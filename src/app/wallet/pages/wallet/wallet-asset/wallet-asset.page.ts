@@ -25,7 +25,7 @@ import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { BigNumber } from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -45,16 +45,13 @@ export type NetworkAssetInfo = {
 }
 
 export type NetworkWalletAssetInfo = {
+    id: string,
     name: string,
-    networks: any,
+    networks: NetworkAssetInfo[],
     networksCount: number,
     balance: BigNumber,
     balanceString: string,
     show: boolean,
-}
-
-export type AssetInfo = {
-    [k: string]: NetworkWalletAssetInfo
 }
 
 @Component({
@@ -66,8 +63,10 @@ export class WalletAssetPage implements OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', { static: false }) slider: IonSlides;
 
-    public assetsInfo: AssetInfo = {};
+    public assetsInfo: NetworkWalletAssetInfo[] = [];
     public totalAmount = '';
+
+    public minAmount = 1; // Do not show if the subwallet amount less than 1 dollar.
 
     private updateOnGoing = false;
     private exitPage = false;
@@ -95,16 +94,6 @@ export class WalletAssetPage implements OnDestroy {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.wallet-asset-title"));
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-            key: "settings",
-            iconPath: BuiltInIcon.SETTINGS
-        });
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-            if (icon.key === 'settings') {
-                this.native.go('/wallet/settings');
-            }
-        });
-
         void this.updateAssetsInfo();
     }
 
@@ -112,20 +101,6 @@ export class WalletAssetPage implements OnDestroy {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
-    handleItem(key: string) {
-        switch (key) {
-            case 'settings':
-                this.goToGeneralSettings();
-                break;
-        }
-    }
-
-    goToGeneralSettings() {
-        this.native.go('/wallet/settings');
-        return false;
-    }
-
-    // TODO: Get balance from cache?
     async updateAssetsInfo(update = false) {
         if (this.updateOnGoing) {
             Logger.warn('wallet', 'Updating assets Info...')
@@ -134,9 +109,9 @@ export class WalletAssetPage implements OnDestroy {
         this.updateOnGoing = true;
 
         let networks = this.networkService.getAvailableNetworks();
+        let masterWalletList = this.walletManager.getMasterWalletsList();
 
         for (let i = 0; i < networks.length && !this.exitPage; i++) {
-            let masterWalletList = this.walletManager.getMasterWalletsList();
             for (let j = 0; j < masterWalletList.length && !this.exitPage; j++) {
                 let networkWallet = await networks[i].createNetworkWallet(masterWalletList[j], false);
 
@@ -146,15 +121,20 @@ export class WalletAssetPage implements OnDestroy {
                         await networkWallet.updateBalance();
                     }
 
-                    if (!this.assetsInfo[networkWallet.masterWallet.id]) {
-                        this.assetsInfo[networkWallet.masterWallet.id] = {
+                    let networkWalletIndex = this.assetsInfo.findIndex( (wallet) => {
+                        return wallet.id === networkWallet.masterWallet.id;
+                    })
+                    if (networkWalletIndex === -1) {
+                        this.assetsInfo.push({
+                            id: networkWallet.masterWallet.id,
                             name: networkWallet.masterWallet.name,
-                            networks: {},
+                            networks: [],
                             networksCount: 0,
                             balance: new BigNumber(0),
                             balanceString: '0',
                             show: false,
-                        }
+                        });
+                        networkWalletIndex = this.assetsInfo.length - 1;
                     }
 
                     let showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
@@ -162,36 +142,48 @@ export class WalletAssetPage implements OnDestroy {
                     let subWallets = [];
                     for (let index = 0; index < showSubwalets.length; index++) {
                         let usdBalance = showSubwalets[index].getUSDBalance();
-                        if (usdBalance.gte(1)) {
-                            subWallets[showSubwalets[index].id] = showSubwalets[index];
+                        if (usdBalance.gte(this.minAmount)) {
+                            subWallets.push(showSubwalets[index]);
                         }
                     }
 
-                    if (Object.keys(subWallets).length > 0) {
+                    if (subWallets.length > 0) {
+                        subWallets.sort((a, b) => {
+                            if (b.getUSDBalance().gte(a.getUSDBalance())) return 1;
+                            else return -1;
+                        });
+
                         let balanceBigNumber = networkWallet.getDisplayBalanceInActiveCurrency();
+                        let netowrkAssetInfo : NetworkAssetInfo = {
+                            name: networks[i].name,
+                            balance: balanceBigNumber,
+                            balanceString: this.getAmountForDisplay(balanceBigNumber),
+                            subWallets: subWallets,
+                        }
 
-                        this.zone.run(() => {
-                            this.assetsInfo[networkWallet.masterWallet.id].networks[networks[i].name] = {
-                                name: networks[i].name,
-                                balance: balanceBigNumber,
-                                balanceString: this.getAmountForDisplay(balanceBigNumber),
-                                subWallets: subWallets,
-                            }
-                            this.assetsInfo[networkWallet.masterWallet.id].networksCount = Object.keys(this.assetsInfo[networkWallet.masterWallet.id].networks).length;
-
-                            this.updateNetworkWalletAssets(this.assetsInfo[networkWallet.masterWallet.id]);
-                            this.updateTotalAssets();
+                        let networkIndex = this.assetsInfo[networkWalletIndex].networks.findIndex( (network) => {
+                            return network.name === networks[i].name;
                         })
+                        if (networkIndex === -1) {
+                            this.assetsInfo[networkWalletIndex].networks.push(netowrkAssetInfo);
+                            this.assetsInfo[networkWalletIndex].networksCount = this.assetsInfo[networkWalletIndex].networks.length;
+                        } else {
+                            this.assetsInfo[networkWalletIndex].networks[networkIndex] = netowrkAssetInfo;
+                        }
                     } else {
                         // Remove old info if the network has no asset.
-                        if (this.assetsInfo[networkWallet.masterWallet.id].networks[networks[i].name]) {
-                            delete this.assetsInfo[networkWallet.masterWallet.id].networks[networks[i].name];
-                            this.assetsInfo[networkWallet.masterWallet.id].networksCount--;
-
-                            this.updateNetworkWalletAssets(this.assetsInfo[networkWallet.masterWallet.id]);
-                            this.updateTotalAssets();
+                        let networkIndex = this.assetsInfo[networkWalletIndex].networks.findIndex( (network) => {
+                            return network.name === networks[i].name;
+                        })
+                        if (networkIndex !== -1) {
+                            this.assetsInfo[networkWalletIndex].networks.splice(networkIndex);
+                            this.assetsInfo[networkWalletIndex].networksCount = this.assetsInfo[networkWalletIndex].networks.length;
                         }
                     }
+                    this.zone.run(() => {
+                        this.updateNetworkWalletAssets(this.assetsInfo[networkWalletIndex]);
+                        this.updateTotalAssets();
+                    })
                 }
                 catch (err) {
                     Logger.warn('wallet', 'Update Wallet balance error:', err)
@@ -203,19 +195,29 @@ export class WalletAssetPage implements OnDestroy {
 
     private updateTotalAssets() {
         let totalAmount = new BigNumber(0);
-        for (let key in this.assetsInfo) {
-            totalAmount = totalAmount.plus(this.assetsInfo[key].balance);
+        for (let i = 0; i < this.assetsInfo.length; i++) {
+            totalAmount = totalAmount.plus(this.assetsInfo[i].balance);
         }
         this.totalAmount = this.getAmountForDisplay(totalAmount);
+
+        this.assetsInfo.sort((a, b) => {
+            if (b.balance.gte(a.balance)) return 1;
+            else return -1;
+        })
     }
 
     private updateNetworkWalletAssets(networkWalletInfo: NetworkWalletAssetInfo) {
         let networkWalletTotalBalance = new BigNumber(0);
-        for (let key in networkWalletInfo.networks) {
-            networkWalletTotalBalance = networkWalletTotalBalance.plus(networkWalletInfo.networks[key].balance);
+        for (let i = 0; i < networkWalletInfo.networks.length; i++) {
+            networkWalletTotalBalance = networkWalletTotalBalance.plus(networkWalletInfo.networks[i].balance);
         }
         networkWalletInfo.balance = networkWalletTotalBalance;
         networkWalletInfo.balanceString = this.getAmountForDisplay(networkWalletTotalBalance);
+
+        networkWalletInfo.networks.sort((a, b) => {
+            if (b.balance.gte(a.balance)) return 1;
+            else return -1;
+        })
     }
 
     private getAmountForDisplay(amount: BigNumber) {

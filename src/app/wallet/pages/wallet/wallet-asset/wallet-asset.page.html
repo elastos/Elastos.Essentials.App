@@ -27,52 +27,52 @@
             </ion-row>
 
             <!-- Wallets list -->
-            <ion-row *ngFor="let netWallet of assetsInfo | keyvalue " class="subwallet-row"
+            <ion-row *ngFor="let netWallet of assetsInfo" class="subwallet-row"
                 [class.dark-subwallet-row]="theme.darkMode">
                 <!-- Wallet total -->
                 <ion-col [size]="6" class="left-title">
-                    <h1>{{ netWallet.value.name }}</h1>
+                    <h1>{{ netWallet.name }}</h1>
                     <p class="net-count">{{ 'wallet.wallet-asset-networks-count' | translate:{networksCount:
-                        netWallet.value.networksCount} }}</p>
+                        netWallet.networksCount} }}</p>
                 </ion-col>
                 <ion-col [size]="5" class="right-col">
                     <h1>
-                        {{ netWallet.value.balanceString }}
+                        {{ netWallet.balanceString }}
                         <span> {{ currencyService.selectedCurrency.symbol }}</span>
                     </h1>
                 </ion-col>
-                <ion-col size="1" class='img' (click)="netWallet.value.show = ! netWallet.value.show">
+                <ion-col size="1" class='img' (click)="netWallet.show = ! netWallet.show">
                     <img class="arrow-icon" src="assets/wallet/icons/down-arrow-grey.svg">
                 </ion-col>
 
                 <!-- Networks list in a wallet -->
-                <div *ngIf="netWallet.value.show">
-                    <ion-row class="network-row" *ngFor="let network of netWallet.value.networks | keyvalue ">
+                <div *ngIf="netWallet.show">
+                    <ion-row class="network-row" *ngFor="let network of netWallet.networks">
                         <ion-col [size]="12" class="left-title">
-                            <h1>{{ network.value.name }}</h1>
+                            <h1>{{ network.name }}</h1>
                             <h2>
-                                {{ network.value.balanceString }}
+                                {{ network.balanceString }}
                                 <span> {{ currencyService.selectedCurrency.symbol }}</span>
                             </h2>
                         </ion-col>
                         <!-- Subwallets / tokens -->
                         <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
-                            *ngFor="let subWallet of network.value.subWallets | keyvalue ">
+                            *ngFor="let subWallet of network.subWallets">
                             <ion-col size="2" class="left-col">
                                 <div class="icon-container">
-                                    <img [src]="subWallet.value.getMainIcon()">
-                                    <div *ngIf="subWallet.value.getSecondaryIcon()" class="ela-icon">
-                                        <img [src]="subWallet.value.getSecondaryIcon()" />
+                                    <img [src]="subWallet.getMainIcon()">
+                                    <div *ngIf="subWallet.getSecondaryIcon()" class="ela-icon">
+                                        <img [src]="subWallet.getSecondaryIcon()" />
                                     </div>
                                 </div>
                             </ion-col>
                             <ion-col [size]="5" class="middle-col">
-                                <h1>{{ uiService.getSubwalletTitle(subWallet.value) }}</h1>
-                                <p>{{ uiService.getSubwalletSubtitle(subWallet.value) }}</p>
+                                <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
+                                <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
                             </ion-col>
                             <ion-col [size]="5" class="right-col">
                                 <p>
-                                    {{ subWallet.value.getAmountInExternalCurrency(subWallet.value.getDisplayBalance())
+                                    {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance())
                                     }}
                                     {{ currencyService.selectedCurrency.symbol }}
                                 </p>
