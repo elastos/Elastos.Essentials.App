@@ -76,7 +76,7 @@ export const it = {
         'edit-profile': 'Modifica il Profilo',
         'select-one': 'Selezionane uno',
         'select-date': 'Seleziona una data',
-        'enter-here': 'Entra qui',
+        'enter-here': 'Digita qui',
         'select-gender': 'Seleziona un genere',
         'saving-picture-to-hive': 'Salvare l\'immagine nello spazio di archiviazione di Elastos Hive',
 
@@ -90,7 +90,7 @@ export const it = {
         // page: credentials
         'mycredentials-header': 'Credenziali',
         'mycredentials-segment-all': 'Tutte',
-        'mycredentials-segment-hidden': 'Nascoste',
+        'mycredentials-segment-hidden': 'Non visibili',
         'mycredentials-segment-visible': 'Visibili',
         'mycredentials-segment-verified': 'Verificate',
         'mycredentials-segment-unverified': 'Non Verificate',
