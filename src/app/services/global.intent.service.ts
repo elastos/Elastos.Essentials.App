@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalNavService } from './global.nav.service';
 
@@ -10,6 +10,12 @@ declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 })
 export class GlobalIntentService {
   public static instance: GlobalIntentService;
+
+  // Queue of intents to be handled. If an intent is received while another one is still in progress
+  // then it is queued and processed later.
+  private intentsQueue: EssentialsIntentPlugin.ReceivedIntent[] = [];
+  private intentProcessInProgress = false;
+  private unprocessedIntentInterval: any = null; // Warning timeout when an intent did not send any response
 
   // Emits received intents from the app manager.
   public intentListener = new BehaviorSubject<EssentialsIntentPlugin.ReceivedIntent>(null);
@@ -31,9 +37,16 @@ export class GlobalIntentService {
 
   public listen() {
     Logger.log("Intents", "Listening to external incoming intents");
-    essentialsIntentManager.addIntentListener((receivedIntent)=>{
-      Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
-        this.intentListener.next(receivedIntent);
+    essentialsIntentManager.addIntentListener((receivedIntent) => {
+      Logger.log("Intents", "Intent received, adding to queue", receivedIntent);
+      this.intentsQueue.push(receivedIntent);
+
+      if (!this.intentProcessInProgress) {
+        this.processNextIntentRequest();
+      }
+      else {
+        Logger.log("Intents", "Another intent is already being processed. This one will be executed next");
+      }
     });
   }
 
@@ -47,8 +60,28 @@ export class GlobalIntentService {
     return essentialsIntentManager.sendUrlIntent(url)
   }
 
+  private processNextIntentRequest() {
+    Logger.log("Intents", "Processing next intent", this.intentsQueue.length);
+    if (this.intentsQueue.length > 0) {
+      let nextIntent = this.intentsQueue[0];
+      this.intentsQueue.splice(0, 1);
+
+      Logger.log("Intents", "Intent received (next in queue), now dispatching to listeners", nextIntent);
+      this.intentProcessInProgress = true;
+
+      this.unprocessedIntentInterval = setInterval(() => {
+        Logger.warn("Intents", "No intent response sent after several seconds!", nextIntent);
+      }, 20000);
+
+      this.intentListener.next(nextIntent);
+    }
+  }
+
   async sendIntentResponse(result: any, intentId: number, navigateBack = true): Promise<void> {
     Logger.log("Intents", "Sending intent response ", result, intentId, navigateBack);
+
+    this.intentProcessInProgress = false;
+    clearInterval(this.unprocessedIntentInterval);
 
     if (navigateBack)
       await this.globalNav.exitCurrentContext();
@@ -59,6 +92,7 @@ export class GlobalIntentService {
     }
     catch (e) {
       Logger.error("Intents", "Intent response error", e);
+      this.processNextIntentRequest();
       throw new Error("sendIntentResponse() error: Result data is not a valid JSON object");
     }
 
@@ -72,6 +106,8 @@ export class GlobalIntentService {
     //if (GlobalConnectService.instance.getActiveConnectionToken())
     //  result["connectionToken"] = GlobalConnectService.instance.getActiveConnectionToken();
 
-    return essentialsIntentManager.sendIntentResponse(result, intentId);
+    let response = await essentialsIntentManager.sendIntentResponse(result, intentId);
+    this.processNextIntentRequest();
+    return response;
   }
 }
