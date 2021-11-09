@@ -6,7 +6,7 @@ export const it = {
         'council-members': 'Membri del Consiglio CR',
         'my-candidates': 'I miei candidati',
         'vote-history': 'Cronologia dei voti',
-        'votes': 'voti',
+        'votes': 'Voti',
         'votes-remaining': 'Voti rimanenti',
         'dist-votes': 'Distribuisci voti',
         'pledge-ela': 'Impegna ELA',
@@ -40,6 +40,23 @@ export const it = {
         'cr-member-info-no-available' : 'Le informazioni del Consiglio CRC non sono al momento disponibili, riprova più tardi',
         'pledge-some-ELA-to-candidates': 'Distribuisci i tuoi voti ELA ai candidati',
         'not-allow-pledge-more-than-own': 'Non puoi distribuire più voti ELA del numero di ELA che possiedi',
+        
+         /********** Member **********/
+        'crmember-profile': 'Profilo del Membro del CRC',
+        'impeachment-progress': ' Voto di incriminazione',
+        'current': 'Voti Attuali',
+        'impeachment': 'Voti per l\'incriminazione',
+        'about-member': 'Informazioni sul Membro CRC',
+        'performance-record': 'Registro Votazioni',
+        'member-did': 'DID del Membro del Consiglio',
+        'member-url': 'URL del Membro del Consiglio',
+        'member-profile': 'Profilo del Membro del CRC',
+        'update': 'Aggiorna',
+        'claim-dpos-node': 'Richiedi Nodo DPos',
+
+        /********** Impeach **********/
+        'impeach-council-member': 'Incrimina un Membro del Consiglio',
+        'member-name': 'Nome del Membro del Consiglio',
 
         /********** Location code **********
         * Location code - list of international phone number country code / country name.
