@@ -139,6 +139,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     networks: ["bsc"]
                 },
                 {
+                    icon: '/assets/browser/dapps/raven.png',
+                    title: 'Moe Raven',
+                    description: 'The magical matic yield optimizer',
+                    url: 'https://raven.moe/',
+                    useExternalBrowser: false,
+                    networks: ["elastos", "polygon"]
+                },
+                {
                     icon: '/assets/browser/dapps/tokbridge.svg',
                     title: 'Shadow Tokens',
                     description: 'Bridge assets between Elastos and other chains',
