@@ -78,17 +78,13 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
         // Standard ERC20 contract ABI
         this.erc20ABI = require("../../../../assets/wallet/ethereum/StandardErc20ABI.json");
-
-        // First retrieve the number of decimals used by this token. this is needed for a good display,
-        // as we need to convert the balance integer using the number of decimals.
-        // NOT NEEDED ANY MORE - SAVED WHEN ADDING TOKENS - await this.fetchTokenDecimals();
-
-        runDelayed(() => this.updateBalance(), 5000);
     }
 
     public async startBackgroundUpdates(): Promise<void> {
         await super.startBackgroundUpdates();
         void this.fetchAndRearmTokenValue();
+
+        runDelayed(() => this.updateBalance(), 5000);
         return;
     }
 

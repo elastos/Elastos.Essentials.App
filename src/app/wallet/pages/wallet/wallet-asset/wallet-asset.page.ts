@@ -68,6 +68,9 @@ export class WalletAssetPage implements OnDestroy {
 
     public minAmount = 1; // Do not show if the subwallet amount less than 1 dollar.
 
+    private totalSubwalletCount = 0;
+    private updatedSubwalletCount = 0;
+
     private updateOnGoing = false;
     private exitPage = false;
 
@@ -94,19 +97,31 @@ export class WalletAssetPage implements OnDestroy {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.wallet-asset-title"));
-        void this.updateAssetsInfo();
+        void this.initAsset();
     }
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
-    async updateAssetsInfo(update = false) {
+    async initAsset() {
+        await this.updateAssetsInfo();
+        setTimeout(() => {
+            void this.updateAssetsInfo(true);
+        }, 500);
+    }
+
+    async updateAssetsInfo(updateBalance = false) {
         if (this.updateOnGoing) {
             Logger.warn('wallet', 'Updating assets Info...')
             return;
         }
         this.updateOnGoing = true;
+        if (updateBalance) {
+            this.updatedSubwalletCount = 0;
+        } else {
+            this.totalSubwalletCount = 0;
+        }
 
         let networks = this.networkService.getAvailableNetworks();
         let masterWalletList = this.walletManager.getMasterWalletsList();
@@ -116,11 +131,6 @@ export class WalletAssetPage implements OnDestroy {
                 let networkWallet = await networks[i].createNetworkWallet(masterWalletList[j], false);
 
                 try {
-                    // TODO: updateBalance too slow.
-                    if (update) {
-                        await networkWallet.updateBalance();
-                    }
-
                     let networkWalletIndex = this.assetsInfo.findIndex( (wallet) => {
                         return wallet.id === networkWallet.masterWallet.id;
                     })
@@ -138,9 +148,19 @@ export class WalletAssetPage implements OnDestroy {
                     }
 
                     let showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
+                    if (!updateBalance) {
+                        this.totalSubwalletCount += showSubwalets.length;
+                    }
 
                     let subWallets = [];
                     for (let index = 0; index < showSubwalets.length; index++) {
+                        if (updateBalance) {
+                            await showSubwalets[index].updateBalance();
+                            this.zone.run(() => {
+                                this.updatedSubwalletCount++;
+                            });
+                        }
+
                         let usdBalance = showSubwalets[index].getUSDBalance();
                         if (usdBalance.gte(this.minAmount)) {
                             subWallets.push(showSubwalets[index]);
@@ -201,7 +221,7 @@ export class WalletAssetPage implements OnDestroy {
         this.totalAmount = this.getAmountForDisplay(totalAmount);
 
         this.assetsInfo.sort((a, b) => {
-            if (b.balance.gte(a.balance)) return 1;
+            if (b.balance.gt(a.balance)) return 1;
             else return -1;
         })
     }
@@ -236,6 +256,10 @@ export class WalletAssetPage implements OnDestroy {
         await this.updateAssetsInfo(true);
         setTimeout(() => {
             event.target.complete();
-        }, 1000);
+        }, 500);
+    }
+
+    public getUpdatingProgressInfo() {
+        return (100 * this.updatedSubwalletCount / this.totalSubwalletCount).toFixed(0);
     }
 }

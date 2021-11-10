@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 
@@ -19,40 +19,90 @@ export class GlobalJsonRPCService {
         GlobalJsonRPCService.instance = this;
     }
 
-    httpPost(rpcApiUrl: string, param: any): Promise<any> {
+    httpPost(rpcApiUrl: string, param: any, timeout = -1): Promise<any> {
         if (!rpcApiUrl) {
             return null;
         }
-
         return new Promise((resolve, reject) => {
-            const httpOptions = {
-                headers: new HttpHeaders({
-                    'Content-Type': 'application/json',
-                })
-            };
-            // Logger.log("GlobalJsonRPCService", 'httpPost rpcApiUrl:', rpcApiUrl);
-            this.http.post(rpcApiUrl, JSON.stringify(param), httpOptions)
-                .subscribe((res: any) => {
-                    if (res) {
-                        // Logger.warn("GlobalJsonRPCService", 'httpPost response:', res);
-                        if (res instanceof Array) {
-                            resolve(res);
+            var request = new XMLHttpRequest();
+
+            request.open('POST', rpcApiUrl, true);
+            request.setRequestHeader('Content-Type','application/json');
+            if (timeout != -1) {
+                request.timeout = timeout;
+            }
+
+            request.onreadystatechange = function() {
+                if (request.readyState === 4 && request.timeout !== 1) {
+                    let resultString = request.responseText;
+
+                    try {
+                        let result = JSON.parse(resultString);
+                        if (result instanceof Array) {
+                            resolve(result);
                         } else {
-                            if (res.error) {
-                                Logger.error("GlobalJsonRPCService", 'httpPost error:', res);
-                                reject(res.error);
+                            if (result.error) {
+                                Logger.error("GlobalJsonRPCService", 'httpPost error:', result);
+                                reject(result.error);
                             } else {
-                                resolve(res.result || '');
+                                resolve(result.result || '');
                             }
                         }
-                    } else {
-                        Logger.error("GlobalJsonRPCService", 'httpPost get nothing!');
+
+                        resolve(result);
+                    } catch(e) {
+                        Logger.error("GlobalJsonRPCService", 'httpPost error:', e);
+                        reject("Invalid JSON response returned by the JSON RPC");
                     }
-                }, (err) => {
-                    Logger.error("GlobalJsonRPCService", 'JsonRPCService httpPost error:', JSON.stringify(err));
-                    reject(err);
-                });
+                }
+            };
+
+            request.ontimeout = function() {
+                Logger.error("GlobalJsonRPCService", 'httpPost timeout');
+                reject("Timeout");
+            };
+
+            request.onerror = function(error) {
+                Logger.error("GlobalJsonRPCService", 'httpPost error:', error);
+                reject(error);
+            }
+
+            try {
+                request.send(JSON.stringify(param));
+            } catch(error) {
+                reject("Connection error");
+            }
         });
+
+        // return new Promise((resolve, reject) => {
+        //     const httpOptions = {
+        //         headers: new HttpHeaders({
+        //             'Content-Type': 'application/json',
+        //         })
+        //     };
+        //     // Logger.log("GlobalJsonRPCService", 'httpPost rpcApiUrl:', rpcApiUrl);
+        //     this.http.post(rpcApiUrl, JSON.stringify(param), httpOptions)
+        //         .subscribe((res: any) => {
+        //             if (res) {
+        //                 // Logger.warn("GlobalJsonRPCService", 'httpPost response:', res);
+        //                 if (res instanceof Array) {
+        //                     resolve(res);
+        //                 } else {
+        //                     if (res.error) {
+        //                         Logger.error("GlobalJsonRPCService", 'httpPost error:', res);
+        //                         reject(res.error);
+        //                     } else {
+        //                         resolve(res.result || '');
+        //                     }
+        //                 }
+        //             } else {
+        //                 Logger.error("GlobalJsonRPCService", 'httpPost get nothing!');
+        //             }
+        //         }, (err) => {
+        //             Logger.error("GlobalJsonRPCService", 'JsonRPCService httpPost error:', JSON.stringify(err));
+        //             reject(err);
+        //         });
+        // });
     }
 
     httpGet(url): Promise<any> {

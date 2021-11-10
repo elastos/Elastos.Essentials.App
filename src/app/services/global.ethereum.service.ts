@@ -69,7 +69,8 @@ export class GlobalEthereumRPCService {
         };
 
         try {
-            let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            // Normal 10s is enough for get balance.
+            let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 10000);
             return new BigNumber(balanceString);
         }
         catch (err) {

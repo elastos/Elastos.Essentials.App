@@ -4,6 +4,7 @@
     <ion-content>
         <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
             <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
+                <div class='updateprogress'>{{ getUpdatingProgressInfo() }}%</div>
             </ion-refresher-content>
         </ion-refresher>
 
