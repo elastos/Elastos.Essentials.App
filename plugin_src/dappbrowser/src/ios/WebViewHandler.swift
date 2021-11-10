@@ -454,11 +454,7 @@ extension WebViewHandler: WKNavigationDelegate {
         }
     }
 
-    @objc func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        // update url, stop spinner, update back/forward
-
-        webView.scrollView.contentInset = .zero;
-
+    func loadStop() {
         self.spinner.stopAnimating();
 
         self.getHeadAndSendCallback();
@@ -466,14 +462,21 @@ extension WebViewHandler: WKNavigationDelegate {
         self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.LOAD_STOP_EVENT, "url":webView.url?.absoluteString as Any?]);
     }
 
+    @objc func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        // update url, stop spinner, update back/forward
+
+        webView.scrollView.contentInset = .zero;
+
+        self.loadStop();
+    }
+
     @objc func webView(_ webView: WKWebView, failedNavigation delegateName: String, withError error: Error) {
         // log fail message, stop spinner, update back/forward
         NSLog("webView:%@: %@", delegateName, error.localizedDescription);
 
-        self.spinner.stopAnimating();
-        self.getHeadAndSendCallback();
-
         self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.LOAD_ERROR_EVENT, "url":webView.url?.absoluteString as Any?, "message": error.localizedDescription]);
+
+        self.loadStop();
     }
 
     @objc func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
