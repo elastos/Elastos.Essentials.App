@@ -1,6 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
-import moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
@@ -9,6 +8,7 @@ import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { StandardCoinName } from '../coin';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
+import { WalletUtil } from '../wallet.util';
 import { ERC20SubWallet } from './erc20.subwallet';
 import { NetworkWallet } from './networkwallet';
 import { StandardSubWallet } from './standard.subwallet';
@@ -108,7 +108,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     transaction.to = transaction.to.toLowerCase();
 
     const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
-    const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
+    const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
     const direction = await this.getTransactionDirection(transaction.to);
     transaction.Direction = direction;

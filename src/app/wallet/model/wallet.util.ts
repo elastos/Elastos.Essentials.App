@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 import BigNumber from 'bignumber.js';
+import moment from 'moment';
 import { CurrencyService } from '../services/currency.service';
 
 export class WalletUtil {
@@ -75,5 +76,10 @@ export class WalletUtil {
       // }
       return amountString;
     }
+  }
+
+  public static getDisplayDate(timestamp: number) {
+    const today = moment(new Date()).startOf('day').valueOf();
+    return timestamp < today ? moment(timestamp).format("YYYY-MM-DD HH:mm") : moment(timestamp).startOf('minutes').fromNow();
   }
 }

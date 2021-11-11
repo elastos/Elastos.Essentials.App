@@ -1,9 +1,9 @@
 import { TranslateService } from "@ngx-translate/core";
 import BigNumber from "bignumber.js";
-import moment from "moment";
 import { Config } from "src/app/wallet/config/Config";
 import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo } from "../../providers/transaction.types";
 import { TransactionsHelper } from "../../transactions.helper";
+import { WalletUtil } from "../../wallet.util";
 
 export class ElastosTransactionsHelper {
   public static getMemoString(memo: string) {
@@ -48,7 +48,7 @@ export class ElastosTransactionsHelper {
 
   public static getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): TransactionInfo {
     const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
-    const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(timestamp).format("YYYY-MM-DD HH:mm");
+    const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
     const transactionInfo: TransactionInfo = {
       amount: new BigNumber(-1), // Defined by inherited classes

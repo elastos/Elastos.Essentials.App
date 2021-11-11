@@ -78,9 +78,6 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): Promise<TransactionInfo> {
-        const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
-        const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
-
         let transactionInfo = ElastosTransactionsHelper.getTransactionInfo(transaction, translate);
         transactionInfo.amount = new BigNumber(transaction.value, 10),
             transactionInfo.symbol = '';
