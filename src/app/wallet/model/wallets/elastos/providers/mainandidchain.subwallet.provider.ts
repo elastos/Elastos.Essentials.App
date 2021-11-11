@@ -36,8 +36,8 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
       let afterTransactionIndex = (await this.getTransactions(subWallet)).findIndex(t => t.txid === afterTransaction.txid);
       if (afterTransactionIndex) { // Just in case, should always be true but...
         // Ex: if tx index in current list of transactions is 18 and we use 8 results per page
-        // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
-        page = 1 + Math.floor((afterTransactionIndex + 1) / this.TRANSACTION_LIMIT);
+        // then the page to fetch is 2: Math.floor(18 / 8) - API page index starts at 0
+        page = Math.floor((afterTransactionIndex + 1) / this.TRANSACTION_LIMIT);
       }
       await this.fetchMoreMainChainTransactions(page);
     } else {
@@ -179,6 +179,10 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
     // Get the txhistory after the timestampStart.
     for (let i = 0, len = txList.length; i < len; i++) {
       for (const txhistory of txList[i].transactions) {
+        if (txhistory.votecategory != 0) {// Vote transaction
+            txhistory.type = TransactionDirection.MOVED;
+            txhistory.value = '0';
+        }
         // txhistory.time === 0: pending transaction.
         if ((txhistory.time === 0) || (txhistory.time >= this.timestampStart)) {
           transactions.push(txhistory);

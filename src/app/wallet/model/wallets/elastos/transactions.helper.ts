@@ -48,7 +48,7 @@ export class ElastosTransactionsHelper {
 
   public static getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): TransactionInfo {
     const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
-    const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
+    const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(timestamp).format("YYYY-MM-DD HH:mm");
 
     const transactionInfo: TransactionInfo = {
       amount: new BigNumber(-1), // Defined by inherited classes
