@@ -59,6 +59,8 @@ export const it = {
         'app-crcouncil-description': 'Membri del consiglio della Cyber Republic',
         'app-cr-proposal': 'Proposte CR',
         'app-crproposal-description': 'Proposte Cyber Republic',
+        'app-cr-suggestion': 'CR Suggestion',
+        'app-suggestion-description': 'Cyber Republic suggestions',
         'app-dev-tools': 'Strumenti per sviluppatori',
         'app-browser': 'Scopri dApps',
         'app-browser-description': 'Esplora le dApp da utilizzare in Essentials',

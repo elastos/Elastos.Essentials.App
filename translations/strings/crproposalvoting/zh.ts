@@ -12,7 +12,7 @@ export const zh = {
         'search-proposal': '搜索提案',
         'searching-proposals': '搜索提案',
         'loading-proposal': '正在加载提案...',
-        'no-proposals': '暂时没有匹配的提案',
+        'no-proposals': '暂时没有匹配的提案。',
         'proposal-details': '提案细节',
         'proposal': '提案',
         'abstract': '摘要',
@@ -25,12 +25,25 @@ export const zh = {
         'abstain': '弃权',
         'by': '提案人:',
 
+        'suggestions': '建言',
+        'search-suggestion': '搜索建言',
+        'searching-suggestions': '搜索建言',
+        'loading-suggestion': '正在加载建言...',
+        'no-suggestions': '暂时没有匹配的建言。',
+        'suggestion-details': '建言详情',
+        'suggestion': '建言',
+        'suggestion-id': '建言ID',
+
         // Status
         'status-voting': '委会评议中',
         'status-notification': '公示中',
         'status-active': '执行中',
         'status-final': '已完成',
         'status-rejected': '已废止',
+
+        'signed': '已签名',
+        'proposed': '未签名',
+        'unsigned': '已转为提案',
 
         // Intent Screens
         'wrong-did': 'DID错误',

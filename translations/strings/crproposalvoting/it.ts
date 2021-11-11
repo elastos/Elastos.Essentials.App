@@ -25,12 +25,25 @@ export const it = {
         'abstain': 'Astenuto',
         'by': 'Di',
 
+        'suggestions': 'Suggestions',
+        'search-suggestion': 'Search Suggestion',
+        'searching-suggestions': 'Searching Suggestions',
+        'loading-suggestion': 'Loading Suggestion...',
+        'no-suggestions': 'No matching suggestions for now.',
+        'suggestion-details': 'Suggestion Details',
+        'suggestion': 'Suggestion',
+        'suggestion-id': 'Suggestion ID',
+
         // Status
         'status-voting': 'Revisione da parte del Consiglio in corso',
         'status-notification': 'Revisione da parte della Community in corso',
         'status-active': 'Attivo',
         'status-final': 'Approvato',
         'status-rejected': 'Respinto',
+
+        'signed': 'Signed',
+        'proposed': 'Proposed',
+        'unsigned': 'Unsigned',
 
         // Intent Screens
         'wrong-did': 'La DID non corrisponde',
@@ -100,7 +113,7 @@ export const it = {
         'review-milestone-msg': 'You are about to review the following milestone. Please review it, and follow the process to sign and publish it.',
         'sign-review-milestone': 'Sign and Review Milestone',
         ////////
-        
+
         'withdraw': 'Ritirati',
         'withdraw-msg': 'Stai per ritirarti. Si prega di rivederlo e seguire la procedura per firmarlo e pubblicarlo.',
         'withdraw-amount': 'Prelevare l\'importo',

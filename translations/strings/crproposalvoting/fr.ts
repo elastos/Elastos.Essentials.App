@@ -24,12 +24,25 @@ export const fr = {
         'abstain': 'Abstention',
         'by': 'Par',
 
+        'suggestions': 'Suggestions',
+        'search-suggestion': 'Search Suggestion',
+        'searching-suggestions': 'Searching Suggestions',
+        'loading-suggestion': 'Loading Suggestion...',
+        'no-suggestions': 'No matching suggestions for now.',
+        'suggestion-details': 'Suggestion Details',
+        'suggestion': 'Suggestion',
+        'suggestion-id': 'Suggestion ID',
+
         // Status
         'status-voting': 'Revue par le Conseil en cours',
         'status-notification': 'Revue par la Communuaté en Cours',
         'status-active': 'Actif',
         'status-final': 'Apprové',
         'status-rejected': 'Rejeté',
+
+        'signed': 'Signed',
+        'proposed': 'Proposed',
+        'unsigned': 'Unsigned',
 
         // Intent Screens
         'wrong-did': 'DID do not match',

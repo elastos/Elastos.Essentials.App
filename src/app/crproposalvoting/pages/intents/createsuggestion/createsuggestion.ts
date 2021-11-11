@@ -1,6 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { SuggestionDetail } from 'src/app/crproposalvoting/model/suggestion-model';
+import { SuggestionService } from 'src/app/crproposalvoting/services/suggestion.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -10,7 +12,6 @@ import { VoteService } from 'src/app/vote/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { SuggestionDetails } from '../../../model/suggestion-details';
 import { CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
 import { ProposalService } from '../../../services/proposal.service';
@@ -42,9 +43,9 @@ export class CreateSuggestionPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     private originalRequestJWT: string;
-    private suggestionID: string;
-    public suggestionDetailsFetched = false;
-    public suggestionDetails: SuggestionDetails;
+    private suggestionId: string;
+    public suggestionDetailFetched = false;
+    public suggestionDetail: SuggestionDetail;
     private createSuggestionCommand: CreateSuggestionCommand;
     public signingAndSendingSuggestionResponse = false;
     public creationDate: string = "";
@@ -54,6 +55,7 @@ export class CreateSuggestionPage {
 
     constructor(
         private proposalService: ProposalService,
+        private suggestionService: SuggestionService,
         private crOperations: CROperationsService,
         private popup: PopupService,
         public translate: TranslateService,
@@ -71,7 +73,7 @@ export class CreateSuggestionPage {
             this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
             Logger.log('crproposal', "createSuggestionCommand", this.createSuggestionCommand);
             this.originalRequestJWT = this.crOperations.originalRequestJWT;
-            this.suggestionID = this.createSuggestionCommand.sid;
+            this.suggestionId = this.createSuggestionCommand.sid;
             this.proposaltype = this.createSuggestionCommand.data.proposaltype;
 
             if (this.createSuggestionCommand.data.proposaltype == "normal") {
@@ -81,13 +83,13 @@ export class CreateSuggestionPage {
             }
 
             // Fetch more details about this suggestion, to display to the user
-            this.suggestionDetails = await this.proposalService.fetchSuggestionDetails(this.suggestionID);
-            Logger.log('crproposal', "suggestionDetails", this.suggestionDetails);
-            if (this.proposaltype == "changeproposalowner" && this.suggestionDetails.newAddress && !this.suggestionDetails.newOwnerDID) {
+            this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
+            Logger.log('crproposal', "suggestionDetail", this.suggestionDetail);
+            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newAddress && !this.suggestionDetail.newOwnerDID) {
                 this.proposaltype = "changeproposaladdress";
             }
-            this.creationDate = Util.timestampToDateTime(this.suggestionDetails.createdAt * 1000);
-            this.suggestionDetailsFetched = true;
+            this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
+            this.suggestionDetailFetched = true;
         }
         catch (err) {
             Logger.error('crproposal', 'CreateSuggestionPage ionViewDidEnter error:', err);

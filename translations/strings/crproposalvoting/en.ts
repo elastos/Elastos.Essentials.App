@@ -25,12 +25,25 @@ export const en = {
         'abstain': 'Abstain',
         'by': 'By',
 
+        'suggestions': 'Suggestions',
+        'search-suggestion': 'Search Suggestion',
+        'searching-suggestions': 'Searching Suggestions',
+        'loading-suggestion': 'Loading Suggestion...',
+        'no-suggestions': 'No matching suggestions for now.',
+        'suggestion-details': 'Suggestion Details',
+        'suggestion': 'Suggestion',
+        'suggestion-id': 'Suggestion ID',
+
         // Status
         'status-voting': 'Under Council Review',
         'status-notification': 'Under Community Review',
         'status-active': 'Active',
         'status-final': 'Approved',
         'status-rejected': 'Rejected',
+
+        'signed': 'Signed',
+        'proposed': 'Proposed',
+        'unsigned': 'Unsigned',
 
         // Intent Screens
         'wrong-did': 'DID do not match',

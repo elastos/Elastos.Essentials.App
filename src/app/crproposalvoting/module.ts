@@ -1,26 +1,27 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
-import { CRProposalVotingRoutingModule } from './routing';
-
-import { ProposalListsHomePage } from './pages/proposal-lists/home/home';
-import { ProposalListingPage } from './pages/proposal-lists/listing/listing';
-import { HttpClientModule } from '@angular/common/http';
-import { ProposalSearchResultComponent } from './components/proposal-search-result/proposal-search-result.component';
-import { ProposalDetailsPage } from './pages/proposal-details/proposal-details';
-import { VoteResultComponent } from './components/vote-result/vote-result.component';
-import { CreateSuggestionPage } from './pages/intents/createsuggestion/createsuggestion';
-import { PopupService } from './services/popup.service';
-import { VoteForProposalPage } from './pages/intents/voteforproposal/voteforproposal';
-import { FormsModule } from '@angular/forms';
-import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { ProposalSearchResultComponent } from './components/proposal-search-result/proposal-search-result.component';
+import { VoteResultComponent } from './components/vote-result/vote-result.component';
 import { CreateProposalPage } from './pages/intents/createproposal/createproposal';
+import { CreateSuggestionPage } from './pages/intents/createsuggestion/createsuggestion';
+import { ReviewMilestonePage } from './pages/intents/reviewmilestone/reviewmilestone';
 import { ReviewProposalPage } from './pages/intents/reviewproposal/reviewproposal';
 import { UpdatMilestonePage } from './pages/intents/updatemilestone/updatemilestone';
-import { ReviewMilestonePage } from './pages/intents/reviewmilestone/reviewmilestone';
+import { VoteForProposalPage } from './pages/intents/voteforproposal/voteforproposal';
 import { WithdrawPage } from './pages/intents/withdraw/withdraw';
+import { ProposalDetailsPage } from './pages/proposal-details/proposal-details';
+import { ProposalListsHomePage } from './pages/proposal-lists/home/home';
+import { ProposalListingPage } from './pages/proposal-lists/listing/listing';
+// import { SuggestionDetailPage } from './pages/suggestion-detail/suggestion-detail';
+import { SuggestionListPage } from './pages/suggestion-list/suggestion-list';
+import { CRProposalVotingRoutingModule } from './routing';
+import { PopupService } from './services/popup.service';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,8 @@ import { WithdrawPage } from './pages/intents/withdraw/withdraw';
     ProposalListsHomePage,
     ProposalListingPage,
     ProposalDetailsPage,
+    SuggestionListPage,
+    // SuggestionDetailPage,
 
     // Intents,
     CreateSuggestionPage,
@@ -58,6 +61,8 @@ import { WithdrawPage } from './pages/intents/withdraw/withdraw';
     ProposalListsHomePage,
     ProposalListingPage,
     ProposalDetailsPage,
+    SuggestionListPage,
+    // SuggestionDetailPage,
 
     // Intents
     CreateSuggestionPage,

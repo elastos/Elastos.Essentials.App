@@ -1,18 +1,16 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ProposalStatus } from '../model/proposal-status';
-import { ProposalsSearchResponse } from '../model/proposal-search-response';
-import { ProposalSearchResult } from '../model/proposal-search-result';
+import { Injectable } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { ProposalDetails } from '../model/proposal-details';
 import { ProposalsDetailsResponse } from '../model/proposal-details-response';
-import { SuggestionDetails } from '../model/suggestion-details';
-import { SuggestionDetailsResponse } from '../model/suggestion-details-response';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { Logger } from 'src/app/logger';
-import { App } from 'src/app/model/app.enum'
-import { Subscription } from 'rxjs';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
-import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { ProposalsSearchResponse } from '../model/proposal-search-response';
+import { ProposalSearchResult } from '../model/proposal-search-result';
+import { ProposalStatus } from '../model/proposal-status';
 
 @Injectable({
     providedIn: 'root'
@@ -110,24 +108,6 @@ export class ProposalService {
                 }
             }, (err) => {
                 Logger.error('crproposal', 'fetchSearchedProposal error:', err);
-                reject(err);
-            });
-        });
-    }
-
-    public fetchSuggestionDetails(suggestionId: string): Promise<SuggestionDetails> {
-        return new Promise((resolve, reject) => {
-            Logger.log('crproposal', 'Fetching suggestion details for suggestion ' + suggestionId + '...');
-            this.http.get<any>(this.cr_rpc_api + '/api/suggestion/get_suggestion/' + suggestionId).subscribe((res: SuggestionDetailsResponse) => {
-                Logger.log('crproposal', res);
-                if (res && res.data) {
-                    resolve(res.data);
-                } else {
-                    Logger.error('crproposal', 'get_suggestion: can not get data!');
-                    reject(null);
-                }
-            }, (err) => {
-                Logger.error('crproposal', 'fetchSuggestionDetails error:', err);
                 reject(err);
             });
         });

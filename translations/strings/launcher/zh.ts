@@ -59,6 +59,8 @@ export const zh = {
         'app-crcouncil-description': 'CR 委员会成员',
         'app-cr-proposal': 'CR 提案',
         'app-crproposal-description': '参与社区运营共治',
+        'app-cr-suggestion': 'CR 建言',
+        'app-suggestion-description': '参与社区运营共治',
         'app-dev-tools': '开发者工具',
         'app-browser': '探索 DApp',
         'app-browser-description': '探索可在Essentials里使用的DAPP',

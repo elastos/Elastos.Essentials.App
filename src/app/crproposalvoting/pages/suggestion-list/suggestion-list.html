@@ -1,0 +1,62 @@
+<ion-content
+    [scrollEvents]="true" #content [class.darkContent]="theme.darkMode" class="lightmode">
+    <app-titlebar></app-titlebar>
+
+    <ion-content>
+        <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+            <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
+            </ion-refresher-content>
+        </ion-refresher>
+
+        <!-- Search Input - reveal if first proposals are fetched on page load -->
+        <ion-row *ngIf="showSearch" class="search-row">
+            <ion-input #input autosize placeholder="{{ 'crproposalvoting.search-suggestion' | translate }}"
+                [(ngModel)]="searchInput" name="searchInput" ngDefaultControl (ngModelChange)="searchSuggestion($event)"
+                mode="ios" clearInput>
+            </ion-input>
+        </ion-row>
+
+        <ion-grid *ngIf="suggestionsFetched" class="container">
+            <div *ngIf="suggestions.length > 0">
+                <ion-row *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)"
+                    class="item-row ripple ion-activatable">
+                    <ion-col size="2" class="left-col">
+                        <h1><span>#</span>{{ suggestion.id }}</h1>
+                    </ion-col>
+                    <ion-col size="8.5" class="middle-col">
+                        <h1>{{ suggestion.title }}</h1>
+                        <p class="date">{{ uxService.formatDate(suggestion.createdAt) }} &#8226; {{ suggestion.proposedBy }}
+                        </p>
+                        <p class="status" [class.proposed]="suggestion.proposed === 'proposed'"
+                            [class.signed]="suggestion.status === 'signed'"
+                            [class.unsigned]="suggestion.status === 'unsigned'">
+                            {{ 'crproposalvoting.' + suggestion.status | translate }}
+                        </p>
+                    </ion-col>
+                    <ion-col size="1.5" class="right-col">
+                        <ion-img
+                            [src]="!theme.darkMode ? '/assets/crproposalvoting/icons/right-arrow.svg' : '/assets/crproposalvoting/icons/darkmode/right-arrow.svg'">
+                        </ion-img>
+                    </ion-col>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-row>
+            </div>
+            <div *ngIf="suggestions.length == 0" class="more">
+                {{ 'crproposalvoting.no-suggestions' | translate }}
+            </div>
+        </ion-grid>
+
+        <!-- Spinner Container - Reveal if suggestions are being fetched -->
+        <ion-grid *ngIf="!suggestionsFetched" class="spinner-container">
+            <div class="spinner">
+                <ion-spinner name="crescent"></ion-spinner>
+            </div>
+        </ion-grid>
+
+        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreSuggestions($event)">
+            <ion-infinite-scroll-content class="ion-padding-top" loadingSpinner="crescent">
+            </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+    </ion-content>
+
+</ion-content>

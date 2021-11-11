@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProposalListsHomePage } from './pages/proposal-lists/home/home';
-import { ProposalListingPage } from './pages/proposal-lists/listing/listing';
-import { ProposalDetailsPage } from './pages/proposal-details/proposal-details';
-import { CreateSuggestionPage } from './pages/intents/createsuggestion/createsuggestion';
-import { VoteForProposalPage } from './pages/intents/voteforproposal/voteforproposal';
 import { CreateProposalPage } from './pages/intents/createproposal/createproposal';
+import { CreateSuggestionPage } from './pages/intents/createsuggestion/createsuggestion';
+import { ReviewMilestonePage } from './pages/intents/reviewmilestone/reviewmilestone';
 import { ReviewProposalPage } from './pages/intents/reviewproposal/reviewproposal';
 import { UpdatMilestonePage } from './pages/intents/updatemilestone/updatemilestone';
-import { ReviewMilestonePage } from './pages/intents/reviewmilestone/reviewmilestone';
+import { VoteForProposalPage } from './pages/intents/voteforproposal/voteforproposal';
 import { WithdrawPage } from './pages/intents/withdraw/withdraw';
+import { ProposalDetailsPage } from './pages/proposal-details/proposal-details';
+import { ProposalListingPage } from './pages/proposal-lists/listing/listing';
+// import { SuggestionDetailPage } from './pages/suggestion-detail/suggestion-detail';
+import { SuggestionListPage } from './pages/suggestion-list/suggestion-list';
 
 const routes: Routes = [
 /*   {
@@ -22,11 +23,17 @@ const routes: Routes = [
     ],
   }, */
   {
-    path: 'proposals/:proposalType', component: ProposalListingPage,
+    path: 'proposals/:proposalType', component: ProposalListingPage
   },
   {
     path: 'proposal-details', component: ProposalDetailsPage
   },
+  {
+    path: 'suggestions/:suggestionType', component: SuggestionListPage
+  },
+//   {
+//     path: 'suggestion-detail', component: SuggestionDetailPage
+//   },
   // Intents
   {
     path: 'createsuggestion', component: CreateSuggestionPage
