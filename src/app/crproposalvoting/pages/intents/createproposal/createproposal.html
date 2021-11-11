@@ -1,10 +1,10 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <div *ngIf="!suggestionDetailsFetched">
+    <div *ngIf="!suggestionDetailFetched">
         <ion-spinner></ion-spinner>
     </div>
 
-    <div *ngIf="suggestionDetailsFetched" [class.darkContainer]="theme.darkMode">
+    <div *ngIf="suggestionDetailFetched" [class.darkContainer]="theme.darkMode">
 
         <div class="message">{{ 'crproposalvoting.create-proposal-msg' | translate }}</div>
         <ion-list>
