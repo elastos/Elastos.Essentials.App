@@ -106,8 +106,13 @@ export class GlobalIntentService {
     //if (GlobalConnectService.instance.getActiveConnectionToken())
     //  result["connectionToken"] = GlobalConnectService.instance.getActiveConnectionToken();
 
-    let response = await essentialsIntentManager.sendIntentResponse(result, intentId);
+    try {
+      await essentialsIntentManager.sendIntentResponse(result, intentId);
+    }
+    catch (e) {
+      Logger.error("Intents", "Failed to send intent response:", intentId, result, e);
+    }
+
     this.processNextIntentRequest();
-    return response;
   }
 }
