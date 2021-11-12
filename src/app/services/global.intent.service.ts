@@ -14,7 +14,7 @@ export class GlobalIntentService {
   // Queue of intents to be handled. If an intent is received while another one is still in progress
   // then it is queued and processed later.
   private intentsQueue: EssentialsIntentPlugin.ReceivedIntent[] = [];
-  private intentProcessInProgress = false;
+  private intentBeingProcessed: EssentialsIntentPlugin.ReceivedIntent = null;
   private unprocessedIntentInterval: any = null; // Warning timeout when an intent did not send any response
 
   // Emits received intents from the app manager.
@@ -41,11 +41,11 @@ export class GlobalIntentService {
       Logger.log("Intents", "Intent received, adding to queue", receivedIntent);
       this.intentsQueue.push(receivedIntent);
 
-      if (!this.intentProcessInProgress) {
+      if (!this.intentBeingProcessed) {
         this.processNextIntentRequest();
       }
       else {
-        Logger.log("Intents", "Another intent is already being processed. This one will be executed next");
+        Logger.log("Intents", "Another intent is already being processed. This one will be executed next", this.intentBeingProcessed);
       }
     });
   }
@@ -67,7 +67,7 @@ export class GlobalIntentService {
       this.intentsQueue.splice(0, 1);
 
       Logger.log("Intents", "Intent received (next in queue), now dispatching to listeners", nextIntent);
-      this.intentProcessInProgress = true;
+      this.intentBeingProcessed = nextIntent;
 
       this.unprocessedIntentInterval = setInterval(() => {
         Logger.warn("Intents", "No intent response sent after several seconds!", nextIntent);
@@ -80,7 +80,7 @@ export class GlobalIntentService {
   async sendIntentResponse(result: any, intentId: number, navigateBack = true): Promise<void> {
     Logger.log("Intents", "Sending intent response ", result, intentId, navigateBack);
 
-    this.intentProcessInProgress = false;
+    this.intentBeingProcessed = null;
     clearInterval(this.unprocessedIntentInterval);
 
     if (navigateBack)

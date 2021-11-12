@@ -48,8 +48,7 @@ export class GlobalWalletConnectService extends GlobalService {
     private nav: GlobalNavService,
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
-    private intent: GlobalIntentService,
-    private intents: GlobalIntentService,
+    private globalIntentService: GlobalIntentService,
     private globalNetworksService: GlobalNetworksService,
     private globalSwitchNetworkService: GlobalSwitchNetworkService,
     private walletNetworkService: WalletNetworkService,
@@ -63,7 +62,9 @@ export class GlobalWalletConnectService extends GlobalService {
   init() {
     GlobalServiceManager.getInstance().registerService(this);
 
-    this.intents.intentListener.subscribe((receivedIntent) => {
+    Logger.log("walletconnect", "Registering to intent events");
+    this.globalIntentService.intentListener.subscribe((receivedIntent) => {
+      Logger.log("walletconnect", "Received intent event", receivedIntent);
       if (!receivedIntent)
         return;
 
@@ -74,9 +75,15 @@ export class GlobalWalletConnectService extends GlobalService {
           // Make sure this raw url coming from outside is for us
           let rawUrl: string = receivedIntent.params.url;
           if (this.canHandleUri(rawUrl)) {
-            this.zone.run(() => {
-              void this.handleWCURIRequest(rawUrl, WalletConnectSessionRequestSource.EXTERNAL_INTENT);
-            });
+            if (!this.shouldIgnoreUri(rawUrl)) {
+              this.zone.run(() => {
+                void this.handleWCURIRequest(rawUrl, WalletConnectSessionRequestSource.EXTERNAL_INTENT, receivedIntent);
+              });
+            }
+            else {
+              // Send empty intent response to unlock the intent service
+              void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
+            }
           }
         }
       }
@@ -85,9 +92,15 @@ export class GlobalWalletConnectService extends GlobalService {
           // Make sure this raw url coming from outside is for us
           let rawUrl: string = receivedIntent.params.uri;
           if (this.canHandleUri(rawUrl)) {
-            this.zone.run(() => {
-              void this.handleWCURIRequest(rawUrl, WalletConnectSessionRequestSource.EXTERNAL_INTENT);
-            });
+            if (!this.shouldIgnoreUri(rawUrl)) {
+              this.zone.run(() => {
+                void this.handleWCURIRequest(rawUrl, WalletConnectSessionRequestSource.EXTERNAL_INTENT, receivedIntent);
+              });
+            }
+            else {
+              // Send empty intent response to unlock the intent service
+              void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
+            }
           }
         }
       }
@@ -152,19 +165,28 @@ export class GlobalWalletConnectService extends GlobalService {
       return false;
     }
 
+    return true;
+  }
+
+  public shouldIgnoreUri(uri: string): boolean {
     // We should ignore urls even if starting with "wc:", if they don't contain params, according to wallet connect documentation
     // https://docs.walletconnect.org/mobile-linking
-    if (uri.indexOf("?") < 0)
-      return false;
+    if (uri.startsWith("wc:") && uri.indexOf("?") < 0)
+      return true;
 
-    return true;
+    return false;
   }
 
   /**
    * Handles a scanned or received wc:// url in order to initiate a session with a wallet connect proxy
    * server and client.
    */
-  public handleWCURIRequest(uri: string, source: WalletConnectSessionRequestSource) {
+  public async handleWCURIRequest(uri: string, source: WalletConnectSessionRequestSource, receivedIntent?: EssentialsIntentPlugin.ReceivedIntent) {
+    // No one may be awaiting this response but we need to send the intent response to release the
+    // global intent manager queue.
+    if (receivedIntent)
+      await this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
+
     if (!this.canHandleUri(uri))
       throw new Error("Invalid WalletConnect URL: " + uri);
 
@@ -418,7 +440,7 @@ export class GlobalWalletConnectService extends GlobalService {
             txid: string,
             status: "published" | "cancelled"
           }
-        } = await this.intent.sendIntent("https://wallet.elastos.net/esctransaction", {
+        } = await this.globalIntentService.sendIntent("https://wallet.elastos.net/esctransaction", {
           payload: request
         });
         Logger.log("walletconnect", "Got esctransaction intent response", response);
@@ -468,7 +490,7 @@ export class GlobalWalletConnectService extends GlobalService {
       result: {
         added: boolean
       }
-    } = await this.intent.sendIntent("https://wallet.elastos.net/adderctoken", params);
+    } = await this.globalIntentService.sendIntent("https://wallet.elastos.net/adderctoken", params);
 
     if (response && response.result) {
       connector.approveRequest({
@@ -562,7 +584,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let existingNetwork = this.walletNetworkService.getNetworkByChainId(chainId);
     if (!existingNetwork) {
       // Network doesn't exist yet. Send an intent to the wallet and wait for the response.
-      let response: EditCustomNetworkIntentResult = await this.intent.sendIntent("https://wallet.elastos.net/addethereumchain", addParams);
+      let response: EditCustomNetworkIntentResult = await this.globalIntentService.sendIntent("https://wallet.elastos.net/addethereumchain", addParams);
 
       if (response && response.networkAdded) {
         networkWasAdded = true;
@@ -643,7 +665,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let intentUrl = request.params[0]["url"] as string;
     try {
       Logger.log("walletconnect", "Sending custom essentials intent request", intentUrl);
-      let response = await this.intent.sendUrlIntent(intentUrl);
+      let response = await this.globalIntentService.sendUrlIntent(intentUrl);
       Logger.log("walletconnect", "Got custom request intent response", response);
 
       // Approve Call Request
