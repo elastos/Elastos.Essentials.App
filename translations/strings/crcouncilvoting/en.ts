@@ -27,6 +27,11 @@ export const en = {
         'Active': 'Active',
         'Illegal': 'Illegal',
 
+        'support': 'Support',
+        'reject': 'Reject',
+        'abstention': 'Abstention',
+        'undecided': 'Undecided',
+
         /********** Toast **********/
         'wallet-access-request': 'Wallet Access Request',
         'wallet-access-request-message': 'Wallet will fetch your ELA balance to estimate your voting power',

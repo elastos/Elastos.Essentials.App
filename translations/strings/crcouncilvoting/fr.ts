@@ -26,6 +26,11 @@ export const fr = {
         'Active': 'Active',
         'Illegal': 'Illegal',
 
+        'support': 'Support',
+        'reject': 'Reject',
+        'abstention': 'Abstention',
+        'undecided': 'Undecided',
+
         /********** Toast **********/
         'wallet-access-request': 'Accès au Portefeuille',
         'wallet-access-request-message': 'Le solde actuel de vos ELA permettra de déterminer votre pouvoir de vote',

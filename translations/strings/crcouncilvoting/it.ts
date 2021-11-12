@@ -27,6 +27,11 @@ export const it = {
         'Active': 'Attivo',
         'Illegal': 'Illegittimo',
 
+        'support': 'Support',
+        'reject': 'Reject',
+        'abstention': 'Abstention',
+        'undecided': 'Undecided',
+
         /********** Toast **********/
         'wallet-access-request': 'Richiesta di accesso al portafoglio',
         'wallet-access-request-message': 'Il tuo attuale saldo ELA determinerà il tuo potere di voto',
@@ -40,7 +45,7 @@ export const it = {
         'cr-member-info-no-available' : 'Le informazioni del Consiglio CRC non sono al momento disponibili, riprova più tardi',
         'pledge-some-ELA-to-candidates': 'Distribuisci i tuoi voti ELA ai candidati',
         'not-allow-pledge-more-than-own': 'Non puoi distribuire più voti ELA del numero di ELA che possiedi',
-        
+
          /********** Member **********/
         'crmember-profile': 'Profilo del Membro del CRC',
         'impeachment-progress': ' Voto di incriminazione',

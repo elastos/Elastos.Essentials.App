@@ -27,6 +27,11 @@ export const zh = {
         'Active': '激活',
         'Illegal': '非法',
 
+        'support': '赞同',
+        'reject': '反对',
+        'abstention': '弃权',
+        'undecided': '未操作',
+
         /********** Toast **********/
         'wallet-access-request': '获取钱包信息',
         'wallet-access-request-message': '将通过钱包获取您的ELA余额，以计算您的投票权',
