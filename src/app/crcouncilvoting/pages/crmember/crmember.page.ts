@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -28,7 +29,7 @@ export class CRMemberPage {
     radius: number = 125;
     percentage: number = 0;
 
-    public member: any = {};
+    public member: any = null;
     public segmentValue = "about";
 
     private popover: any = null;
@@ -42,19 +43,25 @@ export class CRMemberPage {
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
         public candidatesService: CandidatesService,
-    ) { }
+        private route: ActivatedRoute,
+    ) {
+        this.init(this.route.snapshot.params.did);
+    }
+
+    async init(did: string) {
+        this.member = await this.candidatesService.getCRMemeberInfo(did);
+        Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.member);
+        this.member.impeachmentThroughVotes = Math.ceil(this.candidatesService.selectedMember.impeachmentThroughVotes);
+        this.current = this.member.impeachmentVotes;
+        this.max = this.member.impeachmentThroughVotes;
+        this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
+    }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.crmember-profile'));
 
         this.titleBar.setMenuVisibility(true);
         this.titleBar.setMenuComponent(OptionsComponent)
-
-        this.member = this.candidatesService.selectedMember;
-        this.member.impeachmentThroughVotes = Math.ceil(this.member.impeachmentThroughVotes);
-        this.current = this.member.impeachmentVotes;
-        this.max = this.member.impeachmentThroughVotes;
-        this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
     }
 
     async showOptions() {

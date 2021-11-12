@@ -145,9 +145,6 @@ export class CandidatesPage implements OnInit {
     }
 
     async onShowMemberInfo(did: string) {
-        await this.candidatesService.getCRMemeberInfo(did);
-        if (this.candidatesService.selectedMember != null) {
-            this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
-        }
+        this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember/' + did);
     }
 }

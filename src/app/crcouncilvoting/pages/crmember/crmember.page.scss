@@ -28,7 +28,7 @@ ion-col {
     }
 
     .location {
-        color: #ACACAC;
+        color: #acacac;
     }
 
     .status {
@@ -113,10 +113,10 @@ ion-segment {
 .voteResult {
     padding: 5px 10px;
     border-radius: 6px;
-    border: 1px solid #00D88A;
+    border: 1px solid #00d88a;
     height: 22;
     font-size: 10px;
-    color: #03B776;
+    color: #03b776;
     background-color: rgba(116, 255, 222, 0.15);
 }
 
@@ -152,17 +152,16 @@ ion-segment {
         background-color: #252525;
 
         ion-segment-button {
-            color: #FFFFFF;
+            color: #ffffff;
         }
     }
 
     .voteResult {
-        border: 1px solid #235C48;
-        color: #3FAB85;
+        border: 1px solid #235c48;
+        color: #3fab85;
     }
 
     .footer-space {
         background-color: #121212;
     }
 }
-

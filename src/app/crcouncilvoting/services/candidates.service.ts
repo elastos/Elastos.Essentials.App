@@ -295,7 +295,7 @@ export class CandidatesService {
         await toast.present();
     }
 
-    async getCRMemeberInfo(did: string) {
+    async getCRMemeberInfo(did: string): Promise<CRMemberInfo> {
         try {
             this.selectedMember = null;
             let result = await this.jsonRPCService.httpGet(this.crRpcApi + '/api/council/information/' + did);
@@ -310,6 +310,8 @@ export class CandidatesService {
         catch (err) {
             Logger.error(App.CRCOUNCIL_VOTING, 'Get council information error:', err);
         }
+
+        return this.selectedMember;
     }
 
 }

@@ -1,7 +1,7 @@
 <ion-content>
     <app-titlebar></app-titlebar>
 
-    <div [class.darkContainer]="theme.darkMode">
+    <div *ngIf="member != null" [class.darkContainer]="theme.darkMode">
         <ion-list class="container">
             <ion-row class="id-row">
                 <ion-col size="2.75" class="left-col">
@@ -139,6 +139,10 @@
                 </ion-col>
             </ion-row>
         </ion-footer>
+    </div>
+
+    <div *ngIf="member == null" class="spinner align-center">
+        <ion-spinner name="crescent"></ion-spinner>
     </div>
 
 </ion-content>

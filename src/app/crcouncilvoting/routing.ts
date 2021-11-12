@@ -9,7 +9,7 @@ import { VotePage } from './pages/vote/vote.page';
 
 const routes: Routes = [
   { path: 'candidates', component: CandidatesPage },
-  { path: 'crmember', component: CRMemberPage },
+  { path: 'crmember/:did', component: CRMemberPage },
   { path: 'impeach', component: ImpeachCRMemberPage },
   { path: 'vote', component: VotePage },
   { path: 'history', component: HistoryPage },
