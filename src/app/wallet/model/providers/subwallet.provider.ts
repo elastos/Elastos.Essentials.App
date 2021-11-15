@@ -53,7 +53,7 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
     return cache;
   }
 
-  protected async saveTransactions(newTransactions: TransactionType[]): Promise<void> {
+  public async saveTransactions(newTransactions: TransactionType[]): Promise<void> {
     //console.log("DEBUG saveTransactions newTransactions=", newTransactions);
 
     if (!newTransactions)

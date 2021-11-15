@@ -140,6 +140,10 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);
   }
 
+  public updateTransactions(subWallet: AnySubWallet, transactons: TransactionType[]) {
+    return this.getSubWalletTransactionProvider(subWallet).saveTransactions(transactons);
+  }
+
   /* public prepareTransactions(subWallet: AnySubWallet): Promise<void> {
     return this.getSubWalletTransactionProvider(subWallet).prepareTransactions(subWallet);
   } */

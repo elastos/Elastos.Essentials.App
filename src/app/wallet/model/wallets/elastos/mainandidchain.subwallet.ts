@@ -64,6 +64,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
                 await this.checkAddresses(false);
             }
             await this.updateBalance();
+            await this.updatePendingTransaction();
         }, 1000);
     }
 
@@ -611,6 +612,44 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         }
         Logger.log('wallet', 'Pending Transactions:', pendingTransactions);
         return pendingTransactions;
+    }
+
+    // Some pending transactions may be long ago transactions, which may not be updated when updating transaction records,
+    // So we must first process the pending transactions after startup to confirm whether they are confirmed or invalid transactions.
+    private async updatePendingTransaction() {
+        let transaction = await this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
+        let pendingTransactions = [];
+        for (let i = 0, len = transaction.length; i < len; i++) {
+          if (transaction[i].Status !== TransactionStatus.CONFIRMED) {
+            pendingTransactions.push(transaction[i]);
+          } else {
+            // the transactions list is sorted by block height.
+            break;
+          }
+        }
+
+        if (pendingTransactions.length === 0) return;
+
+        let pendingTxidList = pendingTransactions.map( tx => tx.txid)
+        let txList = await this.getrawtransaction(this.id as StandardCoinName, pendingTxidList);
+
+        let needUpdate = false;
+        for (let i = 0; i < txList.length; i++) {
+            if (txList[i].result.confirmations > 0) {
+                // Update info: Status, height, time
+                let tx = pendingTransactions.find(tx => {
+                    return tx.txid === txList[i].result.txid;
+                })
+                tx.time = txList[i].result.time;
+                tx.Status = TransactionStatus.CONFIRMED;
+                needUpdate = true;
+            }
+        }
+
+        if (needUpdate) {
+            Logger.log('wallet', 'update pending transaction:', pendingTransactions)
+            await this.networkWallet.getTransactionDiscoveryProvider().updateTransactions(this, pendingTransactions);
+        }
     }
 
     private async getUTXOUsedInPendingTransaction() {
