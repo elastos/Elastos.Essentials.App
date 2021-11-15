@@ -85,7 +85,7 @@
             </ion-list>
         </ion-grid>
 
-        <div *ngIf="member == null" class="spinner align-center">
+        <div *ngIf="candidatesService.candidates.length === 0 && candidatesService.crmembers.length === 0" class="spinner align-center">
             <ion-spinner name="crescent"></ion-spinner>
         </div>
 
