@@ -26,12 +26,15 @@ import org.json.JSONException;
 
 import android.os.Message;
 import android.webkit.JsPromptResult;
+import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.GeolocationPermissions.Callback;
+
+import java.util.Arrays;
 
 public class DappChromeClient extends WebChromeClient {
 
@@ -185,4 +188,9 @@ public class DappChromeClient extends WebChromeClient {
         }
     }
 
+    @Override
+    public void onPermissionRequest(final PermissionRequest request) {
+        LOG.d(LOG_TAG, "onPermissionRequest: " + Arrays.toString(request.getResources()));
+        request.grant(request.getResources());
+    }
 }
