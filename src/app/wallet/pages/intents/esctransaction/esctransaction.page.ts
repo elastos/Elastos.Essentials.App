@@ -25,6 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from "bignumber.js";
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -64,6 +65,11 @@ export class EscTransactionPage implements OnInit {
   private publicationStatusSub: Subscription;
   private ethTransactionSpeedupSub: Subscription;
 
+  private alreadySentIntentResponce = false;
+
+  // Titlebar
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
   constructor(
     public walletManager: WalletService,
     public popupProvider: PopupProvider,
@@ -85,6 +91,15 @@ export class EscTransactionPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('wallet.esctransaction-title'));
     this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
+        key: "close",
+        iconPath: BuiltInIcon.CLOSE
+    });
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+        if (icon.key === 'close') {
+            void this.cancelOperation();
+        }
+    });
 
     void this.init();
   }
@@ -99,6 +114,10 @@ export class EscTransactionPage implements OnInit {
   ionViewWillLeave() {
     if (this.publicationStatusSub) this.publicationStatusSub.unsubscribe();
     if (this.ethTransactionSpeedupSub) this.ethTransactionSpeedupSub.unsubscribe();
+
+    if (!this.alreadySentIntentResponce) {
+        void this.cancelOperation(false);
+    }
   }
 
   async init() {
@@ -157,7 +176,7 @@ export class EscTransactionPage implements OnInit {
             txid: status.txId,
             status: 'published'
           }
-          await this.globalIntentService.sendIntentResponse(resultOk, this.intentTransfer.intentId);
+          await this.sendIntentResponse(resultOk, this.intentTransfer.intentId);
           break;
         case ETHTransactionStatus.CANCEL:
           let result = {
@@ -165,7 +184,7 @@ export class EscTransactionPage implements OnInit {
             txid: null,
             status: 'cancelled'
           }
-          await this.globalIntentService.sendIntentResponse(result, this.intentTransfer.intentId);
+          await this.sendIntentResponse(result, this.intentTransfer.intentId);
           break;
       }
     });
@@ -188,11 +207,16 @@ export class EscTransactionPage implements OnInit {
    * Cancel the vote operation. Closes the screen and goes back to the calling application after
    * sending the intent response.
    */
-  async cancelOperation() {
-    await this.globalIntentService.sendIntentResponse(
+  async cancelOperation(navigateBack = true) {
+    await this.sendIntentResponse(
       { txid: null, status: 'cancelled' },
-      this.intentTransfer.intentId
+      this.intentTransfer.intentId, navigateBack
     );
+  }
+
+  private async sendIntentResponse(result, intentId, navigateBack = true) {
+    this.alreadySentIntentResponce = true;
+    await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
   }
 
   goTransaction() {
@@ -281,7 +305,7 @@ export class EscTransactionPage implements OnInit {
       catch (err) {
         Logger.error('wallet', 'EscTransactionPage publishTransaction error:', err)
         if (this.intentTransfer.intentId) {
-          await this.globalIntentService.sendIntentResponse(
+          await this.sendIntentResponse(
             { txid: null, status: 'error' },
             this.intentTransfer.intentId
           );
@@ -289,7 +313,7 @@ export class EscTransactionPage implements OnInit {
       }
     } else {
       if (this.intentTransfer.intentId) {
-        await this.globalIntentService.sendIntentResponse(
+        await this.sendIntentResponse(
           { txid: null, status: 'error' },
           this.intentTransfer.intentId
         );

@@ -25,6 +25,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { signTypedData, signTypedData_v4 } from "eth-sig-util";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
@@ -60,6 +61,12 @@ export class SignTypedDataPage implements OnInit {
   private payloadToBeSigned: string;
   private useV4: boolean;
 
+  private alreadySentIntentResponce = false;
+
+  // Titlebar
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
+
   constructor(
     public walletManager: WalletService,
     public popupProvider: PopupProvider,
@@ -84,6 +91,15 @@ export class SignTypedDataPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('wallet.signtypeddata-title'));
     this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
+        key: "close",
+        iconPath: BuiltInIcon.CLOSE
+    });
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+        if (icon.key === 'close') {
+            void this.cancelOperation();
+        }
+    });
   }
 
   ionViewDidEnter() {
@@ -94,6 +110,9 @@ export class SignTypedDataPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    if (!this.alreadySentIntentResponce) {
+        void this.cancelOperation(false);
+    }
   }
 
   init() {
@@ -112,12 +131,17 @@ export class SignTypedDataPage implements OnInit {
    * Cancel the operation. Closes the screen and goes back to the calling application after
    * sending the intent response.
    */
-  async cancelOperation() {
-    await this.globalIntentService.sendIntentResponse(
+  async cancelOperation(navigateBack = true) {
+    await this.sendIntentResponse(
       { data: null },
-      this.receivedIntent.intentId
+      this.receivedIntent.intentId, navigateBack
     );
   }
+
+  private async sendIntentResponse(result, intentId, navigateBack = true) {
+    this.alreadySentIntentResponce = true;
+    await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
+}
 
   async confirmSign(): Promise<void> {
     const payPassword = await this.authService.getWalletPassword(this.networkWallet.masterWallet.id);
@@ -143,7 +167,7 @@ export class SignTypedDataPage implements OnInit {
         });
       }
 
-      void this.globalIntentService.sendIntentResponse({
+      void this.sendIntentResponse({
         signedData
       }, this.receivedIntent.intentId);
     }
@@ -151,7 +175,7 @@ export class SignTypedDataPage implements OnInit {
       // Sign method can throw exception in case some provided content has an invalid format
       // i.e.: array value, with "address" type. In such case, we fail silently.
 
-      await this.globalIntentService.sendIntentResponse(
+      await this.sendIntentResponse(
         { data: null },
         this.receivedIntent.intentId
       );

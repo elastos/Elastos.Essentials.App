@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -41,6 +42,12 @@ export class AccessPage implements OnInit {
     public showReason = false;
     private rootPage = false;
 
+    private alreadySentIntentResponce = false;
+
+    // Titlebar
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
+
     constructor(
         private globalIntentService: GlobalIntentService,
         public walletManager: WalletService,
@@ -65,9 +72,21 @@ export class AccessPage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('wallet.access-title'));
         this.titleBar.setNavigationMode(null);
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
+            key: "close",
+            iconPath: BuiltInIcon.CLOSE
+        });
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            if (icon.key === 'close') {
+                void this.cancelOperation();
+            }
+        });
     }
 
     ionViewWillLeave() {
+        if (!this.alreadySentIntentResponce) {
+            void this.cancelOperation(false);
+        }
     }
 
     async init() {
@@ -172,11 +191,16 @@ export class AccessPage implements OnInit {
      * Cancel the vote operation. Closes the screen and goes back to the calling application after
      * sending the intent response.
      */
-    async cancelOperation() {
-        await this.globalIntentService.sendIntentResponse(
+    async cancelOperation(navigateBack = true) {
+        await this.sendIntentResponse(
             { walletinfo: null, status: 'cancelled' },
-            this.intentTransfer.intentId
+            this.intentTransfer.intentId, navigateBack
         );
+    }
+
+    private async sendIntentResponse(result, intentId, navigateBack = true) {
+        this.alreadySentIntentResponce = true;
+        await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
     }
 
     async onShare() {
@@ -184,7 +208,7 @@ export class AccessPage implements OnInit {
             this.native.go('/wallet/mnemonic/export', { fromIntent: true });
         } else {
             const selectedClaim = this.buildDeliverableList();
-            await this.globalIntentService.sendIntentResponse(
+            await this.sendIntentResponse(
                 { walletinfo: selectedClaim }, this.intentTransfer.intentId);
         }
     }

@@ -1,22 +1,22 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-
-import { NodesService } from '../../services/nodes.service';
-import { DPosNode } from '../../model/nodes.model';
 import { TranslateService } from '@ngx-translate/core';
-import { Logger } from 'src/app/logger';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from 'src/app/model/app.enum';
-import { VoteService } from 'src/app/vote/services/vote.service';
 import { PopupProvider } from 'src/app/services/global.popup.service';
-import { Router } from '@angular/router';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { DPosNode } from '../../model/nodes.model';
+import { NodesService } from '../../services/nodes.service';
+
 
 
 @Component({
@@ -28,16 +28,16 @@ export class VotePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     // Values
-    public selectedNodes: number = 0;
+    public selectedNodes = 0;
 
     // Intent
-    public voted: boolean = false;
+    public voted = false;
 
     // Voting
-    public voting: boolean = false;
+    public voting = false;
 
     // DPosNode Detail
-    public showNode: boolean = false;
+    public showNode = false;
     public nodeIndex: number;
     public node: DPosNode;
 
@@ -61,7 +61,7 @@ export class VotePage implements OnInit {
     ) {
         const navigation = this.router.getCurrentNavigation();
         if (navigation.extras.state && navigation.extras.state.refreash) {
-            this.nodesService.init();
+            void this.nodesService.init();
         }
     }
 
@@ -74,10 +74,9 @@ export class VotePage implements OnInit {
         switch (this.nodesService.dposInfo.state) {
             case 'Unregistered':
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
-                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-                    await this.goToRegistration();
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                    void this.goToRegistration();
                 });
-
                 break;
             case 'Pending':
             case 'Active':
@@ -86,8 +85,8 @@ export class VotePage implements OnInit {
             case 'Illegal':
             case 'Returned':
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png' });
-                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-                    this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/unregistration');
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                    void this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/unregistration');
                 });
                 break;
         }
@@ -113,7 +112,7 @@ export class VotePage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-        this.setRegistrationIcon();
+        void this.setRegistrationIcon();
     }
 
     ionViewWillLeave() {
@@ -135,8 +134,8 @@ export class VotePage implements OnInit {
 
         if (castedNodeKeys.length > 0) {
             Logger.log('dposvoting', 'castedNodeKeys:', castedNodeKeys);
-            this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "nodes", castedNodeKeys);
-            let votesSent: boolean = false;
+            void this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "nodes", castedNodeKeys);
+            let votesSent = false;
 
             try {
                 let res = await this.globalIntentService.sendIntent(
@@ -147,7 +146,7 @@ export class VotePage implements OnInit {
 
                 if (!res.result.txid) {
                     votesSent = true;
-                    this.voteFailed('dposvoting.vote-cancelled');
+                    void this.voteFailed('dposvoting.vote-cancelled');
                 }
                 else {
                     votesSent = true;
@@ -158,24 +157,24 @@ export class VotePage implements OnInit {
                     this.nodesService._votes = this.nodesService._votes.concat({ date: date, tx: txid, keys: castedNodeKeys });
                     Logger.log('dposvoting', 'Vote history updated', this.nodesService._votes);
                     await this.nodesService.setStoredVotes();
-                    this.voteSuccess(res.result.txid);
+                    void this.voteSuccess(res.result.txid);
                 }
             }
             catch (err) {
                 votesSent = true;
                 Logger.log('dposvoting', 'Intent sent failed', err);
-                this.voteFailed(err);
+                void this.voteFailed(err);
             }
 
             // If no response is sent from wallet, show vote transaction has failed
             setTimeout(() => {
                 if (votesSent === false) {
-                    this.voteFailed('dposvoting.vote-timeout');
+                    void this.voteFailed('dposvoting.vote-timeout');
                 }
             }, 10000)
         }
         else {
-            this.noNodesChecked();
+            void this.noNodesChecked();
         }
         this.voting = false;
     }
@@ -219,13 +218,14 @@ export class VotePage implements OnInit {
             header: this.translate.instant('common.vote-success'),
             message: `${txid.slice(0, 16) + '<br>' + txid.slice(16, 32) + '<br>' + txid.slice(32, 48)}`,
             color: "primary",
+            duration: 2000,
             buttons: [
                 {
                     text: this.translate.instant('common.copy'),
                     handler: () => {
                         this.toast.dismiss();
                         this.globalNative.genericToast('common.tx-copied-to-clipboard');
-                        this.globalNative.copyClipboard(txid);
+                        void this.globalNative.copyClipboard(txid);
                     }
                 },
                 {
@@ -249,6 +249,7 @@ export class VotePage implements OnInit {
             header: this.translate.instant('dposvoting.vote-fail'),
             message: this.translate.instant(res),
             color: "primary",
+            duration: 2000,
             buttons: [
                 {
                     text: this.translate.instant('common.ok'),
@@ -279,7 +280,7 @@ export class VotePage implements OnInit {
             color: "primary",
             duration: 2000
         });
-        toast.present();
+        await toast.present();
     }
 }
 

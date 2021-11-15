@@ -24,6 +24,7 @@ import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -51,6 +52,11 @@ export class DidTransactionPage implements OnInit {
     private subWalletId: string; // IDChain
     private walletInfo = {};
 
+    private alreadySentIntentResponce = false;
+
+    // Titlebar
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
     constructor(
         public walletManager: WalletService,
         public popupProvider: PopupProvider,
@@ -70,12 +76,27 @@ export class DidTransactionPage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.didtransaction-title"));
         this.titleBar.setNavigationMode(null);
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
+            key: "close",
+            iconPath: BuiltInIcon.CLOSE
+        });
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            if (icon.key === 'close') {
+                void this.cancelOperation();
+            }
+        });
     }
 
     ionViewDidEnter() {
         if (this.walletInfo["Type"] === "Multi-Sign") {
             // TODO: reject didtransaction if multi sign (show error popup)
             void this.cancelOperation();
+        }
+    }
+
+    ionViewWillLeave() {
+        if (!this.alreadySentIntentResponce) {
+            void this.cancelOperation(false);
         }
     }
 
@@ -92,11 +113,16 @@ export class DidTransactionPage implements OnInit {
      * Cancel the vote operation. Closes the screen and goes back to the calling application after
      * sending the intent response.
      */
-    async cancelOperation() {
-        await this.globalIntentService.sendIntentResponse(
+    async cancelOperation(navigateBack = true) {
+        await this.sendIntentResponse(
             { txid: null, status: 'cancelled' },
-            this.intentTransfer.intentId
+            this.intentTransfer.intentId, navigateBack
         );
+    }
+
+    private async sendIntentResponse(result, intentId, navigateBack = true) {
+        this.alreadySentIntentResponce = true;
+        await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
     }
 
     goTransaction() {
@@ -137,9 +163,9 @@ export class DidTransactionPage implements OnInit {
             });
 
             const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+            await this.sendIntentResponse(result, transfer.intentId);
         } else {
-            await this.globalIntentService.sendIntentResponse(
+            await this.sendIntentResponse(
                 { txid: null, status: 'error' },
                 this.intentTransfer.intentId
             );

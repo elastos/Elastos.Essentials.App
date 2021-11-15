@@ -23,6 +23,7 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -52,6 +53,11 @@ export class DPoSVotePage implements OnInit {
     private walletInfo = {};
     public intentTransfer: IntentTransfer;
 
+    private alreadySentIntentResponce = false;
+
+    // Titlebar
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
     constructor(
         public walletManager: WalletService,
         public coinTransferService: CoinTransferService,
@@ -72,12 +78,27 @@ export class DPoSVotePage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('wallet.dposvote-title'));
         this.titleBar.setNavigationMode(null);
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
+            key: "close",
+            iconPath: BuiltInIcon.CLOSE
+        });
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            if (icon.key === 'close') {
+                void this.cancelOperation();
+            }
+        });
     }
 
     ionViewDidEnter() {
         if (this.walletInfo["Type"] === "Multi-Sign") {
             // TODO: reject voting if multi sign (show error popup), as multi sign wallets cannot vote.
             void this.cancelOperation();
+        }
+    }
+
+    ionViewWillLeave() {
+        if (!this.alreadySentIntentResponce) {
+            void this.cancelOperation(false);
         }
     }
 
@@ -106,15 +127,20 @@ export class DPoSVotePage implements OnInit {
      * Cancel the vote operation. Closes the screen and goes back to the calling application after
      * sending the intent response.
      */
-    async cancelOperation() {
+    async cancelOperation(navigateBack = true) {
         try {
-            await this.globalIntentService.sendIntentResponse(
+            await this.sendIntentResponse(
                 { txid: null, status: 'cancelled' },
-                this.intentTransfer.intentId);
+                this.intentTransfer.intentId, navigateBack);
         } catch (err) {
             Logger.error('wallet', 'wallet app -> dposvote pg -> cancelOperation err', err);
             void this.globalNav.navigateBack();
         }
+    }
+
+    private async sendIntentResponse(result, intentId, navigateBack = true) {
+        this.alreadySentIntentResponce = true;
+        await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
     }
 
     /**
@@ -167,9 +193,9 @@ export class DPoSVotePage implements OnInit {
             });
 
             const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+            await this.sendIntentResponse(result, transfer.intentId);
         } else {
-            await this.globalIntentService.sendIntentResponse(
+            await this.sendIntentResponse(
                 { txid: null, status: 'error' },
                 this.intentTransfer.intentId
             );
