@@ -9,7 +9,7 @@ export class TelosTestNetNetwork extends EVMNetwork {
   constructor() {
     super(
       "telos",
-      "Telos",
+      "Telos EVM Testnet",
       "assets/wallet/networks/telos.png",
       "TLOS",
       "Telos",
