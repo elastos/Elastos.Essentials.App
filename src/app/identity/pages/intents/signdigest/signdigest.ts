@@ -1,16 +1,16 @@
 import { Component, ViewChild } from '@angular/core';
-import { DIDService } from '../../../services/did.service';
-import { UXService } from '../../../services/ux.service';
-import { PopupProvider } from '../../../services/popup';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../../services/auth.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { SignIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
 import { BASE64 } from 'src/app/model/base64';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AuthService } from '../../../services/auth.service';
+import { DIDService } from '../../../services/did.service';
+import { PopupProvider } from '../../../services/popup';
+import { UXService } from '../../../services/ux.service';
 
 @Component({
     selector: 'page-signdigest',
@@ -38,8 +38,8 @@ export class SignDigestPage {
         this.titleBar.setTitle(this.translate.instant('identity.sign-data'));
         this.titleBar.setNavigationMode(null);
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.CLOSE });
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-            await this.rejectRequest();
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            void this.rejectRequest();
         });
 
         this.receivedIntent = this.intentService.getReceivedIntent();
@@ -49,11 +49,11 @@ export class SignDigestPage {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
-    async acceptRequest() {
+    acceptRequest() {
         Logger.log('Identity', "Signing user data now");
 
         // Prompt password if needed
-        AuthService.instance.checkPasswordThenExecute(async () => {
+        void AuthService.instance.checkPasswordThenExecute(async () => {
             let password = AuthService.instance.getCurrentUserPassword();
 
             let intentRequestData = this.receivedIntent.params;
@@ -88,7 +88,7 @@ export class SignDigestPage {
             // Send the intent response as everything is completed
             Logger.log('Identity', "Data signed, sending intent response");
             try {
-                await this.appServices.sendIntentResponse("signdigest", { signature: signature, jwt: jwtToken }, this.receivedIntent.intentId);
+                await this.appServices.sendIntentResponse({ signature: signature, jwt: jwtToken }, this.receivedIntent.intentId);
             }
             catch (e) {
                 await this.popup.ionicAlert("Response error", "Sorry, we were unable to return the signed information to the calling app. " + e);
@@ -99,6 +99,6 @@ export class SignDigestPage {
     }
 
     async rejectRequest() {
-        await this.appServices.sendIntentResponse("signdigest", {}, this.receivedIntent.intentId);
+        await this.appServices.sendIntentResponse({}, this.receivedIntent.intentId);
     }
 }

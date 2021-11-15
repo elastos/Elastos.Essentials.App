@@ -1,46 +1,55 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DID as ConnSDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { NoMatchRecommendation } from '@elastosfoundation/elastos-connectivity-sdk-js/typings/did';
 import { AlertController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import jsonpath from "jsonpath";
 import { isNil } from 'lodash-es';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { PopupProvider } from 'src/app/identity/services/popup';
 import { Logger } from 'src/app/logger';
+import { JSONObject } from 'src/app/model/json';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
 import { DID } from '../../../model/did.model';
-import { DIDDocument } from '../../../model/diddocument.model';
-import { CredAccessIdentityIntent } from '../../../model/identity.intents';
-import { Profile } from '../../../model/profile.model';
+import { RequestCredentialsIntent } from '../../../model/identity.intents';
 import { VerifiableCredential } from '../../../model/verifiablecredential.model';
 import { AuthService } from '../../../services/auth.service';
 import { BasicCredentialsService } from '../../../services/basiccredentials.service';
 import { DIDService } from '../../../services/did.service';
 import { DIDSyncService } from '../../../services/didsync.service';
-import { ExpirationService, ExpiredItem } from '../../../services/expiration.service';
+import { ExpirationService } from '../../../services/expiration.service';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 import { ProfileService } from '../../../services/profile.service';
 import { UXService } from '../../../services/ux.service';
 
-declare let didManager: DIDPlugin.DIDManager;
+/**
+ * TODO BPI:
+ *
+ * DONE - Check expired credentials
+ * DONE - Create a customizable credential component to use in credentials list + request screen
+ * DONE - Check claim issuers and display UI messages if KO
+ * DONE   - Show on UI for each claim
+ * - For external credentials, display issuer avatar/name/did string or placeholders
+ * - Test with UI customization
+ * - Design + integration
+ * - Cleanup old code
+ *
+ * - Save profile credentials with DisplayableCredential implementation
+ *    - Display according to DisplayableCredential when possible
+ * - Add related credential types to profile credentials (just the type, nothing else for now)
+ * - Allow to add multiple emails, addresses, etc to profile.
+ *    - When min and max are one, selecting an unselected credential should unselect the selected one.
+ * - Replace "verified" by "from third party"
+ * (low) - Fix credentials list screen blinking like crazy (lots of refresh)
+ */
 
-type RequestDapp = {
-  appPackageId: string,
-  intentId: number,
-  action: string,
-  claims: any,
-  customization: {
-    primarycolorlightmode: string,
-    primarycolordarkmode: string
-  },
-  nonce: any,
-  realm: any,
-  originalJwtRequest: any,
-  jwtExpirationDays: any
-}
+declare let didManager: DIDPlugin.DIDManager;
 
 type IssuerDisplayEntry = {
   did: string,
@@ -55,7 +64,7 @@ type IssuerInfo = {
   errorMessage: string
 }
 
-type ClaimRequest = {
+/* type ClaimRequest = {
   name: string,
   value: string,
   credential: DIDPlugin.VerifiableCredential, // credential related to this claim request
@@ -65,67 +74,54 @@ type ClaimRequest = {
   selected: boolean,
   reason: string // Additional usage info string provided by the caller
 }
+ */
+
+type CredentialDisplayEntry = {
+  credential: VerifiableCredential;
+  selected: boolean;
+  expired: boolean;
+}
+
+type ClaimDisplayEntry = {
+  claim: ConnSDKDID.Claim; // Original claim request from the intent
+  matchingCredentials: CredentialDisplayEntry[]; // Credentials matching the requested claim
+}
 
 /**
+ * This screen is the v2 version og "get credentials / credaccess" with support for
+ * queries by type instead of only ID, json path queries, multiple credential choices,
+ * displayable credential type and more.
+ *
  * Request example:
-   {
-      appPackageId: "org.mycompany.myapp",
-      intentId: 1,
-      action: "intent",
-      nonce: "xxx",
-      realm: "xxx",
-      claims: {
-        "email": true,
-        "name": false,
-        "gender": {
-          required: false
-        },
-        "birthDate": true,
-        "nation": true,
-        "otherInexistingField":false,
-        "diploma": {
-          "required": false,
-          "reason": "If provided, will be shown to end user"
-        }
-      },
-      customization: null,
-      originalJwtRequest: null,
-      jwtExpirationDays: 1
-    }
+   // TODO
  */
 @Component({
-  selector: 'page-credentialaccessrequest',
-  templateUrl: 'credentialaccessrequest.html',
-  styleUrls: ['credentialaccessrequest.scss']
+  selector: 'page-requestcredentials',
+  templateUrl: 'requestcredentials.html',
+  styleUrls: ['requestcredentials.scss']
 })
-export class CredentialAccessRequestPage {
+export class RequestCredentialsPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public receivedIntent: CredAccessIdentityIntent = null;
+  public receivedIntent: RequestCredentialsIntent = null;
   // TODO public requestDappInfo: EssentialsIntentPlugin.AppInfo = null;
   public requestDappIcon: string = null;
   public requestDappName: string = null;
   public requestDappColor = '#565bdb';
 
-  public profile = new Profile(); // Empty profile waiting to get the real one.
   public credentials: VerifiableCredential[] = [];
   public did: DID = null;
-  public avatarDataUrl: string = null;
 
   private onlineDIDDocumentStatusSub: Subscription = null;
-  private avatarSubscription: Subscription = null;
+
   public publishStatusFetched = false;
   public didNeedsToBePublished = false;
-  public publishedDidRequested = false;
   public publishingDidRequired = false;
 
-  public mandatoryItems: ClaimRequest[] = [];
-  public optionalItems: ClaimRequest[] = [];
+  public organizedClaims: ClaimDisplayEntry[] = [];
 
-  public denyReason = '';
-  public canDeliver = true;
+  public sendingResponse = false;
 
-  public showSpinner = false;
   public popup: HTMLIonPopoverElement = null;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -146,7 +142,8 @@ export class CredentialAccessRequestPage {
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private globalIntentService: GlobalIntentService,
-    private intentService: IntentReceiverService
+    private intentService: IntentReceiverService,
+    private dappbrowserService: DappBrowserService
   ) {
   }
 
@@ -158,18 +155,21 @@ export class CredentialAccessRequestPage {
       void this.titleBar.globalNav.exitCurrentContext();
     });
 
-    this.mandatoryItems = [];
-    this.optionalItems = [];
+    this.organizedClaims = [];
+    /*  this.mandatoryItems = [];
+     this.optionalItems = []; */
 
     // Show the spinner while we make sure if the DID is published or not
     this.publishStatusFetched = false;
 
-    this.profile = this.didService.getActiveDidStore().getActiveDid().getBasicProfile();
     this.credentials = this.didService.getActiveDidStore().getActiveDid().credentials;
     this.did = this.didService.getActiveDidStore().getActiveDid();
     Logger.log('Identity', 'Did needs to be published?', this.didNeedsToBePublished);
 
     this.receivedIntent = this.intentService.getReceivedIntent();
+
+    // Fix all values in the request to make it straightforward in our process later
+    this.prepareRawClaims();
 
     this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(this.did.getDIDString()).subscribe((status) => {
       if (status.checked) {
@@ -185,12 +185,9 @@ export class CredentialAccessRequestPage {
       await this.organizeRequestedClaims();
 
       Logger.log('Identity', "Request Dapp color", this.requestDappColor);
-      Logger.log('Identity', "Mandatory claims:", this.mandatoryItems);
-      Logger.log('Identity', "Optional claims:", this.optionalItems);
-    });
-
-    this.avatarSubscription = this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
-      this.avatarDataUrl = dataUrl;
+      //Logger.log('Identity', "Mandatory claims:", this.mandatoryItems);
+      //Logger.log('Identity', "Optional claims:", this.optionalItems);
+      Logger.log('Identity', "Organized claims:", this.organizedClaims);
     });
   }
 
@@ -200,22 +197,26 @@ export class CredentialAccessRequestPage {
       this.onlineDIDDocumentStatusSub.unsubscribe();
       this.onlineDIDDocumentStatusSub = null;
     }
+  }
 
-    if (this.avatarSubscription) {
-      this.avatarSubscription.unsubscribe();
-      this.avatarSubscription = null;
-    }
+  /**
+   * Runs through all claims in the incoming request and set default value whenever needed.
+   */
+  private prepareRawClaims() {
+    this.receivedIntent.params.request.claims.forEach(claim => {
+      if (claim.min === undefined)
+        claim.min = 1;
+      if (claim.max === undefined)
+        claim.max = 1;
+    });
   }
 
   getRequestedTheme(): Promise<void> {
-    Logger.log('Identity', 'Creating credentialaccessrequest page layout');
     return new Promise((resolve) => {
-      const customization = this.receivedIntent.params.customization
+      const customization = this.receivedIntent.params.request.customization;
       if (customization) {
-        if ('primarycolorlightmode' in customization && 'primarycolordarkmode' in customization) {
-          !this.theme.darkMode ?
-            this.requestDappColor = customization.primarycolorlightmode :
-            this.requestDappColor = customization.primarycolordarkmode
+        if (customization.primaryColorDarkMode && customization.primaryColorDarkMode) {
+          this.requestDappColor = !this.theme.darkMode ? customization.primaryColorLightMode : customization.primaryColorDarkMode;
         }
       }
       resolve();
@@ -225,8 +226,8 @@ export class CredentialAccessRequestPage {
   private handleRequiresPublishing() {
     return new Promise<void>((resolve) => {
       // Intent service marks value as true if intent does not specify 'publisheddid' params
-      const publisheddidParams = this.receivedIntent.params.publisheddid;
-      Logger.log('publisheddid params', this.receivedIntent.params.publisheddid);
+      const publisheddidParams = this.receivedIntent.params.request.didMustBePublished;
+      Logger.log('publisheddid params', this.receivedIntent.params.request.didMustBePublished);
 
       if (publisheddidParams) {
         if (this.publishStatusFetched && !this.didNeedsToBePublished) {
@@ -249,23 +250,52 @@ export class CredentialAccessRequestPage {
    * ready for UI.
    */
   async organizeRequestedClaims() {
-    // Manually append the mandatory item "Your DID".
-    this.addDIDToMandatoryItems();
-
-    const did: string = this.didService.getActiveDidStore().getActiveDid().getDIDString();
-
     // Split into mandatory and optional items
-    for (let key of Object.keys(this.receivedIntent.params.claims)) {
-      const claim = this.receivedIntent.params.claims[key];
-      const claimIsRequired = this.claimIsRequired(claim);
+    for (let claim of this.receivedIntent.params.request.claims) {
+      Logger.log("identity", "Organizing claim", claim);
 
-      // TODO: For now we consider that 1 claim = 1 credential = 1 info inside. In the future we may
-      // have several info inside one credential, so even if the caller requests only one field from such
-      // credential we will have to display the WHOLE fields inside the credential on this credacess screen
-      // so that users know which infos are really going to be shared (credentials can't be split).
+      // Convert our DID store credentials list into a searcheable array of JSON data for jsonpath
+      let searcheableCredentials: JSONObject[] = [];
+      for (let vc of this.credentials) {
+        let credentialJson = JSON.parse(await vc.pluginVerifiableCredential.toString());
+        searcheableCredentials.push(credentialJson);
+      }
+      let matchingCredentialJsons = jsonpath.query(searcheableCredentials, claim.query) as JSONObject[];
+      Logger.log("identity", "Matching credentials (json)", matchingCredentialJsons);
+
+      // Rebuild a list of real credential objects from json results
+      let matchingCredentials: CredentialDisplayEntry[] = matchingCredentialJsons.map(jsonCred => {
+        let credential = this.credentials.find(c => c.pluginVerifiableCredential.getId() === jsonCred.id);
+
+        // Check if the credential is expired
+        let expirationInfo = this.expirationService.verifyCredentialExpiration(this.did.pluginDid.getDIDString(), credential.pluginVerifiableCredential, 0);
+        let isExpired = false;
+        if (expirationInfo) // hacky case, but null expirationInfo means we should not check the expiration... (legacy)
+          isExpired = expirationInfo.daysToExpire <= 0;
+
+        // Check if the issuers can match (credential issuer must be in claim's issuers list, if provided)
+        if (claim.issuers) {
+          let matchingIssuer = claim.issuers.find(i => i === credential.pluginVerifiableCredential.getIssuer());
+          if (!matchingIssuer)
+            return null;
+        }
+
+        return {
+          credential: credential,
+          selected: true,
+          expired: isExpired
+        };
+      }).filter(c => c !== null);
+
+      let organizedClaim: ClaimDisplayEntry = {
+        claim,
+        matchingCredentials
+      }
+
+      this.organizedClaims.push(organizedClaim);
 
       // Retrieve current value from active store credentials
-      let relatedCredential = this.findCredential(key);
+      /* let relatedCredential = this.findCredential(key);
       if (!relatedCredential) {
         Logger.warn('identity', "No credential found for requested claim:", key);
       }
@@ -345,45 +375,22 @@ export class CredentialAccessRequestPage {
           this.canDeliver = false;
       } else {
         this.optionalItems.push(claimRequest);
-      }
+      } */
     }
+
+    Logger.log("identity", "Organized claims", this.organizedClaims);
   }
 
   /**
    * Some credentials are complex objects, not string. We want to returne a string representation for easier
    * display.
    */
-  private credentialValueAsString(credentialValue: any): string {
+  /* private credentialValueAsString(credentialValue: any): string {
     if (typeof credentialValue === "string")
       return credentialValue as string;
     else
       return this.translate.instant("identity.cant-be-displayed");
-  }
-
-  addDIDToMandatoryItems() {
-    let did: string = this.did.getDIDString();
-    let didDocument: DIDDocument = this.did.getDIDDocument();
-    let expiredState: ExpiredItem = this.expirationService.verifyDIDExpiration(did, didDocument, 0);
-    Logger.log('Identity', "expiredState", expiredState)
-
-    let claimRequest: ClaimRequest = {
-      name: "did",
-      value: did,
-      credential: null,
-      canBeDelivered: true,
-      issuer: {
-        canBeDelivered: true,
-        displayItem: null,
-        errorMessage: "",
-        isExpired: false
-      },
-      isExpired: (expiredState.daysToExpire <= 0),
-      selected: true,
-      reason: ""
-    };
-
-    this.mandatoryItems.push(claimRequest);
-  }
+  } */
 
   async alertDidNeedsPublishing() {
     const alert = await this.alertCtrl.create({
@@ -424,22 +431,9 @@ export class CredentialAccessRequestPage {
    * NOTE: For now we assume that the credential name (fragment) is the same as the requested claim value.
    * But this may not be true in the future: we would have to search inside credential properties one by one.
    */
-  getBasicProfileCredentialValue(credential: DIDPlugin.VerifiableCredential): any {
+  /* getBasicProfileCredentialValue(credential: DIDPlugin.VerifiableCredential): any {
     return credential.getSubject()[credential.getFragment()];
-  }
-
-  /**
-   * Check if a raw claim provided by the caller is required or not. The "required" attribute
-   * can be in various locations.
-   */
-  claimIsRequired(claimValue: any): boolean {
-    if (claimValue instanceof Object) {
-      return claimValue.required || false;
-    }
-    else {
-      return claimValue; // Claim value itself is already a boolean
-    }
-  }
+  } */
 
   /**
    * Check if self proclaimed credentials are accepted
@@ -468,43 +462,26 @@ export class CredentialAccessRequestPage {
     return issuersAccepted.includes(issuerDid);
   }
 
-  claimReason(claimValue: any): string {
-    if (claimValue instanceof Object) {
-      return claimValue.reason || null;
-    }
-
-    return null;
-  }
-
   /**
    * Build a list of credentials ready to be packaged into a presentation, according to selections
-   * done by user (some optional items could have been removed).
+   * done by the user.
    */
-  buildDeliverableCredentialsList() {
+  buildDeliverableCredentialsList(): DIDPlugin.VerifiableCredential[] {
     let selectedCredentials: DIDPlugin.VerifiableCredential[] = [];
-
-    // Add all mandatory credential inconditionally
-    for (let i in this.mandatoryItems) {
-      let item = this.mandatoryItems[i];
-
-      if (item.credential) // Skip DID
-        selectedCredentials.push(item.credential);
+    for (let organizedClaim of this.organizedClaims) {
+      for (let displayCredential of organizedClaim.matchingCredentials) {
+        if (displayCredential.selected)
+          selectedCredentials.push(displayCredential.credential.pluginVerifiableCredential);
+      }
     }
 
-    // Add selected optional credentials only
-    for (let i in this.optionalItems) {
-      let item = this.optionalItems[i];
-      if (item.selected)
-        selectedCredentials.push(item.credential);
-    }
-
-    Logger.log('Identity', JSON.parse(JSON.stringify(selectedCredentials)));
+    Logger.log('Identity', 'Deliverable credentials:', JSON.parse(JSON.stringify(selectedCredentials)));
 
     return selectedCredentials;
   }
 
   acceptRequest() {
-    this.showSpinner = true;
+    this.sendingResponse = true;
 
     setTimeout(() => {
       let selectedCredentials = this.buildDeliverableCredentialsList();
@@ -513,7 +490,7 @@ export class CredentialAccessRequestPage {
       void AuthService.instance.checkPasswordThenExecute(async () => {
         let presentation: DIDPlugin.VerifiablePresentation = null;
         let currentDidString: string = this.didService.getActiveDid().getDIDString();
-        presentation = await this.didService.getActiveDid().createVerifiablePresentationFromCredentials(selectedCredentials, this.authService.getCurrentUserPassword(), this.receivedIntent.params.nonce, this.receivedIntent.params.realm);
+        presentation = await this.didService.getActiveDid().createVerifiablePresentationFromCredentials(selectedCredentials, this.authService.getCurrentUserPassword(), this.receivedIntent.params.request.nonce, this.receivedIntent.params.request.realm);
         Logger.log('Identity', "Created presentation:", presentation);
 
         let payload = {
@@ -540,31 +517,31 @@ export class CredentialAccessRequestPage {
 
         const jwtToken = await this.didService.getActiveDid().getDIDDocument().createJWT(
           payload,
-          this.receivedIntent.jwtExpirationDays,
+          1, // Presentation JWT validity expires after 1 day  //this.receivedIntent.jwtExpirationDays,
           this.authService.getCurrentUserPassword()
         );
 
-        Logger.log('Identity', "Sending credaccess intent response for intent id " + this.receivedIntent.intentId);
+        Logger.log('Identity', "Sending intent response for intent id " + this.receivedIntent.intentId);
         try {
           if (this.receivedIntent.originalJwtRequest) {
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             setTimeout(async () => {
               await this.appServices.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
-              this.showSpinner = false;
+              this.sendingResponse = false;
             }, 1000);
 
           } else {
             await this.appServices.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
-            this.showSpinner = false;
+            this.sendingResponse = false;
           }
         }
         catch (e) {
           this.popup = await this.popupService.ionicAlert("Response error", "Sorry, we were unable to return the right information to the calling app. " + e);
-          this.showSpinner = false;
+          this.sendingResponse = false;
         }
       }, () => {
         // Cancelled
-        this.showSpinner = false;
+        this.sendingResponse = false;
       });
     }, 100);
   }
@@ -607,35 +584,125 @@ export class CredentialAccessRequestPage {
   }
 
   getIntro() {
-    if (!this.canDeliver) {
-      return this.translate.instant('identity.credaccess-missing');
-    } else if (this.publishingDidRequired) {
+    if (this.publishingDidRequired) {
       return this.translate.instant('identity.credaccess-publish-required');
     } else {
       return this.translate.instant('identity.credaccess-intro');
     }
   }
 
-  getCredIcon(item: ClaimRequest): any {
-    if (item.name === 'avatar') {
-      if (this.avatarDataUrl)
-        return this.avatarDataUrl;
-      else
-        return `/assets/identity/smallIcons/nofill/name.svg`;
-    } else {
-      const imgName = item.name === "did" ? "finger-print" : item.name;
-      const theme = this.theme.darkMode ? "dark" : "light";
-      return `/assets/identity/smallIcons/nofill/${imgName}.svg`;
-    }
-  }
+  getItemValueDisplay(credentialEntry: CredentialDisplayEntry) {
+    return credentialEntry.credential.pluginVerifiableCredential.getFragment();
 
-  getItemValueDisplay(item: ClaimRequest) {
-    if (!item.canBeDelivered) {
+    /* if (!item.canBeDelivered) {
       return this.translate.instant('identity.missing');
     } else if (item.canBeDelivered && !item.issuer.canBeDelivered) {
       return this.translate.instant(item.issuer.errorMessage)
     } else {
       return item.value;
+    } */
+  }
+
+  /**
+   * Called when user clicks the credential checkbox.
+   *
+   * Several cases can happen, and it all depends the min and max number of credentials the calling
+   * app is expecting for the parent claim.
+   */
+  public onCredentialSelection(claim: ClaimDisplayEntry, credentialEntry: CredentialDisplayEntry) {
+    // If currently selected, we expect to unselect. But the code below will decide whether this
+    // expectation can be fulfilled or not.
+    let expectingToUnselect = credentialEntry.selected;
+
+    Logger.log("identity-debug", "onCredentialSelection", claim, credentialEntry);
+
+    if (expectingToUnselect) {
+      // Expecting to unselect
+      if (claim.claim.min === 0) {
+        Logger.log("identity-debug", "min is 0, unseleting");
+        credentialEntry.selected = false; // min is 0, all credentials for this claim can be unselected (optional)
+      }
+      else {
+        // min is greater than 0, then we can unselect only if we currently
+        // have have at leave min+1 selected credentials in the claim
+        let nbSelected = this.numberOfSelectedCredentialsInClaim(claim);
+        Logger.log("identity-debug", "min is not 0", nbSelected, claim.claim.min);
+        if (nbSelected > claim.claim.min)
+          credentialEntry.selected = false;
+      }
     }
+    else {
+      // Expecting to select
+      let nbSelected = this.numberOfSelectedCredentialsInClaim(claim);
+      if (nbSelected < claim.claim.max)
+        credentialEntry.selected = true;
+    }
+  }
+
+  public numberOfSelectedCredentialsInClaim(claim: ClaimDisplayEntry): number {
+    return claim.matchingCredentials.reduce((acc, c) => c.selected ? acc + 1 : acc, 0);
+  }
+
+  /**
+   * Convenient string format that describes the claim selection style.
+   */
+  public claimSelectionType(claim: ClaimDisplayEntry): string {
+    if (claim.claim.min == 0 && claim.claim.max == 1)
+      return "optional";
+    else if (claim.claim.min == 1 && claim.claim.max == 1)
+      return "mandatory";
+    else
+      return "multiple";
+  }
+
+  /**
+   * Tells if current user selection of credentials fulfills the request requirements.
+   * If true, the confirmation button may be displayed. If false, a cancel button may show
+   * instead.
+   */
+  public selectionFulfillsTheRequest(): boolean {
+    if (this.sendingResponse || !this.publishStatusFetched)
+      return false; // Fetching something, can't fuflill the request.
+
+    if (this.publishingDidRequired)
+      return false; // DID is not published but it should be.
+
+    // Make sure that we got the right number of credentials we expected for each claim.
+    for (let organizedClaim of this.organizedClaims) {
+      let nbOfSelectedCredentials = this.numberOfSelectedCredentialsInClaim(organizedClaim);
+      if (nbOfSelectedCredentials < organizedClaim.claim.min || nbOfSelectedCredentials > organizedClaim.claim.max)
+        return false;
+    }
+
+    return true;
+  }
+
+  public validationButtonClicked() {
+    if (this.sendingResponse || this.popup)
+      return; // Do nothing
+
+    if (this.selectionFulfillsTheRequest())
+      this.acceptRequest();
+    else
+      void this.rejectRequest();
+  }
+
+  /**
+   * Whether the confirmation button should display a spinner icon or not.
+   */
+  public shouldShowValidationButtonSpinner(): boolean {
+    return this.sendingResponse || !this.publishStatusFetched;
+  }
+
+  /**
+   * Tells if some "no match" recommendations were provided in the claim to guide user
+   * or not.
+   */
+  public claimHasNoMatchRecommendations(claim: ClaimDisplayEntry): boolean {
+    return claim.claim.noMatchRecommendations && claim.claim.noMatchRecommendations.length > 0;
+  }
+
+  public openRecommendation(recommendation: NoMatchRecommendation) {
+    void this.dappbrowserService.open(recommendation.url, recommendation.title);
   }
 }

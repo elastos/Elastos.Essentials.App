@@ -253,14 +253,14 @@ export class CredentialImportRequestPage {
   private finalizeRequest(importedCredentials: string[]) {
     void this.popupProvider.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async () => {
       Logger.log('Identity', "Sending credimport intent response for intent id " + this.receivedIntent.intentId)
-      await this.appServices.sendIntentResponse("credimport", {
+      await this.appServices.sendIntentResponse({
         importedcredentials: importedCredentials
       }, this.receivedIntent.intentId);
     })
   }
 
   async rejectRequest() {
-    await this.appServices.sendIntentResponse("credimport", {}, this.receivedIntent.intentId);
+    await this.appServices.sendIntentResponse({}, this.receivedIntent.intentId);
   }
 
   getDappIcon() {

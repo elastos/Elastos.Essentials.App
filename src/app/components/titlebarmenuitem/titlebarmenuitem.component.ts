@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import {  TitleBarMenuItem, BuiltInIcon } from '../titlebar/titlebar.types';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { BuiltInIcon, TitleBarMenuItem } from '../titlebar/titlebar.types';
 
 @Component({
   selector: 'app-titlebarmenuitem',
@@ -23,7 +23,7 @@ export class TitlebarmenuitemComponent implements OnInit {
   }
 
   onTitlebarMenuItemClicked(item: TitleBarMenuItem) {
-    this.popoverCtrl.dismiss({
+    void this.popoverCtrl.dismiss({
       item: item
     });
   }

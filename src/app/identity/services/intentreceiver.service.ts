@@ -6,7 +6,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
-import { AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, SetHiveProviderIdentityIntent } from '../model/identity.intents';
+import { AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, RequestCredentialsIntent, SetHiveProviderIdentityIntent } from '../model/identity.intents';
 import { AppIDService } from './appid.service';
 import { Native } from './native';
 import { PopupProvider } from './popup';
@@ -59,7 +59,7 @@ export class IntentReceiverService {
                 if (this.checkAppIdCredIssueIntentParams(intent)) {
                     if (!GlobalDIDSessionsService.signedInDIDString) {
                         Logger.log("identity", "No signed in identity. Returning no app id credential");
-                        await this.uxService.sendIntentResponse(intent.action, {}, intent.intentId);
+                        await this.uxService.sendIntentResponse({}, intent.intentId);
                     }
                     else {
                         await this.uxService.loadIdentityAndShow(false);
@@ -90,6 +90,17 @@ export class IntentReceiverService {
                 if (this.checkCredAccessIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
                     void this.native.setRootRouter("/identity/intents/credaccessrequest");
+                }
+                else {
+                    // Something wrong happened while trying to handle the intent: send intent response with error
+                    void this.showErrorAndExitFromIntent(intent);
+                }
+                break;
+            case "requestcredentials":
+                Logger.log('identity', "Received request credentials intent request");
+                if (this.checkRequestCredentialsIntentParams(intent)) {
+                    await this.uxService.loadIdentityAndShow(false);
+                    void this.native.setRootRouter("/identity/intents/requestcredentials");
                 }
                 else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
@@ -228,7 +239,7 @@ export class IntentReceiverService {
 
         Logger.error('identity', errorMessage);
 
-        await this.uxService.sendIntentResponse(intent.action, {}, intent.intentId);
+        await this.uxService.sendIntentResponse({}, intent.intentId);
     }
 
     private checkCredAccessIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
@@ -245,6 +256,20 @@ export class IntentReceiverService {
         credAccessIntent.params.realm = credAccessIntent.params.realm || "no-realm";
         credAccessIntent.jwtExpirationDays = credAccessIntent.jwtExpirationDays || 1;
         this.receivedIntent = credAccessIntent;
+
+        return true;
+    }
+
+    private checkRequestCredentialsIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        Logger.log('identity', "Checking requestcredentials intent parameters");
+        if (Util.isEmptyObject(intent.params)) {
+            Logger.error('identity', "Invalid requestcredentials parameters received. No params.", intent.params);
+            return false;
+        }
+
+        let requestCredentialsIntent: RequestCredentialsIntent = intent;
+        // TODO: check some internal field here
+        this.receivedIntent = requestCredentialsIntent;
 
         return true;
     }
@@ -463,13 +488,13 @@ export class IntentReceiverService {
             if (status.didString == didString) {
                 if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
                     pubStatusSub.unsubscribe();
-                    void this.uxService.sendIntentResponse(intent.action, {
+                    void this.uxService.sendIntentResponse({
                         txid: status.txId
                     }, intent.intentId);
                 }
                 else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
                     pubStatusSub.unsubscribe();
-                    void this.uxService.sendIntentResponse(intent.action, {
+                    void this.uxService.sendIntentResponse({
                         txid: null
                     }, intent.intentId);
                 }
@@ -485,7 +510,7 @@ export class IntentReceiverService {
                 Logger.log("identity", "(intent) DID publication complete, sending intent response");
 
                 publicationStatus.unsubscribe();
-                void this.uxService.sendIntentResponse(this.receivedIntent.action, {
+                void this.uxService.sendIntentResponse({
                     txid: status.txId
                 }, this.receivedIntent.intentId);
             }
@@ -493,7 +518,7 @@ export class IntentReceiverService {
                 Logger.warn("identity", "(intent) DID publication failure, sending intent response");
 
                 publicationStatus.unsubscribe();
-                void this.uxService.sendIntentResponse(this.receivedIntent.action, {
+                void this.uxService.sendIntentResponse({
                     txid: null
                 }, this.receivedIntent.intentId);
             }
@@ -506,7 +531,7 @@ export class IntentReceiverService {
         if (!publicationStarted) {
             Logger.warn("identity", "(intent) DID publication cancelled, sending intent response");
             publicationStatus.unsubscribe();
-            void this.uxService.sendIntentResponse(this.receivedIntent.action, {
+            void this.uxService.sendIntentResponse({
                 txid: null
             }, this.receivedIntent.intentId);
         }
