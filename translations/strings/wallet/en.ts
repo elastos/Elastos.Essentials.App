@@ -171,6 +171,7 @@ export const en = {
         "max": "MAX",
         "touch-to-select-a-personal-wallet": "Touch to select a personal wallet",
         "withdraw-note": "The minimum withdrawal amount is 0.0002 ELA and must be an integral multiple of 0.00000001",
+        'crosschain-note': "Elastos cross-chain transfers usually take between 15 and 25 minutes. During this time you will not see your funds, please be patient",
 
         /********************
         * Coin Receive Page *

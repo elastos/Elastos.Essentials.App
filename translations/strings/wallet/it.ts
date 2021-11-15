@@ -171,6 +171,7 @@ export const it = {
         "max": "MAX",
         "touch-to-select-a-personal-wallet": "Tocca per scegliere un portafoglio personale",
         "withdraw-note": "L'importo minimo di prelievo è 0,0002 ELA e deve essere un multiplo intero di 0,00000001",
+        'crosschain-note': "Elastos cross-chain transfers usually take between 15 and 25 minutes. During this time you will not see your funds, please be patient",
 
         /********************
         * Coin Receive Page *

@@ -155,6 +155,10 @@
           <p> {{ 'wallet.withdraw-note' | translate }} </p>
         </div>
 
+        <div *ngIf="transferType === 1 || transferType === 4" class="note">
+            <p> {{ 'wallet.crosschain-note' | translate }} </p>
+        </div>
+
         <!------------------ SEND AND RECHARGE BUTTON ------------------>
 
         <div *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3" class="footer-container ion-no-border"
