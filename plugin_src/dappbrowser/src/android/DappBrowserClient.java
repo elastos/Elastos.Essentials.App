@@ -3,6 +3,7 @@ package org.elastos.essentials.plugins.dappbrowser;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -351,6 +352,14 @@ public class DappBrowserClient extends WebViewClient {
 
     @Override
     public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+        // If debuggable version, it will don't cancel and return.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (0 != (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+                handler.proceed();
+                return;
+            }
+        }
+
         super.onReceivedSslError(view, handler, error);
         try {
             JSONObject obj = new JSONObject();
