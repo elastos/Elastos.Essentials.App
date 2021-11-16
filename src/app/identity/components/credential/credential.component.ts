@@ -146,26 +146,22 @@ export class CredentialComponent {
             let rawDescription = (credProps["displayable"] as JSONObject)["description"] as string;
 
             // From a raw description, find all special ${...} tags and replace them with values from the subject.
-            //let regEx = /${([a-zA-Z0-9.]+)}/g; regEx. regEx.exec("${toto} ${coucou}")
-            //let regEx = new RegExp("${([a-zA-Z0-9.]+)}", "g");
-            //'${coucou} ${toto}'.ma
-            let keywordTags = Array.from(rawDescription.match(/\${([a-zA-Z0-9.]+)}/g))
+            if (rawDescription) {
+                let keywordTags = Array.from(rawDescription.match(/\${([a-zA-Z0-9.]+)}/g))
 
-            let description = rawDescription;
-            for (let tag of keywordTags) {
-                // tag: ${xxx}
-                // matchingGroup: ['${...}', '...'];
-                let matchingGroup = tag.match(/\${([a-zA-Z0-9.]+)}/);
-                if (matchingGroup && matchingGroup.length > 1) {
-                    let jsonFieldPath = matchingGroup[1];
-                    let evaluatedField = evalObjectFieldPath(credProps, jsonFieldPath);
-                    description = description.replace(tag, evaluatedField);
+                let description = rawDescription;
+                for (let tag of keywordTags) {
+                    // tag: ${xxx}
+                    // matchingGroup: ['${...}', '...'];
+                    let matchingGroup = tag.match(/\${([a-zA-Z0-9.]+)}/);
+                    if (matchingGroup && matchingGroup.length > 1) {
+                        let jsonFieldPath = matchingGroup[1];
+                        let evaluatedField = evalObjectFieldPath(credProps, jsonFieldPath);
+                        description = description.replace(tag, evaluatedField);
+                    }
                 }
+                this.description = description;
             }
-            this.description = description;
-        }
-        else {
-            this.description = null;
         }
     }
 
