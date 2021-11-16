@@ -5,6 +5,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { DappBrowserService } from "src/app/dappbrowser/services/dappbrowser.service";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
@@ -45,6 +46,7 @@ export class MyProfilePage {
   public creatingIdentity = false;
   //public hasModifiedCredentials = false;
   public avatarDataUrl: string = null;
+  private hasKYCedCredentials = true; // true by default to hide the suggestion link before checking.
 
   public fetchingApps = false;
 
@@ -74,6 +76,7 @@ export class MyProfilePage {
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
     private globalIntentService: GlobalIntentService,
+    private dAppBrowserService: DappBrowserService,
     private globalNav: GlobalNavService
   ) {
     this.init();
@@ -159,6 +162,8 @@ export class MyProfilePage {
 
       this.buildDetailEntries();
       this.buildCredentialEntries(publishAvatar); */
+
+      this.checkKYCedCredentials();
     }
   }
 
@@ -416,5 +421,27 @@ export class MyProfilePage {
 
   exportMnemonic() {
     return this.globalNav.navigateTo("identitybackup", "/identity/backupdid");
+  }
+
+  /**
+   * True if user contains credentials issued by a KYC provider. So that we don't suggest him
+   * to get KYC-ed again.
+   */
+  private checkKYCedCredentials() {
+    if (!this.credentials)
+      return;
+
+    // Temporary hardcoded single KYC provided DID. TODO: make this more configurable, with a list.
+    const kycIssuerDID = "did:elastos:iqjN3CLRjd7a4jGCZe6B3isXyeLy7KKDuK";
+    this.hasKYCedCredentials = this.credentials.filter(c => c.pluginVerifiableCredential.getIssuer() === kycIssuerDID).length > 0;
+  }
+
+  public userHasKYCedCredentials(): boolean {
+    return this.hasKYCedCredentials;
+  }
+
+  public launchKYCVerification() {
+    const kycMeDAppUrl = "https://kyc-me.trinity-tech.io";
+    void this.dAppBrowserService.open(kycMeDAppUrl, "Identity Verification");
   }
 }

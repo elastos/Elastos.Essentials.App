@@ -20,14 +20,14 @@
         background-image: url("/assets/identity/svg/empty-balloon.svg");
         background-blend-mode: multiply;
         padding: 35px;
-  
+
         ion-icon {
           display: block;
           margin: auto;
           width: 70%;
           height: 70%;
         }
-  
+
         img {
           display: block;
           margin: auto;
@@ -46,23 +46,24 @@
       justify-content: center;
       align-items: flex-start;
       margin: 20px 0 10px;
-  
+
       ion-col {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-  
-        p, h1 {
+
+        p,
+        h1 {
           margin: 0;
         }
-  
+
         p {
           font-size: 13px;
           font-weight: 500;
           letter-spacing: 0.65px;
         }
-    
+
         h1 {
           font-size: 24px;
           font-weight: 600;
@@ -73,8 +74,8 @@
 
   .status-grid {
     padding: 10px;
-    border-top: 1.5px solid #EAEAEA;
-    border-bottom: 1.5px solid #EAEAEA;
+    border-top: 1.5px solid #eaeaea;
+    border-bottom: 1.5px solid #eaeaea;
     margin-top: 5px;
 
     ion-row {
@@ -92,13 +93,17 @@
           height: 19.6px;
           object-fit: contain;
         }
-    
+
         .verified {
           width: 20.2px;
           height: 22.7px;
-          margin-left:2px;
+          margin-left: 2px;
           object-fit: contain;
         }
+      }
+
+      .left-info-col {
+        justify-content: center;
       }
     }
   }
@@ -135,7 +140,7 @@
         color: #ffffff;
         margin: 0;
       }
-  
+
       .description {
         font-size: 13px;
         font-weight: 500;
@@ -159,7 +164,7 @@
         letter-spacing: 0.65px;
       }
     }
-  
+
     .options-row {
       display: flex;
       justify-content: space-between;
@@ -179,35 +184,35 @@
         img {
           width: 35px;
         }
-    
+
         h2 {
           margin: 2px 2px 3px 2px;
           font-size: 17px;
           font-weight: 600;
           color: white;
         }
-      
+
         span {
           font-size: 12px;
           font-weight: 500;
           letter-spacing: 0.6px;
           color: white;
           text-align: center;
-        }  
+        }
       }
-  
+
       .publish {
         background-image: url("/assets/identity/svg/background-blue.svg");
       }
-  
+
       .share {
         background-image: url("/assets/identity/svg/background-black.svg");
       }
-    
+
       .edit {
         background-image: url("/assets/identity/svg/background-black.svg");
       }
-    
+
       .export {
         background-image: url("/assets/identity/svg/background-black.svg");
       }
@@ -228,13 +233,15 @@
 
     .options-row {
       ion-col {
-        h2, span {
+        h2,
+        span {
           color: black;
         }
       }
-    
+
       .publish {
-        span, h2 {
+        span,
+        h2 {
           color: #ffffff;
         }
       }
@@ -242,11 +249,11 @@
       .share {
         background-image: url("/assets/identity/svg/background-dark.svg");
       }
-  
+
       .edit {
         background-image: url("/assets/identity/svg/background-dark.svg");
       }
-  
+
       .export {
         background-image: url("/assets/identity/svg/background-dark.svg");
       }

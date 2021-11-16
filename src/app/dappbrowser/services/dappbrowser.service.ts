@@ -250,8 +250,11 @@ export class DappBrowserService {
 
         // Inject the Elastos connectivity connector
         Logger.log("dappbrowser", "Executing Elastos connector injection script");
-        void dappBrowser.executeScript({ code: this.elastosConnectorCode });
-        Logger.log("dappbrowser", "Injection completed");
+        /* setTimeout(() => {
+            void dappBrowser.executeScript({ code: this.elastosConnectorCode });
+            Logger.log("dappbrowser", "Injection completed");
+
+        }, 15000); */
 
         // Manually send current network and wallet first (behaviorsubject gets the event only for the first
         // dapp opened)
