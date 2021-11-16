@@ -178,6 +178,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     useExternalBrowser: false,
                     networks: ["elastos"]
                 },
+                {
+                    icon: '/assets/browser/dapps/sushiswap.png',
+                    title: 'Sushiswap',
+                    description: 'Be a DeFi Chef with Sushi. Swap, earn, stack yields, lend, borrow ...',
+                    url: 'https://app.sushi.com/',
+                    useExternalBrowser: false,
+                    networks: ["ethereum", "fantom", "bsc", "polygon", "telos"]
+                },
             ];
         } else {
             this.allDApps = [];
