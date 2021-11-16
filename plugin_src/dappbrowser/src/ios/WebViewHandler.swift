@@ -487,9 +487,13 @@ extension WebViewHandler: WKNavigationDelegate {
         self.webView(webView, failedNavigation: "didFailProvisionalNavigation", withError: error);
     }
 
-    //    @objc func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-    //        _ = "webViewWebContentProcessDidTerminate";
-    //    }
+//This for: Accept invalid or self-signed SSL certificates during EE development
+//Need add "DEBUG" macro in XCode, "Build Settings"->"Active Compilation Conditions", Add "DEBUG" WITHOUT -D.
+#if DEBUG
+    @objc func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        completionHandler(URLSession.AuthChallengeDisposition.useCredential, URLCredential(trust:challenge.protectionSpace.serverTrust!))
+    }
+#endif
 }
 
 extension WebViewHandler: WKUIDelegate {
