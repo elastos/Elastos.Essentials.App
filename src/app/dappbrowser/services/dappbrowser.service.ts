@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
-import { GetCredentialsQuery } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings/did';
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { CredImportIdentityIntentParams } from 'src/app/identity/model/identity.intents';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
@@ -21,6 +21,7 @@ import { BrowsedAppInfo } from '../model/browsedappinfo';
 import { StorageService } from './storage.service';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
+declare let didManager: DIDPlugin.DIDManager;
 
 export type DABMessage = {
     type: "message";
@@ -418,6 +419,11 @@ export class DappBrowserService {
                 await this.handleElastosGetCredentials(message);
                 void dappBrowser.show();
                 break;
+            case "elastos_importCredentials":
+                dappBrowser.hide();
+                await this.handleElastosImportCredentials(message);
+                void dappBrowser.show();
+                break;
             case "elastos_signData":
                 dappBrowser.hide();
                 await this.handleElastosSignData(message);
@@ -560,7 +566,7 @@ export class DappBrowserService {
 
     private async handleElastosGetCredentials(message: DABMessage): Promise<void> {
         try {
-            let query = message.data.object as GetCredentialsQuery;
+            let query = message.data.object as DID.GetCredentialsQuery;
 
             let res: { result: { presentation: DIDPlugin.VerifiablePresentation } };
             res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/credaccess", query);
@@ -574,6 +580,41 @@ export class DappBrowserService {
             this.sendElastosConnectorIABResponse(
                 message.data.id,
                 res.result.presentation
+            );
+        }
+        catch (e) {
+            this.sendElastosConnectorIABError(message.data.id, e);
+        }
+    }
+
+    private async handleElastosImportCredentials(message: DABMessage): Promise<void> {
+        try {
+            let request: { credentials: string[], options?: DID.ImportCredentialOptions } = message.data.object;
+
+            let credentials: DIDPlugin.VerifiableCredential[] = [];
+            for (let cs of request.credentials) {
+                credentials.push(didManager.VerifiableCredentialBuilder.fromJson(cs));
+            }
+
+            request.options = request.options || {};
+
+            let res: { result: { importedcredentials: string[] } };
+            let importParams: CredImportIdentityIntentParams = {
+                credentials,
+                forceToPublishCredentials: request.options.forceToPublishCredentials,
+                customization: null
+            };
+            res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/credimport", importParams);
+
+            if (!res || !res.result || !res.result.importedcredentials) {
+                console.warn("Missing imported credentials result. The operation was maybe cancelled.");
+                this.sendElastosConnectorIABError(message.data.id, "Missing imported credentials result. The operation was maybe cancelled.");
+                return;
+            }
+
+            this.sendElastosConnectorIABResponse(
+                message.data.id,
+                res.result.importedcredentials
             );
         }
         catch (e) {

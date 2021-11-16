@@ -79173,15 +79173,24 @@
 	    static async getCredentials(query) {
 	        console.log("getCredentials request received", query);
 	        let response = await essentialsBridge.postMessage("elastos_getCredentials", query);
-	        console.log("getCredentials Response received", response);
+	        console.log("getCredentials response received", response);
 	        return VerifiablePresentation.parse(JSON.stringify(response));
+	    }
+	    static async importCredentials(credentials, options) {
+	        console.log("importCredentials request received", credentials, options);
+	        let response = await essentialsBridge.postMessage("elastos_importCredentials", {
+	            credentials: credentials.map(c => c.toString()),
+	            options
+	        });
+	        console.log("importCredentials response received", response);
+	        return response;
 	    }
 	    static async signData(data, jwtExtra, signatureFieldName) {
 	        console.log("signData request received", data, jwtExtra, signatureFieldName);
 	        let response = await essentialsBridge.postMessage("elastos_signData", {
 	            data, jwtExtra, signatureFieldName
 	        });
-	        console.log("signData Response received", response);
+	        console.log("signData response received", response);
 	        return response;
 	    }
 	}
@@ -79201,14 +79210,14 @@
 	    /**
 	     * DID API
 	     */
-	    async getCredentials(query) {
+	    getCredentials(query) {
 	        return DIDOperations.getCredentials(query);
 	    }
 	    issueCredential(holder, types, subject, identifier, expirationDate) {
 	        throw new Error("Method not implemented.");
 	    }
 	    importCredentials(credentials, options) {
-	        throw new Error("Method not implemented.");
+	        return DIDOperations.importCredentials(credentials, options);
 	    }
 	    signData(data, jwtExtra, signatureFieldName) {
 	        return DIDOperations.signData(data, jwtExtra, signatureFieldName);
