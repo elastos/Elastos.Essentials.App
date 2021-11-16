@@ -75,7 +75,7 @@ export class ExpirationService {
 
         let daysToCredentialExpire: number = this.daysToExpire(credential.getExpirationDate())
 
-        Logger.log("identity", `Days to ${this.getCredentialID(did, credential)} expire`, daysToCredentialExpire)
+        //Logger.log("identity", `Days to ${this.getCredentialID(did, credential)} expire`, daysToCredentialExpire)
 
         let credentialExpiredMessage = this.constructPersonalMessage(`Your ${this.getCredentialID(did, credential)} credential`, daysToCredentialExpire)
         //add new expired item response for this credential
