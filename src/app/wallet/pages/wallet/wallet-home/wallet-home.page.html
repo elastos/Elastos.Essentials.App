@@ -143,6 +143,30 @@
                 </ion-col>
             </ion-row>
 
+            <ion-row class="list-title-row" *ngIf="hasStakingAssets()">
+                <ion-col size="12">
+                    <h1>{{ 'wallet.staking-assets' | translate }}</h1>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
+                *ngFor="let stakingAsset of getDisplayableStakingAssets()" (click)="onStakingAssetClicked(stakingAsset)">
+                <ion-col size="2" class="left-col">
+                    <div class="icon-container">
+                        <img [src]="stakingAsset.farmIconUrl">
+                    </div>
+                </ion-col>
+                <ion-col [size]="5" class="middle-col">
+                    <h1>{{ stakingAsset.farmName }}</h1>
+                </ion-col>
+                <ion-col [size]="5" class="right-col">
+                    <h1>{{ usdToCurrencyAmount(stakingAsset.amountUSD, networkWallet.getDecimalPlaces()) }}</h1>
+                    <p>
+                        {{ currencyService.selectedCurrency.symbol }}
+                    </p>
+                </ion-col>
+            </ion-row>
+
             <ion-row *ngIf="networkWallet.getNFTs().length" class="list-title-row collectibles-title">
                 <ion-col size="12">
                     <h1>{{ 'wallet.collectibles' | translate }}</h1>

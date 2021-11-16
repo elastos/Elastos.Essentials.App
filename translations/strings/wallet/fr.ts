@@ -53,6 +53,7 @@ export const fr = {
         "sync-progress": "Synchronisation {{progress}}%",
         "ela-erc20": "JETON ERC20 ELASTOS",
         "coin-list": "Liste des jetons",
+        "staking-assets": "Staked Assets",
         "activate-hive-vault": "Activer le stockage Hive",
         "pull-down-to-refresh": "Faire glisser l'écran pour rafraîchir",
         "hive-not-configured-title": "Stockage Hiv enon configuré",

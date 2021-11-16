@@ -52,6 +52,7 @@ export const en = {
         "sync-progress": "Synchronization {{progress}}%",
         "ela-erc20": "ELASTOS ERC20 TOKEN",
         "coin-list": "Token List",
+        "staking-assets": "Staked Assets",
         "activate-hive-vault": "Activate Hive Vault",
         "pull-down-to-refresh": "Pull Down Screen to Refresh",
         "hive-not-configured-title": "Hive not configured",

@@ -23,6 +23,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
@@ -34,6 +35,7 @@ import { Network } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { DefiService, StakingData } from 'src/app/wallet/services/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
@@ -62,6 +64,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public masterWallet: MasterWallet = null;
     public networkWallet: NetworkWallet = null;
     private displayableSubWallets: AnySubWallet[] = null;
+    private stakingAssets: StakingData[] = null;
 
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
@@ -110,6 +113,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
             if (activeNetworkWallet) {
                 this.networkWallet = activeNetworkWallet;
                 this.refreshSubWalletsList();
+                this.refreshStakingAssetsList();
 
                 // Know when a subwallet is added or removed, to refresh our list
                 this.subWalletsListChangeSubscription = this.networkWallet.subWalletsListChange.subscribe(() => {
@@ -194,6 +198,10 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.displayableSubWallets = this.networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
     }
 
+    private refreshStakingAssetsList() {
+        this.stakingAssets = this.networkWallet.getStakingAssets();
+    }
+
     showRefresher() {
         setTimeout(() => {
             this.hideRefresher = false;
@@ -235,6 +243,31 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public getDisplayableSubWallets(): AnySubWallet[] {
         return this.displayableSubWallets;
+    }
+
+    public getDisplayableStakingAssets(): StakingData[] {
+        return this.stakingAssets;
+    }
+
+    public hasStakingAssets() {
+        if (!this.stakingAssets || this.stakingAssets.length === 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public usdToCurrencyAmount(balance: string, decimalplace = -1): string {
+        if (!balance) {
+            return '...';
+        }
+
+        if (decimalplace == -1) {
+            decimalplace = this.currencyService.selectedCurrency.decimalplace;
+        }
+
+        let curerentAmount = this.currencyService.usdToCurrencyAmount(new BigNumber(balance));
+        return curerentAmount.decimalPlaces(decimalplace).toString();
     }
 
     /**
@@ -332,6 +365,10 @@ export class WalletHomePage implements OnInit, OnDestroy {
         else {
             this.shownSubWalletDetails = subWallet;
         }
+    }
+
+    public onStakingAssetClicked(stakingAsset: StakingData) {
+        DefiService.instance.openStakeApp(stakingAsset);
     }
 
     public shouldShowSubWalletDetails(subWallet: AnySubWallet): boolean {

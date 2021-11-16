@@ -32,6 +32,7 @@ import { BridgeService } from './bridge.service';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
 import { CustomNetworkService } from './customnetwork.service';
+import { DefiService } from './defi.service';
 import { EarnService } from './earn.service';
 import { ETHTransactionService } from './ethtransaction.service';
 import { IntentService } from './intent.service';
@@ -70,6 +71,7 @@ export class WalletInitService extends GlobalService {
     private earnService: EarnService, // IMPORTANT: unused, but keep it here for initialization
     private swapService: SwapService, // IMPORTANT: unused, but keep it here for initialization
     private bridgeService: BridgeService, // IMPORTANT: unused, but keep it here for initialization
+    private defiService: DefiService, // IMPORTANT: unused, but keep it here for initialization
     private httpClient: HttpClient
   ) {
     super();

@@ -52,6 +52,7 @@ export const zh = {
                 "sync-progress": "同步中 {{progress}}%",
                 "ela-erc20": "ELASTOS ERC20 币种",
                 "coin-list": "币列表",
+                "staking-assets": "抵押资产",
                 "activate-hive-vault": "激活 Hive Vault",
                 "pull-down-to-refresh": "下拉屏幕刷新",
                 "hive-not-configured-title": "Hive未配置",

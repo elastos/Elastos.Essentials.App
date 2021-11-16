@@ -1,8 +1,10 @@
 import BigNumber from 'bignumber.js';
+import moment from 'moment';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { CurrencyService } from '../../services/currency.service';
+import { DefiService, StakingData } from '../../services/defi.service';
 import { LocalStorage } from '../../services/storage.service';
 import { Coin, CoinID, CoinType, StandardCoinName } from '../coin';
 import { Network } from '../networks/network';
@@ -18,6 +20,11 @@ export class ExtendedNetworkWalletInfo {
     subWallets: SerializedSubWallet[] = [];
     /** List of serialized NFTs added earlier to this master wallet */
     nfts: SerializedNFT[] = []; // TODO: Save each NFT's list of tokens in another storage item.
+}
+
+export type StakingInfo = {
+    timestamp: number;
+    stakingData: StakingData[];
 }
 
 /**
@@ -38,6 +45,10 @@ export abstract class NetworkWallet {
     public subWalletsListChange = new Subject<SubWallet<any>>(); // Subwallet added or created
 
     private fetchMainTokenTimer: any = null;
+    private fetchStakingAssetTimer: any = null;
+
+    private stakingAssetsID = '';
+    private stakingInfo: StakingInfo = null;
 
     constructor(
         public masterWallet: MasterWallet,
@@ -59,6 +70,9 @@ export abstract class NetworkWallet {
         // Prepare ERC20, NFT subwallets and other info
         await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key));
 
+        this.stakingAssetsID = await this.getUniqueIdentifierOnStake();
+        await this.loadStakingAssets();
+
         this.initializationComplete = true;
     }
 
@@ -76,6 +90,8 @@ export abstract class NetworkWallet {
 
         void this.fetchAndRearmMainTokenValue();
 
+        void this.fetchAndRearmStakingAssets();
+
         this.getTransactionDiscoveryProvider().start();
 
         return;
@@ -92,6 +108,7 @@ export abstract class NetworkWallet {
         }
 
         clearTimeout(this.fetchMainTokenTimer);
+        clearTimeout(this.fetchStakingAssetTimer);
 
         await this.getTransactionDiscoveryProvider().stop();
     }
@@ -106,6 +123,14 @@ export abstract class NetworkWallet {
 
     private async fetchMainTokenValue(): Promise<void> {
         await CurrencyService.instance.fetchMainTokenValue(new BigNumber(1), this.network, 'USD');
+    }
+
+    private async fetchAndRearmStakingAssets(): Promise<void> {
+        await this.fetchStakingAssets();
+
+        this.fetchStakingAssetTimer = setTimeout(() => {
+            void this.fetchAndRearmStakingAssets();
+        }, 300000); // 5 minutes
     }
 
     /**
@@ -145,6 +170,16 @@ export abstract class NetworkWallet {
                 canGetBalance = true;
                 let subWalletUSDBalance = subWallet.getUSDBalance();
                 usdBalance = usdBalance.plus(subWalletUSDBalance);
+            }
+        }
+
+        // Staking assets
+        if (this.stakingInfo) {
+            for (let stakingAsset of Object.values(this.stakingInfo.stakingData)) {
+                if (stakingAsset.amountUSD) {
+                    canGetBalance = true;
+                    usdBalance = usdBalance.plus(stakingAsset.amountUSD);
+                }
             }
         }
 
@@ -407,5 +442,50 @@ export abstract class NetworkWallet {
 
     public getTransactionDiscoveryProvider(): TransactionProvider<any> {
         return this.transactionDiscoveryProvider;
+    }
+
+    // Stake assets
+    private async getUniqueIdentifierOnStake() {
+        let tokenAddress = await this.getMainEvmSubWallet().getTokenAddress();
+        let chainId = this.network.getMainChainID();
+        return 'stakingassets-' + tokenAddress + '-' + chainId + '-' + this.masterWallet.id;
+    }
+
+    private async loadStakingAssets() {
+        this.stakingInfo = await LocalStorage.instance.get(this.stakingAssetsID);
+        return this.stakingInfo;
+    }
+
+    private async saveStakingAssets(stakingInfo: StakingInfo) {
+        await LocalStorage.instance.set(this.stakingAssetsID, stakingInfo);
+    }
+
+    // In order to reduce resource consumption, the update interval is 10 minutes.
+    private async fetchStakingAssets() {
+        const tenMinutesago = moment().add(-10, 'minutes').valueOf();
+        if (!this.stakingInfo || (this.stakingInfo.timestamp < tenMinutesago)) {
+            let tokenAddress = await this.getMainEvmSubWallet().getTokenAddress();
+            let chainId = this.network.getMainChainID();
+            let stakingData = await DefiService.instance.getStakingAssets(tokenAddress, chainId);
+            if (stakingData) {
+                stakingData.sort((a, b) => {
+                    if (b.amountUSD > a.amountUSD) return 1;
+                    else return -1;
+                })
+                this.stakingInfo = {
+                    timestamp : moment().valueOf(),
+                    stakingData : stakingData
+                }
+                await this.saveStakingAssets(this.stakingInfo);
+            }
+        }
+        return this.stakingInfo;
+    }
+
+    public getStakingAssets() {
+        if (this.stakingInfo) {
+            return this.stakingInfo.stakingData;
+        }
+        else return [];
     }
 }
