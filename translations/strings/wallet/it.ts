@@ -92,7 +92,7 @@ export const it = {
         "euro": "Euro",
         "czk-koruna": "Corona Ceca",
         "british-pound": "Sterlina Inglese",
-        "japanese-yen":"Yen Giapponese",
+        "japanese-yen": "Yen Giapponese",
         "bitcoin": "Bitcoin",
 
         /**********************
@@ -353,7 +353,7 @@ export const it = {
         ************************/
         'wallet-asset-title': 'Panoramica dei Bilanci',
         "wallet-asset-networks-count": "{{ networksCount }} Reti",
-
+        'staked-assets-info-by': 'Staked assets information provided by',
 
         /********************************************** Intent Screens ***********************************************/
 

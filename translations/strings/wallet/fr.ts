@@ -93,7 +93,7 @@ export const fr = {
         "czk-koruna": "Czech Koruna",
         "euro": "Euro",
         "british-pound": "British Pound",
-        "japanese-yen":"Japanese Yen",
+        "japanese-yen": "Japanese Yen",
         "bitcoin": "Bitcoin",
 
         /**********************
@@ -354,7 +354,7 @@ export const fr = {
         ************************/
         'wallet-asset-title': 'Assets Overview',
         "wallet-asset-networks-count": "{{ networksCount }} Networks",
-
+        'staked-assets-info-by': 'Informations hors portefeuille fournies par',
 
         /********************************************** Intent Screens ***********************************************/
 

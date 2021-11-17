@@ -105,6 +105,13 @@
                     </ion-row>
                 </div>
             </ion-row>
+
+            <!-- Staked assets provider credit-->
+            <ion-row class="staked-assets-provider" (click)="openStakedAssetsProvider()">
+                <div class="intro">{{ 'wallet.staked-assets-info-by' | translate }}</div>
+                <img
+                    [src]="theme.darkMode ? 'assets/wallet/earn/darkmode/tinnetwork.png' : 'assets/wallet/earn/tinnetwork.png'" />
+            </ion-row>
         </ion-grid>
     </ion-content>
 </ion-content>

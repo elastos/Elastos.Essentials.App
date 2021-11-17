@@ -92,7 +92,7 @@ export const zh = {
                 "czk-koruna": "捷克克朗",
                 "euro": "欧元",
                 "british-pound": "英镑",
-                "japanese-yen":"日元",
+                "japanese-yen": "日元",
                 "bitcoin": "比特币",
 
                 /**********************
@@ -353,6 +353,7 @@ export const zh = {
                 ************************/
                 'wallet-asset-title': '资产总览',
                 "wallet-asset-networks-count": "{{ networksCount }} 个网络",
+                'staked-assets-info-by': 'Staked assets information provided by',
 
                 /********************************************** Intent Screens ***********************************************/
 

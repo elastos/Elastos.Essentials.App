@@ -152,7 +152,7 @@ export class WalletAssetPage implements OnDestroy {
                     if ((subWallets.length > 0) || (stakingData.length > 0)) {
                         // getDisplayBalanceInActiveCurrency including the staked assets.
                         let balanceBigNumber = networkWallet.getDisplayBalanceInActiveCurrency();
-                        let netowrkAssetInfo : NetworkAssetInfo = {
+                        let netowrkAssetInfo: NetworkAssetInfo = {
                             name: networks[i].name,
                             balance: balanceBigNumber,
                             // stakedBalance: stakedBalance,
@@ -161,7 +161,7 @@ export class WalletAssetPage implements OnDestroy {
                             stakingData: stakingData,
                         }
 
-                        let networkIndex = this.assetsInfo[networkWalletIndex].networks.findIndex( (network) => {
+                        let networkIndex = this.assetsInfo[networkWalletIndex].networks.findIndex((network) => {
                             return network.name === networks[i].name;
                         })
                         if (networkIndex === -1) {
@@ -171,7 +171,7 @@ export class WalletAssetPage implements OnDestroy {
                         }
                     } else {
                         // Remove old info if the network has no asset.
-                        let networkIndex = this.assetsInfo[networkWalletIndex].networks.findIndex( (network) => {
+                        let networkIndex = this.assetsInfo[networkWalletIndex].networks.findIndex((network) => {
                             return network.name === networks[i].name;
                         })
                         if (networkIndex !== -1) {
@@ -195,7 +195,7 @@ export class WalletAssetPage implements OnDestroy {
     // Find the specified index from assetsInfo array.
     // Create a new NetworkWalletAssetInfo if can not find it.
     private findWalletIndex(networkWallet: NetworkWallet) {
-        let networkWalletIndex = this.assetsInfo.findIndex( (wallet) => {
+        let networkWalletIndex = this.assetsInfo.findIndex((wallet) => {
             return wallet.id === networkWallet.masterWallet.id;
         })
         if (networkWalletIndex === -1) {
@@ -305,5 +305,12 @@ export class WalletAssetPage implements OnDestroy {
 
     public getUpdatingProgressInfo() {
         return (100 * this.updatedSubwalletCount / this.totalSubwalletCount).toFixed(0);
+    }
+
+    /**
+     * Open tin.network in a browser view
+     */
+    public openStakedAssetsProvider() {
+        this.defiService.openStakedAssetsProvider();
     }
 }

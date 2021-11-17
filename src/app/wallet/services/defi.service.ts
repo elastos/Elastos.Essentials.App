@@ -68,7 +68,7 @@ export class DefiService {
         void this.dappbrowserService.open(farm.farmUrl, farm.farmName);
     }
 
-    public openStakedAssetsProvider(walletAddress: string) {
+    public openStakedAssetsProvider(walletAddress?: string) {
         void this.dappbrowserService.open("https://tin.network", "Tin.Network");
     }
 }
