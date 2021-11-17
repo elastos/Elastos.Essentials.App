@@ -28,6 +28,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { DefiService, StakingData } from 'src/app/wallet/services/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { AnySubWallet } from '../../../model/wallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
@@ -39,16 +41,17 @@ import { WalletService } from '../../../services/wallet.service';
 
 export type NetworkAssetInfo = {
     name: string,
-    balance: BigNumber,
-    balanceString: string,
+    balance: BigNumber, // raw balance
+    // stakedBalance: number, // staked balance
+    balanceString: string, // display balance
     subWallets: AnySubWallet[],
+    stakingData: StakingData[],
 }
 
 export type NetworkWalletAssetInfo = {
     id: string,
     name: string,
     networks: NetworkAssetInfo[],
-    networksCount: number,
     balance: BigNumber,
     balanceString: string,
     show: boolean,
@@ -78,6 +81,7 @@ export class WalletAssetPage implements OnDestroy {
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
+        public defiService: DefiService,
         public native: Native,
         public popupProvider: PopupProvider,
         public walletManager: WalletService,
@@ -106,6 +110,7 @@ export class WalletAssetPage implements OnDestroy {
 
     async initAsset() {
         await this.updateAssetsInfo();
+
         setTimeout(() => {
             void this.updateAssetsInfo(true);
         }, 500);
@@ -131,54 +136,29 @@ export class WalletAssetPage implements OnDestroy {
                 let networkWallet = await networks[i].createNetworkWallet(masterWalletList[j], false);
 
                 try {
-                    let networkWalletIndex = this.assetsInfo.findIndex( (wallet) => {
-                        return wallet.id === networkWallet.masterWallet.id;
-                    })
-                    if (networkWalletIndex === -1) {
-                        this.assetsInfo.push({
-                            id: networkWallet.masterWallet.id,
-                            name: networkWallet.masterWallet.name,
-                            networks: [],
-                            networksCount: 0,
-                            balance: new BigNumber(0),
-                            balanceString: '0',
-                            show: false,
-                        });
-                        networkWalletIndex = this.assetsInfo.length - 1;
+                    let networkWalletIndex = this.findWalletIndex(networkWallet);
+
+                    // Staking assets.
+                    if (updateBalance) {
+                        await networkWallet.fetchStakingAssets();
                     }
+                    let stakingData = networkWallet.getStakingAssets();
+                    // let stakedBalance = 0;
+                    // for (let k = 0; k < stakingData.length; k++) {
+                    //     stakedBalance += stakingData[k].amountUSD;
+                    // }
 
-                    let showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
-                    if (!updateBalance) {
-                        this.totalSubwalletCount += showSubwalets.length;
-                    }
-
-                    let subWallets = [];
-                    for (let index = 0; index < showSubwalets.length; index++) {
-                        if (updateBalance) {
-                            await showSubwalets[index].updateBalance();
-                            this.zone.run(() => {
-                                this.updatedSubwalletCount++;
-                            });
-                        }
-
-                        let usdBalance = showSubwalets[index].getUSDBalance();
-                        if (usdBalance.gte(this.minAmount)) {
-                            subWallets.push(showSubwalets[index]);
-                        }
-                    }
-
-                    if (subWallets.length > 0) {
-                        subWallets.sort((a, b) => {
-                            if (b.getUSDBalance().gte(a.getUSDBalance())) return 1;
-                            else return -1;
-                        });
-
+                    let subWallets = await this.getSubwalletsShouldShowOn(networkWallet, updateBalance);
+                    if ((subWallets.length > 0) || (stakingData.length > 0)) {
+                        // getDisplayBalanceInActiveCurrency including the staked assets.
                         let balanceBigNumber = networkWallet.getDisplayBalanceInActiveCurrency();
                         let netowrkAssetInfo : NetworkAssetInfo = {
                             name: networks[i].name,
                             balance: balanceBigNumber,
+                            // stakedBalance: stakedBalance,
                             balanceString: this.getAmountForDisplay(balanceBigNumber),
                             subWallets: subWallets,
+                            stakingData: stakingData,
                         }
 
                         let networkIndex = this.assetsInfo[networkWalletIndex].networks.findIndex( (network) => {
@@ -186,7 +166,6 @@ export class WalletAssetPage implements OnDestroy {
                         })
                         if (networkIndex === -1) {
                             this.assetsInfo[networkWalletIndex].networks.push(netowrkAssetInfo);
-                            this.assetsInfo[networkWalletIndex].networksCount = this.assetsInfo[networkWalletIndex].networks.length;
                         } else {
                             this.assetsInfo[networkWalletIndex].networks[networkIndex] = netowrkAssetInfo;
                         }
@@ -197,9 +176,9 @@ export class WalletAssetPage implements OnDestroy {
                         })
                         if (networkIndex !== -1) {
                             this.assetsInfo[networkWalletIndex].networks.splice(networkIndex);
-                            this.assetsInfo[networkWalletIndex].networksCount = this.assetsInfo[networkWalletIndex].networks.length;
                         }
                     }
+
                     this.zone.run(() => {
                         this.updateNetworkWalletAssets(this.assetsInfo[networkWalletIndex]);
                         this.updateTotalAssets();
@@ -211,6 +190,58 @@ export class WalletAssetPage implements OnDestroy {
             }
         }
         this.updateOnGoing = false;
+    }
+
+    // Find the specified index from assetsInfo array.
+    // Create a new NetworkWalletAssetInfo if can not find it.
+    private findWalletIndex(networkWallet: NetworkWallet) {
+        let networkWalletIndex = this.assetsInfo.findIndex( (wallet) => {
+            return wallet.id === networkWallet.masterWallet.id;
+        })
+        if (networkWalletIndex === -1) {
+            this.assetsInfo.push({
+                id: networkWallet.masterWallet.id,
+                name: networkWallet.masterWallet.name,
+                networks: [],
+                balance: new BigNumber(0),
+                balanceString: '0',
+                show: false,
+            });
+            networkWalletIndex = this.assetsInfo.length - 1;
+        }
+        return networkWalletIndex;
+    }
+
+    // Get all subwallets that the balance is bigger than the threshold.
+    private async getSubwalletsShouldShowOn(networkWallet: NetworkWallet, updateBalance = false) {
+        let showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
+        if (!updateBalance) {
+            this.totalSubwalletCount += showSubwalets.length;
+        }
+
+        let subWallets = [];
+        for (let index = 0; index < showSubwalets.length; index++) {
+            if (updateBalance) {
+                await showSubwalets[index].updateBalance();
+                this.zone.run(() => {
+                    this.updatedSubwalletCount++;
+                });
+            }
+
+            let usdBalance = showSubwalets[index].getUSDBalance();
+            if (usdBalance.gte(this.minAmount)) {
+                subWallets.push(showSubwalets[index]);
+            }
+        }
+
+        if (subWallets.length > 0) {
+            subWallets.sort((a, b) => {
+                if (b.getUSDBalance().gte(a.getUSDBalance())) return 1;
+                else return -1;
+            });
+        }
+
+        return subWallets;
     }
 
     private updateTotalAssets() {
@@ -246,6 +277,19 @@ export class WalletAssetPage implements OnDestroy {
             decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
         }
         return amount.decimalPlaces(decimalplace).toString();
+    }
+
+    public usdToCurrencyAmount(balance: string, decimalplace = -1): string {
+        if (!balance) {
+            return '...';
+        }
+
+        if (decimalplace == -1) {
+            decimalplace = this.currencyService.selectedCurrency.decimalplace;
+        }
+
+        let curerentAmount = this.currencyService.usdToCurrencyAmount(new BigNumber(balance));
+        return curerentAmount.decimalPlaces(decimalplace).toString();
     }
 
     async doRefresh(event) {

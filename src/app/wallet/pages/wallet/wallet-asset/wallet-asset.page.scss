@@ -72,7 +72,8 @@ ion-slide,
     .subwallet-row {
         padding: 7px;
 
-        .left-title {
+        .left-title,
+        .stake-title {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -103,6 +104,10 @@ ion-slide,
                 color: #9b9b9b;
                 font-size: 12px;
             }
+        }
+
+        .stake-title {
+            margin-bottom: 0px;
         }
 
         .img {

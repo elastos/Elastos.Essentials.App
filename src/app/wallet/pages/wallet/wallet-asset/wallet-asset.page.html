@@ -34,7 +34,7 @@
                 <ion-col [size]="6" class="left-title">
                     <h1>{{ netWallet.name }}</h1>
                     <p class="net-count">{{ 'wallet.wallet-asset-networks-count' | translate:{networksCount:
-                        netWallet.networksCount} }}</p>
+                        netWallet.networks.length} }}</p>
                 </ion-col>
                 <ion-col [size]="5" class="right-col">
                     <h1>
@@ -73,8 +73,31 @@
                             </ion-col>
                             <ion-col [size]="5" class="right-col">
                                 <p>
-                                    {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance())
-                                    }}
+                                    {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance()) }}
+                                    {{ currencyService.selectedCurrency.symbol }}
+                                </p>
+                            </ion-col>
+                        </ion-row>
+
+                        <ion-col [size]="12" class="stake-title" *ngIf="network.stakingData.length">
+                            <p>
+                                {{ 'wallet.staking-assets' | translate }}
+                            </p>
+                        </ion-col>
+
+                        <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
+                            *ngFor="let stakingAsset of network.stakingData">
+                            <ion-col size="2" class="left-col">
+                                <div class="icon-container">
+                                    <img [src]="stakingAsset.farmIconUrl">
+                                </div>
+                            </ion-col>
+                            <ion-col [size]="5" class="middle-col">
+                                <h1>{{ stakingAsset.farmName }}</h1>
+                            </ion-col>
+                            <ion-col [size]="5" class="right-col">
+                                <p>
+                                    {{ usdToCurrencyAmount(stakingAsset.amountUSD) }}
                                     {{ currencyService.selectedCurrency.symbol }}
                                 </p>
                             </ion-col>

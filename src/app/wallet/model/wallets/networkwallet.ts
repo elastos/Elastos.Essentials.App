@@ -461,7 +461,7 @@ export abstract class NetworkWallet {
     }
 
     // In order to reduce resource consumption, the update interval is 10 minutes.
-    private async fetchStakingAssets() {
+    public async fetchStakingAssets() {
         const tenMinutesago = moment().add(-10, 'minutes').valueOf();
         if (!this.stakingInfo || (this.stakingInfo.timestamp < tenMinutesago)) {
             let tokenAddress = await this.getMainEvmSubWallet().getTokenAddress();
