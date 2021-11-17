@@ -52,7 +52,7 @@
             justify-content: flex-start;
             align-items: flex-start;
 
-            h1, h2, h3, h4 {
+            h1, h2, h3, h4, .bigFont, .smallFont {
                 padding: 0 10px;
                 margin: 0;
                 line-height: 1;
@@ -82,7 +82,7 @@
                 margin-bottom: 4px;
             }
 
-            h4 {
+            h4, .bigFont, .smallFont {
                 font-size: 42px;
                 letter-spacing: 1.05px;
                 line-height: 0.85;
@@ -103,6 +103,18 @@
                 .ela {
                     font-size: 21px;
                     letter-spacing: 0.53px;
+                }
+            }
+
+            .smallFont {
+                font-size: 32px;
+
+                .dot {
+                    font-size: 20px;
+                }
+
+                .decimals {
+                    font-size: 20px;
                 }
             }
         }

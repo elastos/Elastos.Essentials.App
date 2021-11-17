@@ -33,7 +33,7 @@
                 <ion-row class="card-label-row">
                     <h3>{{ 'wallet.coin-balance' | translate }}</h3>
                     <div (click)="!chainIsERC20() ? currencyService.toggleCurrencyDisplay() : null">
-                        <h4 *ngIf="!currencyService.useCurrency || chainIsERC20()">{{
+                        <h4 *ngIf="!currencyService.useCurrency || chainIsERC20()" class="bigFont" [class.smallFont]="useSmallFont()">{{
                             WalletUtil.getWholeBalance(networkWallet.subWallets[subWalletId].getDisplayBalance())
                             }}<span class="dot"
                                 *ngIf="!networkWallet.subWallets[subWalletId].getDisplayBalance().isZero() && !networkWallet.subWallets[subWalletId].getDisplayBalance().isNaN() && WalletUtil.getDecimalBalance(networkWallet.subWallets[subWalletId].getDisplayBalance())">.</span>
@@ -42,7 +42,7 @@
                                 }}</span>
                             <span class="ela"> {{ getCoinBalanceCurrency() }}</span>
                         </h4>
-                        <h4 *ngIf="currencyService.useCurrency && !chainIsERC20()">{{
+                        <h4 *ngIf="currencyService.useCurrency && !chainIsERC20()" class="bigFont"  [class.smallFont]="useSmallFont()">{{
                             WalletUtil.getWholeBalance(currencyService.getMainTokenValue(networkWallet.subWallets[subWalletId].getDisplayBalance()))
                             }}<span class="dot"
                                 *ngIf="!networkWallet.subWallets[subWalletId].getDisplayBalance().isZero() && !networkWallet.subWallets[subWalletId].getDisplayBalance().isNaN() && WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.subWallets[subWalletId].getDisplayBalance()))">.</span>

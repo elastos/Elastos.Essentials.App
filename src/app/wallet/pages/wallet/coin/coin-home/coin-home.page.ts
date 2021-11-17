@@ -481,4 +481,8 @@ export class CoinHomePage implements OnInit {
         this.uiService.returnedUser = true;
         void this.storage.setVisit(true);
     }
+
+    public useSmallFont(): boolean {
+        return WalletUtil.getWholeBalance(this.networkWallet.subWallets[this.subWalletId].getDisplayBalance()).length >= 10;
+    }
 }
