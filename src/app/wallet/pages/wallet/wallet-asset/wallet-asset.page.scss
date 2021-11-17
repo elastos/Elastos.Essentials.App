@@ -169,8 +169,11 @@ ion-slide,
     }
 
     .staked-assets-provider {
+        display: flex;
+        flex-direction: column;
         justify-content: center;
         margin-top: 10px;
+        align-items: center;
 
         img {
             height: 30px;

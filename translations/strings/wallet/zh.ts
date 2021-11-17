@@ -353,7 +353,7 @@ export const zh = {
                 ************************/
                 'wallet-asset-title': '资产总览',
                 "wallet-asset-networks-count": "{{ networksCount }} 个网络",
-                'staked-assets-info-by': 'Staked assets information provided by',
+                'staked-assets-info-by': '抵押资产数据提供商',
 
                 /********************************************** Intent Screens ***********************************************/
 
