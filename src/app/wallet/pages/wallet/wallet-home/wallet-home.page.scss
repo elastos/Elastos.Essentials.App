@@ -226,6 +226,35 @@ ion-slide,
         }
     }
 
+    .staked-assets-row {
+        align-items: center;
+
+        .service-provider {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 3px;
+
+            .cell:first-of-type {
+                display: flex;
+                margin-bottom: 3px;
+                font-weight: 500;
+            }
+
+            .cell {
+                .go {
+                    height: 10px;
+                }
+            }
+
+            img {
+                padding-left: 3px;
+                padding-right: 6px;
+                height: 18px;
+            }
+        }
+    }
+
     .card-label-row {
         .change-wallet {
             ion-col {

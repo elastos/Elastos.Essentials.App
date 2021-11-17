@@ -102,6 +102,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private walletNetworkUIService: WalletNetworkUIService,
         private walletUIService: WalletUIService,
         private storage: LocalStorage,
+        private defiService: DefiService,
         private globalStartupService: GlobalStartupService,
         private events: Events,
     ) {
@@ -368,11 +369,19 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     public onStakingAssetClicked(stakingAsset: StakingData) {
-        DefiService.instance.openStakeApp(stakingAsset);
+        this.defiService.openStakeApp(stakingAsset);
     }
 
     public shouldShowSubWalletDetails(subWallet: AnySubWallet): boolean {
         return this.shownSubWalletDetails && this.shownSubWalletDetails.id === subWallet.id;
+    }
+
+    /**
+     * Open tin.network in a browser view
+     */
+    public async openStakedAssetsProvider() {
+        let walletAddress = await this.networkWallet.getMainEvmSubWallet().getTokenAddress()
+        this.defiService.openStakedAssetsProvider(walletAddress);
     }
 
     public earn(event, subWallet: AnySubWallet) {

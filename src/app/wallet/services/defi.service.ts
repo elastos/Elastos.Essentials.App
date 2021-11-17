@@ -32,7 +32,7 @@ export type StakingData = {
     farmIconUrl: string;
     amountUSD: number;
     lastUpdated: number;
-  };
+};
 
 @Injectable({
     providedIn: 'root'
@@ -45,7 +45,7 @@ export class DefiService {
     constructor(
         public dappbrowserService: DappBrowserService,
         public jsonRPCService: GlobalJsonRPCService,
-        ) {
+    ) {
         DefiService.instance = this;
     }
 
@@ -53,7 +53,7 @@ export class DefiService {
         let requestUrl = this.stakingAssetsUrl + '?address=' + address + '&chainid=' + chainId;
         try {
             let rawResult = await this.jsonRPCService.httpGet(requestUrl);
-            let stakingAssets = rawResult.filter( asset => {
+            let stakingAssets = rawResult.filter(asset => {
                 return asset.amountUSD > 0;
             })
             return stakingAssets;
@@ -66,5 +66,9 @@ export class DefiService {
 
     public openStakeApp(farm: StakingData) {
         void this.dappbrowserService.open(farm.farmUrl, farm.farmName);
+    }
+
+    public openStakedAssetsProvider(walletAddress: string) {
+        void this.dappbrowserService.open("https://tin.network", "Tin.Network");
     }
 }

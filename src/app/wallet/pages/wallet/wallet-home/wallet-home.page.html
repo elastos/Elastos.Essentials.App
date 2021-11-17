@@ -51,7 +51,8 @@
                         <h4 *ngIf="!currencyService.useCurrency">{{
                             WalletUtil.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"
                                 *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
-                            <span class="decimals">{{ WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance(), networkWallet.getDecimalPlaces())
+                            <span class="decimals">{{ WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance(),
+                                networkWallet.getDecimalPlaces())
                                 }}</span>
                             <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
                         </h4>
@@ -143,14 +144,27 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="list-title-row" *ngIf="hasStakingAssets()">
-                <ion-col size="12">
+            <ion-row class="list-title-row staked-assets-row" *ngIf="hasStakingAssets()">
+                <ion-col size="6">
                     <h1>{{ 'wallet.staking-assets' | translate }}</h1>
+                </ion-col>
+                <ion-col size="6" class="service-provider ripple ion-activatable" (click)="openStakedAssetsProvider()">
+                    <div class="cell">By</div>
+                    <div class="cell">
+                        <img
+                            [src]="theme.darkMode ? 'assets/wallet/earn/darkmode/tinnetwork.png' : 'assets/wallet/earn/tinnetwork.png'" />
+                    </div>
+                    <div class="cell">
+                        <img class="go"
+                            [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/right-arrow.svg' : 'assets/wallet/icons/right-arrow.svg'" />
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>
             </ion-row>
 
-            <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
-                *ngFor="let stakingAsset of getDisplayableStakingAssets()" (click)="onStakingAssetClicked(stakingAsset)">
+            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+                *ngFor="let stakingAsset of getDisplayableStakingAssets()"
+                (click)="onStakingAssetClicked(stakingAsset)">
                 <ion-col size="2" class="left-col">
                     <div class="icon-container">
                         <img [src]="stakingAsset.farmIconUrl">
@@ -165,6 +179,7 @@
                         {{ currencyService.selectedCurrency.symbol }}
                     </p>
                 </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
 
             <ion-row *ngIf="networkWallet.getNFTs().length" class="list-title-row collectibles-title">
