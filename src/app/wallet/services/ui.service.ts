@@ -60,8 +60,10 @@ export class UiService {
         return balance.decimalPlaces(4).toString();
       } else if (balance.isGreaterThanOrEqualTo(1000) && balance.isLessThan(10000)) {
         return balance.decimalPlaces(2).toString();
+      } else if (balance.isGreaterThanOrEqualTo(10000) && balance.isLessThan(1000000)) {
+        return balance.dividedBy(1000).toFixed(2) + 'k';
       } else {
-        return balance.dividedBy(1000).toFixed(0) + 'k';
+        return balance.dividedBy(1000000).toFixed(2) + 'm';
       }
     } catch (e) {
       // The old wallet use number for balance, and save the wallet info to localstorage.
