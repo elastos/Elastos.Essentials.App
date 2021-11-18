@@ -1,7 +1,7 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { CredImportIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
@@ -32,6 +32,7 @@ type ImportedCredentialItem = {
 type ImportedCredential = {
   name: string,
   values: ImportedCredentialItem[],
+  showData: boolean,
   credential: VerifiableCredential,
 }
 
@@ -65,6 +66,8 @@ Request example:
 export class CredentialImportRequestPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
   public receivedIntent: CredImportIdentityIntent = null;
   public requestDappIcon: string = null;
   public requestDappName: string = null;
@@ -93,7 +96,14 @@ export class CredentialImportRequestPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('identity.credential-import'));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+      // Close icon
+      await this.rejectRequest();
+      void this.titleBar.globalNav.exitCurrentContext();
+    });
 
     void this.zone.run(async () => {
       this.receivedIntent = this.intentService.getReceivedIntent();
@@ -103,6 +113,10 @@ export class CredentialImportRequestPage {
 
       Logger.log('Identity', "Displayable credentials:", this.displayableCredentials)
     });
+  }
+
+  ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   /**
@@ -170,6 +184,7 @@ export class CredentialImportRequestPage {
       let displayableCredential: ImportedCredential = {
         name: this.didService.getUserFriendlyBasicProfileKeyName(importedCredential.getFragment()),
         values: displayableEntries,
+        showData: false,
         credential: new VerifiableCredential(importedCredential),
       };
 

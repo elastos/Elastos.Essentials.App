@@ -31,10 +31,6 @@ import { UXService } from '../../../services/ux.service';
 /**
  * TODO BPI:
  *
- * DONE - Check expired credentials
- * DONE - Create a customizable credential component to use in credentials list + request screen
- * DONE - Check claim issuers and display UI messages if KO
- * DONE   - Show on UI for each claim
  * - For external credentials, display issuer avatar/name/did string or placeholders
  * - Test with UI customization
  * - Design + integration
@@ -151,7 +147,10 @@ export class RequestCredentialsPage {
     this.titleBar.setTitle(' ');
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+      // Close icon
+      await this.rejectRequest();
       void this.titleBar.globalNav.exitCurrentContext();
     });
 
@@ -282,10 +281,17 @@ export class RequestCredentialsPage {
 
         return {
           credential: credential,
-          selected: true,
+          selected: false, // Don't select anything yet, we'll update this just after
           expired: isExpired
         };
       }).filter(c => c !== null);
+
+      // Decide which credentials should be selected by default or not. Strategy:
+      // - min = max = number of matching creds = 1 -> select the only cred
+      // - all other cases: don't select anything
+      if (claim.min == 1 && claim.max === claim.min && matchingCredentials.length === 1) {
+        matchingCredentials[0].selected = true;
+      }
 
       let organizedClaim: ClaimDisplayEntry = {
         claim,
@@ -379,6 +385,49 @@ export class RequestCredentialsPage {
     }
 
     Logger.log("identity", "Organized claims", this.organizedClaims);
+  }
+
+  /**
+   * Called when user clicks the credential checkbox.
+   *
+   * Several cases can happen, and it all depends the min and max number of credentials the calling
+   * app is expecting for the parent claim.
+   */
+  public onCredentialSelection(claim: ClaimDisplayEntry, credentialEntry: CredentialDisplayEntry) {
+    // If currently selected, we expect to unselect. But the code below will decide whether this
+    // expectation can be fulfilled or not.
+    let expectingToUnselect = credentialEntry.selected;
+
+    Logger.log("identity-debug", "onCredentialSelection", claim, credentialEntry);
+
+    if (expectingToUnselect) {
+      // Expecting to unselect
+      if (claim.claim.min === 1 && claim.claim.max === 1) {
+        // Do nothing, cannot unselect. Need to select another one
+      }
+      else {
+        credentialEntry.selected = false;
+      }
+    }
+    else {
+      // Expecting to select
+      if (claim.claim.min === 1 && claim.claim.max === 1) {
+        // We can select yes, but we also need to unselect the currently selected one
+        let selectedCredentialEntry = this.getFirstSelectedCredentialInClaim(claim);
+        if (selectedCredentialEntry)
+          selectedCredentialEntry.selected = false;
+      }
+
+      credentialEntry.selected = true;
+    }
+  }
+
+  public numberOfSelectedCredentialsInClaim(claim: ClaimDisplayEntry): number {
+    return claim.matchingCredentials.reduce((acc, c) => c.selected ? acc + 1 : acc, 0);
+  }
+
+  private getFirstSelectedCredentialInClaim(claim: ClaimDisplayEntry): CredentialDisplayEntry {
+    return claim.matchingCredentials.find(c => c.selected);
   }
 
   /**
@@ -604,55 +653,24 @@ export class RequestCredentialsPage {
   }
 
   /**
-   * Called when user clicks the credential checkbox.
+   * Convenient string format that describes the currenty claim selection status and requirement.
    *
-   * Several cases can happen, and it all depends the min and max number of credentials the calling
-   * app is expecting for the parent claim.
+   * min 1 max 1: "x / 1"
+   * min 0 max 3: "x / max 3"
+   * min 2 max 2: "x / 2"
+   * min 2 max 4: "x / min 2, max 4"
    */
-  public onCredentialSelection(claim: ClaimDisplayEntry, credentialEntry: CredentialDisplayEntry) {
-    // If currently selected, we expect to unselect. But the code below will decide whether this
-    // expectation can be fulfilled or not.
-    let expectingToUnselect = credentialEntry.selected;
+  public claimSelectionSummary(claim: ClaimDisplayEntry): string {
+    let selectedNb = this.numberOfSelectedCredentialsInClaim(claim);
 
-    Logger.log("identity-debug", "onCredentialSelection", claim, credentialEntry);
-
-    if (expectingToUnselect) {
-      // Expecting to unselect
-      if (claim.claim.min === 0) {
-        Logger.log("identity-debug", "min is 0, unseleting");
-        credentialEntry.selected = false; // min is 0, all credentials for this claim can be unselected (optional)
-      }
-      else {
-        // min is greater than 0, then we can unselect only if we currently
-        // have have at leave min+1 selected credentials in the claim
-        let nbSelected = this.numberOfSelectedCredentialsInClaim(claim);
-        Logger.log("identity-debug", "min is not 0", nbSelected, claim.claim.min);
-        if (nbSelected > claim.claim.min)
-          credentialEntry.selected = false;
-      }
-    }
+    if (claim.claim.min === claim.claim.max)
+      return `${selectedNb} / ${claim.claim.min}`;
     else {
-      // Expecting to select
-      let nbSelected = this.numberOfSelectedCredentialsInClaim(claim);
-      if (nbSelected < claim.claim.max)
-        credentialEntry.selected = true;
+      if (claim.claim.min === 0)
+        return `${selectedNb} / max ${claim.claim.max}`;
+      else
+        return `${selectedNb} / min ${claim.claim.max}, max ${claim.claim.max}`;
     }
-  }
-
-  public numberOfSelectedCredentialsInClaim(claim: ClaimDisplayEntry): number {
-    return claim.matchingCredentials.reduce((acc, c) => c.selected ? acc + 1 : acc, 0);
-  }
-
-  /**
-   * Convenient string format that describes the claim selection style.
-   */
-  public claimSelectionType(claim: ClaimDisplayEntry): string {
-    if (claim.claim.min == 0 && claim.claim.max == 1)
-      return "optional";
-    else if (claim.claim.min == 1 && claim.claim.max == 1)
-      return "mandatory";
-    else
-      return "multiple";
   }
 
   /**

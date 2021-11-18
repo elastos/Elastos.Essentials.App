@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import FastAverageColor from 'fast-average-color';
 import { Avatar } from 'src/app/contacts/models/avatar';
 import { CredentialAvatar } from 'src/app/didsessions/model/did.model';
 import { evalObjectFieldPath } from 'src/app/helpers/objects';
@@ -31,6 +32,8 @@ type ValueItem = {
     styleUrls: ['./credential.component.scss'],
 })
 export class CredentialComponent {
+    @ViewChild("icon") iconElement: ElementRef;
+
     public _credential: CredentialDisplayEntry = null;
     public iconSrc = transparentPixelIconDataUrl();
     public description: string = null;
@@ -110,15 +113,16 @@ export class CredentialComponent {
                             Logger.log("identity", "Got empty avatar data from hive");
                             this.iconSrc = transparentPixelIconDataUrl();
                         }
+                        this.applyIconAfterFetch();
                     });
                 }
                 else {
                     // Assume base64.
                     let avatar = await Avatar.fromAvatarCredential(avatarCredential.getSubject().avatar as CredentialAvatar);
                     this.iconSrc = avatar.toBase64DataUrl();
+                    this.applyIconAfterFetch();
                 }
             }
-
         }
         else { // No remote picture to fetch
             // If the credential implements the DisplayableCredential interface, we get the icon from this.
@@ -136,7 +140,40 @@ export class CredentialComponent {
 
                 this.iconSrc = `/assets/identity/smallIcons/dark/${fragment}.svg`;
             }
+
+            this.applyIconAfterFetch();
         }
+    }
+
+    /**
+     * Applies an asynchronously fetched icon data to the UI icon
+     */
+    private applyIconAfterFetch() {
+        // Load the image manually to be able to extract the main color
+        let image = new Image();
+        image.crossOrigin = 'anonymous';
+        image.onload = async () => {
+            this.iconElement.nativeElement.crossOrigin = 'anonymous';
+            this.iconElement.nativeElement.src = image.src;
+
+            const fac = new FastAverageColor();
+            try {
+                let color = await fac.getColorAsync(this.iconElement.nativeElement);
+
+                // Change the icon background colro according to the main icon color type (light or dark)
+                if (color.isDark)
+                    this.iconElement.nativeElement.style.backgroundColor = "#FFFFFF80"; // color.rgba;
+                else
+                    this.iconElement.nativeElement.style.backgroundColor = "#00000080";
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        image.onerror = () => {
+            image.src = "https://0.0.0.0:8100/assets/identity/smallIcons/dark/finger-print.svg";
+            this.iconElement.nativeElement.style.backgroundColor = "#00000080";
+        };
+        image.src = this.iconSrc;
     }
 
     private prepareDescription() {
