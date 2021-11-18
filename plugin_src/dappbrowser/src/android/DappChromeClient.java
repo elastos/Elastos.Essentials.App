@@ -160,7 +160,13 @@ public class DappChromeClient extends WebChromeClient {
                 new WebViewClient() {
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                        inAppWebView.loadUrl(request.getUrl().toString());
+                        String url = request.getUrl().toString();
+                        if (isDialog) {
+                            DappBrowserPlugin.getInstance().webViewHandler.brwoserPlugin.openExternal(url);
+                        }
+                        else {
+                            inAppWebView.loadUrl(url);
+                        }
                         return true;
                     }
 
