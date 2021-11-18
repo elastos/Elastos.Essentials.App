@@ -48,7 +48,7 @@ export class CredentialComponent {
         void this.updateCredential(credential);
     }
 
-    @Output("click")
+    @Output("onClicked")
     private clicked?= new EventEmitter();
 
     @Output("checkBoxClicked")
@@ -170,7 +170,7 @@ export class CredentialComponent {
             }
         };
         image.onerror = () => {
-            image.src = "https://0.0.0.0:8100/assets/identity/smallIcons/dark/finger-print.svg";
+            image.src = "assets/identity/smallIcons/dark/finger-print.svg";
             this.iconElement.nativeElement.style.backgroundColor = "#00000080";
         };
         image.src = this.iconSrc;
@@ -273,7 +273,7 @@ export class CredentialComponent {
         return this.profileService.credentialIsInLocalDIDDocument(this._credential.credential);
     }
 
-    public onClick() {
+    public onClicked() {
         this.clicked?.emit();
     }
 

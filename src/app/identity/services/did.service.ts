@@ -9,10 +9,7 @@ import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { DID } from "../model/did.model";
 import { DIDStore } from "../model/didstore.model";
-import { DIDURL } from "../model/didurl.model";
 import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
-import { VerifiableCredential } from "../model/verifiablecredential.model";
-import { AuthService } from "./auth.service";
 import { LocalStorage } from "./localstorage";
 import { Native } from "./native";
 import { PopupProvider } from "./popup";
@@ -250,29 +247,5 @@ export class DIDService extends GlobalService {
       return key;
 
     return translated;
-  }
-
-  /**
-   * Deletes a given credential from user identity including local store, DID document,
-   * and does all the necessary laundry.
-   */
-  public deleteCredential(credential: VerifiableCredential) {
-    void AuthService.instance.checkPasswordThenExecute(async () => {
-      let password = AuthService.instance.getCurrentUserPassword();
-
-      // Delete locally
-      await this.getActiveDid().deleteCredential(new DIDURL(credential.pluginVerifiableCredential.getId()), true);
-
-      // Delete from local DID document
-      let currentDidDocument = this.getActiveDid().getDIDDocument();
-      if (currentDidDocument.getCredentialById(new DIDURL(credential.pluginVerifiableCredential.getId()))) {
-        await currentDidDocument.deleteCredential(
-          credential.pluginVerifiableCredential,
-          password
-        );
-      }
-    }, () => {
-      // Cancelled
-    });
   }
 }

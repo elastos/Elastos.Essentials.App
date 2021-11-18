@@ -75,6 +75,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     networks: ["elastos"]
                 },
                 {
+                    icon: '/assets/browser/dapps/glidefinance.png',
+                    title: 'Glide Finance',
+                    description: 'Elastos ecosystem decentralized exchange',
+                    url: 'https://glidefinance.io/',
+                    useExternalBrowser: false,
+                    networks: ["elastos"]
+                },
+                {
                     icon: '/assets/browser/dapps/cyberrepublic.svg',
                     title: 'Cyber Republic',
                     description: 'Cyber Republic (CR) is the community that has naturally formed around Elastos.',
@@ -89,14 +97,6 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     url: 'https://creda.app/',
                     useExternalBrowser: false,
                     networks: ["arbitrum"]
-                },
-                {
-                    icon: '/assets/browser/dapps/glidefinance.png',
-                    title: 'Glide Finance',
-                    description: 'Elastos ecosystem decentralized exchange',
-                    url: 'https://glidefinance.io/',
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
                 },
                 {
                     icon: '/assets/browser/dapps/elk.svg',
@@ -114,14 +114,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     useExternalBrowser: false,
                     networks: ["heco", "bsc"]
                 },
-                {
+                /* {
                     icon: '/assets/browser/dapps/profile.png',
                     title: 'Profile',
                     description: 'A better way to be online using Elastos DID',
                     url: 'https://profile.site/',
                     useExternalBrowser: false,
                     networks: ["elastos"]
-                },
+                }, */
                 {
                     icon: '/assets/browser/dapps/mdex.png',
                     title: 'Mdex',

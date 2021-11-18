@@ -20,6 +20,7 @@ import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model
 import { DIDDocument } from "../../model/diddocument.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
+import { CredentialsService } from "../../services/credentials.service";
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
@@ -82,7 +83,8 @@ export class CredentialDetailsPage implements OnInit {
     private globalIntentService: GlobalIntentService,
     private globalPopupService: GlobalPopupService,
     private globalNavService: GlobalNavService,
-    private authService: AuthService
+    private authService: AuthService,
+    private credentialsService: CredentialsService
   ) {
     this.init();
   }
@@ -464,14 +466,15 @@ export class CredentialDetailsPage implements OnInit {
   private async deleteCredential() {
     Logger.log("identity", "Request to delete current credential");
     let deletionConfirmed = await this.globalPopupService.showConfirmationPopup("Delete credential", "This credential will be deleted from your identity. This cannot be undone.");
-
     if (!deletionConfirmed)
       return; // Cancelled
 
     // Delete
-    this.didService.deleteCredential(this.credential);
+    let wasDeleted = await this.credentialsService.deleteCredential(this.credential);
+    Logger.log("identity", "Credential deletion result:", wasDeleted, ". Maybe exiting screen");
 
     // Exit
-    void this.globalNavService.navigateBack();
+    if (wasDeleted)
+      void this.globalNavService.navigateBack();
   }
 }
