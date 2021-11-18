@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
+import { AlertController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { AlertController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
+import { ConfirmationPopupComponent } from '../components/confirmation-popup/confirmation-popup.component';
 
 @Injectable({
     providedIn: 'root'
 })
-export class PopupProvider {
-
+export class GlobalPopupService {
     public alertPopup: any = null;
 
     constructor(
         public alertCtrl: AlertController,
+        private popoverCtrl: PopoverController,
         private translate: TranslateService,
     ) { }
 
@@ -270,6 +271,32 @@ export class PopupProvider {
             }).then(prompt => {
                 void prompt.present();
             });
+        });
+    }
+
+    /**
+     * Advanced confirmation popup with designed UI component.
+     * Resolves when the popup is closing. True if confirmed, false if cancelled.
+     */
+    private confirmationPopup: HTMLIonPopoverElement = null;
+    public showConfirmationPopup(title: string, text: string): Promise<boolean> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise(async resolve => {
+            this.confirmationPopup = await this.popoverCtrl.create({
+                cssClass: 'contacts-warning-component',
+                component: ConfirmationPopupComponent,
+                componentProps: {
+                    type: "danger", // TODO: others
+                    title,
+                    text,
+                }
+            });
+            void this.confirmationPopup.onWillDismiss().then((response) => {
+                let confirmed = response.data as boolean;
+                this.confirmationPopup = null;
+                resolve(confirmed);
+            });
+            await this.confirmationPopup.present();
         });
     }
 }

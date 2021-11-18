@@ -10,7 +10,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { PopupProvider } from 'src/app/services/global.popup.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
@@ -56,7 +56,7 @@ export class VotePage implements OnInit {
         private globalIntentService: GlobalIntentService,
         public voteService: VoteService,
         public theme: GlobalThemeService,
-        public popupProvider: PopupProvider,
+        public popupProvider: GlobalPopupService,
         private router: Router,
     ) {
         const navigation = this.router.getCurrentNavigation();

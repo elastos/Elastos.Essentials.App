@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
-
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
-import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { DIDService } from './did.service';
-import { VerifiableCredential } from '../model/verifiablecredential.model';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDURL } from '../model/didurl.model';
+import { VerifiableCredential } from '../model/verifiablecredential.model';
+import { DIDService } from './did.service';
+
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -190,7 +190,9 @@ export class BackupService extends GlobalService {
   async deleteCredentialEntryLocally(credentialID: string): Promise<void> {
     Logger.log("identitybackup", 'Deleting credential from the local model (from backup)');
     await this.didService.getActiveDid().deleteCredential(new DIDURL(credentialID), true);
-    console.log("deleteCredentialEntryLocally TODO !");
+
+    // TODO: delete from DID document !
+
     return;
   }
 

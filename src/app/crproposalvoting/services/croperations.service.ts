@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { PopupProvider } from 'src/app/services/global.popup.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { PopupService } from './popup.service';
 
@@ -38,21 +36,21 @@ export class CROperationsService {
         private popup: PopupService,
         private globalIntentService: GlobalIntentService,
         private voteService: VoteService,
-        public popupProvider: PopupProvider,
-    ) {}
+        public popupProvider: GlobalPopupService,
+    ) { }
 
     init() {
-        this.subscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+        this.subscription = this.globalIntentService.intentListener.subscribe((receivedIntent) => {
             if (receivedIntent)
                 void this.handledReceivedIntent(receivedIntent);
         });
     }
 
     public stop() {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-        this.subscription = null;
-      }
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+            this.subscription = null;
+        }
     }
 
     addOnItemClickedListener(icon) {

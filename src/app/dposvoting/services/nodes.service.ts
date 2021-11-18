@@ -9,7 +9,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { PopupProvider } from 'src/app/services/global.popup.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
@@ -113,7 +113,7 @@ export class NodesService {
         private globalElastosAPIService: GlobalElastosAPIService,
         public voteService: VoteService,
         private walletManager: WalletService,
-        public popupProvider: PopupProvider,
+        public popupProvider: GlobalPopupService,
         public events: Events,
         public zone: NgZone,
     ) {

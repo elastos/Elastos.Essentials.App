@@ -1,19 +1,22 @@
 import { Injectable, NgZone } from "@angular/core";
 import { ToastController } from "@ionic/angular";
-
 import { TranslateService } from "@ngx-translate/core";
-import { LocalStorage } from "./localstorage";
-import { PopupProvider } from "./popup";
-import { Native } from "./native";
-import { DIDStore } from "../model/didstore.model";
-import { DID } from "../model/did.model";
-import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
-import { GlobalDIDSessionsService, IdentityEntry } from "src/app/services/global.didsessions.service";
-import { Logger } from "src/app/logger";
-import { GlobalIntentService } from "src/app/services/global.intent.service";
-import { Events } from "src/app/services/events.service";
 import { BehaviorSubject } from "rxjs";
+import { Logger } from "src/app/logger";
+import { Events } from "src/app/services/events.service";
+import { GlobalDIDSessionsService, IdentityEntry } from "src/app/services/global.didsessions.service";
+import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
+import { DID } from "../model/did.model";
+import { DIDStore } from "../model/didstore.model";
+import { DIDURL } from "../model/didurl.model";
+import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
+import { VerifiableCredential } from "../model/verifiablecredential.model";
+import { AuthService } from "./auth.service";
+import { LocalStorage } from "./localstorage";
+import { Native } from "./native";
+import { PopupProvider } from "./popup";
+
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -92,24 +95,24 @@ export class DIDService extends GlobalService {
   }
 
   public async activateDidStore(storeId: string): Promise<boolean> {
-      if (storeId == null) {
-        Logger.error('identity', "Impossible to activate a null store id!");
-        return false;
-      }
+    if (storeId == null) {
+      Logger.error('identity', "Impossible to activate a null store id!");
+      return false;
+    }
 
-      let didStore = await DIDStore.loadFromDidStoreId(storeId, this.events, this.didSessions, this.globalIntentService);
-      if (!didStore) {
-        void this.popupProvider.ionicAlert(
-          "Store load error",
-          "Sorry, we were unable to load your DID store..."
-        );
-        return false;
-      }
+    let didStore = await DIDStore.loadFromDidStoreId(storeId, this.events, this.didSessions, this.globalIntentService);
+    if (!didStore) {
+      void this.popupProvider.ionicAlert(
+        "Store load error",
+        "Sorry, we were unable to load your DID store..."
+      );
+      return false;
+    }
 
-      Logger.log("Identity", "Setting active DID store", didStore);
-      this.activeDidStore = didStore;
+    Logger.log("Identity", "Setting active DID store", didStore);
+    this.activeDidStore = didStore;
 
-      return true;
+    return true;
   }
 
   /**
@@ -247,5 +250,29 @@ export class DIDService extends GlobalService {
       return key;
 
     return translated;
+  }
+
+  /**
+   * Deletes a given credential from user identity including local store, DID document,
+   * and does all the necessary laundry.
+   */
+  public deleteCredential(credential: VerifiableCredential) {
+    void AuthService.instance.checkPasswordThenExecute(async () => {
+      let password = AuthService.instance.getCurrentUserPassword();
+
+      // Delete locally
+      await this.getActiveDid().deleteCredential(new DIDURL(credential.pluginVerifiableCredential.getId()), true);
+
+      // Delete from local DID document
+      let currentDidDocument = this.getActiveDid().getDIDDocument();
+      if (currentDidDocument.getCredentialById(new DIDURL(credential.pluginVerifiableCredential.getId()))) {
+        await currentDidDocument.deleteCredential(
+          credential.pluginVerifiableCredential,
+          password
+        );
+      }
+    }, () => {
+      // Cancelled
+    });
   }
 }

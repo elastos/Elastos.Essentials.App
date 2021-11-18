@@ -1,0 +1,25 @@
+<div class="container" [class.darkContainer]="theme.darkMode">
+  <ion-row class="delete-header">
+    <img src="/assets/contacts/images/warning.svg">
+    <h1 class="ion-padding-horizontal ion-text-center">{{ title }}</h1>
+  </ion-row>
+
+  <ion-row>
+    <ion-col class="message ion-no-padding">
+      <p class="ion-padding-horizontal">
+        {{ text }} <br>
+      </p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="btn-row">
+    <ion-col class="btn ion-activatable ripple" size="5" (click)="cancel()">
+      <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+    <ion-col class="btn ion-activatable ripple" size="5" (click)="confirm()">
+      <ion-label>{{ 'common.confirm' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+  </ion-row>
+</div>

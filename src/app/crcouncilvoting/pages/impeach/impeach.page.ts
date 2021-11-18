@@ -7,7 +7,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { PopupProvider } from 'src/app/services/global.popup.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
@@ -36,7 +36,7 @@ export class ImpeachCRMemberPage {
         private globalNav: GlobalNavService,
         public candidatesService: CandidatesService,
         private voteService: VoteService,
-        public popupProvider: PopupProvider,
+        public popupProvider: GlobalPopupService,
     ) { }
 
 

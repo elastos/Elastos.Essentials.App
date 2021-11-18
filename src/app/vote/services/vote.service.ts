@@ -3,7 +3,7 @@ import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { PopupProvider } from 'src/app/services/global.popup.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
@@ -39,7 +39,7 @@ export class VoteService {
     constructor(
         public native: Native,
         private walletManager: WalletService,
-        public popupProvider: PopupProvider,
+        public popupProvider: GlobalPopupService,
         private nav: GlobalNavService,
         private walletNetworkService: WalletNetworkService,
         private walletNetworkUIService: WalletNetworkUIService,

@@ -7,11 +7,14 @@ import { isNil } from "lodash-es";
 import * as moment from "moment";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
+import { TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
 import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { GlobalNavService } from "src/app/services/global.nav.service";
+import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { DIDDocument } from "../../model/diddocument.model";
@@ -61,6 +64,8 @@ export class CredentialDetailsPage implements OnInit {
 
   public displayableProperties: DisplayProperty[];
 
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
   constructor(
     private http: HttpClient,
     public events: Events,
@@ -75,6 +80,8 @@ export class CredentialDetailsPage implements OnInit {
     public profileService: ProfileService,
     private basicCredentialService: BasicCredentialsService,
     private globalIntentService: GlobalIntentService,
+    private globalPopupService: GlobalPopupService,
+    private globalNavService: GlobalNavService,
     private authService: AuthService
   ) {
     this.init();
@@ -139,9 +146,20 @@ export class CredentialDetailsPage implements OnInit {
     await this.getIssuer();
     this.displayableProperties = this.getDisplayableProperties();
     this.titleBar.setTitle(this.translate.instant('identity.credentialdetails-title'));
+    this.titleBar.setupMenuItems([
+      { key: "delete", title: "Delete", iconPath: "assets/contacts/images/delete.svg" }
+    ]);
+    this.titleBar.setMenuVisibility(true);
+
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      if (icon.key === "delete") {
+        void this.deleteCredential();
+      }
+    });
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   ionViewDidEnter() {
@@ -434,5 +452,26 @@ export class CredentialDetailsPage implements OnInit {
         claims: claimsObject,
       }
     );
+  }
+
+  /**
+   * User requests to delete this credential:
+   * - confirm
+   * - delete from DID document
+   * - delete from store
+   * - exit screen
+   */
+  private async deleteCredential() {
+    Logger.log("identity", "Request to delete current credential");
+    let deletionConfirmed = await this.globalPopupService.showConfirmationPopup("Delete credential", "This credential will be deleted from your identity. This cannot be undone.");
+
+    if (!deletionConfirmed)
+      return; // Cancelled
+
+    // Delete
+    this.didService.deleteCredential(this.credential);
+
+    // Exit
+    void this.globalNavService.navigateBack();
   }
 }
