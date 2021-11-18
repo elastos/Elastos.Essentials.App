@@ -21,9 +21,16 @@ import android.widget.ProgressBar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.cordova.LOG;
 import org.apache.cordova.CordovaWebView;
@@ -44,13 +51,11 @@ public class DappBrowserClient extends WebViewClient {
     boolean waitForBeforeload;
     ProgressBar progressBar;
     private Activity activity;
-    private String[] allowedSchemes;
     private DappBrowserPlugin brwoserPlugin;
-    private Boolean injected = false;
+    private Boolean sslerrorAndNeedInject = false;
     public String originUrl;
 
     public DappBrowserClient(DappBrowserPlugin brwoserPlugin, ProgressBar progressBar, String beforeload) {
-        this.webView = webView;
         this.beforeload = beforeload;
         this.waitForBeforeload = beforeload != null;
         this.brwoserPlugin = brwoserPlugin;
@@ -193,17 +198,6 @@ public class DappBrowserClient extends WebViewClient {
         }
         // Test for whitelisted custom scheme names like mycoolapp:// or twitteroauthresponse:// (Twitter Oauth Response)
         else if (!url.startsWith("http:") && !url.startsWith("https:") /*&& url.matches("^[A-Za-z0-9+.-]*://.*?$")*/) {
-/** Don't check the allowed list */
-//            if (allowedSchemes == null) {
-//                String allowed = brwoserPlugin.getPreferences().getString("AllowedSchemes", null);
-//                if(allowed != null) {
-//                    allowedSchemes = allowed.split(",");
-//                }
-//            }
-//            if (allowedSchemes != null) {
-//                for (String scheme : allowedSchemes) {
-//                    if (url.startsWith(scheme)) {
-
             //direct open in system browser
             brwoserPlugin.openExternal(url);
 
@@ -217,9 +211,6 @@ public class DappBrowserClient extends WebViewClient {
             } catch (Exception ex) {
                 LOG.e(LOG_TAG, "Custom Scheme URI passed in has caused a error.");
             }
-//                    }
-//                }
-//            }
         }
 
         if (useBeforeload) {
@@ -253,12 +244,39 @@ public class DappBrowserClient extends WebViewClient {
      */
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-        //Check whether injected, if not will inject web3 provider
-        if (!injected) {
-            injectWeb3ProviderScript(request.getUrl().toString());
+        LOG.d(LOG_TAG, "in browser client. isMainFrame:" + request.isForMainFrame() +": " + request.getUrl());
+
+        String urlString = request.getUrl().toString();
+        WebResourceResponse resourceResponse = null;
+
+        if (request.isForMainFrame() || this.originUrl == null || urlString.equals(this.originUrl)) {
+            try {
+                URL url = new URL(urlString);
+                URLConnection connection = url.openConnection();
+                String mimeType = connection.getContentType();
+                if ((mimeType == null)) {
+                    mimeType = "text/html";
+                }
+                if ((mimeType != null) && mimeType.contains("text/html")) {
+                    String encoding = connection.getHeaderField("encoding");
+                    if (encoding == null) {
+                        //TODO:: maybe try get charset from mimeType.
+                        encoding = "UTF-8";
+                    }
+                    InputStream inputStream = connection.getInputStream();
+                    inputStream = injectJSInHeadTag(inputStream);
+                    resourceResponse = new WebResourceResponse("text/html", encoding, inputStream);
+                }
+            }
+            catch (IOException e) {
+                LOG.e(LOG_TAG, e.getLocalizedMessage());
+            }
+        }
+        else if (sslerrorAndNeedInject) { //TODO:: This use in debuggable, but it don't work now
+            injectWeb3ProviderScript(request);
         }
 
-        return shouldInterceptRequest(request.getUrl().toString(), super.shouldInterceptRequest(view, request), request.getMethod());
+        return shouldInterceptRequest(urlString, resourceResponse, request.getMethod());
     }
 
     public WebResourceResponse shouldInterceptRequest(String url, WebResourceResponse response, String method) {
@@ -276,7 +294,7 @@ public class DappBrowserClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
 
-        injected = false;
+        sslerrorAndNeedInject = false;
         this.originUrl = url;
 
         String newloc = "";
@@ -353,11 +371,10 @@ public class DappBrowserClient extends WebViewClient {
     @Override
     public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
         // If debuggable version, it will don't cancel and return.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (0 != (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-                handler.proceed();
-                return;
-            }
+        if (isDebuggable()) {
+            sslerrorAndNeedInject = true;
+            handler.proceed();
+            return;
         }
 
         super.onReceivedSslError(view, handler, error);
@@ -440,10 +457,33 @@ public class DappBrowserClient extends WebViewClient {
         super.onLoadResource(view, url);
     }
 
-    private synchronized void injectWeb3ProviderScript(String url) {
-        if (!injected && (this.originUrl != null) && !url.equals(this.originUrl)) {
+    public InputStream injectJSInHeadTag(InputStream inputStream) throws IOException {
+        BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String line; (line = buf.readLine()) != null; ) {
+            stringBuilder.append(line).append('\n');
+        }
+        String html = stringBuilder.toString();
+        html = html.replaceFirst("(<head\\b[^>]*>)", "$1<script type='text/javascript'> essentials_atdocumentstartscript_value </script>");
+        html = html.replace("essentials_atdocumentstartscript_value", brwoserPlugin.webViewHandler.options.atdocumentstartscript);
+        return new ByteArrayInputStream(html.getBytes());
+    }
+
+    private synchronized void injectWeb3ProviderScript(WebResourceRequest request) {
+        String url = request.getUrl().toString();
+        if (sslerrorAndNeedInject && (!request.isForMainFrame() || (this.originUrl != null) && !url.equals(this.originUrl))) {
             brwoserPlugin.injectDeferredObject(brwoserPlugin.webViewHandler.options.atdocumentstartscript, null);
-            injected = true;
+            sslerrorAndNeedInject = false;
         }
     }
+
+    private boolean isDebuggable() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (0 != (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

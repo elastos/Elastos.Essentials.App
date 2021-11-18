@@ -22,12 +22,10 @@
 
 package org.elastos.essentials.plugins.dappbrowser;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
@@ -37,7 +35,6 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
@@ -45,25 +42,18 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import org.elastos.essentials.app.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.view.WindowManager.LayoutParams;
 
 import org.apache.cordova.LOG;
-import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 
 public class WebViewHandler {
     protected static final String LOG_TAG = "WebViewHandler";
@@ -80,7 +70,7 @@ public class WebViewHandler {
     DappBrowserOptions options;
     private Activity activity;
     String beforeload = "";
-    private DappBrowserClient currentClient;
+    public DappBrowserClient currentClient;
 
     public ValueCallback<Uri[]> mUploadCallback;
     public final static int FILECHOOSER_REQUESTCODE = 1;
@@ -292,8 +282,10 @@ public class WebViewHandler {
             // NB: wait for about:blank before dismissing
             public void onPageFinished(WebView view, String url) {
                 webView.destroy();
-                webView = null;
                 brwoserPlugin.webViewHandler = null;
+                webView = null;
+                currentClient = null;
+
                 //For onBackPressed work
                 brwoserPlugin.webView.getView().requestFocus();
 
@@ -443,5 +435,7 @@ public class WebViewHandler {
     public void setAlpha(float alpha) {
         webView.setAlpha(alpha);
     }
+
+
 
 }

@@ -31,15 +31,16 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.Browser;
 import android.view.ViewGroup;
+import android.webkit.ServiceWorkerClient;
+import android.webkit.ServiceWorkerController;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.Config;
-import org.apache.cordova.CordovaArgs;
-import org.apache.cordova.CordovaHttpAuthHandler;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.LOG;
 import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
@@ -63,14 +64,8 @@ public class DappBrowserPlugin extends CordovaPlugin {
     private static final String SELF = "_self";
     private static final String SYSTEM = "_system";
 
-    private static final String EXIT_EVENT = "exit";
-    private static final String LOAD_START_EVENT = "loadstart";
-    private static final String LOAD_STOP_EVENT = "loadstop";
-    private static final String LOAD_ERROR_EVENT = "loaderror";
-    private static final String MESSAGE_EVENT = "message";
-
     private CallbackContext callbackContext;
-    public WebViewHandler webViewHandler;
+    public WebViewHandler webViewHandler = null;
     public int viewHeight;
     static DappBrowserPlugin instance = null;
 
@@ -82,6 +77,19 @@ public class DappBrowserPlugin extends CordovaPlugin {
     public void pluginInitialize() {
         viewHeight = ((ViewGroup)this.webView.getView()).getHeight();
         instance = this;
+
+        ServiceWorkerController swController = ServiceWorkerController.getInstance();
+        swController.setServiceWorkerClient(new ServiceWorkerClient() {
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
+                if (webViewHandler != null && webViewHandler.currentClient != null) {
+                    LOG.d(LOG_TAG, "in service worker. isMainFrame:"+request.isForMainFrame() +": " + request.getUrl());
+                    return webViewHandler.currentClient.shouldInterceptRequest(null, request);
+                }
+                return null;
+            }
+        });
+        swController.getServiceWorkerWebSettings().setAllowContentAccess(true);
     }
 
     public boolean isMainThread() {
