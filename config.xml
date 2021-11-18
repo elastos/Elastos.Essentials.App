@@ -223,6 +223,4 @@
     <hook src="scripts/modify_xcode_project.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <allow-navigation href="https://0.0.0.0:8100" sessionid="a89a190a" />
-    <allow-navigation href="http://192.168.8.214:8100" sessionid="dbcc4dc6" />
-    <allow-navigation href="http://192.168.8.214:8101" sessionid="c92abd2e" />
 </widget>

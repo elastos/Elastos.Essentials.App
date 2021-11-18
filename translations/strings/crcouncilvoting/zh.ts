@@ -26,6 +26,7 @@ export const zh = {
         'Inactive': '非激活',
         'Active': '激活',
         'Illegal': '非法',
+        'Expired': '过期',
 
         'support': '赞同',
         'reject': '反对',

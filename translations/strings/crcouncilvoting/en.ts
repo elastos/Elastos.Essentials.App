@@ -26,6 +26,7 @@ export const en = {
         'Inactive': 'Inactive',
         'Active': 'Active',
         'Illegal': 'Illegal',
+        'Expired': 'Expired',
 
         'support': 'Support',
         'reject': 'Reject',

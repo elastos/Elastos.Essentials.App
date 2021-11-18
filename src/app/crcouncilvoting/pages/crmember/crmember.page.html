@@ -20,7 +20,13 @@
                     </ion-label>
                 </ion-col>
                 <ion-col size="2.75" class="right-col align-center align-right">
-                    <p class="status">{{'crcouncilvoting.'+ member.status | translate }}</p>
+                    <p class="status" [class.elected]="member.status === 'Elected'"
+                        [class.impeached]="member.status === 'Impeached'"
+                        [class.returned]="member.status === 'Returned'"
+                        [class.terminated]="member.status === 'Terminated'"
+                        [class.inactive]="member.status === 'Inactive'" [class.active]="member.status === 'Active'"
+                        [class.illegal]="member.status === 'Illegal'" [class.expired]="member.status === 'Expired'">
+                        {{'crcouncilvoting.'+ member.status | translate }}</p>
                 </ion-col>
             </ion-row>
 
@@ -107,8 +113,13 @@
                             </p>
                         </ion-label>
                     </ion-col>
-                    <ion-col class="voteResult label-col" size="2.5">
-                        <div class="align-center">{{'crcouncilvoting.' + item.voteResult | translate}}</div>
+                    <ion-col class="label-col" size="2.5">
+                        <div class="voteResult align-center" [class.support]="item.voteResult === 'support'"
+                            [class.reject]="item.voteResult === 'reject'"
+                            [class.abstention]="item.voteResult === 'abstention'"
+                            [class.undecided]="item.voteResult === 'undecided'">
+                            {{'crcouncilvoting.' + item.voteResult | translate}}
+                        </div>
                     </ion-col>
                 </ion-row>
             </ion-list>

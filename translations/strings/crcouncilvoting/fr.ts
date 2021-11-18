@@ -25,6 +25,7 @@ export const fr = {
         'Inactive': 'Inactive',
         'Active': 'Active',
         'Illegal': 'Illegal',
+        'Expired': 'Expired',
 
         'support': 'Support',
         'reject': 'Reject',

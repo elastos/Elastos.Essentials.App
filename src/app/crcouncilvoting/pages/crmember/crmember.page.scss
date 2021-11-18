@@ -39,7 +39,47 @@ ion-col {
         height: 22;
         font-size: 10px;
         font-weight: 600;
+
+    }
+
+    .elected {
+        color: #000000;
         background-color: #74ffde;
+    }
+
+    .impeached {
+        color: #FFFFFF;
+        background-color: #7B6700;
+    }
+
+    .returned {
+        color: #FFFFFF;
+        background-color: #7774FF;
+    }
+
+    .terminated {
+        color: #FFFFFF;
+        background-color: #BC1212;
+    }
+
+    .inactive {
+        color: #808080;
+        background-color: #ECECEC;
+    }
+
+    .active {
+        color: #000000;
+        background-color: #74ffde;
+    }
+
+    .illegal {
+        color: #FFFFFF;
+        background-color: #BC1212;
+    }
+
+    .expired {
+        color: #000000;
+        border: 1px solid #C4C4C4;
     }
 }
 
@@ -113,16 +153,34 @@ ion-segment {
 .voteResult {
     padding: 5px 10px;
     border-radius: 6px;
-    border: 1px solid #00d88a;
     height: 22;
     font-size: 10px;
-    color: #03b776;
-    background-color: rgba(116, 255, 222, 0.15);
+}
+
+.support {
+    color: #00B978;
+    background-color: rgba(96, 206, 180, 0.15);
+}
+
+.reject {
+    color: #FF3838;
+    background-color: #FFEAEA;
+}
+
+.abstention {
+    color: #CCCCCC;
+    background-color: #282828;
+}
+
+.undecided {
+    color: #CCCCCC;
+    background-color: rgba(96, 206, 180, 0.15);
 }
 
 .footer-space {
     background-color: #ffffff;
     height: 113px;
+    width: 100%;
 }
 
 .darkContainer {
@@ -135,8 +193,18 @@ ion-segment {
     }
 
     .id-row {
-        .status {
-            color: #000000;
+        .impeached {
+            background-color: #7B6800;
+        }
+
+        .inactive {
+            color: #545454;
+            background-color: #ECECEC;
+        }
+
+        .expired {
+            color: #FFFFFF;
+            border: 1px solid #FFFFFF;
         }
     }
 
@@ -156,12 +224,29 @@ ion-segment {
         }
     }
 
-    .voteResult {
-        border: 1px solid #235c48;
-        color: #3fab85;
+    .support {
+        color: #27D89A;
+        background-color: rgba(116, 255, 222, 0.15);
+    }
+
+    .reject {
+        color: #FF7474;
+        background-color: #4E1616;
+    }
+
+    .abstention {
+        color: #FFFFFF;
+        background-color: #282828;
+    }
+
+    .undecided {
+        color: #F8F8F8;
+        background-color: #545454;
     }
 
     .footer-space {
         background-color: #121212;
     }
+
+
 }
