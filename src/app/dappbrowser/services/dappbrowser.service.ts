@@ -238,36 +238,6 @@ export class DappBrowserService {
         }
     }
 
-    private async injectWeb3Provider(event: DappBrowserPlugin.DappBrowserEvent) {
-        // Updated the browsed url
-        this.url = event.url;
-
-
-
-        // // Inject the web3 provider
-        // Logger.log("dappbrowser", "Executing Web3 provider injection script");
-        // void dappBrowser.executeScript({code: this.web3ProviderCode});
-
-        // Inject the Elastos connectivity connector
-        Logger.log("dappbrowser", "Executing Elastos connector injection script");
-        /* setTimeout(() => {
-            void dappBrowser.executeScript({ code: this.elastosConnectorCode });
-            Logger.log("dappbrowser", "Injection completed");
-
-        }, 15000); */
-
-        // Manually send current network and wallet first (behaviorsubject gets the event only for the first
-        // dapp opened)
-        //console.log("ACTIVE NETWORK", WalletNetworkService.instance.activeNetwork.value)
-        //this.sendActiveNetworkToDApp(WalletNetworkService.instance.activeNetwork.value);
-        //void this.sendActiveWalletToDApp(WalletService.instance.activeNetworkWallet.value);
-
-        // Remember this application as browsed permanently.
-        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(this.url, "", "", ""));
-
-        return;
-    }
-
     private sendActiveNetworkToDApp(activeNetwork: Network) {
         // Get the active network chain ID
         this.activeChainID = activeNetwork.getMainChainID();
@@ -298,7 +268,11 @@ export class DappBrowserService {
     }
 
     private async handleLoadStartEvent(event: DappBrowserPlugin.DappBrowserEvent) {
-        await this.injectWeb3Provider(event);
+        // Updated the browsed url
+        this.url = event.url;
+
+        // Remember this application as browsed permanently.
+        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(this.url, "", "", ""));
     }
 
     private handleLoadStopEvent(event: DABLoadStop): Promise<void> {
