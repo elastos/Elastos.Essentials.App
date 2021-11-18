@@ -330,13 +330,15 @@ export class DappBrowserService {
                     if (!iconUrl.startsWith("http")) { // Not an absolute url, so we have to concatenate the dapp url
                         let url = new URL(this.url);
                         url.pathname = iconUrl;
-                        iconUrl = url.toString();
+                        // The icon URL of some websites is xxx.ico?r1, so url.toString() will be 'xxx.ico%3Fr1'
+                        iconUrl = url.toString().replace(/%3F/g, "?");
                     }
                 }
             }
         }
-        if (iconUrl)
-            iconUrl = iconUrl.toLowerCase();
+        // Some websites have icon names with uppercase letters.
+        // if (iconUrl)
+        //     iconUrl = iconUrl.toLowerCase();
 
         Logger.log("dappbrowser", "Extracted website title:", title);
         Logger.log("dappbrowser", "Extracted website description:", description);

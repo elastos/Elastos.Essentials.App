@@ -91,6 +91,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     networks: ["elastos"]
                 },
                 {
+                    icon: '/assets/browser/dapps/anyswap.svg',
+                    title: 'AnySwap',
+                    description: 'Anyswap is a fully decentralized cross chain swap protocol, based on Fusion DCRM technology, with automated pricing and liquidity system.',
+                    url: 'https://anyswap.exchange/',
+                    useExternalBrowser: false,
+                    networks: ["arbitrum", "avalanchecchain", "bsc", "eth", "heco", "fusion", "fantom", "polygon", "telos"]
+                },
+                {
                     icon: '/assets/browser/dapps/creda.png',
                     title: 'CreDA',
                     description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
