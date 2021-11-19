@@ -170,9 +170,9 @@ export class RegisterApplicationProfileRequestPage {
     let createdCredential = await this.didService.getActiveDid().upsertCredential(credentialId, props, password, true, customCredentialTypes);
 
     // Add this credential to the DID document.
-    await this.didService.getActiveDid().getDIDDocument().updateOrAddCredential(createdCredential, password);
+    await this.didService.getActiveDid().getLocalDIDDocument().updateOrAddCredential(createdCredential, password);
 
-    Logger.warn('identity', "diddoc after main app profile added:", this.didService.getActiveDid().getDIDDocument());
+    Logger.warn('identity', "diddoc after main app profile added:", this.didService.getActiveDid().getLocalDIDDocument());
   }
 
   createIndependantCredentials(password: string) {
@@ -188,8 +188,8 @@ export class RegisterApplicationProfileRequestPage {
         let createdCredential: DIDPlugin.VerifiableCredential = await this.didService.getActiveDid().upsertCredential(credentialId, { key: value }, password, true);
         this.credentials.push(createdCredential);
         // Add this credential to the DID document.
-        await this.didService.getActiveDid().getDIDDocument().updateOrAddCredential(createdCredential, password);
-        Logger.warn('identity', "diddoc after shared claim added:", this.didService.getActiveDid().getDIDDocument());
+        await this.didService.getActiveDid().getLocalDIDDocument().updateOrAddCredential(createdCredential, password);
+        Logger.warn('identity', "diddoc after shared claim added:", this.didService.getActiveDid().getLocalDIDDocument());
       });
     }
   }

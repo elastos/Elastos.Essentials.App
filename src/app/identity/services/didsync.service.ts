@@ -227,7 +227,7 @@ export class DIDSyncService implements GlobalService {
     }
 
     // Compare modification dates
-    /* let locallyUpdatedDate = await did.getDIDDocument().getUpdated();
+    /* let locallyUpdatedDate = await did.getLocalDIDDocument().getUpdated();
     if (
       locallyUpdatedDate >
       currentOnChainDIDDocument.pluginDidDocument.getUpdated()

@@ -1,7 +1,10 @@
+import { VerifiableCredential } from "./verifiablecredential.model";
+
 export type CredentialDisplayEntry = {
-  credential: DIDPlugin.VerifiableCredential; // Related real credential
+  credential: VerifiableCredential; // Related real credential
   issuer: string; // DID String of the credential issuer
-  isVisible: boolean; // This credential is currently visible in the local DID Document
+  isInLocalDocument: boolean; // This credential is currently visible in the local DID document
+  isInPublishedDocument: boolean; // This credential is currently published in the on-chain DID document
   willingToDelete: boolean;
   canDelete: boolean;
 };

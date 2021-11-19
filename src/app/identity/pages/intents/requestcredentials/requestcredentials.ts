@@ -564,7 +564,7 @@ export class RequestCredentialsPage {
           }
         }
 
-        const jwtToken = await this.didService.getActiveDid().getDIDDocument().createJWT(
+        const jwtToken = await this.didService.getActiveDid().getLocalDIDDocument().createJWT(
           payload,
           1, // Presentation JWT validity expires after 1 day  //this.receivedIntent.jwtExpirationDays,
           this.authService.getCurrentUserPassword()

@@ -30,7 +30,7 @@ export class ExpirationService {
         let expiredItems: ExpiredItem[] = []
 
         let did: DID = this.didService.getActiveDid();
-        let didDocument: DIDDocument = did.getDIDDocument();
+        let didDocument: DIDDocument = did.getLocalDIDDocument();
 
         //verify if active DID is about to expire
         let didExpirationItem = this.verifyDIDExpiration(did.getDIDString(), didDocument, maxDaysToExpire)

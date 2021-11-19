@@ -12,7 +12,7 @@
       </ion-col>
       <ion-col size="12" class="show-col ion-align-self-end">
         <span>{{ 'identity.show-on-profile' | translate }}</span>
-       </ion-col>
+      </ion-col>
     </ion-row>
 
     <div *ngFor="let entry of profile.entries" class="credentials">
@@ -29,13 +29,15 @@
             </ion-row>
             <ion-row>
               <ion-col class="edit-col">
-                <ion-input mode="ios" [placeholder]="'identity.enter-here'|translate" [(ngModel)]="entry.value" name="edit" ngDefaultControl></ion-input>
+                <ion-input mode="ios" [placeholder]="'identity.enter-here'|translate" [(ngModel)]="entry.value"
+                  name="edit" ngDefaultControl></ion-input>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+            (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -52,20 +54,16 @@
             </ion-row>
             <ion-row>
               <ion-col class="edit-col">
-                <ion-input
-                  mode="ios"
-                  [placeholder]="'identity.enter-here'|translate"
-                  [(ngModel)]="entry.value"
-                  type="email" pattern="email" name="email"
-                  ngDefaultControl
-                >
+                <ion-input mode="ios" [placeholder]="'identity.enter-here'|translate" [(ngModel)]="entry.value"
+                  type="email" pattern="email" name="email" ngDefaultControl>
                 </ion-input>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+            (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -82,13 +80,15 @@
             </ion-row>
             <ion-row class="edit-col">
               <ion-col>
-                <ion-input mode="ios" [placeholder]="'identity.enter-here'|translate" [(ngModel)]="entry.value" type="tel" name="tel" ngDefaultControl></ion-input>
+                <ion-input mode="ios" [placeholder]="'identity.enter-here'|translate" [(ngModel)]="entry.value"
+                  type="tel" name="tel" ngDefaultControl></ion-input>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+            (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -111,7 +111,8 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+            (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -130,8 +131,9 @@
             </ion-row>
             <ion-row class="edit-col">
               <ion-col>
-                <ion-select [(ngModel)]="entry.value" [placeholder]="'identity.select-one'|translate" [interfaceOptions]="option"
-                  [cancelText]="'common.cancel'|translate" [okText]="'common.confirm'|translate" ngDefaultControl>
+                <ion-select [(ngModel)]="entry.value" [placeholder]="'identity.select-one'|translate"
+                  [interfaceOptions]="option" [cancelText]="'common.cancel'|translate"
+                  [okText]="'common.confirm'|translate" ngDefaultControl>
                   <ion-select-option value="female">{{ 'identity.female' | translate }}</ion-select-option>
                   <ion-select-option value="male">{{ 'identity.male' | translate }}</ion-select-option>
                 </ion-select>
@@ -140,7 +142,8 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+            (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -157,17 +160,17 @@
             </ion-row>
             <ion-row class="edit-col">
               <ion-col>
-                <ion-datetime picker-format="YYYY/M/D" [(ngModel)]="entry.value" [placeholder]="'identity.select-date'|translate"
-                  [cancelText]="'common.cancel'|translate" [doneText]="'common.confirm'|translate"
-                  (ionChange)="formatBirthDay(entry)"
-                  ngDefaultControl>
+                <ion-datetime picker-format="YYYY/M/D" [(ngModel)]="entry.value"
+                  [placeholder]="'identity.select-date'|translate" [cancelText]="'common.cancel'|translate"
+                  [doneText]="'common.confirm'|translate" (ionChange)="formatBirthDay(entry)" ngDefaultControl>
                 </ion-datetime>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+            (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -185,7 +188,8 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+            (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
     </div>

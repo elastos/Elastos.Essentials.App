@@ -98,14 +98,14 @@ export class SetHiveProviderRequestPage {
   async addOrUpdateService(password: string) {
     Logger.log("identity", "Creating service");
 
-    let service: DIDPlugin.Service = await this.didService.getActiveDid().getDIDDocument().getService('#hivevault');
+    let service: DIDPlugin.Service = await this.didService.getActiveDid().getLocalDIDDocument().getService('#hivevault');
     if (service) {
       Logger.log("identity", 'The #hivevault service already exists, updating it');
-      await this.didService.getActiveDid().getDIDDocument().removeService('#hivevault', password);
+      await this.didService.getActiveDid().getLocalDIDDocument().removeService('#hivevault', password);
     }
 
     service = didManager.ServiceBuilder.createService('#hivevault', 'HiveVault', this.receivedIntent.params.address);
-    await this.didService.getActiveDid().getDIDDocument().addService(service, password);
+    await this.didService.getActiveDid().getLocalDIDDocument().addService(service, password);
   }
 
   async rejectRequest() {

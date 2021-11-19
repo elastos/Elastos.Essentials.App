@@ -224,7 +224,7 @@ export class CredentialImportRequestPage {
 
         // Also add the credential to the DID document if we need to publish it.
         if (this.forceToPublishCredentials) {
-          await this.didService.getActiveDid().getDIDDocument().updateOrAddCredential(displayableCredential.credential.pluginVerifiableCredential, AuthService.instance.getCurrentUserPassword());
+          await this.didService.getActiveDid().getLocalDIDDocument().updateOrAddCredential(displayableCredential.credential.pluginVerifiableCredential, AuthService.instance.getCurrentUserPassword());
         }
 
         importedCredentialsResult.push(displayableCredential.credential.pluginVerifiableCredential.getId())
@@ -262,7 +262,7 @@ export class CredentialImportRequestPage {
       }
     });
 
-    await this.didService.getActiveDid().getDIDDocument().publish(AuthService.instance.getCurrentUserPassword());
+    await this.didService.getActiveDid().getLocalDIDDocument().publish(AuthService.instance.getCurrentUserPassword());
   }
 
   private finalizeRequest(importedCredentials: string[]) {

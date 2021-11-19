@@ -74,8 +74,6 @@ export class Profile {
     return newProfile;
   }
 
-
-
   isMale() {
     let genderEntry = this.getEntryByKey("gender");
     return (

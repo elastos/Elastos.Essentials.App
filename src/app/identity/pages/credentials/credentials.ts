@@ -123,7 +123,7 @@ export class CredentialsPage {
 
       this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
-      Logger.log("identity", "Has credentials?", this.hasCredential);
+      Logger.log("identity", "Has credentials?", this.hasCredential, this.credentials);
 
       // Sort credentials by title
       this.credentials.sort((c1, c2) => {
@@ -183,7 +183,7 @@ export class CredentialsPage {
     //this.profileService.appCreds = [];
     let hasAvatar = false;
 
-    this.profileService.visibleCredentials.map((cred) => {
+    this.profileService.credsInLocalDoc.map((cred) => {
       // Find Avatar Credential
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
@@ -195,7 +195,7 @@ export class CredentialsPage {
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
-    this.profileService.invisibleCredentials.map((cred) => {
+    this.profileService.credsNotInLocalDoc.map((cred) => {
       // Find App Credentials
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
@@ -242,12 +242,12 @@ export class CredentialsPage {
   /********** Prompt warning before deleting if creds are selected **********/
   deleteSelectedCredentials() {
     let selectedCreds = 0;
-    this.profileService.invisibleCredentials.map((cred) => {
+    this.profileService.credsNotInLocalDoc.map((cred) => {
       if (cred.willingToDelete) {
         selectedCreds++;
       }
     });
-    this.profileService.visibleCredentials.map((cred) => {
+    this.profileService.credsInLocalDoc.map((cred) => {
       if (cred.willingToDelete) {
         selectedCreds++;
       }
@@ -462,8 +462,8 @@ export class CredentialsPage {
 
   get filteredCredentials(): CredentialDisplayEntry[] {
     if (this.segment == "all") return this.profileService.allCreds
-    if (this.segment == "hidden") return this.profileService.invisibleCredentials
-    if (this.segment == "visible") return this.profileService.visibleCredentials
+    if (this.segment == "hidden") return this.profileService.credsNotInPublishedDoc
+    if (this.segment == "visible") return this.profileService.credsInPublishedDoc
 
     return this.profileService.allCreds.filter((item) => {
       let types = item.credential.getTypes();

@@ -170,7 +170,7 @@ export class ProfilePage {
     //this.profileService.appCreds = [];
     let hasAvatar = false;
 
-    this.profileService.visibleCredentials.map((cred) => {
+    this.profileService.credsInLocalDoc.map((cred) => {
       // Find Avatar Credential
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
@@ -181,7 +181,7 @@ export class ProfilePage {
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
-    this.profileService.invisibleCredentials.map((cred) => {
+    this.profileService.credsNotInLocalDoc.map((cred) => {
       // Find App Credentials
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
@@ -229,12 +229,12 @@ export class ProfilePage {
   /********** Prompt warning before deleting if creds are selected **********/
   deleteSelectedCredentials() {
     let selectedCreds = 0;
-    this.profileService.invisibleCredentials.map((cred) => {
+    this.profileService.credsNotInLocalDoc.map((cred) => {
       if (cred.willingToDelete) {
         selectedCreds++;
       }
     });
-    this.profileService.visibleCredentials.map((cred) => {
+    this.profileService.credsInLocalDoc.map((cred) => {
       if (cred.willingToDelete) {
         selectedCreds++;
       }

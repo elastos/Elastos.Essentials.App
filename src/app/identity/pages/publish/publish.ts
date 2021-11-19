@@ -1,16 +1,15 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
-import { ProfileService } from "../../services/profile.service";
-import { BasicCredentialsService } from "../../services/basiccredentials.service";
-import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { Logger } from "src/app/logger";
 import { Subscription } from "rxjs";
-import { Events } from "src/app/services/events.service";
+import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
-import { AuthService } from "../../services/auth.service";
+import { Events } from "src/app/services/events.service";
+import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
+import { AuthService } from "../../services/auth.service";
+import { BasicCredentialsService } from "../../services/basiccredentials.service";
+import { ProfileService } from "../../services/profile.service";
 
 @Component({
     selector: "page-publish",
@@ -48,20 +47,22 @@ export class PublishPage {
         });
 
         this._publishableCredentials = [];
-        this.profileService.visibleCredentials.forEach(val => {
+        this.profileService.credsInLocalDoc.forEach(val => {
             this._publishableCredentials.push(Object.assign({}, val))
         });
-        this.profileService.invisibleCredentials.forEach(val => {
+        this.profileService.credsNotInLocalDoc.forEach(val => {
             if (!("apppackage" in val.credential.getSubject()) || (val.credential.getFragment() == "avatar" && val.credential.getSubject().hasOwnProperty["data"]))
                 this._publishableCredentials.push(val);
         });
+
+        this._publishableCredentials.forEach(pc => pc.credential.prepareForDisplay());
     }
 
     ngOnDestroy() {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-        this.subscription = null;
-      }
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+            this.subscription = null;
+        }
     }
 
     init() {
@@ -71,22 +72,15 @@ export class PublishPage {
     }
 
     ionViewWillEnter() {
-      this.titleBar.setTitle(this.translate.instant('identity.publish'));
-      this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
+        this.titleBar.setTitle(this.translate.instant('identity.publish'));
+        this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
     }
 
     ionViewWillLeave() {
     }
 
     getDisplayableCredentialTitle(entry: CredentialDisplayEntry): string {
-        let fragment = entry.credential.getFragment();
-        let translationKey = "identity.credential-info-type-" + fragment;
-        let translated = this.translate.instant(translationKey);
-
-        if (!translated || translated == "" || translated == translationKey)
-            return fragment;
-
-        return translated;
+        return entry.credential.getDisplayableTitle();
     }
 
     displayableProperties(credential: DIDPlugin.VerifiableCredential) {
@@ -112,13 +106,16 @@ export class PublishPage {
         return this._publishableCredentials;
     }
 
-    async onVisibilityChange(visible: boolean, entry: CredentialDisplayEntry) {
+    public async onCredentialCheckboxClicked(entry: CredentialDisplayEntry) {
+        if (this.updatingVisibility)
+            return;
+
         this.updatingVisibility = true;
-        
+
         await this.authService.checkPasswordThenExecute(
             async () => {
-                await this.profileService.setCredentialVisibility(entry.credential.getFragment(), visible, this.authService.getCurrentUserPassword());
-                await this.profileService.updateDIDDocument();
+                await this.profileService.setCredentialVisibility(entry.credential.getFragment(), !entry.isInLocalDocument, this.authService.getCurrentUserPassword());
+                entry.isInLocalDocument = !entry.isInLocalDocument;
                 this.updatingVisibility = false;
             },
             () => {

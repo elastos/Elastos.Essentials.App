@@ -196,7 +196,7 @@ export class DID {
                     }
 
                     // Remove the info from the DID document, if any
-                    let currentDidDocument = this.getDIDDocument();
+                    let currentDidDocument = this.getLocalDIDDocument();
                     if (currentDidDocument) {
                         let documentCredential = currentDidDocument.getCredentialById(credentialId);
                         if (documentCredential) {
@@ -228,7 +228,7 @@ export class DID {
 
                         // Update the DID Document in case it contains the credential. Then we will have to
                         // ask user if he wants to publish a new version of his did document on chain.
-                        let currentDidDocument = this.getDIDDocument();
+                        let currentDidDocument = this.getLocalDIDDocument();
                         if (currentDidDocument) {
                             let documentCredential = currentDidDocument.getCredentialById(credentialId);
                             if (documentCredential) {
@@ -454,7 +454,7 @@ export class DID {
         this.didDocument = didDocument;
     }
 
-    public getDIDDocument(): DIDDocument {
+    public getLocalDIDDocument(): DIDDocument {
         return this.didDocument;
     }
 }

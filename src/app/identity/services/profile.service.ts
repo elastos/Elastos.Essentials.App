@@ -144,11 +144,15 @@ export class ProfileService extends GlobalService {
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     let didString = this.didService.getActiveDid().getDIDString();
-    this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((status) => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe(async (status) => {
       Logger.log("identity", "Profile service got DID Document status change event for DID " + didString);
       if (status.checked) {
         this.publishStatusFetched = true;
         this.publishedDIDDocument = status.document;
+
+        await this.checkIfLocalDIDDocumentNeedsToBeSynchronizedWithChain();
+
         this.recomputeDocumentAndCredentials();
       }
       else {
@@ -248,23 +252,17 @@ export class ProfileService extends GlobalService {
       );
       if (issuerId !== null) issuersId.push(issuerId);
 
-      if (this.credentialIsInLocalDIDDocument(c.pluginVerifiableCredential)) {
-        this.credentials.push({
-          credential: c.pluginVerifiableCredential,
-          issuer: issuerId,
-          isVisible: true,
-          willingToDelete: false,
-          canDelete: canDelete,
-        });
-      } else {
-        this.credentials.push({
-          credential: c.pluginVerifiableCredential,
-          issuer: issuerId,
-          isVisible: false,
-          willingToDelete: false,
-          canDelete: canDelete,
-        });
-      }
+      let isInLocalDocument = this.credentialIsInLocalDIDDocument(c.pluginVerifiableCredential);
+      let isInPublishedDocument = this.credentialIsInPublishedDIDDocument(c.pluginVerifiableCredential)
+
+      this.credentials.push({
+        credential: c,
+        issuer: issuerId,
+        isInLocalDocument,
+        isInPublishedDocument,
+        willingToDelete: false,
+        canDelete: canDelete,
+      });
     }
 
     if (issuersId.length > 0) {
@@ -273,8 +271,8 @@ export class ProfileService extends GlobalService {
       });
     }
 
-    Logger.log("identity", "Visible credentials", this.visibleCredentials);
-    Logger.log("identity", "Invisible credentials", this.invisibleCredentials);
+    Logger.log("identity", "Visible credentials", this.credsInLocalDoc);
+    Logger.log("identity", "Invisible credentials", this.credsNotInLocalDoc);
     this.buildAppAndAvatarCreds();
 
     Logger.log("identity", "Built credential entries", this.credentials);
@@ -285,7 +283,7 @@ export class ProfileService extends GlobalService {
     //this.profileService.appCreds = [];
     let hasAvatar = false;
 
-    this.visibleCredentials.map((cred) => {
+    this.credsInLocalDoc.map((cred) => {
       // Find Avatar Credential
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
@@ -297,7 +295,7 @@ export class ProfileService extends GlobalService {
         Logger.log("identity", "Profile has bio", this.displayedBio);
       }
     });
-    this.invisibleCredentials.map((cred) => {
+    this.credsNotInLocalDoc.map((cred) => {
       // Find App Credentials
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
@@ -327,17 +325,37 @@ export class ProfileService extends GlobalService {
   }
 
   /**
-   * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
+   * Tells if a given credential is currently in the local DID document.
+   * Which means:
+   * - We don't know if this credential is on chain or not here.
+   * - But next time the DID is published, is a credential is in the "local did document",
+   * this credential will become published online.
    */
   public credentialIsInLocalDIDDocument(credential: DIDPlugin.VerifiableCredential) {
     if (!credential)
       return false;
 
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
+    let currentDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
     if (!currentDidDocument)
       return false;
 
     let didDocumentCredential = currentDidDocument.getCredentialById(
+      new DIDURL(credential.getId())
+    );
+    return didDocumentCredential != null;
+  }
+
+  /**
+   * Tells if a given credential is currently visible on chain or not (inside the PUBLISHED did document).
+   */
+  public credentialIsInPublishedDIDDocument(credential: DIDPlugin.VerifiableCredential) {
+    if (!credential)
+      return false;
+
+    if (!this.publishedDIDDocument)
+      return false; // We don't know yet
+
+    let didDocumentCredential = this.publishedDIDDocument.getCredentialById(
       new DIDURL(credential.getId())
     );
     return didDocumentCredential != null;
@@ -356,10 +374,10 @@ export class ProfileService extends GlobalService {
     let credential = this.credentials.find((item) => {
       return item.credential.getFragment() == key;
     });
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
+    let currentDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
     if (credential) {
       Logger.log("identity", "Changing visibility of " + key + " to visibility " + willingToBePubliclyVisible + " in profile service credentials");
-      credential.isVisible = willingToBePubliclyVisible;
+      credential.isInLocalDocument = willingToBePubliclyVisible;
       await this.updateDIDDocumentFromSelectionEntry(currentDidDocument, credential, password);
       this.events.publish("credentials:modified");
     }
@@ -387,7 +405,7 @@ export class ProfileService extends GlobalService {
         // Try to retrieve a standard property info from this property
         let basicCredentialInfo = BasicCredentialsService.instance.getBasicCredentialInfoByKey(p);
         if (basicCredentialInfo) {
-          profile.setValue(basicCredentialInfo, props[p], cred.isVisible);
+          profile.setValue(basicCredentialInfo, props[p], cred.isInLocalDocument);
         }
       }
     });
@@ -425,15 +443,27 @@ export class ProfileService extends GlobalService {
     return this.credentials;
   }
 
-  get visibleCredentials(): CredentialDisplayEntry[] {
+  get credsInLocalDoc(): CredentialDisplayEntry[] {
     return this.allCreds.filter((item) => {
-      return item.isVisible == true;
+      return item.isInLocalDocument == true;
     });
   }
 
-  get invisibleCredentials(): CredentialDisplayEntry[] {
+  get credsNotInLocalDoc(): CredentialDisplayEntry[] {
     return this.allCreds.filter((item) => {
-      return item.isVisible == false;
+      return item.isInLocalDocument == false;
+    });
+  }
+
+  get credsInPublishedDoc(): CredentialDisplayEntry[] {
+    return this.allCreds.filter((item) => {
+      return item.isInPublishedDocument == true;
+    });
+  }
+
+  get credsNotInPublishedDoc(): CredentialDisplayEntry[] {
+    return this.allCreds.filter((item) => {
+      return item.isInPublishedDocument == false;
     });
   }
 
@@ -451,13 +481,14 @@ export class ProfileService extends GlobalService {
    */
   get profileEntries(): CredentialDisplayEntry[] {
     let basicCredentials = this.basicCredentialService.getBasicCredentialkeys();
-    return this.visibleCredentials.filter((item) => {
+    return this.credsInLocalDoc.filter((item) => {
       let fragment = item.credential.getFragment();
       return basicCredentials.find(x => x == fragment) && fragment !== "avatar" // default credential display entry
     });
   }
 
   /********** Identity Data Options **********/
+  // TODO: MOVE THIS - THIS IS UI CODE, SHOULD NOT BE HERE
   editProfile() {
     this.editingVisibility = false;
     this.deleteMode = false;
@@ -465,6 +496,7 @@ export class ProfileService extends GlobalService {
     void this.native.go("/identity/editprofile", { create: false });
   }
 
+  // TODO: MOVE THIS - THIS IS UI CODE, SHOULD NOT BE HERE
   editVisibility() {
     this.changeList("details");
     this.deleteMode = false;
@@ -472,6 +504,7 @@ export class ProfileService extends GlobalService {
     this.editingVisibility = !this.editingVisibility;
   }
 
+  // TODO: MOVE THIS - THIS IS UI CODE, SHOULD NOT BE HERE
   deleteCredentials() {
     this.changeList("credentials");
     this.editingVisibility = false;
@@ -511,7 +544,7 @@ export class ProfileService extends GlobalService {
 
   /**
    * Shows a dialog asking user to publish his DID or not. If confirmed, DID is published
-   * through the global publicaiton manager.
+   * through the global publication manager.
    *
    * The returned boolean tells if a publication was initiated or not (cancelled).
    */
@@ -555,15 +588,15 @@ export class ProfileService extends GlobalService {
 
         let currentDidDocument = this.didService
           .getActiveDid()
-          .getDIDDocument();
+          .getLocalDIDDocument();
 
-        for (let entry of this.visibleCredentials) {
+        for (let entry of this.credsInLocalDoc) {
           if (entry.willingToDelete) {
             await this.deleteSelectedEntryReal(entry, currentDidDocument);
           }
         }
 
-        for (let entry of this.invisibleCredentials) {
+        for (let entry of this.credsNotInLocalDoc) {
           if (entry.willingToDelete) {
             await this.deleteSelectedEntryReal(entry, currentDidDocument);
           }
@@ -593,7 +626,7 @@ export class ProfileService extends GlobalService {
       currentDidDocument.getCredentialById(new DIDURL(entry.credential.getId()))
     ) {
       await currentDidDocument.deleteCredential(
-        entry.credential,
+        entry.credential.pluginVerifiableCredential,
         AuthService.instance.getCurrentUserPassword()
       );
       return true;
@@ -603,6 +636,29 @@ export class ProfileService extends GlobalService {
 
   public publish() {
     void this.native.go("/identity/publish");
+  }
+
+  /**
+   * Compares the local DID document update date and the published document one.
+   * In case the published one is more recent than the local one, we call synchronize()
+   * to make sure to get the published document locally before doing modifications.
+   * Without this, modifying the local doc and trying to publish it over a more recent
+   * online document results in conflicts ("document not up to date" kind of errors).
+   */
+  private async checkIfLocalDIDDocumentNeedsToBeSynchronizedWithChain(): Promise<void> {
+    Logger.log("identity", "Comparing local and remote DID documents for potential synchronization");
+    let localDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
+    if (this.publishedDIDDocument.getUpdated() > localDidDocument.getUpdated()) {
+      Logger.log("identity", "The published document is more recent than the local one. SYNCHRONIZING");
+
+      // Synchronize local document with on chain document - TODO: WHY?
+      await this.didService.getActiveDidStore().synchronize();
+
+      Logger.log("identity", "DID document synchronization complete");
+    }
+    else {
+      Logger.log("identity", "The published document is not more recent than the local one. Nothing to do");
+    }
   }
 
   private recomputeDocumentAndCredentials() {
@@ -685,7 +741,7 @@ export class ProfileService extends GlobalService {
     // For each VISIBLE local credential, check if it's already in the published credentials.
     // We may have set a credential to become public
     for (let localCred of this.credentials) {
-      if (localCred.isVisible) {
+      if (localCred.isInLocalDocument) {
         if (!publishedCredentials.find(c => c.getFragment() === localCred.credential.getFragment())) {
           // local cred willing to be visible but not found in published creds? we have a modified credential
           Logger.log("identity", "Local credential should be published for the first time", localCred);
@@ -727,7 +783,7 @@ export class ProfileService extends GlobalService {
   *****************************************************/
   private async updateDIDDocumentFromSelection(password: string) {
     let changeCount = 0;
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
+    let currentDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
 
     for (let credential of this.allCreds) {
       await this.updateDIDDocumentFromSelectionEntry(
@@ -752,8 +808,9 @@ export class ProfileService extends GlobalService {
       void AuthService.instance.checkPasswordThenExecute(
         async () => {
           let password = AuthService.instance.getCurrentUserPassword();
+
+          // Based on the current UI model, update the local DID document accordingly (visibility mostly)
           await this.updateDIDDocumentFromSelection(password);
-          await this.didService.getActiveDidStore().synchronize();
           resolve();
         },
         () => {
@@ -765,7 +822,7 @@ export class ProfileService extends GlobalService {
 
   /**
    * Adds, removes or update a credential based on its in-app state as a CredentialDisplayEntry,
-   * into the local did document.
+   * into the LOCAL did document.
    */
   private async updateDIDDocumentFromSelectionEntry(
     currentDidDocument: DIDDocument,
@@ -781,31 +838,25 @@ export class ProfileService extends GlobalService {
     let existingCredential = await currentDidDocument.getCredentialById(
       new DIDURL(credentialId)
     );
-    if (!existingCredential && credentialEntry.isVisible) {
+    if (!existingCredential && credentialEntry.isInLocalDocument) {
       // Credential doesn't exist in the did document yet but user wants to add it? Then add it.
       Logger.log("identity", "Credential wants to be published but not in the local document. Adding it");
       await currentDidDocument.addCredential(
-        credentialEntry.credential,
+        credentialEntry.credential.pluginVerifiableCredential,
         password
       );
-    } else if (
-      existingCredential &&
-      !credentialEntry.isVisible
-    ) {
+    } else if (existingCredential && !credentialEntry.isInLocalDocument) {
       // Credential exists but user wants to remove it on chain? Then delete it from the did document
       Logger.log("identity", "Credential wants to NOT be published but it's in the local document. Removing it");
       await currentDidDocument.deleteCredential(
-        credentialEntry.credential,
+        credentialEntry.credential.pluginVerifiableCredential,
         password
       );
-    } else if (
-      existingCredential &&
-      credentialEntry.isVisible
-    ) {
+    } else if (existingCredential && credentialEntry.isInLocalDocument) {
       // Credential exists but user wants to update it on chain? Then delete it from the did document and add it again
       Logger.log("identity", "Credential exists in the local did document. Updating it");
       await currentDidDocument.updateOrAddCredential(
-        credentialEntry.credential,
+        credentialEntry.credential.pluginVerifiableCredential,
         password
       );
     }
@@ -896,7 +947,7 @@ export class ProfileService extends GlobalService {
   public getAvatarCredential(): DIDPlugin.VerifiableCredential {
     let avatarEntry = this.allCreds.find(c => c.credential.getFragment() === "avatar");
     if (avatarEntry)
-      return avatarEntry.credential;
+      return avatarEntry.credential.pluginVerifiableCredential;
     else
       return null;
   }

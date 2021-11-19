@@ -2,24 +2,13 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import FastAverageColor from 'fast-average-color';
-import { Avatar } from 'src/app/contacts/models/avatar';
-import { CredentialAvatar } from 'src/app/didsessions/model/did.model';
-import { evalObjectFieldPath } from 'src/app/helpers/objects';
-import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
-import { Logger } from 'src/app/logger';
-import { JSONObject } from 'src/app/model/json';
-import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { BasicCredentialsService } from '../../services/basiccredentials.service';
+import { VerifiableCredential } from '../../model/verifiablecredential.model';
 import { DIDService } from '../../services/did.service';
 import { ExpirationService } from '../../services/expiration.service';
 import { ProfileService } from '../../services/profile.service';
-
-class CredentialDisplayEntry {
-    constructor(public credential: DIDPlugin.VerifiableCredential) { }
-}
 
 type ValueItem = {
     name: string,
@@ -34,14 +23,14 @@ type ValueItem = {
 export class CredentialComponent {
     @ViewChild("icon") iconElement: ElementRef;
 
-    public _credential: CredentialDisplayEntry = null;
-    public iconSrc = transparentPixelIconDataUrl();
+    public _credential: VerifiableCredential = null;
     public description: string = null;
     public checkBoxColor = '#565bdb';
     public isExpired = false;
 
     @Input("selectable") public selectable = false; // Whether to show the selection checkbox or not
     @Input("selected") public selected = false; // On/off checkbox model - defined by the parent
+    @Input("showPubStatus") public showPubStatus = true; // Show the "published" icon or not
 
     @Input()
     set credential(credential: DIDPlugin.VerifiableCredential) {
@@ -60,22 +49,16 @@ export class CredentialComponent {
         public globalNav: GlobalNavService,
         public globalNotifications: GlobalNotificationsService,
         private profileService: ProfileService,
-        private basicCredentialService: BasicCredentialsService,
         private translate: TranslateService,
-        private hiveCache: GlobalHiveCacheService,
         private expirationService: ExpirationService
-    ) {
-        theme.activeTheme.subscribe((activeTheme) => {
-            //this.setTitleBarTheme(activeTheme);
-        });
-    }
+    ) { }
 
     /**
      * Called when the credential @input value changes
      */
     private async updateCredential(credential: DIDPlugin.VerifiableCredential) {
         if (credential) {
-            this._credential = new CredentialDisplayEntry(credential);
+            this._credential = new VerifiableCredential(credential);
 
             // Check if the credential is expired
             let expirationInfo = this.expirationService.verifyCredentialExpiration(DIDService.instance.getActiveDid().pluginDid.getDIDString(), credential, 0);
@@ -83,72 +66,26 @@ export class CredentialComponent {
             if (expirationInfo) // hacky case, but null expirationInfo means we should not check the expiration... (legacy)
                 isExpired = expirationInfo.daysToExpire <= 0;
 
-            await this.prepareIcon();
-            await this.prepareDescription();
+            await this.prepareCredential();
         }
         else {
             this._credential = null;
         }
     }
 
-    private async prepareIcon() {
-        if (this.hasRemotePictureToFetch()) { // Remote picture to fetch
-            let avatarCredential = this._credential.credential;
-            if (avatarCredential.getSubject() && avatarCredential.getSubject().avatar && avatarCredential.getSubject().avatar.data) {
-                let hiveAssetUrl: string = avatarCredential.getSubject().avatar.data;
-                let avatarCacheKey = hiveAssetUrl;
+    private prepareCredential() {
+        this._credential.onIconReady(iconSrc => {
+            this.applyIconAfterFetch(iconSrc);
+        });
+        this._credential.prepareForDisplay();
+        this.description = this._credential.getDisplayableDescription();
 
-                if (hiveAssetUrl.startsWith("hive://")) {
-                    Logger.log("identity", "Refreshing picture from hive url", hiveAssetUrl);
-                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                  /* this.hiveCacheDataUrlSub = */ this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl).subscribe(async rawData => {
-                        //console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT", /* rawData */)
-                        if (rawData) {
-                            Logger.log("identity", "Got raw picture data from hive");
-                            let base64DataUrl = await rawImageToBase64DataUrl(rawData);
-                            //console.log("DEBUG BASE64 ENCODED", /* base64DataUrl */);
-                            this.iconSrc = base64DataUrl;
-                        }
-                        else {
-                            Logger.log("identity", "Got empty avatar data from hive");
-                            this.iconSrc = transparentPixelIconDataUrl();
-                        }
-                        this.applyIconAfterFetch();
-                    });
-                }
-                else {
-                    // Assume base64.
-                    let avatar = await Avatar.fromAvatarCredential(avatarCredential.getSubject().avatar as CredentialAvatar);
-                    this.iconSrc = avatar.toBase64DataUrl();
-                    this.applyIconAfterFetch();
-                }
-            }
-        }
-        else { // No remote picture to fetch
-            // If the credential implements the DisplayableCredential interface, we get the icon from this.
-            let credProps = this._credential.credential.getSubject();
-            if ("displayable" in credProps) {
-                this.iconSrc = (credProps["displayable"] as JSONObject)["icon"] as string;
-            }
-            else {
-                // Fallback for old style credentials - try to guess an icon, or use a defaut one.
-                let fragment = this._credential.credential.getFragment();
-
-                if (!this.basicCredentialService.getBasicCredentialkeys().some(x => x == fragment)) {
-                    fragment = "finger-print";
-                }
-
-                this.iconSrc = `/assets/identity/smallIcons/dark/${fragment}.svg`;
-            }
-
-            this.applyIconAfterFetch();
-        }
     }
 
     /**
      * Applies an asynchronously fetched icon data to the UI icon
      */
-    private applyIconAfterFetch() {
+    private applyIconAfterFetch(iconSrc: string) {
         // Load the image manually to be able to extract the main color
         let image = new Image();
         image.crossOrigin = 'anonymous';
@@ -173,73 +110,19 @@ export class CredentialComponent {
             image.src = "assets/identity/smallIcons/dark/finger-print.svg";
             this.iconElement.nativeElement.style.backgroundColor = "#00000080";
         };
-        image.src = this.iconSrc;
-    }
-
-    private prepareDescription() {
-        let credProps = this._credential.credential.getSubject();
-        if ("displayable" in credProps) {
-            // rawDescription sample: hello ${firstName} ${lastName.test}
-            let rawDescription = (credProps["displayable"] as JSONObject)["description"] as string;
-
-            // From a raw description, find all special ${...} tags and replace them with values from the subject.
-            if (rawDescription) {
-                let keywordTags = Array.from(rawDescription.match(/\${([a-zA-Z0-9.]+)}/g))
-
-                let description = rawDescription;
-                for (let tag of keywordTags) {
-                    // tag: ${xxx}
-                    // matchingGroup: ['${...}', '...'];
-                    let matchingGroup = tag.match(/\${([a-zA-Z0-9.]+)}/);
-                    if (matchingGroup && matchingGroup.length > 1) {
-                        let jsonFieldPath = matchingGroup[1];
-                        let evaluatedField = evalObjectFieldPath(credProps, jsonFieldPath);
-                        description = description.replace(tag, evaluatedField);
-                    }
-                }
-                this.description = description;
-            }
-        }
-    }
-
-    // TODO - rework - basic way of checking if the credential is an avatar.
-    // Rework using a specific avatar credential type.
-    private hasRemotePictureToFetch(): boolean {
-        let fragment = this._credential.credential.getFragment();
-        if (fragment === "avatar") {
-            return true;
-        } else {
-            return false;
-        }
+        image.src = iconSrc;
     }
 
     /* public setTitle(title: string) {
         this._title = title;
     } */
 
-    // TODO: rework
     getIcon(): string {
-        return this.iconSrc;
+        return this._credential.getDisplayableIconSrc();
     }
 
-    // NOTE: currently does backward compatibility for ID-based credentials in profile. Rework
     getTitle(): string {
-        // If the credential implements the DisplayableCredential type, get the title from there.
-        let credProps = this._credential.credential.getSubject();
-        if ("displayable" in credProps) {
-            return (credProps["displayable"] as JSONObject)["title"] as string;
-        }
-        else {
-            // Fallback try to guess a name, or use a default display
-            let fragment = this._credential.credential.getFragment();
-            let translationKey = "identity.credential-info-type-" + fragment;
-            let translated = this.translate.instant(translationKey);
-
-            if (!translated || translated == "" || translated == translationKey)
-                return fragment;
-
-            return translated;
-        }
+        return this._credential.getDisplayableTitle();
     }
 
     /**
@@ -248,11 +131,11 @@ export class CredentialComponent {
      * Returns null if nothing can be displayed easily.
      */
     getValueItems(): ValueItem[] {
-        let fragment = this._credential.credential.getFragment();
+        let fragment = this._credential.pluginVerifiableCredential.getFragment();
         if (fragment === "avatar")
             return null;
 
-        let subject = this._credential.credential.getSubject();
+        let subject = this._credential.pluginVerifiableCredential.getSubject();
 
         // TODO: rework with displayable credential - for now, display raw properties
         return Object.keys(subject)
@@ -270,7 +153,7 @@ export class CredentialComponent {
     }
 
     isPublished(): boolean {
-        return this.profileService.credentialIsInLocalDIDDocument(this._credential.credential);
+        return this.profileService.credentialIsInPublishedDIDDocument(this._credential.pluginVerifiableCredential);
     }
 
     public onClicked() {

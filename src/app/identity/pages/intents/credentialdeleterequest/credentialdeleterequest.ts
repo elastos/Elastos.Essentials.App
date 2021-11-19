@@ -192,8 +192,8 @@ export class CredentialDeleteRequestPage {
         let credential = displayableCredential.credential.pluginVerifiableCredential;
 
         // Delete from the DID Document, if any
-        if (this.didService.getActiveDid().getDIDDocument().getCredentialById(credentialId))
-          await this.didService.getActiveDid().getDIDDocument().deleteCredential(credential, AuthService.instance.getCurrentUserPassword());
+        if (this.didService.getActiveDid().getLocalDIDDocument().getCredentialById(credentialId))
+          await this.didService.getActiveDid().getLocalDIDDocument().deleteCredential(credential, AuthService.instance.getCurrentUserPassword());
 
         // Delete from credentials list
         await this.didService.getActiveDid().deleteCredential(credentialId, true);
@@ -233,7 +233,7 @@ export class CredentialDeleteRequestPage {
       }
     });
 
-    await this.didService.getActiveDid().getDIDDocument().publish(AuthService.instance.getCurrentUserPassword());
+    await this.didService.getActiveDid().getLocalDIDDocument().publish(AuthService.instance.getCurrentUserPassword());
   }
 
   private finalizeRequest(deletedCredentialsIds: string[]) {

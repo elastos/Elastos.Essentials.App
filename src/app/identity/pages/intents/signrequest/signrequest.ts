@@ -59,7 +59,7 @@ export class SignRequestPage {
       let intentRequestData = this.receivedIntent.params;
 
       let signature = await this.didService.getActiveDid().signData(this.receivedIntent.params.data, password);
-      let publicKey = await this.didService.getActiveDid().getDIDDocument().getDefaultPublicKey();
+      let publicKey = await this.didService.getActiveDid().getLocalDIDDocument().getDefaultPublicKey();
 
       let payload = {};
 
@@ -85,7 +85,7 @@ export class SignRequestPage {
       // Return the signature info as a signed JWT in case runtime needs to send this response through a URL
       // callback. If that's inside Elastos Essentials, the JWT will be parsed and the calling app will receive the
       // signature payload.
-      let jwtToken = await this.didService.getActiveDid().getDIDDocument().createJWT(payload,
+      let jwtToken = await this.didService.getActiveDid().getLocalDIDDocument().createJWT(payload,
         1, this.authService.getCurrentUserPassword());
 
       // Send the intent response as everything is completed

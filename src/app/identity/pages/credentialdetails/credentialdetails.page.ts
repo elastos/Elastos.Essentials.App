@@ -13,10 +13,10 @@ import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { DIDDocument } from "../../model/diddocument.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
@@ -49,13 +49,16 @@ export class CredentialDetailsPage implements OnInit {
   public credential: VerifiableCredential;
   public issuer: IssuerDisplayEntry;
   private avatarImg = null;
+  public isCredentialInLocalDIDDocument = false;
+  public isCredentialInPublishedDIDDocument = false;
+  public hasCheckedCredential = false;
+  public updatingVisibility = false; // The local document is being updated to add or remove this credential
 
   public segment = "validator";
   public credentialId: string = null;
   public appIcon: string;
+  public iconSrc = transparentPixelIconDataUrl(); // Main icon html src data
 
-  public isCredentialInLocalDocument = true;
-  public hasCheckedCredential = false;
 
   private didchangedSubscription: Subscription = null;
   private publicationstatusSubscription: Subscription = null;
@@ -83,6 +86,7 @@ export class CredentialDetailsPage implements OnInit {
     private globalIntentService: GlobalIntentService,
     private globalPopupService: GlobalPopupService,
     private globalNavService: GlobalNavService,
+    private globalNativeService: GlobalNativeService,
     private authService: AuthService,
     private credentialsService: CredentialsService
   ) {
@@ -96,7 +100,7 @@ export class CredentialDetailsPage implements OnInit {
 
       let didString = this.didService.getActiveDid().getDIDString();
       this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((document) => {
-        void this.selectCredential();
+        void this.prepareCredential();
       });
     }
 
@@ -177,28 +181,32 @@ export class CredentialDetailsPage implements OnInit {
     } */
   }
 
-  async selectCredential() {
+  async prepareCredential() {
     Logger.log("identity", "Computing credential status");
 
     this.credential = null;
     this.issuer = null;
     this.segment = "validator";
 
-    if (
-      isNil(this.credentialId) ||
-      isNil(this.credentials) ||
-      this.credentials.length <= 0
-    ) {
+    if (isNil(this.credentialId) || isNil(this.credentials) || this.credentials.length <= 0)
       return;
-    }
 
     let selected = this.credentials.filter(
       (item) => item.pluginVerifiableCredential.getId() == this.credentialId
     );
 
-    if (selected.length > 0) this.credential = selected[0];
+    if (selected.length > 0)
+      this.credential = selected[0];
 
-    if (this.credential == null) { return; }
+    if (this.credential == null)
+      return;
+
+    this.checkIsCredentialInPublishedDIDDocument();
+    this.checkIsCredentialInLocalDIDDocument();
+
+    // Prepare the credential for display
+    this.credential.onIconReady(iconSrc => this.iconSrc = iconSrc);
+    this.credential.prepareForDisplay();
 
     await this.getIssuer();
 
@@ -217,14 +225,15 @@ export class CredentialDetailsPage implements OnInit {
   }
 
   getDisplayableCredentialTitle(): string {
-    let fragment = this.credential.pluginVerifiableCredential.getFragment();
-    let translationKey = "identity.credential-info-type-" + fragment;
-    let translated = this.translate.instant(translationKey);
+    return this.credential.getDisplayableTitle();
+  }
 
-    if (!translated || translated == "" || translated == translationKey)
-      return fragment;
+  public hasDescription(): boolean {
+    return !!this.credential.getDisplayableDescription();
+  }
 
-    return translated;
+  public getDisplayableCredentialDescription(): string {
+    return this.credential.getDisplayableDescription();
   }
 
   getDisplayableProperties() {
@@ -268,15 +277,17 @@ export class CredentialDetailsPage implements OnInit {
     return !types.includes("SelfProclaimedCredential");
   }
 
-  getCredIconSrc(entry: CredentialDisplayEntry): string {
-    let fragment = this.credential.pluginVerifiableCredential.getFragment();
+  getCredIconSrc(): string {
+    return this.iconSrc;
+
+    /* let fragment = this.credential.pluginVerifiableCredential.getFragment();
 
     if (!this.basicCredentialService.getBasicCredentialkeys().some(x => x == fragment)) {
       fragment = "finger-print";
     }
 
     let skin = this.theme.darkMode ? "dark" : "light";
-    return this.isVerified() ? `/assets/identity/headerIcons/${skin}/${fragment}-verified.svg` : `/assets/identity/headerIcons/${skin}/${fragment}.svg`;
+    return this.isVerified() ? `/assets/identity/headerIcons/${skin}/${fragment}-verified.svg` : `/assets/identity/headerIcons/${skin}/${fragment}.svg`; */
   }
 
   getSmallIcon(iconName: string) {
@@ -415,11 +426,18 @@ export class CredentialDetailsPage implements OnInit {
     this.isCredentialInLocalDocument = localValue === chainValue;
   } */
 
-  public isCredentialInLocalDIDDocument(): boolean {
+  private checkIsCredentialInPublishedDIDDocument() {
     if (!this.credential)
-      return false;
+      this.isCredentialInPublishedDIDDocument = false;
+    else
+      this.isCredentialInPublishedDIDDocument = this.profileService.credentialIsInPublishedDIDDocument(this.credential.pluginVerifiableCredential);
+  }
 
-    return this.profileService.credentialIsInLocalDIDDocument(this.credential.pluginVerifiableCredential);
+  private checkIsCredentialInLocalDIDDocument() {
+    if (!this.credential)
+      this.isCredentialInLocalDIDDocument = false;
+    else
+      this.isCredentialInLocalDIDDocument = this.profileService.credentialIsInLocalDIDDocument(this.credential.pluginVerifiableCredential);
   }
 
   async publishCredential(): Promise<void> {
@@ -476,5 +494,32 @@ export class CredentialDetailsPage implements OnInit {
     // Exit
     if (wasDeleted)
       void this.globalNavService.navigateBack();
+  }
+
+  /**
+   * Adds or removes the current credential from the local DID Document, ready for next publication.
+   */
+  public async onVisibilityChange(visible: boolean) {
+    this.updatingVisibility = true;
+
+    await this.authService.checkPasswordThenExecute(
+      async () => {
+        // Instantly update (save) this change in the profile service - cannot undo
+        await this.profileService.setCredentialVisibility(this.credential.pluginVerifiableCredential.getFragment(), visible, AuthService.instance.getCurrentUserPassword());
+        this.updatingVisibility = false;
+
+        if (visible)
+          this.globalNativeService.genericToast("This credential will become visible to everyone next time your publish your identity");
+        else {
+          if (this.isCredentialInPublishedDIDDocument)
+            this.globalNativeService.genericToast("This credential will be unpublished next time your publish your identity");
+          else
+            this.globalNativeService.genericToast("This credential will be not be published next time your publish your identity");
+        }
+      },
+      () => {
+        this.updatingVisibility = false;
+      }
+    );
   }
 }

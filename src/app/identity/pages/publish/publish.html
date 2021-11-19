@@ -5,7 +5,7 @@
         <ion-row class="header">
             <ion-col size="12">
                 <ion-label>
-                    {{ 'identity.mycredentials-header' |  translate }}
+                    {{ 'identity.mycredentials-header' | translate }}
                 </ion-label>
             </ion-col>
             <ion-col size="12">
@@ -13,14 +13,13 @@
                 <span style="margin-top: 10px;">- {{ 'identity.toggle-credentials-to-publish'| translate }}</span>
             </ion-col>
         </ion-row>
-         
-        <ion-grid *ngIf="profileService.isPublishStatusFetched() && !profileService.didNeedsToBePublished" class="status-grid">
+
+        <ion-grid *ngIf="profileService.isPublishStatusFetched() && !profileService.didNeedsToBePublished"
+            class="status-grid">
             <ion-row>
                 <ion-col size="1">
-                    <img 
-                        [src]="unchangedPublishedCredentials.length > 0 ? '/assets/identity/svg/credential-published.svg' : '/assets/identity/svg/publish-gray.svg'"
-                        class="published"
-                    >
+                    <img [src]="unchangedPublishedCredentials.length > 0 ? '/assets/identity/svg/credential-published.svg' : '/assets/identity/svg/publish-gray.svg'"
+                        class="published">
                 </ion-col>
                 <ion-col size="11">
                     <ion-label>
@@ -33,7 +32,12 @@
 
         <div class="credentials">
             <div class="card" *ngFor="let entry of publishableCredentials()">
-                <div class="card-icon">
+                <credential [credential]="entry.credential.pluginVerifiableCredential" [selectable]="true"
+                    [selected]="entry.isInLocalDocument" (checkBoxClicked)="onCredentialCheckboxClicked(entry)"
+                    [showPubStatus]="false" class="credential">
+                </credential>
+
+                <!-- <div class="card-icon">
                     <img *ngIf="!isAvatarCred(entry)" [src]="getCredIconSrc(entry)" />
                     <div *ngIf="isAvatarCred(entry)">
                         <img class="avatar" [src]="getAvatar(entry)" />
@@ -48,15 +52,12 @@
                             </span>
                         </ion-col>
                         <ion-col size="2" class="toggle-col">
-                            <ion-toggle
-                                color="tertiary"
-                                [(ngModel)]="entry.isVisible" mode="ios"
-                                [disabled]="updatingVisibility"
-                                (ngModelChange)="onVisibilityChange($event, entry)">
+                            <ion-toggle color="tertiary" [(ngModel)]="entry.isInLocalDocument" mode="ios"
+                                [disabled]="updatingVisibility" (ngModelChange)="onVisibilityChange($event, entry)">
                             </ion-toggle>
                         </ion-col>
                     </ion-row>
-                </div>
+                </div> -->
             </div>
         </div>
         <ion-row class="btn-row">

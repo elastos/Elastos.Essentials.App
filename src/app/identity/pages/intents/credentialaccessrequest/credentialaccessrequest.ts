@@ -362,7 +362,7 @@ export class CredentialAccessRequestPage {
 
   addDIDToMandatoryItems() {
     let did: string = this.did.getDIDString();
-    let didDocument: DIDDocument = this.did.getDIDDocument();
+    let didDocument: DIDDocument = this.did.getLocalDIDDocument();
     let expiredState: ExpiredItem = this.expirationService.verifyDIDExpiration(did, didDocument, 0);
     Logger.log('Identity', "expiredState", expiredState)
 
@@ -538,7 +538,7 @@ export class CredentialAccessRequestPage {
           }
         }
 
-        const jwtToken = await this.didService.getActiveDid().getDIDDocument().createJWT(
+        const jwtToken = await this.didService.getActiveDid().getLocalDIDDocument().createJWT(
           payload,
           this.receivedIntent.jwtExpirationDays,
           this.authService.getCurrentUserPassword()

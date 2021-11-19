@@ -78,11 +78,10 @@ export class EditProfilePage {
     private globalHiveService: GlobalHiveService,
     private hiveCache: GlobalHiveCacheService,
     private globalNav: GlobalNavService,
-    private popup: PopupProvider)
-  {
+    private popup: PopupProvider) {
     Logger.log('Identity', "Editing an existing profile");
 
-    // Get a profile object - higher level representation of the local DID document, for convenience.
+    // Get a profile object - higher level representation of basic credentials in the local DID document, for convenience.
     this.profile = Profile.fromProfile(this.profileService.getBasicProfile());
 
     // Get noticed when the avatar become ready
@@ -111,10 +110,10 @@ export class EditProfilePage {
   ionViewWillLeave() {
     this.hwBackKeySubscription.unsubscribe();
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-  /*   // Go to the countrypicker screen will trigger ionViewWillLeave
-    if (!this.showSelectCountry) {
-      this.next(false);
-    } */
+    /*   // Go to the countrypicker screen will trigger ionViewWillLeave
+      if (!this.showSelectCountry) {
+        this.next(false);
+      } */
   }
 
   async onVisibilityChange(visible: boolean, entry: BasicCredentialEntry) {
@@ -217,7 +216,7 @@ export class EditProfilePage {
 
           // Upload the the picture and create the script to let others get this picture.
           let randomPictureID = new Date().getTime();
-          let avatarFileName = "identity/avatar/"+randomPictureID;
+          let avatarFileName = "identity/avatar/" + randomPictureID;
           let uploader = await this.globalHiveService.getActiveVault().getFiles().upload(avatarFileName);
           let avatarData = Buffer.from(PictureComponent.shared.rawBase64ImageOut, "base64"); // Raw picture data, not base64 encoded
           Logger.log("identity", "Uploaded avatar buffer:", avatarData);
@@ -227,7 +226,7 @@ export class EditProfilePage {
           Logger.log('identity', "Completed avatar upload to hive");
 
           // Create a script to make this picture available to everyone
-          let scriptName = "getMainIdentityAvatar"+randomPictureID;
+          let scriptName = "getMainIdentityAvatar" + randomPictureID;
           let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript(scriptName, hiveManager.Scripting.Executables.newAggregatedExecutable(
             [hiveManager.Scripting.Executables.Files.newDownloadExecutable(avatarFileName)]
           ), null, true, true);
@@ -235,11 +234,11 @@ export class EditProfilePage {
 
           let currentUserDID = this.didService.getActiveDid().getDIDString();
           let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
-          let avatarHiveURL = "hive://"+currentUserDID+"@"+essentialsAppDID+"/"+scriptName+"?params={\"empty\":0}"; // Fake params to prevent hive SDK bug crash
+          let avatarHiveURL = "hive://" + currentUserDID + "@" + essentialsAppDID + "/" + scriptName + "?params={\"empty\":0}"; // Fake params to prevent hive SDK bug crash
           Logger.log("identity", "Generated avatar url:", avatarHiveURL);
 
           // Save the new avatar to the cache
-          this.hiveCache.set(currentUserDID+"-avatar", avatarData);
+          this.hiveCache.set(currentUserDID + "-avatar", avatarData);
 
           // Update UI locally without saving to permanent profile yet.
           this.avatarDataUrl = await rawImageToBase64DataUrl(avatarData);

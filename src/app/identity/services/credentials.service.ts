@@ -34,7 +34,7 @@ export class CredentialsService {
         await this.didService.getActiveDid().deleteCredential(new DIDURL(credential.pluginVerifiableCredential.getId()), true);
 
         // Delete from local DID document
-        let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
+        let currentDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
         if (currentDidDocument.getCredentialById(new DIDURL(credential.pluginVerifiableCredential.getId()))) {
           await currentDidDocument.deleteCredential(
             credential.pluginVerifiableCredential,
