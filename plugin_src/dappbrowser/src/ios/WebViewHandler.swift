@@ -170,14 +170,13 @@ class WebViewHandler:  NSObject {
         configuration.userContentController.add(self, name:"windowOpen");
 
         //Inject the js script at document start
-        let replaceWindownOpen = "function _EssentialsWindowOpen() {" +
+        let replaceWindownOpen = "window.open = function(url, target) {" +
                     "    let param = {" +
-                    "        url: arguments[0]," +
-                    "        target: arguments[1]," +
+                    "        url: url," +
+                    "        target: target," +
                     "    };" +
                     "    window.webkit.messageHandlers.windowOpen.postMessage(JSON.stringify(param));" +
-                    "} " +
-                    "window.open=_EssentialsWindowOpen;";
+                    "}; ";
         let atdocumentstartscript = replaceWindownOpen + options.atdocumentstartscript;
 
         let atDocumentStartScript = WKUserScript(source: atdocumentstartscript, injectionTime: WKUserScriptInjectionTime.atDocumentStart, forMainFrameOnly: true);
