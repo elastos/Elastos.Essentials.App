@@ -398,16 +398,8 @@
             self.commandDelegate?.send(pluginResult, callbackId: self.callbackId);
         }
     }
-
- }
-
- extension DappBrowserPlugin : WKScriptMessageHandler {
-     @objc func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-
-        if (message.name != WebViewHandler.DAB_BRIDGE_NAME) {
-            return;
-        }
-
+         
+    public func sendMessageEvent(_ message: WKScriptMessage) {
         var pluginResult: CDVPluginResult? = nil;
 
         if(message.body is [String: Any]){
@@ -445,5 +437,5 @@
             }
          }
      }
-}
 
+ }

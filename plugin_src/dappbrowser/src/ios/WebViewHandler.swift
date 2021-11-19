@@ -164,11 +164,24 @@ class WebViewHandler:  NSObject {
         configuration.applicationNameForUserAgent = userAgent;
         configuration.userContentController = WKUserContentController();
         configuration.processPool = CDVWKProcessPoolFactory.shared().sharedProcessPool();
+        configuration.preferences.javaScriptCanOpenWindowsAutomatically = true;
 
-        configuration.userContentController.add(self.brwoserPlugin, name:WebViewHandler.DAB_BRIDGE_NAME);
+        configuration.userContentController.add(self, name:WebViewHandler.DAB_BRIDGE_NAME);
+        configuration.userContentController.add(self, name:"windowOpen");
 
         //Inject the js script at document start
-        let atDocumentStartScript = WKUserScript(source: options.atdocumentstartscript, injectionTime: WKUserScriptInjectionTime.atDocumentStart, forMainFrameOnly: true)
+        let replaceWindownOpen = "function _EssentialsWindowOpen() {" +
+                    "    let param = {" +
+                    "        url: arguments[0]," +
+                    "        target: arguments[1]," +
+                    "    };" +
+                    "    window.webkit.messageHandlers.windowOpen.postMessage(JSON.stringify(param));" +
+                    "} " +
+                    "window.open=_EssentialsWindowOpen;";
+        let atdocumentstartscript = replaceWindownOpen + options.atdocumentstartscript;
+
+        let atDocumentStartScript = WKUserScript(source: atdocumentstartscript, injectionTime: WKUserScriptInjectionTime.atDocumentStart, forMainFrameOnly: true);
+
         configuration.userContentController.addUserScript(atDocumentStartScript);
 
         //WKWebView options
@@ -572,4 +585,46 @@ extension WebViewHandler: WKUIDelegate {
         }
     }
 
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if let frame = navigationAction.targetFrame,
+            frame.isMainFrame {
+            return nil
+        }
+        webView.load(navigationAction.request)
+        return nil
+    }
+
+}
+
+extension WebViewHandler : WKScriptMessageHandler {
+    @objc func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+
+        if (message.name == WebViewHandler.DAB_BRIDGE_NAME) {
+            brwoserPlugin.sendMessageEvent(message);
+        }
+        else if (message.name == "windowOpen") {
+            windowOpen(message);
+        }
+    }
+
+    public func windowOpen(_ message: WKScriptMessage) {
+        let messageContent = message.body as! String;
+        do {
+            let params = try JSONSerialization.jsonObject(with: messageContent.data(using: .utf8)!, options:[]) as! [String: Any];
+            guard params["url"] != nil, let url = URL(string: params["url"] as! String) else {
+                return;
+            }
+
+
+            if (params["target"] as? String == "_system") {
+                brwoserPlugin.openInSystem(url);
+            }
+            else {
+                navigate(to: url);
+            }
+        }
+        catch let error {
+            print("JSONSerialization.jsonObject error: \(error)");
+        }
+    }
 }

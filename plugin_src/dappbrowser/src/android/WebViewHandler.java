@@ -80,6 +80,8 @@ public class WebViewHandler {
         this.activity = brwoserPlugin.cordova.getActivity();
         this.options = options;
 
+        options.atdocumentstartscript += "window.open = function(url, target) {return window.essentialsExtractor.windowOpen(url, target);};";
+
         createWebView();
 
         //Set Background Color
@@ -182,6 +184,27 @@ public class WebViewHandler {
                 }
                 catch (JSONException ex) {
                     LOG.d(LOG_TAG, "Should never happen");;
+                }
+            }
+
+            @JavascriptInterface
+            @SuppressWarnings("unused")
+            public void windowOpen(String url, String target) {
+                if (target != null && target.equals("_system")) {
+                    brwoserPlugin.openExternal(url);
+                }
+                else {
+                    if (brwoserPlugin.isMainThread()) {
+                        navigate(url);
+                    }
+                    else {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                navigate(url);
+                            }
+                        });
+                    }
                 }
             }
         }
