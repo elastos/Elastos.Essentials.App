@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ContactsInitService } from '../contacts/services/init.service';
-import { CRProposalVotingInitService } from '../crproposalvoting/services/init.service';
 import { DAppBrowserInitService } from '../dappbrowser/services/init.service';
 import { DeveloperToolsInitService } from '../developertools/services/init.service';
 import { DIDSessionsInitService } from '../didsessions/services/init.service';
@@ -9,6 +8,7 @@ import { IdentityInitService } from '../identity/services/init.service';
 import { LauncherInitService } from '../launcher/services/init.service';
 import { ScannerInitService } from '../scanner/services/init.service';
 import { SettingsInitService } from '../settings/services/init.service';
+import { CRProposalVotingInitService } from '../voting/crproposalvoting/services/init.service';
 import { WalletInitService } from '../wallet/services/init.service';
 
 

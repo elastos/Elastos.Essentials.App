@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { ProducersSearchResponse } from '../dposvoting/model/nodes.model';
 import { Logger } from '../logger';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
+import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model';
 import { StandardCoinName } from '../wallet/model/coin';
 import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/evm.types';
 import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/providers/transaction.types';
