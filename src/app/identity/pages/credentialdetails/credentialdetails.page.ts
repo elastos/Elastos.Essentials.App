@@ -153,7 +153,7 @@ export class CredentialDetailsPage implements OnInit {
     this.displayableProperties = this.getDisplayableProperties();
     this.titleBar.setTitle(this.translate.instant('identity.credentialdetails-title'));
     this.titleBar.setupMenuItems([
-      { key: "delete", title: "Delete", iconPath: "assets/contacts/images/delete.svg" }
+      { key: "delete", title: this.translate.instant('common.delete'), iconPath: "assets/contacts/images/delete.svg" }
     ]);
     this.titleBar.setMenuVisibility(true);
 
@@ -483,7 +483,7 @@ export class CredentialDetailsPage implements OnInit {
    */
   private async deleteCredential() {
     Logger.log("identity", "Request to delete current credential");
-    let deletionConfirmed = await this.globalPopupService.showConfirmationPopup("Delete credential", "This credential will be deleted from your identity. This cannot be undone.");
+    let deletionConfirmed = await this.globalPopupService.showConfirmationPopup(this.translate.instant('identity.delete-credential'), this.translate.instant('identity.delete-credential-info'));
     if (!deletionConfirmed)
       return; // Cancelled
 
@@ -509,12 +509,12 @@ export class CredentialDetailsPage implements OnInit {
         this.updatingVisibility = false;
 
         if (visible)
-          this.globalNativeService.genericToast("This credential will become visible to everyone next time your publish your identity");
+          this.globalNativeService.genericToast(this.translate.instant('identity.change-visible'));
         else {
           if (this.isCredentialInPublishedDIDDocument)
-            this.globalNativeService.genericToast("This credential will be unpublished next time your publish your identity");
+            this.globalNativeService.genericToast(this.translate.instant('identity.change-unpublished'));
           else
-            this.globalNativeService.genericToast("This credential will be not be published next time your publish your identity");
+            this.globalNativeService.genericToast(this.translate.instant('identity.change-not-published'));
         }
       },
       () => {
