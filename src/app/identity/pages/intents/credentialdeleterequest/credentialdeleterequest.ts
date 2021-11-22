@@ -49,6 +49,8 @@ export class CredentialDeleteRequestPage {
   public receivedIntent: CredDeleteIdentityIntent = null;
   public requestDappIcon: string = null;
 
+  private alreadySentIntentResponce = false;
+
   public accepting = false;
   public popup: HTMLIonPopoverElement = null;
 
@@ -90,6 +92,10 @@ export class CredentialDeleteRequestPage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
+    }
   }
 
   /**
@@ -239,22 +245,27 @@ export class CredentialDeleteRequestPage {
   private finalizeRequest(deletedCredentialsIds: string[]) {
     void this.popupProvider.ionicAlert(this.translate.instant('identity.creddelete-success-title'), this.translate.instant('identity.creddelete-success'), this.translate.instant('identity.creddelete-success-done')).then(async () => {
       Logger.log('Identity', "Sending creddelete intent response for intent id " + this.receivedIntent.intentId)
-      await this.appServices.sendIntentResponse({
+      await this.sendIntentResponse({
         deletedcredentialsids: deletedCredentialsIds
       }, this.receivedIntent.intentId);
     })
   }
 
-  async rejectRequest() {
-    await this.appServices.sendIntentResponse({
+  async rejectRequest(navigateBack = true) {
+    await this.sendIntentResponse({
+      deletedcredentialsids: []
+    }, this.receivedIntent.intentId, navigateBack);
+  }
+
+  async failingRequest() {
+    await this.sendIntentResponse({
       deletedcredentialsids: []
     }, this.receivedIntent.intentId);
   }
 
-  async failingRequest() {
-    await this.appServices.sendIntentResponse({
-      deletedcredentialsids: []
-    }, this.receivedIntent.intentId);
+  private async sendIntentResponse(result, intentId, navigateBack = true) {
+    this.alreadySentIntentResponce = true;
+    await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 
   getDappIcon() {

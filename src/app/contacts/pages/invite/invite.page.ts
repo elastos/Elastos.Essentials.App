@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Contact } from '../../models/contact.model';
 import { FriendsService } from '../../services/friends.service';
 import { UxService } from '../../services/ux.service';
 
-import { Contact } from '../../models/contact.model';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarNavigationMode, TitleBarIconSlot, TitleBarIcon, TitleBarMenuItem, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+
 
 @Component({
   selector: 'app-invite',
@@ -21,9 +21,10 @@ export class InvitePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   // Params
-  public isFilter: boolean = false;
-  public isSingleInvite: boolean = false;
-  private intent: string = ''
+  public isFilter = false;
+  public isSingleInvite = false;
+  private intent = ''
+  private actionByUser = false;
 
   public filteredContacts: Contact[];
   public letters: string[] = [];
@@ -73,7 +74,7 @@ export class InvitePage implements OnInit {
     this.titleBar.setNavigationMode(null); // Modals are not part of page stack, therefore we dont use navigation mode
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.globalNav.navigateBack();
+      void this.globalNav.navigateBack();
     });
   }
 
@@ -82,6 +83,9 @@ export class InvitePage implements OnInit {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    if (this.intent.length > 0 && !this.actionByUser) {
+        this.friendsService.sendEmptyIntentRes();
+    }
   }
 
   getContacts() {
@@ -170,9 +174,10 @@ export class InvitePage implements OnInit {
   }
 
   inviteClicked() {
+    this.actionByUser = true;
     if (this.intent == "share") {
       // We were picking friend(s) for sharing content
-      this.friendsService.shareToContacts(this.isFilter);
+      void this.friendsService.shareToContacts(this.isFilter);
     }
     else {
       // We were picking fiends to get friends info

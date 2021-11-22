@@ -73,6 +73,8 @@ export class CredentialImportRequestPage {
   public requestDappName: string = null;
   public requestDappColor = '#565bdb';
 
+  private alreadySentIntentResponce = false;
+
   public accepting = false;
   public popup: HTMLIonPopoverElement = null;
   public wrongTargetDID = false; // Whether the credential we are trying to import is for us or not.
@@ -117,6 +119,10 @@ export class CredentialImportRequestPage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
+    }
   }
 
   /**
@@ -268,14 +274,19 @@ export class CredentialImportRequestPage {
   private finalizeRequest(importedCredentials: string[]) {
     void this.popupProvider.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async () => {
       Logger.log('Identity', "Sending credimport intent response for intent id " + this.receivedIntent.intentId)
-      await this.appServices.sendIntentResponse({
+      await this.sendIntentResponse({
         importedcredentials: importedCredentials
       }, this.receivedIntent.intentId);
     })
   }
 
-  async rejectRequest() {
-    await this.appServices.sendIntentResponse({}, this.receivedIntent.intentId);
+  async rejectRequest(navigateBack = true) {
+    await this.sendIntentResponse({}, this.receivedIntent.intentId, navigateBack);
+  }
+
+  private async sendIntentResponse(result, intentId, navigateBack = true) {
+    this.alreadySentIntentResponce = true;
+    await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 
   getDappIcon() {

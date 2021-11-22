@@ -30,6 +30,7 @@ export class SignRequestPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public receivedIntent: SignIdentityIntent = null;
+  private alreadySentIntentResponce = false;
 
   constructor(
     private didService: DIDService,
@@ -47,6 +48,12 @@ export class SignRequestPage {
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
     this.receivedIntent = this.intentService.getReceivedIntent();
+  }
+
+  ionViewWillLeave() {
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
+    }
   }
 
   acceptRequest() {
@@ -91,7 +98,7 @@ export class SignRequestPage {
       // Send the intent response as everything is completed
       Logger.log('Identity', "Data signed, sending intent response");
       try {
-        await this.appServices.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
+        await this.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
       }
       catch (e) {
         await this.popup.ionicAlert("Response error", "Sorry, we were unable to return the signed information to the calling app. " + e);
@@ -101,7 +108,12 @@ export class SignRequestPage {
     });
   }
 
-  async rejectRequest() {
-    await this.appServices.sendIntentResponse({}, this.receivedIntent.intentId);
+  async rejectRequest(navigateBack = true) {
+    await this.sendIntentResponse({}, this.receivedIntent.intentId, navigateBack);
+  }
+
+  private async sendIntentResponse(result, intentId, navigateBack = true) {
+    this.alreadySentIntentResponce = true;
+    await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 }
