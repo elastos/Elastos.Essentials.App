@@ -54,9 +54,7 @@ export class WalletUtil {
     let minBalanceToShow = 1 / Math.pow(10, decimalplace);
     const decimalBalance = balance.modulo(1);
     if (decimalBalance.gt(minBalanceToShow)) {
-      let endIndex = decimalplace + 2;
-
-      const fixedDecimalBalance = decimalBalance.toNumber().toString().slice(2, endIndex);
+      const fixedDecimalBalance = decimalBalance.decimalPlaces(decimalplace).toString().substring(2);
       return fixedDecimalBalance;
     } else if (decimalBalance.isZero()) {
       return '';
