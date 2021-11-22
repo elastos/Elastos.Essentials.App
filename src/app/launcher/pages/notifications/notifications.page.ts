@@ -1,25 +1,24 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { TranslateService } from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
-
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
+import { Logger } from 'src/app/logger';
+import { App } from "src/app/model/app.enum";
+import { Events } from 'src/app/services/events.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
+import { WalletInitService } from 'src/app/wallet/services/init.service';
 import {
-  NotificationManagerService,
-  LauncherNotification,
-  LauncherNotificationType
+    LauncherNotification,
+    LauncherNotificationType, NotificationManagerService
 } from '../../services/notificationmanager.service';
 import { TipsService } from '../../services/tips.service';
-import { Logger } from 'src/app/logger';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
-import { Events } from 'src/app/services/events.service';
-import { App } from "src/app/model/app.enum"
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
-import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
-import { WalletInitService } from 'src/app/wallet/services/init.service';
+
 
 @Component({
   selector: 'app-notifications',

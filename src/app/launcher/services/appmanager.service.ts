@@ -4,8 +4,6 @@ import { MenuController, ModalController, PopoverController } from '@ionic/angul
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ContactsInitService } from 'src/app/contacts/services/init.service';
-import { CRCouncilVotingInitService } from 'src/app/crcouncilvoting/services/init.service';
-import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
@@ -15,6 +13,8 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
+import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Tip } from '../model/tip.model';
