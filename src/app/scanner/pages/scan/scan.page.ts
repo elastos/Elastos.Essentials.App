@@ -1,20 +1,20 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { AlertController } from '@ionic/angular'
-import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { IntentService } from '../../services/intent.service';
-import QrScanner from 'qr-scanner';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
+import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Logger } from 'src/app/logger';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { isObject } from 'lodash-es';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalWalletConnectService, WalletConnectSessionRequestSource } from 'src/app/services/global.walletconnect.service';
+import QrScanner from 'qr-scanner';
+import { Subscription } from 'rxjs';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalWalletConnectService, WalletConnectSessionRequestSource } from 'src/app/services/global.walletconnect.service';
+import { IntentService } from '../../services/intent.service';
 
 // The worker JS file from qr-scanner must be copied manually from
 // the qr-scanner node_modules sources and copied to our assets/folder
@@ -40,6 +40,8 @@ export class ScanPage {
     fromIntentRequest = false;
     loader: any = null;
     alert: any = null;
+
+    alreadySentIntentResponce = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -82,6 +84,10 @@ export class ScanPage {
      * Leaving the page, do some cleanup.
      */
     ionViewWillLeave() {
+        // Must send intent response for intent when click back key.
+        if (this.fromIntentRequest && !this.alreadySentIntentResponce) {
+            void this.returnScannedContentToIntentRequester('', false);
+        }
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
         this.zone.run(() => {
             Logger.log("Scanner", "Scan view is leaving")
@@ -268,8 +274,9 @@ export class ScanPage {
         }, 100);
     }
 
-    async returnScannedContentToIntentRequester(scannedContent: string) {
-        await this.intentService.sendScanQRCodeIntentResponse(scannedContent);
+    async returnScannedContentToIntentRequester(scannedContent: string, navigateBack = true) {
+        this.alreadySentIntentResponce = true;
+        await this.intentService.sendScanQRCodeIntentResponse(scannedContent, navigateBack);
     }
 
     /**
