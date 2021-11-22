@@ -73,8 +73,8 @@ ion-col {
     }
 
     .illegal {
-        color: #FFFFFF;
-        background-color: #BC1212;
+        color: #BC1212;
+        border: 1px solid #BC1212;
     }
 
     .expired {
@@ -200,6 +200,11 @@ ion-segment {
         .inactive {
             color: #545454;
             background-color: #ECECEC;
+        }
+
+        .illegal {
+            color: #FF4A4A;
+            border: 1px solid #FF4A4A;
         }
 
         .expired {
