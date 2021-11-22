@@ -1,9 +1,9 @@
 import { Injectable, NgZone } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalIntentService } from '../../services/global.intent.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { Logger } from 'src/app/logger';
 import { NavigationExtras } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalIntentService } from '../../services/global.intent.service';
 
 
 @Injectable({
@@ -20,7 +20,7 @@ export class IntentService {
     ) {
     }
 
-    public async init() {
+    public init() {
         /*Logger.log('Scanner', "Checking if there are pending intents");
         essentialsIntentManager.hasPendingIntent((hasPendingIntent: boolean)=>{
             if (hasPendingIntent) {
@@ -66,15 +66,15 @@ export class IntentService {
         }
 
         this.ngZone.run(() => {
-            this.globalNav.navigateRoot("/scanner", "/scanner/scan", props);
+            void this.globalNav.navigateRoot("/scanner", "/scanner/scan", props);
         });
     }
 
-    public sendScanQRCodeIntentResponse(scannedContent: string): Promise<void> {
+    public sendScanQRCodeIntentResponse(scannedContent: string, navigateBack = true): Promise<void> {
         Logger.log('Scanner', "Sending scanqrcode intent response");
 
         return this.globalIntentService.sendIntentResponse({
             scannedContent: scannedContent
-        }, this.intentRequest.intentId as number);
+        }, this.intentRequest.intentId as number, navigateBack);
     }
 }
