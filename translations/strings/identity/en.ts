@@ -63,6 +63,11 @@ export const en = {
         'issuance-date': 'Issuance date',
         'expiration-date': 'Expiration date',
         'no-history-display': 'No history display',
+        'change-visibility': 'Change visibility',
+        'change-visibility-info': 'Choose to make this information visible by everyone or not',
+        'change-visible': 'This credential will become visible to everyone next time your publish your identity',
+        'change-unpublished': 'This credential will be unpublished next time your publish your identity',
+        'change-not-published': 'This credential will be not be published next time your publish your identity',
 
         // Credentiallist
         'publish-changes': 'Publish Changes',
