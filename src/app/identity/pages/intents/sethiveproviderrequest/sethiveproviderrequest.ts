@@ -28,6 +28,8 @@ export class SetHiveProviderRequestPage {
   public receivedIntent: SetHiveProviderIdentityIntent = null;
   private publishresultSubscription: Subscription = null;
 
+  private alreadySentIntentResponce = false;
+
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
@@ -65,6 +67,9 @@ export class SetHiveProviderRequestPage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
+    }
   }
 
   acceptRequest() {
@@ -90,9 +95,10 @@ export class SetHiveProviderRequestPage {
     });
   }
 
-  async sendIntentResponse(status: string) {
+  async sendIntentResponse(status: string, navigateBack = true) {
+    this.alreadySentIntentResponce = true;
     // Send the intent response as everything is completed
-    await this.appServices.sendIntentResponse({ status: status }, this.receivedIntent.intentId);
+    await this.appServices.sendIntentResponse({ status: status }, this.receivedIntent.intentId, navigateBack);
   }
 
   async addOrUpdateService(password: string) {
@@ -108,7 +114,7 @@ export class SetHiveProviderRequestPage {
     await this.didService.getActiveDid().getLocalDIDDocument().addService(service, password);
   }
 
-  async rejectRequest() {
-    await this.sendIntentResponse('cancelled');
+  async rejectRequest(navigateBack = true) {
+    await this.sendIntentResponse('cancelled', navigateBack);
   }
 }

@@ -57,6 +57,8 @@ export class CredentialIssueRequestPage {
   public displayableCredential: IssuedCredential = null; // Displayable reworked material
   public preliminaryChecksCompleted = false;
 
+  private alreadySentIntentResponce = false;
+
   public showIdentifier = false;
   public showReceiver = true;
   public showExpiration = false;
@@ -86,6 +88,12 @@ export class CredentialIssueRequestPage {
 
       Logger.log('Identity', "Displayable credential:", this.displayableCredential)
     });
+  }
+
+  ionViewWillLeave() {
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
+    }
   }
 
   /**
@@ -160,7 +168,7 @@ export class CredentialIssueRequestPage {
           void this.popup.ionicAlert(this.translate.instant('identity.credential-issued'), this.translate.instant('identity.credential-issued-success'), this.translate.instant('common.done')).then(async () => {
             Logger.log('Identity', "Sending credissue intent response for intent id " + this.receivedIntent.intentId)
             let credentialAsString = await issuedCredential.toString();
-            await this.appServices.sendIntentResponse({
+            await this.sendIntentResponse({
               credential: credentialAsString
             }, this.receivedIntent.intentId);
           })
@@ -174,7 +182,12 @@ export class CredentialIssueRequestPage {
     });
   }
 
-  async rejectRequest() {
-    await this.appServices.sendIntentResponse({}, this.receivedIntent.intentId);
+  async rejectRequest(navigateBack = true) {
+    await this.sendIntentResponse({}, this.receivedIntent.intentId, navigateBack);
+  }
+
+  private async sendIntentResponse(result, intentId, navigateBack = true) {
+    this.alreadySentIntentResponce = true;
+    await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 }

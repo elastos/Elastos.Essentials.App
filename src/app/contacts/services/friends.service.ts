@@ -1,23 +1,23 @@
 import { Injectable, NgZone } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras } from '@angular/router';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
-
+import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
+import { App } from "src/app/model/app.enum";
+import { Contact as ContactNotifierContact, ContactNotifierService } from 'src/app/services/contactnotifier.service';
+import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { defaultContacts } from '../config/config';
+import { Avatar } from '../models/avatar';
+import { Contact } from '../models/contact.model';
+import { DidService } from './did.service';
 import { NativeService } from './native.service';
 
-import { Contact } from '../models/contact.model';
-import { Avatar } from '../models/avatar';
-import { DidService } from './did.service';
-import { ContactNotifierService, Contact as ContactNotifierContact } from 'src/app/services/contactnotifier.service';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Events } from 'src/app/services/events.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { App } from "src/app/model/app.enum"
-import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
-import { defaultContacts } from '../config/config';
+
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -971,6 +971,14 @@ export class FriendsService extends GlobalService {
     } else {
       void this.native.genericToast(this.translate.instant('contacts.select-before-invite'));
     }
+  }
+
+  // Send empty intent response when user cancel the action.
+  sendEmptyIntentRes() {
+    void this.globalIntentService.sendIntentResponse(
+      {},
+      this.managerService.handledIntentId, false
+    );
   }
 
   /********************************************************

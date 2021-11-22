@@ -21,6 +21,7 @@ export class SignDigestPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     public receivedIntent: SignIdentityIntent = null;
+    private alreadySentIntentResponce = false;
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
@@ -47,6 +48,9 @@ export class SignDigestPage {
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        if (!this.alreadySentIntentResponce) {
+            void this.rejectRequest(false);
+        }
     }
 
     acceptRequest() {
@@ -88,7 +92,7 @@ export class SignDigestPage {
             // Send the intent response as everything is completed
             Logger.log('Identity', "Data signed, sending intent response");
             try {
-                await this.appServices.sendIntentResponse({ signature: signature, jwt: jwtToken }, this.receivedIntent.intentId);
+                await this.sendIntentResponse({ signature: signature, jwt: jwtToken }, this.receivedIntent.intentId);
             }
             catch (e) {
                 await this.popup.ionicAlert("Response error", "Sorry, we were unable to return the signed information to the calling app. " + e);
@@ -98,7 +102,12 @@ export class SignDigestPage {
         });
     }
 
-    async rejectRequest() {
-        await this.appServices.sendIntentResponse({}, this.receivedIntent.intentId);
+    async rejectRequest(navigateBack = true) {
+        await this.sendIntentResponse({}, this.receivedIntent.intentId, navigateBack);
+    }
+
+    private async sendIntentResponse(result, intentId, navigateBack = true) {
+        this.alreadySentIntentResponce = true;
+        await this.appServices.sendIntentResponse(result, intentId, navigateBack);
     }
 }

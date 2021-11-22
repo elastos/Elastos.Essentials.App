@@ -53,6 +53,8 @@ export class RegisterApplicationProfileRequestPage {
 
   public receivedIntent: RegAppProfileIdentityIntent = null;
 
+  private alreadySentIntentResponce = false;
+
   credentials: DIDPlugin.VerifiableCredential[] = [];
   denyReason = '';
 
@@ -106,6 +108,12 @@ export class RegisterApplicationProfileRequestPage {
     Logger.log("identity", "Modified request data:", this.receivedIntent);
   }
 
+  ionViewWillLeave() {
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
+    }
+  }
+
   acceptRequest() {
     // Prompt password if needed
     void AuthService.instance.checkPasswordThenExecute(async () => {
@@ -129,6 +137,7 @@ export class RegisterApplicationProfileRequestPage {
   }
 
   async sendIntentResponse() {
+    this.alreadySentIntentResponce = true;
     // Send the intent response as everything is completed
     await this.appServices.sendIntentResponse({}, this.receivedIntent.intentId);
   }
@@ -194,7 +203,8 @@ export class RegisterApplicationProfileRequestPage {
     }
   }
 
-  async rejectRequest() {
-    await this.appServices.sendIntentResponse({ status: 'cancelled' }, this.receivedIntent.intentId);
+  async rejectRequest(navigateBack = true) {
+    this.alreadySentIntentResponce = true;
+    await this.appServices.sendIntentResponse({ status: 'cancelled' }, this.receivedIntent.intentId, navigateBack);
   }
 }

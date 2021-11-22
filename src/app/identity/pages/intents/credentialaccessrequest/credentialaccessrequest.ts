@@ -107,6 +107,8 @@ export class CredentialAccessRequestPage {
   public requestDappName: string = null;
   public requestDappColor = '#565bdb';
 
+  private alreadySentIntentResponce = false;
+
   public profile = new Profile(); // Empty profile waiting to get the real one.
   public credentials: VerifiableCredential[] = [];
   public did: DID = null;
@@ -204,6 +206,10 @@ export class CredentialAccessRequestPage {
     if (this.avatarSubscription) {
       this.avatarSubscription.unsubscribe();
       this.avatarSubscription = null;
+    }
+
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
     }
   }
 
@@ -396,7 +402,7 @@ export class CredentialAccessRequestPage {
           text: this.translate.instant('identity.credaccess-alert-publish-required-btn'),
           handler: () => {
             this.zone.run(() => {
-              void this.globalIntentService.sendIntentResponse(
+              void this.sendIntentResponse(
                 { jwt: null },
                 this.receivedIntent.intentId
               );
@@ -549,12 +555,12 @@ export class CredentialAccessRequestPage {
           if (this.receivedIntent.originalJwtRequest) {
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             setTimeout(async () => {
-              await this.appServices.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
+              await this.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
               this.showSpinner = false;
             }, 1000);
 
           } else {
-            await this.appServices.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
+            await this.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
             this.showSpinner = false;
           }
         }
@@ -569,8 +575,13 @@ export class CredentialAccessRequestPage {
     }, 100);
   }
 
-  async rejectRequest() {
-    await this.appServices.sendIntentResponse({ did: null, presentation: null }, this.receivedIntent.intentId);
+  async rejectRequest(navigateBack = true) {
+    await this.sendIntentResponse({ did: null, presentation: null }, this.receivedIntent.intentId, navigateBack);
+  }
+
+  private async sendIntentResponse(result, intentId, navigateBack = true) {
+    this.alreadySentIntentResponce = true;
+    await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 
   async showSuccess(jwtToken) {
@@ -581,7 +592,7 @@ export class CredentialAccessRequestPage {
       component: SuccessComponent,
     });
     /*     this.popup.onWillDismiss().then(async () => {
-          await this.appServices.sendIntentResponse("credaccess", {jwt: jwtToken}, this.requestDapp.intentId);
+          await this.sendIntentResponse("credaccess", {jwt: jwtToken}, this.requestDapp.intentId);
         }); */
     return await this.popup.present();
   }
