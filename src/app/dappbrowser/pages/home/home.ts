@@ -122,6 +122,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     useExternalBrowser: false,
                     networks: ["heco", "bsc"]
                 },
+                {
+                    icon: '/assets/browser/dapps/idriss.png',
+                    title: 'Idriss Crypto Transactions',
+                    description: ' Link wallet addresses from multiple networks to your email or phone number, enabling quick-lookup & seamless payments.(registry on BSC).',
+                    url: 'https://www.idriss-crypto.com/',
+                    useExternalBrowser: false,
+                    networks: ["elastos", "bsc"]
+                },
                 /* {
                     icon: '/assets/browser/dapps/profile.png',
                     title: 'Profile',
