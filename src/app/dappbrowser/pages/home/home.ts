@@ -118,7 +118,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     icon: '/assets/browser/dapps/filda.png',
                     title: 'FilDA',
                     description: 'HECO-based lending and borrowing, with ELA support',
-                    url: 'https://filda.io/',
+                    url: 'https://app.filda.io/',
                     useExternalBrowser: false,
                     networks: ["heco", "bsc"]
                 },
