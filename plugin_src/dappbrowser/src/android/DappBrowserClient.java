@@ -3,7 +3,6 @@ package org.elastos.essentials.plugins.dappbrowser;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -31,12 +30,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 import org.apache.cordova.LOG;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.apache.cordova.PluginManager;
 import org.apache.cordova.CordovaHttpAuthHandler;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 public class DappBrowserClient extends WebViewClient {
     protected static final String LOG_TAG = "DappBrowserClient";
@@ -52,8 +61,8 @@ public class DappBrowserClient extends WebViewClient {
     ProgressBar progressBar;
     private Activity activity;
     private DappBrowserPlugin brwoserPlugin;
-    private Boolean sslerrorAndNeedInject = false;
     public String originUrl;
+//    private Boolean injected = false;
 
     public DappBrowserClient(DappBrowserPlugin brwoserPlugin, ProgressBar progressBar, String beforeload) {
         this.beforeload = beforeload;
@@ -246,6 +255,13 @@ public class DappBrowserClient extends WebViewClient {
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
         LOG.d(LOG_TAG, "in browser client. isMainFrame:" + request.isForMainFrame() +": " + request.getUrl());
 
+//        //Check whether injected, if not will inject web3 provider
+//        if (!injected) {
+//            injectWeb3ProviderScript(request);
+//        }
+//
+//        return shouldInterceptRequest(request.getUrl().toString(), super.shouldInterceptRequest(view, request), request.getMethod());
+
         String urlString = request.getUrl().toString();
         WebResourceResponse resourceResponse = null;
 
@@ -253,6 +269,11 @@ public class DappBrowserClient extends WebViewClient {
             try {
                 URL url = new URL(urlString);
                 URLConnection connection = url.openConnection();
+
+                // Pass the web resource request headers to the url connection headers
+                Map<String, String> requestHeaders = request.getRequestHeaders();
+                requestHeaders.forEach(connection::setRequestProperty);
+
                 String mimeType = connection.getContentType();
                 if ((mimeType == null)) {
                     mimeType = "text/html";
@@ -271,9 +292,6 @@ public class DappBrowserClient extends WebViewClient {
             catch (IOException e) {
                 LOG.e(LOG_TAG, e.getLocalizedMessage());
             }
-        }
-        else if (sslerrorAndNeedInject) { //TODO:: This use in debuggable, but it don't work now
-            injectWeb3ProviderScript(request);
         }
 
         return shouldInterceptRequest(urlString, resourceResponse, request.getMethod());
@@ -294,7 +312,7 @@ public class DappBrowserClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
 
-        sslerrorAndNeedInject = false;
+//        injected = false;
         this.originUrl = url;
 
         String newloc = "";
@@ -370,12 +388,11 @@ public class DappBrowserClient extends WebViewClient {
 
     @Override
     public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-        // If debuggable version, it will don't cancel and return.
-        if (isDebuggable()) {
-            sslerrorAndNeedInject = true;
-            handler.proceed();
-            return;
-        }
+//        // If debuggable version, it will don't cancel and return.
+//        if (brwoserPlugin.isDebuggable()) {
+//            handler.proceed();
+//            return;
+//        }
 
         super.onReceivedSslError(view, handler, error);
         try {
@@ -469,21 +486,48 @@ public class DappBrowserClient extends WebViewClient {
         return new ByteArrayInputStream(html.getBytes());
     }
 
-    private synchronized void injectWeb3ProviderScript(WebResourceRequest request) {
-        String url = request.getUrl().toString();
-        if (sslerrorAndNeedInject && (!request.isForMainFrame() || (this.originUrl != null) && !url.equals(this.originUrl))) {
-            brwoserPlugin.injectDeferredObject(brwoserPlugin.webViewHandler.options.atdocumentstartscript, null);
-            sslerrorAndNeedInject = false;
-        }
-    }
+//    private synchronized void injectWeb3ProviderScript(WebResourceRequest request) {
+//        String url = request.getUrl().toString();
+//        if (!injected && (!request.isForMainFrame() || (this.originUrl != null) && !url.equals(this.originUrl))) {
+//            brwoserPlugin.injectDeferredObject(brwoserPlugin.webViewHandler.options.atdocumentstartscript, null);
+//            injected = true;
+//        }
+//    }
 
-    private boolean isDebuggable() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (0 != (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+    public static void setSslVerifier() throws NoSuchAlgorithmException, KeyManagementException {
+        // Set up a Trust all manager
+        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager()
+        {
+            public java.security.cert.X509Certificate[] getAcceptedIssuers()
+            {
+                return null;
+            }
+
+            public void checkClientTrusted(
+                    java.security.cert.X509Certificate[] certs, String authType)
+            {
+            }
+
+            public void checkServerTrusted(
+                    java.security.cert.X509Certificate[] certs, String authType)
+            {
+            }
+        } };
+
+        // Get a new SSL context
+        SSLContext sc = SSLContext.getInstance("TLSv1.2");
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        // Set our connection to use this SSL context, with the "Trust all" manager in place.
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+        // Also force it to trust all hosts
+        HostnameVerifier allHostsValid = new HostnameVerifier() {
+            public boolean verify(String hostname, SSLSession session) {
                 return true;
             }
-        }
-        return false;
+        };
+        // and set the hostname verifier.
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
     }
 
 }

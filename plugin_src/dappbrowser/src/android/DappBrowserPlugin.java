@@ -24,9 +24,11 @@ package org.elastos.essentials.plugins.dappbrowser;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.Browser;
@@ -52,6 +54,8 @@ import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +81,15 @@ public class DappBrowserPlugin extends CordovaPlugin {
     public void pluginInitialize() {
         viewHeight = ((ViewGroup)this.webView.getView()).getHeight();
         instance = this;
+
+        //If debuggable, trusting all certificates over HTTPS
+        if (isDebuggable()) {
+            try {
+                DappBrowserClient.setSslVerifier();
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                LOG.e(LOG_TAG, e.getLocalizedMessage());
+            }
+        }
 
         ServiceWorkerController swController = ServiceWorkerController.getInstance();
         swController.setServiceWorkerClient(new ServiceWorkerClient() {
@@ -654,4 +667,14 @@ public class DappBrowserPlugin extends CordovaPlugin {
             return null;
         }
     }
+
+    public boolean isDebuggable() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (0 != (this.cordova.getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
