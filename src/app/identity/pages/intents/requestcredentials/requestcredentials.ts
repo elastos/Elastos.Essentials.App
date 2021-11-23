@@ -84,7 +84,7 @@ type ClaimDisplayEntry = {
 }
 
 /**
- * This screen is the v2 version og "get credentials / credaccess" with support for
+ * This screen is the v2 version of "get credentials / credaccess" with support for
  * queries by type instead of only ID, json path queries, multiple credential choices,
  * displayable credential type and more.
  *
@@ -200,7 +200,7 @@ export class RequestCredentialsPage {
     }
 
     if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
+      void this.rejectRequest(false);
     }
   }
 
@@ -549,16 +549,16 @@ export class RequestCredentialsPage {
         Logger.log('Identity', "Created presentation:", presentation);
 
         let payload = {
-          type: "credaccess",
+          type: "requestcredentials",
           did: currentDidString,
           presentation: JSON.parse(await presentation.toJson()), // Get presentation as json from the DID SDK then parse as a json object to send the response back.
         };
 
         // Return the original JWT token in case this intent was called by an external url (elastos scheme definition)
-        // TODO: Currently adding elastos://credaccess/ in front of the JWT because of CR website requirement. But we should cleanup this and pass only the JWT itself
+        // TODO: Currently adding elastos://requestcredentials/ in front of the JWT because of CR website requirement. But we should cleanup this and pass only the JWT itself
         if (this.receivedIntent.originalJwtRequest) {
           Logger.log('Identity', 'Intent is called by external intent', this.receivedIntent.originalJwtRequest);
-          payload["req"] = "elastos://credaccess/" + this.receivedIntent.originalJwtRequest;
+          payload["req"] = "elastos://requestcredentials/" + this.receivedIntent.originalJwtRequest;
 
           let parsedJwt = await didManager.parseJWT(false, this.receivedIntent.originalJwtRequest);
           if (parsedJwt) {
@@ -618,7 +618,7 @@ export class RequestCredentialsPage {
       component: SuccessComponent,
     });
     /*     this.popup.onWillDismiss().then(async () => {
-          await this.sendIntentResponse("credaccess", {jwt: jwtToken}, this.requestDapp.intentId);
+          await this.sendIntentResponse("requestcredentials", {jwt: jwtToken}, this.requestDapp.intentId);
         }); */
     return await this.popup.present();
   }

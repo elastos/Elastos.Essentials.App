@@ -398,6 +398,11 @@ export class DappBrowserService {
                 await this.handleElastosGetCredentials(message);
                 void dappBrowser.show();
                 break;
+            case "elastos_requestCredentials":
+                dappBrowser.hide();
+                await this.handleElastosRequestCredentials(message);
+                void dappBrowser.show();
+                break;
             case "elastos_importCredentials":
                 dappBrowser.hide();
                 await this.handleElastosImportCredentials(message);
@@ -549,6 +554,29 @@ export class DappBrowserService {
 
             let res: { result: { presentation: DIDPlugin.VerifiablePresentation } };
             res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/credaccess", query);
+
+            if (!res || !res.result || !res.result.presentation) {
+                console.warn("Missing presentation. The operation was maybe cancelled.");
+                this.sendElastosConnectorIABError(message.data.id, "Missing presentation. The operation was maybe cancelled.");
+                return;
+            }
+
+            this.sendElastosConnectorIABResponse(
+                message.data.id,
+                res.result.presentation
+            );
+        }
+        catch (e) {
+            this.sendElastosConnectorIABError(message.data.id, e);
+        }
+    }
+
+    private async handleElastosRequestCredentials(message: DABMessage): Promise<void> {
+        try {
+            let request = message.data.object as DID.CredentialDisclosureRequest;
+
+            let res: { result: { presentation: DIDPlugin.VerifiablePresentation } };
+            res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/requestcredentials", { request });
 
             if (!res || !res.result || !res.result.presentation) {
                 console.warn("Missing presentation. The operation was maybe cancelled.");

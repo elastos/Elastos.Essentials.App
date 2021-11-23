@@ -79176,6 +79176,12 @@
 	        console.log("getCredentials response received", response);
 	        return VerifiablePresentation.parse(JSON.stringify(response));
 	    }
+	    static async requestCredentials(query) {
+	        console.log("requestCredentials request received", query);
+	        let response = await essentialsBridge.postMessage("elastos_requestCredentials", query);
+	        console.log("requestCredentials response received", response);
+	        return VerifiablePresentation.parse(JSON.stringify(response));
+	    }
 	    static async importCredentials(credentials, options) {
 	        console.log("importCredentials request received", credentials, options);
 	        let response = await essentialsBridge.postMessage("elastos_importCredentials", {
@@ -79212,6 +79218,9 @@
 	     */
 	    getCredentials(query) {
 	        return DIDOperations.getCredentials(query);
+	    }
+	    requestCredentials(query) {
+	        return DIDOperations.requestCredentials(query);
 	    }
 	    issueCredential(holder, types, subject, identifier, expirationDate) {
 	        throw new Error("Method not implemented.");

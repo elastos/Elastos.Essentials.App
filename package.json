@@ -30,7 +30,6 @@
     "@angular/platform-browser-dynamic": "11.0.9",
     "@angular/router": "11.0.9",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "^2.0.2",
-    "@elastosfoundation/elastos-connectivity-sdk-js": "^1.0.10",
     "@ethersproject/experimental": "5.0.9",
     "@ionic-native/app-version": "5.32.0",
     "@ionic-native/clipboard": "5.31.1",
@@ -92,7 +91,7 @@
     "@angular/compiler": "11.0.9",
     "@angular/compiler-cli": "11.0.9",
     "@angular/language-service": "11.0.9",
-    "@elastosfoundation/elastos-connectivity-sdk-js": "^1.0.10",
+    "@elastosfoundation/elastos-connectivity-sdk-js": "^1.0.11",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.5",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.20",
     "@ionic/angular-toolkit": "3.1.0",
@@ -176,8 +175,7 @@
       "elastos-essentials-plugin-dappbrowser": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "android"
     ]
   }
 }
