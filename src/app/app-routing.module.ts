@@ -1,25 +1,26 @@
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuardService } from './services/auth-guard.service';
 
 @Component({ template: "<div></div>" })
-export class EmptyPage  {}
+export class EmptyPage { }
 
 const routes: Routes = [
-  { path: 'launcher', loadChildren: './launcher/module#LauncherModule' },
+  { path: 'launcher', loadChildren: './launcher/module#LauncherModule', canActivate: [AuthGuardService] },
   { path: 'didsessions', loadChildren: './didsessions/module#DIDSessionsModule' },
   { path: 'scanner', loadChildren: './scanner/module#ScannerModule' },
-  { path: 'hivemanager', loadChildren: './hivemanager/module#HiveManagerModule' },
-  { path: 'settings', loadChildren: './settings/module#SettingsModule' },
-  { path: 'contacts', loadChildren: './contacts/module#ContactsModule' },
-  { path: 'identity', loadChildren: './identity/module#IdentityModule' },
-  { path: 'wallet', loadChildren: './wallet/module#WalletModule' },
-  { path: 'dposvoting', loadChildren: './voting/dposvoting/module#DPoSVotingModule' },
-  { path: 'dposregistration', loadChildren: './voting/dposregistration/module#DPoSRegistrationModule' },
-  { path: 'crcouncilvoting', loadChildren: './voting/crcouncilvoting/module#CRCouncilVotingModule' },
-  { path: 'crcouncilmanager', loadChildren: './voting/crcouncilmanager/module#CRCouncilManagerModule' },
-  { path: 'crproposalvoting', loadChildren: './voting/crproposalvoting/module#CRProposalVotingModule' },
-  { path: 'developertools', loadChildren: './developertools/module#DeveloperToolsModule' },
-  { path: 'dappbrowser', loadChildren: './dappbrowser/module#DAppBrowserModule' },
+  { path: 'hivemanager', loadChildren: './hivemanager/module#HiveManagerModule', canActivate: [AuthGuardService] },
+  { path: 'settings', loadChildren: './settings/module#SettingsModule', canActivate: [AuthGuardService] },
+  { path: 'contacts', loadChildren: './contacts/module#ContactsModule', canActivate: [AuthGuardService] },
+  { path: 'identity', loadChildren: './identity/module#IdentityModule', canActivate: [AuthGuardService] },
+  { path: 'wallet', loadChildren: './wallet/module#WalletModule', canActivate: [AuthGuardService] },
+  { path: 'dposvoting', loadChildren: './voting/dposvoting/module#DPoSVotingModule', canActivate: [AuthGuardService] },
+  { path: 'dposregistration', loadChildren: './voting/dposregistration/module#DPoSRegistrationModule', canActivate: [AuthGuardService] },
+  { path: 'crcouncilvoting', loadChildren: './voting/crcouncilvoting/module#CRCouncilVotingModule', canActivate: [AuthGuardService] },
+  { path: 'crcouncilmanager', loadChildren: './voting/crcouncilmanager/module#CRCouncilManagerModule', canActivate: [AuthGuardService] },
+  { path: 'crproposalvoting', loadChildren: './voting/crproposalvoting/module#CRProposalVotingModule', canActivate: [AuthGuardService] },
+  { path: 'developertools', loadChildren: './developertools/module#DeveloperToolsModule', canActivate: [AuthGuardService] },
+  { path: 'dappbrowser', loadChildren: './dappbrowser/module#DAppBrowserModule', canActivate: [AuthGuardService] },
 
   // Prevent angular from calling a random default route sometimes when starting,
   // leading to crashes if platform is not ready yet
