@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
@@ -44,7 +45,7 @@ export class BrowserTitleBarComponent extends TitleBarComponent {
         public globalNotifications: GlobalNotificationsService,
         private networkService: WalletNetworkService
     ) {
-        super(themeService, popoverCtrl, globalNav,globalNotifications);
+        super(themeService, popoverCtrl, globalNav, globalNotifications);
     }
 
     public setUrl(url: string) {
@@ -72,7 +73,11 @@ export class BrowserTitleBarComponent extends TitleBarComponent {
 
     getIconPath(iconSlot: TitleBarIconSlot) {
         if (this.icons[iconSlot].iconPath == BuiltInIcon.NETWORK) {
-            return this.networkService.activeNetwork.value.logo;
+            // Note: sometimes the active network can be null for a while
+            if (this.networkService.activeNetwork.value)
+                return this.networkService.activeNetwork.value.logo;
+            else
+                return transparentPixelIconDataUrl();
         }
         else {
             return super.getIconPath(iconSlot);
