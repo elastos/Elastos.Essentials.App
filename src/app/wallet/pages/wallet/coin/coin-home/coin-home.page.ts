@@ -253,7 +253,7 @@ export class CoinHomePage implements OnInit {
             return;
         }
         this.transactionsLoaded = true;
-        Logger.log('wallet', "Got all transactions: ", transactions);
+        Logger.log('wallet', "Got all transactions: ", transactions.length);
 
         //const transactions = allTransactions.transactions;
         //this.MaxCount = allTransactions.total;
@@ -279,7 +279,7 @@ export class CoinHomePage implements OnInit {
         for (let transaction of transactions) {
             const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
             if (!transactionInfo) {
-                Logger.warn('wallet', 'Invalid transaction ', transaction);
+                // Logger.warn('wallet', 'Invalid transaction ', transaction);
                 continue;
             }
 

@@ -72,7 +72,7 @@ export type ElastosAPIProvider = {
  * Service reponsible for switching between different API providers for elastos features,
  * such as Elastos ESCRPC, CyberRepublic listings, etc.
  *
- * Ex: elastos.io VS trinity-tech.cn
+ * Ex: elastos.io VS trinity-tech.io
  */
 @Injectable({
     providedIn: 'root'
@@ -124,7 +124,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         eidMiscRPC: 'https://api.elastos.io/eid-misc',
                         eidBrowserRPC: 'https://eid.elastos.io/api',
                         eidOracleRPC: 'https://api.elastos.io/eid-oracle',
-                        escRPC: 'https://api.elastos.io/eth',
+                        escRPC: 'https://api.elastos.io/esc',
                         escMiscRPC: 'https://api.elastos.io/misc',
                         escOracleRPC: 'https://api.elastos.io/oracle',
                         escBrowserRPC: 'https://esc.elastos.io/api',
@@ -137,10 +137,10 @@ export class GlobalElastosAPIService extends GlobalService {
                         eidMiscRPC: 'https://api-testnet.elastos.io/eid-misc',
                         eidBrowserRPC: 'https://eid-testnet.elastos.io/api',
                         eidOracleRPC: 'https://api-testnet.elastos.io/eid-oracle',
-                        escRPC: 'https://api-testnet.elastos.io/eth',
+                        escRPC: 'https://api-testnet.elastos.io/esc',
                         escOracleRPC: 'https://api-testnet.elastos.io/oracle',
                         escMiscRPC: 'https://api-testnet.elastos.io/misc',
-                        escBrowserRPC: 'https://eth-testnet.elastos.io/api',
+                        escBrowserRPC: 'https://esc-testnet.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "LRW": {
@@ -160,32 +160,32 @@ export class GlobalElastosAPIService extends GlobalService {
             },
             {
                 key: "ttechcn",
-                name: "trinity-tech.cn",
-                description: this.translate.instant('settings.trinity-tech-cn-des'),
+                name: "trinity-tech.io",
+                description: this.translate.instant('settings.trinity-tech-io-des'),
                 endpoints: {
                     "MainNet": {
-                        mainChainRPC: 'https://api.trinity-tech.cn/ela',
-                        idChainRPC: 'https://api.trinity-tech.cn/did',
-                        eidChainRPC: 'https://api.trinity-tech.cn/eid',
-                        eidMiscRPC: 'https://api.trinity-tech.cn/eid-misc',
+                        mainChainRPC: 'https://api.trinity-tech.io/ela',
+                        idChainRPC: 'https://api.trinity-tech.io/did',
+                        eidChainRPC: 'https://api.trinity-tech.io/eid',
+                        eidMiscRPC: 'https://api.trinity-tech.io/eid-misc',
                         eidBrowserRPC: 'https://eid.elastos.io/api',
-                        eidOracleRPC: 'https://api.trinity-tech.cn/eid-oracle',
-                        escRPC: 'https://api.trinity-tech.cn/eth',
-                        escOracleRPC: 'https://api.trinity-tech.cn/eth-oracle',
-                        escMiscRPC: 'https://api.trinity-tech.cn/eth-misc',
-                        escBrowserRPC: 'https://esc.trinity-tech.cn/api',
+                        eidOracleRPC: 'https://api.trinity-tech.io/eid-oracle',
+                        escRPC: 'https://api.trinity-tech.io/esc',
+                        escOracleRPC: 'https://api.trinity-tech.io/esc-oracle',
+                        escMiscRPC: 'https://api.trinity-tech.io/esc-misc',
+                        escBrowserRPC: 'https://esc.trinity-tech.cn/api', // no esc.trinity-tech.io
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "TestNet": {
-                        mainChainRPC: 'https://api-testnet.trinity-tech.cn/ela',
-                        idChainRPC: 'https://api-testnet.trinity-tech.cn/did',
-                        eidChainRPC: 'https://api-testnet.trinity-tech.cn/eid',
-                        eidMiscRPC: 'https://api-testnet.trinity-tech.cn/eid-misc',
+                        mainChainRPC: 'https://api-testnet.trinity-tech.io/ela',
+                        idChainRPC: 'https://api-testnet.trinity-tech.io/did',
+                        eidChainRPC: 'https://api-testnet.trinity-tech.io/eid',
+                        eidMiscRPC: 'https://api-testnet.trinity-tech.io/eid-misc',
                         eidBrowserRPC: 'https://eid-testnet.elastos.io/api',
-                        eidOracleRPC: 'https://api-testnet.trinity-tech.cn/eid-oracle',
-                        escRPC: 'https://api-testnet.trinity-tech.cn/eth',
-                        escOracleRPC: 'https://api-testnet.trinity-tech.cn/eth-oracle',
-                        escMiscRPC: 'https://api-testnet.trinity-tech.cn/eth-misc',
+                        eidOracleRPC: 'https://api-testnet.trinity-tech.io/eid-oracle',
+                        escRPC: 'https://api-testnet.trinity-tech.io/esc',
+                        escOracleRPC: 'https://api-testnet.trinity-tech.io/esc-oracle',
+                        escMiscRPC: 'https://api-testnet.trinity-tech.io/esc-misc',
                         escBrowserRPC: 'https://esc-testnet.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
@@ -556,7 +556,7 @@ export class GlobalElastosAPIService extends GlobalService {
     public async getERC20TokenTransactions(elastosChainCode: StandardCoinName, address: string): Promise<EthTokenTransaction[]> {
         let apiurltype = this.getApiUrlTypeForBrowser(elastosChainCode);
         const rpcApiUrl = this.getApiUrl(apiurltype);
-        const ethscgetTokenTxsUrl = rpcApiUrl + '/api/?module=account&action=tokentx&address=' + address;
+        const ethscgetTokenTxsUrl = rpcApiUrl + '?module=account&action=tokentx&address=' + address;
 
         let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
         let resultItems = result.result as EthTokenTransaction[];
@@ -567,7 +567,7 @@ export class GlobalElastosAPIService extends GlobalService {
     public async getERC20TokenList(elastosChainCode: StandardCoinName, address: string): Promise<ERCTokenInfo[]> {
         let apiurltype = this.getApiUrlTypeForBrowser(elastosChainCode);
         const rpcApiUrl = this.getApiUrl(apiurltype);
-        const ethscgetTokenListUrl = rpcApiUrl + '/api/?module=account&action=tokenlist&address=' + address;
+        const ethscgetTokenListUrl = rpcApiUrl + '?module=account&action=tokenlist&address=' + address;
 
         let result = await this.globalJsonRPCService.httpGet(ethscgetTokenListUrl);
         return result.result as ERCTokenInfo[];

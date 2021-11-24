@@ -1,25 +1,23 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AlertController } from '@ionic/angular';
-import { NgZone} from '@angular/core';
-import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { PopupService } from '../../services/popup.service';
+import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarMenuItem, BuiltInIcon, TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { Events } from 'src/app/services/events.service';
+import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { ProfileService } from 'src/app/identity/services/profile.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { App } from "src/app/model/app.enum"
+import { Logger } from 'src/app/logger';
+import { App } from "src/app/model/app.enum";
+import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
+import { PopupService } from '../../services/popup.service';
 
 declare let hiveManager: HivePlugin.HiveManager;
 
@@ -80,7 +78,7 @@ export class PickProviderPage implements OnInit {
       this.storageProviders =  [
         { name: 'Trinity-tech.io 1', vaultAddress: "https://hive1.trinity-tech.io" },
         { name: 'Trinity-tech.io 2', vaultAddress: "https://hive2.trinity-tech.io" },
-        { name: 'Trinity-tech.cn 1', vaultAddress: "https://hive1.trinity-tech.cn" }
+        { name: 'Trinity-tech.io 1', vaultAddress: "https://hive1.trinity-tech.io" }
       ];
     }
     else if (networkTemplate == TESTNET_TEMPLATE) {

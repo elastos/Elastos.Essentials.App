@@ -107,7 +107,7 @@ export const fr = {
         'elastos-api-provider': 'Fournisseur d\'API Elastos',
         'elastos-api-provider-des': 'Sélectionnez votre fournisseur pour les services Elastos',
         'elastos-io-des': 'Ensemble de services déployés et maintenus par l\'équipe Elastos Fusion de la fondation Elastos, aussi connue comme l\'équipe Produit.',
-        'trinity-tech-cn-des': 'Ensemble de services déployés et maintenus par l\'équipe Trinity Tech de la fondation Elastos, responsable du développement des SDK d\'Elastos.',
+        'trinity-tech-io-des': 'Ensemble de services déployés et maintenus par l\'équipe Trinity Tech de la fondation Elastos, responsable du développement des SDK d\'Elastos.',
 
         /*********** Elastos API provider page ***********/
         'elastosapiprovider': 'API Elastos'

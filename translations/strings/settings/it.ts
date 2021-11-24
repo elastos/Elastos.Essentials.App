@@ -107,7 +107,7 @@ export const it = {
         'elastos-api-provider': 'Provider di API Elastos',
         'elastos-api-provider-des': 'Seleziona il tuo provider preferito per tutti i servizi relativi a Elastos',
         'elastos-io-des': 'Set di APIs implementati e gestiti dal team Elastos Fusion della Elastos Foundation, noto anche come team del prodotto.',
-        'trinity-tech-cn-des': 'Set di APIs implementati e mantenuti dal team Trinity Tech della Elastos Foundation, responsabile dello sviluppo degli SDK Elastos.',
+        'trinity-tech-io-des': 'Set di APIs implementati e mantenuti dal team Trinity Tech della Elastos Foundation, responsabile dello sviluppo degli SDK Elastos.',
 
         /*********** Elastos API provider page ***********/
         'elastosapiprovider': 'APIs di Elastos'

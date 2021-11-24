@@ -78907,11 +78907,11 @@
 	}
 	DefaultDIDAdapter.MAINNET_RESOLVERS = [
 	    "https://api.elastos.io/eid",
-	    "https://api.trinity-tech.cn/eid"
+	    "https://api.trinity-tech.io/eid"
 	];
 	DefaultDIDAdapter.TESTNET_RESOLVERS = [
 	    "https://api-testnet.elastos.io/eid",
-	    "https://api-testnet.trinity-tech.cn/eid",
+	    "https://api-testnet.trinity-tech.io/eid",
 	];
 	(function (DefaultDIDAdapter) {
 	    class CheckResult {
