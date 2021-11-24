@@ -4,6 +4,7 @@ import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -379,5 +380,19 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
     public pickNetwork() {
         void this.walletNetworkUIService.chooseActiveNetwork();
+    }
+
+    public getActiveNetworkLogo(): string {
+        if (this.walletNetworkService.activeNetwork.value)
+            return this.walletNetworkService.activeNetwork.value.logo;
+        else
+            return transparentPixelIconDataUrl();
+    }
+
+    public getActiveNetworkName(): string {
+        if (this.walletNetworkService.activeNetwork.value)
+            return this.walletNetworkService.activeNetwork.value.name;
+        else
+            return "";
     }
 }

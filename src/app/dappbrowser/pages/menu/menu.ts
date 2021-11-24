@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -139,5 +140,19 @@ export class MenuPage {
      */
     public appMetaLoaded(): boolean {
         return this.browsedAppInfo && this.browsedAppInfo.title !== "";
+    }
+
+    public getActiveNetworkLogo(): string {
+        if (this.walletNetworkService.activeNetwork.value)
+            return this.walletNetworkService.activeNetwork.value.logo;
+        else
+            return transparentPixelIconDataUrl();
+    }
+
+    public getActiveNetworkName(): string {
+        if (this.walletNetworkService.activeNetwork.value)
+            return this.walletNetworkService.activeNetwork.value.name;
+        else
+            return "";
     }
 }
