@@ -17,7 +17,7 @@
         </ion-row>
 
         <ion-grid *ngIf="suggestionsFetched" class="container">
-            <div *ngIf="suggestions.length > 0">
+            <div *ngIf="suggestions && suggestions.length > 0">
                 <ion-row *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)"
                     class="item-row ripple ion-activatable">
                     <ion-col size="2" class="left-col">
@@ -41,7 +41,7 @@
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-row>
             </div>
-            <div *ngIf="suggestions.length == 0" class="more">
+            <div *ngIf="!suggestions || suggestions.length == 0" class="more">
                 {{ 'crproposalvoting.no-suggestions' | translate }}
             </div>
         </ion-grid>

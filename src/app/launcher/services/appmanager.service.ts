@@ -240,6 +240,15 @@ export class AppmanagerService {
                         hasWidget: false,
                         routerPath: '/crproposalvoting/proposals/ALL'
                     },
+                    {
+                        id: 'crsuggestion',
+                        routerContext: App.CRPROPOSAL_VOTING,
+                        name: this.translate.instant('launcher.app-cr-suggestion'),
+                        description: this.translate.instant('launcher.app-crsuggestion-description'),
+                        icon: '/assets/launcher/apps/app-icons/suggestion.svg',
+                        hasWidget: false,
+                        routerPath: '/crproposalvoting/suggestions/ALL'
+                    },
                 ]
             }
         ];
