@@ -51,7 +51,8 @@ export class GlobalIntentService {
   }
 
   sendIntent(action: string, params?: any): Promise<any> {
-    Logger.log("Intents", "Sending intent", action, params);
+    // Can not show the data. Private data, confidential. eg. mnemonic.
+    Logger.log("Intents", "Sending intent", action);
     return essentialsIntentManager.sendIntent(action, params);
   }
 
@@ -78,7 +79,8 @@ export class GlobalIntentService {
   }
 
   async sendIntentResponse(result: any, intentId: number, navigateBack = true): Promise<void> {
-    Logger.log("Intents", "Sending intent response ", result, intentId, navigateBack);
+      // Can not show the data. Private data, confidential. eg. mnemonic.
+    Logger.log("Intents", "Sending intent response ", intentId, navigateBack);
 
     this.intentBeingProcessed = null;
     clearInterval(this.unprocessedIntentInterval);
@@ -110,7 +112,7 @@ export class GlobalIntentService {
       await essentialsIntentManager.sendIntentResponse(result, intentId);
     }
     catch (e) {
-      Logger.error("Intents", "Failed to send intent response:", intentId, result, e);
+      Logger.error("Intents", "Failed to send intent response:", intentId, e);
     }
 
     this.processNextIntentRequest();

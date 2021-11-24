@@ -770,7 +770,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // Intent response will return a contact's DID document under result.friends.document
     async openContacts() {
-        Logger.log('wallet', "Sending intent 'https://contact.elastos.net/pickfriend', requesting credentialType: 'elaAddress'");
         let res = await this.globalIntentService.sendIntent(
             "https://contact.elastos.net/pickfriend",
             {
@@ -779,7 +778,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     credentialType: "elaAddress"
                 }
             });
-        Logger.log('wallet', 'pickfriend intent res', res);
         if (res.result.friends && res.result.friends[0]) {
             this.zone.run(() => {
                 this.toAddress = res.result.friends[0].credentials.elaAddress;

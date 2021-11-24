@@ -1,9 +1,9 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
-import { UXService } from 'src/app/didsessions/services/ux.service';
-import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { IdentityService } from 'src/app/didsessions/services/identity.service';
+import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 
@@ -46,14 +46,16 @@ export class ScanPage implements OnInit {
         });
 
         // Show qr scanner
-        this.qrScanner.show();
+        await this.qrScanner.show();
 
         // Show camera
         // document.getElementsByTagName('body')[0].style.opacity = "0.5";
 
         // Start scanning
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         const scanSub = this.qrScanner.scan().subscribe(async (text: string) => {
-          Logger.log('didsessions', 'Scanned something', text);
+            // Can not show the scan data. Private data, confidential. eg. mnemonic.
+          Logger.log('didsessions', 'Scanned something length:', text.length);
 
           this.zone.run(() => {
             this.scanning = false;
@@ -63,7 +65,7 @@ export class ScanPage implements OnInit {
           // document.getElementsByTagName('body')[0].style.opacity = "1";
 
           // Hide qr scanner
-          this.qrScanner.hide();
+          await this.qrScanner.hide();
 
           // Stop scanning
           scanSub.unsubscribe();

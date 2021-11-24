@@ -1,8 +1,8 @@
 import { Injectable, NgZone } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 
 @Injectable({
@@ -19,22 +19,22 @@ export class NativeService {
   ) { }
 
   /********* Toasts *********/
-  async genericToast(msg: string, duration: number = 3000) {
+  genericToast(msg: string, duration = 3000) {
     this.globalNative.genericToast(msg, duration, "success");
   }
 
-  async shareToast() {
+  shareToast() {
     this.globalNative.genericToast('contacts.contact-copied-to-clipboard', 3000, "success");
   }
 
-  async didResolveErr(err: string) {
+  didResolveErr(err: string) {
     this.globalNative.errToast('contacts.resolve-error-header', 6000);
   }
 
   /********* Loader *********/
-  public async showLoading(content: string = ''): Promise<void> {
+  public async showLoading(content = ''): Promise<void> {
     await this.globalNative.hideLoading();
-    this.globalNative.showLoading(content);
+    await this.globalNative.showLoading(content);
   }
 
   public async hideLoading() {
@@ -51,12 +51,12 @@ export class NativeService {
           text: this.translate.instant('common.ok'),
           handler: () => {
             this.zone.run(() => {
-                this.globalIntentService.sendIntentResponse({}, intentId);
+                void this.globalIntentService.sendIntentResponse({}, intentId);
             });
           }
         }
       ]
     });
-    alert.present();
+    await alert.present();
   }
 }

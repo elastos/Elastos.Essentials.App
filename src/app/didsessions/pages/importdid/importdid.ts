@@ -79,7 +79,6 @@ export class ImportDIDPage {
 
     ngOnInit() {
         this.events.subscribe('qrScanner', (qrData) => {
-            Logger.log('didsessions', 'qrScanner event', qrData.mnemonic);
             this.mnemonicSentence = qrData.mnemonic;
             this.onMnemonicSentenceChanged();
         })

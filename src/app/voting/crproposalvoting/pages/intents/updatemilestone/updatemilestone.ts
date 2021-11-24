@@ -72,7 +72,7 @@ export class UpdatMilestonePage {
     }
 
     cancel() {
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
     }
 
     async signAndUpdateMilestone() {
@@ -87,7 +87,7 @@ export class UpdatMilestonePage {
             if (signedJWT) {
                 await this.proposalService.sendProposalCommandResponseToCallbackURL(this.updateMilestoneCommand.callbackurl, signedJWT);
                 //Go to launcher
-                this.globalNav.goToLauncher();
+                void this.globalNav.goToLauncher();
             }
         }
         catch (e) {

@@ -97,7 +97,7 @@ export class CreateSuggestionPage {
     }
 
     cancel() {
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
     }
 
     async signAndCreateSuggestion() {
@@ -131,12 +131,12 @@ export class CreateSuggestionPage {
             this.signingAndSendingSuggestionResponse = false;
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
             await this.popup.alert("Error", "Sorry, unable to sign your suggestion. Your suggestion can't be created for now. " + e, "Ok");
-            this.exitIntentWithError();
+            void this.exitIntentWithError();
             return;
         }
 
         this.signingAndSendingSuggestionResponse = false;
-        this.exitIntentWithSuccess();
+        void this.exitIntentWithSuccess();
     }
 
     private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {

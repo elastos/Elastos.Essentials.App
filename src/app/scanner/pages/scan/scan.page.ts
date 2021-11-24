@@ -141,7 +141,8 @@ export class ScanPage {
                 // Start scanning and listening to scan results
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.scanSub = this.qrScanner.scan().subscribe(async (text: string) => {
-                    Logger.log("Scanner", "Scanned data: ", text)
+                    // Can not show the scan data. Private data, confidential. eg. mnemonic.
+                    Logger.log("Scanner", "Scanned data length: ", text.length);
                     this.scannedText = text;
 
                     this.ngZone.run(() => {
