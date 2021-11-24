@@ -13,6 +13,7 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
@@ -66,6 +67,7 @@ export class AppmanagerService {
     constructor(
         private sanitizer: DomSanitizer,
         public zone: NgZone,
+        public theme: GlobalThemeService,
         public popoverController: PopoverController,
         private modalController: ModalController,
         public menuCtrl: MenuController,
@@ -245,7 +247,7 @@ export class AppmanagerService {
                         routerContext: App.CRPROPOSAL_VOTING,
                         name: this.translate.instant('launcher.app-cr-suggestion'),
                         description: this.translate.instant('launcher.app-crsuggestion-description'),
-                        icon: '/assets/launcher/apps/app-icons/suggestion.svg',
+                        icon: this.theme.darkMode ? '/assets/launcher/apps/app-icons/suggestion_dark.svg' : '/assets/launcher/apps/app-icons/suggestion.svg',
                         hasWidget: false,
                         routerPath: '/crproposalvoting/suggestions/ALL'
                     },

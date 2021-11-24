@@ -1,637 +1,637 @@
 @import "src/app/launcher/root.scss";
 
 ion-content {
-  &::-webkit-scrollbar {
-    display: none;
-  }
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 /************************************** ALL THEMES **************************************/
 .container {
-  min-height: 100%;
-  padding: 10px 20px;
+    min-height: 100%;
+    padding: 10px 20px;
 
-  .backup-row {
-    padding: 10px 10px 10px 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-  }
-
-  .id-row {
-    margin: 20px 0;
-    padding-bottom: 10px;
-
-    ion-col {
-      display: flex;
-    }
-
-    .left-col {
-      align-items: center;
-      justify-content: flex-start;
-
-      ion-avatar {
-        width: 68px;
-        height: 68px;
-      }
-
-      .noAvatar {
-      }
-
-      .hasAvatar {
-      }
-    }
-
-    .mid-col {
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      width: 100%;
-
-      h1,
-      h2 {
-        margin: 0;
-        text-align: left;
-      }
-
-      h2 {
-        display: block;
-        font-size: 6vw;
-        font-weight: 500;
-        letter-spacing: -0.5px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-wrap: break-word;
-      }
-
-      h1 {
-        font-size: 9px;
-        font-weight: 600;
-        letter-spacing: 2.4px;
-        margin-bottom: 3px;
-      }
-    }
-
-    .right-col {
-      justify-content: center;
-      align-items: center;
-      border-radius: 100%;
-
-      img {
-        width: 4.4px;
-        height: 18.6px;
-      }
-    }
-  }
-
-  .backup-row {
-    background-image: url("/assets/launcher/icons/backup-background.svg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    border-radius: 25px;
-    padding: 15px 0px;
-    margin: 20px 0;
-
-    ion-col {
-      display: flex;
-    }
-
-    .left-col {
-      justify-content: center;
-      align-items: flex-start;
-
-      img {
-        margin-top: 10px;
-        height: 20px;
-        width: 23px;
-      }
-    }
-
-    .mid-col {
-      justify-content: center;
-      align-items: center;
-      padding-right: 0;
-      padding-left: 0;
-
-      ion-label {
-        h1,
-        p {
-          color: #ffffff;
-          margin: 0;
-        }
-
-        h1 {
-          font-size: 12px;
-          font-weight: 500;
-          margin-bottom: 6px;
-        }
-
-        p {
-          font-size: 9px;
-          font-weight: 400;
-          line-height: 15px;
-        }
-      }
-    }
-
-    .right-col {
-      justify-content: center;
-      align-items: flex-end;
-
-      div {
+    .backup-row {
+        padding: 10px 10px 10px 10px;
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        border-radius: 9px;
-        background: #ffffff;
-        padding: 12px 10px;
-
-        h1 {
-          margin: 0;
-          font-size: 9px;
-          font-weight: 700;
-          letter-spacing: 0.5px;
-          color: #791bf5;
-          text-transform: uppercase;
-        }
-      }
-    }
-  }
-
-  .category-row,
-  .wallet-connect-row,
-  .wallets-row {
-    border-radius: 25px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 15px 10px;
-    margin: 20px 0;
-    opacity: 1;
-
-    .title-col {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.8px;
-      padding: 0 0 5px 5px;
+        color: white;
     }
 
-    .app-col {
-      padding: 0;
-
-      .app-row {
-        padding: 10px 0;
+    .id-row {
+        margin: 20px 0;
+        padding-bottom: 10px;
 
         ion-col {
-          display: flex;
-          align-items: center;
+            display: flex;
         }
 
         .left-col {
-          justify-content: flex-start;
-
-          .icon-container {
-            display: flex;
-            justify-content: center;
             align-items: center;
-            border-radius: 12px;
-            width: 48px;
-            height: 48px;
-            opacity: 1;
+            justify-content: flex-start;
 
-            img {
-              width: 55%;
-              height: 55%;
+            ion-avatar {
+                width: 68px;
+                height: 68px;
             }
-          }
+
+            .noAvatar {
+            }
+
+            .hasAvatar {
+            }
         }
 
         .mid-col {
-          justify-content: flex-start;
-          align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
 
-          ion-label {
+            h1,
+            h2 {
+                margin: 0;
+                text-align: left;
+            }
+
+            h2 {
+                display: block;
+                font-size: 6vw;
+                font-weight: 500;
+                letter-spacing: -0.5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                word-wrap: break-word;
+            }
+
             h1 {
-              font-size: 14px;
-              font-weight: 600;
-              margin: 0;
+                font-size: 9px;
+                font-weight: 600;
+                letter-spacing: 2.4px;
+                margin-bottom: 3px;
             }
-
-            p {
-              font-size: 10px;
-              font-weight: 500;
-              margin-top: 3px;
-            }
-          }
         }
 
         .right-col {
-          justify-content: flex-end;
-        }
-
-        .widget-col {
-          padding-top: 0;
-
-          .wallet-widget {
-            background: #742fcf;
-            border-radius: 7px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
             justify-content: center;
-            padding: 8px;
-            line-height: 1.6;
-
-            span {
-              color: white;
-              font-weight: 500;
-              font-size: 10px;
-            }
-
-            .active-wallet,
-            .active-network {
-              font-size: 10px;
-              font-weight: 600;
-              letter-spacing: 0.5px;
-              display: block;
-              color: #ffffff;
-            }
-          }
-
-          .hive-widget {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
+            border-radius: 100%;
 
-            ion-progress-bar {
-              width: 50%;
+            img {
+                width: 4.4px;
+                height: 18.6px;
             }
+        }
+    }
 
-            span {
-              margin-left: 3px;
-              font-size: 9px;
-              font-weight: 500;
-              letter-spacing: 0.5px;
-              text-align: right;
+    .backup-row {
+        background-image: url("/assets/launcher/icons/backup-background.svg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        border-radius: 25px;
+        padding: 15px 0px;
+        margin: 20px 0;
+
+        ion-col {
+            display: flex;
+        }
+
+        .left-col {
+            justify-content: center;
+            align-items: flex-start;
+
+            img {
+                margin-top: 10px;
+                height: 20px;
+                width: 23px;
             }
-          }
-        }
-      }
-
-      .logout-row {
-        padding: 0;
-      }
-    }
-  }
-
-  .wallet-connect-row {
-    .icon {
-      height: 30px;
-      margin-top: -35px;
-      margin-bottom: 10px;
-    }
-
-    .connector-col {
-      .connector {
-        display: flex;
-        align-items: center;
-
-        .connector-logo {
-          height: 20px;
-          max-width: 20px;
-          margin-right: 10px;
         }
 
-        p {
-          font-weight: bold;
-          margin: 5px;
-        }
-      }
-    }
-  }
+        .mid-col {
+            justify-content: center;
+            align-items: center;
+            padding-right: 0;
+            padding-left: 0;
 
-  .wallets-row {
-    .header-row {
-      align-items: center;
+            ion-label {
+                h1,
+                p {
+                    color: #ffffff;
+                    margin: 0;
+                }
 
-      .title-col {
-        padding: 0;
-      }
+                h1 {
+                    font-size: 12px;
+                    font-weight: 500;
+                    margin-bottom: 6px;
+                }
 
-      .network-col {
-        font-size: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        color: #1c1c1c;
-
-        .network-logo,
-        .toggle {
-          height: 16px;
-        }
-
-        .network-logo {
-          margin-right: 5px;
+                p {
+                    font-size: 9px;
+                    font-weight: 400;
+                    line-height: 15px;
+                }
+            }
         }
 
-        .toggle {
-          margin-left: 5px;
+        .right-col {
+            justify-content: center;
+            align-items: flex-end;
+
+            div {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 9px;
+                background: #ffffff;
+                padding: 12px 10px;
+
+                h1 {
+                    margin: 0;
+                    font-size: 9px;
+                    font-weight: 700;
+                    letter-spacing: 0.5px;
+                    color: #791bf5;
+                    text-transform: uppercase;
+                }
+            }
         }
-      }
     }
 
-    .wallets-col {
-      .no-wallet {
-        text-align: center;
-      }
-    }
-
-    .wallet-widget-row {
-      position: relative;
-      border-radius: 14px;
-      padding: 5px 10px 10px;
-      background-repeat: no-repeat;
-      background-size: cover;
-      width: 100%;
-
-      .card-label-row {
+    .category-row,
+    .wallet-connect-row,
+    .wallets-row {
+        border-radius: 25px;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 15px 10px;
+        margin: 20px 0;
+        opacity: 1;
 
-        .top-row {
-          display: flex;
+        .title-col {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            padding: 0 0 5px 5px;
+        }
 
-          ion-col {
-            .wallet-name {
-              font-weight: 500;
-              font-size: 12px;
-              justify-content: flex-start;
-              text-align: left;
-              margin-bottom: 15px;
+        .app-col {
+            padding: 0;
+
+            .app-row {
+                padding: 10px 0;
+
+                ion-col {
+                    display: flex;
+                    align-items: center;
+                }
+
+                .left-col {
+                    justify-content: flex-start;
+
+                    .icon-container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 12px;
+                        width: 48px;
+                        height: 48px;
+                        opacity: 1;
+
+                        img {
+                            width: 55%;
+                            height: 55%;
+                        }
+                    }
+                }
+
+                .mid-col {
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    ion-label {
+                        h1 {
+                            font-size: 14px;
+                            font-weight: 600;
+                            margin: 0;
+                        }
+
+                        p {
+                            font-size: 10px;
+                            font-weight: 500;
+                            margin-top: 3px;
+                        }
+                    }
+                }
+
+                .right-col {
+                    justify-content: flex-end;
+                }
+
+                .widget-col {
+                    padding-top: 0;
+
+                    .wallet-widget {
+                        background: #742fcf;
+                        border-radius: 7px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        justify-content: center;
+                        padding: 8px;
+                        line-height: 1.6;
+
+                        span {
+                            color: white;
+                            font-weight: 500;
+                            font-size: 10px;
+                        }
+
+                        .active-wallet,
+                        .active-network {
+                            font-size: 10px;
+                            font-weight: 600;
+                            letter-spacing: 0.5px;
+                            display: block;
+                            color: #ffffff;
+                        }
+                    }
+
+                    .hive-widget {
+                        width: 100%;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+
+                        ion-progress-bar {
+                            width: 50%;
+                        }
+
+                        span {
+                            margin-left: 3px;
+                            font-size: 9px;
+                            font-weight: 500;
+                            letter-spacing: 0.5px;
+                            text-align: right;
+                        }
+                    }
+                }
             }
-          }
-        }
 
-        .total {
-          font-size: 10px;
-          text-transform: capitalize;
-          letter-spacing: 0.8px;
-          color: #ffffff;
-          margin-bottom: 4px;
-          margin-left: 5px;
-          opacity: 1;
+            .logout-row {
+                padding: 0;
+            }
         }
-
-        .balance {
-          font-size: 20px;
-          letter-spacing: 1.05px;
-          line-height: 0.85;
-          font-weight: 700;
-          color: #ffffff;
-          margin-left: 5px;
-          margin-top: 5px;
-        }
-      }
-
-      .arrow-down {
-        position: absolute;
-        z-index: 0;
-        bottom: -15px;
-        left: 10%;
-        height: 30px;
-        width: 30px;
-        transform: translate(2px, -2px) rotate(-45deg);
-        -webkit-transform: translate(2px, -2px) rotate(-45deg);
-        border-right: 2px solid transparent;
-        border-top: 2px solid transparent;
-        display: inline-block;
-        -moz-transform: translate(2px, -2px) rotate(-45deg);
-        -ms-transform: translate(2px, -2px) rotate(-45deg);
-        -o-transform: translate(2px, -2px) rotate(-45deg);
-      }
     }
-  }
 
-  .logout-row {
-    padding: 10px 15px;
-  }
+    .wallet-connect-row {
+        .icon {
+            height: 30px;
+            margin-top: -35px;
+            margin-bottom: 10px;
+        }
+
+        .connector-col {
+            .connector {
+                display: flex;
+                align-items: center;
+
+                .connector-logo {
+                    height: 20px;
+                    max-width: 20px;
+                    margin-right: 10px;
+                }
+
+                p {
+                    font-weight: bold;
+                    margin: 5px;
+                }
+            }
+        }
+    }
+
+    .wallets-row {
+        .header-row {
+            align-items: center;
+
+            .title-col {
+                padding: 0;
+            }
+
+            .network-col {
+                font-size: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                color: #1c1c1c;
+
+                .network-logo,
+                .toggle {
+                    height: 16px;
+                }
+
+                .network-logo {
+                    margin-right: 5px;
+                }
+
+                .toggle {
+                    margin-left: 5px;
+                }
+            }
+        }
+
+        .wallets-col {
+            .no-wallet {
+                text-align: center;
+            }
+        }
+
+        .wallet-widget-row {
+            position: relative;
+            border-radius: 14px;
+            padding: 5px 10px 10px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 100%;
+
+            .card-label-row {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+
+                .top-row {
+                    display: flex;
+
+                    ion-col {
+                        .wallet-name {
+                            font-weight: 500;
+                            font-size: 12px;
+                            justify-content: flex-start;
+                            text-align: left;
+                            margin-bottom: 15px;
+                        }
+                    }
+                }
+
+                .total {
+                    font-size: 10px;
+                    text-transform: capitalize;
+                    letter-spacing: 0.8px;
+                    color: #ffffff;
+                    margin-bottom: 4px;
+                    margin-left: 5px;
+                    opacity: 1;
+                }
+
+                .balance {
+                    font-size: 20px;
+                    letter-spacing: 1.05px;
+                    line-height: 0.85;
+                    font-weight: 700;
+                    color: #ffffff;
+                    margin-left: 5px;
+                    margin-top: 5px;
+                }
+            }
+
+            .arrow-down {
+                position: absolute;
+                z-index: 0;
+                bottom: -15px;
+                left: 10%;
+                height: 30px;
+                width: 30px;
+                transform: translate(2px, -2px) rotate(-45deg);
+                -webkit-transform: translate(2px, -2px) rotate(-45deg);
+                border-right: 2px solid transparent;
+                border-top: 2px solid transparent;
+                display: inline-block;
+                -moz-transform: translate(2px, -2px) rotate(-45deg);
+                -ms-transform: translate(2px, -2px) rotate(-45deg);
+                -o-transform: translate(2px, -2px) rotate(-45deg);
+            }
+        }
+    }
+
+    .logout-row {
+        padding: 10px 15px;
+    }
 }
 
 /************************************** LIGHT THEME **************************************/
 .light-container {
-  background: #f5f5fd;
+    background: #f5f5fd;
 
-  .id-row {
-    .mid-col {
-      h1,
-      h2 {
-        color: #000000;
-      }
-    }
-  }
-
-  .category-row,
-  .wallet-connect-row,
-  .wallets-row {
-    background-color: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
-
-    .title-col {
-      color: #000000;
-    }
-
-    .app-col {
-      .add-border {
-        border-bottom: 1px solid #eaeaea;
-      }
-
-      .app-row {
-        .left-col {
-          #wallet {
-            background: #fbebff;
-          }
-
-          #identity {
-            background: #cff7ff;
-          }
-
-          #contacts {
-            background: #ffebf0;
-          }
-
-          #hive {
-            background: #fffdde;
-          }
-
-          #scanner {
-            background: #fbebff;
-          }
-
-          #settings {
-            background: #fff1eb;
-          }
-
-          #dpos {
-            background: #fae9ff;
-          }
-
-          #crcouncil {
-            background: #d0ffff;
-          }
-
-          #crproposal {
-            background: #ddf2ff;
-          }
-
-          #crsuggestion {
-            background: #fffdde;
-          }
-
-          #browser {
-            background: #d8f6ff;
-          }
-        }
-
+    .id-row {
         .mid-col {
-          ion-label {
-            h1 {
-              color: #000000;
+            h1,
+            h2 {
+                color: #000000;
             }
+        }
+    }
 
-            p {
-              color: #000000;
-              opacity: 0.7;
-            }
-          }
+    .category-row,
+    .wallet-connect-row,
+    .wallets-row {
+        background-color: #ffffff;
+        box-shadow: 0 3px 15px 0 #ededf0;
+
+        .title-col {
+            color: #000000;
         }
 
-        .widget-col {
-          .wallet-widget {
-            opacity: 0.8;
-          }
-
-          .hive-widget {
-            span {
-              color: #000000;
-              opacity: 0.32;
+        .app-col {
+            .add-border {
+                border-bottom: 1px solid #eaeaea;
             }
-          }
+
+            .app-row {
+                .left-col {
+                    #wallet {
+                        background: #fbebff;
+                    }
+
+                    #identity {
+                        background: #cff7ff;
+                    }
+
+                    #contacts {
+                        background: #ffebf0;
+                    }
+
+                    #hive {
+                        background: #fffdde;
+                    }
+
+                    #scanner {
+                        background: #fbebff;
+                    }
+
+                    #settings {
+                        background: #fff1eb;
+                    }
+
+                    #dpos {
+                        background: #fae9ff;
+                    }
+
+                    #crcouncil {
+                        background: #d0ffff;
+                    }
+
+                    #crproposal {
+                        background: #ddf2ff;
+                    }
+
+                    #crsuggestion {
+                        background: #f6ffde;
+                    }
+
+                    #browser {
+                        background: #d8f6ff;
+                    }
+                }
+
+                .mid-col {
+                    ion-label {
+                        h1 {
+                            color: #000000;
+                        }
+
+                        p {
+                            color: #000000;
+                            opacity: 0.7;
+                        }
+                    }
+                }
+
+                .widget-col {
+                    .wallet-widget {
+                        opacity: 0.8;
+                    }
+
+                    .hive-widget {
+                        span {
+                            color: #000000;
+                            opacity: 0.32;
+                        }
+                    }
+                }
+            }
+
+            .logout-row {
+                .left-col {
+                    .icon-container {
+                        background: #d9d9d9;
+                    }
+                }
+            }
         }
-      }
+    }
 
-      .logout-row {
-        .left-col {
-          .icon-container {
-            background: #d9d9d9;
-          }
+    .wallet-connect-row {
+        ion-label {
+            color: #000000;
+            opacity: 0.7;
         }
-      }
-    }
-  }
-
-  .wallet-connect-row {
-    ion-label {
-      color: #000000;
-      opacity: 0.7;
-    }
-  }
-
-  .wallets-row {
-    .top-row {
-      .wallet-name {
-        color: #fff;
-      }
     }
 
-    .card-label-row {
-      .total  {
-        color: #fff;
-      }
-    }
+    .wallets-row {
+        .top-row {
+            .wallet-name {
+                color: #fff;
+            }
+        }
 
-    .header-row {
-      color: #fff;
+        .card-label-row {
+            .total  {
+                color: #fff;
+            }
+        }
+
+        .header-row {
+            color: #fff;
+        }
     }
-  }
 }
 
 /************************************** DARK THEME **************************************/
 .dark-container {
-  background: #121212;
+    background: #121212;
 
-  .id-row {
-    .mid-col {
-      h1,
-      h2 {
-        color: #ffffff;
-      }
-    }
-  }
-
-  .category-row,
-  .wallet-connect-row,
-  .wallets-row {
-    background: #212021;
-    box-shadow: none;
-
-    .title-col {
-      color: #9d9d9d;
-    }
-
-    .app-col {
-      .add-border {
-        border-bottom: 1px solid #464646;
-      }
-
-      .app-row {
-        .left-col {
-          .icon-container {
-            box-shadow: 0px 0px 1px #000000e2;
-            background: #363636;
-          }
-        }
-
+    .id-row {
         .mid-col {
-          ion-label {
-            h1 {
-              color: #ffffff;
+            h1,
+            h2 {
+                color: #ffffff;
             }
+        }
+    }
 
-            p {
-              color: #acacac;
-              opacity: 1;
-            }
-          }
+    .category-row,
+    .wallet-connect-row,
+    .wallets-row {
+        background: #212021;
+        box-shadow: none;
+
+        .title-col {
+            color: #9d9d9d;
         }
 
-        .widget-col {
-          .hive-widget {
-            span {
-              color: #7c7c7c;
-              opacity: 1;
+        .app-col {
+            .add-border {
+                border-bottom: 1px solid #464646;
             }
-          }
+
+            .app-row {
+                .left-col {
+                    .icon-container {
+                        box-shadow: 0px 0px 1px #000000e2;
+                        background: #363636;
+                    }
+                }
+
+                .mid-col {
+                    ion-label {
+                        h1 {
+                            color: #ffffff;
+                        }
+
+                        p {
+                            color: #acacac;
+                            opacity: 1;
+                        }
+                    }
+                }
+
+                .widget-col {
+                    .hive-widget {
+                        span {
+                            color: #7c7c7c;
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
         }
-      }
     }
-  }
 
-  .wallet-connect-row {
-    ion-label {
-      color: #acacac;
+    .wallet-connect-row {
+        ion-label {
+            color: #acacac;
+        }
     }
-  }
 
-  .wallets-row {
-    .header-row {
-      .network-col {
-        color: #acacac;
-      }
+    .wallets-row {
+        .header-row {
+            .network-col {
+                color: #acacac;
+            }
+        }
     }
-  }
 }

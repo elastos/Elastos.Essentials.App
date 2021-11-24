@@ -1,4 +1,4 @@
-<ion-content 
+<ion-content
     [scrollEvents]="true" #content [class.darkContent]="theme.darkMode" class="lightmode"
     [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
@@ -18,7 +18,7 @@
         </ion-row>
 
         <ion-grid *ngIf="proposalsFetched" class="container">
-            <div *ngIf="proposals.length > 0">
+            <div *ngIf="proposals && proposals.length > 0">
                 <ion-row *ngFor="let proposal of proposals" (click)="selectProposal(proposal)"
                     class="item-row ripple ion-activatable">
                     <ion-col size="2" class="left-col">
@@ -42,7 +42,7 @@
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-row>
             </div>
-            <div *ngIf="proposals.length == 0" class="more">
+            <div *ngIf="!proposals || proposals.length == 0" class="more">
                 {{ 'crproposalvoting.no-proposals' | translate }}
             </div>
         </ion-grid>
