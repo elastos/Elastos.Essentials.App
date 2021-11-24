@@ -29,10 +29,17 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
   public async discoverTokens(): Promise<void> {
     let tokenSubWallet = this.subWallet;
     const address = await tokenSubWallet.getTokenAddress();
-    let tokenList = await GlobalElastosAPIService.instance.getERC20TokenList(StandardCoinName.ETHSC, address);
 
-    // Let the provider know what we have found
-    await this.provider.onTokenInfoFound(tokenList);
+    try {
+      let tokenList = await GlobalElastosAPIService.instance.getERC20TokenList(StandardCoinName.ETHSC, address);
+
+      // Let the provider know what we have found
+      await this.provider.onTokenInfoFound(tokenList);
+    }
+    catch (e) {
+      // Potential network error
+      Logger.warn("wallet", "Elastos token discovery failed", e);
+    }
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
