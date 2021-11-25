@@ -56,7 +56,7 @@ export class PickProviderPage implements OnInit {
 
   constructor(
     public zone: NgZone,
-    public alertController:AlertController,
+    public alertController: AlertController,
     private translate: TranslateService,
     public hiveService: HiveService,
     private route: ActivatedRoute,
@@ -69,20 +69,19 @@ export class PickProviderPage implements OnInit {
     public profileService: ProfileService,
     private globalNetworksService: GlobalNetworksService,
     private globalHiveService: GlobalHiveService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     // Adapt the proposed default hive nodes to the selected network in settings.
     let networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
     if (networkTemplate == MAINNET_TEMPLATE) {
-      this.storageProviders =  [
+      this.storageProviders = [
         { name: 'Trinity-tech.io 1', vaultAddress: "https://hive1.trinity-tech.io" },
-        { name: 'Trinity-tech.io 2', vaultAddress: "https://hive2.trinity-tech.io" },
-        { name: 'Trinity-tech.io 1', vaultAddress: "https://hive1.trinity-tech.io" }
+        { name: 'Trinity-tech.io 2', vaultAddress: "https://hive2.trinity-tech.io" }
       ];
     }
     else if (networkTemplate == TESTNET_TEMPLATE) {
-      this.storageProviders =  [
+      this.storageProviders = [
         { name: 'Trinity Tech Hive Testnet 1', vaultAddress: "https://hive-testnet1.trinity-tech.io" },
         { name: 'Trinity Tech Hive Testnet 2', vaultAddress: "https://hive-testnet2.trinity-tech.io" }
       ];
@@ -95,7 +94,7 @@ export class PickProviderPage implements OnInit {
       //Logger.log("HiveManager", "QUERY PARAMS", data);
     });
 
-    this.events.subscribe("plan-just-purchased", ()=>{
+    this.events.subscribe("plan-just-purchased", () => {
       Logger.log("HiveManager", "Payment just purchased. Refreshing status.");
       void this.checkInitialStatus();
     });
@@ -153,7 +152,7 @@ export class PickProviderPage implements OnInit {
   }
 
 
-  ionViewDidEnter(){
+  ionViewDidEnter() {
     Logger.log("hivemanager", "Pick provider: subscribing to vault status events");
     this.globalHiveService.vaultStatus.subscribe((status) => {
       void this.checkInitialStatus();
@@ -230,15 +229,15 @@ export class PickProviderPage implements OnInit {
   private async publishProvider(providerName: string, providerAddress: string) {
     Logger.log("HiveManager", "Publishing vault provider", providerName, providerAddress);
 
-   /*  let diddocment = await this.profileService.publishedDIDDocument;
-    if (diddocment === null) {
-      Logger.log('HiveManager', 'DID is not published!')
-      let confirmed = await this.popup.ionicConfirm("hivemanager.alert.didpublish-title", "hivemanager.alert.didpublish-msg");
-      if (confirmed) {
-        this.globalIntentService.sendIntent("https://did.elastos.net/promptpublishdid", null);
-      }
-      return;
-    } */
+    /*  let diddocment = await this.profileService.publishedDIDDocument;
+     if (diddocment === null) {
+       Logger.log('HiveManager', 'DID is not published!')
+       let confirmed = await this.popup.ionicConfirm("hivemanager.alert.didpublish-title", "hivemanager.alert.didpublish-msg");
+       if (confirmed) {
+         this.globalIntentService.sendIntent("https://did.elastos.net/promptpublishdid", null);
+       }
+       return;
+     } */
 
     this.publishingProvider = true;
     let publicationStarted = await this.globalHiveService.publishVaultProvider(providerName, providerAddress);
