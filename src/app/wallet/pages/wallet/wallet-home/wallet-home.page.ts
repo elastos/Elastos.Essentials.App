@@ -20,7 +20,7 @@
 * SOFTWARE.
 */
 
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
@@ -66,6 +66,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     private displayableSubWallets: AnySubWallet[] = null;
     private stakingAssets: StakingData[] = null;
 
+    public refreshingStakedAssets = false;
+
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
     private subWalletsListChangeSubscription: Subscription = null;
@@ -105,6 +107,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private defiService: DefiService,
         private globalStartupService: GlobalStartupService,
         private events: Events,
+        private zone: NgZone,
     ) {
     }
 
@@ -370,6 +373,21 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public onStakingAssetClicked(stakingAsset: StakingData) {
         this.defiService.openStakeApp(stakingAsset);
+    }
+
+    public async onRefreshStakingAssetClicked() {
+        this.zone.run( ()=> {
+            this.refreshingStakedAssets = true;
+        })
+
+        await this.networkWallet.fetchStakingAssets();
+        this.refreshStakingAssetsList();
+
+        setTimeout(() => {
+            this.zone.run( ()=> {
+                this.refreshingStakedAssets = false;
+            })
+        }, 1000);
     }
 
     public shouldShowSubWalletDetails(subWallet: AnySubWallet): boolean {

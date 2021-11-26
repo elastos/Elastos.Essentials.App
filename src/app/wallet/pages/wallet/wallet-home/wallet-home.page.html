@@ -144,7 +144,7 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="list-title-row staked-assets-row" *ngIf="hasStakingAssets()">
+            <ion-row class="list-title-row staked-assets-row">
                 <ion-col size="6">
                     <h1>{{ 'wallet.staking-assets' | translate }}</h1>
                 </ion-col>
@@ -160,6 +160,17 @@
                     </div>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>
+            </ion-row>
+
+            <ion-row class="reload-staked-assets" (click)="onRefreshStakingAssetClicked()" *ngIf="!refreshingStakedAssets">
+                <img
+                    [src]="!theme.darkMode ? '/assets/browser/icons/icon-reload.svg' : 'assets/browser/icons/dark_mode/icon-reload.svg'" />
+                <ion-label>{{ 'wallet.staking-assets-refresh' | translate }}</ion-label>
+            </ion-row>
+
+            <ion-row class="reload-staked-assets" *ngIf="refreshingStakedAssets">
+                <ion-spinner name="crescent"></ion-spinner>
+                <ion-label>{{ 'wallet.staking-assets-refreshing' | translate }}</ion-label>
             </ion-row>
 
             <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"

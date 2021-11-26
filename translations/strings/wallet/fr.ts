@@ -54,6 +54,8 @@ export const fr = {
         "ela-erc20": "JETON ERC20 ELASTOS",
         "coin-list": "Liste des jetons",
         "staking-assets": "Staked Assets",
+        "staking-assets-refresh": "Refresh",
+        "staking-assets-refreshing": "Refreshing",
         "activate-hive-vault": "Activer le stockage Hive",
         "pull-down-to-refresh": "Faire glisser l'écran pour rafraîchir",
         "hive-not-configured-title": "Stockage Hiv enon configuré",

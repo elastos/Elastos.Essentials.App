@@ -228,6 +228,7 @@ ion-slide,
 
     .staked-assets-row {
         align-items: center;
+        margin: 0;
 
         .service-provider {
             display: flex;
@@ -252,6 +253,25 @@ ion-slide,
                 padding-right: 6px;
                 height: 18px;
             }
+        }
+    }
+
+    .reload-staked-assets {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+
+        img {
+            height: 36px;
+            width: 36px;
+            padding-bottom: 5px;
+        }
+
+        ion-label {
+            margin-left: 12px;
+            font-size: 14px;
+            font-weight: 600;
         }
     }
 

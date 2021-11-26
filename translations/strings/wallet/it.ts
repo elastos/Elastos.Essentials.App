@@ -53,6 +53,8 @@ export const it = {
         "ela-erc20": "ELASTOS ERC20 TOKEN",
         "coin-list": "Lista dei Token",
         "staking-assets": "Staked Assets",
+        "staking-assets-refresh": "Refresh",
+        "staking-assets-refreshing": "Refreshing",
         "activate-hive-vault": "Abilita archiviazione Hive",
         "pull-down-to-refresh": "Fai scorrere lo schermo per aggiornare",
         "hive-not-configured-title": "Archiviazione Hive non configurata",

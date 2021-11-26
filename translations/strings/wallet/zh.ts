@@ -52,7 +52,9 @@ export const zh = {
                 "sync-progress": "同步中 {{progress}}%",
                 "ela-erc20": "ELASTOS ERC20 币种",
                 "coin-list": "币列表",
-                "staking-assets": "抵押资产",
+                "staking-assets": "质押资产",
+                "staking-assets-refresh": "刷新",
+                "staking-assets-refreshing": "正在拼命刷新...",
                 "activate-hive-vault": "激活 Hive Vault",
                 "pull-down-to-refresh": "下拉屏幕刷新",
                 "hive-not-configured-title": "Hive未配置",
@@ -353,7 +355,7 @@ export const zh = {
                 ************************/
                 'wallet-asset-title': '资产总览',
                 "wallet-asset-networks-count": "{{ networksCount }} 个网络",
-                'staked-assets-info-by': '抵押资产数据提供商',
+                'staked-assets-info-by': '质押资产数据提供商',
 
                 /********************************************** Intent Screens ***********************************************/
 

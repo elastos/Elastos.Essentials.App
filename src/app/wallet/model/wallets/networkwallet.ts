@@ -125,12 +125,16 @@ export abstract class NetworkWallet {
         await CurrencyService.instance.fetchMainTokenValue(new BigNumber(1), this.network, 'USD');
     }
 
+    // Do not auto refresh.
+    // If we have never fetched the api, the first time we fetch automatically
     private async fetchAndRearmStakingAssets(): Promise<void> {
-        await this.fetchStakingAssets();
+        if (!this.stakingInfo) {
+            await this.fetchStakingAssets();
+        }
 
-        this.fetchStakingAssetTimer = setTimeout(() => {
-            void this.fetchAndRearmStakingAssets();
-        }, 300000); // 5 minutes
+        // this.fetchStakingAssetTimer = setTimeout(() => {
+        //     void this.fetchAndRearmStakingAssets();
+        // }, 300000); // 5 minutes
     }
 
     /**
