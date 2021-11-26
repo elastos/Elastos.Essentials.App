@@ -388,11 +388,11 @@ public class DappBrowserClient extends WebViewClient {
 
     @Override
     public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-//        // If debuggable version, it will don't cancel and return.
-//        if (brwoserPlugin.isDebuggable()) {
-//            handler.proceed();
-//            return;
-//        }
+       // If debuggable version, it will don't cancel and return.
+       if (brwoserPlugin.isDebuggable()) {
+           handler.proceed();
+           return;
+       }
 
         super.onReceivedSslError(view, handler, error);
         try {
