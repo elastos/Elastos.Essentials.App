@@ -53,6 +53,8 @@ export class ElastosNetworkWallet extends NetworkWallet {
     if (networkConfig['ETHSC']) {
       await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
       this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
+    } else {
+        this.mainTokenSubWallet = this.subWallets[StandardCoinName.ETHDID] as ElastosEVMSubWallet;
     }
 
     Logger.log("wallet", "Elastos standard subwallets preparation completed");

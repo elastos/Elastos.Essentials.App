@@ -37,18 +37,21 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
     this.oldIdChainProvider = new ElastosMainAndOldIDChainSubWalletProvider(this, this.oldIdSubWallet);
     await this.oldIdChainProvider.initialize();
 
-    this.escProvider = new ElastosEscSubWalletProvider(this, this.escSubWallet);
-    await this.escProvider.initialize();
-
     this.eidProvider = new ElastosEidSubWalletProvider(this, this.eidSubWallet);
     await this.eidProvider.initialize();
 
-    this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
-    await this.tokenProvider.initialize();
+    // TODO: No ETHSC in LRW
+    if (this.escSubWallet) {
+        this.escProvider = new ElastosEscSubWalletProvider(this, this.escSubWallet);
+        await this.escProvider.initialize();
 
-    // Discover new transactions globally for all tokens at once, in order to notify user
-    // of NEW tokens received, and NEW payments received for existing tokens.
-    this.refreshEvery(() => this.tokenProvider.discoverTokens(), 30000);
+        this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
+        await this.tokenProvider.initialize();
+
+        // Discover new transactions globally for all tokens at once, in order to notify user
+        // of NEW tokens received, and NEW payments received for existing tokens.
+        this.refreshEvery(() => this.tokenProvider.discoverTokens(), 30000);
+    }
   }
 
   protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
