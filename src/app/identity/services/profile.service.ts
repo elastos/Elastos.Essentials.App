@@ -648,7 +648,7 @@ export class ProfileService extends GlobalService {
   private async checkIfLocalDIDDocumentNeedsToBeSynchronizedWithChain(): Promise<void> {
     Logger.log("identity", "Comparing local and remote DID documents for potential synchronization");
     let localDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
-    if (this.publishedDIDDocument.getUpdated() > localDidDocument.getUpdated()) {
+    if (this.publishedDIDDocument && localDidDocument && (this.publishedDIDDocument.getUpdated() > localDidDocument.getUpdated())) {
       Logger.log("identity", "The published document is more recent than the local one. SYNCHRONIZING");
 
       // Synchronize local document with on chain document - TODO: WHY?
