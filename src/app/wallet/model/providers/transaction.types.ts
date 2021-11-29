@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { JSONObject } from 'src/app/model/json';
 
 export enum TransactionStatus {
     CONFIRMED = 'confirmed',

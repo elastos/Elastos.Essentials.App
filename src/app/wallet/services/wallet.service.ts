@@ -451,6 +451,31 @@ export class WalletService {
         await this.addMasterWalletToLocalModel(masterId, walletName, account, createdBySystem);
     }
 
+    /**
+     * Creates a new master wallet both in the SPV SDK and in our local model, using a given priv key.
+     */
+     public async importWalletWithPrivKey(
+        masterId: WalletID,
+        walletName: string,
+        privKey: string,
+        payPassword: string,
+        createdBySystem: boolean
+    ) {
+        Logger.log('wallet', "Importing new master wallet with priv key");
+
+        await this.spvBridge.createMasterWalletWithPrivKey(
+            masterId,
+            privKey,
+            payPassword,
+        );
+        const account: WalletAccount = {
+            SingleAddress: true,
+            Type: WalletAccountType.STANDARD
+        };
+
+        await this.addMasterWalletToLocalModel(masterId, walletName, account, createdBySystem);
+    }
+
     private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean) {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
 
