@@ -58,6 +58,7 @@ export abstract class NetworkWallet {
         this.id = masterWallet.id;
 
         this.transactionDiscoveryProvider = this.createTransactionDiscoveryProvider();
+        Logger.warn('wallet', this.id, ' create transactionDiscoveryProvider')
     }
 
     public async initialize(): Promise<void> {
@@ -70,8 +71,11 @@ export abstract class NetworkWallet {
         // Prepare ERC20, NFT subwallets and other info
         await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key));
 
-        this.stakingAssetsID = await this.getUniqueIdentifierOnStake();
-        await this.loadStakingAssets();
+        // There is no EVMSubwallet in BTCNetworkWallet.
+        if (this.getMainEvmSubWallet()) {
+            this.stakingAssetsID = await this.getUniqueIdentifierOnStake();
+            await this.loadStakingAssets();
+        }
 
         this.initializationComplete = true;
     }
@@ -90,7 +94,10 @@ export abstract class NetworkWallet {
 
         void this.fetchAndRearmMainTokenValue();
 
-        void this.fetchAndRearmStakingAssets();
+        // There is no EVMSubwallet in BTCNetworkWallet.
+        if (this.getMainEvmSubWallet()) {
+            void this.fetchAndRearmStakingAssets();
+        }
 
         this.getTransactionDiscoveryProvider().start();
 

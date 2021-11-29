@@ -9,6 +9,7 @@ import { ElastosSDKHelper } from './helpers/elastossdk.helper';
 import { Logger } from './logger';
 import { InternalElastosConnector } from './model/internalelastosconnector';
 import { GlobalAppBackgroundService } from './services/global.appbackground.service';
+import { GlobalBTCRPCService } from './services/global.btc.service';
 import { GlobalDIDSessionsService } from './services/global.didsessions.service';
 import { GlobalElastosAPIService } from './services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from './services/global.ethereum.service';
@@ -60,6 +61,7 @@ export class AppComponent {
     private globalElastosAPIService: GlobalElastosAPIService,
     private globalStartupService: GlobalStartupService,
     public globalEthereumService: GlobalEthereumRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
+    public globalBTCService: GlobalBTCRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     private firebase: FirebaseX
   ) {
   }

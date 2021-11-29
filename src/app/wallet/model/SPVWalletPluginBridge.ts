@@ -143,6 +143,19 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    createMasterWalletWithPrivKey(
+        masterWalletId: string,
+        singlePrivateKey: string,
+        payPassword: string,
+    ): Promise<MasterWalletBasicInfo> {
+        return new Promise((resolve, reject) => {
+            walletManager.createMasterWalletWithPrivKey(
+                [masterWalletId, singlePrivateKey, payPassword],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("createMasterWalletWithPrivKey", err, reject); });
+        });
+    }
+
     createMultiSignMasterWallet(
         masterWalletId: string,
         publicKeys: string,
@@ -921,7 +934,7 @@ export class SPVWalletPluginBridge {
     }
 
     // BTCSubwallet
-    getLegacyAddresses(masterWalletId: string, index: number, count: number, internal: boolean): Promise<string> {
+    getLegacyAddresses(masterWalletId: string, index: number, count: number, internal: boolean): Promise<string[]> {
         return new Promise((resolve, reject) => {
             walletManager.getLegacyAddresses([masterWalletId, index, count, internal],
                 (ret) => { resolve(ret); },

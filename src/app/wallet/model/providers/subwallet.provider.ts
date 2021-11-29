@@ -20,7 +20,6 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
 
   public initialize(): Promise<void> {
     this.transactionsCache = new Map();
-    //this.transactions = new Map();
     return;
   }
 
