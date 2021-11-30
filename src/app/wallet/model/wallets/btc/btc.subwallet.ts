@@ -2,21 +2,17 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
-import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { Config } from '../../../config/Config';
-import { BTCTransaction } from '../../btc.types';
+import { BTCTransaction, BTCUTXO } from '../../btc.types';
 import { StandardCoinName } from '../../coin';
 import { BridgeProvider } from '../../earn/bridgeprovider';
 import { EarnProvider } from '../../earn/earnprovider';
 import { SwapProvider } from '../../earn/swapprovider';
-import { TransactionDetail } from '../../providers/transaction.types';
-import { VoteType } from '../../SPVWalletPluginBridge';
+import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, UtxoForSDK } from '../../providers/transaction.types';
+import { WalletUtil } from '../../wallet.util';
 import { NetworkWallet } from '../networkwallet';
 import { StandardSubWallet } from '../standard.subwallet';
 
-
-const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, VoteType.CRCImpeachment]
 
 /**
  * Specialized standard sub wallet that shares Mainchain (ELA) and ID chain code.
@@ -26,6 +22,7 @@ const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, Vote
 export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
     private TRANSACTION_LIMIT = 50;
     private legacyAddress: string = null;
+    private transactionsList : string[] = null;
 
     constructor(
         networkWallet: NetworkWallet,
@@ -35,6 +32,8 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
 
         this.tokenDecimals = 8;
         this.tokenAmountMulipleTimes = Config.SELAAsBigNumber;
+
+        void this.createAddress();
     }
 
     public async startBackgroundUpdates(): Promise<void> {
@@ -85,9 +84,65 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
         else return 1;
     }
 
-    // public async getTransactionInfo(transaction: TransactionType, translate: TranslateService): Promise<TransactionInfo> {
-    //     return await null;
-    // }
+    public async getTransactionInfo(transaction: BTCTransaction, translate: TranslateService): Promise<TransactionInfo> {
+          const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
+          const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+
+          const direction =  transaction.direction;
+
+          const transactionInfo: TransactionInfo = {
+            amount: new BigNumber(-1),
+            confirmStatus: -1, // transaction.confirmations, // To reduce RPC calls, we do not update this value
+            datetime,
+            direction: direction,
+            fee: transaction.fee,
+            height: 0,
+            memo: '',
+            name: await this.getTransactionName(transaction, translate),
+            payStatusIcon: await this.getTransactionIconPath(transaction),
+            status: '',
+            statusName: "",
+            symbol: '',
+            from: transaction.from,
+            to: transaction.to,
+            timestamp,
+            txid: transaction.hash,
+            type: null,
+            isCrossChain: false,
+          };
+
+          transactionInfo.amount = new BigNumber(transaction.value);
+
+          if (transactionInfo.confirmStatus !== 0) {
+            transactionInfo.status = TransactionStatus.CONFIRMED;
+            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-confirmed");
+          } else {
+            transactionInfo.status = TransactionStatus.PENDING;
+            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-pending");
+          }
+
+          if (direction === TransactionDirection.RECEIVED) {
+            transactionInfo.type = TransactionType.RECEIVED;
+            transactionInfo.symbol = '+';
+          } else if (direction === TransactionDirection.SENT) {
+            transactionInfo.type = TransactionType.SENT;
+            transactionInfo.symbol = '-';
+          } else if (direction === TransactionDirection.MOVED) {
+            transactionInfo.type = TransactionType.TRANSFER;
+            transactionInfo.symbol = '';
+          }
+          return transactionInfo;
+    }
+
+    // eslint-disable-next-line require-await
+    protected async getTransactionIconPath(transaction: BTCTransaction): Promise<string> {
+        switch (transaction.direction) {
+          case TransactionDirection.RECEIVED:
+           return './assets/wallet/buttons/receive.png';
+          case TransactionDirection.SENT:
+            return './assets/wallet/buttons/send.png';
+        }
+      }
 
     public async update() {
         await this.getBalanceByRPC();
@@ -100,111 +155,120 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
 
     /**
      * Check whether the available balance is enough.
-     * @param amount unit is SELA
+     * @param amount unit is sotoshi
      */
     public async isAvailableBalanceEnough(amount: BigNumber) {
         return await this.balance.gt(amount);
     }
 
+    public getTxidList() {
+        return this.transactionsList;
+    }
+
+    //satoshi
+    public async getAvailableUtxo(amount: number) {
+        let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.rpcApiUrl, this.legacyAddress);
+
+        let utxoArrayForSDK = [];
+        let getEnoughUTXO = false;
+        if (utxoArray) {
+            let totalAmount = 0;
+            // Use the old utxo first.
+            for (let i = utxoArray.length - 1; i >= 0; i--) {
+                let utxoForSDK: UtxoForSDK = {
+                    Address: this.legacyAddress,
+                    Amount: utxoArray[i].value,
+                    Index: utxoArray[i].vout,
+                    TxHash: utxoArray[i].txid
+                }
+                utxoArrayForSDK.push(utxoForSDK);
+
+                totalAmount += parseInt(utxoArray[i].value);
+                if ((amount != -1) && (totalAmount >= amount)) {
+                    Logger.log('wallet', 'Get enough btc utxo for :', amount);
+                    getEnoughUTXO = true;
+                    break;
+                }
+            }
+        }
+
+        if (!getEnoughUTXO) {
+            Logger.warn('wallet', 'Utxo is not enough for ', amount, utxoArrayForSDK)
+        }
+        return utxoArrayForSDK;
+    }
+
     // Ignore gasPrice and gasLimit.
     public async createPaymentTransaction(toAddress: string, amount: number, memo = "", gasPrice: string = null, gasLimit: string = null): Promise<string> {
-        return await ''
+        let feerate =  await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
+
+        // TODO: Normally the data less than 1KB.
+        let fee = this.accMul(feerate, Config.SATOSHI);
+
+        let toAmount = 0;
+        if (amount == -1) {
+            toAmount = Math.floor(this.balance.minus(fee).toNumber());
+        } else {
+            toAmount = this.accMul(amount, Config.SATOSHI);
+        }
+
+        let outputs = [{
+            "Address": toAddress,
+            "Amount": toAmount.toString()
+        }]
+
+        let utxo = await this.getAvailableUtxo(toAmount + fee);
+        if (!utxo) return;
+
+        Logger.log('wallet', 'createBTCTransaction  toAddress:', toAddress, ' amount:', toAmount)
+
+        return await this.masterWallet.walletManager.spvBridge.createBTCTransaction(
+            this.masterWallet.id,
+            JSON.stringify(utxo),
+            JSON.stringify(outputs),
+            this.legacyAddress,
+            feerate.toString());
     }
 
     public async publishTransaction(transaction: string): Promise<string> {
-        let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
-            this.masterWallet.id,
-            this.id,
-            transaction,
-        )
-
-        let txid = await this.sendRawTransaction(this.id as StandardCoinName, rawTx);
-        return txid;
+        let obj = JSON.parse(transaction);
+        // Do not return txid;
+        return await this.sendRawTransaction(obj.Data);
     }
 
-    protected async sendRawTransaction(subWalletId: StandardCoinName, payload: string): Promise<string> {
-        const param = {
-            method: 'sendrawtransaction',
-            params: [
-                payload
-            ],
-        };
-
-        let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(subWalletId);
-        const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
-        if (rpcApiUrl === null) {
-            return await '';
-        }
-        // The caller need catch the execption.
-        return GlobalJsonRPCService.instance.httpPost(rpcApiUrl, param);
+    protected async sendRawTransaction(payload: string) {
+        return await GlobalBTCRPCService.instance.sendrawtransaction(this.rpcApiUrl, payload)
     }
 
     // ********************************
     // Private
     // ********************************
 
-    public async getrawtransaction(subWalletId: StandardCoinName, txidArray: string[]): Promise<any[]> {
-        const paramArray = [];
-        for (let i = 0, len = txidArray.length; i < len; i++) {
-            const txid = txidArray[i];
-            const param = {
-                method: 'getrawtransaction',
-                params: {
-                    txid,
-                    verbose: true
-                },
-                id: i.toString()
-            };
-            paramArray.push(param);
-        }
-
-        let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(subWalletId);
-        const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
-        if (rpcApiUrl === null) {
-            return null;
-        }
-
-        let result: any[] = null;
-        let retryTimes = 0;
-        do {
-            try {
-                result = await GlobalJsonRPCService.instance.httpPost(rpcApiUrl, paramArray);
-                break;
-            } catch (e) {
-                // wait 100ms?
-            }
-        } while (++retryTimes < GlobalElastosAPIService.API_RETRY_TIMES);
-
-        // Logger.log('wallet', 'getrawtransaction:', result)
-        return result;
-    }
-
     /**
      * Get balance by RPC
      */
     public async getBalanceByRPC() {
-        this.balance = await this.getBalanceByAddress();
-        Logger.warn('wallet', ' getBalanceByRPC:', this.balance.toString());
-        await this.saveBalanceToCache();
-
-        //Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
+        await this.updateBTCSubWalletInfo();
     }
 
-    private async getBalanceByAddress() {
-        let legacyAddress = await this.masterWallet.walletManager.spvBridge.getLegacyAddresses(this.masterWallet.id, 0, 1, false);
-        Logger.warn("wallet", 'getBalanceByAddress:legacyAddress:', legacyAddress);
-        return await GlobalBTCRPCService.instance.balancehistory(this.rpcApiUrl, legacyAddress[0]);
-    }
+    /**
+     * Update balance and transaction list.
+     */
+    private async updateBTCSubWalletInfo() {
+        let btcInfo =  await GlobalBTCRPCService.instance.address(this.rpcApiUrl, this.legacyAddress);
 
-    async getTransactionDetails(txid: string): Promise<TransactionDetail> {
-        let details = await this.getrawtransaction(this.id as StandardCoinName, [txid]);
-        if (details && details[0].result) {
-            return details[0].result;
-        } else {
-            // Remove error transaction.
-            // TODO await this.removeInvalidTransaction(txid);
-            return null;
+        if (btcInfo.balance) {
+            // the unconfirmedBalance is negative for unconfirmed sending transaction.
+            this.balance = new BigNumber(btcInfo.balance).plus(btcInfo.unconfirmedBalance);
+            await this.saveBalanceToCache();
         }
+        if (btcInfo.txids) {
+            this.transactionsList = btcInfo.txids;
+        }
+    }
+
+    async getTransactionDetails(txid: string): Promise<any> {
+        return await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, txid);
     }
 
     accMul(arg1, arg2) {
@@ -215,19 +279,19 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
         return Math.floor(Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m))
     }
 
-    // Main chain and ID chain don't support such "EVM" features for now, so we override the default
+    // BTC chain don't support such "EVM" features for now, so we override the default
     // implementation to return nothing
     public getAvailableEarnProviders(): EarnProvider[] {
         return [];
     }
 
-    // Main chain and ID chain don't support such "EVM" features for now, so we override the default
+    // BTC chain don't support such "EVM" features for now, so we override the default
     // implementation to return nothing
     public getAvailableSwapProviders(): SwapProvider[] {
         return [];
     }
 
-    // Main chain and ID chain don't support such "EVM" features for now, so we override the default
+    // BTC chain don't support such "EVM" features for now, so we override the default
     // implementation to return nothing
     public getAvailableBridgeProviders(): BridgeProvider[] {
         return [];

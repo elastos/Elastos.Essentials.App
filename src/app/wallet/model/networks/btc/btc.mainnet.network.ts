@@ -25,8 +25,4 @@ export class BTCMainNetNetwork extends BTCNetworkBase {
   public getBuiltInERC20Coins(): ERC20Coin[] {
     return [];
   }
-
-  public getMainChainID(): number {
-    return -1;
-  }
 }

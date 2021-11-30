@@ -129,7 +129,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     private showCryptonamesOption = false;
     private publicationStatusSub: Subscription;
     private ethTransactionSpeedupSub: Subscription;
-    private isEthsubwallet = false;
+    private isEVMSubwallet = false;
 
     constructor(
         public route: ActivatedRoute,
@@ -200,8 +200,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance());
 
-        if ((this.subWalletId !== StandardCoinName.ELA) && (this.subWalletId !== StandardCoinName.IDChain)) {
-            this.isEthsubwallet = true;
+        if ((this.subWalletId.startsWith('ETH'))) {
+            this.isEVMSubwallet = true;
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status) => {
                 Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
@@ -341,7 +341,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 intentId: this.intentId
             });
 
-            if (this.isEthsubwallet) {
+            if (this.isEVMSubwallet) {
                 try {
                     await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
                 }
@@ -422,7 +422,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 intentId: null,
             });
 
-            if (this.isEthsubwallet) {
+            if (this.isEVMSubwallet) {
                 try {
                     await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
                 }
@@ -609,9 +609,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         switch (subWalletIdTemp) {
             case StandardCoinName.ELA:
             case StandardCoinName.IDChain:
-            case StandardCoinName.ETHSC:
-                // TODO : Open it after spvsdk fix the isSubWalletAddressValid bug.
-                // case StandardCoinName.ETHDID:
+            case StandardCoinName.BTC:
                 break;
             default:
                 subWalletIdTemp = StandardCoinName.ETHSC;

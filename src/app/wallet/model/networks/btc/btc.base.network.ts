@@ -30,12 +30,12 @@ export abstract class BTCNetworkBase extends Network {
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
     let wallet = new BTCNetworkWallet(masterWallet, this);
     await wallet.initialize();
+
     if (startBackgroundUpdates)
       void wallet.startBackgroundUpdates();
     return wallet;
   }
 
-  // TODO remove it
   public async createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
     return await null;
   }
@@ -48,7 +48,9 @@ export abstract class BTCNetworkBase extends Network {
     return 'BTC';
   }
 
-  public abstract getMainChainID(): number;
+  public getMainChainID(): number {
+      return -1;
+  }
 
   public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
     onGoingConfig['BTC'] = {};

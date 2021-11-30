@@ -752,7 +752,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
                 utxoArrayForSDK.push(utxoForSDK);
                 totalAmount += utxoAmountSELA;
                 if ((amountSELA != -1) && (totalAmount >= amountSELA)) {
-                    Logger.log('wallet', 'Get enought utxo for :', amountSELA);
+                    Logger.log('wallet', 'Get enough utxo for :', amountSELA);
                     getEnoughUTXO = true;
                     break;
                 }

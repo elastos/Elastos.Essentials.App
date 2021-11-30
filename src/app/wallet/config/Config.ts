@@ -34,6 +34,8 @@ export class Config {
 
     public static WEI = 1000000000000000000; // 10 ^ 18
 
+    public static SATOSHI = 100000000; // Number of satoshi per BTC.
+
     public static IDCHAIN_URL = 'https://idchain.elastos.org/';
     public static BLOCKCHAIN_URL = 'https://blockchain.elastos.org/';
 

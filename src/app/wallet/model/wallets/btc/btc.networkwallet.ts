@@ -31,23 +31,6 @@ export class BTCNetworkWallet extends NetworkWallet {
         await this.subWallets[StandardCoinName.BTC].initialize();
     }
 
-    public startBackgroundUpdates(): Promise<void> {
-        for (let subWallet of this.getSubWallets()) {
-            void subWallet.startBackgroundUpdates();
-        }
-
-        // void this.fetchAndRearmMainTokenValue();
-
-        // // There is no EVMSubwallet in BTCNetworkWallet.
-        // if (this.getMainEvmSubWallet()) {
-        //     void this.fetchAndRearmStakingAssets();
-        // }
-
-        this.getTransactionDiscoveryProvider().start();
-
-        return;
-    }
-
     public getMainEvmSubWallet(): StandardEVMSubWallet {
         return null;
     }
