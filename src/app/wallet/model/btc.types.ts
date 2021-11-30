@@ -1,3 +1,4 @@
+import { TransactionDirection } from "./providers/transaction.types";
 
 export type BalanceHistory = {
   received: string;
@@ -47,7 +48,7 @@ export type btcoutobj = {
     scriptPubKey: ScriptPubKey;
 }
 
-export type BTCTransaction = {
+export type RawBTCTransaction = {
     txid: string;
     hash: string;
     version: string;
@@ -62,4 +63,21 @@ export type BTCTransaction = {
     confirmations: number;
     time: number;
     blocktime: number;
+}
+
+export type BTCTransaction = RawBTCTransaction & {
+    fee?: string;
+    to?: string;
+    from?: string;
+    direction?: TransactionDirection;
+    value?: string;
+}
+
+export type BTCUTXO = {
+    txid: string;
+    hash: string;
+    value: string; //satoshi
+    height: number;
+    vout : number;
+    confirmations: number;
 }

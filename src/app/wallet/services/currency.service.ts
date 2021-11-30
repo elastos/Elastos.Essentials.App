@@ -130,7 +130,7 @@ export class CurrencyService {
 
     this.updateInterval = setInterval(() => {
         void this.fetchTokenStatsFromElaphant();
-    }, 60000);// 60s
+    }, 120000);// 120s
 
     Logger.log('wallet', "Currency service initialization complete");
   }
