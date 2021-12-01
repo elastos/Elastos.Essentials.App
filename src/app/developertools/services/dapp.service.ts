@@ -1,13 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
-
-import { StorageDApp } from '../model/storagedapp.model';
-import { CreatedDApp } from '../model/customtypes';
 import { Router } from '@angular/router';
-import { HelpComponent } from '../components/help/help.component';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { PopoverController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { HelpComponent } from '../components/help/help.component';
+import { CreatedDApp } from '../model/customtypes';
+import { StorageDApp } from '../model/storagedapp.model';
+
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -46,7 +46,7 @@ export class DAppService {
     }
 
     public getDApps(): StorageDApp[] {
-        Logger.log("developertools", "GET DAPPS", this.dapps);
+        //Logger.log("developertools", "GET DAPPS", this.dapps);
         return this.dapps;
     }
 
@@ -55,8 +55,16 @@ export class DAppService {
         await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", this.dapps);
     }
 
+    public async updateDapp(dapp: StorageDApp): Promise<void> {
+        // Delete from the model
+        this.dapps.splice(this.dapps.findIndex(app => app.didStoreId === dapp.didStoreId && app.didString === dapp.didString), 1);
+
+        // Re-add to the model
+        await this.storeDApp(dapp);
+    }
+
     public async getStorePassword(didStoreId: string): Promise<string> {
-        let passwordKey = "store-"+didStoreId;
+        let passwordKey = "store-" + didStoreId;
         let passwordInfo = await passwordManager.getPasswordInfo(passwordKey) as PasswordManagerPlugin.GenericPasswordInfo;
         if (!passwordInfo) {
             Logger.error("developertools", "DID store password could not be retrieved from the password manager");
@@ -98,17 +106,44 @@ export class DAppService {
                 let storePassword = await this.getStorePassword(didStore.getId());
 
                 // Create the root key to be able to create a DID right after
-                didStore.initPrivateIdentity("ENGLISH", mnemonic, passphrase, storePassword, true, () => {
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                didStore.initPrivateIdentity("ENGLISH", mnemonic, passphrase, storePassword, true, async () => {
                     Logger.log("developertools", "Private identity created successfully");
 
-                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                    didStore.newDid(storePassword, "", async (did) => {
-                        Logger.log("developertools", "DID created successfully", did);
+                    // Synchronize potentially published DID document on chain
+                    await this.syncStore(didStore, storePassword);
 
+                    // Check if there are imported DIDs from chain. If so, use the first one in the list.
+                    // Otherwise, create a new DID.
+                    let existingDIDs = await this.listDIDs(didStore);
+
+                    if (!existingDIDs || existingDIDs.length === 0) {
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        didStore.newDid(storePassword, "", async (did) => {
+                            Logger.log("developertools", "DID created successfully", did);
+
+                            let dapp = new StorageDApp();
+                            dapp.name = appName;
+                            dapp.didStoreId = didStore.getId();
+                            dapp.didString = did.getDIDString();
+
+                            // Store app info to permanent storage
+                            await this.storeDApp(dapp);
+
+                            resolve({
+                                dapp: dapp,
+                                mnemonic: mnemonic
+                            });
+                        }, (err) => {
+                            Logger.error("developertools", err);
+                        });
+                    }
+                    else {
+                        // Existing DID - we handle only the first one in the list
                         let dapp = new StorageDApp();
                         dapp.name = appName;
                         dapp.didStoreId = didStore.getId();
-                        dapp.didString = did.getDIDString();
+                        dapp.didString = existingDIDs[0].getDIDString();
 
                         // Store app info to permanent storage
                         await this.storeDApp(dapp);
@@ -116,10 +151,8 @@ export class DAppService {
                         resolve({
                             dapp: dapp,
                             mnemonic: mnemonic
-                        })
-                    }, (err) => {
-                        Logger.error("developertools", err);
-                    })
+                        });
+                    }
                 }, (err) => {
                     reject(err);
                 });
@@ -147,13 +180,13 @@ export class DAppService {
                 // No transaction to publish in this ID transaction callback, it should never be called.
                 // Another callback is used when publishing the app.
                 Logger.warn("developertools", "Create ID transaction callback called but we do not handle it!");
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
             }, async (didStore) => {
                 Logger.log("developertools", "DID store created");
 
                 // Generate and save a random DID store password
                 let storePassword = await passwordManager.generateRandomPassword();
-                let passwordKey = "store-"+didStoreId;
+                let passwordKey = "store-" + didStoreId;
                 let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
                     type: PasswordManagerPlugin.PasswordType.GENERIC_PASSWORD,
                     displayName: "DID Store password",
@@ -201,27 +234,50 @@ export class DAppService {
         return uuid.join('');
     }
 
+    /**
+     * Used to import existing DIDs. synchronizes published documents to get a local copy.
+     */
+    private syncStore(didStore: DIDPlugin.DIDStore, storePassword: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            void didStore.synchronize(storePassword, () => {
+                resolve();
+            }, (e) => {
+                reject(e);
+            });
+        });
+    }
+
+    private listDIDs(didStore: DIDPlugin.DIDStore): Promise<DIDPlugin.DID[]> {
+        return new Promise((resolve, reject) => {
+            void didStore.listDids(null, (dids) => {
+                resolve(dids);
+            }, (e) => {
+                reject(e);
+            });
+        });
+    }
+
     public async showHelp(ev: any, helpMessage: string) {
-      const popover = await this.popoverController.create({
-        mode: 'ios',
-        component: HelpComponent,
-        cssClass: 'developertools-help-component',
-        event: ev,
-        componentProps: {
-          message: helpMessage
-        },
-        translucent: false
-      });
-      return await popover.present();
+        const popover = await this.popoverController.create({
+            mode: 'ios',
+            component: HelpComponent,
+            cssClass: 'developertools-help-component',
+            event: ev,
+            componentProps: {
+                message: helpMessage
+            },
+            translucent: false
+        });
+        return await popover.present();
     }
 
     async deleteApp(app: StorageDApp): Promise<void> {
-      await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", this.dapps = this.dapps.filter(dapp => dapp.didStoreId !== app.didStoreId));
-      void this.popoverController.dismiss();
-      void this.router.navigate(['/developertools/home']);
+        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", this.dapps = this.dapps.filter(dapp => dapp.didStoreId !== app.didStoreId));
+        void this.popoverController.dismiss();
+        void this.router.navigate(['/developertools/home']);
     }
 
     public deleteApps(): Promise<void> {
-      return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", []);
+        return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", []);
     }
 }

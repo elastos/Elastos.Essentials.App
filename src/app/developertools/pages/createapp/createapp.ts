@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { DAppService } from '../../services/dapp.service';
-import { CreatedDApp } from '../../model/customtypes';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIcon, TitleBarMenuItem, TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { CreatedDApp } from '../../model/customtypes';
+import { DAppService } from '../../services/dapp.service';
 
 @Component({
   selector: 'page-createapp',
@@ -15,21 +15,22 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 export class CreateAppPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  appName: string = "";
-  mnemonicToImport: string = "";
-  mnemonicToImportPassphrase: string = "";
+  appName = "";
+  mnemonicToImport = "";
+  mnemonicToImportPassphrase = "";
 
   createdDApp: CreatedDApp = null;
   importDID = false;
+  creationInProgress = false;
 
-  passwordToggle: string = 'eye';
+  passwordToggle = 'eye';
   showPassword = false;
 
   helpMessage: string = this.translate.instant('developertools.help-message');
   helpMessage2: string = this.translate.instant('developertools.help-message2');
   helpMessage3: string = this.translate.instant('developertools.help-message3');
 
-  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem)=>void;
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     public dAppService: DAppService,
@@ -48,10 +49,10 @@ export class CreateAppPage {
       iconPath: BuiltInIcon.BACK
     });
 
-    this.titleBarIconClickedListener = (clickedIcon)=>{
+    this.titleBarIconClickedListener = (clickedIcon) => {
       switch (clickedIcon.key) {
         case "createapp-back":
-          this.nav.navigateBack();
+          void this.nav.navigateBack();
           break;
       }
     }
@@ -64,33 +65,36 @@ export class CreateAppPage {
   }
 
   async createApp() {
-    if(this.appName) {
-      if (!this.importDID) {
+    this.creationInProgress = true;
+
+    if (!this.importDID) {
+      if (this.appName) {
         this.createdDApp = await this.dAppService.createDApp(this.appName);
       } else {
-        if(this.mnemonicToImport) {
-          this.createdDApp = await this.dAppService.createDAppUsingMnemonic(
-            this.appName,
-            this.mnemonicToImport,
-            this.mnemonicToImportPassphrase
-          );
-        } else {
-          this.native.genericToast('developertools.provide-mnemonic', 4000, 'dark');
-        }
+        this.native.genericToast('developertools.provide-name', 2000, 'dark');
       }
     } else {
-      this.native.genericToast('developertools.provide-name', 2000, 'dark');
+      if (this.mnemonicToImport) {
+        this.createdDApp = await this.dAppService.createDAppUsingMnemonic(
+          "Unnamed",
+          this.mnemonicToImport,
+          this.mnemonicToImportPassphrase
+        );
+      } else {
+        this.native.genericToast('developertools.provide-mnemonic', 4000, 'dark');
+      }
     }
 
+    this.creationInProgress = false;
   }
 
   endAppCreation() {
-    this.nav.navigateBack();
+    void this.nav.navigateBack();
   }
 
   togglePassword() {
     this.showPassword = !this.showPassword;
-    if(this.passwordToggle === 'eye') {
+    if (this.passwordToggle === 'eye') {
       this.passwordToggle = 'eye-off'
     } else {
       this.passwordToggle = 'eye';

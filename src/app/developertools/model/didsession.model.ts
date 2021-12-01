@@ -1,7 +1,5 @@
-import { CLIApp } from "./cliapp.model";
-import { AppPublicationCredentialSubject } from "./apppubcredsubject.model";
 import { Logger } from "src/app/logger";
-import { GlobalPublicationService } from "src/app/services/global.publication.service";
+import { DIDPublicationStatus, GlobalPublicationService } from "src/app/services/global.publication.service";
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -78,32 +76,27 @@ export class DIDSession {
     /**
      * Updates the app's did document with all the required info that we have locally
      */
-    public async updateDIDDocument(developerDID: string, nativeRedirectUrl: string, nativeCallbackUrl: string, nativeCustomScheme: string): Promise <void> {
+    public async updateDIDDocument(developerDID: string, appName: string, appIconUrl: string, nativeRedirectUrl: string, nativeCallbackUrl: string, nativeCustomScheme: string): Promise<void> {
         Logger.log("developertools", "DID Session debug (did):", this.did);
         Logger.log("developertools", "DID Session debug (didDocument):", this.didDocument);
         Logger.log("developertools", "DID Session debug (didStore):", this.didStore);
 
-        await this.updateDIDDocumentsWithDeveloperDID(developerDID);
-        await this.updateDIDDocumentsWithNativeUrls(nativeRedirectUrl, nativeCallbackUrl, nativeCustomScheme);
-    }
-
-    private updateDIDDocumentsWithDeveloperDID(developerDID: string): Promise <void> {
         let properties = {
-            did: developerDID
+            name: appName,
+            iconUrl: appIconUrl,
+            developer: {
+                did: developerDID
+            },
+            endpoints: {
+                redirectUrl: nativeRedirectUrl,
+                callbackUrl: nativeCallbackUrl,
+                customScheme: nativeCustomScheme
+            }
         };
-        return this.updateDIDDocumentsWithCredential("#developer", properties, "DappDeveloperCredential");
+        await this.updateDIDDocumentsWithApplicationCredential("#appinfo", properties, "ApplicationCredential");
     }
 
-    private updateDIDDocumentsWithNativeUrls(nativeRedirectUrl: string, nativeCallbackUrl: string, nativeCustomScheme: string): Promise <void> {
-        let properties = {
-            redirectUrl: nativeRedirectUrl,
-            callbackUrl: nativeCallbackUrl,
-            customScheme: nativeCustomScheme
-        };
-        return this.updateDIDDocumentsWithCredential("#native", properties, "NativeAppCredential");
-    }
-
-    private updateDIDDocumentsWithCredential(credentialName: string, properties: any, credentialType: string): Promise<void> {
+    private updateDIDDocumentsWithApplicationCredential(credentialName: string, properties: any, credentialType: string): Promise<void> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise((resolve, reject) => {
             let validityDays: any = 5 * 365; // 5 years
@@ -114,10 +107,10 @@ export class DIDSession {
                 Logger.log("developertools", "Credential issued:", credential);
                 // Also add this credential into the local DID document, ready for publishing.
 
-                Logger.log("developertools", "Removing existing credential "+credentialName+" if any");
+                Logger.log("developertools", "Removing existing credential " + credentialName + " if any");
                 await this.deleteExistingCredentialIfAny(credentialName);
 
-                Logger.log("developertools", "Adding the new "+credentialName+" credential to the DID document");
+                Logger.log("developertools", "Adding the new " + credentialName + " credential to the DID document");
                 this.didDocument.addCredential(credential, this.storePassword, () => {
                     Logger.log("developertools", "DIDDocument after update: ", this.didDocument)
                     resolve();
@@ -135,9 +128,9 @@ export class DIDSession {
         return new Promise((resolve, reject) => {
             let credential = this.didDocument.getCredential(credentialName);
             if (credential) {
-                this.didDocument.deleteCredential(credential, this.storePassword, ()=>{
+                this.didDocument.deleteCredential(credential, this.storePassword, () => {
                     resolve();
-                }, (err)=>{
+                }, (err) => {
                     reject(err);
                 });
             }
@@ -148,9 +141,36 @@ export class DIDSession {
         });
     }
 
-    public async publishDIDDocument(): Promise < void> {
-        await GlobalPublicationService.instance.publishDIDFromStore(
-            this.didStore.getId(),
-            this.storePassword, this.didString, true);
+    /**
+     * Publishes the DID and resolves only after publishing is complete.
+     */
+    public publishDIDDocument(): Promise<boolean> {
+        return new Promise(resolve => {
+            void GlobalPublicationService.instance.resetStatus().then(async () => {
+                let publicationStatusSub = GlobalPublicationService.instance.publicationStatus.subscribe((status) => {
+                    if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
+                        Logger.log("developertools", "Identity publication success");
+                        publicationStatusSub.unsubscribe();
+                        resolve(true);
+                    }
+                    else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
+                        Logger.log("developertools", "Identity publication failure");
+                        publicationStatusSub.unsubscribe();
+                        resolve(false);
+                    }
+                });
+
+                try {
+                    await GlobalPublicationService.instance.publishDIDFromStore(
+                        this.didStore.getId(),
+                        this.storePassword, this.didString, true);
+                }
+                catch (e) {
+                    Logger.log("didsessions", "Identity publication failure (publishDIDFromStore)", e);
+                    publicationStatusSub.unsubscribe();
+                    resolve(false);
+                }
+            });
+        });
     }
 }

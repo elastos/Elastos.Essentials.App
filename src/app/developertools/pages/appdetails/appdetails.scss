@@ -1,11 +1,26 @@
 @import "src/app/developertools/root.scss";
 
+.flex-jc-centered {
+  justify-content: center;
+}
+
+.flex-ai-centered {
+  align-items: center;
+}
+
+.std-padding {
+  padding: 10px;
+}
+
 .container {
   min-height: 100%;
-  background: #FAFAFA;
+  background: #fafafa;
   padding: 0px 30px 90px;
 
-  p, h1, ion-label, ion-icon {
+  p,
+  h1,
+  ion-label,
+  ion-icon {
     color: #21313d;
     margin: 0;
   }
@@ -19,7 +34,7 @@
       display: flex;
       justify-content: center;
     }
-    
+
     ion-col {
       display: flex;
       justify-content: space-between;
@@ -37,6 +52,9 @@
   }
 
   .section-container {
+    display: flex;
+    flex-direction: column;
+
     .section-title-row {
       ion-col {
         padding-left: 0;
@@ -48,12 +66,12 @@
     }
 
     ion-list {
-      background: #FAFAFA;
-  
+      background: #fafafa;
+
       ion-row {
         border-bottom: 0.5px solid #21313d;
         padding: 12.5px 0;
-  
+
         ion-col {
           padding-left: 0;
           padding-right: 0;
@@ -63,20 +81,20 @@
             font-size: 14px;
             font-weight: 700;
           }
-  
+
           ion-icon {
             font-size: 16px;
           }
-  
+
           ion-label {
             font-size: 12px;
             font-weight: 600;
             word-wrap: break-word;
             white-space: pre-wrap !important;
           }
-  
+
           ion-input {
-            --background: #FAFAFA;
+            --background: #fafafa;
             --color: #21313d;
             --padding-top: 0;
             --padding-bottom: 0;
@@ -87,10 +105,35 @@
       .input-row {
         padding-bottom: 5px;
       }
+
+      .app-icon {
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+
+        p {
+          font-weight: 400 !important;
+          margin-top: 5px !important;
+        }
+
+        ion-img {
+          width: 150px;
+          height: 150px;
+          object-fit: cover;
+          border-radius: 50%;
+          overflow: hidden;
+        }
+      }
     }
   }
 
   ion-button {
     margin-top: 30px;
+  }
+
+  .up-to-date {
+    color: green;
+    margin-top: 10px;
+    text-align: center;
   }
 }

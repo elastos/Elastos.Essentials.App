@@ -9,26 +9,26 @@
         <h1>{{ 'developertools.create-new-app' | translate }}</h1>
       </ion-col>
     </ion-row>
-   
+
     <ion-card class="ion-text-center">
       <h5>{{ 'developertools.create-app-message' | translate }}</h5>
     </ion-card>
 
     <ion-list>
-      <ion-row class="input-row">
-        <ion-col size="12">
-          <p>{{ 'developertools.app-name' | translate }}</p>
-        </ion-col>
-        <ion-col size="12">
-          <ion-input title="App name" [(ngModel)]="appName" type="text"></ion-input>
-        </ion-col>
-      </ion-row>
-   
       <ion-row class="toggle-row">
         <ion-col size="12">
           <p *ngIf="!importDID">{{ 'developertools.create-did' | translate }}</p>
           <p *ngIf="importDID">{{ 'developertools.import-did' | translate }}</p>
           <ion-toggle [(ngModel)]="importDID" color="dark"></ion-toggle>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="input-row" *ngIf="!importDID">
+        <ion-col size="12">
+          <p>{{ 'developertools.app-name' | translate }}</p>
+        </ion-col>
+        <ion-col size="12">
+          <ion-input title="App name" [(ngModel)]="appName" type="text"></ion-input>
         </ion-col>
       </ion-row>
 
@@ -44,7 +44,8 @@
 
       <ion-row *ngIf="importDID" class="input-row">
         <ion-col size="12">
-          <p>{{ 'developertools.mnemonic-passphrase' | translate }} <span>{{ 'developertools.if-any' | translate }} </span></p>
+          <p>{{ 'developertools.mnemonic-passphrase' | translate }} <span>{{ 'developertools.if-any' | translate }}
+            </span></p>
           <ion-icon name="help-circle" (click)='dAppService.showHelp($event, helpMessage3)'></ion-icon>
         </ion-col>
         <ion-col size=12>
@@ -53,8 +54,12 @@
       </ion-row>
     </ion-list>
 
-    <ion-button  color="dark" (click)="createApp()">
+    <ion-button color="dark" (click)="createApp()" *ngIf="!creationInProgress">
       <ion-label>{{ 'developertools.create-app' | translate }}</ion-label>
+    </ion-button>
+
+    <ion-button color="dark" (click)="createApp()" *ngIf="creationInProgress">
+      <ion-spinner></ion-spinner>
     </ion-button>
   </ion-grid>
 
@@ -62,11 +67,12 @@
   <ion-grid class="container" *ngIf="createdDApp">
     <ion-row>
       <ion-col size="12">
-        <h1>{{ 'developertools.app-created' | translate }}</h1>
+        <h1 *ngIf="!importDID">{{ 'developertools.app-created' | translate }}</h1>
+        <h1 *ngIf="importDID">App imported!</h1>
       </ion-col>
     </ion-row>
 
-    <ion-card class="ion-text-center">
+    <ion-card class="ion-text-center" *ngIf="!importDID">
       <h5>{{ 'developertools.save-mnemonic' | translate }}</h5> <br>
       <p>
         {{ createdDApp.mnemonic }}

@@ -1,13 +1,14 @@
-import { Hive, DID, Interfaces, storage as connectivityStorage, logger as connectivityLogger } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { DID, Hive, Interfaces, logger as connectivityLogger, storage as connectivityStorage } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { Logger } from "../logger";
 import { GlobalDIDSessionsService } from "../services/global.didsessions.service";
 import { GlobalStorageService } from "../services/global.storage.service";
+import { InternalHiveAuthHelper } from "./hive.authhelper";
 
 export class EssentialsDIDKeyValueStore implements Interfaces.IKeyValueStorage {
     constructor(private storage: GlobalStorageService) {
     }
 
-    set<T>(key: string, value: T): Promise<void>{
+    set<T>(key: string, value: T): Promise<void> {
         return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "connectivitysdk", key, value);
     }
 
@@ -54,8 +55,8 @@ export class ElastosSDKHelper {
     /**
      * @param context Isolation context to be able to handle multiple auth tokens, etc. Usually, the "app module name"
      */
-    public newHiveAuthHelper(): Hive.AuthHelper {
-        let authHelper = new Hive.AuthHelper();
+    public newHiveAuthHelper(): InternalHiveAuthHelper {
+        let authHelper = new InternalHiveAuthHelper();
         return authHelper;
     }
 

@@ -150,7 +150,7 @@ export const fr = {
         // page: appidcredissue
         'appidcredential-issue': 'Identification de l\'Application',
         'appidcredential-package-id': 'ID du paquet:',
-        'appidcredissue-intro': 'Confirmez-vous que cette application a été téléchargée et installée depuis une source sure? ',
+        'appidcredissue-intro': 'Do you confirm that the requesting application matches with the above information? Be careful, this will grant access to this application\'s hive vault storage.',
         'app-instancedid': 'DID temporaire de l\'application',
         'app-did': 'DID de l\'application',
 

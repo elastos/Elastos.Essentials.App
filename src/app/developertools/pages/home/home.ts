@@ -1,12 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { DAppService } from '../../services/dapp.service';
-import { StorageDApp } from '../../model/storagedapp.model';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { TranslateService } from '@ngx-translate/core';
+import { App } from "src/app/model/app.enum";
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
+import { StorageDApp } from '../../model/storagedapp.model';
+import { DAppService } from '../../services/dapp.service';
 
 @Component({
   selector: 'page-home',
@@ -32,11 +32,11 @@ export class HomePage {
 
   newApp() {
     Logger.log("developertools", "new app")
-    this.nav.navigateTo(App.DEVELOPER_TOOLS, "/developertools/createapp");
+    void this.nav.navigateTo(App.DEVELOPER_TOOLS, "/developertools/createapp");
   }
 
   openApp(app: StorageDApp) {
-    this.nav.navigateTo(
+    void this.nav.navigateTo(
       App.DEVELOPER_TOOLS, "/developertools/appdetails", { state: { "app": app } }
     );
   }

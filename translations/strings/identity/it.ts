@@ -149,7 +149,7 @@ export const it = {
         // page: appidcredissue
         'appidcredential-issue': 'Identificazione dell\'applicazione',
         'appidcredential-package-id': 'ID pacchetto:',
-        'appidcredissue-intro': 'Confermi che questa applicazione è stata scaricata e installata da una fonte sicura? ',
+        'appidcredissue-intro': 'Do you confirm that the requesting application matches with the above information? Be careful, this will grant access to this application\'s hive vault storage.',
         'app-instancedid': 'DID temporanea dell\'Applicazione',
         'app-did': 'DID dell\'Applicazione',
 

@@ -1,25 +1,28 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
-import { DAppService } from '../../services/dapp.service';
-import { StorageDApp } from '../../model/storagedapp.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalConfig } from 'src/app/config/globalconfig';
+import { pictureMimeType, rawImageToBase64DataUrl } from 'src/app/helpers/picture.helpers';
+import { Logger } from 'src/app/logger';
+import { ApplicationDIDInfo, GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DeleteComponent } from '../../components/delete/delete.component';
 import { DIDHelper } from '../../helpers/did.helper';
 import { DIDSession } from '../../model/didsession.model';
-import { DeleteComponent } from '../../components/delete/delete.component';
-import { IdentityService } from '../../services/identity.service';
+import { StorageDApp } from '../../model/storagedapp.model';
+import { DAppService } from '../../services/dapp.service';
 import { HiveService } from '../../services/hive.service';
-import { PopupService } from '../../services/popup.service';;
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { App } from "src/app/model/app.enum"
+import { IdentityService } from '../../services/identity.service';
+import { PopupService } from '../../services/popup.service';
 
-// TODO: When opening the screen we could fetch the existing app on chain and display its info.
+declare let hiveManager: HivePlugin.HiveManager;
 
 @Component({
   selector: 'page-appdetails',
@@ -34,18 +37,22 @@ export class AppDetailsPage {
 
   didStorePasswordIsValid = false;
   showPassword = false;
-  passwordToggle: string = 'eye';
+  passwordToggle = 'eye';
   appDIDDocumentStatusWasChecked = false; // Whether the App DID document has been checked on chain or not yet
-  appDIDDocument: DIDPlugin.DIDDocument = null;
+  private publishedAppInfo: ApplicationDIDInfo = null;
   developerDIDDocument: DIDPlugin.DIDDocument = null;
-  trinityPubStatusWasChecked = false; // Whether the Elastos Essentials application publication status was checked
   signedInUserDID: string = null;
+  public publishingDid = false;
+  public fetchingIcon = false;
+  public uploadingIcon = false;
 
   public base64iconPath: string = null;
 
-  public nativeRedirectUrl: string = "";
-  public nativeCustomScheme: string = "";
-  public nativeCallbackUrl: string = "";
+  public appName = "";
+  private appIconUrl = null;
+  public nativeRedirectUrl = "";
+  public nativeCustomScheme = "";
+  public nativeCallbackUrl = "";
 
   public appIdentityHelpMessage = "developertools.appIdentityHelpMessage";
   public nativeRedirectUrlHelpMessage = "developertools.nativeRedirectUrlHelpMessage";
@@ -67,6 +74,8 @@ export class AppDetailsPage {
     private native: GlobalNativeService,
     private nav: GlobalNavService,
     public translate: TranslateService,
+    private globalApplicationDidService: GlobalApplicationDidService,
+    private globalHiveService: GlobalHiveService
   ) {
     route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -88,7 +97,7 @@ export class AppDetailsPage {
     this.titleBarIconClickedListener = (clickedIcon) => {
       switch (clickedIcon.key) {
         case "appdetails-back":
-          this.nav.navigateBack();
+          void this.nav.navigateBack();
           break;
       }
     }
@@ -101,8 +110,7 @@ export class AppDetailsPage {
 
     await this.didSession.synchronizeDIDDocument();
 
-    await this.downloadAppIconFromDeveloperHive();
-    await this.checkAppIdentityStatus();
+    await this.refreshAppIdentityStatus();
   }
 
   ionViewWillLeave() {
@@ -110,89 +118,97 @@ export class AppDetailsPage {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
-  private async checkAppIdentityStatus() {
+  private async refreshAppIdentityStatus() {
     Logger.log("developertools", "Checking if the application DID is on chain or not");
 
     this.appDIDDocumentStatusWasChecked = false;
-    this.appDIDDocument = await this.identityService.getAppIdentityOnChain(this.didSession.did.getDIDString());
-    this.developerDIDDocument = await this.identityService.getDeveloperIdentityOnChain(this.getOnChainAppDeveloperDID());
-    this.appDIDDocumentStatusWasChecked = true;
 
-    if (this.appDIDDocument) {
+    this.publishedAppInfo = await this.globalApplicationDidService.fetchPublishedAppInfo(this.didSession.did.getDIDString());
+
+    if (this.publishedAppInfo.didDocument) {
       Logger.log("developertools", "App DID is on chain");
+      this.developerDIDDocument = await this.identityService.getDeveloperIdentityOnChain(this.getOnChainAppDeveloperDID());
 
-      this.nativeRedirectUrl = this.getOnChainNativeRedirectUrl();
-      this.nativeCallbackUrl = this.getOnChainNativeCallbackUrl();
-      this.nativeCustomScheme = this.getOnChainNativeCustomScheme();
+      this.appName = this.publishedAppInfo.name;
+      this.appIconUrl = this.publishedAppInfo.iconUrl;
+      this.nativeRedirectUrl = this.getOnChainRedirectUrlEndpoint();
+      this.nativeCallbackUrl = this.getOnChainCallbackUrlEndpoint();
+      this.nativeCustomScheme = this.getOnChainCustomSchemeEndpoint();
+
+      // Fetch, don't wait
+      void this.fetchAppIcon();
     }
-    else
+    else {
       Logger.log("developertools", "App DID is NOT on chain");
+
+      this.appName = this.app.name;
+    }
+
+    this.appDIDDocumentStatusWasChecked = true;
   }
 
-  publishAppIdentity() {
-    // TODO - disable button when publishing - show spinner
-    this.identityService.publishAppIdentity(this.didSession, this.nativeRedirectUrl, this.nativeCallbackUrl, this.nativeCustomScheme);
-  }
+  async publishAppIdentity() {
+    if (this.publishingDid)
+      return;
 
-  publishAppToElastos() {
-    this.nav.navigateTo(
-      App.DEVELOPER_TOOLS,
-      "/developertools/publishapptrinity",
-      {
-        state: {
-          "app": this.app,
-          "didsession": this.didSession
-        }
-      }
-    );
+    this.publishingDid = true;
+    let publishedSuccessfully = await this.identityService.publishAppIdentity(this.didSession, this.appName, this.appIconUrl, this.nativeRedirectUrl, this.nativeCallbackUrl, this.nativeCustomScheme);
+    this.publishingDid = false;
+
+    if (publishedSuccessfully) {
+      // Update the dapp info on disk in case the name was changed
+      this.app.name = this.appName;
+      await this.dAppService.updateDapp(this.app);
+
+      // Refresh all data
+      await this.refreshAppIdentityStatus();
+    }
   }
 
   public isAppIdentityPublished(): boolean {
-    return this.appDIDDocumentStatusWasChecked && this.appDIDDocument != null
+    return this.appDIDDocumentStatusWasChecked && this.publishedAppInfo != null
   }
 
-  private getOnChainNativeRedirectUrl(): string {
-    if (!this.appDIDDocument)
+  private getOnChainRedirectUrlEndpoint(): string {
+    return this.getOnChainEndpoint("redirectUrl");
+  }
+
+  private getOnChainCustomSchemeEndpoint(): string {
+    return this.getOnChainEndpoint("customScheme");
+  }
+
+  private getOnChainCallbackUrlEndpoint(): string {
+    return this.getOnChainEndpoint("callbackUrl");
+  }
+
+  private getOnChainEndpoint(endPointName: string): string {
+    if (!this.publishedAppInfo || !this.publishedAppInfo.didDocument)
       return "";
 
-    let credential = this.appDIDDocument.getCredential("#native");
+    let credential = this.publishedAppInfo.didDocument.getCredential("#appinfo");
     if (!credential)
       return "";
 
-    return credential.getSubject()["redirectUrl"] || "";
-  }
-
-  private getOnChainNativeCustomScheme(): string {
-    if (!this.appDIDDocument)
+    let subject = credential.getSubject();
+    if (!("endpoints" in subject))
       return "";
-
-    let credential = this.appDIDDocument.getCredential("#native");
-    if (!credential)
-      return "";
-
-    return credential.getSubject()["customScheme"] || "";
-  }
-
-  private getOnChainNativeCallbackUrl(): string {
-    if (!this.appDIDDocument)
-      return "";
-
-    let credential = this.appDIDDocument.getCredential("#native");
-    if (!credential)
-      return "";
-
-    return credential.getSubject()["callbackUrl"] || "";
+    else
+      return subject["endpoints"][endPointName] || "";
   }
 
   public getOnChainAppDeveloperDID(): string {
-    if (!this.appDIDDocument)
+    if (!this.publishedAppInfo || !this.publishedAppInfo.didDocument)
       return null;
 
-    let credential = this.appDIDDocument.getCredential("#developer");
+    let credential = this.publishedAppInfo.didDocument.getCredential("#appinfo");
     if (!credential)
       return null;
 
-    return credential.getSubject()["did"];
+    let subject = credential.getSubject();
+    if (!("developer" in subject))
+      return "";
+    else
+      return subject["developer"]["did"] || "";
   }
 
   public chainDeveloperDIDMatchesLocalDID(): boolean {
@@ -200,19 +216,29 @@ export class AppDetailsPage {
   }
 
   public chainRedirectURLMatchesLocalRedirectURL(): boolean {
-    return this.nativeRedirectUrl == this.getOnChainNativeRedirectUrl();
+    return this.nativeRedirectUrl == this.getOnChainRedirectUrlEndpoint();
   }
 
   public chainCustomSchemeMatchesLocalCustomScheme(): boolean {
-    return this.nativeCustomScheme == this.getOnChainNativeCustomScheme();
+    return this.nativeCustomScheme == this.getOnChainCustomSchemeEndpoint();
   }
 
   public chainCallbackURLMatchesLocalCallbackURL(): boolean {
-    return this.nativeCallbackUrl == this.getOnChainNativeCallbackUrl();
+    return this.nativeCallbackUrl == this.getOnChainCallbackUrlEndpoint();
+  }
+
+  public chainAppNameMatchesLocalAppName(): boolean {
+    return this.appName == this.publishedAppInfo.name;
+  }
+
+  public chainAppIconMatchesLocalAppIcon(): boolean {
+    return this.appIconUrl === this.publishedAppInfo.iconUrl; // TODO CHECK THIS
   }
 
   public appIdentityNeedsToBePublished(): boolean {
     return !this.isAppIdentityPublished() ||
+      !this.chainAppNameMatchesLocalAppName() ||
+      !this.chainAppIconMatchesLocalAppIcon() ||
       !this.chainDeveloperDIDMatchesLocalDID() ||
       !this.chainCallbackURLMatchesLocalCallbackURL() ||
       !this.chainRedirectURLMatchesLocalRedirectURL() ||
@@ -259,56 +285,17 @@ export class AppDetailsPage {
   }
 
   public async copyAppDIDToClipboard() {
-    this.native.copyClipboard(this.app.didString);
+    await this.native.copyClipboard(this.app.didString);
     this.native.genericToast('developertools.app-did-copied', 2000, 'dark');
   }
 
-  public async downloadAppIconFromDeveloperHive() {
-    let vault = await this.hiveService.getDeveloperVault();
-    let filePath = this.didSession.didString + "/" + "appicon.png";
-
-    try {
-      let reader = await vault.getFiles().download(filePath);
-      if (!reader) {
-        Logger.log("developertools", "Failed to get reader");
-      }
-      else {
-        let fileParts: ArrayBuffer[] = [];
-        let readContent: Uint8Array = null;
-        const BYTES_TO_READ = 40000;
-        while (true) {
-          readContent = await reader.read(BYTES_TO_READ);
-          if (readContent && readContent.byteLength > 0) {
-            fileParts.push(readContent);
-          }
-          else
-            break; // No more content to read, stop looping.
-        }
-        let fileContent = new Blob(fileParts);
-        await reader.close();
-
-        if (fileContent) {
-          Logger.log("developertools", "Got the whole file content");
-
-          this.base64iconPath = await new Promise((resolve)=>{
-            var fileReader = new FileReader();
-            fileReader.onload = function(event){
-              var base64 = event.target["result"];
-              resolve(base64 as string);
-            };
-            fileReader.readAsDataURL(fileContent);
-          });
-
-          Logger.log("developertools", "base64iconPath", this.base64iconPath);
-        }
-        else {
-          Logger.log("developertools", "Invalid fileContent or no fileContent.text() available", fileContent);
-        }
-      }
-    }
-    catch (e) {
-      Logger.warn("developertools", e);
-      Logger.warn("developertools", "Failure during file download (not found?): " + e);
+  private async fetchAppIcon() {
+    if (this.appIconUrl) {
+      this.fetchingIcon = true;
+      Logger.log("developertools", `Fetching app icon from ${this.appIconUrl}`);
+      this.base64iconPath = await this.globalHiveService.fetchHiveScriptPictureToDataUrl(this.appIconUrl);
+      Logger.log("developertools", `Got app icon`);
+      this.fetchingIcon = false;
     }
   }
 
@@ -318,68 +305,71 @@ export class AppDetailsPage {
 
   /**
    * Lets user pick a picture from his gallery. The picture is uploaded to the developer's hive vault
-   * as the application icon.
+   * as the application icon. Then, a hive script is created to make this picture publicly accessible
+   * by everyone.
    */
   public selectAndUploadAppIconFromLibrary() {
-    navigator.camera.getPicture((data) => {
-      Logger.log("developertools", "Got gallery data");
-      if (data) {
-        this.zone.run(async () => {
-          try {
-            let rawData = Buffer.from(data, 'base64');
-            await this.uploadAppIconToHive(rawData);
-
-            // Free the memory
-            navigator.camera.cleanup(() => { }, (err) => { });
-          }
-          catch (e) {
-            //this.alertNoScannedContent('sorry', 'scan-err');
-            Logger.log("developertools", "Error while loading the picture as PNG:", e);
-          }
-        });
-      }
-      else {
-        Logger.log("developertools", "No picture picked?");
-      }
-    }
-      , (err) => {
-        //this.alertNoScannedContent('sorry', 'gallery-err');
-        Logger.log("developertools", err);
-      }, {
-      targetWidth: 512, // Reduce picture size to avoid memory problems - keep it large enough for QR code readabilitiy
-      targetHeight: 512,
+    const options: CameraOptions = {
+      quality: 90,
+      mediaType: 0,
+      correctOrientation: true,
+      targetWidth: 256, // Reduce picture size to avoid memory problems
+      targetHeight: 256,
       destinationType: 0, // Return as base64 data string
       sourceType: 0, // Pick from photo library
       encodingType: 1 // Return as PNG base64 data
-    });
+    };
+
+    navigator.camera.getPicture((imageData) => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      this.zone.run(async () => {
+        if (imageData) {
+          let mimeType = await pictureMimeType(imageData);
+
+          if (["image/png", "image/jpg", "image/jpeg"].indexOf(mimeType) < 0) {
+            this.native.genericToast('identity.not-a-valid-picture');
+            return;
+          }
+
+          await this.uploadAppIconToHive(imageData);
+
+          // Free the memory
+          navigator.camera.cleanup(() => { }, (err) => { });
+        }
+      });
+    }, ((err) => {
+      Logger.error('developertools', err);
+    }), options);
   }
 
-  private async uploadAppIconToHive(rawData: Uint8Array) {
-    await this.popup.showLoading("developertools.uploading-icon");
+  private async uploadAppIconToHive(rawBase64ImageOut: string): Promise<void> {
+    this.uploadingIcon = true;
 
-    try {
-      let vault = await this.hiveService.getDeveloperVault();
-      let filePath = this.didSession.didString + "/" + "appicon.png";
+    // Upload the the picture and create the script to let others get this picture.
+    let randomPictureID = new Date().getTime();
+    let appIconFileName = "developertools/appicons/" + randomPictureID;
+    let uploader = await this.globalHiveService.getActiveVault().getFiles().upload(appIconFileName);
+    let avatarData = Buffer.from(rawBase64ImageOut, "base64"); // Raw picture data, not base64 encoded
+    await uploader.write(avatarData);
+    await uploader.flush();
+    await uploader.close();
+    Logger.log('developertools', "Completed app icon upload to hive");
 
-      Logger.log("developertools", "Starting to upload app icon to the developer's hive vault at path: " + filePath);
+    // Create a script to make this picture available to everyone
+    let scriptName = "getAppIcon" + randomPictureID;
+    let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript(scriptName, hiveManager.Scripting.Executables.newAggregatedExecutable(
+      [hiveManager.Scripting.Executables.Files.newDownloadExecutable(appIconFileName)]
+    ), null, true, true);
+    Logger.log('developertools', "Could create avatar script?", couldCreateScript);
 
-      let writer = await vault.getFiles().upload(filePath);
-      if (!writer) {
-        Logger.error("developertools", "Failed to get writer");
-      }
-      else {
-        await writer.write(rawData);
-        await writer.flush();
-        await writer.close();
+    let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
+    let avatarHiveURL = "hive://" + GlobalDIDSessionsService.signedInDIDString + "@" + essentialsAppDID + "/" + scriptName + "?params={\"empty\":0}"; // Fake params to prevent hive SDK bug crash
+    Logger.log("developertools", "Generated avatar url:", avatarHiveURL);
 
-        Logger.log("developertools", "Binary file upload completed");
-      }
-    }
-    catch (e) {
-      Logger.error("developertools", e);
-      Logger.log("developertools", "Exception while uploading the application icon: " + e);
-    }
+    // Update UI locally without saving to permanent profile yet.
+    this.appIconUrl = avatarHiveURL;
+    this.base64iconPath = await rawImageToBase64DataUrl(avatarData);
 
-    await this.popup.hideLoading();
+    this.uploadingIcon = false;
   }
 }

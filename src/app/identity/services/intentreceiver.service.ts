@@ -6,7 +6,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
-import { AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, RequestCredentialsIntent, SetHiveProviderIdentityIntent } from '../model/identity.intents';
+import { CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, RequestCredentialsIntent, SetHiveProviderIdentityIntent } from '../model/identity.intents';
 import { AppIDService } from './appid.service';
 import { Native } from './native';
 import { PopupProvider } from './popup';
@@ -26,7 +26,7 @@ export class IntentReceiverService {
         public events: Events,
         private native: Native,
         private popup: PopupProvider,
-        private appIDService: AppIDService,
+        private appIDService: AppIDService, // Keep it for init
         private uxService: UXService,
         private globalIntentService: GlobalIntentService,
         private profileService: ProfileService,
@@ -64,20 +64,20 @@ export class IntentReceiverService {
                     else {
                         await this.uxService.loadIdentityAndShow(false);
 
-                        let appIdIssueIntent = intent as AppIdCredIssueIdentityIntent;
+                        //let appIdIssueIntent = intent as AppIdCredIssueIdentityIntent;
 
                         // Check if we can directly fullfil the request or not (silent intent).
                         // From inside trinity, as the runtime can ensure the app did, we can directly
                         // issue the credential most of the times. Native apps though require a UI
                         // confirmation.
-                        this.appIDService.prepareNextRequest(appIdIssueIntent.intentId, appIdIssueIntent.params.appPackageId, appIdIssueIntent.params.appinstancedid, appIdIssueIntent.params.appdid);
-                        if (await this.appIDService.applicationIDCredentialCanBeIssuedWithoutUI(appIdIssueIntent.params)) {
-                            void this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent.params);
-                        }
-                        else {
-                            // We have to show a UI confirmation so let's do it.
-                            void this.native.setRootRouter("/identity/intents/appidcredissuerequest");
-                        }
+                        //this.appIDService.prepareNextRequest(appIdIssueIntent.intentId, appIdIssueIntent.params.appPackageId, appIdIssueIntent.params.appinstancedid, appIdIssueIntent.params.appdid);
+                        //if (await this.appIDService.applicationIDCredentialCanBeIssuedWithoutUI(appIdIssueIntent.params)) {
+                        //    void this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent.params);
+                        //}
+                        //else {
+                        // We have to show a UI confirmation so let's do it.
+                        void this.native.setRootRouter("/identity/intents/appidcredissuerequest");
+                        //}
                     }
                 }
                 else {

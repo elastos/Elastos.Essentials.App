@@ -149,7 +149,7 @@ export const en = {
         // page: appidcredissue
         'appidcredential-issue': 'Application Identification',
         'appidcredential-package-id': 'Package ID:',
-        'appidcredissue-intro': 'Do you authentify that requesting application is a trusted app, installed from a trusted location? ',
+        'appidcredissue-intro': 'Do you confirm that the requesting application matches with the above information? Be careful, this will grant access to this application\'s hive vault storage.',
         'app-instancedid': 'App Instance DID',
         'app-did': 'App DID',
 

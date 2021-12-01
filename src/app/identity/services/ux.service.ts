@@ -84,7 +84,15 @@ export class UXService {
         if (!intentParams)
             return false; // Should not happen
 
-        // TODO: WALLET CONNECT CHECKS !
+        // TODO: WALLET CONNECT AND INTERNAL BROWSER CONNECTOR AND DIRECT INTENT CALLS CHECKS !
+        // TODO: BY DEFAULT --> GOING OUTSIDE EXCEPT SPECIFIED OTHERWISE
+
+        /**
+         * - NOT ESS - external WC -> sendIntent()
+         * - NOT ESS - internal browser connector -> sendIntent()
+         * - ESS - internal dapp helper -> cordova sdk -> sendIntent()
+         * - NOT ESS - external direct intent url -> intent plugin -> onIntent()
+         */
 
         if (intentParams.callbackurl || intentParams.redirecturl) {
             Logger.log('identity', "isIntentResponseGoingOutsideElastos? YES - Params:", intentParams);

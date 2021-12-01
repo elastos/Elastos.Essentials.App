@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { GlobalConfig } from "src/app/config/globalconfig";
 import { Logger } from "src/app/logger";
+import { AppIdCredIssueIdentityIntent } from "../model/identity.intents";
 import { AuthService } from "./auth.service";
 import { DIDService } from "./did.service";
 import { UXService } from "./ux.service";
@@ -16,25 +16,28 @@ import { UXService } from "./ux.service";
   providedIn: "root",
 })
 export class AppIDService {
-  private intentId: number = null;
-  private appPackageId: string = null;
-  private appInstanceDID: string = null;
-  private externallyProvidedAppDID: string = null;
+  public static instance: AppIDService = null;
+
+  //private intentId: number = null;
+  //private appPackageId: string = null;
+  //private appInstanceDID: string = null;
+  //private externallyProvidedAppDID: string = null;
 
   constructor(
     private authService: AuthService,
     private uxService: UXService,
     private didService: DIDService) {
+    AppIDService.instance = this;
   }
 
-  public prepareNextRequest(intentId: number, appPackageId: string, appInstanceDID: string, externallyProvidedAppDID: string) {
-    this.intentId = intentId;
-    this.appPackageId = appPackageId;
-    this.appInstanceDID = appInstanceDID;
-    this.externallyProvidedAppDID = externallyProvidedAppDID;
-  }
+  //public prepareNextRequest(intentId: number, appPackageId: string, appInstanceDID: string, externallyProvidedAppDID: string) {
+  /* this.intentId = intentId;
+  this.appPackageId = appPackageId;
+  this.appInstanceDID = appInstanceDID;
+  this.externallyProvidedAppDID = externallyProvidedAppDID; */
+  //}
 
-  public async applicationIDCredentialCanBeIssuedWithoutUI(intentParams: any): Promise<boolean> {
+  /* public async applicationIDCredentialCanBeIssuedWithoutUI(intentParams: any): Promise<boolean> {
     if (!await this.uxService.isIntentResponseGoingOutsideEssentials(intentParams)) {
       // Intent is for Essentials itself. We can issue silently.
       return true;
@@ -44,61 +47,72 @@ export class AppIDService {
       Logger.log('identity', "Can't issue app id credential silently: called from a third party app");
       return false;
     }
-  }
+  } */
 
-  private async getActualAppDID(intentParams: any): Promise<string> {
+  /* private async getActualAppDID(intentParams: any): Promise<string> {
     if (!await this.uxService.isIntentResponseGoingOutsideEssentials(intentParams)) {
       // Intent response is for Essentials itself so we use Essentials app DID
       return GlobalConfig.ESSENTIALS_APP_DID;
     }
     else {
-      // We don't need to blindly trust if this DID is genuine or not. The trinity runtime wille
+      // We don't need to blindly trust if this DID is genuine or not. The trinity runtime will
       // match it with the redirect url that is registered in app did document on chain, when
       // sending the intent response.
       return this.externallyProvidedAppDID;
     }
-  }
+  } */
 
-  public async generateAndSendApplicationIDCredentialIntentResponse(intentParams: any) {
+  public generateApplicationIDCredential(appInstanceDid: string, appDid: string): Promise<DIDPlugin.VerifiableCredential> {
     let properties = {
-      appInstanceDid: this.appInstanceDID,
-      appDid: await this.getActualAppDID(intentParams),
+      appInstanceDid,
+      appDid
     };
 
-    await AuthService.instance.checkPasswordThenExecute(async () => {
-      Logger.log('identity', "AppIdCredIssueRequest - issuing credential");
+    return new Promise((resolve, reject) => {
+      void AuthService.instance.checkPasswordThenExecute(async () => {
+        Logger.log('identity', "AppIdCredIssueRequest - issuing credential");
 
-      await this.didService.getActiveDid().pluginDid.issueCredential(
-        this.appInstanceDID,
-        "#app-id-credential",
-        ['AppIdCredential'],
-        30, // one month - after that, we'll need to generate this credential again.
-        properties,
-        this.authService.getCurrentUserPassword(),
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        async (issuedCredential) => {
-          Logger.log('identity', "Sending appidcredissue intent response for intent id " + this.intentId)
-          let credentialAsString = await issuedCredential.toString();
-
-          // If we are doing a silent intent, we don't navigate back because we didn't navigate forward.
-          let navigateBack = await this.uxService.isIntentResponseGoingOutsideEssentials(intentParams);
-          Logger.log('identity', "Navigate back? ", navigateBack);
-
-          await this.uxService.sendIntentResponse({
-            credential: credentialAsString
-          }, this.intentId, navigateBack);
-        }, (err) => {
-          Logger.error('identity', "Failed to issue the app id credential...", err);
-          void this.rejectExternalRequest();
-        });
-    }, () => {
-      // Cancelled
-      Logger.warn("identity", "AppID credential generation cancelled");
-      void this.rejectExternalRequest();
+        await this.didService.getActiveDid().pluginDid.issueCredential(
+          appInstanceDid,
+          "#app-id-credential",
+          ['AppIdCredential'],
+          30, // one month - after that, we'll need to generate this credential again.
+          properties,
+          this.authService.getCurrentUserPassword(),
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          (issuedCredential) => {
+            resolve(issuedCredential);
+          }, (err) => {
+            Logger.error('identity', "Failed to issue the app id credential...", err);
+            reject(err);
+          });
+      }, () => {
+        // Cancelled
+        Logger.warn("identity", "AppID credential generation cancelled");
+        reject();
+      });
     });
   }
 
-  public async rejectExternalRequest() {
-    await this.uxService.sendIntentResponse({}, this.intentId);
+  public async generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent: AppIdCredIssueIdentityIntent) {
+    let appInstanceDid = appIdIssueIntent.params.appinstancedid;
+    let appDid = appIdIssueIntent.params.appdid;
+
+    try {
+      let issuedCredential = await this.generateApplicationIDCredential(appInstanceDid, appDid);
+      Logger.log('identity', "Sending appidcredissue intent response for intent id " + appIdIssueIntent.intentId)
+      let credentialAsString = await issuedCredential.toString();
+
+      await this.uxService.sendIntentResponse({
+        credential: credentialAsString
+      }, appIdIssueIntent.intentId);
+    }
+    catch (e) {
+      void this.rejectExternalRequest(appIdIssueIntent);
+    }
+  }
+
+  public async rejectExternalRequest(appIdIssueIntent: AppIdCredIssueIdentityIntent) {
+    await this.uxService.sendIntentResponse({}, appIdIssueIntent.intentId);
   }
 }

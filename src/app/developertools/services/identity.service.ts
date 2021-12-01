@@ -12,17 +12,17 @@ declare let didManager: DIDPlugin.DIDManager;
 export class IdentityService {
     constructor(
         private storage: GlobalStorageService,
-        private didSessions: GlobalDIDSessionsService) {}
+        private didSessions: GlobalDIDSessionsService) { }
 
     /**
      * Queries the DID sidechain to check if the given app DID is published or not.
      */
     public getAppIdentityOnChain(appDID: string): Promise<DIDPlugin.DIDDocument> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             Logger.log("developertools", "Get app identity on chain - Resolving appDID", appDID);
-            didManager.resolveDidDocument(appDID, true, (document)=>{
+            didManager.resolveDidDocument(appDID, true, (document) => {
                 resolve(document);
-            }, (err)=>{
+            }, (err) => {
                 reject(err);
             });
         });
@@ -32,19 +32,19 @@ export class IdentityService {
         if (!developerDID)
             return null;
 
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             Logger.log("developertools", "Get developer identity on chain - Resolving developerDID", developerDID);
-            didManager.resolveDidDocument(developerDID, true, (document)=>{
+            didManager.resolveDidDocument(developerDID, true, (document) => {
                 resolve(document);
-            }, (err)=>{
+            }, (err) => {
                 reject(err);
             });
         });
     }
 
-    public async publishAppIdentity(didSession: DIDSession, nativeRedirectUrl: string, nativeCallbackUrl: string, nativeCustomScheme: string): Promise<void> {
+    public async publishAppIdentity(didSession: DIDSession, appName: string, appIconUrl: string, nativeRedirectUrl: string, nativeCallbackUrl: string, nativeCustomScheme: string): Promise<boolean> {
         let developerDID = await (await this.didSessions.getSignedInIdentity()).didString;
-        await didSession.updateDIDDocument(developerDID, nativeRedirectUrl, nativeCallbackUrl, nativeCustomScheme);
-        await didSession.publishDIDDocument();
+        await didSession.updateDIDDocument(developerDID, appName, appIconUrl, nativeRedirectUrl, nativeCallbackUrl, nativeCustomScheme);
+        return didSession.publishDIDDocument();
     }
 }
