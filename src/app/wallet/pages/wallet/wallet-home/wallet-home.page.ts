@@ -68,6 +68,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public refreshingStakedAssets = false;
 
+    public isEVMNetworkWallet = true;
+
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
     private subWalletsListChangeSubscription: Subscription = null;
@@ -108,14 +110,15 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private globalStartupService: GlobalStartupService,
         private events: Events,
         private zone: NgZone,
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.showRefresher();
         this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe((activeNetworkWallet) => {
             if (activeNetworkWallet) {
                 this.networkWallet = activeNetworkWallet;
+                this.isEVMNetworkWallet = this.networkWallet.getMainEvmSubWallet() ? true : false;
+
                 this.refreshSubWalletsList();
                 this.refreshStakingAssetsList();
 
