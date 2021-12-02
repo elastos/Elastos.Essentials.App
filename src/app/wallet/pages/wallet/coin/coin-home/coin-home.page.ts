@@ -191,6 +191,8 @@ export class CoinHomePage implements OnInit {
             this.coinTransferService.walletInfo = Util.clone(this.networkWallet.masterWallet.account);
 
             this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
+
+            this.startUpdateInterval();
         }
     }
 

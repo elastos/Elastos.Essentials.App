@@ -94,6 +94,8 @@ export class BTCSubWalletProvider<SubWalletType extends SubWallet<any>> extends 
             transaction.direction = TransactionDirection.SENT;
         } else {
             transaction.direction = TransactionDirection.RECEIVED;
+            // Set sending address.
+            transaction.from = out.scriptPubKey.address;
         }
     }
   }
@@ -105,8 +107,6 @@ export class BTCSubWalletProvider<SubWalletType extends SubWallet<any>> extends 
             outs = transaction.vout.filter( (vt) => {
                 return vt.scriptPubKey.address === tokenAddress;
             })
-            // TODO: Use the first sending address.
-            transaction.from = outs[0].scriptPubKey.address;
         } else {
             outs = transaction.vout.filter( (vt) => {
                 return vt.scriptPubKey.address !== tokenAddress;
