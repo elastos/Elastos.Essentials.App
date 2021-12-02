@@ -43,9 +43,10 @@ export class BTCSubWalletProvider<SubWalletType extends SubWallet<any>> extends 
   }
 
   private async getRawTransaction(subWallet: BTCSubWallet) {
-    this.transactions = await this.getTransactions(this.subWallet);
-
     this.txidList = subWallet.getTxidList();
+    if (!this.txidList) return;
+
+    this.transactions = await this.getTransactions(this.subWallet);
 
     // TODO: Do not need to get all transactions.
     for (let i = 0; i < this.txidList.length; i++) {
