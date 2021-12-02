@@ -13,6 +13,7 @@ import { GlobalHiveService } from "src/app/services/global.hive.service";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
 import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
+import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { area } from "../../../../assets/identity/area/area";
 import { PictureComponent } from "../../components/picture/picture.component";
@@ -78,6 +79,7 @@ export class EditProfilePage {
     private globalHiveService: GlobalHiveService,
     private hiveCache: GlobalHiveCacheService,
     private globalNav: GlobalNavService,
+    private globalPopupService: GlobalPopupService,
     private popup: PopupProvider) {
     Logger.log('Identity', "Editing an existing profile");
 
@@ -121,12 +123,26 @@ export class EditProfilePage {
 
     await this.authService.checkPasswordThenExecute(
       async () => {
+        if (visible) {
+          // Willing to make visible
+          // If the credential is sensitive, make sure to let user confirm his choice first
+          let relatedCredential = this.profileService.findCredentialByKey(entry.key);
+          if (relatedCredential.isSensitiveCredential()) {
+            let confirmed = await this.globalPopupService.showConfirmationPopup("Sensitive information", "This information is marked as sensitive. Please double check that you really want to publish this");
+            if (!confirmed) {
+              entry.isVisible = !visible; // Cancelled - revert user's UI toggle ot its previous state
+              return;
+            }
+          }
+        }
+
         // Instantly update (save) this change in the profile service - cannot undo
         await this.profileService.setCredentialVisibility(entry.key, visible, AuthService.instance.getCurrentUserPassword());
         this.updatingVisibility = false;
       },
       () => {
         this.updatingVisibility = false;
+        entry.isVisible = !visible; // Cancelled - revert user's UI toggle ot its previous state
       }
     );
   }

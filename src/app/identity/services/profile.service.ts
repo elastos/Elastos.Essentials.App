@@ -21,6 +21,7 @@ import { CredentialDisplayEntry } from "../model/credentialdisplayentry.model";
 import { DIDDocument } from "../model/diddocument.model";
 import { DIDURL } from "../model/didurl.model";
 import { Profile } from "../model/profile.model";
+import { VerifiableCredential } from "../model/verifiablecredential.model";
 import { AuthService } from "./auth.service";
 import { BasicCredentialsService } from './basiccredentials.service';
 import { DIDService } from "./did.service";
@@ -368,6 +369,19 @@ export class ProfileService extends GlobalService {
     let fragment = credential.getFragment();
     if (fragment === "name") return false;
     else return true;
+  }
+
+  /**
+   * Returns the VerifiableCredential for the given credential fragment
+   */
+  public findCredentialByKey(credentialFragment: string): VerifiableCredential {
+    let credentialEntry = this.credentials.find((item) => {
+      return item.credential.getFragment() == credentialFragment;
+    });
+    if (credentialEntry)
+      return credentialEntry.credential;
+    else
+      return null;
   }
 
   async setCredentialVisibility(key: string, willingToBePubliclyVisible: boolean, password: string): Promise<void> {

@@ -504,6 +504,20 @@ export class CredentialDetailsPage implements OnInit {
 
     await this.authService.checkPasswordThenExecute(
       async () => {
+        if (visible) {
+          // Willing to make visible
+          // If the credential is sensitive, make sure to let user confirm his choice first
+          let relatedCredential = this.credential;
+          if (relatedCredential.isSensitiveCredential()) {
+            let confirmed = await this.globalPopupService.showConfirmationPopup("Sensitive information", "This information is marked as sensitive. Please double check that you really want to publish this");
+            if (!confirmed) {
+              this.isCredentialInLocalDIDDocument = false; // Revert user's UI choice as we cancel this.
+              this.updatingVisibility = false;
+              return;
+            }
+          }
+        }
+
         // Instantly update (save) this change in the profile service - cannot undo
         await this.profileService.setCredentialVisibility(this.credential.pluginVerifiableCredential.getFragment(), visible, AuthService.instance.getCurrentUserPassword());
         this.updatingVisibility = false;
@@ -519,6 +533,7 @@ export class CredentialDetailsPage implements OnInit {
       },
       () => {
         this.updatingVisibility = false;
+        this.isCredentialInLocalDIDDocument = !this.isCredentialInLocalDIDDocument; // Revert user's UI choice as we cancel this.
       }
     );
   }

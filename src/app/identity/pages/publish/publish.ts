@@ -5,6 +5,7 @@ import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
 import { Events } from "src/app/services/events.service";
+import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { AuthService } from "../../services/auth.service";
@@ -34,7 +35,8 @@ export class PublishPage {
         public theme: GlobalThemeService,
         public profileService: ProfileService,
         private authService: AuthService,
-        private basicCredentialService: BasicCredentialsService
+        private basicCredentialService: BasicCredentialsService,
+        private globalPopupService: GlobalPopupService
     ) {
         this.init();
     }
@@ -114,7 +116,22 @@ export class PublishPage {
 
         await this.authService.checkPasswordThenExecute(
             async () => {
-                await this.profileService.setCredentialVisibility(entry.credential.getFragment(), !entry.isInLocalDocument, this.authService.getCurrentUserPassword());
+                let makeVisible = !entry.isInLocalDocument;
+
+                if (makeVisible) {
+                    // Willing to make visible
+                    // If the credential is sensitive, make sure to let user confirm his choice first
+                    let relatedCredential = entry.credential;
+                    if (relatedCredential.isSensitiveCredential()) {
+                        let confirmed = await this.globalPopupService.showConfirmationPopup("Sensitive information", "This information is marked as sensitive. Please double check that you really want to publish this");
+                        if (!confirmed) {
+                            this.updatingVisibility = false;
+                            return;
+                        }
+                    }
+                }
+
+                await this.profileService.setCredentialVisibility(entry.credential.getFragment(), makeVisible, this.authService.getCurrentUserPassword());
                 entry.isInLocalDocument = !entry.isInLocalDocument;
                 this.updatingVisibility = false;
             },

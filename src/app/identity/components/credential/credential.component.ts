@@ -156,6 +156,10 @@ export class CredentialComponent {
         return this.profileService.credentialIsInPublishedDIDDocument(this._credential.pluginVerifiableCredential);
     }
 
+    public isSensitive(): boolean {
+        return this._credential.isSensitiveCredential();
+    }
+
     public onClicked() {
         this.clicked?.emit();
     }

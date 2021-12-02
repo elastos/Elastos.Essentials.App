@@ -214,4 +214,12 @@ export class VerifiableCredential {
     public getId(): any {
         return this.pluginVerifiableCredential.getId();
     }
+
+    /**
+     * Tells if this credentials is considered as sensitive, meaning that users should be careful
+     * while publishing or sharing such credential.
+     */
+    public isSensitiveCredential(): boolean {
+        return this.pluginVerifiableCredential.getTypes().indexOf("SensitiveCredential") >= 0;
+    }
 }
