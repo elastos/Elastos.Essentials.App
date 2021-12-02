@@ -124,12 +124,15 @@ export class DappBrowserService {
         // Get the active network chain ID
         this.activeChainID = activeNetwork.getMainChainID();
 
-        // Get the active network RPC URL
-        this.rpcUrl = activeNetwork.getMainEvmRpcApiUrl();
+        // The main chain ID is -1 if there is no EVM subwallet. eg. BTC.
+        if (this.activeChainID != -1) {
+            // Get the active network RPC URL
+            this.rpcUrl = activeNetwork.getMainEvmRpcApiUrl();
 
-        // Get the active wallet address
-        let subwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
-        this.userAddress = await subwallet.createAddress();
+            // Get the active wallet address
+            let subwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
+            this.userAddress = await subwallet.createAddress();
+        }
 
         // Prepare our web3 provider bridge and elastos connectors for injection
         Logger.log("dappbrowser", "Loading the IAB web3 provider");
