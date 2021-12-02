@@ -118,7 +118,6 @@ export class GlobalBTCRPCService {
         }
         return new Promise((resolve, reject) => {
             this.http.get<any>(url, options).subscribe((res) => {
-                Logger.warn('GlobalBTCRPCService', 'http respones:', res);
                 resolve(res);
             }, (err) => {
                 Logger.error('GlobalBTCRPCService', 'http get error:', err);

@@ -13,6 +13,7 @@ import { AvalancheCChainMainNetNetwork } from '../model/networks/avalanchecchain
 import { AvalancheCChainTestNetNetwork } from '../model/networks/avalanchecchain/avalanchecchain.testnet.network';
 import { BSCMainNetNetwork } from '../model/networks/bsc/bsc.mainnet.network';
 import { BSCTestNetNetwork } from '../model/networks/bsc/bsc.testnet.network';
+import { BTCMainNetNetwork } from '../model/networks/btc/btc.mainnet.network';
 import { BTCTestNetNetwork } from '../model/networks/btc/btc.testnet.network';
 import { ElastosLRWNetwork } from '../model/networks/elastos/elastos.lrw.network';
 import { ElastosMainNetNetwork } from '../model/networks/elastos/elastos.mainnet.network';
@@ -127,6 +128,7 @@ export class WalletInitService extends GlobalService {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         await this.createAndRegisterNetwork(new ElastosMainNetNetwork(), true);
+        await this.createAndRegisterNetwork(new BTCMainNetNetwork());
         await this.createAndRegisterNetwork(new EthereumMainNetNetwork());
         await this.createAndRegisterNetwork(new HECOMainNetNetwork());
         await this.createAndRegisterNetwork(new BSCMainNetNetwork());
