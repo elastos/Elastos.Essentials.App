@@ -42,14 +42,23 @@ export class SuggestionDetail {
     title: string;      // Title
     did: string;        // ?
     didName; string;    // ?
-    abs: string;        // Main suggestion description text
+    abstract: string;        // Main suggestion description text
     address: string;    // ?
     createdAt: number;  // Timestamp
     targetSuggestionTitle: string;
     newOwnerDID?: string;
     newAddress?: string;
     targetSuggestionHash: string;
+    targetProposalNum: number;
     type: string;
+    draftHash: string;
+    motivation: string;
+    goal: string;
+    milestone: any;
+    implementationTeam: any;
+    planStatement: string;
+    budgets: any;
+    budgetStatement: string;
 }
 
 export type SuggestionDetailResponse = {
@@ -60,6 +69,7 @@ export type SuggestionDetailResponse = {
 
 //-----------Search-------------
 export type SuggestionSearchResult = {
+    sid: string;
     id: number;
     title: string;
     status: SuggestionStatus;
