@@ -10,7 +10,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { SuggestionDetail, SuggestionSearchResult } from '../../model/suggestion-model';
 import { CROperationsService, CRWebsiteCommand } from '../../services/croperations.service';
-import { DraftService } from '../../services/draft.service';
+// import { DraftService } from '../../services/draft.service';
 import { SuggestionService } from '../../services/suggestion.service';
 import { UXService } from '../../services/ux.service';
 
@@ -33,6 +33,7 @@ export class SuggestionDetailPage {
     isSelf = false;
 
     activeTab = 1;
+    totalBudget = 0;
 
     constructor(
         public uxService: UXService,
@@ -44,7 +45,7 @@ export class SuggestionDetailPage {
         private translate: TranslateService,
         public voteService: VoteService,
         private crOperations: CROperationsService,
-        private draftService: DraftService
+        // private draftService: DraftService
     ) {
         this.init();
     }
@@ -58,8 +59,15 @@ export class SuggestionDetailPage {
             let suggestionDetails = await this.suggestionService.fetchSuggestionDetail(suggestionId);
 
             this.suggestion = Object.assign(suggestionSearchResult, suggestionDetails);
-
             this.isSelf = Util.isSelfDid(this.suggestion.did);
+
+            //Get total budget
+            if (this.suggestion.budgets) {
+                for (let budget of this.suggestion.budgets) {
+                    budget.type = budget.type.toLowerCase();
+                    this.totalBudget += parseInt(budget.amount);
+                }
+            }
             this.addSuggestionDetail();
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestion-details'));
             Logger.log('CRSuggestion', "Merged suggestion info:", this.suggestion)
@@ -180,13 +188,13 @@ export class SuggestionDetailPage {
         // let hash = this.draftService.getDraftHash(content);
         // let data = {content: "This is the content of the opinion.json"};
         // Logger.log('crsuggestion', "Zip:", content, hash, JSON.stringify(data));
-        let command = {command: "createproposal", data: this.suggestion, sid: this.suggestion.sid} as CRWebsiteCommand;
+        let command = { command: "createproposal", data: this.suggestion, sid: this.suggestion.sid } as CRWebsiteCommand;
         Logger.log('crsuggestion', "Command:", command);
         this.crOperations.handleCRProposalCommand(command, null);
     }
 
-    async signSuggestion()  {
-        let command = {command: "createsuggestion", data: this.suggestion, sid: this.suggestion.sid} as CRWebsiteCommand;
+    async signSuggestion() {
+        let command = { command: "createsuggestion", data: this.suggestion, sid: this.suggestion.sid } as CRWebsiteCommand;
         Logger.log('createsuggestion', "Command:", command);
         this.crOperations.handleCRProposalCommand(command, null);
     }
