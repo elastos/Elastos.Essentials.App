@@ -1,4 +1,4 @@
-import { TransactionDirection } from "./providers/transaction.types";
+import { GenericTransaction, TransactionDirection } from "./providers/transaction.types";
 
 export type BalanceHistory = {
   received: string;
@@ -22,55 +22,43 @@ export type AddressResult = {
     txs: number;
 };
 
-export type ScriptSig = {
-    asm: string;
-    hex: string;
-}
-
-export type ScriptPubKey = {
-    asm: string;
-    hex: string;
-    address: string;
-    type: string;
-}
-
-export type btcinobj = {
+export type BTCInObj = {
     txid: string;
-    vout: number;
-    scriptSig: ScriptSig;
-    txinwitness: string[];
     sequence: number;
+    n: number;
+    addresses: string[];
+    value: string; // sotoshi
+    isAddress: boolean;
+    hex: string;
 }
 
-export type btcoutobj = {
+export type BTCOutObj = {
     value: string;
     n: number;
-    scriptPubKey: ScriptPubKey;
+    hex: string;
+    addresses: string[];
+    isAddress: boolean;
 }
 
-export type RawBTCTransaction = {
+export type BTCTransaction = GenericTransaction & {
     txid: string;
-    hash: string;
     version: string;
-    size: number;
-    vsize: number;
-    weight: number;
-    locktime: number;
-    vin: btcinobj[];
-    vout : btcoutobj[];
-    hex: string;
-    blockhash: string;
+    vin: BTCInObj[];
+    vout : BTCOutObj[];
+    blockHash: string;
+    blockHeight: number;
     confirmations: number;
     time: number;
-    blocktime: number;
-}
+    blockTime: number;
+    value: string;  // sotoshi
+    valueIn: string;// sotoshi
+    fees: string;   // sotoshi
+    hex: string;
 
-export type BTCTransaction = RawBTCTransaction & {
-    fee?: string;
     to?: string;
     from?: string;
     direction?: TransactionDirection;
-    value?: string;
+    realValue?: number;
 }
 
 export type BTCUTXO = {

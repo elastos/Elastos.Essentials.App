@@ -13,6 +13,7 @@ import { WalletUtil } from '../../wallet.util';
 import { NetworkWallet } from '../networkwallet';
 import { StandardSubWallet } from '../standard.subwallet';
 
+const TRANSACTION_LIMIT = 50;
 
 /**
  * Specialized standard sub wallet that shares Mainchain (ELA) and ID chain code.
@@ -20,9 +21,9 @@ import { StandardSubWallet } from '../standard.subwallet';
  * specialized class exists.
  */
 export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
-    private TRANSACTION_LIMIT = 50;
     private legacyAddress: string = null;
     private transactionsList : string[] = null;
+    private totalTransactionCount = 0;
 
     constructor(
         networkWallet: NetworkWallet,
@@ -85,18 +86,18 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
     }
 
     public async getTransactionInfo(transaction: BTCTransaction, translate: TranslateService): Promise<TransactionInfo> {
-          const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
+          const timestamp = transaction.blockTime * 1000; // Convert seconds to use milliseconds
           const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
           const direction =  transaction.direction;
 
           const transactionInfo: TransactionInfo = {
-            amount: new BigNumber(-1),
+            amount: new BigNumber(transaction.realValue).dividedBy(this.tokenAmountMulipleTimes),
             confirmStatus: -1, // transaction.confirmations, // To reduce RPC calls, we do not update this value
             datetime,
             direction: direction,
-            fee: transaction.fee,
-            height: 0,
+            fee: (new BigNumber(transaction.fees).dividedBy(this.tokenAmountMulipleTimes)).toString(),
+            height: transaction.blockHeight,
             memo: '',
             name: await this.getTransactionName(transaction, translate),
             payStatusIcon: await this.getTransactionIconPath(transaction),
@@ -106,12 +107,10 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
             from: transaction.from,
             to: transaction.to,
             timestamp,
-            txid: transaction.hash,
+            txid: transaction.txid,
             type: null,
             isCrossChain: false,
           };
-
-          transactionInfo.amount = new BigNumber(transaction.value);
 
           if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = TransactionStatus.CONFIRMED;
@@ -137,12 +136,14 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
     // eslint-disable-next-line require-await
     protected async getTransactionIconPath(transaction: BTCTransaction): Promise<string> {
         switch (transaction.direction) {
-          case TransactionDirection.RECEIVED:
-           return './assets/wallet/buttons/receive.png';
-          case TransactionDirection.SENT:
-            return './assets/wallet/buttons/send.png';
+            case TransactionDirection.RECEIVED:
+                return './assets/wallet/buttons/receive.png';
+            case TransactionDirection.SENT:
+                return './assets/wallet/buttons/send.png';
+            case TransactionDirection.MOVED:
+                return './assets/wallet/buttons/transfer.png';
         }
-      }
+    }
 
     public async update() {
         await this.getBalanceByRPC();
@@ -203,6 +204,7 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
         let feerate =  await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
 
         // TODO: Normally the data less than 1KB.
+        // Fees are related to input and output.
         let fee = this.accMul(feerate, Config.SATOSHI);
 
         let toAmount = 0;
@@ -255,15 +257,19 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
      * Update balance and transaction list.
      */
     private async updateBTCSubWalletInfo() {
-        let btcInfo =  await GlobalBTCRPCService.instance.address(this.rpcApiUrl, this.legacyAddress);
+        // Get the latest info.
+        let btcInfo =  await GlobalBTCRPCService.instance.address(this.rpcApiUrl, this.legacyAddress, TRANSACTION_LIMIT, 1);
+        if (btcInfo) {
+            if (btcInfo.balance) {
+                // the unconfirmedBalance is negative for unconfirmed sending transaction.
+                this.balance = new BigNumber(btcInfo.balance).plus(btcInfo.unconfirmedBalance);
+                await this.saveBalanceToCache();
+            }
+            if (btcInfo.txids) {
+                this.transactionsList = btcInfo.txids;
+            }
 
-        if (btcInfo.balance) {
-            // the unconfirmedBalance is negative for unconfirmed sending transaction.
-            this.balance = new BigNumber(btcInfo.balance).plus(btcInfo.unconfirmedBalance);
-            await this.saveBalanceToCache();
-        }
-        if (btcInfo.txids) {
-            this.transactionsList = btcInfo.txids;
+            this.totalTransactionCount = btcInfo.txs;
         }
     }
 

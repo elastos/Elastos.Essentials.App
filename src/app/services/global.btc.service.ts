@@ -10,16 +10,23 @@ import { GlobalJsonRPCService } from './global.jsonrpc.service';
 })
 export class GlobalBTCRPCService {
     public static instance: GlobalBTCRPCService = null;
+    // Pay for it after evaluation
+    private apikeys = ['JCBiDqxUbHK2yjVPndSwYg70aANmzkOF',
+                        'raIkl0N79nXd6jZOF1zyLiBMVwbJqfc2',
+                        '4XZngRNFoTDc7l8GIKx3YmUWvtBSwydb',
+                        '49DAE10rcXPU7LRkKfyiuGtFgvBMIJjQ',
+                        'zvEsonX2uFPTLy7liqWApZhb9Uce8Omk']
+
     private apikey = 'JCBiDqxUbHK2yjVPndSwYg70aANmzkOF';
 
     constructor(private http: HttpClient, private globalJsonRPCService: GlobalJsonRPCService) {
         GlobalBTCRPCService.instance = this;
+        this.apikey = this.apikeys[Math.floor(Math.random()*5)];
     }
 
     public async balancehistory(rpcApiUrl: string, address: string): Promise<BigNumber> {
         let requestUrl = rpcApiUrl + '/api/v2/balancehistory/' + address;
 
-        return new BigNumber("1346705"); // for test
         try {
             let balanceArray: BalanceHistory[] = await this.httpGet(requestUrl);
             if (balanceArray instanceof Array) {
@@ -34,21 +41,34 @@ export class GlobalBTCRPCService {
         }
     }
 
-    public async address(rpcApiUrl: string, address: string): Promise<AddressResult> {
-        let requestUrl = rpcApiUrl + '/api/v2/address/' + address;
+    public async address(rpcApiUrl: string, address: string, pageSize: number, page = 1): Promise<AddressResult> {
+        // address/<address>[?page=<page>&pageSize=<size>&from=<block height>&to=<block height>&details=<basic|tokens|tokenBalances|txids|txs>&contract=<contract address>]
+        let requestUrl = rpcApiUrl + '/api/v2/address/' + address + '?pageSize=' + pageSize + '&page=' + page;
 
         try {
             let balanceArray: AddressResult = await this.httpGet(requestUrl);
             return balanceArray;
         }
         catch (err) {
-            Logger.error('GlobalBTCRPCService', 'balancehistory: http get error:', err);
+            Logger.error('GlobalBTCRPCService', 'address: http get error:', err);
             return null;
         }
     }
 
+    // public async getrawtransaction(rpcApiUrl: string, txid: string): Promise<BTCTransaction> {
+    //     let requestUrl = rpcApiUrl + '/api/v2/tx-specific/' + txid;
+
+    //     try {
+    //         return await this.httpGet(requestUrl);
+    //     }
+    //     catch (err) {
+    //         Logger.error('GlobalBTCRPCService', 'getrawtransaction: http get error:', err);
+    //         return null;
+    //     }
+    // }
+
     public async getrawtransaction(rpcApiUrl: string, txid: string): Promise<BTCTransaction> {
-        let requestUrl = rpcApiUrl + '/api/v2/tx-specific/' + txid;
+        let requestUrl = rpcApiUrl + '/api/v2/tx/' + txid;
 
         try {
             return await this.httpGet(requestUrl);
