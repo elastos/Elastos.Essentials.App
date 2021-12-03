@@ -112,7 +112,7 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
             isCrossChain: false,
           };
 
-          if (transactionInfo.confirmStatus !== 0) {
+          if (transaction.confirmations > 0) {
             transactionInfo.status = TransactionStatus.CONFIRMED;
             transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-confirmed");
           } else {

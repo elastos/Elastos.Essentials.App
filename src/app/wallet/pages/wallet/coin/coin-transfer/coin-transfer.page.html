@@ -136,7 +136,7 @@
                 </ion-col>
             </ion-row>
 
-            <h1 *ngIf="!isEthsubwallet && suggestedAddresses.length === 0" (click)="hideMemo = !hideMemo">
+            <h1 *ngIf="fromSubWallet.supportMemo() && suggestedAddresses.length === 0" (click)="hideMemo = !hideMemo">
                 {{ 'wallet.advanced-options' | translate }}
                 <img [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'"
                     [class.rotate]="!hideMemo">
