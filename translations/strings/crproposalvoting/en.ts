@@ -128,6 +128,20 @@ export const en = {
         'new-crc-proposals-msg2': ' new proposals since you last visited, click to check them out.',
 
         'all-proposals-are-loaded': 'All proposals are loaded',
+
+        //Suggection detail
+        'make-into-proposal': 'Make into Proposal',
+        'sign-suggestion': 'Sign Suggestion',
+        'motivation': 'Motivation',
+        'goal': 'Goal',
+        'milestone': 'Milestone',
+        'implementation-team': 'Implementation Team',
+        'plan-statement': 'Plan Statement',
+        'budgets': 'Budgets',
+        'total-budget': 'Total Budget ',
+        'receive-address': 'ELA Receive Address',
+        'payment-schedule': 'Payment Schedule',
+        'budget-statement': 'Budget Statement',
     }
 
 };

@@ -1,5 +1,77 @@
 @import "src/app/voting/crproposalvoting/root.scss";
 
+.milestone-container {
+    display: flex;
+    align-items: stretch;
+}
+
+.vertical-line-container {
+    width: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.vertical-line-container .inner {
+    width: 2px;
+    background: #f9f586;
+}
+
+.content {
+    width: 100%;
+    padding-left: 10px;
+}
+
+.content .entry {
+    position: relative;
+    margin-bottom: 10px;
+    display: flex;
+}
+
+.content .entry .number {
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.content .entry .marker {
+    width: 12px;
+    height: 12px;
+    border: solid 1px #96fbc4;
+    border-radius: 50%;
+    position: absolute;
+    left: -25px;
+    z-index: 10;
+}
+
+#budget-wrap {
+    display: flex;
+    overflow-x: scroll;
+    // justify-content: space-around;
+
+    div {
+        width: 200px;
+    }
+}
+.budget-container {
+    width: 100%;
+    height: 152px;
+    // float: left;
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    // justify-content: space-around;
+
+    .budget {
+        // margin-right: 12px;
+        // padding-right: 12px;
+        display: inline-block;
+        height: 152px;
+        width: 237px;
+        background-color: #f6f6f6;
+    }
+}
+
 ion-grid {
     padding: 0;
 
@@ -83,16 +155,17 @@ ion-grid {
         .details-col {
             padding-top: 0;
 
-            div, pre {
+            div,
+            pre {
                 margin: 10px 0;
                 font-weight: 400;
                 font-size: 12px;
                 white-space: pre-wrap;
                 word-wrap: break-word;
-                font-family: 'Inter' !important;
+                font-family: "Inter" !important;
             }
 
-            .url:active  {
+            .url:active {
                 color: #428cff;
             }
         }
@@ -151,7 +224,8 @@ ion-grid {
         background: #212021;
         box-shadow: none;
 
-        ion-card-title, ion-card-subtitle {
+        ion-card-title,
+        ion-card-subtitle {
             color: #ffffff;
         }
     }
@@ -172,7 +246,7 @@ ion-grid {
         }
 
         .tab-active {
-            box-shadow: 0px 0px 1px #000000E2;
+            box-shadow: 0px 0px 1px #000000e2;
             background: #363636;
 
             p {

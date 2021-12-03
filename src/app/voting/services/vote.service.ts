@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
-import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { StandardCoinName } from '../../wallet/model/coin';
 import { WalletAccount, WalletAccountType } from '../../wallet/model/walletaccount';
 import { Native } from '../../wallet/services/native.service';
@@ -35,25 +38,32 @@ export class VoteService {
     private route: string;
     private routerOptions?: NavigationOptions;
 
+    public crmembers: any[] = [];
 
     constructor(
         public native: Native,
         private walletManager: WalletService,
         public popupProvider: GlobalPopupService,
         private nav: GlobalNavService,
-        private walletNetworkService: WalletNetworkService,
-        private walletNetworkUIService: WalletNetworkUIService,
         private globalIntentService: GlobalIntentService,
+        public jsonRPCService: GlobalJsonRPCService,
         private globalSwitchNetworkService: GlobalSwitchNetworkService,
+        private globalElastosAPIService: GlobalElastosAPIService
     ) {
         this.elastosChainCode = StandardCoinName.ELA;
     }
 
     public init() {
-        Logger.log("wallet", "VoteService init");
+        Logger.log(App.VOTING, "VoteService init");
+        //Get cr members
+        if (this.crmembers.length > 0) {
+            this.getCRMembers();
+        }
     }
 
     public async selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
+
+
         this.clear();
 
         // Make sure the active network is elastos, otherwise, ask user to change
@@ -138,4 +148,60 @@ export class VoteService {
             void this.nav.goToLauncher();
         }
     }
+
+    async getCRMembers() {
+        Logger.log(App.VOTING, 'Get CRMembers..');
+
+        this.crmembers = []
+
+        const param = {
+            method: 'listcurrentcrs',
+            params: {
+                state: "all"
+            },
+        };
+
+        try {
+            const elaRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+            const result = await this.jsonRPCService.httpPost(elaRpcApi, param);
+            if (!result || !result.crmembersinfo) {
+                return;
+            }
+            Logger.log(App.VOTING, "crmembers:", result.crmembersinfo);
+            this.crmembers = result.crmembersinfo;
+        }
+        catch (err) {
+            Logger.error(App.VOTING, 'getCRMembers error', err);
+        }
+    }
+
+    async getCurrentCRMembers() {
+        this.crmembers = [];
+
+        try {
+            const crRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
+            let result = await this.jsonRPCService.httpGet(crRpcApi + "/api/council/list");
+            Logger.log(App.VOTING, 'Get Current CRMembers:', result);
+            if (result && result.data && result.data.council) {
+                this.crmembers = result.data.council;
+            }
+        }
+        catch (err) {
+            Logger.error(App.VOTING, 'getCurrentCRMembers error:', err);
+        }
+    }
+
+    async isCRMember() {
+        await this.getCurrentCRMembers();
+        var ret = false;
+        Logger.log(App.VOTING, 'my did:', GlobalDIDSessionsService.signedInDIDString);
+        for (let member of this.crmembers) {
+            if (Util.isSelfDid(member.did)) {
+                ret = true;
+            }
+        }
+        Logger.log(App.VOTING, 'isCRMember:', ret);
+        return ret;
+    }
+
 }

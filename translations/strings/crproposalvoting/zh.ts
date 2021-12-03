@@ -42,8 +42,8 @@ export const zh = {
         'status-rejected': '已废止',
 
         'signed': '已签名',
-        'proposed': '未签名',
-        'unsigned': '已转为提案',
+        'proposed': '已转为提案',
+        'unsigned': '未签名',
 
         // Intent Screens
         'wrong-did': 'DID错误',
@@ -128,6 +128,20 @@ export const zh = {
         'new-crc-proposals-msg2': ' 个新提案，点击查看',
 
         'all-proposals-are-loaded': '所有提案都已加载',
+
+        //Suggection detail
+        'make-into-proposal': '转成提案',
+        'sign-suggestion': '签名建言',
+        'motivation': '动机',
+        'goal': '目标',
+        'milestone': '里程碑',
+        'implementation-team': '实施团队',
+        'plan-statement': '计划 Statement',
+        'budgets': '预算',
+        'total-budget': '总预算',
+        'receive-address': 'ELA接收地址',
+        'payment-schedule': '付款安排',
+        'budget-statement': '预算 Statement',
     }
 
 };

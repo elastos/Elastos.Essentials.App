@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
+import { GlobalDIDSessionsService } from '../services/global.didsessions.service';
 
 @Injectable()
 export class Util {
@@ -220,6 +221,13 @@ export class Util {
         newtxid += txid.substring(i, i + 2);
       }
       return newtxid
+    }
+
+    public static isSelfDid(did: string) {
+        if (did == GlobalDIDSessionsService.signedInDIDString || ("did:elastos:" + did) == GlobalDIDSessionsService.signedInDIDString) {
+            return true;
+        }
+        return false;
     }
 
 }

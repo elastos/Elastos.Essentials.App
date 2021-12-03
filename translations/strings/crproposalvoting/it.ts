@@ -130,6 +130,20 @@ export const it = {
         'new-crc-proposals-msg2': ' nuove proposte dalla tua ultima visita, clicca per visualizzarle.',
 
         'all-proposals-are-loaded': 'Tutte le proposte sono caricate',
+
+        //Suggection detail
+        'make-into-proposal': 'Make into Proposal',
+        'sign-suggestion': 'Sign Suggestion',
+        'motivation': 'Motivation',
+        'goal': 'Goal',
+        'milestone': 'Milestone',
+        'implementation-team': 'Implementation Team',
+        'plan-statement': 'Plan Statement',
+        'budgets': 'Budgets',
+        'total-budget': 'Total Budget ',
+        'receive-address': 'ELA Receive Address',
+        'payment-schedule': 'Payment Schedule',
+        'budget-statement': 'Budget Statement',
     }
 
 };

@@ -44,15 +44,15 @@ export class SuggestionService {
         }
 
         try {
-            var url = this.getCrRpcApi() + '/api/suggestion/all_search?page=' + page + '&results=10';
+            var url = this.getCrRpcApi() + '/api/v2/suggestion/all_search?page=' + page + '&results=40';
             if (status != SuggestionStatus.ALL) {
                 url = url + '&status=' + status;
             }
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log('crsuggestion', result);
             if (this.pageNumbersLoaded < page) {
-                if (result && result.data && result.data.list) {
-                    this.allSearchResults = this.allSearchResults.concat(result.data.list);
+                if (result && result.data && result.data.suggestions) {
+                    this.allSearchResults = this.allSearchResults.concat(result.data.suggestions);
                     this.pageNumbersLoaded = page;
                 }
                 else {
@@ -69,7 +69,7 @@ export class SuggestionService {
     public async fetchSuggestionDetail(suggestionId: string): Promise<SuggestionDetail> {
         try {
             Logger.log('crsuggestion', 'Fetching suggestion details for suggestion ' + suggestionId + '...');
-            let url = this.getCrRpcApi() + '/api/suggestion/get_suggestion/' + suggestionId;
+            let url = this.getCrRpcApi() + '/api/v2/suggestion/get_suggestion/' + suggestionId;
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log('crsuggestion', result);
             if (result && result.data) {
@@ -87,7 +87,7 @@ export class SuggestionService {
     public async fetchSearchedSuggestion(page = 1, status: SuggestionStatus, search?: string): Promise<SuggestionSearchResult[]> {
 
         try {
-            var url = this.getCrRpcApi() + '/api/suggestion/all_search?page=' + page + '&results=10&search=' + search;
+            var url = this.getCrRpcApi() + '/api/v2/suggestion/all_search?page=' + page + '&results=10&search=' + search;
             if (status != SuggestionStatus.ALL) {
                 url = url + '&status=' + status;
             }

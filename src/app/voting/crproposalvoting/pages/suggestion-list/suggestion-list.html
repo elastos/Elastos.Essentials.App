@@ -25,9 +25,9 @@
                     </ion-col>
                     <ion-col size="8.5" class="middle-col">
                         <h1>{{ suggestion.title }}</h1>
-                        <p class="date">{{ uxService.formatDate(suggestion.createdAt) }} &#8226; {{ suggestion.proposedBy }}
+                        <p class="date">{{ uxService.formatDate(suggestion.createdAt) }} &#8226; {{ suggestion.proposer }}
                         </p>
-                        <p class="status" [class.proposed]="suggestion.proposed === 'proposed'"
+                        <p class="status" [class.proposed]="suggestion.status === 'proposed'"
                             [class.signed]="suggestion.status === 'signed'"
                             [class.unsigned]="suggestion.status === 'unsigned'">
                             {{ 'crproposalvoting.' + suggestion.status | translate }}

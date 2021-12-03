@@ -13,8 +13,8 @@ declare let didManager: DIDPlugin.DIDManager;
 
 export type CRWebsiteCommand = {
     command: string; // Ex: "voteforproposal"
-    callbackurl: string;
-    iss: string; // JWT issuer (Normally, the CR website)
+    callbackurl?: string;
+    iss?: string; // JWT issuer (Normally, the CR website)
     data: any;
 }
 
@@ -117,18 +117,22 @@ export class CROperationsService {
             return false;
         }
 
-        this.originalRequestJWT = crProposalJwtRequest;
-        this.onGoingCommand = jwtPayload;
+        return this.handleCRProposalCommand(jwtPayload, crProposalJwtRequest);
+    }
 
-        if (!Util.isEmptyObject(jwtPayload.data.userdid)) {
-            if (jwtPayload.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
+    public async handleCRProposalCommand(payload: CRWebsiteCommand, originalRequestJWT?: string): Promise<boolean> {
+        this.originalRequestJWT = originalRequestJWT;
+        this.onGoingCommand = payload;
+
+        if (!Util.isEmptyObject(payload.data.userdid)) {
+            if (payload.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
                 Logger.warn('crproposal', "The did isn't match");
                 await this.popupProvider.ionicAlert('wallet.text-warning', 'crproposalvoting.wrong-did');
                 return false;
             }
         }
 
-        switch (jwtPayload.command) {
+        switch (payload.command) {
             case "createsuggestion":
             case "createproposal":
             case "reviewproposal":
@@ -136,11 +140,11 @@ export class CROperationsService {
             case "updatemilestone":
             case "reviewmilestone":
             case "withdraw":
-                await this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + jwtPayload.command);
+                await this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + payload.command);
                 break;
 
             default:
-                Logger.warn('crproposal', "Unhandled CR command: ", jwtPayload.command);
+                Logger.warn('crproposal', "Unhandled CR command: ", payload.command);
                 this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
         }
 

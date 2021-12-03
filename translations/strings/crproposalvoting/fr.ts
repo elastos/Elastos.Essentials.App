@@ -127,6 +127,20 @@ export const fr = {
         'new-crc-proposals-msg2': ' nouvelles propositions depuis votre dernière visite, touchez pour les voir.',
 
         'all-proposals-are-loaded': 'Toutes les propositions sont affichées',
+
+        //Suggection detail
+        'make-into-proposal': 'Make into Proposal',
+        'sign-suggestion': 'Sign Suggestion',
+        'motivation': 'Motivation',
+        'goal': 'Goal',
+        'milestone': 'Milestone',
+        'implementation-team': 'Implementation Team',
+        'plan-statement': 'Plan Statement',
+        'budgets': 'Budgets',
+        'total-budget': 'Total Budget ',
+        'receive-address': 'ELA Receive Address',
+        'payment-schedule': 'Payment Schedule',
+        'budget-statement': 'Budget Statement',
     }
 
 };

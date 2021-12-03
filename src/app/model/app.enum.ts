@@ -4,6 +4,7 @@ export enum App {
     IDENTITY = "identity",
     CONTACTS = "contacts",
     WALLET = "wallet",
+    VOTING = "voting",
     CRCOUNCIL_VOTING = "crcouncilvoting",
     CRCOUNCIL_MANAGER = "crcouncilmanager",
     CRPROPOSAL_VOTING = "crproposalvoting",
