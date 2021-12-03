@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
+import { DIDDocumentsService } from 'src/app/identity/services/diddocuments.service';
 import { PopupProvider } from 'src/app/identity/services/popup';
 import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
@@ -140,6 +141,7 @@ export class RequestCredentialsPage {
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private globalIntentService: GlobalIntentService,
+    private didDocumentsService: DIDDocumentsService,
     private intentService: IntentReceiverService,
     private dappbrowserService: DappBrowserService
   ) {
@@ -172,7 +174,7 @@ export class RequestCredentialsPage {
     // Fix all values in the request to make it straightforward in our process later
     this.prepareRawClaims();
 
-    this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(this.did.getDIDString()).subscribe((status) => {
+    this.onlineDIDDocumentStatusSub = this.didDocumentsService.onlineDIDDocumentsStatus.get(this.did.getDIDString()).subscribe((status) => {
       if (status.checked) {
         this.publishStatusFetched = true;
         this.didNeedsToBePublished = status.document == null;

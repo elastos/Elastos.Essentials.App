@@ -6,6 +6,7 @@ import { isNil } from 'lodash-es';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { DIDDocumentsService } from 'src/app/identity/services/diddocuments.service';
 import { PopupProvider } from 'src/app/identity/services/popup';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -148,6 +149,7 @@ export class CredentialAccessRequestPage {
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private globalIntentService: GlobalIntentService,
+    private didDocumentsService: DIDDocumentsService,
     private intentService: IntentReceiverService
   ) {
   }
@@ -173,7 +175,7 @@ export class CredentialAccessRequestPage {
 
     this.receivedIntent = this.intentService.getReceivedIntent();
 
-    this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(this.did.getDIDString()).subscribe((status) => {
+    this.onlineDIDDocumentStatusSub = this.didDocumentsService.onlineDIDDocumentsStatus.get(this.did.getDIDString()).subscribe((status) => {
       if (status.checked) {
         this.publishStatusFetched = true;
         this.didNeedsToBePublished = status.document == null;
@@ -209,7 +211,7 @@ export class CredentialAccessRequestPage {
     }
 
     if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
+      void this.rejectRequest(false);
     }
   }
 

@@ -22,6 +22,7 @@ import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
 import { CredentialsService } from "../../services/credentials.service";
 import { DIDService } from "../../services/did.service";
+import { DIDDocumentsService } from "../../services/diddocuments.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
 
@@ -87,6 +88,7 @@ export class CredentialDetailsPage implements OnInit {
     private globalPopupService: GlobalPopupService,
     private globalNavService: GlobalNavService,
     private globalNativeService: GlobalNativeService,
+    private didDocumentsService: DIDDocumentsService,
     private authService: AuthService,
     private credentialsService: CredentialsService
   ) {
@@ -99,7 +101,7 @@ export class CredentialDetailsPage implements OnInit {
       this.credentialId = navigation.extras.state.credentialId;
 
       let didString = this.didService.getActiveDid().getDIDString();
-      this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((document) => {
+      this.onlineDIDDocumentStatusSub = this.didDocumentsService.onlineDIDDocumentsStatus.get(didString).subscribe((document) => {
         void this.prepareCredential();
       });
     }

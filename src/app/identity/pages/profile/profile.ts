@@ -129,7 +129,6 @@ export class ProfilePage {
 
       this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
-      Logger.log("identity", "Has credentials?", this.hasCredential);
 
       // Sort credentials by title
       this.credentials.sort((c1, c2) => {

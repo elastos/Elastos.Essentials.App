@@ -49,4 +49,11 @@ export class CredentialsService {
       });
     });
   }
+
+  /**
+  * Tells if the issuer of credential is the active user (self) or not
+  */
+  public credentialSelfIssued(credential: VerifiableCredential): boolean {
+    return credential.pluginVerifiableCredential.getIssuer() === this.didService.getActiveDid().getDIDString();
+  }
 }

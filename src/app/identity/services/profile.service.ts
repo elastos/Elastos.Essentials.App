@@ -25,6 +25,7 @@ import { VerifiableCredential } from "../model/verifiablecredential.model";
 import { AuthService } from "./auth.service";
 import { BasicCredentialsService } from './basiccredentials.service';
 import { DIDService } from "./did.service";
+import { DIDDocumentsService } from "./diddocuments.service";
 import { DIDSyncService } from "./didsync.service";
 import { DIDEvents } from "./events";
 import { Native } from "./native";
@@ -105,6 +106,7 @@ export class ProfileService extends GlobalService {
     private popoverCtrl: PopoverController,
     private didService: DIDService,
     private didSyncService: DIDSyncService,
+    private didDocumentsService: DIDDocumentsService,
     private translate: TranslateService,
     private basicCredentialService: BasicCredentialsService,
     private globalIntentService: GlobalIntentService,
@@ -146,7 +148,7 @@ export class ProfileService extends GlobalService {
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     let didString = this.didService.getActiveDid().getDIDString();
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe(async (status) => {
+    this.didDocumentsService.onlineDIDDocumentsStatus.get(didString).subscribe(async (status) => {
       Logger.log("identity", "Profile service got DID Document status change event for DID " + didString);
       if (status.checked) {
         this.publishStatusFetched = true;
@@ -917,9 +919,10 @@ export class ProfileService extends GlobalService {
     issuerId: string
   ): Promise<IssuerDisplayEntry> {
     return new Promise<IssuerDisplayEntry>((resolve, reject) => {
-      this.didSyncService
-        .getDIDDocumentFromDID(issuerId)
-        .then((issuerDoc) => {
+      this.didDocumentsService
+        .fetchOrAwaitDIDDocumentWithStatus(issuerId)
+        .then((status) => {
+          let issuerDoc = status.document;
           if (issuerDoc === null) {
             Logger.log("identity", issuerId, ' is not published');
             resolve(null);

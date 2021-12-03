@@ -5,7 +5,7 @@ import { Logger } from "src/app/logger";
 import { DID } from "../model/did.model";
 import { DIDDocument } from "../model/diddocument.model";
 import { DIDService } from "./did.service";
-import { DIDSyncService } from "./didsync.service";
+import { DIDDocumentsService } from "./diddocuments.service";
 import { Native } from "./native";
 
 
@@ -22,7 +22,7 @@ export interface ExpiredItem {
 export class ExpirationService {
     constructor(
         private didService: DIDService,
-        private didSyncService: DIDSyncService,
+        private didDocumentsService: DIDDocumentsService,
         public native: Native) {
     }
 
@@ -92,7 +92,7 @@ export class ExpirationService {
         if (isNil(issuerDID) || issuerDID === "" || issuerDID === did) return null
 
         // Get issuer's DID document
-        let issuerDocument: DIDDocument = await this.didSyncService.getDIDDocumentFromDID(issuerDID);
+        let issuerDocument: DIDDocument = (await this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(issuerDID)).document;
         if (!issuerDocument) {
             // For now, we don't handle this case. Consider the credential as OK.
             // It is possible that the issuer did not publish his DID (which is useless but could happen).

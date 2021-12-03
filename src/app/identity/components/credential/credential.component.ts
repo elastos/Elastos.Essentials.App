@@ -5,8 +5,11 @@ import FastAverageColor from 'fast-average-color';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDDocument } from '../../model/diddocument.model';
 import { VerifiableCredential } from '../../model/verifiablecredential.model';
+import { CredentialsService } from '../../services/credentials.service';
 import { DIDService } from '../../services/did.service';
+import { DIDDocumentsService } from '../../services/diddocuments.service';
 import { ExpirationService } from '../../services/expiration.service';
 import { ProfileService } from '../../services/profile.service';
 
@@ -24,6 +27,7 @@ export class CredentialComponent {
     @ViewChild("icon") iconElement: ElementRef;
 
     public _credential: VerifiableCredential = null;
+    private issuerDidDocument: DIDDocument = null;
     public description: string = null;
     public checkBoxColor = '#565bdb';
     public isExpired = false;
@@ -50,8 +54,13 @@ export class CredentialComponent {
         public globalNotifications: GlobalNotificationsService,
         private profileService: ProfileService,
         private translate: TranslateService,
-        private expirationService: ExpirationService
+        private expirationService: ExpirationService,
+        private credentialsService: CredentialsService,
+        private didDocumentsService: DIDDocumentsService
     ) { }
+
+    ionViewWillEnter() {
+    }
 
     /**
      * Called when the credential @input value changes
@@ -59,6 +68,11 @@ export class CredentialComponent {
     private async updateCredential(credential: DIDPlugin.VerifiableCredential) {
         if (credential) {
             this._credential = new VerifiableCredential(credential);
+
+            void this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(this._credential.pluginVerifiableCredential.getIssuer()).then(issuerDocumentStatus => {
+                if (issuerDocumentStatus.checked && issuerDocumentStatus.document)
+                    this.issuerDidDocument = issuerDocumentStatus.document;
+            });
 
             // Check if the credential is expired
             let expirationInfo = this.expirationService.verifyCredentialExpiration(DIDService.instance.getActiveDid().pluginDid.getDIDString(), credential, 0);
@@ -171,5 +185,20 @@ export class CredentialComponent {
         event.preventDefault();
 
         this.checkBoxClicked?.emit();
+    }
+
+    public selfIssued(): boolean {
+        if (!this._credential)
+            return true;
+
+        return this.credentialsService.credentialSelfIssued(this._credential);
+    }
+
+    public getIssuerName(): string {
+        if (!this.issuerDidDocument)
+            return "";
+
+        // TODO: update DIDDocument class with methods to easily get name, avatar
+        return this.issuerDidDocument.pluginDidDocument.getSubject().getDIDString();
     }
 }
