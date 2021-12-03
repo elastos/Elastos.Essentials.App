@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:859676453180:android:887c16b58f0c50e4425639",
         "android_client_info": {
-          "package_name": "org.elastos.essentials.app"
+          "package_name": "org.elastos.essentials.apptest"
         }
       },
       "oauth_client": [
@@ -35,7 +35,7 @@
               "client_id": "859676453180-488sh58m1qd6p0nt5oh5i712vdlr5eb4.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "org.elastos.essentials.app"
+                "bundle_id": "org.elastos.essentials.apptest"
               }
             }
           ]
