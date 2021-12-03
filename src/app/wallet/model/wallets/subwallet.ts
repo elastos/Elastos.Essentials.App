@@ -234,6 +234,11 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
    */
   public abstract getDisplayAmount(amount: BigNumber): BigNumber;
 
+  // Only ELA main chain support memo.
+  public supportMemo() {
+      return false;
+  }
+
   /**
    * Tells if this subwallet has a balance greater than or equal to the given amount.
    * For SPV subwallets, this method should be called only after wallet is synced.

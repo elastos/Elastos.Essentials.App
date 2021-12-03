@@ -128,6 +128,10 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         }
     }
 
+    public supportMemo() {
+        return true;
+    }
+
     public async update() {
         await this.getBalanceByRPC();
     }
