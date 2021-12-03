@@ -41,7 +41,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div *ngSwitchCase="'budgets'">
+                        <div *ngSwitchCase="'budgets'" style="width:100%">
                             <ion-row>
                                 <ion-col size="12">
                                     <ion-label>
@@ -107,12 +107,12 @@
             <ion-footer>
                 <ion-row>
                     <ion-col class="align-center">
-                        <div *ngIf="isCRMember && suggestion.status == 'signed'" class="btn-container align-center" id="sign"
-                            (click)="makeIntoProposal()">
+                        <div *ngIf="isCRMember && suggestion.status == 'signed'" class="btn-container align-center"
+                            id="sign" (click)="makeIntoProposal()">
                             {{ 'crproposalvoting.make-into-proposal' | translate }}
                         </div>
-                        <div *ngIf="isSelf && suggestion.status == 'unsigned'" class="btn-container align-center" id="sign"
-                            (click)="signSuggestion()">
+                        <div *ngIf="isSelf && suggestion.status == 'unsigned'" class="btn-container align-center"
+                            id="sign" (click)="signSuggestion()">
                             {{ 'crproposalvoting.sign-suggestion' | translate }}
                         </div>
                         <ion-ripple-effect></ion-ripple-effect>
