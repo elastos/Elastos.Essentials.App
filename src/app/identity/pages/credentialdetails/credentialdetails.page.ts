@@ -8,7 +8,7 @@ import * as moment from "moment";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
-import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
+import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
 import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
@@ -17,11 +17,13 @@ import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { reducedDidString } from "../../helpers/did.helper";
 import { DIDDocument } from "../../model/diddocument.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
 import { CredentialsService } from "../../services/credentials.service";
 import { DIDService } from "../../services/did.service";
+import { DIDDocumentsService } from "../../services/diddocuments.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
 
@@ -47,7 +49,6 @@ export class CredentialDetailsPage implements OnInit {
   public credentials: VerifiableCredential[];
   public currentOnChainDIDDocument: DIDDocument = null;
   public credential: VerifiableCredential;
-  public issuer: IssuerDisplayEntry;
   private avatarImg = null;
   public isCredentialInLocalDIDDocument = false;
   public isCredentialInPublishedDIDDocument = false;
@@ -59,6 +60,11 @@ export class CredentialDetailsPage implements OnInit {
   public appIcon: string;
   public iconSrc = transparentPixelIconDataUrl(); // Main icon html src data
 
+  // Issuer
+  private issuerDidDocument: DIDDocument = null;
+  private issuerName: string = null;
+  public issuerIcon = transparentPixelIconDataUrl();
+  public issuerDid: string = null;
 
   private didchangedSubscription: Subscription = null;
   private publicationstatusSubscription: Subscription = null;
@@ -87,6 +93,7 @@ export class CredentialDetailsPage implements OnInit {
     private globalPopupService: GlobalPopupService,
     private globalNavService: GlobalNavService,
     private globalNativeService: GlobalNativeService,
+    private didDocumentsService: DIDDocumentsService,
     private authService: AuthService,
     private credentialsService: CredentialsService
   ) {
@@ -99,7 +106,7 @@ export class CredentialDetailsPage implements OnInit {
       this.credentialId = navigation.extras.state.credentialId;
 
       let didString = this.didService.getActiveDid().getDIDString();
-      this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((document) => {
+      this.onlineDIDDocumentStatusSub = this.didDocumentsService.onlineDIDDocumentsStatus.get(didString).subscribe((document) => {
         void this.prepareCredential();
       });
     }
@@ -148,8 +155,7 @@ export class CredentialDetailsPage implements OnInit {
     }
   }
 
-  async ionViewWillEnter() {
-    await this.getIssuer();
+  ionViewWillEnter() {
     this.displayableProperties = this.getDisplayableProperties();
     this.titleBar.setTitle(this.translate.instant('identity.credentialdetails-title'));
     this.titleBar.setupMenuItems([
@@ -181,12 +187,14 @@ export class CredentialDetailsPage implements OnInit {
     } */
   }
 
-  async prepareCredential() {
+  prepareCredential() {
     Logger.log("identity", "Computing credential status");
 
     this.credential = null;
-    this.issuer = null;
     this.segment = "validator";
+
+    // Issuer icon placeholder while fetching the real icon
+    this.issuerIcon = this.theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg';
 
     if (isNil(this.credentialId) || isNil(this.credentials) || this.credentials.length <= 0)
       return;
@@ -208,20 +216,35 @@ export class CredentialDetailsPage implements OnInit {
     this.credential.onIconReady(iconSrc => this.iconSrc = iconSrc);
     this.credential.prepareForDisplay();
 
-    await this.getIssuer();
+    void this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(this.credential.pluginVerifiableCredential.getIssuer()).then(issuerDocumentStatus => {
+      if (issuerDocumentStatus.checked && issuerDocumentStatus.document) {
+        // Issuer document fetched and non null: store it and
+        this.issuerDidDocument = issuerDocumentStatus.document;
+
+        // Get the issuer icon
+        let representativeIconSubject = this.didDocumentsService.getRepresentativeIcon(this.issuerDidDocument);
+        if (representativeIconSubject) {
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          representativeIconSubject.subscribe(async iconBuffer => {
+            if (iconBuffer) {
+              this.issuerIcon = await rawImageToBase64DataUrl(iconBuffer);
+            }
+          });
+        }
+        else {
+          // No icon in the document
+        }
+
+        // Get the issuer name
+        this.issuerName = this.didDocumentsService.getRepresentativeOwnerName(this.issuerDidDocument);
+
+        // Issuer DID for display
+        this.issuerDid = reducedDidString(this.issuerDidDocument.pluginDidDocument.getSubject().getDIDString());
+      }
+    });
 
     //await this.isLocalCredSyncOnChain();
     this.hasCheckedCredential = true;
-  }
-
-  async getIssuer() {
-    let issuerDid = this.credential.pluginVerifiableCredential.getIssuer();
-    //issuerDid = "did:elastos:ibXZJqeN19iTpvNvqo5vU9XH4PEGKhgS6d";
-    if (isNil(issuerDid) || issuerDid == "") return;
-
-    this.issuer = await this.profileService.getIssuerDisplayEntryFromID(
-      issuerDid
-    );
   }
 
   getDisplayableCredentialTitle(): string {
@@ -266,15 +289,6 @@ export class CredentialDetailsPage implements OnInit {
 
   getAvatar(): string {
     return this.avatarImg || transparentPixelIconDataUrl(); // Transparent pixel while loading
-  }
-
-  hasIssuerName() {
-    return this.issuer.name !== null && this.issuer.name !== "";
-  }
-
-  isVerified() {
-    let types = this.credential.pluginVerifiableCredential.getTypes();
-    return !types.includes("SelfProclaimedCredential");
   }
 
   getCredIconSrc(): string {
@@ -348,6 +362,10 @@ export class CredentialDetailsPage implements OnInit {
       default:
         return "finger-print";
     }
+  }
+
+  public isSensitive(): boolean {
+    return this.credential.isSensitiveCredential();
   }
 
   transformDate(date): string {
@@ -536,5 +554,24 @@ export class CredentialDetailsPage implements OnInit {
         this.isCredentialInLocalDIDDocument = !this.isCredentialInLocalDIDDocument; // Revert user's UI choice as we cancel this.
       }
     );
+  }
+
+  public selfIssued(): boolean {
+    if (!this.credential)
+      return true;
+
+    return this.credentialsService.credentialSelfIssued(this.credential);
+  }
+
+  public getIssuerName(): string {
+    if (!this.issuerName) {
+      if (!this.issuerDidDocument)
+        return "";
+      else
+        return this.issuerDidDocument.pluginDidDocument.getSubject().getDIDString();
+    }
+    else {
+      return this.issuerName;
+    }
   }
 }

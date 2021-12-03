@@ -129,7 +129,6 @@ export class ProfilePage {
 
       this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
-      Logger.log("identity", "Has credentials?", this.hasCredential);
 
       // Sort credentials by title
       this.credentials.sort((c1, c2) => {
@@ -408,31 +407,5 @@ export class ProfilePage {
     if (id === undefined) return null;
 
     return id;
-  }
-
-
-  hasIssuer(issuerId: string): boolean {
-    return this.profileService.hasIssuer(issuerId);
-  }
-
-  hasAvatarIssuer(issuerId: string): boolean {
-    if (!this.profileService.hasIssuer(issuerId)) return false;
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.avatar !== null && issuer.avatar !== "";
-  }
-
-  getIssuerAvatar(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.avatar;
-  }
-
-  getIssuerName(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.name;
-  }
-
-  getIssuerDID(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.did;
   }
 }

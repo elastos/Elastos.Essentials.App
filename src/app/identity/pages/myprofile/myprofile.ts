@@ -19,16 +19,10 @@ import { Profile } from "../../model/profile.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { AuthService } from "../../services/auth.service";
 import { DIDService } from "../../services/did.service";
+import { DIDDocumentsService } from "../../services/diddocuments.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { Native } from "../../services/native";
 import { ProfileService } from "../../services/profile.service";
-
-
-type IssuerDisplayEntry = {
-  did: string;
-  name: string;
-  avatar: string;
-};
 
 @Component({
   selector: "page-myprofile",
@@ -77,6 +71,7 @@ export class MyProfilePage {
     public actionSheetController: ActionSheetController,
     private globalIntentService: GlobalIntentService,
     private dAppBrowserService: DappBrowserService,
+    private didDocumentsService: DIDDocumentsService,
     private globalNav: GlobalNavService
   ) {
     this.init();
@@ -175,9 +170,10 @@ export class MyProfilePage {
     this.hasModifiedCredentials = this.profileService.hasModifiedCredentials(); */
 
     this.profileService.didString = this.didService.getActiveDid().getDIDString();
-    void this.didSyncService
-      .getDIDDocumentFromDID(this.profileService.didString)
-      .then(async (didDoc) => {
+    void this.didDocumentsService
+      .fetchOrAwaitDIDDocumentWithStatus(this.profileService.didString)
+      .then(async (status) => {
+        let didDoc = status.document;
         this.currentOnChainDIDDocument = didDoc;
         if (this.currentOnChainDIDDocument) {
           Logger.log("identity", "MyProfile: Published DID Document", await this.currentOnChainDIDDocument.pluginDidDocument.toJson());
@@ -392,31 +388,6 @@ export class MyProfilePage {
     } else {
       return false;
     }
-  }
-
-  hasIssuer(issuerId: string): boolean {
-    return this.profileService.hasIssuer(issuerId);
-  }
-
-  hasAvatarIssuer(issuerId: string): boolean {
-    if (!this.profileService.hasIssuer(issuerId)) return false;
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.avatar !== null && issuer.avatar !== "";
-  }
-
-  getIssuerAvatar(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.avatar;
-  }
-
-  getIssuerName(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.name;
-  }
-
-  getIssuerDID(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.did;
   }
 
   exportMnemonic() {

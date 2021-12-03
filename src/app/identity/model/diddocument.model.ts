@@ -97,6 +97,16 @@ export class DIDDocument {
         });
     }
 
+    /**
+     * Retrieve credentials that match a given credential type
+     */
+    getCredentialsByType(credentialType: string): DIDPlugin.VerifiableCredential[] {
+        let credentials = this.getCredentials();
+        return credentials.filter((c) => {
+            return c.getTypes().indexOf(credentialType) >= 0;
+        });
+    }
+
     getCredentials(): DIDPlugin.VerifiableCredential[] {
         return this.pluginDidDocument.getCredentials();
     }

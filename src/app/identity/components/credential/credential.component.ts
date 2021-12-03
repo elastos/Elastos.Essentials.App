@@ -2,11 +2,15 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import FastAverageColor from 'fast-average-color';
+import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDDocument } from '../../model/diddocument.model';
 import { VerifiableCredential } from '../../model/verifiablecredential.model';
+import { CredentialsService } from '../../services/credentials.service';
 import { DIDService } from '../../services/did.service';
+import { DIDDocumentsService } from '../../services/diddocuments.service';
 import { ExpirationService } from '../../services/expiration.service';
 import { ProfileService } from '../../services/profile.service';
 
@@ -27,6 +31,9 @@ export class CredentialComponent {
     public description: string = null;
     public checkBoxColor = '#565bdb';
     public isExpired = false;
+    private issuerDidDocument: DIDDocument = null;
+    private issuerName: string = null;
+    public issuerIcon = transparentPixelIconDataUrl();
 
     @Input("selectable") public selectable = false; // Whether to show the selection checkbox or not
     @Input("selected") public selected = false; // On/off checkbox model - defined by the parent
@@ -50,8 +57,13 @@ export class CredentialComponent {
         public globalNotifications: GlobalNotificationsService,
         private profileService: ProfileService,
         private translate: TranslateService,
-        private expirationService: ExpirationService
+        private expirationService: ExpirationService,
+        private credentialsService: CredentialsService,
+        private didDocumentsService: DIDDocumentsService
     ) { }
+
+    ionViewWillEnter() {
+    }
 
     /**
      * Called when the credential @input value changes
@@ -59,6 +71,33 @@ export class CredentialComponent {
     private async updateCredential(credential: DIDPlugin.VerifiableCredential) {
         if (credential) {
             this._credential = new VerifiableCredential(credential);
+
+            // Issuer icon placeholder while fetching the real icon
+            this.issuerIcon = this.theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg';
+
+            void this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(this._credential.pluginVerifiableCredential.getIssuer()).then(issuerDocumentStatus => {
+                if (issuerDocumentStatus.checked && issuerDocumentStatus.document) {
+                    // Issuer document fetched and non null: store it and
+                    this.issuerDidDocument = issuerDocumentStatus.document;
+
+                    // Get the issuer icon
+                    let representativeIconSubject = this.didDocumentsService.getRepresentativeIcon(this.issuerDidDocument);
+                    if (representativeIconSubject) {
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        representativeIconSubject.subscribe(async iconBuffer => {
+                            if (iconBuffer) {
+                                this.issuerIcon = await rawImageToBase64DataUrl(iconBuffer);
+                            }
+                        });
+                    }
+                    else {
+                        // No icon in the document
+                    }
+
+                    // Get the issuer name
+                    this.issuerName = this.didDocumentsService.getRepresentativeOwnerName(this.issuerDidDocument);
+                }
+            });
 
             // Check if the credential is expired
             let expirationInfo = this.expirationService.verifyCredentialExpiration(DIDService.instance.getActiveDid().pluginDid.getDIDString(), credential, 0);
@@ -171,5 +210,24 @@ export class CredentialComponent {
         event.preventDefault();
 
         this.checkBoxClicked?.emit();
+    }
+
+    public selfIssued(): boolean {
+        if (!this._credential)
+            return true;
+
+        return this.credentialsService.credentialSelfIssued(this._credential);
+    }
+
+    public getIssuerName(): string {
+        if (!this.issuerName) {
+            if (!this.issuerDidDocument)
+                return "";
+            else
+                return this.issuerDidDocument.pluginDidDocument.getSubject().getDIDString();
+        }
+        else {
+            return this.issuerName;
+        }
     }
 }

@@ -248,4 +248,9 @@ export class DIDService extends GlobalService {
 
     return translated;
   }
+
+
+  private thirdPartyDidDocumentsCache: { [didString: string]: DIDPlugin.DIDDocument }
+
+  public thirdPartyDidDocument
 }

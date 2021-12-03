@@ -17,6 +17,7 @@ import { Profile } from "../../model/profile.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
 import { DIDService } from "../../services/did.service";
+import { DIDDocumentsService } from "../../services/diddocuments.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { Native } from "../../services/native";
 import { ProfileService } from "../../services/profile.service";
@@ -64,6 +65,7 @@ export class CredentialsPage {
     public theme: GlobalThemeService,
     public actionSheetController: ActionSheetController,
     public profileService: ProfileService,
+    private didDocumentsService: DIDDocumentsService,
     private basicCredentialService: BasicCredentialsService
   ) {
     this.init();
@@ -77,7 +79,7 @@ export class CredentialsPage {
     });
 
     let didString = this.didService.getActiveDid().getDIDString();
-    this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((document) => {
+    this.onlineDIDDocumentStatusSub = this.didDocumentsService.onlineDIDDocumentsStatus.get(didString).subscribe((document) => {
       // When the did document content changes, we rebuild our profile entries on screen.
       // (published status)
       this.init();
@@ -432,10 +434,6 @@ export class CredentialsPage {
     return issuer.avatar !== null && issuer.avatar !== "";
   }
 
-  getIssuerAvatar(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return this.hasAvatarIssuer(issuerId) ? issuer.avatar : this.getSmallIcon("name");
-  }
 
   getSmallIcon(iconName: string) {
     return this.theme.darkMode ? `/assets/identity/smallIcons/dark/${iconName}.svg` : `/assets/identity/smallIcons/light/${iconName}.svg`
