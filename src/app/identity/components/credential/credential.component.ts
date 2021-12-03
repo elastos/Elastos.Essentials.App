@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import FastAverageColor from 'fast-average-color';
+import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -27,10 +28,12 @@ export class CredentialComponent {
     @ViewChild("icon") iconElement: ElementRef;
 
     public _credential: VerifiableCredential = null;
-    private issuerDidDocument: DIDDocument = null;
     public description: string = null;
     public checkBoxColor = '#565bdb';
     public isExpired = false;
+    private issuerDidDocument: DIDDocument = null;
+    private issuerName: string = null;
+    public issuerIcon = transparentPixelIconDataUrl();
 
     @Input("selectable") public selectable = false; // Whether to show the selection checkbox or not
     @Input("selected") public selected = false; // On/off checkbox model - defined by the parent
@@ -69,9 +72,31 @@ export class CredentialComponent {
         if (credential) {
             this._credential = new VerifiableCredential(credential);
 
+            // Issuer icon placeholder while fetching the real icon
+            this.issuerIcon = this.theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg';
+
             void this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(this._credential.pluginVerifiableCredential.getIssuer()).then(issuerDocumentStatus => {
-                if (issuerDocumentStatus.checked && issuerDocumentStatus.document)
+                if (issuerDocumentStatus.checked && issuerDocumentStatus.document) {
+                    // Issuer document fetched and non null: store it and
                     this.issuerDidDocument = issuerDocumentStatus.document;
+
+                    // Get the issuer icon
+                    let representativeIconSubject = this.didDocumentsService.getRepresentativeIcon(this.issuerDidDocument);
+                    if (representativeIconSubject) {
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        representativeIconSubject.subscribe(async iconBuffer => {
+                            if (iconBuffer) {
+                                this.issuerIcon = await rawImageToBase64DataUrl(iconBuffer);
+                            }
+                        });
+                    }
+                    else {
+                        // No icon in the document
+                    }
+
+                    // Get the issuer name
+                    this.issuerName = this.didDocumentsService.getRepresentativeOwnerName(this.issuerDidDocument);
+                }
             });
 
             // Check if the credential is expired
@@ -195,10 +220,14 @@ export class CredentialComponent {
     }
 
     public getIssuerName(): string {
-        if (!this.issuerDidDocument)
-            return "";
-
-        // TODO: update DIDDocument class with methods to easily get name, avatar
-        return this.issuerDidDocument.pluginDidDocument.getSubject().getDIDString();
+        if (!this.issuerName) {
+            if (!this.issuerDidDocument)
+                return "";
+            else
+                return this.issuerDidDocument.pluginDidDocument.getSubject().getDIDString();
+        }
+        else {
+            return this.issuerName;
+        }
     }
 }

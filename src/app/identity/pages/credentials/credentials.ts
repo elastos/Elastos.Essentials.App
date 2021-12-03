@@ -434,10 +434,6 @@ export class CredentialsPage {
     return issuer.avatar !== null && issuer.avatar !== "";
   }
 
-  getIssuerAvatar(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return this.hasAvatarIssuer(issuerId) ? issuer.avatar : this.getSmallIcon("name");
-  }
 
   getSmallIcon(iconName: string) {
     return this.theme.darkMode ? `/assets/identity/smallIcons/dark/${iconName}.svg` : `/assets/identity/smallIcons/light/${iconName}.svg`

@@ -408,30 +408,4 @@ export class ProfilePage {
 
     return id;
   }
-
-
-  hasIssuer(issuerId: string): boolean {
-    return this.profileService.hasIssuer(issuerId);
-  }
-
-  hasAvatarIssuer(issuerId: string): boolean {
-    if (!this.profileService.hasIssuer(issuerId)) return false;
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.avatar !== null && issuer.avatar !== "";
-  }
-
-  getIssuerAvatar(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.avatar;
-  }
-
-  getIssuerName(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.name;
-  }
-
-  getIssuerDID(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.did;
-  }
 }

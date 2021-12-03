@@ -61,7 +61,6 @@ type ClaimRequest = {
   value: string,
   credential: DIDPlugin.VerifiableCredential, // credential related to this claim request
   canBeDelivered: boolean,  // Whether the requested claim can be delivered to caller or not. Almost similar to "credential" being null, except for "did"
-  issuer: IssuerInfo, //Issuer details to display when credential is validated and/or requested
   isExpired: boolean,
   selected: boolean,
   reason: string // Additional usage info string provided by the caller
@@ -256,7 +255,7 @@ export class CredentialAccessRequestPage {
    * From the raw list of claims requested by the caller, we create our internal model
    * ready for UI.
    */
-  async organizeRequestedClaims() {
+  private organizeRequestedClaims() {
     // Manually append the mandatory item "Your DID".
     this.addDIDToMandatoryItems();
 
@@ -290,13 +289,6 @@ export class CredentialAccessRequestPage {
 
       let hasRelatedCredential: boolean = (relatedCredential != null);
 
-      let issuerInfo: IssuerInfo = {
-        canBeDelivered: hasRelatedCredential,
-        isExpired: false,
-        displayItem: null,
-        errorMessage: ""
-      };
-
       let isExpired = false;
 
       if (hasRelatedCredential) {
@@ -307,31 +299,6 @@ export class CredentialAccessRequestPage {
           let expirationInfo: ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
           isExpired = expirationInfo.daysToExpire <= 0;
         }
-
-        // Check if accepts self proclaimed credentials are accepted or
-        // In case of validated credential, if credential issuer match with claim request
-        if (!this.acceptsSelfProclaimedCredentials(claim.iss)) {
-          if (credentialTypes.includes("SelfProclaimedCredential")) {
-            issuerInfo.canBeDelivered = false;
-            issuerInfo.errorMessage = "Credential issuer is required";
-          } else {
-            let issuerDid: string = relatedCredential.pluginVerifiableCredential.getIssuer()
-            let issuerExpirationInfo: ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
-            let issuerisExpired: boolean = issuerExpirationInfo.daysToExpire <= 0;
-            let issuerIsAccepted: boolean = this.acceptsIssuer(claim.iss, issuerDid);
-            issuerInfo.displayItem = await this.profileService.getIssuerDisplayEntryFromID(issuerDid)
-            issuerInfo.isExpired = issuerisExpired
-            issuerInfo.canBeDelivered = issuerIsAccepted && !issuerisExpired
-
-            if (issuerisExpired) {
-              issuerInfo.errorMessage = "Credential issuer DID is expired"
-            }
-
-            if (!issuerIsAccepted) {
-              issuerInfo.errorMessage = "Credential issuer is not the same requested"
-            }
-          }
-        }
       }
 
       let claimRequest: ClaimRequest = {
@@ -339,7 +306,6 @@ export class CredentialAccessRequestPage {
         value: claimValue,
         credential: (relatedCredential ? relatedCredential.pluginVerifiableCredential : null),
         canBeDelivered: hasRelatedCredential,
-        issuer: issuerInfo,
         selected: true,
         isExpired: isExpired,
         reason: ""
@@ -349,7 +315,7 @@ export class CredentialAccessRequestPage {
         this.mandatoryItems.push(claimRequest);
 
         // If at least one mandatory item is missing, we cannot complete the intent request.
-        if (!hasRelatedCredential || !issuerInfo.canBeDelivered)
+        if (!hasRelatedCredential)
           this.canDeliver = false;
       } else {
         this.optionalItems.push(claimRequest);
@@ -379,12 +345,6 @@ export class CredentialAccessRequestPage {
       value: did,
       credential: null,
       canBeDelivered: true,
-      issuer: {
-        canBeDelivered: true,
-        displayItem: null,
-        errorMessage: "",
-        isExpired: false
-      },
       isExpired: (expiredState.daysToExpire <= 0),
       selected: true,
       reason: ""
@@ -645,8 +605,6 @@ export class CredentialAccessRequestPage {
   getItemValueDisplay(item: ClaimRequest) {
     if (!item.canBeDelivered) {
       return this.translate.instant('identity.missing');
-    } else if (item.canBeDelivered && !item.issuer.canBeDelivered) {
-      return this.translate.instant(item.issuer.errorMessage)
     } else {
       return item.value;
     }

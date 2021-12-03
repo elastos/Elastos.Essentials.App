@@ -24,13 +24,6 @@ import { DIDSyncService } from "../../services/didsync.service";
 import { Native } from "../../services/native";
 import { ProfileService } from "../../services/profile.service";
 
-
-type IssuerDisplayEntry = {
-  did: string;
-  name: string;
-  avatar: string;
-};
-
 @Component({
   selector: "page-myprofile",
   templateUrl: "myprofile.html",
@@ -395,31 +388,6 @@ export class MyProfilePage {
     } else {
       return false;
     }
-  }
-
-  hasIssuer(issuerId: string): boolean {
-    return this.profileService.hasIssuer(issuerId);
-  }
-
-  hasAvatarIssuer(issuerId: string): boolean {
-    if (!this.profileService.hasIssuer(issuerId)) return false;
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.avatar !== null && issuer.avatar !== "";
-  }
-
-  getIssuerAvatar(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.avatar;
-  }
-
-  getIssuerName(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.name;
-  }
-
-  getIssuerDID(issuerId: string): string {
-    let issuer = this.profileService.getIssuer(issuerId);
-    return issuer.did;
   }
 
   exportMnemonic() {

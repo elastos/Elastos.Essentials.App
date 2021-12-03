@@ -245,7 +245,6 @@ export class ProfileService extends GlobalService {
     });
 
     // DID issuers found on credentials
-    let issuersId: string[] = [];
     this.credentials = [];
     for (let c of rawCredentials) {
       let canDelete = this.credentialCanBeDeleted(c.pluginVerifiableCredential);
@@ -253,7 +252,6 @@ export class ProfileService extends GlobalService {
       let issuerId = this.getIssuerIdFromVerifiableCredential(
         c.pluginVerifiableCredential
       );
-      if (issuerId !== null) issuersId.push(issuerId);
 
       let isInLocalDocument = this.credentialIsInLocalDIDDocument(c.pluginVerifiableCredential);
       let isInPublishedDocument = this.credentialIsInPublishedDIDDocument(c.pluginVerifiableCredential)
@@ -265,12 +263,6 @@ export class ProfileService extends GlobalService {
         isInPublishedDocument,
         willingToDelete: false,
         canDelete: canDelete,
-      });
-    }
-
-    if (issuersId.length > 0) {
-      this.zone.run(() => {
-        void this.loadIssuers(issuersId);
       });
     }
 
@@ -881,7 +873,7 @@ export class ProfileService extends GlobalService {
   /***
    Load allissuers infos found on  profile credentials
   ***/
-  loadIssuers(issuersId: string[]) {
+  /* loadIssuers(issuersId: string[]) {
     void Promise.all(
       issuersId.map((issuerId) => {
         return this.getIssuerDisplayEntryFromID(issuerId);
@@ -894,7 +886,7 @@ export class ProfileService extends GlobalService {
         }
       });
     });
-  }
+  } */
 
   hasIssuer(issuerId: string): boolean {
     if (issuerId === null || issuerId === "") return false;
@@ -915,7 +907,7 @@ export class ProfileService extends GlobalService {
   /***
    Get Issuer info (DID, name and avatar) from the published DID Document
   ***/
-  public getIssuerDisplayEntryFromID(
+  /* public getIssuerDisplayEntryFromID(
     issuerId: string
   ): Promise<IssuerDisplayEntry> {
     return new Promise<IssuerDisplayEntry>((resolve, reject) => {
@@ -959,7 +951,7 @@ export class ProfileService extends GlobalService {
           reject(error);
         });
     });
-  }
+  } */
 
   public getAvatarCredential(): DIDPlugin.VerifiableCredential {
     let avatarEntry = this.allCreds.find(c => c.credential.getFragment() === "avatar");

@@ -12,7 +12,7 @@ import { GlobalHiveService } from './global.hive.service';
 export class GlobalHiveCacheService {
   public static instance: GlobalHiveCacheService = null;
 
-  private cache = new Map<string, BehaviorSubject<any>>(); // Map of asset unique key / asset data
+  private cache = new Map<string, BehaviorSubject<Buffer>>(); // Map of asset unique key / asset data
 
   constructor(private globalHiveService: GlobalHiveService) {
     GlobalHiveCacheService.instance = this;
@@ -24,7 +24,7 @@ export class GlobalHiveCacheService {
    * - if hiveScriptUrl is set: fetched the assets from hive then caches and returns the asset.
    * - if hiveScriptUrl is not set: returns null.
    */
-  public getAssetByUrl(key: string, hiveScriptUrl?: string): BehaviorSubject<any> {
+  public getAssetByUrl(key: string, hiveScriptUrl?: string): BehaviorSubject<Buffer> {
     // Already in cache? Return the cached data.
     if (this.cache.has(key)) {
       //console.log("DEBUG HIVE CACHE RETURN FROM KEY", key);
