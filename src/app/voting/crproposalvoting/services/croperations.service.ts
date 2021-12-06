@@ -157,7 +157,10 @@ export class CROperationsService {
     }
 
     public async sendIntentResponse(result?: any) {
-        await this.globalIntentService.sendIntentResponse({}, this.intentId);
+        if (this.intentId && this.intentId != null) {
+            await this.globalIntentService.sendIntentResponse({}, this.intentId);
+            this.intentId = null;
+        }
     }
 
     public async sendSignDigestIntent(data: any): Promise<any> {
