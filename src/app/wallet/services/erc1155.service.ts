@@ -135,6 +135,7 @@ export class ERC1155Service {
 
                     let asset = new NFTAsset();
                     asset.id = tokenId;
+                    asset.displayableId = asset.id;
 
                     // If we have a provider for this contract, use it to extract more info
                     if (erc1155Provider) {

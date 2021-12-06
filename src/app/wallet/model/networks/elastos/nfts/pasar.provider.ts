@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { Logger } from "src/app/logger";
 import { Contract } from "web3-eth-contract";
 import { ERC1155Provider } from "../../../nfts/erc1155.provider";
@@ -39,6 +40,9 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
         if (jsonMetadataResponse && jsonMetadataResponse.ok) {
           let jsonMetadata = await jsonMetadataResponse.json();
           console.log("pasar nft json:", jsonMetadata);
+
+          // Display pasar NFT ids in HEX to match pasar, instead of decimal
+          asset.displayableId = `0x${new BigNumber(asset.id).toString(16)}`;
 
           if ("name" in jsonMetadata)
             asset.name = jsonMetadata["name"];

@@ -123,6 +123,7 @@ export class ERC721Service {
 
                 let asset = new NFTAsset();
                 asset.id = tokenID;
+                asset.displayableId = asset.id;
 
                 // Now try to get more information about this asset - ERC721Metadata / tokenURI()
                 let tokenURI: string = null;

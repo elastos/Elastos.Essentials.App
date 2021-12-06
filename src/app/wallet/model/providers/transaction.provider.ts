@@ -241,7 +241,6 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
         }
       }
       else if (token.type === "ERC-1155") {
-        console.log("ON 1155 TOKEN FOUND", token);
         if (!this.networkWallet.containsNFT(token.contractAddress)) {
           await this.networkWallet.createNFT(NFTType.ERC1155, token.contractAddress, Number.parseInt(token.balance));
           // TODO: let user know, should be a different notification than for ERC20 and the click

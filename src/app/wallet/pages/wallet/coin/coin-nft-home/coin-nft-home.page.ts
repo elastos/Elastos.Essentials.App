@@ -166,10 +166,10 @@ export class CoinNFTHomePage implements OnInit {
     }
 
     public getDisplayableAssetID(asset: NFTAsset): string {
-        if (asset.id.length < 15)
-            return asset.id;
+        if (asset.displayableId.length < 15)
+            return asset.displayableId;
 
-        return asset.id.substr(0, 15) + "...";
+        return asset.displayableId.substr(0, 15) + "...";
     }
 
     public hasRealAssetIcon(asset: NFTAsset): boolean {
