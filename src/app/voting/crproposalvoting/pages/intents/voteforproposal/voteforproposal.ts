@@ -149,6 +149,7 @@ export class VoteForProposalPage {
         }
 
         this.signingAndSendingSuggestionResponse = false;
+        void this.crOperations.sendIntentResponse();
     }
 
 }

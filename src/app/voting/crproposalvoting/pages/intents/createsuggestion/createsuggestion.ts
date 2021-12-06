@@ -49,7 +49,7 @@ export class CreateSuggestionPage {
     private createSuggestionCommand: CreateSuggestionCommand;
     public signingAndSendingSuggestionResponse = false;
     public creationDate: string = "";
-    public buggetAmount: number = 0;
+    public bugetAmount: number = 0;
     public Config = Config;
     public proposaltype: string;
 
@@ -74,11 +74,12 @@ export class CreateSuggestionPage {
             Logger.log('crproposal', "createSuggestionCommand", this.createSuggestionCommand);
             this.originalRequestJWT = this.crOperations.originalRequestJWT;
             this.suggestionId = this.createSuggestionCommand.sid;
-            this.proposaltype = this.createSuggestionCommand.data.proposaltype;
+            this.proposaltype = this.createSuggestionCommand.data.proposaltype || this.createSuggestionCommand.data.type;
 
-            if (this.createSuggestionCommand.data.proposaltype == "normal") {
+            if (this.proposaltype == "normal") {
                 for (let suggestionBudget of this.createSuggestionCommand.data.budgets) {
-                    this.buggetAmount += parseInt(suggestionBudget.amount);
+                    suggestionBudget.type = suggestionBudget.type.toLowerCase();
+                    this.bugetAmount += parseInt(suggestionBudget.amount);
                 }
             }
 
@@ -142,7 +143,7 @@ export class CreateSuggestionPage {
     private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {
         Logger.log('crproposal', "Sending intent to sign the suggestion digest", suggestionDigest);
 
-        let result = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {
+        let result = await this.crOperations.sendSignDigestIntent({
             data: suggestionDigest,
             signatureFieldName: "data",
             jwtExtra: {
@@ -166,8 +167,8 @@ export class CreateSuggestionPage {
         let data = this.createSuggestionCommand.data;
         let payload = {
             Type: 0,
-            CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
+            CategoryData: data.categorydata || "",
+            OwnerPublicKey: data.ownerpublickey || data.ownerPublicKey,
             DraftHash: data.drafthash,
             Budgets: [],
             Recipient: data.recipient
@@ -188,6 +189,8 @@ export class CreateSuggestionPage {
             });
         }
 
+        Logger.log('crsuggestion', "getNormalDigest.", payload);
+
         let digest = await this.walletManager.spvBridge.proposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         return Util.reverseHexToBE(digest);
     }
@@ -204,6 +207,7 @@ export class CreateSuggestionPage {
             NewOwnerPublicKey: data.newownerpublickey,
         };
 
+        Logger.log('crsuggestion', "getChangeOwnerDigest.", payload);
         let digest = await this.walletManager.spvBridge.proposalChangeOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         return Util.reverseHexToBE(digest);
     }
@@ -218,6 +222,7 @@ export class CreateSuggestionPage {
             TargetProposalHash: data.targetproposalhash,
         };
 
+        Logger.log('crsuggestion', "getTerminateDigest.", payload);
         let digest = await this.walletManager.spvBridge.terminateProposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         return Util.reverseHexToBE(digest);
     }
@@ -233,12 +238,13 @@ export class CreateSuggestionPage {
             SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
         };
 
+        Logger.log('crsuggestion', "getSecretaryGeneralDigest.", payload);
         let digest = await this.walletManager.spvBridge.proposalSecretaryGeneralElectionDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         return Util.reverseHexToBE(digest);
     }
 
     private getDigest(): Promise<any> {
-        switch (this.createSuggestionCommand.data.proposaltype) {
+        switch (this.proposaltype) {
             case "normal":
                 return this.getNormalDigest();
             case "changeproposalowner":

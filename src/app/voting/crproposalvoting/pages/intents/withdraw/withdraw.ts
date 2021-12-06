@@ -69,7 +69,7 @@ export class WithdrawPage {
     }
 
     cancel() {
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
     }
 
     async signAndWithdraw() {
@@ -86,9 +86,9 @@ export class WithdrawPage {
             Logger.log('crproposal', "Got proposal digest.", digest);
 
             //Get did sign digest
-            let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {
+            let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
-            }, this.voteService.intentId);
+            });
             Logger.log('crproposal', "Got signed digest.", ret);
             if (ret.result && ret.result.signature) {
                 //Create transaction and send
@@ -103,7 +103,7 @@ export class WithdrawPage {
         }
 
         this.signingAndSendingSuggestionResponse = false;
-        // this.exitIntentWithSuccess();
+        void this.crOperations.sendIntentResponse();
     }
 
     private getWithdrawPayload(command: WithdrawCommand): any {

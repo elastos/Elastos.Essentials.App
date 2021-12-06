@@ -76,7 +76,7 @@ export class ReviewMilestonePage {
     }
 
     cancel() {
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
     }
 
     async signAndReviewMilestone() {
@@ -93,7 +93,7 @@ export class ReviewMilestonePage {
             Logger.log('crproposal', "Got review milestone digest.", digest);
 
             //Get did sign digest
-            let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {
+            let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
             });
             Logger.log('crproposal', "Got signed digest.", ret);
@@ -110,6 +110,7 @@ export class ReviewMilestonePage {
         }
 
         this.signingAndSendingProposalResponse = false;
+        void this.crOperations.sendIntentResponse();
     }
 
     private getPayload(command: ReviewMilestoneCommand): any {

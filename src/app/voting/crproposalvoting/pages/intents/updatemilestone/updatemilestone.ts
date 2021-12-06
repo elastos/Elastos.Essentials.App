@@ -96,6 +96,7 @@ export class UpdatMilestonePage {
         }
 
         this.signingAndSendingSuggestionResponse = false;
+        void this.crOperations.sendIntentResponse();
     }
 
     private async getMilestoneDigest(): Promise<string> {
@@ -111,7 +112,7 @@ export class UpdatMilestonePage {
     private async signMilestoneDigestAsJWT(suggestionDigest: string): Promise<string> {
         Logger.log('crproposal', "Sending intent to sign the suggestion digest", suggestionDigest);
         try {
-            let result = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {
+            let result = await this.crOperations.sendSignDigestIntent({
                 data: suggestionDigest,
                 signatureFieldName: "data",
                 jwtExtra: {

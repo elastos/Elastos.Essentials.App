@@ -32,6 +32,9 @@ export class CROperationsService {
     public originalRequestJWT: string;
     public onGoingCommand: any;
 
+    public intentAction: string;
+    public intentId: number;
+
     constructor(
         private popup: PopupService,
         private globalIntentService: GlobalIntentService,
@@ -53,9 +56,9 @@ export class CROperationsService {
         }
     }
 
-    addOnItemClickedListener(icon) {
+    async addOnItemClickedListener(icon) {
         if (icon.key == "scan") {
-            this.handleScanAction();
+            await this.handleScanAction();
         }
     }
 
@@ -64,7 +67,7 @@ export class CROperationsService {
             let data = await this.globalIntentService.sendIntent("scanqrcode", null);
             Logger.log("crproposal", "Scan result", data);
             if (data && data.result && data.result.scannedContent)
-                this.handleScannedContent(data.result.scannedContent);
+                await this.handleScannedContent(data.result.scannedContent);
             else
                 Logger.warn('crproposal', "Unable to handle the scanned QR code - no scanned content info");
         }
@@ -76,7 +79,7 @@ export class CROperationsService {
     private async handleScannedContent(scannedContent: string) {
         if (scannedContent.startsWith("https://did.elastos.net/crproposal/")) {
             let jwt = scannedContent.replace("https://did.elastos.net/crproposal/", "");
-            this.handleCRProposalJWTCommand(jwt);
+            await this.handleCRProposalJWTCommand(jwt);
         }
         else {
             Logger.warn('crproposal', "Unhandled QR code content:", scannedContent);
@@ -85,18 +88,20 @@ export class CROperationsService {
 
     private async handledReceivedIntent(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
         if (receivedIntent.action == "https://did.elastos.net/crproposal") {
-            this.handleCRProposalIntentRequest(receivedIntent);
+            await this.handleCRProposalIntentRequest(receivedIntent);
+
         }
     }
 
     private async handleCRProposalIntentRequest(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
         if (!receivedIntent.originalJwtRequest) {
             Logger.error('crproposal', "Received a crproposal intent request that is not encoded as JWT, which is not allowed. Skipping the request");
+            await this.sendIntentResponse();
         }
         else {
-            this.voteService.intentAction = receivedIntent.action;
-            this.voteService.intentId = receivedIntent.intentId;
-            if (!this.handleCRProposalJWTCommand(receivedIntent.originalJwtRequest)) {
+            this.intentAction = receivedIntent.action;
+            this.intentId = receivedIntent.intentId;
+            if (!await this.handleCRProposalJWTCommand(receivedIntent.originalJwtRequest)) {
                 await this.sendIntentResponse();
             }
         }
@@ -113,11 +118,11 @@ export class CROperationsService {
 
         let jwtPayload = parsedJwtresult.payload as CRWebsiteCommand;
         if (!jwtPayload.command) {
-            this.popup.alert("crproposal", "Received CR website command without a command field. Skipping.", "Ok");
+            await this.popup.alert("crproposal", "Received CR website command without a command field. Skipping.", "Ok");
             return false;
         }
 
-        return this.handleCRProposalCommand(jwtPayload, crProposalJwtRequest);
+        return await this.handleCRProposalCommand(jwtPayload, crProposalJwtRequest);
     }
 
     public async handleCRProposalCommand(payload: CRWebsiteCommand, originalRequestJWT?: string): Promise<boolean> {
@@ -145,15 +150,17 @@ export class CROperationsService {
 
             default:
                 Logger.warn('crproposal', "Unhandled CR command: ", payload.command);
-                this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
+                await this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
         }
 
         return true;
     }
 
-    public sendIntentResponse(result?: any): Promise<void> {
-        // For now do nothing, as we consider all intents will be received by scanning QR codes and no one is
-        // expecting a direct response.
-        return Promise.resolve();
+    public async sendIntentResponse(result?: any) {
+        await this.globalIntentService.sendIntentResponse({}, this.intentId);
+    }
+
+    public async sendSignDigestIntent(data: any): Promise<any> {
+        return await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", data, this.intentId);
     }
 }

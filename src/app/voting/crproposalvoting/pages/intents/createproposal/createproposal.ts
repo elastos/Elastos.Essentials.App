@@ -28,7 +28,7 @@ export type CreateProposalCommand = CRWebsiteCommand & {
         newownersignature: string,
         newrecipient: string,
         ownerpublickey: string,     // Public key of proposal owner
-        proposaltype: string // Ex: "normal",
+        type: string // Ex: "normal",
         recipient: string, // Ex: ELA address
         signature: string,
         targetproposalhash: string,
@@ -53,7 +53,7 @@ export class CreateProposalPage {
     private createProposalCommand: CreateProposalCommand;
     public signingAndSendingProposalResponse = false;
     public creationDate = "";
-    public buggetAmount = 0;
+    public bugetAmount = 0;
     public Config = Config;
     public proposaltype: string;
 
@@ -76,11 +76,12 @@ export class CreateProposalPage {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-proposal'));
         this.createProposalCommand = this.crOperations.onGoingCommand as CreateProposalCommand;
         this.suggestionId = this.createProposalCommand.sid;
-        this.proposaltype = this.createProposalCommand.data.proposaltype;
+        this.proposaltype = this.createProposalCommand.data.type;
 
-        if (this.createProposalCommand.data.proposaltype == "normal") {
+        if (this.proposaltype == "normal") {
             for (let suggestionBudget of this.createProposalCommand.data.budgets) {
-                this.buggetAmount += parseInt(suggestionBudget.amount);
+                suggestionBudget.type = suggestionBudget.type.toLowerCase();
+                this.bugetAmount += parseInt(suggestionBudget.amount);
             }
         }
 
@@ -104,7 +105,7 @@ export class CreateProposalPage {
     }
 
     private getPayload(): any {
-        switch (this.createProposalCommand.data.proposaltype) {
+        switch (this.proposaltype) {
             case "normal":
                 return this.getNormalPayload();
             case "changeproposalowner":
@@ -114,12 +115,12 @@ export class CreateProposalPage {
             case "secretarygeneral":
                 return this.getSecretaryGeneralPayload();
             default:
-                throw new Error("Don't support this proposaltype: " + this.createProposalCommand.data.proposaltype);
+                throw new Error("Don't support this type: " + this.proposaltype);
         }
     }
 
     private async digestFunction(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
-        switch (this.createProposalCommand.data.proposaltype) {
+        switch (this.proposaltype) {
             case "normal":
                 return await this.walletManager.spvBridge.proposalCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             case "changeproposalowner":
@@ -129,12 +130,12 @@ export class CreateProposalPage {
             case "secretarygeneral":
                 return await this.walletManager.spvBridge.proposalSecretaryGeneralElectionCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             default:
-                throw new Error("Don't support this proposaltype: " + this.createProposalCommand.data.proposaltype);
+                throw new Error("Don't support this type: " + this.proposaltype);
         }
     }
 
     private async creatTransactionFunction(payload: string, memo: string): Promise<string> {
-        switch (this.createProposalCommand.data.proposaltype) {
+        switch (this.proposaltype) {
             case "normal":
                 return await this.voteService.sourceSubwallet.createProposalTransaction(payload, memo);
             case "changeproposalowner":
@@ -144,7 +145,7 @@ export class CreateProposalPage {
             case "secretarygeneral":
                 return await this.voteService.sourceSubwallet.createSecretaryGeneralElectionTransaction(payload, memo);
             default:
-                throw new Error("Don't support this proposaltype: " + this.createProposalCommand.data.proposaltype);
+                throw new Error("Don't support this type: " + this.proposaltype);
         }
     }
 
@@ -176,13 +177,14 @@ export class CreateProposalPage {
             Logger.error('crproposal', 'signAndCreateProposal error:', e);
         }
         this.signingAndSendingProposalResponse = false;
+        void this.crOperations.sendIntentResponse();
     }
 
     private getNormalPayload(): any {
         let data = this.createProposalCommand.data;
         let payload = {
             Type: 0,
-            CategoryData: data.categorydata,
+            CategoryData: data.categorydata || "",
             OwnerPublicKey: data.ownerpublickey,
             DraftHash: data.drafthash,
             // DraftData: "",
@@ -261,7 +263,7 @@ export class CreateProposalPage {
 
     async signDigest(digest: string): Promise<string> {
         //Get did sign digest
-        let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {
+        let ret = await this.crOperations.sendSignDigestIntent({
             data: digest,
         });
         Logger.log('crproposal', "Got signed digest.", ret);

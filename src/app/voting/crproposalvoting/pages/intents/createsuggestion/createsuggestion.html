@@ -8,10 +8,10 @@
 
         <div class="message">{{ 'crproposalvoting.create-suggestion-msg' | translate }}</div>
         <ion-list>
-            <ion-row class="profile-data" *ngIf="suggestionDetails.title">
+            <ion-row class="profile-data" *ngIf="suggestionDetail.title">
                 <ion-col>
                     <h5>{{ 'common.title' | translate }}</h5>
-                    <h4>{{ suggestionDetails.title }}</h4>
+                    <h4>{{ suggestionDetail.title }}</h4>
                 </ion-col>
             </ion-row>
 
@@ -23,10 +23,10 @@
                 </div>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="suggestionDetails.abs">
+            <ion-row class="profile-data" *ngIf="suggestionDetail.abs">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.suggestion-abstract' | translate }}</h5>
-                    <h4>{{ suggestionDetails.abs }}</h4>
+                    <h4>{{ suggestionDetail.abs }}</h4>
                 </ion-col>
             </ion-row>
 
@@ -59,7 +59,7 @@
             <ion-row class="profile-data" *ngIf="proposaltype == 'normal'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.budget-amount' | translate }}</h5>
-                    <h4>{{ buggetAmount / Config.SELA }}</h4>
+                    <h4>{{ bugetAmount / Config.SELA }}</h4>
                 </ion-col>
             </ion-row>
 
@@ -72,18 +72,18 @@
             </ion-row>
 
             <ion-row class="profile-data"
-                *ngIf="suggestionDetails.newAddress && (proposaltype == 'changeproposaladdress' || proposaltype == 'changeproposalowner')">
+                *ngIf="suggestionDetail.newAddress && (proposaltype == 'changeproposaladdress' || proposaltype == 'changeproposalowner')">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.new-recipient-address' | translate }}</h5>
-                    <h4>{{ suggestionDetails.newAddress }}</h4>
+                    <h4>{{ suggestionDetail.newAddress }}</h4>
                 </ion-col>
             </ion-row>
 
             <ion-row class="profile-data"
-                *ngIf="suggestionDetails.newOwnerDID && proposaltype == 'changeproposalowner'">
+                *ngIf="suggestionDetail.newOwnerDID && proposaltype == 'changeproposalowner'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.new-owner-did' | translate }}</h5>
-                    <h4>{{ suggestionDetails.newOwnerDID }}</h4>
+                    <h4>{{ suggestionDetail.newOwnerDID }}</h4>
                 </ion-col>
             </ion-row>
 
@@ -95,11 +95,11 @@
             </ion-row>
 
             <ion-row class="profile-data"
-                *ngIf="suggestionDetails.targetProposalTitle &&
+                *ngIf="suggestionDetail.targetProposalTitle &&
                 (proposaltype == 'changeproposalowner' || proposaltype == 'closeproposal')">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.target-proposal-title' | translate }}</h5>
-                    <h4>{{ suggestionDetails.targetProposalTitle }}</h4>
+                    <h4>{{ suggestionDetail.targetProposalTitle }}</h4>
                 </ion-col>
             </ion-row>
 
@@ -111,10 +111,10 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="suggestionDetails.address">
+            <ion-row class="profile-data" *ngIf="suggestionDetail.address">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.suggestion-url' | translate }}</h5>
-                    <h4>{{ suggestionDetails.address }}</h4>
+                    <h4>{{ suggestionDetail.address }}</h4>
                 </ion-col>
             </ion-row>
 
