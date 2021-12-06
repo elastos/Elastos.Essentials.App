@@ -5,6 +5,12 @@ import { GlobalNavService } from './global.nav.service';
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 
+type QueuedIntent = {
+  status: "created" | "submitted" | "processing"; // "created" means queued, but not executed yet. "submitted" means sent to the native intent manager. "processing" means sent inside essentials and not finished yet (no response).
+  intent?: EssentialsIntentPlugin.ReceivedIntent; // Native intent received. Defined only when status is "started"
+  parentIntentId?: number; // If this intent is sent from inside a parent inside, that parent intent id is saved here.
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,8 +19,9 @@ export class GlobalIntentService {
 
   // Queue of intents to be handled. If an intent is received while another one is still in progress
   // then it is queued and processed later.
-  private intentsQueue: EssentialsIntentPlugin.ReceivedIntent[] = [];
-  private intentBeingProcessed: EssentialsIntentPlugin.ReceivedIntent = null;
+  private intentsQueue: QueuedIntent[] = [];
+  private intentJustCreated: QueuedIntent = null; // Intent just created and not processed yet
+  private intentsBeingProcessed: QueuedIntent[] = [];
   private unprocessedIntentInterval: any = null; // Warning timeout when an intent did not send any response
 
   // Emits received intents from the app manager.
@@ -39,50 +46,112 @@ export class GlobalIntentService {
     Logger.log("Intents", "Listening to external incoming intents");
     essentialsIntentManager.addIntentListener((receivedIntent) => {
       Logger.log("Intents", "Intent received, adding to queue", receivedIntent);
-      this.intentsQueue.push(receivedIntent);
 
-      if (!this.intentBeingProcessed) {
+      // Find the related queued intent that has a "created" status and update it.
+      let queuedIntent = this.intentJustCreated;
+      this.intentJustCreated = null;
+
+      queuedIntent.intent = receivedIntent;
+      queuedIntent.status = "submitted";
+
+      let intentToProcess = this.findProcessableIntent();
+
+      if (intentToProcess) {
         this.processNextIntentRequest();
       }
       else {
-        Logger.log("Intents", "Another intent is already being processed. This one will be executed next", this.intentBeingProcessed);
+        Logger.log("Intents", "Another intent is already being processed. This one will be executed later", intentToProcess);
       }
     });
   }
 
-  sendIntent(action: string, params?: any): Promise<any> {
+  /**
+   * The next processable intent is:
+   * - The first intent in the queue, if there is currently no intent being processed
+   * - Or, the first intent in the queue that has a parent id that is currently being processed.
+   */
+  private findProcessableIntent(): QueuedIntent {
+    // Nothing to process
+    if (this.intentsQueue.length === 0)
+      return null;
+
+    if (this.intentsBeingProcessed.length === 0) {
+      Logger.log("intents", "Next processable intent is a root intent (no parent)");
+      // Currently no intent being process, so we take the first one in the queue
+      return this.intentsQueue[0]; // First item in the queue
+    }
+    else {
+      // Already some intents being processed
+      let rootIntentBeingProcessed = this.intentsBeingProcessed.find(i => !i.parentIntentId); // There should be always one, and only one root item
+
+      let childIntentsForRootIntent = this.intentsQueue.find(i => i.parentIntentId === rootIntentBeingProcessed.intent.intentId);
+      if (childIntentsForRootIntent) {
+        // A child intent from an active parent intent has been found, so we can process it.
+        Logger.log("intents", "Next processable intent is a child intent of root intent:", childIntentsForRootIntent.parentIntentId);
+        return childIntentsForRootIntent;
+      }
+      else {
+        return null;
+      }
+    }
+  }
+
+  /**
+   * Sends an intent with optional params.
+   * If an intent wants to be able to call a sub-intent (ie: voting calling the wallet to publish a transaction),
+   * the parentIntentId must be given so that the intent manager allows the execution of this sub-intent before
+   * the parent intent sends its response (imbricated intents can't await for linear responses).
+   */
+  sendIntent(action: string, params?: any, parentIntentId?: number): Promise<any> {
     // Can not show the data. Private data, confidential. eg. mnemonic.
-    Logger.log("Intents", "Sending intent", action);
+    Logger.log("Intents", "Sending intent", action, parentIntentId);
+
+    this.intentJustCreated = {
+      status: "created",
+      parentIntentId
+    }
+    this.intentsQueue.push(this.intentJustCreated);
+
     return essentialsIntentManager.sendIntent(action, params);
   }
 
-  sendUrlIntent(url: string): Promise<any> {
-    Logger.log("Intents", "Sending url intent", url);
+  sendUrlIntent(url: string, parentIntentId?: number): Promise<any> {
+    Logger.log("Intents", "Sending url intent", url, parentIntentId);
+
+    this.intentJustCreated = {
+      status: "created",
+      parentIntentId
+    }
+    this.intentsQueue.push(this.intentJustCreated);
+
     return essentialsIntentManager.sendUrlIntent(url)
   }
 
   private processNextIntentRequest() {
-    Logger.log("Intents", "Processing next intent", this.intentsQueue.length);
-    if (this.intentsQueue.length > 0) {
-      let nextIntent = this.intentsQueue[0];
-      this.intentsQueue.splice(0, 1);
+    Logger.log("Intents", "Processing next intent with remaining items in queue:", this.intentsQueue.length);
 
-      Logger.log("Intents", "Intent received (next in queue), now dispatching to listeners", nextIntent);
-      this.intentBeingProcessed = nextIntent;
+    let nextProcessableIntent = this.findProcessableIntent();
+    if (nextProcessableIntent) {
+      Logger.log("Intents", "Intent processing starting. Sending to listeners", nextProcessableIntent);
+      nextProcessableIntent.status = "processing";
+      this.intentsBeingProcessed.push(nextProcessableIntent);
 
       this.unprocessedIntentInterval = setInterval(() => {
-        Logger.warn("Intents", "No intent response sent after several seconds!", nextIntent);
+        Logger.warn("Intents", "No intent response sent after several seconds!", nextProcessableIntent);
       }, 20000);
 
-      this.intentListener.next(nextIntent);
+      this.intentListener.next(nextProcessableIntent.intent);
     }
   }
 
   async sendIntentResponse(result: any, intentId: number, navigateBack = true): Promise<void> {
-      // Can not show the data. Private data, confidential. eg. mnemonic.
+    // Can not show the data in logs. Private data, confidential. eg. mnemonic.
     Logger.log("Intents", "Sending intent response ", intentId, navigateBack);
 
-    this.intentBeingProcessed = null;
+    // Find the processing intent in the list and clear it
+    this.intentsQueue.splice(this.intentsQueue.findIndex(i => i.intent.intentId === intentId), 1);
+    this.intentsBeingProcessed.splice(this.intentsBeingProcessed.findIndex(i => i.intent.intentId === intentId), 1);
+
     clearInterval(this.unprocessedIntentInterval);
 
     if (navigateBack)

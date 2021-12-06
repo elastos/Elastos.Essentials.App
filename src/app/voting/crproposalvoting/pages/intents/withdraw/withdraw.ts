@@ -88,7 +88,7 @@ export class WithdrawPage {
             //Get did sign digest
             let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {
                 data: digest,
-            });
+            }, this.voteService.intentId);
             Logger.log('crproposal', "Got signed digest.", ret);
             if (ret.result && ret.result.signature) {
                 //Create transaction and send
