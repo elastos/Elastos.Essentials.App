@@ -84,6 +84,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     networks: ["elastos"]
                 },
                 {
+                    icon: '/assets/browser/dapps/kycme.png',
+                    title: 'KYC-me',
+                    description: 'Get DID credentials from your real identity here, to get access to more dApps such as ELAB.',
+                    url: 'https://kyc-me.io?theme=' + (this.theme.darkMode ? "dark" : "light"),
+                    useExternalBrowser: false,
+                    networks: ["elastos"]
+                },
+                {
                     icon: '/assets/browser/dapps/cyberrepublic.svg',
                     title: 'Cyber Republic',
                     description: 'Cyber Republic (CR) is the community that has naturally formed around Elastos.',
