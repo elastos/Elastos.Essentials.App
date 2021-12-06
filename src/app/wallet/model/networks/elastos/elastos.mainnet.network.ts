@@ -7,10 +7,10 @@ import { elastosMainnetElkBridgeProvider, elastosMainnetGlideBridgeProvider, ela
 import { elastosMainnetElkEarnProvider } from "./earn/earn.providers";
 import { elastosMainnetElkSwapProvider, elastosMainnetGlideSwapProvider } from "./earn/swap.providers";
 import { ElastosNetworkBase } from "./elastos.base.network";
+import { ElastosPasarERC1155Provider } from "./nfts/pasar.provider";
 
 export class ElastosMainNetNetwork extends ElastosNetworkBase {
   private uniswapCurrencyProvider: ElastosMainnetUniswapCurrencyProvider = null;
-
 
   constructor() {
     super("Elastos",
@@ -25,6 +25,9 @@ export class ElastosMainNetNetwork extends ElastosNetworkBase {
         elastosMainnetGlideBridgeProvider,
         elastosMainnetShadowTokenBridgeProvider,
         elastosMainnetElkBridgeProvider
+      ],
+      [
+        new ElastosPasarERC1155Provider()
       ]
     );
 

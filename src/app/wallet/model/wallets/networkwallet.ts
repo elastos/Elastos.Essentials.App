@@ -348,13 +348,25 @@ export abstract class NetworkWallet {
     }
 
     public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<void> {
-        let resolvedInfo = await this.masterWallet.erc721Service.getCoinInfo(contractAddress);
-        if (resolvedInfo) {
-            let nft = new NFT(nftType, contractAddress, balance);
-            nft.setResolvedInfo(resolvedInfo);
-            this.nfts.push(nft);
+        if (nftType === NFTType.ERC721) {
+            let resolvedInfo = await this.masterWallet.erc721Service.getCoinInfo(contractAddress);
+            if (resolvedInfo) {
+                let nft = new NFT(nftType, contractAddress, balance);
+                nft.setResolvedInfo(resolvedInfo);
+                this.nfts.push(nft);
 
-            await this.save();
+                await this.save();
+            }
+        }
+        else if (nftType === NFTType.ERC1155) {
+            let resolvedInfo = await this.masterWallet.erc1155Service.getCoinInfo(contractAddress);
+            if (resolvedInfo) {
+                let nft = new NFT(nftType, contractAddress, balance);
+                nft.setResolvedInfo(resolvedInfo);
+                this.nfts.push(nft);
+
+                await this.save();
+            }
         }
     }
 
@@ -373,6 +385,10 @@ export abstract class NetworkWallet {
         let accountAddress = await this.getMainEvmSubWallet().createAddress();
         if (nft.type == NFTType.ERC721) {
             let assets = await this.masterWallet.erc721Service.fetchAllAssets(accountAddress, nft.contractAddress);
+            nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
+        }
+        else if (nft.type == NFTType.ERC1155) {
+            let assets = await this.masterWallet.erc1155Service.fetchAllAssets(accountAddress, nft.contractAddress);
             nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
         }
     }
@@ -477,8 +493,8 @@ export abstract class NetworkWallet {
                     else return -1;
                 })
                 this.stakingInfo = {
-                    timestamp : moment().valueOf(),
-                    stakingData : stakingData
+                    timestamp: moment().valueOf(),
+                    stakingData: stakingData
                 }
                 await this.saveStakingAssets(this.stakingInfo);
             }

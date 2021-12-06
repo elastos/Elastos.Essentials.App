@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 .container {
     min-height: 100%;
@@ -9,7 +9,8 @@
         margin-bottom: 10px;
         margin-left: 5px;
 
-        h1, p {
+        h1,
+        p {
             margin: 0;
         }
 
@@ -50,7 +51,10 @@
             justify-content: flex-start;
             align-items: flex-start;
 
-            h1, h2, h3, h4 {
+            h1,
+            h2,
+            h3,
+            h4 {
                 margin: 0;
                 line-height: 1;
             }
@@ -131,7 +135,8 @@
                         height: 9.1px;
                     }
 
-                    .send, .receive {
+                    .send,
+                    .receive {
                         width: 52.3px;
                         height: 35.8px;
                     }
@@ -165,7 +170,7 @@
             -ms-transform: translate(2px, -2px) rotate(-45deg);
             -o-transform: translate(2px, -2px) rotate(-45deg);
             // Default color
-            background-color: #242424
+            background-color: #242424;
         }
     }
 
@@ -175,13 +180,13 @@
         .card-btn-row {
             ion-col {
                 .btn-box {
-                    background-color:  #adadad;
+                    background-color: #adadad;
                 }
             }
         }
 
         .arrow-down {
-            background-color: #242424
+            background-color: #242424;
         }
     }
     .blue-card {
@@ -220,7 +225,7 @@
         .card-btn-row {
             ion-col {
                 .btn-box {
-                    background-color:  #dddddd;
+                    background-color: #dddddd;
                 }
             }
         }
@@ -234,7 +239,8 @@
         margin-bottom: 10px;
         margin-left: 5px;
 
-        h1, h2 {
+        h1,
+        h2 {
             margin: 0;
             font-weight: 500;
             line-height: 0.8;
@@ -242,15 +248,15 @@
         }
 
         h1 {
-          font-size: 18px;
-          text-align: left;
+            font-size: 18px;
+            text-align: left;
         }
 
         h2 {
-          letter-spacing: 0.32px;
-          font-size: 12px;
-          margin-top: 5px;
-          margin-left: 10px;
+            letter-spacing: 0.32px;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-left: 10px;
         }
     }
 
@@ -273,12 +279,17 @@
             padding-left: 10px;
 
             .asset-icon {
-                width:40px;
-                height:40px;
+                width: 40px;
+                height: 40px;
+                display: flex;
+
+                img {
+                    margin: auto;
+                }
             }
 
             .asset-name {
-                font-size:16px;
+                font-size: 16px;
             }
 
             .icon-container {
@@ -321,14 +332,16 @@
             }
         }
 
-        .middle-col, .right-col {
+        .middle-col,
+        .right-col {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
             overflow: hidden;
 
-            h1, p {
+            h1,
+            p {
                 margin: 0;
             }
 
@@ -368,7 +381,8 @@
             height: 40px;
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             margin-top: 15px;
         }
 
@@ -399,8 +413,7 @@
     }
 }
 
-
-.dark-container  {
+.dark-container {
     .item-row {
         box-shadow: 0 3px 15px 0 #151626;
         background-color: #2b2c49;

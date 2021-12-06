@@ -195,7 +195,6 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   public async onTokenInfoFound(tokens: ERCTokenInfo[]) {
     let newAllCoinsList: ERCTokenInfo[] = [];
     let newERC20CoinsList: string[] = [];
-    let newERC721CoinsList: string[] = [];
     const timestamp = (new Date()).valueOf();
 
     let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
@@ -242,7 +241,12 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
         }
       }
       else if (token.type === "ERC-1155") {
-        Logger.warn('wallet', 'ERC1155 NFTs not yet implemented', token);
+        console.log("ON 1155 TOKEN FOUND", token);
+        if (!this.networkWallet.containsNFT(token.contractAddress)) {
+          await this.networkWallet.createNFT(NFTType.ERC1155, token.contractAddress, Number.parseInt(token.balance));
+          // TODO: let user know, should be a different notification than for ERC20 and the click
+          // should bring to wallet home, not to coins list
+        }
       }
       else {
         Logger.warn('wallet', 'Unhandled token type:', token);

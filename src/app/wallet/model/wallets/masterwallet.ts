@@ -1,4 +1,5 @@
 import { Logger } from 'src/app/logger';
+import { ERC1155Service } from '../../services/erc1155.service';
 import { ERC721Service } from '../../services/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
 import { WalletService } from '../../services/wallet.service';
@@ -34,6 +35,7 @@ export class MasterWallet {
     constructor(
         public walletManager: WalletService,
         public erc721Service: ERC721Service,
+        public erc1155Service: ERC1155Service,
         private localStorage: LocalStorage,
         id: string,
         createdBySystem: boolean,
@@ -102,17 +104,17 @@ export class MasterWallet {
     /**
      * Removes a subwallet (coin - ex: ela, idchain) from the given wallet.
      */
-     /* public async destroyStandardSubWallet(coinId: CoinID) {
-        let subWallet = this.standardSubWallets[coinId];
-        if (subWallet) {
-          await subWallet.destroy();
+    /* public async destroyStandardSubWallet(coinId: CoinID) {
+       let subWallet = this.standardSubWallets[coinId];
+       if (subWallet) {
+         await subWallet.destroy();
 
-          // Delete the subwallet from out local model.
-          delete this.standardSubWallets[coinId];
+         // Delete the subwallet from out local model.
+         delete this.standardSubWallets[coinId];
 
-          await this.masterWallet.save();
-        }
-    } */
+         await this.masterWallet.save();
+       }
+   } */
 
     /**
      * Removes all subwallets from the given wallet.

@@ -4,6 +4,7 @@ import { CoinID, StandardCoinName } from "../../coin";
 import { BridgeProvider } from "../../earn/bridgeprovider";
 import { EarnProvider } from "../../earn/earnprovider";
 import { SwapProvider } from "../../earn/swapprovider";
+import { ERC1155Provider } from "../../nfts/erc1155.provider";
 import { ElastosERC20SubWallet } from "../../wallets/elastos/elastos.erc20.subwallet";
 import { ElastosNetworkWallet } from "../../wallets/elastos/elastos.networkwallet";
 import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
@@ -19,14 +20,16 @@ export abstract class ElastosNetworkBase extends Network {
     displayName: string,
     earnProviders?: EarnProvider[],
     swapProviders?: SwapProvider[],
-    bridgeProviders?: BridgeProvider[]) {
+    bridgeProviders?: BridgeProvider[],
+    erc1155Providers?: ERC1155Provider[]) {
     super(
       "elastos",
       displayName,
       "assets/wallet/networks/elastos.svg",
       earnProviders,
       swapProviders,
-      bridgeProviders);
+      bridgeProviders,
+      erc1155Providers);
   }
 
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {

@@ -7,6 +7,7 @@ import { Coin, CoinID, CoinType, ERC20Coin } from "../coin";
 import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
 import { SwapProvider } from "../earn/swapprovider";
+import { ERC1155Provider } from "../nfts/erc1155.provider";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
 import { NetworkWallet } from "../wallets/networkwallet";
@@ -28,7 +29,8 @@ export abstract class Network {
     public logo: string, // Path to the network icon
     public earnProviders: EarnProvider[] = [],
     public swapProviders: SwapProvider[] = [],
-    public bridgeProviders: BridgeProvider[] = []
+    public bridgeProviders: BridgeProvider[] = [],
+    public erc1155Providers: ERC1155Provider[] = [],
   ) {
   }
 
@@ -231,11 +233,19 @@ export abstract class Network {
   }
 
   /**
+   * Returns the first provider able to support the provided erc1155 contract address
+   */
+  public getERC1155Provider(contractAddress: string): ERC1155Provider {
+    let lowerCaseContract = contractAddress.toLowerCase();
+    let provider = this.erc1155Providers.find(p => p.supportedContractAddresses.map(c => c.toLowerCase()).find(p => p.indexOf(lowerCaseContract) >= 0));
+    return provider;
+  }
+
+  /**
    * To be overriden by each network. By default, no provider is returned, meaning that ERC20 tokens
    * won't be able to get a USD pricing.
    */
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
     return null;
   }
-
 }

@@ -1,5 +1,5 @@
-import { ERC721ResolvedInfo } from "../../services/erc721.service";
 import { NFTAsset } from "./nftasset";
+import { NFTResolvedInfo } from "./resolvedinfo";
 
 /**
  * Class representing a NFT (ERC 721, 1155) contract (NOT a minted assets inside this contract).
@@ -8,7 +8,7 @@ export class NFT {
   public name: string;
   public assets: NFTAsset[] = [];
 
-  constructor(public type: NFTType, public contractAddress: string, public balance: number) {}
+  constructor(public type: NFTType, public contractAddress: string, public balance: number) { }
 
   public toSerializedNFT(): SerializedNFT {
     return {
@@ -19,7 +19,7 @@ export class NFT {
     };
   }
 
-  public setResolvedInfo(resolvedInfo: ERC721ResolvedInfo) {
+  public setResolvedInfo(resolvedInfo: NFTResolvedInfo) {
     this.name = resolvedInfo.name;
   }
 

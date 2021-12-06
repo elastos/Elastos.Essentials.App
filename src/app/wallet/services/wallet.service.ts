@@ -37,6 +37,7 @@ import { MasterWallet, WalletID } from '../model/wallets/masterwallet';
 import { NetworkWallet } from '../model/wallets/networkwallet';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
+import { ERC1155Service } from './erc1155.service';
 import { ERC721Service } from './erc721.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
@@ -111,6 +112,7 @@ export class WalletService {
         public translate: TranslateService,
         public localStorage: LocalStorage,
         private erc721Service: ERC721Service,
+        private erc1155Service: ERC1155Service,
         private authService: AuthService,
         public popupProvider: PopupProvider,
         private prefs: GlobalPreferencesService,
@@ -203,7 +205,7 @@ export class WalletService {
                     Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId);
 
                     // Create a model instance for each master wallet returned by the SPV SDK.
-                    this.masterWallets[masterId] = new MasterWallet(this, this.erc721Service, this.localStorage, masterId, false);
+                    this.masterWallets[masterId] = new MasterWallet(this, this.erc721Service, this.erc1155Service, this.localStorage, masterId, false);
                     await this.masterWallets[masterId].prepareAfterCreation();
                 }
             }
@@ -453,7 +455,7 @@ export class WalletService {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
 
         // Add a new wallet to our local model
-        this.masterWallets[id] = new MasterWallet(this, this.erc721Service, this.localStorage, id, createdBySystem, name);
+        this.masterWallets[id] = new MasterWallet(this, this.erc721Service, this.erc1155Service, this.localStorage, id, createdBySystem, name);
 
         // Set some wallet account info
         this.masterWallets[id].account = walletAccount;

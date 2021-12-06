@@ -26,13 +26,9 @@ import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import Web3 from 'web3';
 import { NFTAsset } from '../model/nfts/nftasset';
+import { NFTResolvedInfo } from '../model/nfts/resolvedinfo';
 import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
-
-export type ERC721ResolvedInfo = {
-    /** Main NFT name, if set, or "" */
-    name: string;
-}
 
 @Injectable({
     providedIn: 'root'
@@ -63,26 +59,7 @@ export class ERC721Service {
         return this.web3;
     }
 
-    /* public isAddress(address: string) {
-        return this.getWeb3().utils.isAddress(address);
-    } */
-
-    /* public async isContractAddress(address: string) {
-        const contractCode = await this.getWeb3().eth.getCode(address);
-        return contractCode === '0x' ? false : true;
-    } */
-
-    /* public async getCoinDecimals(address: string, ethAccountAddress: string) {
-        let coinDecimals = 0;
-        const erc20Contract = new (this.getWeb3()).eth.Contract(this.erc721ABI, address, { from: ethAccountAddress });
-        if (erc20Contract) {
-            coinDecimals = await erc20Contract.methods.decimals().call();
-            Logger.log('wallet', 'Coin decimals:', coinDecimals);
-        }
-        return coinDecimals;
-    } */
-
-    public async getCoinInfo(address: string): Promise<ERC721ResolvedInfo> {
+    public async getCoinInfo(address: string): Promise<NFTResolvedInfo> {
         try {
             const erc721Contract = new (this.getWeb3()).eth.Contract(this.erc721ABI, address);
             Logger.log('wallet', 'erc721Contract', erc721Contract);
