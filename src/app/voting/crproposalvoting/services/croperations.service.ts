@@ -55,7 +55,7 @@ export class CROperationsService {
 
     addOnItemClickedListener(icon) {
         if (icon.key == "scan") {
-            this.handleScanAction();
+            void this.handleScanAction();
         }
     }
 
@@ -64,7 +64,7 @@ export class CROperationsService {
             let data = await this.globalIntentService.sendIntent("scanqrcode", null);
             Logger.log("crproposal", "Scan result", data);
             if (data && data.result && data.result.scannedContent)
-                this.handleScannedContent(data.result.scannedContent);
+                void this.handleScannedContent(data.result.scannedContent);
             else
                 Logger.warn('crproposal', "Unable to handle the scanned QR code - no scanned content info");
         }
@@ -73,32 +73,36 @@ export class CROperationsService {
         }
     }
 
-    private async handleScannedContent(scannedContent: string) {
+    private handleScannedContent(scannedContent: string) {
         if (scannedContent.startsWith("https://did.elastos.net/crproposal/")) {
             let jwt = scannedContent.replace("https://did.elastos.net/crproposal/", "");
-            this.handleCRProposalJWTCommand(jwt);
+            void this.handleCRProposalJWTCommand(jwt);
         }
         else {
             Logger.warn('crproposal', "Unhandled QR code content:", scannedContent);
         }
     }
 
-    private async handledReceivedIntent(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
+    private handledReceivedIntent(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
         if (receivedIntent.action == "https://did.elastos.net/crproposal") {
-            this.handleCRProposalIntentRequest(receivedIntent);
+            void this.handleCRProposalIntentRequest(receivedIntent);
+        } else {
+            // TODO: return error info?
+            void this.sendIntentResponse(receivedIntent.intentId);
         }
     }
 
     private async handleCRProposalIntentRequest(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
         if (!receivedIntent.originalJwtRequest) {
             Logger.error('crproposal', "Received a crproposal intent request that is not encoded as JWT, which is not allowed. Skipping the request");
+            // TODO: return error info?
+            void this.sendIntentResponse(receivedIntent.intentId);
         }
         else {
             this.voteService.intentAction = receivedIntent.action;
             this.voteService.intentId = receivedIntent.intentId;
-            if (!this.handleCRProposalJWTCommand(receivedIntent.originalJwtRequest)) {
-                await this.sendIntentResponse();
-            }
+            await this.handleCRProposalJWTCommand(receivedIntent.originalJwtRequest);
+            void this.sendIntentResponse(this.voteService.intentId);
         }
     }
 
@@ -113,7 +117,7 @@ export class CROperationsService {
 
         let jwtPayload = parsedJwtresult.payload as CRWebsiteCommand;
         if (!jwtPayload.command) {
-            this.popup.alert("crproposal", "Received CR website command without a command field. Skipping.", "Ok");
+            void this.popup.alert("crproposal", "Received CR website command without a command field. Skipping.", "Ok");
             return false;
         }
 
@@ -145,15 +149,15 @@ export class CROperationsService {
 
             default:
                 Logger.warn('crproposal', "Unhandled CR command: ", payload.command);
-                this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
+                void this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
         }
 
         return true;
     }
 
-    public sendIntentResponse(result?: any): Promise<void> {
+    public sendIntentResponse(intentId: number): Promise<void> {
         // For now do nothing, as we consider all intents will be received by scanning QR codes and no one is
         // expecting a direct response.
-        return Promise.resolve();
+        return void this.globalIntentService.sendIntentResponse({}, intentId, false)
     }
 }
