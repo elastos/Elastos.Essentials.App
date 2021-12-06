@@ -126,7 +126,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         eidOracleRPC: 'https://api.elastos.io/eid-oracle',
                         escRPC: 'https://api.elastos.io/esc',
                         escMiscRPC: 'https://api.elastos.io/misc',
-                        escOracleRPC: 'https://api.elastos.io/oracle',
+                        escOracleRPC: 'https://api.elastos.io/esc-oracle',
                         escBrowserRPC: 'https://esc.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
@@ -138,7 +138,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         eidBrowserRPC: 'https://eid-testnet.elastos.io/api',
                         eidOracleRPC: 'https://api-testnet.elastos.io/eid-oracle',
                         escRPC: 'https://api-testnet.elastos.io/esc',
-                        escOracleRPC: 'https://api-testnet.elastos.io/oracle',
+                        escOracleRPC: 'https://api-testnet.elastos.io/esc-oracle',
                         escMiscRPC: 'https://api-testnet.elastos.io/misc',
                         escBrowserRPC: 'https://esc-testnet.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org'
