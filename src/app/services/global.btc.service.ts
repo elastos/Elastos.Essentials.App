@@ -80,7 +80,7 @@ export class GlobalBTCRPCService {
     }
 
     public async getUTXO(rpcApiUrl: string, address: string): Promise<BTCUTXO[]> {
-        let requestUrl = rpcApiUrl + '/api/v2/utxo/' + address;// + '?confirmed=true';
+        let requestUrl = rpcApiUrl + '/api/v2/utxo/' + address + '?confirmed=true';
 
         try {
             return await this.httpGet(requestUrl);

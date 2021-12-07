@@ -196,9 +196,7 @@ export class CoinTxInfoPage implements OnInit {
             {
                 type: 'blockId',
                 title: 'wallet.tx-info-block-id',
-                value:
-                    // the Height is 2147483647(-1) when the transaction is not confirmed.
-                    this.transactionInfo.confirmStatus === 0 ? 0 : this.height,
+                value: this.height <= 0 ? 0 : this.height,
                 show: false,
             },
             {
