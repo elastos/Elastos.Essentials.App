@@ -6,7 +6,7 @@ import { BTCNetworkBase } from "./btc.base.network";
 
 export class BTCTestNetNetwork extends BTCNetworkBase {
   constructor() {
-    super("BTC",
+    super("BTC Testnet",
       BTCAPI.getApiUrl(BTCApiType.NODE, TESTNET_TEMPLATE),
       BTCAPI.getApiUrl(BTCApiType.EXPLORER, TESTNET_TEMPLATE),
       [

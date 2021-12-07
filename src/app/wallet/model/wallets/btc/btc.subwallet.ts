@@ -130,6 +130,7 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
             transactionInfo.type = TransactionType.TRANSFER;
             transactionInfo.symbol = '';
           }
+
           return transactionInfo;
     }
 
@@ -234,7 +235,6 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
 
     public async publishTransaction(transaction: string): Promise<string> {
         let obj = JSON.parse(transaction);
-        // Do not return txid;
         return await this.sendRawTransaction(obj.Data);
     }
 

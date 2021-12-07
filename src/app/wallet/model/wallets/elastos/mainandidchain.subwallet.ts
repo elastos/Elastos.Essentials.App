@@ -80,8 +80,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
     public async getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): Promise<TransactionInfo> {
         let transactionInfo = ElastosTransactionsHelper.getTransactionInfo(transaction, translate);
-        transactionInfo.amount = new BigNumber(transaction.value, 10),
-            transactionInfo.symbol = '';
+        transactionInfo.amount = new BigNumber(transaction.value, 10);
+        transactionInfo.symbol = '';
         transactionInfo.isCrossChain = false;
         transactionInfo.txid = transaction.txid;
 
