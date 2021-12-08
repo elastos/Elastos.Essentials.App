@@ -3,6 +3,7 @@ export const fr = {
     'identity': {
         /******************** Generic ********************/
         'accept': 'Accepter',
+        'confirm': 'Confirmer',
         'accept-and-publish': 'Accepter et Publier',
         'delete-and-publish': 'Supprimer et Publier',
         'share-description': 'Partagez votre identité',

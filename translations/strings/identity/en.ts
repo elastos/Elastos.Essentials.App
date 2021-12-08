@@ -3,6 +3,7 @@ export const en = {
     'identity': {
         /******************** Generic ********************/
         'accept': 'Accept',
+        'confirm': 'Confirm',
         'accept-and-publish': 'Accept and Publish',
         'delete-and-publish': 'Delete and Publish',
         'share-description': 'Share your Identity with others',

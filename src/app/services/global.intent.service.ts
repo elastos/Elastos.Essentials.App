@@ -48,11 +48,22 @@ export class GlobalIntentService {
       Logger.log("Intents", "Intent received, adding to queue", receivedIntent);
 
       // Find the related queued intent that has a "created" status and update it.
-      let queuedIntent = this.intentJustCreated;
-      this.intentJustCreated = null;
-
-      queuedIntent.intent = receivedIntent;
-      queuedIntent.status = "submitted";
+      let queuedIntent: QueuedIntent = null;
+      if (this.intentJustCreated) {
+        // Intent created by essentials just now
+        queuedIntent = this.intentJustCreated;
+        queuedIntent.intent = receivedIntent;
+        queuedIntent.status = "submitted";
+        this.intentJustCreated = null;
+      }
+      else {
+        // Intent received from the external world. Essentials' sendIntent() has not been called first.
+        queuedIntent = {
+          status: "submitted",
+          intent: receivedIntent
+        };
+        this.intentsQueue.push(queuedIntent);
+      }
 
       let intentToProcess = this.findProcessableIntent();
 

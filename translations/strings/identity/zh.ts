@@ -3,6 +3,7 @@ export const zh = {
     'identity': {
         /******************** Generic ********************/
         'accept': '接受',
+        'confirm': 'Confirm',
         'accept-and-publish': '接受并发布',
         'delete-and-publish': '删除并发布',
         'share-description': '分享您的身份',

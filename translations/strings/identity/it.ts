@@ -3,6 +3,7 @@ export const it = {
     'identity': {
         /******************** Generic ********************/
         'accept': 'Accetta',
+        'confirm': 'Confirm',
         'accept-and-publish': 'Accetta e Pubblica',
         'delete-and-publish': 'Elimina e Pbblica',
         'share-description': 'Condividi la tua identità',
