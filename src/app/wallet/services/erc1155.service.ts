@@ -111,28 +111,55 @@ export class ERC1155Service {
             // More info at: https://docs.alchemy.com/alchemy/guides/eth_getlogs#what-are-event-signatures
             const erc1155Contract = new (this.getWeb3()).eth.Contract(this.erc1155ABI, contractAddress, { from: accountAddress });
             let transferSingleEventTopic = this.web3.utils.sha3("TransferSingle(address,address,address,uint256,uint256)");
-            let transferEvents = await erc1155Contract.getPastEvents('TransferSingle', {
+            let transferInEvents = await erc1155Contract.getPastEvents('TransferSingle', {
                 // All blocks
-                fromBlock: 0,
-                toBlock: 'latest',
+                fromBlock: 0, toBlock: 'latest',
                 // transfer event signature + 3rd parameter should be the account address. (meaning "received the NFT")
                 topics: [
                     transferSingleEventTopic,
                     null,
                     null,
-                    paddedAccountAddress
+                    paddedAccountAddress // Received by us
                 ]
             }) as any as ERC1155Transfer[];
+
+            // Also get transfer out events, so we can know which tokens are still in our possession
+            let transferOutEvents = await erc1155Contract.getPastEvents('TransferSingle', {
+                // All blocks
+                fromBlock: 0, toBlock: 'latest',
+                // transfer event signature + 2nd parameter should be the account address. (meaning "sent the NFT")
+                topics: [
+                    transferSingleEventTopic,
+                    null,
+                    paddedAccountAddress // Sent by us
+                ]
+            }) as any as ERC1155Transfer[];
+
+            // Based on all transfers (in/out), rebuild the history of NFT ownerships until we can get
+            // The list of tokens that we still own
+            let allTransferEvents = [...transferInEvents, ...transferOutEvents];
+
+            // Sort by date ASC
+            allTransferEvents = allTransferEvents.sort((a, b) => a.blockNumber - b.blockNumber);
+
+            // Retrace history from old blocks to recent blocks
+            let ownedTokenIds: { [tokenId: string]: boolean } = {};
+            allTransferEvents.forEach(transferEvent => {
+                // User account as sender? Remove the token from the list
+                if (transferEvent.returnValues._from.toLowerCase() === accountAddress.toLowerCase())
+                    delete ownedTokenIds[transferEvent.returnValues._id];
+
+                // User account as received? Add the token to the list
+                if (transferEvent.returnValues._to.toLowerCase() === accountAddress.toLowerCase())
+                    ownedTokenIds[transferEvent.returnValues._id] = true;
+            });
 
             // Check if we have a NFT provider available to provide more info about this
             let erc1155Provider = this.networkService.activeNetwork.value.getERC1155Provider(contractAddress);
 
             // Iterate over transferEvents() to get more info.
             try {
-                for (let i = 0; i < transferEvents.length; i++) {
-                    let transferEvent = transferEvents[i];
-                    let tokenId = transferEvent.returnValues._id;
-
+                for (let tokenId of Object.keys(ownedTokenIds)) {
                     let asset = new NFTAsset();
                     asset.id = tokenId;
                     asset.displayableId = asset.id;

@@ -260,6 +260,12 @@
         }
     }
 
+    .refreshing-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .item-row {
         border-radius: 17px;
         padding: 7.5px 10px 7.5px 0;
@@ -279,8 +285,6 @@
             padding-left: 10px;
 
             .asset-icon {
-                width: 40px;
-                height: 40px;
                 display: flex;
 
                 img {

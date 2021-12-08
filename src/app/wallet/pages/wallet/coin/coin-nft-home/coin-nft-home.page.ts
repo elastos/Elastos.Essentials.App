@@ -165,6 +165,16 @@ export class CoinNFTHomePage implements OnInit {
         return asset.name || "Unnamed Asset";
     }
 
+    public getDisplayableAssetDescription(asset: NFTAsset): string {
+        if (!asset.description)
+            return "";
+
+        if (asset.description.length > 200)
+            return asset.description.substr(0, 200) + "...";
+        else
+            return asset.description;
+    }
+
     public getDisplayableAssetID(asset: NFTAsset): string {
         if (asset.displayableId.length < 15)
             return asset.displayableId;

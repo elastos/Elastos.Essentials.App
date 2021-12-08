@@ -5,8 +5,10 @@
         <ion-row class="main-title-row">
             <ion-col size="12">
                 <h1>NFT Overview</h1>
-                <p *ngIf="todaysTransactions > 20">{{ 'wallet.coin-new-transactions-today' | translate:{ '20+': todaysTransactions} }}}</p>
-                <p *ngIf="todaysTransactions <= 20">{{ 'wallet.coin-new-transactions-today' | translate:{todaysTransactions: todaysTransactions} }}</p>
+                <p *ngIf="todaysTransactions > 20">{{ 'wallet.coin-new-transactions-today' | translate:{ '20+':
+                    todaysTransactions} }}}</p>
+                <p *ngIf="todaysTransactions <= 20">{{ 'wallet.coin-new-transactions-today' |
+                    translate:{todaysTransactions: todaysTransactions} }}</p>
             </ion-col>
         </ion-row>
         <ion-row class="gray-card card-row">
@@ -30,27 +32,28 @@
         <ion-row class="list-title-row">
             <h1>Assets</h1>
         </ion-row>
-        <ion-row *ngIf="refreshingAssets">
+        <ion-row *ngIf="refreshingAssets" class="refreshing-spinner">
             <ion-spinner></ion-spinner>
         </ion-row>
         <div *ngIf="!refreshingAssets && nft.getAssets()">
-            <ion-row class="item-row ripple ion-activatable" *ngFor="let asset of nft.getAssets()" (click)="showAssetDetails(asset)">
-                <ion-col size="2" class="left-col">
+            <ion-row class="item-row ripple ion-activatable" *ngFor="let asset of nft.getAssets()"
+                (click)="showAssetDetails(asset)">
+                <ion-col size="3" class="left-col">
                     <div class="asset-icon">
                         <img [src]="getAssetIcon(asset)">
                     </div>
                 </ion-col>
-                <ion-col size="10" class="middle-col">
+                <ion-col size="9" class="middle-col">
                     <div class="asset-name">{{ getDisplayableAssetName(asset) }}</div>
                     <p><b>Token ID</b>: {{ getDisplayableAssetID(asset) }}</p>
                 </ion-col>
                 <ion-col size="12" *ngIf="asset.description" class="asset-description">
-                    <p>{{ asset.description }}</p>
+                    <p>{{ getDisplayableAssetDescription(asset) }}</p>
                 </ion-col>
             </ion-row>
         </div>
         <div class="empty-list" *ngIf="!refreshingAssets && !nft.getAssets()">
-            <img src="assets/wallet/icons/warning.svg"/>
+            <img src="assets/wallet/icons/warning.svg" />
             <h2>Collectibles for this NFT type cannot be listed.</h2>
         </div>
 
@@ -58,18 +61,10 @@
                 <h1>{{ 'wallet.coin-transactions' | translate }}</h1>
         </ion-row> -->
         <div *ngIf="transferList.length > 0">
-            <ion-row
-                class="item-row ripple ion-activatable"
-                *ngFor="let item of transferList"
-                (click)="onItem(item)"
-            >
+            <ion-row class="item-row ripple ion-activatable" *ngFor="let item of transferList" (click)="onItem(item)">
                 <ion-col size="2" class="left-col">
-                    <div
-                        class="icon-container"
-                        [class.purple]="item.type === 1"
-                        [class.black]="item.type === 2"
-                        [class.orange]="item.type === 3"
-                    >
+                    <div class="icon-container" [class.purple]="item.type === 1" [class.black]="item.type === 2"
+                        [class.orange]="item.type === 3">
                         <img [src]="item.payStatusIcon">
                     </div>
                 </ion-col>
@@ -88,7 +83,7 @@
             </ion-row>
         </div>
         <div class="empty-list" *ngIf="transactionsLoaded && (transferList.length === 0)">
-            <img src="assets/wallet/icons/warning.svg"/>
+            <img src="assets/wallet/icons/warning.svg" />
             <h1>{{ 'wallet.coin-no-transactions' | translate }}</h1>
         </div>
         <!-- <div class="more" (click)="clickMore()" *ngIf="isShowMore">
