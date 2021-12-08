@@ -58,7 +58,6 @@ export abstract class NetworkWallet {
         this.id = masterWallet.id;
 
         this.transactionDiscoveryProvider = this.createTransactionDiscoveryProvider();
-        Logger.warn('wallet', this.id, ' create transactionDiscoveryProvider')
     }
 
     public async initialize(): Promise<void> {

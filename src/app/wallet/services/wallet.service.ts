@@ -244,7 +244,21 @@ export class WalletService {
                         this.networkWallets[masterWallet.id] = networkWallet;
                 }
                 catch (err) {
-                    Logger.error("wallet", "Failed to create network wallet for master wallet", masterWallet, err);
+                    if (err.code == 20006) {
+                        Logger.log("wallet", "Need to call IMasterWallet::VerifyPayPassword():", masterWallet, err);
+                        // 20006: Need to call IMasterWallet::VerifyPayPassword() or re-import wallet first.
+                        // A password is required to generate a public key in spvsdk.
+                        // Usually occurs when a new network is first supported, eg. EVM, BTC.
+                        const payPassword = await this.authService.getWalletPassword(masterWallet.id);
+                        if (payPassword) {
+                            await this.spvBridge.verifyPayPassword(masterWallet.id, payPassword);
+                            networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
+                            if (networkWallet)
+                                this.networkWallets[masterWallet.id] = networkWallet;
+                        }
+                    } else {
+                        Logger.error("wallet", "Failed to create network wallet for master wallet", masterWallet, err);
+                    }
                 }
                 finally {
                     // Notify that this network wallet is the active one.

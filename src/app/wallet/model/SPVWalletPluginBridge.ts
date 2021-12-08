@@ -223,7 +223,7 @@ export class SPVWalletPluginBridge {
     ): Promise<MasterWalletBasicInfo> {
         return new Promise((resolve, reject) => {
             walletManager.importWalletWithMnemonic(
-                [masterWalletId, mnemonic, phrasePassword, payPassword, singleAddress],
+                [masterWalletId, mnemonic.normalize("NFKD"), phrasePassword, payPassword, singleAddress],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("importWalletWithMnemonic", err, reject); });
         });
@@ -976,6 +976,8 @@ export class SPVWalletPluginBridge {
             return;
         }
 
+        Logger.error('wallet', 'SPVWalletPluginBridge::handleError:', err);
+
         // Do not show alert for 10003 and 20001.
         if (err["code"] === 10003) {
             Logger.warn('wallet', 'SPVWalletPluginBridge Can\'t get the subwallet :', err);
@@ -984,11 +986,14 @@ export class SPVWalletPluginBridge {
         }
         // Maybe some subwallet is not supported in LRW.
         if (err["code"] === 20001) {
-            Logger.warn('wallet', 'SPVWalletPluginBridge error :', err);
             if (promiseRejectHandler) promiseRejectHandler(err);
             return;
         }
-        Logger.error('wallet', 'SPVWalletPluginBridge::handleError:', err);
+        // Need use input password then retry.
+        if (err["code"] === 20006) {
+            if (promiseRejectHandler) promiseRejectHandler(err);
+            return;
+        }
 
         let error = err["code"]
         if (error) {

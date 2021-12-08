@@ -70,7 +70,7 @@ module.exports = function(ctx) {
         while (!fileMatched && attempt < max_attempt) {
           attempt++;
 
-          console.log("Starting to download file " + obj.filename);
+          console.log("Starting to download file " + obj.url);
           let unit = "bytes"
           await wget(obj.url, {
             onProgress: (status) => {
