@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { ETHTransactionComponent } from '../components/eth-transaction/eth-transaction.component';
 import { ETHTransactionStatus } from '../model/evm.types';
 import { RawTransactionPublishResult } from '../model/providers/transaction.types';
@@ -70,7 +71,21 @@ class ETHTransactionManager {
                 void this.emitEthTransactionStatusChange(status);
             }
         } else {
-            await subwallet.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
+            // 'nonce too low': The transaction already published.
+            if (result.message.includes('nonce too low')) {
+                let status: ETHTransactionStatusInfo = {
+                    chainId: subwallet.id,
+                    gasPrice: null,
+                    gasLimit: null,
+                    status: ETHTransactionStatus.PACKED,
+                    txId: null,
+                    nonce: -1
+                  }
+                  this.emitEthTransactionStatusChange(status);
+            }
+            else {
+                await subwallet.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
+            }
         }
         return;
       }
@@ -173,7 +188,7 @@ class ETHTransactionManager {
       } else {
         let status: ETHTransactionStatusInfo = {
           chainId: subwallet.id,
-          gasPrice: result.gasPrice,
+          gasPrice: Util.ceil(parseInt(result.gasPrice) * 1.2).toString(),
           gasLimit: this.defaultGasLimit,
           status: ETHTransactionStatus.UNPACKED,
           nonce: parseInt(result.nonce),
