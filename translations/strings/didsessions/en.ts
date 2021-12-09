@@ -32,6 +32,9 @@ export const en = {
     'import-again': 'Would you like to import a different Identity?',
     'import-again-cancel': 'Cancel',
     'import-again-yes': 'Yes',
+    'did-corrupted-title': 'Corrupted DID error',
+    'did-corrupted-info': 'Apparently, your DID is corrupted and Essentials cannot recover it. The only solution for now is to create a new DID.',
+    'got-it': 'Got it',
 
     // Create screen
     'welcome-message1': 'Welcome to the modern internet, where you take control of your own digital identity in a secured sandbox environment.',

@@ -32,6 +32,9 @@ export const zh = {
     'import-again': '您是否要导入其他身份？',
     'import-again-cancel': '取消',
     'import-again-yes': '是的',
+    'did-corrupted-title': 'DID损坏',
+    'did-corrupted-info': '您的DID已损坏，Essentials无法恢复。请重新创建一个新的DID',
+    'got-it': '好的',
 
     // Create screen
     'welcome-message1': '欢迎使用新一代互联网，您可以在安全的沙盒环境中控制自己的数字身份。',

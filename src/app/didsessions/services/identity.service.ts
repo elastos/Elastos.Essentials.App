@@ -347,15 +347,18 @@ export class IdentityService {
             catch (e) {
                 // Special case - "invalid signature" during synchronize - bug of getdids.com DIDs.
                 // Recommend user to create a new DID
-                if (e && new String(e).indexOf("signature mismatch") > 0) {
-                    Logger.warn("didsessions", "Corrupted user DID, synchronize() has failed. Need to create a new DID");
+                if (e) {
+                    let message = e.message ? new String(e.message) : new String(e);
+                    if (message.indexOf("signature mismatch") > 0) {
+                        Logger.warn("didsessions", "Corrupted user DID, synchronize() has failed. Need to create a new DID");
 
-                    await this.uxService.hideLoading();
-                    void this.popupProvider.ionicAlert("Corrupted DID error", "Apparently, your DID is corrupted and Essentials cannot recover it. The only solution for now is to create a new DID.", "Got it").then(() => {
-                        void this.globalNavService.navigateDIDSessionHome();
-                    });
+                        await this.uxService.hideLoading();
+                        void this.popupProvider.ionicAlert(this.translate.instant('didsessions.did-corrupted-title'), this.translate.instant('didsessions.did-corrupted-info'), this.translate.instant('didsessions.got-it')).then(() => {
+                            void this.globalNavService.navigateDIDSessionHome();
+                        });
 
-                    return;
+                        return;
+                    }
                 }
                 else {
                     throw e;

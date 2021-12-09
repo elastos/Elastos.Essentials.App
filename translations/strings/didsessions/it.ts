@@ -11,10 +11,10 @@ export const it = {
       'select-identity': 'Seleziona un\'identità',
       'your-private-qr-code': 'Il tuo Codice QR Privato',
       'your-private-key': 'La tua Chiave Privata',
-  
+
       // Placeholder
       'enter-name-here': 'Inserisci qui il tuo nome',
-  
+
       // Popups
       'mnemonic-invalid': 'Frase mnemonica non valida',
       'mnemonic-invalid-prompt': 'Si prega di controllare la frase mnemonica... ',
@@ -32,7 +32,10 @@ export const it = {
       'import-again': 'Vuoi importare un\'Identità diversa?',
       'import-again-cancel': 'Annulla',
       'import-again-yes': 'Si',
-  
+      'did-corrupted-title': 'Corrupted DID error',
+      'did-corrupted-info': 'Apparently, your DID is corrupted and Essentials cannot recover it. The only solution for now is to create a new DID.',
+      'got-it': 'Got it',
+
       // Create screen
       'welcome-message1': 'Benvenuto nell\'Internet moderno, dove prendi il controllo della tua identità digitale in un ambiente sicuro.',
       'welcome-message2': 'Ora puoi gestire la tua identità digitale e verificare quella degli altri, senza dover fornire tutti i tuoi dati a terzi, proteggendo così la tua Privacy.',
@@ -42,35 +45,35 @@ export const it = {
       'create-message': 'Crea una nuova identità oppure puoi importare un\'identità esistente che già possiedi',
       'new': 'Crea',
       'import': 'Importa',
-  
+
       // Edit
       'your-name': 'Come ti chiami?',
-  
+
       // Backup
-  
+
       // Verify Mnemonic
       'verify-prompt': 'Clicca sulle tue 12 parole segrete per verificarle.',
-  
+
       // Import
       'import-type': 'Tipo d\'importazione',
       'mnemonic-input': 'Inserimento del mnemonico',
       'import-from-wallet': 'Importa da Portafoglio',
       'enter-mnemonic': 'Inserisci qui le parole mnemoniche',
       'import-prompt': 'Inserisci le tue 12 parole mnemoniche o scansiona il tuo codice QR cliccando sull\'icona posta in alto per importare la tua identità',
-  
+
       // Multiple DIDs to import screen
       'more-than-one-import-did-pick-one': 'È stata trovata più di un\'identità. Si prega di scegliere quello che si desidera importare',
-  
+
       // Pick Identity
       'create-new-identity': 'Nuova Identità',
-  
+
       // Delete Identity
       'delete-identity': 'Elimina Identità',
       'delete-identity-prompt': 'Questa azione eliminerà la tua identità localmente, ma potrai sempre reimportarla in un secondo momento.',
-  
+
       // retrieve identities
       'retrieve-prompt': 'Ricerca e importazione dell\'identità, attendere.',
-  
+
       // Backup
       'name-s': '\'s',
       'decentralized-id': 'ID Decentralizzato',
@@ -85,7 +88,7 @@ export const it = {
       'print-confirmation-des': 'Sei riuscito a stampare il codice QR della tua identità?',
       'print-try-again': 'No, riprova',
       'print-yes': 'Si',
-  
+
       // Prepare DID
       'getting-ready': 'Completamento in corso',
       'ready': 'Pronto!',
@@ -103,6 +106,5 @@ export const it = {
       }
     }
    };
-  
-  
-  
+
+
