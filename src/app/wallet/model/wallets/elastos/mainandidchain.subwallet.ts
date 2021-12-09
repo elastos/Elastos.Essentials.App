@@ -161,8 +161,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         return await this.balance.gt(amount);
     }
 
-    // Ignore gasPrice and gasLimit.
-    public async createPaymentTransaction(toAddress: string, amount: number, memo = "", gasPrice: string = null, gasLimit: string = null): Promise<string> {
+    // Ignore gasPrice, gasLimit and nonce.
+    public async createPaymentTransaction(toAddress: string, amount: number, memo = "", gasPrice: string = null, gasLimit: string = null, nonce: number = null): Promise<string> {
         let toAmount = 0;
         if (amount == -1) {
             toAmount = Math.floor(this.balance.minus(10000).toNumber());
@@ -247,8 +247,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         );
     }
 
-    // Ignore gasPrice and gasLimit.
-    public async createWithdrawTransaction(toAddress: string, amount: number, memo, gasPrice: string, gasLimit: string): Promise<string> {
+    // Ignore gasPrice, gasLimit and nonce.
+    public async createWithdrawTransaction(toAddress: string, amount: number, memo, gasPrice: string, gasLimit: string, nonce: number): Promise<string> {
         let toAmount = 0;
         if (amount == -1) {
             toAmount = Math.floor(this.balance.minus(20000).toNumber());

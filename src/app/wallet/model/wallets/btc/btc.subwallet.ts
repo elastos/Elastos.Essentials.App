@@ -72,7 +72,7 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
         return this.legacyAddress;
     }
 
-    public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gssLimit: string): Promise<any> {
+    public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
         return Promise.resolve([]);
     }
 
@@ -200,8 +200,8 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
         return utxoArrayForSDK;
     }
 
-    // Ignore gasPrice and gasLimit.
-    public async createPaymentTransaction(toAddress: string, amount: number, memo = "", gasPrice: string = null, gasLimit: string = null): Promise<string> {
+    // Ignore gasPrice, gasLimit and nonce.
+    public async createPaymentTransaction(toAddress: string, amount: number, memo = "", gasPrice: string = null, gasLimit: string = null, nonce: number = null): Promise<string> {
         let feerate =  await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
 
         // TODO: Normally the data less than 1KB.

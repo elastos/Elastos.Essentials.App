@@ -196,7 +196,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   }
 
 
-  public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string): Promise<string> {
+  public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string, nonceArg: number): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const contractAbi = require("../../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
     const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.withdrawContractAddress);
@@ -252,7 +252,11 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
 
     const data = method.encodeABI();
-    let nonce = await this.getNonce();
+
+    let nonce = nonceArg;
+    if (nonce === -1) {
+        nonce = await this.getNonce();
+    }
     Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' withdrawContractAddress:', this.withdrawContractAddress);
     return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
       this.masterWallet.id,

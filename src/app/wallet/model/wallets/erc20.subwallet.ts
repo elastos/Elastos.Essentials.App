@@ -392,11 +392,11 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         return null;
     }
 
-    public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gssLimit: string): Promise<any> {
+    public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonceArg: number): Promise<any> {
         return Promise.resolve([]);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null): Promise<any> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg: number = null): Promise<any> {
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });

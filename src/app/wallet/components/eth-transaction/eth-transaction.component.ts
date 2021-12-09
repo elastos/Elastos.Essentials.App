@@ -23,6 +23,7 @@ export class ETHTransactionComponent implements OnInit {
   public gasPrice: string = null;// GWEI
   // public gasLimit: string = null;
   public gasLimit = '200000';
+  public nonce = -1;
 
   private GWEI = 1000000000;
 
@@ -59,6 +60,7 @@ export class ETHTransactionComponent implements OnInit {
           this.zone.run(() => {
             this.gasPrice = new BigNumber(status.gasPrice).dividedBy(this.GWEI).toFixed(1);
             this.gasLimit = status.gasLimit;
+            this.nonce = status.nonce;
             this.publishing = false;
             this.publicationFailed = true;
           });
@@ -67,6 +69,7 @@ export class ETHTransactionComponent implements OnInit {
           this.zone.run(() => {
             this.gasPrice = new BigNumber(status.gasPrice).dividedBy(this.GWEI).toFixed(1);
             this.gasLimit = status.gasLimit;
+            this.nonce = status.nonce;
             this.publishing = false;
             this.publicationFailed = true;
           });
@@ -79,6 +82,7 @@ export class ETHTransactionComponent implements OnInit {
     let speedup : ETHTransactionSpeedup = {
       gasPrice: Math.floor(parseFloat(this.gasPrice) * this.GWEI).toString(),
       gasLimit: this.gasLimit,
+      nonce: this.nonce,
     }
     ETHTransactionService.instance.ethTransactionSpeedup.next(speedup);
     this.exitComponent();
@@ -90,7 +94,8 @@ export class ETHTransactionComponent implements OnInit {
       gasPrice: null,
       gasLimit:  null,
       status: ETHTransactionStatus.CANCEL,
-      txId: null
+      txId: null,
+      nonce: null
     }
     ETHTransactionService.instance.ethTransactionStatus.next(status)
     this.exitComponent();

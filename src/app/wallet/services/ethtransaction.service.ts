@@ -14,11 +14,13 @@ export type ETHTransactionStatusInfo = {
   gasLimit: string;
   status: ETHTransactionStatus;
   txId: string;
+  nonce: number;
 }
 
 export type ETHTransactionSpeedup = {
   gasPrice: string;
   gasLimit: string;
+  nonce: number;
 }
 
 class ETHTransactionManager {
@@ -48,6 +50,28 @@ class ETHTransactionManager {
       let result = await subwallet.signAndSendRawTransaction(transaction, transfer, false);
       Logger.log('wallet', 'publishTransaction ', result)
       if (!result.published) {
+        // The previous transaction needs to be accelerated.
+        if (this.needToSpeedup(result)) {
+            if (result.txid) {
+                if (showBlockingLoader) {
+                    await this.displayPublicationLoader();
+                }
+
+                let tx = await subwallet.getTransactionDetails(result.txid);
+                let defaultGasprice = await subwallet.getGasPrice();
+                let status: ETHTransactionStatusInfo = {
+                chainId: subwallet.id,
+                gasPrice: defaultGasprice,
+                gasLimit: this.defaultGasLimit,
+                status: ETHTransactionStatus.UNPACKED,
+                txId: null,
+                nonce: parseInt(tx.nonce),
+                }
+                void this.emitEthTransactionStatusChange(status);
+            }
+        } else {
+            await subwallet.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
+        }
         return;
       }
 
@@ -56,7 +80,7 @@ class ETHTransactionManager {
       }
       const isPublishingOnGoing = await this.CheckPublishing(result)
       if (!isPublishingOnGoing) {
-        Logger.warn('wallet', 'publishTransaction error')
+        Logger.warn('wallet', 'publishTransaction error ', result)
 
         let defaultGasprice = await subwallet.getGasPrice();
         let status: ETHTransactionStatusInfo = {
@@ -64,13 +88,14 @@ class ETHTransactionManager {
           gasPrice: defaultGasprice,
           gasLimit: this.defaultGasLimit,
           status: ETHTransactionStatus.UNPACKED,
-          txId: null
+          txId: null,
+          nonce: -1
         }
         void this.emitEthTransactionStatusChange(status);
         return;
       }
 
-      this.waitforTimes = subwallet.getAverageBlocktime() * 3;
+      this.waitforTimes = subwallet.getAverageBlocktime() * 5;
       if (this.needToSpeedup(result)) {
         let defaultGasprice = await subwallet.getGasPrice();
         let status: ETHTransactionStatusInfo = {
@@ -78,7 +103,8 @@ class ETHTransactionManager {
           gasPrice: defaultGasprice,
           gasLimit: this.defaultGasLimit,
           status: ETHTransactionStatus.UNPACKED,
-          txId: null
+          txId: null,
+          nonce: -1
         }
         void this.emitEthTransactionStatusChange(status);
       } else {
@@ -88,7 +114,7 @@ class ETHTransactionManager {
       }
     }
     catch (err) {
-      Logger.error('wallet', 'publishTransaction error:', err)
+      Logger.error('wallet', 'publishTransaction error:', err, ' transaction:', transaction)
     }
   }
 
@@ -110,7 +136,11 @@ class ETHTransactionManager {
         return true;
       }
 
+      // The previous transaction is pending.
       if (result.message.includes('known transaction')) {
+        // Get the txid
+        let txid = result.message.replace('known transaction:', '').trim();
+        result.txid = txid.startsWith('0x') ? txid : '0x' + txid;
         return true;
       }
 
@@ -130,7 +160,8 @@ class ETHTransactionManager {
         gasPrice: result.gasPrice,
         gasLimit: this.defaultGasLimit,
         status: ETHTransactionStatus.PACKED,
-        txId: txid
+        txId: txid,
+        nonce: parseInt(result.nonce)
       }
       this.emitEthTransactionStatusChange(status);
     } else {
@@ -145,6 +176,7 @@ class ETHTransactionManager {
           gasPrice: result.gasPrice,
           gasLimit: this.defaultGasLimit,
           status: ETHTransactionStatus.UNPACKED,
+          nonce: parseInt(result.nonce),
           txId: txid
         }
         this.emitEthTransactionStatusChange(status);

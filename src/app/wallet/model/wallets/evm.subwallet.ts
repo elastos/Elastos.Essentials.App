@@ -302,10 +302,11 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     return this.balance.gt(amount);
   }
 
-  public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null): Promise<string> {
+  public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg: number = null): Promise<string> {
     let gasPrice = gasPriceArg;
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
+    //   gasPrice = '900000000';
     }
 
     let gasLimit = gasLimitArg;
@@ -331,7 +332,10 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       if (amount <= 0) return null;
     }
 
-    let nonce = await this.getNonce();
+    let nonce = nonceArg;
+    if (nonce === -1) {
+        nonce = await this.getNonce();
+    }
     Logger.log('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
     return this.masterWallet.walletManager.spvBridge.createTransfer(
       this.masterWallet.id,
@@ -346,7 +350,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     );
   }
 
-  public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gssLimit: string): Promise<any> {
+  public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
     return Promise.resolve([]);
   }
 

@@ -38,6 +38,7 @@ import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
+import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
@@ -89,6 +90,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // User can set gas price and limit.
     private gasPrice: string = null;
     private gasLimit: string = null;
+    private nonce: number = -1;
 
     // Intent
     private action = null;
@@ -200,7 +202,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance());
 
-        if ((this.subWalletId.startsWith('ETH'))) {
+        if (this.fromSubWallet instanceof StandardEVMSubWallet) {
             this.isEVMSubwallet = true;
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status) => {
@@ -237,11 +239,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 if (status) {
                     this.gasPrice = status.gasPrice;
                     this.gasLimit = status.gasLimit;
+                    this.nonce = status.nonce;
                     // Do Transaction
                     void await this.transaction();
                     // Reset gas price.
                     this.gasPrice = null;
                     this.gasLimit = null;
+                    this.nonce = -1;
                 }
             });
         }
@@ -328,7 +332,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.amount, // User input amount
             this.memo, // User input memo
             this.gasPrice,
-            this.gasLimit
+            this.gasLimit,
+            this.nonce
         );
         await this.native.hideLoading();
         if (rawTx) {
@@ -408,7 +413,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.amount,
             this.memo,
             this.gasPrice,
-            this.gasLimit
+            this.gasLimit,
+            this.nonce
         );
 
         if (rawTx) {

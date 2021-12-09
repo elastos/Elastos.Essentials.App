@@ -4,6 +4,7 @@ import { Transfer } from '../../services/cointransfer.service';
 import { CurrencyService } from '../../services/currency.service';
 import { CoinType } from '../coin';
 import { GenericTransaction, RawTransactionPublishResult } from '../providers/transaction.types';
+import { StandardEVMSubWallet } from './evm.subwallet';
 import { NetworkWallet } from './networkwallet';
 import { SubWallet } from './subwallet';
 
@@ -127,7 +128,11 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
             catch (err) {
                 await this.masterWallet.walletManager.native.hideLoading();
                 Logger.error("wallet", "Publish error:", err);
-                await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
+                // ETHTransactionManager handle this error if the subwallet is StandardEVMSubWallet.
+                // Maybe need to speed up.
+                if (!(this instanceof StandardEVMSubWallet)) {
+                    await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
+                }
                 resolve({
                     published: false,
                     txid: null,
