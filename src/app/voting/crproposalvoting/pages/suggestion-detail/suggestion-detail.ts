@@ -47,7 +47,7 @@ export class SuggestionDetailPage {
         private crOperations: CROperationsService,
         // private draftService: DraftService
     ) {
-        this.init();
+        void this.init();
     }
 
     async init() {
@@ -80,7 +80,7 @@ export class SuggestionDetailPage {
     ionViewDidEnter() {
     }
 
-    async ionViewWillEnter() {
+    ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.loading-suggestion'));
         this.changeDetector.detectChanges(); // Force angular to catch changes in complex objects
     }
@@ -179,23 +179,25 @@ export class SuggestionDetailPage {
         if (item.type === 'url') {
             const urlToOpen = item.value;
             Logger.log('crsuggestion', "Opening external URL:", urlToOpen);
-            this.globalIntentService.sendIntent('openurl', { url: urlToOpen })
+            void this.globalIntentService.sendIntent('openurl', { url: urlToOpen })
         }
     }
 
-    async makeIntoProposal() {
+    makeIntoProposal() {
         // let content = await this.draftService.getDraft("opinion.json", "This is the content of the opinion.json");
         // let hash = this.draftService.getDraftHash(content);
         // let data = {content: "This is the content of the opinion.json"};
         // Logger.log('crsuggestion', "Zip:", content, hash, JSON.stringify(data));
-        let command = { command: "createproposal", data: this.suggestion, sid: this.suggestion.sid } as CRWebsiteCommand;
-        Logger.log('crsuggestion', "Command:", command);
-        this.crOperations.handleCRProposalCommand(command, null);
+        this.handleCommand("createproposal");
     }
 
-    async signSuggestion() {
-        let command = { command: "createsuggestion", data: this.suggestion, sid: this.suggestion.sid } as CRWebsiteCommand;
-        Logger.log('createsuggestion', "Command:", command);
-        this.crOperations.handleCRProposalCommand(command, null);
+    signSuggestion() {
+        this.handleCommand("createsuggestion");
+    }
+
+    handleCommand(command: string) {
+        let crcommand = { command: command, data: this.suggestion, sid: this.suggestion.sid, isNotScan: true } as CRWebsiteCommand;
+        Logger.log('CRSuggestion', "Command:", crcommand);
+        void this.crOperations.handleCRProposalCommand(crcommand, null);
     }
 }

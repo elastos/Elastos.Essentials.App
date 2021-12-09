@@ -22,31 +22,32 @@
                             [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
                     </ion-col>
                     <ion-col *ngIf="item.active" class="details-col" size="12" [ngSwitch]="item.type">
-                        <div *ngSwitchCase="'html'" [innerHtml]="item.value"></div>
-                        <div *ngSwitchCase="'milestone'" class="milestone-container">
+                        <div *ngSwitchCase="'html'" class="item" [innerHtml]="item.value"></div>
+                        <div *ngSwitchCase="'milestone'" class="milestone-container item">
                             <div class="vertical-line-container">
                                 <div class="inner"></div>
                             </div>
                             <div class="content">
-                                <div *ngFor="let entry of item.value" class="entry">
-                                    <div class="marker"></div>
-                                    <ion-col size="2">{{entry.stage}}</ion-col>
-                                    <!-- <div class="number">{{entry.stage}}</div> -->
-                                    <ion-col size="8">
+                                <div *ngFor="let entry of item.value; last as isLast" class="entry">
+                                    <div class="dot"></div>
+                                    <div *ngIf="isLast" class="marker"></div>
+                                    <ion-col size="1" class="stage">{{entry.stage}}</ion-col>
+                                    <ion-col size="9">
                                         <ion-label>
-                                            <h5>{{uxService.formatDate(entry.timestamp) }}</h5>
-                                            <h5>{{entry.goal}}</h5>
+                                            <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp) }}
+                                            </h5>
+                                            <h5 class="milestone-goal">{{entry.goal}}</h5>
                                         </ion-label>
                                     </ion-col>
                                 </div>
                             </div>
                         </div>
-                        <div *ngSwitchCase="'budgets'" style="width:100%">
+                        <div *ngSwitchCase="'budgets'" class="budget-container item">
                             <ion-row>
                                 <ion-col size="12">
                                     <ion-label>
                                         <h5>{{'crproposalvoting.total-budget' | translate}} (ELA)</h5>
-                                        <h4>5000</h4>
+                                        <h4>{{ totalBudget }}</h4>
                                     </ion-label>
                                 </ion-col>
                             </ion-row>
@@ -54,7 +55,7 @@
                                 <ion-col size="12">
                                     <ion-label>
                                         <h5>{{'crproposalvoting.receive-address' | translate}}</h5>
-                                        <h4>ddagagagg</h4>
+                                        <h4>{{ suggestion.recipient }}</h4>
                                     </ion-label>
                                 </ion-col>
                             </ion-row>
@@ -62,36 +63,36 @@
                                 <ion-col size="12">
                                     <ion-label>
                                         <h5>{{'crproposalvoting.payment-schedule' | translate}}</h5>
+                                        <ul id="budget-list">
+                                            <li *ngFor="let entry of item.value; let i = index">
+                                                <div id="budget">
+                                                    <p><span class="number">{{ i }}</span> <span>{{ 'crproposalvoting.'+ entry.type | translate }}</span></p>
+                                                    <p class="amount">{{ "ELA " + entry.amount }} </p>
+                                                    <p class="stage">{{ "#Milestone" + entry.stage }} </p>
+                                                    <p class="payment-criteria">{{ entry.paymentCriteria }} </p>
+                                                </div>
+                                                <div class="space"></div>
+                                            </li>
+                                        </ul>
+                                    </ion-label>
+
+                                </ion-col>
+                            </ion-row>
+                        </div>
+                        <div *ngSwitchCase="'implementationTeam'" class="implementation-team item">
+                            <ion-row *ngFor="let entry of item.value">
+                                <ion-col size="1.25" id="img-col">
+                                    <img class="avatar"
+                                        [src]="entry.avatar ? entry.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
+                                </ion-col>
+                                <ion-col class="label-col" size="10.75">
+                                    <ion-label>
+                                        <h4 class="font-blod">{{ entry.member }} </h4>
+                                        <h5>{{ entry.role }} </h5>
+                                        <h5>{{ entry.responsibility }}</h5>
                                     </ion-label>
                                 </ion-col>
                             </ion-row>
-                            <ion-row>
-                                <div class="budget-container">
-                                    <div class="budget" *ngFor="let entry of item.value">
-                                        <p>{{ entry.type }} </p>
-                                        <p>{{ entry.stage }} </p>
-                                        <p>{{ entry.amount }} </p>
-                                        <p>{{ entry.paymentCriteria }} </p>
-                                    </div>
-                                </div>
-                            </ion-row>
-                        </div>
-                        <div *ngSwitchCase="'implementationTeam'">
-                            <ion-grid>
-                                <ion-row *ngFor="let entry of item.value">
-                                    <ion-col size="2.5" class="img-col">
-                                        <img
-                                            [src]="entry.avatar ? entry.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
-                                    </ion-col>
-                                    <ion-col class="label-col" size="9.5">
-                                        <ion-label>
-                                            <h4>{{ entry.member }} </h4>
-                                            <h4>{{ entry.role }} </h4>
-                                            <h4>{{ entry.responsibility }}</h4>
-                                        </ion-label>
-                                    </ion-col>
-                                </ion-row>
-                            </ion-grid>
                         </div>
                     </ion-col>
                 </ion-card>

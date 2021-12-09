@@ -1,74 +1,4 @@
-@import "src/app/voting/crproposalvoting/root.scss";
-
-.milestone-container {
-    display: flex;
-    align-items: stretch;
-}
-
-.vertical-line-container {
-    width: 20px;
-    display: flex;
-    justify-content: center;
-}
-
-.vertical-line-container .inner {
-    width: 2px;
-    background: #f9f586;
-}
-
-.content {
-    width: 100%;
-    padding-left: 10px;
-}
-
-.content .entry {
-    position: relative;
-    margin-bottom: 10px;
-    display: flex;
-}
-
-.content .entry .number {
-    font-weight: bold;
-    font-size: 14px;
-    margin-right: 5px;
-}
-
-.content .entry .marker {
-    width: 12px;
-    height: 12px;
-    border: solid 1px #96fbc4;
-    border-radius: 50%;
-    position: absolute;
-    left: -25px;
-    z-index: 10;
-}
-
-#budget-wrap {
-    display: flex;
-    overflow-x: scroll;
-    // justify-content: space-around;
-
-    div {
-        width: 200px;
-    }
-}
-.budget-container {
-    width: 100%;
-    height: 152px;
-    display: flex;
-    flex-wrap: wrap;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    white-space: nowrap;
-    flex-direction: column;
-
-    .budget {
-        padding: 5px;
-        height: 152px;
-        width: 237px;
-        background-color: #f6f6f6;
-    }
-}
+@import "src/app/voting/root.scss";
 
 ion-grid {
     padding: 0;
@@ -153,9 +83,9 @@ ion-grid {
         .details-col {
             padding-top: 0;
 
-            div,
-            pre {
-                margin: 10px 0;
+            .item {
+                margin: 0;
+                width: 100%;
                 font-weight: 400;
                 font-size: 12px;
                 white-space: pre-wrap;
@@ -166,6 +96,21 @@ ion-grid {
             .url:active {
                 color: #428cff;
             }
+        }
+
+        ion-label {
+            width: 100%;
+
+            h5 {
+                font-size: 12px;
+                display: block;
+            }
+
+            h4 {
+                font-size: 14px;
+                display: block;
+            }
+
         }
     }
 
@@ -217,6 +162,141 @@ ion-grid {
     }
 }
 
+.milestone-container {
+    display: flex;
+    align-items: stretch;
+    padding-top: 0px;
+
+    .vertical-line-container {
+        padding-top: 22px;
+        width: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .vertical-line-container .inner {
+        width: 2px;
+        background: #7ab400;
+    }
+
+    .content {
+        width: 100%;
+        padding-left: 10px;
+    }
+
+    .content .entry {
+        width: 100%;
+        position: relative;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .content .entry .dot {
+        margin-top: 10px;
+        width: 12px;
+        height: 12px;
+        border: solid 1px #7ab400;
+        border-radius: 50%;
+        background-color: white;
+        position: absolute;
+        left: -25px;
+        z-index: 10;
+    }
+
+    .content .entry .marker {
+        margin-top: 10px;
+        padding-top: 28px;
+        width: 10px;
+        height: 100%;
+        background-color: white;
+        position: absolute;
+        left: -25px;
+        z-index: 5;
+    }
+
+    .content .entry .stage {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .milestone-timestamp {
+        font-size: 14px;
+    }
+
+    .milestone-goal {
+        font-size: 12px;
+    }
+}
+
+.budget-container {
+    #budget-list {
+        padding: 0 0;
+        width: 100%;
+        height: 152px;
+        display: flex;
+        flex-wrap: wrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        flex-direction: column;
+        list-style: none;
+
+        #budget {
+            margin-top: 0;
+            padding: 10px 26px;
+            height: 152px;
+            width: 237px;
+            display: inline-block;
+
+            p {
+                font-size: 14px;
+                font-weight: normal;
+                margin-bottom: 4px;
+            }
+
+            .number {
+                margin-left: -16px;
+                display: inline-block;
+                width: 16px;
+                font-weight: bold;
+            }
+
+            .amount {
+                font-weight: bold;
+                margin-top: 8px;
+                margin-bottom: 8px;
+            }
+
+            .stage {
+                color: #7ab400;
+            }
+
+            .payment-criteria {
+                font-size: 12px;
+            }
+        }
+
+        .space {
+            width: 12px;
+            display: inline-block;
+        }
+    }
+}
+
+.implementation-team {
+    #img-col {
+        margin-top: 10px;
+        display: flex;
+        align-items: flex-start;
+
+        .avatar {
+            width: 24px;
+            height: 24px;
+        }
+    }
+}
+
 .darkContainer {
     ion-card {
         background: #212021;
@@ -252,6 +332,22 @@ ion-grid {
             }
         }
     }
+
+    .milestone-container {
+        .vertical-line-container .inner {
+            background: #F9F586;
+        }
+
+        .content .entry .dot {
+            border: solid 1px #96FBC4;
+            background-color: #212021;
+        }
+
+        .content .entry .marker {
+            background-color: #212021;
+        }
+    }
+
 }
 
 .invisible {

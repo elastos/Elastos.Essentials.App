@@ -24,7 +24,7 @@
                         <h1><span>#</span>{{ suggestion.id }}</h1>
                     </ion-col>
                     <ion-col size="8.5" class="middle-col">
-                        <h1>{{ suggestion.title }}</h1>
+                        <h1 class="title">{{ suggestion.title }}</h1>
                         <p class="date">{{ uxService.formatDate(suggestion.createdAt) }} &#8226; {{ suggestion.proposer }}
                         </p>
                         <p class="status" [class.proposed]="suggestion.status === 'proposed'"
