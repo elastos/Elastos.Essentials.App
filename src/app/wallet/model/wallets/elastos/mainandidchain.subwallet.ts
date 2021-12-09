@@ -12,7 +12,6 @@ import { BridgeProvider } from '../../earn/bridgeprovider';
 import { EarnProvider } from '../../earn/earnprovider';
 import { SwapProvider } from '../../earn/swapprovider';
 import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
-import { ElastosNetworkBase } from '../../networks/elastos/elastos.base.network';
 import { ElastosTransaction, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../providers/transaction.types';
 import { Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
 import { NetworkWallet } from '../networkwallet';
@@ -234,25 +233,10 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
                 return null;
         }
 
-        let version = 1;
-        // Remove it if block height > 1032840 (testnet:807000)
-        let blockHeight = await GlobalElastosAPIService.instance.getBlockCount(this.id as StandardCoinName);
-        let crossChainV2BlockHeight = await (this.networkWallet.network as ElastosNetworkBase).getcrossChainV2BlockHeight();
-        Logger.log('wallet', 'blockHeight:', blockHeight, ' crossChainV2BlockHeight:', crossChainV2BlockHeight)
-        if (blockHeight < crossChainV2BlockHeight - 5) {
-            version = 0;
-        } else if (blockHeight >= crossChainV2BlockHeight){
-            version = 1;
-        } else {
-            await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.blockchain-updating-prompt');
-            return null;
-        }
-        Logger.log('wallet', 'createDepositTransaction version:', version);
-
         return this.masterWallet.walletManager.spvBridge.createDepositTransaction(
             this.masterWallet.id,
             this.id,
-            version,
+            1,
             JSON.stringify(utxo),
             toSubWalletId,
             toAmount.toString(),
