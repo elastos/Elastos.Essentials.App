@@ -189,9 +189,9 @@ class WebViewHandler:  NSObject {
             configuration.ignoresViewportScaleLimits = options.enableviewportscale;
             if(options.mediaplaybackrequiresuseraction){
                 configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypes.all
-            }else{
+            }
+            else {
                 configuration.mediaTypesRequiringUserActionForPlayback = [];
-
             }
         }
         else{ // iOS 9

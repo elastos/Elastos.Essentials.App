@@ -38,7 +38,7 @@ class DappBrowserOptions: NSObject {
 
     @objc public var enableviewportscale = false;
     @objc public var mediaplaybackrequiresuseraction = false;
-    @objc public var allowinlinemediaplayback = false;
+    @objc public var allowinlinemediaplayback = true;
     @objc public var hidden = false;
     @objc public var disallowoverscroll = false;
     @objc public var hidenavigationbuttons = false;
@@ -57,7 +57,7 @@ class DappBrowserOptions: NSObject {
             let fields = Mirror(reflecting: obj).children
             for (key, value) in fields {
                 guard let key = key else { continue }
-                
+
                 if (json[key] != nil) {
                     if (value is Bool) {
                         obj.setValue(json[key] as! Bool, forKey: key);
