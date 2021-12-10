@@ -76,7 +76,7 @@ export class CreateProposalPage {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-proposal'));
         this.createProposalCommand = this.crOperations.onGoingCommand as CreateProposalCommand;
         this.suggestionId = this.createProposalCommand.sid;
-        this.proposaltype = this.createProposalCommand.data.type;
+        this.proposaltype = this.createProposalCommand.data.type || this.createProposalCommand.data.proposaltype;
 
         if (this.proposaltype == "normal") {
             for (let suggestionBudget of this.createProposalCommand.data.budgets) {
