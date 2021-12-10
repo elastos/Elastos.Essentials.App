@@ -1,14 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { CredImportIdentityIntentParams } from 'src/app/identity/model/identity.intents';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Network } from 'src/app/wallet/model/networks/network';
@@ -18,10 +23,11 @@ import { EditCustomNetworkIntentResult } from 'src/app/wallet/pages/settings/edi
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { BrowsedAppInfo } from '../model/browsedappinfo';
-import { StorageService } from './storage.service';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 declare let didManager: DIDPlugin.DIDManager;
+
+const MAX_RECENT_APPS = 3;
 
 export type DABMessage = {
     type: "message";
@@ -45,6 +51,15 @@ export type DABLoadStop = {
     url: string;
 }
 
+/**
+ * Mode used to run dapps. Depending on this mode, different things are done.
+ * Android normally uses the IN_APP mode while iOS uses EXTERNAL_BROWSER (in app forbidden by apple)
+ */
+enum DAppsBrowseMode {
+    IN_APP = 0,
+    EXTERNAL_BROWSER = 1
+}
+
 export interface DappBrowserClient {
     onExit: (mode?: string) => void;
     onLoadStart?: () => void;
@@ -60,7 +75,7 @@ export interface DappBrowserClient {
 @Injectable({
     providedIn: 'root'
 })
-export class DappBrowserService {
+export class DappBrowserService implements GlobalService {
     private userAddress: string = null;
     private web3ProviderCode: string = null;
     private elastosConnectorCode: string = null;
@@ -70,6 +85,7 @@ export class DappBrowserService {
     public title: string = null;
     public url: string;
     public activeBrowsedAppInfo = new BehaviorSubject<BrowsedAppInfo>(null); // Extracted info about a fetched dapp, after it's successfully loaded.
+    public recentApps = new BehaviorSubject<string[]>([]);
 
     private networkSubscription: Subscription = null;
     private walletSubscription: Subscription = null;
@@ -80,17 +96,39 @@ export class DappBrowserService {
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
         public zone: NgZone,
+        private platform: Platform,
+        private globalStorageService: GlobalStorageService,
         private walletNetworkService: WalletNetworkService,
         private walletService: WalletService,
-        private storageService: StorageService
+        private g: GlobalDIDSessionsService,
+        private globalIntentService: GlobalIntentService
     ) {
         void this.init();
     }
 
-    async init() {
-        // NOTE: Make sure to load everything before creating the browser, to be able to synchronously
-        // inject the code in the "loadstart" event. Otherwise, the target dapp code loads partially
-        // or fully before our injection and the web3 provider is sometimes not found.
+    public init() {
+        GlobalServiceManager.getInstance().registerService(this);
+    }
+
+    async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+        await this.loadRecentApps();
+        return;
+    }
+
+    onUserSignOut(): Promise<void> {
+        return;
+    }
+
+    public getBrowseMode(): DAppsBrowseMode {
+        // TMP TRUE
+        if (/* true ||  */this.platform.platforms().indexOf('ios') >= 0)
+            return DAppsBrowseMode.EXTERNAL_BROWSER;
+        else
+            return DAppsBrowseMode.IN_APP;
+    }
+
+    public canBrowseInApp(): boolean {
+        return this.getBrowseMode() === DAppsBrowseMode.IN_APP;
     }
 
     public setClient(dabClient: DappBrowserClient) {
@@ -99,6 +137,33 @@ export class DappBrowserService {
 
     public getActiveBrowsedAppInfo(): BrowsedAppInfo {
         return this.activeBrowsedAppInfo.value;
+    }
+
+    public async setActiveBrowsedAppInfoNetwork(networkKey: string) {
+        let appInfo = this.activeBrowsedAppInfo.value;
+        if (appInfo) {
+            appInfo.network = networkKey;
+            await this.saveBrowsedAppInfo(appInfo);
+        }
+    }
+
+    /**
+     * Opens a url either in the in-app browser, or in the external browser, depending on the current
+     * "browse mode". This allows opening apps inside essentials on android, and in the external browser
+     * on ios.
+     */
+    public openForBrowseMode(url: string, title?: string, target?: string): Promise<void> {
+        if (this.getBrowseMode() == DAppsBrowseMode.IN_APP) {
+            // We cano use the "standard" way to open dapps in app.
+            return this.open(url, title, target);
+        }
+        else {
+            void this.globalIntentService.sendIntent('openurl', { url });
+
+            // In external mode, while we open the app in the external browser, we also fetch its
+            // header here to get the title, icon, description and store it as recently browsed.
+            void this.backgroundFetchUrlInfo(url);
+        }
     }
 
     /**
@@ -177,7 +242,15 @@ export class DappBrowserService {
         }
 
         // Remember this application as browsed permanently.
-        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(this.url, "", "", ""));
+        let appInfo: BrowsedAppInfo = {
+            url: this.url,
+            title: "",
+            description: "",
+            iconUrl: "",
+            network: this.walletNetworkService.activeNetwork.value.key,
+            lastBrowsed: moment().unix()
+        }
+        this.activeBrowsedAppInfo.next(await this.saveBrowsedAppInfo(appInfo));
     }
 
     public async handleEvent(event: DappBrowserPlugin.DappBrowserEvent) {
@@ -241,7 +314,7 @@ export class DappBrowserService {
         }
     }
 
-    private sendActiveNetworkToDApp(activeNetwork: Network) {
+    private async sendActiveNetworkToDApp(activeNetwork: Network) {
         // Get the active network chain ID
         this.activeChainID = activeNetwork.getMainChainID();
 
@@ -255,6 +328,9 @@ export class DappBrowserService {
                 window.ethereum.setRPCApiEndpoint(${this.activeChainID}, '${this.rpcUrl}');
                 window.ethereum.setChainId(${this.activeChainID});
             `});
+
+        // Save new network to browsed app info
+        await this.setActiveBrowsedAppInfoNetwork(activeNetwork.key);
     }
 
     private async sendActiveWalletToDApp(networkWallet: NetworkWallet) {
@@ -275,13 +351,21 @@ export class DappBrowserService {
         this.url = event.url;
 
         // Remember this application as browsed permanently.
-        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(this.url, "", "", ""));
+        let appInfo: BrowsedAppInfo = {
+            url: this.url,
+            title: "",
+            description: "",
+            iconUrl: "",
+            lastBrowsed: moment().unix(),
+            network: this.getActiveNetworkKey()
+        }
+        this.activeBrowsedAppInfo.next(await this.saveBrowsedAppInfo(appInfo));
     }
 
     private handleLoadStopEvent(event: DABLoadStop): Promise<void> {
         if (!this.networkSubscription) {
             this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(activeNetwork => {
-                this.sendActiveNetworkToDApp(activeNetwork);
+                void this.sendActiveNetworkToDApp(activeNetwork);
             });
         }
 
@@ -294,9 +378,9 @@ export class DappBrowserService {
         return;
     }
 
-    private async handleHtmlHeader(event: DappBrowserPlugin.DappBrowserEvent): Promise<Document> {
+    private async extractHtmlInfoAndUpdatedBrowsedDApp(html: string, forUrl: string): Promise<Document> {
         let domParser = new DOMParser();
-        let htmlHeader = domParser.parseFromString(event.data, "text/html");
+        let htmlHeader = domParser.parseFromString(html, "text/html");
         //console.log("HEADER", event, htmlHeader, event.data);
 
         // Extract all the information we can, but mostly the app title, description and icon
@@ -331,7 +415,7 @@ export class DappBrowserService {
                 iconUrl = iconLink.getAttribute("href");
                 if (iconUrl) {
                     if (!iconUrl.startsWith("http")) { // Not an absolute url, so we have to concatenate the dapp url
-                        let url = new URL(this.url);
+                        let url = new URL(forUrl);
                         url.pathname = iconUrl;
                         // The icon URL of some websites is xxx.ico?r1, so url.toString() will be 'xxx.ico%3Fr1'
                         iconUrl = url.toString().replace(/%3F/g, "?");
@@ -339,22 +423,26 @@ export class DappBrowserService {
                 }
             }
         }
-        // Some websites have icon names with uppercase letters.
-        // if (iconUrl)
-        //     iconUrl = iconUrl.toLowerCase();
 
         Logger.log("dappbrowser", "Extracted website title:", title);
         Logger.log("dappbrowser", "Extracted website description:", description);
         Logger.log("dappbrowser", "Extracted website icon URL:", iconUrl);
 
         // Remember this application as browsed permanently.
-        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(
-            this.url,
+        this.activeBrowsedAppInfo.next(await this.saveBrowsedAppInfo({
+            url: forUrl,
             title,
             description,
-            iconUrl));
+            iconUrl,
+            lastBrowsed: moment().unix(),
+            network: this.getActiveNetworkKey()
+        }));
 
         return htmlHeader;
+    }
+
+    private handleHtmlHeader(event: DappBrowserPlugin.DappBrowserEvent): Promise<Document> {
+        return this.extractHtmlInfoAndUpdatedBrowsedDApp(event.data, this.url);
     }
 
     /**
@@ -698,5 +786,122 @@ export class DappBrowserService {
         void dappBrowser.executeScript({
             code: code
         });
+    }
+
+    private getActiveNetworkKey(): string {
+        return this.walletNetworkService.activeNetwork.value ? this.walletNetworkService.activeNetwork.value.key : null;
+    }
+
+    /**
+     * Consider we have enough info about an app when title and icon url are set.
+     */
+    private browsedAppInfoDataFilled(appInfo: BrowsedAppInfo): boolean {
+        if (!appInfo.title || !appInfo.iconUrl)
+            return false;
+
+        if (appInfo.title === "" || appInfo.iconUrl === "")
+            return false;
+
+        return true;
+    }
+
+    /**
+     * Saves information about a browsed dapp for later use (for example when adding to favorites)
+     */
+    public async saveBrowsedAppInfo(appInfo: BrowsedAppInfo): Promise<BrowsedAppInfo> {
+        let key = "appinfo-" + appInfo.url; // Use the url as access key
+        await this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", key, appInfo);
+
+        // Only add to recent apps if we have enough info so far
+        if (this.browsedAppInfoDataFilled(appInfo))
+            await this.addAppToRecent(appInfo.url);
+
+        return appInfo;
+    }
+
+    public async getBrowsedAppInfo(url: string): Promise<BrowsedAppInfo> {
+        let key = "appinfo-" + url; // Use the url as access key
+        let appInfo = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", key, null);
+        return appInfo;
+    }
+
+    /**
+     * Add a browsed url to recently browsed apps. The recents apps array is always sorted by most
+     * recent first.
+     */
+    private async addAppToRecent(url: string) {
+        let recentApps = this.recentApps.value;
+
+        // Remove this url from recents if already inside
+        let existingIndex = this.recentApps.value.findIndex(appUrl => appUrl === url);
+        if (existingIndex >= 0)
+            recentApps.splice(existingIndex, 1);
+
+        // Add to front of recents
+        recentApps.splice(0, 0, url);
+
+        // Remove old recents
+        recentApps = recentApps.slice(0, MAX_RECENT_APPS);
+
+        this.recentApps.next(recentApps);
+
+        await this.saveRecentApps();
+    }
+
+    private async saveRecentApps() {
+        await this.globalStorageService.setSetting<string[]>(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "recentapps", this.recentApps.value);
+    }
+
+    private async loadRecentApps() {
+        this.recentApps.next(await this.globalStorageService.getSetting<string[]>(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "recentapps", []));
+    }
+
+    public async getRecentAppsWithInfo(): Promise<BrowsedAppInfo[]> {
+        let appInfos: BrowsedAppInfo[] = [];
+        for (let appUrl of this.recentApps.value) {
+            let appInfo = await this.getBrowsedAppInfo(appUrl);
+            if (appInfo)
+                appInfos.push(appInfo);
+        }
+        return appInfos;
+    }
+
+    private async backgroundFetchUrlInfo(url: string): Promise<void> {
+        console.log("backgroundFetchUrlInfo", url);
+        try {
+            // Note: this "add" is actually a "set" listener.
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            dappBrowser.addEventListener(async event => {
+                if (event.type == "head") {
+                    await this.extractHtmlInfoAndUpdatedBrowsedDApp(event.data, url);
+                    await dappBrowser.close();
+                }
+                else if (event.type == "loaderror") {
+                    await dappBrowser.close();
+                }
+            });
+            await dappBrowser.open(url, "_webview", {
+                hidden: true
+            });
+
+            console.log("backgroundFetchUrlInfo after loadurl");
+        }
+        catch (e) {
+            Logger.warn("dappbrowser", `Failed to fetch background url info for url ${url}`, e);
+        }
+    }
+
+    /**
+     * Launch a recently browsed app. If the last network used while browing this dapp
+     * is not the active one, first toggle to the right network that users like to use with this
+     * dapp.
+     */
+    public async openRecentApp(recentApp: BrowsedAppInfo) {
+        if (recentApp.network && recentApp.network != this.getActiveNetworkKey()) {
+            let previousNetwork = this.walletNetworkService.getNetworkByKey(recentApp.network);
+            if (previousNetwork)
+                await this.walletNetworkService.setActiveNetwork(previousNetwork);
+        }
+        void this.openForBrowseMode(recentApp.url, recentApp.title);
     }
 }

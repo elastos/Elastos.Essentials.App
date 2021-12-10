@@ -9,6 +9,65 @@
             </ion-col>
         </ion-row>
 
+        <ion-row class="no-in-app-notice-row" *ngIf="!dappbrowserService.canBrowseInApp() && !noInAppNoticeDismissed">
+            <ion-col size="2" class="icon">
+                <img src="/assets/settings/icon/walletconnect.svg">
+            </ion-col>
+            <ion-col size="8.5" class="main">
+                <div class="heading">iOS user notice</div>
+                <div class="notice">
+                    Apple App Store guidelines forbid built-in browsers to access
+                    crypto-currency features. Browsing dApps will redirect
+                    you to your external browser.
+                </div>
+                <div class="notice">
+                    To connect the external browser
+                    to your wallet, please use <b>Wallet Connect</b>,
+                    and choose <b>Elastos Essentials</b>.
+                </div>
+            </ion-col>
+            <ion-col size="1.5" class="close">
+                <img (click)="dismissNoInAppNotice()"
+                    [src]="!theme.darkMode ? '/assets/browser/icons/icon-close.svg' : '/assets/browser/icons/dark_mode/icon-close.svg'">
+            </ion-col>
+        </ion-row>
+
+        <ion-row class="header-row fav-header" *ngIf="recentApps.length > 0">
+            <ion-col size="12">
+                <h2>Recent apps</h2>
+            </ion-col>
+        </ion-row>
+
+        <div *ngIf="recentApps.length > 0">
+            <ion-row *ngFor="let recentApp of recentApps" class="dapp-row ripple ion-activatable"
+                (click)="openRecent(recentApp)">
+                <ion-col class="left-col" size="2">
+                    <div class="icon-container">
+                        <img [src]="recentApp.iconUrl">
+                    </div>
+                </ion-col>
+                <ion-col class="middle-col" size="8">
+                    <ion-label>
+                        <div class="title">{{recentApp.title}}</div>
+                        <div class="description">{{recentApp.description}}</div>
+                    </ion-label>
+                </ion-col>
+
+                <ion-col class="right-col" size="2">
+                    <img class="next"
+                        [src]="!theme.darkMode ? '/assets/browser/icons/right-arrow.svg' : '/assets/browser/icons/dark_mode/right-arrow.svg'">
+
+                    <img *ngIf="!recentAppIsInFavorites(recentApp)"
+                        [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav-no-border.svg' : 'assets/browser/icons/dark_mode/icon-fav-no-border.svg'"
+                        (click)="toggleRecentAppFavorite($event, recentApp)" />
+                    <img *ngIf="recentAppIsInFavorites(recentApp)"
+                        [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav-no-border-active.svg' : 'assets/browser/icons/dark_mode/icon-fav-no-border-active.svg'"
+                        (click)="toggleRecentAppFavorite($event, recentApp)" />
+                </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-row>
+        </div>
+
         <ion-row class="header-row fav-header">
             <ion-col size="6">
                 <h2>{{ 'dappbrowser.favorites' | translate }}</h2>

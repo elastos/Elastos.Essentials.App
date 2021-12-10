@@ -66,6 +66,37 @@
         }
     }
 
+    .no-in-app-notice-row {
+        background-color: #fff;
+        padding: 5px;
+
+        .icon {
+            img {
+                width: 100%;
+            }
+        }
+
+        .main {
+            .heading {
+                font-weight: 600;
+                margin-bottom: 5px;
+            }
+            .notice {
+                margin-bottom: 5px;
+            }
+        }
+
+        .close {
+            justify-content: flex-end;
+            align-items: flex-start;
+            display: flex;
+
+            img {
+                width: 24px;
+            }
+        }
+    }
+
     .fav-header,
     .other-apps-header {
         margin-bottom: 15px;
@@ -155,6 +186,10 @@
         .network-col {
             color: #acacac;
         }
+    }
+
+    .no-in-app-notice-row {
+        background-color: #212021;
     }
 
     .dapp-row {

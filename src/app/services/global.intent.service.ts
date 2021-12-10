@@ -117,11 +117,15 @@ export class GlobalIntentService {
     // Can not show the data. Private data, confidential. eg. mnemonic.
     Logger.log("Intents", "Sending intent", action, parentIntentId);
 
-    this.intentJustCreated = {
-      status: "created",
-      parentIntentId
+    // Filter out special intent actions such as openurl, that will never get any answer as they
+    // are handled by the native code, not by essentials.
+    if (action === "openurl") {
+      this.intentJustCreated = {
+        status: "created",
+        parentIntentId
+      }
+      this.intentsQueue.push(this.intentJustCreated);
     }
-    this.intentsQueue.push(this.intentJustCreated);
 
     return essentialsIntentManager.sendIntent(action, params);
   }

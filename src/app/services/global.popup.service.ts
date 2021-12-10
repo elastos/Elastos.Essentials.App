@@ -156,8 +156,8 @@ export class GlobalPopupService {
     public ionicConfirm(
         title: string,
         message: string,
-        okText: string = "common.confirm",
-        cancelText: string = "common.cancel"
+        okText = "common.confirm",
+        cancelText = "common.cancel"
     ): Promise<any> {
         return new Promise((resolve, reject) => {
             this.alertPopup = null;

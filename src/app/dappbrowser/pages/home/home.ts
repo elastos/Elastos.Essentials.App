@@ -6,13 +6,16 @@ import { Subscription } from 'rxjs';
 import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { App } from 'src/app/model/app.enum';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
+import { BrowsedAppInfo } from '../../model/browsedappinfo';
 import { BrowserFavorite } from '../../model/favorite';
 import { DappBrowserService } from '../../services/dappbrowser.service';
 import { FavoritesService } from '../../services/favorites.service';
@@ -25,6 +28,7 @@ type DAppMenuEntry = {
     description: string;
     url: string;
     useExternalBrowser: boolean;
+    walletConnectSupported: boolean; // Whether the dapp supports wallet connect or not (needed for external navigation on ios for instance - otherwise we don't recommend)
     networks: string[]; // List of network keys in which this dapp can run. Empty list = available everywhere.
 }
 
@@ -39,10 +43,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     public dApps: DAppMenuEntry[] = [];
     public allDApps: DAppMenuEntry[] = [];
     public favorites: BrowserFavorite[] = [];
+    public recentApps: BrowsedAppInfo[] = [];
 
     public dabRunning = false;
+    public noInAppNoticeDismissed = true; // Whether user has previously dismissed the "ios / no in app browser" box or not.
+
     private favoritesSubscription: Subscription = null;
     private networkSubscription: Subscription = null;
+    private recentAppsSubscription: Subscription = null;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -55,6 +63,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         private platform: Platform,
         private globalStartupService: GlobalStartupService,
         private globalIntentService: GlobalIntentService,
+        private globalStorageService: GlobalStorageService,
         public dappbrowserService: DappBrowserService,
         public walletNetworkService: WalletNetworkService,
         private walletNetworkUIService: WalletNetworkUIService,
@@ -64,165 +73,179 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     }
 
     initDapps() {
-        // Only add builtin dapps for Android.
-        if (this.platform.platforms().indexOf('android') >= 0) {
-            this.allDApps = [
-                {
-                    icon: '/assets/browser/dapps/feeds.png',
-                    title: 'Feeds',
-                    description: 'Feeds is a decentralized social platform where users remain in full control of their data.',
-                    url: 'https://feeds.trinity-feeds.app/nav/?page=home',
-                    useExternalBrowser: true,
-                    networks: ["elastos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/glidefinance.png',
-                    title: 'Glide Finance',
-                    description: 'Elastos ecosystem decentralized exchange',
-                    url: 'https://glidefinance.io/',
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/kycme.png',
-                    title: 'KYC-me',
-                    description: 'Get DID credentials from your real identity here, to get access to more dApps such as ELAB.',
-                    url: 'https://kyc-me.io?theme=' + (this.theme.darkMode ? "dark" : "light"),
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/cyberrepublic.svg',
-                    title: 'Cyber Republic',
-                    description: 'Cyber Republic (CR) is the community that has naturally formed around Elastos.',
-                    url: 'https://www.cyberrepublic.org/',
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/anyswap.svg',
-                    title: 'AnySwap',
-                    description: 'Anyswap is a fully decentralized cross chain swap protocol, based on Fusion DCRM technology, with automated pricing and liquidity system.',
-                    url: 'https://anyswap.exchange/',
-                    useExternalBrowser: false,
-                    networks: ["arbitrum", "avalanchecchain", "bsc", "eth", "heco", "fusion", "fantom", "polygon", "telos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/creda.png',
-                    title: 'CreDA',
-                    description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
-                    url: 'https://creda.app/',
-                    useExternalBrowser: false,
-                    networks: ["arbitrum"]
-                },
-                {
-                    icon: '/assets/browser/dapps/elk.svg',
-                    title: 'ElkDex by ElkFinance',
-                    description: 'Elk Finance is a decentralized network for cross-chain liquidity. The Elk ecosystem introduces a seamless process for anyone exchanging cryptocurrencies. Our motto is Any chain, anytime, anywhere.™',
-                    url: 'https://app.elk.finance/',
-                    useExternalBrowser: false,
-                    networks: ["elastos", "heco", "bsc", "avalanchecchain", "fantom", "polygon", "telos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/filda.png',
-                    title: 'FilDA',
-                    description: 'HECO-based lending and borrowing, with ELA support',
-                    url: 'https://app.filda.io/',
-                    useExternalBrowser: false,
-                    networks: ["heco", "bsc"]
-                },
-                {
-                    icon: '/assets/browser/dapps/idriss.png',
-                    title: 'Idriss Crypto Transactions',
-                    description: ' Link wallet addresses from multiple networks to your email or phone number, enabling quick-lookup & seamless payments.(registry on BSC).',
-                    url: 'https://www.idriss-crypto.com/',
-                    useExternalBrowser: false,
-                    networks: ["elastos", "bsc"]
-                },
-                /* {
-                    icon: '/assets/browser/dapps/profile.png',
-                    title: 'Profile',
-                    description: 'A better way to be online using Elastos DID',
-                    url: 'https://profile.site/',
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
-                }, */
-                {
-                    icon: '/assets/browser/dapps/mdex.png',
-                    title: 'Mdex',
-                    description: 'An AMM-based decentralized transaction protocol that integrates DEX, IMO & DAO',
-                    url: 'https://ht.mdex.co/',
-                    useExternalBrowser: false,
-                    networks: ["heco"]
-                },
-                {
-                    icon: '/assets/browser/dapps/mdex.png',
-                    title: 'Mdex',
-                    description: 'An AMM-based decentralized transaction protocol that integrates DEX, IMO & DAO',
-                    url: 'https://bsc.mdex.co/',
-                    useExternalBrowser: false,
-                    networks: ["bsc"]
-                },
-                {
-                    icon: '/assets/browser/dapps/raven.png',
-                    title: 'Moe Raven',
-                    description: 'The magical matic yield optimizer',
-                    url: 'https://raven.moe/',
-                    useExternalBrowser: false,
-                    networks: ["elastos", "polygon"]
-                },
-                {
-                    icon: '/assets/browser/dapps/tokbridge.svg',
-                    title: 'Shadow Tokens',
-                    description: 'Bridge assets between Elastos and other chains',
-                    url: 'https://tokbridge.net/',
-                    useExternalBrowser: false,
-                    networks: ["elastos", "heco", "bsc", "ethereum"]
-                },
-                {
-                    icon: '/assets/browser/dapps/tokswap.png',
-                    title: 'TokSwap',
-                    description: 'Swap your tokens on the Elastos blockchain',
-                    url: 'https://tokswap.net/',
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/tin.jpg',
-                    title: 'Tin.network',
-                    description: 'Manage your DeFi assets and liabilities in one simple interface',
-                    url: 'https://tin.network/',
-                    useExternalBrowser: false,
-                    networks: []
-                },
-                {
-                    icon: '/assets/browser/dapps/cryptoname.png',
-                    title: 'Cryptoname',
-                    description: 'CryptoName is your passport to the crypto world',
-                    url: 'https://cryptoname.org/',
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/sushiswap.png',
-                    title: 'Sushiswap',
-                    description: 'Be a DeFi Chef with Sushi. Swap, earn, stack yields, lend, borrow ...',
-                    url: 'https://app.sushi.com/',
-                    useExternalBrowser: false,
-                    networks: ["ethereum", "fantom", "bsc", "polygon", "telos"]
-                },
-            ];
-        } else {
-            this.allDApps = [];
-        }
+        this.allDApps = [
+            {
+                icon: '/assets/browser/dapps/feeds.png',
+                title: 'Feeds',
+                description: 'Feeds is a decentralized social platform where users remain in full control of their data.',
+                url: 'https://feeds.trinity-feeds.app/nav/?page=home',
+                useExternalBrowser: true,
+                walletConnectSupported: true,
+                networks: ["elastos"]
+            },
+            {
+                icon: '/assets/browser/dapps/glidefinance.png',
+                title: 'Glide Finance',
+                description: 'Elastos ecosystem decentralized exchange',
+                url: 'https://glidefinance.io/',
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["elastos"]
+            },
+            {
+                icon: '/assets/browser/dapps/kycme.png',
+                title: 'KYC-me',
+                description: 'Get DID credentials from your real identity here, to get access to more dApps such as ELAB.',
+                url: 'https://kyc-me.io?theme=' + (this.theme.darkMode ? "dark" : "light"),
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["elastos"]
+            },
+            {
+                icon: '/assets/browser/dapps/cyberrepublic.svg',
+                title: 'Cyber Republic',
+                description: 'Cyber Republic (CR) is the community that has naturally formed around Elastos.',
+                url: 'https://www.cyberrepublic.org/',
+                useExternalBrowser: false,
+                walletConnectSupported: true, // Not really, but we can open on ios, as this is a non web3 dapps
+                networks: ["elastos"]
+            },
+            {
+                icon: '/assets/browser/dapps/anyswap.svg',
+                title: 'AnySwap',
+                description: 'Anyswap is a fully decentralized cross chain swap protocol, based on Fusion DCRM technology, with automated pricing and liquidity system.',
+                url: 'https://anyswap.exchange/',
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["arbitrum", "avalanchecchain", "bsc", "eth", "heco", "fusion", "fantom", "polygon", "telos"]
+            },
+            {
+                icon: '/assets/browser/dapps/creda.png',
+                title: 'CreDA',
+                description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
+                url: 'https://creda.app/',
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["arbitrum"]
+            },
+            {
+                icon: '/assets/browser/dapps/elk.svg',
+                title: 'ElkDex by ElkFinance',
+                description: 'Elk Finance is a decentralized network for cross-chain liquidity. The Elk ecosystem introduces a seamless process for anyone exchanging cryptocurrencies. Our motto is Any chain, anytime, anywhere.™',
+                url: 'https://app.elk.finance/',
+                useExternalBrowser: false,
+                walletConnectSupported: false,
+                networks: ["elastos", "heco", "bsc", "avalanchecchain", "fantom", "polygon", "telos"]
+            },
+            {
+                icon: '/assets/browser/dapps/filda.png',
+                title: 'FilDA',
+                description: 'HECO-based lending and borrowing, with ELA support',
+                url: 'https://app.filda.io/',
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["heco", "bsc"]
+            },
+            {
+                icon: '/assets/browser/dapps/idriss.png',
+                title: 'Idriss Crypto Transactions',
+                description: ' Link wallet addresses from multiple networks to your email or phone number, enabling quick-lookup & seamless payments.(registry on BSC).',
+                url: 'https://www.idriss-crypto.com/',
+                useExternalBrowser: false,
+                walletConnectSupported: false,
+                networks: ["elastos", "bsc"]
+            },
+            /* {
+                icon: '/assets/browser/dapps/profile.png',
+                title: 'Profile',
+                description: 'A better way to be online using Elastos DID',
+                url: 'https://profile.site/',
+                useExternalBrowser: false,
+                networks: ["elastos"]
+            }, */
+            {
+                icon: '/assets/browser/dapps/mdex.png',
+                title: 'Mdex',
+                description: 'An AMM-based decentralized transaction protocol that integrates DEX, IMO & DAO',
+                url: 'https://ht.mdex.co/',
+                useExternalBrowser: false,
+                walletConnectSupported: false,
+                networks: ["heco"]
+            },
+            {
+                icon: '/assets/browser/dapps/mdex.png',
+                title: 'Mdex',
+                description: 'An AMM-based decentralized transaction protocol that integrates DEX, IMO & DAO',
+                url: 'https://bsc.mdex.co/',
+                useExternalBrowser: false,
+                walletConnectSupported: false,
+                networks: ["bsc"]
+            },
+            {
+                icon: '/assets/browser/dapps/raven.png',
+                title: 'Moe Raven',
+                description: 'The magical matic yield optimizer',
+                url: 'https://raven.moe/',
+                useExternalBrowser: false,
+                walletConnectSupported: false,
+                networks: ["elastos", "polygon"]
+            },
+            {
+                icon: '/assets/browser/dapps/tokbridge.svg',
+                title: 'Shadow Tokens',
+                description: 'Bridge assets between Elastos and other chains',
+                url: 'https://tokbridge.net/',
+                useExternalBrowser: false,
+                walletConnectSupported: false, // Seems to be supported on the website but not working
+                networks: ["elastos", "heco", "bsc", "ethereum"]
+            },
+            {
+                icon: '/assets/browser/dapps/tokswap.png',
+                title: 'TokSwap',
+                description: 'Swap your tokens on the Elastos blockchain',
+                url: 'https://tokswap.net/',
+                useExternalBrowser: false,
+                walletConnectSupported: false,
+                networks: ["elastos"]
+            },
+            {
+                icon: '/assets/browser/dapps/tin.jpg',
+                title: 'Tin.network',
+                description: 'Manage your DeFi assets and liabilities in one simple interface',
+                url: 'https://tin.network/',
+                useExternalBrowser: false,
+                walletConnectSupported: true, // Not really, but not needed
+                networks: []
+            },
+            {
+                icon: '/assets/browser/dapps/cryptoname.png',
+                title: 'Cryptoname',
+                description: 'CryptoName is your passport to the crypto world',
+                url: 'https://cryptoname.org/',
+                useExternalBrowser: false,
+                walletConnectSupported: false,
+                networks: ["elastos"]
+            },
+            {
+                icon: '/assets/browser/dapps/sushiswap.png',
+                title: 'Sushiswap',
+                description: 'Be a DeFi Chef with Sushi. Swap, earn, stack yields, lend, borrow ...',
+                url: 'https://app.sushi.com/',
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["ethereum", "fantom", "bsc", "polygon", "telos"]
+            },
+        ];
 
         this.buildFilteredDApps();
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.setTheme(this.theme.darkMode);
         this.titleBar.setBrowserMode(false);
         this.titleBar.setCloseMode(false);
+
+        await this.checkNoInAppNoticeStatus();
 
         this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
             this.buildFilteredFavorites();
@@ -235,11 +258,18 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             this.buildFilteredDApps();
             this.buildFilteredDAppsWithFavorites();
         });
+
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.recentAppsSubscription = this.dappbrowserService.recentApps.subscribe(async recentApps => {
+            this.recentApps = await this.dappbrowserService.getRecentAppsWithInfo();
+            console.log("recent apps", this.recentApps);
+        });
     }
 
     ionViewWillLeave() {
         this.favoritesSubscription.unsubscribe();
         this.networkSubscription.unsubscribe();
+        this.recentAppsSubscription.unsubscribe();
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
@@ -253,9 +283,6 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     }
 
     ionViewDidEnter() {
-        //On _blank mode, after hide for menu.
-        void dappBrowser.show();
-
         this.globalStartupService.setStartupScreenReady();
 
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
@@ -282,8 +309,13 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     }
 
     private buildFilteredDApps() {
-        this.dApps = this.allDApps.filter(a => {
-            return a.networks.length == 0 || a.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
+        this.dApps = this.allDApps.filter(app => {
+            // If we need to run apps externally, but WC is not connected by apps, we don't show them.
+            if (!this.dappbrowserService.canBrowseInApp() && !app.walletConnectSupported)
+                return false;
+
+            // Show active network only
+            return app.networks.length == 0 || app.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
         });
     }
 
@@ -348,7 +380,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         //     this.dappbrowserService.setClient(this);
         //     this.dabRunning = true;
         // }
-        void this.dappbrowserService.open(url, title);
+        void this.dappbrowserService.openForBrowseMode(url, title);
     }
 
     private openWithExternalBrowser(url: string) {
@@ -370,9 +402,8 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         });
     }
 
-    onMenu() {
-        dappBrowser.hide();
-        void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
+    public openRecent(recentApp: BrowsedAppInfo) {
+        void this.dappbrowserService.openRecentApp(recentApp);
     }
 
     public getShortFavoriteDescription(favorite: BrowserFavorite): string {
@@ -402,5 +433,32 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             return this.walletNetworkService.activeNetwork.value.name;
         else
             return "";
+    }
+
+    public recentAppIsInFavorites(recentApp: BrowsedAppInfo): boolean {
+        return this.favoritesService.urlInFavorites(recentApp.url);
+    }
+
+    /**
+     * Adds or removes a favorite based on a recent app info.
+     */
+    public async toggleRecentAppFavorite(event, recentApp: BrowsedAppInfo) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let favorite = this.favoritesService.findFavoriteByUrl(recentApp.url);
+        if (favorite)
+            await this.favoritesService.removeFromFavorites(favorite);
+        else
+            await this.favoritesService.addToFavorites(recentApp);
+    }
+
+    private async checkNoInAppNoticeStatus(): Promise<void> {
+        this.noInAppNoticeDismissed = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "noinappnoticedismissed", false);
+    }
+
+    public dismissNoInAppNotice() {
+        this.noInAppNoticeDismissed = true;
+        this.noInAppNoticeDismissed = void this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "noinappnoticedismissed", true);
     }
 }

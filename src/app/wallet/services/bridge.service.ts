@@ -99,6 +99,6 @@ export class BridgeService {
         // Use the swap url (more accurate), if any, otherwise the default project url
         let targetUrl = provider.bridgeUrl || provider.baseProvider.projectUrl;
 
-        void this.dappbrowserService.open(targetUrl, provider.baseProvider.name);
+        void this.dappbrowserService.openForBrowseMode(targetUrl, provider.baseProvider.name);
     }
 }

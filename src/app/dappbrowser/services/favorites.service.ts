@@ -86,8 +86,12 @@ export class FavoritesService {
             "dappbrowser", "favorites", this.favoritesSubject.value);
     }
 
-    public findFavoriteByUrl(url: string) {
+    public findFavoriteByUrl(url: string): BrowserFavorite {
         return this.favoritesSubject.value.find(f => f.url === url);
+    }
+
+    public urlInFavorites(url: string): boolean {
+        return !!this.findFavoriteByUrl(url);
     }
 
     /**

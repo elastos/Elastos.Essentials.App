@@ -11,7 +11,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
 import { DappBrowserClient, DappBrowserService } from '../../services/dappbrowser.service';
-import { StorageService } from '../../services/storage.service';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
@@ -37,7 +36,6 @@ export class BrowserPage implements DappBrowserClient {
         public keyboard: Keyboard,
         private platform: Platform,
         public dappbrowserService: DappBrowserService,
-        private storageService: StorageService,
         private walletNetworkUIService: WalletNetworkUIService
     ) {
     }

@@ -60,7 +60,7 @@ export class EditFavoritePage {
     }
 
     ionViewWillLeave() {
-      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     async goback() {

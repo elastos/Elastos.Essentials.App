@@ -119,7 +119,7 @@ export class SwapService {
         targetUrl = targetUrl.replace("${inputCurrency}", inputCurrency);
         targetUrl = targetUrl.replace("${theme}", this.theme.darkMode ? "dark" : "light");
 
-        void this.dappbrowserService.open(targetUrl, provider.baseProvider.name);
+        void this.dappbrowserService.openForBrowseMode(targetUrl, provider.baseProvider.name);
     }
 
     /**

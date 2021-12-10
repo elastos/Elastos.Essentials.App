@@ -57,7 +57,7 @@ export class EarnService {
 
     constructor(
         public dappbrowserService: DappBrowserService,
-        ) {
+    ) {
 
         EarnService.instance = this;
     }
@@ -101,6 +101,6 @@ export class EarnService {
         // Use the staking url (more accurate), if any, otherwise the default project url
         let targetUrl = provider.depositUrl || provider.baseProvider.projectUrl;
 
-        void this.dappbrowserService.open(targetUrl, provider.baseProvider.name);
+        void this.dappbrowserService.openForBrowseMode(targetUrl, provider.baseProvider.name);
     }
 }
