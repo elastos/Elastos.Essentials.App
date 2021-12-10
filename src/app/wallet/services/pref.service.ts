@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalNetworksService, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { Config } from '../config/Config';
 
 @Injectable({
@@ -9,7 +9,7 @@ import { Config } from '../config/Config';
 })
 export class WalletPrefsService {
   public activeNetworkTemplate: string;
-  public mnemonicLang = 'english';
+  public mnemonicLang = WalletPlugin.MnemonicLanguage.English;
   private subscription: Subscription = null;
   private languageSubscription: Subscription = null;
 
@@ -63,11 +63,13 @@ export class WalletPrefsService {
 
   private setMnemonicLangByLanguage(lang) {
     if (lang === 'zh') {
-      this.setMnemonicLang("chinese");
+      this.setMnemonicLang(WalletPlugin.MnemonicLanguage.ChineseSimplified);
     } else if (lang === 'fr') {
-      this.setMnemonicLang("french");
+      this.setMnemonicLang(WalletPlugin.MnemonicLanguage.French);
+    } else if (lang === 'it') {
+      this.setMnemonicLang(WalletPlugin.MnemonicLanguage.Italian);
     } else {
-      this.setMnemonicLang("english");
+      this.setMnemonicLang(WalletPlugin.MnemonicLanguage.English);
     }
   }
 

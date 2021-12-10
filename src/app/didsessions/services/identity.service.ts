@@ -637,6 +637,8 @@ export class IdentityService {
         this.setMnemonicLang("CHINESE_SIMPLIFIED");
       } else if (lang === 'fr') {
           this.setMnemonicLang("FRENCH");
+      } else if (lang === 'it') {
+        this.setMnemonicLang("ITALIAN");
       } else {
           this.setMnemonicLang("ENGLISH");
       }
