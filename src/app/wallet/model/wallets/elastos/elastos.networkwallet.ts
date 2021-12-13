@@ -1,4 +1,3 @@
-import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { StandardCoinName } from "../../coin";
@@ -29,13 +28,13 @@ export class ElastosNetworkWallet extends NetworkWallet {
   protected async prepareStandardSubWallets(): Promise<void> {
     this.mainTokenSubWallet = new EscSubWallet(this);
 
-    Logger.log("wallet", "Registering Elastos standard subwallets to the SPVSDK");
+    //Logger.log("wallet", "Registering Elastos standard subwallets to the SPVSDK");
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.IDChain);
     // await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHDID);
 
-    Logger.log("wallet", "Creating Elastos standard subwallets");
+    //Logger.log("wallet", "Creating Elastos standard subwallets");
     this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this);
     this.subWallets[StandardCoinName.IDChain] = new IDChainSubWallet(this);
     // this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
@@ -54,10 +53,10 @@ export class ElastosNetworkWallet extends NetworkWallet {
       await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
       this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
     } else {
-        this.mainTokenSubWallet = this.subWallets[StandardCoinName.ETHDID] as ElastosEVMSubWallet;
+      this.mainTokenSubWallet = this.subWallets[StandardCoinName.ETHDID] as ElastosEVMSubWallet;
     }
 
-    Logger.log("wallet", "Elastos standard subwallets preparation completed");
+    //Logger.log("wallet", "Elastos standard subwallets preparation completed");
   }
 
   public getMainEvmSubWallet(): StandardEVMSubWallet {

@@ -275,7 +275,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createSubWallet([masterWalletId, subWalletId],
                 (ret) => {
-                    Logger.log("wallet", "Created subwallet in SPVSDK, wallet ID:", masterWalletId, "Chain code:", subWalletId);
+                    //Logger.log("wallet", "Created subwallet in SPVSDK, wallet ID:", masterWalletId, "Chain code:", subWalletId);
                     resolve(ret);
                 },
                 (err) => { void this.handleError("createSubWallet", err, reject); });

@@ -193,7 +193,7 @@ export class WalletService {
             for (let i = 0; i < idList.length; i++) {
                 const masterId = idList[i];
 
-                Logger.log('wallet', "Rebuilding local model for wallet id " + masterId);
+                //Logger.log('wallet', "Rebuilding local model for wallet id " + masterId);
 
                 // Try to retrieve locally storage extended info about this wallet
                 if (!(await MasterWallet.extendedInfoExistsForMasterId(masterId))) {
@@ -202,7 +202,7 @@ export class WalletService {
                     continue;
                 }
                 else {
-                    Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId);
+                    //Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId);
 
                     // Create a model instance for each master wallet returned by the SPV SDK.
                     this.masterWallets[masterId] = new MasterWallet(this, this.erc721Service, this.erc1155Service, this.localStorage, masterId, false);
@@ -468,7 +468,7 @@ export class WalletService {
     /**
      * Creates a new master wallet both in the SPV SDK and in our local model, using a given priv key.
      */
-     public async importWalletWithPrivKey(
+    public async importWalletWithPrivKey(
         masterId: WalletID,
         walletName: string,
         privKey: string,

@@ -27,7 +27,7 @@ import { BrowsedAppInfo } from '../model/browsedappinfo';
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 declare let didManager: DIDPlugin.DIDManager;
 
-const MAX_RECENT_APPS = 3;
+const MAX_RECENT_APPS = 10;
 
 export type DABMessage = {
     type: "message";
@@ -914,5 +914,10 @@ export class DappBrowserService implements GlobalService {
                 await this.walletNetworkService.setActiveNetwork(previousNetwork);
         }
         void this.openForBrowseMode(recentApp.url, recentApp.title);
+    }
+
+    public async clearRecentApps(): Promise<void> {
+        this.recentApps.next([]);
+        await this.saveRecentApps();
     }
 }

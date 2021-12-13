@@ -34,15 +34,15 @@ export class DAppService {
         Logger.log("developertools", "Loading local dapps list");
 
         let dappsJson = await this.storage.getSetting<any[]>(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", null);
-        Logger.log("developertools", "Loaded dapps json:", dappsJson);
+        //Logger.log("developertools", "Loaded dapps json:", dappsJson);
         this.dapps = [];
         if (dappsJson) {
             for (let dappJson of dappsJson) {
-                Logger.log("developertools", "Adding Dapp from json:", dappJson);
+                //Logger.log("developertools", "Adding Dapp from json:", dappJson);
                 this.dapps.push(StorageDApp.fromJson(dappJson))
             }
         }
-        Logger.log("developertools", "Loaded dapps after conversion:", this.dapps);
+        //Logger.log("developertools", "Loaded dapps after conversion:", this.dapps);
     }
 
     public getDApps(): StorageDApp[] {

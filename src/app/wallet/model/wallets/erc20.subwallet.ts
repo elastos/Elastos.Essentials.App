@@ -38,7 +38,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public static async newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): Promise<ERC20SubWallet> {
-        Logger.log('wallet', "Initializing ERC20 subwallet from serialized sub wallet", serializedSubWallet);
+        //Logger.log('wallet', "Initializing ERC20 subwallet from serialized sub wallet", serializedSubWallet);
         if (!serializedSubWallet.id) {
             Logger.error('wallet', 'newFromSerializedSubWallet id is null');
             return null;
@@ -243,7 +243,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public async updateBalance() {
-        Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
+        //Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
         if (!this.tokenDecimals) {
             Logger.error("wallet", "Token decimals unknown for token " + this.coin.getID());
             return;
@@ -259,7 +259,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             if (rawBalance) {
                 this.balance = new BigNumber(rawBalance);
                 await this.saveBalanceToCache();
-                Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.getRawBalance().toString());
+                //Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.getRawBalance().toString());
             }
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.coin.getName(), this.id, ') updateBalance error:', error);

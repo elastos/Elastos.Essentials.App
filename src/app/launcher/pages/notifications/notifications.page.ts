@@ -14,8 +14,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import {
-    LauncherNotification,
-    LauncherNotificationType, NotificationManagerService
+  LauncherNotification,
+  LauncherNotificationType, NotificationManagerService
 } from '../../services/notificationmanager.service';
 import { TipsService } from '../../services/tips.service';
 
@@ -57,12 +57,12 @@ export class NotificationsPage implements OnInit {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setTitle(this.translate.instant('launcher.notifications'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.NOTIFICATIONS });
+    //this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.NOTIFICATIONS });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       void this.closeNotificationPage();
     });
 
-    if(this.theme.darkMode) {
+    if (this.theme.darkMode) {
       this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
     } else {
       this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
@@ -166,7 +166,7 @@ export class NotificationsPage implements OnInit {
       }
     } else if (notification.type === LauncherNotificationType.CONTACT) {
       if (notification.contactAvatar && Object.keys(notification.contactAvatar).length !== 0) {
-        return 'data:'+notification.contactAvatar.contentType+';base64,'+notification.contactAvatar.base64ImageData;
+        return 'data:' + notification.contactAvatar.contentType + ';base64,' + notification.contactAvatar.base64ImageData;
       } else {
         return "assets/launcher/icons/contact.png";
       }

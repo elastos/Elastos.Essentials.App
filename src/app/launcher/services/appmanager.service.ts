@@ -133,11 +133,11 @@ export class AppmanagerService {
 
     private initAppsList() {
         this.runnableApps = [
-            {
+            /* {
                 type: 'launcher.main',
                 shouldBeDisplayed: () => true,
                 apps: [
-                    /* {
+                    {
                         id: 'wallet',
                         name: this.translate.instant('launcher.app-wallet'),
                         routerContext: App.WALLET,
@@ -146,7 +146,7 @@ export class AppmanagerService {
                         hasWidget: true,
                         // routerPath: '/wallet/wallet-home'
                         startCall: () => this.walletInitService.start()
-                    }, */
+                    },
                     {
                         id: 'browser',
                         routerContext: App.DAPP_BROWSER,
@@ -166,50 +166,8 @@ export class AppmanagerService {
                         hasWidget: false,
                         // routerPath: '/identity/credaccessrequest'
                     },
-                    {
-                        id: 'contacts',
-                        routerContext: App.CONTACTS,
-                        name: this.translate.instant('launcher.app-contacts'),
-                        description: this.translate.instant('launcher.app-contacts-description'),
-                        icon: '/assets/launcher/apps/app-icons/contacts.svg',
-                        hasWidget: false,
-                        startCall: () => this.contactsInitService.start()
-                    }
                 ]
-            },
-            {
-                type: 'launcher.utilities',
-                shouldBeDisplayed: () => true,
-                apps: [
-                    {
-                        id: 'scanner',
-                        routerContext: App.SCANNER,
-                        name: this.translate.instant('launcher.app-scanner'),
-                        description: this.translate.instant('launcher.app-scanner-description'),
-                        icon: '/assets/launcher/apps/app-icons/scanner.svg',
-                        hasWidget: false,
-                        routerPath: '/scanner/scan'
-                    },
-                    {
-                        id: 'settings',
-                        routerContext: App.SETTINGS,
-                        name: this.translate.instant('launcher.app-settings'),
-                        description: this.translate.instant('launcher.app-settings-description'),
-                        icon: '/assets/launcher/apps/app-icons/settings.svg',
-                        hasWidget: false,
-                        routerPath: '/settings/menu'
-                    },
-                    {
-                        id: 'hive',
-                        routerContext: App.HIVE_MANAGER,
-                        name: this.translate.instant('launcher.app-hive'),
-                        description: this.translate.instant('launcher.app-hive-description'),
-                        icon: '/assets/launcher/apps/app-icons/hive.svg',
-                        hasWidget: true,
-                        startCall: () => this.hiveManagerInitService.start()
-                    },
-                ]
-            },
+            }, */
             {
                 type: 'launcher.elastos-voting',
                 shouldBeDisplayed: () => this.walletNetworkService.isActiveNetworkElastos(),
@@ -252,6 +210,48 @@ export class AppmanagerService {
                         iconDark: '/assets/launcher/apps/app-icons/suggestion_dark.svg',
                         hasWidget: false,
                         routerPath: '/crproposalvoting/suggestions/all'
+                    },
+                ]
+            },
+            {
+                type: 'launcher.utilities',
+                shouldBeDisplayed: () => true,
+                apps: [
+                    /* {
+                        id: 'scanner',
+                        routerContext: App.SCANNER,
+                        name: this.translate.instant('launcher.app-scanner'),
+                        description: this.translate.instant('launcher.app-scanner-description'),
+                        icon: '/assets/launcher/apps/app-icons/scanner.svg',
+                        hasWidget: false,
+                        routerPath: '/scanner/scan'
+                    }, */
+                    /* {
+                        id: 'settings',
+                        routerContext: App.SETTINGS,
+                        name: this.translate.instant('launcher.app-settings'),
+                        description: this.translate.instant('launcher.app-settings-description'),
+                        icon: '/assets/launcher/apps/app-icons/settings.svg',
+                        hasWidget: false,
+                        routerPath: '/settings/menu'
+                    }, */
+                    {
+                        id: 'contacts',
+                        routerContext: App.CONTACTS,
+                        name: this.translate.instant('launcher.app-contacts'),
+                        description: this.translate.instant('launcher.app-contacts-description'),
+                        icon: '/assets/launcher/apps/app-icons/contacts.svg',
+                        hasWidget: false,
+                        startCall: () => this.contactsInitService.start()
+                    },
+                    {
+                        id: 'hive',
+                        routerContext: App.HIVE_MANAGER,
+                        name: this.translate.instant('launcher.app-hive'),
+                        description: this.translate.instant('launcher.app-hive-description'),
+                        icon: '/assets/launcher/apps/app-icons/hive.svg',
+                        hasWidget: true,
+                        startCall: () => this.hiveManagerInitService.start()
                     },
                 ]
             }

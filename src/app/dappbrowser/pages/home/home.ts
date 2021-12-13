@@ -461,4 +461,8 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         this.noInAppNoticeDismissed = true;
         this.noInAppNoticeDismissed = void this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "noinappnoticedismissed", true);
     }
+
+    public getRecentApps(): BrowsedAppInfo[] {
+        return this.recentApps.slice(0, Math.min(3, this.recentApps.length));
+    }
 }

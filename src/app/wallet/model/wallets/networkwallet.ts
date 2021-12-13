@@ -427,7 +427,7 @@ export abstract class NetworkWallet {
      * storage instead.
      */
     public async populateWithExtendedInfo(extendedInfo: ExtendedNetworkWalletInfo): Promise<void> {
-        Logger.log("wallet", "Populating network master wallet with extended info", this.id, extendedInfo);
+        //Logger.log("wallet", "Populating network master wallet with extended info", this.id, extendedInfo);
 
         // In case of newly created wallet we don't have extended info from local storage yet,
         // which is normal.

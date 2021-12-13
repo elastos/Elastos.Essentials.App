@@ -35,6 +35,7 @@ export const it = {
         'active-network': 'Rete Attiva',
         'active-wallet': 'Portafoglio Attivo',
         'touch-to-create-wallet': 'Tocca qui per creare un portafoglio',
+        'manage-identity': 'My identity',
 
         /********** Onboard Page **********/
 

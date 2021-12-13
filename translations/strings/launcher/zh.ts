@@ -35,6 +35,7 @@ export const zh = {
         'active-network': '网络',
         'active-wallet': '活动钱包',
         'touch-to-create-wallet': '点击创建新钱包',
+        'manage-identity': 'My identity',
 
         /********** Onboard Page **********/
 

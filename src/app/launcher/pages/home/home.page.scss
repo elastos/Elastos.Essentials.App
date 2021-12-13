@@ -159,8 +159,60 @@ ion-content {
         }
     }
 
+    .dapps-row {
+        padding-top: 10px !important;
+
+        .title-col {
+            padding: 0px;
+        }
+        .more-col {
+            display: flex;
+            align-items: center;
+            font-size: 10px;
+            justify-content: flex-end;
+
+            img {
+                margin-left: 5px;
+                height: 10px;
+            }
+        }
+
+        .apps-col {
+            display: flex;
+            flex-wrap: wrap;
+            height: 62px;
+            flex-direction: column;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            white-space: nowrap;
+            width: 100%;
+
+            .recent-app {
+                width: 70px;
+                margin-right: 10px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                img {
+                    max-width: 100%;
+                    height: 40px;
+                    margin-bottom: 5px;
+                }
+
+                .title {
+                    text-align: center;
+                    font-size: 9px;
+                    white-space: nowrap;
+                }
+            }
+        }
+    }
+
     .category-row,
     .wallet-connect-row,
+    .dapps-row,
     .wallets-row {
         border-radius: 25px;
         display: flex;
@@ -437,6 +489,7 @@ ion-content {
 
     .category-row,
     .wallet-connect-row,
+    .dapps-row,
     .wallets-row {
         background-color: #ffffff;
         box-shadow: 0 3px 15px 0 #ededf0;
@@ -575,6 +628,7 @@ ion-content {
 
     .category-row,
     .wallet-connect-row,
+    .dapps-row,
     .wallets-row {
         background: #212021;
         box-shadow: none;
@@ -624,6 +678,20 @@ ion-content {
     .wallet-connect-row {
         ion-label {
             color: #acacac;
+        }
+    }
+
+    .dapps-row {
+        .more-col {
+            color: #acacac;
+        }
+
+        .apps-col {
+            .recent-app {
+                .title {
+                    color: #acacac;
+                }
+            }
         }
     }
 

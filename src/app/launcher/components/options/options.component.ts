@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
+import { App } from 'src/app/model/app.enum';
+import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from '../../../services/global.theme.service';
 import { DIDManagerService } from '../../services/didmanager.service';
-import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
 
 
 @Component({
@@ -16,20 +18,26 @@ export class OptionsComponent implements OnInit {
     public theme: GlobalThemeService,
     private didService: DIDManagerService,
     private popoverCtrl: PopoverController,
+    private globalNavService: GlobalNavService,
     private appBackGroundService: GlobalAppBackgroundService
   ) { }
 
   ngOnInit() {
   }
 
+  async manageIdentity() {
+    await this.popoverCtrl.dismiss();
+    void this.globalNavService.navigateTo(App.IDENTITY, "/identity/myprofile/home");
+  }
+
   async signOut() {
-    this.popoverCtrl.dismiss();
+    await this.popoverCtrl.dismiss();
     await this.appBackGroundService.stop();
     this.didService.signOut();
   }
 
-  shareIdentity() {
-    this.popoverCtrl.dismiss();
-    this.didService.shareIdentity();
+  async shareIdentity() {
+    await this.popoverCtrl.dismiss();
+    void this.didService.shareIdentity();
   }
 }

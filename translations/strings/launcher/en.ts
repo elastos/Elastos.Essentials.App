@@ -35,6 +35,7 @@ export const en = {
         'active-network': 'Active network',
         'active-wallet': 'Active wallet',
         'touch-to-create-wallet': 'Touch here to create a wallet',
+        'manage-identity': 'My identity',
 
         /********** Onboard Page **********/
 

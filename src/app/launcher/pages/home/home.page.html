@@ -2,6 +2,8 @@
   <app-titlebar></app-titlebar>
 
   <ion-grid class="container" [class.light-container]="!theme.darkMode" [class.dark-container]="theme.darkMode">
+
+    <!-- Identity -->
     <ion-row *ngIf="getSignedInIdentity()" class="id-row">
       <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">
         <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
@@ -24,6 +26,7 @@
       </ion-col>
     </ion-row>
 
+    <!-- Backup identity -->
     <ion-row class="backup-row" *ngIf="identityNeedsBackup">
       <ion-col class="left-col" size="1.75">
         <img src="/assets/launcher/icons/finger-print.svg">
@@ -42,6 +45,7 @@
       </ion-col>
     </ion-row>
 
+    <!-- Wallet Connect -->
     <ion-row class="wallet-connect-row" *ngIf="someWalletConnectSessionsCanBeDisplayed()"
       (click)="showWalletConnectSessions()">
       <img class="icon" src="assets/settings/icon/walletconnect.svg">
@@ -56,6 +60,7 @@
       </ion-col>
     </ion-row>
 
+    <!-- Wallets -->
     <ion-row class="wallets-row" *ngIf="walletNetworkService.activeNetwork.value">
       <ion-col size=12>
         <ion-row class="header-row">
@@ -106,6 +111,49 @@
       </ion-col>
     </ion-row>
 
+    <!-- dApps -->
+    <ion-row class="dapps-row">
+      <ion-row *ngIf="recentApps.length > 0">
+        <!-- Has recent apps - category header -->
+        <ion-col size="8" class="title-col">
+          Recent dApps
+        </ion-col>
+        <ion-col size="4" class="more-col" (click)="openDApps()">
+          All dApps
+          <img
+            [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+        </ion-col>
+      </ion-row>
+      <!-- Has recent apps - Apps list -->
+      <ion-col class="apps-col" size="12" *ngIf="recentApps.length > 0">
+        <div class="recent-app" *ngFor="let app of recentApps" (click)="openRecentApp(app)">
+          <img [src]="app.iconUrl" />
+          <div class="title">{{ getShortRecentAppTitle(app)}}</div>
+        </div>
+      </ion-col>
+      <!-- No recent apps -->
+      <ion-col class="app-col no-app-col" size="12" (click)="openDApps()" *ngIf="recentApps.length == 0">
+        <ion-row class="app-row">
+          <ion-col class="left-col" size="2">
+            <div class="icon-container" id="browser">
+              <img src="/assets/launcher/apps/app-icons/browser.svg">
+            </div>
+          </ion-col>
+          <ion-col class="mid-col" offset="0.2" size="8">
+            <ion-label>
+              <h1>{{ 'launcher.app-browser' | translate }}</h1>
+              <p>{{ 'launcher.app-browser-description' | translate }}</p>
+            </ion-label>
+          </ion-col>
+          <ion-col class="right-col" size="1.8">
+            <img
+              [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <!-- Dynamic categories -->
     <div *ngFor="let category of appService.runnableApps">
       <ion-row *ngIf="category.shouldBeDisplayed()" class="category-row">
         <ion-col size="12" class="title-col">
@@ -139,6 +187,7 @@
       </ion-row>
     </div>
 
+    <!-- Sign out -->
     <ion-row *ngIf="getSignedInIdentity()" class="category-row logout-row ion-activatable ripple" (click)="signOut()">
       <ion-col class="app-col" size="12">
         <ion-row class="app-row logout-row">

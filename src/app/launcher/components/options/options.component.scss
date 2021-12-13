@@ -13,10 +13,10 @@ ion-grid {
     ion-row {
       padding: 10px 20px 10px 12px;
       display: flex;
-      justify-content: space-between;
 
       ion-label {
         margin-top: 3px;
+        margin-left: 5px;
         font-size: 14px;
         font-weight: 500;
       }
@@ -51,11 +51,9 @@ ion-grid {
   .row {
     ion-row {
       .sign {
-        color: #ACACAC;
+        color: #acacac;
         opacity: 1;
       }
     }
   }
 }
-
-

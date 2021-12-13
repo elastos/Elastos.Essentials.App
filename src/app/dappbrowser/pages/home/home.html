@@ -39,7 +39,7 @@
         </ion-row>
 
         <div *ngIf="recentApps.length > 0">
-            <ion-row *ngFor="let recentApp of recentApps" class="dapp-row ripple ion-activatable"
+            <ion-row *ngFor="let recentApp of getRecentApps()" class="dapp-row ripple ion-activatable"
                 (click)="openRecent(recentApp)">
                 <ion-col class="left-col" size="2">
                     <div class="icon-container">

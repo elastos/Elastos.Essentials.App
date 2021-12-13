@@ -8,7 +8,10 @@ import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BrowsedAppInfo } from 'src/app/dappbrowser/model/browsedappinfo';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
@@ -51,6 +54,8 @@ export class HomePage implements OnInit {
   private activeNetworkSub: Subscription = null; // Subscription to wallet service to know when the active network (elastos, heco, bsc, etc) changes
   private vaultStatusSub: Subscription = null; // Subscription to vault link status event
   private walletConnectSub: Subscription = null; // Subscription to wallet connect active sessions
+  private recentAppsSub: Subscription = null; // Susbcription to recently used dApps (browser)
+  private themeSubscription: Subscription = null; // Subscription to theme change
 
   // Widget data
   public activeNetwork: Network = null;
@@ -62,6 +67,7 @@ export class HomePage implements OnInit {
     percentUsage: string; // usedStorage / maxStorage ratio, 0-100% string
   } = null;
   public walletConnectConnectors: WalletConnect[] = [];
+  public recentApps: BrowsedAppInfo[] = [];
 
   public walletsSlideOpts = {
     initialSlide: 0,
@@ -92,6 +98,8 @@ export class HomePage implements OnInit {
     private globalHiveService: GlobalHiveService,
     private globalWalletConnectService: GlobalWalletConnectService,
     private globalStartupService: GlobalStartupService,
+    private globalNavService: GlobalNavService,
+    private browserService: DappBrowserService,
     private didSessions: GlobalDIDSessionsService) {
   }
 
@@ -112,13 +120,21 @@ export class HomePage implements OnInit {
 
     this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
     this.titleBar.setNavigationMode(null);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+    this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
       key: "notifications",
       iconPath: BuiltInIcon.NOTIFICATIONS
     });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if (icon.key === 'notifications') {
-        void this.showNotifications();
+      switch (icon.key) {
+        case 'notifications':
+          void this.showNotifications();
+          break;
+        case 'scan':
+          void this.globalNavService.navigateTo(App.SCANNER, "/scanner/scan");
+          break;
+        case 'settings':
+          void this.globalNavService.navigateTo(App.SETTINGS, "/settings/menu");
+          break;
       }
     });
 
@@ -127,6 +143,29 @@ export class HomePage implements OnInit {
     } else {
       this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
     }
+
+    this.themeSubscription = this.theme.activeTheme.subscribe(theme => {
+      if (theme === AppTheme.DARK) {
+        this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
+          key: "scan",
+          iconPath: "/assets/launcher/icons/dark_mode/scan.svg"
+        });
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+          key: "settings",
+          iconPath: "/assets/launcher/icons/dark_mode/settings.svg"
+        });
+      }
+      else {
+        this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
+          key: "scan",
+          iconPath: "/assets/launcher/icons/scan.svg"
+        });
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+          key: "settings",
+          iconPath: "/assets/launcher/icons/settings.svg"
+        });
+      }
+    });
 
     this.identityNeedsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
 
@@ -186,6 +225,11 @@ export class HomePage implements OnInit {
       });
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.recentAppsSub = this.browserService.recentApps.subscribe(async () => {
+      this.recentApps = await this.browserService.getRecentAppsWithInfo();
+    });
+
     Logger.log("launcher", "Launcher home screen will enter completed")
   }
 
@@ -222,6 +266,14 @@ export class HomePage implements OnInit {
     if (this.walletConnectSub) {
       this.walletConnectSub.unsubscribe();
       this.walletConnectSub = null;
+    }
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+      this.themeSubscription = null;
+    }
+    if (this.recentAppsSub) {
+      this.recentAppsSub.unsubscribe();
+      this.recentAppsSub = null;
     }
 
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
@@ -331,12 +383,28 @@ export class HomePage implements OnInit {
 
   public getFriendlyBalance(balance: BigNumber, decimalplace = -1): string {
     if (!balance || balance.isNaN()) {
-        return '...';
+      return '...';
     }
 
     if (decimalplace == -1) {
-        decimalplace = this.currencyService.selectedCurrency.decimalplace;
+      decimalplace = this.currencyService.selectedCurrency.decimalplace;
     }
     return balance.decimalPlaces(decimalplace).toString();
+  }
+
+  public getShortRecentAppTitle(app: BrowsedAppInfo): string {
+    if (app.title.length > 9)
+      return app.title.substr(0, 9) + "...";
+    else
+      return app.title;
+  }
+
+  public openDApps() {
+    //this.browserService.clearRecentApps(); // TMP
+    void this.globalNavService.navigateTo(App.DAPP_BROWSER, "/dappbrowser/home");
+  }
+
+  public openRecentApp(app: BrowsedAppInfo) {
+    void this.browserService.openRecentApp(app);
   }
 }
