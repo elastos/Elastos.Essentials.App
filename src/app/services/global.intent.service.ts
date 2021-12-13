@@ -94,7 +94,6 @@ export class GlobalIntentService {
     else {
       // Already some intents being processed
       let rootIntentBeingProcessed = this.intentsBeingProcessed.find(i => !i.parentIntentId); // There should be always one, and only one root item
-
       let childIntentsForRootIntent = this.intentsQueue.find(i => i.parentIntentId === rootIntentBeingProcessed.intent.intentId);
       if (childIntentsForRootIntent) {
         // A child intent from an active parent intent has been found, so we can process it.
@@ -119,7 +118,7 @@ export class GlobalIntentService {
 
     // Filter out special intent actions such as openurl, that will never get any answer as they
     // are handled by the native code, not by essentials.
-    if (action === "openurl") {
+    if (action !== "openurl") {
       this.intentJustCreated = {
         status: "created",
         parentIntentId
@@ -132,7 +131,6 @@ export class GlobalIntentService {
 
   sendUrlIntent(url: string, parentIntentId?: number): Promise<any> {
     Logger.log("Intents", "Sending url intent", url, parentIntentId);
-
     this.intentJustCreated = {
       status: "created",
       parentIntentId
