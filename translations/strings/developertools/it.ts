@@ -38,6 +38,7 @@ export const it = {
         'up-to-date': 'Tutto è aggiornato, niente da pubblicare',
         'different-did': 'Diverso dall\'utente presente. Pubblica per aggiornare.',
         'uploading-icon': 'Invio dell\'icona dell\'app allo spazio di archiviazione Hive dello sviluppatore, attendi...',
+        'touch-to-change': 'Touch the icon to change it',
 
         // Placeholders
         'redirecturl-placeholder': 'Inserisci qui il tuo "URL di reindirizzamento" se ne hai uno',
@@ -54,5 +55,5 @@ export const it = {
         'help-message3': 'For advanced use only, this mnemonic is only necessary if you want to use your wallet\'s passphrase for extra security',
         'delete-app-msg': 'In order to recover this app for future access and updates, you will have to create a new app with the same mnemonics'
     }
-   
+
 };

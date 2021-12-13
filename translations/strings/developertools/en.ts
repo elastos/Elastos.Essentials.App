@@ -38,6 +38,7 @@ export const en = {
         'up-to-date': 'Everything is up to date, nothing to publish',
         'different-did': 'Different from currently signed in user - please publish to update',
         'uploading-icon': 'Uploading app icon to developer\'s hive vault, please wait...',
+        'touch-to-change': 'Touch the icon to change it',
 
         // Placeholders
         'redirecturl-placeholder': 'Set your intents redirect url here if any',
@@ -54,5 +55,5 @@ export const en = {
         'help-message3': 'For advanced use only, this mnemonic is only necessary if you want to use your wallet\'s passphrase for extra security',
         'delete-app-msg': 'In order to recover this app for future access and updates, you will have to create a new app with the same mnemonics'
     }
-   
+
 };

@@ -38,6 +38,7 @@ export const fr = {
         'up-to-date': 'Tout est à jour, rien à publier',
         'different-did': 'Différent de l\'utilisateur courant. Publier pour mettre à jour.',
         'uploading-icon': 'Envoie de l\'icône de l\'application vers le stockage Hive du développeur, veuillez patienter...',
+        'touch-to-change': 'Toucher l\'icône pour la modifier',
 
         // Placeholders
         'redirecturl-placeholder': 'Saisir votre "redirect url" ici si vous en avez une',
