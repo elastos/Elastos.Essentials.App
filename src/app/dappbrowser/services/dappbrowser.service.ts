@@ -195,20 +195,29 @@ export class DappBrowserService implements GlobalService {
             this.rpcUrl = activeNetwork.getMainEvmRpcApiUrl();
 
             // Get the active wallet address
-            let subwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
-            this.userAddress = await subwallet.createAddress();
+            if (WalletService.instance.activeNetworkWallet.value) {
+                let subwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
+                this.userAddress = await subwallet.createAddress();
+            }
+            else
+                this.userAddress = null;
         }
 
         // Prepare our web3 provider bridge and elastos connectors for injection
         Logger.log("dappbrowser", "Loading the IAB web3 provider");
-        this.web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
-        this.web3ProviderCode = this.web3ProviderCode + `
-        console.log('Elastos Essentials Web3 provider is being created');
-        window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.rpcUrl}', '${this.userAddress}');
-        window.web3 = {
-            currentProvider: window.ethereum
-        };
-        console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3);`;
+        if (this.userAddress) {
+            this.web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
+            this.web3ProviderCode = this.web3ProviderCode + `
+            console.log('Elastos Essentials Web3 provider is being created');
+            window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.rpcUrl}', '${this.userAddress}');
+            window.web3 = {
+                currentProvider: window.ethereum
+            };
+            console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3);`;
+        }
+        else {
+            this.web3ProviderCode = ''; // No wallet, no injection.
+        }
 
         Logger.log("dappbrowser", "Loading the IAB elastos connector");
         this.elastosConnectorCode = await this.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
@@ -335,15 +344,17 @@ export class DappBrowserService implements GlobalService {
 
     private async sendActiveWalletToDApp(networkWallet: NetworkWallet) {
         // Get the active wallet address
-        let subwallet = networkWallet.getMainEvmSubWallet();
-        this.userAddress = await subwallet.createAddress();
+        if (networkWallet) {
+            let subwallet = networkWallet.getMainEvmSubWallet();
+            this.userAddress = await subwallet.createAddress();
 
-        Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
+            Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
 
-        void dappBrowser.executeScript({
-            code: " \
-                window.ethereum.setAddress('"+ this.userAddress + "');\
-            "});
+            void dappBrowser.executeScript({
+                code: " \
+                    window.ethereum.setAddress('"+ this.userAddress + "');\
+                "});
+        }
     }
 
     private async handleLoadStartEvent(event: DappBrowserPlugin.DappBrowserEvent) {
