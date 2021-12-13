@@ -38,7 +38,7 @@ export const zh = {
         'up-to-date': '已更新到最新，无需发布',
         'different-did': '与当前登录的用户不同-请发布以进行更新',
         'uploading-icon': '正在将应用图标上传到开发人员的 Hive Vault，请稍候...',
-        'touch-to-change': 'Touch the icon to change it',
+        'touch-to-change': '点击图标可进行更改',
 
         // Placeholders
         'redirecturl-placeholder': '在此处设置您的 Intent 重定向 URL（如果有）',
