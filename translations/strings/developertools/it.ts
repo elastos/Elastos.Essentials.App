@@ -38,7 +38,7 @@ export const it = {
         'up-to-date': 'Tutto è aggiornato, niente da pubblicare',
         'different-did': 'Diverso dall\'utente presente. Pubblica per aggiornare.',
         'uploading-icon': 'Invio dell\'icona dell\'app allo spazio di archiviazione Hive dello sviluppatore, attendi...',
-        'touch-to-change': 'Touch the icon to change it',
+        'touch-to-change': 'Tocca l\'icona per cambiarlo',
 
         // Placeholders
         'redirecturl-placeholder': 'Inserisci qui il tuo "URL di reindirizzamento" se ne hai uno',
