@@ -5,7 +5,7 @@ export const zh = {
 
     // Home
     'home-header': '探索 dApp',
-    'home-intro': '找到与 Essentials 兼容的 dApp.',
+    'home-intro': '找到与 Essentials 兼容的 dApp',
     'favorites': '收藏夹',
     'no-favorite': '{{networkName}} 网络没有可显示的收藏夹。在上方输入 url 并使用菜单将 dApp 添加为收藏夹，或在现有收藏夹中启用此网络。',
     'home-other-dapps': '其它 dApp',

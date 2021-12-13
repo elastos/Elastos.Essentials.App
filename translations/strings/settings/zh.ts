@@ -96,7 +96,7 @@ export const zh = {
           'startupscreen-wallets-title': '钱包',
           'startupscreen-wallets-description': '默认显示您的活动钱包，如果您特别关心资产',
           'startupscreen-dapps-title': 'DApps入口',
-          'startupscreen-dapps-description': '你需要整天浏览 dApp 吗？那这种模式适合你',
+          'startupscreen-dapps-description': '您需要整天浏览 dApp 吗？那这种模式适合您',
 
           /*********** Privacy page **********/
           'privacy': '隐私',

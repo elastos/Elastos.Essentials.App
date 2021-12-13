@@ -35,7 +35,7 @@ export const zh = {
         'active-network': '网络',
         'active-wallet': '活动钱包',
         'touch-to-create-wallet': '点击创建新钱包',
-        'manage-identity': 'My identity',
+        'manage-identity': '我的身份',
 
         /********** Onboard Page **********/
 
@@ -64,7 +64,7 @@ export const zh = {
         'app-crsuggestion-description': '参与社区运营共治',
         'app-dev-tools': '开发者工具',
         'app-browser': '探索 DApp',
-        'app-browser-description': '探索可在Essentials里使用的DAPP',
+        'app-browser-description': '探索可在Essentials里使用的DApp',
         'app-dpos-registration': 'DPoS 参选',
         'app-dpos-registration-description': 'DPoS 参选管理',
         'app-crcouncil-registration': 'CR 委员参选',

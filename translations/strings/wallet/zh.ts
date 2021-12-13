@@ -343,12 +343,12 @@ export const zh = {
                 'network-chain-id': '链 ID',
                 'network-token-symbol': '代币符号 (可选)',
                 'checking-rpc-url': '正在检查 RPC URL',
-                'checking-account-rpc-url': '正在检查 account RPC URL',
+                'checking-account-rpc-url': '正在检查 Account RPC URL',
                 'wrong-rpc-url': 'RPC URL 无法访问，请检查！',
                 'wrong-account-rpc-url': 'Account RPC URL 无法访问，请检查！',
                 'cant-delete-active-network': '不能删除当前活动网络， 如需删除，请先切换到其他网络！',
-                'delete-network-prompt-title': '删除网络 ?',
-                'delete-network-prompt-text': '确定需要删除此网络 ?',
+                'delete-network-prompt-title': '删除网络?',
+                'delete-network-prompt-text': '确定需要删除此网络?',
 
                 /***********************
                 * Asset Overview Page *
