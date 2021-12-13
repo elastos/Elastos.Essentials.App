@@ -33,6 +33,7 @@ type RunnableApp = {
     routerContext: string; // Ex: "wallet"
     description: string;
     icon: string;
+    iconDark?: string;
     hasWidget: boolean;
     routerPath?: string;
     startCall?: () => void;
@@ -247,7 +248,8 @@ export class AppmanagerService {
                         routerContext: App.CRPROPOSAL_VOTING,
                         name: this.translate.instant('launcher.app-cr-suggestion'),
                         description: this.translate.instant('launcher.app-crsuggestion-description'),
-                        icon: this.theme.darkMode ? '/assets/launcher/apps/app-icons/suggestion_dark.svg' : '/assets/launcher/apps/app-icons/suggestion.svg',
+                        icon: '/assets/launcher/apps/app-icons/suggestion.svg',
+                        iconDark: '/assets/launcher/apps/app-icons/suggestion_dark.svg',
                         hasWidget: false,
                         routerPath: '/crproposalvoting/suggestions/all'
                     },

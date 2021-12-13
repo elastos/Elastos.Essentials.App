@@ -115,7 +115,7 @@
           <ion-row class="app-row" [class.add-border]="app !== category.apps[category.apps.length -1]">
             <ion-col class="left-col" size="2">
               <div class="icon-container" [id]="app.id">
-                <img [src]="app.icon">
+                <img [src]="app.iconDark && theme.darkMode ? app.iconDark : app.icon">
               </div>
             </ion-col>
             <ion-col class="mid-col" offset="0.2" size="8">
