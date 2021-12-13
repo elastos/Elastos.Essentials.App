@@ -27,13 +27,13 @@ export const zh = {
         'by': '提案人:',
 
         'suggestions': '建议',
-        'search-suggestion': '搜索建言',
-        'searching-suggestions': '搜索建言',
-        'loading-suggestion': '正在加载建言...',
-        'no-suggestions': '暂时没有匹配的建言。',
-        'suggestion-details': '建言详情',
+        'search-suggestion': '搜索建议',
+        'searching-suggestions': '搜索建议',
+        'loading-suggestion': '正在加载建议...',
+        'no-suggestions': '暂时没有匹配的建议。',
+        'suggestion-details': '建议详情',
         'suggestion': '建议',
-        'suggestion-id': '建言ID',
+        'suggestion-id': '建议ID',
 
         // Status
         'registered': '委员评议',
@@ -136,7 +136,7 @@ export const zh = {
 
         //Suggection detail
         'make-into-proposal': '转成提案',
-        'sign-suggestion': '签名建言',
+        'sign-suggestion': '签名建议',
         'motivation': '动机',
         'goal': '目标',
         'milestone': '里程碑',
