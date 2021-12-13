@@ -26,13 +26,13 @@ export const zh = {
         'abstain': '弃权',
         'by': '提案人:',
 
-        'suggestions': '建言',
+        'suggestions': '建议',
         'search-suggestion': '搜索建言',
         'searching-suggestions': '搜索建言',
         'loading-suggestion': '正在加载建言...',
         'no-suggestions': '暂时没有匹配的建言。',
         'suggestion-details': '建言详情',
-        'suggestion': '建言',
+        'suggestion': '建议',
         'suggestion-id': '建言ID',
 
         // Status
