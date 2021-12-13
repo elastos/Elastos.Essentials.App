@@ -22,7 +22,7 @@
                             [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
                     </ion-col>
                     <ion-col *ngIf="item.active" class="details-col" size="12" [ngSwitch]="item.type">
-                        <div *ngSwitchCase="'html'" class="item" [innerHtml]="item.value"></div>
+                        <div *ngSwitchCase="'marked'" class="item" [innerHtml]="item.value"></div>
                         <div *ngSwitchCase="'milestone'" class="milestone-container item">
                             <div class="vertical-line-container">
                                 <div class="inner"></div>
@@ -32,7 +32,7 @@
                                     <div class="dot"></div>
                                     <div *ngIf="isLast" class="marker"></div>
                                     <ion-col size="1" class="stage">{{entry.stage}}</ion-col>
-                                    <ion-col size="9">
+                                    <ion-col size="11">
                                         <ion-label>
                                             <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp) }}
                                             </h5>
@@ -103,18 +103,13 @@
             <ion-spinner name="crescent"></ion-spinner>
         </ion-grid>
 
-        <div *ngIf="(isCRMember && suggestion.status == 'signed') || (isSelf && suggestion.status == 'unsigned')">
+        <div *ngIf="buttonLabel">
             <div class="footer-space"></div>
             <ion-footer>
                 <ion-row>
                     <ion-col class="align-center">
-                        <div *ngIf="isCRMember && suggestion.status == 'signed'" class="btn-container align-center"
-                            id="sign" (click)="makeIntoProposal()">
-                            {{ 'crproposalvoting.make-into-proposal' | translate }}
-                        </div>
-                        <div *ngIf="isSelf && suggestion.status == 'unsigned'" class="btn-container align-center"
-                            id="sign" (click)="signSuggestion()">
-                            {{ 'crproposalvoting.sign-suggestion' | translate }}
+                        <div class="btn-container align-center" id="sign" (click)="handleCommand()">
+                            {{ buttonLabel | translate }}
                         </div>
                         <ion-ripple-effect></ion-ripple-effect>
                     </ion-col>

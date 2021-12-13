@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -71,7 +72,7 @@ export class CreateSuggestionPage {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-suggestion'));
         try {
             this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
-            Logger.log('crproposal', "createSuggestionCommand", this.createSuggestionCommand);
+            Logger.log(App.CRPROPOSAL_VOTING, "createSuggestionCommand", this.createSuggestionCommand);
             this.originalRequestJWT = this.crOperations.originalRequestJWT;
             this.suggestionId = this.createSuggestionCommand.sid;
             this.proposaltype = this.createSuggestionCommand.data.proposaltype || this.createSuggestionCommand.data.type;
@@ -85,7 +86,7 @@ export class CreateSuggestionPage {
 
             // Fetch more details about this suggestion, to display to the user
             this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
-            Logger.log('crproposal', "suggestionDetail", this.suggestionDetail);
+            Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
             if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newAddress && !this.suggestionDetail.newOwnerDID) {
                 this.proposaltype = "changeproposaladdress";
             }
@@ -110,11 +111,11 @@ export class CreateSuggestionPage {
 
             //Get digest
             let digest = await this.getDigest();
-            Logger.log('crproposal', "Got proposal digest.", digest);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got proposal digest.", digest);
 
             //Sign Suggestion Digest As JWT
             let signedJWT = await this.signSuggestionDigestAsJWT(digest);
-            Logger.log('crproposal', "signedJWT", signedJWT);
+            Logger.log(App.CRPROPOSAL_VOTING, "signedJWT", signedJWT);
 
             if (!signedJWT) {
                 // Operation cancelled, cancel the operation silently.
@@ -122,11 +123,8 @@ export class CreateSuggestionPage {
                 return;
             }
 
-            //Send response to callback url
-            await this.proposalService.sendProposalCommandResponseToCallbackURL(this.createSuggestionCommand.callbackurl, signedJWT);
-            //Go to launcher
-            await this.globalNav.goToLauncher();
-
+            await this.suggestionService.postSignSuggestionCommandResponse(signedJWT);
+            this.crOperations.goBack();
         }
         catch (e) {
             this.signingAndSendingSuggestionResponse = false;
@@ -141,19 +139,18 @@ export class CreateSuggestionPage {
     }
 
     private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {
-        Logger.log('crproposal', "Sending intent to sign the suggestion digest", suggestionDigest);
+        Logger.log(App.CRPROPOSAL_VOTING, "Sending intent to sign the suggestion digest", suggestionDigest);
+
+        let payload = {
+            sid: this.createSuggestionCommand.sid,
+            command: "createsuggestion",
+        }
 
         let result = await this.crOperations.sendSignDigestIntent({
             data: suggestionDigest,
-            signatureFieldName: "data",
-            jwtExtra: {
-                type: "signature",
-                aud: this.createSuggestionCommand.iss, // ? Need to get from the initially scanned JWT?
-                command: "createsuggestion",
-                req: "elastos://crproposal/" + this.originalRequestJWT
-            }
+            payload: payload,
         });
-        Logger.log('crproposal', "Got signed digest.", result);
+        Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", result);
 
         if (!result.result || !result.responseJWT) {
             // Operation cancelled by user
@@ -169,7 +166,8 @@ export class CreateSuggestionPage {
             Type: 0,
             CategoryData: data.categorydata || "",
             OwnerPublicKey: data.ownerpublickey || data.ownerPublicKey,
-            DraftHash: data.drafthash,
+            DraftHash: data.drafthash || data.draftHash,
+            DraftData: data.draftData,
             Budgets: [],
             Recipient: data.recipient
         };

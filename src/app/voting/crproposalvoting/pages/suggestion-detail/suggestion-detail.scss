@@ -86,6 +86,9 @@ ion-grid {
             .item {
                 margin: 0;
                 width: 100%;
+            }
+
+            .marked {
                 font-weight: 400;
                 font-size: 12px;
                 white-space: pre-wrap;
@@ -110,7 +113,6 @@ ion-grid {
                 font-size: 14px;
                 display: block;
             }
-
         }
     }
 
@@ -176,7 +178,7 @@ ion-grid {
 
     .vertical-line-container .inner {
         width: 2px;
-        background: #7ab400;
+        background-color: #7ab400;
     }
 
     .content {
@@ -226,6 +228,7 @@ ion-grid {
 
     .milestone-goal {
         font-size: 12px;
+        white-space: normal;
     }
 }
 
@@ -248,6 +251,7 @@ ion-grid {
             height: 152px;
             width: 237px;
             display: inline-block;
+            background-color: #f6f6f6;
 
             p {
                 font-size: 14px;
@@ -273,7 +277,9 @@ ion-grid {
             }
 
             .payment-criteria {
+                height: 100%;
                 font-size: 12px;
+                white-space: normal;
             }
         }
 
@@ -335,11 +341,11 @@ ion-grid {
 
     .milestone-container {
         .vertical-line-container .inner {
-            background: #F9F586;
+            background: #f9f586;
         }
 
         .content .entry .dot {
-            border: solid 1px #96FBC4;
+            border: solid 1px #96fbc4;
             background-color: #212021;
         }
 
@@ -348,6 +354,13 @@ ion-grid {
         }
     }
 
+    .budget-container {
+        #budget-list {
+            #budget {
+                background-color: #2f2d2f;
+            }
+        }
+    }
 }
 
 .invisible {

@@ -8,6 +8,7 @@ export enum App {
     CRCOUNCIL_VOTING = "crcouncilvoting",
     CRCOUNCIL_MANAGER = "crcouncilmanager",
     CRPROPOSAL_VOTING = "crproposalvoting",
+    CRSUGGESTION = "crsuggestion",
     DEVELOPER_TOOLS = "developertools",
     DPOS_VOTING = "dposvoting",
     DPOS_REGISTRATION = "dposregistration",

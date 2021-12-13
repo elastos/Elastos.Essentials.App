@@ -1,7 +1,7 @@
 
 
 export enum SuggestionStatus {
-    ALL = "ALL",
+    ALL = "all",
     SIGNED = "signed",
     UNSIGNED = "unsigned",
     PROPOSED = "proposed",

@@ -9,6 +9,7 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuggestionSearchResult, SuggestionStatus } from '../../model/suggestion-model';
+import { CROperationsService } from '../../services/croperations.service';
 import { SuggestionService } from '../../services/suggestion.service';
 import { UXService } from '../../services/ux.service';
 
@@ -42,7 +43,8 @@ export class SuggestionListPage implements OnInit {
         private suggestionService: SuggestionService,
         private route: ActivatedRoute,
         private globalNav: GlobalNavService,
-        public translate: TranslateService
+        public translate: TranslateService,
+        private crOperations: CROperationsService,
     ) {
         this.suggestionStatus = this.route.snapshot.params.suggestionType as SuggestionStatus;
         Logger.log('CRSuggestion', 'Suggestion status:', this.suggestionStatus);
@@ -53,7 +55,7 @@ export class SuggestionListPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.init();
+        void this.init();
     }
 
     ionViewWillLeave() {
@@ -63,8 +65,10 @@ export class SuggestionListPage implements OnInit {
     async init() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-cr-suggestion'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-            await this.globalNav.navigateTo("scanner", '/scanner/scan');
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            if (icon.key == "scan") {
+                void this.crOperations.handleScanAction();
+            }
         });
         this.suggestionsFetched = false;
         this.suggestionService.reset();
@@ -115,7 +119,7 @@ export class SuggestionListPage implements OnInit {
     public async loadMoreSuggestions(event) {
         if (!this.allSuggestionsLoaded) {
             Logger.log('crsuggestion', 'Loading more suggestions', this.fetchPage);
-            this.content.scrollToBottom(300);
+            void this.content.scrollToBottom(300);
 
             let suggestionsLength = this.suggestions.length;
 
@@ -139,7 +143,7 @@ export class SuggestionListPage implements OnInit {
                     this.fetchPage--;
                 }
                 this.allSuggestionsLoaded = true;
-                this.uxService.genericToast(this.translate.instant('crproposalvoting.all-suggestions-are-loaded'));
+                void this.uxService.genericToast(this.translate.instant('crproposalvoting.all-suggestions-are-loaded'));
                 // this.content.scrollToTop(300);
             }
         }
@@ -148,9 +152,9 @@ export class SuggestionListPage implements OnInit {
     }
 
     selectSuggestion(suggestion: SuggestionSearchResult) {
-        // suggestion = this.suggestionService.getFetchedSuggestionById(743);
+        // suggestion = this.suggestionService.getFetchedSuggestionById(754);
         Logger.log('crsuggestion', 'selectSuggestion:', suggestion);
         this.suggestionService.selectedSuggestion = suggestion;
-        this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/suggestion-detail", { state: { suggestionId: suggestion.sid } });
+        void this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/suggestion-detail", { state: { suggestionId: suggestion.sid } });
     }
 }

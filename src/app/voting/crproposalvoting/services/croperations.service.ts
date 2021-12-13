@@ -1,21 +1,32 @@
 import { Injectable } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { PopupService } from './popup.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
+export enum CRCommandType {
+    SuggestionDetailPage = "suggestion-detail-page",
+    ProposalDetailPage = "proposal-detail-page",
+    SuggestionListScan = "suggestion-list-scan",
+    ProposalListScan = "proposal-list-scan",
+    Scan = "scan",
+}
+
 export type CRWebsiteCommand = {
     command: string; // Ex: "voteforproposal"
     callbackurl?: string;
     iss?: string; // JWT issuer (Normally, the CR website)
     data: any;
+    type: CRCommandType;
 }
 
 export type CreateSuggestionBudget = {
@@ -34,12 +45,15 @@ export class CROperationsService {
 
     public intentAction: string;
     public intentId: number;
+    public activeCommandReturn = new BehaviorSubject<CRCommandType>(null);
 
     constructor(
         private popup: PopupService,
         private globalIntentService: GlobalIntentService,
         private voteService: VoteService,
         public popupProvider: GlobalPopupService,
+        public jsonRPCService: GlobalJsonRPCService,
+        private globalNav: GlobalNavService,
     ) { }
 
     init() {
@@ -62,7 +76,7 @@ export class CROperationsService {
         }
     }
 
-    private async handleScanAction() {
+    public async handleScanAction() {
         try {
             let data = await this.globalIntentService.sendIntent("scanqrcode", null);
             Logger.log("crproposal", "Scan result", data);
@@ -128,8 +142,9 @@ export class CROperationsService {
     public async handleCRProposalCommand(payload: CRWebsiteCommand, originalRequestJWT?: string): Promise<boolean> {
         this.originalRequestJWT = originalRequestJWT;
         this.onGoingCommand = payload;
+        let data = payload.data;
 
-        if (!Util.isEmptyObject(payload.data.userdid)) {
+        if (!Util.isEmptyObject(data.userdid)) {
             if (payload.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
                 Logger.warn('crproposal', "The did isn't match");
                 await this.popupProvider.ionicAlert('wallet.text-warning', 'crproposalvoting.wrong-did');
@@ -137,21 +152,28 @@ export class CROperationsService {
             }
         }
 
+        data.categorydata = data.categorydata || "";
+        data.ownerpublickey = data.ownerpublickey || data.ownerPublicKey,
+        data.drafthash = data.drafthash || data.draftHash;
+
         switch (payload.command) {
             case "createsuggestion":
             case "createproposal":
+                data.draftData = await this.getDraftData(data.drafthash);
+                break;
             case "reviewproposal":
             case "voteforproposal":
             case "updatemilestone":
             case "reviewmilestone":
             case "withdraw":
-                await this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + payload.command);
                 break;
 
             default:
                 Logger.warn('crproposal', "Unhandled CR command: ", payload.command);
                 await this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
+                return false;
         }
+        await this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + payload.command);
 
         return true;
     }
@@ -163,7 +185,43 @@ export class CROperationsService {
         }
     }
 
-    public async sendSignDigestIntent(data: any): Promise<any> {
-        return await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", data, this.intentId);
+    public async sendSignDigestIntent(params: any): Promise<any> {
+        return await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", params, this.intentId);
+    }
+
+    public async getDraftData(draftHash: string): Promise<string> {
+        try {
+            var url = this.voteService.getCrRpcApi() + '/api/v2/suggestion/draft_data/' + draftHash;
+            let result = await this.jsonRPCService.httpGet(url);
+            Logger.log('crsuggestion', "getDraftData", result);
+            if (result && result.data && result.data.content) {
+                return result.data.content;
+                // return Buffer.from(result.data.content, "hex").toString("base64");
+            }
+            else {
+                Logger.error('crsuggestion', 'fetchSuggestions can not get vote data!');
+            }
+        }
+        catch (err) {
+            Logger.error('crsuggestion', 'fetchSuggestions error:', err);
+        }
+    }
+
+    public reverseHash(draftHash: string): string {
+        const reverseHash = draftHash
+            .match(/[a-fA-F0-9]{2}/g)
+            .reverse()
+            .join('')
+        return reverseHash;
+    }
+
+    public goBack() {
+        let type = this.onGoingCommand.type;
+        this.activeCommandReturn.next(type);
+        switch(type) {
+            case CRCommandType.SuggestionDetailPage:
+                void this.globalNav.navigateBack();
+                break;
+        }
     }
 }

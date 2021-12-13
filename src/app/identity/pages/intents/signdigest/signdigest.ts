@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { SignIdentityIntent } from 'src/app/identity/model/identity.intents';
+import { IdentityIntent, IdentityIntentParams } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
 import { BASE64 } from 'src/app/model/base64';
@@ -12,6 +12,14 @@ import { DIDService } from '../../../services/did.service';
 import { PopupProvider } from '../../../services/popup';
 import { UXService } from '../../../services/ux.service';
 
+
+type SignDigestIntentParams = IdentityIntentParams & {
+    data: string,                 // Raw data to sign
+    payload?: any                 // Custom app payload will be passed directly to the JWT payload.
+}
+
+type SignDigestIntent = IdentityIntent<SignDigestIntentParams> & {
+}
 @Component({
     selector: 'page-signdigest',
     templateUrl: 'signdigest.html',
@@ -20,7 +28,7 @@ import { UXService } from '../../../services/ux.service';
 export class SignDigestPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    public receivedIntent: SignIdentityIntent = null;
+    public receivedIntent: SignDigestIntent = null;
     private alreadySentIntentResponce = false;
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -65,32 +73,18 @@ export class SignDigestPage {
             var signature = await this.didService.getActiveDid().getLocalDIDDocument().signDigest(intentRequestData.data, password);
             signature = BASE64.decode(signature);
 
-            let publicKey = await this.didService.getActiveDid().getLocalDIDDocument().getDefaultPublicKey();
+            // let publicKey = await this.didService.getActiveDid().getLocalDIDDocument().getDefaultPublicKey();
 
-            let payload = {};
-
-            // First, fill the payload with all JWT extra passed by the calling app, if any
-            if (intentRequestData.jwtExtra)
-                Object.assign(payload, intentRequestData.jwtExtra);
-
-            // Then, store the signed data using either the app signatureFieldName, or as default "signature" field.
-            if (intentRequestData.signatureFieldName)
-                payload[intentRequestData.signatureFieldName] = signature;
-            else
-                payload["signature"] = signature; // Default field name
-
-            // Add the public key, for convenience.
-            payload["publickey"] = publicKey;
-
-
-            // Return the signature info as a signed JWT in case runtime needs to send this response through a URL
-            // callback. If that's inside Elastos Essentials, the JWT will be parsed and the calling app will receive the
-            // signature payload.
-            let jwtToken = await this.didService.getActiveDid().getLocalDIDDocument().createJWT(payload,
-                1, this.authService.getCurrentUserPassword());
+            //Create a jwtToken by payload
+            var jwtToken: string;
+            if (intentRequestData.payload) {
+                let payload = intentRequestData.payload;
+                payload.signature = signature; // Default field name
+                jwtToken = await this.didService.getActiveDid().getLocalDIDDocument().createJWT(payload,
+                    1, password);
+            }
 
             // Send the intent response as everything is completed
-            Logger.log('Identity', "Data signed, sending intent response");
             try {
                 await this.sendIntentResponse({ signature: signature, jwt: jwtToken }, this.receivedIntent.intentId);
             }

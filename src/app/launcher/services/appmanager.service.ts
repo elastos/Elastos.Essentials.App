@@ -240,17 +240,17 @@ export class AppmanagerService {
                         description: this.translate.instant('launcher.app-crproposal-description'),
                         icon: '/assets/launcher/apps/app-icons/proposal.svg',
                         hasWidget: false,
-                        routerPath: '/crproposalvoting/proposals/ALL'
+                        routerPath: '/crproposalvoting/proposals/all'
                     },
-                    // {
-                    //     id: 'crsuggestion',
-                    //     routerContext: App.CRPROPOSAL_VOTING,
-                    //     name: this.translate.instant('launcher.app-cr-suggestion'),
-                    //     description: this.translate.instant('launcher.app-crsuggestion-description'),
-                    //     icon: this.theme.darkMode ? '/assets/launcher/apps/app-icons/suggestion_dark.svg' : '/assets/launcher/apps/app-icons/suggestion.svg',
-                    //     hasWidget: false,
-                    //     routerPath: '/crproposalvoting/suggestions/all'
-                    // },
+                    {
+                        id: 'crsuggestion',
+                        routerContext: App.CRPROPOSAL_VOTING,
+                        name: this.translate.instant('launcher.app-cr-suggestion'),
+                        description: this.translate.instant('launcher.app-crsuggestion-description'),
+                        icon: this.theme.darkMode ? '/assets/launcher/apps/app-icons/suggestion_dark.svg' : '/assets/launcher/apps/app-icons/suggestion.svg',
+                        hasWidget: false,
+                        routerPath: '/crproposalvoting/suggestions/all'
+                    },
                 ]
             }
         ];

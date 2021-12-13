@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import marked from 'marked';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
@@ -9,7 +10,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { SuggestionDetail, SuggestionSearchResult } from '../../model/suggestion-model';
-import { CROperationsService, CRWebsiteCommand } from '../../services/croperations.service';
+import { CRCommandType, CROperationsService, CRWebsiteCommand } from '../../services/croperations.service';
 // import { DraftService } from '../../services/draft.service';
 import { SuggestionService } from '../../services/suggestion.service';
 import { UXService } from '../../services/ux.service';
@@ -29,11 +30,15 @@ export class SuggestionDetailPage {
 
     timeActive = false;
     rejectActive = false;
-    isCRMember = false;
-    isSelf = false;
 
     activeTab = 1;
     totalBudget = 0;
+    isCRMember = false;
+    isSelf = false;
+    commandName: string;
+    buttonLabel: string;
+
+    private commandReturnSub: Subscription = null;
 
     constructor(
         public uxService: UXService,
@@ -47,7 +52,7 @@ export class SuggestionDetailPage {
         private crOperations: CROperationsService,
         // private draftService: DraftService
     ) {
-        void this.init();
+
     }
 
     async init() {
@@ -68,6 +73,21 @@ export class SuggestionDetailPage {
                     this.totalBudget += parseInt(budget.amount);
                 }
             }
+
+            //Set command name
+            if (this.isCRMember && this.suggestion.status == 'signed') {
+                this.commandName = "createproposal";
+                this.buttonLabel = "crproposalvoting.make-into-proposal";
+            }
+            else if (this.isSelf && this.suggestion.status == 'unsigned'){
+                this.commandName = "createsuggestion";
+                this.buttonLabel = "crproposalvoting.sign-suggestion";
+            }
+            else {
+                this.commandName = null;
+                this.buttonLabel = null;
+            }
+
             this.addSuggestionDetail();
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestion-details'));
             Logger.log('CRSuggestion', "Merged suggestion info:", this.suggestion)
@@ -82,7 +102,20 @@ export class SuggestionDetailPage {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.loading-suggestion'));
+
+        void this.init();
+        this.commandReturnSub = this.crOperations.activeCommandReturn.subscribe(commandType => {
+            if (commandType == CRCommandType.SuggestionDetailPage) {
+                void this.init();
+            }
+        });
+
         this.changeDetector.detectChanges(); // Force angular to catch changes in complex objects
+    }
+
+    ionViewWillLeave() {
+        this.commandReturnSub.unsubscribe();
+        this.commandReturnSub = null;
     }
 
     ionViewDidLeave() {
@@ -94,25 +127,25 @@ export class SuggestionDetailPage {
         this.suggestionDetails.push(
             {
                 title: this.translate.instant('crproposalvoting.suggestion'),
-                type: 'html',
+                type: 'marked',
                 value: this.suggestion.title,
                 active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.abstract'),
-                type: 'html',
+                type: 'marked',
                 value: marked(this.suggestion.abstract),
                 active: false
             },
             {
                 title: this.translate.instant('crproposalvoting.motivation'),
-                type: 'html',
+                type: 'marked',
                 value: marked(this.suggestion.motivation),
                 active: false
             },
             {
                 title: this.translate.instant('crproposalvoting.goal'),
-                type: 'html',
+                type: 'marked',
                 value: marked(this.suggestion.goal),
                 active: false
             },
@@ -130,7 +163,7 @@ export class SuggestionDetailPage {
             },
             {
                 title: this.translate.instant('crproposalvoting.plan-statement'),
-                type: 'html',
+                type: 'marked',
                 value: this.suggestion.planStatement ? marked(this.suggestion.planStatement) : null,
                 active: true
             },
@@ -142,7 +175,7 @@ export class SuggestionDetailPage {
             },
             {
                 title: this.translate.instant('crproposalvoting.budget-statement'),
-                type: 'html',
+                type: 'marked',
                 value: this.suggestion.budgetStatement ? marked(this.suggestion.budgetStatement) : null,
                 active: true
             }
@@ -183,20 +216,10 @@ export class SuggestionDetailPage {
         }
     }
 
-    makeIntoProposal() {
-        // let content = await this.draftService.getDraft("opinion.json", "This is the content of the opinion.json");
-        // let hash = this.draftService.getDraftHash(content);
-        // let data = {content: "This is the content of the opinion.json"};
-        // Logger.log('crsuggestion', "Zip:", content, hash, JSON.stringify(data));
-        this.handleCommand("createproposal");
-    }
 
-    signSuggestion() {
-        this.handleCommand("createsuggestion");
-    }
 
-    handleCommand(command: string) {
-        let crcommand = { command: command, data: this.suggestion, sid: this.suggestion.sid, isNotScan: true } as CRWebsiteCommand;
+    handleCommand() {
+        let crcommand = { command: this.commandName, data: this.suggestion, sid: this.suggestion.sid, type: CRCommandType.SuggestionDetailPage } as CRWebsiteCommand;
         Logger.log('CRSuggestion', "Command:", crcommand);
         void this.crOperations.handleCRProposalCommand(crcommand, null);
     }

@@ -60,7 +60,7 @@ export class WithdrawPage {
         try {
             // Fetch more details about this proposal, to display to the user
             this.proposalDetails = await this.proposalService.fetchProposalDetails(this.withdrawCommand.data.proposalhash);
-            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
             this.proposalDetailsFetched = true;
         }
         catch (err) {
@@ -78,18 +78,18 @@ export class WithdrawPage {
         try {
             //Get payload
             var payload = this.getWithdrawPayload(this.withdrawCommand);
-            Logger.log('crproposal', "Got payload.", payload);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got payload.", payload);
 
             //Get digest
             var digest = await this.walletManager.spvBridge.proposalWithdrawDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
             digest = Util.reverseHexToBE(digest);
-            Logger.log('crproposal', "Got proposal digest.", digest);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got proposal digest.", digest);
 
             //Get did sign digest
             let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
             });
-            Logger.log('crproposal', "Got signed digest.", ret);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
             if (ret.result && ret.result.signature) {
                 //Create transaction and send
                 payload.Signature = ret.result.signature;

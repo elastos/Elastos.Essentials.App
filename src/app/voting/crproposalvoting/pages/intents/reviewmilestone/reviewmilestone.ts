@@ -61,13 +61,13 @@ export class ReviewMilestonePage {
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
         this.reviewMilestoneCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
-        Logger.log('crproposal', "reviewMilestoneCommand", this.reviewMilestoneCommand);
+        Logger.log(App.CRPROPOSAL_VOTING, "reviewMilestoneCommand", this.reviewMilestoneCommand);
         this.trackingType = this.reviewMilestoneCommand.data.proposaltrackingtype;
 
         try {
             // Fetch more details about this proposal, to display to the user
             this.proposalDetails = await this.proposalService.fetchProposalDetails(this.reviewMilestoneCommand.data.proposalhash);
-            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
             this.proposalDetailsFetched = true;
         }
         catch (err) {
@@ -85,18 +85,18 @@ export class ReviewMilestonePage {
         try {
             //Get payload
             var payload = this.getPayload(this.reviewMilestoneCommand);
-            Logger.log('crproposal', "Got review milestone payload.", payload);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone payload.", payload);
 
             //Get digest
             var digest = await this.walletManager.spvBridge.proposalTrackingSecretaryDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
             digest = Util.reverseHexToBE(digest);
-            Logger.log('crproposal', "Got review milestone digest.", digest);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone digest.", digest);
 
             //Get did sign digest
             let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
             });
-            Logger.log('crproposal', "Got signed digest.", ret);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
             if (ret.result && ret.result.signature) {
                 //Create transaction and send
                 payload.SecretaryGeneralSignature = ret.result.signature;

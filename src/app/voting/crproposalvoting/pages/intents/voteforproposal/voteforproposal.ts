@@ -56,7 +56,7 @@ export class VoteForProposalPage {
         try {
             // Fetch more details about this proposal, to display to the user
             this.proposalDetails = await this.proposalService.fetchProposalDetails(this.voteForProposalCommand.data.proposalHash);
-            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
             this.proposalDetailsFetched = true;
         }
         catch (err) {

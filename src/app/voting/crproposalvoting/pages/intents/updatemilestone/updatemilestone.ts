@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -62,7 +63,7 @@ export class UpdatMilestonePage {
         try {
             // Fetch more details about this proposal, to display to the user
             this.proposalDetails = await this.proposalService.fetchProposalDetails(this.updateMilestoneCommand.data.proposalhash);
-            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
             this.proposalDetailsFetched = true;
         }
         catch (err) {
@@ -101,16 +102,16 @@ export class UpdatMilestonePage {
 
     private async getMilestoneDigest(): Promise<string> {
         let payload = this.getMilestonePayload(this.updateMilestoneCommand);
-        Logger.log('crproposal', "milestone payload", payload);
+        Logger.log(App.CRPROPOSAL_VOTING, "milestone payload", payload);
         let digest = await this.walletManager.spvBridge.proposalTrackingOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         let ret = Util.reverseHexToBE(digest);
 
-        Logger.log('crproposal', "Got milestone digest.", ret);
+        Logger.log(App.CRPROPOSAL_VOTING, "Got milestone digest.", ret);
         return ret;
     }
 
     private async signMilestoneDigestAsJWT(suggestionDigest: string): Promise<string> {
-        Logger.log('crproposal', "Sending intent to sign the suggestion digest", suggestionDigest);
+        Logger.log(App.CRPROPOSAL_VOTING, "Sending intent to sign the suggestion digest", suggestionDigest);
         try {
             let result = await this.crOperations.sendSignDigestIntent({
                 data: suggestionDigest,
@@ -121,14 +122,14 @@ export class UpdatMilestonePage {
                     req: "elastos://crproposal/" + this.originalRequestJWT
                 }
             });
-            Logger.log('crproposal', "Got signed digest.", result);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", result);
 
             if (!result.result || !result.responseJWT) {
                 // Operation cancelled by user
                 return null;
             }
 
-            Logger.log('crproposal', "signedJWT", result.responseJWT);
+            Logger.log(App.CRPROPOSAL_VOTING, "signedJWT", result.responseJWT);
 
             return result.responseJWT;
         }
