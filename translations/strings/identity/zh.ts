@@ -153,7 +153,7 @@ export const zh = {
         // page: appidcredissue
         'appidcredential-issue': '应用识别',
         'appidcredential-package-id': '应用ID:',
-        'appidcredissue-intro': 'Do you confirm that the requesting application matches with the above information? Be careful, this will grant access to this application\'s hive vault storage.',
+        'appidcredissue-intro': '您确认发出请求的应用与上述信息匹配吗？ 请注意，这将授权访问此应用的 Hive Vault 存储。',
         'app-instancedid': '应用实例DID',
         'app-did': '应用DID',
 
