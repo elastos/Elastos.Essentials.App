@@ -57,13 +57,11 @@ export class VoteService {
         Logger.log(App.VOTING, "VoteService init");
         //Get cr members
         if (this.crmembers.length > 0) {
-            this.getCRMembers();
+            void this.getCRMembers();
         }
     }
 
     public async selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
-
-
         this.clear();
 
         // Make sure the active network is elastos, otherwise, ask user to change
@@ -125,6 +123,7 @@ export class VoteService {
     }
 
     public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<void> {
+        Logger.log(App.VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
 
         const transfer = new Transfer();
         Object.assign(transfer, {
@@ -141,12 +140,12 @@ export class VoteService {
             await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
         }
 
-        if (context) {
-            void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
-        }
-        else {
-            void this.nav.goToLauncher();
-        }
+        // if (context) {
+        //     void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
+        // }
+        // else {
+        //     void this.nav.goToLauncher();
+        // }
     }
 
     async getCRMembers() {
@@ -202,6 +201,10 @@ export class VoteService {
         }
         Logger.log(App.VOTING, 'isCRMember:', ret);
         return ret;
+    }
+
+    public getCrRpcApi(): string {
+        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
     }
 
 }
