@@ -43,7 +43,7 @@ export const it = {
         'something-went-wrong': 'Qualcosa è andato storto, per favore riprova più tardi',
         'please-wait': 'Attendi per favore...',
         'sorry': 'Spiacente',
-        'name-is-missing': 'Inserisci un nome per favoreù',
+        'name-is-missing': 'Inserisci un nome per favore',
         'error': 'Errore',
         'sentry-message': 'Spiacenti, l\'applicazione ha riscontrato un errore. Il team di sviluppo è stato informato.',
 
