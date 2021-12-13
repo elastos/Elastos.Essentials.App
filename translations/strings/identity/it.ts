@@ -3,7 +3,7 @@ export const it = {
     'identity': {
         /******************** Generic ********************/
         'accept': 'Accetta',
-        'confirm': 'Confirm',
+        'confirm': 'Conferma',
         'accept-and-publish': 'Accetta e Pubblica',
         'delete-and-publish': 'Elimina e Pbblica',
         'share-description': 'Condividi la tua identità',
@@ -51,10 +51,10 @@ export const it = {
         'credentialdetails-show-on-profile': 'Mostra nel profilo pubblico',
         'credentialdetails-self-proclaimed-credential': 'Credenziale Autoproclamata',
         'credential-published-on-blockchain': 'Credenziale Pubblicata sulla Blockchain',
-        'credential-should-be-visible': 'Currently visible to everyone',
+        'credential-should-be-visible': 'Attualmente visibile a tutti',
         'credential-verified': 'Credenziale Verificata',
         'credential-unverified': 'Credenziale non Verificata',
-        'credential-not-published': 'Currently not visible by others',
+        'credential-not-published': 'Attualmente non visibile da altri',
         'credential-on-blockchain': 'Rendi visibile questa informazione pubblicandola sulla blockchain',
         'verify-credential': 'Verifica credenziali',
         'reverify-credential': 'Verifica nuova credenziale',
@@ -64,11 +64,11 @@ export const it = {
         'issuance-date': 'Data di Emissione',
         'expiration-date': 'Data di scadenza',
         'no-history-display': 'Nessuna visualizzazione della cronologia',
-        'change-visibility': 'Change visibility',
-        'change-visibility-info': 'Choose to make this information visible by everyone or not',
-        'change-visible': 'This credential will become visible to everyone next time your publish your identity',
-        'change-unpublished': 'This credential will be unpublished next time your publish your identity',
-        'change-not-published': 'This credential will be not be published next time your publish your identity',
+        'change-visibility': 'Cambia visibilità',
+        'change-visibility-info': 'Scegli di rendere questa informazione visibile a tutti o meno',
+        'change-visible': 'Questa credenziale diventerà visibile a tutti la prossima volta che pubblicherai la tua identità',
+        'change-unpublished': 'Questa credenziale verrà resa privata la prossima volta che pubblicherai la tua identità',
+        'change-not-published': 'Questa credenziale non verrà resa pubblica la prossima volta che pubblicherai la tua identità',
 
         // Credentiallist
         'publish-changes': 'Pubblica modifiche',
