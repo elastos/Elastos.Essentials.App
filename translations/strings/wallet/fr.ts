@@ -462,6 +462,8 @@ export const fr = {
         "text-wallet-name-validator-already-exists": "Ce nom est déjà utilisé par un autre portefeuille",
         "text-wallet-passphrase-validator-repeat": "Les deux phrases secrètes saisies sont différentes",
         "text-wallet-passphrase-validator-min-length": "La phrase secrète doit avoir au moins 8 caractères",
+        "import-wallet-by-mnemonic": "Import Wallet by mnemonic",
+        "import-wallet-by-privatekey": "Import Wallet by private key",
 
         /*****************
         * Mnemonic Pages *
@@ -489,6 +491,8 @@ export const fr = {
         "mnemonic-reinput-passphrase": "Saisir le mot de passe à nouveau",
         "help:create-password": "Il s'agit d'un mot de passe optionnel qui augmente la sécurité du mnémonique. Considérez-le comme un 13e mot du mnémonique. Notez bien que ce mot de passe ne pas pas être retrouvé si vous l\'oubliez. Saisir un mauvais mot de passe de mnémonique dans l\'avenir lorsque vous importerez votre portefeuille ne génèrera pas d\'erreur mais créera une adresse de portefeuille différente, et vous ne verrez pas vos fonds.",
         "help:import-password": "Le mot de passe du mnémonique est un mot de votre choix qui est fortement associé à votre mnémonique. Ne tenez pas compte de cette option si vous n\'avez pas utilisé de mot de passe de mnémonique lors de la création de votre portefeuille.",
+        "privatekey": "Private Key",
+        "privatekey-tap-to-copy": "Tap private key to copy",
 
         /********************************
         * Advanced Mnemonic Import Page *
@@ -497,6 +501,14 @@ export const fr = {
         'advanced-import-intro': 'Vous pouvez coller vos 12 mots de mnémonique sur une seule ligne ici.',
         'advanced-import-msg': '* Espace requis entre chaque mot',
         'paste-mnemonic': 'Coller ou saisir les 12 mots du mnémonique',
+
+        /********************************
+        * Import Wallet by private key Page *
+        *********************************/
+        'import-wallet-by-privatekey-info': 'Only EVM compatible wallet private keys are supported ',
+        'paste-privatekey': 'Paste or Enter Private Key',
+        'wrong-privatekey-msg': 'Please enter the correct private key',
+
 
         /***************************
         * Earn, Swap, Bridge pages *

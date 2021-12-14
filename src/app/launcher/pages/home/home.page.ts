@@ -394,7 +394,11 @@ export class HomePage implements OnInit {
   }
 
   public pickNetwork() {
-    void this.walletNetworkUIService.chooseActiveNetwork();
+    let hideNetwork = null;
+    if (this.walletService.getActiveMasterWallet().createdByPrivateKey) {
+        hideNetwork = 'BTC';
+    }
+    void this.walletNetworkUIService.chooseActiveNetwork(hideNetwork);
   }
 
   public getFriendlyBalance(balance: BigNumber, decimalplace = -1): string {

@@ -46,9 +46,10 @@ export class WalletNetworkUIService {
      * Lets user pick a network in the list of all available networks.
      * Promise resolves when a new network is chosen or when cancelled.
      */
-    async chooseActiveNetwork(): Promise<boolean> {
+    async chooseActiveNetwork(hideNetwork = null): Promise<boolean> {
         let options: NetworkChooserComponentOptions = {
-            currentNetwork: this.networkService.activeNetwork.value
+            currentNetwork: this.networkService.activeNetwork.value,
+            hideNetwork: hideNetwork
         };
 
         let modal = await this.modalCtrl.create({

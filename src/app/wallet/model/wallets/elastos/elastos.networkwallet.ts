@@ -1,3 +1,4 @@
+import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { StandardCoinName } from "../../coin";
@@ -28,49 +29,69 @@ export class ElastosNetworkWallet extends NetworkWallet {
   protected async prepareStandardSubWallets(): Promise<void> {
     this.mainTokenSubWallet = new EscSubWallet(this);
 
-    //Logger.log("wallet", "Registering Elastos standard subwallets to the SPVSDK");
-    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
-    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.IDChain);
-    // await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
-    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHDID);
-
-    //Logger.log("wallet", "Creating Elastos standard subwallets");
-    this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this);
-    this.subWallets[StandardCoinName.IDChain] = new IDChainSubWallet(this);
-    // this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
-    this.subWallets[StandardCoinName.ETHDID] = new EidSubWallet(this);
-
-    await this.subWallets[StandardCoinName.ELA].initialize();
-    await this.mainTokenSubWallet.initialize();
-    await this.subWallets[StandardCoinName.IDChain].initialize();
-    await this.subWallets[StandardCoinName.ETHDID].initialize();
-
-    // TODO: No ETHSC in LRW
-    // Remove it if there is ETHSC in LRW.
-    let networkConfig: SPVNetworkConfig = {};
-    this.network.updateSPVNetworkConfig(networkConfig, GlobalNetworksService.instance.getActiveNetworkTemplate())
-    if (networkConfig['ETHSC']) {
-      await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
-      this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
-    } else {
-      this.mainTokenSubWallet = this.subWallets[StandardCoinName.ETHDID] as ElastosEVMSubWallet;
+    // Logger.log("wallet", "Registering Elastos standard subwallets to the SPVSDK");
+    try {
+        await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
+        await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.IDChain);
+        // Logger.log("wallet", "Creating Elastos standard subwallets");
+        this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this);
+        this.subWallets[StandardCoinName.IDChain] = new IDChainSubWallet(this);
+        await this.subWallets[StandardCoinName.ELA].initialize();
+        await this.subWallets[StandardCoinName.IDChain].initialize();
+    }
+    catch (err) {
+        Logger.error("wallet", "Can not Create Elastos standard subwallets ", err);
     }
 
-    //Logger.log("wallet", "Elastos standard subwallets preparation completed");
+    try {
+        // await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
+        await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHDID);
+
+        // this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
+        this.subWallets[StandardCoinName.ETHDID] = new EidSubWallet(this);
+
+        await this.mainTokenSubWallet.initialize();
+        await this.subWallets[StandardCoinName.ETHDID].initialize();
+
+        // TODO: No ETHSC in LRW
+        // Remove it if there is ETHSC in LRW.
+        let networkConfig: SPVNetworkConfig = {};
+        this.network.updateSPVNetworkConfig(networkConfig, GlobalNetworksService.instance.getActiveNetworkTemplate())
+        if (networkConfig['ETHSC']) {
+          await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
+          this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
+        } else {
+            this.mainTokenSubWallet = this.subWallets[StandardCoinName.ETHDID] as ElastosEVMSubWallet;
+        }
+
+        // Logger.log("wallet", "Elastos standard subwallets preparation completed");
+    }
+    catch (err) {
+        Logger.error("wallet", "Can not Create Elastos EVM subwallets ", err);
+    }
   }
 
   public async getAddresses(): Promise<WalletAddressInfo[]> {
     // Elastos network wallet has 2 different addresses: main chain, and ESC/EID
-    return [
-      {
-        title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
-        address: await this.subWallets[StandardCoinName.ELA].createAddress()
-      },
-      {
-        title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
-        address: await this.subWallets[StandardCoinName.ETHSC].createAddress()
-      }
-    ];
+    if (this.subWallets[StandardCoinName.ELA]) {
+        return [
+            {
+                title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
+                address: await this.subWallets[StandardCoinName.ELA].createAddress()
+            },
+            {
+                title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
+                address: await this.subWallets[StandardCoinName.ETHSC].createAddress()
+            }
+        ]
+    } else {
+        return [
+            {
+                title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
+                address: await this.subWallets[StandardCoinName.ETHSC].createAddress()
+            }
+        ];
+    }
   }
 
   public getMainEvmSubWallet(): StandardEVMSubWallet {

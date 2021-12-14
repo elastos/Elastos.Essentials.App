@@ -462,6 +462,8 @@ export const zh = {
                 "text-wallet-name-validator-already-exists": "此钱包名称已经存在",
                 "text-wallet-passphrase-validator-repeat": "两次输入的助记词密码不一致",
                 "text-wallet-passphrase-validator-min-length": "助记词密码最少8位",
+                "import-wallet-by-mnemonic": "通过助记词导入钱包",
+                "import-wallet-by-privatekey": "通过私钥导入钱包",
 
                 /*****************
                 * Mnemonic Pages *
@@ -489,6 +491,8 @@ export const zh = {
                 "mnemonic-reinput-passphrase": "再次输入助记词密码",
                 "help:create-password": "助记词密码是可选的，但它为您的钱包提供了更高的安全性。您可以将其视为自定义的第13个助记词。请注意，如果忘记了该密码，将无法恢复钱包。在恢复您的钱包时输入错误的助记词密码不会产生任何错误，但恢复的将是另一个钱包。",
                 "help:import-password": "助记词密码是与助记词绑定的自定义密码。 如果您在创建钱包时使用了助记词密码，则导入时必须使用相同的助记词密码，反之，则无需助记词密码，否则恢复的将是另一个钱包。",
+                "privatekey": "私钥",
+                "privatekey-tap-to-copy": "点击私钥即可复制",
 
                 /********************************
                 * Advanced Mnemonic Import Page *
@@ -497,6 +501,13 @@ export const zh = {
                 'advanced-import-intro': '您可以直接粘贴或输入您的12个助记词',
                 'advanced-import-msg': '* 助记词之间需要空格',
                 'paste-mnemonic': '粘贴或输入12个助记词',
+
+                /********************************
+                * Import Wallet by private key Page *
+                *********************************/
+                'import-wallet-by-privatekey-info': '只支持兼容 EVM 的钱包私钥',
+                'paste-privatekey': '请粘贴或输入私钥',
+                'wrong-privatekey-msg': '请输入正确的私钥',
 
                 /***************************
                 * Earn, Swap, Bridge pages *

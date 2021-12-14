@@ -23,6 +23,7 @@ export class WalletCreatePage implements OnInit {
     @ViewChild('input', {static: false}) input: IonInput;
 
     public useMenmonicPassphrase = false;
+    public importByPrivateKey = false;
     public wallet = {
         name: '',
         singleAddress: false,
@@ -106,7 +107,11 @@ export class WalletCreatePage implements OnInit {
         if (this.walletCreationService.type === 1) {
             this.native.go("/wallet/mnemonic/create");
         } else {
-            this.native.go("/wallet/wallet-import");
+            if (this.importByPrivateKey) {
+                this.native.go('/wallet/wallet-import-privatekey');
+            } else {
+                this.native.go("/wallet/wallet-import");
+            }
         }
     }
 

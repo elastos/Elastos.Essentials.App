@@ -12,6 +12,7 @@ import { UiService } from '../../services/ui.service';
 
 export type NetworkChooserComponentOptions = {
   currentNetwork: Network;
+  hideNetwork: string;
 }
 
 @Component({
@@ -42,7 +43,7 @@ export class NetworkChooserComponent implements OnInit {
     this.options = this.navParams.data as NetworkChooserComponentOptions;
 
     this.currentNetwork = this.options.currentNetwork;
-    this.networksToShowInList = this.networkService.getAvailableNetworks();
+    this.networksToShowInList = this.networkService.getAvailableNetworks(this.options.hideNetwork);
   }
 
   selectNetwork(network: Network) {
