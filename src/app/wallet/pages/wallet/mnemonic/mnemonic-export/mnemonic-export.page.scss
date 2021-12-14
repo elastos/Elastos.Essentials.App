@@ -49,6 +49,16 @@
         margin-top: 75px;
         width: 95%;
     }
+
+    .key {
+        width: 100%;
+        margin-top: 75px;
+        padding: 10px;
+        background: #2b2c49;
+        box-shadow: 0 3px 15px 0 #151626;
+        font-size: 16px;
+        border-radius: 25px;
+    }
 }
 
 @media screen and (max-height: 670px) {

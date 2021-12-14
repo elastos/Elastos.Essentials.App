@@ -106,8 +106,15 @@ export class WalletNetworkService {
         this.networksList.next(this.networks);
     }
 
-    public getAvailableNetworks(): Network[] {
-        return this.networks;
+    /**
+     * Do not support BTC network when import masterWallet by private key.
+     */
+    public getAvailableNetworks(hideNetwork = null): Network[] {
+        if (hideNetwork) {
+            return this.networks.filter( (n) => {return n.getMainTokenSymbol() !== hideNetwork});
+        } else {
+            return this.networks;
+        }
     }
 
     /**

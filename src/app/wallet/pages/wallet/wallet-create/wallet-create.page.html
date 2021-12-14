@@ -16,6 +16,16 @@
         <!-- Toggles -->
         <ion-row class="toggle-row">
             <ion-col class="left-col" size="10">
+                <h1 *ngIf="importByPrivateKey">{{ 'wallet.import-wallet-by-privatekey' | translate }}</h1>
+                <h1 *ngIf="!importByPrivateKey">{{ 'wallet.import-wallet-by-mnemonic' | translate }}</h1>
+            </ion-col>
+            <ion-col class="right-col" size="2">
+                <ion-toggle mode="ios" color="secondary" [(ngModel)]="importByPrivateKey" ></ion-toggle>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class="toggle-row" *ngIf="!importByPrivateKey">
+            <ion-col class="left-col" size="10">
                 <h1 *ngIf="wallet.singleAddress">{{ 'wallet.single-address' | translate }}</h1>
                 <h1 *ngIf="!wallet.singleAddress">{{ 'wallet.multiple-address' | translate }}</h1>
             </ion-col>
@@ -35,7 +45,7 @@
         </ion-row>
 
         <!-- Passphrase Inputs -->
-        <ion-row class="password-row" *ngIf="useMenmonicPassphrase">
+        <ion-row class="password-row" *ngIf="!importByPrivateKey && useMenmonicPassphrase">
             <ion-col size="10">
                 <ion-input
                     type="password"
@@ -49,7 +59,7 @@
                 <ion-icon mode="ios" name="help"></ion-icon>
             </ion-col>
         </ion-row>
-        <ion-row *ngIf="useMenmonicPassphrase">
+        <ion-row *ngIf="!importByPrivateKey && useMenmonicPassphrase">
             <ion-input
                 #input
                 type="password"

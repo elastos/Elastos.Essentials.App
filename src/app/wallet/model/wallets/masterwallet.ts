@@ -18,7 +18,9 @@ export class ExtendedMasterWalletInfo {
     /* Wallet theme */
     theme: Theme;
     /* Created by system when create a new identity */
-    createdBySystem: boolean
+    createdBySystem: boolean;
+    /* Created by private key */
+    createByPrivateKey: boolean;
 }
 
 export class MasterWallet {
@@ -26,6 +28,7 @@ export class MasterWallet {
     public name: string = null;
     public theme: Theme = null;
     public createdBySystem = false;
+    public createdByPrivateKey = false;
 
     public account: WalletAccount = {
         Type: WalletAccountType.STANDARD,
@@ -39,11 +42,13 @@ export class MasterWallet {
         private localStorage: LocalStorage,
         id: string,
         createdBySystem: boolean,
+        createByPrivateKey: boolean,
         name?: string,
         theme?: Theme,
     ) {
         this.id = id;
         this.createdBySystem = createdBySystem;
+        this.createdByPrivateKey = createByPrivateKey;
         this.name = name || 'Anonymous Wallet';
         this.theme = theme || {
             color: '#752fcf',
@@ -77,6 +82,7 @@ export class MasterWallet {
         extendedInfo.name = this.name;
         extendedInfo.theme = this.theme;
         extendedInfo.createdBySystem = this.createdBySystem;
+        extendedInfo.createByPrivateKey = this.createdByPrivateKey;
 
         return extendedInfo;
     }
@@ -96,6 +102,7 @@ export class MasterWallet {
             this.name = extendedInfo.name;
             this.theme = extendedInfo.theme;
             this.createdBySystem = extendedInfo.createdBySystem;
+            this.createdByPrivateKey = extendedInfo.createByPrivateKey ? extendedInfo.createByPrivateKey : false;
         }
 
         Logger.log("wallet", "Populated master wallet:", this);

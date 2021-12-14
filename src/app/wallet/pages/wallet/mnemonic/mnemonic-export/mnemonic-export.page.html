@@ -1,6 +1,6 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <ion-grid *ngIf="hideMnemonic" class="verify-container ion-no-padding ion-no-margin" [class.verify-dark-container]="theme.darkMode">
+    <ion-grid *ngIf="hideMnemonic && hasMnemonic" class="verify-container ion-no-padding ion-no-margin" [class.verify-dark-container]="theme.darkMode">
         <ion-row class="btn-container">
             <ion-button color="secondary" (click)="onExport()">
                 <ion-label>{{ 'wallet.text-export-mnemonic' | translate }}</ion-label>
@@ -8,7 +8,7 @@
         </ion-row>
     </ion-grid>
 
-    <ion-grid *ngIf="!hideMnemonic" class="ion-text-center verified-container">
+    <ion-grid *ngIf="!hideMnemonic && hasMnemonic" class="ion-text-center verified-container">
         <p>
             {{ 'wallet.mnemonic-prompt1' | translate }}<b>{{ 'wallet.mnemonic-prompt2' | translate }}</b>{{ 'wallet.mnemonic-prompt3' | translate }}<br><br>
         </p>
@@ -28,5 +28,12 @@
                 <ion-label>{{ 'wallet.text-allow' | translate }}</ion-label>
             </ion-button>
         </ion-row>
+    </ion-grid>
+
+    <ion-grid *ngIf="!hasMnemonic" class="ion-text-center verified-container">
+        <div class="key" (click)="copyPrivateKey()">
+            {{ evmPrivateKey }}
+        </div>
+        <p>{{ 'wallet.privatekey-tap-to-copy' | translate }}</p>
     </ion-grid>
 </ion-content>
