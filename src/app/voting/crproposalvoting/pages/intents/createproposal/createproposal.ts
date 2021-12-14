@@ -78,6 +78,7 @@ export class CreateProposalPage {
         this.suggestionId = this.createProposalCommand.sid;
         this.proposaltype = this.createProposalCommand.data.type || this.createProposalCommand.data.proposaltype;
 
+        this.bugetAmount = 0;
         if (this.proposaltype == "normal") {
             for (let suggestionBudget of this.createProposalCommand.data.budgets) {
                 suggestionBudget.type = suggestionBudget.type.toLowerCase();
@@ -88,7 +89,7 @@ export class CreateProposalPage {
         try {
             // Fetch more details about this suggestion, to display to the user
             this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
-            Logger.log('crproposal', "suggestionDetail", this.suggestionDetail);
+            Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
             if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newAddress && !this.suggestionDetail.newOwnerDID) {
                 this.proposaltype = "changeproposaladdress";
             }
@@ -155,7 +156,7 @@ export class CreateProposalPage {
         try {
             //Get payload
             var payload = this.getPayload();
-            Logger.log('crproposal', 'get payload', payload);
+            Logger.log(App.CRPROPOSAL_VOTING, 'get payload', payload);
 
             //Get digest
             var digest = await this.digestFunction(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
@@ -168,7 +169,9 @@ export class CreateProposalPage {
 
                 //Create transaction
                 let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
+                Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+                this.crOperations.goBack();
             }
         }
         catch (e) {
@@ -187,7 +190,7 @@ export class CreateProposalPage {
             CategoryData: data.categorydata || "",
             OwnerPublicKey: data.ownerpublickey,
             DraftHash: data.drafthash,
-            // DraftData: "",
+            DraftData: data.draftData,
             Budgets: [],
             Recipient: data.recipient,
 
@@ -266,7 +269,7 @@ export class CreateProposalPage {
         let ret = await this.crOperations.sendSignDigestIntent({
             data: digest,
         });
-        Logger.log('crproposal', "Got signed digest.", ret);
+        Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
         if (!ret.result) {
             // Operation cancelled by user
             return null;

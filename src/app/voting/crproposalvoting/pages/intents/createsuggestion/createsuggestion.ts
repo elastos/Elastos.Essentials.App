@@ -77,6 +77,7 @@ export class CreateSuggestionPage {
             this.suggestionId = this.createSuggestionCommand.sid;
             this.proposaltype = this.createSuggestionCommand.data.proposaltype || this.createSuggestionCommand.data.type;
 
+            this.bugetAmount = 0;
             if (this.proposaltype == "normal") {
                 for (let suggestionBudget of this.createSuggestionCommand.data.budgets) {
                     suggestionBudget.type = suggestionBudget.type.toLowerCase();
