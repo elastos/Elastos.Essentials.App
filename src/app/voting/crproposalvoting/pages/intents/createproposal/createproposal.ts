@@ -103,6 +103,7 @@ export class CreateProposalPage {
 
     cancel() {
         void this.globalNav.navigateBack();
+        void this.crOperations.sendIntentResponse();
     }
 
     private getPayload(): any {

@@ -103,6 +103,7 @@ export class ReviewProposalPage {
 
     cancel() {
         void this.globalNav.navigateBack();
+        void this.crOperations.sendIntentResponse();
     }
 
     async signAndReviewProposal() {

@@ -130,13 +130,14 @@ export class CROperationsService {
             return false;
         }
 
-        let jwtPayload = parsedJwtresult.payload as CRWebsiteCommand;
-        if (!jwtPayload.command) {
+        let crCommand = parsedJwtresult.payload as CRWebsiteCommand;
+        if (!crCommand.command) {
             await this.popup.alert("crproposal", "Received CR website command without a command field. Skipping.", "Ok");
             return false;
         }
 
-        return await this.handleCRProposalCommand(jwtPayload, crProposalJwtRequest);
+        crCommand.type = CRCommandType.Scan;
+        return await this.handleCRProposalCommand(crCommand, crProposalJwtRequest);
     }
 
     public async handleCRProposalCommand(crCommand: CRWebsiteCommand, originalRequestJWT?: string): Promise<boolean> {
@@ -159,11 +160,11 @@ export class CROperationsService {
         switch (crCommand.command) {
             case "createsuggestion":
             case "createproposal":
-                data.draftData = await this.getDraftData("draft_data", data.drafthash);
+                data.draftData = await this.getDraftData(data.drafthash);
                 break;
             case "reviewproposal":
                 if (crCommand.type == CRCommandType.Scan) {
-                    data.opinionData = await this.getDraftData("opinion_data", data.opinionHash);
+                    data.opinionData = await this.getOpinionData(data.opinionHash);
                 }
                 break;
             case "voteforproposal":
@@ -193,24 +194,45 @@ export class CROperationsService {
         return await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", params, this.intentId);
     }
 
-    public async getDraftData(dataType: string, draftHash: string): Promise<string> {
+    public async getDraftData(draftHash: string): Promise<string> {
         if (!draftHash) {
             return null;
         }
 
         try {
-            var url = this.voteService.getCrRpcApi() + '/api/v2/suggestion/' + dataType +'/' + draftHash;
+            var url = this.voteService.getCrRpcApi() + '/api/v2/suggestion/draft_data/' + draftHash;
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log('crsuggestion', "getDraftData", result);
             if (result && result.data && result.data.content) {
                 return result.data.content;
             }
             else {
-                Logger.error('crproposal', 'getDraftData can not get data!');
+                Logger.error('crsuggestion', 'getDraftData can not get data!');
             }
         }
         catch (err) {
-            Logger.error('crproposal', 'getDraftData error:', err);
+            Logger.error('crsuggestion', 'getDraftData error:', err);
+        }
+    }
+
+    public async getOpinionData(opinionHash: string): Promise<string> {
+        if (!opinionHash) {
+            return null;
+        }
+
+        try {
+            var url = this.voteService.getCrRpcApi() + '/api/v2/proposal/opinion_data/' + opinionHash;
+            let result = await this.jsonRPCService.httpGet(url);
+            Logger.log('crsuggestion', "getOpinionData", result);
+            if (result && result.data && result.data.content) {
+                return result.data.content;
+            }
+            else {
+                Logger.error('crproposal', 'getOpinionData can not get data!');
+            }
+        }
+        catch (err) {
+            Logger.error('crproposal', 'getOpinionData error:', err);
         }
     }
 
