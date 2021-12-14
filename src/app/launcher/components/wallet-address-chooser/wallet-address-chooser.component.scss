@@ -9,7 +9,7 @@
   width: 100%;
 
   ion-grid {
-    width: 100%;
+    width: 90%;
   }
 
   .heading {
@@ -23,11 +23,13 @@
     align-self: center;
 
     .address {
+      font-size: 14px;
+      font-weight: 500;
     }
   }
 
   .icon-container {
-    background: #444;
+    background: #f5f5fd;
     width: 40px;
     height: 40px;
     display: flex;
@@ -47,6 +49,10 @@
       .title {
         color: #c9c9c9;
       }
+    }
+
+    .icon-container {
+      background: #444;
     }
   }
 }
