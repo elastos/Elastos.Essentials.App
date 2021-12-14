@@ -1,4 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
@@ -6,14 +7,16 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
-import { CROperationsService, CRWebsiteCommand } from 'src/app/voting/crproposalvoting/services/croperations.service';
+import { CRCommandType, CROperationsService, CRWebsiteCommand } from 'src/app/voting/crproposalvoting/services/croperations.service';
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { DraftService } from '../../../services/draft.service';
 import { PopupService } from '../../../services/popup.service';
 
 type ReviewProposalCommand = CRWebsiteCommand & {
@@ -28,7 +31,8 @@ type ReviewProposalCommand = CRWebsiteCommand & {
 @Component({
     selector: 'page-review-proposal',
     templateUrl: 'reviewproposal.html',
-    styleUrls: ['./reviewproposal.scss']
+    styleUrls: ['./reviewproposal.scss'],
+    providers: [Keyboard]
 })
 export class ReviewProposalPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
@@ -38,6 +42,8 @@ export class ReviewProposalPage {
     public voteResult = "";
     public proposalDetails: ProposalDetails;
     public proposalDetailsFetched = false;
+    public isKeyboardHide = true;
+    public opinion = "test";
 
     constructor(
         private crOperations: CROperationsService,
@@ -49,18 +55,41 @@ export class ReviewProposalPage {
         private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
+        public zone: NgZone,
+        public keyboard: Keyboard,
+        private draftService: DraftService,
     ) {
     }
 
     async ionViewWillEnter() {
+        this.keyboard.onKeyboardWillShow().subscribe(() => {
+            this.zone.run(() => {
+                this.isKeyboardHide = false;
+            });
+            // console.log('SHOWK');
+        });
+
+        this.keyboard.onKeyboardWillHide().subscribe(() => {
+            this.zone.run(() => {
+                this.isKeyboardHide = true;
+            });
+            // console.log('HIDEK');
+        });
+
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-proposal'));
         this.reviewProposalCommand = this.crOperations.onGoingCommand as ReviewProposalCommand;
-        this.voteResult = this.reviewProposalCommand.data.voteResult;
+        if (this.reviewProposalCommand.type == CRCommandType.ProposalDetailPage) {
+            this.voteResult = "approve";
+        }
+        else {
+            this.voteResult = this.reviewProposalCommand.data.voteResult.toLowerCase();
+        }
 
         try {
             // Fetch more details about this proposal, to display to the user
             this.proposalDetails = await this.proposalService.fetchProposalDetails(this.reviewProposalCommand.data.proposalHash);
-            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
             this.proposalDetailsFetched = true;
         }
         catch (err) {
@@ -68,33 +97,46 @@ export class ReviewProposalPage {
         }
     }
 
+    ionViewWillLeave() {
+        // this.keyboard.onKeyboardWillShow().unsubscribe();
+    }
+
     cancel() {
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
     }
 
     async signAndReviewProposal() {
+        //Check opinion value
+        if (!this.opinion || this.opinion == "") {
+            let blankMsg = this.translate.instant('crproposalvoting.opinion')
+                            + this.translate.instant('common.text-input-is-blank');
+            this.globalNative.genericToast(blankMsg);
+            return;
+        }
+
         this.signingAndSendingProposalResponse = true;
 
         try {
             //Get payload
-            var payload = this.getProposalPayload(this.reviewProposalCommand);
-            Logger.log('crproposal', "Got review proposal payload.", payload);
+            var payload = await this.getProposalPayload(this.reviewProposalCommand);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got review proposal payload.", payload);
 
-            //Get digest
+            // //Get digest
             var digest = await this.walletManager.spvBridge.proposalReviewDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
             digest = Util.reverseHexToBE(digest);
-            Logger.log('crproposal', "Got review proposal digest.", digest);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got review proposal digest.", digest);
 
             //Get did sign digest
             let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
             });
-            Logger.log('crproposal', "Got signed digest.", ret);
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
             if (ret.result && ret.result.signature) {
                 //Create transaction and send
                 payload.Signature = ret.result.signature;
                 const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+                this.crOperations.goBack();
             }
         }
         catch (e) {
@@ -106,21 +148,33 @@ export class ReviewProposalPage {
         void this.crOperations.sendIntentResponse();
     }
 
-    private getProposalPayload(proposalCommand: ReviewProposalCommand): any {
+    private async getProposalPayload(proposalCommand: ReviewProposalCommand): Promise<any> {
         let voteResultTypes = {
             approve: 0,
             reject: 1,
             abstain: 2
         }
 
-        let proposalPayload = {
-            VoteResult: voteResultTypes[proposalCommand.data.voteResult.toLowerCase()],
+        if (this.reviewProposalCommand.type == CRCommandType.ProposalDetailPage) {
+            let ret = await this.draftService.getDraft("opinion.json", this.opinion);
+            proposalCommand.data.opinionHash = ret.hash;
+            proposalCommand.data.opinionData = ret.data;
+            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, proposalCommand);
+        }
+
+        let proposalPayload: any = {
+            VoteResult: voteResultTypes[this.voteResult],
             ProposalHash: proposalCommand.data.proposalHash,
             OpinionHash: proposalCommand.data.opinionHash,
-            // OpinionData: "",
+            OpinionData: proposalCommand.data.opinionData,
             DID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
         };
 
         return proposalPayload;
+    }
+
+    segmentChanged(ev: any) {
+        this.voteResult = ev.detail.value;
+        console.log('Segment changed', ev);
     }
 }

@@ -44,8 +44,6 @@ export const zh = {
         'text-dpos-name-already-used': '此DPoS节点名称已经存在',
         'dpos-unregister-warning': '您要注销DPoS节点吗？',
         'text-dpos-info-dont-modify': 'DPoS节点信息没有修改。',
-        'text-input-is-blank': "输入为空，这项必填。",
-        'text-input-format-wrong': "输入格式错误。",
         'text-registration-no-confirm': "上次注册还没确认，请等待。",
         'text-update-no-confirm': "上次更新还没确认，请等待。",
     }

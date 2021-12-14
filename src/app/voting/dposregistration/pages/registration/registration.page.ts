@@ -93,8 +93,8 @@ export class DPosRegistrationPage implements OnInit {
     checkValues() {
         Logger.log("DPosRegistrationPage", "Dpos Info", this.dposInfo);
 
-        var blankMsg = this.translate.instant('dposregistration.text-input-is-blank');
-        var formatWrong = this.translate.instant('dposregistration.text-input-format-wrong');
+        var blankMsg = this.translate.instant('common.text-input-is-blank');
+        var formatWrong = this.translate.instant('common.text-input-format-wrong');
         if (!this.dposInfo.nickname || this.dposInfo.nickname == "") {
             blankMsg = this.translate.instant('dposregistration.node-name') + blankMsg;
             this.globalNative.genericToast(blankMsg);

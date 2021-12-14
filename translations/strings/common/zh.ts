@@ -76,5 +76,9 @@ export const zh = {
         'share-friend': '在 Elastos Essentials 中添加我为好友',
         'share-add-me-as-friend': '加我为好友',
         'copied-to-clipboard': '已复制',
+
+        //Input error
+        'text-input-is-blank': "输入为空，这项必填。",
+        'text-input-format-wrong': "输入格式错误。",
     }
 }

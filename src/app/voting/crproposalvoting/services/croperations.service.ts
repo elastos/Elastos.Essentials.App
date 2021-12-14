@@ -139,13 +139,13 @@ export class CROperationsService {
         return await this.handleCRProposalCommand(jwtPayload, crProposalJwtRequest);
     }
 
-    public async handleCRProposalCommand(payload: CRWebsiteCommand, originalRequestJWT?: string): Promise<boolean> {
+    public async handleCRProposalCommand(crCommand: CRWebsiteCommand, originalRequestJWT?: string): Promise<boolean> {
         this.originalRequestJWT = originalRequestJWT;
-        this.onGoingCommand = payload;
-        let data = payload.data;
+        this.onGoingCommand = crCommand;
+        let data = crCommand.data;
 
         if (!Util.isEmptyObject(data.userdid)) {
-            if (payload.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
+            if (crCommand.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
                 Logger.warn('crproposal', "The did isn't match");
                 await this.popupProvider.ionicAlert('wallet.text-warning', 'crproposalvoting.wrong-did');
                 return false;
@@ -156,12 +156,16 @@ export class CROperationsService {
         data.ownerpublickey = data.ownerpublickey || data.ownerPublicKey,
         data.drafthash = data.drafthash || data.draftHash;
 
-        switch (payload.command) {
+        switch (crCommand.command) {
             case "createsuggestion":
             case "createproposal":
-                data.draftData = await this.getDraftData(data.drafthash);
+                data.draftData = await this.getDraftData("draft_data", data.drafthash);
                 break;
             case "reviewproposal":
+                if (crCommand.type == CRCommandType.Scan) {
+                    data.opinionData = await this.getDraftData("opinion_data", data.opinionHash);
+                }
+                break;
             case "voteforproposal":
             case "updatemilestone":
             case "reviewmilestone":
@@ -169,11 +173,11 @@ export class CROperationsService {
                 break;
 
             default:
-                Logger.warn('crproposal', "Unhandled CR command: ", payload.command);
+                Logger.warn('crproposal', "Unhandled CR command: ", crCommand.command);
                 await this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
                 return false;
         }
-        await this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + payload.command);
+        await this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + crCommand.command);
 
         return true;
     }
@@ -189,30 +193,25 @@ export class CROperationsService {
         return await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", params, this.intentId);
     }
 
-    public async getDraftData(draftHash: string): Promise<string> {
+    public async getDraftData(dataType: string, draftHash: string): Promise<string> {
+        if (!draftHash) {
+            return null;
+        }
+
         try {
-            var url = this.voteService.getCrRpcApi() + '/api/v2/suggestion/draft_data/' + draftHash;
+            var url = this.voteService.getCrRpcApi() + '/api/v2/suggestion/' + dataType +'/' + draftHash;
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log('crsuggestion', "getDraftData", result);
             if (result && result.data && result.data.content) {
                 return result.data.content;
-                // return Buffer.from(result.data.content, "hex").toString("base64");
             }
             else {
-                Logger.error('crsuggestion', 'fetchSuggestions can not get vote data!');
+                Logger.error('crproposal', 'getDraftData can not get data!');
             }
         }
         catch (err) {
-            Logger.error('crsuggestion', 'fetchSuggestions error:', err);
+            Logger.error('crproposal', 'getDraftData error:', err);
         }
-    }
-
-    public reverseHash(draftHash: string): string {
-        const reverseHash = draftHash
-            .match(/[a-fA-F0-9]{2}/g)
-            .reverse()
-            .join('')
-        return reverseHash;
     }
 
     public goBack() {
@@ -220,6 +219,7 @@ export class CROperationsService {
         this.activeCommandReturn.next(type);
         switch(type) {
             case CRCommandType.SuggestionDetailPage:
+            case CRCommandType.ProposalDetailPage:
                 void this.globalNav.navigateBack();
                 break;
         }

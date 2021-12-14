@@ -75,5 +75,9 @@ export const it = {
         'share-friend': 'Aggiungi il mio contatto in Elastos Essentials',
         'share-add-me-as-friend': 'Aggiungimi come contatto',
         'copied-to-clipboard': 'Copiato negli appunti',
+
+        //Input error
+        'text-input-is-blank': " è vuoto, è obbligatorio.",
+        'text-input-format-wrong': " il formato di input è sbagliato.",
     }
 }

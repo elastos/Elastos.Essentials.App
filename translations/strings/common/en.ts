@@ -75,5 +75,9 @@ export const en = {
         'share-friend': 'Add my friend in Elastos Essentials',
         'share-add-me-as-friend': 'Add me as a friend',
         'copied-to-clipboard': 'Copied to clipboard',
+
+        //Input error
+        'text-input-is-blank': " is blank, It is required.",
+        'text-input-format-wrong': " input format is wrong.",
     }
 }

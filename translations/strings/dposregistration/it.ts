@@ -44,8 +44,6 @@ export const it = {
         'text-dpos-name-already-used': 'Questo nome del nodo DPoS è già in uso',
         'dpos-unregister-warning': 'Vuoi annullare la registrazione del tuo nodo DPoS?',
         'text-dpos-info-dont-modify': 'Queste informazioni sul nodo DPoS non vengono modificate.',
-        'text-input-is-blank': " è vuoto, è obbligatorio.",
-        'text-input-format-wrong': " il formato di input è sbagliato.",
         'text-registration-no-confirm': "L'ultima volta la registrazione non è stata confermata, attendere.",
         'text-update-no-confirm': "L'ultimo aggiornamento non ha confermato, attendere.",
     }
