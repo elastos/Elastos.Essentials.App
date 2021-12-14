@@ -4,11 +4,10 @@ import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { ProposalDetails } from '../model/proposal-details';
-import { ProposalsDetailsResponse } from '../model/proposal-details-response';
-import { ProposalsSearchResponse } from '../model/proposal-search-response';
 import { ProposalSearchResult } from '../model/proposal-search-result';
 import { ProposalStatus } from '../model/proposal-status';
 
@@ -25,15 +24,16 @@ export class ProposalService {
         private http: HttpClient,
         private nav: GlobalNavService,
         private globalNetworksService: GlobalNetworksService,
+        public jsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) { }
 
-    async init() {
-        this.subscription = this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
-            this.cr_rpc_api = this.getCRProposalAPI();
-        });
-        this.cr_rpc_api = this.getCRProposalAPI();
-    }
+    // async init() {
+    //     this.subscription = this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
+    //         this.cr_rpc_api = this.getCRProposalAPI();
+    //     });
+    //     this.cr_rpc_api = this.getCRProposalAPI();
+    // }
 
     public stop() {
         if (this.subscription) {
@@ -49,68 +49,66 @@ export class ProposalService {
         this.pageNumbersLoaded = 0;
     }
 
-    private getCRProposalAPI(): string {
+    private getCrRpcApi(): string {
         return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
     }
 
-    public fetchProposals(status: ProposalStatus, page: number): Promise<ProposalSearchResult[]> {
-        return new Promise((resolve, reject) => {
-            if (this.pageNumbersLoaded >= page) {
-                resolve(this.allSearchResults);
+    public async fetchProposals(status: ProposalStatus, page: number): Promise<ProposalSearchResult[]> {
+        if (this.pageNumbersLoaded >= page) {
+            return this.allSearchResults;
+        }
+
+        try {
+            var url = this.getCrRpcApi() + '/api/v2/proposal/all_search?status=' + status + '&page=' + page + '&results=10';
+            let result = await this.jsonRPCService.httpGet(url);
+            Logger.log(App.CRPROPOSAL_VOTING, "fetchProposals", url, result);
+            if (this.pageNumbersLoaded < page) {
+                if (result && result.data && result.data.proposals) {
+                    this.allSearchResults = this.allSearchResults.concat(result.data.proposals);
+                    this.pageNumbersLoaded = page;
+                }
+                else {
+                    Logger.error(App.CRPROPOSAL_VOTING, 'fetchProposals can not get proposals!');
+                }
             }
-
-            Logger.log('crproposal', 'Fetching proposals... page:', page);
-            this.http.get<any>(this.cr_rpc_api + '/api/cvote/all_search?status=' + status + '&page=' + page + '&results=10').subscribe((res: ProposalsSearchResponse) => {
-                Logger.log('crproposal', res);
-                if (this.pageNumbersLoaded < page) {
-                    if (res && res.data && res.data.list) {
-                        this.allSearchResults = this.allSearchResults.concat(res.data.list);
-                        this.pageNumbersLoaded = page;
-                    } else {
-                        Logger.error('crproposal', 'can not get vote data!');
-                    }
-                }
-                resolve(this.allSearchResults);
-            }, (err) => {
-                Logger.error('crproposal', 'fetchProposals error:', err);
-                reject(err);
-            });
-        });
+            return this.allSearchResults;
+        }
+        catch (err) {
+            Logger.error(App.CRPROPOSAL_VOTING, 'fetchProposals error:', err);
+        }
     }
 
-    public fetchProposalDetails(proposalId: number): Promise<ProposalDetails> {
-        return new Promise((resolve, reject) => {
-            Logger.log('crproposal', 'Fetching proposal details for proposal ' + proposalId + '...');
-            this.http.get<any>(this.cr_rpc_api + '/api/cvote/get_proposal/' + proposalId).subscribe((res: ProposalsDetailsResponse) => {
-                Logger.log('crproposal', res);
-                if (res && res.data) {
-                    resolve(res.data);
-                } else {
-                    Logger.error('crproposal', 'cat not get data');
-                    reject(null);
-                }
-            }, (err) => {
-                Logger.error('crproposal', 'fetchProposalDetails error:', err);
-                reject(err);
-            });
-        });
+    public async fetchProposalDetails(proposalHash: string/*proposalId: number*/): Promise<ProposalDetails> {
+        try {
+            Logger.log(App.CRPROPOSAL_VOTING, 'Fetching proposal details for proposal ' + proposalHash + '...');
+            let url = this.getCrRpcApi() + '/api/v2/proposal/get_proposal/' + proposalHash;
+            let result = await this.jsonRPCService.httpGet(url);
+            Logger.log(App.CRPROPOSAL_VOTING, result);
+            if (result && result.data) {
+                return result.data;
+            }
+            else {
+                Logger.error(App.CRPROPOSAL_VOTING, 'cat not get data');
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRPROPOSAL_VOTING, 'fetchProposalDetails error:', err);
+        }
     }
 
-    public fetchSearchedProposal(page = 1, status: ProposalStatus, search?: string): Promise<ProposalSearchResult[]> {
-        return new Promise((resolve, reject) => {
-            Logger.log('crproposal', 'Fetching searched proposal for status: ' + status, + 'with search: ' + search);
-            this.http.get<any>(this.cr_rpc_api + '/api/cvote/all_search?page=' + page + '&results=10&status=' + status + '&search=' + search).subscribe((res: ProposalsSearchResponse) => {
-                Logger.log('crproposal', res);
-                if (res && res.data) {
-                    resolve(res.data.list);
-                } else {
-                    reject(null);
-                }
-            }, (err) => {
-                Logger.error('crproposal', 'fetchSearchedProposal error:', err);
-                reject(err);
-            });
-        });
+    public async fetchSearchedProposal(page = 1, status: ProposalStatus, search?: string): Promise<ProposalSearchResult[]> {
+        Logger.log(App.CRPROPOSAL_VOTING, 'Fetching searched proposal for status: ' + status, + 'with search: ' + search);
+        try {
+            var url = this.getCrRpcApi() + '/api/v2/proposal/all_search?page=' + page + '&results=10&status=' + status + '&results=10&search=' + search;
+            let result = await this.jsonRPCService.httpGet(url);
+            Logger.log(App.CRPROPOSAL_VOTING, 'fetchSearchedProposal:' + result);
+            if (result && result.data) {
+                return result.data.list;
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRPROPOSAL_VOTING, 'fetchSearchedProposal error:', err);
+        }
     }
 
     /**
@@ -156,4 +154,5 @@ export class ProposalService {
             return proposal.id == proposalId;
         })
     }
+
 }

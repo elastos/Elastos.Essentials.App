@@ -31,7 +31,7 @@ export class CRProposalVotingInitService extends GlobalService {
       Logger.log("crproposal", "User signed in, initializing internal services");
       void this.uxService.init();
       void this.crOperations.init();
-      void this.proposalService.init();
+    //   void this.proposalService.init();
       void this.appService.getTimeCheckedForProposals();
     }, 7000); // 7 seconds before starting everything, to release the Essentials boot load.
     return;

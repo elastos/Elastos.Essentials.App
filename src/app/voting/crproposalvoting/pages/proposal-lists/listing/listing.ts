@@ -1,16 +1,17 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonInput } from '@ionic/angular';
-import { ProposalService } from '../../../services/proposal.service';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalSearchResult } from '../../../model/proposal-search-result';
 import { ProposalStatus } from '../../../model/proposal-status';
+import { ProposalService } from '../../../services/proposal.service';
 import { UXService } from '../../../services/ux.service';
-import { ActivatedRoute } from '@angular/router';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TranslateService } from '@ngx-translate/core';
-import { Logger } from 'src/app/logger';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
     selector: 'page-proposal-listing',
@@ -53,7 +54,7 @@ export class ProposalListingPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.init();
+        void this.init();
     }
 
     ionViewWillLeave() {
@@ -63,8 +64,8 @@ export class ProposalListingPage implements OnInit {
     async init() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-cr-proposal'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-            await this.globalNav.navigateTo("scanner", '/scanner/scan');
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            void this.globalNav.navigateTo("scanner", '/scanner/scan');
         });
         this.proposalsFetched = false;
         this.proposalService.reset();
@@ -84,7 +85,7 @@ export class ProposalListingPage implements OnInit {
     }
 
     async searchProposal(event) {
-        Logger.log('crproposal', 'Search input changed', event);
+        Logger.log(App.CRPROPOSAL_VOTING, 'Search input changed', event);
         if (this.searchInput) {
             this.proposalsFetched = false;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.searching-proposals'));
@@ -114,8 +115,8 @@ export class ProposalListingPage implements OnInit {
 
     public async loadMoreProposals(event) {
         if (!this.allProposalsLoaded) {
-            Logger.log('crproposal', 'Loading more proposals', this.fetchPage);
-            this.content.scrollToBottom(300);
+            Logger.log(App.CRPROPOSAL_VOTING, 'Loading more proposals', this.fetchPage);
+            void this.content.scrollToBottom(300);
 
             let proposalsLength = this.proposals.length;
 
@@ -139,7 +140,7 @@ export class ProposalListingPage implements OnInit {
                     this.fetchPage--;
                 }
                 this.allProposalsLoaded = true;
-                this.uxService.genericToast(this.translate.instant('crproposalvoting.all-proposals-are-loaded'));
+                void this.uxService.genericToast(this.translate.instant('crproposalvoting.all-proposals-are-loaded'));
                 // this.content.scrollToTop(300);
             }
         }

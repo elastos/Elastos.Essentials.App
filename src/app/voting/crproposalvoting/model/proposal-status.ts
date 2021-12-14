@@ -1,8 +1,11 @@
 export enum ProposalStatus {
-    ALL = "ALL",
-    VOTING = "VOTING",
-    NOTIFICATION = "NOTIFICATION",
-    ACTIVE = "ACTIVE",
-    FINAL = "FINAL",
-    REJECTED = "REJECTED"
+    ALL = "all",
+    REGISTERED = "registered",
+    CRAGREED = "cragreed",
+    VOTERAGREED = "voteragreed",
+    FINISHED = "finished",
+    CRCANCELED = "crcanceled",
+    VOTERCANCELED = "votercanceled",
+    TERMINATED = "terminated",
+    ABORTED = "aborted"
 }

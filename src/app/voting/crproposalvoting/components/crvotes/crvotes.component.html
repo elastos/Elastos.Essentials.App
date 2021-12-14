@@ -1,0 +1,9 @@
+<div class="container" [class.darkContainer]="theme.darkMode">
+    <ul>
+        <li *ngFor="let item of votes;">
+            <div [class.abstain]="item === 'abstain'" [class.approve]="item === 'approve'"
+                [class.reject]="item === 'reject'" [class.blank]="item === 'blank'"></div>
+        </li>
+        <li class="ratio">{{ ratio }}%</li>
+    </ul>
+</div>

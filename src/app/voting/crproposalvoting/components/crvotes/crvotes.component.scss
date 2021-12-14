@@ -1,0 +1,53 @@
+
+ul {
+    display: flex;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+li {
+    margin-top: 0;
+
+    div {
+        display: block;
+        line-height: 40px;
+        width: 9px;
+        height: 15px;
+        border-radius: 4px;
+    }
+}
+
+li + li {
+    margin-left: 4px;
+}
+
+.abstain {
+    background-color: #3B3B3B;
+}
+
+.approve {
+    background-color: #00DE73;
+}
+
+.reject {
+    background-color: #FC3E36;
+}
+
+.blank {
+    background-color: #DFDFDF;
+}
+
+.ratio {
+    font-size: 13px;
+    padding-left: 6px;
+}
+
+.darkContainer {
+    .abstain {
+        background-color: #3C3C3C;
+    }
+
+    .blank {
+        background-color: #515151;
+    }
+}

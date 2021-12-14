@@ -1,4 +1,4 @@
-@import "src/app/voting/root.scss";
+@import "src/app/voting/crproposalvoting/root.scss";
 
 ion-grid {
     padding: 0;
@@ -95,21 +95,19 @@ ion-grid {
                 word-wrap: break-word;
                 font-family: "Inter" !important;
             }
-
-            .url:active {
-                color: #428cff;
-            }
         }
 
         ion-label {
             width: 100%;
 
             h5 {
+                width: 100%;
                 font-size: 12px;
                 display: block;
             }
 
             h4 {
+                width: 100%;
                 font-size: 14px;
                 display: block;
             }
@@ -305,6 +303,7 @@ ion-grid {
 
 .darkContainer {
     ion-card {
+        color: white;
         background: #212021;
         box-shadow: none;
 
@@ -358,6 +357,13 @@ ion-grid {
         #budget-list {
             #budget {
                 background-color: #2f2d2f;
+                p {
+                    color: white;
+                }
+
+                .stage {
+                    color: #96FBC4;
+                }
             }
         }
     }

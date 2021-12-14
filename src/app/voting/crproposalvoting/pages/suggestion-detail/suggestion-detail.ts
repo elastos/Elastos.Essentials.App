@@ -9,6 +9,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
+import { Config } from 'src/app/wallet/config/Config';
 import { SuggestionDetail, SuggestionSearchResult } from '../../model/suggestion-model';
 import { CRCommandType, CROperationsService, CRWebsiteCommand } from '../../services/croperations.service';
 // import { DraftService } from '../../services/draft.service';
@@ -37,6 +38,7 @@ export class SuggestionDetailPage {
     isSelf = false;
     commandName: string;
     buttonLabel: string;
+    public Config = Config;
 
     private commandReturnSub: Subscription = null;
 
@@ -67,6 +69,7 @@ export class SuggestionDetailPage {
             this.isSelf = Util.isSelfDid(this.suggestion.did);
 
             //Get total budget
+            this.totalBudget = 0;
             if (this.suggestion.budgets) {
                 for (let budget of this.suggestion.budgets) {
                     budget.type = budget.type.toLowerCase();
@@ -134,20 +137,20 @@ export class SuggestionDetailPage {
             {
                 title: this.translate.instant('crproposalvoting.abstract'),
                 type: 'marked',
-                value: marked(this.suggestion.abstract),
-                active: false
+                value: this.suggestion.abstract ? marked(this.suggestion.abstract) : null,
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.motivation'),
                 type: 'marked',
-                value: marked(this.suggestion.motivation),
-                active: false
+                value: this.suggestion.motivation ? marked(this.suggestion.motivation) : null,
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.goal'),
                 type: 'marked',
-                value: marked(this.suggestion.goal),
-                active: false
+                value: this.suggestion.goal ? marked(this.suggestion.goal) : null,
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.milestone'),

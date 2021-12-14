@@ -1,16 +1,16 @@
 import { ProposalStatus } from "./proposal-status";
 
 export enum VoteResultType {
-    SUPPORT = "support",
+    APPROVE = "approve",
     REJECT = "reject",
-    ABSTENTION = "abstention"
+    ABSTAIN = "abstain"
 }
 
 export class VoteResult {
-    value: VoteResultType;
-    reason: string; // Council member comment for his vote choice
+    result: VoteResultType;
+    opinion: string; // Council member comment for his vote choice
     avatar?: string; // Url of the council member who sent this result, if any
-    votedBy: string; // Display name of the voting council member
+    name: string; // Display name of the voting council member
 }
 
 export class TrackingComment {
@@ -33,9 +33,9 @@ export class Tracking {
 export class ProposalDetails {
     id: number;
     status: ProposalStatus;
-    abs: string; // Abstract = detailed proposal description
-    voteResult: VoteResult[];
-    address: string; // Cyber Republic web page URL where the full proposal content can be seen
+    abstract: string; // Abstract = detailed proposal description
+    crVotes: VoteResult[];
+    originalURL: string; // Cyber Republic web page URL where the full proposal content can be seen
     duration: string; // ?
     rejectAmount: string; // ?
     rejectThroughAmount: string; // ?
@@ -43,4 +43,14 @@ export class ProposalDetails {
     tracking: Tracking[] // ?
     title: string;
     createdAt: number;
+    type: string;
+    draftHash: string;
+    motivation: string;
+    goal: string;
+    milestone: any;
+    implementationTeam: any;
+    planStatement: string;
+    budgets: any;
+    budgetStatement: string;
+    recipient: string;
 }

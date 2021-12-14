@@ -23,6 +23,10 @@ ion-spinner {
     text-align: right;
 }
 
+.font-blod {
+    font-weight: bold;
+}
+
 .message {
     margin: 24px;
     padding: 10px;
@@ -183,6 +187,11 @@ ion-footer {
             color: white;
             background-color: #592996;
         }
+
+        #sign {
+            color: white;
+            background-color: #8052FF;
+        }
     }
 
     .proposaltype {
@@ -193,5 +202,21 @@ ion-footer {
     td,
     th {
         border: 1px solid white;
+    }
+
+    .voteragreed {
+        color: #20E9C5;
+    }
+
+    .finished {
+        color: #67CBE1;
+    }
+
+    .registered {
+        color: #C9C9C9;
+    }
+
+    .cragreed {
+        color: #C9C9C9;
     }
 }

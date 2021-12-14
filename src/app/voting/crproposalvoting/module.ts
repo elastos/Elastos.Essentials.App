@@ -6,6 +6,7 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { CrVotesComponent } from './components/crvotes/crvotes.component';
 import { ProposalSearchResultComponent } from './components/proposal-search-result/proposal-search-result.component';
 import { VoteResultComponent } from './components/vote-result/vote-result.component';
 import { CreateProposalPage } from './pages/intents/createproposal/createproposal';
@@ -43,7 +44,8 @@ import { PopupService } from './services/popup.service';
 
     // Components
     ProposalSearchResultComponent,
-    VoteResultComponent
+    VoteResultComponent,
+    CrVotesComponent
   ],
   imports: [
     CommonModule,
@@ -75,7 +77,8 @@ import { PopupService } from './services/popup.service';
 
     // Components
     ProposalSearchResultComponent,
-    VoteResultComponent
+    VoteResultComponent,
+    CrVotesComponent
   ],
   providers: [
     Platform,

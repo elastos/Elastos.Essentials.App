@@ -14,3 +14,52 @@
 .proposal-search-result {
     width: 100%;
 }
+
+//--------------Proposal Status------------------------------------
+
+.status {
+    font-weight: 700;
+    color: #666666;
+}
+
+.voteragreed {
+    color: #00B83E;
+}
+
+.finished {
+    color: #0BBFE7;
+}
+
+.registered {
+    color: #3C3C3C;
+}
+
+.cragreed {
+    color: #3C3C3C;
+}
+
+.crcanceled {
+    color: #FF5757;
+}
+
+.votercanceled {
+    color: #FF5757;
+}
+
+.darkContainer {
+    .voteragreed {
+        color: #20E9C5;
+    }
+
+    .finished {
+        color: #67CBE1;
+    }
+
+    .registered {
+        color: #C9C9C9;
+    }
+
+    .cragreed {
+        color: #C9C9C9;
+    }
+}
