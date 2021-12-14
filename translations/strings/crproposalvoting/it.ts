@@ -26,14 +26,14 @@ export const it = {
         'abstain': 'Astenuto',
         'by': 'Di',
 
-        'suggestions': 'Suggestions',
-        'search-suggestion': 'Search Suggestion',
-        'searching-suggestions': 'Searching Suggestions',
-        'loading-suggestion': 'Loading Suggestion...',
-        'no-suggestions': 'No matching suggestions for now.',
-        'suggestion-details': 'Suggestion Details',
-        'suggestion': 'Suggestion',
-        'suggestion-id': 'Suggestion ID',
+        'suggestions': 'Suggerimenti',
+        'search-suggestion': 'Cerca suggerimento',
+        'searching-suggestions': 'Ricerca del suggerimento',
+        'loading-suggestion': 'Caricamento suggerimento...',
+        'no-suggestions': 'Nessun suggerimento corrispondente per ora.',
+        'suggestion-details': 'Dettagli del suggerimento',
+        'suggestion': 'Suggerimento',
+        'suggestion-id': 'ID Suggerimento',
 
         // Status
         'registered': 'Registered',
