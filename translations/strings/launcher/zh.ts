@@ -36,12 +36,12 @@ export const zh = {
         'active-wallet': '活动钱包',
         'touch-to-create-wallet': '点击创建新钱包',
         'manage-identity': '我的身份',
-        'address-copied-to-clipboard': 'Copied address {{address}} to clipboard!',
+        'address-copied-to-clipboard': '已复制地址 {{address}} 到剪切板！',
 
         /******** Components ********/
-        'address': 'Address:',
-        'addresses': 'Addresses',
-        'wallet-addresses': 'Wallet Addresses',
+        'address': '地址：',
+        'addresses': '地址',
+        'wallet-addresses': '钱包地址',
 
         /********** Onboard Page **********/
 
