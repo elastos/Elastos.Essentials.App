@@ -35,7 +35,7 @@ export const it = {
         'active-network': 'Rete Attiva',
         'active-wallet': 'Portafoglio Attivo',
         'touch-to-create-wallet': 'Tocca qui per creare un portafoglio',
-        'manage-identity': 'My identity',
+        'manage-identity': 'La mia identità',
 
         /********** Onboard Page **********/
 
@@ -60,8 +60,8 @@ export const it = {
         'app-crcouncil-description': 'Membri del consiglio della Cyber Republic',
         'app-cr-proposal': 'Proposte CR',
         'app-crproposal-description': 'Proposte Cyber Republic',
-        'app-cr-suggestion': 'CR Suggestion',
-        'app-crsuggestion-description': 'Cyber Republic suggestions',
+        'app-cr-suggestion': 'Suggerimenti CR',
+        'app-crsuggestion-description': 'Suggerimenti Cyber Republic',
         'app-dev-tools': 'Strumenti per sviluppatori',
         'app-browser': 'Scopri dApps',
         'app-browser-description': 'Esplora le dApp da utilizzare in Essentials',
