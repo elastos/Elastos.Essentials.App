@@ -2,7 +2,7 @@
 
 /********************** ALERT CONTROLLER **********************/
 .alert {
-  z-index:100000 !important;
+  z-index: 100000 !important;
   --ion-text-color: #000000;
 }
 
@@ -46,35 +46,47 @@
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
+.launcher-address-chooser-component {
+  --background: #ffffff;
+  --width: 70vw;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.launcher-address-chooser-component-dark {
+  --background: #212021;
+  --width: 70vw;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
 /********************** DIDSESSSIONS **********************/
 .didsessions-printoptions-component {
-    --height: 300px;
-    --background: #ffffff;
-    align-items: flex-end;
+  --height: 300px;
+  --background: #ffffff;
+  align-items: flex-end;
 
-    .modal-wrapper {
-      position: absolute;
-      left: 0;
-      display: block;
-      width: 100%;
-      border-top-left-radius: 30px;
-      border-top-right-radius: 30px;
-    }
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
 }
 
 .didsessions-mnemonicpasscheck-component {
-    --height: 350px;
-    --background: #ffffff;
-    align-items: flex-end;
+  --height: 350px;
+  --background: #ffffff;
+  align-items: flex-end;
 
-    .modal-wrapper {
-      position: absolute;
-      left: 0;
-      display: block;
-      width: 100%;
-      border-top-left-radius: 30px;
-      border-top-right-radius: 30px;
-    }
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
 }
 
 .didsessions-mnemonicpasscheck-component-dark {
@@ -100,21 +112,25 @@
   animation-fill-mode: forwards;
 
   @keyframes didsessionsWarningAnimate {
-    0% { bottom: -1000px }
-    100% { bottom: 0px }
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
   }
 
   ion-backdrop {
     background: transparent !important;
   }
 
-  .popover-wrapper{
+  .popover-wrapper {
     .popover-content {
       position: relative !important;
       margin: 0 auto !important;
       left: auto !important;
       top: auto !important;
-      width:85vw  !important;
+      width: 85vw !important;
     }
   }
 }
@@ -139,17 +155,17 @@
   align-items: flex-end;
 
   .modal-wrapper {
-      position: absolute;
-      left: 0;
-      display: block;
-      width: 100%;
-      border-top-left-radius: 50px;
-      border-top-right-radius: 50px;
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
   }
 }
 
 .identity-publishmode-component-base {
-  --height:35%;
+  --height: 35%;
 }
 
 .identity-warning-component {
@@ -160,21 +176,25 @@
   animation-fill-mode: forwards;
 
   @keyframes identityWarningAnimate {
-    0% { bottom: -1000px }
-    100% { bottom: 0px }
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
   }
 
   ion-backdrop {
     background: transparent !important;
   }
 
-  .popover-wrapper{
+  .popover-wrapper {
     .popover-content {
       position: relative !important;
       margin: 0 auto !important;
       left: auto !important;
       top: auto !important;
-      width:85vw  !important;
+      width: 85vw !important;
     }
   }
 }
@@ -200,18 +220,18 @@
   align-items: flex-end;
 
   .modal-wrapper {
-      position: absolute;
-      left: 0;
-      display: block;
-      width: 100%;
-      border-top-left-radius: 50px;
-      border-top-right-radius: 50px;
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
   }
 }
 
 .switch-network-component-base {
-  --height:35%;
-  --min-height:280px;
+  --height: 35%;
+  --min-height: 280px;
 }
 
 /********************** WALLET **********************/
@@ -228,15 +248,19 @@
   animation-fill-mode: forwards;
 
   @keyframes walletTxAnimate {
-    0% { bottom: -1000px }
-    100% { bottom: 0px }
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
   }
 
   ion-backdrop {
     background: transparent !important;
   }
 
-  .popover-wrapper{
+  .popover-wrapper {
     .popover-content {
       position: relative !important;
       margin: 0 auto !important;
@@ -255,21 +279,25 @@
   animation-fill-mode: forwards;
 
   @keyframes walletWarningAnimate {
-    0% { bottom: -1000px }
-    100% { bottom: 0px }
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
   }
 
   ion-backdrop {
     background: transparent !important;
   }
 
-  .popover-wrapper{
+  .popover-wrapper {
     .popover-content {
       position: relative !important;
       margin: 0 auto !important;
       left: auto !important;
       top: auto !important;
-      width:85vw  !important;
+      width: 85vw !important;
     }
   }
 }
@@ -300,12 +328,12 @@
   align-items: flex-end;
 
   .modal-wrapper {
-      position: absolute;
-      left: 0;
-      display: block;
-      width: 100%;
-      border-top-left-radius: 50px;
-      border-top-right-radius: 50px;
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
   }
 }
 
@@ -314,12 +342,12 @@
   align-items: flex-end;
 
   .modal-wrapper {
-      position: absolute;
-      left: 0;
-      display: block;
-      width: 100%;
-      border-top-left-radius: 50px;
-      border-top-right-radius: 50px;
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
   }
 }
 
@@ -331,28 +359,32 @@
   animation-fill-mode: forwards;
 
   @keyframes contactsWarningAnimate {
-    0% { bottom: -1000px }
-    100% { bottom: 0px }
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
   }
 
   ion-backdrop {
     background: transparent !important;
   }
 
-  .popover-wrapper{
+  .popover-wrapper {
     .popover-content {
       position: relative !important;
       margin: 0 auto !important;
       left: auto !important;
       top: auto !important;
-      width:85vw  !important;
+      width: 85vw !important;
     }
   }
 }
 
 /********************** DEVELOPER TOOLS **********************/
 .developertools-help-component {
-  --background: linear-gradient(to bottom, #181d20 0%,  #21313d 100%);
+  --background: linear-gradient(to bottom, #181d20 0%, #21313d 100%);
   --width: 60%;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
@@ -364,13 +396,13 @@
     opacity: 0.1 !important;
   }
 
-  .popover-wrapper{
+  .popover-wrapper {
     .popover-content {
       position: relative !important;
       margin: 0 auto !important;
       left: auto !important;
       top: auto !important;
-      width:85vw  !important;
+      width: 85vw !important;
     }
   }
 }

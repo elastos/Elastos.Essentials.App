@@ -27,6 +27,11 @@ export type StakingInfo = {
     stakingData: StakingData[];
 }
 
+export type WalletAddressInfo = {
+    title: string;
+    address: string;
+}
+
 /**
  * A network wallet is an instance of a master wallet (one root key) for a
  * given network (elastos, heco, etc).
@@ -281,6 +286,8 @@ export abstract class NetworkWallet {
      * not yet created, and push instances of those subwallets so we can store them.
      */
     protected abstract prepareStandardSubWallets(): Promise<void>;
+
+    public abstract getAddresses(): Promise<WalletAddressInfo[]>;
 
     /**
      * Returns the main subwallet inside this network wallet, responsible for refreshing the list of

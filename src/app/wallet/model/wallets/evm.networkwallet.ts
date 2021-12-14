@@ -3,7 +3,7 @@ import { EVMTransactionProvider } from '../providers/evm.transaction.provider';
 import { TransactionProvider } from '../providers/transaction.provider';
 import { StandardEVMSubWallet } from './evm.subwallet';
 import { MasterWallet } from './masterwallet';
-import { NetworkWallet } from './networkwallet';
+import { NetworkWallet, WalletAddressInfo } from './networkwallet';
 
 /**
  * Network wallet type for standard EVM networks
@@ -35,6 +35,15 @@ export class EVMNetworkWallet extends NetworkWallet {
         await this.mainTokenSubWallet.initialize();
         this.subWallets[this.network.getEVMSPVConfigName()] = this.mainTokenSubWallet;
         await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, this.network.getEVMSPVConfigName());
+    }
+
+    public async getAddresses(): Promise<WalletAddressInfo[]> {
+        return [
+            {
+                title: this.mainTokenSubWallet.getFriendlyName(),
+                address: await this.mainTokenSubWallet.getTokenAddress()
+            }
+        ];
     }
 
     public getMainEvmSubWallet(): StandardEVMSubWallet {

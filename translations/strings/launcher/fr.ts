@@ -36,6 +36,12 @@ export const fr = {
         'active-wallet': 'Portef. Actif',
         'touch-to-create-wallet': 'Toucher pour créer un portefeuille',
         'manage-identity': 'Mon identité',
+        'address-copied-to-clipboard': 'Adresse {{address}} copiée dans le presse-papier!',
+
+        /******** Components ********/
+        'address': 'Adresse:',
+        'addresses': 'Adresses',
+        'wallet-addresses': 'Adresses Portefeuille',
 
         /********** Onboard Page **********/
 

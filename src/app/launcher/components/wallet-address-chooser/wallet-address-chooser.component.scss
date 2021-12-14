@@ -1,0 +1,52 @@
+@import "src/app/launcher/root.scss";
+
+:host {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-self: flex-start;
+  width: 100%;
+
+  ion-grid {
+    width: 100%;
+  }
+
+  .heading {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    margin-bottom: 5px;
+  }
+
+  .left {
+    align-self: center;
+
+    .address {
+    }
+  }
+
+  .icon-container {
+    background: #444;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    padding: 12px;
+    border-radius: 10px;
+
+    img {
+    }
+  }
+
+  .darkContainer {
+    .heading {
+      color: #9d9d9d;
+    }
+
+    .address {
+      .title {
+        color: #c9c9c9;
+      }
+    }
+  }
+}

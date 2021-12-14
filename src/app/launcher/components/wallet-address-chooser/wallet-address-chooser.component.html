@@ -1,0 +1,15 @@
+<ion-grid [class.darkContainer]="theme.darkMode">
+  <ion-row class="heading">{{ 'launcher.wallet-addresses' | translate}}</ion-row>
+  <ion-row *ngFor="let addressInfo of walletAddressesInfo" class="address">
+    <ion-col size="10" class="left">
+      <div class="title">{{addressInfo.title}}</div>
+      <div class="address">{{getReducedWalletAddress(addressInfo.address)}}</div>
+    </ion-col>
+    <ion-col size="2">
+      <div class="icon-container ion-activatable ripple" (click)="copyAddress(addressInfo)">
+        <img [src]="theme.darkMode ? 'assets/launcher/icons/dark_mode/copy.svg' : 'assets/launcher/icons/copy.svg'">
+        <ion-ripple-effect></ion-ripple-effect>
+      </div>
+    </ion-col>
+  </ion-row>
+</ion-grid>

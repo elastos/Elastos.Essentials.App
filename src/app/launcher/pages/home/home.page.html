@@ -76,12 +76,14 @@
         </ion-row>
       </ion-col>
       <ion-col size="12" class="wallets-col">
-        <div *ngIf="walletService.getNetworkWalletsList().length == 0" (click)="openWallet()" class="no-wallet">
+        <div *ngIf="networkWalletsList.length == 0" (click)="openWallet()" class="no-wallet">
           {{ 'launcher.touch-to-create-wallet' | translate }}
         </div>
-        <ion-slides pager={true} *ngIf="walletService.getNetworkWalletsList().length > 0" #walletsSlider
+
+        <!-- Wallets list - horizontal slide -->
+        <ion-slides pager={true} [style]="networkWalletsList.length === 0 ? 'display:gone':''" #walletsSlider
           [options]="walletsSlideOpts" (ionSlideDidChange)="onWalletWidgetSlideChanged()">
-          <ion-slide *ngFor="let networkWallet of walletService.getNetworkWalletsList()">
+          <ion-slide *ngFor="let networkWallet of networkWalletsList">
             <div class="wallet-widget-row ripple ion-activatable" [ngStyle]="
             {
                 'background-image': networkWallet.masterWallet.theme ?
@@ -102,6 +104,23 @@
                 <div *ngIf="currencyService.useCurrency" class="balance">
                   {{ getFriendlyBalance(networkWallet.getDisplayBalanceInActiveCurrency()) }}
                   {{ currencyService.selectedCurrency.symbol }}
+                </div>
+
+                <!-- Single address - directly copy -->
+                <div class="single-address" *ngIf="getWalletAddresses(networkWallet).length === 1"
+                  (click)="copySingleAddressToClipboard($event, getWalletAddresses(networkWallet)[0].address)">
+                  <div class="title">{{ 'launcher.address' | translate }}</div>
+                  <div class="bottom">
+                    <div class="address">{{getReducedWalletAddress(getWalletAddresses(networkWallet)[0].address)}}</div>
+                    <img [src]="'assets/launcher/icons/dark_mode/copy.svg'">
+                  </div>
+                </div>
+
+                <!-- Several addresses - need to open a popup to select -->
+                <div class="addresses" *ngIf="getWalletAddresses(networkWallet).length > 1"
+                  (click)="pickWalletAddress($event, networkWallet)">
+                  {{ 'launcher.addresses' | translate }}
+                  <img [src]="'assets/wallet/icons/darkmode/down-arrow.svg'">
                 </div>
               </ion-row>
               <ion-ripple-effect></ion-ripple-effect>
@@ -128,6 +147,7 @@
       <ion-col class="apps-col" size="12" *ngIf="recentApps.length > 0">
         <div class="recent-app" *ngFor="let app of recentApps" (click)="openRecentApp(app)">
           <img [src]="app.iconUrl" />
+          <img class="network" [src]="getRecentAppNetworkIcon(app)">
           <div class="title">{{ getShortRecentAppTitle(app)}}</div>
         </div>
       </ion-col>

@@ -1,7 +1,24 @@
 
-import { WrongPasswordException } from "../model/exceptions/wrongpasswordexception.exception";
-import { PasswordManagerCancelallationException } from "../model/exceptions/passwordmanagercancellationexception";
 import { Logger } from "src/app/logger";
+import { PasswordManagerCancelallationException } from "../model/exceptions/passwordmanagercancellationexception";
+import { WrongPasswordException } from "../model/exceptions/wrongpasswordexception.exception";
+
+/**
+ * Converts a did:elastos:abcdefghijklmn string into did:elastos:abcd...klmn
+ */
+export const reducedDidString = (didString: string): string => {
+  if (!didString)
+    return null;
+
+  if (!didString.startsWith("did:elastos:"))
+    return didString;
+
+  let shortForm = didString.replace("did:elastos:", "");
+  if (shortForm.length < 12)
+    return didString;
+
+  return `did:elastos:${shortForm.substr(0, 6)}...${shortForm.substr(shortForm.length - 6, 6)}`;
+}
 
 export class DIDHelper {
   /**

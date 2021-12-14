@@ -5,6 +5,7 @@ import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { urlDomain } from 'src/app/helpers/url.helpers';
 import { CredImportIdentityIntentParams } from 'src/app/identity/model/identity.intents';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
@@ -843,13 +844,16 @@ export class DappBrowserService implements GlobalService {
     private async addAppToRecent(url: string) {
         let recentApps = this.recentApps.value;
 
-        // Remove this url from recents if already inside
-        let existingIndex = this.recentApps.value.findIndex(appUrl => appUrl === url);
+        // Remove this url from recents if already inside.
+        // We use unique root domains to replace older recent dapps, as browsed info can contain
+        // several sub paths while browinsg an app (1 app, multiple "browsed app info").
+        let rootDomain = urlDomain(url);
+        let existingIndex = this.recentApps.value.findIndex(appUrl => urlDomain(appUrl) === rootDomain);
         if (existingIndex >= 0)
             recentApps.splice(existingIndex, 1);
 
         // Add to front of recents
-        recentApps.splice(0, 0, url);
+        recentApps.splice(0, 0, url); // Save the url to be able to open it, not the root domain
 
         // Remove old recents
         recentApps = recentApps.slice(0, MAX_RECENT_APPS);

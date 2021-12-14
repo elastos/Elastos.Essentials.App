@@ -10,11 +10,14 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { BrowsedAppInfo } from 'src/app/dappbrowser/model/browsedappinfo';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
+import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
+import { reducedWalletAddress } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
@@ -22,6 +25,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { Network } from 'src/app/wallet/model/networks/network';
+import { NetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/wallets/networkwallet';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -29,6 +33,7 @@ import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.servi
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { OptionsComponent } from '../../components/options/options.component';
+import { WalletAddressChooserComponent } from '../../components/wallet-address-chooser/wallet-address-chooser.component';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
 import { NotificationsPage } from '../notifications/notifications.page';
@@ -58,7 +63,9 @@ export class HomePage implements OnInit {
   private themeSubscription: Subscription = null; // Subscription to theme change
 
   // Widget data
+  public networkWalletsList: NetworkWallet[] = [];
   public activeNetwork: Network = null;
+  private activeWalletAddresses: { [walletId: string]: WalletAddressInfo[] } = {};
   public hiveVaultLinked = false;
   public hiveVaultStorageStats: {
     usedStorage: string; // Used storage, formatted for display, in GB
@@ -99,6 +106,7 @@ export class HomePage implements OnInit {
     private globalWalletConnectService: GlobalWalletConnectService,
     private globalStartupService: GlobalStartupService,
     private globalNavService: GlobalNavService,
+    private globalNative: GlobalNativeService,
     private browserService: DappBrowserService,
     private didSessions: GlobalDIDSessionsService) {
   }
@@ -189,16 +197,16 @@ export class HomePage implements OnInit {
     // on the wallet widget.
     this.walletServiceSub = this.walletService.walletServiceStatus.subscribe((initializationComplete) => {
       if (initializationComplete) {
-        this.updateWidgetMainWallet();
+        void this.updateWidgetMainWallet();
       }
     });
 
     this.networkWalletSub = this.walletService.activeNetworkWallet.subscribe(networkWallet => {
-      this.updateWidgetMainWallet();
+      void this.updateWidgetMainWallet();
     });
 
     this.activeNetworkSub = this.walletNetworkService.activeNetwork.subscribe(networkName => {
-      this.updateWidgetMainWallet();
+      void this.updateWidgetMainWallet();
     });
 
     // Wait to know user's hive vault status to show the hive storage widget
@@ -282,7 +290,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  private updateWidgetMainWallet() {
+  private async updateWidgetMainWallet() {
     // Deprecated
     let activeWallet = this.walletService.activeNetworkWallet.value;
     if (activeWallet) {
@@ -292,10 +300,18 @@ export class HomePage implements OnInit {
       this.activeNetwork = null;
     }
 
+    this.networkWalletsList = this.walletService.getNetworkWalletsList();
+
     // Select the active wallet in the wallets slides
     let activeWalletIndex = this.walletService.getActiveNetworkWalletIndex();
     if (activeWalletIndex != -1) { // Happens if no wallet
       void this.walletsSlider.slideTo(activeWalletIndex, 0);
+    }
+
+    // Save wallet addresses locally for easy copy
+    this.activeWalletAddresses = {};
+    for (let networkWallet of this.networkWalletsList) {
+      this.activeWalletAddresses[networkWallet.id] = await networkWallet.getAddresses();
     }
   }
 
@@ -399,6 +415,14 @@ export class HomePage implements OnInit {
       return app.title;
   }
 
+  public getRecentAppNetworkIcon(app: BrowsedAppInfo): string {
+    let network = this.walletNetworkService.getNetworkByKey(app.network);
+    if (!network)
+      return transparentPixelIconDataUrl();
+
+    return network.logo;
+  }
+
   public openDApps() {
     //this.browserService.clearRecentApps(); // TMP
     void this.globalNavService.navigateTo(App.DAPP_BROWSER, "/dappbrowser/home");
@@ -406,5 +430,51 @@ export class HomePage implements OnInit {
 
   public openRecentApp(app: BrowsedAppInfo) {
     void this.browserService.openRecentApp(app);
+  }
+
+  public getReducedWalletAddress(address: string) {
+    return reducedWalletAddress(address);
+  }
+
+  /**
+   * Copies the first and only wallet address for the active wallet on the widget, for the active network.
+   * Address is copied to the clipboard and a toast confirmation is shown.
+   */
+  public copySingleAddressToClipboard(event, address: string) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    let confirmationMessage = this.translate.instant('launcher.address-copied-to-clipboard', { address });
+    this.globalNative.genericToast(confirmationMessage);
+    void this.globalNative.copyClipboard(address);
+  }
+
+  public getWalletAddresses(wallet: NetworkWallet): WalletAddressInfo[] {
+    if (!this.activeWalletAddresses[wallet.id])
+      return [];
+
+    return Object.values(this.activeWalletAddresses[wallet.id]);
+  }
+
+  public async pickWalletAddress(event, networkWallet: NetworkWallet) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    let addresses = this.getWalletAddresses(networkWallet);
+
+    this.popover = await this.popoverCtrl.create({
+      mode: 'ios',
+      component: WalletAddressChooserComponent,
+      componentProps: {
+        addresses
+      },
+      cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'launcher-address-chooser-component' : 'launcher-address-chooser-component-dark',
+      event: event,
+      translucent: false
+    });
+    this.popover.onWillDismiss().then((resp) => {
+      this.popover = null;
+    });
+    return await this.popover.present();
   }
 }

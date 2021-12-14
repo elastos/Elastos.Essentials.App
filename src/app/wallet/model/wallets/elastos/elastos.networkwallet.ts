@@ -5,7 +5,7 @@ import { Network } from "../../networks/network";
 import { TransactionProvider } from "../../providers/transaction.provider";
 import { StandardEVMSubWallet } from "../evm.subwallet";
 import { MasterWallet } from "../masterwallet";
-import { NetworkWallet } from "../networkwallet";
+import { NetworkWallet, WalletAddressInfo } from "../networkwallet";
 import { EidSubWallet } from "./eid.evm.subwallet";
 import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 import { EscSubWallet } from "./esc.evm.subwallet";
@@ -57,6 +57,20 @@ export class ElastosNetworkWallet extends NetworkWallet {
     }
 
     //Logger.log("wallet", "Elastos standard subwallets preparation completed");
+  }
+
+  public async getAddresses(): Promise<WalletAddressInfo[]> {
+    // Elastos network wallet has 2 different addresses: main chain, and ESC/EID
+    return [
+      {
+        title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
+        address: await this.subWallets[StandardCoinName.ELA].createAddress()
+      },
+      {
+        title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
+        address: await this.subWallets[StandardCoinName.ETHSC].createAddress()
+      }
+    ];
   }
 
   public getMainEvmSubWallet(): StandardEVMSubWallet {
