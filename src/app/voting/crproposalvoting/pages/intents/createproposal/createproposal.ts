@@ -90,7 +90,7 @@ export class CreateProposalPage {
             // Fetch more details about this suggestion, to display to the user
             this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
             Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
-            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newAddress && !this.suggestionDetail.newOwnerDID) {
+            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
                 this.proposaltype = "changeproposaladdress";
             }
             this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);

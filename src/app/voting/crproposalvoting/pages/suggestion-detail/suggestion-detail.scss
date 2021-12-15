@@ -301,6 +301,36 @@ ion-grid {
     }
 }
 
+.receive-address {
+    div {
+        width: 100%;
+        font-size: 12px;
+        word-wrap: break-word;
+    }
+
+    img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+
+.original-url {
+    a {
+        width: 100%;
+        color: #8052FF;
+    }
+
+    a:active {
+        color: #428cff;
+    }
+
+    img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
 .darkContainer {
     ion-card {
         color: white;
@@ -365,6 +395,12 @@ ion-grid {
                     color: #96FBC4;
                 }
             }
+        }
+    }
+
+    .original-url {
+        a {
+            color: #B79DFF;
         }
     }
 }

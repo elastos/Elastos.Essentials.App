@@ -62,7 +62,7 @@ export class SuggestionDetail {
     targetSuggestionHash: string;
 
     newOwnerDID?: string;
-    newAddress?: string;
+    newRecipient?: string;
     newSecretaryPublicKey?: string;
 
     type: string;

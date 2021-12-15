@@ -182,7 +182,19 @@ export class SuggestionDetailPage {
                 type: 'marked',
                 value: this.suggestion.budgetStatement ? marked(this.suggestion.budgetStatement) : null,
                 active: true
-            }
+            },
+            {
+                title: this.translate.instant('crproposalvoting.url'),
+                type: 'original-url',
+                value: this.suggestion.originalURL,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.receive-address'),
+                type: 'receive-address',
+                value: this.suggestion.recipient,
+                active: true
+            },
         );
     }
 

@@ -140,7 +140,7 @@ export class ProposalService {
     }
 
     public navigateToProposalDetailPage(proposal: ProposalSearchResult) {
-        void this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/proposal-details", { state: { proposalId: proposal.id } });
+        void this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/proposal-details", { state: { proposalHash: proposal.proposalHash } });
 
         /* this.router.navigate(["/crproposalvoting/proposal-details"], {
             queryParams: {

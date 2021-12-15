@@ -35,7 +35,7 @@
                             [class.votercanceled]="proposal.status === 'votercanceled'">
                             {{ 'crproposalvoting.' + proposal.status | translate }}
                         </p>
-                        <!-- <crvotes></crvotes> -->
+                        <crvotes [crvotes]="proposal.crVotes"></crvotes>
                     </ion-col>
                     <ion-col size="1.5" class="right-col">
                         <ion-img

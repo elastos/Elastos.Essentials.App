@@ -32,25 +32,36 @@ export class Tracking {
 
 export class ProposalDetails {
     id: number;
+    title: string;
     status: ProposalStatus;
+    type: string;
+    createdAt: number;
+    proposer: string;
+    did: string;
+    proposalHash: string;
     abstract: string; // Abstract = detailed proposal description
+    motivation: string;
+    goal: string;
+    milestone: any;
+    implementationTeam: any;
+    planStatement: string;
+    recipient: string;
+    budgetStatement: string;
+
     crVotes: VoteResult[];
     originalURL: string; // Cyber Republic web page URL where the full proposal content can be seen
     duration: string; // ?
     rejectAmount: string; // ?
     rejectThroughAmount: string; // ?
     rejectRatio: number; // ?
-    tracking: Tracking[] // ?
-    title: string;
-    createdAt: number;
-    type: string;
-    draftHash: string;
-    motivation: string;
-    goal: string;
-    milestone: any;
-    implementationTeam: any;
-    planStatement: string;
+
+    targetProposalID: string;
+    targetProposalTitle: string;
+
+    newOwnerDID?: string;
+    newRecipient?: string;
+    newSecretaryDID?: string;
+    closeProposalID?: string;
+
     budgets: any;
-    budgetStatement: string;
-    recipient: string;
 }

@@ -6,6 +6,7 @@ import marked from 'marked';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -26,7 +27,7 @@ type MergedProposalInfo = ProposalSearchResult & ProposalDetails;
 export class ProposalDetailPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    proposal: MergedProposalInfo;
+    proposal: ProposalDetails;
     proposalDetails = [];
 
     timeActive = false;
@@ -41,6 +42,7 @@ export class ProposalDetailPage {
     buttonLabel: string;
     public Config = Config;
     public crvotes = {approve: 0, reject: 0, abstain: 0};
+    public proposalHash: string;
 
     constructor(
         public uxService: UXService,
@@ -56,24 +58,24 @@ export class ProposalDetailPage {
     ) {
         const navigation = this.router.getCurrentNavigation();
         if (navigation.extras.state) {
-            const proposalId = navigation.extras.state.proposalId;
-            Logger.log('CRProposal', 'Proposal details id', proposalId);
-            void this.init(proposalId);
+            this.proposalHash = navigation.extras.state.proposalHash;
+            Logger.log('CRProposal', 'Proposal details id', this.proposalHash);
+            void this.init();
         }
     }
 
-    async init(proposalId) {
+    async init() {
         this.proposal = null;
         try {
             this.isCRMember = await this.voteService.isCRMember();
-            let proposalSearchResult = this.proposalService.getFetchedProposalById(proposalId);
-            let proposalHash = proposalSearchResult.proposalHash;
+            // let proposalSearchResult = this.proposalService.getFetchedProposalById(proposalId);
+            // let proposalHash = proposalSearchResult.proposalHash;
             // let proposalHash = "f85dc0a06c2a03e3ca278f49fccf3e773b2599a6c64bdaffd5d9604e61f5b29c";
-            let proposalDetails = await this.proposalService.fetchProposalDetails(proposalHash);
-            Logger.log('CRProposal', "proposal", proposalSearchResult, proposalDetails);
+            this.proposal = await this.proposalService.fetchProposalDetails(this.proposalHash);
+            Logger.log('CRProposal', "proposal", this.proposal);
 
-            this.proposal = Object.assign(proposalSearchResult, proposalDetails);
-            // this.isSelf = Util.isSelfDid(this.proposal.did);
+            // this.proposal = Object.assign(proposalSearchResult, proposalDetails);
+            this.isSelf = Util.isSelfDid(this.proposal.did);
 
             //Get total budget
             if (this.proposal.budgets) {
