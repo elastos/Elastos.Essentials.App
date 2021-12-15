@@ -8,17 +8,17 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { ProposalSearchResult } from '../../../model/proposal-search-result';
-import { ProposalStatus } from '../../../model/proposal-status';
-import { ProposalService } from '../../../services/proposal.service';
-import { UXService } from '../../../services/ux.service';
+import { ProposalSearchResult } from '../../model/proposal-search-result';
+import { ProposalStatus } from '../../model/proposal-status';
+import { ProposalService } from '../../services/proposal.service';
+import { UXService } from '../../services/ux.service';
 
 @Component({
-    selector: 'page-proposal-listing',
-    templateUrl: 'listing.html',
-    styleUrls: ['./listing.scss']
+    selector: 'page-proposal-list',
+    templateUrl: 'proposal-list.html',
+    styleUrls: ['./proposal-list.scss']
 })
-export class ProposalListingPage implements OnInit {
+export class ProposalListPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
     @ViewChild('content', { static: false }) content: IonContent;
     @ViewChild('search', { static: false }) search: IonInput;
@@ -149,6 +149,6 @@ export class ProposalListingPage implements OnInit {
     }
 
     selectProposal(proposal: ProposalSearchResult) {
-        this.proposalService.navigateToProposalDetailsPage(proposal);
+        this.proposalService.navigateToProposalDetailPage(proposal);
     }
 }

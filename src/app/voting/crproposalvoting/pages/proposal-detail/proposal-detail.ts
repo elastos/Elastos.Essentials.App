@@ -19,11 +19,11 @@ import { UXService } from '../../services/ux.service';
 type MergedProposalInfo = ProposalSearchResult & ProposalDetails;
 
 @Component({
-    selector: 'page-proposal-details',
-    templateUrl: 'proposal-details.html',
-    styleUrls: ['./proposal-details.scss']
+    selector: 'page-proposal-detail',
+    templateUrl: 'proposal-detail.html',
+    styleUrls: ['./proposal-detail.scss']
 })
-export class ProposalDetailsPage {
+export class ProposalDetailPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     proposal: MergedProposalInfo;

@@ -139,7 +139,7 @@ export class ProposalService {
         });
     }
 
-    public navigateToProposalDetailsPage(proposal: ProposalSearchResult) {
+    public navigateToProposalDetailPage(proposal: ProposalSearchResult) {
         void this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/proposal-details", { state: { proposalId: proposal.id } });
 
         /* this.router.navigate(["/crproposalvoting/proposal-details"], {

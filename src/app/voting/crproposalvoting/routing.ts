@@ -7,27 +7,18 @@ import { ReviewProposalPage } from './pages/intents/reviewproposal/reviewproposa
 import { UpdatMilestonePage } from './pages/intents/updatemilestone/updatemilestone';
 import { VoteForProposalPage } from './pages/intents/voteforproposal/voteforproposal';
 import { WithdrawPage } from './pages/intents/withdraw/withdraw';
-import { ProposalDetailsPage } from './pages/proposal-details/proposal-details';
-import { ProposalListingPage } from './pages/proposal-lists/listing/listing';
+import { ProposalDetailPage } from './pages/proposal-detail/proposal-detail';
+import { ProposalListPage } from './pages/proposal-list/proposal-list';
 import { SuggestionDetailPage } from './pages/suggestion-detail/suggestion-detail';
 import { SuggestionListPage } from './pages/suggestion-list/suggestion-list';
 
 
 const routes: Routes = [
-/*   {
-    path: 'proposals', component: ProposalListsHomePage,
-    children: [
-      {
-        path: ':proposalType',
-        component: ProposalListingPage,
-      },
-    ],
-  }, */
   {
-    path: 'proposals/:proposalType', component: ProposalListingPage
+    path: 'proposals/:proposalType', component: ProposalListPage
   },
   {
-    path: 'proposal-details', component: ProposalDetailsPage
+    path: 'proposal-details', component: ProposalDetailPage
   },
   {
     path: 'suggestions/:suggestionType', component: SuggestionListPage

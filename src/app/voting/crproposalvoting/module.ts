@@ -16,9 +16,8 @@ import { ReviewProposalPage } from './pages/intents/reviewproposal/reviewproposa
 import { UpdatMilestonePage } from './pages/intents/updatemilestone/updatemilestone';
 import { VoteForProposalPage } from './pages/intents/voteforproposal/voteforproposal';
 import { WithdrawPage } from './pages/intents/withdraw/withdraw';
-import { ProposalDetailsPage } from './pages/proposal-details/proposal-details';
-import { ProposalListsHomePage } from './pages/proposal-lists/home/home';
-import { ProposalListingPage } from './pages/proposal-lists/listing/listing';
+import { ProposalDetailPage } from './pages/proposal-detail/proposal-detail';
+import { ProposalListPage } from './pages/proposal-list/proposal-list';
 import { SuggestionDetailPage } from './pages/suggestion-detail/suggestion-detail';
 import { SuggestionListPage } from './pages/suggestion-list/suggestion-list';
 import { CRProposalVotingRoutingModule } from './routing';
@@ -27,9 +26,8 @@ import { PopupService } from './services/popup.service';
 @NgModule({
   declarations: [
     // Pages
-    ProposalListsHomePage,
-    ProposalListingPage,
-    ProposalDetailsPage,
+    ProposalListPage,
+    ProposalDetailPage,
     SuggestionListPage,
     SuggestionDetailPage,
 
@@ -60,9 +58,8 @@ import { PopupService } from './services/popup.service';
   bootstrap: [],
   entryComponents: [
     // Pages
-    ProposalListsHomePage,
-    ProposalListingPage,
-    ProposalDetailsPage,
+    ProposalListPage,
+    ProposalDetailPage,
     SuggestionListPage,
     SuggestionDetailPage,
 
