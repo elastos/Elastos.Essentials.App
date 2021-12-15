@@ -96,7 +96,7 @@ export class SuggestionService {
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log(App.CRSUGGESTION, 'fetchSearchedSuggestion:' + result);
             if (result && result.data) {
-                return result.data.list;
+                return result.data.suggestions;
             }
         }
         catch (err) {
