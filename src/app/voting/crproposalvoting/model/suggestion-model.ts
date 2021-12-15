@@ -40,25 +40,37 @@ export class Tracking {
 export class SuggestionDetail {
     id: number;         // Unique id on CR website
     title: string;      // Title
-    did: string;        // ?
-    didName; string;    // ?
+    status: string;
+    did: string;
+    proposer: string;
+    ownerPublicKey: string;
     abstract: string;        // Main suggestion description text
-    address: string;    // ?
+    originalURL: string;
     createdAt: number;  // Timestamp
-    targetSuggestionTitle: string;
-    newOwnerDID?: string;
-    newAddress?: string;
-    targetSuggestionHash: string;
-    targetProposalNum: number;
-    type: string;
-    draftHash: string;
     motivation: string;
     goal: string;
+
     milestone: any;
     implementationTeam: any;
     planStatement: string;
+    recipient: string;
     budgets: any;
     budgetStatement: string;
+
+    targetProposalNum: number;
+    targetSuggestionTitle: string;
+    targetSuggestionHash: string;
+
+    newOwnerDID?: string;
+    newAddress?: string;
+    newSecretaryPublicKey?: string;
+
+    type: string;
+    draftHash: string;
+
+    signature?: string;
+    secretaryGeneralSignature?: string;
+    newOwnerSignature?: string;
 }
 
 export type SuggestionDetailResponse = {

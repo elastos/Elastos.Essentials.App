@@ -154,7 +154,7 @@ export class SuggestionListPage implements OnInit {
     selectSuggestion(suggestion: SuggestionSearchResult) {
         // suggestion = this.suggestionService.getFetchedSuggestionById(754);
         Logger.log('crsuggestion', 'selectSuggestion:', suggestion);
-        this.suggestionService.selectedSuggestion = suggestion;
+        // this.suggestionService.selectedSuggestion = suggestion;
         void this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/suggestion-detail", { state: { suggestionId: suggestion.sid } });
     }
 }

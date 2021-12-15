@@ -26,7 +26,7 @@ type MergedSuggestionInfo = SuggestionSearchResult & SuggestionDetail;
 export class SuggestionDetailPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    suggestion: MergedSuggestionInfo;
+    suggestion: SuggestionDetail;
     suggestionDetails = [];
 
     timeActive = false;
@@ -41,6 +41,7 @@ export class SuggestionDetailPage {
     public Config = Config;
 
     private commandReturnSub: Subscription = null;
+    public suggestionId: string;
 
     constructor(
         public uxService: UXService,
@@ -52,20 +53,20 @@ export class SuggestionDetailPage {
         private translate: TranslateService,
         public voteService: VoteService,
         private crOperations: CROperationsService,
-        // private draftService: DraftService
     ) {
-
+        const navigation = this.router.getCurrentNavigation();
+        if (navigation.extras.state) {
+            this.suggestionId = navigation.extras.state.suggestionId;
+            Logger.log('CRSuggestion', 'Suggestion id', this.suggestionId);
+            void this.init();
+        }
     }
 
     async init() {
         this.suggestion = null;
         try {
             this.isCRMember = await this.voteService.isCRMember();
-            let suggestionSearchResult = this.suggestionService.selectedSuggestion;
-            const suggestionId = suggestionSearchResult.sid;
-            let suggestionDetails = await this.suggestionService.fetchSuggestionDetail(suggestionId);
-
-            this.suggestion = Object.assign(suggestionSearchResult, suggestionDetails);
+            this.suggestion = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
             this.isSelf = Util.isSelfDid(this.suggestion.did);
 
             //Get total budget
@@ -220,9 +221,8 @@ export class SuggestionDetailPage {
     }
 
 
-
     handleCommand() {
-        let crcommand = { command: this.commandName, data: this.suggestion, sid: this.suggestion.sid, type: CRCommandType.SuggestionDetailPage } as CRWebsiteCommand;
+        let crcommand = { command: this.commandName, data: this.suggestion, sid: this.suggestionId, type: CRCommandType.SuggestionDetailPage } as CRWebsiteCommand;
         Logger.log('CRSuggestion', "Command:", crcommand);
         void this.crOperations.handleCRProposalCommand(crcommand, null);
     }
