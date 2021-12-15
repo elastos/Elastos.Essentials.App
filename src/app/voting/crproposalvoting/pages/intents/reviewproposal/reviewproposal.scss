@@ -27,8 +27,8 @@ ion-segment {
     }
 }
 
-ion-textarea {
-    padding-left: 15px;
+textarea {
+    padding: 15px;
     width: 100%;
     height: 159px;
     font-size: 13px;
@@ -75,7 +75,7 @@ img {
         }
     }
 
-    ion-textarea {
+    textarea {
         background-color: #3B3B3B;
         border: 1px solid #626262;
     }

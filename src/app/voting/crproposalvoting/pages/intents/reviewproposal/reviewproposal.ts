@@ -43,7 +43,7 @@ export class ReviewProposalPage {
     public proposalDetails: ProposalDetails;
     public proposalDetailsFetched = false;
     public isKeyboardHide = true;
-    public opinion = "test";
+    public opinion = "";
 
     constructor(
         private crOperations: CROperationsService,
