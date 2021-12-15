@@ -16,7 +16,7 @@ export class SuggestionService {
     private pageNumbersLoaded = 0;
     private subscription: Subscription = null;
     public selectedSuggestion: SuggestionSearchResult;
-    public waitingDict = {};
+    public blockWaitingDict = {};
 
     constructor(
         private http: HttpClient,
@@ -24,6 +24,10 @@ export class SuggestionService {
         public jsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) {
+    }
+
+    init() {
+
     }
 
     public stop() {
@@ -130,5 +134,23 @@ export class SuggestionService {
         return this.allSearchResults.find((suggestion) => {
             return suggestion.id == suggestionId;
         })
+    }
+
+    public addBlockWatingItem(suggestionId: string, status: string) {
+        this.blockWaitingDict[suggestionId] = status;
+    }
+
+    //If the current status changed, will be remove
+    public needBlockWating(suggestionId: string, status: string): boolean {
+        if (this.blockWaitingDict[suggestionId] && this.blockWaitingDict[suggestionId] == status) {
+            return true;
+        }
+        return false;
+    }
+
+    public removeBlockWatingItem(suggestionId: string) {
+        if (this.blockWaitingDict[suggestionId]) {
+            delete this.blockWaitingDict[suggestionId];
+        }
     }
 }

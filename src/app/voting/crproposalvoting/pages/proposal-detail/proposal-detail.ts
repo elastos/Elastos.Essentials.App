@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import marked from 'marked';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
@@ -43,6 +44,7 @@ export class ProposalDetailPage {
     public Config = Config;
     public crvotes = {approve: 0, reject: 0, abstain: 0};
     public proposalHash: string;
+    private commandReturnSub: Subscription = null;
 
     constructor(
         public uxService: UXService,
@@ -60,7 +62,6 @@ export class ProposalDetailPage {
         if (navigation.extras.state) {
             this.proposalHash = navigation.extras.state.proposalHash;
             Logger.log('CRProposal', 'Proposal details id', this.proposalHash);
-            void this.init();
         }
     }
 
@@ -68,13 +69,9 @@ export class ProposalDetailPage {
         this.proposal = null;
         try {
             this.isCRMember = await this.voteService.isCRMember();
-            // let proposalSearchResult = this.proposalService.getFetchedProposalById(proposalId);
-            // let proposalHash = proposalSearchResult.proposalHash;
-            // let proposalHash = "f85dc0a06c2a03e3ca278f49fccf3e773b2599a6c64bdaffd5d9604e61f5b29c";
             this.proposal = await this.proposalService.fetchProposalDetails(this.proposalHash);
             Logger.log('CRProposal', "proposal", this.proposal);
 
-            // this.proposal = Object.assign(proposalSearchResult, proposalDetails);
             this.isSelf = Util.isSelfDid(this.proposal.did);
 
             //Get total budget
@@ -103,17 +100,16 @@ export class ProposalDetailPage {
             }
 
             //Set command name
-            if (this.isCRMember && this.proposal.status == 'registered') {
-                this.commandName = "reviewproposal";
-                this.buttonLabel = "crproposalvoting.review-proposal";
-            }
-            // else if (this.isSelf && this.proposal.status == 'unsigned'){
-            //     this.commandName = "createsuggestion";
-            //     this.buttonLabel = "crproposalvoting.sign-suggestion";
-            // }
-            else {
-                this.commandName = null;
-                this.buttonLabel = null;
+            this.commandName = null;
+            this.buttonLabel = null;
+
+            if (!this.proposalService.needBlockWating(this.proposalHash, this.proposal.status)) {
+                this.proposalService.removeBlockWatingItem(this.proposalHash);
+
+                if (this.isCRMember && this.proposal.status == 'registered') {
+                    this.commandName = "reviewproposal";
+                    this.buttonLabel = "crproposalvoting.review-proposal";
+                }
             }
 
             this.addProposalDetails();
@@ -130,7 +126,20 @@ export class ProposalDetailPage {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.loading-proposal'));
+
+        void this.init();
+        this.commandReturnSub = this.crOperations.activeCommandReturn.subscribe(commandType => {
+            if (commandType == CRCommandType.SuggestionDetailPage) {
+                void this.init();
+            }
+        });
+
         this.changeDetector.detectChanges(); // Force angular to catch changes in complex objects
+    }
+
+    ionViewWillLeave() {
+        this.commandReturnSub.unsubscribe();
+        this.commandReturnSub = null;
     }
 
     ionViewDidLeave() {

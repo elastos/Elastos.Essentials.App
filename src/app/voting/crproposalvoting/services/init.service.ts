@@ -6,40 +6,45 @@ import { GlobalService, GlobalServiceManager } from 'src/app/services/global.ser
 import { AppService } from './app.service';
 import { CROperationsService } from './croperations.service';
 import { ProposalService } from './proposal.service';
+import { SuggestionService } from './suggestion.service';
 import { UXService } from './ux.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class CRProposalVotingInitService extends GlobalService {
-  constructor(
-    private appService: AppService,
-    private uxService: UXService,
-    private crOperations: CROperationsService,
-    private proposalService: ProposalService,
-  ) {
-    super();
-  }
+    constructor(
+        private appService: AppService,
+        private uxService: UXService,
+        private crOperations: CROperationsService,
+        private proposalService: ProposalService,
+        private suggestionService: SuggestionService,
+    ) {
+        super();
+    }
 
-  public init(): Promise<void> {
-    GlobalServiceManager.getInstance().registerService(this);
-    return;
-  }
+    public init(): Promise<void> {
+        GlobalServiceManager.getInstance().registerService(this);
+        return;
+    }
 
-  public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    runDelayed(() => {
-      Logger.log("crproposal", "User signed in, initializing internal services");
-      void this.uxService.init();
-      void this.crOperations.init();
-    //   void this.proposalService.init();
-    //   void this.appService.getTimeCheckedForProposals();
-    }, 7000); // 7 seconds before starting everything, to release the Essentials boot load.
-    return;
-  }
+    public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+        runDelayed(() => {
+            Logger.log("crproposal", "User signed in, initializing internal services");
+            void this.uxService.init();
+            void this.crOperations.init();
+            this.suggestionService.init();
+            void this.proposalService.init();
 
-  public onUserSignOut(): Promise<void> {
-    this.crOperations.stop();
-    this.proposalService.stop();
-    return;
-  }
+            //   void this.appService.getTimeCheckedForProposals();
+        }, 7000); // 7 seconds before starting everything, to release the Essentials boot load.
+        return;
+    }
+
+    public onUserSignOut(): Promise<void> {
+        this.crOperations.stop();
+        this.suggestionService.stop();
+        this.proposalService.stop();
+        return;
+    }
 }

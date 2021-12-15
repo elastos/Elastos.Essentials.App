@@ -19,6 +19,7 @@ export class ProposalService {
     private pageNumbersLoaded = 0;
     private cr_rpc_api = 'https://api.cyberrepublic.org';
     private subscription: Subscription = null;
+    public blockWaitingDict = {};
 
     constructor(
         private http: HttpClient,
@@ -28,12 +29,9 @@ export class ProposalService {
         private globalElastosAPIService: GlobalElastosAPIService
     ) { }
 
-    // async init() {
-    //     this.subscription = this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
-    //         this.cr_rpc_api = this.getCRProposalAPI();
-    //     });
-    //     this.cr_rpc_api = this.getCRProposalAPI();
-    // }
+    init() {
+
+    }
 
     public stop() {
         if (this.subscription) {
@@ -153,6 +151,24 @@ export class ProposalService {
         return this.allSearchResults.find((proposal) => {
             return proposal.id == proposalId;
         })
+    }
+
+    public addBlockWatingItem(hash: string, status: string) {
+        this.blockWaitingDict[hash] = status;
+    }
+
+    //If the current status changed, will be remove
+    public needBlockWating(hash: string, status: string): boolean {
+        if (this.blockWaitingDict[hash] && this.blockWaitingDict[hash] == status) {
+            return true;
+        }
+        return false;
+    }
+
+    public removeBlockWatingItem(hash: string) {
+        if (this.blockWaitingDict[hash]) {
+            delete this.blockWaitingDict[hash];
+        }
     }
 
 }

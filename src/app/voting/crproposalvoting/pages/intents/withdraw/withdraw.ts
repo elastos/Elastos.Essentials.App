@@ -70,6 +70,7 @@ export class WithdrawPage {
 
     cancel() {
         void this.globalNav.navigateBack();
+        void this.crOperations.sendIntentResponse();
     }
 
     async signAndWithdraw() {

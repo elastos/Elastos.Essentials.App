@@ -58,7 +58,6 @@ export class SuggestionDetailPage {
         if (navigation.extras.state) {
             this.suggestionId = navigation.extras.state.suggestionId;
             Logger.log('CRSuggestion', 'Suggestion id', this.suggestionId);
-            void this.init();
         }
     }
 
@@ -79,17 +78,20 @@ export class SuggestionDetailPage {
             }
 
             //Set command name
-            if (this.isCRMember && this.suggestion.status == 'signed') {
-                this.commandName = "createproposal";
-                this.buttonLabel = "crproposalvoting.make-into-proposal";
-            }
-            else if (this.isSelf && this.suggestion.status == 'unsigned'){
-                this.commandName = "createsuggestion";
-                this.buttonLabel = "crproposalvoting.sign-suggestion";
-            }
-            else {
-                this.commandName = null;
-                this.buttonLabel = null;
+            this.commandName = null;
+            this.buttonLabel = null;
+
+            if (!this.suggestionService.needBlockWating(this.suggestionId, this.suggestion.status)) {
+                this.suggestionService.removeBlockWatingItem(this.suggestionId);
+
+                if (this.isCRMember && this.suggestion.status == 'signed') {
+                    this.commandName = "createproposal";
+                    this.buttonLabel = "crproposalvoting.make-into-proposal";
+                }
+                else if (this.isSelf && this.suggestion.status == 'unsigned'){
+                    this.commandName = "createsuggestion";
+                    this.buttonLabel = "crproposalvoting.sign-suggestion";
+                }
             }
 
             this.addSuggestionDetail();

@@ -13,7 +13,7 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
+import { CRCommandType, CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
 import { ProposalService } from '../../../services/proposal.service';
 
@@ -70,33 +70,40 @@ export class CreateSuggestionPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-suggestion'));
-        try {
-            this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
-            Logger.log(App.CRPROPOSAL_VOTING, "createSuggestionCommand", this.createSuggestionCommand);
-            this.originalRequestJWT = this.crOperations.originalRequestJWT;
-            this.suggestionId = this.createSuggestionCommand.sid;
-            this.proposaltype = this.createSuggestionCommand.data.proposaltype || this.createSuggestionCommand.data.type;
 
-            this.bugetAmount = 0;
-            if (this.proposaltype == "normal") {
-                for (let suggestionBudget of this.createSuggestionCommand.data.budgets) {
-                    suggestionBudget.type = suggestionBudget.type.toLowerCase();
-                    this.bugetAmount += parseInt(suggestionBudget.amount);
-                }
-            }
+        this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "createSuggestionCommand", this.createSuggestionCommand);
+        this.originalRequestJWT = this.crOperations.originalRequestJWT;
+        this.suggestionId = this.createSuggestionCommand.sid;
+        this.proposaltype = this.createSuggestionCommand.data.proposaltype || this.createSuggestionCommand.data.type;
 
-            // Fetch more details about this suggestion, to display to the user
-            this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
-            Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
-            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
-                this.proposaltype = "changeproposaladdress";
+        this.bugetAmount = 0;
+        if (this.proposaltype == "normal") {
+            for (let suggestionBudget of this.createSuggestionCommand.data.budgets) {
+                suggestionBudget.type = suggestionBudget.type.toLowerCase();
+                this.bugetAmount += parseInt(suggestionBudget.amount);
             }
-            this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
-            this.suggestionDetailFetched = true;
         }
-        catch (err) {
-            Logger.error('crproposal', 'CreateSuggestionPage ionViewDidEnter error:', err);
+
+        if (this.createSuggestionCommand.type == CRCommandType.SuggestionDetailPage) {
+            this.suggestionDetail = this.createSuggestionCommand.data;
         }
+        else {
+            try {
+                // Fetch more details about this suggestion, to display to the user
+                this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
+            }
+            catch (err) {
+                Logger.error('crproposal', 'CreateSuggestionPage fetchSuggestionDetail error:', err);
+            }
+        }
+
+        Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
+        if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
+            this.proposaltype = "changeproposaladdress";
+        }
+        this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
+        this.suggestionDetailFetched = true;
     }
 
     cancel() {

@@ -71,6 +71,7 @@ export class VoteForProposalPage {
 
     cancel() {
         void this.globalNav.navigateBack();
+        void this.crOperations.sendIntentResponse();
     }
 
     async voteAgainstProposal() {

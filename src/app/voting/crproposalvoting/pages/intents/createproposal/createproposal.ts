@@ -13,7 +13,7 @@ import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { SuggestionDetail } from '../../../model/suggestion-model';
-import { CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
+import { CRCommandType, CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
 import { ProposalService } from '../../../services/proposal.service';
 import { SuggestionService } from '../../../services/suggestion.service';
@@ -86,19 +86,25 @@ export class CreateProposalPage {
             }
         }
 
-        try {
-            // Fetch more details about this suggestion, to display to the user
-            this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
-            Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
-            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
-                this.proposaltype = "changeproposaladdress";
+        if (this.createProposalCommand.type == CRCommandType.SuggestionDetailPage) {
+            this.suggestionDetail = this.createProposalCommand.data;
+        }
+        else {
+            try {
+                // Fetch more details about this suggestion, to display to the user
+                this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
             }
-            this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
-            this.suggestionDetailFetched = true;
+            catch (err) {
+                Logger.error('crproposal', 'CreateProposalPage fetchSuggestionDetail error:', err);
+            }
         }
-        catch (err) {
-            Logger.error('crproposal', 'CreateProposalPage ionViewDidEnter error:', err);
+
+        Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
+        if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
+            this.proposaltype = "changeproposaladdress";
         }
+        this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
+        this.suggestionDetailFetched = true;
     }
 
     cancel() {
@@ -172,6 +178,7 @@ export class CreateProposalPage {
                 let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
                 Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+                this.suggestionService.addBlockWatingItem(this.createProposalCommand.sid, this.suggestionDetail.status);
                 this.crOperations.goBack();
             }
         }

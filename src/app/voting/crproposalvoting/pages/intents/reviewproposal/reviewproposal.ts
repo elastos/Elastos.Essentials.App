@@ -79,22 +79,24 @@ export class ReviewProposalPage {
 
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-proposal'));
         this.reviewProposalCommand = this.crOperations.onGoingCommand as ReviewProposalCommand;
+        this.proposalDetails = null;
+
         if (this.reviewProposalCommand.type == CRCommandType.ProposalDetailPage) {
             this.voteResult = "approve";
+            this.proposalDetails = this.reviewProposalCommand.data;
         }
         else {
             this.voteResult = this.reviewProposalCommand.data.voteResult.toLowerCase();
+            try {
+                // Fetch more details about this proposal, to display to the user
+                this.proposalDetails = await this.proposalService.fetchProposalDetails(this.reviewProposalCommand.data.proposalHash);
+            }
+            catch (err) {
+                Logger.error('crproposal', 'ReviewProposalPage fetchProposalDetails error:', err);
+            }
         }
-
-        try {
-            // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.reviewProposalCommand.data.proposalHash);
-            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-            this.proposalDetailsFetched = true;
-        }
-        catch (err) {
-            Logger.error('crproposal', 'ReviewProposalPage ionViewDidEnter error:', err);
-        }
+        Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
+        this.proposalDetailsFetched = true;
     }
 
     ionViewWillLeave() {
@@ -137,6 +139,7 @@ export class ReviewProposalPage {
                 payload.Signature = ret.result.signature;
                 const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+                this.proposalService.addBlockWatingItem(this.proposalDetails.proposalHash, this.proposalDetails.status);
                 this.crOperations.goBack();
             }
         }
