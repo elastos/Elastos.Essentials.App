@@ -83,6 +83,7 @@ export class ProposalDetailPage {
             }
 
             //Get cr votes
+            this.crvotes = {approve: 0, reject: 0, abstain: 0};
             if (this.proposal.crVotes) {
                 for (let vote of this.proposal.crVotes) {
                     switch (vote.result) {
@@ -103,13 +104,9 @@ export class ProposalDetailPage {
             this.commandName = null;
             this.buttonLabel = null;
 
-            if (!this.proposalService.needBlockWating(this.proposalHash, this.proposal.status)) {
-                this.proposalService.removeBlockWatingItem(this.proposalHash);
-
-                if (this.isCRMember && this.proposal.status == 'registered') {
-                    this.commandName = "reviewproposal";
-                    this.buttonLabel = "crproposalvoting.review-proposal";
-                }
+            if (this.isCRMember && this.proposal.status == 'registered') {
+                this.commandName = "reviewproposal";
+                this.buttonLabel = "crproposalvoting.review-proposal";
             }
 
             this.addProposalDetails();

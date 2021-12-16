@@ -139,7 +139,6 @@ export class ReviewProposalPage {
                 payload.Signature = ret.result.signature;
                 const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
-                this.proposalService.addBlockWatingItem(this.proposalDetails.proposalHash, this.proposalDetails.status);
                 this.crOperations.goBack();
             }
         }
