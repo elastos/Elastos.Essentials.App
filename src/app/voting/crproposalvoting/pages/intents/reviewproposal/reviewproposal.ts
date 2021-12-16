@@ -109,12 +109,20 @@ export class ReviewProposalPage {
     }
 
     async signAndReviewProposal() {
-        //Check opinion value
-        if (!this.opinion || this.opinion == "") {
-            let blankMsg = this.translate.instant('crproposalvoting.opinion')
-                            + this.translate.instant('common.text-input-is-blank');
-            this.globalNative.genericToast(blankMsg);
-            return;
+        if (this.reviewProposalCommand.type == CRCommandType.ProposalDetailPage) {
+            //Check opinion value
+            if (!this.opinion || this.opinion == "") {
+                let blankMsg = this.translate.instant('crproposalvoting.opinion')
+                                + this.translate.instant('common.text-input-is-blank');
+                this.globalNative.genericToast(blankMsg);
+                return;
+            }
+
+            //Handle opinion
+            let ret = await this.draftService.getDraft("opinion.json", this.opinion);
+            this.reviewProposalCommand.data.opinionHash = ret.hash;
+            this.reviewProposalCommand.data.opinionData = ret.data;
+            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, this.reviewProposalCommand);
         }
 
         this.signingAndSendingProposalResponse = true;
@@ -151,18 +159,11 @@ export class ReviewProposalPage {
         void this.crOperations.sendIntentResponse();
     }
 
-    private async getProposalPayload(proposalCommand: ReviewProposalCommand): Promise<any> {
+    private getProposalPayload(proposalCommand: ReviewProposalCommand): Promise<any> {
         let voteResultTypes = {
             approve: 0,
             reject: 1,
             abstain: 2
-        }
-
-        if (this.reviewProposalCommand.type == CRCommandType.ProposalDetailPage) {
-            let ret = await this.draftService.getDraft("opinion.json", this.opinion);
-            proposalCommand.data.opinionHash = ret.hash;
-            proposalCommand.data.opinionData = ret.data;
-            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, proposalCommand);
         }
 
         let proposalPayload: any = {
