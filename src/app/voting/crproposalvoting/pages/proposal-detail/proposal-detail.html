@@ -5,7 +5,7 @@
             <ion-card>
                 <ion-card-title>{{ 'crproposalvoting.proposal' | translate }} <span>#</span>{{ proposal.id }}
                 </ion-card-title>
-                <ion-card-subtitle>{{ 'crproposalvoting.by' | translate }} {{ proposal.proposedBy }} &#8226; {{
+                <ion-card-subtitle>{{ 'crproposalvoting.by' | translate }} {{ proposal.proposer }} &#8226; {{
                     uxService.formatDate(proposal.createdAt) }}</ion-card-subtitle>
                 <p class="status" [class.voteragreed]="proposal.status === 'voteragreed'"
                     [class.finished]="proposal.status === 'finished'"

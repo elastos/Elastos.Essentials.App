@@ -25,7 +25,7 @@
                     </ion-col>
                     <ion-col size="8.5" class="middle-col">
                         <h1 class="title">{{ proposal.title }}</h1>
-                        <p class="date">{{ uxService.formatDate(proposal.createdAt) }} &#8226; {{ proposal.proposedBy }}
+                        <p class="date">{{ uxService.formatDate(proposal.createdAt) }} &#8226; {{ proposal.proposer }}
                         </p>
                         <p class="status" [class.voteragreed]="proposal.status === 'voteragreed'"
                             [class.finished]="proposal.status === 'finished'"
