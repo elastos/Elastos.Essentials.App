@@ -18,7 +18,8 @@
             <ion-row class="profile-data" *ngIf="proposaltype">
                 <div>
                     <h5>{{ 'crproposalvoting.type' | translate }}</h5>
-                    <h4 class="align-center proposaltype">{{ 'crproposalvoting.proposaltype-' + proposaltype | translate }}</h4>
+                    <h4 class="align-center proposaltype">{{ 'crproposalvoting.proposaltype-' + proposaltype | translate
+                        }}</h4>
                 </div>
             </ion-row>
 
@@ -58,7 +59,7 @@
             <ion-row class="profile-data" *ngIf="proposaltype == 'normal'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.budget-amount' | translate }}</h5>
-                    <h4>{{ bugetAmount / Config.SELA  }}</h4>
+                    <h4>{{ bugetAmount / Config.SELA }}</h4>
                 </ion-col>
             </ion-row>
 
@@ -78,8 +79,7 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data"
-                *ngIf="suggestionDetail.newOwnerDID && proposaltype == 'changeproposalowner'">
+            <ion-row class="profile-data" *ngIf="suggestionDetail.newOwnerDID && proposaltype == 'changeproposalowner'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.new-owner-did' | translate }}</h5>
                     <h4>{{ suggestionDetail.newOwnerDID }}</h4>
@@ -93,8 +93,7 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data"
-                *ngIf="suggestionDetail.targetProposalTitle &&
+            <ion-row class="profile-data" *ngIf="suggestionDetail.targetProposalTitle &&
                 (proposaltype == 'changeproposalowner' || proposaltype == 'closeproposal')">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.target-proposal-title' | translate }}</h5>
@@ -110,10 +109,10 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="suggestionDetail.address">
+            <ion-row class="profile-data" *ngIf="suggestionDetail.originalURL">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.suggestion-url' | translate }}</h5>
-                    <h4>{{ suggestionDetail.address }}</h4>
+                    <h4>{{ suggestionDetail.originalURL }}</h4>
                 </ion-col>
             </ion-row>
 
@@ -129,22 +128,25 @@
             <ion-spinner></ion-spinner>
         </div>
 
-        <ion-footer *ngIf="!signingAndSendingProposalResponse">
-            <ion-row>
-                <ion-col class="left-col">
-                    <div class="btn-container align-center" id="cancel" (click)="cancel()">
-                        {{ 'common.cancel' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-                <ion-col class="right-col">
-                    <div class="btn-container align-center" id="confirm" (click)="signAndCreateProposal()">
-                        {{ 'common.confirm' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-            </ion-row>
-        </ion-footer>
+        <div *ngIf="!signingAndSendingProposalResponse">
+            <div class="footer-space"></div>
+            <ion-footer>
+                <ion-row>
+                    <ion-col class="left-col">
+                        <div class="btn-container align-center" id="cancel" (click)="cancel()">
+                            {{ 'common.cancel' | translate }}
+                        </div>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-col>
+                    <ion-col class="right-col">
+                        <div class="btn-container align-center" id="confirm" (click)="signAndCreateProposal()">
+                            {{ 'common.confirm' | translate }}
+                        </div>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-col>
+                </ion-row>
+            </ion-footer>
+        </div>
     </div>
 
 </ion-content>

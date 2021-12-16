@@ -62,21 +62,24 @@
             <ion-spinner></ion-spinner>
         </div>
 
-        <ion-footer *ngIf="!signingAndSendingSuggestionResponse && isKeyboardHide">
-            <ion-row>
-                <ion-col class="left-col">
-                    <div class="btn-container align-center" id="cancel" (click)="cancel()">
-                        {{ 'common.cancel' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-                <ion-col class="right-col">
-                    <div class="btn-container align-center" id="confirm" (click)="signAndReviewProposal()">
-                        {{ 'common.confirm' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-            </ion-row>
-        </ion-footer>
+        <div *ngIf="!signingAndSendingSuggestionResponse && isKeyboardHide">
+            <div class="footer-space"></div>
+            <ion-footer>
+                <ion-row>
+                    <ion-col class="left-col">
+                        <div class="btn-container align-center" id="cancel" (click)="cancel()">
+                            {{ 'common.cancel' | translate }}
+                        </div>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-col>
+                    <ion-col class="right-col">
+                        <div class="btn-container align-center" id="confirm" (click)="signAndReviewProposal()">
+                            {{ 'common.confirm' | translate }}
+                        </div>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-col>
+                </ion-row>
+            </ion-footer>
+        </div>
     </div>
 </ion-content>

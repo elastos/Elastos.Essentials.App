@@ -58,8 +58,8 @@ export class SuggestionDetail {
     budgetStatement: string;
 
     targetProposalNum: number;
-    targetSuggestionTitle: string;
-    targetSuggestionHash: string;
+    targetProposalTitle: string;
+    targetProposalHash: string;
 
     newOwnerDID?: string;
     newRecipient?: string;
