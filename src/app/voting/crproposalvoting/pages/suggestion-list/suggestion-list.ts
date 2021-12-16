@@ -66,9 +66,7 @@ export class SuggestionListPage implements OnInit {
         this.titleBar.setTitle(this.translate.instant('launcher.app-cr-suggestion'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-            if (icon.key == "scan") {
-                void this.crOperations.handleScanAction();
-            }
+            void this.globalNav.navigateTo("scanner", '/scanner/scan');
         });
         this.suggestionsFetched = false;
         this.suggestionService.reset();
