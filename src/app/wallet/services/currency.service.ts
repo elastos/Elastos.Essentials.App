@@ -73,8 +73,7 @@ type CachedTokenPrice = {
 }
 
 /**
- * - For the main tokens (ELA, ETH, BNB...) we rely on elaphant api's data in USD.
- * - We also use the elaphant API to compute ratios between USD and CNY/BTC, using any arbitrary entry in the returned list.
+ * - For the main tokens (ELA, ETH, BNB...) we rely on price api's data in USD.
  * - For ERC20 tokens, we use uniswap protocols on each network to get tokens valuations.
  */
 @Injectable({
@@ -83,24 +82,19 @@ type CachedTokenPrice = {
 export class CurrencyService {
   public static instance: CurrencyService = null;
 
-  private stopService = false;
-
   private networkMainTokenPrice = {};
   private updateInterval = null;
-  private elaphantPricefetched = false;
+  private pricefetched = false;
 
-  //private tokenSymbol = 'ELA';
-  //public tokenStats: ElaphantPriceAPITokenStats;
   private exchangeRates: ExchangeRateCache = {};
   private pricesCache: TimeBasedPersistentCache<CachedTokenPrice>; // Cache that contains latest prices for all tokens (native and ERC)
-  //private tokenFetchOnGoing = false;
 
   // Use currency as main wallet total amount
   public useCurrency = false;
 
   public selectedCurrency: DisplayableCurrency;
 
-  private elaphantPriceUrl = 'https://api-price.elaphant.app/api/1/cmc?limit=600';
+  private trinityPriceUrl = 'https://assist.trinity-feeds.app/feeds/api/v1/price';
   private usdExchangeRateUrl = 'https://currencies.trinity-tech.io/latest?from=USD';
 
   constructor(
@@ -114,8 +108,6 @@ export class CurrencyService {
   }
 
   async init() {
-    this.stopService = false;
-
     this.loadAllTokenSymbol();
 
     // Load or create a cache and store this cache globally to share fetched values among several DID users.
@@ -129,14 +121,13 @@ export class CurrencyService {
     await this.computeExchangeRatesFromCurrenciesService();
 
     this.updateInterval = setInterval(() => {
-        void this.fetchTokenStatsFromElaphant();
+        void this.fetchTokenStatsFromPriceService();
     }, 120000);// 120s
 
     Logger.log('wallet', "Currency service initialization complete");
   }
 
   stop() {
-    this.stopService = true;
     if (this.updateInterval) {
         clearInterval(this.updateInterval);
         this.updateInterval = null;
@@ -204,23 +195,23 @@ export class CurrencyService {
   }
 
   /**
-   * Fetches prices from the elaphant api and returns only a target item
+   * Fetches prices from the trinity price api and returns only a target item
    */
-  private fetchTokenStatsFromElaphant(): Promise<boolean> {
-    Logger.log("wallet", "Fetching elaphant api prices");
+  private fetchTokenStatsFromPriceService(): Promise<boolean> {
+    Logger.log("wallet", "Fetching trinity api prices");
 
     return new Promise(resolve => {
-      this.http.get<any>(this.elaphantPriceUrl).subscribe((res: ElaphantPriceAPITokenStats[]) => {
+      this.http.get<any>(this.trinityPriceUrl).subscribe((res: TrinityPriceAPITokenStats[]) => {
         if (res) {
             for (let tokenSymbol in this.networkMainTokenPrice) {
-                let tokenStats = res.find((coin) => coin.symbol === tokenSymbol);
+                let tokenStats = res[tokenSymbol];
                 if (tokenStats) {
                     this.networkMainTokenPrice[tokenSymbol] = tokenStats;
                 } else {
                     this.networkMainTokenPrice[tokenSymbol] = null;
                 }
             }
-            this.elaphantPricefetched = true;
+            this.pricefetched = true;
             // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
             resolve(true);
         }
@@ -293,18 +284,18 @@ export class CurrencyService {
     //void this.pricesCache.delete(); // DEV
     //return;
 
-    if (!this.elaphantPricefetched) {
-        await this.fetchTokenStatsFromElaphant();
+    if (!this.pricefetched) {
+        await this.fetchTokenStatsFromPriceService();
     }
 
     let tokenStats = this.networkMainTokenPrice[network.getMainTokenSymbol()];
     if (tokenStats) {
       this.pricesCache.set(cacheKey, {
-        usdValue: parseFloat(tokenStats.price_usd)
+        usdValue: parseFloat(tokenStats)
       }, currentTime);
     }
     else {
-      Logger.log("wallet", "No currency in elaphant API for", network.getMainTokenSymbol(), ". Trying other methods");
+      Logger.log("wallet", "No currency in trinity API for", network.getMainTokenSymbol(), ". Trying other methods");
       if (network.getMainEvmRpcApiUrl() && network.getUniswapCurrencyProvider()) {
         // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
         let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(network, network.getUniswapCurrencyProvider().getWrappedNativeCoin());
@@ -422,7 +413,7 @@ export class CurrencyService {
 
 
   /**
-   * Fetches prices from the elaphant api and returns only a target item
+   * Get USD exchange from currencies service.
    */
   private fetchUSDExchangeRate() {
     return new Promise(resolve => {
@@ -442,34 +433,6 @@ export class CurrencyService {
   }
 }
 
-type ElaphantPriceAPITokenStats = {
-  "24h_volume_btc": string;
-  "24h_volume_cny": string;
-  "24h_volume_usd": string;
-  available_supply: string;
-  id: string;
-  last_updated: string;
-  local_system_time: string;
-  market_cap_btc: string;
-  market_cap_cny: string;
-  market_cap_usd: string;
-  max_supply: string;
-  name: string;
-  num_market_pairs: string;
-  percent_change_1h: string;
-  percent_change_7d: string;
-  percent_change_24h: string;
-  platform_symbol: string;
-  platform_token_address: string;
-  price_btc: string;
-  price_cny: string;
-  price_usd: string;
-  rank: string;
-  symbol: string;
-  total_supply: string;
-  _id: string;
-};
-
 type CurrenciesExchangeRate = {
   amount: number;
   base: string;
@@ -477,4 +440,8 @@ type CurrenciesExchangeRate = {
   rates: {
     [symbol: string]: string
   };
+}
+
+type TrinityPriceAPITokenStats = {
+    [symbol: string]: string
 }
