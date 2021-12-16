@@ -138,8 +138,6 @@ export class VerifiableCredential {
         let image = new Image();
         image.crossOrigin = 'anonymous';
 
-        console.log("loadIconWithFallback", this.iconSrc);
-
         image.onload = () => {
             this.iconSrc = image.src;
             this.onIconReadyCallback?.(this.iconSrc);

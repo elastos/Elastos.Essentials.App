@@ -189,24 +189,24 @@ export class CredentialsPage {
       // Find Avatar Credential
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
-        Logger.log("identity", "Profile has avatar");
+        //Logger.log("identity", "Profile has avatar");
       }
       // Find Description Credential
       if ("description" in cred.credential.getSubject()) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
-        Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
+        //Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
     this.profileService.credsNotInLocalDoc.map((cred) => {
       // Find App Credentials
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
-        Logger.log("identity", "Profile has avatar");
+        //Logger.log("identity", "Profile has avatar");
       }
       // Find Description Credentials
       if ("description" in cred.credential.getSubject()) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
-        Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
+        //Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
   }

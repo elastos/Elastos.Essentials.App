@@ -54,7 +54,7 @@ export class PublishPage {
         });
         this.profileService.credsNotInLocalDoc.forEach(val => {
             if (!("apppackage" in val.credential.getSubject()) || (val.credential.getFragment() == "avatar" && val.credential.getSubject().hasOwnProperty["data"]))
-                this._publishableCredentials.push(val);
+                this._publishableCredentials.push(Object.assign({}, val));
         });
 
         this._publishableCredentials.forEach(pc => pc.credential.prepareForDisplay());
@@ -130,9 +130,9 @@ export class PublishPage {
                         }
                     }
                 }
-
                 await this.profileService.setCredentialVisibility(entry.credential.getFragment(), makeVisible, this.authService.getCurrentUserPassword());
                 entry.isInLocalDocument = !entry.isInLocalDocument;
+
                 this.updatingVisibility = false;
             },
             () => {
