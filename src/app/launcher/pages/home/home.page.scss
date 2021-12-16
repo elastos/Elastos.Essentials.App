@@ -182,6 +182,7 @@ ion-content {
             flex-wrap: wrap;
             height: 62px;
             flex-direction: column;
+            align-content: flex-start;
             overflow-x: scroll;
             overflow-y: hidden;
             white-space: nowrap;
