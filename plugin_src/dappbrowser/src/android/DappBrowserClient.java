@@ -58,19 +58,19 @@ public class DappBrowserClient extends WebViewClient {
     CordovaWebView webView;
     String beforeload;
     boolean waitForBeforeload;
-    ProgressBar progressBar;
     private Activity activity;
     private DappBrowserPlugin brwoserPlugin;
     public String originUrl;
+    public String atDocumentStartScript;
 //    private Boolean injected = false;
 
-    public DappBrowserClient(DappBrowserPlugin brwoserPlugin, ProgressBar progressBar, String beforeload) {
+    public DappBrowserClient(DappBrowserPlugin brwoserPlugin, String atdocumentstartscript, String beforeload) {
         this.beforeload = beforeload;
         this.waitForBeforeload = beforeload != null;
         this.brwoserPlugin = brwoserPlugin;
         this.activity = brwoserPlugin.cordova.getActivity();
         this.webView = brwoserPlugin.webView;
-        this.progressBar = progressBar;
+        this.atDocumentStartScript = atdocumentstartscript;
     }
 
     /**
@@ -286,7 +286,9 @@ public class DappBrowserClient extends WebViewClient {
                     }
                     InputStream inputStream = connection.getInputStream();
                     inputStream = injectJSInHeadTag(inputStream);
-                    resourceResponse = new WebResourceResponse("text/html", encoding, inputStream);
+                    if (inputStream != null) {
+                        resourceResponse = new WebResourceResponse("text/html", encoding, inputStream);
+                    }
                 }
             }
             catch (IOException e) {
@@ -328,8 +330,10 @@ public class DappBrowserClient extends WebViewClient {
         }
 
         // Update the UI if we haven't already
-        brwoserPlugin.webViewHandler.setUrlEditText(newloc);
-        progressBar.setVisibility(View.VISIBLE);
+        if (brwoserPlugin.webViewHandler != null) {
+            brwoserPlugin.webViewHandler.setUrlEditText(newloc);
+            brwoserPlugin.webViewHandler.progressBar.setVisibility(View.VISIBLE);
+        }
 
         try {
             JSONObject obj = new JSONObject();
@@ -357,7 +361,9 @@ public class DappBrowserClient extends WebViewClient {
         view.clearFocus();
         view.requestFocus();
 
-        progressBar.setVisibility(View.GONE);
+        if (brwoserPlugin.webViewHandler != null) {
+            brwoserPlugin.webViewHandler.progressBar.setVisibility(View.GONE);
+        }
 
         try {
             JSONObject obj = new JSONObject();
@@ -475,6 +481,10 @@ public class DappBrowserClient extends WebViewClient {
     }
 
     public InputStream injectJSInHeadTag(InputStream inputStream) throws IOException {
+        if (inputStream == null || this.atDocumentStartScript == null) {
+            return null;
+        }
+
         BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
         for (String line; (line = buf.readLine()) != null; ) {
@@ -482,7 +492,7 @@ public class DappBrowserClient extends WebViewClient {
         }
         String html = stringBuilder.toString();
         html = html.replaceFirst("(<head\\b[^>]*>)", "$1<script type='text/javascript'> essentials_atdocumentstartscript_value </script>");
-        html = html.replace("essentials_atdocumentstartscript_value", brwoserPlugin.webViewHandler.options.atdocumentstartscript);
+        html = html.replace("essentials_atdocumentstartscript_value", this.atDocumentStartScript);
         return new ByteArrayInputStream(html.getBytes());
     }
 

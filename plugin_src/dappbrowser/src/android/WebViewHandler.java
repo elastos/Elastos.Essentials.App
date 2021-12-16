@@ -151,7 +151,7 @@ public class WebViewHandler {
             }
         });
 
-        currentClient = new DappBrowserClient(brwoserPlugin, progressBar, beforeload);
+        currentClient = new DappBrowserClient(brwoserPlugin, options.atdocumentstartscript, beforeload);
         webView.setWebViewClient(currentClient);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
