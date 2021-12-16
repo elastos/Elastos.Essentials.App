@@ -3,7 +3,7 @@ export const zh = {
     'identity': {
         /******************** Generic ********************/
         'accept': '接受',
-        'confirm': 'Confirm',
+        'confirm': '确认',
         'accept-and-publish': '接受并发布',
         'delete-and-publish': '删除并发布',
         'share-description': '分享您的身份',
@@ -12,9 +12,9 @@ export const zh = {
         'publish-description': '将身份发布上链',
         'missing': '缺失',
         'verify': '立即验证',
-        'expired': 'Expired',
-        'sensitive': 'Sensitive',
-        'delivered-by': 'Created by',
+        'expired': '已到期',
+        'sensitive': '敏感的',
+        'delivered-by': '制作者',
 
         /******************** Main Screens  ********************/
         // page: myprofile
@@ -75,7 +75,7 @@ export const zh = {
         'change-visible': '此凭证将在您下次发布身份时对所有人可见',
         'change-unpublished': '下次发布身份时，将取消发布此凭证',
         'change-not-published': '下次发布身份时将不会发布此凭证',
-        'who-made-this': 'Who made this?',
+        'who-made-this': '这是谁做的？',
 
         // Credentiallist
         'publish-changes': '发布更新',

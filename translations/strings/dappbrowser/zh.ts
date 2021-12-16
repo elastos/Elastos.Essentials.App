@@ -10,11 +10,11 @@ export const zh = {
     'no-favorite': '{{networkName}} 网络没有可显示的收藏夹。在上方输入 url 并使用菜单将 dApp 添加为收藏夹，或在现有收藏夹中启用此网络。',
     'home-other-dapps': '其它 dApp',
     'home-no-other-dapp': '目前没有任何有趣的 dApp 可以推荐给这个网络或这个平台。请在上方手动输入网址并将其添加为收藏夹。',
-    'ios-user-notice': 'iOS user notice',
-    'ios-user-notice-1': 'Apple App Store guidelines forbid built-in browsers to access crypto-currency features. Browsing dApps will redirect you to your external browser.',
-    'ios-user-notice-2': 'To connect the external browser to your wallet, please use <b>Wallet Connect</b>, and choose <b>Elastos Essentials</b>.',
-    'recent-apps': 'Recent apps',
-    'all-dapps': 'All dApps',
+    'ios-user-notice': 'iOS用户须知',
+    'ios-user-notice-1': '苹果的 App Store 禁止内置浏览器访问加密货币功能。浏览 dApp 会将其重定向到外部浏览器。',
+    'ios-user-notice-2': '要将外部浏览器连接到您的钱包，请使用 <b>Wallet Connect</b>，然后选择 <b>Elastos Essentials</b>。',
+    'recent-apps': '最近的应用',
+    'all-dapps': '所有dApp',
 
     // Menu
     'menu-title': '选项',
