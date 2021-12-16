@@ -92,8 +92,8 @@ export abstract class Network {
 
     this.lastAccessTimestamp = await LocalStorage.instance.get("custom-erc20-coins-accesstime-" + this.localStorageKey);
 
-    Logger.log('wallet', "Available coins for network " + this.key + ":", this.availableCoins);
-    Logger.log('wallet', "Deleted coins for network " + this.key + ":", this.deletedERC20Coins);
+    //Logger.log('wallet', "Available coins for network " + this.key + ":", this.availableCoins);
+    //Logger.log('wallet', "Deleted coins for network " + this.key + ":", this.deletedERC20Coins);
   }
 
   public getAvailableCoins(): Coin[] {

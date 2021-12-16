@@ -334,7 +334,7 @@ export class TitleBarComponent {
     }
 
     needToShowRedDot() {
-        return (this.icons[3].iconPath === BuiltInIcon.NOTIFICATIONS)
+        return (this.icons[1].iconPath === BuiltInIcon.NOTIFICATIONS)
             && (this.globalNotifications.notifications.length > 0);
     }
 }
