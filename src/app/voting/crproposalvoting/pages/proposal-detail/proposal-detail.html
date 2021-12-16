@@ -72,10 +72,10 @@
                                         <ul id="budget-list">
                                             <li *ngFor="let entry of item.value; let i = index">
                                                 <div id="budget">
-                                                    <p><span class="number">{{ i }}</span> <span>{{ 'crproposalvoting.'+
+                                                    <p><span class="number">{{ i + 1 }}</span> <span>{{ 'crproposalvoting.'+
                                                             entry.type | translate }}</span></p>
                                                     <p class="amount">{{ "ELA " + entry.amount / Config.SELA }} </p>
-                                                    <p class="stage">{{ "#Milestone" + entry.stage }} </p>
+                                                    <p class="stage">{{ "#Milestone" + entry.stage + 1 }} </p>
                                                     <p class="payment-criteria">{{ entry.paymentCriteria }} </p>
                                                 </div>
                                                 <div class="space"></div>
