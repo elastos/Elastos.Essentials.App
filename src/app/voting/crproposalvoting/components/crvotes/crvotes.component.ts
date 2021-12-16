@@ -25,10 +25,11 @@ export class CrVotesComponent implements OnInit {
         }
 
         let count = value.abstain + value.approve + value.reject;
-        this.ratio = Math.floor(count * 100 / 12);
         for (let i = 0; i < 12 - count; i++) {
             this.votes.push("blank");
         }
+
+        this.ratio = Math.floor(value.approve * 100 / 12);
      }
 
     public votes = [];
