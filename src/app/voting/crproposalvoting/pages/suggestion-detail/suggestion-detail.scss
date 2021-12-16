@@ -97,20 +97,16 @@ ion-grid {
             }
         }
 
-        ion-label {
+        h5 {
             width: 100%;
+            font-size: 12px;
+            display: block;
+        }
 
-            h5 {
-                width: 100%;
-                font-size: 12px;
-                display: block;
-            }
-
-            h4 {
-                width: 100%;
-                font-size: 14px;
-                display: block;
-            }
+        h4 {
+            width: 100%;
+            font-size: 14px;
+            display: block;
         }
     }
 
@@ -297,6 +293,19 @@ ion-grid {
         .avatar {
             width: 24px;
             height: 24px;
+        }
+    }
+
+    .implementation {
+        margin-top: 0;
+        padding-top: 0;
+
+        h4 {
+            margin: 10px;
+        }
+
+        h5 {
+            margin: 10px;
         }
     }
 }
