@@ -10,7 +10,7 @@ import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive.service';
+import { GlobalHiveService, VaultStatus } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
@@ -18,8 +18,6 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
 import { PopupService } from '../../services/popup.service';
-
-declare let hiveManager: HivePlugin.HiveManager;
 
 type StorageProvider = {
   name: string,
@@ -36,7 +34,7 @@ export class PickProviderPage implements OnInit {
 
   public checkingInitialStatus = true;
   public vaultProviderCouldBeContacted = false;
-  public vaultLinkStatus: VaultLinkStatus = null;
+  public vaultLinkStatus: VaultStatus = null;
   private forceProviderChange = false;
   private developerMode = false;
   public manualProviderAddress: string = null;
@@ -245,8 +243,8 @@ export class PickProviderPage implements OnInit {
     this.publishingProvider = false;
 
     // Refresh the link status
-    this.vaultLinkStatus = await this.globalHiveService.retrieveVaultLinkStatus();
-    Logger.log("HiveManager", "Vault link status:", this.vaultLinkStatus)
+    this.vaultLinkStatus = await this.globalHiveService.vaultStatus.value;
+    Logger.log("HiveManager", "Vault link status:", this.vaultLinkStatus);
 
     this.forceProviderChange = false;
   }
@@ -299,7 +297,7 @@ export class PickProviderPage implements OnInit {
   private async revokeHiveAuthToken() {
     Logger.log("HiveManager", "Revoking main user vault authentication token");
     // Revoke the vualt auth token
-    await this.globalHiveService.getActiveVault().revokeAccessToken();
+    await (await this.globalHiveService.getActiveUserVaultServices()).getAccessToken().invalidate();
     // Also remove the app instance DID because it contains data (app did) we may want to renew.
     // Setting the active connector to null will clenaup its context, including the app instance DID.
     await connectivity.setActiveConnector(null);

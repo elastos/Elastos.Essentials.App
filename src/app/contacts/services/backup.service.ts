@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
-
-import { DidService } from './did.service';
-import { Contact } from '../models/contact.model';
-import { FriendsService } from './friends.service';
-import { Hive } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
+import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
+import { VaultServices } from '@elastosfoundation/elastos-hive-js-sdk';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
+import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
 import { Events } from 'src/app/services/events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
-import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { Contact } from '../models/contact.model';
+import { DidService } from './did.service';
+import { FriendsService } from './friends.service';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackupService {
   private backupRestoreHelper: HiveDataSync;
-  private userVault: HivePlugin.Vault;
+  private vaultServices: VaultServices;
 
   public restoredContacts: Contact[] = [];
 
@@ -43,24 +44,17 @@ export class BackupService {
         return;
       }
 
-      const hiveClient = await this.globalHiveService.getHiveClient();
-      Logger.log("contacts", "Hive client initialization complete");
-
-      const userDID = await this.didService.getSignedIdentity();
 
       // did:elastos:iaMPKSkYLJYmbBTuT3JfF9E8cFtLWky5vk - Test
-
-      Logger.log("contacts", "Getting current user's vault instance");
-      this.userVault = await hiveClient.getVault(userDID); // No response here
-
-      if (!this.userVault) {
+      this.vaultServices = await this.globalHiveService.getActiveUserVaultServices();
+      if (!this.vaultServices) {
         Logger.log("contacts", "Failed to get user's vault. Maybe none if configured yet. Backup service not starting for now");
         return;
       }
 
-      Logger.log("contacts", "User vault retrieved. Now creating a new backup restore helper instance", this.userVault);
+      Logger.log("contacts", "User vault retrieved. Now creating a new backup restore helper instance", this.vaultServices);
 
-      this.backupRestoreHelper = new HiveDataSync(this.userVault, this.globalStorage, true);
+      this.backupRestoreHelper = new HiveDataSync(this.vaultServices, this.globalStorage, true);
 
       this.restoredContacts = [];
       this.backupRestoreHelper.addSyncContext("contacts",
@@ -146,7 +140,7 @@ export class BackupService {
     this.events.publish('friends:updateSlider');
   }
 
-  async upsertDatabaseEntry(context: string, key: string, data: HivePlugin.JSONObject): Promise<void> {
+  async upsertDatabaseEntry(context: string, key: string, data: JSONObject): Promise<void> {
     try {
       Logger.log("contacts", 'Local restored contacts', this.restoredContacts);
       Logger.log("contacts", 'upsertDatabaseEntry called for entry', context, key);

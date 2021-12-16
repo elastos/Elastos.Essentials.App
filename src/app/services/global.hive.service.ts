@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
+import { VaultInfo, VaultServices } from '@elastosfoundation/elastos-hive-js-sdk/typings';
+import { SubscriptionInfo } from '@elastosfoundation/elastos-hive-js-sdk/typings/domain/subscription/subscriptioninfo';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { InternalHiveAuthHelper } from '../helpers/hive.authhelper';
 import { rawImageToBase64DataUrl } from '../helpers/picture.helpers';
 import { runDelayed } from '../helpers/sleep.helper';
 import { JSONObject } from '../model/json';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let hiveManager: HivePlugin.HiveManager;
 
 const availableHideNodeProviders: string[] = [
   "https://hive1.trinity-tech.io",
@@ -19,22 +21,23 @@ const availableHideNodeProviders: string[] = [
   "https://hive1.trinity-tech.cn"
 ];
 
-export enum VaultLinkStatusCheckState {
+export enum VaultStatusState {
   NOT_CHECKED, // Not checked yet
   SUCCESSFULLY_RETRIEVED, // Vault status was fetched without error
   NETWORK_ERROR, // Network error while fetching the vault status
   UNKNOWN_ERROR // Unknown error while fetching the vault status
 }
 
-export type VaultLinkStatus = {
-  checkState: VaultLinkStatusCheckState,
-  // There is already a vault provider info on chain about a vault provider attacher to this user.
+export type VaultStatus = {
+  checkState: VaultStatusState;
+  // There is already info on chain about a vault provider attached to this user.
   publishedInfo?: {
-    vaultName: string,
-    vaultAddress: string,
-    vaultVersion: string,
-    activePricingPlan: HivePlugin.Payment.ActivePricingPlan
+    vaultName: string;
+    vaultAddress: string;
+    vaultVersion: string;
   };
+  vaultInfo?: SubscriptionInfo; // Current user's subscription info (used storage, etc) - retrieved by the subscription service
+  vaultServices?: VaultServices; // Current user's vault services instance, if any
 }
 
 @Injectable({
@@ -43,13 +46,8 @@ export type VaultLinkStatus = {
 export class GlobalHiveService extends GlobalService {
   public static instance: GlobalHiveService = null;
 
-  public client = new BehaviorSubject<HivePlugin.Client>(null);
-  private vaultLinkStatus: VaultLinkStatus = null; // Current user's vault status.
-  private activeVault: HivePlugin.Vault = null;
-  private pricingInfo: HivePlugin.Payment.PricingInfo = null; // Cached pricing info for user's current vault provider after been fetched.
-
-  public vaultStatus = new BehaviorSubject<VaultLinkStatus>(null); // Latest known vault status for active user
-  private clientCreationSubject: Subject<HivePlugin.Client> = null;
+  private hiveAuthHelper: InternalHiveAuthHelper = null;
+  public vaultStatus = new BehaviorSubject<VaultStatus>(null); // Latest known vault status for active user
 
   constructor(
     public translate: TranslateService,
@@ -63,38 +61,21 @@ export class GlobalHiveService extends GlobalService {
 
   init() {
     GlobalServiceManager.getInstance().registerService(this);
+
+    this.hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
+    if (!this.hiveAuthHelper) {
+      throw new Error("Hive auth helper failed to create");
+    }
   }
 
   stop() {
-    this.vaultLinkStatus = null;
-    this.activeVault = null;
-
-    this.clientCreationSubject = null;
-    if (this.client) {
-      this.client.next(null);
-    }
-
-    this.vaultStatus.next(this.vaultLinkStatus);
+    this.vaultStatus?.next(null);
   }
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    // New user is signing in: initialize a global hive client and try to get his hive vault status.
-    // Not a blocking call
-    //Logger.log("GlobalHiveService", "Getting a global hive client instance");
-    /* void this.getHiveClient().then((client) => {
-      if (!client) {
-        Logger.error("GlobalHiveService", "Fatal error in hive manager: Unable to get a global hive client instance.");
-      }
-      else {
-        this.client.next(client);
-        Logger.log("GlobalHiveService", "Global hive client instance was created", this.client);
-        void this.retrieveVaultLinkStatus();
-      }
-    }); */
-
+    // Wait a moment then check active user's vault status and get things ready to use.
     runDelayed(() => {
-      Logger.log("GlobalHiveService", "Global hive client instance was created", this.client);
-      void this.retrieveVaultLinkStatus();
+      void this.retrieveVaultStatus();
     }, 3000);
 
     return;
@@ -105,52 +86,33 @@ export class GlobalHiveService extends GlobalService {
     return;
   }
 
-  public async getHiveClient(): Promise<HivePlugin.Client> {
-    Logger.log("GlobalHiveService", "Getting hive client");
+  /**
+   * Convenience method to get a shared vault services instance for the active user.
+   */
+  public getActiveUserVaultServices(): Promise<VaultServices> {
+    return this.getVaultServicesFor(this.didSessions.getSignedInIdentity().didString);
+  }
 
-    // Create only one client instance overall
-    if (this.client.value) {
-      Logger.log("GlobalHiveService", "Existing client returned", this.client);
-      return this.client.value;
-    }
+  /**
+   * Helper to get a vaults services instance for any DID.
+   */
+  public async getVaultServicesFor(targetDid: string): Promise<VaultServices> {
+    Logger.log("GlobalHiveService", "Getting vault services for", targetDid);
 
-    // Avoid double creation - use a subject to have multiple listeners waiting for this hive client creation
-    if (!this.clientCreationSubject) {
-      Logger.log("GlobalHiveService", "Creating a new subject and get a real client");
+    let vaultServices = await this.hiveAuthHelper.getVaultServices(targetDid, (e) => {
+      // Auth error
+      Logger.error("GlobalHiveService", "Hive authentication error", e);
+      throw e;
+    });
 
-      this.clientCreationSubject = new Subject();
+    return vaultServices;
+  }
 
-      // First call, create the subject and the client
-      const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
-      if (!hiveAuthHelper) {
-        throw new Error("Hive auth helper failed to create");
-      }
+  /**
+   * Checks the current vault status for the active user and updates the RxSubject accordingly.
+   */
+  private async checkActiveUserVaultServices(): Promise<void> {
 
-      // This process takes like 1-2 seconds
-      this.client.next(await hiveAuthHelper.getClientWithAuth((e) => {
-        // Auth error
-        Logger.error("GlobalHiveService", "Hive authentication error", e);
-      }));
-
-      Logger.log("GlobalHiveService", "Emitting client created");
-      this.clientCreationSubject.next(this.client.value);
-      //this.clientCreationSubject = null; // NOTE: don't set the subject to null otherwise observers don't receive the event from the next() above. Weird - Maybe some garbage collection?
-
-      return this.client.value;
-    }
-    else {
-      Logger.log("GlobalHiveService", "Waiting for another client creation request to complete");
-
-      // Not the first call, just wait for client creation completion
-      return new Promise(resolve => {
-        let tempSub = this.clientCreationSubject.subscribe(pendingClient => {
-          Logger.log("GlobalHiveService", "Got pending hive client, now informing the listeners", pendingClient);
-          tempSub.unsubscribe();
-          this.client.next(pendingClient);
-          resolve(pendingClient);
-        });
-      });
-    }
   }
 
   /**
@@ -207,21 +169,41 @@ export class GlobalHiveService extends GlobalService {
   }
 
   /**
-   * Makes hive vault ready for the current user.
+   * Returns the hive vault status for a given DID.
    */
-  public async prepareHiveVault(vaultProviderAddress: string): Promise<boolean> {
-    Logger.log("GlobalHiveService", "Preparing hive vault");
+  private async getVaultInfo(targetDid: string): Promise<VaultInfo> {
+    let subscriptionService = await this.hiveAuthHelper.getSubscriptionService(targetDid);
+    return subscriptionService.checkSubscription();
+  }
+
+  /**
+   * Subscribes active user to the target hive vault provider.
+   */
+  public async subscribeToHiveProvider(vaultProviderAddress: string): Promise<boolean> {
+    Logger.log("GlobalHiveService", "Subscribing to hive provider", vaultProviderAddress);
 
     let didString = GlobalDIDSessionsService.signedInDIDString;
 
-    let hiveClient = await this.getHiveClient();
-    Logger.log("GlobalHiveService", "Got hive client", hiveClient);
+    let vaultInfo = await this.getVaultInfo(didString);
+    console.log("subscribeToHiveProvider vaultInfo", vaultInfo);
 
-    let vault = await hiveClient.createVault(didString, vaultProviderAddress);
-    // We don't check if the vault is null or not. NULL without exception means the vault already exists, so that's ok.
+    if (vaultInfo) {
+      // The hive vault is already subscribed, so we have nothing to do.
+      return true;
+    }
+    else {
+      // No subscription - subscribe
+      let subscriptionService = await this.hiveAuthHelper.getSubscriptionService(didString);
+      vaultInfo = await subscriptionService.subscribe();
+      if (!vaultInfo) {
+        // TO CHECK - Failure ?
+        Logger.error("GlobalHiveService", "Failed to create vault on the hive node");
+        return false;
+      }
+    }
 
-    vault = await hiveClient.getVault(didString);
-    if (!vault) {
+    let vaultServices = await this.hiveAuthHelper.getVaultServices(didString);
+    if (!vaultServices) {
       Logger.error("GlobalHiveService", "NULL vault returned, unable to get the vault for this DID.");
     }
     else {
@@ -229,8 +211,8 @@ export class GlobalHiveService extends GlobalService {
       try {
         Logger.log("GlobalHiveService", "Calling an api on the hive vault to make sure everything is fine");
 
-        let pricingPlan = await vault.getPayment().getActivePricingPlan();
-        if (!pricingPlan) {
+        let storageUsed = await vaultInfo.getStorageUsed();
+        if (!storageUsed) {
           Logger.error("GlobalHiveService", "Error while calling a test hive vault API. No data returned");
         }
         else {
@@ -249,24 +231,35 @@ export class GlobalHiveService extends GlobalService {
   }
 
   /**
-   *
+   * Initial check of active user's hive vault status
    */
-  async retrieveVaultLinkStatus(): Promise<VaultLinkStatus> {
-    Logger.log("GlobalHiveService", "Looking for vault link status");
+  private async retrieveVaultStatus(): Promise<void> {
+    Logger.log("GlobalHiveService", "Looking for vault status");
 
     let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
 
-    let hiveClient = await this.getHiveClient();
-
-    let status: VaultLinkStatus = {
-      checkState: VaultLinkStatusCheckState.NOT_CHECKED,
+    this.vaultStatus.next({
+      checkState: VaultStatusState.NOT_CHECKED,
+      vaultInfo: null,
       publishedInfo: null
-    };
+    });
 
     // Check if we can find an existing vault provider address on DID chain for this user.
     Logger.log("GlobalHiveService", "Retrieving vault of current user's DID " + signedInDID);
     try {
-      this.activeVault = await hiveClient.getVault(signedInDID);
+      let vaultInfo = await (await this.hiveAuthHelper.getSubscriptionService(signedInDID)).checkSubscription();
+      let activeUserVaultServices = await this.hiveAuthHelper.getVaultServices(signedInDID);
+      // Normally, if no exception thrown, activeUserVaultServices is never null
+      this.vaultStatus.next({
+        checkState: VaultStatusState.NOT_CHECKED,
+        vaultInfo,
+        publishedInfo: {
+          vaultAddress: activeUserVaultServices.getProviderAddress(),
+          vaultName: "Unknown Vault Name",
+          vaultVersion: await (await activeUserVaultServices.getNodeVersion()).toString()
+        },
+        vaultServices: activeUserVaultServices
+      });
     }
     catch (e) {
       if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
@@ -283,82 +276,22 @@ export class GlobalHiveService extends GlobalService {
       }
     }
 
-    if (this.activeVault === null) {
-      Logger.log("GlobalHiveService", "No vault found for this DID");
-      // Null vault returned, so this either means we are not on ID chain yet, or we didn't
-      // call create vault. So the user will have to do it.
-    }
-    else {
-      Logger.log("GlobalHiveService", "Got user vault", this.activeVault);
-
-      // Ensure the vault was created by calling the createVault() API. We can make sure of this by getting the active
-      // payment plan. If none or if a vault not found exception is returned, this means the vault was not yet created.
-      let activePricingPlan: HivePlugin.Payment.ActivePricingPlan = null;
-      try {
-        activePricingPlan = await this.activeVault.getPayment().getActivePricingPlan();
-        if (!activePricingPlan) {
-          Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned null. Vault was probably not created correctly earlier and needs to be registered again.");
-          this.emitUnknownErrorStatus();
-          return null;
-        }
-        Logger.log("GlobalHiveService", "Got active payment plan from retrieveVaultLinkStatus():", activePricingPlan);
-      }
-      catch (e) {
-        if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
-          Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned a vault not found exception. Vault was probably not created correctly earlier and needs to be registered again.");
-          this.emitUnknownErrorStatus();
-          return null;
-        }
-        else {
-          Logger.error("GlobalHiveService", "Exception while calling getActivePricingPlan() in retrieveVaultLinkStatus():", e);
-          this.emitUnknownErrorStatus();
-          return null;
-        }
-      }
-
-      status.checkState = VaultLinkStatusCheckState.SUCCESSFULLY_RETRIEVED;
-
-      // TODO: onUserSignOut will set activeVault to null.
-      if (this.activeVault) {
-        let currentlyPublishedVaultAddress = this.activeVault.getVaultProviderAddress();
-        Logger.log("GlobalHiveService", "Currently published vault address: ", currentlyPublishedVaultAddress);
-
-        if (currentlyPublishedVaultAddress) {
-          status.publishedInfo = {
-            vaultAddress: currentlyPublishedVaultAddress,
-            vaultName: "Unknown Vault Name",
-            vaultVersion: await this.activeVault.getNodeVersion(),
-            activePricingPlan
-          };
-        }
-      } else {
-        // User signout.
-        return
-      }
-    }
-
-    Logger.log("GlobalHiveService", "Link status retrieval completed");
-
-    this.vaultLinkStatus = status;
-    this.vaultStatus.next(this.vaultLinkStatus);
-
-    return status;
+    Logger.log("GlobalHiveService", "Vault status retrieval completed");
   }
 
   private emitUnknownErrorStatus() {
     Logger.log("GlobalHiveService", "Emiting unknown error status");
-    this.vaultLinkStatus = {
-      checkState: VaultLinkStatusCheckState.UNKNOWN_ERROR
-    };
-    this.vaultStatus.next(this.vaultLinkStatus);
+    this.vaultStatus.next({
+      checkState: VaultStatusState.UNKNOWN_ERROR
+    });
   }
 
-  public getActiveVault(): HivePlugin.Vault {
-    return this.activeVault;
+  public getActiveVaultServices(): VaultServices {
+    return this.vaultStatus.value.vaultServices;
   }
 
   public hiveUserVaultCanBeUsed(): boolean {
-    return this.activeVault !== null;
+    return !!this.getActiveVaultServices();
   }
 
   /**
@@ -367,14 +300,18 @@ export class GlobalHiveService extends GlobalService {
   public async publishVaultProvider(providerName: string, vaultAddress: string): Promise<boolean> {
     let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
 
+    let subscriptionServices = await this.hiveAuthHelper.getSubscriptionService(signedInDID, vaultAddress);
+    if (!subscriptionServices) {
+      Logger.error('HiveManager', "Failed to create vault on the vault provider for DID " + signedInDID + " at address " + vaultAddress + " because there is no active vault services instance.");
+      return false;
+    }
+
     // First try to create the vault on the provider
     try {
-      let createdVault = await this.client.value.createVault(signedInDID, vaultAddress);
-      if (createdVault) {
+      let createdVaultInfo = await subscriptionServices.subscribe();
+      if (createdVaultInfo) {
         Logger.log("GlobalHiveService", "Vault was newly created on the provider. Now updating vault address on user's DID");
-
         // Vault creation succeeded, we can now save the provider address on ID chain.
-        this.activeVault = createdVault;
       }
       else {
         // Vault already exists on this provider. Nothing to do
@@ -418,15 +355,6 @@ export class GlobalHiveService extends GlobalService {
     }
   }
 
-  public async getPricingInfo(): Promise<HivePlugin.Payment.PricingInfo> {
-    if (this.pricingInfo)
-      return this.pricingInfo;
-
-    this.pricingInfo = await this.getActiveVault().getPayment().getPricingInfo();
-
-    return this.pricingInfo;
-  }
-
   /**
    * Calls a hive script that contains a downloadable picture file, for instance a identity avatar.
    * The fetched picture is returned as a raw buffer.
@@ -442,10 +370,11 @@ export class GlobalHiveService extends GlobalService {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise<Buffer>(async (resolve) => {
       try {
-        let hiveClient = await this.getHiveClient();
+        let hiveClient = await this.checkActiveUserVaultServices();
         Logger.log("GlobalHiveService", "Calling script url to download file", hiveScriptUrl);
-        let reader = await hiveClient.downloadFileByScriptUrl(hiveScriptUrl); // Broken in Hive Java SDK 2.0.29
-
+        resolve(null); // CANT FETCH PICTURES FOR NOW
+        return;
+        /* TODO IN HIVE JS let reader = await hiveClient.downloadFileByScriptUrl(hiveScriptUrl); // Broken in Hive Java SDK 2.0.29
         let rawData: Uint8Array = await reader.readAll();
 
         if (!rawData || rawData.length == 0) {
@@ -455,11 +384,11 @@ export class GlobalHiveService extends GlobalService {
         else {
           Logger.log("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", rawData.length);
           resolve(Buffer.from(rawData));
-        }
+        }*/
       }
       catch (e) {
         // Can't download the asset
-        Logger.warn("GlobalHiveService", "Failed to download hive asset at "+hiveScriptUrl, e);
+        Logger.warn("GlobalHiveService", "Failed to download hive asset at " + hiveScriptUrl, e);
         resolve(null);
       }
     });
@@ -486,8 +415,8 @@ export class GlobalHiveService extends GlobalService {
   public getHiveAvatarUrlFromDIDAvatarCredential(avatarCredentialSubject: JSONObject): string {
     if (avatarCredentialSubject.type && avatarCredentialSubject.type == "elastoshive") {
       if (avatarCredentialSubject.data && avatarCredentialSubject["content-type"]) {
-          let hiveUrl = avatarCredentialSubject.data as string;
-          return hiveUrl;
+        let hiveUrl = avatarCredentialSubject.data as string;
+        return hiveUrl;
       }
     }
     // Other cases: return nothing.

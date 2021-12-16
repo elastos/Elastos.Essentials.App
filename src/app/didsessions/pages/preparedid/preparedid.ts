@@ -1,20 +1,19 @@
-import { Component, ViewChild, NgZone } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { TranslateService } from '@ngx-translate/core';
-import { IdentityService } from '../../services/identity.service';
 import { IonSlides, Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { sleep } from 'src/app/helpers/sleep.helper';
-import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
-import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletCreationService } from 'src/app/wallet/services/walletcreation.service';
+import { IdentityService } from '../../services/identity.service';
+
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -22,9 +21,9 @@ declare let didManager: DIDPlugin.DIDManager;
 const MIN_SLIDE_SHOW_DURATION_MS = 4000;
 
 @Component({
-    selector: 'page-preparedid',
-    templateUrl: 'preparedid.html',
-    styleUrls: ['preparedid.scss']
+  selector: 'page-preparedid',
+  templateUrl: 'preparedid.html',
+  styleUrls: ['preparedid.scss']
 })
 export class PrepareDIDPage {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -80,12 +79,12 @@ export class PrepareDIDPage {
     private globalPublicationService: GlobalPublicationService,
     public theme: GlobalThemeService
   ) {
-      Logger.log('didsessions', "Entering PrepareDID page");
-      const navigation = this.router.getCurrentNavigation();
-      if(navigation.extras.state && navigation.extras.state.enterEvent) {
-        this.nextStepId = navigation.extras.state.enterEvent.stepId;
-        Logger.log('didsessions', 'PrepareDIDPage - nextStepId', this.nextStepId);
-      }
+    Logger.log('didsessions', "Entering PrepareDID page");
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation.extras.state && navigation.extras.state.enterEvent) {
+      this.nextStepId = navigation.extras.state.enterEvent.stepId;
+      Logger.log('didsessions', 'PrepareDIDPage - nextStepId', this.nextStepId);
+    }
   }
 
   async ionViewWillEnter() {
@@ -139,7 +138,7 @@ export class PrepareDIDPage {
           await this.createWalletFromIdentity();
           break;
         default:
-          // Do nothing.
+        // Do nothing.
       }
     }
     while (nextSlideIndex !== this.ALL_DONE_SLIDE_INDEX && operationSuccessful);
@@ -190,7 +189,7 @@ export class PrepareDIDPage {
       return this.SIGN_IN_SLIDE_INDEX;
     }
     else if (currentSlideIndex <= this.HIVE_SETUP_SLIDE_INDEX && !await this.isHiveVaultReady()) {
-       return this.HIVE_SETUP_SLIDE_INDEX;
+      return this.HIVE_SETUP_SLIDE_INDEX;
     }
     if (currentSlideIndex < this.DEFAULT_WALLET_SLIDE_INDEX && !(await this.defaultWalletExists())) {
       return this.DEFAULT_WALLET_SLIDE_INDEX;
@@ -207,7 +206,7 @@ export class PrepareDIDPage {
 
   private fetchPublishedDID(): Promise<DIDPlugin.DIDDocument> {
     Logger.log("didsessions", "Checking if identity is published for ", this.identityService.identityBeingCreated.did.getDIDString());
-    return new Promise<DIDPlugin.DIDDocument>((resolve, reject) =>{
+    return new Promise<DIDPlugin.DIDDocument>((resolve, reject) => {
       didManager.resolveDidDocument(this.identityService.identityBeingCreated.did.getDIDString(), true, (doc) => {
         Logger.log("didsessions", "Resolved identity:", doc);
         resolve(doc);
@@ -230,7 +229,7 @@ export class PrepareDIDPage {
     Logger.log("didsessions", "Checking if hive vault is ready");
     // To know if the vault is ready we need a hive client instance and then check what getvault() returns.
     // retrieveVaultLinkStatus() does that for us.
-    let vaultStatus = await this.globalHiveService.retrieveVaultLinkStatus();
+    let vaultStatus = await this.globalHiveService.vaultStatus.value;
     Logger.log("didsessions", "Hive vault status:", vaultStatus);
 
     // Try to check hive only once. If this has failed a first time we continue to not block the user.
@@ -294,7 +293,7 @@ export class PrepareDIDPage {
 
       return true;
     }
-    catch(e) {
+    catch (e) {
       Logger.warn("didsessions", "Publish identity error in prepare did:", e);
       this.publishError = "Failed to publish identity: " + e;
       return false;
@@ -305,7 +304,7 @@ export class PrepareDIDPage {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     return new Promise<boolean>((resolve) => {
       void this.globalPublicationService.resetStatus().then(async () => {
-        let publicationStatusSub = this.globalPublicationService.publicationStatus.subscribe((status)=>{
+        let publicationStatusSub = this.globalPublicationService.publicationStatus.subscribe((status) => {
           if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
             Logger.log("didsessions", "Identity publication success");
             publicationStatusSub.unsubscribe();
@@ -320,9 +319,9 @@ export class PrepareDIDPage {
 
         try {
           await this.globalPublicationService.publishDIDFromStore(
-                  this.identityService.identityBeingCreated.didStore.getId(),
-                  this.identityService.identityBeingCreated.storePass,
-                  this.identityService.identityBeingCreated.did.getDIDString());
+            this.identityService.identityBeingCreated.didStore.getId(),
+            this.identityService.identityBeingCreated.storePass,
+            this.identityService.identityBeingCreated.did.getDIDString());
         }
         catch (e) {
           Logger.log("didsessions", "Identity publication failure (publishDIDFromStore)", e);
@@ -343,7 +342,7 @@ export class PrepareDIDPage {
       Logger.log("didsessions", "Sign in complete");
       return true;
     }
-    catch(e) {
+    catch (e) {
       Logger.warn("didsessions", "Sign in error in prepare did:", e);
       this.signInError = "Failed to sign in: " + e;
       return false;
@@ -363,11 +362,11 @@ export class PrepareDIDPage {
     try {
       await Promise.all([
         sleep(MIN_SLIDE_SHOW_DURATION_MS),
-        this.globalHiveService.prepareHiveVault(vaultAddress)
+        this.globalHiveService.subscribeToHiveProvider(vaultAddress)
       ]);
       return true;
     }
-    catch(e) {
+    catch (e) {
       Logger.warn("didsessions", "Hive storage error in prepare did:", e);
       this.hiveError = "Failed to setup the hive storage: " + e;
       return false;

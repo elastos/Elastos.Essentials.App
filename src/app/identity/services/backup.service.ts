@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { VaultServices } from '@elastosfoundation/elastos-hive-js-sdk/typings';
 import { Subscription } from 'rxjs';
-import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
+import { JSONObject } from 'src/app/model/json';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
@@ -11,7 +12,6 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDURL } from '../model/didurl.model';
 import { VerifiableCredential } from '../model/verifiablecredential.model';
 import { DIDService } from './did.service';
-
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -22,7 +22,7 @@ const BACKUP_CONTEXT = "identitycredentials";
 })
 export class BackupService extends GlobalService {
   private backupRestoreHelper: HiveDataSync;
-  private userVault: HivePlugin.Vault;
+  private userVault: VaultServices;
   private credAddedSub: Subscription = null;
   private credModifiedSub: Subscription = null;
   private credDeletedSub: Subscription = null;
@@ -106,20 +106,11 @@ export class BackupService extends GlobalService {
 
     this.preparingOrPrepared = true;
 
-    const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
-    if (!hiveAuthHelper) {
-      Logger.log("identitybackup", "Failed to get hive auth helper. Backup service not starting");
-      return;
-    }
-
-    void this.globalHiveService.getHiveClient().then(async hiveClient => {
+    void this.globalHiveService.getActiveUserVaultServices().then(async vaultServices => {
       try {
-        const userDID = GlobalDIDSessionsService.signedInDIDString;
-
-        // did:elastos:iaMPKSkYLJYmbBTuT3JfF9E8cFtLWky5vk - Test
+        this.userVault = vaultServices;
 
         Logger.log("identitybackup", "Getting current user's vault instance");
-        this.userVault = await hiveClient.getVault(userDID); // No response here
 
         if (!this.userVault) {
           Logger.log("identitybackup", "Failed to get user's vault. Maybe none if configured yet. Backup service not starting for now");
@@ -134,7 +125,7 @@ export class BackupService extends GlobalService {
           async (entry) => {
             // Remote entry not existing locally - add it
             Logger.log("identitybackup", "Addition request from backup helper", entry);
-            let credentialJSON: HivePlugin.JSONObject = entry.data;
+            let credentialJSON: JSONObject = entry.data;
             try {
               let credential = didManager.VerifiableCredentialBuilder.fromJson(JSON.stringify(credentialJSON));
               if (credential) {

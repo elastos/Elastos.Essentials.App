@@ -10,7 +10,7 @@ import { Logger } from "src/app/logger";
 import { ContactNotifierService } from "src/app/services/contactnotifier.service";
 import { Events } from "src/app/services/events.service";
 import { IdentityEntry } from "src/app/services/global.didsessions.service";
-import { GlobalHiveService, VaultLinkStatusCheckState } from "src/app/services/global.hive.service";
+import { GlobalHiveService, VaultStatusState } from "src/app/services/global.hive.service";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
@@ -129,7 +129,7 @@ export class ProfileService extends GlobalService {
     });
 
     this.globalHiveService.vaultStatus.subscribe(status => {
-      if (status && status.checkState === VaultLinkStatusCheckState.SUCCESSFULLY_RETRIEVED && status.publishedInfo) {
+      if (status && status.checkState === VaultStatusState.SUCCESSFULLY_RETRIEVED && status.publishedInfo) {
         // We don't need it yet, but we start fetching the avatar that is possibly stored on a hive vault,
         // as soon as the main user's hive vault is ready. This way, the avatar will be ready when the user
         // starts the main identity screen.

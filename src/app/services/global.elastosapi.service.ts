@@ -17,7 +17,6 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let hiveManager: HivePlugin.HiveManager;
 
 export enum ElastosApiUrlType {
     // Main chain
