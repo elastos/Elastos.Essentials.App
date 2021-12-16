@@ -12,6 +12,9 @@ export const zh = {
         'publish-description': '将身份发布上链',
         'missing': '缺失',
         'verify': '立即验证',
+        'expired': 'Expired',
+        'sensitive': 'Sensitive',
+        'delivered-by': 'Created by',
 
         /******************** Main Screens  ********************/
         // page: myprofile
@@ -72,6 +75,7 @@ export const zh = {
         'change-visible': '此凭证将在您下次发布身份时对所有人可见',
         'change-unpublished': '下次发布身份时，将取消发布此凭证',
         'change-not-published': '下次发布身份时将不会发布此凭证',
+        'who-made-this': 'Who made this?',
 
         // Credentiallist
         'publish-changes': '发布更新',

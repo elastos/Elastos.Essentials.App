@@ -12,6 +12,9 @@ export const fr = {
         'publish-description': 'Publiez votre identité sur la chaîne de blocs',
         'missing': 'Manquant',
         'verify': 'Vérifier Maintenant',
+        'expired': 'Expiré',
+        'sensitive': 'Sensible',
+        'delivered-by': 'Créé par',
 
         /******************** Main Screens  ********************/
         // page: myprofile (Home)
@@ -70,6 +73,7 @@ export const fr = {
         'change-visible': 'This credential will become visible to everyone next time your publish your identity',
         'change-unpublished': 'This credential will be unpublished next time your publish your identity',
         'change-not-published': 'This credential will be not be published next time your publish your identity',
+        'who-made-this': 'Qui l\'a créé?',
 
         // Credentiallist
         'publish-changes': 'Publier les Changements',

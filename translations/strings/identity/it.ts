@@ -12,6 +12,9 @@ export const it = {
         'publish-description': 'Pubblica la tua identità sulla blockchain',
         'missing': 'Mancante',
         'verify': 'Verifica Ora',
+        'expired': 'Expired',
+        'sensitive': 'Sensitive',
+        'delivered-by': 'Created by',
 
         /******************** Main Screens  ********************/
         // page: myprofile (Home)
@@ -69,6 +72,7 @@ export const it = {
         'change-visible': 'Questa credenziale diventerà visibile a tutti la prossima volta che pubblicherai la tua identità',
         'change-unpublished': 'Questa credenziale verrà resa privata la prossima volta che pubblicherai la tua identità',
         'change-not-published': 'Questa credenziale non verrà resa pubblica la prossima volta che pubblicherai la tua identità',
+        'who-made-this': 'Who made this?',
 
         // Credentiallist
         'publish-changes': 'Pubblica modifiche',
