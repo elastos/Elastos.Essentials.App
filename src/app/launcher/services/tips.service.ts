@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import * as moment from 'moment';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Tip } from '../model/tip.model';
 import { TipAudience } from '../model/tipaudience.model';
-import * as moment from 'moment';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { Logger } from 'src/app/logger';
-import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { App } from 'src/app/model/app.enum';
 
 const DURATION_MIN_BETWEEN_2_TIPS_HOURS = 12; // 12 hours
 const DURATION_BETWEEN_2_CHECKS_MS = 5 * 60 * 1000; // 5 minutes
@@ -36,6 +36,11 @@ export class TipsService {
     {
       title: "launcher.tip-title-what-is-did",
       message: "launcher.tip-message-what-is-did",
+      audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
+    },
+    {
+      title: "launcher.tip-title-did-vs-wallet",
+      message: "launcher.tip-message-did-vs-wallet",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
