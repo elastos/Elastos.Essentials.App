@@ -14,16 +14,11 @@
                 <img src="/assets/settings/icon/walletconnect.svg">
             </ion-col>
             <ion-col size="8.5" class="main">
-                <div class="heading">iOS user notice</div>
+                <div class="heading">{{ 'dappbrowser.ios-user-notice' | translate}}</div>
                 <div class="notice">
-                    Apple App Store guidelines forbid built-in browsers to access
-                    crypto-currency features. Browsing dApps will redirect
-                    you to your external browser.
+                    {{ 'dappbrowser.ios-user-notice-1' | translate}}
                 </div>
-                <div class="notice">
-                    To connect the external browser
-                    to your wallet, please use <b>Wallet Connect</b>,
-                    and choose <b>Elastos Essentials</b>.
+                <div class="notice" [innerHtml]="'dappbrowser.ios-user-notice-2' | translate">
                 </div>
             </ion-col>
             <ion-col size="1.5" class="close">
@@ -34,7 +29,7 @@
 
         <ion-row class="header-row fav-header" *ngIf="recentApps.length > 0">
             <ion-col size="12">
-                <h2>Recent apps</h2>
+                <h2>{{ 'dappbrowser.recent-apps' | translate}}</h2>
             </ion-col>
         </ion-row>
 

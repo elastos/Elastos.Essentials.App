@@ -135,10 +135,10 @@
       <ion-row *ngIf="recentApps.length > 0">
         <!-- Has recent apps - category header -->
         <ion-col size="8" class="title-col">
-          Recent dApps
+          {{ 'dappbrowser.recent-apps' | translate}}
         </ion-col>
         <ion-col size="4" class="more-col" (click)="openDApps()">
-          All dApps
+          {{ 'dappbrowser.all-dapps' | translate}}
           <img
             [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
         </ion-col>

@@ -10,6 +10,11 @@ export const fr = {
     'no-favorite': 'Aucun favori pour l\'instant pour le réseau {{networkName}}. Saisissez une url ci-dessus et utilisez le menu pour ajouter l\'appli en favori - ou activez le réseau actuel sur vos favoris existants.',
     'home-other-dapps': 'Autres dApps',
     'home-no-other-dapp': 'Nous n\'avons pour l\'instant pas de dApp à recommander pour ce réseau ou sur cette plateforme. Naviguez manuellement vers vos dApps et ajoutez-les en favoris.',
+    'ios-user-notice': 'Note aux utilisateurs iOS',
+    'ios-user-notice-1': 'Les règles de l\'App Store Apple interdisent aux navigateurs intégrés d\'accéder aux crypto-transactions. Vous allez être redirigé(e) vers votre navigateur externe.',
+    'ios-user-notice-2': 'Pour vous connecter depuis les dApps, veuillez utiliser <b>Wallet Connect</b>, puis choisir <b>Elastos Essentials</b>.',
+    'recent-apps': 'Apps récentes',
+    'all-dapps': 'Toutes les apps',
 
     // Menu
     'menu-title': 'Options',
