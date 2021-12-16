@@ -821,12 +821,15 @@ export class DappBrowserService implements GlobalService {
      * Saves information about a browsed dapp for later use (for example when adding to favorites)
      */
     public async saveBrowsedAppInfo(appInfo: BrowsedAppInfo): Promise<BrowsedAppInfo> {
+        // Make sure to save only app info with clean data
+        if (!this.browsedAppInfoDataFilled(appInfo))
+            return appInfo;
+
         let key = "appinfo-" + appInfo.url; // Use the url as access key
         await this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", key, appInfo);
 
-        // Only add to recent apps if we have enough info so far
-        if (this.browsedAppInfoDataFilled(appInfo))
-            await this.addAppToRecent(appInfo.url);
+        // Add to recently browsed apps list as well
+        await this.addAppToRecent(appInfo.url);
 
         return appInfo;
     }
