@@ -57,8 +57,8 @@ export class CredentialDetailsPage implements OnInit {
 
   public segment = "validator";
   public credentialId: string = null;
-  public appIcon: string;
   public iconSrc = transparentPixelIconDataUrl(); // Main icon html src data
+  public iconLoaded = false;
 
   // Issuer
   private issuerDidDocument: DIDDocument = null;
@@ -156,6 +156,7 @@ export class CredentialDetailsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.iconLoaded = false;
     this.displayableProperties = this.getDisplayableProperties();
     this.titleBar.setTitle(this.translate.instant('identity.credentialdetails-title'));
     this.titleBar.setupMenuItems([
@@ -181,10 +182,6 @@ export class CredentialDetailsPage implements OnInit {
     Logger.log('Identity',
       "Credential details ionViewDidEnter did: " + this.profileService.didString
     );
-
-    /* if (this.isApp()) {
-      this.getAppIcon();
-    } */
   }
 
   prepareCredential() {
@@ -213,7 +210,12 @@ export class CredentialDetailsPage implements OnInit {
     this.checkIsCredentialInLocalDIDDocument();
 
     // Prepare the credential for display
-    this.credential.onIconReady(iconSrc => this.iconSrc = iconSrc);
+    this.credential.onIconReady(iconSrc => {
+      console.log("onIconReady");
+      this.iconSrc = iconSrc;
+      this.iconLoaded = true;
+    });
+    console.log("prepareForDisplay");
     this.credential.prepareForDisplay();
 
     void this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(this.credential.pluginVerifiableCredential.getIssuer()).then(issuerDocumentStatus => {
