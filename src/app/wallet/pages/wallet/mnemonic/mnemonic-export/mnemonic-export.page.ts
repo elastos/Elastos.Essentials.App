@@ -88,16 +88,11 @@ export class MnemonicExportPage implements OnInit {
             if (this.hasMnemonic) {
                 void this.showMnemonics();
             } else {
-                void this.showPrivateKey();
+                this.hideMnemonic = false;
             }
-        });
-    }
 
-    async showPrivateKey() {
-        this.evmPrivateKey = await this.walletManager.spvBridge.exportETHSCPrivateKey(this.masterWalletId, "ETHSC", this.payPassword);
-        this.titleBar.setBackgroundColor('#732cd0');
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-        this.titleBar.setTitle(this.translate.instant('wallet.privatekey'));
+            void this.showPrivateKey();
+        });
     }
 
     async getPassword() {
@@ -145,6 +140,15 @@ export class MnemonicExportPage implements OnInit {
         }
 
         this.hideMnemonic = false;
+    }
+
+    async showPrivateKey() {
+        this.evmPrivateKey = await this.walletManager.spvBridge.exportETHSCPrivateKey(this.masterWalletId, "ETHSC", this.payPassword);
+        if (!this.hasMnemonic) {
+            this.titleBar.setBackgroundColor('#732cd0');
+            this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+            this.titleBar.setTitle(this.translate.instant('wallet.privatekey'));
+        }
     }
 
     async onShare() {

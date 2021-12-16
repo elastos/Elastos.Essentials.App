@@ -8,16 +8,20 @@
         </ion-row>
     </ion-grid>
 
-    <ion-grid *ngIf="!hideMnemonic && hasMnemonic" class="ion-text-center verified-container">
-        <p>
+    <ion-grid *ngIf="!hideMnemonic" class="ion-text-center verified-container">
+        <p *ngIf="hasMnemonic">
             {{ 'wallet.mnemonic-prompt1' | translate }}<b>{{ 'wallet.mnemonic-prompt2' | translate }}</b>{{ 'wallet.mnemonic-prompt3' | translate }}<br><br>
         </p>
-        <ion-row class="mnemonic-row">
+        <ion-row *ngIf="hasMnemonic" class="mnemonic-row">
             <ion-col size="3.6" *ngFor="let item of mnemonicList; let i=index">
                 <div class="mnemonic-index">{{ mnemonicList.indexOf(item) + 1 }}</div>
                 <ion-label>{{ item }}</ion-label>
             </ion-col>
         </ion-row>
+        <div class="key" (click)="copyPrivateKey()">
+            {{ evmPrivateKey }}
+        </div>
+        <p>{{ 'wallet.privatekey-tap-to-copy' | translate }}</p>
         <ion-row *ngIf="!hideMnemonic && !isFromIntent" class="btn-container">
             <ion-button color="secondary" (click)="return()">
                 <ion-label> {{ 'wallet.back-to-setting' | translate }}</ion-label>
@@ -28,12 +32,5 @@
                 <ion-label>{{ 'wallet.text-allow' | translate }}</ion-label>
             </ion-button>
         </ion-row>
-    </ion-grid>
-
-    <ion-grid *ngIf="!hasMnemonic" class="ion-text-center verified-container">
-        <div class="key" (click)="copyPrivateKey()">
-            {{ evmPrivateKey }}
-        </div>
-        <p>{{ 'wallet.privatekey-tap-to-copy' | translate }}</p>
     </ion-grid>
 </ion-content>
