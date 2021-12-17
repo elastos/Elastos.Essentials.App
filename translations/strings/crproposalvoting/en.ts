@@ -86,6 +86,8 @@ export const en = {
         'create-proposal': 'Create Proposal',
         'create-proposal-msg': 'You are about to create the following proposal. Please review it, and follow the process to sign and publish it.',
         'sign-create-proposal': 'Sign and Create Proposal',
+        "create-proposal-successfully": "Proposal created successfully, please wait for transaction confirmation.",
+        "create-proposal-failed": "Failed to create proposal, please recreate proposal.",
 
         'review-proposal': 'Review Proposal',
         'review-proposal-msg': 'You are about to review the following proposal. Please review it, and follow the process to sign and publish it.',
@@ -98,6 +100,8 @@ export const en = {
         'progress': 'Progress',
         'finalized': 'Finalized',
         // 'abstain': 'Abstain',
+        "review-proposal-successfully": "Proposal review is successfully, please wait for transaction confirmation.",
+        "review-proposal-failed": "Proposal review failed, please review again.",
 
         'vote-proposal': 'Vote Against',
         'vote-proposal-msg': 'You are about to vote to veto a proposal. If a proposal is vetoed by community members using enough ELA, it will be aborted.',

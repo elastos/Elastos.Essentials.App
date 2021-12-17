@@ -9,6 +9,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { CRCommandType, CROperationsService, CRWebsiteCommand } from 'src/app/voting/crproposalvoting/services/croperations.service';
@@ -58,6 +59,7 @@ export class ReviewProposalPage {
         private globalNative: GlobalNativeService,
         public zone: NgZone,
         public keyboard: Keyboard,
+        private globalPopupService: GlobalPopupService,
         private draftService: DraftService,
     ) {
     }
@@ -148,11 +150,13 @@ export class ReviewProposalPage {
                 const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
                 this.crOperations.goBack();
+                this.globalNative.genericToast('crproposalvoting.create-proposal-successfully', 2000, "success");
             }
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.popup.alert("Error", "Sorry, unable to sign your crproposal. Your crproposal can't be review for now. " + e, "Ok");
+            await this.globalPopupService.ionicAlert("common.error", 'crproposalvoting.review-proposal-failed');
+            Logger.error('crproposal', 'signAndReviewProposal error:', e);
         }
 
         this.signingAndSendingProposalResponse = false;

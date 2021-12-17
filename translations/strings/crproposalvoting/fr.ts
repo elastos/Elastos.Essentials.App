@@ -85,6 +85,8 @@ export const fr = {
         'create-proposal': 'Créer une Proposition',
         'create-proposal-msg': 'Vous êtes sur le point de créer la proposition suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
         'sign-create-proposal': 'Signer et Créer la Proposition',
+        "create-proposal-successfully": "Proposal created successfully, please wait for transaction confirmation.",
+        "create-proposal-failed": "Failed to create proposal, please recreate proposal.",
 
         'review-proposal': 'Vote pour une Proposition',
         'review-proposal-msg': 'Vous êtes sur le point de voter pour la proposition suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
@@ -97,6 +99,8 @@ export const fr = {
         'progress': 'Progress',
         'finalized': 'Finalized',
         // 'abstain': 'Abstain',
+        "review-proposal-successfully": "Proposal review is successfully, please wait for transaction confirmation.",
+        "review-proposal-failed": "Proposal review failed, please review again.",
 
         'vote-proposal': 'Vote Against',
         'vote-proposal-msg': 'Vous êtes sur le point de voter contre la proposition suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',

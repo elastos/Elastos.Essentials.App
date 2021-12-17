@@ -6,7 +6,9 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
@@ -68,6 +70,8 @@ export class CreateProposalPage {
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
+        private globalPopupService: GlobalPopupService,
     ) {
 
     }
@@ -180,11 +184,12 @@ export class CreateProposalPage {
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
                 this.suggestionService.addBlockWatingItem(this.createProposalCommand.sid, this.suggestionDetail.status);
                 this.crOperations.goBack();
+                this.globalNative.genericToast('crproposalvoting.create-proposal-successfully', 2000, "success");
             }
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.popup.alert("Error", "Sorry, unable to sign your crproposal. Your crproposal can't be created for now. " + e, "Ok");
+            await this.globalPopupService.ionicAlert("common.error", 'crproposalvoting.create-proposal-failed');
             Logger.error('crproposal', 'signAndCreateProposal error:', e);
         }
         this.signingAndSendingProposalResponse = false;

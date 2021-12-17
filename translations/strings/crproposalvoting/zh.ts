@@ -86,6 +86,8 @@ export const zh = {
         'create-proposal': '发布提案',
         'create-proposal-msg': '您将要发布以下提案。请对其进行审核，并按照流程进行签名和发布。',
         'sign-create-proposal': '签名并发布提案',
+        "create-proposal-successfully": "创建提案成功，请等待交易确认。",
+        "create-proposal-failed": "创建提案失败，请重新创建提案。",
 
         'review-proposal': '评议提案',
         'review-proposal-msg': '您将要评议以下提案。请对其进行审核，并按照流程进行签名和评议。',
@@ -98,6 +100,8 @@ export const zh = {
         'progress': '同意',
         'finalized': '同意',
         // 'abstain': '弃权',
+        "review-proposal-successfully": "提案评议成功，请等待交易确认。",
+        "review-proposal-failed": "提案评议失败，请重新评议。",
 
         'vote-proposal': '投反对票',
         'vote-proposal-msg': '您将投票否决此提案。如果社区成员使用足够的ELA否决了提案，则该提案将被中止。',
