@@ -25,7 +25,7 @@
             <ion-row class="profile-data" *ngIf="reviewMilestoneCommand.data.stage">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.milestone-stage' | translate }}</h5>
-                    <h4>{{ reviewMilestoneCommand.data.stage + 1 }}</h4>
+                    <h4>{{ reviewMilestoneCommand.data.stage + proposalDetails.stageAdjust }}</h4>
                 </ion-col>
             </ion-row>
 

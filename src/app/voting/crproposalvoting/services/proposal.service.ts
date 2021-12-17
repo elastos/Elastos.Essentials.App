@@ -83,7 +83,14 @@ export class ProposalService {
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log(App.CRPROPOSAL_VOTING, result);
             if (result && result.data) {
-                return result.data;
+                let detail = result.data;
+                if ((detail.budgets.length > 0) && (detail.budgets[0].stage == 0)) {
+                    detail.stageAdjust = 1;
+                }
+                else {
+                    detail.stageAdjust = 0;
+                }
+                return detail;
             }
             else {
                 Logger.error(App.CRPROPOSAL_VOTING, 'cat not get data');

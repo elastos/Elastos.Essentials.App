@@ -79,6 +79,13 @@ export class SuggestionService {
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log(App.CRSUGGESTION, result);
             if (result && result.data) {
+                let detail = result.data;
+                if ((detail.budgets.length > 0) && (detail.budgets[0].stage == 0)) {
+                    detail.stageAdjust = 1;
+                }
+                else {
+                    detail.stageAdjust = 0;
+                }
                 return result.data;
             }
             else {
