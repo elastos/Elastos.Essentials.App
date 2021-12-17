@@ -136,6 +136,7 @@ export const fr = {
         'new-crc-proposals-msg2': ' nouvelles propositions depuis votre dernière visite, touchez pour les voir.',
 
         'all-proposals-are-loaded': 'Toutes les propositions sont affichées',
+        'all-suggestions-are-loaded': 'All suggestions are loaded',
 
         //Suggection detail
         'make-into-proposal': 'Make into Proposal',

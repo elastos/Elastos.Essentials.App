@@ -139,6 +139,7 @@ export const it = {
         'new-crc-proposals-msg2': ' nuove proposte dalla tua ultima visita, clicca per visualizzarle.',
 
         'all-proposals-are-loaded': 'Tutte le proposte sono caricate',
+        'all-suggestions-are-loaded': 'All suggestions are loaded',
 
         //Suggection detail
         'make-into-proposal': 'Make into Proposal',

@@ -137,6 +137,7 @@ export const zh = {
         'new-crc-proposals-msg2': ' 个新提案，点击查看',
 
         'all-proposals-are-loaded': '所有提案都已加载',
+        'all-suggestions-are-loaded': '所有建议都已加载',
 
         //Suggection detail
         'make-into-proposal': '转成提案',
