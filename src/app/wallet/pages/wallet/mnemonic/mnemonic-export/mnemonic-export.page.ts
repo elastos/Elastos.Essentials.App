@@ -8,6 +8,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WalletCreateType } from 'src/app/wallet/model/walletaccount';
 import { AuthService } from '../../../../services/auth.service';
 import { IntentTransfer } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
@@ -84,7 +85,7 @@ export class MnemonicExportPage implements OnInit {
             const masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
             this.walletname = masterWallet.name;
             this.account = masterWallet.account.Type;
-            this.hasMnemonic = !masterWallet.createdByPrivateKey;
+            this.hasMnemonic = masterWallet.createType === WalletCreateType.MNEMONIC;
             if (this.hasMnemonic) {
                 void this.showMnemonics();
             } else {

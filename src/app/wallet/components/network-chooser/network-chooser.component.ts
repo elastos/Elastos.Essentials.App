@@ -6,13 +6,14 @@ import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from '../../model/coin';
 import { Network } from '../../model/networks/network';
+import { WalletCreateType } from '../../model/walletaccount';
 import { CurrencyService } from '../../services/currency.service';
 import { WalletNetworkService } from '../../services/network.service';
 import { UiService } from '../../services/ui.service';
 
 export type NetworkChooserComponentOptions = {
   currentNetwork: Network;
-  hideNetwork: string;
+  walletCreateType: WalletCreateType;
 }
 
 @Component({
@@ -43,7 +44,7 @@ export class NetworkChooserComponent implements OnInit {
     this.options = this.navParams.data as NetworkChooserComponentOptions;
 
     this.currentNetwork = this.options.currentNetwork;
-    this.networksToShowInList = this.networkService.getAvailableNetworks(this.options.hideNetwork);
+    this.networksToShowInList = this.networkService.getAvailableNetworks(this.options.walletCreateType);
   }
 
   selectNetwork(network: Network) {

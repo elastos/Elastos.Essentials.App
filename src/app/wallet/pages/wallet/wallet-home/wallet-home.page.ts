@@ -368,11 +368,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     public pickNetwork() {
-        let hideNetwork = null;
-        if (this.networkWallet.masterWallet.createdByPrivateKey) {
-            hideNetwork = 'BTC';
-        }
-        void this.walletNetworkUIService.chooseActiveNetwork(hideNetwork);
+        void this.walletNetworkUIService.chooseActiveNetwork();
     }
 
     public onSubWalletClicked(subWallet: AnySubWallet) {
