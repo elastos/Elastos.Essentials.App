@@ -70,22 +70,6 @@ export class WalletSettingsPage implements OnInit {
             icon: '/assets/wallet/settings/picture.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
         },
-        {
-            type: 'coin-list',
-            route: "/wallet/coin-list",
-            title: this.translate.instant("wallet.wallet-settings-manage-coin-list"),
-            subtitle: this.translate.instant("wallet.wallet-settings-manage-coin-list-subtitle"),
-            icon: '/assets/wallet/settings/coins.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/coins.svg'
-        },
-        {
-            type: 'wallet-delete',
-            route: null,
-            title: this.translate.instant("wallet.wallet-settings-delete-wallet"),
-            subtitle: this.translate.instant("wallet.wallet-settings-delete-wallet-subtitle"),
-            icon: '/assets/wallet/settings/trash.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
-        },
         /*       {
                   type: 'wallet-swap',
                   route: "/wallet/swap-test",
@@ -120,6 +104,17 @@ export class WalletSettingsPage implements OnInit {
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
         await this.getMasterWalletBasicInfo();
 
+        if (this.networkWallet.supportsERC20Coins()) {
+            this.settings.push({
+                type: 'coin-list',
+                route: "/wallet/coin-list",
+                title: this.translate.instant("wallet.wallet-settings-manage-coin-list"),
+                subtitle: this.translate.instant("wallet.wallet-settings-manage-coin-list-subtitle"),
+                icon: '/assets/wallet/settings/coins.svg',
+                iconDarkmode: '/assets/wallet/settings/darkmode/coins.svg'
+            });
+        }
+
         // Legacy support: ability to migrate remaining balances from DID 1 to DID 2 chains
         // Show this menu entry only if the DID 1.0 subwallet balance is non 0 to not pollute all users
         // with this later on.
@@ -135,6 +130,15 @@ export class WalletSettingsPage implements OnInit {
                 iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg'
             });
         }
+
+        this.settings.push({
+            type: 'wallet-delete',
+            route: null,
+            title: this.translate.instant("wallet.wallet-settings-delete-wallet"),
+            subtitle: this.translate.instant("wallet.wallet-settings-delete-wallet-subtitle"),
+            icon: '/assets/wallet/settings/trash.svg',
+            iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
+        });
     }
 
     ionViewWillEnter() {

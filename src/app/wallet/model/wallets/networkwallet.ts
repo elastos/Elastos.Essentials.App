@@ -523,4 +523,8 @@ export abstract class NetworkWallet {
         }
         else return [];
     }
+
+    public supportsERC20Coins() {
+        return true;
+    }
 }

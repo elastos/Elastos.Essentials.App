@@ -51,4 +51,8 @@ export class BTCNetworkWallet extends NetworkWallet {
     public getAverageBlocktime(): number {
         return 600;
     }
+
+    public supportsERC20Coins() {
+        return false;
+    }
 }
