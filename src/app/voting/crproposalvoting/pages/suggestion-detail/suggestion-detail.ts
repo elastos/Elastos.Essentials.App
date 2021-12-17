@@ -224,17 +224,6 @@ export class SuggestionDetailPage {
         }
     }
 
-    openLink(item) {
-        Logger.log('crsuggestion', "URL item clicked:", item);
-
-        if (item.type === 'url') {
-            const urlToOpen = item.value;
-            Logger.log('crsuggestion', "Opening external URL:", urlToOpen);
-            void this.globalIntentService.sendIntent('openurl', { url: urlToOpen })
-        }
-    }
-
-
     handleCommand() {
         let crcommand = { command: this.commandName, data: this.suggestion, sid: this.suggestionId, type: CRCommandType.SuggestionDetailPage } as CRWebsiteCommand;
         Logger.log('CRSuggestion', "Command:", crcommand);

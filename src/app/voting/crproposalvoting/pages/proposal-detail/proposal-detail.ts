@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import marked from 'marked';
 import { Subscription } from 'rxjs';
@@ -8,7 +7,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
@@ -52,9 +50,7 @@ export class ProposalDetailPage {
         private proposalService: ProposalService,
         private changeDetector: ChangeDetectorRef,
         public theme: GlobalThemeService,
-        private globalIntentService: GlobalIntentService,
         private translate: TranslateService,
-        private clipboard: Clipboard,
         public voteService: VoteService,
         private crOperations: CROperationsService,
     ) {
@@ -255,16 +251,6 @@ export class ProposalDetailPage {
                 return String(days) + ' days remaining';
             }
         }
-    }
-
-    openLink(url) {
-        Logger.log(App.CRPROPOSAL_VOTING, "Opening external URL:", url);
-        void this.globalIntentService.sendIntent('openurl', { url: url })
-    }
-
-    copyAddress(address: string) {
-        Logger.log(App.CRPROPOSAL_VOTING, "Copy address to clipboard", address);
-        void this.clipboard.copy(address);
     }
 
     handleCommand() {

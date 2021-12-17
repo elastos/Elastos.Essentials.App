@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-
-
 
 type CRWebsiteCommand = {
     command: string; // Ex: "voteforproposal"
@@ -24,7 +26,9 @@ export class UXService {
     private appIsLaunchingFromIntent = false; // Is the app starting because of an intent request?
 
     constructor(
-        private native: GlobalNativeService,
+        private globalNative: GlobalNativeService,
+        private clipboard: Clipboard,
+        private globalIntentService: GlobalIntentService,
         public translate: TranslateService
     ) {}
 
@@ -36,6 +40,17 @@ export class UXService {
     }
 
     genericToast(msg: string) {
-        this.native.genericToast(msg);
+        this.globalNative.genericToast(msg);
+    }
+
+    copyAddress(address: string) {
+        Logger.log(App.VOTING, "Copy address to clipboard", address);
+        void this.clipboard.copy(address);
+        this.globalNative.genericToast('common.copied-to-clipboard', 2000, "success");
+    }
+
+    openLink(url) {
+        Logger.log(App.VOTING, "Opening external URL:", url);
+        void this.globalIntentService.sendIntent('openurl', { url: url })
     }
 }

@@ -103,7 +103,7 @@
                         </div>
 
                         <div *ngSwitchCase="'original-url'" class="item">
-                            <ion-row class="original-url" (click)="openLink(item.value)">
+                            <ion-row class="original-url" (click)="uxService.openLink(item.value)">
                                 <ion-col class="label-col" size="10.75">
                                     <a>{{ item.value }} </a>
                                 </ion-col>
@@ -118,12 +118,11 @@
                                 <ion-col class="label-col" size="10.75">
                                     <div>{{ item.value }}</div>
                                 </ion-col>
-                                <ion-col size="1.25" (click)="copyAddress(item.value)">
+                                <ion-col size="1.25" (click)="uxService.copyAddress(item.value)">
                                     <img [src]="'assets/crproposalvoting/icons/clipboard.svg'">
                                 </ion-col>
                             </ion-row>
                         </div>
-
 
                         <div *ngSwitchCase="'member-votes'" class="item">
                             <div class="tab-container">
