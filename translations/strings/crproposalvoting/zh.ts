@@ -108,14 +108,14 @@ export const zh = {
         'multi-sign-reject-voting': '多签钱包不能投票。',
         'greater-than-max-votes': '超过有效的票数。',
 
-        'update-milestone': '更新Milestone',
-        'update-milestone-msg': '您将要更新Milestone。请对其进行审核，并按照流程进行签名和发布。',
-        'sign-update-milestone': '签名并更新Milestone',
-        'milestone-stage': 'Milestone阶段',
+        'update-milestone': '更新里程碑',
+        'update-milestone-msg': '您将要更新里程碑。请对其进行审核，并按照流程进行签名和发布。',
+        'sign-update-milestone': '签名并更新里程碑',
+        'milestone-stage': '里程碑阶段',
 
-        'review-milestone': '评议Milestone',
-        'review-milestone-msg': '您将要评议Milestone。请对其进行审核，并按照流程进行签名和发布。',
-        'sign-review-milestone': '签名并评议Milestone',
+        'review-milestone': '评议里程碑',
+        'review-milestone-msg': '您将要评议里程碑。请对其进行审核，并按照流程进行签名和发布。',
+        'sign-review-milestone': '签名并评议里程碑',
 
         'withdraw': '取款',
         'withdraw-msg': '您将要取款。请对其进行审核，并按照流程进行签名和发布。',
@@ -141,12 +141,12 @@ export const zh = {
         'goal': '目标',
         'milestone': '里程碑',
         'implementation-team': '实施团队',
-        'plan-statement': '计划 Statement',
+        'plan-statement': '计划说明',
         'budgets': '预算',
         'total-budget': '总预算',
         'receive-address': 'ELA接收地址',
         'payment-schedule': '付款安排',
-        'budget-statement': '预算 Statement',
+        'budget-statement': '预算说明',
     }
 
 };
