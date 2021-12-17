@@ -31,7 +31,7 @@
                                 <div *ngFor="let entry of item.value; last as isLast" class="entry">
                                     <div class="dot"></div>
                                     <div *ngIf="isLast" class="marker"></div>
-                                    <ion-col size="1" class="stage">{{entry.stage}}</ion-col>
+                                    <ion-col size="1" class="stage">{{ entry.stage + 1}}</ion-col>
                                     <ion-col size="11">
                                         <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp) }}
                                         </h5>
@@ -67,7 +67,7 @@
                                                     <p><span class="number">{{ i + 1 }}</span> <span>{{ 'crproposalvoting.'+
                                                             entry.type | translate }}</span></p>
                                                     <p class="amount">{{ "ELA " + entry.amount / Config.SELA }} </p>
-                                                    <p class="stage">{{ "#Milestone" + (entry.stage + 1) }} </p>
+                                                    <p class="stage">{{"#" + ('crproposalvoting.milestone' | translate) + (entry.stage + 1) }}</p>
                                                     <p class="payment-criteria">{{ entry.paymentCriteria }} </p>
                                                 </div>
                                                 <div class="space"></div>

@@ -48,7 +48,7 @@
                         </tr>
                         <tr *ngFor='let budget of createSuggestionCommand.data.budgets'>
                             <td>{{ 'crproposalvoting.' + budget.type | translate }}</td>
-                            <td>{{ budget.stage }}</td>
+                            <td>{{ budget.stage + 1 }}</td>
                             <td>{{ budget.amount / Config.SELA }}</td>
                         </tr>
                     </table>
