@@ -64,7 +64,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public masterWallet: MasterWallet = null;
     public networkWallet: NetworkWallet = null;
     private displayableSubWallets: AnySubWallet[] = null;
-    private stakingAssets: StakingData[] = null;
+    public stakingAssets: StakingData[] = null;
 
     public refreshingStakedAssets = false;
 
@@ -73,6 +73,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
     private subWalletsListChangeSubscription: Subscription = null;
+    private stakedAssetsUpdateSubscription: Subscription = null;
 
     // Helpers
     public WalletUtil = WalletUtil;
@@ -126,6 +127,10 @@ export class WalletHomePage implements OnInit, OnDestroy {
                 this.subWalletsListChangeSubscription = this.networkWallet.subWalletsListChange.subscribe(() => {
                     this.refreshSubWalletsList();
                 });
+
+                this.stakedAssetsUpdateSubscription = this.networkWallet.stakedAssetsUpdate.subscribe((data) => {
+                    this.refreshStakingAssetsList();
+                })
             }
         });
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
@@ -158,6 +163,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
         if (this.sendTransactionSubscription) {
             this.sendTransactionSubscription.unsubscribe();
             this.sendTransactionSubscription = null;
+        }
+
+        if (this.stakedAssetsUpdateSubscription) {
+            this.stakedAssetsUpdateSubscription.unsubscribe();
+            this.stakedAssetsUpdateSubscription = null;
         }
     }
 
@@ -206,7 +216,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     private refreshStakingAssetsList() {
-        this.stakingAssets = this.networkWallet.getStakingAssets();
+        this.zone.run( ()=> {
+            this.stakingAssets = this.networkWallet.getStakingAssets();
+        })
     }
 
     showRefresher() {
@@ -250,10 +262,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public getDisplayableSubWallets(): AnySubWallet[] {
         return this.displayableSubWallets;
-    }
-
-    public getDisplayableStakingAssets(): StakingData[] {
-        return this.stakingAssets;
     }
 
     public hasStakingAssets() {
@@ -384,7 +392,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
         })
 
         await this.networkWallet.fetchStakingAssets();
-        this.refreshStakingAssetsList();
 
         setTimeout(() => {
             this.zone.run( ()=> {

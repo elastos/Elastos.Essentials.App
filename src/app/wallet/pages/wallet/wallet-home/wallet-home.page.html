@@ -174,7 +174,7 @@
             </ion-row>
 
             <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
-                *ngFor="let stakingAsset of getDisplayableStakingAssets()"
+                *ngFor="let stakingAsset of stakingAssets"
                 (click)="onStakingAssetClicked(stakingAsset)">
                 <ion-col size="2" class="left-col">
                     <div class="icon-container">

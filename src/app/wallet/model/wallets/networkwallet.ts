@@ -48,6 +48,7 @@ export abstract class NetworkWallet {
     public nfts: NFT[] = [];
 
     public subWalletsListChange = new Subject<SubWallet<any>>(); // Subwallet added or created
+    public stakedAssetsUpdate = new Subject<StakingData[]>();
 
     private fetchMainTokenTimer: any = null;
     private fetchStakingAssetTimer: any = null;
@@ -510,6 +511,7 @@ export abstract class NetworkWallet {
                     stakingData: stakingData
                 }
                 await this.saveStakingAssets(this.stakingInfo);
+                this.stakedAssetsUpdate.next(this.stakingInfo.stakingData);
             }
         }
         return this.stakingInfo;
