@@ -53,7 +53,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row *ngFor="let item of newCoinList" class="subwallet-row ripple" [class.dark-subwallet-row]="theme.darkMode"
+    <ion-row *ngFor="let item of getShownNewCoinList()" class="subwallet-row ripple" [class.dark-subwallet-row]="theme.darkMode"
       [class.ion-activatable]="item.coin.canBeRemoved()">
       <ion-col size="2" class="left-col" (click)="goToCoinDetails(item)">
         <div class="icon-container">

@@ -55,6 +55,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     private coinDeleteSubscription: Subscription = null;
 
     private maxCountForDisplay = 300;
+    private maxNewCoinCountForDisplay = 5;
     public searchKey = '';
 
     // Titlebar
@@ -172,10 +173,6 @@ export class CoinListPage implements OnInit, OnDestroy {
           return (coin.coin.getCreatedTime() > lastAccessTime)
         })
 
-        if (this.coinList.length > this.maxCountForDisplay) {
-          this.coinList.slice(0, this.maxCountForDisplay)
-        }
-
         const timestamp = (new Date()).valueOf();
         this.networkWallet.network.updateAccessTime(timestamp);
         Logger.log('wallet', 'coin list', this.coinList, this.newCoinList);
@@ -205,6 +202,14 @@ export class CoinListPage implements OnInit, OnDestroy {
         })
         return searchResult;
       }
+    }
+
+    public getShownNewCoinList() {
+        if (this.newCoinList.length > this.maxNewCoinCountForDisplay) {
+            return this.newCoinList.slice(0, this.maxNewCoinCountForDisplay)
+        } else {
+            return this.newCoinList;
+        }
     }
 
     async createSubWallet(coin: Coin) {
