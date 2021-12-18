@@ -38,12 +38,12 @@
                                     <div class="dot"></div>
                                     <div *ngIf="isLast" class="marker"></div>
                                     <ion-col size="1" class="stage">{{ entry.stage + proposal.stageAdjust }}</ion-col>
-                                    <ion-col size="9">
-                                        <ion-label>
+                                    <ion-col size="9" class="milestone">
+                                        <div>
                                             <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp) }}
                                             </h5>
                                             <h5 class="milestone-goal">{{entry.goal}}</h5>
-                                        </ion-label>
+                                        </div>
                                     </ion-col>
                                 </div>
                             </div>

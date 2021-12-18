@@ -164,7 +164,7 @@ ion-grid {
     padding-top: 0px;
 
     .vertical-line-container {
-        padding-top: 22px;
+        padding-top: 20px;
         width: 20px;
         display: flex;
         justify-content: center;
@@ -189,7 +189,7 @@ ion-grid {
     }
 
     .content .entry .dot {
-        margin-top: 10px;
+        margin-top: 8px;
         width: 12px;
         height: 12px;
         border: solid 1px #7ab400;
@@ -216,14 +216,24 @@ ion-grid {
         font-weight: bold;
     }
 
-    .milestone-timestamp {
-        font-size: 14px;
+    .milestone {
+        width: 100%;
+        margin-top: 5px;
+        padding: 0px;
+
+        .milestone-timestamp {
+            margin-top: 0px;
+            padding: 0px;
+            font-size: 14px;
+        }
+
+        .milestone-goal {
+            margin-top: 10px;
+            font-size: 12px;
+            white-space: normal;
+        }
     }
 
-    .milestone-goal {
-        font-size: 12px;
-        white-space: normal;
-    }
 }
 
 .budget-container {

@@ -182,7 +182,6 @@ export class CreateProposalPage {
                 let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
                 Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
-                this.suggestionService.addBlockWatingItem(this.createProposalCommand.sid, this.suggestionDetail.status);
                 this.crOperations.goBack();
                 this.globalNative.genericToast('crproposalvoting.create-proposal-successfully', 2000, "success");
             }
