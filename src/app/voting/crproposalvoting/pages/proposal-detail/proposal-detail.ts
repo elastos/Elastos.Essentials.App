@@ -93,6 +93,8 @@ export class ProposalDetailPage {
                             this.crvotes.abstain += 1;
                             break;
                     }
+
+                    vote.avatar = this.proposalService.avatarList[vote.name];
                 }
             }
 

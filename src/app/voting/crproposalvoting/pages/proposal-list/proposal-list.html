@@ -27,7 +27,7 @@
                         <h1 class="title">{{ proposal.title }}</h1>
                         <p class="date">{{ uxService.formatDate(proposal.createdAt) }} &#8226; {{ proposal.proposer }}
                         </p>
-                        <p class="status" [class.voteragreed]="proposal.status === 'voteragreed'"
+                        <p class="proposal-status" [class.voteragreed]="proposal.status === 'voteragreed'"
                             [class.finished]="proposal.status === 'finished'"
                             [class.registered]="proposal.status === 'registered'"
                             [class.cragreed]="proposal.status === 'cragreed'"
