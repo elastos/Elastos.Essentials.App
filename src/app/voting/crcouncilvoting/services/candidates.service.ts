@@ -298,7 +298,8 @@ export class CandidatesService {
     async getCRMemeberInfo(did: string): Promise<CRMemberInfo> {
         try {
             this.selectedMember = null;
-            let result = await this.jsonRPCService.httpGet(this.crRpcApi + '/api/council/information/' + did);
+            let url = this.getCrRpcApi() + '/api/council/information/' + did;
+            let result = await this.jsonRPCService.httpGet(url);
             if (result && result.data) {
                 let member = result.data;
                 member.avatar = await this.getAvatar(member.did);
@@ -312,6 +313,10 @@ export class CandidatesService {
         }
 
         return this.selectedMember;
+    }
+
+    private getCrRpcApi(): string {
+        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
     }
 
 }
