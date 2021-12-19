@@ -35,12 +35,12 @@ export const fr = {
         'suggestion-id': 'Suggestion ID',
 
         // Status
-        'registered': 'Registered',
-        'cragreed': 'CrAgreed',
-        'voteragreed': 'Voteragreed',
-        'finished': 'Finished',
-        'crcanceled': 'CrCanceled',
-        'votercanceled': 'VoterCanceled',
+        'registered': 'Under Council Review',
+        'cragreed': 'Under Community Review',
+        'voteragreed': 'Active',
+        'finished': 'Final',
+        'crcanceled': 'Rejected',
+        'votercanceled': 'Rejected',
         'terminated': 'Terminated',
         'aborted': 'Aborted',
 
