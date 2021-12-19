@@ -10,7 +10,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 export class CrVotesComponent implements OnInit {
     @Input('crvotes') set crvotes(value: any) {
         this.votes = [];
-        this.ratio = 0;
+        this.ratio = "0";
 
         for (let i = 0; i < value.abstain; i++) {
             this.votes.push("abstain");
@@ -29,11 +29,11 @@ export class CrVotesComponent implements OnInit {
             this.votes.push("blank");
         }
 
-        this.ratio = Math.floor(value.approve * 100 / 12);
+        this.ratio = (value.approve * 100 / 12).toFixed(1);
      }
 
     public votes = [];
-    public ratio = 0;
+    public ratio = "0";
 
     constructor(public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
