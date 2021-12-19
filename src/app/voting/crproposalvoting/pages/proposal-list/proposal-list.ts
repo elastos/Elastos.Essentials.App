@@ -30,8 +30,6 @@ export class ProposalListPage implements OnInit {
     public showSearch = false;
     public searchInput = '';
 
-    public allProposalsLoaded = false;
-
     private fetchPage = 1;
     private searchPage = 1;
 
@@ -47,7 +45,6 @@ export class ProposalListPage implements OnInit {
     ) {
         this.proposalType = this.route.snapshot.params.proposalType as ProposalStatus;
         Logger.log('CRProposal', this.proposalType, 'Proposal type');
-        this.allProposalsLoaded = false;
     }
 
     ngOnInit() {
@@ -62,6 +59,11 @@ export class ProposalListPage implements OnInit {
     }
 
     async init() {
+        //Don't refreash the list.
+        if (this.proposalsFetched) {
+            return;
+        }
+
         this.titleBar.setTitle(this.translate.instant('launcher.app-cr-proposal'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
@@ -72,41 +74,44 @@ export class ProposalListPage implements OnInit {
         await this.fetchProposals();
     }
 
-    async fetchProposals() {
+    async fetchProposals(results = 10) {
         try {
-            this.proposals = await this.proposalService.fetchProposals(this.proposalType, 1);
+            this.proposals = await this.proposalService.fetchProposals(this.proposalType, 1, results);
             this.proposalsFetched = true;
             this.showSearch = true;
+            this.fetchPage = Math.floor(results / 10) + 1;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposals'));
+            Logger.log(App.CRPROPOSAL_VOTING, 'fetchProposals', this.proposals);
         }
         catch (err) {
-            Logger.error('crproposal', 'fetchProposals error:', err)
+            Logger.error(App.CRPROPOSAL_VOTING, 'fetchProposals error:', err)
         }
     }
 
     async searchProposal(event) {
         Logger.log(App.CRPROPOSAL_VOTING, 'Search input changed', event);
+        // Reset Search Page #
+        this.searchPage = 1;
         if (this.searchInput) {
             this.proposalsFetched = false;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.searching-proposals'));
             try {
-                this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
+                this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage++, this.proposalType, this.searchInput);
                 this.proposalsFetched = true;
                 this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposals'));
             }
             catch (err) {
-                Logger.error('crproposal', 'searchProposal error:', err);
+                Logger.error(App.CRPROPOSAL_VOTING, 'searchProposal error:', err);
             }
         } else {
-            // Reset Search Page #
-            this.searchPage = 1;
-            await this.fetchProposals();
+            this.proposals = this.proposalService.allResults;
         }
     }
 
     async doRefresh(event) {
         this.searchInput = '';
-        await this.fetchProposals();
+        this.proposalService.reset();
+        await this.fetchProposals(this.proposals.length);
 
         setTimeout(() => {
             event.target.complete();
@@ -114,35 +119,31 @@ export class ProposalListPage implements OnInit {
     }
 
     public async loadMoreProposals(event) {
-        if (!this.allProposalsLoaded) {
-            Logger.log(App.CRPROPOSAL_VOTING, 'Loading more proposals', this.fetchPage);
+        Logger.log(App.CRPROPOSAL_VOTING, 'Loading more proposals', this.fetchPage);
+        let proposalsLength = this.proposals.length;
+
+        try {
+            if (this.searchInput) {
+                this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
+            }
+            else {
+                this.proposals = await this.proposalService.fetchProposals(this.proposalType, this.fetchPage);
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRPROPOSAL_VOTING, 'loadMoreProposals error:', err);
+        }
+
+        if (this.proposals.length === proposalsLength) {
+            void this.uxService.genericToast(this.translate.instant('crproposalvoting.all-proposals-are-loaded'));
+        }
+        else {
+            if (this.searchInput) {
+                this.searchPage++;
+            } else {
+                this.fetchPage++;
+            }
             void this.content.scrollToBottom(300);
-
-            let proposalsLength = this.proposals.length;
-
-            try {
-                if (this.searchInput) {
-                    this.searchPage++;
-                    this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
-                } else {
-                    this.fetchPage++;
-                    this.proposals = await this.proposalService.fetchProposals(this.proposalType, this.fetchPage);
-                }
-            }
-            catch (err) {
-                Logger.error('crproposal', 'loadMoreProposals error:', err);
-            }
-
-            if (this.proposals.length === proposalsLength) {
-                if (this.searchInput) {
-                    this.searchPage--;
-                } else {
-                    this.fetchPage--;
-                }
-                this.allProposalsLoaded = true;
-                void this.uxService.genericToast(this.translate.instant('crproposalvoting.all-proposals-are-loaded'));
-                // this.content.scrollToTop(300);
-            }
         }
 
         event.target.complete();

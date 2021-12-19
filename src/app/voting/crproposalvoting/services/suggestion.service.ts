@@ -12,6 +12,7 @@ import { SuggestionDetail, SuggestionSearchResult, SuggestionStatus } from '../m
     providedIn: 'root'
 })
 export class SuggestionService {
+    public allResults: SuggestionSearchResult[] = [];
     public allSearchResults: SuggestionSearchResult[] = [];
     private pageNumbersLoaded = 0;
     private subscription: Subscription = null;
@@ -23,19 +24,20 @@ export class SuggestionService {
         private nav: GlobalNavService,
         public jsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService
-    ) {
-    }
+    ) { }
 
     init() {
 
     }
 
     public stop() {
+        this.allResults = [];
         this.allSearchResults = [];
         this.pageNumbersLoaded = 0;
     }
 
     public reset() {
+        this.allResults = [];
         this.allSearchResults = [];
         this.pageNumbersLoaded = 0;
     }
@@ -44,11 +46,7 @@ export class SuggestionService {
         return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
     }
 
-    public async fetchSuggestions(status: SuggestionStatus, page: number): Promise<SuggestionSearchResult[]> {
-        if (this.pageNumbersLoaded >= page) {
-            return this.allSearchResults;
-        }
-
+    public async fetchSuggestions(status: SuggestionStatus, page: number, results = 10): Promise<SuggestionSearchResult[]> {
         try {
             var url = this.getCrRpcApi() + '/api/v2/suggestion/all_search?page=' + page + '&results=10';
             if (status != SuggestionStatus.ALL) {
@@ -58,14 +56,14 @@ export class SuggestionService {
             Logger.log(App.CRSUGGESTION, "fetchSuggestions", url, result);
             if (this.pageNumbersLoaded < page) {
                 if (result && result.data && result.data.suggestions) {
-                    this.allSearchResults = this.allSearchResults.concat(result.data.suggestions);
+                    this.allResults = this.allResults.concat(result.data.suggestions);
                     this.pageNumbersLoaded = page;
                 }
                 else {
                     Logger.error(App.CRSUGGESTION, 'fetchSuggestions can not get suggestions!');
                 }
             }
-            return this.allSearchResults;
+            return this.allResults;
         }
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'fetchSuggestions error:', err);
@@ -80,13 +78,13 @@ export class SuggestionService {
             Logger.log(App.CRSUGGESTION, result);
             if (result && result.data) {
                 let detail = result.data;
-                if ((detail.budgets.length > 0) && (detail.budgets[0].stage == 0)) {
+                if (detail.budgets && (detail.budgets.length > 0) && (detail.budgets[0].stage == 0)) {
                     detail.stageAdjust = 1;
                 }
                 else {
                     detail.stageAdjust = 0;
                 }
-                return result.data;
+                return detail;
             }
             else {
                 Logger.error(App.CRSUGGESTION, 'cat not get data');
@@ -98,6 +96,9 @@ export class SuggestionService {
     }
 
     public async fetchSearchedSuggestion(page = 1, status: SuggestionStatus, search?: string): Promise<SuggestionSearchResult[]> {
+        if (page == 1) {
+            this.allSearchResults = [];
+        }
 
         try {
             var url = this.getCrRpcApi() + '/api/v2/suggestion/all_search?page=' + page + '&results=10&search=' + search;
@@ -105,10 +106,11 @@ export class SuggestionService {
                 url = url + '&status=' + status;
             }
             let result = await this.jsonRPCService.httpGet(url);
-            Logger.log(App.CRSUGGESTION, 'fetchSearchedSuggestion:' + result);
+            Logger.log(App.CRSUGGESTION, 'fetchSearchedSuggestion:', url, result);
             if (result && result.data) {
-                return result.data.suggestions;
+		this.allSearchResults = this.allSearchResults.concat(result.data.suggestions);
             }
+            return this.allSearchResults;
         }
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'fetchSearchedSuggestion error:', err);

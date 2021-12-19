@@ -15,16 +15,15 @@ import { ProposalStatus } from '../model/proposal-status';
     providedIn: 'root'
 })
 export class ProposalService {
+    public allResults: ProposalSearchResult[] = [];
     public allSearchResults: ProposalSearchResult[] = [];
     private pageNumbersLoaded = 0;
-    private cr_rpc_api = 'https://api.cyberrepublic.org';
     private subscription: Subscription = null;
     public blockWaitingDict = {};
 
     constructor(
         private http: HttpClient,
         private nav: GlobalNavService,
-        private globalNetworksService: GlobalNetworksService,
         public jsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) { }
@@ -49,15 +48,13 @@ export class ProposalService {
     }
 
     public stop() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-            this.subscription = null;
-        }
+        this.allResults = [];
         this.allSearchResults = [];
         this.pageNumbersLoaded = 0;
     }
 
     public reset() {
+        this.allResults = [];
         this.allSearchResults = [];
         this.pageNumbersLoaded = 0;
     }
@@ -66,25 +63,21 @@ export class ProposalService {
         return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
     }
 
-    public async fetchProposals(status: ProposalStatus, page: number): Promise<ProposalSearchResult[]> {
-        if (this.pageNumbersLoaded >= page) {
-            return this.allSearchResults;
-        }
-
+    public async fetchProposals(status: ProposalStatus, page: number, results = 10): Promise<ProposalSearchResult[]> {
         try {
-            var url = this.getCrRpcApi() + '/api/v2/proposal/all_search?status=' + status + '&page=' + page + '&results=10';
+            var url = this.getCrRpcApi() + '/api/v2/proposal/all_search?status=' + status + '&page=' + page + '&results=' + results;
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log(App.CRPROPOSAL_VOTING, "fetchProposals", url, result);
             if (this.pageNumbersLoaded < page) {
                 if (result && result.data && result.data.proposals) {
-                    this.allSearchResults = this.allSearchResults.concat(result.data.proposals);
+                    this.allResults = this.allResults.concat(result.data.proposals);
                     this.pageNumbersLoaded = page;
                 }
                 else {
                     Logger.error(App.CRPROPOSAL_VOTING, 'fetchProposals can not get proposals!');
                 }
             }
-            return this.allSearchResults;
+            return this.allResults;
         }
         catch (err) {
             Logger.error(App.CRPROPOSAL_VOTING, 'fetchProposals error:', err);
@@ -99,7 +92,7 @@ export class ProposalService {
             Logger.log(App.CRPROPOSAL_VOTING, result);
             if (result && result.data) {
                 let detail = result.data;
-                if ((detail.budgets.length > 0) && (detail.budgets[0].stage == 0)) {
+                if (detail.budgets && (detail.budgets.length > 0) && (detail.budgets[0].stage == 0)) {
                     detail.stageAdjust = 1;
                 }
                 else {
@@ -117,14 +110,18 @@ export class ProposalService {
     }
 
     public async fetchSearchedProposal(page = 1, status: ProposalStatus, search?: string): Promise<ProposalSearchResult[]> {
-        Logger.log(App.CRPROPOSAL_VOTING, 'Fetching searched proposal for status: ' + status, + 'with search: ' + search);
+        if (page == 1) {
+            this.allSearchResults = [];
+        }
+
         try {
             var url = this.getCrRpcApi() + '/api/v2/proposal/all_search?page=' + page + '&results=10&status=' + status + '&results=10&search=' + search;
             let result = await this.jsonRPCService.httpGet(url);
-            Logger.log(App.CRPROPOSAL_VOTING, 'fetchSearchedProposal:' + result);
+            Logger.log(App.CRPROPOSAL_VOTING, 'fetchSearchedProposal:', url, result);
             if (result && result.data) {
-                return result.data.proposals;
+                this.allSearchResults = this.allSearchResults.concat(result.data.proposals);
             }
+            return this.allSearchResults;
         }
         catch (err) {
             Logger.error(App.CRPROPOSAL_VOTING, 'fetchSearchedProposal error:', err);
@@ -170,7 +167,7 @@ export class ProposalService {
     }
 
     public getFetchedProposalById(proposalId: number): ProposalSearchResult {
-        return this.allSearchResults.find((proposal) => {
+        return this.allResults.find((proposal) => {
             return proposal.id == proposalId;
         })
     }
@@ -192,5 +189,4 @@ export class ProposalService {
             delete this.blockWaitingDict[hash];
         }
     }
-
 }

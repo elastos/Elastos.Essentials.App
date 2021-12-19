@@ -9,7 +9,6 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuggestionSearchResult, SuggestionStatus } from '../../model/suggestion-model';
-import { CROperationsService } from '../../services/croperations.service';
 import { SuggestionService } from '../../services/suggestion.service';
 import { UXService } from '../../services/ux.service';
 
@@ -30,8 +29,6 @@ export class SuggestionListPage implements OnInit {
     public showSearch = false;
     public searchInput = '';
 
-    public allSuggestionsLoaded = false;
-
     private fetchPage = 1;
     private searchPage = 1;
 
@@ -44,11 +41,9 @@ export class SuggestionListPage implements OnInit {
         private route: ActivatedRoute,
         private globalNav: GlobalNavService,
         public translate: TranslateService,
-        private crOperations: CROperationsService,
     ) {
         this.suggestionStatus = this.route.snapshot.params.suggestionType as SuggestionStatus;
-        Logger.log('CRSuggestion', 'Suggestion status:', this.suggestionStatus);
-        this.allSuggestionsLoaded = false;
+        Logger.log(App.CRSUGGESTION, 'Suggestion status:', this.suggestionStatus);
     }
 
     ngOnInit() {
@@ -63,6 +58,11 @@ export class SuggestionListPage implements OnInit {
     }
 
     async init() {
+        //Don't refreash the list.
+        if (this.suggestionsFetched) {
+            return;
+        }
+
         this.titleBar.setTitle(this.translate.instant('launcher.app-cr-suggestion'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
@@ -73,41 +73,44 @@ export class SuggestionListPage implements OnInit {
         await this.fetchSuggestions();
     }
 
-    async fetchSuggestions() {
+    async fetchSuggestions(results = 10) {
         try {
-            this.suggestions = await this.suggestionService.fetchSuggestions(this.suggestionStatus, 1);
+            this.suggestions = await this.suggestionService.fetchSuggestions(this.suggestionStatus, 1, results);
             this.suggestionsFetched = true;
             this.showSearch = true;
+            this.fetchPage = Math.floor(results / 10) + 1;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestions'));
+            Logger.log(App.CRSUGGESTION, 'fetchProposals', this.suggestions);
         }
         catch (err) {
-            Logger.error('crsuggestion', 'fetchSuggestions error:', err)
+            Logger.error(App.CRSUGGESTION, 'fetchSuggestions error:', err)
         }
     }
 
     async searchSuggestion(event) {
-        Logger.log('crsuggestion', 'Search input changed', event);
+        Logger.log(App.CRSUGGESTION, 'Search input changed', event);
+        // Reset Search Page #
+        this.searchPage = 1;
         if (this.searchInput) {
             this.suggestionsFetched = false;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.searching-suggestions'));
             try {
-                this.suggestions = await this.suggestionService.fetchSearchedSuggestion(this.searchPage, this.suggestionStatus, this.searchInput);
+                this.suggestions = await this.suggestionService.fetchSearchedSuggestion(this.searchPage++, this.suggestionStatus, this.searchInput);
                 this.suggestionsFetched = true;
                 this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestions'));
             }
             catch (err) {
-                Logger.error('crsuggestion', 'searchSuggestion error:', err);
+                Logger.error(App.CRSUGGESTION, 'searchSuggestion error:', err);
             }
         } else {
-            // Reset Search Page #
-            this.searchPage = 1;
-            await this.fetchSuggestions();
+            this.suggestions = this.suggestionService.allResults;
         }
     }
 
     async doRefresh(event) {
         this.searchInput = '';
-        await this.fetchSuggestions();
+        this.suggestionService.reset();
+        await this.fetchSuggestions(this.suggestions.length);
 
         setTimeout(() => {
             event.target.complete();
@@ -115,35 +118,33 @@ export class SuggestionListPage implements OnInit {
     }
 
     public async loadMoreSuggestions(event) {
-        if (!this.allSuggestionsLoaded) {
-            Logger.log('crsuggestion', 'Loading more suggestions', this.fetchPage);
+        Logger.log(App.CRSUGGESTION, 'Loading more suggestions', this.fetchPage);
+        void this.content.scrollToBottom(300);
+
+        let suggestionsLength = this.suggestions.length;
+
+        try {
+            if (this.searchInput) {
+                this.suggestions = await this.suggestionService.fetchSearchedSuggestion(this.searchPage, this.suggestionStatus, this.searchInput);
+            }
+            else {
+                this.suggestions = await this.suggestionService.fetchSuggestions(this.suggestionStatus, this.fetchPage);
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRSUGGESTION, 'loadMoreSuggestions error:', err);
+        }
+
+        if (this.suggestions.length === suggestionsLength) {
+            void this.uxService.genericToast(this.translate.instant('crproposalvoting.all-suggestions-are-loaded'));
+        }
+	    else {
+            if (this.searchInput) {
+                this.searchPage++;
+            } else {
+                this.fetchPage++;
+            }
             void this.content.scrollToBottom(300);
-
-            let suggestionsLength = this.suggestions.length;
-
-            try {
-                if (this.searchInput) {
-                    this.searchPage++;
-                    this.suggestions = await this.suggestionService.fetchSearchedSuggestion(this.searchPage, this.suggestionStatus, this.searchInput);
-                } else {
-                    this.fetchPage++;
-                    this.suggestions = await this.suggestionService.fetchSuggestions(this.suggestionStatus, this.fetchPage);
-                }
-            }
-            catch (err) {
-                Logger.error('crsuggestion', 'loadMoreSuggestions error:', err);
-            }
-
-            if (this.suggestions.length === suggestionsLength) {
-                if (this.searchInput) {
-                    this.searchPage--;
-                } else {
-                    this.fetchPage--;
-                }
-                this.allSuggestionsLoaded = true;
-                void this.uxService.genericToast(this.translate.instant('crproposalvoting.all-suggestions-are-loaded'));
-                // this.content.scrollToTop(300);
-            }
         }
 
         event.target.complete();
@@ -151,8 +152,8 @@ export class SuggestionListPage implements OnInit {
 
     selectSuggestion(suggestion: SuggestionSearchResult) {
         // suggestion = this.suggestionService.getFetchedSuggestionById(754);
-        Logger.log('crsuggestion', 'selectSuggestion:', suggestion);
+        Logger.log(App.CRSUGGESTION, 'selectSuggestion:', suggestion);
         // this.suggestionService.selectedSuggestion = suggestion;
-        void this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/suggestion-detail", { state: { suggestionId: suggestion.sid } });
+        void this.globalNav.navigateTo(App.CRSUGGESTION, "/crproposalvoting/suggestion-detail", { state: { suggestionId: suggestion.sid } });
     }
 }
