@@ -18,48 +18,48 @@
 //--------------Proposal Status------------------------------------
 
 .propoasl-status {
-    font-weight: 700;
+    font-weight: 700 !important;
     // color: #666666;
 }
 
 .voteragreed {
-    color: #00B83E;
+    color: #00B83E !important;
 }
 
 .finished {
-    color: #0BBFE7;
+    color: #0BBFE7 !important;
 }
 
 .registered {
-    color: #3C3C3C;
+    color: #3C3C3C !important;
 }
 
 .cragreed {
-    color: #3C3C3C;
+    color: #3C3C3C !important;
 }
 
 .crcanceled {
-    color: #FF5757;
+    color: #FF5757 !important;
 }
 
 .votercanceled {
-    color: #FF5757;
+    color: #FF5757 !important;
 }
 
 .darkContainer {
     .voteragreed {
-        color: #20E9C5;
+        color: #20E9C5 !important;
     }
 
     .finished {
-        color: #67CBE1;
+        color: #67CBE1 !important;
     }
 
     .registered {
-        color: #C9C9C9;
+        color: #C9C9C9 !important;
     }
 
     .cragreed {
-        color: #C9C9C9;
+        color: #C9C9C9 !important;
     }
 }
