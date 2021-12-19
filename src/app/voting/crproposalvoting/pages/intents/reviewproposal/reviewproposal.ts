@@ -154,7 +154,7 @@ export class ReviewProposalPage {
                 const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
                 this.crOperations.goBack();
-                this.globalNative.genericToast('crproposalvoting.create-proposal-successfully', 2000, "success");
+                this.globalNative.genericToast('crproposalvoting.review-proposal-successfully', 2000, "success");
             }
         }
         catch (e) {
