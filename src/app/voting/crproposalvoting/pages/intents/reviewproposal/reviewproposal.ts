@@ -62,9 +62,14 @@ export class ReviewProposalPage {
         private globalPopupService: GlobalPopupService,
         private draftService: DraftService,
     ) {
+
     }
 
     async ionViewWillEnter() {
+        if (this.proposalDetailsFetched) {
+            return;
+        }
+
         this.keyboard.onKeyboardWillShow().subscribe(() => {
             this.zone.run(() => {
                 this.isKeyboardHide = false;
@@ -81,7 +86,6 @@ export class ReviewProposalPage {
 
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-proposal'));
         this.reviewProposalCommand = this.crOperations.onGoingCommand as ReviewProposalCommand;
-        this.proposalDetails = null;
 
         if (this.reviewProposalCommand.type == CRCommandType.ProposalDetailPage) {
             this.voteResult = "approve";
