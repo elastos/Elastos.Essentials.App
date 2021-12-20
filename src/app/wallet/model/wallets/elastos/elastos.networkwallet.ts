@@ -72,26 +72,25 @@ export class ElastosNetworkWallet extends NetworkWallet {
   }
 
   public async getAddresses(): Promise<WalletAddressInfo[]> {
-    // Elastos network wallet has 2 different addresses: main chain, and ESC/EID
+    let addresses = [];
+
+    // No ELA when imported by private key.
     if (this.subWallets[StandardCoinName.ELA]) {
-        return [
-            {
-                title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
-                address: await this.subWallets[StandardCoinName.ELA].createAddress()
-            },
-            {
-                title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
-                address: await this.subWallets[StandardCoinName.ETHSC].createAddress()
-            }
-        ]
-    } else {
-        return [
-            {
-                title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
-                address: await this.subWallets[StandardCoinName.ETHSC].createAddress()
-            }
-        ];
+        addresses.push({
+            title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
+            address: await this.subWallets[StandardCoinName.ELA].createAddress()
+        });
     }
+
+    // No ETHSC in LRW.
+    if (this.subWallets[StandardCoinName.ETHSC]) {
+        addresses.push({
+            title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
+            address: await this.subWallets[StandardCoinName.ETHSC].createAddress()
+        });
+    }
+
+    return addresses;
   }
 
   public getMainEvmSubWallet(): StandardEVMSubWallet {
