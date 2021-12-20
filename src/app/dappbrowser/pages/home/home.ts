@@ -300,7 +300,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     void this.nav.goToLauncher();
                     break;
                 case BuiltInIcon.BACK:
-                    void this.nav.navigateBack();
+                    if (this.nav.canGoBack()) {
+                        void this.nav.navigateBack();
+                    }
+                    else {
+                        // If the startup screen is DAPP browser, We go to launcher when the user clicks the back key.
+                        void this.nav.navigateHome();
+                    }
+
                     break;
             }
         });
