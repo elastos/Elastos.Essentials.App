@@ -131,11 +131,20 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             {
                 icon: '/assets/browser/dapps/elk.svg',
                 title: 'ElkDex by ElkFinance',
-                description: 'Elk Finance is a decentralized network for cross-chain liquidity. The Elk ecosystem introduces a seamless process for anyone exchanging cryptocurrencies. Our motto is Any chain, anytime, anywhere.™',
+                description: 'Elk Finance is a decentralized network for cross-chain liquidity. Our motto is "Any chain, anytime, anywhere.™',
                 url: 'https://app.elk.finance/',
                 useExternalBrowser: false,
                 walletConnectSupported: false,
                 networks: ["elastos", "heco", "bsc", "avalanchecchain", "fantom", "polygon", "telos"]
+            },
+            {
+                icon: '/assets/browser/dapps/vitrim.png',
+                title: 'Vitrim Ecosystem',
+                description: 'Discover the latest #VitrimNFTs on the largest NFT marketplace on Elastos. NFTs + DEFI',
+                url: 'https://vitrim.io/',
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["elastos"]
             },
             {
                 icon: '/assets/browser/dapps/filda.png',
