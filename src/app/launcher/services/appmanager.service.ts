@@ -217,24 +217,15 @@ export class AppmanagerService {
                 type: 'launcher.utilities',
                 shouldBeDisplayed: () => true,
                 apps: [
-                    /* {
-                        id: 'scanner',
-                        routerContext: App.SCANNER,
-                        name: this.translate.instant('launcher.app-scanner'),
-                        description: this.translate.instant('launcher.app-scanner-description'),
-                        icon: '/assets/launcher/apps/app-icons/scanner.svg',
+                    {
+                        id: 'redpackets',
+                        routerContext: App.RED_PACKETS,
+                        name: this.translate.instant('launcher.app-redpackets'),
+                        description: this.translate.instant('launcher.app-redpackets-description'),
+                        icon: '/assets/launcher/apps/app-icons/redpackets.png',
                         hasWidget: false,
-                        routerPath: '/scanner/scan'
-                    }, */
-                    /* {
-                        id: 'settings',
-                        routerContext: App.SETTINGS,
-                        name: this.translate.instant('launcher.app-settings'),
-                        description: this.translate.instant('launcher.app-settings-description'),
-                        icon: '/assets/launcher/apps/app-icons/settings.svg',
-                        hasWidget: false,
-                        routerPath: '/settings/menu'
-                    }, */
+                        routerPath: '/redpackets/home'
+                    },
                     {
                         id: 'contacts',
                         routerContext: App.CONTACTS,

@@ -1,0 +1,75 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+
+  <ion-grid name="container">
+
+    <ion-row class="ion-padding-top">
+      <ion-col class="section ion-padding-top">
+        <ion-img src="../assets/images/packet3.png"></ion-img> <br>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col class="section">
+        <ion-label>Red Packet Claimed!</ion-label>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="ion-text-center">
+      <ion-col class="section ion-padding">
+        <h4 class="ion-no-margin">
+          You received <span>{{ ela }} ELA</span>! <br>
+          If this red packet is charged, you should <br>
+          see your new balance once confirmed!
+        </h4>
+      </ion-col>
+    </ion-row>
+
+    <div *ngIf="packet">
+      <ion-row class="ion-padding-top">
+        <ion-col size="12" class="summary">
+          <h2>Packet Claimers</h2>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="details" *ngFor="let r of packet.packet_rcver_details">
+        <h4> {{ r.name }} </h4>
+        <p> {{ r.amount }} ELA</p>
+      </ion-row>
+    </div>
+
+    <div *ngIf="packet">
+      <ion-row class="ion-padding-top">
+        <ion-col size="12" class="summary">
+          <h2>Packet Summary</h2>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="details">
+        <h4>Packet Creator</h4>
+        <p>{{ packet.packet_creator }}</p>
+      </ion-row>
+
+      <ion-row class="details">
+        <h4>Packets Claimed</h4>
+        <p>{{ packet.packet_rcv_num }}</p>
+      </ion-row>
+
+      <ion-row class="details">
+        <h4>ELA Claimed</h4>
+        <p>{{ packet.packet_rcv_amt }}</p>
+      </ion-row>
+
+      <ion-row class="details">
+        <h4>Packets Remaining</h4>
+        <p>{{ packet.packet_num - packet.packet_rcv_num }}</p>
+      </ion-row>
+
+      <ion-row class="details">
+        <h4>ELA Remaining</h4>
+        <p>{{ packet.packet_amt - packet.packet_rcv_amt }}</p>
+      </ion-row>
+    </div>
+
+  </ion-grid>
+</ion-content>

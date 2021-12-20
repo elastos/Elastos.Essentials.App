@@ -1,0 +1,31 @@
+ion-col {
+  display: flex;
+  align-items: flex-end;
+
+  span {
+    display: flex;
+    align-items: center;
+    padding-bottom: 2px;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: #007AFF;
+    }
+  }
+}
+
+ion-icon {
+  font-size: 24px;
+}
+
+.summary {
+  margin: 0;
+  padding: 0 5px;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 800;
+  }
+}

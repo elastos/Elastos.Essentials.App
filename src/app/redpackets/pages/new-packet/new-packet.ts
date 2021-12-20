@@ -1,0 +1,164 @@
+import { Component, ViewChild } from '@angular/core';
+import { AlertController, ModalController, NavController, ToastController } from '@ionic/angular';
+import BigNumber from 'bignumber.js';
+import moment from 'moment';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
+import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
+import { UiService } from 'src/app/wallet/services/ui.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { TokenChooserComponent } from '../../../wallet/components/token-chooser/token-chooser.component';
+import { Packet, PacketDistributionType, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
+import { PacketService } from '../../services/packet.service';
+
+@Component({
+  selector: 'page-new-packet',
+  templateUrl: 'new-packet.html',
+  styleUrls: ['./new-packet.scss'],
+})
+export class NewPacketPage {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
+  // Packet info
+  public tokenSubwallet: AnySubWallet; // Subwallet of the token chosen by user for the red packet. By default, use the main EVM subwallet
+  public packets: number = 19; // Number of red packets available
+  public tokenAmount: string = "10"; // Number of token (native or ERC20) to spend, totally
+  public type: PacketType = PacketType.STANDARD; // Red packet type - TODO
+  public distributionType: PacketDistributionType = PacketDistributionType.RANDOM; // Fixed amount for all packets, or random amounts?
+  public category = "default"; // Red packet theme: christmas, chinese new year, etc
+  public message = "temporary message"; // Message shown by users who open the packet
+  public probability = 100;
+  public expirationDays = 3; // Number of days after which the red packet expires
+  public visibility: PacketVisibility = PacketVisibility.LINK_ONLY;
+  public dAppUrl = "";
+
+  // Logic
+  public creatingPacket = false;
+
+  // Callbacks
+  public onItemClickedListener: any;
+
+  constructor(
+    public navCtrl: NavController,
+    private globalNavService: GlobalNavService,
+    private didSessions: GlobalDIDSessionsService,
+    private alertCtrl: AlertController,
+    private uiService: UiService,
+    private toastController: ToastController,
+    private walletService: WalletService,
+    private modalCtrl: ModalController,
+    public packetService: PacketService
+  ) { }
+
+  ionViewWillEnter() {
+    this.titleBar.setTitle("New Packet");
+    this.titleBar.setBackgroundColor("#f04141");
+    this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+
+    this.tokenSubwallet = this.walletService.activeNetworkWallet.value.getMainEvmSubWallet();
+  }
+
+  ionViewDidEnter() {
+  }
+
+  public getSignedInIdentity(): IdentityEntry {
+    return this.didSessions.getSignedInIdentity();
+  }
+
+  /**
+   * Checks all inputs and informs user if something is wrong or missing
+   */
+  public validateInputs(): boolean {
+    if (this.packets === undefined) {
+      void this.formErr("Invalid number of packets");
+      return false;
+    }
+
+    if (this.tokenAmount === undefined) {
+      void this.formErr("Invalid number of tokens to distribute");
+      return false;
+    }
+
+    if (this.probability === undefined || this.probability < 0 || this.probability > 100) {
+      void this.formErr("Invalid probability. Use a 0-100 value");
+      return false;
+    }
+
+    if (this.message.length === 0) {
+      void this.formErr("Be kind with your people, send them a nice message!");
+      return false;
+    }
+
+    return true;
+  }
+
+  /** Submit packet form **/
+  public createPacket() {
+    if (!this.validateInputs())
+      return;
+
+    let packet: Packet = {
+      quantity: this.packets,
+      value: new BigNumber(this.tokenAmount),
+      distributionType: this.distributionType,
+      message: this.message,
+      packetType: this.type,
+      tokenType: this.tokenSubwallet instanceof ERC20SubWallet ? TokenType.ERC20_TOKEN : TokenType.NATIVE_TOKEN,
+      creatorDID: this.didSessions.getSignedInIdentity().didString,
+      expirationDate: moment(this.expirationDays, "days").unix()
+    };
+
+    this.packetService.preparePacket(packet);
+
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay");
+  }
+
+  async formErr(message: string) {
+    const toast = await this.toastController.create({
+      mode: 'ios',
+      color: 'danger',
+      header: 'Almost there but...',
+      message,
+      duration: 2000
+    });
+    void toast.present();
+  }
+
+  /**
+   * Select the main token to put in the red packets
+   */
+  public async pickToken() {
+    let modal = await this.modalCtrl.create({
+      component: TokenChooserComponent
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
+    modal.onWillDismiss().then(async (params) => {
+      Logger.log('redpackets', 'Token subwallet selected:', params);
+      if (params.data && params.data.selectedSubwallet) {
+        if (this.tokenSubwallet && this.tokenSubwallet.id !== params.data.selectedSubwallet.id) {
+          // The token is a different one, reset the amount to avoid mistakes
+          this.tokenAmount = "";
+        }
+
+        this.tokenSubwallet = params.data.selectedSubwallet;
+      }
+    });
+    void modal.present();
+  }
+
+  /**
+   * If the distribution type if fixed, this returns the number of tokens in each packet.
+   */
+  public getValuePerFixedPacket(): string {
+    if (this.tokenAmount === "" || this.packets === 0)
+      return "0";
+
+    return this.uiService.getFixedBalance(new BigNumber(this.tokenAmount).dividedBy(this.packets));
+  }
+}

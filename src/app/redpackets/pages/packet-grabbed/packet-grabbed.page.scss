@@ -1,0 +1,28 @@
+@import "../../root.scss";
+
+.section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ion-img {
+    height: 120px;
+    width: 120px;
+  }
+
+  ion-label {
+    font-weight: 900;
+    font-size: 28px;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  span {
+    font-size: 20px;
+    font-weight: 800;
+    color: #f04141;
+  }
+}

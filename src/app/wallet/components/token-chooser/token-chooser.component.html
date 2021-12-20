@@ -1,0 +1,31 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <div class="token-container" [class.dark-network-container]="theme.darkMode">
+        <ion-row class="header-row">
+            <ion-col size="12">
+                <ion-label>
+                    <h1>Select a token</h1>
+                    <p>Which token would you like to use next?</p>
+                </ion-label>
+            </ion-col>
+        </ion-row>
+
+        <ion-row *ngFor="let token of tokens" class="token-row ripple ion-activatable" (click)="selectToken(token)">
+            <ion-col size="2" class="left-col">
+                <img [src]="token.subWallet.getMainIcon()">
+            </ion-col>
+            <ion-col size="10" class="main-col">
+                <div class="symbol">{{ token.subWallet.getDisplayTokenName() }}</div>
+                <div class="name">{{ token.subWallet.getFriendlyName() }}</div>
+                <div class="balance">{{ uiService.getFixedBalance(token.subWallet.getDisplayBalance()) }}</div>
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+    </div>
+</ion-content>
+
+<ion-footer class="ion-no-border" [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
+    <ion-button (click)="cancelOperation()">
+        <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+    </ion-button>
+</ion-footer>

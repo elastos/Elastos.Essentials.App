@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="72.852" height="72.852" viewBox="0 0 72.852 72.852">
+  <defs>
+    <linearGradient id="linear-gradient" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fb9566"/>
+      <stop offset="0.24" stop-color="#fa8a67"/>
+      <stop offset="0.65" stop-color="#f96e6a"/>
+      <stop offset="1" stop-color="#f7516d"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="0.75" y1="0.933" x2="0.25" y2="0.067" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-3" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="0.08" stop-color="#fff" stop-opacity="0.8"/>
+      <stop offset="0.17" stop-color="#fff" stop-opacity="0.62"/>
+      <stop offset="0.26" stop-color="#fff" stop-opacity="0.451"/>
+      <stop offset="0.36" stop-color="#fff" stop-opacity="0.31"/>
+      <stop offset="0.46" stop-color="#fff" stop-opacity="0.2"/>
+      <stop offset="0.57" stop-color="#fff" stop-opacity="0.11"/>
+      <stop offset="0.68" stop-color="#fff" stop-opacity="0.051"/>
+      <stop offset="0.82" stop-color="#fff" stop-opacity="0.012"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-4" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="0.09" stop-color="#fff" stop-opacity="0.871"/>
+      <stop offset="0.28" stop-color="#fff" stop-opacity="0.612"/>
+      <stop offset="0.46" stop-color="#fff" stop-opacity="0.388"/>
+      <stop offset="0.63" stop-color="#fff" stop-opacity="0.22"/>
+      <stop offset="0.78" stop-color="#fff" stop-opacity="0.102"/>
+      <stop offset="0.91" stop-color="#fff" stop-opacity="0.031"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g id="Group_43" data-name="Group 43" transform="translate(-7225.73 1035.12)">
+    <path id="Path" d="M36.426,0A36.426,36.426,0,1,0,72.852,36.426,36.426,36.426,0,0,0,36.426,0Z" transform="translate(7225.73 -1035.12)" fill="url(#linear-gradient)"/>
+    <path id="Path-2" data-name="Path" d="M25.991,0a25.99,25.99,0,1,0,25.99,25.99A25.99,25.99,0,0,0,25.991,0Z" transform="translate(7236.165 -1024.684)" fill="url(#linear-gradient-2)"/>
+    <path id="Path-3" data-name="Path" d="M1.667,47.262,52.947,2.484A36.226,36.226,0,0,0,47.1,0L0,41.127A36.126,36.126,0,0,0,1.667,47.262Z" transform="translate(7226.313 -1033.336)" opacity="0.24" fill="url(#linear-gradient-3)"/>
+    <path id="Path-4" data-name="Path" d="M36.426,0A36.476,36.476,0,0,0,0,36.426a23.429,23.429,0,0,0,.117,2.867L44.178.834A36.409,36.409,0,0,0,36.426,0Z" transform="translate(7225.73 -1035.12)" opacity="0.24" fill="url(#linear-gradient-4)"/>
+    <path id="Subtraction_1" data-name="Subtraction 1" d="M411.576,97.576a17.944,17.944,0,1,1,7.007-1.414A17.888,17.888,0,0,1,411.576,97.576Zm-2-9v4h5v-4Zm-1-21,1.446,18H414.1l1.48-18Z" transform="translate(6851 -1078)" fill="#fff" opacity="0.674"/>
+  </g>
+</svg>

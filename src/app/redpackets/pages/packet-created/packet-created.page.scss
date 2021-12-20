@@ -1,0 +1,96 @@
+@import "../../root.scss";
+
+.address {
+  .section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    ion-img {
+      height: 120px;
+      width: 120px;
+    }
+
+    ion-label {
+      font-weight: 900;
+      font-size: 28px;
+    }
+
+    h4,
+    h3 {
+      font-size: 14px;
+    }
+
+    h4 {
+      font-weight: 700;
+    }
+
+    h3 {
+      font-weight: 800;
+    }
+
+    span {
+      font-size: 20px;
+      font-weight: 800;
+      color: #f04141;
+    }
+  }
+
+  .btn-row {
+    display: flex;
+    justify-content: space-around;
+
+    .custom-btn {
+      margin: 0;
+      width: 48%;
+    }
+  }
+}
+
+.copied {
+  color: white;
+  border: 4px dashed black;
+}
+
+.links {
+  border-bottom: 0.5px solid #000000;
+
+  ion-row {
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    ion-col {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+
+      ion-icon {
+        font-size: 16px;
+      }
+
+      ion-img {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    h5 {
+      margin: 0 0 16px;
+    }
+
+    h4 {
+      font-size: 12px;
+      font-weight: 700;
+      margin: 16px 0;
+    }
+
+    p {
+      font-size: 12px !important;
+      font-weight: 600;
+      margin: 0 0 16px;
+      color: #868f96 !important;
+    }
+  }
+}

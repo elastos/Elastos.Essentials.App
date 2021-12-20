@@ -1,0 +1,14 @@
+@import "../../root.scss";
+
+.header {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.section {
+  display: flex;
+
+  ion-col {
+    align-self: center;
+  }
+}
