@@ -79,7 +79,7 @@ export class ProposalListPage implements OnInit {
             this.proposals = await this.proposalService.fetchProposals(this.proposalType, 1, results);
             this.proposalsFetched = true;
             this.showSearch = true;
-            this.fetchPage = Math.floor(results / 10) + 1;
+            this.fetchPage = Math.floor(this.proposals.length / 10) + 1;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposals'));
             Logger.log(App.CRPROPOSAL_VOTING, 'fetchProposals', this.proposals);
         }

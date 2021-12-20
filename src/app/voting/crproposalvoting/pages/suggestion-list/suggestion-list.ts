@@ -78,7 +78,7 @@ export class SuggestionListPage implements OnInit {
             this.suggestions = await this.suggestionService.fetchSuggestions(this.suggestionStatus, 1, results);
             this.suggestionsFetched = true;
             this.showSearch = true;
-            this.fetchPage = Math.floor(results / 10) + 1;
+            this.fetchPage = Math.floor(this.suggestions.length / 10) + 1;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestions'));
             Logger.log(App.CRSUGGESTION, 'fetchProposals', this.suggestions);
         }
