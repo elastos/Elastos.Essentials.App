@@ -108,6 +108,7 @@ export class CurrencyService {
   }
 
   async init() {
+    this.pricefetched = false;
     this.loadAllTokenSymbol();
 
     // Load or create a cache and store this cache globally to share fetched values among several DID users.
