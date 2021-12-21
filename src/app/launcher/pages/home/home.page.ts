@@ -405,7 +405,7 @@ export class HomePage implements OnInit {
     if (decimalplace == -1) {
       decimalplace = this.currencyService.selectedCurrency.decimalplace;
     }
-    return balance.decimalPlaces(decimalplace).toString();
+    return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toString();
   }
 
   public getShortRecentAppTitle(app: BrowsedAppInfo): string {
