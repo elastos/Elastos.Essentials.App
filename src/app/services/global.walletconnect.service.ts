@@ -122,9 +122,13 @@ export class GlobalWalletConnectService extends GlobalService {
         for (let c of Array.from(this.connectors.values())) {
           if (c.connected) {
             try {
+              let chainId = activeWallet.network.getMainChainID();
+              let account = await this.getAccountFromNetworkWallet(activeWallet);
+              Logger.log("walletconnect", `Updating connected session`, c, chainId, account);
+
               c.updateSession({
-                chainId: activeWallet.network.getMainChainID(),
-                accounts: [await this.getAccountFromNetworkWallet(activeWallet)]
+                chainId: chainId,
+                accounts: [account]
               });
             }
             catch (e) {
@@ -604,12 +608,14 @@ export class GlobalWalletConnectService extends GlobalService {
 
     if (networkWasAdded || existingNetwork) {
       // Network added, or network already existed => success, no matter if user chosed to switch or not
+      Logger.log("walletconnect", "Approving add network request");
       connector.approveRequest({
         id: request.id,
         result: {} // Successfully added or existing
       });
     }
     else {
+      Logger.log("walletconnect", "Rejecting add network request");
       connector.rejectRequest({
         id: request.id,
         error: {
