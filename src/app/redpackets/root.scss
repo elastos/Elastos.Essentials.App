@@ -168,12 +168,12 @@ ion-textarea {
 /** Global buttons **/
 .custom-btn {
   padding: 20px;
-  margin-top: 16px;
   background-color: rgba(255, 255, 255, 0.2);
   border: 2px solid #fff;
   border-radius: 40px;
   box-shadow: rgb(0 0 0 / 30%) 0px 0px 15px;
   transition: all 0.3s ease;
+  text-align: center;
 
   ion-label {
     font-weight: 800;
@@ -237,4 +237,22 @@ ion-textarea {
       }
     }
   }
+}
+
+.sticky-footer {
+  background-color: #f04141;
+  box-shadow: rgb(0 0 0 / 40%) 0 0px 20px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.pd1 {
+  padding: 10px;
+}
+
+.mt1 {
+  margin-top: 10px;
 }

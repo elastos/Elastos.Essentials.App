@@ -36,6 +36,7 @@ export class Packet {
   public expirationDate: number; // Unix timestamp at which the red packet will expire
 }
 
+// TODO: delete
 export class PacketDetail {
   constructor(
     public language: string,

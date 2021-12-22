@@ -2,14 +2,17 @@ import { Component, ViewChild } from '@angular/core';
 import { AlertController, ModalController, NavController, ToastController } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { TokenChooserComponent } from '../../../wallet/components/token-chooser/token-chooser.component';
@@ -27,7 +30,7 @@ export class NewPacketPage {
   // Packet info
   public tokenSubwallet: AnySubWallet; // Subwallet of the token chosen by user for the red packet. By default, use the main EVM subwallet
   public packets: number = 19; // Number of red packets available
-  public tokenAmount: string = "10"; // Number of token (native or ERC20) to spend, totally
+  public tokenAmount: string = "12"; // Number of token (native or ERC20) to spend, totally
   public type: PacketType = PacketType.STANDARD; // Red packet type - TODO
   public distributionType: PacketDistributionType = PacketDistributionType.RANDOM; // Fixed amount for all packets, or random amounts?
   public category = "default"; // Red packet theme: christmas, chinese new year, etc
@@ -36,12 +39,15 @@ export class NewPacketPage {
   public expirationDays = 3; // Number of days after which the red packet expires
   public visibility: PacketVisibility = PacketVisibility.LINK_ONLY;
   public dAppUrl = "";
+  public name = ""; // Creator's name - display only - as on the DID.
 
   // Logic
   public creatingPacket = false;
+  public unsupportedNetwork = false;
 
   // Callbacks
-  public onItemClickedListener: any;
+  public titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+  private networkSubscription: Subscription = null;
 
   constructor(
     public navCtrl: NavController,
@@ -51,6 +57,8 @@ export class NewPacketPage {
     private uiService: UiService,
     private toastController: ToastController,
     private walletService: WalletService,
+    private walletNetworkService: WalletNetworkService,
+    private walletNetworkUIService: WalletNetworkUIService,
     private modalCtrl: ModalController,
     public packetService: PacketService
   ) { }
@@ -60,10 +68,24 @@ export class NewPacketPage {
     this.titleBar.setBackgroundColor("#f04141");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
-    this.tokenSubwallet = this.walletService.activeNetworkWallet.value.getMainEvmSubWallet();
+    this.name = this.didSessions.getSignedInIdentity().name;
+
+    this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
+      this.refreshNetwork();
+    });
+
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      switch (icon.key) {
+        case "network":
+          void this.walletNetworkUIService.chooseActiveNetwork();
+          break;
+      }
+    });
   }
 
-  ionViewDidEnter() {
+  ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    this.networkSubscription.unsubscribe();
   }
 
   public getSignedInIdentity(): IdentityEntry {
@@ -104,16 +126,18 @@ export class NewPacketPage {
 
     let packet: Packet = {
       quantity: this.packets,
+      chainId: this.tokenSubwallet.networkWallet.network.getMainChainID(),
       value: new BigNumber(this.tokenAmount),
       distributionType: this.distributionType,
       message: this.message,
       packetType: this.type,
       tokenType: this.tokenSubwallet instanceof ERC20SubWallet ? TokenType.ERC20_TOKEN : TokenType.NATIVE_TOKEN,
       creatorDID: this.didSessions.getSignedInIdentity().didString,
-      expirationDate: moment(this.expirationDays, "days").unix()
+      expirationDate: moment().add(this.expirationDays, "days").unix()
     };
 
-    this.packetService.preparePacket(packet);
+    let targetSubWallet = this.tokenSubwallet || this.walletService.getActiveNetworkWallet().getMainEvmSubWallet();
+    this.packetService.preparePacket(packet, targetSubWallet);
 
     void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay");
   }
@@ -160,5 +184,21 @@ export class NewPacketPage {
       return "0";
 
     return this.uiService.getFixedBalance(new BigNumber(this.tokenAmount).dividedBy(this.packets));
+  }
+
+  /**
+   * After a network change, refresh the title bar and the screen content
+   */
+  private refreshNetwork() {
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+      key: "network",
+      iconPath: this.walletNetworkService.activeNetwork.value.logo
+    });
+
+    // Reset values that don't make sense any more after swtiching a network (need to be re-entered by user)
+    this.tokenSubwallet = this.walletService.activeNetworkWallet.value.getMainEvmSubWallet();
+    this.unsupportedNetwork = !this.tokenSubwallet;
+    this.tokenAmount = "123";
+    this.packets = 213;
   }
 }

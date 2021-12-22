@@ -202,6 +202,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         return usdBalance || new BigNumber(0);
     }
 
+    public getOneCoinUSDValue(): BigNumber {
+        return CurrencyService.instance.getERC20TokenValue(new BigNumber(1), this.coin, this.networkWallet.network, 'USD');
+    }
+
     public getMainIcon(): string {
         return this.networkWallet.network.logo;
     }

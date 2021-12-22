@@ -2,17 +2,22 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { Platform, ToastController } from '@ionic/angular';
+import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
+import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
+import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
 import { PacketCosts } from '../model/packetcosts.model';
 import { Packet } from '../model/packets.model';
 
-const packetApi = 'https://redpacket.elastos.org/api/v1/packet/';
+//const packetApi = 'https://redpacket.elastos.org/api/v1/packet/';
+const packetApi = 'https://192.168.1.4:5080/api/v1';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PacketService {
   private preparedPacket: Packet = null;
+  private preparedPacketSubWallet: AnySubWallet = null;
 
   constructor(
     private platform: Platform,
@@ -54,60 +59,119 @@ export class PacketService {
   }
 
   /**
-   * Saves the given packet as being prepare. The received packet already contains all the needed
+   * Saves the given packet as being prepared. The received packet already contains all the needed
    * info. This info is saved and used for the payment step.
    */
-  public preparePacket(packet: Packet) {
+  public preparePacket(packet: Packet, subWallet: AnySubWallet) {
     this.preparedPacket = packet;
+    this.preparedPacketSubWallet = subWallet;
 
     Logger.log("redpackets", "Preparing packet:", packet);
   }
 
-  public getPrepapredPacket(): Packet {
+  public getPreparedPacket(): Packet {
     return this.preparedPacket;
+  }
+
+  public getPreparedPacketSubWallet(): AnySubWallet {
+    return this.preparedPacketSubWallet;
   }
 
   /**
    * Compute detailed costs in TOKEN and in NATIVE COIN for the prepared packet.
+   *
+   * - standardServiceFees: 0.5 USD worth of native coin
    */
-  public computeCosts(): PacketCosts {
+  public async computeCosts(): Promise<PacketCosts> {
     let costs: PacketCosts = {
-      erc202Token: {
-        redPacket: '',
-        options: {
-          publicPacketFees: ''
-        }
-      },
       nativeToken: {
-        redPacket: '',
-        transactionFees: '',
-        standardServiceFees: '',
+        redPacket: new BigNumber(0),
+        transactionFees: new BigNumber(0),
+        standardServiceFeesUSD: new BigNumber(0.5),
+        standardServiceFees: new BigNumber(0),
         options: {
-          publicPacketFees: ''
-        }
+          publicPacketFees: new BigNumber(0)
+        },
+        total: new BigNumber(0)
       }
     };
+
+    if (!this.preparePacket) {
+      Logger.error("redpackets", "Packet costs can't be computed without a prepared packet!");
+      return costs;
+    }
+
+    // Native or ERC packet?
+    if (this.preparedPacketSubWallet instanceof ERC20SubWallet) {
+      // ERC20 token in the packet
+      costs.erc20Token = {
+        redPacket: new BigNumber(0),
+        options: {
+          publicPacketFees: new BigNumber(0)
+        },
+        total: new BigNumber(0)
+      };
+
+      costs.erc20Token.redPacket = this.preparedPacket.value;
+      costs.erc20Token.total = costs.erc20Token.total.plus(costs.erc20Token.redPacket);
+      // public option TODO
+
+      // Estimated native coin transaction fees
+      let singleTransferCost = await this.packetERC20TransferFeesCost();
+      costs.nativeToken.transactionFees = singleTransferCost.multipliedBy(this.preparedPacket.quantity);
+      costs.nativeToken.total = costs.nativeToken.total.plus(costs.nativeToken.transactionFees);
+
+      // Service fees in native coin
+      let standardEvmSubwallet = this.preparedPacketSubWallet.networkWallet.getMainEvmSubWallet();
+      costs.nativeToken.standardServiceFees = costs.nativeToken.standardServiceFeesUSD.dividedBy(standardEvmSubwallet.getOneCoinUSDValue());
+      costs.nativeToken.total = costs.nativeToken.total.plus(costs.nativeToken.standardServiceFees);
+    }
+    else {
+      // Native token in the wallet
+      costs.nativeToken.redPacket = this.preparedPacket.value;
+      costs.nativeToken.total = costs.nativeToken.total.plus(costs.nativeToken.redPacket);
+
+      // Estimated native coin transaction fees
+      let singleTransferCost = await this.packetNativeCoinTransferFeesCost();
+      costs.nativeToken.transactionFees = singleTransferCost.multipliedBy(this.preparedPacket.quantity);
+      costs.nativeToken.total = costs.nativeToken.total.plus(costs.nativeToken.transactionFees);
+
+      // Service fees in native coin
+      costs.nativeToken.standardServiceFees = costs.nativeToken.standardServiceFeesUSD.dividedBy(this.preparedPacketSubWallet.getOneCoinUSDValue());
+      costs.nativeToken.total = costs.nativeToken.total.plus(costs.nativeToken.standardServiceFees);
+    }
+
+    //console.log("total", costs.nativeToken.total.toString())
+
     return costs;
   }
 
-  /* createPacket(packet: Packet): Promise<boolean> {
-    console.log('Creating packet', packet);
+  /**
+   * Estimates the cost to transfer a red packet ERC20 amount to a winning user.
+   */
+  private async packetERC20TransferFeesCost(): Promise<BigNumber> {
+    // Estimate gas cost in native coin, for a "transfer" ERC20 contract call
+    // TODO
+    return await new BigNumber(0.002);
+  }
+
+  // TODO: getGasPrice + For native coins, the gas is 21000 for most cases
+  private async packetNativeCoinTransferFeesCost(): Promise<BigNumber> {
+    // Native coin - get native coin cost to send a payment
+    // TODO
+    return await new BigNumber(0.002);
+  }
+
+  createPacket(packet: Packet): Promise<boolean> {
+    Logger.log('redpackets', 'Creating packet on backend', packet);
 
     return new Promise((resolve, reject) => {
-      this.http.post<any>(packetApi + 'create', packet).subscribe((res) => {
+      // Create a new packet
+      this.http.post<any>(`${packetApi}/packets`, packet).subscribe((res) => {
         console.log(res);
         resolve(false);
 
-        let packetType = "";
-        if (packet.distributionType === "random") {
-          packetType = "Random"
-        } else if (packet.distributionType === "fixed") {
-          packetType = "Fixed"
-        } else {
-          packetType === "Supernode"
-        }
-
-        let props: NavigationExtras = {
+        /* let props: NavigationExtras = {
           queryParams: {
             hash: res.result.packet_hash,
             payAddress: res.result.pay_address,
@@ -116,14 +180,14 @@ export class PacketService {
             packets: packet.quantity
           }
         }
-        void this.router.navigate(['/packet-created'], props)
+        void this.router.navigate(['/packet-created'], props) */
       }, (err) => {
         console.log(err);
-        void this.formErr();
+        //void this.formErr();
         resolve(false);
       });
     });
-  } */
+  }
 
   peakPacket(hash: string): Promise<any> {
     console.log('Checking packet', hash);

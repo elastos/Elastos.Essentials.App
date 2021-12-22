@@ -1,6 +1,12 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-grid class="container ion-text-center ion-padding" *ngIf="tokenSubwallet">
+  <!-- Unsupported network -->
+  <ion-grid *ngIf="tokenSubwallet && unsupportedNetwork">
+    This network is unsupported for red packets. Please select another one.
+  </ion-grid>
+
+  <!-- Supported network and subwallet is set -->
+  <ion-grid class="container ion-text-center ion-padding footer-margin" *ngIf="tokenSubwallet && !unsupportedNetwork">
     <ion-row class="section ion-padding-top">
       <ion-col size="6" class="header">
         Quantity
@@ -120,6 +126,9 @@
       <ion-col size="12">
         <h4>About you</h4>
       </ion-col>
+      <ion-col size="12">
+        This red packet will be published using your currently signed in user information:
+      </ion-col>
     </ion-row>
 
     <ion-row class="section ion-padding-top">
@@ -167,6 +176,10 @@
       </ion-col>
     </ion-row>
 
+    <div class="sticky-footer-margin"></div>
+  </ion-grid>
+
+  <div class="sticky-footer pd1">
     <div *ngIf="creatingPacket === false" class="custom-btn" (click)="createPacket()">
       <ion-label>Create Red Packet</ion-label>
     </div>
@@ -174,6 +187,5 @@
     <div *ngIf="creatingPacket === true" class="creatingPacket" disabled>
       <ion-spinner name="dots"></ion-spinner>
     </div>
-
-  </ion-grid>
+  </div>
 </ion-content>
