@@ -70,6 +70,8 @@ export class CoinHomePage implements OnInit {
 
     // Total transactions today
     public todaysTransactions = 0;
+    // Only for fetchMoreTransactions
+    private prevTransactionCount = 0;
     //private MaxCount = 0;
     private start = 0;
 
@@ -296,9 +298,11 @@ export class CoinHomePage implements OnInit {
         }
 
         //At least all transactions of today must be loaded.
-        if (this.todaysTransactions == transactions.length) {
+        if ((this.todaysTransactions == transactions.length) && (this.prevTransactionCount != transactions.length)) {
             this.fetchMoreTransactions();
         }
+
+        this.prevTransactionCount = transactions.length;
     }
 
     onItem(item) {
