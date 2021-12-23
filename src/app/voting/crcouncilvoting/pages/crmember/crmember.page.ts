@@ -10,6 +10,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/voting/services/vote.service';
 import { OptionsComponent } from '../../components/options/options.component';
 import { CandidatesService } from '../../services/candidates.service';
 
@@ -43,6 +44,7 @@ export class CRMemberPage {
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
         public candidatesService: CandidatesService,
+        public voteService: VoteService,
         private route: ActivatedRoute,
     ) {
         void this.init(this.route.snapshot.params.did);
@@ -60,8 +62,10 @@ export class CRMemberPage {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.crmember-profile'));
 
-        this.titleBar.setMenuVisibility(true);
-        this.titleBar.setMenuComponent(OptionsComponent)
+        if (this.voteService.canVote()) {
+            this.titleBar.setMenuVisibility(true);
+            this.titleBar.setMenuComponent(OptionsComponent)
+        }
     }
 
     async showOptions(ev) {
@@ -101,7 +105,7 @@ export class CRMemberPage {
     }
 
     claimDposNode() {
-        this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crnode');
+        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crnode');
     }
 }
 

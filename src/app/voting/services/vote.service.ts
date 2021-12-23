@@ -259,4 +259,8 @@ export class VoteService {
         return (secretaryGeneralDid == GlobalDIDSessionsService.signedInDIDString) || (("did:elastos:" + secretaryGeneralDid) ==  GlobalDIDSessionsService.signedInDIDString);
     }
 
+    // The wallet that has no ELA subwallet can't vote, eg. the wallet imported by privat key.
+    canVote() {
+        return this.sourceSubwallet ? true : false;
+    }
 }
