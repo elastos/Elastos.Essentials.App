@@ -7,11 +7,11 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
-type CRWebsiteCommand = {
+type CRCommand = {
     command: string; // Ex: "voteforproposal"
 }
 
-type VoteForProposalCommand = CRWebsiteCommand & {
+type VoteForProposalCommand = CRCommand & {
     data: {
         proposalHash: string;
     }

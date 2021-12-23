@@ -15,14 +15,14 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="reviewProposalCommand.data.proposalHash">
+            <ion-row class="profile-data" *ngIf="onGoingCommand.data.proposalHash">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
-                    <h4>{{ reviewProposalCommand.data.proposalHash }}</h4>
+                    <h4>{{ onGoingCommand.data.proposalHash }}</h4>
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="voteResult && reviewProposalCommand.type != 'proposal-detail-page'">
+            <ion-row class="profile-data" *ngIf="voteResult && onGoingCommand.type != 'proposal-detail-page'">
                 <div>
                     <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
                     <h4 class="align-center vote-result" [id]="voteResult"><img
@@ -32,7 +32,7 @@
                 </div>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="reviewProposalCommand.type == 'proposal-detail-page'">
+            <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
                 <div>
                     <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
                     <ion-segment (ionChange)="segmentChanged($event)" [value]="voteResult">
@@ -49,10 +49,10 @@
                 </div>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="reviewProposalCommand.type == 'proposal-detail-page'">
+            <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
                 <div>
                     <h5>{{ 'crproposalvoting.opinion' | translate }}</h5>
-                    <textarea [(ngModel)]="opinion"></textarea>
+                    <textarea [(ngModel)]="content"></textarea>
                 </div>
             </ion-row>
 

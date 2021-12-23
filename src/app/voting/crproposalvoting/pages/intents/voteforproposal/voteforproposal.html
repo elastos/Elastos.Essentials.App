@@ -39,11 +39,11 @@
             </ion-row>
         </ion-list>
 
-        <div *ngIf="signingAndSendingSuggestionResponse">
+        <div *ngIf="signingAndSendingProposalResponse">
             <ion-spinner></ion-spinner>
         </div>
 
-        <ion-footer *ngIf="!signingAndSendingSuggestionResponse">
+        <ion-footer *ngIf="!signingAndSendingProposalResponse">
             <ion-row>
                 <ion-col class="left-col">
                     <div class="btn-container align-center" id="cancel" (click)="cancel()">

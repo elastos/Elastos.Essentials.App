@@ -1,21 +1,25 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
-import { CROperationsService, CRWebsiteCommand } from 'src/app/voting/crproposalvoting/services/croperations.service';
+import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { DraftService } from '../../../services/draft.service';
 import { PopupService } from '../../../services/popup.service';
 
-type ReviewMilestoneCommand = CRWebsiteCommand & {
+type ReviewMilestoneCommand = CRCommand & {
     data: {
         messagehash: string,
         newownerpubkey: string,
@@ -38,11 +42,14 @@ type ReviewMilestoneCommand = CRWebsiteCommand & {
 export class ReviewMilestonePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private reviewMilestoneCommand: ReviewMilestoneCommand;
+    private onGoingCommand: ReviewMilestoneCommand;
     public signingAndSendingProposalResponse = false;
     public trackingType = "";
     public proposalDetails: ProposalDetails;
     public proposalDetailsFetched = false;
+    public isKeyboardHide = true;
+    public content = "";
+    public voteResult = "approve";
 
     constructor(
         private crOperations: CROperationsService,
@@ -54,25 +61,50 @@ export class ReviewMilestonePage {
         private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
+        public zone: NgZone,
+        public keyboard: Keyboard,
+        private globalPopupService: GlobalPopupService,
+        private draftService: DraftService,
     ) {
 
     }
 
     async ionViewWillEnter() {
+        if (this.proposalDetailsFetched) {
+            return;
+        }
+
+        this.keyboard.onKeyboardWillShow().subscribe(() => {
+            this.zone.run(() => {
+                this.isKeyboardHide = false;
+            });
+            // console.log('SHOWK');
+        });
+
+        this.keyboard.onKeyboardWillHide().subscribe(() => {
+            this.zone.run(() => {
+                this.isKeyboardHide = true;
+            });
+            // console.log('HIDEK');
+        });
+
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
-        this.reviewMilestoneCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
-        Logger.log(App.CRPROPOSAL_VOTING, "reviewMilestoneCommand", this.reviewMilestoneCommand);
-        this.trackingType = this.reviewMilestoneCommand.data.proposaltrackingtype;
+        this.onGoingCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "onGoingCommand", this.onGoingCommand);
+        this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "common";
+        this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
         try {
             // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.reviewMilestoneCommand.data.proposalhash);
+            this.proposalDetails = await this.proposalService.getCurrentProposal(this.onGoingCommand.data.proposalHash,
+                                                this.onGoingCommand.type != CRCommandType.ProposalDetailPage);
             Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-            this.proposalDetailsFetched = true;
         }
         catch (err) {
-            Logger.error('crproposal', 'ReviewMilestonePage ionViewDidEnter error:', err);
+            Logger.error('crproposal', 'ReviewMilestonePage getCurrentProposal error:', err);
         }
+        this.proposalDetailsFetched = true;
     }
 
     cancel() {
@@ -80,11 +112,28 @@ export class ReviewMilestonePage {
     }
 
     async signAndReviewMilestone() {
+        if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
+            //Check content value
+            if (!this.content || this.content == "") {
+                let blankMsg = this.translate.instant('crproposalvoting.opinion')
+                                + this.translate.instant('common.text-input-is-blank');
+                this.globalNative.genericToast(blankMsg);
+                return;
+            }
+
+            //Handle opinion
+            let data = {opinion: this.voteResult, content: this.content};
+            let ret = await this.draftService.getDraft("opinion.json", data);
+            this.onGoingCommand.data.secretaryopinionhash = ret.hash;
+            this.onGoingCommand.data.secretaryopiniondata = ret.data;
+            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
+        }
+
         this.signingAndSendingProposalResponse = true;
 
         try {
             //Get payload
-            var payload = this.getPayload(this.reviewMilestoneCommand);
+            var payload = this.getPayload(this.onGoingCommand);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone payload.", payload);
 
             //Get digest
@@ -101,12 +150,13 @@ export class ReviewMilestonePage {
                 //Create transaction and send
                 payload.SecretaryGeneralSignature = ret.result.signature;
                 const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(JSON.stringify(payload), '');
-                await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+                await this.crOperations.signAndSendRawTransaction(rawTx);
             }
         }
         catch (e) {
-            // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.popup.alert("Error", "Sorry, unable to sign your crproposal. Your crproposal can't be review for now. " + e, "Ok");
+            this.signingAndSendingProposalResponse = false;
+            await this.crOperations.popupErrorMessage(e);
+            return;
         }
 
         this.signingAndSendingProposalResponse = false;
@@ -124,10 +174,10 @@ export class ReviewMilestonePage {
         }
 
         let payload = {
-            Type: TrackingTypes[command.data.proposaltrackingtype.toLowerCase()],
-            ProposalHash: command.data.proposalhash,
-            MessageHash: command.data.messagehash,
-            // MessageData: "",
+            Type: TrackingTypes[this.trackingType.toLowerCase()],
+            ProposalHash: command.data.proposalHash,
+            MessageHash: command.data.messageHash,
+            MessageData: command.data.messageData,
             Stage: command.data.stage,
             OwnerPublicKey: command.data.ownerpubkey,
             OwnerSignature: command.data.ownersignature,
@@ -135,9 +185,14 @@ export class ReviewMilestonePage {
             NewOwnerPublicKey: "",
             NewOwnerSignature: "",
             SecretaryGeneralOpinionHash: command.data.secretaryopinionhash,
-            // SecretaryGeneralOpinionData: "",
+            SecretaryGeneralOpinionData: command.data.secretaryopiniondata,
         };
 
         return payload;
+    }
+
+    segmentChanged(ev: any) {
+        this.voteResult = ev.detail.value;
+        console.log('Segment changed', ev);
     }
 }

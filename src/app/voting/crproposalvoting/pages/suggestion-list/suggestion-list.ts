@@ -7,6 +7,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuggestionSearchResult, SuggestionStatus } from '../../model/suggestion-model';
 import { SuggestionService } from '../../services/suggestion.service';
@@ -41,12 +42,16 @@ export class SuggestionListPage implements OnInit {
         private route: ActivatedRoute,
         private globalNav: GlobalNavService,
         public translate: TranslateService,
+        private globalPopupService: GlobalPopupService,
     ) {
         this.suggestionStatus = this.route.snapshot.params.suggestionType as SuggestionStatus;
         Logger.log(App.CRSUGGESTION, 'Suggestion status:', this.suggestionStatus);
     }
 
     ngOnInit() {
+    }
+
+    ionViewDidEnter() {
     }
 
     ionViewWillEnter() {

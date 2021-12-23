@@ -382,6 +382,17 @@
   }
 }
 
+/********************** VOTING **********************/
+.milestone-options-component {
+    --background: #ffffff;
+    box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.milestone-options-component-dark {
+    --background: #212021;
+    box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
 /********************** DEVELOPER TOOLS **********************/
 .developertools-help-component {
   --background: linear-gradient(to bottom, #181d20 0%, #21313d 100%);

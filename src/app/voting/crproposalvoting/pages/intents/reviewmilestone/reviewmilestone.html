@@ -15,17 +15,17 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="reviewMilestoneCommand.data.proposalhash">
+            <ion-row class="profile-data" *ngIf="onGoingCommand.data.proposalHash">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
-                    <h4>{{ reviewMilestoneCommand.data.proposalhash }}</h4>
+                    <h4>{{ onGoingCommand.data.proposalHash }}</h4>
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="reviewMilestoneCommand.data.stage">
+            <ion-row class="profile-data" *ngIf="onGoingCommand.data.stage">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.milestone-stage' | translate }}</h5>
-                    <h4>{{ reviewMilestoneCommand.data.stage + proposalDetails.stageAdjust }}</h4>
+                    <h4>{{ onGoingCommand.data.stage + proposalDetails.stageAdjust }}</h4>
                 </ion-col>
             </ion-row>
 
@@ -35,29 +35,54 @@
                     <h4>{{ 'crproposalvoting.' + trackingType | translate }}</h4>
                 </ion-col>
             </ion-row>
+
+            <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
+                <div>
+                    <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
+                    <ion-segment (ionChange)="segmentChanged($event)" [value]="voteResult">
+                        <ion-segment-button value="approve">
+                            <ion-label>{{'crproposalvoting.approve' | translate}}</ion-label>
+                        </ion-segment-button>
+                        <ion-segment-button value="reject">
+                            <ion-label>{{'crproposalvoting.reject' | translate}}</ion-label>
+                        </ion-segment-button>
+                    </ion-segment>
+                </div>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
+                <div>
+                    <h5>{{ 'crproposalvoting.opinion' | translate }}</h5>
+                    <textarea [(ngModel)]="content"></textarea>
+                </div>
+            </ion-row>
+
         </ion-list>
 
 
-        <div *ngIf="signingAndSendingSuggestionResponse">
+        <div *ngIf="signingAndSendingProposalResponse">
             <ion-spinner></ion-spinner>
         </div>
 
-        <ion-footer *ngIf="!signingAndSendingSuggestionResponse">
-            <ion-row>
-                <ion-col class="left-col">
-                    <div class="btn-container align-center" id="cancel" (click)="cancel()">
-                        {{ 'common.cancel' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-                <ion-col class="right-col">
-                    <div class="btn-container align-center" id="confirm" (click)="signAndReviewMilestone()">
-                        {{ 'common.confirm' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-            </ion-row>
-        </ion-footer>
+        <div *ngIf="!signingAndSendingProposalResponse && isKeyboardHide">
+            <div class="footer-space"></div>
+            <ion-footer>
+                <ion-row>
+                    <ion-col class="left-col">
+                        <div class="btn-container align-center" id="cancel" (click)="cancel()">
+                            {{ 'common.cancel' | translate }}
+                        </div>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-col>
+                    <ion-col class="right-col">
+                        <div class="btn-container align-center" id="confirm" (click)="signAndReviewMilestone()">
+                            {{ 'common.confirm' | translate }}
+                        </div>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-col>
+                </ion-row>
+            </ion-footer>
 
+        </div>
     </div>
 </ion-content>

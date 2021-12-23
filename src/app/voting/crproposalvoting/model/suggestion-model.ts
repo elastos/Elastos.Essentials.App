@@ -39,6 +39,7 @@ export class Tracking {
 
 export class SuggestionDetail {
     id: number;         // Unique id on CR website
+    sid?: string;   //Suggestion id
     title: string;      // Title
     status: string;
     did: string;

@@ -15,12 +15,12 @@ import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { SuggestionDetail } from '../../../model/suggestion-model';
-import { CRCommandType, CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
+import { CRCommand, CRCommandType, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
 import { ProposalService } from '../../../services/proposal.service';
 import { SuggestionService } from '../../../services/suggestion.service';
 
-export type CreateProposalCommand = CRWebsiteCommand & {
+export type CreateProposalCommand = CRCommand & {
     data: {
         budgets: CreateSuggestionBudget[],
         categorydata: string, // This is empty string

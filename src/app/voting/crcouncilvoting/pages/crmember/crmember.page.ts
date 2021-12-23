@@ -45,7 +45,7 @@ export class CRMemberPage {
         public candidatesService: CandidatesService,
         private route: ActivatedRoute,
     ) {
-        this.init(this.route.snapshot.params.did);
+        void this.init(this.route.snapshot.params.did);
     }
 
     async init(did: string) {
@@ -64,7 +64,7 @@ export class CRMemberPage {
         this.titleBar.setMenuComponent(OptionsComponent)
     }
 
-    async showOptions() {
+    async showOptions(ev) {
         Logger.log('Launcher', 'Opening options');
 
         this.popover = await this.popoverCtrl.create({
@@ -73,7 +73,8 @@ export class CRMemberPage {
             componentProps: {
             },
             cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'launcher-options-component' : 'launcher-options-component-dark',
-            translucent: false
+            translucent: false,
+            event: ev,
         });
         this.popover.onWillDismiss().then(() => {
             this.popover = null;

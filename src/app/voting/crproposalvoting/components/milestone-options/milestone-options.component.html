@@ -1,0 +1,20 @@
+<ion-grid [class.darkContainer]="theme.darkMode">
+    <div class="row ion-activatable" *ngIf="command == 'apply'">
+        <ion-row (click)="handleCommand('updatemilestone')">
+            <ion-label>{{ 'crproposalvoting.apply' | translate }}</ion-label>
+        </ion-row>
+        <ion-ripple-effect></ion-ripple-effect>
+    </div>
+    <div class="row ion-activatable" *ngIf="command == 'review'">
+        <ion-row (click)="handleCommand('reviewmilestone')">
+            <ion-label>{{ 'crproposalvoting.review' | translate }}</ion-label>
+        </ion-row>
+        <ion-ripple-effect></ion-ripple-effect>
+    </div>
+    <div class="row ion-activatable" *ngIf="command == 'withdraw'">
+        <ion-row (click)="handleCommand('withdraw')">
+            <ion-label>{{ 'crproposalvoting.withdraw' | translate }}</ion-label>
+        </ion-row>
+        <ion-ripple-effect></ion-ripple-effect>
+    </div>
+</ion-grid>

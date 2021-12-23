@@ -1,26 +1,31 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
+import { CRCommand, CRCommandType, CROperationsService } from '../../../services/croperations.service';
+import { DraftService } from '../../../services/draft.service';
 import { PopupService } from '../../../services/popup.service';
 import { ProposalService } from '../../../services/proposal.service';
 
-type UpdateMilestoneCommand = CRWebsiteCommand & {
+type UpdateMilestoneCommand = CRCommand & {
     data: {
-        messagehash: string,
+        messageHash: string,
+        messageData: string,
         newownerpubkey: string,
         ownerpubkey: string,
-        proposalhash: string,
+        proposalHash: string,
         proposaltrackingtype: string,
         stage: number,
         userdid: string
@@ -36,10 +41,12 @@ export class UpdatMilestonePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     private originalRequestJWT: string;
-    private updateMilestoneCommand: UpdateMilestoneCommand;
-    public signingAndSendingSuggestionResponse = false;
+    private onGoingCommand: UpdateMilestoneCommand;
+    public signingAndSendingProposalResponse = false;
     public proposalDetails: ProposalDetails;
     public proposalDetailsFetched = false;
+    public isKeyboardHide = true;
+    public content = "";
 
     constructor(
         private proposalService: ProposalService,
@@ -51,25 +58,50 @@ export class UpdatMilestonePage {
         private walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
+        private globalNative: GlobalNativeService,
+        public zone: NgZone,
+        public keyboard: Keyboard,
+        private globalPopupService: GlobalPopupService,
+        private draftService: DraftService,
     ) {
 
     }
 
     async ionViewWillEnter() {
+        if (this.proposalDetailsFetched) {
+            return;
+        }
+
+        this.keyboard.onKeyboardWillShow().subscribe(() => {
+            this.zone.run(() => {
+                this.isKeyboardHide = false;
+            });
+        });
+
+        this.keyboard.onKeyboardWillHide().subscribe(() => {
+            this.zone.run(() => {
+                this.isKeyboardHide = true;
+            });
+        });
+
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.update-milestone'));
-        this.updateMilestoneCommand = this.crOperations.onGoingCommand as UpdateMilestoneCommand;
-        this.originalRequestJWT = this.crOperations.originalRequestJWT;
+        this.onGoingCommand = this.crOperations.onGoingCommand as UpdateMilestoneCommand;
+        // this.originalRequestJWT = this.crOperations.originalRequestJWT;
+        this.onGoingCommand.data.newownerpubkey = this.onGoingCommand.data.newownerpubkey || "";
 
         try {
+            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+
             // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.updateMilestoneCommand.data.proposalhash);
+            this.proposalDetails = await this.proposalService.getCurrentProposal(this.onGoingCommand.data.proposalHash,
+                                                this.onGoingCommand.type != CRCommandType.ProposalDetailPage);
             Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-            this.proposalDetailsFetched = true;
         }
         catch (err) {
-            Logger.error('crproposal', 'UpdatMilestonePage ionViewDidEnter error:', err);
+            //TODO:: show error message
+            Logger.error(App.CRPROPOSAL_VOTING, 'UpdatMilestonePage getCurrentProposal error:', err);
         }
-
+        this.proposalDetailsFetched = true;
     }
 
     cancel() {
@@ -78,31 +110,51 @@ export class UpdatMilestonePage {
     }
 
     async signAndUpdateMilestone() {
-        this.signingAndSendingSuggestionResponse = true;
+        if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
+            //Check opinion value
+            if (!this.content || this.content == "") {
+                let blankMsg = this.translate.instant('crproposalvoting.opinion')
+                                + this.translate.instant('common.text-input-is-blank');
+                this.globalNative.genericToast(blankMsg);
+                return;
+            }
+
+            //Handle opinion
+            let data = {content: this.content}
+            let ret = await this.draftService.getDraft("message.json", data);
+            this.onGoingCommand.data.messageHash = ret.hash;
+            this.onGoingCommand.data.messageData = ret.data;
+            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
+        }
+
+        this.signingAndSendingProposalResponse = true;
 
         try {
             // Create the suggestion/proposal digest - ask the SPVSDK to do this with a silent intent.
             let digest = await this.getMilestoneDigest();
 
             let signedJWT = await this.signMilestoneDigestAsJWT(digest);
-
-            if (signedJWT) {
-                await this.proposalService.sendProposalCommandResponseToCallbackURL(this.updateMilestoneCommand.callbackurl, signedJWT);
-                //Go to launcher
-                void this.globalNav.goToLauncher();
+            if (!signedJWT) {
+                // Operation cancelled, cancel the operation silently.
+                this.signingAndSendingProposalResponse = false;
+                return;
             }
+
+            await this.proposalService.postUpdateMilestoneCommandResponse(signedJWT);
+            this.crOperations.handleSuccessReturn();
         }
         catch (e) {
-            // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.popup.alert("Error", "Sorry, unable to update milestone. Your milestone can't be updated for now. " + e, "Ok");
+            this.signingAndSendingProposalResponse = false;
+            await this.crOperations.popupErrorMessage(e);
+            return;
         }
 
-        this.signingAndSendingSuggestionResponse = false;
+        this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
     }
 
     private async getMilestoneDigest(): Promise<string> {
-        let payload = this.getMilestonePayload(this.updateMilestoneCommand);
+        let payload = this.getMilestonePayload(this.onGoingCommand);
         Logger.log(App.CRPROPOSAL_VOTING, "milestone payload", payload);
         let digest = await this.walletManager.spvBridge.proposalTrackingOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         let ret = Util.reverseHexToBE(digest);
@@ -112,41 +164,37 @@ export class UpdatMilestonePage {
     }
 
     private async signMilestoneDigestAsJWT(suggestionDigest: string): Promise<string> {
-        Logger.log(App.CRPROPOSAL_VOTING, "Sending intent to sign the suggestion digest", suggestionDigest);
-        try {
-            let result = await this.crOperations.sendSignDigestIntent({
-                data: suggestionDigest,
-                signatureFieldName: "data",
-                jwtExtra: {
-                    type: "signature",
-                    command: this.updateMilestoneCommand.command,
-                    req: "elastos://crproposal/" + this.originalRequestJWT
-                }
-            });
-            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", result);
+        Logger.log(App.CRSUGGESTION, "Sending intent to sign the suggestion digest", suggestionDigest);
 
-            if (!result.result || !result.responseJWT) {
-                // Operation cancelled by user
-                return null;
-            }
-
-            Logger.log(App.CRPROPOSAL_VOTING, "signedJWT", result.responseJWT);
-
-            return result.responseJWT;
+        let payload = {
+            command: "updatemilestone",
+            proposalHash: this.onGoingCommand.data.proposalHash,
+            stage: this.onGoingCommand.data.stage,
+            messageHash: this.onGoingCommand.data.messageHash,
+            messageData: this.onGoingCommand.data.messageData,
         }
-        catch (err) {
-            Logger.error('crproposal', "didsign send intent error", err);
-            throw err;
+
+        let result = await this.crOperations.sendSignDigestIntent({
+            data: suggestionDigest,
+            payload: payload,
+        });
+        Logger.log(App.CRSUGGESTION, "Got signed digest.", result);
+
+        if (!result.result || !result.responseJWT) {
+            // Operation cancelled by user
+            return null;
         }
+
+        return result.responseJWT;
     }
 
     private getMilestonePayload(command: UpdateMilestoneCommand): any {
         let payload = {
-            ProposalHash: command.data.proposalhash,
-            MessageHash: command.data.messagehash,
-            // MessageData: "",
+            ProposalHash: command.data.proposalHash,
+            MessageHash: command.data.messageHash,
+            MessageData: command.data.messageData,
             Stage: command.data.stage,
-            OwnerPublicKey: command.data.ownerpubkey,
+            OwnerPublicKey: command.data.ownerPublicKey,
             NewOwnerPublicKey: command.data.newownerpubkey,
         };
         return payload;

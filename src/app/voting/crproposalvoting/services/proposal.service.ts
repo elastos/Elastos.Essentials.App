@@ -6,7 +6,6 @@ import { App } from 'src/app/model/app.enum';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { ProposalDetails } from '../model/proposal-details';
 import { ProposalSearchResult } from '../model/proposal-search-result';
 import { ProposalStatus } from '../model/proposal-status';
@@ -20,6 +19,7 @@ export class ProposalService {
     private pageNumbersLoaded = 0;
     private subscription: Subscription = null;
     public blockWaitingDict = {};
+    public currentProposal: ProposalDetails = null;
 
     constructor(
         private http: HttpClient,
@@ -98,6 +98,7 @@ export class ProposalService {
                 else {
                     detail.stageAdjust = 0;
                 }
+                this.currentProposal = detail;
                 return detail;
             }
             else {
@@ -106,6 +107,16 @@ export class ProposalService {
         }
         catch (err) {
             Logger.error(App.CRPROPOSAL_VOTING, 'fetchProposalDetails error:', err);
+        }
+        return null;
+    }
+
+    public async getCurrentProposal(proposalHash: string, refresh = false): Promise<ProposalDetails> {
+        if (refresh || this.currentProposal == null || this.currentProposal.proposalHash != proposalHash) {
+            return await this.fetchProposalDetails(proposalHash);
+        }
+        else {
+            return this.currentProposal;
         }
     }
 
@@ -156,6 +167,25 @@ export class ProposalService {
         });
     }
 
+    public async postUpdateMilestoneCommandResponse(jwtToken: string): Promise<void> {
+        const param = {
+            jwt: jwtToken,
+        };
+
+        let url = this.getCrRpcApi() + "/api/v2/proposal/milestone";
+        Logger.log(App.CRPROPOSAL_VOTING, 'postUpdateMilestoneCommandResponse:', url, jwtToken);
+        try {
+            const result = await this.jsonRPCService.httpPost(url, param);
+            Logger.log(App.CRPROPOSAL_VOTING, 'postUpdateMilestoneCommandResponse', result);
+            if (result && result.code) {
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRPROPOSAL_VOTING, 'postUpdateMilestoneCommandResponse error', err);
+            throw new Error(err);
+        }
+    }
+
     public navigateToProposalDetailPage(proposal: ProposalSearchResult) {
         void this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/proposal-details", { state: { proposalHash: proposal.proposalHash } });
 
@@ -170,6 +200,28 @@ export class ProposalService {
         return this.allResults.find((proposal) => {
             return proposal.id == proposalId;
         })
+    }
+
+    public async getProposalState(proposalHash: string): Promise<any> {
+        const param = {
+            method: 'getcrproposalstate',
+            params: {
+                proposalhash: proposalHash,
+            },
+        };
+
+        let url = this.getCrRpcApi();
+        Logger.log(App.CRPROPOSAL_VOTING, 'getProposalState:', url, param);
+        try {
+            const result = await this.jsonRPCService.httpPost(url, param);
+            Logger.log(App.CRPROPOSAL_VOTING, 'getProposalState', result);
+            if (result && result.code) {
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRPROPOSAL_VOTING, 'getProposalState error', err);
+            throw new Error(err);
+        }
     }
 
     public addBlockWatingItem(hash: string, status: string) {

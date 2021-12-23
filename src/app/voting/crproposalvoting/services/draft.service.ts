@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as crypto from 'crypto';
 import JSZip from 'jszip';
-
 @Injectable({
     providedIn: 'root'
 })
@@ -21,10 +20,9 @@ export class DraftService {
         return reverseHash;
     }
 
-    public getDraft(filename: string, content: string): Promise<any> {
+    public getDraft(filename: string, data: any): Promise<any> {
         return new Promise((resolve, reject) => {
             var zip = new JSZip();
-            let data = {content: content};
             let fileContent = Buffer.from(JSON.stringify(data, null, 2), 'utf8');
             zip.file(filename, fileContent);
             zip.generateAsync({ type: "uint8array" }).then((zipcontent) => {

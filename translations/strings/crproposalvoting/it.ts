@@ -14,6 +14,7 @@ export const it = {
         'loading-proposal': 'Caricamento proposta...',
         'no-proposals': 'Nessun risultato per il momento.',
         'proposal-details': 'Dettagli della proposta',
+        'no-proposal-detail': 'Can not get the proposal detial for now.',
         'proposal': 'Proposta',
         'abstract': 'Riassunto',
         'proposal-hash': 'Hash della proposta',
@@ -32,6 +33,7 @@ export const it = {
         'loading-suggestion': 'Caricamento suggerimento...',
         'no-suggestions': 'Nessun suggerimento corrispondente per ora.',
         'suggestion-details': 'Dettagli del suggerimento',
+        'no-suggestion-detail': 'Can not get the suggestion detial for now.',
         'suggestion': 'Suggerimento',
         'suggestion-id': 'ID Suggerimento',
 
@@ -82,12 +84,14 @@ export const it = {
         'finalpayment': 'FinalPayment',
 
         'sign-create-suggestion': 'Firma e crea suggerimento',
+        'createsuggestion-successfully': 'Suggestion created successfully.',
+        'createsuggestion-failed': 'Failed to sign suggestion, please sign suggestion again.',
 
         'create-proposal': 'Crea proposta',
         'create-proposal-msg': 'Stai per creare la seguente proposta. Si prega di controllare il contenuto e seguire le istruzioni per la firma e la pubblicazione.',
         'sign-create-proposal': 'Firma e crea una proposta',
-        "create-proposal-successfully": "Proposal created successfully, please wait for transaction confirmation.",
-        "create-proposal-failed": "Failed to create proposal, please recreate proposal.",
+        'createproposal-successfully': 'Proposal created successfully, please wait for transaction confirmation.',
+        'createproposal-failed': 'Failed to create proposal, please recreate proposal.',
 
         'review-proposal': 'Vota per una proposta',
         'review-proposal-msg': 'Stai per votare per la seguente proposta. Si prega di controllare il contenuto e quindi seguire le istruzioni per la firma e la pubblicazione.',
@@ -100,8 +104,8 @@ export const it = {
         'progress': 'In Progresso',
         'finalized': 'Finalizzato',
         // 'abstain': 'Abstain',
-        "review-proposal-successfully": "Proposal review is successfully, please wait for transaction confirmation.",
-        "review-proposal-failed": "Proposal review failed, please review again.",
+        'reviewproposal-successfully': 'Proposal review is successfully, please wait for transaction confirmation.',
+        'reviewproposal-failed': 'Proposal review failed, please review again.',
 
         'vote-proposal': 'Vota contro',
         'vote-proposal-msg': 'Stai per votare contro la seguente proposta. Si prega di controllare il contenuto e quindi seguire le istruzioni per la firma e la pubblicazione.',
@@ -111,11 +115,15 @@ export const it = {
         'max-votes-suf': ' Voti',
         'multi-sign-reject-voting': 'VOta contro con Multi sign.',
         'greater-than-max-votes': 'Voti superiori a quelli disponibili.',
+        'voteforproposal-successfully': 'Vote successfully, please wait for transaction confirmation.',
+        'voteforproposal-failed': 'Failed to vote, please vote again.',
 
         'update-milestone': 'Aggiornamento Pietra Miliare',
         'update-milestone-msg': 'Stai per aggiornare la Pietra Miliare. Si prega di controllare il contenuto e quindi seguire le istruzioni per firmare e pubblicare.',
         'sign-update-milestone': 'Firma e aggiorna la Pietra Miliare',
         'milestone-stage': 'Fase Pietra Miliare',
+        'updatemilestone-successfully': 'Update milestone successfully.',
+        'updatemilestone-failed': 'Failed to update milestone, please update milestone again.',
 
         // NO ITALIAN TRANSLATION FOR NOW
         'review-milestone': 'Review Milestone',
@@ -127,6 +135,13 @@ export const it = {
         'withdraw-msg': 'Stai per ritirarti. Si prega di rivederlo e seguire la procedura per firmarlo e pubblicarlo.',
         'withdraw-amount': 'Prelevare l\'importo',
         'sign-withdraw': 'Firma e ritira',
+        // NO TRANSLATION
+        'apply': 'Apply',
+        'review': 'Review',
+        'reviewmilestone-successfully': 'Milestone review is successfully, please wait for transaction confirmation.',
+        'reviewmilestone-failed': 'Milestone review failed, please review again.',
+        'withdraw-successfully': 'Withdraw is successfully, please wait for transaction confirmation.',
+        'withdraw-failed': 'Withdraw failed, please withdraw again.',
 
         'crc-proposals-today': 'Proposte CRC oggi',
         'crc-proposals-today-msg': 'C\'è una nuova proposta CRC oggi, clicca per visualizzarla.',

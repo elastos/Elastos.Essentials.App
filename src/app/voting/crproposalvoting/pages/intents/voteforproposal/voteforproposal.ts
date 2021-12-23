@@ -14,9 +14,9 @@ import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridg
 import { WalletAccountType } from 'src/app/wallet/model/walletaccount';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
+import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 
-type VoteForProposalCommand = CRWebsiteCommand & {
+type VoteForProposalCommand = CRCommand & {
     data: {
         proposalHash: string;
     }
@@ -32,7 +32,7 @@ export class VoteForProposalPage {
     private voteForProposalCommand: VoteForProposalCommand;
     public proposalDetails: ProposalDetails;
     public proposalDetailsFetched = false;
-    public signingAndSendingSuggestionResponse = false;
+    public signingAndSendingProposalResponse = false;
     public maxVotes = 0;
     public amount = 0;
 
@@ -124,7 +124,7 @@ export class VoteForProposalPage {
     }
 
     async createVoteCRProposalTransaction(voteAmount) {
-        this.signingAndSendingSuggestionResponse = true;
+        this.signingAndSendingProposalResponse = true;
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 
         let votes = {};
@@ -143,13 +143,15 @@ export class VoteForProposalPage {
         );
 
         try {
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
-            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', "Sorry, unable to vote. Your crproposal can't be vote for now. ");
+            this.signingAndSendingProposalResponse = false;
+            await this.crOperations.popupErrorMessage(e);
+            return;
         }
 
-        this.signingAndSendingSuggestionResponse = false;
+        this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
     }
 

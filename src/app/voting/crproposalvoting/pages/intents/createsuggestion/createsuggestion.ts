@@ -5,7 +5,9 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuggestionDetail } from 'src/app/voting/crproposalvoting/model/suggestion-model';
 import { SuggestionService } from 'src/app/voting/crproposalvoting/services/suggestion.service';
@@ -13,12 +15,12 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CRCommandType, CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
+import { CRCommand, CRCommandType, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
 import { ProposalService } from '../../../services/proposal.service';
 
 
-export type CreateSuggestionCommand = CRWebsiteCommand & {
+export type CreateSuggestionCommand = CRCommand & {
     data: {
         budgets: CreateSuggestionBudget[],
         categorydata: string, // This is empty string
@@ -62,9 +64,11 @@ export class CreateSuggestionPage {
         public translate: TranslateService,
         private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
         private walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
+        private globalPopupService: GlobalPopupService,
     ) {
     }
 
@@ -72,7 +76,7 @@ export class CreateSuggestionPage {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-suggestion'));
 
         this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
-        Logger.log(App.CRPROPOSAL_VOTING, "createSuggestionCommand", this.createSuggestionCommand);
+        Logger.log(App.CRSUGGESTION, "createSuggestionCommand", this.createSuggestionCommand);
         this.originalRequestJWT = this.crOperations.originalRequestJWT;
         this.suggestionId = this.createSuggestionCommand.sid;
         this.proposaltype = this.createSuggestionCommand.data.proposaltype || this.createSuggestionCommand.data.type;
@@ -98,7 +102,7 @@ export class CreateSuggestionPage {
             }
         }
 
-        Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
+        Logger.log(App.CRSUGGESTION, "suggestionDetail", this.suggestionDetail);
         if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
             this.proposaltype = "changeproposaladdress";
         }
@@ -120,11 +124,11 @@ export class CreateSuggestionPage {
 
             //Get digest
             let digest = await this.getDigest();
-            Logger.log(App.CRPROPOSAL_VOTING, "Got proposal digest.", digest);
+            Logger.log(App.CRSUGGESTION, "Got proposal digest.", digest);
 
             //Sign Suggestion Digest As JWT
             let signedJWT = await this.signSuggestionDigestAsJWT(digest);
-            Logger.log(App.CRPROPOSAL_VOTING, "signedJWT", signedJWT);
+            Logger.log(App.CRSUGGESTION, "signedJWT", signedJWT);
 
             if (!signedJWT) {
                 // Operation cancelled, cancel the operation silently.
@@ -133,13 +137,11 @@ export class CreateSuggestionPage {
             }
 
             await this.suggestionService.postSignSuggestionCommandResponse(signedJWT);
-            this.crOperations.goBack();
+            this.crOperations.handleSuccessReturn();
         }
         catch (e) {
             this.signingAndSendingSuggestionResponse = false;
-            // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.popup.alert("Error", "Sorry, unable to sign your suggestion. Your suggestion can't be created for now. " + e, "Ok");
-            void this.exitIntentWithError();
+            await this.crOperations.popupErrorMessage(e);
             return;
         }
 
@@ -148,7 +150,7 @@ export class CreateSuggestionPage {
     }
 
     private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {
-        Logger.log(App.CRPROPOSAL_VOTING, "Sending intent to sign the suggestion digest", suggestionDigest);
+        Logger.log(App.CRSUGGESTION, "Sending intent to sign the suggestion digest", suggestionDigest);
 
         let payload = {
             sid: this.createSuggestionCommand.sid,
@@ -159,7 +161,7 @@ export class CreateSuggestionPage {
             data: suggestionDigest,
             payload: payload,
         });
-        Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", result);
+        Logger.log(App.CRSUGGESTION, "Got signed digest.", result);
 
         if (!result.result || !result.responseJWT) {
             // Operation cancelled by user

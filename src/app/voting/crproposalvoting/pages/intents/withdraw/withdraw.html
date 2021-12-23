@@ -16,33 +16,33 @@
             </ion-row>
 
             <ion-row class="profile-data"
-                *ngIf="withdrawCommand.data.proposalhash">
+                *ngIf="onGoingCommand.data.proposalHash">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
-                    <h4>{{ withdrawCommand.data.proposalhash }}</h4>
+                    <h4>{{ onGoingCommand.data.proposalHash }}</h4>
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="withdrawCommand.data.amount">
+            <ion-row class="profile-data" *ngIf="onGoingCommand.data.amount">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.withdraw-amount' | translate }}</h5>
-                    <h4>{{ withdrawCommand.data.amount / Config.SELA  }}</h4>
+                    <h4>{{ onGoingCommand.data.amount / Config.SELA  }}</h4>
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="withdrawCommand.data.recipient">
+            <ion-row class="profile-data" *ngIf="onGoingCommand.data.recipient">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.recipient-address' | translate }}</h5>
-                    <h4>{{ withdrawCommand.data.recipient }}</h4>
+                    <h4>{{ onGoingCommand.data.recipient }}</h4>
                 </ion-col>
             </ion-row>
         </ion-list>
 
-        <div *ngIf="signingAndSendingSuggestionResponse">
+        <div *ngIf="signingAndSendingProposalResponse">
             <ion-spinner></ion-spinner>
         </div>
 
-        <ion-footer *ngIf="!signingAndSendingSuggestionResponse">
+        <ion-footer *ngIf="!signingAndSendingProposalResponse">
             <ion-row>
                 <ion-col class="left-col">
                     <div class="btn-container align-center" id="cancel" (click)="cancel()">

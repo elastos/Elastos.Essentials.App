@@ -18,6 +18,7 @@ export class SuggestionService {
     private subscription: Subscription = null;
     public selectedSuggestion: SuggestionSearchResult;
     public blockWaitingDict = {};
+    public currentSuggestion: SuggestionDetail = null;
 
     constructor(
         private http: HttpClient,
@@ -84,6 +85,8 @@ export class SuggestionService {
                 else {
                     detail.stageAdjust = 0;
                 }
+                detail.sid = suggestionId;
+                this.currentSuggestion = detail;
                 return detail;
             }
             else {
@@ -92,6 +95,15 @@ export class SuggestionService {
         }
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'fetchSuggestionDetail error:', err);
+        }
+    }
+
+    public async getCurrentSuggestion(suggestionId: string, refresh = false): Promise<SuggestionDetail> {
+        if (refresh || this.currentSuggestion == null || this.currentSuggestion.sid != suggestionId) {
+            return await this.fetchSuggestionDetail(suggestionId);
+        }
+        else {
+            return this.currentSuggestion;
         }
     }
 
@@ -136,6 +148,7 @@ export class SuggestionService {
         }
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'postSignSuggestionCommandResponse error', err);
+            throw new Error(err);
         }
     }
 
