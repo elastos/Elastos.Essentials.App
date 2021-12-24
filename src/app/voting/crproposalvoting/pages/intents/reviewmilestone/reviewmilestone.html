@@ -29,10 +29,10 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="trackingType">
+            <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'scan'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
-                    <h4>{{ 'crproposalvoting.' + trackingType | translate }}</h4>
+                    <h4>{{ 'crproposalvoting.' + voteResult | translate }}</h4>
                 </ion-col>
             </ion-row>
 

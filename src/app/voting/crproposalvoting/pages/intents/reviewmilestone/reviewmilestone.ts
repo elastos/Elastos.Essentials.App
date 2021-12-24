@@ -84,7 +84,7 @@ export class ReviewMilestonePage {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
         this.onGoingCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
         Logger.log(App.CRPROPOSAL_VOTING, "onGoingCommand", this.onGoingCommand);
-        this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "common";
+        this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "progress";
         // this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
         try {

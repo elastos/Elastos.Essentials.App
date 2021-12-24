@@ -22,8 +22,6 @@ declare let didManager: DIDPlugin.DIDManager;
 export enum CRCommandType {
     SuggestionDetailPage = "suggestion-detail-page",
     ProposalDetailPage = "proposal-detail-page",
-    SuggestionListScan = "suggestion-list-scan",
-    ProposalListScan = "proposal-list-scan",
     Scan = "scan",
 }
 
