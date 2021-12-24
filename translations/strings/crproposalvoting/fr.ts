@@ -78,6 +78,7 @@ export const fr = {
         'proposaltype-changeproposaladdress': 'Change Proposal Address',
         'proposaltype-closeproposal': 'Terminate Proposal',
         'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
+        'proposaltype-reservecustomizedid': 'Motion to reserve Customized DID',
         'imprest': 'Imprest',
         'normalpayment': 'NormalPayment',
         'finalpayment': 'FinalPayment',

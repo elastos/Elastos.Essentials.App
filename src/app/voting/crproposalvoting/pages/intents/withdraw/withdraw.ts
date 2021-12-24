@@ -4,10 +4,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
@@ -16,7 +13,6 @@ import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCommand, CRCommandType, CROperationsService } from '../../../services/croperations.service';
-import { PopupService } from '../../../services/popup.service';
 
 type onGoingCommand = CRCommand & {
     data: {
@@ -43,16 +39,12 @@ export class WithdrawPage {
 
     constructor(
         private crOperations: CROperationsService,
-        private popup: PopupService,
         public translate: TranslateService,
-        private globalIntentService: GlobalIntentService,
         private walletManager: WalletService,
         private voteService: VoteService,
         private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
-        private globalNative: GlobalNativeService,
-        private globalPopupService: GlobalPopupService,
     ) {
 
     }

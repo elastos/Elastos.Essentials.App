@@ -79,6 +79,7 @@ export const zh = {
         'proposaltype-changeproposaladdress': '改变接收地址',
         'proposaltype-closeproposal': '关闭提议',
         'proposaltype-secretarygeneral': '新的CR委员秘书长',
+        'proposaltype-reservecustomizedid': '预留自定义DID动议',
         'imprest': '首付款/预付款',
         'normalpayment': '阶段款',
         'finalpayment': '结项款/尾款',

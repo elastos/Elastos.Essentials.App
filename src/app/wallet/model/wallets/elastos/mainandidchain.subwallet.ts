@@ -414,6 +414,20 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         );
     }
 
+    public async createReserveCustomIDTransaction(payload: string, memo = ""): Promise<string> {
+        let utxo = await this.getAvailableUtxo(20000);
+        if (!utxo) return;
+
+        return this.masterWallet.walletManager.spvBridge.createReserveCustomIDTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            payload,
+            '10000',
+            memo
+        );
+    }
+
     //
     //dpos registration transaction functions
     //

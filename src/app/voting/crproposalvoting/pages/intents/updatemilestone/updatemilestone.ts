@@ -5,10 +5,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -16,7 +14,6 @@ import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCommand, CRCommandType, CROperationsService } from '../../../services/croperations.service';
 import { DraftService } from '../../../services/draft.service';
-import { PopupService } from '../../../services/popup.service';
 import { ProposalService } from '../../../services/proposal.service';
 
 type UpdateMilestoneCommand = CRCommand & {
@@ -51,9 +48,7 @@ export class UpdatMilestonePage {
     constructor(
         private proposalService: ProposalService,
         private crOperations: CROperationsService,
-        private popup: PopupService,
         public translate: TranslateService,
-        private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService,
         private walletManager: WalletService,
         private voteService: VoteService,
@@ -61,7 +56,6 @@ export class UpdatMilestonePage {
         private globalNative: GlobalNativeService,
         public zone: NgZone,
         public keyboard: Keyboard,
-        private globalPopupService: GlobalPopupService,
         private draftService: DraftService,
     ) {
 
