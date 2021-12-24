@@ -184,13 +184,13 @@ export class CROperationsService {
 
         data.categorydata = data.categorydata || "";
         data.ownerpublickey = data.ownerpublickey || data.ownerPublicKey,
-        data.drafthash = data.drafthash || data.draftHash;
         data.proposalHash = data.proposalhash || data.proposalHash;
 
         switch (crCommand.command) {
             case "createsuggestion":
             case "createproposal":
-                data.draftData = await this.getDraftData(data.drafthash);
+                data.draftHash = data.drafthash || data.draftHash;
+                data.draftData = await this.getDraftData(data.draftHash);
                 break;
             case "reviewproposal":
                 if (crCommand.type == CRCommandType.Scan) {
@@ -211,6 +211,7 @@ export class CROperationsService {
                     let ret = await this.getMessageData(data.messageHash);
                     if (ret != null) {
                         data.messageData = ret.content;
+                        data.ownerPublicKey = ret.ownerPublicKey;
                         data.ownerSignature = ret.ownerSignature;
                     }
                 break;

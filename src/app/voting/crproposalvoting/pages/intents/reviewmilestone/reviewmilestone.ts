@@ -5,10 +5,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
@@ -17,7 +15,6 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DraftService } from '../../../services/draft.service';
-import { PopupService } from '../../../services/popup.service';
 
 type ReviewMilestoneCommand = CRCommand & {
     data: {
@@ -53,9 +50,7 @@ export class ReviewMilestonePage {
 
     constructor(
         private crOperations: CROperationsService,
-        private popup: PopupService,
         public translate: TranslateService,
-        private globalIntentService: GlobalIntentService,
         public walletManager: WalletService,
         private voteService: VoteService,
         private proposalService: ProposalService,
@@ -64,7 +59,6 @@ export class ReviewMilestonePage {
         private globalNative: GlobalNativeService,
         public zone: NgZone,
         public keyboard: Keyboard,
-        private globalPopupService: GlobalPopupService,
         private draftService: DraftService,
     ) {
 
@@ -79,14 +73,12 @@ export class ReviewMilestonePage {
             this.zone.run(() => {
                 this.isKeyboardHide = false;
             });
-            // console.log('SHOWK');
         });
 
         this.keyboard.onKeyboardWillHide().subscribe(() => {
             this.zone.run(() => {
                 this.isKeyboardHide = true;
             });
-            // console.log('HIDEK');
         });
 
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
@@ -179,9 +171,8 @@ export class ReviewMilestonePage {
             MessageHash: command.data.messageHash,
             MessageData: command.data.messageData,
             Stage: command.data.stage,
-            OwnerPublicKey: command.data.ownerpubkey,
+            OwnerPublicKey: command.data.ownerPublicKey,
             OwnerSignature: command.data.ownerSignature,
-            // OwnerSignature: "f5df8e6d725715af38087ced2d8a537f27632f1fee1e2509022ce9a5cbeb4e7ab3ee708c6af602e6785eb2a2016d7c0a4ff6c6192e42593841e145c717555492",
             NewOwnerPublicKey: "",
             NewOwnerSignature: "",
             SecretaryGeneralOpinionHash: command.data.secretaryopinionhash,
