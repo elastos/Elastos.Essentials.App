@@ -140,6 +140,12 @@ export class SuggestionDetailPage {
                 active: true
             },
             {
+                title: this.translate.instant('crproposalvoting.type'),
+                type: 'type',
+                value: this.suggestion.type,
+                active: true
+            },
+            {
                 title: this.translate.instant('crproposalvoting.abstract'),
                 type: 'marked',
                 value: this.suggestion.abstract ? marked(this.suggestion.abstract) : null,
