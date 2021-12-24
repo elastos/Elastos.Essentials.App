@@ -63,17 +63,17 @@ export class SuggestionListPage implements OnInit {
     }
 
     async init() {
-        //Don't refreash the list.
-        if (this.suggestionsFetched) {
-            return;
-        }
-
         this.titleBar.setTitle(this.translate.instant('launcher.app-cr-suggestion'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             void this.globalNav.navigateTo("scanner", '/scanner/scan');
         });
-        this.suggestionsFetched = false;
+
+        //Don't refreash the list.
+        if (this.suggestionsFetched) {
+            return;
+        }
+
         this.suggestionService.reset();
         await this.fetchSuggestions();
     }
