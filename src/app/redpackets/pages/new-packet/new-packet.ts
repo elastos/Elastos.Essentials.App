@@ -30,7 +30,7 @@ export class NewPacketPage {
   // Packet info
   public tokenSubwallet: AnySubWallet; // Subwallet of the token chosen by user for the red packet. By default, use the main EVM subwallet
   public packets: number = 19; // Number of red packets available
-  public tokenAmount: string = "12"; // Number of token (native or ERC20) to spend, totally
+  public tokenAmount: string = "0.01"; // Number of token (native or ERC20) to spend, totally
   public type: PacketType = PacketType.STANDARD; // Red packet type - TODO
   public distributionType: PacketDistributionType = PacketDistributionType.RANDOM; // Fixed amount for all packets, or random amounts?
   public category = "default"; // Red packet theme: christmas, chinese new year, etc
@@ -120,9 +120,13 @@ export class NewPacketPage {
   }
 
   /** Submit packet form **/
-  public createPacket() {
+  public async createPacket() {
     if (!this.validateInputs())
       return;
+
+    let targetSubWallet = this.tokenSubwallet || this.walletService.getActiveNetworkWallet().getMainEvmSubWallet();
+
+    let creatorAddress = await targetSubWallet.createAddress();
 
     let packet: Packet = {
       quantity: this.packets,
@@ -132,11 +136,15 @@ export class NewPacketPage {
       message: this.message,
       packetType: this.type,
       tokenType: this.tokenSubwallet instanceof ERC20SubWallet ? TokenType.ERC20_TOKEN : TokenType.NATIVE_TOKEN,
+      creatorAddress,
       creatorDID: this.didSessions.getSignedInIdentity().didString,
       expirationDate: moment().add(this.expirationDays, "days").unix()
     };
 
-    let targetSubWallet = this.tokenSubwallet || this.walletService.getActiveNetworkWallet().getMainEvmSubWallet();
+    if (this.tokenSubwallet instanceof ERC20SubWallet) {
+      packet.erc20ContractAddress = this.tokenSubwallet.coin.getContractAddress();
+    }
+
     this.packetService.preparePacket(packet, targetSubWallet);
 
     void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay");
@@ -167,7 +175,7 @@ export class NewPacketPage {
       if (params.data && params.data.selectedSubwallet) {
         if (this.tokenSubwallet && this.tokenSubwallet.id !== params.data.selectedSubwallet.id) {
           // The token is a different one, reset the amount to avoid mistakes
-          this.tokenAmount = "";
+          this.tokenAmount = "0.01";
         }
 
         this.tokenSubwallet = params.data.selectedSubwallet;
@@ -198,7 +206,7 @@ export class NewPacketPage {
     // Reset values that don't make sense any more after swtiching a network (need to be re-entered by user)
     this.tokenSubwallet = this.walletService.activeNetworkWallet.value.getMainEvmSubWallet();
     this.unsupportedNetwork = !this.tokenSubwallet;
-    this.tokenAmount = "123";
-    this.packets = 213;
+    this.tokenAmount = "0.01";
+    this.packets = 30;
   }
 }

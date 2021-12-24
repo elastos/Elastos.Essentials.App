@@ -48,24 +48,24 @@ export type SerializablePacketCosts = {
   }
 }
 
-export const serializeCosts = (costs: PacketCosts): SerializablePacketCosts => {
+export const deserializeCosts = (costs: SerializablePacketCosts): PacketCosts => {
   return {
     erc20Token: costs.erc20Token ? {
-      redPacket: costs.erc20Token.redPacket.toString(),
+      redPacket: new BigNumber(costs.erc20Token.redPacket),
       options: {
-        publicPacketFees: costs.erc20Token.options.publicPacketFees.toString()
+        publicPacketFees: new BigNumber(costs.erc20Token.options.publicPacketFees)
       },
-      total: costs.erc20Token.total.toString()
+      total: new BigNumber(costs.erc20Token.total)
     } : undefined,
     nativeToken: {
-      redPacket: costs.nativeToken.redPacket.toString(),
-      transactionFees: costs.nativeToken.transactionFees.toString(),
-      standardServiceFeesUSD: costs.nativeToken.standardServiceFeesUSD.toString(),
-      standardServiceFees: costs.nativeToken.standardServiceFees.toString(),
+      redPacket: new BigNumber(costs.nativeToken.redPacket),
+      transactionFees: new BigNumber(costs.nativeToken.transactionFees),
+      standardServiceFeesUSD: new BigNumber(costs.nativeToken.standardServiceFeesUSD),
+      standardServiceFees: new BigNumber(costs.nativeToken.standardServiceFees),
       options: {
-        publicPacketFees: costs.nativeToken.options.publicPacketFees.toString()
+        publicPacketFees: new BigNumber(costs.nativeToken.options.publicPacketFees)
       },
-      total: costs.nativeToken.total.toString()
+      total: new BigNumber(costs.nativeToken.total)
     }
   }
 }

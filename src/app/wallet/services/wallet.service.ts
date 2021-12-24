@@ -33,6 +33,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { Network } from '../model/networks/network';
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
 import { WalletAccount, WalletAccountType } from '../model/walletaccount';
+import { StandardEVMSubWallet } from '../model/wallets/evm.subwallet';
 import { MasterWallet, WalletID } from '../model/wallets/masterwallet';
 import { NetworkWallet } from '../model/wallets/networkwallet';
 import { AuthService } from './auth.service';
@@ -366,6 +367,22 @@ export class WalletService {
      */
     public getNetworkWalletsList(): NetworkWallet[] {
         return Object.values(this.networkWallets);
+    }
+
+    /**
+     * Tries to find the standard "main" EVM subwallet that has the given address in the list of
+     * all subwallets for the active network
+     */
+    public async findStandardEVMSubWalletByAddress(address: string): Promise<StandardEVMSubWallet> {
+        for (let networkWallet of this.getNetworkWalletsList()) {
+            let mainEVMSubWallet = networkWallet.getMainEvmSubWallet();
+            if (mainEVMSubWallet) {
+                let walletAddress = await mainEVMSubWallet.createAddress();
+                if (walletAddress === address)
+                    return mainEVMSubWallet;
+            }
+        }
+        return null;
     }
 
     private goToLauncherScreen() {

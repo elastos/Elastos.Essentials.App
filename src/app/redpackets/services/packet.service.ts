@@ -3,14 +3,11 @@ import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { Platform, ToastController } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
+import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
-import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
-import { PacketCosts } from '../model/packetcosts.model';
-import { Packet } from '../model/packets.model';
-
-//const packetApi = 'https://redpacket.elastos.org/api/v1/packet/';
-const packetApi = 'https://192.168.1.4:5080/api/v1';
+import { deserializeCosts, PacketCosts, SerializablePacketCosts } from '../model/packetcosts.model';
+import { CreatedPacket, Packet } from '../model/packets.model';
 
 @Injectable({
   providedIn: 'root'
@@ -82,7 +79,7 @@ export class PacketService {
    *
    * - standardServiceFees: 0.5 USD worth of native coin
    */
-  public async computeCosts(): Promise<PacketCosts> {
+  /* public async computeCosts(): Promise<PacketCosts> {
     let costs: PacketCosts = {
       nativeToken: {
         redPacket: new BigNumber(0),
@@ -144,7 +141,7 @@ export class PacketService {
     //console.log("total", costs.nativeToken.total.toString())
 
     return costs;
-  }
+  } */
 
   /**
    * Estimates the cost to transfer a red packet ERC20 amount to a winning user.
@@ -162,38 +159,46 @@ export class PacketService {
     return await new BigNumber(0.002);
   }
 
-  createPacket(packet: Packet): Promise<boolean> {
+  createPacket(packet: Packet): Promise<CreatedPacket<PacketCosts>> {
     Logger.log('redpackets', 'Creating packet on backend', packet);
 
     return new Promise((resolve, reject) => {
       // Create a new packet
-      this.http.post<any>(`${packetApi}/packets`, packet).subscribe((res) => {
-        console.log(res);
-        resolve(false);
-
-        /* let props: NavigationExtras = {
-          queryParams: {
-            hash: res.result.packet_hash,
-            payAddress: res.result.pay_address,
-            packetType: packetType,
-            ela: packet.value,
-            packets: packet.quantity
-          }
+      this.http.post<CreatedPacket<SerializablePacketCosts>>(`${GlobalConfig.RedPackets.serviceUrl}/packets`, packet).subscribe(createdPacket => {
+        console.log("createdPacket", createdPacket);
+        if (createdPacket) {
+          resolve({
+            request: createdPacket.request,
+            hash: createdPacket.hash,
+            paymentAddress: createdPacket.paymentAddress,
+            costs: deserializeCosts(createdPacket.costs)
+          });
         }
-        void this.router.navigate(['/packet-created'], props) */
+        else {
+          resolve(null);
+        }
       }, (err) => {
-        console.log(err);
-        //void this.formErr();
-        resolve(false);
+        Logger.error("redpackets", "Failed to create packet with the backend:", err);
+        resolve(null);
       });
     });
+  }
+
+  public async requestToCheckPayment(packetHash: string): Promise<void> {
+    try {
+      let response = await this.http.post(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/checkpayments`, {}).toPromise();
+      console.log("check payment response", response);
+    }
+    catch (err) {
+      Logger.error("redpackets", "Check payment request failure", err);
+    }
   }
 
   peakPacket(hash: string): Promise<any> {
     console.log('Checking packet', hash);
     return new Promise((resolve, reject) => {
       this.http.get<any>(
-        packetApi + 'peek/' +
+        GlobalConfig.RedPackets.serviceUrl + 'peek/' +
         `${'?packet_hash=' + hash + '&show_receivers=true'}`
       ).subscribe((res) => {
         console.log(res);
@@ -209,7 +214,7 @@ export class PacketService {
     console.log('Grabbing packet', hash, address, name);
     return new Promise((resolve, reject) => {
       this.http.get<any>(
-        packetApi + 'grab/' +
+        GlobalConfig.RedPackets.serviceUrl + 'grab/' +
         `${'?packet_hash=' + hash + '&address=' + address + '&name=' + name}`
       ).subscribe((res) => {
         console.log(res);

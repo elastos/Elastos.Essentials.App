@@ -7,7 +7,7 @@
   </ion-grid>
 
   <!-- Payment info -->
-  <ion-grid class="container ion-text-center ion-padding" *ngIf="costs && !creatingPacket">
+  <ion-grid class="container ion-text-center ion-padding" *ngIf="createdPacket && !creatingPacket">
     <!-- Intro -->
     <p>
       You are about to finalize your red packet. Please confirm sending the following tokens to the red packet service.
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="erc20summary" *ngIf="costs.erc20Token">
+    <div class="erc20summary" *ngIf="createdPacket.costs.erc20Token">
       <h4>{{getERC20TokenSymbol()}}</h4>
       <ion-row>
         <ion-col size="6" class="header">Red packet</ion-col>

@@ -1,4 +1,6 @@
 import BigNumber from "bignumber.js";
+import { PacketCosts, SerializablePacketCosts } from "./packetcosts.model";
+import { PaymentStatus } from "./payments.model";
 
 export enum PacketType {
   STANDARD = "standard",
@@ -25,15 +27,20 @@ export class Packet {
   public quantity: number; // Mandatory - number of red packets
   public chainId?: number; // Chain ID (for EVM network - the only kind of network supported now)
   public tokenType: TokenType; // Native or ERC20 token in packets?
-  public erc20ContractAddress?: number; // Address of the ERC20 token, if the red packet contains ERC20 tokens on an EVM chain
+  public erc20ContractAddress?: string; // Address of the ERC20 token, if the red packet contains ERC20 tokens on an EVM chain
   public value: BigNumber; // Number of tokens to spend (native, or ERC20) - human readable
   public distributionType: PacketDistributionType;
   public message: string;
   public category?: string; // Optional red packet theme. Christmas, etc. "default" by default, meaning no special theme
   public visibility?: PacketVisibility; // Optional visibility. Link only by default
   public probability?: number; // 0-100 probability to win a red packet.
+  public creatorAddress: string; // Creator's wallet address (EVM 0x address)
   public creatorDID: string; // Creator's DID string
   public expirationDate: number; // Unix timestamp at which the red packet will expire
+
+  // Payments
+  paymentAddress?: string; // EVM address of this service, where payments have to be sent
+  paymentStatus?: PaymentStatus;
 }
 
 // TODO: delete
@@ -53,3 +60,12 @@ export class PacketDetail {
   ) { }
 }
 
+/**
+ * Packet info returned by the api after a packet creation
+ */
+export type CreatedPacket<T extends PacketCosts | SerializablePacketCosts> = {
+  request: Packet; // Original request - not used for now
+  hash: string; // Unique packet hash just created
+  paymentAddress: string; // EVM address of this service, where payments have to be sent
+  costs: T; // Costs associated to this packet creation, for the creator
+}

@@ -53,39 +53,39 @@ class ETHTransactionManager {
       if (!result.published) {
         // The previous transaction needs to be accelerated.
         if (this.needToSpeedup(result)) {
-            if (result.txid) {
-                if (showBlockingLoader) {
-                    await this.displayPublicationLoader();
-                }
+          if (result.txid) {
+            if (showBlockingLoader) {
+              await this.displayPublicationLoader();
+            }
 
-                let tx = await subwallet.getTransactionDetails(result.txid);
-                let defaultGasprice = await subwallet.getGasPrice();
-                let status: ETHTransactionStatusInfo = {
-                chainId: subwallet.id,
-                gasPrice: defaultGasprice,
-                gasLimit: this.defaultGasLimit,
-                status: ETHTransactionStatus.UNPACKED,
-                txId: null,
-                nonce: parseInt(tx.nonce),
-                }
-                void this.emitEthTransactionStatusChange(status);
+            let tx = await subwallet.getTransactionDetails(result.txid);
+            let defaultGasprice = await subwallet.getGasPrice();
+            let status: ETHTransactionStatusInfo = {
+              chainId: subwallet.id,
+              gasPrice: defaultGasprice,
+              gasLimit: this.defaultGasLimit,
+              status: ETHTransactionStatus.UNPACKED,
+              txId: null,
+              nonce: parseInt(tx.nonce),
             }
+            void this.emitEthTransactionStatusChange(status);
+          }
         } else {
-            // 'nonce too low': The transaction already published.
-            if (result.message.includes('nonce too low')) {
-                let status: ETHTransactionStatusInfo = {
-                    chainId: subwallet.id,
-                    gasPrice: null,
-                    gasLimit: null,
-                    status: ETHTransactionStatus.PACKED,
-                    txId: null,
-                    nonce: -1
-                  }
-                  this.emitEthTransactionStatusChange(status);
+          // 'nonce too low': The transaction already published.
+          if (result.message.includes('nonce too low')) {
+            let status: ETHTransactionStatusInfo = {
+              chainId: subwallet.id,
+              gasPrice: null,
+              gasLimit: null,
+              status: ETHTransactionStatus.PACKED,
+              txId: null,
+              nonce: -1
             }
-            else {
-                await subwallet.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
-            }
+            this.emitEthTransactionStatusChange(status);
+          }
+          else {
+            await subwallet.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
+          }
         }
         return;
       }
@@ -135,10 +135,10 @@ class ETHTransactionManager {
 
   private async CheckPublishing(result: RawTransactionPublishResult) {
     if (result.message) {
-        if (result.message.includes('insufficient funds for gas * price + value')) {
-            await this.modalCtrl.dismiss();
-            return false;
-        }
+      if (result.message.includes('insufficient funds for gas * price + value')) {
+        await this.modalCtrl.dismiss();
+        return false;
+      }
     }
 
     return true;
