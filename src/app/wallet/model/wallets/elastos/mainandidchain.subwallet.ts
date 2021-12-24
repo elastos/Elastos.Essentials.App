@@ -712,7 +712,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
      *
      * @param amountSELA SELA
      */
-    protected async getAvailableUtxo(amountSELA: number) {
+    public async getAvailableUtxo(amountSELA: number) {
         let utxoArray: Utxo[] = null;
         if (this.id === StandardCoinName.ELA) {
             await this.getVotingUtxoByRPC();

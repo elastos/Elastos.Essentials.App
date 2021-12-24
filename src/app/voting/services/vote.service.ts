@@ -149,6 +149,13 @@ export class VoteService {
         return result;
     }
 
+    public async checkWalletAvailableForVote():  Promise<boolean> {
+        let utxo = await this.sourceSubwallet.getAvailableUtxo(20000);
+        if (!utxo) return false;
+
+        return true;
+    }
+
     async getCRMembers() {
         Logger.log(App.VOTING, 'Get CRMembers..');
 

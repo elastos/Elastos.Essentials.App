@@ -156,6 +156,10 @@ export class CreateProposalPage {
     }
 
     async signAndCreateProposal() {
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         this.signingAndSendingProposalResponse = true;
 
         try {

@@ -323,12 +323,18 @@ export class CROperationsService {
 
     public async signAndSendRawTransaction(rawTx: any) {
         Logger.log(App.CRPROPOSAL_VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
+
+        if (!rawTx) {
+            throw new Error("rawTx is null");
+        }
+
         const result = await this.voteService.signAndSendRawTransaction(rawTx);
         if (result.published) {
             this.handleSuccessReturn();
         }
         else {
-            throw new Error(result.message);
+            // throw new Error(result.message); // sourceSubwallet.signAndSendRawTransaction have handle error.
+            throw new Error("");
         }
     }
 
@@ -338,6 +344,10 @@ export class CROperationsService {
     }
 
     public async popupErrorMessage(error: any) {
+        if (!error) {
+            return;
+        }
+
         var message = "";
         if (error instanceof String) {
             message = error as string;
@@ -345,6 +355,11 @@ export class CROperationsService {
         else if ((error instanceof Object) && error.message) {
             message = error.message;
         }
+
+        if (message == "") {
+            return;
+        }
+
         await this.globalPopupService.ionicAlert("common.error", this.translate.instant('crproposalvoting.' + this.onGoingCommand.command + '-failed') + "[" + message + "]");
         Logger.error('crproposal', this.onGoingCommand.command + ' error:', message);
     }

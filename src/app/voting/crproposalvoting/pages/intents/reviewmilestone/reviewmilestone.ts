@@ -104,6 +104,10 @@ export class ReviewMilestonePage {
     }
 
     async signAndReviewMilestone() {
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
             //Check content value
             if (!this.content || this.content == "") {

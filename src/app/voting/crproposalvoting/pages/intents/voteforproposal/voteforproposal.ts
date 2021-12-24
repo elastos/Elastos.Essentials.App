@@ -124,6 +124,10 @@ export class VoteForProposalPage {
     }
 
     async createVoteCRProposalTransaction(voteAmount) {
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         this.signingAndSendingProposalResponse = true;
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 

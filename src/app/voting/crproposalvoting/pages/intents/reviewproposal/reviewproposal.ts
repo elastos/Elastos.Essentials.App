@@ -107,6 +107,10 @@ export class ReviewProposalPage {
     }
 
     async signAndReviewProposal() {
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
             //Check opinion value
             if (!this.content || this.content == "") {

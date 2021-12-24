@@ -72,6 +72,10 @@ export class WithdrawPage {
     }
 
     async signAndWithdraw() {
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         this.signingAndSendingProposalResponse = true;
 
         try {
