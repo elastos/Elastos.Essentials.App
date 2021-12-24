@@ -239,22 +239,28 @@ export class ProposalDetailPage {
                 active: true
             },
             {
+                title: this.translate.instant('crproposalvoting.type'),
+                type: 'type',
+                value: this.proposal.type,
+                active: true
+            },
+            {
                 title: this.translate.instant('crproposalvoting.abstract'),
                 type: 'marked',
                 value: this.proposal.abstract ? marked(this.proposal.abstract) : null,
-                active: false
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.motivation'),
                 type: 'marked',
                 value: this.proposal.motivation ? marked(this.proposal.motivation) : null,
-                active: false
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.goal'),
                 type: 'marked',
                 value: this.proposal.goal ? marked(this.proposal.goal) : null,
-                active: false
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.milestone'),
@@ -266,37 +272,37 @@ export class ProposalDetailPage {
                 title: this.translate.instant('crproposalvoting.proposal-hash'),
                 type: 'hash',
                 value: this.proposal.proposalHash,
-                active: false
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.implementation-team'),
                 type: 'implementationTeam',
                 value: this.proposal.implementationTeam,
-                active: false
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.plan-statement'),
                 type: 'marked',
                 value: this.proposal.planStatement ? marked(this.proposal.planStatement) : null,
-                active: false
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.budgets'),
                 type: 'budgets',
                 value: this.proposal.budgets,
-                active: false
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.budget-statement'),
                 type: 'marked',
                 value: this.proposal.budgetStatement ? marked(this.proposal.budgetStatement) : null,
-                active: false
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.url'),
                 type: 'original-url',
                 value: this.proposal.originalURL,
-                active: false
+                active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.receive-address'),
