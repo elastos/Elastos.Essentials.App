@@ -13,8 +13,8 @@ import { CROperationsService } from '../../services/croperations.service';
 export class MileStoneOptionsComponent implements OnInit {
 
     command: string;
-    stage: number;
     withdrawAmout: number;
+    lastTracking: any;
 
     constructor(
         public theme: GlobalThemeService,
@@ -27,7 +27,6 @@ export class MileStoneOptionsComponent implements OnInit {
         let lastTracking = this.navParams.get('lastTracking');
         Logger.log("MileStoneOptionsComponent", 'Input:', lastTracking);
         this.command = lastTracking.command;
-        this.stage = lastTracking.stage;
         this.withdrawAmout = this.navParams.get('withdrawAmout');;
     }
 
@@ -36,8 +35,12 @@ export class MileStoneOptionsComponent implements OnInit {
         if (commandName == "withdraw") {
             this.crOperations.handleProposalDetailPageCommand(commandName, {amount: this.withdrawAmout});
         }
-        else {
-            this.crOperations.handleProposalDetailPageCommand(commandName, {stage: this.stage});
+        else if (commandName == "updatemilestone") {
+            this.crOperations.handleProposalDetailPageCommand(commandName, {stage: this.lastTracking.stage});
+        }
+        else if (commandName == "reviewmilestone") {
+            this.crOperations.handleProposalDetailPageCommand(commandName,
+                    {stage: this.lastTracking.stage, messageHash: this.lastTracking.apply.messageHash});
         }
 
     }

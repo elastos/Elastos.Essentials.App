@@ -93,7 +93,7 @@ export class ReviewMilestonePage {
         this.onGoingCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
         Logger.log(App.CRPROPOSAL_VOTING, "onGoingCommand", this.onGoingCommand);
         this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "common";
-        this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+        // this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
         try {
             // Fetch more details about this proposal, to display to the user
@@ -180,7 +180,7 @@ export class ReviewMilestonePage {
             MessageData: command.data.messageData,
             Stage: command.data.stage,
             OwnerPublicKey: command.data.ownerpubkey,
-            OwnerSignature: command.data.ownersignature,
+            OwnerSignature: command.data.ownerSignature,
             // OwnerSignature: "f5df8e6d725715af38087ced2d8a537f27632f1fee1e2509022ce9a5cbeb4e7ab3ee708c6af602e6785eb2a2016d7c0a4ff6c6192e42593841e145c717555492",
             NewOwnerPublicKey: "",
             NewOwnerSignature: "",

@@ -49,7 +49,7 @@ export class CreateSuggestionPage {
     private suggestionId: string;
     public suggestionDetailFetched = false;
     public suggestionDetail: SuggestionDetail;
-    private createSuggestionCommand: CreateSuggestionCommand;
+    private onGoingCommand: CreateSuggestionCommand;
     public signingAndSendingSuggestionResponse = false;
     public creationDate: string = "";
     public bugetAmount: number = 0;
@@ -75,22 +75,22 @@ export class CreateSuggestionPage {
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-suggestion'));
 
-        this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
-        Logger.log(App.CRSUGGESTION, "createSuggestionCommand", this.createSuggestionCommand);
+        this.onGoingCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
+        Logger.log(App.CRSUGGESTION, "onGoingCommand", this.onGoingCommand);
         this.originalRequestJWT = this.crOperations.originalRequestJWT;
-        this.suggestionId = this.createSuggestionCommand.sid;
-        this.proposaltype = this.createSuggestionCommand.data.proposaltype || this.createSuggestionCommand.data.type;
+        this.suggestionId = this.onGoingCommand.sid;
+        this.proposaltype = this.onGoingCommand.data.proposaltype || this.onGoingCommand.data.type;
 
         this.bugetAmount = 0;
         if (this.proposaltype == "normal") {
-            for (let suggestionBudget of this.createSuggestionCommand.data.budgets) {
+            for (let suggestionBudget of this.onGoingCommand.data.budgets) {
                 suggestionBudget.type = suggestionBudget.type.toLowerCase();
                 this.bugetAmount += parseInt(suggestionBudget.amount);
             }
         }
 
-        if (this.createSuggestionCommand.type == CRCommandType.SuggestionDetailPage) {
-            this.suggestionDetail = this.createSuggestionCommand.data;
+        if (this.onGoingCommand.type == CRCommandType.SuggestionDetailPage) {
+            this.suggestionDetail = this.onGoingCommand.data;
         }
         else {
             try {
@@ -153,7 +153,7 @@ export class CreateSuggestionPage {
         Logger.log(App.CRSUGGESTION, "Sending intent to sign the suggestion digest", suggestionDigest);
 
         let payload = {
-            sid: this.createSuggestionCommand.sid,
+            sid: this.onGoingCommand.sid,
             command: "createsuggestion",
         }
 
@@ -172,7 +172,7 @@ export class CreateSuggestionPage {
     }
 
     private async getNormalDigest(): Promise<any> {
-        let data = this.createSuggestionCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             Type: 0,
             CategoryData: data.categorydata || "",
@@ -205,7 +205,7 @@ export class CreateSuggestionPage {
     }
 
     private async getChangeOwnerDigest(): Promise<any> {
-        let data = this.createSuggestionCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
             OwnerPublicKey: data.ownerpublickey,
@@ -222,7 +222,7 @@ export class CreateSuggestionPage {
     }
 
     private async getTerminateDigest(): Promise<any> {
-        let data = this.createSuggestionCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
             OwnerPublicKey: data.ownerpublickey,
@@ -237,7 +237,23 @@ export class CreateSuggestionPage {
     }
 
     private async getSecretaryGeneralDigest(): Promise<any> {
-        let data = this.createSuggestionCommand.data;
+        let data = this.onGoingCommand.data;
+        let payload = {
+            CategoryData: data.categorydata,
+            OwnerPublicKey: data.ownerpublickey,
+            DraftHash: data.drafthash,
+            // DraftData: "",
+            SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
+            SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
+        };
+
+        Logger.log('crsuggestion', "getSecretaryGeneralDigest.", payload);
+        let digest = await this.walletManager.spvBridge.proposalSecretaryGeneralElectionDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+        return Util.reverseHexToBE(digest);
+    }
+
+    private async getReserveCustomizeDidDigest(): Promise<any> {
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
             OwnerPublicKey: data.ownerpublickey,
@@ -262,6 +278,8 @@ export class CreateSuggestionPage {
                 return this.getTerminateDigest();
             case "secretarygeneral":
                 return this.getSecretaryGeneralDigest();
+            case "reservecustomizedid":
+                return this.getReserveCustomizeDidDigest();
         }
     }
 

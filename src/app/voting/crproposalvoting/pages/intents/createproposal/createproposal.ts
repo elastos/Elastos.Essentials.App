@@ -52,7 +52,7 @@ export class CreateProposalPage {
     private suggestionId: string;
     public suggestionDetailFetched = false;
     public suggestionDetail: SuggestionDetail;
-    private createProposalCommand: CreateProposalCommand;
+    private onGoingCommand: CreateProposalCommand;
     public signingAndSendingProposalResponse = false;
     public creationDate = "";
     public bugetAmount = 0;
@@ -78,20 +78,20 @@ export class CreateProposalPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-proposal'));
-        this.createProposalCommand = this.crOperations.onGoingCommand as CreateProposalCommand;
-        this.suggestionId = this.createProposalCommand.sid;
-        this.proposaltype = this.createProposalCommand.data.type || this.createProposalCommand.data.proposaltype;
+        this.onGoingCommand = this.crOperations.onGoingCommand as CreateProposalCommand;
+        this.suggestionId = this.onGoingCommand.sid;
+        this.proposaltype = this.onGoingCommand.data.type || this.onGoingCommand.data.proposaltype;
 
         this.bugetAmount = 0;
         if (this.proposaltype == "normal") {
-            for (let suggestionBudget of this.createProposalCommand.data.budgets) {
+            for (let suggestionBudget of this.onGoingCommand.data.budgets) {
                 suggestionBudget.type = suggestionBudget.type.toLowerCase();
                 this.bugetAmount += parseInt(suggestionBudget.amount);
             }
         }
 
-        if (this.createProposalCommand.type == CRCommandType.SuggestionDetailPage) {
-            this.suggestionDetail = this.createProposalCommand.data;
+        if (this.onGoingCommand.type == CRCommandType.SuggestionDetailPage) {
+            this.suggestionDetail = this.onGoingCommand.data;
         }
         else {
             try {
@@ -196,7 +196,7 @@ export class CreateProposalPage {
     }
 
     private getNormalPayload(): any {
-        let data = this.createProposalCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             Type: 0,
             CategoryData: data.categorydata || "",
@@ -229,7 +229,7 @@ export class CreateProposalPage {
     }
 
     private getChangeOwnerPayload(): any {
-        let data = this.createProposalCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
             OwnerPublicKey: data.ownerpublickey,
@@ -246,7 +246,7 @@ export class CreateProposalPage {
     }
 
     private getTerminatePayload(): any {
-        let data = this.createProposalCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
             OwnerPublicKey: data.ownerpublickey,
@@ -260,7 +260,7 @@ export class CreateProposalPage {
     }
 
     private getSecretaryGeneralPayload(): any {
-        let data = this.createProposalCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
             OwnerPublicKey: data.ownerpublickey,

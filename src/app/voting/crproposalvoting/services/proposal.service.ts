@@ -202,28 +202,6 @@ export class ProposalService {
         })
     }
 
-    public async getProposalState(proposalHash: string): Promise<any> {
-        const param = {
-            method: 'getcrproposalstate',
-            params: {
-                proposalhash: proposalHash,
-            },
-        };
-
-        let url = this.getCrRpcApi();
-        Logger.log(App.CRPROPOSAL_VOTING, 'getProposalState:', url, param);
-        try {
-            const result = await this.jsonRPCService.httpPost(url, param);
-            Logger.log(App.CRPROPOSAL_VOTING, 'getProposalState', result);
-            if (result && result.code) {
-            }
-        }
-        catch (err) {
-            Logger.error(App.CRPROPOSAL_VOTING, 'getProposalState error', err);
-            throw new Error(err);
-        }
-    }
-
     public addBlockWatingItem(hash: string, status: string) {
         this.blockWaitingDict[hash] = status;
     }

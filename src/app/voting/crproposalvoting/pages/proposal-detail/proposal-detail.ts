@@ -123,7 +123,7 @@ export class ProposalDetailPage {
                             let lastTracking = milestone.tracking[milestone.tracking.length - 1];
                             if (lastTracking.apply && (!lastTracking.review || !lastTracking.review.opinion)) {
                                 lastTracking.command = 'review';
-                                milestone.lastTracking = lastTracking
+                                milestone.lastTracking = lastTracking;
                             }
                         }
 
@@ -174,8 +174,6 @@ export class ProposalDetailPage {
 
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposal-details'));
         this.proposalDetailFetched = true;
-
-        await this.proposalService.getProposalState(this.proposalHash);
     }
 
     ionViewDidEnter() {

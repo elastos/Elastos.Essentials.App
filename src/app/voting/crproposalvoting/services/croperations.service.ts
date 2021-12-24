@@ -198,11 +198,21 @@ export class CROperationsService {
                 }
                 break;
             case "updatemilestone":
-            case "reviewmilestone":
                 if (crCommand.type == CRCommandType.Scan) {
                     data.messageHash = data.messageHash || data.messagehash;
-                    data.messageData = await this.getOpinionData(data.messageHash);
+                    let ret = await this.getMessageData(data.messageHash);
+                    if (ret != null) {
+                        data.messageData = ret.content;
+                    }
                 }
+                break;
+            case "reviewmilestone":
+                    data.messageHash = data.messageHash || data.messagehash;
+                    let ret = await this.getMessageData(data.messageHash);
+                    if (ret != null) {
+                        data.messageData = ret.content;
+                        data.ownerSignature = ret.ownerSignature;
+                    }
                 break;
             case "voteforproposal":
             case "withdraw":
@@ -271,7 +281,7 @@ export class CROperationsService {
         }
     }
 
-    public async getMessageData(messageHash: string): Promise<string> {
+    public async getMessageData(messageHash: string): Promise<any> {
         if (!messageHash) {
             return null;
         }
@@ -280,8 +290,8 @@ export class CROperationsService {
             var url = this.voteService.getCrRpcApi() + '/api/v2/proposal/message_data/' + messageHash;
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log(App.CRPROPOSAL_VOTING, "getMessageData", result);
-            if (result && result.data && result.data.content) {
-                return result.data.content;
+            if (result && result.data) {
+                return result.data;
             }
             else {
                 Logger.error(App.CRPROPOSAL_VOTING, 'getMessageData can not get data!');
@@ -290,6 +300,8 @@ export class CROperationsService {
         catch (err) {
             Logger.error(App.CRPROPOSAL_VOTING, 'getMessageData error:', err);
         }
+
+        return null;
     }
 
     public goBack() {

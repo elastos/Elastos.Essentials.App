@@ -15,10 +15,10 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="voteForProposalCommand.data.proposalHash">
+            <ion-row class="profile-data" *ngIf="onGoingCommand.data.proposalHash">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
-                    <h4>{{ voteForProposalCommand.data.proposalHash }}</h4>
+                    <h4>{{ onGoingCommand.data.proposalHash }}</h4>
                 </ion-col>
             </ion-row>
 

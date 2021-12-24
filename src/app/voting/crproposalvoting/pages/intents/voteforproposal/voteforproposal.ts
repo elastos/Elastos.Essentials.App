@@ -29,7 +29,7 @@ type VoteForProposalCommand = CRCommand & {
 export class VoteForProposalPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private voteForProposalCommand: VoteForProposalCommand;
+    private onGoingCommand: VoteForProposalCommand;
     public proposalDetails: ProposalDetails;
     public proposalDetailsFetched = false;
     public signingAndSendingProposalResponse = false;
@@ -51,11 +51,11 @@ export class VoteForProposalPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.vote-proposal'));
-        this.voteForProposalCommand = this.crOperations.onGoingCommand as VoteForProposalCommand;
+        this.onGoingCommand = this.crOperations.onGoingCommand as VoteForProposalCommand;
 
         try {
             // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.voteForProposalCommand.data.proposalHash);
+            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.onGoingCommand.data.proposalHash);
             Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
             this.proposalDetailsFetched = true;
         }
@@ -128,7 +128,7 @@ export class VoteForProposalPage {
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 
         let votes = {};
-        votes[this.voteForProposalCommand.data.proposalHash] = voteAmount; // Vote with everything
+        votes[this.onGoingCommand.data.proposalHash] = voteAmount; // Vote with everything
         Logger.log('wallet', "Vote:", votes);
 
         let crVoteContent: VoteContent = {
