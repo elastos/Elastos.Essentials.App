@@ -44,7 +44,7 @@
                                         <div *ngIf="isLast" class="marker"></div>
                                         <ion-col size="1" class="stage">{{ entry.stage + proposal.stageAdjust }}
                                         </ion-col>
-                                        <ion-col size="10.5" class="milestone">
+                                        <ion-col size="10" class="milestone">
                                             <div class="content">
                                                 <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp)
                                                     }}
@@ -81,9 +81,9 @@
                                                 </div>
                                             </div>
                                         </ion-col>
-                                        <ion-col size="0.5" (click)="showOptions($event, entry.lastTracking)"
+                                        <ion-col size="1" (click)="showOptions($event, entry.lastTracking)"
                                             *ngIf="entry.lastTracking && entry.lastTracking.command">
-                                            <div class="milestone-options align-center">
+                                            <div class="milestone-options align-right">
                                                 <img
                                                     [src]="theme.darkMode ? '/assets/crproposalvoting/icons/darkmode/menu.svg' : '/assets/crproposalvoting/icons/menu.svg'">
                                             </div>
