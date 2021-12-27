@@ -65,16 +65,7 @@ export class CreateSuggestionPage {
 
         this.onGoingCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
         Logger.log(App.CRSUGGESTION, "onGoingCommand", this.onGoingCommand);
-        this.proposaltype = this.onGoingCommand.data.proposaltype || this.onGoingCommand.data.type;
         this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
-
-        this.bugetAmount = 0;
-        if (this.proposaltype == "normal") {
-            for (let suggestionBudget of this.onGoingCommand.data.budgets) {
-                suggestionBudget.type = suggestionBudget.type.toLowerCase();
-                this.bugetAmount += parseInt(suggestionBudget.amount);
-            }
-        }
 
         if (this.onGoingCommand.type == CRCommandType.SuggestionDetailPage) {
             this.suggestionDetail = this.onGoingCommand.data;
@@ -88,13 +79,22 @@ export class CreateSuggestionPage {
                 Logger.error('crproposal', 'CreateSuggestionPage fetchSuggestionDetail error:', err);
             }
         }
+        this.suggestionDetailFetched = true;
+        this.proposaltype = this.suggestionDetail.type;
+
+        this.bugetAmount = 0;
+        if (this.proposaltype == "normal") {
+            for (let suggestionBudget of this.onGoingCommand.data.budgets) {
+                suggestionBudget.type = suggestionBudget.type.toLowerCase();
+                this.bugetAmount += parseInt(suggestionBudget.amount);
+            }
+        }
 
         Logger.log(App.CRSUGGESTION, "suggestionDetail", this.suggestionDetail);
         if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
             this.proposaltype = "changeproposaladdress";
         }
         this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
-        this.suggestionDetailFetched = true;
     }
 
     ionViewWillLeave() {

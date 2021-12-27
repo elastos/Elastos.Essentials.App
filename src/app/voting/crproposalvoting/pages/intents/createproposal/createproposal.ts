@@ -68,15 +68,6 @@ export class CreateProposalPage {
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-proposal'));
         this.onGoingCommand = this.crOperations.onGoingCommand as CreateProposalCommand;
-        this.proposaltype = this.onGoingCommand.data.type || this.onGoingCommand.data.proposaltype;
-
-        this.bugetAmount = 0;
-        if (this.proposaltype == "normal") {
-            for (let suggestionBudget of this.onGoingCommand.data.budgets) {
-                suggestionBudget.type = suggestionBudget.type.toLowerCase();
-                this.bugetAmount += parseInt(suggestionBudget.amount);
-            }
-        }
 
         if (this.onGoingCommand.type == CRCommandType.SuggestionDetailPage) {
             this.suggestionDetail = this.onGoingCommand.data;
@@ -87,7 +78,19 @@ export class CreateProposalPage {
                 this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.onGoingCommand.sid);
             }
             catch (err) {
+                //TODO:: show error
                 Logger.error('crproposal', 'CreateProposalPage fetchSuggestionDetail error:', err);
+            }
+        }
+        this.suggestionDetailFetched = true;
+
+        this.proposaltype = this.suggestionDetail.type;
+
+        this.bugetAmount = 0;
+        if (this.proposaltype == "normal") {
+            for (let suggestionBudget of this.onGoingCommand.data.budgets) {
+                suggestionBudget.type = suggestionBudget.type.toLowerCase();
+                this.bugetAmount += parseInt(suggestionBudget.amount);
             }
         }
 
@@ -96,7 +99,6 @@ export class CreateProposalPage {
             this.proposaltype = "changeproposaladdress";
         }
         this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
-        this.suggestionDetailFetched = true;
     }
 
     ionViewWillLeave() {
