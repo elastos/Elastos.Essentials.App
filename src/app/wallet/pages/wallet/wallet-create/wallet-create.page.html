@@ -14,7 +14,7 @@
         </ion-row>
 
         <!-- Toggles -->
-        <ion-row class="toggle-row">
+        <ion-row class="toggle-row" *ngIf="walletCreationService.type === 2">
             <ion-col class="left-col" size="10">
                 <h1 *ngIf="importByPrivateKey">{{ 'wallet.import-wallet-by-privatekey' | translate }}</h1>
                 <h1 *ngIf="!importByPrivateKey">{{ 'wallet.import-wallet-by-mnemonic' | translate }}</h1>
