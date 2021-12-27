@@ -16,7 +16,8 @@ import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.servi
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { TokenChooserComponent } from '../../../wallet/components/token-chooser/token-chooser.component';
-import { Packet, PacketDistributionType, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
+import { PacketCosts } from '../../model/packetcosts.model';
+import { Packet, PacketDistributionType, PacketInCreation, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
 
 @Component({
@@ -43,6 +44,7 @@ export class NewPacketPage {
 
   // Logic
   public creatingPacket = false;
+  private createdPacket: Packet<PacketCosts> = null;
   public unsupportedNetwork = false;
 
   // Callbacks
@@ -121,14 +123,18 @@ export class NewPacketPage {
 
   /** Submit packet form **/
   public async createPacket() {
-    if (!this.validateInputs())
+    if (this.creatingPacket || !this.validateInputs())
       return;
+
+    this.creatingPacket = true;
 
     let targetSubWallet = this.tokenSubwallet || this.walletService.getActiveNetworkWallet().getMainEvmSubWallet();
 
+    // Get user's EVM address
     let creatorAddress = await targetSubWallet.createAddress();
 
-    let packet: Packet = {
+    // Prepare packet data
+    let packet: PacketInCreation = {
       quantity: this.packets,
       chainId: this.tokenSubwallet.networkWallet.network.getMainChainID(),
       value: new BigNumber(this.tokenAmount),
@@ -141,13 +147,21 @@ export class NewPacketPage {
       expirationDate: moment().add(this.expirationDays, "days").unix()
     };
 
+    // For ERC20 tokens, also save the token contract address into the packet
     if (this.tokenSubwallet instanceof ERC20SubWallet) {
       packet.erc20ContractAddress = this.tokenSubwallet.coin.getContractAddress();
     }
 
-    this.packetService.preparePacket(packet, targetSubWallet);
+    // Create a new packet on the backend
+    this.createdPacket = await this.packetService.createPacket(packet);
+    Logger.log("redpackets", "Created packet:", this.createdPacket);
 
-    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay");
+    // Reach the payment screen to continue
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay", {
+      state: {
+        packetHash: this.createdPacket.hash
+      }
+    });
   }
 
   async formErr(message: string) {

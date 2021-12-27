@@ -6,6 +6,7 @@ import { DIDSessionsInitService } from '../didsessions/services/init.service';
 import { HiveManagerInitService } from '../hivemanager/services/init.service';
 import { IdentityInitService } from '../identity/services/init.service';
 import { LauncherInitService } from '../launcher/services/init.service';
+import { RedPacketsInitService } from '../redpackets/services/init.service';
 import { ScannerInitService } from '../scanner/services/init.service';
 import { SettingsInitService } from '../settings/services/init.service';
 import { CRProposalVotingInitService } from '../voting/crproposalvoting/services/init.service';
@@ -27,7 +28,7 @@ export class GlobalAppBackgroundService {
     private identityInitService: IdentityInitService,
     private walletInitService: WalletInitService,
     private dappBrowserInitService: DAppBrowserInitService,
-
+    private redPacketsService: RedPacketsInitService,
     private crProposalVotingInitService: CRProposalVotingInitService,
     private developerToolsInitService: DeveloperToolsInitService
   ) { }
@@ -46,6 +47,7 @@ export class GlobalAppBackgroundService {
     await this.walletInitService.init();
     await this.crProposalVotingInitService.init();
     await this.dappBrowserInitService.init();
+    await this.redPacketsService.init();
     await this.developerToolsInitService.init();
   }
 

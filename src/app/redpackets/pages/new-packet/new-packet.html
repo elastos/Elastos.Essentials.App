@@ -180,12 +180,9 @@
   </ion-grid>
 
   <div class="sticky-footer pd1">
-    <div *ngIf="creatingPacket === false" class="custom-btn" (click)="createPacket()">
-      <ion-label>Create Red Packet</ion-label>
-    </div>
-
-    <div *ngIf="creatingPacket === true" class="creatingPacket" disabled>
-      <ion-spinner name="dots"></ion-spinner>
+    <div class="custom-btn" (click)="createPacket()">
+      <ion-label *ngIf="!creatingPacket">Create Red Packet</ion-label>
+      <ion-spinner *ngIf="creatingPacket"></ion-spinner>
     </div>
   </div>
 </ion-content>

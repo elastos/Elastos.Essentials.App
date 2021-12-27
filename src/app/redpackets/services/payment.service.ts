@@ -6,6 +6,8 @@ import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { TokenType } from '../model/packets.model';
+import { PaymentStatusEntry } from '../model/payments.model';
 
 /**
  * Type of token paid
@@ -17,6 +19,7 @@ export enum PaymentType {
 
 type NotifyPaymentResponse = {
   confirmed: boolean; // Whether the payment is received/confirmed/remembered by the backend
+  status?: PaymentStatusEntry; // New status if successfully confirmed
 }
 
 type Payment = {
@@ -41,6 +44,9 @@ export class PaymentService implements GlobalService {
   private state: PaymentsState = null;
 
   constructor(private storage: GlobalStorageService, private http: HttpClient) {
+  }
+
+  public init() {
     GlobalServiceManager.getInstance().registerService(this);
   }
 
@@ -69,8 +75,10 @@ export class PaymentService implements GlobalService {
    * Adds a new payment entry
    */
   public createPayment(packetHash: string, transactionHash: string, type: PaymentType): Promise<void> {
-
-    todo: ensure txhash not already in list
+    if (this.getPaymentByTransactionHash(transactionHash)) {
+      Logger.warn("redpackets", `Trying to create a payment with an already existing transaction hash ${transactionHash}! Skipping, check this`);
+      return;
+    }
 
     this.state.payments.push({
       createdAt: moment().unix(),
@@ -91,26 +99,34 @@ export class PaymentService implements GlobalService {
     return this.saveState();
   }
 
-  private getPaymentByTransactionHash(transactionHash: string): Payment {
+  public getPaymentByTransactionHash(transactionHash: string): Payment {
     return this.state.payments.find(p => p.transactionHash === transactionHash);
   }
 
   /**
    * Let the red packet service know that a payment was made
    */
-  public async notifyServiceOfPayment(packetHash: string, transactionHash: string): Promise<void> {
+  public async notifyServiceOfPayment(packetHash: string, transactionHash: string, tokenType: TokenType): Promise<PaymentStatusEntry> {
     try {
       let response = await this.http.post<NotifyPaymentResponse>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/notifypayment`, {
-        transactionHash
+        transactionHash,
+        tokenType // native or erc20
       }).toPromise();
-      console.log("notify payment response", response);
 
-      if (response.confirmed) {
-        // Service has confirmed the payment was well received. 
+      if (response && response.confirmed) {
+        Logger.log("redpackets", "Payment confirmed by the service. Marking it as completed locally", packetHash, transactionHash, response.status);
+        // Service has confirmed the payment was well received.
+        await this.setPaymentConfirmedByService(transactionHash);
+        return response.status;
+      }
+      else {
+        Logger.error("redpackets", "Notify payment: payment could not be confirmed", response);
+        return null;
       }
     }
     catch (err) {
       Logger.error("redpackets", "Notify payment failure", err);
+      return null;
     }
   }
 }

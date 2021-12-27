@@ -1,13 +1,13 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <!-- Packet creation on the backend -->
-  <ion-grid class="container ion-text-center ion-padding" *ngIf="creatingPacket">
-    Creating packet, please wait
+  <ion-grid class="container ion-text-center ion-padding" *ngIf="fetchingPacketInfo">
+    Getting packet information, please wait
     <ion-spinner></ion-spinner>
   </ion-grid>
 
   <!-- Payment info -->
-  <ion-grid class="container ion-text-center ion-padding" *ngIf="createdPacket && !creatingPacket">
+  <ion-grid class="container ion-text-center ion-padding" *ngIf="packet && !fetchingPacketInfo">
     <!-- Intro -->
     <p>
       You are about to finalize your red packet. Please confirm sending the following tokens to the red packet service.
@@ -35,12 +35,16 @@
         <ion-col size="6" class="cost">{{getNativeTokenServiceFees()}} {{getNativeTokenSymbol()}}</ion-col>
       </ion-row>
 
-      <div class="custom-btn mt1" (click)="sendNativeToken()">
-        <ion-label>Send {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}</ion-label>
+      <div class="custom-btn mt1" *ngIf="!isNativePaymentCompleted()" (click)="sendNativeToken()">
+        <ion-label *ngIf="!sendingNativePayment">Send {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}</ion-label>
+        <ion-spinner *ngIf="sendingNativePayment"></ion-spinner>
+      </div>
+      <div *ngIf="isNativePaymentCompleted()">
+        <h1>Already paid!</h1>
       </div>
     </div>
 
-    <div class="erc20summary" *ngIf="createdPacket.costs.erc20Token">
+    <div class="erc20summary" *ngIf="packet.costs.erc20Token">
       <h4>{{getERC20TokenSymbol()}}</h4>
       <ion-row>
         <ion-col size="6" class="header">Red packet</ion-col>
