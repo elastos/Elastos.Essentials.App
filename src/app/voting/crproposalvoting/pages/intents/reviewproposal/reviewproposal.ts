@@ -99,11 +99,11 @@ export class ReviewProposalPage {
 
     ionViewWillLeave() {
         // this.keyboard.onKeyboardWillShow().unsubscribe();
+        void this.crOperations.sendIntentResponse();
     }
 
     cancel() {
         void this.globalNav.navigateBack();
-        void this.crOperations.sendIntentResponse();
     }
 
     async signAndReviewProposal() {

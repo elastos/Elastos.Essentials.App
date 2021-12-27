@@ -66,9 +66,12 @@ export class WithdrawPage {
         }
     }
 
+    ionViewWillLeave() {
+        void this.crOperations.sendIntentResponse();
+    }
+
     cancel() {
         void this.globalNav.navigateBack();
-        void this.crOperations.sendIntentResponse();
     }
 
     async signAndWithdraw() {

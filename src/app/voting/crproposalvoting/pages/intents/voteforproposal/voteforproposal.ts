@@ -69,9 +69,12 @@ export class VoteForProposalPage {
         }
     }
 
+    ionViewWillLeave() {
+        void this.crOperations.sendIntentResponse();
+    }
+
     cancel() {
         void this.globalNav.navigateBack();
-        void this.crOperations.sendIntentResponse();
     }
 
     async voteAgainstProposal() {

@@ -97,9 +97,12 @@ export class CreateSuggestionPage {
         this.suggestionDetailFetched = true;
     }
 
+    ionViewWillLeave() {
+        void this.crOperations.sendIntentResponse();
+    }
+
     cancel() {
         void this.globalNav.navigateBack();
-        void this.crOperations.sendIntentResponse();
     }
 
     async signAndCreateSuggestion() {

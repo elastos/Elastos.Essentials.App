@@ -50,6 +50,7 @@ export class CROperationsService {
     public intentAction: string;
     public intentId: number;
     public activeCommandReturn = new BehaviorSubject<CRCommandType>(null);
+    private sendingSignDigest = false;
 
     constructor(
         private popup: PopupService,
@@ -212,6 +213,10 @@ export class CROperationsService {
                         data.ownerPublicKey = ret.ownerPublicKey;
                         data.ownerSignature = ret.ownerSignature;
                     }
+                    if (crCommand.type == CRCommandType.Scan) {
+                        data.secretaryOpinionHash = data.secretaryopinionhash || data.secretaryOpinionHash;
+                        data.secretaryOpinionData = await this.getOpinionData(data.secretaryOpinionHash);
+                    }
                 break;
             case "voteforproposal":
             case "withdraw":
@@ -228,14 +233,24 @@ export class CROperationsService {
     }
 
     public async sendIntentResponse(result?: any) {
-        if (this.intentId && this.intentId != null) {
+        if (!this.sendingSignDigest && this.intentId && this.intentId != null) {
             await this.globalIntentService.sendIntentResponse({}, this.intentId);
             this.intentId = null;
         }
     }
 
     public async sendSignDigestIntent(params: any): Promise<any> {
-        return await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", params, this.intentId);
+        this.sendingSignDigest = true;
+        try {
+            let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", params, this.intentId);
+            this.sendingSignDigest = false;
+            return ret;
+        }
+        catch (err) {
+            this.sendingSignDigest = false;
+            Logger.error('crsuggestion', 'sendSignDigestIntent error:', err);
+            throw err;
+        }
     }
 
     public async getDraftData(draftHash: string): Promise<string> {
