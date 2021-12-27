@@ -48,6 +48,7 @@ export class SignDigestPage {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('identity.sign-data'));
         this.titleBar.setNavigationMode(null);
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.CLOSE });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             void this.rejectRequest();
