@@ -4,13 +4,15 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CrVotesComponent } from './crvotes/crvotes.component';
 import { MileStoneOptionsComponent } from './milestone-options/milestone-options.component';
+import { ProposalTitleBarComponent } from './titlebar/titlebar.component';
 import { VoteResultComponent } from './vote-result/vote-result.component';
 
 @NgModule({
     declarations: [
         CrVotesComponent,
         VoteResultComponent,
-        MileStoneOptionsComponent
+        MileStoneOptionsComponent,
+        ProposalTitleBarComponent,
     ],
     imports: [
         CommonModule,
@@ -20,14 +22,16 @@ import { VoteResultComponent } from './vote-result/vote-result.component';
     exports: [
         CrVotesComponent,
         VoteResultComponent,
-        MileStoneOptionsComponent
+        MileStoneOptionsComponent,
+        ProposalTitleBarComponent,
     ],
     providers: [
     ],
     entryComponents: [
         CrVotesComponent,
         VoteResultComponent,
-        MileStoneOptionsComponent
+        MileStoneOptionsComponent,
+        ProposalTitleBarComponent,
     ],
 })
 export class ComponentsModule { }
