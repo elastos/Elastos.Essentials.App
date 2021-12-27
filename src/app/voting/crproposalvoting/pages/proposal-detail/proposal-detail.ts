@@ -99,7 +99,7 @@ export class ProposalDetailPage {
                     this.totalBudget += parseInt(budget.amount);
 
                     //Set last tracking for show on page
-                    if (this.proposal.milestone && this.proposal.milestone[i]) {
+                    if (this.proposal.status == 'voteragreed' && this.proposal.milestone && this.proposal.milestone[i]) {
                         let milestone = this.proposal.milestone[i];
 
                         if (this.isOwner) {
