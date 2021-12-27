@@ -233,11 +233,11 @@ export const fr = {
         "tx-info-transaction-time": "Date de la transaction",
         "tx-info-memo": "Mémo",
         "tx-info-receiver-address": "Adresse de destination",
-        "tx-info-sender-address": "Adresse de envoyé",
+        "tx-info-sender-address": "Adresse de l'émetteur",
         "tx-info-transaction-fees": "Frais de transaction",
         "tx-info-cost": "Coût total",
         "tx-info-transaction-id": "Identifiant de transaction",
-        "tx-info-block-id": "Identifiant de bloquer",
+        "tx-info-block-id": "Identifiant de bloc",
         "tx-info-type-received": "Reçu",
         "tx-info-type-sent": "Envoyé",
         "tx-info-type-transferred": "Transféré",
@@ -357,6 +357,18 @@ export const fr = {
         'wallet-asset-title': 'Résumé financier',
         "wallet-asset-networks-count": "{{ networksCount }} réseaux",
         'staked-assets-info-by': 'Informations hors portefeuille fournies par',
+
+        /************
+        * NFT pages *
+        *************/
+        'nft-overview': 'Mes NFTs',
+        'nft-assets': 'Actifs',
+        'nft-token-id': 'Identifiant',
+        'nft-collectibles-cant-be-listed': 'Les actifs pour ce type de NFT ne peuvent pas être listés.',
+        'nft-unnamed-asset': 'NFT sans nom',
+        'nft-asset-with-type': 'NFT de type {{ type }}',
+        'nft-properties': 'Propriétés',
+        'nft-no-properties-yet': 'L\'affichage des propriétés sera disponible prochainement.',
 
         /********************************************** Intent Screens ***********************************************/
 

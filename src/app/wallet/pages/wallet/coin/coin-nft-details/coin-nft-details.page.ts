@@ -68,7 +68,7 @@ export class CoinNFTDetailsPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle("NFT Asset Overview");
+        this.titleBar.setTitle(this.translate.instant("wallet.nft-overview"));
     }
 
     ionViewDidLeave() {
@@ -77,7 +77,7 @@ export class CoinNFTDetailsPage implements OnInit {
     init() {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
-            console.log("NAVSTATE", navigation.extras.state)
+            //console.log("NAVSTATE", navigation.extras.state)
             // Retrieve the master wallet
             let masterWalletId = navigation.extras.state.masterWalletId;
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
@@ -98,7 +98,7 @@ export class CoinNFTDetailsPage implements OnInit {
     }
 
     public getDisplayableAssetName(): string {
-        return this.asset.name || "Unnamed Asset";
+        return this.asset.name || this.translate.instant("wallet.nft-unnamed-asset");
     }
 
     public getDisplayableAssetID(): string {

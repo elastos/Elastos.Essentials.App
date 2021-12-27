@@ -4,7 +4,7 @@
     <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="nft">
         <ion-row class="main-title-row">
             <ion-col size="12">
-                <h1>NFT Overview</h1>
+                <h1>{{ 'wallet.nft-overview' | translate}}</h1>
                 <p *ngIf="todaysTransactions > 20">{{ 'wallet.coin-new-transactions-today' | translate:{ '20+':
                     todaysTransactions} }}}</p>
                 <p *ngIf="todaysTransactions <= 20">{{ 'wallet.coin-new-transactions-today' |
@@ -30,7 +30,7 @@
             <div class="arrow-down"></div>
         </ion-row>
         <ion-row class="list-title-row">
-            <h1>Assets</h1>
+            <h1>{{ 'wallet.nft-assets' | translate }}</h1>
         </ion-row>
         <ion-row *ngIf="refreshingAssets" class="refreshing-spinner">
             <ion-spinner></ion-spinner>
@@ -45,7 +45,7 @@
                 </ion-col>
                 <ion-col size="9" class="middle-col">
                     <div class="asset-name">{{ getDisplayableAssetName(asset) }}</div>
-                    <p><b>Token ID</b>: {{ getDisplayableAssetID(asset) }}</p>
+                    <p><b>{{ 'wallet.nft-token-id' | translate }}</b>: {{ getDisplayableAssetID(asset) }}</p>
                 </ion-col>
                 <ion-col size="12" *ngIf="asset.description" class="asset-description">
                     <p>{{ getDisplayableAssetDescription(asset) }}</p>
@@ -54,7 +54,7 @@
         </div>
         <div class="empty-list" *ngIf="!refreshingAssets && !nft.getAssets()">
             <img src="assets/wallet/icons/warning.svg" />
-            <h2>Collectibles for this NFT type cannot be listed.</h2>
+            <h2>{{ 'wallet.nft-collectibles-cant-be-listed' | translate }}</h2>
         </div>
 
         <!-- <ion-row class="list-title-row">

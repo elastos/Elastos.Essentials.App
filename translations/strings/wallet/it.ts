@@ -357,6 +357,18 @@ export const it = {
         "wallet-asset-networks-count": "{{ networksCount }} Reti",
         'staked-assets-info-by': 'Staked assets information provided by',
 
+        /************
+        * NFT pages *
+        *************/
+        'nft-overview': 'NFT Overview',
+        'nft-assets': 'Assets',
+        'nft-token-id': 'Token ID',
+        'nft-collectibles-cant-be-listed': 'Collectibles for this NFT type cannot be listed.',
+        'nft-unnamed-asset': 'Unnamed Asset',
+        'nft-asset-with-type': '{{ type }} NFT asset',
+        'nft-properties': 'Properties',
+        'nft-no-properties-yet': 'Properties display is not available yet. Coming soon.',
+
         /********************************************** Intent Screens ***********************************************/
 
         /************************

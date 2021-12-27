@@ -357,6 +357,18 @@ export const zh = {
                 "wallet-asset-networks-count": "{{ networksCount }} 个网络",
                 'staked-assets-info-by': '质押资产数据提供商',
 
+                /************
+                * NFT pages *
+                *************/
+                'nft-overview': 'NFT Overview',
+                'nft-assets': 'Assets',
+                'nft-token-id': 'Token ID',
+                'nft-collectibles-cant-be-listed': 'Collectibles for this NFT type cannot be listed.',
+                'nft-unnamed-asset': 'Unnamed Asset',
+                'nft-asset-with-type': '{{ type }} NFT asset',
+                'nft-properties': 'Properties',
+                'nft-no-properties-yet': 'Properties display is not available yet. Coming soon.',
+
                 /********************************************** Intent Screens ***********************************************/
 
                 /************************
