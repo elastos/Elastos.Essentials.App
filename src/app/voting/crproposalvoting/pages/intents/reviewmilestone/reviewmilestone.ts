@@ -41,12 +41,15 @@ export class ReviewMilestonePage {
 
     private onGoingCommand: ReviewMilestoneCommand;
     public signingAndSendingProposalResponse = false;
-    public trackingType = "";
     public proposalDetails: ProposalDetails;
     public proposalDetailsFetched = false;
     public isKeyboardHide = true;
     public content = "";
-    public voteResult = "approve";
+    public trackingType = "progress";
+    typeResult = {
+        progress: "approve",
+        rejected: "reject",
+    }
 
     constructor(
         private crOperations: CROperationsService,
@@ -99,6 +102,10 @@ export class ReviewMilestonePage {
         this.proposalDetailsFetched = true;
     }
 
+    ionViewWillLeave() {
+        void this.crOperations.sendIntentResponse();
+    }
+
     cancel() {
         void this.globalNav.navigateBack();
     }
@@ -118,10 +125,10 @@ export class ReviewMilestonePage {
             }
 
             //Handle opinion
-            let data = {opinion: this.voteResult, content: this.content};
+            let data = {content: this.content};
             let ret = await this.draftService.getDraft("opinion.json", data);
-            this.onGoingCommand.data.secretaryopinionhash = ret.hash;
-            this.onGoingCommand.data.secretaryopiniondata = ret.data;
+            this.onGoingCommand.data.secretaryOpinionHash = ret.hash;
+            this.onGoingCommand.data.secretaryOpinionData = ret.data;
             Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
         }
 
@@ -179,15 +186,15 @@ export class ReviewMilestonePage {
             OwnerSignature: command.data.ownerSignature,
             NewOwnerPublicKey: "",
             NewOwnerSignature: "",
-            SecretaryGeneralOpinionHash: command.data.secretaryopinionhash,
-            SecretaryGeneralOpinionData: command.data.secretaryopiniondata,
+            SecretaryGeneralOpinionHash: command.data.secretaryOpinionHash,
+            SecretaryGeneralOpinionData: command.data.secretaryOpinionData,
         };
 
         return payload;
     }
 
     segmentChanged(ev: any) {
-        this.voteResult = ev.detail.value;
+        this.trackingType = ev.detail.value;
         console.log('Segment changed', ev);
     }
 }

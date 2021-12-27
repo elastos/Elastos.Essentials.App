@@ -32,18 +32,18 @@
             <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'scan'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
-                    <h4>{{ 'crproposalvoting.' + voteResult | translate }}</h4>
+                    <h4>{{ 'crproposalvoting.' + typeResult[trackingType] | translate }}</h4>
                 </ion-col>
             </ion-row>
 
             <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
                 <div>
                     <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
-                    <ion-segment (ionChange)="segmentChanged($event)" [value]="voteResult">
-                        <ion-segment-button value="approve">
+                    <ion-segment (ionChange)="segmentChanged($event)" [value]="trackingType">
+                        <ion-segment-button value="progress">
                             <ion-label>{{'crproposalvoting.approve' | translate}}</ion-label>
                         </ion-segment-button>
-                        <ion-segment-button value="reject">
+                        <ion-segment-button value="rejected">
                             <ion-label>{{'crproposalvoting.reject' | translate}}</ion-label>
                         </ion-segment-button>
                     </ion-segment>
