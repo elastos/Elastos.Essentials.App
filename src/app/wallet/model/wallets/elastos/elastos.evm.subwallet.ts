@@ -196,7 +196,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   }
 
 
-  public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string, nonceArg: number): Promise<string> {
+  public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string, nonceArg = -1): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const contractAbi = require("../../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
     const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.withdrawContractAddress);

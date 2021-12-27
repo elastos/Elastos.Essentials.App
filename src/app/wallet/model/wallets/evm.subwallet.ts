@@ -302,7 +302,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     return this.balance.gt(amount);
   }
 
-  public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg: number = null): Promise<string> {
+  public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<string> {
     let gasPrice = gasPriceArg;
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
