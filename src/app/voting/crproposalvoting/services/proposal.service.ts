@@ -167,15 +167,18 @@ export class ProposalService {
         });
     }
 
-    public async postUpdateMilestoneCommandResponse(jwtToken: string): Promise<void> {
+    public async postUpdateMilestoneCommandResponse(jwtToken: string, callbackUrl: string): Promise<void> {
         const param = {
             jwt: jwtToken,
         };
 
-        let url = this.getCrRpcApi() + "/api/v2/proposal/milestone";
-        Logger.log(App.CRPROPOSAL_VOTING, 'postUpdateMilestoneCommandResponse:', url, jwtToken);
+        if (!callbackUrl) {
+            callbackUrl = this.getCrRpcApi() + "/api/v2/proposal/milestone";
+        }
+
+        Logger.log(App.CRPROPOSAL_VOTING, 'postUpdateMilestoneCommandResponse:', callbackUrl, jwtToken);
         try {
-            const result = await this.jsonRPCService.httpPost(url, param);
+            const result = await this.jsonRPCService.httpPost(callbackUrl, param);
             Logger.log(App.CRPROPOSAL_VOTING, 'postUpdateMilestoneCommandResponse', result);
             if (result && result.code) {
             }

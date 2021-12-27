@@ -80,7 +80,7 @@ export class UpdatMilestonePage {
 
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.update-milestone'));
         this.onGoingCommand = this.crOperations.onGoingCommand as UpdateMilestoneCommand;
-        // this.originalRequestJWT = this.crOperations.originalRequestJWT;
+        this.originalRequestJWT = this.crOperations.originalRequestJWT;
         this.onGoingCommand.data.newownerpubkey = this.onGoingCommand.data.newownerpubkey || "";
 
         try {
@@ -134,7 +134,7 @@ export class UpdatMilestonePage {
                 return;
             }
 
-            await this.proposalService.postUpdateMilestoneCommandResponse(signedJWT);
+            await this.proposalService.postUpdateMilestoneCommandResponse(signedJWT, this.onGoingCommand.callbackurl);
             this.crOperations.handleSuccessReturn();
         }
         catch (e) {
@@ -160,18 +160,33 @@ export class UpdatMilestonePage {
     private async signMilestoneDigestAsJWT(suggestionDigest: string): Promise<string> {
         Logger.log(App.CRSUGGESTION, "Sending intent to sign the suggestion digest", suggestionDigest);
 
-        let payload = {
-            command: "updatemilestone",
-            proposalHash: this.onGoingCommand.data.proposalHash,
-            stage: this.onGoingCommand.data.stage,
-            messageHash: this.onGoingCommand.data.messageHash,
-            messageData: this.onGoingCommand.data.messageData,
+        var data: any;
+        if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
+            data = {
+                data: suggestionDigest,
+                payload: {
+                    command: this.onGoingCommand.command,
+                    proposalHash: this.onGoingCommand.data.proposalHash,
+                    stage: this.onGoingCommand.data.stage,
+                    messageHash: this.onGoingCommand.data.messageHash,
+                    messageData: this.onGoingCommand.data.messageData,
+                },
+            }
+        }
+        else {
+            data = {
+                data: suggestionDigest,
+                signatureFieldName: "data",
+                jwtExtra: {
+                    type: "signature",
+                    command: this.onGoingCommand.command,
+                    req: "elastos://crproposal/" + this.originalRequestJWT
+                }
+            }
         }
 
-        let result = await this.crOperations.sendSignDigestIntent({
-            data: suggestionDigest,
-            payload: payload,
-        });
+        let result = await this.crOperations.sendSignDigestIntent(data);
+
         Logger.log(App.CRSUGGESTION, "Got signed digest.", result);
 
         if (!result.result || !result.responseJWT) {

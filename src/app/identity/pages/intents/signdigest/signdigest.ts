@@ -15,7 +15,9 @@ import { UXService } from '../../../services/ux.service';
 
 type SignDigestIntentParams = IdentityIntentParams & {
     data: string,                 // Raw data to sign
-    payload?: any                 // Custom app payload will be passed directly to the JWT payload.
+    payload?: any,                 // Custom app payload will be passed directly to the JWT payload.
+    jwtExtra?: any,                 // For scan mode, return to websit
+    signatureFieldName?: string,
 }
 
 type SignDigestIntent = IdentityIntent<SignDigestIntentParams> & {
@@ -77,12 +79,22 @@ export class SignDigestPage {
 
             //Create a jwtToken by payload
             var jwtToken: string;
-            if (intentRequestData.payload) {
-                let payload = intentRequestData.payload;
-                payload.signature = signature; // Default field name
-                jwtToken = await this.didService.getActiveDid().getLocalDIDDocument().createJWT(payload,
-                    1, password);
+            var payload: any = {};
+            if (intentRequestData.jwtExtra instanceof Object) {
+                payload = intentRequestData.jwtExtra
             }
+            else if (intentRequestData.payload instanceof Object) {
+                payload = intentRequestData.payload;
+            }
+
+            // Then, store the signed data using either the app signatureFieldName, or as default "signature" field.
+            if (intentRequestData.signatureFieldName)
+                payload[intentRequestData.signatureFieldName] = signature;
+            else
+                payload.signature = signature; // Default field name
+
+            jwtToken = await this.didService.getActiveDid().getLocalDIDDocument().createJWT(payload,
+                1, password);
 
             // Send the intent response as everything is completed
             try {
