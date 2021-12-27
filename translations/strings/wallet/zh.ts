@@ -493,6 +493,7 @@ export const zh = {
                 "help:import-password": "助记词密码是与助记词绑定的自定义密码。 如果您在创建钱包时使用了助记词密码，则导入时必须使用相同的助记词密码，反之，则无需助记词密码，否则恢复的将是另一个钱包。",
                 "privatekey": "私钥",
                 "privatekey-tap-to-copy": "点击私钥即可复制",
+                "export-private-key-intro": "Optionally, you can also use the following private key in some wallets. Touch to copy.",
 
                 /********************************
                 * Advanced Mnemonic Import Page *

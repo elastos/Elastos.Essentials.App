@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 .verify-container {
     min-height: 100%;
@@ -30,7 +30,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background-image: url('/assets/wallet/background/background.svg');
+    background-image: url("/assets/wallet/background/background.svg");
     position: relative;
     object-fit: cover;
 
@@ -53,13 +53,20 @@
     .key {
         width: 100%;
         margin-top: 0px;
-        padding: 10px;
-        background: #2b2c49;
-        box-shadow: 0 3px 15px 0 #151626;
-        font-size: 14px;
+        margin-bottom: 15px;
+        padding: 16px;
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 3px 15px 0 rgb(0 0 0 / 30%);
+        font-size: 12px;
         border-radius: 15px;
+        color: white;
     }
 }
+
+/* .verified-dark-container {
+    .key {
+    }
+} */
 
 @media screen and (max-height: 670px) {
     .verified-container {
@@ -70,8 +77,6 @@
         }
     }
 }
-
-
 
 /* .mnemonic {
     max-height: 30rem;
