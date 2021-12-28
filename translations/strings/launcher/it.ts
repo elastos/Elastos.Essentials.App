@@ -36,7 +36,7 @@ export const it = {
         'active-wallet': 'Portafoglio Attivo',
         'touch-to-create-wallet': 'Tocca qui per creare un portafoglio',
         'manage-identity': 'La mia identità',
-        'address-copied-to-clipboard': 'Copied address {{address}} to clipboard!',
+        'address-copied-to-clipboard': 'Indirizzo {{address}} copiato negli appunti!',
 
         /******** Components ********/
         'address': 'Indirizzo:',
