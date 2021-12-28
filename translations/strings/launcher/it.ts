@@ -39,9 +39,9 @@ export const it = {
         'address-copied-to-clipboard': 'Copied address {{address}} to clipboard!',
 
         /******** Components ********/
-        'address': 'Address:',
-        'addresses': 'Addresses',
-        'wallet-addresses': 'Wallet Addresses',
+        'address': 'Indirizzo:',
+        'addresses': 'Indirizzi',
+        'wallet-addresses': 'Indirizzi del portafoglio',
 
         /********** Onboard Page **********/
 
