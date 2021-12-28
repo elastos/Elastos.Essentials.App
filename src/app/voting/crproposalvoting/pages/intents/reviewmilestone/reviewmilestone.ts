@@ -41,8 +41,8 @@ export class ReviewMilestonePage {
 
     private onGoingCommand: ReviewMilestoneCommand;
     public signingAndSendingProposalResponse = false;
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
     public isKeyboardHide = true;
     public content = "";
     public trackingType = "progress";
@@ -68,38 +68,33 @@ export class ReviewMilestonePage {
     }
 
     async ionViewWillEnter() {
-        if (this.proposalDetailsFetched) {
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
+        if (this.proposalDetail) {
             return;
         }
+        this.proposalDetailFetched = false;
 
-        this.keyboard.onKeyboardWillShow().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = false;
-            });
-        });
-
-        this.keyboard.onKeyboardWillHide().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = true;
-            });
-        });
-
-        this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
         this.onGoingCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
-        Logger.log(App.CRPROPOSAL_VOTING, "onGoingCommand", this.onGoingCommand);
-        this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "progress";
-        // this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+        Logger.log(App.CRPROPOSAL_VOTING, "ReviewMilestoneCommand", this.onGoingCommand);
 
-        try {
-            // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.getCurrentProposal(this.onGoingCommand.data.proposalHash,
-                                                this.onGoingCommand.type != CRCommandType.ProposalDetailPage);
-            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
+
+        if (this.proposalDetail) {
+            this.keyboard.onKeyboardWillShow().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = false;
+                });
+            });
+
+            this.keyboard.onKeyboardWillHide().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = true;
+                });
+            });
+
+            this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "progress";
         }
-        catch (err) {
-            Logger.error('crproposal', 'ReviewMilestonePage getCurrentProposal error:', err);
-        }
-        this.proposalDetailsFetched = true;
     }
 
     ionViewWillLeave() {

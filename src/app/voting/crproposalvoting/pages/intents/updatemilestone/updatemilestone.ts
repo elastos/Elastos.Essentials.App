@@ -40,8 +40,8 @@ export class UpdatMilestonePage {
     private originalRequestJWT: string;
     private onGoingCommand: UpdateMilestoneCommand;
     public signingAndSendingProposalResponse = false;
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
     public isKeyboardHide = true;
     public content = "";
 
@@ -62,40 +62,34 @@ export class UpdatMilestonePage {
     }
 
     async ionViewWillEnter() {
-        if (this.proposalDetailsFetched) {
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.update-milestone'));
+        if (this.proposalDetail) {
             return;
         }
+        this.proposalDetailFetched = false;
 
-        this.keyboard.onKeyboardWillShow().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = false;
-            });
-        });
-
-        this.keyboard.onKeyboardWillHide().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = true;
-            });
-        });
-
-        this.titleBar.setTitle(this.translate.instant('crproposalvoting.update-milestone'));
         this.onGoingCommand = this.crOperations.onGoingCommand as UpdateMilestoneCommand;
-        this.originalRequestJWT = this.crOperations.originalRequestJWT;
-        this.onGoingCommand.data.newownerpubkey = this.onGoingCommand.data.newownerpubkey || "";
+        Logger.log(App.CRPROPOSAL_VOTING, "UpdateMilestoneCommand", this.onGoingCommand);
 
-        try {
-            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
 
-            // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.getCurrentProposal(this.onGoingCommand.data.proposalHash,
-                                                this.onGoingCommand.type != CRCommandType.ProposalDetailPage);
-            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
+        if (this.proposalDetail) {
+            this.keyboard.onKeyboardWillShow().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = false;
+                });
+            });
+
+            this.keyboard.onKeyboardWillHide().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = true;
+                });
+            });
+
+            this.originalRequestJWT = this.crOperations.originalRequestJWT;
+            this.onGoingCommand.data.newownerpubkey = this.onGoingCommand.data.newownerpubkey || "";
         }
-        catch (err) {
-            //TODO:: show error message
-            Logger.error(App.CRPROPOSAL_VOTING, 'UpdatMilestonePage getCurrentProposal error:', err);
-        }
-        this.proposalDetailsFetched = true;
     }
 
     ionViewWillLeave() {

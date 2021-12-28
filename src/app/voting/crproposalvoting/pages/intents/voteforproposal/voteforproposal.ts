@@ -30,8 +30,8 @@ export class VoteForProposalPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     private onGoingCommand: VoteForProposalCommand;
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
     public signingAndSendingProposalResponse = false;
     public maxVotes = 0;
     public amount = 0;
@@ -51,21 +51,22 @@ export class VoteForProposalPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.vote-proposal'));
+        if (this.proposalDetail) {
+            return;
+        }
+        this.proposalDetailFetched = false;
+
         this.onGoingCommand = this.crOperations.onGoingCommand as VoteForProposalCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "VoteForProposalCommand", this.onGoingCommand);
 
-        try {
-            // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.onGoingCommand.data.proposalHash);
-            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-            this.proposalDetailsFetched = true;
-        }
-        catch (err) {
-            Logger.error('crproposal', 'VoteForProposalPage ionViewDidEnter error:', err);
-        }
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
 
-        const stakeAmount = this.voteService.sourceSubwallet.getRawBalance().minus(this.votingFees());
-        if (!stakeAmount.isNegative()) {
-            this.maxVotes = Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
+        if (this.proposalDetail) {
+            const stakeAmount = this.voteService.sourceSubwallet.getRawBalance().minus(this.votingFees());
+            if (!stakeAmount.isNegative()) {
+                this.maxVotes = Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
+            }
         }
     }
 

@@ -1,151 +1,156 @@
-<ion-content>
+<ion-content [class.darkContainer]="theme.darkMode">
     <app-titlebar></app-titlebar>
     <div *ngIf="!suggestionDetailFetched">
         <ion-spinner></ion-spinner>
     </div>
 
-    <div *ngIf="suggestionDetailFetched" [class.darkContainer]="theme.darkMode">
-
-        <div class="message">{{ 'crproposalvoting.create-suggestion-msg' | translate }}</div>
-        <ion-list>
-            <ion-row class="profile-data" *ngIf="suggestionDetail.title">
-                <ion-col>
-                    <h5>{{ 'common.title' | translate }}</h5>
-                    <h4>{{ suggestionDetail.title }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="proposaltype">
-                <div>
-                    <h5>{{ 'crproposalvoting.type' | translate }}</h5>
-                    <h4 class="align-center proposaltype">{{ 'crproposalvoting.proposaltype-' +
-                        proposaltype | translate }}</h4>
-                </div>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="suggestionDetail.abstract">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.suggestion-abstract' | translate }}</h5>
-                    <h4>{{ suggestionDetail.abstract }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="suggestionDetail.recipient">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.recipient-address' | translate }}</h5>
-                    <h4>{{ suggestionDetail.recipient }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="proposaltype == 'normal'">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.attach-budget' | translate }}</h5>
-                    <table>
-                        <tr>
-                            <th>{{ 'crproposalvoting.type' | translate }}</th>
-                            <th>{{ 'crproposalvoting.stage' | translate }}</th>
-                            <th>{{ 'crproposalvoting.amount' | translate }}</th>
-                        </tr>
-                        <tr *ngFor='let budget of onGoingCommand.data.budgets'>
-                            <td>{{ 'crproposalvoting.' + budget.type | translate }}</td>
-                            <td>{{ budget.stage + suggestionDetail.stageAdjust }}</td>
-                            <td>{{ budget.amount / Config.SELA }}</td>
-                        </tr>
-                    </table>
-                    <!-- <h4>View Attachment</h4> -->
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="proposaltype == 'normal'">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.budget-amount' | translate }}</h5>
-                    <h4>{{ bugetAmount / Config.SELA }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data"
-                *ngIf="onGoingCommand.data.secretarygeneraldid && proposaltype == 'secretarygeneral'">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.secretarygeneraldid' | translate }}</h5>
-                    <h4>{{ onGoingCommand.data.secretarygeneraldid }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data"
-                *ngIf="suggestionDetail.newRecipient && (proposaltype == 'changeproposaladdress' || proposaltype == 'changeproposalowner')">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.new-recipient-address' | translate }}</h5>
-                    <h4>{{ suggestionDetail.newRecipient }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="suggestionDetail.newOwnerDID && proposaltype == 'changeproposalowner'">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.new-owner-did' | translate }}</h5>
-                    <h4>{{ suggestionDetail.newOwnerDID }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="creationDate">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.creation-date' | translate }}</h5>
-                    <h4>{{ creationDate }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="suggestionDetail.targetProposalTitle &&
-                (proposaltype == 'changeproposalowner' || proposaltype == 'closeproposal')">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.target-proposal-title' | translate }}</h5>
-                    <h4>{{ suggestionDetail.targetProposalTitle }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data"
-                *ngIf="onGoingCommand.data.targetproposalhash && (proposaltype == 'changeproposalowner' || proposaltype == 'closeproposal')">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.target-proposal-hash' | translate }}</h5>
-                    <h4>{{ onGoingCommand.data.targetproposalhash }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="suggestionDetail.originalURL">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.suggestion-url' | translate }}</h5>
-                    <h4>{{ suggestionDetail.originalURL }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="onGoingCommand.data.draftHash">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.suggestion-hash' | translate }}</h5>
-                    <h4>{{ onGoingCommand.data.draftHash }}</h4>
-                </ion-col>
-            </ion-row>
-        </ion-list>
-
-        <div *ngIf="signingAndSendingSuggestionResponse">
-            <ion-spinner></ion-spinner>
-        </div>
-
-        <div *ngIf="!signingAndSendingSuggestionResponse">
-            <div class="footer-space"></div>
-            <ion-footer>
-                <ion-row>
-                    <ion-col class="left-col">
-                        <div class="btn-container align-center" id="cancel" (click)="cancel()">
-                            {{ 'common.cancel' | translate }}
-                        </div>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </ion-col>
-                    <ion-col class="right-col">
-                        <div class="btn-container align-center" id="confirm" (click)="signAndCreateSuggestion()">
-                            {{ 'common.confirm' | translate }}
-                        </div>
-                        <ion-ripple-effect></ion-ripple-effect>
+    <div *ngIf="suggestionDetailFetched">
+        <div *ngIf="suggestionDetail">
+            <div class="message">{{ 'crproposalvoting.create-suggestion-msg' | translate }}</div>
+            <ion-list>
+                <ion-row class="profile-data" *ngIf="suggestionDetail.title">
+                    <ion-col>
+                        <h5>{{ 'common.title' | translate }}</h5>
+                        <h4>{{ suggestionDetail.title }}</h4>
                     </ion-col>
                 </ion-row>
-            </ion-footer>
+
+                <ion-row class="profile-data" *ngIf="proposaltype">
+                    <div>
+                        <h5>{{ 'crproposalvoting.type' | translate }}</h5>
+                        <h4 class="align-center proposaltype">{{ 'crproposalvoting.proposaltype-' +
+                            proposaltype | translate }}</h4>
+                    </div>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="suggestionDetail.abstract">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.suggestion-abstract' | translate }}</h5>
+                        <h4>{{ suggestionDetail.abstract }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="suggestionDetail.recipient">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.recipient-address' | translate }}</h5>
+                        <h4>{{ suggestionDetail.recipient }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="proposaltype == 'normal'">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.attach-budget' | translate }}</h5>
+                        <table>
+                            <tr>
+                                <th>{{ 'crproposalvoting.type' | translate }}</th>
+                                <th>{{ 'crproposalvoting.stage' | translate }}</th>
+                                <th>{{ 'crproposalvoting.amount' | translate }}</th>
+                            </tr>
+                            <tr *ngFor='let budget of onGoingCommand.data.budgets'>
+                                <td>{{ 'crproposalvoting.' + budget.type | translate }}</td>
+                                <td>{{ budget.stage + suggestionDetail.stageAdjust }}</td>
+                                <td>{{ budget.amount / Config.SELA }}</td>
+                            </tr>
+                        </table>
+                        <!-- <h4>View Attachment</h4> -->
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="proposaltype == 'normal'">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.budget-amount' | translate }}</h5>
+                        <h4>{{ bugetAmount / Config.SELA }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data"
+                    *ngIf="onGoingCommand.data.secretarygeneraldid && proposaltype == 'secretarygeneral'">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.secretarygeneraldid' | translate }}</h5>
+                        <h4>{{ onGoingCommand.data.secretarygeneraldid }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data"
+                    *ngIf="suggestionDetail.newRecipient && (proposaltype == 'changeproposaladdress' || proposaltype == 'changeproposalowner')">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.new-recipient-address' | translate }}</h5>
+                        <h4>{{ suggestionDetail.newRecipient }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data"
+                    *ngIf="suggestionDetail.newOwnerDID && proposaltype == 'changeproposalowner'">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.new-owner-did' | translate }}</h5>
+                        <h4>{{ suggestionDetail.newOwnerDID }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="creationDate">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.creation-date' | translate }}</h5>
+                        <h4>{{ creationDate }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="suggestionDetail.targetProposalTitle &&
+                (proposaltype == 'changeproposalowner' || proposaltype == 'closeproposal')">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.target-proposal-title' | translate }}</h5>
+                        <h4>{{ suggestionDetail.targetProposalTitle }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data"
+                    *ngIf="onGoingCommand.data.targetproposalhash && (proposaltype == 'changeproposalowner' || proposaltype == 'closeproposal')">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.target-proposal-hash' | translate }}</h5>
+                        <h4>{{ onGoingCommand.data.targetproposalhash }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="suggestionDetail.originalURL">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.suggestion-url' | translate }}</h5>
+                        <h4>{{ suggestionDetail.originalURL }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="onGoingCommand.data.draftHash">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.suggestion-hash' | translate }}</h5>
+                        <h4>{{ onGoingCommand.data.draftHash }}</h4>
+                    </ion-col>
+                </ion-row>
+            </ion-list>
+
+            <div *ngIf="signingAndSendingSuggestionResponse">
+                <ion-spinner></ion-spinner>
+            </div>
+
+            <div *ngIf="!signingAndSendingSuggestionResponse">
+                <div class="footer-space"></div>
+                <ion-footer>
+                    <ion-row>
+                        <ion-col class="left-col">
+                            <div class="btn-container align-center" id="cancel" (click)="cancel()">
+                                {{ 'common.cancel' | translate }}
+                            </div>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-col>
+                        <ion-col class="right-col">
+                            <div class="btn-container align-center" id="confirm" (click)="signAndCreateSuggestion()">
+                                {{ 'common.confirm' | translate }}
+                            </div>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-col>
+                    </ion-row>
+                </ion-footer>
+            </div>
+        </div>
+        <div *ngIf="!suggestionDetail" class="no-data">
+            {{ 'crproposalvoting.no-data' | translate }}
         </div>
     </div>
 

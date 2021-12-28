@@ -86,6 +86,7 @@ export class ProposalService {
 
     public async fetchProposalDetails(proposalHash: string/*proposalId: number*/): Promise<ProposalDetails> {
         try {
+            this.currentProposal = null;
             Logger.log(App.CRPROPOSAL_VOTING, 'Fetching proposal details for proposal ' + proposalHash + '...');
             let url = this.getCrRpcApi() + '/api/v2/proposal/get_proposal/' + proposalHash;
             let result = await this.jsonRPCService.httpGet(url);

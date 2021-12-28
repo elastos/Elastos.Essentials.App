@@ -1,88 +1,93 @@
-<ion-content>
+<ion-content [class.darkContainer]="theme.darkMode">
     <app-titlebar></app-titlebar>
-    <div *ngIf="!proposalDetailsFetched">
+    <div *ngIf="!proposalDetailFetched">
         <ion-spinner></ion-spinner>
     </div>
 
-    <div *ngIf="proposalDetailsFetched" [class.darkContainer]="theme.darkMode">
+    <div *ngIf="proposalDetailFetched">
+        <div *ngIf="proposalDetail">
 
-        <div class="message">{{ 'crproposalvoting.review-proposal-msg' | translate }}</div>
-        <ion-list>
-            <ion-row class="profile-data" *ngIf="proposalDetails.title">
-                <ion-col>
-                    <h5>{{ 'common.title' | translate }}</h5>
-                    <h4>{{ proposalDetails.title }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="onGoingCommand.data.proposalHash">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
-                    <h4>{{ onGoingCommand.data.proposalHash }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="onGoingCommand.data.stage">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.milestone-stage' | translate }}</h5>
-                    <h4>{{ onGoingCommand.data.stage + proposalDetails.stageAdjust }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'scan'">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
-                    <h4>{{ 'crproposalvoting.' + typeResult[trackingType] | translate }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
-                <div>
-                    <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
-                    <ion-segment (ionChange)="segmentChanged($event)" [value]="trackingType">
-                        <ion-segment-button value="progress">
-                            <ion-label>{{'crproposalvoting.approve' | translate}}</ion-label>
-                        </ion-segment-button>
-                        <ion-segment-button value="rejected">
-                            <ion-label>{{'crproposalvoting.reject' | translate}}</ion-label>
-                        </ion-segment-button>
-                    </ion-segment>
-                </div>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
-                <div>
-                    <h5>{{ 'crproposalvoting.opinion' | translate }}</h5>
-                    <textarea [(ngModel)]="content"></textarea>
-                </div>
-            </ion-row>
-
-        </ion-list>
-
-
-        <div *ngIf="signingAndSendingProposalResponse">
-            <ion-spinner></ion-spinner>
-        </div>
-
-        <div *ngIf="!signingAndSendingProposalResponse && isKeyboardHide">
-            <div class="footer-space"></div>
-            <ion-footer>
-                <ion-row>
-                    <ion-col class="left-col">
-                        <div class="btn-container align-center" id="cancel" (click)="cancel()">
-                            {{ 'common.cancel' | translate }}
-                        </div>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </ion-col>
-                    <ion-col class="right-col">
-                        <div class="btn-container align-center" id="confirm" (click)="signAndReviewMilestone()">
-                            {{ 'common.confirm' | translate }}
-                        </div>
-                        <ion-ripple-effect></ion-ripple-effect>
+            <div class="message">{{ 'crproposalvoting.review-milestone-msg' | translate }}</div>
+            <ion-list>
+                <ion-row class="profile-data" *ngIf="proposalDetail.title">
+                    <ion-col>
+                        <h5>{{ 'common.title' | translate }}</h5>
+                        <h4>{{ proposalDetail.title }}</h4>
                     </ion-col>
                 </ion-row>
-            </ion-footer>
 
+                <ion-row class="profile-data" *ngIf="onGoingCommand.data.proposalHash">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
+                        <h4>{{ onGoingCommand.data.proposalHash }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="onGoingCommand.data.stage">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.milestone-stage' | translate }}</h5>
+                        <h4>{{ onGoingCommand.data.stage + proposalDetail.stageAdjust }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'scan'">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
+                        <h4>{{ 'crproposalvoting.' + typeResult[trackingType] | translate }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
+                    <div>
+                        <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
+                        <ion-segment (ionChange)="segmentChanged($event)" [value]="trackingType">
+                            <ion-segment-button value="progress">
+                                <ion-label>{{'crproposalvoting.approve' | translate}}</ion-label>
+                            </ion-segment-button>
+                            <ion-segment-button value="rejected">
+                                <ion-label>{{'crproposalvoting.reject' | translate}}</ion-label>
+                            </ion-segment-button>
+                        </ion-segment>
+                    </div>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
+                    <div>
+                        <h5>{{ 'crproposalvoting.opinion' | translate }}</h5>
+                        <textarea [(ngModel)]="content"></textarea>
+                    </div>
+                </ion-row>
+
+            </ion-list>
+
+
+            <div *ngIf="signingAndSendingProposalResponse">
+                <ion-spinner></ion-spinner>
+            </div>
+
+            <div *ngIf="!signingAndSendingProposalResponse && isKeyboardHide">
+                <div class="footer-space"></div>
+                <ion-footer>
+                    <ion-row>
+                        <ion-col class="left-col">
+                            <div class="btn-container align-center" id="cancel" (click)="cancel()">
+                                {{ 'common.cancel' | translate }}
+                            </div>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-col>
+                        <ion-col class="right-col">
+                            <div class="btn-container align-center" id="confirm" (click)="signAndReviewMilestone()">
+                                {{ 'common.confirm' | translate }}
+                            </div>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-col>
+                    </ion-row>
+                </ion-footer>
+            </div>
+        </div>
+
+        <div *ngIf="!proposalDetail" class="no-data">
+            {{ 'crproposalvoting.no-data' | translate }}
         </div>
     </div>
 </ion-content>

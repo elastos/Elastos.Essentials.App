@@ -167,6 +167,13 @@ export const fr = {
         'receive-address': 'ELA Receive Address',
         'payment-schedule': 'Payment Schedule',
         'budget-statement': 'Budget Statement',
+
+        //Error
+        'no-draft-data': 'Can not get the drafe data for now.',
+        'no-message-data': 'Can not get the message data for now.',
+        'no-opinion-data': 'Can not get the opinion data for now.',
+        'no-command-type': 'This CR commond type is currently not supported.',
+        'no-data': 'Can not get the data for now, please try again.',
     }
 
 };

@@ -25,6 +25,12 @@ ion-spinner {
     border-radius: 8px;
 }
 
+ion-row {
+    div {
+        width: 100%;
+    }
+}
+
 ion-list {
     margin: 0;
     padding: 0px 24px;

@@ -1,66 +1,67 @@
-<ion-content>
+<ion-content [class.darkContainer]="theme.darkMode">
     <app-titlebar></app-titlebar>
-    <div *ngIf="!proposalDetailsFetched">
+    <div *ngIf="!proposalDetailFetched">
         <ion-spinner></ion-spinner>
     </div>
 
-    <div *ngIf="proposalDetailsFetched" [class.darkContainer]="theme.darkMode">
+    <div *ngIf="proposalDetailFetched">
+        <div *ngIf="proposalDetail">
 
-        <div class="message">{{ 'crproposalvoting.withdraw-msg' | translate }}</div>
-        <ion-list>
-            <ion-row class="profile-data" *ngIf="proposalDetails.title">
-                <ion-col>
-                    <h5>{{ 'common.title' | translate }}</h5>
-                    <h4>{{ proposalDetails.title }}</h4>
-                </ion-col>
-            </ion-row>
+            <div class="message">{{ 'crproposalvoting.withdraw-msg' | translate }}</div>
+            <ion-list>
+                <ion-row class="profile-data" *ngIf="proposalDetail.title">
+                    <ion-col>
+                        <h5>{{ 'common.title' | translate }}</h5>
+                        <h4>{{ proposalDetail.title }}</h4>
+                    </ion-col>
+                </ion-row>
 
-            <ion-row class="profile-data"
-                *ngIf="onGoingCommand.data.proposalHash">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
-                    <h4>{{ onGoingCommand.data.proposalHash }}</h4>
-                </ion-col>
-            </ion-row>
+                <ion-row class="profile-data" *ngIf="onGoingCommand.data.proposalHash">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
+                        <h4>{{ onGoingCommand.data.proposalHash }}</h4>
+                    </ion-col>
+                </ion-row>
 
-            <ion-row class="profile-data" *ngIf="onGoingCommand.data.amount">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.withdraw-amount' | translate }}</h5>
-                    <h4>{{ onGoingCommand.data.amount / Config.SELA  }}</h4>
-                </ion-col>
-            </ion-row>
+                <ion-row class="profile-data" *ngIf="onGoingCommand.data.amount">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.withdraw-amount' | translate }}</h5>
+                        <h4>{{ onGoingCommand.data.amount / Config.SELA }}</h4>
+                    </ion-col>
+                </ion-row>
 
-            <ion-row class="profile-data" *ngIf="onGoingCommand.data.recipient">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.recipient-address' | translate }}</h5>
-                    <h4>{{ onGoingCommand.data.recipient }}</h4>
-                </ion-col>
-            </ion-row>
-        </ion-list>
+                <ion-row class="profile-data" *ngIf="onGoingCommand.data.recipient">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.recipient-address' | translate }}</h5>
+                        <h4>{{ onGoingCommand.data.recipient }}</h4>
+                    </ion-col>
+                </ion-row>
+            </ion-list>
 
-        <div *ngIf="signingAndSendingProposalResponse">
-            <ion-spinner></ion-spinner>
+            <div *ngIf="signingAndSendingProposalResponse">
+                <ion-spinner></ion-spinner>
+            </div>
+
+            <ion-footer *ngIf="!signingAndSendingProposalResponse">
+                <ion-row>
+                    <ion-col class="left-col">
+                        <div class="btn-container align-center" id="cancel" (click)="cancel()">
+                            {{ 'common.cancel' | translate }}
+                        </div>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-col>
+                    <ion-col class="right-col">
+                        <div class="btn-container align-center" id="confirm" (click)="signAndWithdraw()">
+                            {{ 'common.confirm' | translate }}
+                        </div>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-col>
+                </ion-row>
+            </ion-footer>
         </div>
 
-        <ion-footer *ngIf="!signingAndSendingProposalResponse">
-            <ion-row>
-                <ion-col class="left-col">
-                    <div class="btn-container align-center" id="cancel" (click)="cancel()">
-                        {{ 'common.cancel' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-                <ion-col class="right-col">
-                    <div class="btn-container align-center" id="confirm" (click)="signAndWithdraw()">
-                        {{ 'common.confirm' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-            </ion-row>
-        </ion-footer>
-
+        <div *ngIf="!proposalDetail" class="no-data">
+            {{ 'crproposalvoting.no-data' | translate }}
+        </div>
     </div>
 </ion-content>
-
-
-

@@ -167,6 +167,13 @@ export const zh = {
         'receive-address': 'ELA接收地址',
         'payment-schedule': '付款安排',
         'budget-statement': '预算说明',
+
+        //Error
+        'no-draft-data': '暂时不能获取draftData。',
+        'no-message-data': '暂时不能获取messageData。',
+        'no-opinion-data': '暂时不能获取opinionData。',
+        'no-command-type': '这个CR操作类型目前不支持。',
+        'no-data': '暂时不能获取数据, 请重新操作。',
     }
 
 };

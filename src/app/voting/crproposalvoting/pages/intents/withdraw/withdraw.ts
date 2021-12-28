@@ -12,9 +12,9 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CRCommand, CRCommandType, CROperationsService } from '../../../services/croperations.service';
+import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 
-type onGoingCommand = CRCommand & {
+type WithdrawCommand = CRCommand & {
     data: {
         amount: number,
         ownerpublickey: string,
@@ -31,10 +31,10 @@ type onGoingCommand = CRCommand & {
 export class WithdrawPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private onGoingCommand: onGoingCommand;
+    private onGoingCommand: WithdrawCommand;
     public signingAndSendingProposalResponse = false;
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
     public Config = Config;
 
     constructor(
@@ -51,18 +51,19 @@ export class WithdrawPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.withdraw'));
-        this.onGoingCommand = this.crOperations.onGoingCommand as onGoingCommand;
-        this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
-
-        try {
-            // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.getCurrentProposal(this.onGoingCommand.data.proposalHash,
-                this.onGoingCommand.type != CRCommandType.ProposalDetailPage);
-            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-            this.proposalDetailsFetched = true;
+        if (this.proposalDetail) {
+            return;
         }
-        catch (err) {
-            Logger.error('crproposal', 'WithdrawPage ionViewDidEnter error:', err);
+        this.proposalDetailFetched = false;
+
+        this.onGoingCommand = this.crOperations.onGoingCommand as WithdrawCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "WithdrawCommand", this.onGoingCommand);
+
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
+
+        if (this.proposalDetail) {
+            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
         }
     }
 
@@ -113,7 +114,7 @@ export class WithdrawPage {
         void this.crOperations.sendIntentResponse();
     }
 
-    private getWithdrawPayload(command: onGoingCommand): any {
+    private getWithdrawPayload(command: WithdrawCommand): any {
         let payload = {
             ProposalHash: command.data.proposalHash,
             OwnerPublicKey: command.data.ownerPublicKey,

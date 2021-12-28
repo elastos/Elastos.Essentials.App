@@ -12,7 +12,7 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CRCommand, CRCommandType, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
+import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
 
 
 export type CreateSuggestionCommand = CRCommand & {
@@ -62,39 +62,35 @@ export class CreateSuggestionPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-suggestion'));
+        if (this.suggestionDetail) {
+            return;
+        }
+        this.suggestionDetailFetched = false;
 
         this.onGoingCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
-        Logger.log(App.CRSUGGESTION, "onGoingCommand", this.onGoingCommand);
+        Logger.log(App.CRSUGGESTION, "CreateSuggestionCommand", this.onGoingCommand);
 
-        if (this.onGoingCommand.type == CRCommandType.SuggestionDetailPage) {
-            this.suggestionDetail = this.onGoingCommand.data;
-        }
-        else {
-            try {
-                // Fetch more details about this suggestion, to display to the user
-                this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.onGoingCommand.sid);
-            }
-            catch (err) {
-                Logger.error('crproposal', 'CreateSuggestionPage fetchSuggestionDetail error:', err);
-            }
-        }
+        this.suggestionDetail = await this.crOperations.getCurrentSuggestion();
         this.suggestionDetailFetched = true;
-        this.proposaltype = this.suggestionDetail.type;
-        this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
-        this.bugetAmount = 0;
-        if (this.proposaltype == "normal") {
-            for (let suggestionBudget of this.onGoingCommand.data.budgets) {
-                suggestionBudget.type = suggestionBudget.type.toLowerCase();
-                this.bugetAmount += parseInt(suggestionBudget.amount);
+        if (this.suggestionDetail) {
+            this.proposaltype = this.suggestionDetail.type;
+            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+
+            this.bugetAmount = 0;
+            if (this.proposaltype == "normal") {
+                for (let suggestionBudget of this.onGoingCommand.data.budgets) {
+                    suggestionBudget.type = suggestionBudget.type.toLowerCase();
+                    this.bugetAmount += parseInt(suggestionBudget.amount);
+                }
             }
-        }
 
-        Logger.log(App.CRSUGGESTION, "suggestionDetail", this.suggestionDetail);
-        if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
-            this.proposaltype = "changeproposaladdress";
+            Logger.log(App.CRSUGGESTION, "suggestionDetail", this.suggestionDetail);
+            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
+                this.proposaltype = "changeproposaladdress";
+            }
+            this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
         }
-        this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
     }
 
     ionViewWillLeave() {
