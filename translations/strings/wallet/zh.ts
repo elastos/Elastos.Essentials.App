@@ -360,14 +360,14 @@ export const zh = {
                 /************
                 * NFT pages *
                 *************/
-                'nft-overview': 'NFT Overview',
-                'nft-assets': 'Assets',
+                'nft-overview': 'NFT 概览',
+                'nft-assets': '资产',
                 'nft-token-id': 'Token ID',
-                'nft-collectibles-cant-be-listed': 'Collectibles for this NFT type cannot be listed.',
-                'nft-unnamed-asset': 'Unnamed Asset',
-                'nft-asset-with-type': '{{ type }} NFT asset',
-                'nft-properties': 'Properties',
-                'nft-no-properties-yet': 'Properties display is not available yet. Coming soon.',
+                'nft-collectibles-cant-be-listed': '无法列出此 NFT 类型的收藏品',
+                'nft-unnamed-asset': '未命名资产',
+                'nft-asset-with-type': '{{ type }} NFT 资产',
+                'nft-properties': '属性',
+                'nft-no-properties-yet': '属性显示尚不支持，即将推出',
 
                 /********************************************** Intent Screens ***********************************************/
 
