@@ -85,7 +85,7 @@ export const zh = {
         'finalpayment': '结项款/尾款',
 
         'sign-create-suggestion': '签名并提交建议',
-        'createsuggestion-successfully': '创建建议成功.',
+        'createsuggestion-successfully': '创建建议成功。',
         'createsuggestion-failed': '签名建议失败，请重新签名建议。',
 
         'create-proposal': '发布提案',
