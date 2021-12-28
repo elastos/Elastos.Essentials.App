@@ -65,7 +65,6 @@ export class CreateSuggestionPage {
 
         this.onGoingCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
         Logger.log(App.CRSUGGESTION, "onGoingCommand", this.onGoingCommand);
-        this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
         if (this.onGoingCommand.type == CRCommandType.SuggestionDetailPage) {
             this.suggestionDetail = this.onGoingCommand.data;
@@ -81,6 +80,7 @@ export class CreateSuggestionPage {
         }
         this.suggestionDetailFetched = true;
         this.proposaltype = this.suggestionDetail.type;
+        this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
         this.bugetAmount = 0;
         if (this.proposaltype == "normal") {
@@ -166,7 +166,7 @@ export class CreateSuggestionPage {
         let payload = {
             Type: 0,
             CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerpublickey || data.ownerPublicKey,
+            OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             Budgets: [],
@@ -198,7 +198,7 @@ export class CreateSuggestionPage {
         let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
+            OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             TargetProposalHash: data.targetproposalhash,
@@ -215,7 +215,7 @@ export class CreateSuggestionPage {
         let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
+            OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             TargetProposalHash: data.targetproposalhash,
@@ -230,7 +230,7 @@ export class CreateSuggestionPage {
         let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
+            OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
@@ -249,7 +249,7 @@ export class CreateSuggestionPage {
             OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
-            ReservedCustomIDList: data.reservedCustomizedIDList,
+            ReservedCustomIDList: this.suggestionDetail.reservedCustomizedIDList,
         };
 
         Logger.log(App.CRSUGGESTION, "getReserveCustomizeDidDigest.", payload);

@@ -83,8 +83,8 @@ export class CreateProposalPage {
             }
         }
         this.suggestionDetailFetched = true;
-
         this.proposaltype = this.suggestionDetail.type;
+        this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
         this.bugetAmount = 0;
         if (this.proposaltype == "normal") {
@@ -202,7 +202,7 @@ export class CreateProposalPage {
         let payload = {
             Type: 0,
             CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerpublickey,
+            OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             Budgets: [],
@@ -234,7 +234,7 @@ export class CreateProposalPage {
         let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
+            OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             TargetProposalHash: data.targetproposalhash,
@@ -251,7 +251,7 @@ export class CreateProposalPage {
         let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
+            OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             TargetProposalHash: data.targetproposalhash,
@@ -265,7 +265,7 @@ export class CreateProposalPage {
         let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
+            OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
@@ -282,10 +282,10 @@ export class CreateProposalPage {
         let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerpublickey,
+            OwnerPublicKey: data.ownerPublicKey,
             DraftHash: data.draftHash,
             DraftData: data.draftData,
-            ReservedCustomIDList: data.reservedCustomizedIDList,
+            ReservedCustomIDList: this.suggestionDetail.reservedCustomizedIDList,
             Signature: data.signature,
             CRCouncilMemberDID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
         };

@@ -72,6 +72,8 @@ export class SuggestionDetail {
     signature?: string;
     secretaryGeneralSignature?: string;
     newOwnerSignature?: string;
+
+    reservedCustomizedIDList?: [];
 }
 
 export type SuggestionDetailResponse = {
