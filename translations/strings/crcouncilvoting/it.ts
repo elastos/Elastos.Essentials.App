@@ -52,7 +52,7 @@ export const it = {
         'impeachment-progress': ' Voto di incriminazione',
         'current': 'Voti Attuali',
         'impeachment': 'Voti per l\'incriminazione',
-        'about-member': 'Informazioni sul Membro CRC',
+        'about-member': 'Info Membro CRC',
         'performance-record': 'Registro Votazioni',
         'member-did': 'DID del Membro del Consiglio',
         'member-url': 'URL del Membro del Consiglio',
