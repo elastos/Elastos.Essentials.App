@@ -5,6 +5,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 import { Config } from '../../../config/Config';
 import { StandardCoinName } from '../../coin';
 import { EthTransaction } from '../../evm.types';
+import { WalletCreateType } from '../../walletaccount';
 import { StandardEVMSubWallet } from '../evm.subwallet';
 import { NetworkWallet } from '../networkwallet';
 
@@ -24,7 +25,8 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   }
 
   public supportsCrossChainTransfers(): boolean {
-    return true;
+    // The wallet that imported by private key has no ELA mainchain.
+    return this.networkWallet.masterWallet.createType === WalletCreateType.MNEMONIC;
   }
 
   public getMainIcon(): string {
