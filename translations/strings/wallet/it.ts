@@ -368,6 +368,7 @@ export const it = {
         'nft-asset-with-type': '{{ type }} NFT asset',
         'nft-properties': 'Properties',
         'nft-no-properties-yet': 'Properties display is not available yet. Coming soon.',
+        'nft-assets-owned': 'assets owned',
 
         /********************************************** Intent Screens ***********************************************/
 

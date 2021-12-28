@@ -16,7 +16,8 @@
                 <h1>
                     <span>{{ nft.type }} NFT: {{ nft.name }}</span>
                 </h1>
-                <h3 *ngIf="!refreshingAssets && nft.getAssets()"><b>{{ nft.getAssets().length }}</b> assets owned</h3>
+                <h3 *ngIf="!refreshingAssets && nft.getAssets()"><b>{{ nft.getAssets().length }}</b> {{
+                    'wallet.nft-assets-owned' | translate}}</h3>
             </ion-row>
             <!-- <ion-row class="card-btn-row">
                 <ion-col offset="0.25" size="3">

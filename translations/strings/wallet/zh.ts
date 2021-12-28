@@ -368,6 +368,7 @@ export const zh = {
                 'nft-asset-with-type': '{{ type }} NFT 资产',
                 'nft-properties': '属性',
                 'nft-no-properties-yet': '属性显示尚不支持，即将推出',
+                'nft-assets-owned': 'assets owned',
 
                 /********************************************** Intent Screens ***********************************************/
 
