@@ -100,36 +100,7 @@ export class ProposalDetailPage {
 
                     //Set last tracking for show on page
                     if (this.proposal.status == 'voteragreed' && this.proposal.milestone && this.proposal.milestone[i]) {
-                        let milestone = this.proposal.milestone[i];
-
-                        if (this.isOwner) {
-                            if (budget.status == 'Withdrawable') {
-                                this.withdrawAmout += budget.amount;
-                                milestone.lastTracking = {command: 'withdraw'};
-                            }
-                            else if (!milestone.tracking) {
-                                milestone.lastTracking = {command: 'apply'};
-                            }
-                            else {
-                                milestone.lastTracking = milestone.tracking[milestone.tracking.length - 1];
-
-                                if (budget.status == 'Unfinished' && milestone.lastTracking.apply
-                                            && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
-                                    milestone.lastTracking.command = 'apply';
-                                }
-                            }
-                        }
-                        else if (await this.voteService.isSecretaryGeneral() && milestone.tracking && budget.status == 'Unfinished') {
-                            let lastTracking = milestone.tracking[milestone.tracking.length - 1];
-                            if (lastTracking.apply && (!lastTracking.review || !lastTracking.review.opinion)) {
-                                lastTracking.command = 'review';
-                                milestone.lastTracking = lastTracking;
-                            }
-                        }
-
-                        if (milestone.lastTracking) {
-                            milestone.lastTracking.stage = budget.stage;
-                        }
+                        await this.setLastTracking(i);
                     }
                 }
             }
@@ -174,6 +145,48 @@ export class ProposalDetailPage {
 
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposal-details'));
         this.proposalDetailFetched = true;
+    }
+
+    async setLastTracking(i: number) {
+        let milestone = this.proposal.milestone[i];
+        let budget = this.proposal.budgets[i];
+
+        if (this.isOwner) {
+            if (budget.status == 'Withdrawable') {
+                this.withdrawAmout += budget.amount;
+                milestone.lastTracking = {command: 'withdraw'};
+            }
+            else if (!milestone.tracking) {
+                milestone.lastTracking = {command: 'apply'};
+            }
+            else {
+                milestone.lastTracking = milestone.tracking[milestone.tracking.length - 1];
+
+                if (budget.status == 'Unfinished' && milestone.lastTracking.apply
+                            && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
+                    milestone.lastTracking.command = 'apply';
+                }
+            }
+        }
+        else if (await this.voteService.isSecretaryGeneral() && milestone.tracking && budget.status == 'Unfinished') {
+            let lastTracking = milestone.tracking[milestone.tracking.length - 1];
+            if (lastTracking.apply && lastTracking.apply.messageHash && (!lastTracking.review || !lastTracking.review.opinion)) {
+                try {
+                    let ret = await this.crOperations.getMessageData(lastTracking.apply.messageHash);
+                    if (ret != null && ret.ownerSignature) {
+                        lastTracking.command = 'review';
+                        milestone.lastTracking = lastTracking;
+                    }
+                }
+                catch (errMessage) {
+                    Logger.error(App.CRSUGGESTION, 'Can not getMessageData on stage ', i);
+                }
+            }
+        }
+
+        if (milestone.lastTracking) {
+            milestone.lastTracking.stage = budget.stage;
+        }
     }
 
     ionViewDidEnter() {
