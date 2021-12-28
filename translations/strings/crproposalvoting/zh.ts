@@ -174,6 +174,7 @@ export const zh = {
         'no-opinion-data': '暂时不能获取opinionData。',
         'no-command-type': '这个CR操作类型目前不支持。',
         'no-data': '暂时不能获取数据, 请重新操作。',
+        'ela-not-enough': '有效的ELA不够交易。',
     }
 
 };

@@ -46,7 +46,7 @@ export class VoteService {
     constructor(
         public native: Native,
         private walletManager: WalletService,
-        public popupProvider: GlobalPopupService,
+        public globalPopupService: GlobalPopupService,
         private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService,
         public jsonRPCService: GlobalJsonRPCService,
@@ -81,7 +81,7 @@ export class VoteService {
         this.activeWallet = this.walletManager.getActiveNetworkWallet();
 
         if (!this.activeWallet) {
-            const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
+            const toCreateWallet = await this.globalPopupService.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
             if (toCreateWallet) {
                 this.native.setRootRouter('/wallet/launcher');
             }
@@ -116,7 +116,7 @@ export class VoteService {
 
         //If multi sign will be rejected
         if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
-            await this.popupProvider.ionicAlert('wallet.text-warning', 'crproposalvoting.multi-sign-reject-voting');
+            await this.globalPopupService.ionicAlert('wallet.text-warning', 'crproposalvoting.multi-sign-reject-voting');
             return;
         }
 
@@ -150,8 +150,16 @@ export class VoteService {
     }
 
     public async checkWalletAvailableForVote():  Promise<boolean> {
+        if (await this.sourceSubwallet.hasPendingBalance()) {
+            await this.globalPopupService.ionicAlert("common.please-wait", 'wallet.transaction-pending');
+            return false;
+        }
+
         let utxo = await this.sourceSubwallet.getAvailableUtxo(20000);
-        if (!utxo) return false;
+        if (!utxo) {
+            await this.globalPopupService.ionicAlert('wallet.text-warning', 'crproposalvoting.ela-not-enough');
+            return false;
+        }
 
         return true;
     }

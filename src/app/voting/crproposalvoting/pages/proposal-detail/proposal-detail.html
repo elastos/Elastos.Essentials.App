@@ -46,9 +46,7 @@
                                         </ion-col>
                                         <ion-col size="10" class="milestone">
                                             <div class="content">
-                                                <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp)
-                                                    }}
-                                                </h5>
+                                                <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp)}}</h5>
                                                 <h5 class="milestone-goal">{{ entry.goal }}</h5>
                                                 <div class="lastTracking"
                                                     *ngIf="entry.lastTracking && entry.lastTracking.apply">
