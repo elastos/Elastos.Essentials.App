@@ -46,21 +46,17 @@ export class WalletImportByPrivateKeyPage implements OnInit {
   }
 
   async onImport() {
-    if (this.inputPrivatKeyCompleted()) {
-
-        const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
-        if (payPassword) {
-          try {
+    const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
+    if (payPassword) {
+        try {
             await this.native.showLoading(this.translate.instant('common.please-wait'));
             await this.importWalletWithPrivateKey(payPassword);
-            await this.native.hideLoading();
-          } catch (err) {
-            Logger.error('wallet', 'Wallet import error:', err);
-            await this.native.hideLoading();
-          }
+        } catch (err) {
+            Logger.error('wallet', 'Wallet importWalletWithPrivateKey error:', err);
         }
-    } else {
-        this.native.toast(this.translate.instant("wallet.mnemonic-import-missing-words"));
+        finally {
+            await this.native.hideLoading();
+        }
     }
   }
 

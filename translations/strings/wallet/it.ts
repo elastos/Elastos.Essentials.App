@@ -522,6 +522,7 @@ export const it = {
         'import-wallet-by-privatekey-info': 'Only EVM compatible wallet private keys are supported ',
         'paste-privatekey': 'Paste or Enter Private Key',
         'wrong-privatekey-msg': 'Please enter the correct private key',
+        'import-private-key-sucess': 'Wallet imported from Private key',
 
 
         /***************************

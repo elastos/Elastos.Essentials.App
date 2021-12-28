@@ -491,7 +491,7 @@ export const zh = {
                 'mnemonic-warning3': '切勿与任何人分享您的助记词，并始终保持安全！确保没有人在看着您再继续',
                 'type-menmonic-verify': '请输入您的12个助记词进行验证',
                 'type-menmonic-import': '请按顺序输入钱包的12个助记词',
-                'import-text-word-sucess': '导入助记词成功',
+                'import-text-word-sucess': '已通过助记词成功导入钱包',
                 'next-four-words': '后四个词',
                 'create-wallet': '创建钱包',
                 'import-wallet': '导入钱包',
@@ -506,7 +506,7 @@ export const zh = {
                 "help:import-password": "助记词密码是与助记词绑定的自定义密码。 如果您在创建钱包时使用了助记词密码，则导入时必须使用相同的助记词密码，反之，则无需助记词密码，否则恢复的将是另一个钱包。",
                 "privatekey": "私钥",
                 "privatekey-tap-to-copy": "点击私钥即可复制",
-                "export-private-key-intro": "Optionally, you can also use the following private key in some wallets. Touch to copy.",
+                "export-private-key-intro": "或者，您也可以在某些钱包中使用以下私钥。点击私钥即可复制。",
 
                 /********************************
                 * Advanced Mnemonic Import Page *
@@ -522,6 +522,8 @@ export const zh = {
                 'import-wallet-by-privatekey-info': '只支持兼容 EVM 的钱包私钥',
                 'paste-privatekey': '请粘贴或输入私钥',
                 'wrong-privatekey-msg': '请输入正确的私钥',
+                'import-private-key-sucess': '已通过私钥成功导入钱包',
+
 
                 /***************************
                 * Earn, Swap, Bridge pages *

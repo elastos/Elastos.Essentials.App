@@ -522,6 +522,7 @@ export const fr = {
         'import-wallet-by-privatekey-info': 'Seules les clés privées des portefeuilles EVM (type Ethereum) sont supportées.',
         'paste-privatekey': 'Coller ou saisir la clé privée',
         'wrong-privatekey-msg': 'Veuillez saisir une clé privée valide',
+        'import-private-key-sucess': 'Wallet imported from Private key',
 
 
         /***************************
