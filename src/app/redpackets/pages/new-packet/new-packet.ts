@@ -157,11 +157,13 @@ export class NewPacketPage {
     Logger.log("redpackets", "Created packet:", this.createdPacket);
 
     // Reach the payment screen to continue
-    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay", {
+    await this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay", {
       state: {
         packetHash: this.createdPacket.hash
       }
     });
+
+    this.creatingPacket = false;
   }
 
   async formErr(message: string) {

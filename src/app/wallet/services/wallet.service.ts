@@ -30,9 +30,11 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { CoinType } from '../model/coin';
 import { Network } from '../model/networks/network';
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
 import { WalletAccount, WalletAccountType } from '../model/walletaccount';
+import { ERC20SubWallet } from '../model/wallets/erc20.subwallet';
 import { StandardEVMSubWallet } from '../model/wallets/evm.subwallet';
 import { MasterWallet, WalletID } from '../model/wallets/masterwallet';
 import { NetworkWallet } from '../model/wallets/networkwallet';
@@ -380,6 +382,28 @@ export class WalletService {
                 let walletAddress = await mainEVMSubWallet.createAddress();
                 if (walletAddress === address)
                     return mainEVMSubWallet;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Tries to find the a ERC20 subwallet tfor a given token address in the list of
+     * all subwallets for the active network
+     */
+    public async findERC20SubWalletByContractAddress(tokenContractAddress: string, evmAddress: string): Promise<ERC20SubWallet> {
+        for (let networkWallet of this.getNetworkWalletsList()) {
+            let mainEVMSubWallet = networkWallet.getMainEvmSubWallet();
+            if (mainEVMSubWallet) {
+                let walletAddress = await mainEVMSubWallet.createAddress();
+                if (walletAddress === evmAddress) {
+                    // Found the right network wallet. Now check its subwallets
+                    let erc20SubWallets = networkWallet.getSubWalletsByType(CoinType.ERC20);
+                    for (let sw of erc20SubWallets as ERC20SubWallet[]) {
+                        if (sw.coin.getContractAddress() === tokenContractAddress)
+                            return sw;
+                    }
+                }
             }
         }
         return null;

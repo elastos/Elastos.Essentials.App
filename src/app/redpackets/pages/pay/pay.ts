@@ -13,7 +13,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { PacketCosts } from '../../model/packetcosts.model';
-import { Packet } from '../../model/packets.model';
+import { Packet, TokenType } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
 import { PaymentService, PaymentType } from '../../services/payment.service';
 
@@ -31,6 +31,7 @@ export class PayPage {
   private packetHash: string;
   //private costs: PacketCosts = null;
   public sendingNativePayment = false;
+  public sendingERC20Payment = false;
 
   constructor(
     public navCtrl: NavController,
@@ -81,6 +82,10 @@ export class PayPage {
     return !!this.packet.paymentStatus.nativeToken;
   }
 
+  public isERC20PaymentCompleted(): boolean {
+    return !!this.packet.paymentStatus.erc20Token;
+  }
+
   /**
    * Note: this method must be called only when the red packet contains ERC20.
    * Otherwise it returns "ELA"
@@ -117,13 +122,7 @@ export class PayPage {
     return this.uiService.getFixedBalance(this.packet.costs.nativeToken.standardServiceFees);
   }
 
-  /**
-   * Directly sends the required native tokens to the service
-   */
-  public async sendNativeToken() {
-    if (this.sendingNativePayment)
-      return;
-
+  private async checkRightNetwork(): Promise<boolean> {
     // Force switch to the right network if we are on the wrong one
     let currentNetwork = this.walletNetworkService.activeNetwork.value;
     let packetNetwork = this.walletNetworkService.getNetworkByChainId(this.packet.chainId);
@@ -131,9 +130,21 @@ export class PayPage {
       let switched = await this.globalSwitchNetworkService.promptSwitchToNetwork(packetNetwork);
       if (!switched) {
         Logger.log("redpackets", "Can't send payment. Wrong network");
-        return;
+        return false;
       }
     }
+    return true;
+  }
+
+  /**
+   * Directly sends the required native tokens to the service
+   */
+  public async sendNativeToken() {
+    if (this.sendingNativePayment)
+      return;
+
+    if (!await this.checkRightNetwork())
+      return;
 
     // Now that we are on the right network, find the network wallet that has the right address
     let evmSubWallet = await this.walletService.findStandardEVMSubWalletByAddress(this.packet.creatorAddress);
@@ -144,7 +155,6 @@ export class PayPage {
 
     this.sendingNativePayment = true;
 
-    // TODO: why do we use Number here, not bignumbers ?
     let rawTx = await evmSubWallet.createPaymentTransaction(
       this.packet.paymentAddress,
       this.packet.costs.nativeToken.total.toNumber(),
@@ -179,7 +189,7 @@ export class PayPage {
           if (txStatus.status === ETHTransactionStatus.PACKED) {
             // Notify the backend about this payment, so it can update the packet status
             Logger.log("redpackets", "Transaction has been packed on chain. Telling this to the backend");
-            let confirmedPaymentStatus = await this.paymentService.notifyServiceOfPayment(this.packet.hash, txStatus.txId, this.packet.tokenType);
+            let confirmedPaymentStatus = await this.paymentService.notifyServiceOfPayment(this.packet.hash, txStatus.txId, TokenType.NATIVE_TOKEN);
             if (confirmedPaymentStatus) {
               // Payment is confirmed by the backend
               this.packet.paymentStatus.nativeToken = confirmedPaymentStatus;
@@ -202,14 +212,92 @@ export class PayPage {
       Logger.error('redpackets', 'publishTransaction error:', err)
     }
 
-    console.log("after payment");
+    console.log("after native payment");
   }
 
   /**
    * Directly sends the required native ERC20 tokens to the service
    */
-  public sendERC20Tokens() {
+  public async sendERC20Tokens() {
+    if (this.sendingERC20Payment)
+      return;
 
+    if (!await this.checkRightNetwork())
+      return;
+
+    // Now that we are on the right network, find the token subwallet
+    let erc20SubWallet = await this.walletService.findERC20SubWalletByContractAddress(this.packet.erc20ContractAddress, this.packet.creatorAddress);
+    if (!erc20SubWallet) {
+      Logger.error("redpackets", "Can't find the ERC20 subwallet with which the packet was created. Unable to pay");
+      return;
+    }
+
+    let evmSubWallet = await this.walletService.findStandardEVMSubWalletByAddress(this.packet.creatorAddress);
+    if (!evmSubWallet) {
+      Logger.log("redpackets", "Can't find the wallet with which the packet was created. Unable to pay");
+      return;
+    }
+
+    this.sendingERC20Payment = true;
+
+    let rawTx = await erc20SubWallet.createPaymentTransaction(
+      this.packet.paymentAddress,
+      this.packet.costs.erc20Token.total.toNumber(),
+      "", null, null, -1);
+
+    console.log("Payment rawTx", rawTx);
+
+    const transfer = new Transfer();
+    Object.assign(transfer, {
+      masterWalletId: erc20SubWallet.masterWallet.id,
+      subWalletId: erc20SubWallet.id,
+      rawTransaction: rawTx,
+      action: null,
+      intentId: null
+    });
+
+    try {
+      // Listen to transaction events in order to catch the published transaction hash.
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      let txStatusSub = this.ethTransactionService.ethTransactionStatus.subscribe(async txStatus => {
+        // Make sure we are receiving a status for our current operation, not for something else
+        // Note: this check if far from being robust, let's assume for now that there is only one on going
+        // transaction at a time... Can't do much better over the existing mechanism.
+        if (txStatus.chainId === evmSubWallet.id) {
+          if (txStatus.txId && !this.paymentService.getPaymentByTransactionHash(txStatus.txId)) {
+            // Transaction hash received. Save it locally to be able to retry notifying the back-end
+            // later if needed (in case the backend was not accessible right now, or crashed, etc)
+            Logger.log("redpackets", "Transaction hash received for the payment. Creating a payment entry");
+            await this.paymentService.createPayment(this.packet.hash, txStatus.txId, PaymentType.ERC20_TOKEN);
+          }
+
+          if (txStatus.status === ETHTransactionStatus.PACKED) {
+            // Notify the backend about this payment, so it can update the packet status
+            Logger.log("redpackets", "Transaction has been packed on chain. Telling this to the backend");
+            let confirmedPaymentStatus = await this.paymentService.notifyServiceOfPayment(this.packet.hash, txStatus.txId, TokenType.ERC20_TOKEN);
+            if (confirmedPaymentStatus) {
+              // Payment is confirmed by the backend
+              this.packet.paymentStatus.erc20Token = confirmedPaymentStatus;
+            }
+            else {
+              // Payment could not be confirmed by the backend
+              // TODO
+            }
+
+            this.sendingERC20Payment = false;
+
+            // Stop listening, we got everything we needed
+            txStatusSub.unsubscribe();
+          }
+        }
+      });
+      await this.ethTransactionService.publishTransaction(evmSubWallet, rawTx, transfer, true);
+    }
+    catch (err) {
+      Logger.error('redpackets', 'publishTransaction ERC20 error:', err)
+    }
+
+    console.log("after erc20 payment");
   }
 
   private requestToCheckPayment() {

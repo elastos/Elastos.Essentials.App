@@ -51,8 +51,12 @@
         <ion-col size="6" class="cost">{{getERC20RedPacketValue()}} {{getERC20TokenSymbol()}}</ion-col>
       </ion-row>
 
-      <div class="custom-btn mt1" (click)="sendERC20Tokens()">
-        <ion-label>Send {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</ion-label>
+      <div class="custom-btn mt1" *ngIf="!isERC20PaymentCompleted()" (click)="sendERC20Tokens()">
+        <ion-label *ngIf="!sendingERC20Payment">Send {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</ion-label>
+        <ion-spinner *ngIf="sendingERC20Payment"></ion-spinner>
+      </div>
+      <div *ngIf="isERC20PaymentCompleted()">
+        <h1>Already paid!</h1>
       </div>
     </div>
 
