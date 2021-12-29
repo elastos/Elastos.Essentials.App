@@ -79,7 +79,6 @@ export class CreateProposalPage {
         this.suggestionDetailFetched = true;
         if (this.suggestionDetail) {
             this.proposaltype = this.suggestionDetail.type;
-            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
             this.bugetAmount = 0;
             if (this.proposaltype == "normal") {

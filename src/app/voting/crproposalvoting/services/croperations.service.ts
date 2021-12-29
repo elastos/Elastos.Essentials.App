@@ -275,7 +275,7 @@ export class CROperationsService {
     public async getData(): Promise<boolean> {
         let data = this.onGoingCommand.data;
         data.categorydata = data.categorydata || "";
-        data.ownerpublickey = data.ownerpublickey || data.ownerPublicKey,
+        data.ownerPublicKey = data.ownerpublickey || data.ownerPublicKey,
         data.proposalHash = data.proposalhash || data.proposalHash;
 
         try {
