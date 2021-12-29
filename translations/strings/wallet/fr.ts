@@ -520,6 +520,7 @@ export const fr = {
         * Import Wallet by private key Page *
         *********************************/
         'import-wallet-by-privatekey-info': 'Clé privée: Seules les clés privées des portefeuilles EVM (type Ethereum) sont supportées.',
+        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
         'paste-privatekey': 'Coller ou saisir la clé privée ou un keystore',
         'wrong-privatekey-msg': 'Veuillez saisir une clé privée valide',
         'import-private-key-sucess': 'Wallet imported from Private key',

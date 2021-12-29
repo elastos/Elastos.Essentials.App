@@ -12,7 +12,6 @@
             {{ 'wallet.paste' | translate }}
         </ion-button>
       </ion-row>
-      <h1 *ngIf="!contentIsJsonObj">{{ 'wallet.import-wallet-by-privatekey-info' | translate }}</h1>
       <ion-row class="password-row" *ngIf="contentIsJsonObj">
         <ion-input
             type="password"
@@ -20,6 +19,10 @@
             placeholder="{{ 'wallet.keystore-backup-password' | translate }}"
             [(ngModel)]="keystoreBackupPassword">
         </ion-input>
+      </ion-row>
+      <ion-row class="prompt-row">
+          <h1>{{ 'wallet.import-wallet-by-privatekey-info' | translate }}</h1>
+          <h1>{{ 'wallet.import-wallet-by-keystore-info' | translate }}</h1>
       </ion-row>
       <ion-row class="btn-container">
         <ion-button color="secondary" [disabled]='!inputPrivatKeyCompleted()'(click)="onImport()">

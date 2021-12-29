@@ -520,6 +520,7 @@ export const it = {
         * Import Wallet by private key Page *
         *********************************/
         'import-wallet-by-privatekey-info': 'Private key: Only EVM compatible wallet private keys are supported ',
+        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
         'paste-privatekey': 'Paste or Enter Private Key or Keystore',
         'wrong-privatekey-msg': 'Please enter the correct private key',
         'import-private-key-sucess': 'Wallet imported from Private key',

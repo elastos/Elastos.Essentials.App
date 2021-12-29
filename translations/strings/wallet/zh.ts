@@ -520,6 +520,7 @@ export const zh = {
                 * Import Wallet by private key Page *
                 *********************************/
                 'import-wallet-by-privatekey-info': '私钥:只支持兼容 EVM 的钱包私钥',
+                'import-wallet-by-keystore-info': 'Keystore: 只支持 ELA Keystore',
                 'paste-privatekey': '请粘贴或输入私钥/Keystore',
                 'wrong-privatekey-msg': '请输入正确的私钥/Keystore',
                 'import-private-key-sucess': '已通过私钥成功导入钱包',
