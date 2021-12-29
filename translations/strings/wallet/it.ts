@@ -263,6 +263,8 @@ export const it = {
         "wallet-settings-title": "Impostazioni del portafoglio",
         "wallet-settings-backup-wallet": "Backup del Portafoglio",
         "wallet-settings-backup-wallet-subtitle": "Visualizza il tuo mnemonico per salvarlo in un luogo sicuro.",
+        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
+        "wallet-settings-backup-wallet-keystore": "Export Keystore",
         "wallet-settings-change-name": "Cambia nome",
         "wallet-settings-change-name-subtitle": "Organizza i tuoi portafogli assegnando loro un nome personalizzato.",
         "wallet-settings-change-theme": "Cambia tema",
@@ -507,6 +509,17 @@ export const it = {
         "privatekey": "Private Key",
         "privatekey-tap-to-copy": "Tap private key to copy",
         "export-private-key-intro": "Optionally, you can also use the following private key in some wallets. Touch to copy.",
+
+        /***********************
+        * Export Keystore Page *
+        ************************/
+        "keystore-title": "Export Keystore",
+        "keystore-export-intro": "Touch to copy",
+        "keystore-input-password": "Set Keystore password",
+        "keystore-reinput-password": "Repeat Keystore password",
+        "keystore-export": "Export",
+        "keystore-password-validator-repeat": "The two input passwords are inconsistent",
+        "keystore-password-validator-min-length": "The password must be at least 8 characters",
 
         /********************************
         * Advanced Mnemonic Import Page *

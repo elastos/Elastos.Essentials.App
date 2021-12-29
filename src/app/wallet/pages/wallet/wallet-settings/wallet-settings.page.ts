@@ -9,6 +9,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { WalletCreateType } from 'src/app/wallet/model/walletaccount';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../config/Config';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
@@ -44,6 +45,9 @@ export class WalletSettingsPage implements OnInit {
     // Helpers
     public WalletUtil = WalletUtil;
     public SELA = Config.SELA;
+
+    public canExportKeystore = true;
+    public showExportMenu = false;
 
     public settings = [
         {
@@ -101,6 +105,8 @@ export class WalletSettingsPage implements OnInit {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
         this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
+        this.canExportKeystore = this.masterWallet.createType === WalletCreateType.MNEMONIC
+                || this.masterWallet.createType === WalletCreateType.KEYSTORE;
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
         await this.getMasterWalletBasicInfo();
 
@@ -146,17 +152,6 @@ export class WalletSettingsPage implements OnInit {
         this.walletName = this.walletManager.masterWallets[this.masterWalletId].name;
 
         this.titleBar.setTitle(this.translate.instant("wallet.wallet-settings-title"));
-    }
-
-    async getPassword() {
-        try {
-            const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
-            if (payPassword) {
-                this.native.go('/wallet/mnemonic/export', { payPassword: payPassword });
-            }
-        } catch (e) {
-            Logger.error('wallet', 'MnemonicExportPage getWalletPassword error:' + e);
-        }
     }
 
     async onDelete() {
@@ -222,7 +217,11 @@ export class WalletSettingsPage implements OnInit {
 
     public goToSetting(item) {
         if (item.type === 'wallet-export') {
-            void this.getPassword();
+            if (this.canExportKeystore) {
+                this.showExportMenu = !this.showExportMenu;
+            } else {
+                void this.export();
+            }
         } else if (item.type === 'wallet-delete') {
             void this.onDelete();
         }
@@ -230,6 +229,28 @@ export class WalletSettingsPage implements OnInit {
             this.goToDID1Transfer();
         } else {
             this.native.go(item.route);
+        }
+    }
+
+    public async export() {
+        try {
+            const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
+            if (payPassword) {
+                this.native.go('/wallet/mnemonic/export', { payPassword: payPassword });
+            }
+        } catch (e) {
+            Logger.error('wallet', 'WalletSettingsPage getWalletPassword error:' + e);
+        }
+    }
+
+    public async exportKeystore() {
+        try {
+            const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
+            if (payPassword) {
+                this.native.go('/wallet/wallet-keystore-export', { payPassword: payPassword });
+            }
+        } catch (e) {
+            Logger.error('wallet', 'WalletSettingsPage getWalletPassword error:' + e);
         }
     }
 }

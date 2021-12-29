@@ -262,7 +262,9 @@ export const zh = {
                 ************************/
                 "wallet-settings-title": "钱包设置",
                 "wallet-settings-backup-wallet": "备份钱包",
-                "wallet-settings-backup-wallet-subtitle": "查看要导出和备份的助记词",
+                "wallet-settings-backup-wallet-subtitle": "查看要导出和备份的助记词及私钥",
+                "wallet-settings-backup-wallet-export": "导出助记词及私钥",
+                "wallet-settings-backup-wallet-keystore": "导出 Keystore",
                 "wallet-settings-change-name": "更改名称",
                 "wallet-settings-change-name-subtitle": "自定义钱包名称",
                 "wallet-settings-change-theme": "更换主题",
@@ -507,6 +509,17 @@ export const zh = {
                 "privatekey": "私钥",
                 "privatekey-tap-to-copy": "点击私钥即可复制",
                 "export-private-key-intro": "或者，您也可以在某些钱包中使用以下私钥。点击私钥即可复制。",
+
+                /***********************
+                * Export Keystore Page *
+                ************************/
+                "keystore-title": "导出 Keystore",
+                "keystore-export-intro": "点击Keystore即可复制",
+                "keystore-input-password": "设置Keystore密码（最少8位）",
+                "keystore-reinput-password": "再次输入Keystore密码",
+                "keystore-export": "导出",
+                "keystore-password-validator-repeat": "两次输入的密码不一致",
+                "keystore-password-validator-min-length": "密码最少8位",
 
                 /********************************
                 * Advanced Mnemonic Import Page *

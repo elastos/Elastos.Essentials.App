@@ -50,6 +50,16 @@
                 <img
                     [src]="!theme.darkMode ? 'assets/wallet/icons/right-arrow.svg' : 'assets/wallet/icons/darkmode/right-arrow.svg'" />
             </ion-col>
+            <ion-col *ngIf="item.type === 'wallet-export'" offset="2" size="10" class="providers" [hidden]="!showExportMenu">
+                <div class="exportmenu ripple ion-activatable" (click)="export()">
+                    {{ 'wallet.wallet-settings-backup-wallet-export' | translate }}
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+                <div class="exportmenu ripple ion-activatable" (click)="exportKeystore()">
+                    {{ 'wallet.wallet-settings-backup-wallet-keystore' | translate }}
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
     </ion-grid>
