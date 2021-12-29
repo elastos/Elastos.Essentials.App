@@ -156,15 +156,17 @@ export class ProposalDetailPage {
                 this.withdrawAmout += budget.amount;
                 milestone.lastTracking = {command: 'withdraw'};
             }
-            else if (!milestone.tracking) {
-                milestone.lastTracking = {command: 'apply'};
-            }
-            else {
-                milestone.lastTracking = milestone.tracking[milestone.tracking.length - 1];
+            else if (budget.status != "Withdrawn") {
+                if (!milestone.tracking) {
+                    milestone.lastTracking = {command: 'apply'};
+                }
+                else {
+                    milestone.lastTracking = milestone.tracking[milestone.tracking.length - 1];
 
-                if (budget.status == 'Unfinished' && milestone.lastTracking.apply
-                            && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
-                    milestone.lastTracking.command = 'apply';
+                    if (budget.status == 'Unfinished' && milestone.lastTracking.apply
+                                && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
+                        milestone.lastTracking.command = 'apply';
+                    }
                 }
             }
         }
