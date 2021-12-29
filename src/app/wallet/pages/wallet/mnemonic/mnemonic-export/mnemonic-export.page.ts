@@ -85,7 +85,8 @@ export class MnemonicExportPage implements OnInit {
             const masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
             this.walletname = masterWallet.name;
             this.account = masterWallet.account.Type;
-            this.hasMnemonic = masterWallet.createType === WalletCreateType.MNEMONIC;
+            this.hasMnemonic = masterWallet.createType === WalletCreateType.MNEMONIC
+                || masterWallet.createType === WalletCreateType.KEYSTORE;
             if (this.hasMnemonic) {
                 void this.showMnemonics();
             } else {

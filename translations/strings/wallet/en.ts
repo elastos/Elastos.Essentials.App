@@ -475,7 +475,7 @@ export const en = {
         "text-wallet-passphrase-validator-repeat": "The two input mnemonic passphrases are inconsistent",
         "text-wallet-passphrase-validator-min-length": "The mnemonic passphrase must be at least 8 characters",
         "import-wallet-by-mnemonic": "Import Wallet by mnemonic",
-        "import-wallet-by-privatekey": "Import Wallet by private key",
+        "import-wallet-by-privatekey": "Import Wallet by private key or Keystore",
 
         /*****************
         * Mnemonic Pages *
@@ -519,10 +519,12 @@ export const en = {
         /********************************
         * Import Wallet by private key Page *
         *********************************/
-        'import-wallet-by-privatekey-info': 'Only EVM compatible wallet private keys are supported ',
-        'paste-privatekey': 'Paste or Enter Private Key',
+        'import-wallet-by-privatekey-info': 'Private key: Only EVM compatible wallet private keys are supported ',
+        'paste-privatekey': 'Paste or Enter Private Key or Keystore',
         'wrong-privatekey-msg': 'Please enter the correct private key',
         'import-private-key-sucess': 'Wallet imported from Private key',
+        'import-keystore-sucess': 'Wallet imported from keystore',
+        'keystore-backup-password': 'Please enter the keystore password',
 
         /***************************
         * Earn, Swap, Bridge pages *

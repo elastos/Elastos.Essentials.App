@@ -5,6 +5,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { Config } from 'src/app/wallet/config/Config';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -20,6 +21,8 @@ export class WalletImportByPrivateKeyPage implements OnInit {
 
   private masterWalletId = '1';
   public privatekey = '';
+  public contentIsJsonObj = false;
+  public keystoreBackupPassword = '';
 
   constructor(
     private walletManager: WalletService,
@@ -42,7 +45,11 @@ export class WalletImportByPrivateKeyPage implements OnInit {
   }
 
   inputPrivatKeyCompleted() {
-    return this.privatekey.length > 1;
+      if (this.contentIsJsonObj) {
+          return this.keystoreBackupPassword.length >= Config.MIN_PASSWORD_LENGTH;
+      } else {
+          return this.privatekey.length > 1;
+      }
   }
 
   async onImport() {
@@ -50,7 +57,11 @@ export class WalletImportByPrivateKeyPage implements OnInit {
     if (payPassword) {
         try {
             await this.native.showLoading(this.translate.instant('common.please-wait'));
-            await this.importWalletWithPrivateKey(payPassword);
+            if (this.contentIsJsonObj) {
+                await this.importWalletWithKeyStore(payPassword);
+            } else {
+                await this.importWalletWithPrivateKey(payPassword);
+            }
         } catch (err) {
             Logger.error('wallet', 'Wallet importWalletWithPrivateKey error:', err);
         }
@@ -79,8 +90,36 @@ export class WalletImportByPrivateKeyPage implements OnInit {
     this.native.toast_trans('wallet.import-private-key-sucess');
   }
 
+  async importWalletWithKeyStore(payPassword: string) {
+    await this.walletManager.importWalletWithKeystore(
+        this.masterWalletId,
+        this.walletCreateService.name,
+        this.privatekey,
+        this.keystoreBackupPassword,
+        payPassword,
+    );
+
+    this.events.publish("masterwalletcount:changed", {
+        action: 'add',
+        walletId: this.masterWalletId
+    });
+
+    this.native.toast_trans('wallet.import-keystore-sucess');
+  }
+
   async pasteFromClipboard() {
     this.privatekey = await this.native.pasteFromClipboard();
+    this.getContentType();
+  }
+
+  getContentType() {
+    try {
+        JSON.parse(this.privatekey);
+        this.contentIsJsonObj = true;
+    }
+    catch (err) {
+        this.contentIsJsonObj = false;
+    }
   }
 
 }

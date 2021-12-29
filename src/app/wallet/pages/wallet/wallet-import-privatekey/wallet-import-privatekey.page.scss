@@ -57,6 +57,17 @@
         color: #fdfeff;
     }
 
+    .password-row {
+        margin-top: 15px;
+        padding: 0;
+
+        ion-input {
+            margin: 0 15px 0 15px;
+            background: #803fd5;
+            border-radius: 8px;
+        }
+    }
+
     .btn-container {
         margin-top: 50px;
     }

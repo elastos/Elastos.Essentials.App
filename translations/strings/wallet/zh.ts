@@ -476,7 +476,7 @@ export const zh = {
                 "text-wallet-passphrase-validator-repeat": "两次输入的助记词密码不一致",
                 "text-wallet-passphrase-validator-min-length": "助记词密码最少8位",
                 "import-wallet-by-mnemonic": "通过助记词导入钱包",
-                "import-wallet-by-privatekey": "通过私钥导入钱包",
+                "import-wallet-by-privatekey": "通过私钥/Keystore导入钱包",
 
                 /*****************
                 * Mnemonic Pages *
@@ -519,11 +519,12 @@ export const zh = {
                 /********************************
                 * Import Wallet by private key Page *
                 *********************************/
-                'import-wallet-by-privatekey-info': '只支持兼容 EVM 的钱包私钥',
-                'paste-privatekey': '请粘贴或输入私钥',
-                'wrong-privatekey-msg': '请输入正确的私钥',
+                'import-wallet-by-privatekey-info': '私钥:只支持兼容 EVM 的钱包私钥',
+                'paste-privatekey': '请粘贴或输入私钥/Keystore',
+                'wrong-privatekey-msg': '请输入正确的私钥/Keystore',
                 'import-private-key-sucess': '已通过私钥成功导入钱包',
-
+                'import-keystore-sucess': '已通过Keystore成功导入钱包',
+                'keystore-backup-password': '请输入 Keystore 密码',
 
                 /***************************
                 * Earn, Swap, Bridge pages *
