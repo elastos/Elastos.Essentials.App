@@ -157,7 +157,7 @@ export class ProposalDetailPage {
                 milestone.lastTracking = {command: 'withdraw'};
             }
             else if (budget.status != "Withdrawn") {
-                if (!milestone.tracking) {
+                if (!milestone.tracking || milestone.tracking.length < 1) {
                     milestone.lastTracking = {command: 'apply'};
                 }
                 else {
