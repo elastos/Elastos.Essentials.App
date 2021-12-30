@@ -6,6 +6,7 @@ import { Logger } from '../logger';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { NetworkWallet } from '../wallet/model/wallets/networkwallet';
+import { PersonalSignIntentResult } from '../wallet/pages/intents/personalsign/personalsign.page';
 import { SignTypedDataIntentResult } from '../wallet/pages/intents/signtypeddata/signtypeddata.page';
 import { EditCustomNetworkIntentResult } from '../wallet/pages/settings/edit-custom-network/edit-custom-network.page';
 import { WalletNetworkService } from '../wallet/services/network.service';
@@ -435,6 +436,9 @@ export class GlobalWalletConnectService extends GlobalService {
     else if (request.method.startsWith("eth_signTypedData")) {
       await this.handleSignTypedDataRequest(connector, request);
     }
+    else if (request.method.startsWith("personal_sign")) {
+        await this.handlePersonalSignRequest(connector, request);
+    }
     else {
       try {
         Logger.log("walletconnect", "Sending esctransaction intent", request);
@@ -644,6 +648,29 @@ export class GlobalWalletConnectService extends GlobalService {
       useV4
     };
     let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/signtypeddata", rawData);
+
+    if (response && response.result) {
+      connector.approveRequest({
+        id: request.id,
+        result: response.result.signedData
+      });
+    }
+    else {
+      connector.rejectRequest({
+        id: request.id,
+        error: {
+          code: -1,
+          message: "Errored or cancelled"
+        }
+      });
+    }
+  }
+
+  private async handlePersonalSignRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    let rawData = {
+      payload: request.params
+    };
+    let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/personalsign", rawData);
 
     if (response && response.result) {
       connector.approveRequest({
