@@ -172,14 +172,17 @@ export class CreateProposalPage {
 
             //Get did sign digest
             let ret = await this.signDigest(digest);
-            if (ret) {
-                payload.CRCouncilMemberSignature = ret;
-
-                //Create transaction
-                let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
-                Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
-                await this.crOperations.signAndSendRawTransaction(rawTx);
+            if (!ret) {
+                // Operation cancelled, cancel the operation silently.
+                this.signingAndSendingProposalResponse = false;
+                return;
             }
+
+            payload.CRCouncilMemberSignature = ret;
+            //Create transaction
+            let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
+            Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;
@@ -293,7 +296,7 @@ export class CreateProposalPage {
             data: digest,
         });
         Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
-        if (!ret.result) {
+        if (!ret) {
             // Operation cancelled by user
             return null;
         }

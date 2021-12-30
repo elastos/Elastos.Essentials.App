@@ -147,9 +147,8 @@ export class CreateSuggestionPage {
             data: suggestionDigest,
             payload: payload,
         });
-        Logger.log(App.CRSUGGESTION, "Got signed digest.", result);
 
-        if (!result.result || !result.responseJWT) {
+        if (!result || !result.responseJWT) {
             // Operation cancelled by user
             return null;
         }

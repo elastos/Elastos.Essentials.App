@@ -364,6 +364,10 @@ export class CROperationsService {
         try {
             let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", params, this.intentId);
             this.sendingSignDigest = false;
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
+            if (!ret || !ret.result || !ret.result.signature) {
+                return null;
+            }
             return ret;
         }
         catch (err) {
