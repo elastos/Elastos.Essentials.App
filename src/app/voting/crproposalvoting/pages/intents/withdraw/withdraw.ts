@@ -124,7 +124,7 @@ export class WithdrawPage {
             ProposalHash: command.data.proposalHash,
             OwnerPublicKey: command.data.ownerPublicKey,
             Recipient: command.data.recipient,
-            Amount: command.data.amount,
+            Amount: command.data.amount.toString(),
         };
         return payload;
     }
