@@ -153,7 +153,7 @@ export class ProposalDetailPage {
 
         if (this.isOwner) {
             if (budget.status == 'Withdrawable') {
-                this.withdrawAmout += budget.amount;
+                this.withdrawAmout += parseInt(budget.amount);
                 milestone.lastTracking = {command: 'withdraw'};
             }
             else if (budget.status != "Withdrawn") {
