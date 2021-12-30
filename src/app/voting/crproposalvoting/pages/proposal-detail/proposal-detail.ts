@@ -170,7 +170,7 @@ export class ProposalDetailPage {
                 }
             }
         }
-        else if (await this.voteService.isSecretaryGeneral() && milestone.tracking && budget.status == 'Unfinished') {
+        else if (await this.voteService.isSecretaryGeneral() && milestone.tracking && milestone.tracking.length > 0 && budget.status == 'Unfinished') {
             let lastTracking = milestone.tracking[milestone.tracking.length - 1];
             if (lastTracking.apply && lastTracking.apply.messageHash && (!lastTracking.review || !lastTracking.review.opinion)) {
                 try {
