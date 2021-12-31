@@ -536,25 +536,32 @@ export class WalletService {
 
     private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean, createType: WalletCreateType) {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
+        try {
+            // Add a new wallet to our local model
+            this.masterWallets[id] = new MasterWallet(this, this.erc721Service, this.erc1155Service, this.localStorage, id, createdBySystem, createType, name);
 
-        // Add a new wallet to our local model
-        this.masterWallets[id] = new MasterWallet(this, this.erc721Service, this.erc1155Service, this.localStorage, id, createdBySystem, createType, name);
+            // Set some wallet account info
+            this.masterWallets[id].account = walletAccount;
 
-        // Set some wallet account info
-        this.masterWallets[id].account = walletAccount;
+            // Get some basic information ready in our model.
+            await this.masterWallets[id].populateWithExtendedInfo(null);
 
-        // Get some basic information ready in our model.
-        await this.masterWallets[id].populateWithExtendedInfo(null);
+            // Built networkWallet
+            let activeNetwork = this.networkService.activeNetwork.value;
+            let networkWallet = await activeNetwork.createNetworkWallet(this.masterWallets[id]);
+            this.networkWallets[id] = networkWallet;
 
-        // Save state to local storage
-        await this.masterWallets[id].save();
+            // Save state to local storage
+            await this.masterWallets[id].save();
 
-        // Built networkWallet
-        let activeNetwork = this.networkService.activeNetwork.value;
-        let networkWallet = await activeNetwork.createNetworkWallet(this.masterWallets[id]);
-        this.networkWallets[id] = networkWallet;
-        // Notify that this network wallet is the active one
-        await this.setActiveNetworkWallet(networkWallet);
+            // Notify that this network wallet is the active one
+            await this.setActiveNetworkWallet(networkWallet);
+        }
+        catch (err) {
+            Logger.error('wallet', "Adding master wallet error:", err);
+            void this.destroyMasterWallet(id, false);
+            throw err;
+        }
     }
 
     /**
