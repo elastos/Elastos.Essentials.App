@@ -112,10 +112,13 @@ export class GlobalIntentService {
    * the parentIntentId must be given so that the intent manager allows the execution of this sub-intent before
    * the parent intent sends its response (imbricated intents can't await for linear responses).
    */
-  sendIntent(action: string, params?: any, parentIntentId?: number): Promise<any> {
+  async sendIntent(action: string, params?: any, parentIntentId?: number): Promise<any> {
     // Can not show the data. Private data, confidential. eg. mnemonic.
     Logger.log("Intents", "Sending intent", action, parentIntentId);
 
+    let ret = await essentialsIntentManager.sendIntent(action, params);
+
+    // Add to intent queue After sendurlintent succeeds
     // Filter out special intent actions such as openurl, that will never get any answer as they
     // are handled by the native code, not by essentials.
     if (action !== "openurl") {
@@ -126,18 +129,21 @@ export class GlobalIntentService {
       this.intentsQueue.push(this.intentJustCreated);
     }
 
-    return essentialsIntentManager.sendIntent(action, params);
+    return ret;
   }
 
-  sendUrlIntent(url: string, parentIntentId?: number): Promise<any> {
+  async sendUrlIntent(url: string, parentIntentId?: number): Promise<any> {
     Logger.log("Intents", "Sending url intent", url, parentIntentId);
+    let ret = await essentialsIntentManager.sendUrlIntent(url)
+
+    // Add to intent queue After sendurlintent succeeds
     this.intentJustCreated = {
       status: "created",
       parentIntentId
     }
     this.intentsQueue.push(this.intentJustCreated);
 
-    return essentialsIntentManager.sendUrlIntent(url)
+    return ret;
   }
 
   private processNextIntentRequest() {
