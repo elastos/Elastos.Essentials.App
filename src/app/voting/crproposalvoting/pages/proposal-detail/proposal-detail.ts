@@ -84,8 +84,8 @@ export class ProposalDetailPage {
             //Set last tracking for show on page
             if (this.proposal.milestone) {
                 for (let item of this.proposal.milestone) {
-                    if (item.tracking) {
-                        item.lastTracking = item.tracking[item.tracking.length - 1];
+                    if (item.tracking && item.tracking.length > 0) {
+                        item.lastTrackingInfo = item.tracking[0];
                     }
                 }
             }
@@ -161,7 +161,7 @@ export class ProposalDetailPage {
                     milestone.lastTracking = {command: 'apply'};
                 }
                 else {
-                    milestone.lastTracking = milestone.tracking[milestone.tracking.length - 1];
+                    milestone.lastTracking = milestone.tracking[0];
 
                     if (budget.status == 'Unfinished' && milestone.lastTracking.apply
                                 && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
@@ -171,7 +171,7 @@ export class ProposalDetailPage {
             }
         }
         else if (await this.voteService.isSecretaryGeneral() && milestone.tracking && milestone.tracking.length > 0 && budget.status == 'Unfinished') {
-            let lastTracking = milestone.tracking[milestone.tracking.length - 1];
+            let lastTracking = milestone.tracking[0];
             if (lastTracking.apply && lastTracking.apply.messageHash && (!lastTracking.review || !lastTracking.review.opinion)) {
                 try {
                     let ret = await this.crOperations.getMessageData(lastTracking.apply.messageHash);
