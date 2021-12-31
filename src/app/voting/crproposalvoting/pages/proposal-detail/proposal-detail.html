@@ -79,8 +79,8 @@
                                                 </div>
                                             </div>
                                         </ion-col>
-                                        <ion-col size="1" (click)="showOptions($event, entry.lastTrackingInfo)"
-                                            *ngIf="entry.lastTrackingInfo && entry.lastTrackingInfo.command">
+                                        <ion-col size="1" (click)="showOptions($event, entry.lastTracking)"
+                                            *ngIf="entry.lastTracking && entry.lastTracking.command">
                                             <div class="milestone-options align-right">
                                                 <img
                                                     [src]="theme.darkMode ? '/assets/crproposalvoting/icons/darkmode/menu.svg' : '/assets/crproposalvoting/icons/menu.svg'">
