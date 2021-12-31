@@ -1,6 +1,6 @@
 @import "../suggestion-detail/suggestion-detail.scss";
 
-.lastTracking {
+.lastTrackingInfo {
     width: 100%;
     background-color: #f6f6f6;
     flex-wrap:wrap;
@@ -30,7 +30,7 @@
 }
 
 .darkContainer {
-    .lastTracking {
+    .lastTrackingInfo {
         background-color: #2f2d2f;
 
         div {
