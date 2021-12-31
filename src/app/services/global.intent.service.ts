@@ -116,8 +116,6 @@ export class GlobalIntentService {
     // Can not show the data. Private data, confidential. eg. mnemonic.
     Logger.log("Intents", "Sending intent", action, parentIntentId);
 
-    let ret = await essentialsIntentManager.sendIntent(action, params);
-
     // Add to intent queue After sendurlintent succeeds
     // Filter out special intent actions such as openurl, that will never get any answer as they
     // are handled by the native code, not by essentials.
@@ -129,21 +127,36 @@ export class GlobalIntentService {
       this.intentsQueue.push(this.intentJustCreated);
     }
 
-    return ret;
+    try {
+        return await essentialsIntentManager.sendIntent(action, params);
+    }
+    catch (err) {
+        // No Activity found to handle Intent
+        if (action !== "openurl") {
+            this.intentJustCreated = null;
+            this.intentsQueue.pop();
+        }
+        throw err;
+    }
   }
 
   async sendUrlIntent(url: string, parentIntentId?: number): Promise<any> {
     Logger.log("Intents", "Sending url intent", url, parentIntentId);
-    let ret = await essentialsIntentManager.sendUrlIntent(url)
 
-    // Add to intent queue After sendurlintent succeeds
     this.intentJustCreated = {
       status: "created",
       parentIntentId
     }
     this.intentsQueue.push(this.intentJustCreated);
-
-    return ret;
+    try {
+        return await essentialsIntentManager.sendUrlIntent(url)
+    }
+    catch (err) {
+        // No Activity found to handle Intent
+        this.intentJustCreated = null;
+        this.intentsQueue.pop();
+        throw err;
+    }
   }
 
   private processNextIntentRequest() {
