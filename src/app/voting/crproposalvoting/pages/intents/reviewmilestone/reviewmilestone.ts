@@ -10,7 +10,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
-import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -48,6 +47,7 @@ export class ReviewMilestonePage {
     public trackingType = "progress";
     typeResult = {
         progress: "approve",
+        finalized: "approve",
         rejected: "reject",
     }
 
@@ -56,7 +56,6 @@ export class ReviewMilestonePage {
         public translate: TranslateService,
         public walletManager: WalletService,
         private voteService: VoteService,
-        private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
@@ -125,6 +124,13 @@ export class ReviewMilestonePage {
             this.onGoingCommand.data.secretaryOpinionHash = ret.hash;
             this.onGoingCommand.data.secretaryOpinionData = ret.data;
             Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
+
+            if (this.trackingType == "progress") {
+                let milestone = this.proposalDetail.milestone;
+                if (this.onGoingCommand.data.stage == milestone[milestone.length - 1].stage) {
+                    this.trackingType = "finalized";
+                }
+            }
         }
 
         this.signingAndSendingProposalResponse = true;
