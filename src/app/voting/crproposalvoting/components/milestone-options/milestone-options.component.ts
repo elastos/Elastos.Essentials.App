@@ -27,13 +27,12 @@ export class MileStoneOptionsComponent implements OnInit {
         let lastTracking = this.navParams.get('lastTracking');
         Logger.log("MileStoneOptionsComponent", 'Input:', lastTracking);
         this.command = lastTracking.command;
-        this.withdrawAmout = this.navParams.get('withdrawAmout');;
     }
 
     public handleCommand(commandName: string) {
         void this.popoverCtrl.dismiss();
         if (commandName == "withdraw") {
-            this.crOperations.handleProposalDetailPageCommand(commandName, {amount: this.withdrawAmout});
+            this.crOperations.handleProposalDetailPageCommand(commandName);
         }
         else if (commandName == "updatemilestone") {
             this.crOperations.handleProposalDetailPageCommand(commandName, {stage: this.lastTracking.stage});
