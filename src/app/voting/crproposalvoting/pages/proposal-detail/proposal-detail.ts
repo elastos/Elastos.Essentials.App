@@ -48,7 +48,6 @@ export class ProposalDetailPage {
     private commandReturnSub: Subscription = null;
 
     private popover: any = null;
-    private withdrawAmout = 0;
 
     constructor(
         public uxService: UXService,
@@ -91,7 +90,6 @@ export class ProposalDetailPage {
             }
 
             //Get total budget
-            this.withdrawAmout = 0;
             if (this.proposal.budgets) {
                 for (let i = 0; i < this.proposal.budgets.length; i++) {
                     let budget = this.proposal.budgets[i];
@@ -153,7 +151,6 @@ export class ProposalDetailPage {
 
         if (this.isOwner) {
             if (budget.status == 'Withdrawable') {
-                this.withdrawAmout += parseInt(budget.amount);
                 milestone.lastTracking = {command: 'withdraw'};
             }
             else if (budget.status != "Withdrawn") {
@@ -224,7 +221,6 @@ export class ProposalDetailPage {
             component: MileStoneOptionsComponent,
             componentProps: {
                 lastTracking: lastTracking,
-                withdrawAmout: this.withdrawAmout,
             },
             cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'milestone-options-component' : 'milestone-options-component-dark',
             translucent: false,

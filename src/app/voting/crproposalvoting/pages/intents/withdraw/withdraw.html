@@ -23,10 +23,10 @@
                     </ion-col>
                 </ion-row>
 
-                <ion-row class="profile-data" *ngIf="onGoingCommand.data.amount">
+                <ion-row class="profile-data">
                     <ion-col>
                         <h5>{{ 'crproposalvoting.withdraw-amount' | translate }}</h5>
-                        <h4>{{ onGoingCommand.data.amount / Config.SELA }}</h4>
+                        <h4>{{ this.amount / Config.SELA }}</h4>
                     </ion-col>
                 </ion-row>
 

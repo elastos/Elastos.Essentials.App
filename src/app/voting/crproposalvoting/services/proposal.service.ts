@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -62,6 +63,12 @@ export class ProposalService {
     private getCrRpcApi(): string {
         return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
     }
+
+    private getElaRpcApi(): string {
+        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+    }
+
+
 
     public async fetchProposals(status: ProposalStatus, page: number, results = 10): Promise<ProposalSearchResult[]> {
         try {
@@ -204,6 +211,37 @@ export class ProposalService {
         return this.allResults.find((proposal) => {
             return proposal.id == proposalId;
         })
+    }
+
+    async fetchWithdraws(proposalHash: string): Promise<number> {
+        Logger.log(App.CRPROPOSAL_VOTING, 'Fetching withdraw..');
+
+        const param = {
+            method: 'getcrproposalstate',
+            params: {
+                proposalhash: proposalHash,
+            },
+        };
+
+        var amount = 0;
+        try {
+            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+            if (result && result.proposalstate && result.proposalstate.proposal && !Util.isEmptyObject(result.proposalstate.proposal.budgets)) {
+                let budgets = result.proposalstate.proposal.budgets;
+                Logger.log(App.CRCOUNCIL_VOTING, "proposal budgets:", budgets);
+
+                for (let budget of budgets) {
+                    if (budget.status == "Withdrawable") {
+                        amount += parseFloat(budget.amount);
+                    }
+                }
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRCOUNCIL_VOTING,  'fetchWithdraws error', err);
+        }
+        Logger.log(App.CRCOUNCIL_VOTING, "withdraw amount:", amount);
+        return amount;
     }
 
     public addBlockWatingItem(hash: string, status: string) {
