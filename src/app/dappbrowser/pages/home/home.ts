@@ -93,6 +93,15 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 networks: ["elastos"]
             },
             {
+                icon: '/assets/browser/dapps/elacity.png',
+                title: 'Elacity',
+                description: 'A community driven online marketplace',
+                url: 'https://ela.city/',
+                useExternalBrowser: true,
+                walletConnectSupported: true,
+                networks: ["elastos"]
+            },
+            {
                 icon: '/assets/browser/dapps/kycme.png',
                 title: 'KYC-me',
                 description: 'Get DID credentials from your real identity here, to get access to more dApps such as ELAB.',
