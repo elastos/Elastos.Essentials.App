@@ -92,7 +92,13 @@ export class ReviewMilestonePage {
                 });
             });
 
-            this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "progress";
+            let milestone = this.proposalDetail.milestone;
+            if (this.onGoingCommand.data.stage == milestone[milestone.length - 1].stage) {
+                this.trackingType = "finalized";
+            }
+            else {
+                this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "progress";
+            }
         }
     }
 
@@ -124,13 +130,6 @@ export class ReviewMilestonePage {
             this.onGoingCommand.data.secretaryOpinionHash = ret.hash;
             this.onGoingCommand.data.secretaryOpinionData = ret.data;
             Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
-
-            if (this.trackingType == "progress") {
-                let milestone = this.proposalDetail.milestone;
-                if (this.onGoingCommand.data.stage == milestone[milestone.length - 1].stage) {
-                    this.trackingType = "finalized";
-                }
-            }
         }
 
         this.signingAndSendingProposalResponse = true;
