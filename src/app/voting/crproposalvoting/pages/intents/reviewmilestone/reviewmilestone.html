@@ -30,14 +30,14 @@
                     </ion-col>
                 </ion-row>
 
-                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'scan'">
+                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'scan' || trackingType == 'finalized'">
                     <ion-col>
                         <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
                         <h4>{{ 'crproposalvoting.' + typeResult[trackingType] | translate }}</h4>
                     </ion-col>
                 </ion-row>
 
-                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
+                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page' && trackingType != 'finalized'">
                     <div>
                         <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
                         <ion-segment (ionChange)="segmentChanged($event)" [value]="trackingType">
