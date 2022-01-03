@@ -13,7 +13,7 @@ export const fr = {
         'loading-proposal': 'Chargement de la Proposition...',
         'no-proposals': 'Aucun résultat pour l\'instant.',
         'proposal-details': 'Détails de la Proposition',
-        'no-proposal-detail': 'Can not get the proposal detial for now.',
+        'no-proposal-detail': 'Can not get the proposal details for now.',
         'proposal': 'Proposition',
         'abstract': 'Résumé',
         'proposal-hash': 'Hash de la Proposition',
@@ -32,7 +32,7 @@ export const fr = {
         'loading-suggestion': 'Loading Suggestion...',
         'no-suggestions': 'No matching suggestions for now.',
         'suggestion-details': 'Suggestion Details',
-        'no-suggestion-detail': 'Can not get the suggestion detial for now.',
+        'no-suggestion-detail': 'Can not get the suggestion details for now.',
         'suggestion': 'Suggestion',
         'suggestion-id': 'Suggestion ID',
 

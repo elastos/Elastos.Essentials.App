@@ -14,7 +14,7 @@ export const en = {
         'loading-proposal': 'Loading Proposal...',
         'no-proposals': 'No matching proposals for now.',
         'proposal-details': 'Proposal Details',
-        'no-proposal-detail': 'Can not get the proposal detial for now.',
+        'no-proposal-detail': 'Can not get the proposal details for now.',
         'proposal': 'Proposal',
         'abstract': 'Abstract',
         'proposal-hash': 'Proposal Hash',
@@ -33,7 +33,7 @@ export const en = {
         'loading-suggestion': 'Loading Suggestion...',
         'no-suggestions': 'No matching suggestions for now.',
         'suggestion-details': 'Suggestion Details',
-        'no-suggestion-detail': 'Can not get the suggestion detial for now.',
+        'no-suggestion-detail': 'Can not get the suggestion details for now.',
         'suggestion': 'Suggestion',
         'suggestion-id': 'Suggestion ID',
 

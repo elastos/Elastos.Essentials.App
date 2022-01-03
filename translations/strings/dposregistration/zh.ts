@@ -11,7 +11,7 @@ export const zh = {
         'retrieve': '取款',
         'illegal': 'DPoS节点非法',
         'return': '注销成功',
-        'node-detials': 'DPoS节点详情',
+        'node-details': 'DPoS节点详情',
         'node-status': 'DPoS节点状态',
         'node-name': 'DPoS节点名称',
         'node-publickey': 'DPoS节点公钥',
@@ -31,7 +31,7 @@ export const zh = {
         'Returned': '已取回质押金',
         'current-votes': '当前票数',
 
-        'transaction-detials': '交易详情',
+        'transaction-details': '交易详情',
         'transaction-id': '交易ID',
         'time-published': '发布时间',
         'block-id': '区块ID',

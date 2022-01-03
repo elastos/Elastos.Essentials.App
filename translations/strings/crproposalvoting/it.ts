@@ -14,7 +14,7 @@ export const it = {
         'loading-proposal': 'Caricamento proposta...',
         'no-proposals': 'Nessun risultato per il momento.',
         'proposal-details': 'Dettagli della proposta',
-        'no-proposal-detail': 'Can not get the proposal detial for now.',
+        'no-proposal-detail': 'Can not get the proposal details for now.',
         'proposal': 'Proposta',
         'abstract': 'Riassunto',
         'proposal-hash': 'Hash della proposta',
@@ -33,7 +33,7 @@ export const it = {
         'loading-suggestion': 'Caricamento suggerimento...',
         'no-suggestions': 'Nessun suggerimento corrispondente per ora.',
         'suggestion-details': 'Dettagli del suggerimento',
-        'no-suggestion-detail': 'Can not get the suggestion detial for now.',
+        'no-suggestion-detail': 'Can not get the suggestion details for now.',
         'suggestion': 'Suggerimento',
         'suggestion-id': 'ID Suggerimento',
 

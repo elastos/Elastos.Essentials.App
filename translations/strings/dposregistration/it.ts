@@ -11,7 +11,7 @@ export const it = {
         'retrieve': 'Recupera',
         'illegal': 'Nodo DPoS illegale',
         'return': 'Annullamento registrazione riuscita',
-        'node-detials': 'Dettagli del nodo DPoS',
+        'node-details': 'Dettagli del nodo DPoS',
         'node-status': 'Stato del nodo DPoS',
         'node-name': 'Nome del nodo DPoS',
         'node-publickey': 'Chiave pubblica DPoS',
@@ -31,7 +31,7 @@ export const it = {
         'Returned': 'Restituito',
         'current-votes': 'Voti attuali',
 
-        'transaction-detials': 'Dettagli della Transazione',
+        'transaction-details': 'Dettagli della Transazione',
         'transaction-id': 'ID Transazione',
         'time-published': 'Ora di pubblicazione',
         'block-id': 'ID Blocco',
