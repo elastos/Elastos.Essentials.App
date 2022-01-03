@@ -12,7 +12,7 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CRCommand, CRCommandType, CROperationsService } from '../../../services/croperations.service';
+import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 
 type WithdrawCommand = CRCommand & {
     data: {
@@ -66,13 +66,8 @@ export class WithdrawPage {
         if (this.proposalDetail) {
             this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
-            if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
-                this.amount = await this.proposalService.fetchWithdraws(this.proposalDetail.proposalHash) * Config.SELA;
-                this.amount = Math.round(this.amount);
-            }
-            else {
-                this.amount = this.onGoingCommand.data.amount;
-            }
+            this.amount = await this.proposalService.fetchWithdraws(this.proposalDetail.proposalHash) * Config.SELA;
+            this.amount = Math.round(this.amount);
         }
     }
 
