@@ -161,7 +161,9 @@ export class EditCustomNetworkPage implements OnInit {
         })
       };
 
-      let testCallResult = await this.http.post(this.editedNetworkEntry.rpcUrl, JSON.stringify({}), httpOptions).toPromise();
+      // Some servers return "{}" when the request body is "{}".
+      // So it is better to call eth_blockNumber.
+      let testCallResult = await this.http.post(this.editedNetworkEntry.rpcUrl, JSON.stringify({"method":"eth_blockNumber", "jsonrpc": "2.0","id":"test01"}), httpOptions).toPromise();
       if (testCallResult && "jsonrpc" in testCallResult)
         rpcUrlIsReachable = true;
     }
