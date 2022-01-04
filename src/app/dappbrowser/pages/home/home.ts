@@ -97,7 +97,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 title: 'Elacity',
                 description: 'A community driven online marketplace',
                 url: 'https://ela.city/',
-                useExternalBrowser: true,
+                useExternalBrowser: false,
                 walletConnectSupported: true,
                 networks: ["elastos"]
             },
