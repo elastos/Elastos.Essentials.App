@@ -10,11 +10,11 @@ export const it = {
     'no-favorite': 'Ancora nessun preferito nella rete {{networkName}}. Inserisci un URL sopra e usa il menù per aggiungere la dApp ai preferiti o impostare la rete corrente sui preferiti esistenti.',
     'home-other-dapps': 'Altre dApp',
     'home-no-other-dapp': 'Al momento non abbiamo una dApp da consigliare per questa rete o su questa piattaforma. Naviga manualmente nelle tue dApps e aggiungile ai preferiti.',
-    'ios-user-notice': 'iOS user notice',
-    'ios-user-notice-1': 'Apple App Store guidelines forbid built-in browsers to access crypto-currency features. Browsing dApps will redirect you to your external browser.',
-    'ios-user-notice-2': 'To connect the external browser to your wallet, please use <b>Wallet Connect</b>, and choose <b>Elastos Essentials</b>.',
-    'recent-apps': 'Recent apps',
-    'all-dapps': 'All dApps',
+    'ios-user-notice': 'Avviso per gli utenti iOS',
+    'ios-user-notice-1': 'Le linee guida dell\'Apple App Store vietano ai browser integrati di accedere alle funzionalità delle criptovalute. Verrai reindirizzato al tuo browser esterno.',
+    'ios-user-notice-2': 'Per connettere il browser esterno al tuo portafoglio, utilizza <b>Wallet Connect</b> e scegli <b>Elastos Essentials</b>.',
+    'recent-apps': 'App recenti',
+    'all-dapps': 'Tutte le dApp',
 
     // Menu
     'menu-title': 'Opzioni',
