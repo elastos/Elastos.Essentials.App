@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { PacketService } from './packet.service';
 import { PaymentService } from './payment.service';
 
 @Injectable({
@@ -8,7 +9,8 @@ import { PaymentService } from './payment.service';
 })
 export class RedPacketsInitService extends GlobalService {
   constructor(
-    private paymentsService: PaymentService
+    private paymentsService: PaymentService,
+    private packetService: PacketService
   ) {
     super();
   }
@@ -19,11 +21,12 @@ export class RedPacketsInitService extends GlobalService {
     return;
   }
 
-  public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    return;
+  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    await this.packetService.onUserSignIn();
   }
 
   public onUserSignOut(): Promise<void> {
+    this.packetService.onUserSignOut();
     return;
   }
 }

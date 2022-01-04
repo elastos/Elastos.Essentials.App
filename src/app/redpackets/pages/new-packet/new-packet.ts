@@ -16,8 +16,7 @@ import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.servi
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { TokenChooserComponent } from '../../../wallet/components/token-chooser/token-chooser.component';
-import { PacketCosts } from '../../model/packetcosts.model';
-import { Packet, PacketDistributionType, PacketInCreation, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
+import { Packet, PacketDistributionType, PacketToCreate, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
 
 @Component({
@@ -44,7 +43,7 @@ export class NewPacketPage {
 
   // Logic
   public creatingPacket = false;
-  private createdPacket: Packet<PacketCosts> = null;
+  private createdPacket: Packet = null;
   public unsupportedNetwork = false;
 
   // Callbacks
@@ -134,7 +133,7 @@ export class NewPacketPage {
     let creatorAddress = await targetSubWallet.createAddress();
 
     // Prepare packet data
-    let packet: PacketInCreation = {
+    let packet: PacketToCreate = {
       quantity: this.packets,
       chainId: this.tokenSubwallet.networkWallet.network.getMainChainID(),
       value: new BigNumber(this.tokenAmount),
@@ -155,6 +154,9 @@ export class NewPacketPage {
     // Create a new packet on the backend
     this.createdPacket = await this.packetService.createPacket(packet);
     Logger.log("redpackets", "Created packet:", this.createdPacket);
+
+    // Save the packet locally
+    await this.packetService.addToMyPackets(this.createdPacket);
 
     // Reach the payment screen to continue
     await this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay", {

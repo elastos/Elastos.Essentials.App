@@ -1,5 +1,5 @@
 import { Component, Input, NgZone, OnInit } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { AlertController, ToastController } from '@ionic/angular';
 import { PacketService } from '../../services/packet.service';
@@ -78,7 +78,7 @@ export class GrabComponent implements OnInit {
       this.grabbingPacket = true;
       await this.storageService.setAddress(this.address);
 
-      void this.packetService.grabPacket(this.hash, this.address, this.name).then((grabRes) => {
+      /* void this.packetService.createGrabPacketRequest(this.hash, this.address, this.name).then((grabRes) => {
         if (grabRes) {
           console.log('Grabbed packet', grabRes);
 
@@ -109,7 +109,7 @@ export class GrabComponent implements OnInit {
           this.grabbingPacket = false;
           void this.toastErr();
         }
-      });
+      }); */
     }
   }
 

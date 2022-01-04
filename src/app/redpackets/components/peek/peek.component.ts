@@ -26,7 +26,7 @@ export class PeekComponent implements OnInit {
   searchHash() {
     if (this.hash) {
       this.seekingPacket = true;
-      void this.packetService.peakPacket(this.hash).then((res) => {
+      /* void this.packetService.peakPacket(this.hash).then((res) => {
         this.seekingPacket = false;
         if (res) {
           this.packet = res;
@@ -34,7 +34,7 @@ export class PeekComponent implements OnInit {
         } else {
           void this.toastErr();
         }
-      });
+      }); */
     }
   };
 

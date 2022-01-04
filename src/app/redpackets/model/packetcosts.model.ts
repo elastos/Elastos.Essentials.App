@@ -69,3 +69,25 @@ export const deserializeCosts = (costs: SerializablePacketCosts): PacketCosts =>
     }
   }
 }
+
+export const serializeCosts = (costs: PacketCosts): SerializablePacketCosts => {
+  return {
+    erc20Token: costs.erc20Token ? {
+      redPacket: costs.erc20Token.redPacket.toString(),
+      options: {
+        publicPacketFees: costs.erc20Token.options.publicPacketFees.toString()
+      },
+      total: costs.erc20Token.total.toString()
+    } : undefined,
+    nativeToken: {
+      redPacket: costs.nativeToken.redPacket.toString(),
+      transactionFees: costs.nativeToken.transactionFees.toString(),
+      standardServiceFeesUSD: costs.nativeToken.standardServiceFeesUSD.toString(),
+      standardServiceFees: costs.nativeToken.standardServiceFees.toString(),
+      options: {
+        publicPacketFees: costs.nativeToken.options.publicPacketFees.toString()
+      },
+      total: costs.nativeToken.total.toString()
+    }
+  }
+}

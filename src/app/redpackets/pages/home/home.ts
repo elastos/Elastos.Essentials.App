@@ -2,8 +2,10 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { Packet } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
 
 @Component({
@@ -14,6 +16,12 @@ import { PacketService } from '../../services/packet.service';
 export class HomePage {
   // UI components
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
+  // Logic
+  public fetchingPublicPackets = true;
+
+  // Model
+  public publicPackets: Packet[] = [];
 
   // Callbacks
   public titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -33,12 +41,12 @@ export class HomePage {
     this.titleBar.setupMenuItems([
       {
         key: "my-packets",
-        iconPath: "/assets/launcher/apps/app-icons/redpackets.png",
+        iconPath: transparentPixelIconDataUrl(),
         title: "My packets"
       },
       {
         key: "opened-packets",
-        iconPath: "/assets/launcher/apps/app-icons/redpackets.png",
+        iconPath: transparentPixelIconDataUrl(),
         title: "Opened packets"
       }
     ]);
@@ -55,11 +63,25 @@ export class HomePage {
     });
   }
 
+  async ionViewDidEnter() {
+    this.fetchingPublicPackets = true;
+    this.publicPackets = await this.packetService.getPublicPackets();
+    this.fetchingPublicPackets = false;
+  }
+
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   public newPacket() {
     void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/new");
+  }
+
+  public openPacket(packet: Packet) {
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/packet-details", {
+      state: {
+        packet: packet
+      }
+    });
   }
 }

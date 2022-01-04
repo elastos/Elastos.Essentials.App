@@ -5,9 +5,11 @@
   justify-content: center;
   align-items: center;
 
-  ion-img {
-    height: 120px;
-    width: 120px;
+  .network {
+    .logo {
+      height: 50px;
+      width: 50px;
+    }
   }
 
   ion-label {

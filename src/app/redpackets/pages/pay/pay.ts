@@ -4,6 +4,7 @@ import { NavController } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
@@ -12,7 +13,6 @@ import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.se
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { PacketCosts } from '../../model/packetcosts.model';
 import { Packet, TokenType } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
 import { PaymentService, PaymentType } from '../../services/payment.service';
@@ -27,7 +27,7 @@ export class PayPage {
 
   // Model
   public fetchingPacketInfo = true;
-  private packet: Packet<PacketCosts> = null;
+  private packet: Packet = null;
   private packetHash: string;
   //private costs: PacketCosts = null;
   public sendingNativePayment = false;
@@ -84,6 +84,13 @@ export class PayPage {
 
   public isERC20PaymentCompleted(): boolean {
     return !!this.packet.paymentStatus.erc20Token;
+  }
+
+  public areAllPaymentsCompleted(): boolean {
+    if (this.packet.tokenType === TokenType.NATIVE_TOKEN)
+      return this.isNativePaymentCompleted();
+    else
+      return this.isNativePaymentCompleted() && this.isERC20PaymentCompleted();
   }
 
   /**
@@ -298,6 +305,14 @@ export class PayPage {
     }
 
     console.log("after erc20 payment");
+  }
+
+  public openPacketDetails() {
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/packet-details", {
+      state: {
+        packet: this.packet
+      }
+    });
   }
 
   private requestToCheckPayment() {

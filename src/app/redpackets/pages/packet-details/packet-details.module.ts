@@ -5,23 +5,25 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
-import { PacketGrabbedPage } from './packet-grabbed.page';
+import { ComponentsModule } from '../../components/components.module';
+import { PacketDetailsPage } from './packet-details.page';
 
 @NgModule({
   imports: [
+    ComponentsModule,
     CommonModule,
-    FormsModule,
     IonicModule,
-    SharedComponentsModule,
+    FormsModule,
     TranslateModule,
+    SharedComponentsModule,
     RouterModule.forChild([
       {
         path: '',
-        component: PacketGrabbedPage
+        component: PacketDetailsPage
       }
     ])
   ],
-  declarations: [PacketGrabbedPage],
+  declarations: [PacketDetailsPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class PacketGrabbedPageModule { }
+export class PacketDetailsPageModule { }

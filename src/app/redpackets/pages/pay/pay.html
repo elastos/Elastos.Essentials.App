@@ -63,5 +63,9 @@
     <h4>Status</h4>
     <p>The red packet is live!</p>
 
+    <div class="custom-btn" *ngIf="areAllPaymentsCompleted()" (click)="openPacketDetails()">
+      <ion-label>View packet</ion-label>
+    </div>
+
   </ion-grid>
 </ion-content>
