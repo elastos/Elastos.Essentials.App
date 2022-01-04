@@ -12,6 +12,7 @@ import { CRProposalVoteAgainstPage } from './crproposalvoteagainst/crproposalvot
 import { DidTransactionPage } from './didtransaction/didtransaction.page';
 import { DPoSVotePage } from './dposvote/dposvote.page';
 import { EscTransactionPage } from './esctransaction/esctransaction.page';
+import { PersonalSignPage } from './personalsign/personalsign.page';
 import { SelectSubwalletPage } from './select-subwallet/select-subwallet.page';
 import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
 
@@ -25,7 +26,8 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
         DPoSVotePage,
         EscTransactionPage,
         SelectSubwalletPage,
-        SignTypedDataPage
+        SignTypedDataPage,
+        PersonalSignPage
     ],
     imports: [
         SharedComponentsModule,
@@ -39,6 +41,7 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
             { path: 'didtransaction', component: DidTransactionPage },
             { path: 'esctransaction', component: EscTransactionPage },
             { path: 'signtypeddata', component: SignTypedDataPage },
+            { path: 'personalsign', component: PersonalSignPage },
             { path: 'crmembervote', component: CRmembervotePage },
             { path: 'dposvote', component: DPoSVotePage },
             { path: 'crmemberregister', component: CRMemberRegisterPage },

@@ -38,8 +38,8 @@ export class ReviewProposalPage {
     private onGoingCommand: ReviewProposalCommand;
     public signingAndSendingProposalResponse = false;
     public voteResult = "";
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
     public isKeyboardHide = true;
     public content = "";
 
@@ -60,41 +60,34 @@ export class ReviewProposalPage {
     }
 
     async ionViewWillEnter() {
-        if (this.proposalDetailsFetched) {
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-proposal'));
+        if (this.proposalDetail) {
             return;
         }
+        this.proposalDetailFetched = false;
 
-        this.keyboard.onKeyboardWillShow().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = false;
-            });
-        });
-
-        this.keyboard.onKeyboardWillHide().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = true;
-            });
-        });
-
-        this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-proposal'));
         this.onGoingCommand = this.crOperations.onGoingCommand as ReviewProposalCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "ReviewProposalCommand", this.onGoingCommand);
 
-        if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
-            this.voteResult = "approve";
-            this.proposalDetails = this.onGoingCommand.data;
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
+
+        if (this.proposalDetail) {
+            this.keyboard.onKeyboardWillShow().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = false;
+                });
+            });
+
+            this.keyboard.onKeyboardWillHide().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = true;
+                });
+            });
+
+            this.voteResult = this.onGoingCommand.data.voteResult || "approve";
+            this.voteResult.toLowerCase()
         }
-        else {
-            this.voteResult = this.onGoingCommand.data.voteResult.toLowerCase();
-            try {
-                // Fetch more details about this proposal, to display to the user
-                this.proposalDetails = await this.proposalService.fetchProposalDetails(this.onGoingCommand.data.proposalHash);
-            }
-            catch (err) {
-                Logger.error('crproposal', 'ReviewProposalPage fetchProposalDetails error:', err);
-            }
-        }
-        Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-        this.proposalDetailsFetched = true;
     }
 
     ionViewWillLeave() {
@@ -144,13 +137,18 @@ export class ReviewProposalPage {
             let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
             });
-            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
-            if (ret.result && ret.result.signature) {
-                //Create transaction and send
-                payload.Signature = ret.result.signature;
-                const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
-                await this.crOperations.signAndSendRawTransaction(rawTx);
+
+            if (!ret) {
+                // Operation cancelled, cancel the operation silently.
+                this.signingAndSendingProposalResponse = false;
+                return;
             }
+
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
+            //Create transaction and send
+            payload.Signature = ret.result.signature;
+            const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;

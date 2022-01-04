@@ -48,7 +48,6 @@ export class ProposalDetailPage {
     private commandReturnSub: Subscription = null;
 
     private popover: any = null;
-    private withdrawAmout = 0;
 
     constructor(
         public uxService: UXService,
@@ -84,14 +83,13 @@ export class ProposalDetailPage {
             //Set last tracking for show on page
             if (this.proposal.milestone) {
                 for (let item of this.proposal.milestone) {
-                    if (item.tracking) {
-                        item.lastTracking = item.tracking[item.tracking.length - 1];
+                    if (item.tracking && item.tracking.length > 0) {
+                        item.lastTrackingInfo = item.tracking[0];
                     }
                 }
             }
 
             //Get total budget
-            this.withdrawAmout = 0;
             if (this.proposal.budgets) {
                 for (let i = 0; i < this.proposal.budgets.length; i++) {
                     let budget = this.proposal.budgets[i];
@@ -100,36 +98,7 @@ export class ProposalDetailPage {
 
                     //Set last tracking for show on page
                     if (this.proposal.status == 'voteragreed' && this.proposal.milestone && this.proposal.milestone[i]) {
-                        let milestone = this.proposal.milestone[i];
-
-                        if (this.isOwner) {
-                            if (budget.status == 'Withdrawable') {
-                                this.withdrawAmout += budget.amount;
-                                milestone.lastTracking = {command: 'withdraw'};
-                            }
-                            else if (!milestone.tracking) {
-                                milestone.lastTracking = {command: 'apply'};
-                            }
-                            else {
-                                milestone.lastTracking = milestone.tracking[milestone.tracking.length - 1];
-
-                                if (budget.status == 'Unfinished' && milestone.lastTracking.apply
-                                            && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
-                                    milestone.lastTracking.command = 'apply';
-                                }
-                            }
-                        }
-                        else if (await this.voteService.isSecretaryGeneral() && milestone.tracking && budget.status == 'Unfinished') {
-                            let lastTracking = milestone.tracking[milestone.tracking.length - 1];
-                            if (lastTracking.apply && (!lastTracking.review || !lastTracking.review.opinion)) {
-                                lastTracking.command = 'review';
-                                milestone.lastTracking = lastTracking;
-                            }
-                        }
-
-                        if (milestone.lastTracking) {
-                            milestone.lastTracking.stage = budget.stage;
-                        }
+                        await this.setLastTracking(i);
                     }
                 }
             }
@@ -176,6 +145,49 @@ export class ProposalDetailPage {
         this.proposalDetailFetched = true;
     }
 
+    async setLastTracking(i: number) {
+        let milestone = this.proposal.milestone[i];
+        let budget = this.proposal.budgets[i];
+
+        if (this.isOwner) {
+            if (budget.status == 'Withdrawable') {
+                milestone.lastTracking = {command: 'withdraw'};
+            }
+            else if (budget.status != "Withdrawn") {
+                if (!milestone.tracking || milestone.tracking.length < 1) {
+                    milestone.lastTracking = {command: 'apply'};
+                }
+                else {
+                    milestone.lastTracking = milestone.tracking[0];
+
+                    if (budget.status == 'Unfinished' && milestone.lastTracking.apply
+                                && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
+                        milestone.lastTracking.command = 'apply';
+                    }
+                }
+            }
+        }
+        else if (await this.voteService.isSecretaryGeneral() && milestone.tracking && milestone.tracking.length > 0 && budget.status == 'Unfinished') {
+            let lastTracking = milestone.tracking[0];
+            if (lastTracking.apply && lastTracking.apply.messageHash && (!lastTracking.review || !lastTracking.review.opinion)) {
+                try {
+                    let ret = await this.crOperations.getMessageData(lastTracking.apply.messageHash);
+                    if (ret != null && ret.ownerSignature) {
+                        lastTracking.command = 'review';
+                        milestone.lastTracking = lastTracking;
+                    }
+                }
+                catch (errMessage) {
+                    Logger.error(App.CRSUGGESTION, 'Can not getMessageData on stage ', i);
+                }
+            }
+        }
+
+        if (milestone.lastTracking) {
+            milestone.lastTracking.stage = budget.stage;
+        }
+    }
+
     ionViewDidEnter() {
     }
 
@@ -209,7 +221,6 @@ export class ProposalDetailPage {
             component: MileStoneOptionsComponent,
             componentProps: {
                 lastTracking: lastTracking,
-                withdrawAmout: this.withdrawAmout,
             },
             cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'milestone-options-component' : 'milestone-options-component-dark',
             translucent: false,

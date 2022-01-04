@@ -46,35 +46,33 @@
                                         </ion-col>
                                         <ion-col size="10" class="milestone">
                                             <div class="content">
-                                                <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp)
-                                                    }}
-                                                </h5>
+                                                <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp)}}</h5>
                                                 <h5 class="milestone-goal">{{ entry.goal }}</h5>
-                                                <div class="lastTracking"
-                                                    *ngIf="entry.lastTracking && entry.lastTracking.apply">
+                                                <div class="lastTrackingInfo"
+                                                    *ngIf="entry.lastTrackingInfo && entry.lastTrackingInfo.apply">
                                                     <ion-row>
                                                         <ion-col size="9">
                                                             <div>
                                                                 <div
-                                                                    *ngIf="entry.lastTracking.apply && entry.lastTracking.apply.content">
-                                                                    <h5>{{ entry.lastTracking.apply.content }}</h5>
+                                                                    *ngIf="entry.lastTrackingInfo.apply && entry.lastTrackingInfo.apply.content">
+                                                                    <h5>{{ entry.lastTrackingInfo.apply.content }}</h5>
                                                                     <h5 class="timestamp">{{
-                                                                        uxService.formatDate(entry.lastTracking.apply.timestamp)}}
+                                                                        uxService.formatDate(entry.lastTrackingInfo.apply.timestamp)}}
                                                                     </h5>
                                                                 </div>
-                                                                <div *ngIf="entry.lastTracking.review && entry.lastTracking.review.content"
+                                                                <div *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.content"
                                                                     class="review">
-                                                                    <h5>{{ entry.lastTracking.review.content }}</h5>
+                                                                    <h5>{{ entry.lastTrackingInfo.review.content }}</h5>
                                                                     <h5 class="timestamp">{{
-                                                                        uxService.formatDate(entry.lastTracking.review.timestamp)
+                                                                        uxService.formatDate(entry.lastTrackingInfo.review.timestamp)
                                                                         }}</h5>
                                                                 </div>
                                                             </div>
                                                         </ion-col>
                                                         <ion-col size="3" class="review-opinion"
-                                                            *ngIf="entry.lastTracking.review && entry.lastTracking.review.opinion">
+                                                            *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.opinion">
                                                             <p>{{ 'crproposalvoting.' +
-                                                                entry.lastTracking.review.opinion |
+                                                                entry.lastTrackingInfo.review.opinion |
                                                                 translate }}</p>
                                                         </ion-col>
                                                     </ion-row>

@@ -72,7 +72,7 @@ export abstract class Network {
   public abstract getMainChainID(networkTemplate?: string): number;
 
   public supportedWalletCreateTypes(): WalletCreateType[] {
-      return [WalletCreateType.MNEMONIC, WalletCreateType.PRIVATE_KEY_EVM];
+      return [WalletCreateType.MNEMONIC, WalletCreateType.PRIVATE_KEY_EVM, WalletCreateType.KEYSTORE];
   }
 
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);

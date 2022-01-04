@@ -10,7 +10,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
-import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -41,13 +40,14 @@ export class ReviewMilestonePage {
 
     private onGoingCommand: ReviewMilestoneCommand;
     public signingAndSendingProposalResponse = false;
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
     public isKeyboardHide = true;
     public content = "";
     public trackingType = "progress";
     typeResult = {
         progress: "approve",
+        finalized: "approve",
         rejected: "reject",
     }
 
@@ -56,7 +56,6 @@ export class ReviewMilestonePage {
         public translate: TranslateService,
         public walletManager: WalletService,
         private voteService: VoteService,
-        private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
@@ -68,38 +67,39 @@ export class ReviewMilestonePage {
     }
 
     async ionViewWillEnter() {
-        if (this.proposalDetailsFetched) {
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
+        if (this.proposalDetail) {
             return;
         }
+        this.proposalDetailFetched = false;
 
-        this.keyboard.onKeyboardWillShow().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = false;
-            });
-        });
-
-        this.keyboard.onKeyboardWillHide().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = true;
-            });
-        });
-
-        this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
         this.onGoingCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
-        Logger.log(App.CRPROPOSAL_VOTING, "onGoingCommand", this.onGoingCommand);
-        this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "progress";
-        // this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+        Logger.log(App.CRPROPOSAL_VOTING, "ReviewMilestoneCommand", this.onGoingCommand);
 
-        try {
-            // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.getCurrentProposal(this.onGoingCommand.data.proposalHash,
-                                                this.onGoingCommand.type != CRCommandType.ProposalDetailPage);
-            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
+
+        if (this.proposalDetail) {
+            this.keyboard.onKeyboardWillShow().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = false;
+                });
+            });
+
+            this.keyboard.onKeyboardWillHide().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = true;
+                });
+            });
+
+            let milestone = this.proposalDetail.milestone;
+            if (this.onGoingCommand.data.stage == milestone[milestone.length - 1].stage) {
+                this.trackingType = "finalized";
+            }
+            else {
+                this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "progress";
+            }
         }
-        catch (err) {
-            Logger.error('crproposal', 'ReviewMilestonePage getCurrentProposal error:', err);
-        }
-        this.proposalDetailsFetched = true;
     }
 
     ionViewWillLeave() {
@@ -148,13 +148,18 @@ export class ReviewMilestonePage {
             let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
             });
-            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
-            if (ret.result && ret.result.signature) {
-                //Create transaction and send
-                payload.SecretaryGeneralSignature = ret.result.signature;
-                const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(JSON.stringify(payload), '');
-                await this.crOperations.signAndSendRawTransaction(rawTx);
+
+            if (!ret) {
+                // Operation cancelled, cancel the operation silently.
+                this.signingAndSendingProposalResponse = false;
+                return;
             }
+
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
+            //Create transaction and send
+            payload.SecretaryGeneralSignature = ret.result.signature;
+            const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(JSON.stringify(payload), '');
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;

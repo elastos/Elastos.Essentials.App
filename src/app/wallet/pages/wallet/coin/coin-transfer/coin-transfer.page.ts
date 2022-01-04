@@ -90,7 +90,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // User can set gas price and limit.
     private gasPrice: string = null;
     private gasLimit: string = null;
-    private nonce: number = -1;
+    private nonce = -1;
 
     // Intent
     private action = null;

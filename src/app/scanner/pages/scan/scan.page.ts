@@ -352,11 +352,11 @@ export class ScanPage {
             await this.exitApp();
         }
         catch (err) {
-            Logger.error("Scanner", "Intent sending failed", err)
+            Logger.warn("Scanner", "Intent sending failed", err)
             // We call exitCurrentContext before,
             // so we need add scanner to navigation history again if do not exit scanner.
-            void this.globalNav.navigateRoot(App.SCANNER)
             this.ngZone.run(() => {
+                void this.globalNav.navigateRoot(App.SCANNER)
                 void this.showNooneToHandleIntent()
             })
         }

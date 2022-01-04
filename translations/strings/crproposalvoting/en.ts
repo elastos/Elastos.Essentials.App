@@ -14,7 +14,7 @@ export const en = {
         'loading-proposal': 'Loading Proposal...',
         'no-proposals': 'No matching proposals for now.',
         'proposal-details': 'Proposal Details',
-        'no-proposal-detail': 'Can not get the proposal detial for now.',
+        'no-proposal-detail': 'Can not get the proposal details for now.',
         'proposal': 'Proposal',
         'abstract': 'Abstract',
         'proposal-hash': 'Proposal Hash',
@@ -33,7 +33,7 @@ export const en = {
         'loading-suggestion': 'Loading Suggestion...',
         'no-suggestions': 'No matching suggestions for now.',
         'suggestion-details': 'Suggestion Details',
-        'no-suggestion-detail': 'Can not get the suggestion detial for now.',
+        'no-suggestion-detail': 'Can not get the suggestion details for now.',
         'suggestion': 'Suggestion',
         'suggestion-id': 'Suggestion ID',
 
@@ -167,6 +167,14 @@ export const en = {
         'receive-address': 'ELA Receive Address',
         'payment-schedule': 'Payment Schedule',
         'budget-statement': 'Budget Statement',
+
+        //Error
+        'no-draft-data': 'Can not get the drafe data for now.',
+        'no-message-data': 'Can not get the message data for now.',
+        'no-opinion-data': 'Can not get the opinion data for now.',
+        'no-command-type': 'This CR commond type is currently not supported.',
+        'no-data': 'Can not get the data for now, please try again.',
+        'ela-not-enough': 'The availability ELA is not enough for transaction.',
     }
 
 };

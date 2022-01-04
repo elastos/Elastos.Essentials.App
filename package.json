@@ -93,7 +93,7 @@
     "@angular/compiler": "11.0.9",
     "@angular/compiler-cli": "11.0.9",
     "@angular/language-service": "11.0.9",
-    "@elastosfoundation/elastos-connectivity-sdk-js": "^1.0.11",
+    "@elastosfoundation/elastos-connectivity-sdk-js": "1.0.11",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.5",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.20",
     "@ionic/angular-toolkit": "3.1.0",

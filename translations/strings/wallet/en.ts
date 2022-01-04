@@ -263,6 +263,8 @@ export const en = {
         "wallet-settings-title": "Wallet Settings",
         "wallet-settings-backup-wallet": "Backup Wallet",
         "wallet-settings-backup-wallet-subtitle": "View mnemonics to export and backup",
+        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
+        "wallet-settings-backup-wallet-keystore": "Export Keystore",
         "wallet-settings-change-name": "Change Name",
         "wallet-settings-change-name-subtitle": "Organize your wallet with a custom name",
         "wallet-settings-change-theme": "Change Theme",
@@ -475,7 +477,7 @@ export const en = {
         "text-wallet-passphrase-validator-repeat": "The two input mnemonic passphrases are inconsistent",
         "text-wallet-passphrase-validator-min-length": "The mnemonic passphrase must be at least 8 characters",
         "import-wallet-by-mnemonic": "Import Wallet by mnemonic",
-        "import-wallet-by-privatekey": "Import Wallet by private key",
+        "import-wallet-by-privatekey": "Import Wallet by private key or Keystore",
 
         /*****************
         * Mnemonic Pages *
@@ -508,6 +510,17 @@ export const en = {
         "privatekey-tap-to-copy": "Tap private key to copy",
         "export-private-key-intro": "Optionally, you can also use the following private key in some wallets. Touch to copy.",
 
+        /***********************
+        * Export Keystore Page *
+        ************************/
+        "keystore-title": "Export Keystore",
+        "keystore-export-intro": "Touch to copy",
+        "keystore-input-password": "Set Keystore password",
+        "keystore-reinput-password": "Repeat Keystore password",
+        "keystore-export": "Export",
+        "keystore-password-validator-repeat": "The two input passwords are inconsistent",
+        "keystore-password-validator-min-length": "The password must be at least 8 characters",
+
         /********************************
         * Advanced Mnemonic Import Page *
         *********************************/
@@ -519,10 +532,13 @@ export const en = {
         /********************************
         * Import Wallet by private key Page *
         *********************************/
-        'import-wallet-by-privatekey-info': 'Only EVM compatible wallet private keys are supported ',
-        'paste-privatekey': 'Paste or Enter Private Key',
+        'import-wallet-by-privatekey-info': 'Private key: Only EVM compatible wallet private keys are supported',
+        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
+        'paste-privatekey': 'Paste or Enter Private Key or Keystore',
         'wrong-privatekey-msg': 'Please enter the correct private key',
         'import-private-key-sucess': 'Wallet imported from Private key',
+        'import-keystore-sucess': 'Wallet imported from keystore',
+        'keystore-backup-password': 'Please enter the keystore password',
 
         /***************************
         * Earn, Swap, Bridge pages *

@@ -12,7 +12,7 @@ import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { SuggestionDetail } from '../../../model/suggestion-model';
-import { CRCommand, CRCommandType, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
+import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
 import { SuggestionService } from '../../../services/suggestion.service';
 
 export type CreateProposalCommand = CRCommand & {
@@ -67,38 +67,32 @@ export class CreateProposalPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-proposal'));
+        if (this.suggestionDetail) {
+            return;
+        }
+        this.suggestionDetailFetched = false;
+
         this.onGoingCommand = this.crOperations.onGoingCommand as CreateProposalCommand;
+        Logger.log(App.CRSUGGESTION, "CreateProposalCommand", this.onGoingCommand);
 
-        if (this.onGoingCommand.type == CRCommandType.SuggestionDetailPage) {
-            this.suggestionDetail = this.onGoingCommand.data;
-        }
-        else {
-            try {
-                // Fetch more details about this suggestion, to display to the user
-                this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.onGoingCommand.sid);
-            }
-            catch (err) {
-                //TODO:: show error
-                Logger.error('crproposal', 'CreateProposalPage fetchSuggestionDetail error:', err);
-            }
-        }
+        this.suggestionDetail = await this.crOperations.getCurrentSuggestion();
         this.suggestionDetailFetched = true;
-        this.proposaltype = this.suggestionDetail.type;
-        this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+        if (this.suggestionDetail) {
+            this.proposaltype = this.suggestionDetail.type;
 
-        this.bugetAmount = 0;
-        if (this.proposaltype == "normal") {
-            for (let suggestionBudget of this.onGoingCommand.data.budgets) {
-                suggestionBudget.type = suggestionBudget.type.toLowerCase();
-                this.bugetAmount += parseInt(suggestionBudget.amount);
+            this.bugetAmount = 0;
+            if (this.proposaltype == "normal") {
+                for (let suggestionBudget of this.onGoingCommand.data.budgets) {
+                    suggestionBudget.type = suggestionBudget.type.toLowerCase();
+                    this.bugetAmount += parseInt(suggestionBudget.amount);
+                }
             }
-        }
 
-        Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
-        if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
-            this.proposaltype = "changeproposaladdress";
+            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
+                this.proposaltype = "changeproposaladdress";
+            }
+            this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
         }
-        this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
     }
 
     ionViewWillLeave() {
@@ -178,14 +172,17 @@ export class CreateProposalPage {
 
             //Get did sign digest
             let ret = await this.signDigest(digest);
-            if (ret) {
-                payload.CRCouncilMemberSignature = ret;
-
-                //Create transaction
-                let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
-                Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
-                await this.crOperations.signAndSendRawTransaction(rawTx);
+            if (!ret) {
+                // Operation cancelled, cancel the operation silently.
+                this.signingAndSendingProposalResponse = false;
+                return;
             }
+
+            payload.CRCouncilMemberSignature = ret;
+            //Create transaction
+            let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
+            Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;
@@ -299,7 +296,7 @@ export class CreateProposalPage {
             data: digest,
         });
         Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
-        if (!ret.result) {
+        if (!ret) {
             // Operation cancelled by user
             return null;
         }

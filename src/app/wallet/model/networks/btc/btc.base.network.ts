@@ -54,7 +54,7 @@ export abstract class BTCNetworkBase extends Network {
   }
 
   public supportedWalletCreateTypes(): WalletCreateType[] {
-    return [WalletCreateType.MNEMONIC];
+    return [WalletCreateType.MNEMONIC, WalletCreateType.KEYSTORE];
   }
 
   public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {

@@ -264,6 +264,8 @@ export const fr = {
         "wallet-settings-title": "Paramètres Portefeuille",
         "wallet-settings-backup-wallet": "Sauvegarde",
         "wallet-settings-backup-wallet-subtitle": "Visualisez votre mnémonique pour le sauvegarder en lieu sûr.",
+        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
+        "wallet-settings-backup-wallet-keystore": "Export Keystore",
         "wallet-settings-change-name": "Renommer",
         "wallet-settings-change-name-subtitle": "Organisez vos portefeuilles en leur donnant un nom personnalisé.",
         "wallet-settings-change-theme": "Modifier le thème",
@@ -476,7 +478,7 @@ export const fr = {
         "text-wallet-passphrase-validator-repeat": "Les deux phrases secrètes saisies sont différentes",
         "text-wallet-passphrase-validator-min-length": "La phrase secrète doit avoir au moins 8 caractères",
         "import-wallet-by-mnemonic": "Import par mots secrets",
-        "import-wallet-by-privatekey": "Import par clé privée",
+        "import-wallet-by-privatekey": "Import par clé privée ou un keystore",
 
         /*****************
         * Mnemonic Pages *
@@ -508,6 +510,17 @@ export const fr = {
         "privatekey-tap-to-copy": "Toucher la clé privée pour copier",
         "export-private-key-intro": "Vous pouvez aussi choisir d'utiliser la clé privée suivante dans certaines applications. Touchez pour copier.",
 
+        /***********************
+        * Export Keystore Page *
+        ************************/
+        "keystore-title": "Export Keystore",
+        "keystore-export-intro": "Touch to copy",
+        "keystore-input-password": "Set Keystore password",
+        "keystore-reinput-password": "Repeat Keystore password",
+        "keystore-export": "Export",
+        "keystore-password-validator-repeat": "The two input passwords are inconsistent",
+        "keystore-password-validator-min-length": "The password must be at least 8 characters",
+
         /********************************
         * Advanced Mnemonic Import Page *
         *********************************/
@@ -519,11 +532,13 @@ export const fr = {
         /********************************
         * Import Wallet by private key Page *
         *********************************/
-        'import-wallet-by-privatekey-info': 'Seules les clés privées des portefeuilles EVM (type Ethereum) sont supportées.',
-        'paste-privatekey': 'Coller ou saisir la clé privée',
+        'import-wallet-by-privatekey-info': 'Clé privée: Seules les clés privées des portefeuilles EVM (type Ethereum) sont supportées.',
+        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
+        'paste-privatekey': 'Coller ou saisir la clé privée ou un keystore',
         'wrong-privatekey-msg': 'Veuillez saisir une clé privée valide',
         'import-private-key-sucess': 'Wallet imported from Private key',
-
+        'import-keystore-sucess': 'Wallet imported from keystore',
+        'keystore-backup-password': 'Please enter the keystore password',
 
         /***************************
         * Earn, Swap, Bridge pages *

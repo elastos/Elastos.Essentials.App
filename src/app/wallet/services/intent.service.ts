@@ -205,6 +205,11 @@ export class IntentService {
                 navigationState = JSON.parse(JSON.stringify(intent));
                 break;
 
+            case 'personalsign':
+                this.nextScreen = '/wallet/intents/personalsign';
+                navigationState = JSON.parse(JSON.stringify(intent));
+                break;
+
             case 'pay':
                 this.nextScreen = '/wallet/coin-transfer';
                 const intentSubWalletId = this.getSubWalletIdByCurrency(intent.params.currency || 'ELA');

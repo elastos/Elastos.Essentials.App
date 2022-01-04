@@ -73,6 +73,7 @@ export class SuggestionService {
 
     public async fetchSuggestionDetail(suggestionId: string): Promise<SuggestionDetail> {
         try {
+            this.currentSuggestion = null;
             Logger.log(App.CRSUGGESTION, 'Fetching suggestion details for suggestion ' + suggestionId + '...');
             let url = this.getCrRpcApi() + '/api/v2/suggestion/get_suggestion/' + suggestionId;
             let result = await this.jsonRPCService.httpGet(url);
@@ -96,6 +97,8 @@ export class SuggestionService {
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'fetchSuggestionDetail error:', err);
         }
+
+        return null;
     }
 
     public async getCurrentSuggestion(suggestionId: string, refresh = false): Promise<SuggestionDetail> {

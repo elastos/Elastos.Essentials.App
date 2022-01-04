@@ -262,7 +262,9 @@ export const zh = {
                 ************************/
                 "wallet-settings-title": "钱包设置",
                 "wallet-settings-backup-wallet": "备份钱包",
-                "wallet-settings-backup-wallet-subtitle": "查看要导出和备份的助记词",
+                "wallet-settings-backup-wallet-subtitle": "查看要导出和备份的助记词及私钥",
+                "wallet-settings-backup-wallet-export": "导出助记词及私钥",
+                "wallet-settings-backup-wallet-keystore": "导出 Keystore",
                 "wallet-settings-change-name": "更改名称",
                 "wallet-settings-change-name-subtitle": "自定义钱包名称",
                 "wallet-settings-change-theme": "更换主题",
@@ -476,7 +478,7 @@ export const zh = {
                 "text-wallet-passphrase-validator-repeat": "两次输入的助记词密码不一致",
                 "text-wallet-passphrase-validator-min-length": "助记词密码最少8位",
                 "import-wallet-by-mnemonic": "通过助记词导入钱包",
-                "import-wallet-by-privatekey": "通过私钥导入钱包",
+                "import-wallet-by-privatekey": "通过私钥/Keystore导入钱包",
 
                 /*****************
                 * Mnemonic Pages *
@@ -508,6 +510,17 @@ export const zh = {
                 "privatekey-tap-to-copy": "点击私钥即可复制",
                 "export-private-key-intro": "或者，您也可以在某些钱包中使用以下私钥。点击私钥即可复制。",
 
+                /***********************
+                * Export Keystore Page *
+                ************************/
+                "keystore-title": "导出 Keystore",
+                "keystore-export-intro": "点击Keystore即可复制",
+                "keystore-input-password": "设置Keystore密码（最少8位）",
+                "keystore-reinput-password": "再次输入Keystore密码",
+                "keystore-export": "导出",
+                "keystore-password-validator-repeat": "两次输入的密码不一致",
+                "keystore-password-validator-min-length": "密码最少8位",
+
                 /********************************
                 * Advanced Mnemonic Import Page *
                 *********************************/
@@ -519,11 +532,13 @@ export const zh = {
                 /********************************
                 * Import Wallet by private key Page *
                 *********************************/
-                'import-wallet-by-privatekey-info': '只支持兼容 EVM 的钱包私钥',
-                'paste-privatekey': '请粘贴或输入私钥',
-                'wrong-privatekey-msg': '请输入正确的私钥',
+                'import-wallet-by-privatekey-info': '私钥:只支持兼容 EVM 的钱包私钥',
+                'import-wallet-by-keystore-info': 'Keystore: 只支持 ELA Keystore',
+                'paste-privatekey': '请粘贴或输入私钥/Keystore',
+                'wrong-privatekey-msg': '请输入正确的私钥/Keystore',
                 'import-private-key-sucess': '已通过私钥成功导入钱包',
-
+                'import-keystore-sucess': '已通过Keystore成功导入钱包',
+                'keystore-backup-password': '请输入 Keystore 密码',
 
                 /***************************
                 * Earn, Swap, Bridge pages *

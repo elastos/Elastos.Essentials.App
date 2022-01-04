@@ -263,6 +263,8 @@ export const it = {
         "wallet-settings-title": "Impostazioni del portafoglio",
         "wallet-settings-backup-wallet": "Backup del Portafoglio",
         "wallet-settings-backup-wallet-subtitle": "Visualizza il tuo mnemonico per salvarlo in un luogo sicuro.",
+        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
+        "wallet-settings-backup-wallet-keystore": "Export Keystore",
         "wallet-settings-change-name": "Cambia nome",
         "wallet-settings-change-name-subtitle": "Organizza i tuoi portafogli assegnando loro un nome personalizzato.",
         "wallet-settings-change-theme": "Cambia tema",
@@ -508,6 +510,17 @@ export const it = {
         "privatekey-tap-to-copy": "Tocca la Chiave Privata per copiarla",
         "export-private-key-intro": "Puoi anche scegliere di utilizzare la seguente Chiave Privata in alcune applicazioni. Tocca per copiare.",
 
+        /***********************
+        * Export Keystore Page *
+        ************************/
+        "keystore-title": "Export Keystore",
+        "keystore-export-intro": "Touch to copy",
+        "keystore-input-password": "Set Keystore password",
+        "keystore-reinput-password": "Repeat Keystore password",
+        "keystore-export": "Export",
+        "keystore-password-validator-repeat": "The two input passwords are inconsistent",
+        "keystore-password-validator-min-length": "The password must be at least 8 characters",
+
         /********************************
         * Advanced Mnemonic Import Page *
         *********************************/
@@ -520,10 +533,12 @@ export const it = {
         * Import Wallet by private key Page *
         *********************************/
         'import-wallet-by-privatekey-info': 'Sono supportate solo le chiavi private dei portafogli EVM compatibili (tipo Ethereum). ',
+        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
         'paste-privatekey': 'Incolla o Inserisci la chiave privata',
         'wrong-privatekey-msg': 'Si prega di inserire una Chiave Privata valida',
         'import-private-key-sucess': 'Portafoglio importato dalla Chiave Privata',
-
+        'import-keystore-sucess': 'Wallet imported from keystore',
+        'keystore-backup-password': 'Please enter the keystore password',
 
         /***************************
         * Earn, Swap, Bridge pages *
