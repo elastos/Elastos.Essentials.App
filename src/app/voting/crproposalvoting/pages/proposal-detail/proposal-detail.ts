@@ -97,8 +97,14 @@ export class ProposalDetailPage {
                     this.totalBudget += parseInt(budget.amount);
 
                     //Set last tracking for show on page
-                    if (this.proposal.status == 'voteragreed' && this.proposal.milestone && this.proposal.milestone[i]) {
-                        await this.setLastTracking(i);
+                    if (this.proposal.milestone && this.proposal.milestone[i]) {
+                        if (this.proposal.status == 'voteragreed') {
+                            await this.setLastTracking(i);
+                        }
+                        else if (this.proposal.status == 'finished' && budget.status == 'Withdrawable') {
+                            let milestone = this.proposal.milestone[i];
+                            milestone.lastTracking = {command: 'withdraw', stage: budget.stage};
+                        }
                     }
                 }
             }
@@ -178,7 +184,7 @@ export class ProposalDetailPage {
                     }
                 }
                 catch (errMessage) {
-                    Logger.error(App.CRSUGGESTION, 'Can not getMessageData on stage ', i);
+                    Logger.error(App.CRSUGGESTION, 'Can not getMessageData on stage ', milestone.stage);
                 }
             }
         }
