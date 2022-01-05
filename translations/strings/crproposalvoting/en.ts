@@ -19,6 +19,7 @@ export const en = {
         'abstract': 'Abstract',
         'proposal-hash': 'Proposal Hash',
         'url': 'Original Url',
+        'reservecustomizedid': 'Reserve Customized DID',
         'time-remaining': 'Time Remaining',
         'reject-ratio': 'Rejection Ratio',
         'member-votes': 'Council Member Votes',

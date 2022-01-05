@@ -53,4 +53,13 @@ export class UXService {
         Logger.log(App.VOTING, "Opening external URL:", url);
         void this.globalIntentService.sendIntent('openurl', { url: url })
     }
+
+    getArrayString(list: [string]): string {
+        if (!list) {
+            return null;
+        }
+        let str = list.join(", ");
+        Logger.log(App.VOTING, "Array:", str);
+        return str;
+    }
 }

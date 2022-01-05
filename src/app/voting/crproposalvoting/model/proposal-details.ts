@@ -63,5 +63,7 @@ export class ProposalDetails {
     newSecretaryDID?: string;
     closeProposalID?: string;
 
+    reservedCustomizedIDList?: [string];
+
     budgets: any;
 }

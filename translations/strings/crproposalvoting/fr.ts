@@ -18,6 +18,7 @@ export const fr = {
         'abstract': 'Résumé',
         'proposal-hash': 'Hash de la Proposition',
         'url': 'Url d\'origine',
+        'reservecustomizedid': 'Reserve Customized DID',
         'time-remaining': 'Temps Restant',
         'reject-ratio': 'Ratio de Reject',
         'member-votes': 'Council Member Votes',

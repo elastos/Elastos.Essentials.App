@@ -19,6 +19,7 @@ export const it = {
         'abstract': 'Riassunto',
         'proposal-hash': 'Hash della proposta',
         'url': 'Url Originale',
+        'reservecustomizedid': 'Reserve Customized DID',
         'time-remaining': 'Tempo rimanente',
         'reject-ratio': 'Rapporto di reiezione',
         'member-votes': 'Voti dei membri del Consiglio',
@@ -171,7 +172,7 @@ export const it = {
         'receive-address': 'Indirizzo di ricezione ELA',
         'payment-schedule': 'Programma di pagamento',
         'budget-statement': 'Dichiarazione di bilanzio',
-      
+
         //Error
         'no-draft-data': 'Can not get the drafe data for now.',
         'no-message-data': 'Can not get the message data for now.',

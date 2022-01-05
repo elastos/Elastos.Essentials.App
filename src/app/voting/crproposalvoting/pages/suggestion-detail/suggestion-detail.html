@@ -23,10 +23,13 @@
                                 [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
                         </ion-col>
                         <ion-col *ngIf="item.active" class="details-col" size="12" [ngSwitch]="item.type">
-                            <div *ngSwitchCase="'marked'" class="item" [innerHtml]="item.value"></div>
+                            <div *ngSwitchCase="'marked'" class="item" ></div>
+                            <div *ngSwitchCase="'array'" class="item" [innerHtml]="item.value"></div>
+
                             <div *ngSwitchCase="'type'" class="item">
                                 <h4>{{ 'crproposalvoting.proposaltype-' + item.value | translate }}</h4>
                             </div>
+
                             <div *ngSwitchCase="'milestone'" class="milestone-container item">
                                 <div class="vertical-line-container">
                                     <div class="inner"></div>

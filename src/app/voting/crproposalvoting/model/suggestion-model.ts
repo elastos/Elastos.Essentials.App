@@ -73,7 +73,7 @@ export class SuggestionDetail {
     secretaryGeneralSignature?: string;
     newOwnerSignature?: string;
 
-    reservedCustomizedIDList?: [];
+    reservedCustomizedIDList?: [string];
 }
 
 export type SuggestionDetailResponse = {

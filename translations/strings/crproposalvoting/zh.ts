@@ -19,6 +19,7 @@ export const zh = {
         'abstract': '摘要',
         'proposal-hash': '提案哈希',
         'url': '原始网址',
+        'reservecustomizedid': '预留自定义DID',
         'time-remaining': '剩余时间',
         'reject-ratio': '拒绝率',
         'member-votes': '委员投票结果',
