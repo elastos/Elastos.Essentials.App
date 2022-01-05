@@ -39,11 +39,21 @@
                 color: #c9c9c9;
                 text-align: left;
                 font-size: 12px;
+                margin-bottom: 5px;
             }
 
             .description {
                 color: #fff;
                 font-size: 13px;
+            }
+
+            .bottom-info {
+                margin-top: 5px;
+
+                .time-left {
+                    color: #ffe973;
+                    font-size: 10px;
+                }
             }
         }
 

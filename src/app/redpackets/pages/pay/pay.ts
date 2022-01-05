@@ -56,7 +56,7 @@ export class PayPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle("Finalize and pay");
-    this.titleBar.setBackgroundColor("#f04141");
+    this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
   }
 

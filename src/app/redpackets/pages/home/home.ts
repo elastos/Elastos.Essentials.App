@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -38,6 +38,10 @@ export class HomePage {
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
     this.titleBar.setMenuVisibility(true);
+    this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
+      iconPath: 'assets/redpackets/images/ic-plus.svg',
+      key: 'create-packet'
+    })
     this.titleBar.setupMenuItems([
       {
         key: "my-packets",
@@ -53,6 +57,9 @@ export class HomePage {
 
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       switch (icon.key) {
+        case "create-packet":
+          this.newPacket();
+          break;
         case "my-packets":
           void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/my-packets");
           break;

@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { ComponentsModule } from '../../components/components.module';
 import { OpenedPacketsPage } from './opened-packets';
 
 @NgModule({
@@ -15,6 +16,7 @@ import { OpenedPacketsPage } from './opened-packets';
     FormsModule,
     TranslateModule,
     SharedComponentsModule,
+    ComponentsModule,
     RouterModule.forChild([{
       path: '',
       component: OpenedPacketsPage,

@@ -4,7 +4,9 @@ import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -28,11 +30,13 @@ export class PacketDetailsPage implements OnInit {
   public packetFetchErrored = false; // Error while fetching a remote packet info (network, not found...)
   public checkingGrabStatus = false; // Checking if the packet can be grabbed with the service
   public grabStatusChecked = false; // Grab status has been checked, we know if we won or not
-  public fetchingWinners = true;
+  public fetchingWinners = false;
+  public fetchingPacket = false;
   public justWon = false;
   public justMissed = false;
   public justNoMorePackets = false;
   public captchaChallengeRequired = false;
+  public packetIsInactive = false; // Whether the packet is live for everyone or not (paid)
 
   // UI Model
   public captchaPicture: string = null;
@@ -44,6 +48,7 @@ export class PacketDetailsPage implements OnInit {
     private router: Router,
     private walletNetworkService: WalletNetworkService,
     private walletService: WalletService,
+    private globalNavService: GlobalNavService,
     public packetService: PacketService
   ) {
 
@@ -71,14 +76,25 @@ export class PacketDetailsPage implements OnInit {
         // Refresh packet with latest data
         if (packetHash) {
           Logger.log("redpackets", "Fetching packet details for hash", packetHash);
+          this.fetchingPacket = true;
           this.packet = await this.packetService.getPacketInfo(packetHash);
+          this.fetchingPacket = false;
         }
 
         if (this.packet) {
           Logger.log("redpackets", "Showing packet details", this.packet);
           this.preparePacketDisplay();
-          void this.checkIfNeedToGrab();
-          void this.fetchWinners();
+
+          // Only try to grab / get winners if the packet is live
+          if (this.packet.isActive) {
+            if (!this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString))
+              void this.checkIfNeedToGrab();
+
+            void this.fetchWinners();
+          }
+          else {
+            this.packetIsInactive = true;
+          }
         }
         else {
           Logger.error("redpackets", "Unable to get packet information");
@@ -90,7 +106,7 @@ export class PacketDetailsPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle("Packet details");
-    this.titleBar.setBackgroundColor("#f04141");
+    this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
   }
 
@@ -186,5 +202,17 @@ export class PacketDetailsPage implements OnInit {
     this.fetchingWinners = true;
     this.winners = await this.packetService.getPacketWinners(this.packet.hash);
     this.fetchingWinners = false;
+  }
+
+  public userIsCreator(): boolean {
+    return this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString);
+  }
+
+  public finalizePayment() {
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay", {
+      state: {
+        packetHash: this.packet.hash
+      }
+    });
   }
 }

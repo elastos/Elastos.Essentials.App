@@ -88,6 +88,7 @@ export class Packet {
   costs: PacketCosts;
   paymentAddress?: string; // EVM address of this service, where payments have to be sent
   paymentStatus?: PaymentStatus;
+  isActive: boolean; // Whether the packet is ready for others to grab - ie, it has been paid by the creator
 
   public static fromSerializedPacket(serializedPacket: SerializedPacket): Packet {
     let packet = new Packet();
@@ -122,6 +123,12 @@ export class Packet {
       return this.isNativePaymentCompleted() && this.isERC20PaymentCompleted();
   }
 
+  /**
+   * Tells if the packet was created by the given did
+   */
+  public userIsCreator(did: string): boolean {
+    return this.creatorDID === did;
+  }
 }
 
 // TODO: delete

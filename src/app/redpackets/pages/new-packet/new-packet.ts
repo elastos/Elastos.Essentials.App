@@ -66,7 +66,7 @@ export class NewPacketPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle("New Packet");
-    this.titleBar.setBackgroundColor("#f04141");
+    this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
     this.name = this.didSessions.getSignedInIdentity().name;

@@ -7,9 +7,16 @@
     </div>
 
     <div *ngIf="packet">
+      <!-- For the creator: if packet is not active, go to "pay" -->
+      <div *ngIf="!fetchingPacket && userIsCreator() && !packet.isActive">
+        <div class="custom-btn" (click)="finalizePayment()">
+          <ion-label>Finalize payment</ion-label>
+        </div>
+      </div>
+
       <div *ngIf="checkingGrabStatus">
         <ion-spinner></ion-spinner>
-        <ion-label>Trying to grab a packet! Please wait</ion-label>
+        <ion-label>Trying to grab a packet... Please wait</ion-label>
       </div>
       <div *ngIf="grabStatusChecked">
         <!-- Winning -->
@@ -91,30 +98,9 @@
         <h4>Packet Creator</h4>
         <p>{{ packet.packet_creator }}</p>
       </ion-row>
-
-      <!-- TODO: summary of grabbed + remaining packets? And Amounts grabbed and claimed?
-      <ion-row class="details">
-        <h4>Packets Claimed</h4>
-        <p>{{ packet.packet_rcv_num }}</p>
-      </ion-row>
-
-      <ion-row class="details">
-        <h4>ELA Claimed</h4>
-        <p>{{ packet.packet_rcv_amt }}</p>
-      </ion-row>
-
-      <ion-row class="details">
-        <h4>Packets Remaining</h4>
-        <p>{{ packet.packet_num - packet.packet_rcv_num }}</p>
-      </ion-row>
-
-      <ion-row class="details">
-        <h4>ELA Remaining</h4>
-        <p>{{ packet.packet_amt - packet.packet_rcv_amt }}</p>
-      </ion-row> -->
     </div>
 
-    <div *ngIf="packet">
+    <div *ngIf="packet && packet.isActive">
       <ion-row class="ion-padding-top">
         <ion-col size="12" class="summary">
           <h2>Winners</h2>

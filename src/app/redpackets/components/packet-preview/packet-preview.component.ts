@@ -21,6 +21,7 @@ export class PacketPreviewComponent {
 
     @Input()
     set packet(packet: Packet) {
+        this._packet = packet;
         void this.preparePacket(packet);
     }
 
@@ -29,6 +30,9 @@ export class PacketPreviewComponent {
 
     @Output("checkBoxClicked")
     private checkBoxClicked?= new EventEmitter();
+
+    // Model
+    public _packet: Packet = null;
 
     // UI Model
     public creator = ""; // Packet creator's name

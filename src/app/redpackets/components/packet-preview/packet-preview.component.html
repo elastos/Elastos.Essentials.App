@@ -7,20 +7,18 @@
       <ion-col size="10" class="left-col">
         <div class="creator">{{ creator }}</div>
         <div class="description">
-          Merry Christmas !
+          {{ _packet.message }}
         </div>
-        <div *ngIf="description" class="card-value">
-          {{description}}
-        </div>
-
         <div class="bottom-info">
-          3 days left
+          <div class="time-left">
+            3 days left
+          </div>
         </div>
       </ion-col>
       <ion-col size="2" class="right-col">
         <div class="icons">
           <div class="icon">
-            <img class="published-icon" src="/assets/identity/svg/credential-published.svg" />
+            <img class="published-icon" src="assets/redpackets/images/message.svg" />
           </div>
         </div>
       </ion-col>

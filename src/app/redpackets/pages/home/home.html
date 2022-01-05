@@ -1,10 +1,6 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="container ion-text-center ion-padding">
-    <div class="custom-btn" (click)="newPacket()">
-      <ion-label>Create a red packet</ion-label>
-    </div>
-
     <h1>Public packets</h1>
     <div *ngIf="fetchingPublicPackets">
       <ion-spinner></ion-spinner>
@@ -17,12 +13,19 @@
       <p *ngIf="publicPackets.length === 0">No public packet so far. What about creating your own?</p>
     </div>
 
-    <h1>About red packets</h1>
+    <div class="about">
+      <div class="icon-container">
+        <img src="assets/redpackets/images/about.png" class="icon" />
+        <div class="glow"></div>
+      </div>
 
-    <p>Traditionally used in China to celebrate special occasions and share happiness among friends on social networks,
-      red packets are derived from this idea in Elastos Essentials to celebrate, but also to create crypto communities
-      entertainment.</p>
+      <h1>About red packets</h1>
 
-    <p>Red packets introduce much more fun compared to “airdrops”, as luck and reactivity are involved.</p>
+      <p>Traditionally used in China to celebrate special occasions and share happiness among friends,
+        red packets are derived from this idea in Elastos Essentials to celebrate, but also to create entertainment for
+        crypto communities.</p>
+
+      <p>Red packets introduce much more fun compared to “airdrops”, as luck and reactivity are involved.</p>
+    </div>
   </ion-grid>
 </ion-content>
