@@ -677,6 +677,8 @@ export const en = {
         'txPublished-65': 'Dust Transaction',
         'txPublished-66': 'Insufficient Fee',
         'txPublished-67': 'Checkpoint Error',
+
+        'did-oversize': 'DID Over Size',
     },
 
     /*'Afghanistan': 'Afghanistan',

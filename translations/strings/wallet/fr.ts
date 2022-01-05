@@ -649,5 +649,7 @@ export const fr = {
         'Error-20060': 'Too much inputs',
         'Error-20061': 'Last vote is being confirmed',
         'Error-29999': 'Other error',
+
+        'did-oversize': 'DID Over Size',
     },
 };

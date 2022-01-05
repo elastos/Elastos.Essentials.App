@@ -354,7 +354,7 @@ namespace WalletPublishing {
 
                 // If txid is set in the response this means a transaction has been sent on chain.
                 // If null, this means user has cancelled the operation (no ELA, etc).
-                if (response.result && response.result.txid) {
+                if (response.result && response.result.txid && (response.result.txid !== 'null')) {
                     Logger.log('publicationservice', 'didtransaction response.result.txid ', response.result.txid);
                     this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION;
                     this.manager.persistentInfo.did.wallet = {

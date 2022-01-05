@@ -145,11 +145,11 @@ export class DidTransactionPage implements OnInit {
 
     async createIDTransaction() {
         Logger.log('wallet', 'Calling createIdTransaction()');
-
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
         const rawTx = await (this.sourceSubwallet as EidSubWallet).createIDTransaction(
             JSON.stringify(this.coinTransferService.didrequest),
         );
-
+        await this.native.hideLoading();
         if (rawTx) {
             Logger.log('wallet', 'Created raw DID transaction');
             const transfer = new Transfer();
@@ -163,6 +163,12 @@ export class DidTransactionPage implements OnInit {
             });
 
             const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+            if (result.published === false) {
+                if (result.message.includes('oversized data')) {
+                    // DID playload over size
+                    await this.popupProvider.ionicAlert('wallet.transaction-fail', 'wallet.did-oversize');
+                }
+            }
             await this.sendIntentResponse(result, transfer.intentId);
         } else {
             await this.sendIntentResponse(

@@ -677,5 +677,6 @@ export const zh = {
                 'txPublished-65': '粉尘交易',
                 'txPublished-66': '交易费不足',
                 'txPublished-67': '检查点错误',
+                'did-oversize': 'DID数据过大',
         },
 };
