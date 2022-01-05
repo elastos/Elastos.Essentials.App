@@ -1,0 +1,30 @@
+<div class="packet-preview ion-activatable ripple" (click)="onClicked()">
+  <div class="icon">
+    <img src="assets/redpackets/images/packet.png" />
+  </div>
+  <div class="internal">
+    <ion-row>
+      <ion-col size="10" class="left-col">
+        <div class="creator">{{ creator }}</div>
+        <div class="description">
+          Merry Christmas !
+        </div>
+        <div *ngIf="description" class="card-value">
+          {{description}}
+        </div>
+
+        <div class="bottom-info">
+          3 days left
+        </div>
+      </ion-col>
+      <ion-col size="2" class="right-col">
+        <div class="icons">
+          <div class="icon">
+            <img class="published-icon" src="/assets/identity/svg/credential-published.svg" />
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </div>
+  <ion-ripple-effect></ion-ripple-effect>
+</div>

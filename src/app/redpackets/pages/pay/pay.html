@@ -60,8 +60,10 @@
       </div>
     </div>
 
-    <h4>Status</h4>
-    <p>The red packet is live!</p>
+    <div *ngIf="areAllPaymentsCompleted()">
+      <h4>Status</h4>
+      <p>The red packet is live!</p>
+    </div>
 
     <div class="custom-btn" *ngIf="areAllPaymentsCompleted()" (click)="openPacketDetails()">
       <ion-label>View packet</ion-label>

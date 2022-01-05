@@ -97,18 +97,25 @@ export class NewPacketPage {
    * Checks all inputs and informs user if something is wrong or missing
    */
   public validateInputs(): boolean {
-    if (this.packets === undefined) {
+    if (!this.packets) {
       void this.formErr("Invalid number of packets");
       return false;
     }
 
-    if (this.tokenAmount === undefined) {
+    console.log("this.tokenAmount", this.tokenAmount)
+
+    if (!this.tokenAmount || this.tokenAmount === "") {
       void this.formErr("Invalid number of tokens to distribute");
       return false;
     }
 
-    if (this.probability === undefined || this.probability < 0 || this.probability > 100) {
+    if (!this.probability || this.probability < 0 || this.probability > 100) {
       void this.formErr("Invalid probability. Use a 0-100 value");
+      return false;
+    }
+
+    if (!this.expirationDays || this.expirationDays > 7) {
+      void this.formErr("Invalid expiration time. Use 1-7 days");
       return false;
     }
 

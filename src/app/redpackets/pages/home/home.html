@@ -11,10 +11,8 @@
     </div>
     <div *ngIf="!fetchingPublicPackets">
       <div *ngIf="publicPackets.length > 0">
-        <ion-row *ngFor="let packet of publicPackets" (click)="openPacket(packet)">
-          <b>{{ packet.creatorDID }}</b>
-          {{ packet.message }}
-        </ion-row>
+        <packet-preview *ngFor="let packet of publicPackets" [packet]="packet" (click)="openPacket(packet)">
+        </packet-preview>
       </div>
       <p *ngIf="publicPackets.length === 0">No public packet so far. What about creating your own?</p>
     </div>

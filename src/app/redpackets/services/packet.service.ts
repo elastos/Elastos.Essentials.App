@@ -5,7 +5,7 @@ import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GrabResponse } from '../model/grab.model';
+import { GrabbedPacket, GrabRequest, GrabResponse, GrabStatus, PacketWinner } from '../model/grab.model';
 import { Packet, PacketToCreate, SerializedPacket } from '../model/packets.model';
 
 @Injectable({
@@ -13,7 +13,7 @@ import { Packet, PacketToCreate, SerializedPacket } from '../model/packets.model
 })
 export class PacketService {
   private myPackets: Packet[]; // List of packets created by this user.
-  private grabbedPackets: Packet[]; // List of packets already grabbed before (so we don't retry).
+  private grabbedPackets: GrabbedPacket[]; // List of packets already grabbed before (so we don't retry).
 
   constructor(
     private http: HttpClient,
@@ -92,6 +92,18 @@ export class PacketService {
     }
   }
 
+  public async getPacketWinners(packetHash: string): Promise<PacketWinner[]> {
+    try {
+      let winners = await this.http.get<PacketWinner[]>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/winners`, {}).toPromise();
+      Logger.log("redpackets", "Packet winners", winners);
+      return winners;
+    }
+    catch (err) {
+      Logger.error("redpackets", "Get packet info request failure", err);
+      return null;
+    }
+  }
+
   public async getPublicPackets(): Promise<Packet[]> {
     try {
       let packets = await this.http.get<SerializedPacket[]>(`${GlobalConfig.RedPackets.serviceUrl}/publicpackets`, {}).toPromise();
@@ -100,6 +112,8 @@ export class PacketService {
         packets.forEach(p => {
           deserializedPackets.push(Packet.fromSerializedPacket(p))
         });
+
+        Logger.log("redpackets", "Got public packets", deserializedPackets);
 
         return deserializedPackets;
       }
@@ -126,12 +140,13 @@ export class PacketService {
     });
   } */
 
-  public async createGrabPacketRequest(packetHash: string, userDID: string): Promise<GrabResponse> {
-    Logger.log('redpackets', 'Grabbing packet', packetHash, userDID);
+  public async createGrabPacketRequest(packetHash: string, walletAddress: string): Promise<GrabResponse> {
+    Logger.log('redpackets', 'Grabbing packet', packetHash, walletAddress);
     try {
-      let grabResponse = await this.http.post<GrabResponse>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/grab`, {
-        userDID
-      }).toPromise();
+      let grabRequest: GrabRequest = {
+        walletAddress
+      };
+      let grabResponse = await this.http.post<GrabResponse>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/grab`, grabRequest).toPromise();
       Logger.log('redpackets', 'Grab packet response', grabResponse);
       return grabResponse;
     }
@@ -141,14 +156,25 @@ export class PacketService {
     }
   }
 
-  public async createGrabCaptchaVerification(packetHash: string, previousGrabResponse: GrabResponse, captchaString: string): Promise<GrabResponse> {
+  public async createGrabCaptchaVerification(packet: Packet, previousGrabResponse: GrabResponse, captchaString: string, walletAddress: string, userDID: string): Promise<GrabResponse> {
     Logger.log('redpackets', 'Sending captcha verification');
     try {
-      let grabResponse = await this.http.post<GrabResponse>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/grab`, {
+      let grabRequest: GrabRequest = {
         token: previousGrabResponse.token,
-        captchaResponse: captchaString
-      }).toPromise();
+        captchaResponse: captchaString,
+        walletAddress,
+        userDID
+      };
+      let grabResponse = await this.http.post<GrabResponse>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packet.hash}/grab`, grabRequest).toPromise();
       Logger.log('redpackets', 'Grab packet with captcha response', grabResponse);
+
+      // Save the "grabbed" (won or lost) status so we don't try to fetch again later
+      if (grabResponse.status === GrabStatus.GRABBED ||
+        grabResponse.status === GrabStatus.MISSED ||
+        grabResponse.status === GrabStatus.DEPLETED) {
+        await this.saveGrabbedPacket(packet, grabResponse.status, grabResponse.earnedAmount);
+      }
+
       return grabResponse;
     }
     catch (err) {
@@ -157,12 +183,21 @@ export class PacketService {
     }
   }
 
+  private async saveGrabbedPacket(packet: Packet, status: GrabStatus, earnedAmount: string): Promise<void> {
+    this.grabbedPackets.push({
+      packet: packet.serialize(),
+      status,
+      earnedAmount
+    });
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "grabbedpackets", this.grabbedPackets);
+  }
+
   private async loadGrabbedPackets(): Promise<void> {
     this.grabbedPackets = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "grabbedpackets", []);
   }
 
   public packetAlreadyGrabbed(hash: string): boolean {
-    return !!this.grabbedPackets.find(p => p.hash === hash);
+    return !!this.grabbedPackets.find(p => p.packet && p.packet.hash === hash);
   }
 
   private async loadMyPackets(): Promise<void> {

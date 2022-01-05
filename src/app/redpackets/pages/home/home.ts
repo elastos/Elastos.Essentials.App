@@ -34,7 +34,7 @@ export class HomePage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle("Red Packets");
-    this.titleBar.setBackgroundColor("#f04141");
+    this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
     this.titleBar.setMenuVisibility(true);

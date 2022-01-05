@@ -238,15 +238,15 @@ export class HomePage implements OnInit {
       this.recentApps = await this.browserService.getRecentAppsWithInfo();
     });
 
-    Logger.log("launcher", "Launcher home screen will enter completed")
+    //Logger.log("launcher", "Launcher home screen will enter completed")
   }
 
   ionViewDidEnter() {
-    Logger.log("launcher", "Launcher home screen did enter");
+    //Logger.log("launcher", "Launcher home screen did enter");
 
     this.globalStartupService.setStartupScreenReady();
 
-    Logger.log("launcher", "Launcher home screen did enter completed");
+    //Logger.log("launcher", "Launcher home screen did enter completed");
 
     /* console.log("TEST")
     this.ionSlides.changes.subscribe((comps: QueryList<IonSlide>) => {

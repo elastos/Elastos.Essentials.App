@@ -2,6 +2,7 @@ import { Injectable, NgZone } from "@angular/core";
 import { ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { BehaviorSubject } from "rxjs";
+import { DIDURL } from "src/app/identity/model/didurl.model";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
@@ -176,6 +177,13 @@ export class DIDDocumentsService {
     if (!hiveIconUrl) {
       let avatarCredentials = document.getCredentialsByType("AvatarCredential");
       //console.log("getRepresentativeIcon avatarCredentials", avatarCredentials)
+      if (!avatarCredentials || avatarCredentials.length === 0) {
+        // Could not find the more recent avatarcredential type. Try the legacy #avatar name
+        let avatarCredential = document.getCredentialById(new DIDURL("#avatar"));
+        if (avatarCredential)
+          avatarCredentials.push(avatarCredential);
+      }
+
       if (avatarCredentials && avatarCredentials.length > 0) {
         let credSubject = avatarCredentials[0].getSubject();
         if ("type" in credSubject && credSubject["type"] === "elastoshive")
@@ -211,6 +219,16 @@ export class DIDDocumentsService {
       let nameCredentials = document.getCredentialsByType("NameCredential");
       if (nameCredentials && nameCredentials.length > 0) {
         let credSubject = nameCredentials[0].getSubject();
+        if ("name" in credSubject)
+          name = credSubject["name"];
+      }
+    }
+
+    // Check the legacy "name"
+    if (!name) {
+      let nameCredential = document.getCredentialById(new DIDURL("#name"));
+      if (nameCredential) {
+        let credSubject = nameCredential.getSubject();
         if ("name" in credSubject)
           name = credSubject["name"];
       }

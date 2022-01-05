@@ -16,27 +16,34 @@
         <div *ngIf="justWon">
           <ion-row>
             <ion-col class="section">
-              <ion-label>Red Packet Claimed!</ion-label>
-              {{ packet.hash }}
+              <ion-label>You've got a packet!</ion-label>
             </ion-col>
           </ion-row>
 
           <ion-row class="ion-text-center">
             <ion-col class="section ion-padding">
               <h4 class="ion-no-margin">
-                You received <span>{{ ela }} ELA</span>! <br>
-                If this red packet is charged, you should <br>
-                see your new balance once confirmed!
+                You've received {{ getEarnedAmount() }} {{ getEarnedTokenSymbol() }}!
               </h4>
             </ion-col>
           </ion-row>
+        </div>
+
+        <!-- Lost -->
+        <div *ngIf="justMissed">
+          <h2>No luck this time!</h2>
+        </div>
+
+        <!-- No more packets -->
+        <div *ngIf="justNoMorePackets">
+          <h2>Too late, no more packets...</h2>
         </div>
 
         <!-- Captcha -->
         <div *ngIf="captchaChallengeRequired">
           <ion-img [src]="captchaPicture"></ion-img>
           <p>Please type the above letters (mind the case) to continue</p>
-          <ion-input [(ngModel)]="captchaString" required></ion-input>
+          <ion-input type="url" [(ngModel)]="captchaString" ngDefaultControl></ion-input>
           <ion-button (click)="testCaptcha()">Grab packet</ion-button>
         </div>
       </div>
@@ -114,10 +121,18 @@
         </ion-col>
       </ion-row>
 
-      <!-- <ion-row class="details" *ngFor="let r of packet.packet_rcver_details">
-        <h4> {{ r.name }} </h4>
-        <p> {{ r.amount }} ELA</p>
-      </ion-row> -->
+      <ion-row *ngIf="fetchingWinners">
+        <ion-spinner></ion-spinner>
+      </ion-row>
+
+      <ion-row *ngIf="winners.length == 0">
+        Nobody grabbed this packet yet!
+      </ion-row>
+
+      <ion-row class="details" *ngFor="let winner of winners">
+        <h4 *ngIf="winner.userDID"> {{ winner.userDID }} </h4>
+        <p> {{ winner.winningAmount }} {{ getEarnedTokenSymbol() }}</p>
+      </ion-row>
     </div>
 
 

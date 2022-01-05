@@ -1,13 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { GrabResponse, GrabStatus } from '../../model/grab.model';
-import { Packet } from '../../model/packets.model';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { GrabResponse, GrabStatus, PacketWinner } from '../../model/grab.model';
+import { Packet, TokenType } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
 
 @Component({
@@ -26,17 +28,22 @@ export class PacketDetailsPage implements OnInit {
   public packetFetchErrored = false; // Error while fetching a remote packet info (network, not found...)
   public checkingGrabStatus = false; // Checking if the packet can be grabbed with the service
   public grabStatusChecked = false; // Grab status has been checked, we know if we won or not
+  public fetchingWinners = true;
   public justWon = false;
+  public justMissed = false;
+  public justNoMorePackets = false;
   public captchaChallengeRequired = false;
 
   // UI Model
   public captchaPicture: string = null;
   public captchaString = "";
+  public winners: PacketWinner[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private walletNetworkService: WalletNetworkService,
+    private walletService: WalletService,
     public packetService: PacketService
   ) {
 
@@ -71,6 +78,7 @@ export class PacketDetailsPage implements OnInit {
           Logger.log("redpackets", "Showing packet details", this.packet);
           this.preparePacketDisplay();
           void this.checkIfNeedToGrab();
+          void this.fetchWinners();
         }
         else {
           Logger.error("redpackets", "Unable to get packet information");
@@ -107,20 +115,38 @@ export class PacketDetailsPage implements OnInit {
     await this.sendInitialGrabRequest();
   }
 
+  private getActiveWalletAddress(): Promise<string> {
+    return this.walletService.getActiveNetworkWallet().getMainEvmSubWallet().createAddress();
+  }
+
   private async sendInitialGrabRequest() {
+    let walletAddress = await this.getActiveWalletAddress();
+
     this.grabStatusChecked = false;
-    this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet.hash, GlobalDIDSessionsService.signedInDIDString);
+    this.captchaString = "";
+    this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet.hash, walletAddress);
     this.grabStatusChecked = true;
 
     await this.handleGrabResponse(this.grabResponse);
   }
 
   public async testCaptcha() {
-    this.grabResponse = await this.packetService.createGrabCaptchaVerification(this.packet.hash, this.grabResponse, this.captchaString);
+    let walletAddress = await this.getActiveWalletAddress();
+    this.grabResponse = await this.packetService.createGrabCaptchaVerification(
+      this.packet,
+      this.grabResponse,
+      this.captchaString,
+      walletAddress,
+      GlobalDIDSessionsService.signedInDIDString);
     await this.handleGrabResponse(this.grabResponse);
   }
 
   private async handleGrabResponse(grabResponse: GrabResponse) {
+    this.captchaChallengeRequired = false;
+    this.justWon = false;
+    this.justMissed = false;
+    this.justNoMorePackets = false;
+
     if (grabResponse) {
       if (grabResponse.status == GrabStatus.CAPTCHA_CHALLENGE) {
         // User needs to complete the captcha challenge to finalize the grab verification
@@ -132,15 +158,33 @@ export class PacketDetailsPage implements OnInit {
         await this.sendInitialGrabRequest();
       }
       else if (grabResponse.status === GrabStatus.GRABBED) {
-        // TODO: Winning!
         this.justWon = true;
+        // Update winners list (with ourself, mostly)
+        void this.fetchWinners();
       }
       else if (grabResponse.status === GrabStatus.MISSED) {
-        // TODO: Lost
+        this.justMissed = true;
       }
       else if (grabResponse.status === GrabStatus.DEPLETED) {
-        // TODO: No more packets
+        this.justNoMorePackets = true;
       }
     }
+  }
+
+  public getEarnedAmount(): string {
+    return new BigNumber(this.grabResponse.earnedAmount).toFixed(5);
+  }
+
+  public getEarnedTokenSymbol(): string {
+    if (this.packet.tokenType === TokenType.NATIVE_TOKEN)
+      return this.packet.nativeTokenSymbol;
+    else
+      return this.packet.erc20TokenSymbol;
+  }
+
+  private async fetchWinners() {
+    this.fetchingWinners = true;
+    this.winners = await this.packetService.getPacketWinners(this.packet.hash);
+    this.fetchingWinners = false;
   }
 }

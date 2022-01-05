@@ -4,12 +4,14 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { GrabComponent } from './grab/grab.component';
+import { PacketPreviewComponent } from './packet-preview/packet-preview.component';
 import { PeekComponent } from './peek/peek.component';
 
 @NgModule({
   declarations: [
     GrabComponent,
-    PeekComponent
+    PeekComponent,
+    PacketPreviewComponent
   ],
   imports: [
     CommonModule,
@@ -19,7 +21,8 @@ import { PeekComponent } from './peek/peek.component';
   ],
   exports: [
     GrabComponent,
-    PeekComponent
+    PeekComponent,
+    PacketPreviewComponent
   ],
   providers: [
   ],
