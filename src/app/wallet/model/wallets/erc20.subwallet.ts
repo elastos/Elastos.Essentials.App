@@ -244,7 +244,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     public async updateBalance() {
         //Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
-        if (!this.tokenDecimals) {
+        if (typeof(this.tokenDecimals) == "undefined" || this.tokenDecimals === null) {
             Logger.error("wallet", "Token decimals unknown for token " + this.coin.getID());
             return;
         }
