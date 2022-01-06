@@ -896,7 +896,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
                 Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
                 return null
             }
-            Logger.log("wallet", 'getBalanceByOwnerAddress balance:', balance.toString());
+            // Logger.log("wallet", 'getBalanceByOwnerAddress balance:', balance.toString());
             return balance;
         } catch (e) {
             Logger.error("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);

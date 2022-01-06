@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { Logger } from "src/app/logger";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { TokenType } from "../coin";
@@ -8,6 +9,7 @@ import { AnySubWallet } from "../wallets/subwallet";
 import { ProviderTransactionInfo } from "./providertransactioninfo";
 import { SubWalletTransactionProvider } from "./subwallet.provider";
 import { TransactionProvider } from "./transaction.provider";
+import { TransactionDirection } from "./transaction.types";
 
 const MAX_RESULTS_PER_FETCH = 30
 
@@ -48,7 +50,7 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
     }
 
     const contractAddress = erc20SubWallet.coin.getContractAddress().toLowerCase();
-    const accountAddress = await this.subWallet.createAddress();
+    const accountAddress = (await this.subWallet.createAddress()).toLowerCase();
     let txListUrl = this.accountApiUrl + '?module=account';
     txListUrl += '&action=tokentx';
     txListUrl += '&page=' + page;
@@ -69,10 +71,75 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
         this.canFetchMore = true;
       }
 
+      this.mergeTransactions(transactions, accountAddress);
+
       await this.saveTransactions(transactions);
     } catch (e) {
       Logger.error('wallet', 'EVMSubWalletTokenProvider fetchTransactions error:', e)
     }
+  }
+
+  // Merge the transactions that has the same hash. eg. some contract transactions.
+  private mergeTransactions(transactions: EthTransaction[], accountAddress: string) {
+    let txhashNeedToMerge = [];
+    for (let i = 1; i < transactions.length; i++) {
+        if (transactions[i].hash === transactions[i-1].hash) {
+            if (!txhashNeedToMerge[transactions[i].hash]) txhashNeedToMerge.push(transactions[i].hash)
+        }
+    }
+
+    for (let i = 0; i < txhashNeedToMerge.length; i++) {
+        let txWithSameHash = transactions.filter((tx) => {
+            return tx.hash === txhashNeedToMerge[i];
+        })
+
+        let updateInfo = this.mergeTransactionsWithSameHash(txWithSameHash, accountAddress);
+        let updateArray = false;
+        // update the first sent transaction and remove the others.
+        for (let j = 0; j < transactions.length; j++) {
+            if (transactions[j].hash === txhashNeedToMerge[i]) {
+                if (!updateArray) {
+                    let findTxToUpdate = updateInfo.direction === TransactionDirection.SENT ?
+                            transactions[j].from.toLowerCase() === accountAddress :
+                            transactions[j].to.toLowerCase() === accountAddress
+
+                    if (findTxToUpdate) {
+                        transactions[j].value = updateInfo.value;
+                        updateArray = true;
+                    } else {
+                        // TODO: the UI will not show this transaction.
+                        transactions[j].hash += '----' + transactions[j].logIndex;
+                        transactions[j].hide = true;
+                    }
+                } else {
+                    // TODO: the UI will not show this transaction.
+                    transactions[j].hash += '----' + transactions[j].logIndex;
+                    transactions[j].hide = true;
+                }
+            }
+        }
+    }
+  }
+
+  private mergeTransactionsWithSameHash(transactions: EthTransaction[], accountAddress: string) {
+    let sendValue = new BigNumber(0), receiveValue = new BigNumber(0);
+    for (let i = 0; i < transactions.length; i++) {
+        if (transactions[i].to.toLowerCase() === accountAddress) {
+            receiveValue = receiveValue.plus(new BigNumber(transactions[i].value));
+        } else {
+            sendValue = sendValue.plus(new BigNumber(transactions[i].value));
+        }
+    }
+
+    let value = '', direction : TransactionDirection = TransactionDirection.SENT;
+    if (sendValue.gte(receiveValue)) {
+        value = sendValue.minus(receiveValue).toString();
+    } else {
+        value = receiveValue.minus(sendValue).toString();
+        direction = TransactionDirection.RECEIVED;
+    }
+
+    return {value, direction};
   }
 
   public async fetchAllTokensTransactions(): Promise<void> {

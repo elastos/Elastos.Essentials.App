@@ -16,6 +16,7 @@ export type EthTransaction = GenericTransaction & {
   hash: string;
   input: string;
   isError: string;
+  logIndex?:string;
   nonce: string;
   timeStamp: string; // Unix timestamp, seconds
   to: string;
@@ -24,8 +25,9 @@ export type EthTransaction = GenericTransaction & {
   value: string;
 
   // Computed
-  Direction: TransactionDirection;
-  isERC20TokenTransfer: boolean,
+  Direction?: TransactionDirection;
+  isERC20TokenTransfer?: boolean;
+  hide?: boolean
 };
 
 export type ElastosSCEthTransaction = EthTransaction & {

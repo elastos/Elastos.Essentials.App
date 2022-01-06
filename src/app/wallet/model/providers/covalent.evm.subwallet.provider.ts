@@ -143,7 +143,7 @@ export class CovalentEvmSubWalletProvider extends EVMSubWalletProvider<StandardE
         Direction: (covalenthqTransaction[i].to_address === accountAddress) ? TransactionDirection.RECEIVED : TransactionDirection.SENT,
         isERC20TokenTransfer : covalenthqTransaction[i].transfers ? true :  false,
         txreceipt_status : '',
-        input: ''
+        input: '',
       }
 
       transactions.push(ethTransaction);

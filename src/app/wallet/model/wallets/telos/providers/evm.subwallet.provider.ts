@@ -97,7 +97,7 @@ export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<StandardEVMS
           txreceipt_status: "",
           value: telosTransaction.value,
           Direction: (telosTransaction.to === accountAddress) ? TransactionDirection.RECEIVED : TransactionDirection.SENT,
-          isERC20TokenTransfer: false // TODO
+          isERC20TokenTransfer: false, // TODO
         };
 
         // Convert telos tx to our tx format
