@@ -8,10 +8,12 @@ import { Events } from "src/app/services/events.service";
 import { IdentityEntry } from "src/app/services/global.didsessions.service";
 import { DIDPublicationStatus, GlobalPublicationService } from "src/app/services/global.publication.service";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
+import { DIDHelper } from "../helpers/did.helper";
 import { DIDDocument } from "../model/diddocument.model";
 import {
-  DIDDocumentPublishEvent
+    DIDDocumentPublishEvent
 } from "../model/eventtypes.model";
+import { DIDNotUpToDateException } from "../model/exceptions/didnotuptodateexception";
 import { DIDService } from "./did.service";
 import { DIDDocumentsService } from "./diddocuments.service";
 import { LocalStorage } from "./localstorage";
@@ -111,8 +113,13 @@ export class DIDSyncService implements GlobalService {
       void this.native.hideLoading();
     } catch (err) {
       await this.native.hideLoading();
-      Logger.log("identity", JSON.stringify(err));
-      await this.popupProvider.ionicAlert("identity.publish-error-title", err.message);
+      Logger.error("identity", JSON.stringify(err));
+      let reworkedEx = DIDHelper.reworkedPluginException(err);
+      if (reworkedEx instanceof DIDNotUpToDateException) {
+          await this.popupProvider.ionicAlert("identity.publish-error-title", "identity.publish-error-call-sync-did");
+      } else {
+          await this.popupProvider.ionicAlert("identity.publish-error-title", err.message);
+      }
     }
   }
 

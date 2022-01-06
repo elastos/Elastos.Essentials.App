@@ -271,6 +271,7 @@ export const en = {
         'publish-wait': 'Please wait a few minutes before publishing again',
         'publish-error2': 'Publication error',
         'publish-wait2': 'Your identity is being published online, please wait a few seconds.',
+        'publish-error-call-sync-did': "Need to synchronize identity, Settings->Advanced Settings->Synchronize Identity",
     }
 };
 
