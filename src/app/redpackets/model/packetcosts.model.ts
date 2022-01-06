@@ -2,7 +2,8 @@ import BigNumber from "bignumber.js";
 
 /**
  * Detailed overall costs for a packet creation.
- * Token amounts are expressed in strings because of JS number precision, for some ERC20 meme tokens...
+ * Token amounts are expressed in strings because of JS number precision or for some ERC20 meme tokens...
+ * Token amounts are in human readable format, NOT in wei/token decimals.
  */
 export type PacketCosts = {
   erc20Token?: { // Undefined if the packet contains native coin (no ERC20).

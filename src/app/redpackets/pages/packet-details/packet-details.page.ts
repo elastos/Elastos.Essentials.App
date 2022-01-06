@@ -87,8 +87,8 @@ export class PacketDetailsPage implements OnInit {
 
           // Only try to grab / get winners if the packet is live
           if (this.packet.isActive) {
-            if (!this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString))
-              void this.checkIfNeedToGrab();
+            // TMP DEBUG if (!this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString))
+            void this.checkIfNeedToGrab();
 
             void this.fetchWinners();
           }

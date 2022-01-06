@@ -162,12 +162,12 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     // Ignore gasPrice, gasLimit and nonce.
-    public async createPaymentTransaction(toAddress: string, amount: number, memo = "", gasPrice: string = null, gasLimit: string = null, nonce: number = null): Promise<string> {
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", gasPrice: string = null, gasLimit: string = null, nonce: number = null): Promise<string> {
         let toAmount = 0;
-        if (amount == -1) {
+        if (amount.eq(-1)) {
             toAmount = Math.floor(this.balance.minus(10000).toNumber());
         } else {
-            toAmount = this.accMul(amount, Config.SELA);
+            toAmount = this.accMul(amount.toNumber(), Config.SELA);
         }
         Logger.log('wallet', 'createPaymentTransaction toAmount:', toAmount);
 
@@ -584,19 +584,19 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         const twoMinutesago = moment().add(-2, 'minutes').valueOf();
         // It takes several seconds for getTransactionByRPC.
         if ((this.networkWallet.getTransactionDiscoveryProvider().fetchTransactionTimestamp < twoMinutesago)) {
-          // Update transactions to get the pending transactions.
-          await this.fetchNewestTransactions();
+            // Update transactions to get the pending transactions.
+            await this.fetchNewestTransactions();
         }
 
         let transaction = await this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
         let pendingTransactions = [];
         for (let i = 0, len = transaction.length; i < len; i++) {
-          if (transaction[i].Status !== TransactionStatus.CONFIRMED) {
-            pendingTransactions.push(transaction[i].txid);
-          } else {
-            // the transactions list is sorted by block height.
-            break;
-          }
+            if (transaction[i].Status !== TransactionStatus.CONFIRMED) {
+                pendingTransactions.push(transaction[i].txid);
+            } else {
+                // the transactions list is sorted by block height.
+                break;
+            }
         }
         Logger.log('wallet', 'Pending Transactions:', pendingTransactions);
         return pendingTransactions;
@@ -608,17 +608,17 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         let transaction = await this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
         let pendingTransactions = [];
         for (let i = 0, len = transaction.length; i < len; i++) {
-          if (transaction[i].Status !== TransactionStatus.CONFIRMED) {
-            pendingTransactions.push(transaction[i]);
-          } else {
-            // the transactions list is sorted by block height.
-            break;
-          }
+            if (transaction[i].Status !== TransactionStatus.CONFIRMED) {
+                pendingTransactions.push(transaction[i]);
+            } else {
+                // the transactions list is sorted by block height.
+                break;
+            }
         }
 
         if (pendingTransactions.length === 0) return;
 
-        let pendingTxidList = pendingTransactions.map( tx => tx.txid)
+        let pendingTxidList = pendingTransactions.map(tx => tx.txid)
         let txList = await this.getrawtransaction(this.id as StandardCoinName, pendingTxidList);
 
         let needUpdate = false;
@@ -802,7 +802,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             let candidates: Candidates = {};
 
             for (let j = 0, len = voteContent[i].candidates.length; j < len; j++) {
-                let amountSELA = this.accMul(voteContent[i].candidates[j].votes, Config.SELA)
+                let amountSELA = this.accMul(parseFloat(voteContent[i].candidates[j].votes), Config.SELA)
                 candidates[voteContent[i].candidates[j].candidate] = amountSELA.toString();
             }
 
@@ -1116,7 +1116,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
       }
     } */
 
-    accMul(arg1, arg2) {
+    accMul(arg1: number, arg2: number): number {
         let m = 0, s1 = arg1.toString(), s2 = arg2.toString();
         try { m += s1.split(".")[1].length } catch (e) { }
         try { m += s2.split(".")[1].length } catch (e) { }

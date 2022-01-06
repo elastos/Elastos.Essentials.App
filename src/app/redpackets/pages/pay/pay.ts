@@ -164,7 +164,7 @@ export class PayPage {
 
     let rawTx = await evmSubWallet.createPaymentTransaction(
       this.packet.paymentAddress,
-      this.packet.costs.nativeToken.total.toNumber(),
+      this.packet.costs.nativeToken.total,
       "", null, null, -1);
 
     console.log("Payment rawTx", rawTx);
@@ -249,7 +249,7 @@ export class PayPage {
 
     let rawTx = await erc20SubWallet.createPaymentTransaction(
       this.packet.paymentAddress,
-      this.packet.costs.erc20Token.total.toNumber(),
+      this.packet.costs.erc20Token.total,
       "", null, null, -1);
 
     console.log("Payment rawTx", rawTx);

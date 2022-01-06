@@ -218,7 +218,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                             }
                             await this.globalIntentService.sendIntentResponse(result, this.intentId);
                         }
-                        this.events.publish('wallet:transactionsent', {subwalletid: this.subWalletId, txid: status.txId});
+                        this.events.publish('wallet:transactionsent', { subwalletid: this.subWalletId, txid: status.txId });
                         break;
                     case ETHTransactionStatus.CANCEL:
                         if (this.intentId) {
@@ -329,7 +329,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         // the spv sdk doesn't support ERC20 yet).
         const rawTx = await this.fromSubWallet.createPaymentTransaction(
             this.toAddress, // User input address
-            this.amount, // User input amount
+            new BigNumber(this.amount), // User input amount
             this.memo, // User input memo
             this.gasPrice,
             this.gasLimit,
@@ -534,13 +534,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             return false;
         } else {
             if (this.transferType === TransferType.WITHDRAW) {
-              if (this.amount < 0.0002) return false;
+                if (this.amount < 0.0002) return false;
 
-              const amountString = this.amount.toString();
-              const dotIndex = amountString.indexOf('.');
-              if ((dotIndex + 9) < amountString.length) {
-                return false;
-              }
+                const amountString = this.amount.toString();
+                const dotIndex = amountString.indexOf('.');
+                if ((dotIndex + 9) < amountString.length) {
+                    return false;
+                }
             }
             return true;
         }
@@ -678,7 +678,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         );
     }
 
-    accMul(arg1, arg2) {
+    accMul(arg1: number, arg2: number): number {
         let m = 0, s1 = arg1.toString(), s2 = arg2.toString();
         try { m += s1.split(".")[1].length } catch (e) { }
         try { m += s2.split(".")[1].length } catch (e) { }

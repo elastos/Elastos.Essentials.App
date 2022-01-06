@@ -348,7 +348,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
 
   // public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;
 
-  public abstract createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
+  public abstract createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
   public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
   public abstract publishTransaction(transaction: string): Promise<string>;
   public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;

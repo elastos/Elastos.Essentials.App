@@ -141,7 +141,7 @@ export class Util {
         return buf.reverse().toString("hex");
     }
 
-    public static accMul(arg1, arg2) {
+    public static accMul(arg1: number, arg2: number): number {
         let m = 0, s1 = arg1.toString(), s2 = arg2.toString();
         try { m += s1.split(".")[1].length } catch (e) { }
         try { m += s2.split(".")[1].length } catch (e) { }
@@ -151,17 +151,17 @@ export class Util {
 
     // ceil(12345, 1000) => 13000
     public static ceil(number: number, near = 0) {
-      if (near <= 0) {
-        // Auto ceil, keep 2 number, ceil(1234567, 0) => 1300000
-        let integerDigit = Math.ceil(number).toString().length;
-        if (integerDigit <= 2) {
-          return Math.ceil(number);
+        if (near <= 0) {
+            // Auto ceil, keep 2 number, ceil(1234567, 0) => 1300000
+            let integerDigit = Math.ceil(number).toString().length;
+            if (integerDigit <= 2) {
+                return Math.ceil(number);
+            }
+            let newNear = Math.pow(10, integerDigit - 2);
+            return Math.ceil(number / newNear) * newNear;
+        } else {
+            return Math.ceil(number / near) * near;
         }
-        let newNear = Math.pow(10, integerDigit - 2);
-        return Math.ceil(number / newNear) * newNear;
-      } else {
-        return Math.ceil(number / near) * near;
-      }
     }
 
     static dateFormat(date: Date, format = 'YYYY-MM-DD HH:mm:ss') {
@@ -173,7 +173,7 @@ export class Util {
             return '';
         }
 
-       if (format.length < 4 || 'yyyy-MM-dd HH:mm:ss'.indexOf(format) !== 0) {
+        if (format.length < 4 || 'yyyy-MM-dd HH:mm:ss'.indexOf(format) !== 0) {
             return '';
         }
 
@@ -189,7 +189,7 @@ export class Util {
         return format.replace('yyyy', year.toString())
             .replace('MM', month > 9 ? month.toString() : `0${month}`)
             .replace('dd', day > 9 ? day.toString() : `0${day}`)
-            .replace('HH', hour > 9 ? hour.toString() :`0${hour}`)
+            .replace('HH', hour > 9 ? hour.toString() : `0${hour}`)
             .replace('mm', minute > 9 ? minute.toString() : `0${minute}`)
             .replace('ss', second > 9 ? second.toString() : `0${second}`);
     }
@@ -203,7 +203,7 @@ export class Util {
      * Converts a base-10 or base-16 string representation of a number (ex: "140" or "0xA45F" into
      * a base-10 string representation (ex: "140"->"140", "0xA45F"->"42079")
      */
-     public static getDecimalString(numberString: string) {
+    public static getDecimalString(numberString: string) {
         if (numberString.startsWith('0x')) {
             return (new BigNumber(numberString)).toFixed();
         } else {
@@ -216,11 +216,11 @@ export class Util {
      * For get address in cross chain transaction.
      */
     public static reversetxid(txid) {
-      let newtxid = ''
-      for (let i = txid.length - 2; i >= 0; i -= 2) {
-        newtxid += txid.substring(i, i + 2);
-      }
-      return newtxid
+        let newtxid = ''
+        for (let i = txid.length - 2; i >= 0; i -= 2) {
+            newtxid += txid.substring(i, i + 2);
+        }
+        return newtxid
     }
 
     public static isSelfDid(did: string) {

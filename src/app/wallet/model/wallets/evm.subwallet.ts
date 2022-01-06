@@ -302,11 +302,11 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     return this.balance.gt(amount);
   }
 
-  public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg: number = null): Promise<string> {
+  public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg: number = null): Promise<string> {
     let gasPrice = gasPriceArg;
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
-    //   gasPrice = '900000000';
+      //   gasPrice = '900000000';
     }
 
     let gasLimit = gasLimitArg;
@@ -317,7 +317,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
         Logger.warn('wallet', 'createPaymentTransaction can not estimate gas');
         return null;
       }
-      if (amount === -1) {
+      if (amount.eq(-1)) {
         // TODO: User will lost small amount if use 'estimateGas * 1.5'.
         gasLimit = estimateGas.toString();
       } else {
@@ -326,22 +326,23 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       }
     }
 
-    if (amount === -1) {//-1: send all.
+    if (amount.eq(-1)) {//-1: send all.
       let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice))
-      amount = this.balance.minus(fee).dividedBy(this.tokenAmountMulipleTimes).toNumber();
-      if (amount <= 0) return null;
+      amount = this.balance.minus(fee).dividedBy(this.tokenAmountMulipleTimes);
+      if (amount.lte(0))
+        return null;
     }
 
     let nonce = nonceArg;
     if (nonce === -1) {
-        nonce = await this.getNonce();
+      nonce = await this.getNonce();
     }
-    Logger.log('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
+    Logger.log('wallet', 'createPaymentTransaction amount:', amount.toString(), ' nonce:', nonce)
     return this.masterWallet.walletManager.spvBridge.createTransfer(
       this.masterWallet.id,
       this.id,
       toAddress,
-      amount.toString(),
+      amount.toString(), // Amount in ether
       6, // ETHER_ETHER
       gasPrice,
       0, // WEI
