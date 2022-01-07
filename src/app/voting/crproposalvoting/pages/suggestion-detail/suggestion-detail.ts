@@ -205,6 +205,12 @@ export class SuggestionDetailPage {
                 value: this.suggestion.recipient,
                 active: true
             },
+            {
+                title: this.translate.instant('crproposalvoting.reservecustomizedid'),
+                type: 'array',
+                value: this.uxService.getArrayString(this.suggestion.reservedCustomizedIDList),
+                active: true
+            },
         );
     }
 

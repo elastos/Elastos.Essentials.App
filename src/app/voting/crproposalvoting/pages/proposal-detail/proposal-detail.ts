@@ -328,6 +328,12 @@ export class ProposalDetailPage {
                 active: true
             },
             {
+                title: this.translate.instant('crproposalvoting.reservecustomizedid'),
+                type: 'array',
+                value: this.uxService.getArrayString(this.proposal.reservedCustomizedIDList),
+                active: true
+            },
+            {
                 title: this.translate.instant('crproposalvoting.member-votes'),
                 type: 'member-votes',
                 value: this.proposal.crVotes && this.proposal.crVotes.length > 0 ? this.proposal.crVotes : null,
