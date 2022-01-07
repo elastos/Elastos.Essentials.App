@@ -11,7 +11,7 @@ export class PolygonAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case PolygonAPIType.RPC: return 'https://rpc-mainnet.maticvigil.com';
+          case PolygonAPIType.RPC: return 'https://polygon-rpc.com/';
           case PolygonAPIType.ACCOUNT_RPC: return 'https://api.polygonscan.com/api';
           default:
             throw new Error("Polygon API - Unknown api type " + type);
