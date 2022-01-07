@@ -168,9 +168,11 @@ export class GlobalIntentService {
       nextProcessableIntent.status = "processing";
       this.intentsBeingProcessed.push(nextProcessableIntent);
 
-      this.unprocessedIntentInterval = setInterval(() => {
-        Logger.warn("Intents", "No intent response sent after several seconds!", nextProcessableIntent);
-      }, 20000);
+      if (!this.unprocessedIntentInterval) {
+          this.unprocessedIntentInterval = setInterval(() => {
+              Logger.warn("Intents", "No intent response sent after several seconds!", this.intentsBeingProcessed);
+          }, 20000);
+      }
 
       this.intentListener.next(nextProcessableIntent.intent);
     }
@@ -184,8 +186,10 @@ export class GlobalIntentService {
     this.intentsQueue.splice(this.intentsQueue.findIndex(i => i.intent.intentId === intentId), 1);
     this.intentsBeingProcessed.splice(this.intentsBeingProcessed.findIndex(i => i.intent.intentId === intentId), 1);
 
-    clearInterval(this.unprocessedIntentInterval);
-
+    if (this.intentsBeingProcessed.length === 0) {
+        clearInterval(this.unprocessedIntentInterval);
+        this.unprocessedIntentInterval = null;
+    }
     if (navigateBack)
       await this.globalNav.exitCurrentContext();
 
