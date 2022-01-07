@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
@@ -199,6 +200,15 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 walletConnectSupported: false,
                 networks: ["bsc"]
             },
+            // {
+            //     icon: '/assets/browser/dapps/rocketx.png',
+            //     title: 'RocketX - Skyscanner Crypto',
+            //     description: ' RocketX aggregates Centralised and Decentralised Crypto Exchanges and makes it really simple to trade ANY token listed on ANY exchange. Best rates with minimal slippage.',
+            //     url: 'https://staging.rocketx.exchange/',
+            //     useExternalBrowser: false,
+            //     walletConnectSupported: false,
+            //     networks: ["avalanchecchain", "bsc", "ethereum", "polygon"]
+            // },
             {
                 icon: '/assets/browser/dapps/raven.png',
                 title: 'Moe Raven',
@@ -387,7 +397,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
     public onDAppClicked(app: DAppMenuEntry) {
         if (app.useExternalBrowser) {
-            this.openWithExternalBrowser(app.url);
+            this.openWithExternalBrowser(app);
         } else {
             void this.dabOpen(app.url, app.title);
         }
@@ -408,8 +418,18 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         void this.dappbrowserService.openForBrowseMode(url, title);
     }
 
-    private openWithExternalBrowser(url: string) {
-        void this.globalIntentService.sendIntent('openurl', { url: url });
+    private openWithExternalBrowser(app: DAppMenuEntry) {
+        void this.globalIntentService.sendIntent('openurl', { url: app.url });
+        // Save app info and add to recent app list.
+        let appInfo: BrowsedAppInfo = {
+            url: app.url,
+            title: app.title,
+            description: app.description,
+            iconUrl: app.icon,
+            network: this.walletNetworkService.activeNetwork.value.key,
+            lastBrowsed: moment().unix()
+        }
+        void this.dappbrowserService.saveBrowsedAppInfo(appInfo)
     }
 
     public openFavorite(favorite: BrowserFavorite) {
