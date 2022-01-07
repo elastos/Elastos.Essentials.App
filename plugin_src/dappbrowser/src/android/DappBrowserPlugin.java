@@ -35,6 +35,7 @@ import android.provider.Browser;
 import android.view.ViewGroup;
 import android.webkit.ServiceWorkerClient;
 import android.webkit.ServiceWorkerController;
+import android.webkit.ServiceWorkerWebSettings;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -58,7 +59,6 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @SuppressLint("SetJavaScriptEnabled")
 public class DappBrowserPlugin extends CordovaPlugin {
@@ -95,14 +95,15 @@ public class DappBrowserPlugin extends CordovaPlugin {
         swController.setServiceWorkerClient(new ServiceWorkerClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
-                if (webViewHandler != null && webViewHandler.currentClient != null) {
-                    LOG.d(LOG_TAG, "in service worker. isMainFrame:"+request.isForMainFrame() +": " + request.getUrl());
-                    return webViewHandler.currentClient.shouldInterceptRequest(null, request);
-                }
+               if (webViewHandler != null && webViewHandler.currentClient != null) {
+                    LOG.d(LOG_TAG, "ServiceWorkerClient: isMainFrame:"+request.isForMainFrame() +": " + request.getUrl());
+                   return webViewHandler.currentClient.shouldInterceptRequest(null, request);
+               }
                 return null;
             }
         });
-        swController.getServiceWorkerWebSettings().setAllowContentAccess(true);
+        ServiceWorkerWebSettings settings = swController.getServiceWorkerWebSettings();
+        settings.setAllowContentAccess(true);
     }
 
     public boolean isMainThread() {

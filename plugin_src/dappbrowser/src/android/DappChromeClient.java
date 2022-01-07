@@ -190,6 +190,7 @@ public class DappChromeClient extends WebChromeClient {
     @Override
     public void onProgressChanged(WebView view, int newProgress) {
         if (DappBrowserPlugin.getInstance().webViewHandler != null) {
+            LOG.d(LOG_TAG, "onProgressChanged: " + newProgress);
             DappBrowserPlugin.getInstance().webViewHandler.setProgress(newProgress);
         }
     }
@@ -198,5 +199,10 @@ public class DappChromeClient extends WebChromeClient {
     public void onPermissionRequest(final PermissionRequest request) {
         LOG.d(LOG_TAG, "onPermissionRequest: " + Arrays.toString(request.getResources()));
         request.grant(request.getResources());
+    }
+
+    @Override
+    public void onReceivedTitle(WebView view, String title) {
+        LOG.d(LOG_TAG, "onReceivedTitle: " + title);
     }
 }
