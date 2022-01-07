@@ -36,8 +36,8 @@ export class SwitchNetworkComponent implements OnInit {
   ionViewWillEnter() {
   }
 
-  public switchNetwork() {
-    void this.walletNetworkService.setActiveNetwork(this.targetNetwork);
+  public async switchNetwork() {
+    await this.walletNetworkService.setActiveNetwork(this.targetNetwork);
     void this.modalCtrl.dismiss(true);
   }
 }

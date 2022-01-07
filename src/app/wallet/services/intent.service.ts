@@ -4,6 +4,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { AddERCTokenRequestParams } from '../model/adderctokenrequest';
 import { StandardCoinName } from '../model/coin';
 import { MasterWallet } from '../model/wallets/masterwallet';
@@ -41,6 +42,7 @@ export class IntentService {
         private walletEditionService: WalletEditionService,
         private walletNetworkService: WalletNetworkService,
         private globalIntentService: GlobalIntentService,
+        private globalSwitchNetworkService: GlobalSwitchNetworkService,
     ) {
     }
 
@@ -212,24 +214,8 @@ export class IntentService {
 
             case 'pay':
                 this.nextScreen = '/wallet/coin-transfer';
-                const intentSubWalletId = this.getSubWalletIdByCurrency(intent.params.currency || 'ELA');
-                if (intentSubWalletId) {
-                    this.coinTransferService.subWalletId = intentSubWalletId;
-                } else {
-                    await this.globalIntentService.sendIntentResponse(
-                        { message: 'Not support Token:' + intent.params.currency, status: 'error' },
-                        intent.intentId
-                    );
-
-                    return;
-                }
-
-                this.coinTransferService.transferType = TransferType.PAY;
-                this.coinTransferService.payTransfer = {
-                    toAddress: intent.params.receiver,
-                    amount: this.getNumberFromParam(intent.params.amount),
-                    memo: intent.params.memo || ""
-                };
+                let ret = await this.handlePayIntent(intent);
+                if (!ret) return;
                 break;
 
             case 'crproposalcreatedigest':
@@ -333,6 +319,60 @@ export class IntentService {
         }
     }
 
+    private async handlePayIntent(intent: EssentialsIntentPlugin.ReceivedIntent): Promise<boolean> {
+        if (!("receiver" in intent.params)) {
+            Logger.log("wallet", 'Missing receiver parameter');
+            await this.globalIntentService.sendIntentResponse(
+                { message: 'Missing receiver parameter', status: 'error' },
+                intent.intentId
+            );
+            return false
+        }
+
+        let networkName = intent.params.network || 'elastos';
+        if (this.walletNetworkService.activeNetwork.value.key !== networkName) {
+            let network = this.walletNetworkService.getNetworkByKey(networkName)
+            if (!network) {
+                Logger.log("wallet", 'Not support network ' + networkName);
+                await this.globalIntentService.sendIntentResponse(
+                    { message: 'Not support network:' + networkName, status: 'error' },
+                    intent.intentId
+                );
+                return false;
+            }
+            let networkHasBeenSwitched = await this.globalSwitchNetworkService.promptSwitchToNetwork(network);
+            if (!networkHasBeenSwitched) {
+                await this.globalIntentService.sendIntentResponse(
+                    { message: 'user cancel', status: 'cancelled' },
+                    intent.intentId
+                );
+                return false;
+            }
+        }
+
+        const intentSubWalletId = this.getSubWalletIdByCurrency(intent.params.currency || 'ELA');
+        if (intentSubWalletId) {
+            this.coinTransferService.subWalletId = intentSubWalletId;
+        } else {
+            Logger.log("wallet", 'Not support Token' + intent.params.currency);
+            await this.globalIntentService.sendIntentResponse(
+                { message: 'Not support Token:' + intent.params.currency, status: 'error' },
+                intent.intentId
+            );
+            return false;
+        }
+
+        this.coinTransferService.transferType = TransferType.PAY;
+        this.coinTransferService.payTransfer = {
+            toAddress: intent.params.receiver,
+            amount: this.getNumberFromParam(intent.params.amount),
+            memo: intent.params.memo || ""
+        };
+
+        return true;
+    }
+
+    // TODO: Improve it to support more network.
     private getSubWalletIdByCurrency(currency: string) {
         let subWalletId = StandardCoinName.ELA;
         switch (currency) {
