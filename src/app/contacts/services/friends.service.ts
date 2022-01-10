@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { NavigationExtras } from '@angular/router';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";

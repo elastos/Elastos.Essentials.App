@@ -1,12 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { ModalController, NavParams } from '@ionic/angular';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
-
+import { TranslateService } from '@ngx-translate/core';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { FriendsService } from '../../services/friends.service';
 import { NativeService } from '../../services/native.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
+
 
 
 @Component({

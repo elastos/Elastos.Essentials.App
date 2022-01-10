@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { ChainId, Currency, CurrencyAmount, Fetcher, JSBI, Percent, Route, Router, Token, Trade, WETH } from '@uniswap/sdk';
-import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
+import * as IUniswapV2Router02ABI from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
 import { BigNumber } from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';

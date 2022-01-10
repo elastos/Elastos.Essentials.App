@@ -1,22 +1,21 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Platform } from '@ionic/angular';
-import { HiveManagerRoutingModule } from './routing';
-import { IonicStorageModule } from '@ionic/storage';
-import { PickProviderPage } from './pages/pickprovider/pickprovider.page';
-import { PopupService } from './services/popup.service';
-import { TranslateModule } from '@ngx-translate/core';
-
-import { AdminProvidersListPage } from './pages/admin/adminproviderslist/adminproviderslist.page';
-import { AdminProviderEditPage } from './pages/admin/adminprovideredit/adminprovideredit.page';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
+import { Platform } from '@ionic/angular';
+import { IonicStorageModule } from '@ionic/storage';
+import { TranslateModule } from '@ngx-translate/core';
+import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { ComponentsModule } from './components/components.module';
+import { AdminProviderEditPage } from './pages/admin/adminprovideredit/adminprovideredit.page';
+import { AdminProvidersListPage } from './pages/admin/adminproviderslist/adminproviderslist.page';
 import { PickPlanPage } from './pages/pickplan/pickplan.page';
 import { PickPlanPurchasePage } from './pages/pickplanpurchase/pickplanpurchase.page';
-import { ComponentsModule } from './components/components.module';
+import { PickProviderPage } from './pages/pickprovider/pickprovider.page';
+import { HiveManagerRoutingModule } from './routing';
+import { PopupService } from './services/popup.service';
 
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { SharedComponentsModule } from '../components/sharedcomponents.module';
+
 
 @NgModule({
   declarations: [

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { Subject } from 'rxjs';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { App } from '../model/app.enum';
 import { WalletInitService } from '../wallet/services/init.service';
 import { GlobalDIDSessionsService } from './global.didsessions.service';

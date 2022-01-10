@@ -1,13 +1,13 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { RouterModule, Routes } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
 
 const routes: Routes = [
   {
     path: "myprofile",
-    loadChildren: "./pages/tabnav/tabnav.module#TabsnavPageModule"
+    loadChildren: () => import('./pages/tabnav/tabnav.module').then(m => m.TabsnavPageModule)
   },
   { path: "countrypicker", loadChildren: ()=>import('./pages/countrypicker/module').then(m => m.CountryPickerModule) },
   { path: "editprofile", loadChildren: ()=>import('./pages/editprofile/module').then(m => m.EditProfileModule) },

@@ -26,8 +26,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
+import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
 /****************** Ionic ******************/
 import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';

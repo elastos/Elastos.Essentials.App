@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { IonSlides, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { DrawerState } from 'ion-bottom-drawer';

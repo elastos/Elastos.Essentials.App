@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
-import { IonicStorageModule } from '@ionic/storage';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { IonicModule, Platform } from '@ionic/angular';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
-
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
+
 
 @NgModule({
   declarations: [

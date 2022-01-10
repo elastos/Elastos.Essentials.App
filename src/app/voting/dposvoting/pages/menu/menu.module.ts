@@ -1,23 +1,23 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-
-import { MenuPage } from './menu.page';
-import { VotePage } from '../vote/vote.page';
-import { StatsPage } from '../stats/stats.page';
-import { SearchPage } from '../search/search.page';
-import { HistoryPage } from '../history/history.page';
-import { TxPage } from '../tx/tx.page';
-
-import { NodeSliderComponent as VoteNodeSliderComponent } from '../vote/node-slider/node-slider.component';
-import { NodeSliderComponent as SearchNodeSliderComponent } from '../search/node-slider/node-slider.component';
-import { NodeSliderComponent as TxNodeSliderComponent } from '../tx/node-slider/node-slider.component';
-
-import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { HistoryPage } from '../history/history.page';
+import { NodeSliderComponent as SearchNodeSliderComponent } from '../search/node-slider/node-slider.component';
+import { SearchPage } from '../search/search.page';
+import { StatsPage } from '../stats/stats.page';
+import { NodeSliderComponent as TxNodeSliderComponent } from '../tx/node-slider/node-slider.component';
+import { TxPage } from '../tx/tx.page';
+import { NodeSliderComponent as VoteNodeSliderComponent } from '../vote/node-slider/node-slider.component';
+import { VotePage } from '../vote/vote.page';
+import { MenuPage } from './menu.page';
+
+
+
+
 
 const routes: Routes = [
   {
@@ -73,7 +73,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: '../home/home.module#HomePageModule'
+    loadChildren: () => import('../home/home.module').then(x => x.HomePageModule)
   },
 ];
 

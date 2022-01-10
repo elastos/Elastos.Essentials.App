@@ -1,27 +1,26 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
-
-import { Clipboard } from '@ionic-native/clipboard/ngx';
-
 import * as moment from 'moment';
-
-import { FriendsService } from '../../services/friends.service';
-import { NativeService } from '../../services/native.service';
-import { UxService } from '../../services/ux.service';
-import { DidService } from '../../services/did.service';
-import { AppService } from '../../services/app.service';
-import { PopupService } from '../../services/popup.service';
-
-import { Contact } from '../../models/contact.model';
-import { DApp } from '../../models/dapp.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Contact } from '../../models/contact.model';
+import { DApp } from '../../models/dapp.model';
+import { AppService } from '../../services/app.service';
+import { DidService } from '../../services/did.service';
+import { FriendsService } from '../../services/friends.service';
+import { NativeService } from '../../services/native.service';
+import { PopupService } from '../../services/popup.service';
+import { UxService } from '../../services/ux.service';
+
+
+
+
 
 
 type DisplayableAppInfo = {
