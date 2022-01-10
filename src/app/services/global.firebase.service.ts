@@ -1,11 +1,8 @@
-import {Injectable} from '@angular/core';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+import { Injectable } from '@angular/core';
+import { FirebaseX } from '@awesome-cordova-plugins/firebase-x/ngx';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
-import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
-import { GlobalPreferencesService } from './global.preferences.service';
-import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 // Network templates are dynamic but for convenience, assume we always have mainnet and testnet ones.
 export const MAINNET_TEMPLATE = "MainNet";

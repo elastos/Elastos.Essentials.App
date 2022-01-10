@@ -1,26 +1,26 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
-import { DIDSessionsRoutingModule } from './routing';
-import { QRScanner } from '@ionic-native/qr-scanner/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-
-import { PickIdentityPage } from './pages/pickidentity/pickidentity';
-import { CreateIdentityPage } from './pages/createidentity/createidentity';
-import { TranslateModule } from '@ngx-translate/core';
-
-import { EditProfilePage } from './pages/editprofile/editprofile';
-import { ImportDIDPage } from './pages/importdid/importdid';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
+import { QRScanner } from '@ionic-native/qr-scanner/ngx';
+import { IonicModule, Platform } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { ComponentsModule } from './components/components.module';
-import { PopupProvider } from './services/popup';
 import { OptionsComponent } from './components/options/options.component';
 import { WarningComponent } from './components/warning/warning.component';
-import { LanguagePage } from './pages/language/language.page';
 import { ChooseImportedDIDPage } from './pages/chooseimporteddid/chooseimporteddid.page';
-import { ScanPage } from './pages/scan/scan.page';
-import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { CreateIdentityPage } from './pages/createidentity/createidentity';
+import { EditProfilePage } from './pages/editprofile/editprofile';
+import { ImportDIDPage } from './pages/importdid/importdid';
+import { LanguagePage } from './pages/language/language.page';
+import { PickIdentityPage } from './pages/pickidentity/pickidentity';
 import { PrepareDIDPage } from './pages/preparedid/preparedid';
+import { ScanPage } from './pages/scan/scan.page';
+import { DIDSessionsRoutingModule } from './routing';
+import { PopupProvider } from './services/popup';
+
+
 
 @NgModule({
   declarations: [

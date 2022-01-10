@@ -1,9 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
+import { FirebaseX } from "@awesome-cordova-plugins/firebase-x/ngx";
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
-import { FirebaseX } from "@ionic-native/firebase-x/ngx";
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { ElastosSDKHelper } from './helpers/elastossdk.helper';
 import { Logger } from './logger';

@@ -1,23 +1,23 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
 import { CommonModule } from "@angular/common";
+import { HttpClientModule } from "@angular/common/http";
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { Clipboard } from "@awesome-cordova-plugins/clipboard/ngx";
+import { WebView } from "@awesome-cordova-plugins/ionic-webview/ngx";
 import { IonicModule, Platform } from "@ionic/angular";
 import { IonicStorageModule } from "@ionic/storage";
-import { IdentityRoutingModule } from "./routing";
-import { Clipboard } from "@ionic-native/clipboard/ngx";
+import { TranslateModule } from "@ngx-translate/core";
 import { QRCodeModule } from "angularx-qrcode";
 import { IonBottomDrawerModule } from "ion-bottom-drawer";
-import { TranslateModule } from "@ngx-translate/core";
-import { WebView } from "@ionic-native/ionic-webview/ngx";
 import { ComponentsModule } from "./components/components.module";
+import { OptionsComponent } from "./components/options/options.component";
+import { ShowQRCodeComponent } from "./components/showqrcode/showqrcode.component";
+import { SuccessComponent } from "./components/success/success.component";
+import { WarningComponent } from "./components/warning/warning.component";
+import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
+import { IdentityRoutingModule } from "./routing";
 import { LocalStorage } from "./services/localstorage";
 import { PopupProvider } from "./services/popup";
-import { ShowQRCodeComponent } from "./components/showqrcode/showqrcode.component";
-import { WarningComponent } from "./components/warning/warning.component";
-import { OptionsComponent } from "./components/options/options.component";
-import { SuccessComponent } from "./components/success/success.component";
-import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
 
 @NgModule({
   declarations: [

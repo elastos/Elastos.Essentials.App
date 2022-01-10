@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { TranslateModule } from '@ngx-translate/core';
+import { NgModule } from '@angular/core';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [

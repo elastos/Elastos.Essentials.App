@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
-import { IonicModule, Platform } from '@ionic/angular';
 import { HttpClientModule } from '@angular/common/http';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { NgModule } from '@angular/core';
+import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
+import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 

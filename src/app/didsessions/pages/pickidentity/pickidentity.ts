@@ -1,15 +1,15 @@
-import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { IdentityService, IdentityGroup } from 'src/app/didsessions/services/identity.service';
-import { UXService } from 'src/app/didsessions/services/ux.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { PopupProvider } from 'src/app/didsessions/services/popup';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { IdentityGroup, IdentityService } from 'src/app/didsessions/services/identity.service';
+import { PopupProvider } from 'src/app/didsessions/services/popup';
+import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'page-pickidentity',

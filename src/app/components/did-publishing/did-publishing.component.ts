@@ -1,12 +1,10 @@
-import { Component, ViewChild, NgZone, OnInit } from '@angular/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalPublicationService, DIDPublicationStatus } from 'src/app/services/global.publication.service';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { analyzeAndValidateNgModules } from '@angular/compiler';
-import { Logger } from 'src/app/logger';
 import { ModalController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { Logger } from 'src/app/logger';
+import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-did-publishing',

@@ -1,4 +1,4 @@
-import PQueue from 'p-queue/dist';
+import PQueue from 'p-queue';
 import { Logger } from "src/app/logger";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 

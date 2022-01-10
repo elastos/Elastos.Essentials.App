@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { Logger } from 'src/app/logger';

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { NavController, PopoverController } from '@ionic/angular';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { App } from "src/app/model/app.enum";
