@@ -433,8 +433,27 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         void this.dappbrowserService.saveBrowsedAppInfo(appInfo)
     }
 
+    private openFavoriteWithExternalBrowser(favorite: BrowserFavorite) {
+        void this.globalIntentService.sendIntent('openurl', { url: favorite.url });
+        // Save app info and add to recent app list.
+        let appInfo: BrowsedAppInfo = {
+            url: favorite.url,
+            title: favorite.name,
+            description: favorite.description,
+            iconUrl: favorite.iconUrl,
+            network: this.walletNetworkService.activeNetwork.value.key,
+            lastBrowsed: moment().unix(),
+            useExternalBrowser: favorite.useExternalBrowser
+        }
+        void this.dappbrowserService.saveBrowsedAppInfo(appInfo)
+    }
+
     public openFavorite(favorite: BrowserFavorite) {
-        void this.dabOpen(favorite.url, favorite.name);
+        if (favorite.useExternalBrowser) {
+            void this.openFavoriteWithExternalBrowser(favorite);
+        } else {
+            void this.dabOpen(favorite.url, favorite.name);
+        }
     }
 
     public openFavoriteSettings(event, favorite: BrowserFavorite) {
