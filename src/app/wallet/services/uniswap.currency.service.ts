@@ -5,7 +5,7 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import BigNumber from 'bignumber.js';
-import { Pair, Trade } from 'custom-uniswap-v2-sdk';
+import { Pair, Trade } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
 import { ERC20Coin } from '../model/coin';
 import { Network } from '../model/networks/network';
 import { LocalStorage } from './storage.service';

@@ -111,10 +111,11 @@ export class SentryErrorHandler implements ErrorHandler {
  */
 class CustomTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
-    return Observable.create(async observer => {
-      let translations = await TranslationsLoader.getTranslations(lang)
-      observer.next(translations);
-      observer.complete();
+    return new Observable<any>(observer => {
+        void TranslationsLoader.getTranslations(lang).then((translations) => {
+            observer.next(translations);
+            observer.complete();
+        })
     });
   }
 }
