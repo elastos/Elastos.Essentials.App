@@ -414,6 +414,20 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         );
     }
 
+    public async createReserveCustomIDTransaction(payload: string, memo = ""): Promise<string> {
+        let utxo = await this.getAvailableUtxo(20000);
+        if (!utxo) return;
+
+        return this.masterWallet.walletManager.spvBridge.createReserveCustomIDTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            payload,
+            '10000',
+            memo
+        );
+    }
+
     //
     //dpos registration transaction functions
     //
@@ -698,7 +712,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
      *
      * @param amountSELA SELA
      */
-    protected async getAvailableUtxo(amountSELA: number) {
+    public async getAvailableUtxo(amountSELA: number) {
         let utxoArray: Utxo[] = null;
         if (this.id === StandardCoinName.ELA) {
             await this.getVotingUtxoByRPC();
@@ -882,7 +896,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
                 Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
                 return null
             }
-            Logger.log("wallet", 'getBalanceByOwnerAddress balance:', balance.toString());
+            // Logger.log("wallet", 'getBalanceByOwnerAddress balance:', balance.toString());
             return balance;
         } catch (e) {
             Logger.error("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);

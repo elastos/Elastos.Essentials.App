@@ -7,11 +7,11 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
-type CRWebsiteCommand = {
+type CRCommand = {
     command: string; // Ex: "voteforproposal"
 }
 
-type VoteForProposalCommand = CRWebsiteCommand & {
+type VoteForProposalCommand = CRCommand & {
     data: {
         proposalHash: string;
     }
@@ -52,5 +52,14 @@ export class UXService {
     openLink(url) {
         Logger.log(App.VOTING, "Opening external URL:", url);
         void this.globalIntentService.sendIntent('openurl', { url: url })
+    }
+
+    getArrayString(list: [string]): string {
+        if (!list) {
+            return null;
+        }
+        let str = list.join(", ");
+        Logger.log(App.VOTING, "Array:", str);
+        return str;
     }
 }

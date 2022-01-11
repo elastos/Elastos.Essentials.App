@@ -273,5 +273,6 @@ export const zh = {
         'publish-wait': '请稍等几分钟再发布',
         'publish-error2': '发布错误',
         'publish-wait2': '您的身份正在发布，请稍等。',
+        'publish-error-call-sync-did': "需要同步身份，设置->高级设置->同步身份",
     },
 };

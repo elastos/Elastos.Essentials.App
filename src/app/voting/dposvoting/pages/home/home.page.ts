@@ -59,13 +59,13 @@ export class HomePage implements OnInit {
 
     showSlider() {
         this.hidden = false
-        this.slide.getSwiper().then((swiper) => {
+        void this.slide.getSwiper().then((swiper) => {
             swiper.init();
         })
     }
 
     goToVote() {
-        this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "visited", true);
-        this.router.navigate(['menu/vote']);
+        void this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "visited", true);
+        void this.router.navigate(['menu/vote']);
     }
 }

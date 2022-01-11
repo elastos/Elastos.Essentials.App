@@ -1,0 +1,27 @@
+<ion-content class="ion-text-center">
+  <app-titlebar title=""></app-titlebar>
+  <ion-grid class="container" [class.dark-container]="theme.darkMode">
+    <!-- CARD HEADER -->
+    <div>
+      <ion-card>
+        <img
+          [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
+        <ion-card-title>{{ 'wallet.signtypeddata-subtitle' | translate }}</ion-card-title>
+        <ion-card-subtitle>
+          {{ 'wallet.signtypeddata-intro' | translate }}
+        </ion-card-subtitle>
+      </ion-card>
+    </div>
+
+    <!-- BUTTONS FOOTER -->
+    <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
+      <ion-label>{{ 'common.cancel' | translate}}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+    <div class="btn confirm ion-activatable ripple" (click)="confirmSign()">
+      <ion-label>{{ 'common.confirm' | translate}}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+
+  </ion-grid>
+</ion-content>

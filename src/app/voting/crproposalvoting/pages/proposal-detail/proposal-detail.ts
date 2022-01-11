@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import marked from 'marked';
 import { Subscription } from 'rxjs';
@@ -7,12 +8,13 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
+import { MileStoneOptionsComponent } from '../../components/milestone-options/milestone-options.component';
 import { ProposalDetails, VoteResultType } from '../../model/proposal-details';
 import { ProposalSearchResult } from '../../model/proposal-search-result';
-import { CRCommandType, CROperationsService, CRWebsiteCommand } from '../../services/croperations.service';
+import { CRCommandType, CROperationsService } from '../../services/croperations.service';
 import { ProposalService } from '../../services/proposal.service';
 import { UXService } from '../../services/ux.service';
 
@@ -28,6 +30,7 @@ export class ProposalDetailPage {
 
     proposal: ProposalDetails;
     proposalDetails = [];
+    proposalDetailFetched = false;
 
     timeActive = false;
     rejectActive = false;
@@ -35,7 +38,7 @@ export class ProposalDetailPage {
     activeTab = 1;
     totalBudget = 0;
     isCRMember = false;
-    isSelf = false;
+    isOwner = false;
 
     commandName: string;
     buttonLabel: string;
@@ -43,6 +46,8 @@ export class ProposalDetailPage {
     public crvotes = {approve: 0, reject: 0, abstain: 0};
     public proposalHash: string;
     private commandReturnSub: Subscription = null;
+
+    private popover: any = null;
 
     constructor(
         public uxService: UXService,
@@ -53,6 +58,7 @@ export class ProposalDetailPage {
         private translate: TranslateService,
         public voteService: VoteService,
         private crOperations: CROperationsService,
+        protected popoverCtrl: PopoverController,
     ) {
         const navigation = this.router.getCurrentNavigation();
         if (navigation.extras.state) {
@@ -63,18 +69,43 @@ export class ProposalDetailPage {
 
     async init() {
         this.proposal = null;
+        this.proposalDetailFetched = false;
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.loading-proposal'));
+
         try {
             this.isCRMember = await this.voteService.isCRMember();
             this.proposal = await this.proposalService.fetchProposalDetails(this.proposalHash);
             Logger.log('CRProposal', "proposal", this.proposal);
 
-            this.isSelf = Util.isSelfDid(this.proposal.did);
+            this.isOwner = Util.isSelfDid(this.proposal.did);
+            // this.isOwner = true;
+
+            //Set last tracking for show on page
+            if (this.proposal.milestone) {
+                for (let item of this.proposal.milestone) {
+                    if (item.tracking && item.tracking.length > 0) {
+                        item.lastTrackingInfo = item.tracking[0];
+                    }
+                }
+            }
 
             //Get total budget
             if (this.proposal.budgets) {
-                for (let budget of this.proposal.budgets) {
+                for (let i = 0; i < this.proposal.budgets.length; i++) {
+                    let budget = this.proposal.budgets[i];
                     budget.type = budget.type.toLowerCase();
                     this.totalBudget += parseInt(budget.amount);
+
+                    //Set last tracking for show on page
+                    if (this.proposal.milestone && this.proposal.milestone[i]) {
+                        if (this.proposal.status == 'voteragreed') {
+                            await this.setLastTracking(i);
+                        }
+                        else if (this.proposal.status == 'finished' && budget.status == 'Withdrawable') {
+                            let milestone = this.proposal.milestone[i];
+                            milestone.lastTracking = {command: 'withdraw', stage: budget.stage};
+                        }
+                    }
                 }
             }
 
@@ -109,10 +140,57 @@ export class ProposalDetailPage {
 
             this.addProposalDetails();
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposal-details'));
-            Logger.log('CRProposal', "Merged proposal info:", this.proposal);
+            this.titleBar.setMenuComponent(MileStoneOptionsComponent);
+            Logger.log('CRProposal', "Proposal info:", this.proposal);
         }
         catch (err) {
             Logger.error('CRProposal', 'fetchProposalDetails error:', err);
+        }
+
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposal-details'));
+        this.proposalDetailFetched = true;
+    }
+
+    async setLastTracking(i: number) {
+        let milestone = this.proposal.milestone[i];
+        let budget = this.proposal.budgets[i];
+
+        if (this.isOwner) {
+            if (budget.status == 'Withdrawable') {
+                milestone.lastTracking = {command: 'withdraw'};
+            }
+            else if (budget.status != "Withdrawn") {
+                if (!milestone.tracking || milestone.tracking.length < 1) {
+                    milestone.lastTracking = {command: 'apply'};
+                }
+                else {
+                    milestone.lastTracking = milestone.tracking[0];
+
+                    if (budget.status == 'Unfinished' && milestone.lastTracking.apply
+                                && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
+                        milestone.lastTracking.command = 'apply';
+                    }
+                }
+            }
+        }
+        else if (await this.voteService.isSecretaryGeneral() && milestone.tracking && milestone.tracking.length > 0 && budget.status == 'Unfinished') {
+            let lastTracking = milestone.tracking[0];
+            if (lastTracking.apply && lastTracking.apply.messageHash && (!lastTracking.review || !lastTracking.review.opinion)) {
+                try {
+                    let ret = await this.crOperations.getMessageData(lastTracking.apply.messageHash);
+                    if (ret != null && ret.ownerSignature) {
+                        lastTracking.command = 'review';
+                        milestone.lastTracking = lastTracking;
+                    }
+                }
+                catch (errMessage) {
+                    Logger.error(App.CRSUGGESTION, 'Can not getMessageData on stage ', milestone.stage);
+                }
+            }
+        }
+
+        if (milestone.lastTracking) {
+            milestone.lastTracking.stage = budget.stage;
         }
     }
 
@@ -120,9 +198,9 @@ export class ProposalDetailPage {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('crproposalvoting.loading-proposal'));
-
-        void this.init();
+        if (!this.proposalDetailFetched) {
+            void this.init();
+        }
         this.commandReturnSub = this.crOperations.activeCommandReturn.subscribe(commandType => {
             if (commandType == CRCommandType.SuggestionDetailPage) {
                 void this.init();
@@ -141,6 +219,33 @@ export class ProposalDetailPage {
         // this.titleBar.setTitle(this.translate.instant('proposals'));
     }
 
+    async showOptions(ev: any, lastTracking: any) {
+        Logger.log(App.CRPROPOSAL_VOTING, 'Opening options');
+
+        this.popover = await this.popoverCtrl.create({
+            mode: 'ios',
+            component: MileStoneOptionsComponent,
+            componentProps: {
+                lastTracking: lastTracking,
+            },
+            cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'milestone-options-component' : 'milestone-options-component-dark',
+            translucent: false,
+            event: ev,
+        });
+        this.popover.onWillDismiss().then(() => {
+            this.popover = null;
+        });
+        return await this.popover.present();
+    }
+
+    async doRefresh(event) {
+        await this.init();
+
+        setTimeout(() => {
+            event.target.complete();
+        }, 500);
+    }
+
     addProposalDetails() {
         this.proposalDetails = [];
         this.proposalDetails.push(
@@ -148,6 +253,12 @@ export class ProposalDetailPage {
                 title: this.translate.instant('crproposalvoting.proposal'),
                 type: 'marked',
                 value: this.proposal.title,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.type'),
+                type: 'type',
+                value: this.proposal.type,
                 active: true
             },
             {
@@ -217,10 +328,16 @@ export class ProposalDetailPage {
                 active: true
             },
             {
+                title: this.translate.instant('crproposalvoting.reservecustomizedid'),
+                type: 'array',
+                value: this.uxService.getArrayString(this.proposal.reservedCustomizedIDList),
+                active: true
+            },
+            {
                 title: this.translate.instant('crproposalvoting.member-votes'),
                 type: 'member-votes',
                 value: this.proposal.crVotes && this.proposal.crVotes.length > 0 ? this.proposal.crVotes : null,
-                active: false
+                active: true
             }
         );
     }
@@ -256,8 +373,6 @@ export class ProposalDetailPage {
     }
 
     handleCommand() {
-        let crcommand = { command: this.commandName, data: this.proposal, type: CRCommandType.ProposalDetailPage } as CRWebsiteCommand;
-        Logger.log('CRSuggestion', "Command:", crcommand);
-        void this.crOperations.handleCRProposalCommand(crcommand, null);
+        void this.crOperations.handleProposalDetailPageCommand(this.commandName);
     }
 }

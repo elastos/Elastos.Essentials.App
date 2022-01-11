@@ -3,6 +3,7 @@ import { CoinID } from "../../coin";
 import { BridgeProvider } from "../../earn/bridgeprovider";
 import { EarnProvider } from "../../earn/earnprovider";
 import { SwapProvider } from "../../earn/swapprovider";
+import { WalletCreateType } from "../../walletaccount";
 import { BTCNetworkWallet } from "../../wallets/btc/btc.networkwallet";
 import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
 import { MasterWallet } from "../../wallets/masterwallet";
@@ -50,6 +51,10 @@ export abstract class BTCNetworkBase extends Network {
 
   public getMainChainID(): number {
       return -1;
+  }
+
+  public supportedWalletCreateTypes(): WalletCreateType[] {
+    return [WalletCreateType.MNEMONIC, WalletCreateType.KEYSTORE];
   }
 
   public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {

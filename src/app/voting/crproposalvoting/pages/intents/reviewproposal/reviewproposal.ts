@@ -6,21 +6,18 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
-import { CRCommandType, CROperationsService, CRWebsiteCommand } from 'src/app/voting/crproposalvoting/services/croperations.service';
+import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DraftService } from '../../../services/draft.service';
-import { PopupService } from '../../../services/popup.service';
 
-type ReviewProposalCommand = CRWebsiteCommand & {
+type ReviewProposalCommand = CRCommand & {
     data: {
         did: string,
         opinionHash: string,
@@ -38,19 +35,17 @@ type ReviewProposalCommand = CRWebsiteCommand & {
 export class ReviewProposalPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private reviewProposalCommand: ReviewProposalCommand;
+    private onGoingCommand: ReviewProposalCommand;
     public signingAndSendingProposalResponse = false;
     public voteResult = "";
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
     public isKeyboardHide = true;
-    public opinion = "";
+    public content = "";
 
     constructor(
         private crOperations: CROperationsService,
-        private popup: PopupService,
         public translate: TranslateService,
-        private globalIntentService: GlobalIntentService,
         public walletManager: WalletService,
         private voteService: VoteService,
         private proposalService: ProposalService,
@@ -59,65 +54,59 @@ export class ReviewProposalPage {
         private globalNative: GlobalNativeService,
         public zone: NgZone,
         public keyboard: Keyboard,
-        private globalPopupService: GlobalPopupService,
         private draftService: DraftService,
     ) {
 
     }
 
     async ionViewWillEnter() {
-        if (this.proposalDetailsFetched) {
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-proposal'));
+        if (this.proposalDetail) {
             return;
         }
+        this.proposalDetailFetched = false;
 
-        this.keyboard.onKeyboardWillShow().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = false;
+        this.onGoingCommand = this.crOperations.onGoingCommand as ReviewProposalCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "ReviewProposalCommand", this.onGoingCommand);
+
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
+
+        if (this.proposalDetail) {
+            this.keyboard.onKeyboardWillShow().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = false;
+                });
             });
-            // console.log('SHOWK');
-        });
 
-        this.keyboard.onKeyboardWillHide().subscribe(() => {
-            this.zone.run(() => {
-                this.isKeyboardHide = true;
+            this.keyboard.onKeyboardWillHide().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = true;
+                });
             });
-            // console.log('HIDEK');
-        });
 
-        this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-proposal'));
-        this.reviewProposalCommand = this.crOperations.onGoingCommand as ReviewProposalCommand;
-
-        if (this.reviewProposalCommand.type == CRCommandType.ProposalDetailPage) {
-            this.voteResult = "approve";
-            this.proposalDetails = this.reviewProposalCommand.data;
+            this.voteResult = this.onGoingCommand.data.voteResult || "approve";
+            this.voteResult.toLowerCase()
         }
-        else {
-            this.voteResult = this.reviewProposalCommand.data.voteResult.toLowerCase();
-            try {
-                // Fetch more details about this proposal, to display to the user
-                this.proposalDetails = await this.proposalService.fetchProposalDetails(this.reviewProposalCommand.data.proposalHash);
-            }
-            catch (err) {
-                Logger.error('crproposal', 'ReviewProposalPage fetchProposalDetails error:', err);
-            }
-        }
-        Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-        this.proposalDetailsFetched = true;
     }
 
     ionViewWillLeave() {
         // this.keyboard.onKeyboardWillShow().unsubscribe();
+        void this.crOperations.sendIntentResponse();
     }
 
     cancel() {
         void this.globalNav.navigateBack();
-        void this.crOperations.sendIntentResponse();
     }
 
     async signAndReviewProposal() {
-        if (this.reviewProposalCommand.type == CRCommandType.ProposalDetailPage) {
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
+        if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
             //Check opinion value
-            if (!this.opinion || this.opinion == "") {
+            if (!this.content || this.content == "") {
                 let blankMsg = this.translate.instant('crproposalvoting.opinion')
                                 + this.translate.instant('common.text-input-is-blank');
                 this.globalNative.genericToast(blankMsg);
@@ -125,17 +114,18 @@ export class ReviewProposalPage {
             }
 
             //Handle opinion
-            let ret = await this.draftService.getDraft("opinion.json", this.opinion);
-            this.reviewProposalCommand.data.opinionHash = ret.hash;
-            this.reviewProposalCommand.data.opinionData = ret.data;
-            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, this.reviewProposalCommand);
+            let data = {content: this.content}
+            let ret = await this.draftService.getDraft("opinion.json", data);
+            this.onGoingCommand.data.opinionHash = ret.hash;
+            this.onGoingCommand.data.opinionData = ret.data;
+            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
         }
 
         this.signingAndSendingProposalResponse = true;
 
         try {
             //Get payload
-            var payload = await this.getProposalPayload(this.reviewProposalCommand);
+            var payload = await this.getProposalPayload(this.onGoingCommand);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review proposal payload.", payload);
 
             // //Get digest
@@ -147,27 +137,30 @@ export class ReviewProposalPage {
             let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
             });
-            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
-            if (ret.result && ret.result.signature) {
-                //Create transaction and send
-                payload.Signature = ret.result.signature;
-                const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
-                await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
-                this.crOperations.goBack();
-                this.globalNative.genericToast('crproposalvoting.review-proposal-successfully', 2000, "success");
+
+            if (!ret) {
+                // Operation cancelled, cancel the operation silently.
+                this.signingAndSendingProposalResponse = false;
+                return;
             }
+
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
+            //Create transaction and send
+            payload.Signature = ret.result.signature;
+            const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
-            // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.globalPopupService.ionicAlert("common.error", 'crproposalvoting.review-proposal-failed');
-            Logger.error('crproposal', 'signAndReviewProposal error:', e);
+            this.signingAndSendingProposalResponse = false;
+            await this.crOperations.popupErrorMessage(e);
+            return;
         }
 
         this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
     }
 
-    private getProposalPayload(proposalCommand: ReviewProposalCommand): Promise<any> {
+    private getProposalPayload(command: ReviewProposalCommand): Promise<any> {
         let voteResultTypes = {
             approve: 0,
             reject: 1,
@@ -176,9 +169,9 @@ export class ReviewProposalPage {
 
         let proposalPayload: any = {
             VoteResult: voteResultTypes[this.voteResult],
-            ProposalHash: proposalCommand.data.proposalHash,
-            OpinionHash: proposalCommand.data.opinionHash,
-            OpinionData: proposalCommand.data.opinionData,
+            ProposalHash: command.data.proposalHash,
+            OpinionHash: command.data.opinionHash,
+            OpinionData: command.data.opinionData,
             DID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
         };
 

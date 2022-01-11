@@ -221,6 +221,10 @@ ion-grid {
         margin-top: 5px;
         padding: 0px;
 
+        .content {
+            width: 100%;
+        }
+
         .milestone-timestamp {
             margin-top: 0px;
             padding: 0px;
@@ -233,7 +237,6 @@ ion-grid {
             white-space: normal;
         }
     }
-
 }
 
 .budget-container {

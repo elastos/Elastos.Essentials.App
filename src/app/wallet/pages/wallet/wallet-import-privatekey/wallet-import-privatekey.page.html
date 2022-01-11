@@ -1,0 +1,33 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="ion-text-center container">
+      <ion-row class="txt-container">
+        <ion-textarea
+          row=5
+          placeholder="{{ 'wallet.paste-privatekey' | translate }}"
+          [(ngModel)]="privatekey"
+          mode="ios"
+        ></ion-textarea>
+        <ion-button color="secondary" (click)="pasteFromClipboard()">
+            {{ 'wallet.paste' | translate }}
+        </ion-button>
+      </ion-row>
+      <ion-row class="password-row" *ngIf="contentIsJsonObj">
+        <ion-input
+            type="password"
+            name="backupPassword" ngDefaultControl
+            placeholder="{{ 'wallet.keystore-backup-password' | translate }}"
+            [(ngModel)]="keystoreBackupPassword">
+        </ion-input>
+      </ion-row>
+      <ion-row class="prompt-row">
+          <h1>{{ 'wallet.import-wallet-by-privatekey-info' | translate }}</h1>
+          <h1>{{ 'wallet.import-wallet-by-keystore-info' | translate }}</h1>
+      </ion-row>
+      <ion-row class="btn-container">
+        <ion-button color="secondary" [disabled]='!inputPrivatKeyCompleted()'(click)="onImport()">
+          {{ 'wallet.import-wallet' | translate }}
+        </ion-button>
+      </ion-row>
+  </ion-grid>
+</ion-content>

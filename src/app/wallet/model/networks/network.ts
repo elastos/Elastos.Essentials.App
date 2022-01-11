@@ -8,6 +8,7 @@ import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
 import { SwapProvider } from "../earn/swapprovider";
 import { ERC1155Provider } from "../nfts/erc1155.provider";
+import { WalletCreateType } from "../walletaccount";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
 import { NetworkWallet } from "../wallets/networkwallet";
@@ -69,6 +70,10 @@ export abstract class Network {
    * For elastos, as there are multiple EVM chains, the ETHSC is the "main" one.
    */
   public abstract getMainChainID(networkTemplate?: string): number;
+
+  public supportedWalletCreateTypes(): WalletCreateType[] {
+      return [WalletCreateType.MNEMONIC, WalletCreateType.PRIVATE_KEY_EVM, WalletCreateType.KEYSTORE];
+  }
 
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);
 

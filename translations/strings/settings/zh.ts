@@ -65,7 +65,7 @@ export const zh = {
           'restart-app': '重启应用',
 
           /********** Wallet Connect Page **********/
-          'wallet-connect-request': '应用链接请求',
+          'wallet-connect-request': '应用连接请求',
           'wallet-connect-sessions': '钱包连接会话',
           'wallet-connect-prepare-to-connect': '启动钱包连接',
           'wallet-connect-popup': '操作完成，请返回原应用。',

@@ -271,5 +271,6 @@ export const it = {
         'publish-wait': 'Attendi qualche minuto prima di pubblicare di nuovo',
         'publish-error2': 'Errore di pubblicazione',
         'publish-wait2': 'Il tuo profilo pubblico è in fase di aggiornamento, attendi qualche secondo.',
+        'publish-error-call-sync-did': "Need to synchronize identity, Settings->Advanced Settings->Synchronize Identity",
     }
 };

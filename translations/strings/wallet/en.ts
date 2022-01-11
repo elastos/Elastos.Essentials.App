@@ -263,6 +263,8 @@ export const en = {
         "wallet-settings-title": "Wallet Settings",
         "wallet-settings-backup-wallet": "Backup Wallet",
         "wallet-settings-backup-wallet-subtitle": "View mnemonics to export and backup",
+        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
+        "wallet-settings-backup-wallet-keystore": "Export Keystore",
         "wallet-settings-change-name": "Change Name",
         "wallet-settings-change-name-subtitle": "Organize your wallet with a custom name",
         "wallet-settings-change-theme": "Change Theme",
@@ -356,6 +358,19 @@ export const en = {
         'wallet-asset-title': 'Assets Overview',
         "wallet-asset-networks-count": "{{ networksCount }} Networks",
         'staked-assets-info-by': 'Staked assets information provided by',
+
+        /************
+        * NFT pages *
+        *************/
+        'nft-overview': 'NFT Overview',
+        'nft-assets': 'Assets',
+        'nft-token-id': 'Token ID',
+        'nft-collectibles-cant-be-listed': 'Collectibles for this NFT type cannot be listed.',
+        'nft-unnamed-asset': 'Unnamed Asset',
+        'nft-asset-with-type': '{{ type }} NFT asset',
+        'nft-properties': 'Properties',
+        'nft-no-properties-yet': 'Properties display is not available yet. Coming soon.',
+        'nft-assets-owned': 'assets owned',
 
         /********************************************** Intent Screens ***********************************************/
 
@@ -461,6 +476,8 @@ export const en = {
         "text-wallet-name-validator-already-exists": "This wallet name is already in use",
         "text-wallet-passphrase-validator-repeat": "The two input mnemonic passphrases are inconsistent",
         "text-wallet-passphrase-validator-min-length": "The mnemonic passphrase must be at least 8 characters",
+        "import-wallet-by-mnemonic": "Import Wallet by mnemonic",
+        "import-wallet-by-privatekey": "Import Wallet by private key or Keystore",
 
         /*****************
         * Mnemonic Pages *
@@ -489,6 +506,20 @@ export const en = {
         "help:create-password": "The mnemonic passphrase is optional but it gives an additional level of security to your wallet. You can consider it as a custom 13th mnemonic word. Please note that this passphrase can never be recovered if you forget it. Entering a wrong passphrase when restoring your wallet in the future will not generate any error, but will result in a wrong wallet address.",
         "help:import-password": "A mnemonic passphrase is a custom password that's bound to your mnemonic words. If you did not create a mnemonic passphrase when you created your wallet, then please disregard.",
         // "help:mnemonic-password": 'This is an optional password bound to your mnemonic words, to give your wallet extra security. Save it carefully, it is NOT recoverable if lost.',
+        "privatekey": "Private Key",
+        "privatekey-tap-to-copy": "Tap private key to copy",
+        "export-private-key-intro": "Optionally, you can also use the following private key in some wallets. Touch to copy.",
+
+        /***********************
+        * Export Keystore Page *
+        ************************/
+        "keystore-title": "Export Keystore",
+        "keystore-export-intro": "Touch to copy",
+        "keystore-input-password": "Set Keystore password",
+        "keystore-reinput-password": "Repeat Keystore password",
+        "keystore-export": "Export",
+        "keystore-password-validator-repeat": "The two input passwords are inconsistent",
+        "keystore-password-validator-min-length": "The password must be at least 8 characters",
 
         /********************************
         * Advanced Mnemonic Import Page *
@@ -497,6 +528,17 @@ export const en = {
         'advanced-import-intro': 'You can paste and enter your 12 mnemonic phrases in one line.',
         'advanced-import-msg': '* Spaces are required between words',
         'paste-mnemonic': 'Paste or Enter 12 Mnemonics',
+
+        /********************************
+        * Import Wallet by private key Page *
+        *********************************/
+        'import-wallet-by-privatekey-info': 'Private key: Only EVM compatible wallet private keys are supported',
+        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
+        'paste-privatekey': 'Paste or Enter Private Key or Keystore',
+        'wrong-privatekey-msg': 'Please enter the correct private key',
+        'import-private-key-sucess': 'Wallet imported from Private key',
+        'import-keystore-sucess': 'Wallet imported from keystore',
+        'keystore-backup-password': 'Please enter the keystore password',
 
         /***************************
         * Earn, Swap, Bridge pages *
@@ -635,6 +677,8 @@ export const en = {
         'txPublished-65': 'Dust Transaction',
         'txPublished-66': 'Insufficient Fee',
         'txPublished-67': 'Checkpoint Error',
+
+        'did-oversize': 'DID Over Size',
     },
 
     /*'Afghanistan': 'Afghanistan',

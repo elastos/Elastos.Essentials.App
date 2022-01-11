@@ -5,27 +5,22 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { SuggestionDetail } from '../../../model/suggestion-model';
-import { CRCommandType, CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
-import { PopupService } from '../../../services/popup.service';
-import { ProposalService } from '../../../services/proposal.service';
+import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
 import { SuggestionService } from '../../../services/suggestion.service';
 
-export type CreateProposalCommand = CRWebsiteCommand & {
+export type CreateProposalCommand = CRCommand & {
     data: {
         budgets: CreateSuggestionBudget[],
         categorydata: string, // This is empty string
         did: string,
-        drafthash: string,      // SHA256D of the suggestion's JSON-string
+        draftHash: string,      // SHA256D of the suggestion's JSON-string
         newownerpublickey: string,
         newownersignature: string,
         newrecipient: string,
@@ -49,10 +44,9 @@ export type CreateProposalCommand = CRWebsiteCommand & {
 export class CreateProposalPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private suggestionId: string;
     public suggestionDetailFetched = false;
     public suggestionDetail: SuggestionDetail;
-    private createProposalCommand: CreateProposalCommand;
+    private onGoingCommand: CreateProposalCommand;
     public signingAndSendingProposalResponse = false;
     public creationDate = "";
     public bugetAmount = 0;
@@ -60,60 +54,53 @@ export class CreateProposalPage {
     public proposaltype: string;
 
     constructor(
-        private proposalService: ProposalService,
         private suggestionService: SuggestionService,
         private crOperations: CROperationsService,
-        private popup: PopupService,
         public translate: TranslateService,
-        private globalIntentService: GlobalIntentService,
         public walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
-        private globalNative: GlobalNativeService,
-        private globalPopupService: GlobalPopupService,
     ) {
 
     }
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-proposal'));
-        this.createProposalCommand = this.crOperations.onGoingCommand as CreateProposalCommand;
-        this.suggestionId = this.createProposalCommand.sid;
-        this.proposaltype = this.createProposalCommand.data.type || this.createProposalCommand.data.proposaltype;
+        if (this.suggestionDetail) {
+            return;
+        }
+        this.suggestionDetailFetched = false;
 
-        this.bugetAmount = 0;
-        if (this.proposaltype == "normal") {
-            for (let suggestionBudget of this.createProposalCommand.data.budgets) {
-                suggestionBudget.type = suggestionBudget.type.toLowerCase();
-                this.bugetAmount += parseInt(suggestionBudget.amount);
-            }
-        }
+        this.onGoingCommand = this.crOperations.onGoingCommand as CreateProposalCommand;
+        Logger.log(App.CRSUGGESTION, "CreateProposalCommand", this.onGoingCommand);
 
-        if (this.createProposalCommand.type == CRCommandType.SuggestionDetailPage) {
-            this.suggestionDetail = this.createProposalCommand.data;
-        }
-        else {
-            try {
-                // Fetch more details about this suggestion, to display to the user
-                this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
-            }
-            catch (err) {
-                Logger.error('crproposal', 'CreateProposalPage fetchSuggestionDetail error:', err);
-            }
-        }
-
-        Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
-        if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
-            this.proposaltype = "changeproposaladdress";
-        }
-        this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
+        this.suggestionDetail = await this.crOperations.getCurrentSuggestion();
         this.suggestionDetailFetched = true;
+        if (this.suggestionDetail) {
+            this.proposaltype = this.suggestionDetail.type;
+
+            this.bugetAmount = 0;
+            if (this.proposaltype == "normal") {
+                for (let suggestionBudget of this.onGoingCommand.data.budgets) {
+                    suggestionBudget.type = suggestionBudget.type.toLowerCase();
+                    this.bugetAmount += parseInt(suggestionBudget.amount);
+                }
+            }
+
+            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
+                this.proposaltype = "changeproposaladdress";
+            }
+            this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
+        }
+    }
+
+    ionViewWillLeave() {
+        void this.crOperations.sendIntentResponse();
     }
 
     cancel() {
         void this.globalNav.navigateBack();
-        void this.crOperations.sendIntentResponse();
     }
 
     private getPayload(): any {
@@ -126,6 +113,8 @@ export class CreateProposalPage {
                 return this.getTerminatePayload();
             case "secretarygeneral":
                 return this.getSecretaryGeneralPayload();
+            case "reservecustomizedid":
+                return this.getReserveCustomizeDidPayload();
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
@@ -141,6 +130,8 @@ export class CreateProposalPage {
                 return await this.walletManager.spvBridge.terminateProposalCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             case "secretarygeneral":
                 return await this.walletManager.spvBridge.proposalSecretaryGeneralElectionCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
+            case "reservecustomizedid":
+                return await this.walletManager.spvBridge.reserveCustomIDCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
@@ -156,12 +147,18 @@ export class CreateProposalPage {
                 return await this.voteService.sourceSubwallet.createTerminateProposalTransaction(payload, memo);
             case "secretarygeneral":
                 return await this.voteService.sourceSubwallet.createSecretaryGeneralElectionTransaction(payload, memo);
+            case "reservecustomizedid":
+                return await this.voteService.sourceSubwallet.createReserveCustomIDTransaction(payload, memo);
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
     }
 
     async signAndCreateProposal() {
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         this.signingAndSendingProposalResponse = true;
 
         try {
@@ -175,33 +172,35 @@ export class CreateProposalPage {
 
             //Get did sign digest
             let ret = await this.signDigest(digest);
-            if (ret) {
-                payload.CRCouncilMemberSignature = ret;
-
-                //Create transaction
-                let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
-                Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
-                await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
-                this.crOperations.goBack();
-                this.globalNative.genericToast('crproposalvoting.create-proposal-successfully', 2000, "success");
+            if (!ret) {
+                // Operation cancelled, cancel the operation silently.
+                this.signingAndSendingProposalResponse = false;
+                return;
             }
+
+            payload.CRCouncilMemberSignature = ret;
+            //Create transaction
+            let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
+            Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
-            // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.globalPopupService.ionicAlert("common.error", 'crproposalvoting.create-proposal-failed');
-            Logger.error('crproposal', 'signAndCreateProposal error:', e);
+            this.signingAndSendingProposalResponse = false;
+            await this.crOperations.popupErrorMessage(e);
+            return;
         }
+
         this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
     }
 
     private getNormalPayload(): any {
-        let data = this.createProposalCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             Type: 0,
             CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerpublickey,
-            DraftHash: data.drafthash,
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
             DraftData: data.draftData,
             Budgets: [],
             Recipient: data.recipient,
@@ -229,12 +228,12 @@ export class CreateProposalPage {
     }
 
     private getChangeOwnerPayload(): any {
-        let data = this.createProposalCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
-            DraftHash: data.drafthash,
-            // DraftData: "",
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
+            DraftData: data.draftData,
             TargetProposalHash: data.targetproposalhash,
             NewRecipient: data.newrecipient,
             NewOwnerPublicKey: data.newownerpublickey,
@@ -246,12 +245,12 @@ export class CreateProposalPage {
     }
 
     private getTerminatePayload(): any {
-        let data = this.createProposalCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
-            DraftHash: data.drafthash,
-            // DraftData: "",
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
+            DraftData: data.draftData,
             TargetProposalHash: data.targetproposalhash,
             Signature: data.signature,
             CRCouncilMemberDID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
@@ -260,16 +259,31 @@ export class CreateProposalPage {
     }
 
     private getSecretaryGeneralPayload(): any {
-        let data = this.createProposalCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
-            DraftHash: data.drafthash,
-            // DraftData: "",
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
+            DraftData: data.draftData,
             SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
             SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
             Signature: data.signature,
             SecretaryGeneralSignature: data.secretarygenerasignature,
+            CRCouncilMemberDID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
+        };
+
+        return payload;
+    }
+
+    private getReserveCustomizeDidPayload(): any {
+        let data = this.onGoingCommand.data;
+        let payload = {
+            CategoryData: data.categorydata || "",
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
+            DraftData: data.draftData,
+            ReservedCustomIDList: this.suggestionDetail.reservedCustomizedIDList,
+            Signature: data.signature,
             CRCouncilMemberDID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
         };
 
@@ -282,7 +296,7 @@ export class CreateProposalPage {
             data: digest,
         });
         Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
-        if (!ret.result) {
+        if (!ret) {
             // Operation cancelled by user
             return null;
         }

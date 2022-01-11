@@ -1,6 +1,7 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <ion-grid *ngIf="hideMnemonic" class="verify-container ion-no-padding ion-no-margin" [class.verify-dark-container]="theme.darkMode">
+    <ion-grid *ngIf="hideMnemonic && hasMnemonic" class="verify-container ion-no-padding ion-no-margin"
+        [class.verify-dark-container]="theme.darkMode">
         <ion-row class="btn-container">
             <ion-button color="secondary" (click)="onExport()">
                 <ion-label>{{ 'wallet.text-export-mnemonic' | translate }}</ion-label>
@@ -8,16 +9,22 @@
         </ion-row>
     </ion-grid>
 
-    <ion-grid *ngIf="!hideMnemonic" class="ion-text-center verified-container">
-        <p>
-            {{ 'wallet.mnemonic-prompt1' | translate }}<b>{{ 'wallet.mnemonic-prompt2' | translate }}</b>{{ 'wallet.mnemonic-prompt3' | translate }}<br><br>
+    <ion-grid *ngIf="!hideMnemonic" class="ion-text-center verified-container"
+        [class.verify-dark-container]="theme.darkMode">
+        <p *ngIf="hasMnemonic">
+            {{ 'wallet.mnemonic-prompt1' | translate }}<b>{{ 'wallet.mnemonic-prompt2' | translate }}</b>{{
+            'wallet.mnemonic-prompt3' | translate }}<br><br>
         </p>
-        <ion-row class="mnemonic-row">
+        <ion-row *ngIf="hasMnemonic" class="mnemonic-row">
             <ion-col size="3.6" *ngFor="let item of mnemonicList; let i=index">
                 <div class="mnemonic-index">{{ mnemonicList.indexOf(item) + 1 }}</div>
                 <ion-label>{{ item }}</ion-label>
             </ion-col>
         </ion-row>
+        <p>{{ 'wallet.export-private-key-intro' | translate }}</p>
+        <div class="key" (click)="copyPrivateKey()">
+            {{ evmPrivateKey }}
+        </div>
         <ion-row *ngIf="!hideMnemonic && !isFromIntent" class="btn-container">
             <ion-button color="secondary" (click)="return()">
                 <ion-label> {{ 'wallet.back-to-setting' | translate }}</ion-label>

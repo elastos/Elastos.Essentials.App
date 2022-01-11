@@ -7,6 +7,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuggestionSearchResult, SuggestionStatus } from '../../model/suggestion-model';
 import { SuggestionService } from '../../services/suggestion.service';
@@ -41,12 +42,16 @@ export class SuggestionListPage implements OnInit {
         private route: ActivatedRoute,
         private globalNav: GlobalNavService,
         public translate: TranslateService,
+        private globalPopupService: GlobalPopupService,
     ) {
         this.suggestionStatus = this.route.snapshot.params.suggestionType as SuggestionStatus;
         Logger.log(App.CRSUGGESTION, 'Suggestion status:', this.suggestionStatus);
     }
 
     ngOnInit() {
+    }
+
+    ionViewDidEnter() {
     }
 
     ionViewWillEnter() {
@@ -58,17 +63,17 @@ export class SuggestionListPage implements OnInit {
     }
 
     async init() {
-        //Don't refreash the list.
-        if (this.suggestionsFetched) {
-            return;
-        }
-
         this.titleBar.setTitle(this.translate.instant('launcher.app-cr-suggestion'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             void this.globalNav.navigateTo("scanner", '/scanner/scan');
         });
-        this.suggestionsFetched = false;
+
+        //Don't refreash the list.
+        if (this.suggestionsFetched) {
+            return;
+        }
+
         this.suggestionService.reset();
         await this.fetchSuggestions();
     }
@@ -78,7 +83,7 @@ export class SuggestionListPage implements OnInit {
             this.suggestions = await this.suggestionService.fetchSuggestions(this.suggestionStatus, 1, results);
             this.suggestionsFetched = true;
             this.showSearch = true;
-            this.fetchPage = Math.floor(results / 10) + 1;
+            this.fetchPage = Math.floor(this.suggestions.length / 10) + 1;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestions'));
             Logger.log(App.CRSUGGESTION, 'fetchProposals', this.suggestions);
         }

@@ -6,10 +6,6 @@
     height: 42;
 }
 
-div {
-    width: 100%;
-}
-
 ion-segment {
     padding: 7px 5px;
     width: 100%;
@@ -25,16 +21,6 @@ ion-segment {
         font-size: 14px;
         line-height: 142%;
     }
-}
-
-textarea {
-    padding: 15px;
-    width: 100%;
-    height: 159px;
-    font-size: 13px;
-    background-color: #F5F7FE;
-    border: 1px solid #C9BFD6;
-    border-radius: 7px;
 }
 
 #approve {
@@ -73,10 +59,5 @@ img {
             color: #C9C9C9;
             --indicator-color: #474747;
         }
-    }
-
-    textarea {
-        background-color: #3B3B3B;
-        border: 1px solid #626262;
     }
 }

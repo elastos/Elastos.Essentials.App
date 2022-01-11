@@ -25,6 +25,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { Network } from '../model/networks/network';
+import { WalletCreateType } from '../model/walletaccount';
 import { Native } from './native.service';
 import { PopupProvider } from './popup.service';
 import { LocalStorage } from './storage.service';
@@ -106,8 +107,15 @@ export class WalletNetworkService {
         this.networksList.next(this.networks);
     }
 
-    public getAvailableNetworks(): Network[] {
-        return this.networks;
+    /**
+     * Do not support BTC network when the wallet is imported by private key.
+     */
+    public getAvailableNetworks(walletCreateType: WalletCreateType = null): Network[] {
+        if (walletCreateType) {
+            return this.networks.filter( (n) => {return n.supportedWalletCreateTypes().indexOf(walletCreateType) !== -1});
+        } else {
+            return this.networks;
+        }
     }
 
     /**
@@ -162,6 +170,17 @@ export class WalletNetworkService {
      */
     public isActiveNetworkElastos(): boolean {
         return this.activeNetwork.value && this.activeNetwork.value.key === "elastos";
+    }
+
+    /**
+     * Tells if the currently active network is the EVM network.
+     */
+     public isActiveNetworkEVM(): boolean {
+        if (this.activeNetwork.value) {
+            let network = this.getNetworkByKey(this.activeNetwork.value.key);
+            if (network.getMainChainID() !== -1) return true;
+        }
+        return false;
     }
 }
 

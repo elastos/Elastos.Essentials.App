@@ -54,7 +54,9 @@ export class WalletUtil {
     let minBalanceToShow = 1 / Math.pow(10, decimalplace);
     const decimalBalance = balance.modulo(1);
     if (decimalBalance.gt(minBalanceToShow)) {
-      const fixedDecimalBalance = decimalBalance.decimalPlaces(decimalplace).toString().substring(2);
+      // BigNumber.ROUND_DOWN:  0.9997 => 0.999
+      // Default round mode:  0.9997 => 1
+      const fixedDecimalBalance = decimalBalance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toString().substring(2);
       return fixedDecimalBalance;
     } else if (decimalBalance.isZero()) {
       return '';

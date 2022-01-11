@@ -3145,7 +3145,7 @@
           throw new Error("eth_sign NOT IMPLEMENTED");
           // TODO: unclear why this is a "personal message" if the buffer is utf8...
           /* if (isUtf8(buffer)) {
-            this.postMessage("signPersonalMessage", payload.id, { data: hex });
+            this.postMessage("personal_sign", payload.id, { data: hex });
           } else {
             this.postMessage("signMessage", payload.id, { data: hex });
           } */
@@ -3156,10 +3156,10 @@
           if (buffer.length === 0) {
               // hex it
               const hex = Utils.bufferToHex(message);
-              this.postMessage("signPersonalMessage", payload.id, { data: hex });
+              this.postMessage("personal_sign", payload.id, { data: hex });
           }
           else {
-              this.postMessage("signPersonalMessage", payload.id, { data: message });
+              this.postMessage("personal_sign", payload.id, { data: message });
           }
       }
       personal_ecRecover(payload) {
@@ -3304,5 +3304,5 @@
   // Expose this class globally to be able to create instances from the browser dApp.
   window["DappBrowserWeb3Provider"] = DappBrowserWeb3Provider;
 
-}());
+})();
 //# sourceMappingURL=essentialsiabweb3provider.js.map

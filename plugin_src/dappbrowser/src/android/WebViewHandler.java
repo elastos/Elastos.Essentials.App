@@ -54,6 +54,7 @@ import org.apache.cordova.LOG;
 import org.apache.cordova.CallbackContext;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 public class WebViewHandler {
     protected static final String LOG_TAG = "WebViewHandler";
@@ -82,6 +83,7 @@ public class WebViewHandler {
 
         options.atdocumentstartscript += "window.open = function(url, target) {return window.essentialsExtractor.windowOpen(url, target);};";
 
+        // clearWebViewCache(this.activity);
         createWebView();
 
         //Set Background Color
@@ -232,20 +234,21 @@ public class WebViewHandler {
         }
         settings.setDomStorageEnabled(true);
 
-        if (options.clearcache) {
-            CookieManager.getInstance().removeAllCookie();
-        } else if (options.clearsessioncache) {
-            CookieManager.getInstance().removeSessionCookie();
-        }
+       if (options.clearcache) {
+            CookieManager.getInstance().removeAllCookies(null);
+       } else if (options.clearsessioncache) {
+            CookieManager.getInstance().removeSessionCookies(null);
+       }
 
         // Enable Thirdparty Cookies
-        CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
+       CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
 
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setUseWideViewPort(options.useWideViewPort);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(options.useWideViewPort);
         // Multiple Windows set to true to mitigate Chromium security bug.
         //  See: https://bugs.chromium.org/p/chromium/issues/detail?id=1083819
-        webView.getSettings().setSupportMultipleWindows(true);
+        settings.setSupportMultipleWindows(true);
+
         webView.requestFocus();
         webView.requestFocusFromTouch();
 
@@ -459,6 +462,44 @@ public class WebViewHandler {
         webView.setAlpha(alpha);
     }
 
+    // private static final String APP_CACAHE_DIRNAME = "/webcache";
 
+    // public void clearWebViewCache(Context context) {
+
+    //     try {/*from  ww w  . j  a  va2s  .c  o m*/
+    //         context.deleteDatabase("webview.db");
+    //         context.deleteDatabase("webviewCache.db");
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+
+    //     File appCacheDir = new File(context.getFilesDir().getAbsolutePath()
+    //             + APP_CACAHE_DIRNAME);
+
+    //     File webviewCacheDir = new File(context.getCacheDir()
+    //             .getAbsolutePath() + "/webviewCache");
+
+    //     if (webviewCacheDir.exists()) {
+    //         deleteFile(webviewCacheDir);
+    //     }
+    //     if (appCacheDir.exists()) {
+    //         deleteFile(appCacheDir);
+    //     }
+    // }
+
+    // private void deleteFile(File file) {
+
+    //     if (file.exists()) {
+    //         if (file.isFile()) {
+    //             file.delete();
+    //         } else if (file.isDirectory()) {
+    //             File files[] = file.listFiles();
+    //             for (int i = 0; i < files.length; i++) {
+    //                 deleteFile(files[i]);
+    //             }
+    //         }
+    //         file.delete();
+    //     }
+    // }
 
 }

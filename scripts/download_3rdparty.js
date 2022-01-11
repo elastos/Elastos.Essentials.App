@@ -3,13 +3,13 @@
 // CONFIGURE HERE
 const files_to_download  = [
   {
-    "url": "https://github.com/elastos/Elastos.Essentials.Plugins.Wallet/releases/download/spvsdk-V2.5/libspvsdk.zip",
+    "url": "https://github.com/elastos/Elastos.Essentials.Plugins.Wallet/releases/download/spvsdk-V2.7/libspvsdk.zip",
     "filename": "libspvsdk.zip",
     "sourceDirs": [
       "libspvsdk"
     ],
     "targetDir": "../Plugins/Wallet/src/ios",
-    "md5": "4a75d89824658ebaa7a13443646ae397"
+    "md5": "f3f376a0e68293e2821e30865fc97ea3"
   }
 ]
 // no need to configure below

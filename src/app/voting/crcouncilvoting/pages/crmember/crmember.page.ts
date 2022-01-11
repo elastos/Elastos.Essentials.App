@@ -10,6 +10,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/voting/services/vote.service';
 import { OptionsComponent } from '../../components/options/options.component';
 import { CandidatesService } from '../../services/candidates.service';
 
@@ -43,9 +44,10 @@ export class CRMemberPage {
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
         public candidatesService: CandidatesService,
+        public voteService: VoteService,
         private route: ActivatedRoute,
     ) {
-        this.init(this.route.snapshot.params.did);
+        void this.init(this.route.snapshot.params.did);
     }
 
     async init(did: string) {
@@ -60,11 +62,13 @@ export class CRMemberPage {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.crmember-profile'));
 
-        this.titleBar.setMenuVisibility(true);
-        this.titleBar.setMenuComponent(OptionsComponent)
+        if (this.voteService.canVote()) {
+            this.titleBar.setMenuVisibility(true);
+            this.titleBar.setMenuComponent(OptionsComponent)
+        }
     }
 
-    async showOptions() {
+    async showOptions(ev) {
         Logger.log('Launcher', 'Opening options');
 
         this.popover = await this.popoverCtrl.create({
@@ -73,7 +77,8 @@ export class CRMemberPage {
             componentProps: {
             },
             cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'launcher-options-component' : 'launcher-options-component-dark',
-            translucent: false
+            translucent: false,
+            event: ev,
         });
         this.popover.onWillDismiss().then(() => {
             this.popover = null;
@@ -100,7 +105,7 @@ export class CRMemberPage {
     }
 
     claimDposNode() {
-        this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crnode');
+        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crnode');
     }
 }
 

@@ -13,10 +13,12 @@ export const fr = {
         'loading-proposal': 'Chargement de la Proposition...',
         'no-proposals': 'Aucun résultat pour l\'instant.',
         'proposal-details': 'Détails de la Proposition',
+        'no-proposal-detail': 'Can not get the proposal details for now.',
         'proposal': 'Proposition',
         'abstract': 'Résumé',
         'proposal-hash': 'Hash de la Proposition',
         'url': 'Url d\'origine',
+        'reservecustomizedid': 'Reserve Customized DID',
         'time-remaining': 'Temps Restant',
         'reject-ratio': 'Ratio de Reject',
         'member-votes': 'Council Member Votes',
@@ -31,6 +33,7 @@ export const fr = {
         'loading-suggestion': 'Loading Suggestion...',
         'no-suggestions': 'No matching suggestions for now.',
         'suggestion-details': 'Suggestion Details',
+        'no-suggestion-detail': 'Can not get the suggestion details for now.',
         'suggestion': 'Suggestion',
         'suggestion-id': 'Suggestion ID',
 
@@ -76,17 +79,20 @@ export const fr = {
         'proposaltype-changeproposaladdress': 'Change Proposal Address',
         'proposaltype-closeproposal': 'Terminate Proposal',
         'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
+        'proposaltype-reservecustomizedid': 'Motion to reserve Customized DID',
         'imprest': 'Imprest',
         'normalpayment': 'NormalPayment',
         'finalpayment': 'FinalPayment',
 
         'sign-create-suggestion': 'Signer et Créer la Suggestion',
+        'createsuggestion-successfully': 'Suggestion created successfully.',
+        'createsuggestion-failed': 'Failed to sign suggestion, please sign suggestion again.',
 
         'create-proposal': 'Créer une Proposition',
         'create-proposal-msg': 'Vous êtes sur le point de créer la proposition suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
         'sign-create-proposal': 'Signer et Créer la Proposition',
-        "create-proposal-successfully": "Proposal created successfully, please wait for transaction confirmation.",
-        "create-proposal-failed": "Failed to create proposal, please recreate proposal.",
+        'createproposal-successfully': 'Proposal created successfully, please wait for transaction confirmation.',
+        'createproposal-failed': 'Failed to create proposal, please recreate proposal.',
 
         'review-proposal': 'Vote pour une Proposition',
         'review-proposal-msg': 'Vous êtes sur le point de voter pour la proposition suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
@@ -99,8 +105,8 @@ export const fr = {
         'progress': 'Progress',
         'finalized': 'Finalized',
         // 'abstain': 'Abstain',
-        "review-proposal-successfully": "Proposal review is successfully, please wait for transaction confirmation.",
-        "review-proposal-failed": "Proposal review failed, please review again.",
+        'reviewproposal-successfully': 'Proposal review is successfully, please wait for transaction confirmation.',
+        'reviewproposal-failed': 'Proposal review failed, please review again.',
 
         'vote-proposal': 'Vote Against',
         'vote-proposal-msg': 'Vous êtes sur le point de voter contre la proposition suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
@@ -110,20 +116,31 @@ export const fr = {
         'max-votes-suf': ' Votes',
         'multi-sign-reject-voting': 'Multi sign reject voting.',
         'greater-than-max-votes': 'Greater than avalible votes.',
+        'voteforproposal-successfully': 'Vote successfully, please wait for transaction confirmation.',
+        'voteforproposal-failed': 'Failed to vote, please vote again.',
 
         'update-milestone': 'Mise à jour d\'échéance',
         'update-milestone-msg': 'Vous êtes sur le point de mettre à jour l\'échéance ci-dessous. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
         'sign-update-milestone': 'Signer et Mettre à jour',
         'milestone-stage': 'Milestone Stage',
+        'updatemilestone-successfully': 'Update milestone successfully.',
+        'updatemilestone-failed': 'Failed to update milestone, please update milestone again.',
 
         'review-milestone': 'Vérifier une échéance',
         'review-milestone-msg': 'Vous êtes sur le point de vérifier l\'échéance suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
         'sign-review-milestone': 'Signer et Vérifier',
+        // NO TRANSLATION
+        'apply': 'Apply',
+        'review': 'Review',
+        'reviewmilestone-successfully': 'Milestone review is successfully, please wait for transaction confirmation.',
+        'reviewmilestone-failed': 'Milestone review failed, please review again.',
 
         'withdraw': 'Withdraw',
         'withdraw-msg': 'You are about to withdraw. Please review it, and follow the process to sign and publish it.',
         'withdraw-amount': 'Withdraw Amount',
         'sign-withdraw': 'Sign and Withdraw',
+        'withdraw-successfully': 'Withdraw is successfully, please wait for transaction confirmation.',
+        'withdraw-failed': 'Withdraw failed, please withdraw again.',
 
         'crc-proposals-today': 'Nouvelles propositions CR',
         'crc-proposals-today-msg': 'Il y a une nouvelle proposition CR aujourd\'hui, touchez pour la voir.',
@@ -151,6 +168,14 @@ export const fr = {
         'receive-address': 'ELA Receive Address',
         'payment-schedule': 'Payment Schedule',
         'budget-statement': 'Budget Statement',
+
+        //Error
+        'no-draft-data': 'Can not get the drafe data for now.',
+        'no-message-data': 'Can not get the message data for now.',
+        'no-opinion-data': 'Can not get the opinion data for now.',
+        'no-command-type': 'This CR commond type is currently not supported.',
+        'no-data': 'Can not get the data for now, please try again.',
+        'ela-not-enough': 'The availability ELA is not enough for transaction.',
     }
 
 };

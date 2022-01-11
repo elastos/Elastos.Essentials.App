@@ -4,4 +4,19 @@
     min-height: 100%;
     margin: 0;
     padding: 15px 20px;
+
+    .setting-row {
+        .providers {
+            .exportmenu {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                border-radius: 10px;
+                font-weight: 500;
+                margin-top: 10px;
+                background: rgba(200, 200, 200, 0.2);
+                justify-content: left;
+            }
+        }
+    }
 }

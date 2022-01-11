@@ -44,8 +44,12 @@ export class GlobalJsonRPCService {
                             if (result.error) {
                                 Logger.error("GlobalJsonRPCService", 'httpPost error:', result);
                                 reject(result.error);
-                            } else {
-                                resolve(result.result || '');
+                            }
+                            else if (result.code && result.code != 200 && result.message) {
+                                reject(result.message);
+                            }
+                            else {
+                                resolve(result.result || result.success || '');
                             }
                         }
 

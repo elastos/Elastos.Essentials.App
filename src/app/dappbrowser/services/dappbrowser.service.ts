@@ -19,6 +19,7 @@ import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwor
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { PersonalSignIntentResult } from 'src/app/wallet/pages/intents/personalsign/personalsign.page';
 import { SignTypedDataIntentResult } from 'src/app/wallet/pages/intents/signtypeddata/signtypeddata.page';
 import { EditCustomNetworkIntentResult } from 'src/app/wallet/pages/settings/edit-custom-network/edit-custom-network.page';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -258,7 +259,8 @@ export class DappBrowserService implements GlobalService {
             description: "",
             iconUrl: "",
             network: this.walletNetworkService.activeNetwork.value.key,
-            lastBrowsed: moment().unix()
+            lastBrowsed: moment().unix(),
+            useExternalBrowser: false
         }
         this.activeBrowsedAppInfo.next(await this.saveBrowsedAppInfo(appInfo));
     }
@@ -369,7 +371,8 @@ export class DappBrowserService implements GlobalService {
             description: "",
             iconUrl: "",
             lastBrowsed: moment().unix(),
-            network: this.getActiveNetworkKey()
+            network: this.getActiveNetworkKey(),
+            useExternalBrowser: false
         }
         this.activeBrowsedAppInfo.next(await this.saveBrowsedAppInfo(appInfo));
     }
@@ -447,7 +450,8 @@ export class DappBrowserService implements GlobalService {
             description,
             iconUrl,
             lastBrowsed: moment().unix(),
-            network: this.getActiveNetworkKey()
+            network: this.getActiveNetworkKey(),
+            useExternalBrowser: false
         }));
 
         return htmlHeader;
@@ -480,6 +484,11 @@ export class DappBrowserService implements GlobalService {
             case "eth_signTypedData":
                 dappBrowser.hide();
                 await this.handleSignTypedData(message);
+                void dappBrowser.show();
+                break;
+            case "personal_sign":
+                dappBrowser.hide();
+                await this.handlePersonalSign(message);
                 void dappBrowser.show();
                 break;
             case "wallet_switchEthereumChain":
@@ -567,6 +576,19 @@ export class DappBrowserService implements GlobalService {
     private async handleSignTypedData(message: DABMessage): Promise<void> {
         let rawData: { payload: string, useV4: boolean } = message.data.object
         let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/signtypeddata", rawData);
+
+        this.sendWeb3IABResponse(
+            message.data.id,
+            response.result.signedData
+        );
+    }
+
+    /**
+     * Sign data with wallet private key according to EIP 712.
+     */
+     private async handlePersonalSign(message: DABMessage): Promise<void> {
+        let rawData = message.data.object
+        let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/personalsign", rawData);
 
         this.sendWeb3IABResponse(
             message.data.id,
@@ -920,7 +942,15 @@ export class DappBrowserService implements GlobalService {
             if (previousNetwork)
                 await this.walletNetworkService.setActiveNetwork(previousNetwork);
         }
-        void this.openForBrowseMode(recentApp.url, recentApp.title);
+        if (recentApp.useExternalBrowser) {
+            void this.globalIntentService.sendIntent('openurl', { url: recentApp.url });
+            // Update lastBrowsed.
+            recentApp.lastBrowsed = moment().unix()
+            void this.saveBrowsedAppInfo(recentApp)
+
+        } else {
+            void this.openForBrowseMode(recentApp.url, recentApp.title);
+        }
     }
 
     public async clearRecentApps(): Promise<void> {

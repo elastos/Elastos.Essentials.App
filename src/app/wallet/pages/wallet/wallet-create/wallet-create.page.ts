@@ -23,6 +23,7 @@ export class WalletCreatePage implements OnInit {
     @ViewChild('input', {static: false}) input: IonInput;
 
     public useMenmonicPassphrase = false;
+    public importByPrivateKey = false;
     public wallet = {
         name: '',
         singleAddress: false,
@@ -81,7 +82,7 @@ export class WalletCreatePage implements OnInit {
             this.native.toast_trans("wallet.text-wallet-name-validator-already-exists");
             return;
         }
-        if (this.useMenmonicPassphrase) {
+        if (!this.importByPrivateKey && this.useMenmonicPassphrase) {
             if (this.wallet.mnemonicPassword.length < Config.MIN_PASSWORD_LENGTH) {
                 this.native.toast_trans("wallet.text-wallet-passphrase-validator-min-length");
                 return;
@@ -106,7 +107,11 @@ export class WalletCreatePage implements OnInit {
         if (this.walletCreationService.type === 1) {
             this.native.go("/wallet/mnemonic/create");
         } else {
-            this.native.go("/wallet/wallet-import");
+            if (this.importByPrivateKey) {
+                this.native.go('/wallet/wallet-import-privatekey');
+            } else {
+                this.native.go("/wallet/wallet-import");
+            }
         }
     }
 

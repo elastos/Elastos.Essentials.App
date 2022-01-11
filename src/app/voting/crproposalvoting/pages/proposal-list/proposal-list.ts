@@ -59,17 +59,17 @@ export class ProposalListPage implements OnInit {
     }
 
     async init() {
-        //Don't refreash the list.
-        if (this.proposalsFetched) {
-            return;
-        }
-
         this.titleBar.setTitle(this.translate.instant('launcher.app-cr-proposal'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             void this.globalNav.navigateTo("scanner", '/scanner/scan');
         });
-        this.proposalsFetched = false;
+
+        //Don't refreash the list.
+        if (this.proposalsFetched) {
+            return;
+        }
+
         this.proposalService.reset();
         await this.fetchProposals();
     }
@@ -79,7 +79,7 @@ export class ProposalListPage implements OnInit {
             this.proposals = await this.proposalService.fetchProposals(this.proposalType, 1, results);
             this.proposalsFetched = true;
             this.showSearch = true;
-            this.fetchPage = Math.floor(results / 10) + 1;
+            this.fetchPage = Math.floor(this.proposals.length / 10) + 1;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposals'));
             Logger.log(App.CRPROPOSAL_VOTING, 'fetchProposals', this.proposals);
         }

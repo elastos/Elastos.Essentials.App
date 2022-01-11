@@ -95,7 +95,7 @@ export class CoinNFTHomePage implements OnInit {
 
     ionViewWillEnter() {
         //this.startUpdateInterval();
-        this.titleBar.setTitle("NFT Overview");
+        this.titleBar.setTitle(this.translate.instant("wallet.nft-overview"));
     }
 
     ionViewDidLeave() {
@@ -162,7 +162,7 @@ export class CoinNFTHomePage implements OnInit {
     }
 
     public getDisplayableAssetName(asset: NFTAsset): string {
-        return asset.name || "Unnamed Asset";
+        return asset.name || this.translate.instant("wallet.nft-unnamed-asset");
     }
 
     public getDisplayableAssetDescription(asset: NFTAsset): string {

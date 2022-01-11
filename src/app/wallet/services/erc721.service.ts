@@ -188,8 +188,12 @@ export class ERC721Service {
     */
     private async extractAssetMetadata(asset: NFTAsset, tokenURI: string): Promise<any> {
         // Unsupported url format
-        if (!tokenURI || !tokenURI.startsWith("http"))
+        if (!tokenURI || (!tokenURI.startsWith("http") && !tokenURI.startsWith("ipfs"))) {
             return;
+        }
+
+        // If the url is a IPFS url, replace it with a gateway
+        tokenURI = this.replaceIPFSUrl(tokenURI);
 
         try {
             let metadata: any = await this.http.get(tokenURI).toPromise();
@@ -209,9 +213,9 @@ export class ERC721Service {
 
             // Picture
             if ("properties" in metadata && "image" in metadata.properties)
-                asset.imageURL = metadata.properties.image.description || null;
+                asset.imageURL = this.replaceIPFSUrl(metadata.properties.image.description || null);
             else
-                asset.imageURL = metadata.image || null;
+                asset.imageURL = this.replaceIPFSUrl(metadata.image || null);
 
             // Unset the image if not a valid url
             if (asset.imageURL && !asset.imageURL.startsWith("http"))
@@ -221,6 +225,17 @@ export class ERC721Service {
             // Silent catch
             return;
         }
+    }
+
+    /**
+     * If the url starts with ipfs, returns the gateway-accessible url.
+     * Otherwise, returns the given url.
+     */
+    private replaceIPFSUrl(anyUrl: string): string {
+        if (!anyUrl || !anyUrl.startsWith("ipfs"))
+            return anyUrl;
+
+        return `https://ipfs.io/ipfs/${anyUrl.replace("ipfs://", "")}`;
     }
 
     /*public async getERC20Coin(address: string, ethAccountAddress: string) {

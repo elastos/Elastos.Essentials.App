@@ -4,7 +4,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
@@ -13,10 +12,9 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
-import { PopupService } from '../../../services/popup.service';
+import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 
-type WithdrawCommand = CRWebsiteCommand & {
+type WithdrawCommand = CRCommand & {
     data: {
         amount: number,
         ownerpublickey: string,
@@ -33,17 +31,16 @@ type WithdrawCommand = CRWebsiteCommand & {
 export class WithdrawPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private withdrawCommand: WithdrawCommand;
-    public signingAndSendingSuggestionResponse = false;
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
+    private onGoingCommand: WithdrawCommand;
+    public signingAndSendingProposalResponse = false;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
     public Config = Config;
+    public amount = 0;
 
     constructor(
         private crOperations: CROperationsService,
-        private popup: PopupService,
         public translate: TranslateService,
-        private globalIntentService: GlobalIntentService,
         private walletManager: WalletService,
         private voteService: VoteService,
         private proposalService: ProposalService,
@@ -55,30 +52,43 @@ export class WithdrawPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.withdraw'));
-        this.withdrawCommand = this.crOperations.onGoingCommand as WithdrawCommand;
+        if (this.proposalDetail) {
+            return;
+        }
+        this.proposalDetailFetched = false;
 
-        try {
-            // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.withdrawCommand.data.proposalhash);
-            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-            this.proposalDetailsFetched = true;
+        this.onGoingCommand = this.crOperations.onGoingCommand as WithdrawCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "WithdrawCommand", this.onGoingCommand);
+
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
+
+        if (this.proposalDetail) {
+            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+
+            this.amount = await this.proposalService.fetchWithdraws(this.proposalDetail.proposalHash) * Config.SELA;
+            this.amount = Math.round(this.amount);
         }
-        catch (err) {
-            Logger.error('crproposal', 'WithdrawPage ionViewDidEnter error:', err);
-        }
+    }
+
+    ionViewWillLeave() {
+        void this.crOperations.sendIntentResponse();
     }
 
     cancel() {
         void this.globalNav.navigateBack();
-        void this.crOperations.sendIntentResponse();
     }
 
     async signAndWithdraw() {
-        this.signingAndSendingSuggestionResponse = true;
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
+        this.signingAndSendingProposalResponse = true;
 
         try {
             //Get payload
-            var payload = this.getWithdrawPayload(this.withdrawCommand);
+            var payload = this.getWithdrawPayload(this.onGoingCommand);
             Logger.log(App.CRPROPOSAL_VOTING, "Got payload.", payload);
 
             //Get digest
@@ -90,29 +100,35 @@ export class WithdrawPage {
             let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
             });
-            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
-            if (ret.result && ret.result.signature) {
-                //Create transaction and send
-                payload.Signature = ret.result.signature;
-                const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(JSON.stringify(payload), '');
-                await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+
+            if (!ret) {
+                // Operation cancelled, cancel the operation silently.
+                this.signingAndSendingProposalResponse = false;
+                return;
             }
+
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
+            //Create transaction and send
+            payload.Signature = ret.result.signature;
+            const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(JSON.stringify(payload), '');
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
-            // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.popup.alert("Error", "Sorry, unable to withdraw. Your crproposal can't be withdraw for now. " + e, "Ok");
+            this.signingAndSendingProposalResponse = false;
+            await this.crOperations.popupErrorMessage(e);
+            return;
         }
 
-        this.signingAndSendingSuggestionResponse = false;
+        this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
     }
 
     private getWithdrawPayload(command: WithdrawCommand): any {
         let payload = {
-            ProposalHash: command.data.proposalhash,
-            OwnerPublicKey: command.data.ownerpublickey,
+            ProposalHash: command.data.proposalHash,
+            OwnerPublicKey: command.data.ownerPublicKey,
             Recipient: command.data.recipient,
-            Amount: command.data.amount,
+            Amount: this.amount.toString(),
         };
         return payload;
     }

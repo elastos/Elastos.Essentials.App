@@ -1,1 +1,42 @@
 @import "../suggestion-detail/suggestion-detail.scss";
+
+.lastTrackingInfo {
+    width: 100%;
+    background-color: #f6f6f6;
+    flex-wrap:wrap;
+
+    div {
+        padding: 0;
+        width: 100%;
+
+        h5 {
+            margin: 5px 0;
+        }
+
+        .review {
+            margin-top: 10px;
+        }
+
+        .timestamp {
+            color: #AAAAAA;
+        }
+    }
+}
+
+.milestone-options {
+    width: 100%;
+    padding-top: 5px;
+    height: 15px;
+}
+
+.darkContainer {
+    .lastTrackingInfo {
+        background-color: #2f2d2f;
+
+        div {
+            .timestamp {
+                color: #ECECEC;
+            }
+        }
+    }
+}

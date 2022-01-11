@@ -278,11 +278,13 @@ export class TitleBarComponent {
 
     innerLeftIconClicked() {
         if (this.navigationMode == TitleBarNavigationMode.BACK || this.navigationMode == TitleBarNavigationMode.CLOSE) {
-            if (this.globalNav.canGoBack())
+            if (this.globalNav.canGoBack()) {
                 void this.globalNav.navigateBack();
-            else
-                // Fallback: should not happen, but just in case, if we can't really "go back", we just go "home" without crashing
+            }
+            else {
+                // If the startup screen is DAPP browser, We go to launcher when the user clicks the back key.
                 void this.globalNav.navigateHome();
+            }
         }
         else {
             this.listenableIconClicked(this.icons[TitleBarIconSlot.INNER_LEFT]);

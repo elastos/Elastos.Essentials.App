@@ -4,7 +4,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuggestionDetail } from 'src/app/voting/crproposalvoting/model/suggestion-model';
@@ -13,16 +12,14 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CRCommandType, CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
-import { PopupService } from '../../../services/popup.service';
-import { ProposalService } from '../../../services/proposal.service';
+import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
 
 
-export type CreateSuggestionCommand = CRWebsiteCommand & {
+export type CreateSuggestionCommand = CRCommand & {
     data: {
         budgets: CreateSuggestionBudget[],
         categorydata: string, // This is empty string
-        drafthash: string,      // SHA256D of the suggestion's JSON-string
+        draftHash: string,      // SHA256D of the suggestion's JSON-string
         ownerpublickey: string,     // Public key of proposal owner
         proposaltype: string, // Ex: "normal",
         recipient: string, // Ex: ELA address
@@ -43,11 +40,9 @@ export type CreateSuggestionCommand = CRWebsiteCommand & {
 export class CreateSuggestionPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private originalRequestJWT: string;
-    private suggestionId: string;
     public suggestionDetailFetched = false;
     public suggestionDetail: SuggestionDetail;
-    private createSuggestionCommand: CreateSuggestionCommand;
+    private onGoingCommand: CreateSuggestionCommand;
     public signingAndSendingSuggestionResponse = false;
     public creationDate: string = "";
     public bugetAmount: number = 0;
@@ -55,12 +50,9 @@ export class CreateSuggestionPage {
     public proposaltype: string;
 
     constructor(
-        private proposalService: ProposalService,
         private suggestionService: SuggestionService,
         private crOperations: CROperationsService,
-        private popup: PopupService,
         public translate: TranslateService,
-        private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService,
         private walletManager: WalletService,
         private voteService: VoteService,
@@ -70,45 +62,43 @@ export class CreateSuggestionPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-suggestion'));
-
-        this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
-        Logger.log(App.CRPROPOSAL_VOTING, "createSuggestionCommand", this.createSuggestionCommand);
-        this.originalRequestJWT = this.crOperations.originalRequestJWT;
-        this.suggestionId = this.createSuggestionCommand.sid;
-        this.proposaltype = this.createSuggestionCommand.data.proposaltype || this.createSuggestionCommand.data.type;
-
-        this.bugetAmount = 0;
-        if (this.proposaltype == "normal") {
-            for (let suggestionBudget of this.createSuggestionCommand.data.budgets) {
-                suggestionBudget.type = suggestionBudget.type.toLowerCase();
-                this.bugetAmount += parseInt(suggestionBudget.amount);
-            }
+        if (this.suggestionDetail) {
+            return;
         }
+        this.suggestionDetailFetched = false;
 
-        if (this.createSuggestionCommand.type == CRCommandType.SuggestionDetailPage) {
-            this.suggestionDetail = this.createSuggestionCommand.data;
-        }
-        else {
-            try {
-                // Fetch more details about this suggestion, to display to the user
-                this.suggestionDetail = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
-            }
-            catch (err) {
-                Logger.error('crproposal', 'CreateSuggestionPage fetchSuggestionDetail error:', err);
-            }
-        }
+        this.onGoingCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
+        Logger.log(App.CRSUGGESTION, "CreateSuggestionCommand", this.onGoingCommand);
 
-        Logger.log(App.CRPROPOSAL_VOTING, "suggestionDetail", this.suggestionDetail);
-        if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
-            this.proposaltype = "changeproposaladdress";
-        }
-        this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
+        this.suggestionDetail = await this.crOperations.getCurrentSuggestion();
         this.suggestionDetailFetched = true;
+
+        if (this.suggestionDetail) {
+            this.proposaltype = this.suggestionDetail.type;
+            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+
+            this.bugetAmount = 0;
+            if (this.proposaltype == "normal") {
+                for (let suggestionBudget of this.onGoingCommand.data.budgets) {
+                    suggestionBudget.type = suggestionBudget.type.toLowerCase();
+                    this.bugetAmount += parseInt(suggestionBudget.amount);
+                }
+            }
+
+            Logger.log(App.CRSUGGESTION, "suggestionDetail", this.suggestionDetail);
+            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
+                this.proposaltype = "changeproposaladdress";
+            }
+            this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
+        }
+    }
+
+    ionViewWillLeave() {
+        void this.crOperations.sendIntentResponse();
     }
 
     cancel() {
         void this.globalNav.navigateBack();
-        void this.crOperations.sendIntentResponse();
     }
 
     async signAndCreateSuggestion() {
@@ -120,11 +110,11 @@ export class CreateSuggestionPage {
 
             //Get digest
             let digest = await this.getDigest();
-            Logger.log(App.CRPROPOSAL_VOTING, "Got proposal digest.", digest);
+            Logger.log(App.CRSUGGESTION, "Got proposal digest.", digest);
 
             //Sign Suggestion Digest As JWT
             let signedJWT = await this.signSuggestionDigestAsJWT(digest);
-            Logger.log(App.CRPROPOSAL_VOTING, "signedJWT", signedJWT);
+            Logger.log(App.CRSUGGESTION, "signedJWT", signedJWT);
 
             if (!signedJWT) {
                 // Operation cancelled, cancel the operation silently.
@@ -133,13 +123,11 @@ export class CreateSuggestionPage {
             }
 
             await this.suggestionService.postSignSuggestionCommandResponse(signedJWT);
-            this.crOperations.goBack();
+            this.crOperations.handleSuccessReturn();
         }
         catch (e) {
             this.signingAndSendingSuggestionResponse = false;
-            // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.popup.alert("Error", "Sorry, unable to sign your suggestion. Your suggestion can't be created for now. " + e, "Ok");
-            void this.exitIntentWithError();
+            await this.crOperations.popupErrorMessage(e);
             return;
         }
 
@@ -148,10 +136,10 @@ export class CreateSuggestionPage {
     }
 
     private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {
-        Logger.log(App.CRPROPOSAL_VOTING, "Sending intent to sign the suggestion digest", suggestionDigest);
+        Logger.log(App.CRSUGGESTION, "Sending intent to sign the suggestion digest", suggestionDigest);
 
         let payload = {
-            sid: this.createSuggestionCommand.sid,
+            sid: this.suggestionDetail.sid,
             command: "createsuggestion",
         }
 
@@ -159,9 +147,8 @@ export class CreateSuggestionPage {
             data: suggestionDigest,
             payload: payload,
         });
-        Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", result);
 
-        if (!result.result || !result.responseJWT) {
+        if (!result || !result.responseJWT) {
             // Operation cancelled by user
             return null;
         }
@@ -170,12 +157,12 @@ export class CreateSuggestionPage {
     }
 
     private async getNormalDigest(): Promise<any> {
-        let data = this.createSuggestionCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             Type: 0,
             CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerpublickey || data.ownerPublicKey,
-            DraftHash: data.drafthash || data.draftHash,
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
             DraftData: data.draftData,
             Budgets: [],
             Recipient: data.recipient
@@ -196,57 +183,72 @@ export class CreateSuggestionPage {
             });
         }
 
-        Logger.log('crsuggestion', "getNormalDigest.", payload);
+        Logger.log(App.CRSUGGESTION, "getNormalDigest.", payload);
 
         let digest = await this.walletManager.spvBridge.proposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         return Util.reverseHexToBE(digest);
     }
 
     private async getChangeOwnerDigest(): Promise<any> {
-        let data = this.createSuggestionCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
-            DraftHash: data.drafthash,
-            // DraftData: "",
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
+            DraftData: data.draftData,
             TargetProposalHash: data.targetproposalhash,
             NewRecipient: data.newrecipient,
             NewOwnerPublicKey: data.newownerpublickey,
         };
 
-        Logger.log('crsuggestion', "getChangeOwnerDigest.", payload);
+        Logger.log(App.CRSUGGESTION, "getChangeOwnerDigest.", payload);
         let digest = await this.walletManager.spvBridge.proposalChangeOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         return Util.reverseHexToBE(digest);
     }
 
     private async getTerminateDigest(): Promise<any> {
-        let data = this.createSuggestionCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
-            DraftHash: data.drafthash,
-            // DraftData: "",
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
+            DraftData: data.draftData,
             TargetProposalHash: data.targetproposalhash,
         };
 
-        Logger.log('crsuggestion', "getTerminateDigest.", payload);
+        Logger.log(App.CRSUGGESTION, "getTerminateDigest.", payload);
         let digest = await this.walletManager.spvBridge.terminateProposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         return Util.reverseHexToBE(digest);
     }
 
     private async getSecretaryGeneralDigest(): Promise<any> {
-        let data = this.createSuggestionCommand.data;
+        let data = this.onGoingCommand.data;
         let payload = {
             CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerpublickey,
-            DraftHash: data.drafthash,
-            // DraftData: "",
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
+            DraftData: data.draftData,
             SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
             SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
         };
 
-        Logger.log('crsuggestion', "getSecretaryGeneralDigest.", payload);
+        Logger.log(App.CRSUGGESTION, "getSecretaryGeneralDigest.", payload);
         let digest = await this.walletManager.spvBridge.proposalSecretaryGeneralElectionDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+        return Util.reverseHexToBE(digest);
+    }
+
+    private async getReserveCustomizeDidDigest(): Promise<any> {
+        let data = this.onGoingCommand.data;
+        let payload = {
+            CategoryData: data.categorydata || "",
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
+            DraftData: data.draftData,
+            ReservedCustomIDList: this.suggestionDetail.reservedCustomizedIDList,
+        };
+
+        Logger.log(App.CRSUGGESTION, "getReserveCustomizeDidDigest.", payload);
+        let digest = await this.walletManager.spvBridge.reserveCustomIDOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         return Util.reverseHexToBE(digest);
     }
 
@@ -260,6 +262,10 @@ export class CreateSuggestionPage {
                 return this.getTerminateDigest();
             case "secretarygeneral":
                 return this.getSecretaryGeneralDigest();
+            case "reservecustomizedid":
+                return this.getReserveCustomizeDidDigest();
+            default:
+                throw new Error("Don't support this type: " + this.proposaltype);
         }
     }
 

@@ -1,85 +1,91 @@
-<ion-content>
+<ion-content [class.darkContainer]="theme.darkMode">
     <app-titlebar></app-titlebar>
-    <div *ngIf="!proposalDetailsFetched">
+    <div *ngIf="!proposalDetailFetched">
         <ion-spinner></ion-spinner>
     </div>
 
-    <div *ngIf="proposalDetailsFetched" [class.darkContainer]="theme.darkMode">
+    <div *ngIf="proposalDetailFetched">
+        <div *ngIf="proposalDetail">
 
-        <!-- <div class="message">{{ 'crproposalvoting.review-proposal-msg' | translate }}</div> -->
-        <ion-list>
-            <ion-row class="profile-data" *ngIf="proposalDetails.title">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.proposal-title' | translate }}</h5>
-                    <h4>{{ proposalDetails.title }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="reviewProposalCommand.data.proposalHash">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
-                    <h4>{{ reviewProposalCommand.data.proposalHash }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="voteResult && reviewProposalCommand.type != 'proposal-detail-page'">
-                <div>
-                    <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
-                    <h4 class="align-center vote-result" [id]="voteResult"><img
-                            [src]="!theme.darkMode ? '../assets/crproposalvoting/icons/' + voteResult + '.svg' : '../assets/crproposalvoting/icons/darkmode/' + voteResult + '.svg'">
-                        <span>{{ 'crproposalvoting.' + voteResult | translate }}</span>
-                    </h4>
-                </div>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="reviewProposalCommand.type == 'proposal-detail-page'">
-                <div>
-                    <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
-                    <ion-segment (ionChange)="segmentChanged($event)" [value]="voteResult">
-                        <ion-segment-button value="approve">
-                            <ion-label>{{'crproposalvoting.approve' | translate}}</ion-label>
-                        </ion-segment-button>
-                        <ion-segment-button value="reject">
-                            <ion-label>{{'crproposalvoting.reject' | translate}}</ion-label>
-                        </ion-segment-button>
-                        <ion-segment-button value="abstain">
-                            <ion-label>{{'crproposalvoting.abstain' | translate}}</ion-label>
-                        </ion-segment-button>
-                    </ion-segment>
-                </div>
-            </ion-row>
-
-            <ion-row class="profile-data" *ngIf="reviewProposalCommand.type == 'proposal-detail-page'">
-                <div>
-                    <h5>{{ 'crproposalvoting.opinion' | translate }}</h5>
-                    <textarea [(ngModel)]="opinion"></textarea>
-                </div>
-            </ion-row>
-
-        </ion-list>
-
-        <div *ngIf="signingAndSendingSuggestionResponse">
-            <ion-spinner></ion-spinner>
-        </div>
-
-        <div *ngIf="!signingAndSendingSuggestionResponse && isKeyboardHide">
-            <div class="footer-space"></div>
-            <ion-footer>
-                <ion-row>
-                    <ion-col class="left-col">
-                        <div class="btn-container align-center" id="cancel" (click)="cancel()">
-                            {{ 'common.cancel' | translate }}
-                        </div>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </ion-col>
-                    <ion-col class="right-col">
-                        <div class="btn-container align-center" id="confirm" (click)="signAndReviewProposal()">
-                            {{ 'common.confirm' | translate }}
-                        </div>
-                        <ion-ripple-effect></ion-ripple-effect>
+            <div class="message">{{ 'crproposalvoting.review-proposal-msg' | translate }}</div>
+            <ion-list>
+                <ion-row class="profile-data" *ngIf="proposalDetail.title">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.proposal-title' | translate }}</h5>
+                        <h4>{{ proposalDetail.title }}</h4>
                     </ion-col>
                 </ion-row>
-            </ion-footer>
+
+                <ion-row class="profile-data" *ngIf="onGoingCommand.data.proposalHash">
+                    <ion-col>
+                        <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
+                        <h4>{{ onGoingCommand.data.proposalHash }}</h4>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="voteResult && onGoingCommand.type != 'proposal-detail-page'">
+                    <div>
+                        <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
+                        <h4 class="align-center vote-result" [id]="voteResult"><img
+                                [src]="!theme.darkMode ? '../assets/crproposalvoting/icons/' + voteResult + '.svg' : '../assets/crproposalvoting/icons/darkmode/' + voteResult + '.svg'">
+                            <span>{{ 'crproposalvoting.' + voteResult | translate }}</span>
+                        </h4>
+                    </div>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
+                    <div>
+                        <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
+                        <ion-segment (ionChange)="segmentChanged($event)" [value]="voteResult">
+                            <ion-segment-button value="approve">
+                                <ion-label>{{'crproposalvoting.approve' | translate}}</ion-label>
+                            </ion-segment-button>
+                            <ion-segment-button value="reject">
+                                <ion-label>{{'crproposalvoting.reject' | translate}}</ion-label>
+                            </ion-segment-button>
+                            <ion-segment-button value="abstain">
+                                <ion-label>{{'crproposalvoting.abstain' | translate}}</ion-label>
+                            </ion-segment-button>
+                        </ion-segment>
+                    </div>
+                </ion-row>
+
+                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page'">
+                    <div>
+                        <h5>{{ 'crproposalvoting.opinion' | translate }}</h5>
+                        <textarea [(ngModel)]="content"></textarea>
+                    </div>
+                </ion-row>
+
+            </ion-list>
+
+            <div *ngIf="signingAndSendingSuggestionResponse">
+                <ion-spinner></ion-spinner>
+            </div>
+
+            <div *ngIf="!signingAndSendingSuggestionResponse && isKeyboardHide">
+                <div class="footer-space"></div>
+                <ion-footer>
+                    <ion-row>
+                        <ion-col class="left-col">
+                            <div class="btn-container align-center" id="cancel" (click)="cancel()">
+                                {{ 'common.cancel' | translate }}
+                            </div>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-col>
+                        <ion-col class="right-col">
+                            <div class="btn-container align-center" id="confirm" (click)="signAndReviewProposal()">
+                                {{ 'common.confirm' | translate }}
+                            </div>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-col>
+                    </ion-row>
+                </ion-footer>
+            </div>
+        </div>
+
+        <div *ngIf="!proposalDetail" class="no-data">
+            {{ 'crproposalvoting.no-data' | translate }}
         </div>
     </div>
 </ion-content>

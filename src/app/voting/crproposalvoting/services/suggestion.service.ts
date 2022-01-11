@@ -18,6 +18,7 @@ export class SuggestionService {
     private subscription: Subscription = null;
     public selectedSuggestion: SuggestionSearchResult;
     public blockWaitingDict = {};
+    public currentSuggestion: SuggestionDetail = null;
 
     constructor(
         private http: HttpClient,
@@ -48,7 +49,7 @@ export class SuggestionService {
 
     public async fetchSuggestions(status: SuggestionStatus, page: number, results = 10): Promise<SuggestionSearchResult[]> {
         try {
-            var url = this.getCrRpcApi() + '/api/v2/suggestion/all_search?page=' + page + '&results=10';
+            var url = this.getCrRpcApi() + '/api/v2/suggestion/all_search?page=' + page + '&results=' + results;
             if (status != SuggestionStatus.ALL) {
                 url = url + '&status=' + status;
             }
@@ -72,6 +73,7 @@ export class SuggestionService {
 
     public async fetchSuggestionDetail(suggestionId: string): Promise<SuggestionDetail> {
         try {
+            this.currentSuggestion = null;
             Logger.log(App.CRSUGGESTION, 'Fetching suggestion details for suggestion ' + suggestionId + '...');
             let url = this.getCrRpcApi() + '/api/v2/suggestion/get_suggestion/' + suggestionId;
             let result = await this.jsonRPCService.httpGet(url);
@@ -84,6 +86,8 @@ export class SuggestionService {
                 else {
                     detail.stageAdjust = 0;
                 }
+                detail.sid = suggestionId;
+                this.currentSuggestion = detail;
                 return detail;
             }
             else {
@@ -92,6 +96,17 @@ export class SuggestionService {
         }
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'fetchSuggestionDetail error:', err);
+        }
+
+        return null;
+    }
+
+    public async getCurrentSuggestion(suggestionId: string, refresh = false): Promise<SuggestionDetail> {
+        if (refresh || this.currentSuggestion == null || this.currentSuggestion.sid != suggestionId) {
+            return await this.fetchSuggestionDetail(suggestionId);
+        }
+        else {
+            return this.currentSuggestion;
         }
     }
 
@@ -136,6 +151,7 @@ export class SuggestionService {
         }
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'postSignSuggestionCommandResponse error', err);
+            throw new Error(err);
         }
     }
 

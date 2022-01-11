@@ -262,7 +262,9 @@ export const zh = {
                 ************************/
                 "wallet-settings-title": "钱包设置",
                 "wallet-settings-backup-wallet": "备份钱包",
-                "wallet-settings-backup-wallet-subtitle": "查看要导出和备份的助记词",
+                "wallet-settings-backup-wallet-subtitle": "查看要导出和备份的助记词及私钥",
+                "wallet-settings-backup-wallet-export": "导出助记词及私钥",
+                "wallet-settings-backup-wallet-keystore": "导出 Keystore",
                 "wallet-settings-change-name": "更改名称",
                 "wallet-settings-change-name-subtitle": "自定义钱包名称",
                 "wallet-settings-change-theme": "更换主题",
@@ -356,6 +358,19 @@ export const zh = {
                 'wallet-asset-title': '资产总览',
                 "wallet-asset-networks-count": "{{ networksCount }} 个网络",
                 'staked-assets-info-by': '质押资产数据提供商',
+
+                /************
+                * NFT pages *
+                *************/
+                'nft-overview': 'NFT 概览',
+                'nft-assets': '资产',
+                'nft-token-id': 'Token ID',
+                'nft-collectibles-cant-be-listed': '无法列出此 NFT 类型的收藏品',
+                'nft-unnamed-asset': '未命名资产',
+                'nft-asset-with-type': '{{ type }} NFT 资产',
+                'nft-properties': '属性',
+                'nft-no-properties-yet': '属性显示尚不支持，即将推出',
+                'nft-assets-owned': '项资产',
 
                 /********************************************** Intent Screens ***********************************************/
 
@@ -462,6 +477,8 @@ export const zh = {
                 "text-wallet-name-validator-already-exists": "此钱包名称已经存在",
                 "text-wallet-passphrase-validator-repeat": "两次输入的助记词密码不一致",
                 "text-wallet-passphrase-validator-min-length": "助记词密码最少8位",
+                "import-wallet-by-mnemonic": "通过助记词导入钱包",
+                "import-wallet-by-privatekey": "通过私钥/Keystore导入钱包",
 
                 /*****************
                 * Mnemonic Pages *
@@ -476,7 +493,7 @@ export const zh = {
                 'mnemonic-warning3': '切勿与任何人分享您的助记词，并始终保持安全！确保没有人在看着您再继续',
                 'type-menmonic-verify': '请输入您的12个助记词进行验证',
                 'type-menmonic-import': '请按顺序输入钱包的12个助记词',
-                'import-text-word-sucess': '导入助记词成功',
+                'import-text-word-sucess': '已通过助记词成功导入钱包',
                 'next-four-words': '后四个词',
                 'create-wallet': '创建钱包',
                 'import-wallet': '导入钱包',
@@ -489,6 +506,20 @@ export const zh = {
                 "mnemonic-reinput-passphrase": "再次输入助记词密码",
                 "help:create-password": "助记词密码是可选的，但它为您的钱包提供了更高的安全性。您可以将其视为自定义的第13个助记词。请注意，如果忘记了该密码，将无法恢复钱包。在恢复您的钱包时输入错误的助记词密码不会产生任何错误，但恢复的将是另一个钱包。",
                 "help:import-password": "助记词密码是与助记词绑定的自定义密码。 如果您在创建钱包时使用了助记词密码，则导入时必须使用相同的助记词密码，反之，则无需助记词密码，否则恢复的将是另一个钱包。",
+                "privatekey": "私钥",
+                "privatekey-tap-to-copy": "点击私钥即可复制",
+                "export-private-key-intro": "或者，您也可以在某些钱包中使用以下私钥。点击私钥即可复制。",
+
+                /***********************
+                * Export Keystore Page *
+                ************************/
+                "keystore-title": "导出 Keystore",
+                "keystore-export-intro": "点击Keystore即可复制",
+                "keystore-input-password": "设置Keystore密码（最少8位）",
+                "keystore-reinput-password": "再次输入Keystore密码",
+                "keystore-export": "导出",
+                "keystore-password-validator-repeat": "两次输入的密码不一致",
+                "keystore-password-validator-min-length": "密码最少8位",
 
                 /********************************
                 * Advanced Mnemonic Import Page *
@@ -497,6 +528,17 @@ export const zh = {
                 'advanced-import-intro': '您可以直接粘贴或输入您的12个助记词',
                 'advanced-import-msg': '* 助记词之间需要空格',
                 'paste-mnemonic': '粘贴或输入12个助记词',
+
+                /********************************
+                * Import Wallet by private key Page *
+                *********************************/
+                'import-wallet-by-privatekey-info': '私钥:只支持兼容 EVM 的钱包私钥',
+                'import-wallet-by-keystore-info': 'Keystore: 只支持 ELA Keystore',
+                'paste-privatekey': '请粘贴或输入私钥/Keystore',
+                'wrong-privatekey-msg': '请输入正确的私钥/Keystore',
+                'import-private-key-sucess': '已通过私钥成功导入钱包',
+                'import-keystore-sucess': '已通过Keystore成功导入钱包',
+                'keystore-backup-password': '请输入 Keystore 密码',
 
                 /***************************
                 * Earn, Swap, Bridge pages *
@@ -635,5 +677,6 @@ export const zh = {
                 'txPublished-65': '粉尘交易',
                 'txPublished-66': '交易费不足',
                 'txPublished-67': '检查点错误',
+                'did-oversize': 'DID数据过大',
         },
 };

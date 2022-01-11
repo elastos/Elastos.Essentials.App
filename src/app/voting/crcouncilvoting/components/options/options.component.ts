@@ -22,7 +22,7 @@ export class OptionsComponent implements OnInit {
     }
 
     impeachMember() {
-        this.popoverCtrl.dismiss();
-        this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/impeach');
+        void this.popoverCtrl.dismiss();
+        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/impeach');
     }
 }

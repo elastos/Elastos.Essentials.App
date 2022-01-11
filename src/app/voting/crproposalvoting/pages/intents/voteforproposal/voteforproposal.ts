@@ -14,9 +14,9 @@ import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridg
 import { WalletAccountType } from 'src/app/wallet/model/walletaccount';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
+import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 
-type VoteForProposalCommand = CRWebsiteCommand & {
+type VoteForProposalCommand = CRCommand & {
     data: {
         proposalHash: string;
     }
@@ -29,10 +29,10 @@ type VoteForProposalCommand = CRWebsiteCommand & {
 export class VoteForProposalPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private voteForProposalCommand: VoteForProposalCommand;
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
-    public signingAndSendingSuggestionResponse = false;
+    private onGoingCommand: VoteForProposalCommand;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
+    public signingAndSendingProposalResponse = false;
     public maxVotes = 0;
     public amount = 0;
 
@@ -51,27 +51,31 @@ export class VoteForProposalPage {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.vote-proposal'));
-        this.voteForProposalCommand = this.crOperations.onGoingCommand as VoteForProposalCommand;
+        if (this.proposalDetail) {
+            return;
+        }
+        this.proposalDetailFetched = false;
 
-        try {
-            // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.voteForProposalCommand.data.proposalHash);
-            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-            this.proposalDetailsFetched = true;
-        }
-        catch (err) {
-            Logger.error('crproposal', 'VoteForProposalPage ionViewDidEnter error:', err);
-        }
+        this.onGoingCommand = this.crOperations.onGoingCommand as VoteForProposalCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "VoteForProposalCommand", this.onGoingCommand);
 
-        const stakeAmount = this.voteService.sourceSubwallet.getRawBalance().minus(this.votingFees());
-        if (!stakeAmount.isNegative()) {
-            this.maxVotes = Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
+
+        if (this.proposalDetail) {
+            const stakeAmount = this.voteService.sourceSubwallet.getRawBalance().minus(this.votingFees());
+            if (!stakeAmount.isNegative()) {
+                this.maxVotes = Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
+            }
         }
+    }
+
+    ionViewWillLeave() {
+        void this.crOperations.sendIntentResponse();
     }
 
     cancel() {
         void this.globalNav.navigateBack();
-        void this.crOperations.sendIntentResponse();
     }
 
     async voteAgainstProposal() {
@@ -124,11 +128,15 @@ export class VoteForProposalPage {
     }
 
     async createVoteCRProposalTransaction(voteAmount) {
-        this.signingAndSendingSuggestionResponse = true;
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
+        this.signingAndSendingProposalResponse = true;
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 
         let votes = {};
-        votes[this.voteForProposalCommand.data.proposalHash] = voteAmount; // Vote with everything
+        votes[this.onGoingCommand.data.proposalHash] = voteAmount; // Vote with everything
         Logger.log('wallet', "Vote:", votes);
 
         let crVoteContent: VoteContent = {
@@ -143,13 +151,15 @@ export class VoteForProposalPage {
         );
 
         try {
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
-            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', "Sorry, unable to vote. Your crproposal can't be vote for now. ");
+            this.signingAndSendingProposalResponse = false;
+            await this.crOperations.popupErrorMessage(e);
+            return;
         }
 
-        this.signingAndSendingSuggestionResponse = false;
+        this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
     }
 

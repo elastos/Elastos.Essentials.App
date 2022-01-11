@@ -33,7 +33,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { CoinType } from '../model/coin';
 import { Network } from '../model/networks/network';
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
-import { WalletAccount, WalletAccountType } from '../model/walletaccount';
+import { WalletAccount, WalletAccountType, WalletCreateType } from '../model/walletaccount';
 import { ERC20SubWallet } from '../model/wallets/erc20.subwallet';
 import { StandardEVMSubWallet } from '../model/wallets/evm.subwallet';
 import { MasterWallet, WalletID } from '../model/wallets/masterwallet';
@@ -208,7 +208,7 @@ export class WalletService {
                     //Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId);
 
                     // Create a model instance for each master wallet returned by the SPV SDK.
-                    this.masterWallets[masterId] = new MasterWallet(this, this.erc721Service, this.erc1155Service, this.localStorage, masterId, false);
+                    this.masterWallets[masterId] = new MasterWallet(this, this.erc721Service, this.erc1155Service, this.localStorage, masterId, false, WalletCreateType.MNEMONIC);
                     await this.masterWallets[masterId].prepareAfterCreation();
                 }
             }
@@ -249,15 +249,23 @@ export class WalletService {
                 catch (err) {
                     if (err.code == 20006) {
                         Logger.log("wallet", "Need to call IMasterWallet::VerifyPayPassword():", masterWallet, err);
-                        // 20006: Need to call IMasterWallet::VerifyPayPassword() or re-import wallet first.
-                        // A password is required to generate a public key in spvsdk.
-                        // Usually occurs when a new network is first supported, eg. EVM, BTC.
-                        const payPassword = await this.authService.getWalletPassword(masterWallet.id);
-                        if (payPassword) {
-                            await this.spvBridge.verifyPayPassword(masterWallet.id, payPassword);
-                            networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
-                            if (networkWallet)
-                                this.networkWallets[masterWallet.id] = networkWallet;
+                        // We don't call verifyPayPassword for the wallet imported by private key on BTC network.
+                        if ((activatedNetwork.getMainChainID() !== -1) || (masterWallet.createType !== WalletCreateType.PRIVATE_KEY_EVM)) {
+                            // 20006: Need to call IMasterWallet::VerifyPayPassword() or re-import wallet first.
+                            // A password is required to generate a public key in spvsdk.
+                            // Usually occurs when a new network is first supported, eg. EVM, BTC.
+                            const payPassword = await this.authService.getWalletPassword(masterWallet.id);
+                            if (payPassword) {
+                                await this.spvBridge.verifyPayPassword(masterWallet.id, payPassword);
+                                try {
+                                    networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
+                                }
+                                catch (err) {
+                                    Logger.error("wallet", "createNetworkWallet error", masterWallet, err)
+                                }
+                                if (networkWallet)
+                                    this.networkWallets[masterWallet.id] = networkWallet;
+                            }
                         }
                     } else {
                         Logger.error("wallet", "Failed to create network wallet for master wallet", masterWallet, err);
@@ -368,7 +376,15 @@ export class WalletService {
      * active network.
      */
     public getNetworkWalletsList(): NetworkWallet[] {
-        return Object.values(this.networkWallets);
+        if (this.networkService.isActiveNetworkEVM()) {
+            // return all network wallets.
+            return Object.values(this.networkWallets);
+        } else {
+            let supportedWalletCreateTypes = WalletNetworkService.instance.activeNetwork.value.supportedWalletCreateTypes();
+            return Object.values(this.networkWallets).filter((nw) => {
+                return supportedWalletCreateTypes.indexOf(nw.masterWallet.createType) !== -1;
+            });
+        }
     }
 
     /**
@@ -455,7 +471,7 @@ export class WalletService {
             Type: WalletAccountType.STANDARD
         };
 
-        await this.addMasterWalletToLocalModel(masterId, walletName, account, true);
+        await this.addMasterWalletToLocalModel(masterId, walletName, account, true, WalletCreateType.MNEMONIC);
 
         // Go to wallet's home page.
         this.native.setRootRouter("/wallet/wallet-home");
@@ -503,18 +519,43 @@ export class WalletService {
             Type: WalletAccountType.STANDARD
         };
 
-        await this.addMasterWalletToLocalModel(masterId, walletName, account, createdBySystem);
+        await this.addMasterWalletToLocalModel(masterId, walletName, account, createdBySystem, WalletCreateType.MNEMONIC);
     }
 
     /**
-     * Creates a new master wallet both in the SPV SDK and in our local model, using a given priv key.
+     * Creates a new master wallet both in the SPV SDK and in our local model, using a given mnemonic.
      */
-    public async importWalletWithPrivKey(
+    public async importWalletWithKeystore(
+        masterId: WalletID,
+        walletName: string,
+        keystore: string,
+        backupPassword: string,
+        payPassword: string,
+    ) {
+        Logger.log('wallet', "Importing new master wallet with keystore");
+
+        await this.spvBridge.importWalletWithKeystore(masterId, keystore, backupPassword, payPassword);
+
+        const account: WalletAccount = {
+            SingleAddress: true,
+            Type: WalletAccountType.STANDARD
+        };
+
+        await this.addMasterWalletToLocalModel(masterId, walletName, account, false, WalletCreateType.KEYSTORE);
+
+        // Go to wallet's home page.
+        this.native.setRootRouter("/wallet/wallet-home");
+    }
+
+    /**
+     * Creates a new master wallet both in the SPV SDK and in our local model, using a given private key.
+     * Only support EVM private key.
+     */
+    public async importWalletWithPrivateKey(
         masterId: WalletID,
         walletName: string,
         privKey: string,
-        payPassword: string,
-        createdBySystem: boolean
+        payPassword: string
     ) {
         Logger.log('wallet', "Importing new master wallet with priv key");
 
@@ -528,30 +569,40 @@ export class WalletService {
             Type: WalletAccountType.STANDARD
         };
 
-        await this.addMasterWalletToLocalModel(masterId, walletName, account, createdBySystem);
+        await this.addMasterWalletToLocalModel(masterId, walletName, account, false, WalletCreateType.PRIVATE_KEY_EVM);
+
+        // Go to wallet's home page.
+        this.native.setRootRouter("/wallet/wallet-home");
     }
 
-    private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean) {
+    private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean, createType: WalletCreateType) {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
+        try {
+            // Add a new wallet to our local model
+            this.masterWallets[id] = new MasterWallet(this, this.erc721Service, this.erc1155Service, this.localStorage, id, createdBySystem, createType, name);
 
-        // Add a new wallet to our local model
-        this.masterWallets[id] = new MasterWallet(this, this.erc721Service, this.erc1155Service, this.localStorage, id, createdBySystem, name);
+            // Set some wallet account info
+            this.masterWallets[id].account = walletAccount;
 
-        // Set some wallet account info
-        this.masterWallets[id].account = walletAccount;
+            // Get some basic information ready in our model.
+            await this.masterWallets[id].populateWithExtendedInfo(null);
 
-        // Get some basic information ready in our model.
-        await this.masterWallets[id].populateWithExtendedInfo(null);
+            // Built networkWallet
+            let activeNetwork = this.networkService.activeNetwork.value;
+            let networkWallet = await activeNetwork.createNetworkWallet(this.masterWallets[id]);
+            this.networkWallets[id] = networkWallet;
 
-        // Save state to local storage
-        await this.masterWallets[id].save();
+            // Save state to local storage
+            await this.masterWallets[id].save();
 
-        // Built networkWallet
-        let activeNetwork = this.networkService.activeNetwork.value;
-        let networkWallet = await activeNetwork.createNetworkWallet(this.masterWallets[id]);
-        this.networkWallets[id] = networkWallet;
-        // Notify that this network wallet is the active one
-        await this.setActiveNetworkWallet(networkWallet);
+            // Notify that this network wallet is the active one
+            await this.setActiveNetworkWallet(networkWallet);
+        }
+        catch (err) {
+            Logger.error('wallet', "Adding master wallet error:", err);
+            void this.destroyMasterWallet(id, false);
+            throw err;
+        }
     }
 
     /**

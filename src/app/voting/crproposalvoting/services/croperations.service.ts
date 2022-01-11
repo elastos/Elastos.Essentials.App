@@ -1,31 +1,37 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import Base58 from 'base-58/Base58';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { DIDService } from 'src/app/identity/services/did.service';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
+import { ProposalDetails } from '../model/proposal-details';
+import { SuggestionDetail } from '../model/suggestion-model';
 import { PopupService } from './popup.service';
+import { ProposalService } from './proposal.service';
+import { SuggestionService } from './suggestion.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
 export enum CRCommandType {
     SuggestionDetailPage = "suggestion-detail-page",
     ProposalDetailPage = "proposal-detail-page",
-    SuggestionListScan = "suggestion-list-scan",
-    ProposalListScan = "proposal-list-scan",
     Scan = "scan",
 }
 
-export type CRWebsiteCommand = {
+export type CRCommand = {
     command: string; // Ex: "voteforproposal"
     callbackurl?: string;
     iss?: string; // JWT issuer (Normally, the CR website)
-    data: any;
+    data?: any;
     type: CRCommandType;
 }
 
@@ -46,14 +52,19 @@ export class CROperationsService {
     public intentAction: string;
     public intentId: number;
     public activeCommandReturn = new BehaviorSubject<CRCommandType>(null);
+    private sendingSignDigest = false;
 
     constructor(
         private popup: PopupService,
         private globalIntentService: GlobalIntentService,
         private voteService: VoteService,
-        public popupProvider: GlobalPopupService,
+        public globalPopupService: GlobalPopupService,
         public jsonRPCService: GlobalJsonRPCService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
+        public suggestionService: SuggestionService,
+        private proposalService: ProposalService,
+        private translate: TranslateService,
     ) { }
 
     init() {
@@ -113,7 +124,6 @@ export class CROperationsService {
             await this.sendIntentResponse();
         }
         else {
-            this.intentAction = receivedIntent.action;
             this.intentId = receivedIntent.intentId;
             if (!await this.handleCRProposalJWTCommand(receivedIntent.originalJwtRequest)) {
                 await this.sendIntentResponse();
@@ -130,17 +140,38 @@ export class CROperationsService {
             return false;
         }
 
-        let crCommand = parsedJwtresult.payload as CRWebsiteCommand;
+        let crCommand = parsedJwtresult.payload as CRCommand;
         if (!crCommand.command) {
             await this.popup.alert("crproposal", "Received CR website command without a command field. Skipping.", "Ok");
             return false;
         }
 
         crCommand.type = CRCommandType.Scan;
+        Logger.log(App.VOTING, "Command:", crCommand);
         return await this.handleCRProposalCommand(crCommand, crProposalJwtRequest);
     }
 
-    public async handleCRProposalCommand(crCommand: CRWebsiteCommand, originalRequestJWT?: string): Promise<boolean> {
+    public handleProposalDetailPageCommand(commandName: string, exData?: any) {
+        let data = this.proposalService.currentProposal;
+        if (exData) {
+            data = Object.assign(data, exData);
+        }
+        let crCommand = { command: commandName, data: data, type: CRCommandType.ProposalDetailPage } as CRCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "Command:", crCommand);
+        void this.handleCRProposalCommand(crCommand, null);
+    }
+
+    public handleSuggestionDetailPageCommand(commandName: string, exData?: any) {
+        let data =  this.suggestionService.currentSuggestion;
+        if (exData) {
+            data = Object.assign(data, exData);
+        }
+        let crCommand = { command: commandName, data: data, sid: data.sid, type: CRCommandType.SuggestionDetailPage } as CRCommand;
+        Logger.log(App.CRSUGGESTION, "Command:", crCommand);
+        void this.handleCRProposalCommand(crCommand, null);
+    }
+
+    public async handleCRProposalCommand(crCommand: CRCommand, originalRequestJWT?: string): Promise<boolean> {
         this.originalRequestJWT = originalRequestJWT;
         this.onGoingCommand = crCommand;
         let data = crCommand.data;
@@ -148,50 +179,29 @@ export class CROperationsService {
         if (!Util.isEmptyObject(data.userdid)) {
             if (crCommand.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
                 Logger.warn('crproposal', "The did isn't match");
-                await this.popupProvider.ionicAlert('wallet.text-warning', 'crproposalvoting.wrong-did');
+                await this.globalPopupService.ionicAlert('wallet.text-warning', 'crproposalvoting.wrong-did');
                 return false;
             }
         }
 
-        data.categorydata = data.categorydata || "";
-        data.ownerpublickey = data.ownerpublickey || data.ownerPublicKey,
-        data.drafthash = data.drafthash || data.draftHash;
-
         switch (crCommand.command) {
             case "createsuggestion":
             case "createproposal":
-                data.draftData = await this.getDraftData(data.drafthash);
-                break;
             case "reviewproposal":
-                if (crCommand.type == CRCommandType.Scan) {
-                    data.opinionData = await this.getOpinionData(data.opinionHash);
-                }
-                break;
-            case "voteforproposal":
             case "updatemilestone":
             case "reviewmilestone":
+            case "voteforproposal":
             case "withdraw":
                 break;
 
             default:
                 Logger.warn('crproposal', "Unhandled CR command: ", crCommand.command);
-                await this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
-                return false;
+                await this.globalPopupService.ionicAlert("common.error", "crproposalvoting.no-command-type");
         }
+
         await this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + crCommand.command);
 
         return true;
-    }
-
-    public async sendIntentResponse(result?: any) {
-        if (this.intentId && this.intentId != null) {
-            await this.globalIntentService.sendIntentResponse({}, this.intentId);
-            this.intentId = null;
-        }
-    }
-
-    public async sendSignDigestIntent(params: any): Promise<any> {
-        return await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", params, this.intentId);
     }
 
     public async getDraftData(draftHash: string): Promise<string> {
@@ -208,10 +218,12 @@ export class CROperationsService {
             }
             else {
                 Logger.error('crsuggestion', 'getDraftData can not get data!');
+                throw "crproposalvoting.no-draft-data";
             }
         }
         catch (err) {
             Logger.error('crsuggestion', 'getDraftData error:', err);
+            throw "crproposalvoting.no-draft-data";
         }
     }
 
@@ -223,16 +235,145 @@ export class CROperationsService {
         try {
             var url = this.voteService.getCrRpcApi() + '/api/v2/proposal/opinion_data/' + opinionHash;
             let result = await this.jsonRPCService.httpGet(url);
-            Logger.log('crsuggestion', "getOpinionData", result);
+            Logger.log(App.CRPROPOSAL_VOTING, "getOpinionData", result);
             if (result && result.data && result.data.content) {
                 return result.data.content;
             }
             else {
-                Logger.error('crproposal', 'getOpinionData can not get data!');
+                Logger.error(App.CRPROPOSAL_VOTING, 'getOpinionData can not get data!');
+                throw "crproposalvoting.no-opinion-data";
             }
         }
         catch (err) {
-            Logger.error('crproposal', 'getOpinionData error:', err);
+            Logger.error(App.CRPROPOSAL_VOTING, 'getOpinionData error:', err);
+            throw "crproposalvoting.no-opinion-data";
+        }
+    }
+
+    public async getMessageData(messageHash: string): Promise<any> {
+        if (!messageHash) {
+            return null;
+        }
+
+        try {
+            var url = this.voteService.getCrRpcApi() + '/api/v2/proposal/message_data/' + messageHash;
+            let result = await this.jsonRPCService.httpGet(url);
+            Logger.log(App.CRPROPOSAL_VOTING, "getMessageData", result);
+            if (result && result.data) {
+                return result.data;
+            }
+            else {
+                Logger.error(App.CRPROPOSAL_VOTING, 'getMessageData can not get data!');
+                throw "crproposalvoting.no-message-data";
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRPROPOSAL_VOTING, 'getMessageData error:', err);
+            throw "crproposalvoting.no-message-data";
+        }
+    }
+    public async getData(): Promise<boolean> {
+        let data = this.onGoingCommand.data;
+        data.categorydata = data.categorydata || "";
+        data.ownerPublicKey = data.ownerpublickey || data.ownerPublicKey,
+        data.proposalHash = data.proposalhash || data.proposalHash;
+
+        try {
+            switch (this.onGoingCommand.command) {
+                case "createsuggestion":
+                case "createproposal":
+                    data.draftHash = data.drafthash || data.draftHash;
+                    data.draftData = await this.getDraftData(data.draftHash);
+                    break;
+                case "reviewproposal":
+                    if (this.onGoingCommand.type == CRCommandType.Scan) {
+                        data.opinionData = await this.getOpinionData(data.opinionHash);
+                    }
+                    break;
+                case "updatemilestone":
+                    if (this.onGoingCommand.type == CRCommandType.Scan) {
+                        data.messageHash = data.messageHash || data.messagehash;
+                        let ret = await this.getMessageData(data.messageHash);
+                        if (ret != null) {
+                            data.messageData = ret.content;
+                        }
+                    }
+                    break;
+                case "reviewmilestone":
+                        data.messageHash = data.messageHash || data.messagehash;
+                        let ret = await this.getMessageData(data.messageHash);
+                        if (ret != null) {
+                            data.messageData = ret.content;
+                            data.ownerPublicKey = ret.ownerPublicKey;
+                            data.ownerSignature = ret.ownerSignature;
+                        }
+                        if (this.onGoingCommand.type == CRCommandType.Scan) {
+                            data.secretaryOpinionHash = data.secretaryopinionhash || data.secretaryOpinionHash;
+                            data.secretaryOpinionData = await this.getOpinionData(data.secretaryOpinionHash);
+                        }
+                    break;
+                case "voteforproposal":
+                case "withdraw":
+                    break;
+            }
+        }
+        catch (errMessage) {
+            Logger.error(App.CRSUGGESTION, this.onGoingCommand.command  + ' getData error:', errMessage);
+            await this.globalPopupService.ionicAlert("common.error", errMessage);
+            return false;
+        }
+        return true;
+    }
+
+    public async getCurrentSuggestion(): Promise<SuggestionDetail> {
+        if (!await this.getData()) {
+            return null;
+        }
+
+        let ret = await this.suggestionService.getCurrentSuggestion(this.onGoingCommand.sid,
+            this.onGoingCommand.type != CRCommandType.SuggestionDetailPage);
+        if (ret == null) {
+            await this.globalPopupService.ionicAlert("common.error", "crproposalvoting.no-suggestion-detail");
+        }
+        return ret;
+    }
+
+    public async getCurrentProposal(): Promise<ProposalDetails> {
+        if (!await this.getData()) {
+            return null;
+        }
+
+        let ret = await this.proposalService.getCurrentProposal(this.onGoingCommand.data.proposalHash,
+                                                this.onGoingCommand.type != CRCommandType.ProposalDetailPage);
+        if (ret == null) {
+            await this.globalPopupService.ionicAlert("common.error", "crproposalvoting.no-proposal-detail");
+        }
+        return ret;
+    }
+
+
+    public async sendIntentResponse(result?: any) {
+        if (!this.sendingSignDigest && this.intentId && this.intentId != null) {
+            await this.globalIntentService.sendIntentResponse({}, this.intentId);
+            this.intentId = null;
+        }
+    }
+
+    public async sendSignDigestIntent(params: any): Promise<any> {
+        this.sendingSignDigest = true;
+        try {
+            let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", params, this.intentId);
+            this.sendingSignDigest = false;
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
+            if (!ret || !ret.result || !(ret.result.signature || ret.result[params.signatureFieldName])) {
+                return null;
+            }
+            return ret;
+        }
+        catch (err) {
+            this.sendingSignDigest = false;
+            Logger.error('crsuggestion', 'sendSignDigestIntent error:', err);
+            throw err;
         }
     }
 
@@ -245,5 +386,55 @@ export class CROperationsService {
                 void this.globalNav.navigateBack();
                 break;
         }
+    }
+
+    async getOwnerPublicKey(): Promise<string> {
+        let base58Key = await DIDService.instance.getActiveDid().getLocalDIDDocument().getDefaultPublicKey();
+        let buf = new Buffer(Base58.decode(base58Key));
+        let ret = buf.toString('hex');
+        return ret;
+    }
+
+    public async signAndSendRawTransaction(rawTx: any) {
+        Logger.log(App.CRPROPOSAL_VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
+
+        if (!rawTx) {
+            throw new Error("rawTx is null");
+        }
+
+        const result = await this.voteService.signAndSendRawTransaction(rawTx);
+        if (result.published) {
+            this.handleSuccessReturn();
+        }
+        else {
+            // throw new Error(result.message); // sourceSubwallet.signAndSendRawTransaction have handle error.
+            throw new Error("");
+        }
+    }
+
+    public handleSuccessReturn() {
+        this.goBack();
+        this.globalNative.genericToast('crproposalvoting.' + this.onGoingCommand.command + '-successfully', 2000, "success");
+    }
+
+    public async popupErrorMessage(error: any) {
+        if (!error) {
+            return;
+        }
+
+        var message = "";
+        if (error instanceof String) {
+            message = error as string;
+        }
+        else if ((error instanceof Object) && error.message) {
+            message = error.message;
+        }
+
+        if (message == "") {
+            return;
+        }
+
+        await this.globalPopupService.ionicAlert("common.error", this.translate.instant('crproposalvoting.' + this.onGoingCommand.command + '-failed') + "[" + message + "]");
+        Logger.error('crproposal', this.onGoingCommand.command + ' error:', message);
     }
 }

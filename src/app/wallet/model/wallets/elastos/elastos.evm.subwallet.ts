@@ -5,6 +5,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 import { Config } from '../../../config/Config';
 import { StandardCoinName } from '../../coin';
 import { EthTransaction } from '../../evm.types';
+import { WalletCreateType } from '../../walletaccount';
 import { StandardEVMSubWallet } from '../evm.subwallet';
 import { NetworkWallet } from '../networkwallet';
 
@@ -24,7 +25,8 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   }
 
   public supportsCrossChainTransfers(): boolean {
-    return true;
+    // The wallet that imported by private key has no ELA mainchain.
+    return this.networkWallet.masterWallet.createType === WalletCreateType.MNEMONIC;
   }
 
   public getMainIcon(): string {
@@ -196,7 +198,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   }
 
 
-  public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string, nonceArg: number): Promise<string> {
+  public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string, nonceArg = -1): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const contractAbi = require("../../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
     const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.withdrawContractAddress);

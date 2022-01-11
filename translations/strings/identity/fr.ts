@@ -272,6 +272,7 @@ export const fr = {
         'publish-wait': 'Veuillez attendre quelques minutes avant de publier à nouveau.',
         'publish-error2': 'Erreur de publication',
         'publish-wait2': 'Votre profil public est en train d\'être mis à jour, veuillez patienter quelques secondes.',
+        'publish-error-call-sync-did': "Need to synchronize identity, Settings->Advanced Settings->Synchronize Identity",
     },
 };
 

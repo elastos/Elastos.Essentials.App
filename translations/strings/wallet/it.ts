@@ -120,7 +120,7 @@ export const it = {
         "coin-op-received-token": "Ricevuti",
         "coin-op-sent-token": "Inviati",
         "coin-op-transfered-token": "Trasferito",
-        "coin-op-vote": "Vita",
+        "coin-op-vote": "Votazione",
         "coin-op-identity": "Pubblicazione Identità",
         "coin-op-contract-create": "Creazione Contratto",
         "coin-op-contract-token-transfer": "Trasferimento token ERC20",
@@ -263,6 +263,8 @@ export const it = {
         "wallet-settings-title": "Impostazioni del portafoglio",
         "wallet-settings-backup-wallet": "Backup del Portafoglio",
         "wallet-settings-backup-wallet-subtitle": "Visualizza il tuo mnemonico per salvarlo in un luogo sicuro.",
+        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
+        "wallet-settings-backup-wallet-keystore": "Export Keystore",
         "wallet-settings-change-name": "Cambia nome",
         "wallet-settings-change-name-subtitle": "Organizza i tuoi portafogli assegnando loro un nome personalizzato.",
         "wallet-settings-change-theme": "Cambia tema",
@@ -355,7 +357,20 @@ export const it = {
         ************************/
         'wallet-asset-title': 'Panoramica dei Bilanci',
         "wallet-asset-networks-count": "{{ networksCount }} Reti",
-        'staked-assets-info-by': 'Staked assets information provided by',
+        'staked-assets-info-by': 'Attività di Staking fornite da',
+
+        /************
+        * NFT pages *
+        *************/
+        'nft-overview': 'Panoramica NFT',
+        'nft-assets': 'Assets',
+        'nft-token-id': 'Token ID',
+        'nft-collectibles-cant-be-listed': 'Le risorse per questo tipo di NFT non possono essere elencate.',
+        'nft-unnamed-asset': 'NFT senza nome',
+        'nft-asset-with-type': 'NFT di tipo {{ type }}',
+        'nft-properties': 'Proprietà',
+        'nft-no-properties-yet': 'La visualizzazione delle proprietà sarà presto disponibile.',
+        'nft-assets-owned': 'NFT posseduti',
 
         /********************************************** Intent Screens ***********************************************/
 
@@ -461,6 +476,8 @@ export const it = {
         "text-wallet-name-validator-already-exists": "Questo nome è già utilizzato da un altro portafoglio",
         "text-wallet-passphrase-validator-repeat": "Le due passphrase inserite sono diverse",
         "text-wallet-passphrase-validator-min-length": "La passphrase deve essere lunga almeno 8 caratteri",
+        "import-wallet-by-mnemonic": "Importa il portafoglio tramite Mnemonico",
+        "import-wallet-by-privatekey": "Importa il portafoglio tramite Chiave Privata",
 
         /*****************
         * Mnemonic Pages *
@@ -489,6 +506,20 @@ export const it = {
         "help:create-password": "Questa è una password opzionale che aumenta la sicurezza del mnemonico. Pensala come la tredicesima parola del mnemonico. Nota che questa password non può essere recuperata se la dimentichi. Inserendo la Passphrase sbagliata, in futuro quando importi il ​​tuo portafoglio non genererà un errore ma creerà un indirizzo di portafoglio diverso e non vedrai i tuoi fondi.",
         "help:import-password": "La Passphrase è una parola a tua scelta che è fortemente associata al tuo mnemonico. Ignora questa opzione se non hai utilizzato una Passphrase durante la creazione del tuo portafoglio.",
         // "help:mnemonic-password": 'This is an optional password bound to your mnemonic words, to give your wallet extra security. Save it carefully, it is NOT recoverable if lost.',
+        "privatekey": "Chiave Privata",
+        "privatekey-tap-to-copy": "Tocca la Chiave Privata per copiarla",
+        "export-private-key-intro": "Puoi anche scegliere di utilizzare la seguente Chiave Privata in alcune applicazioni. Tocca per copiare.",
+
+        /***********************
+        * Export Keystore Page *
+        ************************/
+        "keystore-title": "Export Keystore",
+        "keystore-export-intro": "Touch to copy",
+        "keystore-input-password": "Set Keystore password",
+        "keystore-reinput-password": "Repeat Keystore password",
+        "keystore-export": "Export",
+        "keystore-password-validator-repeat": "The two input passwords are inconsistent",
+        "keystore-password-validator-min-length": "The password must be at least 8 characters",
 
         /********************************
         * Advanced Mnemonic Import Page *
@@ -497,6 +528,17 @@ export const it = {
         'advanced-import-intro': 'Puoi incollare le tue 12 parole mnemoniche su una riga qui.',
         'advanced-import-msg': '* Spazio richiesto tra ogni parola',
         'paste-mnemonic': 'Incolla o inserisci le 12 parole del mnemonico',
+
+        /********************************
+        * Import Wallet by private key Page *
+        *********************************/
+        'import-wallet-by-privatekey-info': 'Sono supportate solo le chiavi private dei portafogli EVM compatibili (tipo Ethereum). ',
+        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
+        'paste-privatekey': 'Incolla o Inserisci la chiave privata',
+        'wrong-privatekey-msg': 'Si prega di inserire una Chiave Privata valida',
+        'import-private-key-sucess': 'Portafoglio importato dalla Chiave Privata',
+        'import-keystore-sucess': 'Wallet imported from keystore',
+        'keystore-backup-password': 'Please enter the keystore password',
 
         /***************************
         * Earn, Swap, Bridge pages *
@@ -513,14 +555,14 @@ export const it = {
         'finance-platforms-intro': 'Le seguenti piattaforme possono gestire questo token per farti guadagnare interessi ed eventualmente realizzare un profitto.',
         'get-more-tokens': 'Ottieni più token',
         'get-more-tokens-intro': 'I seguenti fornitori di servizi di terze parti ti consentono di ottenere <b> più {{coinName}} </b> token riscattando altri token:',
-        'bridge-tokens': 'Scambia i tuoi tokens verso altre reit',
+        'bridge-tokens': 'Scambia i tuoi tokens verso altre reti',
         'bridge-tokens-intro': 'I seguenti fornitori di servizi di terze parti ti consentono di <b> convertire il tuo {{coinName}} </b> da/a la rete {{networkName}}, a/da altre reti:',
         'to-networks': 'Alle reti:',
 
         /***************************
         * Block chain upgrade *
         ****************************/
-        'blockchain-updating-prompt': 'Le blockchain Elastos sono in fase di aggiornamento. Riprova tra qualche minuto (max 20 minuti)',
+        'blockchain-updating-prompt': 'Le Blockchain Elastos sono in fase di aggiornamento. Riprova tra qualche minuto (max 20 minuti)',
 
         /********************************************** Error ***********************************************/
 
@@ -635,6 +677,8 @@ export const it = {
         'txPublished-65': 'Dust Transaction',
         'txPublished-66': 'Insufficient Fee',
         'txPublished-67': 'Checkpoint Error',
+
+        'did-oversize': 'DID Over Size',
     },
 
     /*'Afghanistan': 'Afghanistan',

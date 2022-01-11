@@ -6,9 +6,8 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
-import { CrVotesComponent } from './components/crvotes/crvotes.component';
+import { ComponentsModule } from './components/components.module';
 import { ProposalSearchResultComponent } from './components/proposal-search-result/proposal-search-result.component';
-import { VoteResultComponent } from './components/vote-result/vote-result.component';
 import { CreateProposalPage } from './pages/intents/createproposal/createproposal';
 import { CreateSuggestionPage } from './pages/intents/createsuggestion/createsuggestion';
 import { ReviewMilestonePage } from './pages/intents/reviewmilestone/reviewmilestone';
@@ -42,8 +41,6 @@ import { PopupService } from './services/popup.service';
 
     // Components
     ProposalSearchResultComponent,
-    VoteResultComponent,
-    CrVotesComponent
   ],
   imports: [
     CommonModule,
@@ -53,7 +50,8 @@ import { PopupService } from './services/popup.service';
     FormsModule,
     IonicModule,
     IonicStorageModule,
-    TranslateModule
+    TranslateModule,
+    ComponentsModule,
   ],
   bootstrap: [],
   entryComponents: [
@@ -74,8 +72,6 @@ import { PopupService } from './services/popup.service';
 
     // Components
     ProposalSearchResultComponent,
-    VoteResultComponent,
-    CrVotesComponent
   ],
   providers: [
     Platform,

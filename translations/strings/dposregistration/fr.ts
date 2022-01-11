@@ -10,7 +10,7 @@ export const fr = {
         'retrieve': 'Récupérer',
         'illegal': 'Noeud DPoS illégal',
         'return': 'Désenregistré avec succès',
-        'node-detials': 'Détails Noeud DPoS',
+        'node-details': 'Détails Noeud DPoS',
         'node-status': 'Statut Noeud DPoS',
         'node-name': 'Nom du Noeud DPoS',
         'node-publickey': 'Clé Publique du Noeud DPoS',
@@ -30,7 +30,7 @@ export const fr = {
         'Returned': 'Returned',
         'current-votes': 'Votes Actuels',
 
-        'transaction-detials': 'Détails de la Transaction',
+        'transaction-details': 'Détails de la Transaction',
         'transaction-id': 'ID de la Transaction',
         'time-published': 'Date de Publication',
         'block-id': 'ID du bloc',

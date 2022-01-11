@@ -11,11 +11,11 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,6 +112,8 @@ public class DappBrowserClient extends WebViewClient {
      * @param method
      */
     public boolean shouldOverrideUrlLoading(String url, String method) {
+        LOG.d(LOG_TAG, "shouldOverrideUrlLoading:" + url);
+
         boolean override = false;
         boolean useBeforeload = false;
         String errorMessage = null;
@@ -312,6 +314,7 @@ public class DappBrowserClient extends WebViewClient {
      */
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        LOG.d(LOG_TAG, "onPageStarted:" + url);
         super.onPageStarted(view, url, favicon);
 
 //        injected = false;
@@ -346,6 +349,7 @@ public class DappBrowserClient extends WebViewClient {
     }
 
     public void onPageFinished(WebView view, String url) {
+        LOG.d(LOG_TAG, "onPageFinished:" + url);
         super.onPageFinished(view, url);
 
         // Set the namespace for postMessage()
@@ -353,6 +357,20 @@ public class DappBrowserClient extends WebViewClient {
 
         // Get the head from html
         brwoserPlugin.injectDeferredObject("window.essentialsExtractor.processHTML((!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML)", null);
+
+        //Note: when use serviceWorker to load main html, the shouldInterceptRequest can't intercept
+        // the main html, then can't inject the web3 provider js script. so unregister serviceWorker
+        // after the page load finish.
+        brwoserPlugin.injectDeferredObject("(function() { " +
+                "   if (navigator.serviceWorker) {\n" +
+                "       navigator.serviceWorker.getRegistrations().then(function(registrations) {\n" +
+                "           for(let registration of registrations) {\n" +
+                "               console.log(registration);\n" +
+                "               registration.unregister();\n" +
+                "           } " +
+                "       }); " +
+                "   } " +
+                "})();", null);
 
         // CB-10395 DappBrowser's WebView not storing cookies reliable to local device storage
         CookieManager.getInstance().flush();
@@ -376,15 +394,14 @@ public class DappBrowserClient extends WebViewClient {
         }
     }
 
-    public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-        super.onReceivedError(view, errorCode, description, failingUrl);
-
+    public void onReceivedError (WebView view, WebResourceRequest request, WebResourceError error) {
+        String failingUrl = request.getUrl().toString();
         try {
             JSONObject obj = new JSONObject();
             obj.put("type", LOAD_ERROR_EVENT);
             obj.put("url", failingUrl);
-            obj.put("code", errorCode);
-            obj.put("message", description);
+            obj.put("code", error.getErrorCode());
+            obj.put("message", error.getDescription());
 
             brwoserPlugin.sendEventCallback(obj, true, PluginResult.Status.ERROR);
         } catch (JSONException ex) {
@@ -477,6 +494,7 @@ public class DappBrowserClient extends WebViewClient {
     }
 
     public void onLoadResource (WebView view, String url) {
+        LOG.d(LOG_TAG, "onLoadResource:" + url);
         super.onLoadResource(view, url);
     }
 

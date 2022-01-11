@@ -11,7 +11,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { SuggestionDetail, SuggestionSearchResult } from '../../model/suggestion-model';
-import { CRCommandType, CROperationsService, CRWebsiteCommand } from '../../services/croperations.service';
+import { CRCommandType, CROperationsService } from '../../services/croperations.service';
 // import { DraftService } from '../../services/draft.service';
 import { SuggestionService } from '../../services/suggestion.service';
 import { UXService } from '../../services/ux.service';
@@ -28,6 +28,7 @@ export class SuggestionDetailPage {
 
     suggestion: SuggestionDetail;
     suggestionDetails = [];
+    suggestionDetailFetched = false;
 
     timeActive = false;
     rejectActive = false;
@@ -63,6 +64,9 @@ export class SuggestionDetailPage {
 
     async init() {
         this.suggestion = null;
+        this.suggestionDetailFetched = false;
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.loading-suggestion'));
+
         try {
             this.isCRMember = await this.voteService.isCRMember();
             this.suggestion = await this.suggestionService.fetchSuggestionDetail(this.suggestionId);
@@ -91,21 +95,23 @@ export class SuggestionDetailPage {
             }
 
             this.addSuggestionDetail();
-            this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestion-details'));
             Logger.log('CRSuggestion', "Merged suggestion info:", this.suggestion)
         }
         catch (err) {
             Logger.error('CRSuggestion', 'fetchSuggestionDetail error:', err);
         }
+
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestion-details'));
+        this.suggestionDetailFetched = true;
     }
 
     ionViewDidEnter() {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('crproposalvoting.loading-suggestion'));
-
-        void this.init();
+        if (!this.suggestionDetailFetched) {
+            void this.init();
+        }
         this.commandReturnSub = this.crOperations.activeCommandReturn.subscribe(commandType => {
             if (commandType == CRCommandType.SuggestionDetailPage) {
                 void this.init();
@@ -131,6 +137,12 @@ export class SuggestionDetailPage {
                 title: this.translate.instant('crproposalvoting.suggestion'),
                 type: 'marked',
                 value: this.suggestion.title,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.type'),
+                type: 'type',
+                value: this.suggestion.type,
                 active: true
             },
             {
@@ -193,6 +205,12 @@ export class SuggestionDetailPage {
                 value: this.suggestion.recipient,
                 active: true
             },
+            {
+                title: this.translate.instant('crproposalvoting.reservecustomizedid'),
+                type: 'array',
+                value: this.uxService.getArrayString(this.suggestion.reservedCustomizedIDList),
+                active: true
+            },
         );
     }
 
@@ -221,8 +239,6 @@ export class SuggestionDetailPage {
     }
 
     handleCommand() {
-        let crcommand = { command: this.commandName, data: this.suggestion, sid: this.suggestionId, type: CRCommandType.SuggestionDetailPage } as CRWebsiteCommand;
-        Logger.log('CRSuggestion', "Command:", crcommand);
-        void this.crOperations.handleCRProposalCommand(crcommand, null);
+        void this.crOperations.handleSuggestionDetailPageCommand(this.commandName);
     }
 }

@@ -11,7 +11,7 @@ export const en = {
         'retrieve': 'Retrieve',
         'illegal': 'DPoS Node Illegal',
         'return': 'Unregister Success',
-        'node-detials': 'DPoS Node Details',
+        'node-details': 'DPoS Node Details',
         'node-status': 'DPoS node Status',
         'node-name': 'DPoS node name',
         'node-publickey': 'DPoS Public Key',
@@ -31,7 +31,7 @@ export const en = {
         'Returned': 'Returned',
         'current-votes': 'Current Votes',
 
-        'transaction-detials': 'Transaction Details',
+        'transaction-details': 'Transaction Details',
         'transaction-id': 'Transaction ID',
         'time-published': 'Time Published',
         'block-id': 'Block ID',

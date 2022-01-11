@@ -71,6 +71,10 @@ export class VotePage implements OnInit {
     private async setRegistrationIcon() {
         await this.nodesService.init();
 
+        if (!this.voteService.canVote()) {
+            return;
+        }
+
         switch (this.nodesService.dposInfo.state) {
             case 'Unregistered':
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });

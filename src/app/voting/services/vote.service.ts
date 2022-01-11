@@ -10,6 +10,7 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
+import { RawTransactionPublishResult } from 'src/app/wallet/model/providers/transaction.types';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
@@ -39,11 +40,13 @@ export class VoteService {
     private routerOptions?: NavigationOptions;
 
     public crmembers: any[] = [];
+    public secretaryGeneralDid: string = null;
+    public secretaryGeneralPublicKey: string = null;
 
     constructor(
         public native: Native,
         private walletManager: WalletService,
-        public popupProvider: GlobalPopupService,
+        public globalPopupService: GlobalPopupService,
         private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService,
         public jsonRPCService: GlobalJsonRPCService,
@@ -78,7 +81,7 @@ export class VoteService {
         this.activeWallet = this.walletManager.getActiveNetworkWallet();
 
         if (!this.activeWallet) {
-            const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
+            const toCreateWallet = await this.globalPopupService.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
             if (toCreateWallet) {
                 this.native.setRootRouter('/wallet/launcher');
             }
@@ -113,7 +116,7 @@ export class VoteService {
 
         //If multi sign will be rejected
         if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
-            await this.popupProvider.ionicAlert('wallet.text-warning', 'crproposalvoting.multi-sign-reject-voting');
+            await this.globalPopupService.ionicAlert('wallet.text-warning', 'crproposalvoting.multi-sign-reject-voting');
             return;
         }
 
@@ -122,7 +125,7 @@ export class VoteService {
         this.clearRoute();
     }
 
-    public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<void> {
+    public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<RawTransactionPublishResult> {
         Logger.log(App.VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
 
         const transfer = new Transfer();
@@ -136,16 +139,29 @@ export class VoteService {
         });
 
         const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer, false);
-        if (this.intentAction != null) {
-            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
-        }
 
-        // if (context) {
-        //     void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
-        // }
+        if (context) {
+            void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
+        }
         // else {
         //     void this.nav.goToLauncher();
         // }
+        return result;
+    }
+
+    public async checkWalletAvailableForVote():  Promise<boolean> {
+        // if (await this.sourceSubwallet.hasPendingBalance()) {
+        //     await this.globalPopupService.ionicAlert("common.please-wait", 'wallet.transaction-pending');
+        //     return false;
+        // }
+
+        let utxo = await this.sourceSubwallet.getAvailableUtxo(20000);
+        if (!utxo) {
+            await this.globalPopupService.ionicAlert('wallet.text-warning', 'crproposalvoting.ela-not-enough');
+            return false;
+        }
+
+        return true;
     }
 
     async getCRMembers() {
@@ -181,9 +197,22 @@ export class VoteService {
             const crRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
             let result = await this.jsonRPCService.httpGet(crRpcApi + "/api/council/list");
             Logger.log(App.VOTING, 'Get Current CRMembers:', result);
-            if (result && result.data && result.data.council) {
-                this.crmembers = result.data.council;
+            if (result && result.data) {
+                if (result.data.council) {
+                    this.crmembers = result.data.council;
+                }
+
+                if (result.data.secretariat) {
+                    for (let item of result.data.secretariat) {
+                        if (item.status == 'CURRENT') {
+                            this.secretaryGeneralDid = item.did;
+                            Logger.log(App.VOTING, 'secretaryGeneralDid:', this.secretaryGeneralDid);
+                            break;
+                        }
+                    }
+                }
             }
+
         }
         catch (err) {
             Logger.error(App.VOTING, 'getCurrentCRMembers error:', err);
@@ -207,4 +236,46 @@ export class VoteService {
         return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
     }
 
+    public getElaRpcApi(): string {
+        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+    }
+
+    async getSecretaryGeneralDid() {
+        if (this.secretaryGeneralDid == null) {
+            await this.getCRMembers();
+        }
+
+        return this.secretaryGeneralDid;
+    }
+
+    async getSecretaryGeneralPublicKey() {
+        if (this.secretaryGeneralPublicKey == null) {
+            const param = {
+                method: 'getsecretarygeneral',
+            };
+
+            try {
+                const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+                Logger.log(App.VOTING, 'getSecretaryGeneralPublicKey', result);
+                if (result && result.secretarygeneral) {
+                    this.secretaryGeneralPublicKey = result && result.secretarygeneral;
+                }
+            }
+            catch (err) {
+                Logger.error(App.VOTING, 'getSecretaryGeneralPublicKey error', err);
+            }
+        }
+
+        return this.secretaryGeneralPublicKey;
+    }
+
+    async isSecretaryGeneral(): Promise<boolean> {
+        let secretaryGeneralDid = await this.getSecretaryGeneralDid();
+        return (secretaryGeneralDid == GlobalDIDSessionsService.signedInDIDString) || (("did:elastos:" + secretaryGeneralDid) ==  GlobalDIDSessionsService.signedInDIDString);
+    }
+
+    // The wallet that has no ELA subwallet can't vote, eg. the wallet imported by privat key.
+    canVote() {
+        return this.sourceSubwallet ? true : false;
+    }
 }

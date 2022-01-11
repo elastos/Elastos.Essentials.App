@@ -248,7 +248,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     public async updateBalance() {
         //Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
-        if (!this.tokenDecimals) {
+        if (typeof (this.tokenDecimals) == "undefined" || this.tokenDecimals === null) {
             Logger.error("wallet", "Token decimals unknown for token " + this.coin.getID());
             return;
         }
@@ -315,6 +315,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
+        if (transaction.hide) return null;
+
         const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
         const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
@@ -400,7 +402,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         return Promise.resolve([]);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg: number = null): Promise<any> {
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<any> {
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });

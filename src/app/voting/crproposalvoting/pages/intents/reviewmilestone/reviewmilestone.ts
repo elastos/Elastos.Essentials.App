@@ -1,21 +1,21 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
-import { CROperationsService, CRWebsiteCommand } from 'src/app/voting/crproposalvoting/services/croperations.service';
-import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
+import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { PopupService } from '../../../services/popup.service';
+import { DraftService } from '../../../services/draft.service';
 
-type ReviewMilestoneCommand = CRWebsiteCommand & {
+type ReviewMilestoneCommand = CRCommand & {
     data: {
         messagehash: string,
         newownerpubkey: string,
@@ -38,41 +38,72 @@ type ReviewMilestoneCommand = CRWebsiteCommand & {
 export class ReviewMilestonePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private reviewMilestoneCommand: ReviewMilestoneCommand;
+    private onGoingCommand: ReviewMilestoneCommand;
     public signingAndSendingProposalResponse = false;
-    public trackingType = "";
-    public proposalDetails: ProposalDetails;
-    public proposalDetailsFetched = false;
+    public proposalDetail: ProposalDetails;
+    public proposalDetailFetched = false;
+    public isKeyboardHide = true;
+    public content = "";
+    public trackingType = "progress";
+    typeResult = {
+        progress: "approve",
+        finalized: "approve",
+        rejected: "reject",
+    }
 
     constructor(
         private crOperations: CROperationsService,
-        private popup: PopupService,
         public translate: TranslateService,
-        private globalIntentService: GlobalIntentService,
         public walletManager: WalletService,
         private voteService: VoteService,
-        private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
+        public zone: NgZone,
+        public keyboard: Keyboard,
+        private draftService: DraftService,
     ) {
 
     }
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
-        this.reviewMilestoneCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
-        Logger.log(App.CRPROPOSAL_VOTING, "reviewMilestoneCommand", this.reviewMilestoneCommand);
-        this.trackingType = this.reviewMilestoneCommand.data.proposaltrackingtype;
+        if (this.proposalDetail) {
+            return;
+        }
+        this.proposalDetailFetched = false;
 
-        try {
-            // Fetch more details about this proposal, to display to the user
-            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.reviewMilestoneCommand.data.proposalhash);
-            Logger.log(App.CRPROPOSAL_VOTING, "proposalDetails", this.proposalDetails);
-            this.proposalDetailsFetched = true;
+        this.onGoingCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
+        Logger.log(App.CRPROPOSAL_VOTING, "ReviewMilestoneCommand", this.onGoingCommand);
+
+        this.proposalDetail = await this.crOperations.getCurrentProposal();
+        this.proposalDetailFetched = true;
+
+        if (this.proposalDetail) {
+            this.keyboard.onKeyboardWillShow().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = false;
+                });
+            });
+
+            this.keyboard.onKeyboardWillHide().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = true;
+                });
+            });
+
+            let milestone = this.proposalDetail.milestone;
+            if (this.onGoingCommand.data.stage == milestone[milestone.length - 1].stage) {
+                this.trackingType = "finalized";
+            }
+            else {
+                this.trackingType = this.onGoingCommand.data.proposaltrackingtype || "progress";
+            }
         }
-        catch (err) {
-            Logger.error('crproposal', 'ReviewMilestonePage ionViewDidEnter error:', err);
-        }
+    }
+
+    ionViewWillLeave() {
+        void this.crOperations.sendIntentResponse();
     }
 
     cancel() {
@@ -80,11 +111,32 @@ export class ReviewMilestonePage {
     }
 
     async signAndReviewMilestone() {
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
+        if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
+            //Check content value
+            if (!this.content || this.content == "") {
+                let blankMsg = this.translate.instant('crproposalvoting.opinion')
+                                + this.translate.instant('common.text-input-is-blank');
+                this.globalNative.genericToast(blankMsg);
+                return;
+            }
+
+            //Handle opinion
+            let data = {content: this.content};
+            let ret = await this.draftService.getDraft("opinion.json", data);
+            this.onGoingCommand.data.secretaryOpinionHash = ret.hash;
+            this.onGoingCommand.data.secretaryOpinionData = ret.data;
+            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
+        }
+
         this.signingAndSendingProposalResponse = true;
 
         try {
             //Get payload
-            var payload = this.getPayload(this.reviewMilestoneCommand);
+            var payload = this.getPayload(this.onGoingCommand);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone payload.", payload);
 
             //Get digest
@@ -96,17 +148,23 @@ export class ReviewMilestonePage {
             let ret = await this.crOperations.sendSignDigestIntent({
                 data: digest,
             });
-            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
-            if (ret.result && ret.result.signature) {
-                //Create transaction and send
-                payload.SecretaryGeneralSignature = ret.result.signature;
-                const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(JSON.stringify(payload), '');
-                await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+
+            if (!ret) {
+                // Operation cancelled, cancel the operation silently.
+                this.signingAndSendingProposalResponse = false;
+                return;
             }
+
+            Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
+            //Create transaction and send
+            payload.SecretaryGeneralSignature = ret.result.signature;
+            const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(JSON.stringify(payload), '');
+            await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
-            // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.popup.alert("Error", "Sorry, unable to sign your crproposal. Your crproposal can't be review for now. " + e, "Ok");
+            this.signingAndSendingProposalResponse = false;
+            await this.crOperations.popupErrorMessage(e);
+            return;
         }
 
         this.signingAndSendingProposalResponse = false;
@@ -124,20 +182,24 @@ export class ReviewMilestonePage {
         }
 
         let payload = {
-            Type: TrackingTypes[command.data.proposaltrackingtype.toLowerCase()],
-            ProposalHash: command.data.proposalhash,
-            MessageHash: command.data.messagehash,
-            // MessageData: "",
+            Type: TrackingTypes[this.trackingType.toLowerCase()],
+            ProposalHash: command.data.proposalHash,
+            MessageHash: command.data.messageHash,
+            MessageData: command.data.messageData,
             Stage: command.data.stage,
-            OwnerPublicKey: command.data.ownerpubkey,
-            OwnerSignature: command.data.ownersignature,
-            // OwnerSignature: "f5df8e6d725715af38087ced2d8a537f27632f1fee1e2509022ce9a5cbeb4e7ab3ee708c6af602e6785eb2a2016d7c0a4ff6c6192e42593841e145c717555492",
+            OwnerPublicKey: command.data.ownerPublicKey,
+            OwnerSignature: command.data.ownerSignature,
             NewOwnerPublicKey: "",
             NewOwnerSignature: "",
-            SecretaryGeneralOpinionHash: command.data.secretaryopinionhash,
-            // SecretaryGeneralOpinionData: "",
+            SecretaryGeneralOpinionHash: command.data.secretaryOpinionHash,
+            SecretaryGeneralOpinionData: command.data.secretaryOpinionData,
         };
 
         return payload;
+    }
+
+    segmentChanged(ev: any) {
+        this.trackingType = ev.detail.value;
+        console.log('Segment changed', ev);
     }
 }

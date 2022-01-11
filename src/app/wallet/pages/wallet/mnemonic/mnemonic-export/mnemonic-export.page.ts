@@ -8,6 +8,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WalletCreateType } from 'src/app/wallet/model/walletaccount';
 import { AuthService } from '../../../../services/auth.service';
 import { IntentTransfer } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
@@ -31,6 +32,8 @@ export class MnemonicExportPage implements OnInit {
     public isFromIntent = false;
     public mnemonicStr = "";
     public walletname = "";
+    public hasMnemonic = true;
+    public evmPrivateKey = '';
     public account: any = {};
     public intentTransfer: IntentTransfer;
 
@@ -67,7 +70,6 @@ export class MnemonicExportPage implements OnInit {
                 if (navigation.extras.state.payPassword) {
                     this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
                     this.payPassword = navigation.extras.state.payPassword;
-                    void this.showMnemonics();
                 } else {
                     Logger.log('wallet', 'From intent');
                     this.isFromIntent = true;
@@ -83,6 +85,15 @@ export class MnemonicExportPage implements OnInit {
             const masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
             this.walletname = masterWallet.name;
             this.account = masterWallet.account.Type;
+            this.hasMnemonic = masterWallet.createType === WalletCreateType.MNEMONIC
+                || masterWallet.createType === WalletCreateType.KEYSTORE;
+            if (this.hasMnemonic) {
+                void this.showMnemonics();
+            } else {
+                this.hideMnemonic = false;
+            }
+
+            void this.showPrivateKey();
         });
     }
 
@@ -102,7 +113,11 @@ export class MnemonicExportPage implements OnInit {
 
     async onExport() {
         if (await this.getPassword()) {
-           void this.showMnemonics();
+            if (this.hasMnemonic) {
+                void this.showMnemonics();
+            } else {
+                void this.showPrivateKey();
+            }
         } else {
             // User cancel
             Logger.log('wallet', 'MnemonicExportPage user cancel');
@@ -129,6 +144,15 @@ export class MnemonicExportPage implements OnInit {
         this.hideMnemonic = false;
     }
 
+    async showPrivateKey() {
+        this.evmPrivateKey = await this.walletManager.spvBridge.exportETHSCPrivateKey(this.masterWalletId, "ETHSC", this.payPassword);
+        if (!this.hasMnemonic) {
+            this.titleBar.setBackgroundColor('#732cd0');
+            this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+            this.titleBar.setTitle(this.translate.instant('wallet.privatekey'));
+        }
+    }
+
     async onShare() {
         await this.globalIntentService.sendIntentResponse(
             { mnemonic: this.mnemonicStr },
@@ -138,5 +162,10 @@ export class MnemonicExportPage implements OnInit {
 
     return() {
         this.native.pop();
+    }
+
+    copyPrivateKey() {
+        void this.native.copyClipboard(this.evmPrivateKey);
+        this.native.toast(this.translate.instant("common.copied-to-clipboard"));
     }
 }

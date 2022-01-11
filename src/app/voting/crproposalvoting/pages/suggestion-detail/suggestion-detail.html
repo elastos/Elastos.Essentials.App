@@ -1,145 +1,161 @@
-<ion-content>
+<ion-content [class.darkContainer]="theme.darkMode">
     <app-titlebar></app-titlebar>
-    <div *ngIf="suggestion" [class.darkContainer]="theme.darkMode">
-        <ion-grid>
+    <div *ngIf="suggestionDetailFetched">
+        <div *ngIf="suggestion">
+            <ion-grid>
+                <ion-card>
+                    <ion-card-title>{{ 'crproposalvoting.suggestion' | translate }} <span>#</span>{{ suggestion.id }}
+                    </ion-card-title>
+                    <ion-card-subtitle>{{ 'crproposalvoting.by' | translate }} {{ suggestion.proposer }} &#8226; {{
+                        uxService.formatDate(suggestion.createdAt) }}</ion-card-subtitle>
+                    <p [class.proposed]="suggestion.status === 'proposed'"
+                        [class.signed]="suggestion.status === 'signed'"
+                        [class.unsigned]="suggestion.status === 'unsigned'">
+                        {{ 'crproposalvoting.' + suggestion.status | translate }}
+                    </p>
+                </ion-card>
 
-            <ion-card>
-                <ion-card-title>{{ 'crproposalvoting.suggestion' | translate }} <span>#</span>{{ suggestion.id }}
-                </ion-card-title>
-                <ion-card-subtitle>{{ 'crproposalvoting.by' | translate }} {{ suggestion.proposer }} &#8226; {{
-                    uxService.formatDate(suggestion.createdAt) }}</ion-card-subtitle>
-                <p [class.proposed]="suggestion.status === 'proposed'" [class.signed]="suggestion.status === 'signed'"
-                    [class.unsigned]="suggestion.status === 'unsigned'">
-                    {{ 'crproposalvoting.' + suggestion.status | translate }}
-                </p>
-            </ion-card>
+                <div *ngFor="let item of suggestionDetails">
+                    <ion-card *ngIf="item.value" class="section-row">
+                        <ion-col size="12" (click)="item.active = !item.active">
+                            <h1>{{ item.title }}</h1>
+                            <img [class.rotate]="item.active"
+                                [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
+                        </ion-col>
+                        <ion-col *ngIf="item.active" class="details-col" size="12" [ngSwitch]="item.type">
+                            <div *ngSwitchCase="'marked'" class="item" ></div>
+                            <div *ngSwitchCase="'array'" class="item" [innerHtml]="item.value"></div>
 
-            <div *ngFor="let item of suggestionDetails">
-                <ion-card *ngIf="item.value" class="section-row">
-                    <ion-col size="12" (click)="item.active = !item.active">
-                        <h1>{{ item.title }}</h1>
-                        <img [class.rotate]="item.active"
-                            [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
-                    </ion-col>
-                    <ion-col *ngIf="item.active" class="details-col" size="12" [ngSwitch]="item.type">
-                        <div *ngSwitchCase="'marked'" class="item" [innerHtml]="item.value"></div>
-                        <div *ngSwitchCase="'milestone'" class="milestone-container item">
-                            <div class="vertical-line-container">
-                                <div class="inner"></div>
+                            <div *ngSwitchCase="'type'" class="item">
+                                <h4>{{ 'crproposalvoting.proposaltype-' + item.value | translate }}</h4>
                             </div>
-                            <div class="content">
-                                <div *ngFor="let entry of item.value; last as isLast" class="entry">
-                                    <div class="dot"></div>
-                                    <div *ngIf="isLast" class="marker"></div>
-                                    <ion-col size="1" class="stage">{{ entry.stage + suggestion.stageAdjust}}</ion-col>
-                                    <ion-col size="11" class="milestone">
-                                        <div>
-                                            <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp) }}
-                                            </h5>
-                                            <h5 class="milestone-goal">{{entry.goal}}klajgla g agjakkfjlakjglaskd jklgjalgjalgj algjkalg al </h5>
-                                        </div>
-                                    </ion-col>
+
+                            <div *ngSwitchCase="'milestone'" class="milestone-container item">
+                                <div class="vertical-line-container">
+                                    <div class="inner"></div>
+                                </div>
+                                <div class="content">
+                                    <div *ngFor="let entry of item.value; last as isLast" class="entry">
+                                        <div class="dot"></div>
+                                        <div *ngIf="isLast" class="marker"></div>
+                                        <ion-col size="1" class="stage">{{ entry.stage + suggestion.stageAdjust}}
+                                        </ion-col>
+                                        <ion-col size="11" class="milestone">
+                                            <div>
+                                                <h5 class="milestone-timestamp">{{uxService.formatDate(entry.timestamp)
+                                                    }}
+                                                </h5>
+                                                <h5 class="milestone-goal">{{entry.goal}}klajgla g agjakkfjlakjglaskd
+                                                    jklgjalgjalgj algjkalg al </h5>
+                                            </div>
+                                        </ion-col>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div *ngSwitchCase="'budgets'" class="budget-container item">
-                            <ion-row>
-                                <ion-col size="12">
-                                    <ion-label>
-                                        <h5>{{'crproposalvoting.total-budget' | translate}} (ELA)</h5>
-                                        <h4>{{ totalBudget / Config.SELA}}</h4>
-                                    </ion-label>
-                                </ion-col>
-                            </ion-row>
-                            <ion-row>
-                                <ion-col size="12">
-                                    <ion-label>
-                                        <h5>{{'crproposalvoting.receive-address' | translate}}</h5>
-                                        <h4>{{ suggestion.recipient }}</h4>
-                                    </ion-label>
-                                </ion-col>
-                            </ion-row>
-                            <ion-row>
-                                <ion-col size="12">
-                                    <ion-label>
-                                        <h5>{{'crproposalvoting.payment-schedule' | translate}}</h5>
-                                        <ul id="budget-list">
-                                            <li *ngFor="let entry of item.value; let i = index">
-                                                <div id="budget">
-                                                    <p><span class="number">{{ i + 1 }}</span> <span>{{
-                                                            'crproposalvoting.'+
-                                                            entry.type | translate }}</span></p>
-                                                    <p class="amount">{{ "ELA " + entry.amount / Config.SELA }} </p>
-                                                    <p class="stage">{{('crproposalvoting.milestone' | translate) + "#"
-                                                        + (entry.stage + suggestion.stageAdjust) }}</p>
-                                                    <p class="payment-criteria">{{ entry.paymentCriteria }} </p>
-                                                </div>
-                                                <div class="space"></div>
-                                            </li>
-                                        </ul>
-                                    </ion-label>
+                            <div *ngSwitchCase="'budgets'" class="budget-container item">
+                                <ion-row>
+                                    <ion-col size="12">
+                                        <ion-label>
+                                            <h5>{{'crproposalvoting.total-budget' | translate}} (ELA)</h5>
+                                            <h4>{{ totalBudget / Config.SELA}}</h4>
+                                        </ion-label>
+                                    </ion-col>
+                                </ion-row>
+                                <ion-row>
+                                    <ion-col size="12">
+                                        <ion-label>
+                                            <h5>{{'crproposalvoting.receive-address' | translate}}</h5>
+                                            <h4>{{ suggestion.recipient }}</h4>
+                                        </ion-label>
+                                    </ion-col>
+                                </ion-row>
+                                <ion-row>
+                                    <ion-col size="12">
+                                        <ion-label>
+                                            <h5>{{'crproposalvoting.payment-schedule' | translate}}</h5>
+                                            <ul id="budget-list">
+                                                <li *ngFor="let entry of item.value; let i = index">
+                                                    <div id="budget">
+                                                        <p><span class="number">{{ i + 1 }}</span> <span>{{
+                                                                'crproposalvoting.'+
+                                                                entry.type | translate }}</span></p>
+                                                        <p class="amount">{{ "ELA " + entry.amount / Config.SELA }} </p>
+                                                        <p class="stage">{{('crproposalvoting.milestone' | translate) +
+                                                            "#"
+                                                            + (entry.stage + suggestion.stageAdjust) }}</p>
+                                                        <p class="payment-criteria">{{ entry.paymentCriteria }} </p>
+                                                    </div>
+                                                    <div class="space"></div>
+                                                </li>
+                                            </ul>
+                                        </ion-label>
 
-                                </ion-col>
-                            </ion-row>
-                        </div>
-                        <div *ngSwitchCase="'implementationTeam'" class="implementation-team item">
-                            <ion-row *ngFor="let entry of item.value">
-                                <ion-col size="1.25" id="img-col">
-                                    <img class="avatar"
-                                        [src]="entry.avatar ? entry.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
-                                </ion-col>
-                                <ion-col size="10.75">
-                                    <div class="implementation">
-                                        <h4 class="font-blod">{{ entry.member }} </h4>
-                                        <h5>{{ entry.role }} </h5>
-                                        <h5>{{ entry.responsibility }}</h5>
-                                    </div>
-                                </ion-col>
-                            </ion-row>
-                        </div>
+                                    </ion-col>
+                                </ion-row>
+                            </div>
+                            <div *ngSwitchCase="'implementationTeam'" class="implementation-team item">
+                                <ion-row *ngFor="let entry of item.value">
+                                    <ion-col size="1.25" id="img-col">
+                                        <img class="avatar"
+                                            [src]="entry.avatar ? entry.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
+                                    </ion-col>
+                                    <ion-col size="10.75">
+                                        <div class="implementation">
+                                            <h4 class="font-blod">{{ entry.member }} </h4>
+                                            <h5>{{ entry.role }} </h5>
+                                            <h5>{{ entry.responsibility }}</h5>
+                                        </div>
+                                    </ion-col>
+                                </ion-row>
+                            </div>
 
-                        <div *ngSwitchCase="'original-url'" class="item">
-                            <ion-row class="original-url" (click)="uxService.openLink(item.value)">
-                                <ion-col class="label-col" size="10.75">
-                                    <a>{{ item.value }} </a>
-                                </ion-col>
-                                <ion-col size="1.25">
-                                    <img [src]="'assets/crproposalvoting/icons/link.svg'">
-                                </ion-col>
-                            </ion-row>
-                        </div>
+                            <div *ngSwitchCase="'original-url'" class="item">
+                                <ion-row class="original-url" (click)="uxService.openLink(item.value)">
+                                    <ion-col class="label-col" size="10.75">
+                                        <a>{{ item.value }} </a>
+                                    </ion-col>
+                                    <ion-col size="1.25">
+                                        <img [src]="'assets/crproposalvoting/icons/link.svg'">
+                                    </ion-col>
+                                </ion-row>
+                            </div>
 
-                        <div *ngSwitchCase="'receive-address'" class="item">
-                            <ion-row class="receive-address">
-                                <ion-col class="label-col" size="10.75">
-                                    <div>{{ item.value }}</div>
-                                </ion-col>
-                                <ion-col size="1.25" (click)="uxService.copyAddress(item.value)">
-                                    <img [src]="'assets/crproposalvoting/icons/clipboard.svg'">
-                                </ion-col>
-                            </ion-row>
-                        </div>
-                    </ion-col>
-                </ion-card>
+                            <div *ngSwitchCase="'receive-address'" class="item">
+                                <ion-row class="receive-address">
+                                    <ion-col class="label-col" size="10.75">
+                                        <div>{{ item.value }}</div>
+                                    </ion-col>
+                                    <ion-col size="1.25" (click)="uxService.copyAddress(item.value)">
+                                        <img [src]="'assets/crproposalvoting/icons/clipboard.svg'">
+                                    </ion-col>
+                                </ion-row>
+                            </div>
+                        </ion-col>
+                    </ion-card>
+                </div>
+            </ion-grid>
+
+            <div *ngIf="buttonLabel">
+                <div class="footer-space"></div>
+                <ion-footer>
+                    <ion-row>
+                        <ion-col class="align-center">
+                            <div class="btn-container align-center" id="sign" (click)="handleCommand()">
+                                {{ buttonLabel | translate }}
+                            </div>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-col>
+                    </ion-row>
+                </ion-footer>
             </div>
-        </ion-grid>
+        </div>
 
-        <div *ngIf="buttonLabel">
-            <div class="footer-space"></div>
-            <ion-footer>
-                <ion-row>
-                    <ion-col class="align-center">
-                        <div class="btn-container align-center" id="sign" (click)="handleCommand()">
-                            {{ buttonLabel | translate }}
-                        </div>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </ion-col>
-                </ion-row>
-            </ion-footer>
+        <div *ngIf="!suggestion" class="no-data">
+            {{ 'crproposalvoting.no-suggestion-detail' | translate }}
         </div>
     </div>
 
-    <ion-grid *ngIf="!suggestion" class="spinner spinner-container">
+    <ion-grid *ngIf="!suggestionDetailFetched" class="spinner spinner-container">
         <ion-spinner name="crescent"></ion-spinner>
     </ion-grid>
 

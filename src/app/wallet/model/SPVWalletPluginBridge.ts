@@ -933,6 +933,81 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    // Reserve Custom ID
+    reserveCustomIDOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.reserveCustomIDOwnerDigest([masterWalletId, subWalletId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("reserveCustomIDOwnerDigest", err, reject); });
+        });
+    }
+
+    reserveCustomIDCRCouncilMemberDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.reserveCustomIDCRCouncilMemberDigest([masterWalletId, subWalletId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("reserveCustomIDCRCouncilMemberDigest", err, reject); });
+        });
+    }
+
+    createReserveCustomIDTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.createReserveCustomIDTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("createReserveCustomIDTransaction", err, reject); });
+        });
+    }
+
+    // Receive Custom ID
+    receiveCustomIDOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.receiveCustomIDOwnerDigest([masterWalletId, subWalletId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("receiveCustomIDOwnerDigest", err, reject); });
+        });
+    }
+
+    receiveCustomIDCRCouncilMemberDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.receiveCustomIDCRCouncilMemberDigest([masterWalletId, subWalletId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("receiveCustomIDCRCouncilMemberDigest", err, reject); });
+        });
+    }
+
+    createReceiveCustomIDTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.createReceiveCustomIDTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("createReceiveCustomIDTransaction", err, reject); });
+        });
+    }
+
+    // Change Custom ID Fee
+    changeCustomIDFeeOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.changeCustomIDFeeOwnerDigest([masterWalletId, subWalletId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("changeCustomIDFeeOwnerDigest", err, reject); });
+        });
+    }
+
+    changeCustomIDFeeCRCouncilMemberDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.changeCustomIDFeeCRCouncilMemberDigest([masterWalletId, subWalletId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("changeCustomIDFeeCRCouncilMemberDigest", err, reject); });
+        });
+    }
+
+    createChangeCustomIDFeeTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.createChangeCustomIDFeeTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("createChangeCustomIDFeeTransaction", err, reject); });
+        });
+    }
+
     // BTCSubwallet
     getLegacyAddresses(masterWalletId: string, index: number, count: number, internal: boolean): Promise<string[]> {
         return new Promise((resolve, reject) => {
@@ -991,6 +1066,12 @@ export class SPVWalletPluginBridge {
         }
         // Need use input password then retry.
         if (err["code"] === 20006) {
+            if (promiseRejectHandler) promiseRejectHandler(err);
+            return;
+        }
+
+        // Unsupport to create elastos based subwallet. eg. create master wallet by evm privatekey.
+        if (err["code"] === 20057) {
             if (promiseRejectHandler) promiseRejectHandler(err);
             return;
         }

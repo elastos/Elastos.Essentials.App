@@ -14,10 +14,12 @@ export const en = {
         'loading-proposal': 'Loading Proposal...',
         'no-proposals': 'No matching proposals for now.',
         'proposal-details': 'Proposal Details',
+        'no-proposal-detail': 'Can not get the proposal details for now.',
         'proposal': 'Proposal',
         'abstract': 'Abstract',
         'proposal-hash': 'Proposal Hash',
         'url': 'Original Url',
+        'reservecustomizedid': 'Reserve Customized DID',
         'time-remaining': 'Time Remaining',
         'reject-ratio': 'Rejection Ratio',
         'member-votes': 'Council Member Votes',
@@ -32,6 +34,7 @@ export const en = {
         'loading-suggestion': 'Loading Suggestion...',
         'no-suggestions': 'No matching suggestions for now.',
         'suggestion-details': 'Suggestion Details',
+        'no-suggestion-detail': 'Can not get the suggestion details for now.',
         'suggestion': 'Suggestion',
         'suggestion-id': 'Suggestion ID',
 
@@ -77,17 +80,20 @@ export const en = {
         'proposaltype-changeproposaladdress': 'Change Proposal Address',
         'proposaltype-closeproposal': 'Terminate Proposal',
         'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
+        'proposaltype-reservecustomizedid': 'Motion to reserve Customized DID',
         'imprest': 'Imprest',
         'normalpayment': 'NormalPayment',
         'finalpayment': 'FinalPayment',
 
         'sign-create-suggestion': 'Sign and Create Suggestion',
+        'createsuggestion-successfully': 'Suggestion created successfully.',
+        'createsuggestion-failed': 'Failed to sign suggestion, please sign suggestion again.',
 
         'create-proposal': 'Create Proposal',
         'create-proposal-msg': 'You are about to create the following proposal. Please review it, and follow the process to sign and publish it.',
         'sign-create-proposal': 'Sign and Create Proposal',
-        "create-proposal-successfully": "Proposal created successfully, please wait for transaction confirmation.",
-        "create-proposal-failed": "Failed to create proposal, please recreate proposal.",
+        'createproposal-successfully': 'Proposal created successfully, please wait for transaction confirmation.',
+        'createproposal-failed': 'Failed to create proposal, please recreate proposal.',
 
         'review-proposal': 'Review Proposal',
         'review-proposal-msg': 'You are about to review the following proposal. Please review it, and follow the process to sign and publish it.',
@@ -100,8 +106,8 @@ export const en = {
         'progress': 'Progress',
         'finalized': 'Finalized',
         // 'abstain': 'Abstain',
-        "review-proposal-successfully": "Proposal review is successfully, please wait for transaction confirmation.",
-        "review-proposal-failed": "Proposal review failed, please review again.",
+        'reviewproposal-successfully': 'Proposal review is successfully, please wait for transaction confirmation.',
+        'reviewproposal-failed': 'Proposal review failed, please review again.',
 
         'vote-proposal': 'Vote Against',
         'vote-proposal-msg': 'You are about to vote to veto a proposal. If a proposal is vetoed by community members using enough ELA, it will be aborted.',
@@ -111,20 +117,30 @@ export const en = {
         'max-votes-suf': ' Votes',
         'multi-sign-reject-voting': 'Multi sign reject voting.',
         'greater-than-max-votes': 'Greater than avalible votes.',
+        'voteforproposal-successfully': 'Vote successfully, please wait for transaction confirmation.',
+        'voteforproposal-failed': 'Failed to vote, please vote again.',
 
         'update-milestone': 'Update Milestone',
         'update-milestone-msg': 'You are about to review the following milestone. Please review it, and follow the process to sign and publish it.',
         'sign-update-milestone': 'Sign and Update Milestone',
         'milestone-stage': 'Milestone Stage',
+        'updatemilestone-successfully': 'Update milestone successfully.',
+        'updatemilestone-failed': 'Failed to update milestone, please update milestone again.',
 
         'review-milestone': 'Review Milestone',
         'review-milestone-msg': 'You are about to review the following milestone. Please review it, and follow the process to sign and publish it.',
         'sign-review-milestone': 'Sign and Review Milestone',
+        'reviewmilestone-successfully': 'Milestone review is successfully, please wait for transaction confirmation.',
+        'reviewmilestone-failed': 'Milestone review failed, please review again.',
 
         'withdraw': 'Withdraw',
         'withdraw-msg': 'You are about to withdraw. Please review it, and follow the process to sign and publish it.',
         'withdraw-amount': 'Withdraw Amount',
         'sign-withdraw': 'Sign and Withdraw',
+        'apply': 'Apply',
+        'review': 'Review',
+        'withdraw-successfully': 'Withdraw is successfully, please wait for transaction confirmation.',
+        'withdraw-failed': 'Withdraw failed, please withdraw again.',
 
         'crc-proposals-today': 'CRC Proposals Today',
         'crc-proposals-today-msg': 'There is a new CRC proposal today, click to check it out.',
@@ -152,6 +168,14 @@ export const en = {
         'receive-address': 'ELA Receive Address',
         'payment-schedule': 'Payment Schedule',
         'budget-statement': 'Budget Statement',
+
+        //Error
+        'no-draft-data': 'Can not get the drafe data for now.',
+        'no-message-data': 'Can not get the message data for now.',
+        'no-opinion-data': 'Can not get the opinion data for now.',
+        'no-command-type': 'This CR commond type is currently not supported.',
+        'no-data': 'Can not get the data for now, please try again.',
+        'ela-not-enough': 'The availability ELA is not enough for transaction.',
     }
 
 };

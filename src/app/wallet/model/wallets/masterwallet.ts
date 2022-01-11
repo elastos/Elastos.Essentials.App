@@ -3,7 +3,7 @@ import { ERC1155Service } from '../../services/erc1155.service';
 import { ERC721Service } from '../../services/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
 import { WalletService } from '../../services/wallet.service';
-import { WalletAccount, WalletAccountType } from '../walletaccount';
+import { WalletAccount, WalletAccountType, WalletCreateType } from '../walletaccount';
 
 export type WalletID = string;
 
@@ -18,7 +18,9 @@ export class ExtendedMasterWalletInfo {
     /* Wallet theme */
     theme: Theme;
     /* Created by system when create a new identity */
-    createdBySystem: boolean
+    createdBySystem: boolean;
+    /* Created by mnemonic or private key */
+    createType: WalletCreateType;
 }
 
 export class MasterWallet {
@@ -26,6 +28,7 @@ export class MasterWallet {
     public name: string = null;
     public theme: Theme = null;
     public createdBySystem = false;
+    public createType: WalletCreateType = WalletCreateType.MNEMONIC;
 
     public account: WalletAccount = {
         Type: WalletAccountType.STANDARD,
@@ -39,11 +42,13 @@ export class MasterWallet {
         private localStorage: LocalStorage,
         id: string,
         createdBySystem: boolean,
+        createType: WalletCreateType,
         name?: string,
         theme?: Theme,
     ) {
         this.id = id;
         this.createdBySystem = createdBySystem;
+        this.createType = createType;
         this.name = name || 'Anonymous Wallet';
         this.theme = theme || {
             color: '#752fcf',
@@ -77,6 +82,7 @@ export class MasterWallet {
         extendedInfo.name = this.name;
         extendedInfo.theme = this.theme;
         extendedInfo.createdBySystem = this.createdBySystem;
+        extendedInfo.createType = this.createType;
 
         return extendedInfo;
     }
@@ -96,6 +102,7 @@ export class MasterWallet {
             this.name = extendedInfo.name;
             this.theme = extendedInfo.theme;
             this.createdBySystem = extendedInfo.createdBySystem;
+            this.createType = extendedInfo.createType ? extendedInfo.createType : WalletCreateType.MNEMONIC;
         }
 
         Logger.log("wallet", "Populated master wallet:", this);

@@ -240,7 +240,11 @@ export class NodesService {
     }
 
     async fetchNodes() {
-        let ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
+        let ownerPublicKey = '';
+        //The wallet imported by private key has no ELA subwallet.
+        if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
+            await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
+        }
         this.dposInfo = {
             nickname: "test",
             location: 86,
@@ -298,19 +302,21 @@ export class NodesService {
         }
 
         this.dposInfo.txConfirm = true;
-        // TODO await this.voteService.sourceSubwallet.getTransactionsByRpc();
-        let txhistory = await this.voteService.sourceSubwallet.getTransactions();
-        for (let i in txhistory) {
-            if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
-                if (this.dposInfo.state == 'Unregistered') {
-                    if (txhistory[i].txtype == RawTransactionType.RegisterProducer) {
+        if (this.voteService.sourceSubwallet) {
+            // TODO await this.voteService.sourceSubwallet.getTransactionsByRpc();
+            let txhistory = await this.voteService.sourceSubwallet.getTransactions();
+            for (let i in txhistory) {
+                if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
+                    if (this.dposInfo.state == 'Unregistered') {
+                        if (txhistory[i].txtype == RawTransactionType.RegisterProducer) {
+                            this.dposInfo.txConfirm = false;
+                            break;
+                        }
+                    }
+                    else if (txhistory[i].txtype == RawTransactionType.UpdateProducer) {
                         this.dposInfo.txConfirm = false;
                         break;
                     }
-                }
-                else if (txhistory[i].txtype == RawTransactionType.UpdateProducer) {
-                    this.dposInfo.txConfirm = false;
-                    break;
                 }
             }
         }

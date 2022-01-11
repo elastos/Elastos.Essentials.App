@@ -108,6 +108,7 @@ export class CurrencyService {
   }
 
   async init() {
+    this.pricefetched = false;
     this.loadAllTokenSymbol();
 
     // Load or create a cache and store this cache globally to share fetched values among several DID users.
@@ -211,6 +212,9 @@ export class CurrencyService {
                     this.networkMainTokenPrice[tokenSymbol] = null;
                 }
             }
+            // Set exchange for BTC => USD
+            this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
+
             this.pricefetched = true;
             // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
             resolve(true);

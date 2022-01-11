@@ -38,7 +38,7 @@
                                 </p>
                             </ion-label>
                         </ion-col>
-                        <ion-col size="1.5" class="checkbox-container">
+                        <ion-col size="1.5" class="checkbox-container" *ngIf="voteService.canVote()">
                             <ion-checkbox value="node" [(ngModel)]="node.isChecked" mode="ios"
                                 [disabled]="selectedNodes > 35 && !node.isChecked"></ion-checkbox>
                         </ion-col>
@@ -83,7 +83,7 @@
     </ng-template>
 </ion-content>
 
-<div *ngIf="nodesService._nodes.length > 0 && !voting" class="vote-btn ion-activatable ripple animate-btn" (click)="castVote()">
+<div *ngIf="nodesService._nodes.length > 0 && voteService.canVote() && !voting" class="vote-btn ion-activatable ripple animate-btn" (click)="castVote()">
     <h1 *ngIf="voted">{{ 'dposvoting.vote-voted' | translate }}</h1>
     <h1 *ngIf="!voted">{{ 'dposvoting.vote-not-voted' | translate }}</h1>
     <ion-ripple-effect></ion-ripple-effect>

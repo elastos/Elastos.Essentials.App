@@ -14,10 +14,12 @@ export const zh = {
         'loading-proposal': '正在加载提案...',
         'no-proposals': '暂时没有匹配的提案。',
         'proposal-details': '提案细节',
+        'no-proposal-detail': '暂时没有获得提案详情。',
         'proposal': '提案',
         'abstract': '摘要',
         'proposal-hash': '提案哈希',
         'url': '原始网址',
+        'reservecustomizedid': '预留自定义DID',
         'time-remaining': '剩余时间',
         'reject-ratio': '拒绝率',
         'member-votes': '委员投票结果',
@@ -32,6 +34,7 @@ export const zh = {
         'loading-suggestion': '正在加载建议...',
         'no-suggestions': '暂时没有匹配的建议。',
         'suggestion-details': '建议详情',
+        'no-suggestion-detail': '暂时没有获得建议详情。',
         'suggestion': '建议',
         'suggestion-id': '建议ID',
 
@@ -77,17 +80,20 @@ export const zh = {
         'proposaltype-changeproposaladdress': '改变接收地址',
         'proposaltype-closeproposal': '关闭提议',
         'proposaltype-secretarygeneral': '新的CR委员秘书长',
+        'proposaltype-reservecustomizedid': '预留自定义DID动议',
         'imprest': '首付款/预付款',
         'normalpayment': '阶段款',
         'finalpayment': '结项款/尾款',
 
         'sign-create-suggestion': '签名并提交建议',
+        'createsuggestion-successfully': '创建建议成功。',
+        'createsuggestion-failed': '签名建议失败，请重新签名建议。',
 
         'create-proposal': '发布提案',
         'create-proposal-msg': '您将要发布以下提案。请对其进行审核，并按照流程进行签名和发布。',
         'sign-create-proposal': '签名并发布提案',
-        "create-proposal-successfully": "创建提案成功，请等待交易确认。",
-        "create-proposal-failed": "创建提案失败，请重新创建提案。",
+        'createproposal-successfully': '创建提案成功，请等待交易确认。',
+        'createproposal-failed': '创建提案失败，请重新创建提案。',
 
         'review-proposal': '评议提案',
         'review-proposal-msg': '您将要评议以下提案。请对其进行审核，并按照流程进行签名和评议。',
@@ -100,8 +106,8 @@ export const zh = {
         'progress': '同意',
         'finalized': '同意',
         // 'abstain': '弃权',
-        "review-proposal-successfully": "提案评议成功，请等待交易确认。",
-        "review-proposal-failed": "提案评议失败，请重新评议。",
+        'reviewproposal-successfully': '提案评议成功，请等待交易确认。',
+        'reviewproposal-failed': '提案评议失败，请重新评议。',
 
         'vote-proposal': '投反对票',
         'vote-proposal-msg': '您将投票否决此提案。如果社区成员使用足够的ELA否决了提案，则该提案将被中止。',
@@ -111,20 +117,30 @@ export const zh = {
         'max-votes-suf': '票',
         'multi-sign-reject-voting': '多签钱包不能投票。',
         'greater-than-max-votes': '超过有效的票数。',
+        'voteforproposal-successfully': '投票成功，请等待交易确认。',
+        'voteforproposal-failed': '投票失败，请重新投票。',
 
         'update-milestone': '更新里程碑',
         'update-milestone-msg': '您将要更新里程碑。请对其进行审核，并按照流程进行签名和发布。',
         'sign-update-milestone': '签名并更新里程碑',
         'milestone-stage': '里程碑阶段',
+        'updatemilestone-successfully': '更新里程碑成功。',
+        'updatemilestone-failed': '更新里程碑失败, 请重新更新里程碑。',
 
         'review-milestone': '评议里程碑',
         'review-milestone-msg': '您将要评议里程碑。请对其进行审核，并按照流程进行签名和发布。',
         'sign-review-milestone': '签名并评议里程碑',
+        'reviewmilestone-successfully': '评议里程碑成功，请等待交易确认',
+        'reviewmilestone-failed': '评议里程碑失败, 请重新评议里程碑。',
 
         'withdraw': '取款',
         'withdraw-msg': '您将要取款。请对其进行审核，并按照流程进行签名和发布。',
         'withdraw-amount': '取款总额',
         'sign-withdraw': '签名并取款',
+        'apply': '申请',
+        'review': '审批',
+        'withdraw-successfully': '取款成功，请等待交易确认',
+        'withdraw-failed': '取款失败, 请重新取款。',
 
         'crc-proposals-today': '今天的CRC提案',
         'crc-proposals-today-msg': '今天有新的CRC提案，点击查看',
@@ -152,6 +168,14 @@ export const zh = {
         'receive-address': 'ELA接收地址',
         'payment-schedule': '付款安排',
         'budget-statement': '预算说明',
+
+        //Error
+        'no-draft-data': '暂时不能获取draftData。',
+        'no-message-data': '暂时不能获取messageData。',
+        'no-opinion-data': '暂时不能获取opinionData。',
+        'no-command-type': '这个CR操作类型目前不支持。',
+        'no-data': '暂时不能获取数据, 请重新操作。',
+        'ela-not-enough': '有效的ELA不够交易。',
     }
 
 };

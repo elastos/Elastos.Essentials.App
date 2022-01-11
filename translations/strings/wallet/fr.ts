@@ -23,9 +23,9 @@ export const fr = {
         "refresh-refreshing-text": "Mise à jour du portefeuille...",
         "intent-select-wallet": "Sélect. du portefeuille",
         "personal-wallets-with": "Portefeuille personnel avec {{ subwalletSymbol }}",
-        "find-new-token": "New Coin",
-        "find-new-token-msg": "New coin {{ token }} found on {{ network }} network",
-        "find-new-tokens-msg": "{{ count }} new coins found on {{ network }} network",
+        "find-new-token": "Nouveau Jeton",
+        "find-new-token-msg": "Nouveau jeton {{ token }} trouvé sur le réseau {{ network }}",
+        "find-new-tokens-msg": "{{ count }} nouveaux jetons trouvés sur le réseau {{ network }}",
 
 
         /*******************
@@ -53,9 +53,9 @@ export const fr = {
         "sync-progress": "Synchronisation {{progress}}%",
         "ela-erc20": "JETON ERC20 ELASTOS",
         "coin-list": "Liste des jetons",
-        "staking-assets": "Staked Assets",
-        "staking-assets-refresh": "Refresh",
-        "staking-assets-refreshing": "Refreshing",
+        "staking-assets": "Actifs en exercice",
+        "staking-assets-refresh": "Actualiser",
+        "staking-assets-refreshing": "Actualisation",
         "activate-hive-vault": "Activer le stockage Hive",
         "pull-down-to-refresh": "Faire glisser l'écran pour rafraîchir",
         "hive-not-configured-title": "Stockage Hiv enon configuré",
@@ -92,10 +92,10 @@ export const fr = {
         "available-currencies": "Devises affichables",
         "united-states-dollar": "Dollar Américain",
         "chinese-yuan": "Yuan Chinois",
-        "czk-koruna": "Czech Koruna",
+        "czk-koruna": "Couronne Tchèque",
         "euro": "Euro",
-        "british-pound": "British Pound",
-        "japanese-yen": "Japanese Yen",
+        "british-pound": "Livre Britannique",
+        "japanese-yen": "Yen Japonais",
         "bitcoin": "Bitcoin",
 
         /**********************
@@ -174,8 +174,8 @@ export const fr = {
         "transfer-all": "Tous",
         "max": "MAX",
         "touch-to-select-a-personal-wallet": "Toucher pour choisir un portefeuille personnel",
-        "withdraw-note": "The minimum withdrawal amount is 0.0002 ELA and must be an integral multiple of 0.00000001",
-        'crosschain-note': "Elastos cross-chain transfers usually take between 15 and 25 minutes. During this time you will not see your funds, please be patient",
+        "withdraw-note": "Le retrait minimal est de 0.0002 ELA et doit être un multiple de 0.00000001",
+        'crosschain-note': "Les transferts inter-chaînes prennent généralement entre 15 et 25 minutes. Vous ne verrez pas vos fonds pendant ce temps, veuillez patienter.",
 
         /********************
         * Coin Receive Page *
@@ -214,9 +214,9 @@ export const fr = {
         /***********************************
         * Options Component *
         ************************************/
-        'paste': "Paste",
+        'paste': "Coller",
         'contacts': "Contacts",
-        'scan': "Scan",
+        'scan': "Scanner",
 
         /***********************************
         * Network Switch Component *
@@ -233,11 +233,11 @@ export const fr = {
         "tx-info-transaction-time": "Date de la transaction",
         "tx-info-memo": "Mémo",
         "tx-info-receiver-address": "Adresse de destination",
-        "tx-info-sender-address": "Adresse de envoyé",
+        "tx-info-sender-address": "Adresse de l'émetteur",
         "tx-info-transaction-fees": "Frais de transaction",
         "tx-info-cost": "Coût total",
         "tx-info-transaction-id": "Identifiant de transaction",
-        "tx-info-block-id": "Identifiant de bloquer",
+        "tx-info-block-id": "Identifiant de bloc",
         "tx-info-type-received": "Reçu",
         "tx-info-type-sent": "Envoyé",
         "tx-info-type-transferred": "Transféré",
@@ -247,14 +247,14 @@ export const fr = {
         /***********************************
         * ETH Transaction Component *
         ************************************/
-        "eth-sending-transaction": "Transaction is sending",
-        "eth-transaction-wait": "Please wait...",
-        "eth-transaction-fail": "Transaction failed",
-        "eth-transaction-pending": "Transaction not confirmed",
-        "eth-transaction-speedup-prompt": "You can speedup the transaction by increasing the gas price",
-        "eth-transaction-speedup": "Speedup",
-        "eth-gasprice": "Gas Price(GWEI)",
-        "eth-gaslimit": "Gas Limit",
+        "eth-sending-transaction": "Envoi de la transaction",
+        "eth-transaction-wait": "Veuillez patienter...",
+        "eth-transaction-fail": "Echec de la transaction",
+        "eth-transaction-pending": "La transaction n'est pas confirmée",
+        "eth-transaction-speedup-prompt": "Vous pouvez accélérer la transaction en augmentant le prix du gas",
+        "eth-transaction-speedup": "Accélérer",
+        "eth-gasprice": "Prix du Gas (GWEI)",
+        "eth-gaslimit": "Limite Gas",
 
         /********************************************** Wallet Settings Screens ***********************************************/
 
@@ -264,6 +264,8 @@ export const fr = {
         "wallet-settings-title": "Paramètres Portefeuille",
         "wallet-settings-backup-wallet": "Sauvegarde",
         "wallet-settings-backup-wallet-subtitle": "Visualisez votre mnémonique pour le sauvegarder en lieu sûr.",
+        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
+        "wallet-settings-backup-wallet-keystore": "Export Keystore",
         "wallet-settings-change-name": "Renommer",
         "wallet-settings-change-name-subtitle": "Organisez vos portefeuilles en leur donnant un nom personnalisé.",
         "wallet-settings-change-theme": "Modifier le thème",
@@ -296,9 +298,9 @@ export const fr = {
         "coin-list-enable-disable-coins": "Activer/Désactiver des Jetons",
         "coin-list-enable-disable-coins-intro": "Sélectionnez les jetons que vous souhaitez afficher dans le portefeuille actuel.",
         "erc-20-token": "Jeton ERC20",
-        "new-coins": "New Coins",
-        "all-coins": "All Coins",
-        "search-coin": "Search Coins",
+        "new-coins": "Nouveaux jetons",
+        "all-coins": "Tous les jetons",
+        "search-coin": "Rechercher des jetons",
 
         /***********************
         * Export Mnemonic Page *
@@ -354,9 +356,22 @@ export const fr = {
         /***********************
         * Asset Overview Page *
         ************************/
-        'wallet-asset-title': 'Assets Overview',
-        "wallet-asset-networks-count": "{{ networksCount }} Networks",
+        'wallet-asset-title': 'Résumé financier',
+        "wallet-asset-networks-count": "{{ networksCount }} réseaux",
         'staked-assets-info-by': 'Informations hors portefeuille fournies par',
+
+        /************
+        * NFT pages *
+        *************/
+        'nft-overview': 'Mes NFTs',
+        'nft-assets': 'Actifs',
+        'nft-token-id': 'Identifiant',
+        'nft-collectibles-cant-be-listed': 'Les actifs pour ce type de NFT ne peuvent pas être listés.',
+        'nft-unnamed-asset': 'NFT sans nom',
+        'nft-asset-with-type': 'NFT de type {{ type }}',
+        'nft-properties': 'Propriétés',
+        'nft-no-properties-yet': 'L\'affichage des propriétés sera disponible prochainement.',
+        'nft-assets-owned': 'NFTs possédés',
 
         /********************************************** Intent Screens ***********************************************/
 
@@ -462,6 +477,8 @@ export const fr = {
         "text-wallet-name-validator-already-exists": "Ce nom est déjà utilisé par un autre portefeuille",
         "text-wallet-passphrase-validator-repeat": "Les deux phrases secrètes saisies sont différentes",
         "text-wallet-passphrase-validator-min-length": "La phrase secrète doit avoir au moins 8 caractères",
+        "import-wallet-by-mnemonic": "Import par mots secrets",
+        "import-wallet-by-privatekey": "Import par clé privée ou un keystore",
 
         /*****************
         * Mnemonic Pages *
@@ -478,8 +495,8 @@ export const fr = {
         'type-menmonic-import': 'Saisissez les mots de votre mnémonique pour importer votre portefeuille.',
         'import-text-word-sucess': 'Portefeuille importé depuis votre mnémonique',
         'next-four-words': '4 mots suivants',
-        'create-wallet': 'Créer Portefeuille',
-        'import-wallet': 'Importer Portefeuille',
+        'create-wallet': 'Création de Portefeuille',
+        'import-wallet': 'Import de Portefeuille',
         "mnemonic-import-missing-words": "Veuillez saisir tous les mots avant de continuer",
         "mnemonic-check-title": "Vérification du mnémonique",
         "memory-written-down": "Je l'ai noté",
@@ -489,6 +506,20 @@ export const fr = {
         "mnemonic-reinput-passphrase": "Saisir le mot de passe à nouveau",
         "help:create-password": "Il s'agit d'un mot de passe optionnel qui augmente la sécurité du mnémonique. Considérez-le comme un 13e mot du mnémonique. Notez bien que ce mot de passe ne pas pas être retrouvé si vous l\'oubliez. Saisir un mauvais mot de passe de mnémonique dans l\'avenir lorsque vous importerez votre portefeuille ne génèrera pas d\'erreur mais créera une adresse de portefeuille différente, et vous ne verrez pas vos fonds.",
         "help:import-password": "Le mot de passe du mnémonique est un mot de votre choix qui est fortement associé à votre mnémonique. Ne tenez pas compte de cette option si vous n\'avez pas utilisé de mot de passe de mnémonique lors de la création de votre portefeuille.",
+        "privatekey": "Clé privée",
+        "privatekey-tap-to-copy": "Toucher la clé privée pour copier",
+        "export-private-key-intro": "Vous pouvez aussi choisir d'utiliser la clé privée suivante dans certaines applications. Touchez pour copier.",
+
+        /***********************
+        * Export Keystore Page *
+        ************************/
+        "keystore-title": "Export Keystore",
+        "keystore-export-intro": "Touch to copy",
+        "keystore-input-password": "Set Keystore password",
+        "keystore-reinput-password": "Repeat Keystore password",
+        "keystore-export": "Export",
+        "keystore-password-validator-repeat": "The two input passwords are inconsistent",
+        "keystore-password-validator-min-length": "The password must be at least 8 characters",
 
         /********************************
         * Advanced Mnemonic Import Page *
@@ -497,6 +528,17 @@ export const fr = {
         'advanced-import-intro': 'Vous pouvez coller vos 12 mots de mnémonique sur une seule ligne ici.',
         'advanced-import-msg': '* Espace requis entre chaque mot',
         'paste-mnemonic': 'Coller ou saisir les 12 mots du mnémonique',
+
+        /********************************
+        * Import Wallet by private key Page *
+        *********************************/
+        'import-wallet-by-privatekey-info': 'Clé privée: Seules les clés privées des portefeuilles EVM (type Ethereum) sont supportées.',
+        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
+        'paste-privatekey': 'Coller ou saisir la clé privée ou un keystore',
+        'wrong-privatekey-msg': 'Veuillez saisir une clé privée valide',
+        'import-private-key-sucess': 'Wallet imported from Private key',
+        'import-keystore-sucess': 'Wallet imported from keystore',
+        'keystore-backup-password': 'Please enter the keystore password',
 
         /***************************
         * Earn, Swap, Bridge pages *
@@ -607,5 +649,7 @@ export const fr = {
         'Error-20060': 'Too much inputs',
         'Error-20061': 'Last vote is being confirmed',
         'Error-29999': 'Other error',
+
+        'did-oversize': 'DID Over Size',
     },
 };
