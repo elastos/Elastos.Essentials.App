@@ -308,7 +308,8 @@ export class PayPage {
   }
 
   public openPacketDetails() {
-    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/packet-details", {
+    // Use navigateRoot to make sure used doesn't come back to the pay step once payment is completed.
+    void this.globalNavService.navigateRoot(App.RED_PACKETS, "/redpackets/packet-details", {
       state: {
         packet: this.packet
       }

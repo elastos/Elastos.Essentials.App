@@ -72,6 +72,9 @@ export class PacketDetailsPage implements OnInit {
           this.packet = state.packet;
           packetHash = state.packet.hash;
         }
+        else {
+          packetHash = state.packetHash;
+        }
 
         // Refresh packet with latest data
         if (packetHash) {
@@ -97,7 +100,7 @@ export class PacketDetailsPage implements OnInit {
           }
         }
         else {
-          Logger.error("redpackets", "Unable to get packet information");
+          Logger.error("redpackets", "Unable to get packet information for packet hash " + packetHash);
           this.packetFetchErrored = true;
         }
       }

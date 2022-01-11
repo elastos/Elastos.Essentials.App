@@ -1,9 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GrabbedPacket, GrabRequest, GrabResponse, GrabStatus, PacketWinner } from '../model/grab.model';
 import { Packet, PacketToCreate, SerializedPacket } from '../model/packets.model';
@@ -12,45 +16,52 @@ import { Packet, PacketToCreate, SerializedPacket } from '../model/packets.model
   providedIn: 'root'
 })
 export class PacketService {
+  private intentSubscription: Subscription;
+
   private myPackets: Packet[]; // List of packets created by this user.
   private grabbedPackets: GrabbedPacket[]; // List of packets already grabbed before (so we don't retry).
 
   constructor(
     private http: HttpClient,
     private toastController: ToastController,
+    private globalIntentService: GlobalIntentService,
+    private globalNavService: GlobalNavService,
     private storage: GlobalStorageService
   ) { }
 
   public async onUserSignIn(): Promise<void> {
-    /* if (this.platform.platforms().indexOf("cordova") >= 0) {
-      console.log("Listening to intent events")
-      appManager.setIntentListener(
-        this.onReceiveIntent
-      );
-    } */
-
     await this.loadMyPackets();
     await this.loadGrabbedPackets();
+
+    this.intentSubscription = this.globalIntentService.intentListener.subscribe(receivedIntent => {
+      if (receivedIntent && receivedIntent.action.startsWith("https://packet.fun/p") && "g" in receivedIntent.params) {
+        // Send the intent response immediatelly
+        void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
+        this.handleGrabRequest(receivedIntent.params["g"]);
+      }
+    });
   }
 
   public onUserSignOut() {
+    this.intentSubscription.unsubscribe();
   }
 
-  onReceiveIntent = (ret) => {
-    console.log("Intent received", ret);
-
-    switch (ret.action) {
-      case "grabredpacket":
-      /* appManager.hasPendingIntent(() => {
-        console.log('Intent recieved', ret);
-        this.handledIntentId = ret.intentId;
-        this.directToGrab(ret.params);
-      }); */
-    }
+  /**
+   * Intent request to grab a packet
+   *
+   * Grab url example: https://packet.fun/p?g=123f41a15a6047d1bd2a1620e50adbe4
+   */
+  private handleGrabRequest(packetHash: string) {
+    Logger.log("redpackets", "Handling red packet grab request for packet hash " + packetHash);
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/packet-details", {
+      state: {
+        packetHash
+      }
+    });
   }
 
   createPacket(packet: PacketToCreate): Promise<Packet> {
-    Logger.log('redpackets', 'Creating packet on backend', packet);
+    Logger.log('redpackets', 'Creating packet on the backend', packet);
 
     return new Promise((resolve, reject) => {
       // Create a new packet
