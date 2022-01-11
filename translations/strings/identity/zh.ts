@@ -70,12 +70,12 @@ export const zh = {
         'no-history-display': '没有历史记录',
         'change-visibility': '更改可见性',
         'change-visibility-info': '选择是否让每个人都可以看到此信息',
-        'delete-credential': '删除凭证',
-        'delete-credential-info': '此凭证将从您的身份中删除。此操作无法撤消。',
         'change-visible': '此凭证将在您下次发布身份时对所有人可见',
         'change-unpublished': '下次发布身份时，将取消发布此凭证',
         'change-not-published': '下次发布身份时将不会发布此凭证',
         'who-made-this': '这是谁做的？',
+        'delete-credential': '删除凭证',
+        'delete-credential-info': '此凭证将从您的身份中删除。此操作无法撤消。',
 
         // Credentiallist
         'publish-changes': '发布更新',

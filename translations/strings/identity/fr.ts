@@ -74,6 +74,8 @@ export const fr = {
         'change-unpublished': 'This credential will be unpublished next time your publish your identity',
         'change-not-published': 'This credential will be not be published next time your publish your identity',
         'who-made-this': 'Qui l\'a créé?',
+        'delete-credential': 'Supprimer',
+        'delete-credential-info': 'This credential will be removed from your identity. This action cannot be reverted.',
 
         // Credentiallist
         'publish-changes': 'Publier les Changements',
