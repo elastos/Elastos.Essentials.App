@@ -427,7 +427,8 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             description: app.description,
             iconUrl: app.icon,
             network: this.walletNetworkService.activeNetwork.value.key,
-            lastBrowsed: moment().unix()
+            lastBrowsed: moment().unix(),
+            useExternalBrowser: app.useExternalBrowser
         }
         void this.dappbrowserService.saveBrowsedAppInfo(appInfo)
     }
