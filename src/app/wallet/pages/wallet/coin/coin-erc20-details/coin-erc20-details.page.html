@@ -9,7 +9,7 @@
       </div>
       <div class="coinTitle">{{ coin.getDescription() }}</div>
       <div *ngIf="contractAddress" class="qrcode-container">
-          <qrcode [qrdata]="contractAddress" [size]="150"></qrcode>
+          <qrcode [qrdata]="contractAddress" [width]="200"></qrcode>
       </div>
       <h1>{{ 'wallet.coin-erc20-details-address' | translate }}</h1>
       <h2 *ngIf="contractAddress" (click)="copy()">
