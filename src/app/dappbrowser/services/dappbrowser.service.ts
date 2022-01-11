@@ -259,7 +259,8 @@ export class DappBrowserService implements GlobalService {
             description: "",
             iconUrl: "",
             network: this.walletNetworkService.activeNetwork.value.key,
-            lastBrowsed: moment().unix()
+            lastBrowsed: moment().unix(),
+            useExternalBrowser: false
         }
         this.activeBrowsedAppInfo.next(await this.saveBrowsedAppInfo(appInfo));
     }
@@ -370,7 +371,8 @@ export class DappBrowserService implements GlobalService {
             description: "",
             iconUrl: "",
             lastBrowsed: moment().unix(),
-            network: this.getActiveNetworkKey()
+            network: this.getActiveNetworkKey(),
+            useExternalBrowser: false
         }
         this.activeBrowsedAppInfo.next(await this.saveBrowsedAppInfo(appInfo));
     }
@@ -448,7 +450,8 @@ export class DappBrowserService implements GlobalService {
             description,
             iconUrl,
             lastBrowsed: moment().unix(),
-            network: this.getActiveNetworkKey()
+            network: this.getActiveNetworkKey(),
+            useExternalBrowser: false
         }));
 
         return htmlHeader;
@@ -939,7 +942,15 @@ export class DappBrowserService implements GlobalService {
             if (previousNetwork)
                 await this.walletNetworkService.setActiveNetwork(previousNetwork);
         }
-        void this.openForBrowseMode(recentApp.url, recentApp.title);
+        if (recentApp.useExternalBrowser) {
+            void this.globalIntentService.sendIntent('openurl', { url: recentApp.url });
+            // Update lastBrowsed.
+            recentApp.lastBrowsed = moment().unix()
+            void this.saveBrowsedAppInfo(recentApp)
+
+        } else {
+            void this.openForBrowseMode(recentApp.url, recentApp.title);
+        }
     }
 
     public async clearRecentApps(): Promise<void> {
