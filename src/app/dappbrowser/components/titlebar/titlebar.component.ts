@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { PopoverController } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
@@ -31,6 +32,7 @@ export class BrowserTitleBarComponent extends TitleBarComponent {
     emit() {
         Logger.log("browser", "URL bar - request go browse to url:", this._url);
         if (this._url && this._url !== "") {
+            this.keyboard.hide();
             let fixedUrl: string = this._url;
             if (!fixedUrl.startsWith("http"))
                 fixedUrl = "https://" + fixedUrl;
@@ -43,7 +45,8 @@ export class BrowserTitleBarComponent extends TitleBarComponent {
         public popoverCtrl: PopoverController,
         public globalNav: GlobalNavService,
         public globalNotifications: GlobalNotificationsService,
-        private networkService: WalletNetworkService
+        private networkService: WalletNetworkService,
+        public keyboard: Keyboard,
     ) {
         super(themeService, popoverCtrl, globalNav, globalNotifications);
     }
