@@ -29,7 +29,7 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="ShowSplashScreenSpinner" value="false" />
     <preference name="SplashMaintainAspectRatio" value="true" />
-    <preference name="InternalIntentFilters" value="https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net https://elink.elastos.net" />
+    <preference name="InternalIntentFilters" value="https://packet.fun https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net https://elink.elastos.net" />
     <preference name="IntentRedirecturlFilter" value="https://essentials.elastos.net" />
     <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc:" />
     <preference name="AndroidXEnabled" value="true" />
@@ -88,6 +88,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:host="elink.elastos.net" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="packet.fun" android:pathPattern="/.*" android:scheme="https" />
             </intent-filter>
             <intent-filter>
                 <data android:scheme="wc" />
@@ -154,6 +160,7 @@
                 <string>applinks:contact.elastos.net</string>
                 <string>applinks:scanner.elastos.net</string>
                 <string>applinks:elink.elastos.net</string>
+                <string>applinks:packet.fun</string>
             </array>
         </config-file>
         <config-file parent="com.apple.developer.associated-domains" target="*-Release.plist">
@@ -166,6 +173,7 @@
                 <string>applinks:contact.elastos.net</string>
                 <string>applinks:scanner.elastos.net</string>
                 <string>applinks:elink.elastos.net</string>
+                <string>applinks:packet.fun</string>
             </array>
         </config-file>
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
