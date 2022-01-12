@@ -92,6 +92,8 @@ export const zh = {
         'enter-here': '请输入',
         'select-gender': '选择性别',
         'saving-picture-to-hive': '将图片保存到 Elastos Hive 存储',
+        'save-avatar-error-title': "保存头像失败",
+        'save-avatar-error-insufficient-space': "Hive 存储空间不足",
 
         // tabnav
         'home': '主页',

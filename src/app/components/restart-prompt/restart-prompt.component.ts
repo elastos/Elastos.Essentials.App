@@ -16,7 +16,6 @@ export class RestartPromptComponent implements OnInit {
     private popoverCtrl: PopoverController,
   ) {
     this.canCancel = this.navParams.get('showCancel') || false;
-    // Logger.warn('wallet', ' this.canCancel:', this.canCancel)
   }
 
   ngOnInit() {

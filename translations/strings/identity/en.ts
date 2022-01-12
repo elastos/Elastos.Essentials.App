@@ -91,6 +91,8 @@ export const en = {
         'enter-here': 'Enter here',
         'select-gender': 'Select Gender',
         'saving-picture-to-hive': 'Saving picture to your Elastos Hive storage',
+        'save-avatar-error-title': "Saving avatar error",
+        'save-avatar-error-insufficient-space': "Hive Insufficient Space",
 
         // tabnav
         'home': 'Home',
