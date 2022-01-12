@@ -32,7 +32,7 @@ import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
-import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
+import { EVMService } from 'src/app/wallet/services/evm.service';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -80,7 +80,7 @@ export class SignTypedDataPage implements OnInit {
     private erc20service: ERC20CoinService, // Keep it to initialize the service for the ETHTransactionInfoParser
     public uiService: UiService,
     private router: Router,
-    private ethTransactionService: ETHTransactionService
+    private ethTransactionService: EVMService
   ) {
   }
 
@@ -92,13 +92,13 @@ export class SignTypedDataPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('wallet.signtypeddata-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-        key: "close",
-        iconPath: BuiltInIcon.CLOSE
+      key: "close",
+      iconPath: BuiltInIcon.CLOSE
     });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-        if (icon.key === 'close') {
-            void this.cancelOperation();
-        }
+      if (icon.key === 'close') {
+        void this.cancelOperation();
+      }
     });
   }
 
@@ -111,7 +111,7 @@ export class SignTypedDataPage implements OnInit {
 
   ionViewWillLeave() {
     if (!this.alreadySentIntentResponce) {
-        void this.cancelOperation(false);
+      void this.cancelOperation(false);
     }
   }
 
@@ -141,7 +141,7 @@ export class SignTypedDataPage implements OnInit {
   private async sendIntentResponse(result, intentId, navigateBack = true) {
     this.alreadySentIntentResponce = true;
     await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
-}
+  }
 
   async confirmSign(): Promise<void> {
     const payPassword = await this.authService.getWalletPassword(this.networkWallet.masterWallet.id);

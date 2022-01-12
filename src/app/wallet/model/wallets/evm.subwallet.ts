@@ -4,9 +4,11 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import Web3 from 'web3';
-import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
+import { ERC20CoinService } from '../../services/erc20coin.service';
+import { EVMService } from '../../services/evm.service';
 import { StandardCoinName } from '../coin';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction, SignedETHSCTransaction } from '../evm.types';
+import { EVMNetwork } from '../networks/evm.network';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
 import { WalletUtil } from '../wallet.util';
 import { ERC20SubWallet } from './erc20.subwallet';
@@ -20,7 +22,6 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   protected ethscAddress: string = null;
   protected withdrawContractAddress: string = null;
   protected publishdidContractAddress: string = null;
-  protected web3 = null;
   // private erc20ABI: any;
 
   protected tokenList: ERCTokenInfo[] = null;
@@ -39,7 +40,6 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   public async initialize(): Promise<void> {
     await super.initialize();
 
-    this.initWeb3();
     this.tokenDecimals = 18;
     this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
     // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
@@ -76,6 +76,14 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       this.ethscAddress = (await this.createAddress()).toLowerCase();
     }
     return this.ethscAddress;
+  }
+
+  protected getWeb3(): Web3 {
+    return EVMService.instance.getWeb3(this.networkWallet.network as EVMNetwork);
+  }
+
+  protected getNetwork(): EVMNetwork {
+    return this.networkWallet.network as EVMNetwork;
   }
 
   public async createAddress(): Promise<string> {
@@ -263,15 +271,10 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     }
   }
 
-  protected initWeb3() {
-    const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl);
-    this.web3 = new Web3(trinityWeb3Provider);
-  }
-
   protected async getBalanceByWeb3(): Promise<BigNumber> {
     const address = await this.getTokenAddress();
     try {
-      const balanceString = await this.web3.eth.getBalance(address);
+      const balanceString = await this.getWeb3().eth.getBalance(address);
       return new BigNumber(balanceString);
     }
     catch (e) {
@@ -365,7 +368,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
    * Returns the current gas price on chain.
    */
   public async getGasPrice(): Promise<string> {
-    const gasPrice = await this.web3.eth.getGasPrice();
+    const gasPrice = await this.getWeb3().eth.getGasPrice();
     //Logger.log('wallet', "GAS PRICE: ", gasPrice)
     return gasPrice;
   }
@@ -382,7 +385,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   }
 
   public async estimateGas(tx): Promise<number> {
-    let gasLimit = await this.web3.eth.estimateGas(tx);
+    let gasLimit = await this.getWeb3().eth.estimateGas(tx);
     return gasLimit;
   }
 
@@ -396,6 +399,21 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       Logger.error('wallet', 'estimateGasForPaymentTransaction failed, ', this.id, ' error:', err);
     }
     return -1;
+  }
+
+  /**
+   * Estimated cost of a native coin transfer, in readable native coin amount.
+   */
+  public estimateTransferTransactionFees(): Promise<BigNumber> {
+    return EVMService.instance.estimateTransferTransactionFees(this.getNetwork());
+  }
+
+  /**
+   * Estimated cost in native coin readable amount, of a ERC20 transfer cost.
+   */
+  public async estimateERC20TransferTransactionFees(tokenAddress: string): Promise<BigNumber> {
+    let senderAddress = await this.createAddress();
+    return ERC20CoinService.instance.estimateERC20TransferTransactionFees(tokenAddress, senderAddress, this.getNetwork());
   }
 
   /*protected async removeInvalidTransaction(hash: string) {

@@ -35,9 +35,14 @@
         <ion-col size="6" class="cost">{{getNativeTokenServiceFees()}} {{getNativeTokenSymbol()}}</ion-col>
       </ion-row>
 
-      <div class="custom-btn mt1" *ngIf="!isNativePaymentCompleted()" (click)="sendNativeToken()">
+      <div class="custom-btn mt1" *ngIf="!isNativePaymentCompleted() && nativeTokenBalanceIsEnough"
+        (click)="sendNativeToken()">
         <ion-label *ngIf="!sendingNativePayment">Send {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}</ion-label>
         <ion-spinner *ngIf="sendingNativePayment"></ion-spinner>
+      </div>
+      <div *ngIf="!isNativePaymentCompleted() && !nativeTokenBalanceIsEnough">
+        <h2>Current balance of {{currentNativeBalance}} {{getNativeTokenSymbol()}} is not enough to pay
+          {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}</h2>
       </div>
       <div *ngIf="isNativePaymentCompleted()">
         <h1>Already paid!</h1>
@@ -51,9 +56,14 @@
         <ion-col size="6" class="cost">{{getERC20RedPacketValue()}} {{getERC20TokenSymbol()}}</ion-col>
       </ion-row>
 
-      <div class="custom-btn mt1" *ngIf="!isERC20PaymentCompleted()" (click)="sendERC20Tokens()">
+      <div class="custom-btn mt1" *ngIf="!isERC20PaymentCompleted() && erc20TokenBalanceIsEnough"
+        (click)="sendERC20Tokens()">
         <ion-label *ngIf="!sendingERC20Payment">Send {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</ion-label>
         <ion-spinner *ngIf="sendingERC20Payment"></ion-spinner>
+      </div>
+      <div *ngIf="!isERC20PaymentCompleted() && !erc20TokenBalanceIsEnough">
+        <h2>Current balance of {{currentERC20Balance}} {{getERC20TokenSymbol()}} is not enough to pay
+          {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</h2>
       </div>
       <div *ngIf="isERC20PaymentCompleted()">
         <h1>Already paid!</h1>

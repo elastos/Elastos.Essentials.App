@@ -36,7 +36,8 @@ import { CurrencyService } from './currency.service';
 import { CustomNetworkService } from './customnetwork.service';
 import { DefiService } from './defi.service';
 import { EarnService } from './earn.service';
-import { ETHTransactionService } from './ethtransaction.service';
+import { ERC20CoinService } from './erc20coin.service';
+import { EVMService } from './evm.service';
 import { IntentService } from './intent.service';
 import { NameResolvingService } from './nameresolving.service';
 import { NavService } from './nav.service';
@@ -69,11 +70,12 @@ export class WalletInitService extends GlobalService {
     private networkService: WalletNetworkService,
     private customNetworkService: CustomNetworkService,
     private globalNetworksService: GlobalNetworksService,
-    private ethTransactionService: ETHTransactionService,
+    private ethTransactionService: EVMService,
     private earnService: EarnService, // IMPORTANT: unused, but keep it here for initialization
     private swapService: SwapService, // IMPORTANT: unused, but keep it here for initialization
     private bridgeService: BridgeService, // IMPORTANT: unused, but keep it here for initialization
     private defiService: DefiService, // IMPORTANT: unused, but keep it here for initialization
+    private erc20CoinService: ERC20CoinService, // IMPORTANT: unused, but keep it here for initialization
     private httpClient: HttpClient
   ) {
     super();

@@ -35,7 +35,7 @@ import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
-import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
+import { EVMService } from 'src/app/wallet/services/evm.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -81,7 +81,7 @@ export class EscTransactionPage implements OnInit {
     public theme: GlobalThemeService,
     private erc20service: ERC20CoinService, // Keep it to initialize the service for the ETHTransactionInfoParser
     public uiService: UiService,
-    private ethTransactionService: ETHTransactionService
+    private ethTransactionService: EVMService
   ) {
   }
 
@@ -92,13 +92,13 @@ export class EscTransactionPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('wallet.esctransaction-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-        key: "close",
-        iconPath: BuiltInIcon.CLOSE
+      key: "close",
+      iconPath: BuiltInIcon.CLOSE
     });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-        if (icon.key === 'close') {
-            void this.cancelOperation();
-        }
+      if (icon.key === 'close') {
+        void this.cancelOperation();
+      }
     });
 
     void this.init();
@@ -116,7 +116,7 @@ export class EscTransactionPage implements OnInit {
     if (this.ethTransactionSpeedupSub) this.ethTransactionSpeedupSub.unsubscribe();
 
     if (!this.alreadySentIntentResponce) {
-        void this.cancelOperation(false);
+      void this.cancelOperation(false);
     }
   }
 
@@ -159,6 +159,7 @@ export class EscTransactionPage implements OnInit {
 
     // Extract information about the specific transaction type we are handling
     let transactionInfoParser = new ETHTransactionInfoParser(
+      this.evmSubWallet.networkWallet.network,
       this.coinTransferService.payloadParam.data,
       this.coinTransferService.payloadParam.value || "0",
       this.coinTransferService.payloadParam.to
@@ -167,7 +168,7 @@ export class EscTransactionPage implements OnInit {
     Logger.log("wallet", "ESCTransaction got transaction info:", this.transactionInfo);
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status) => {
+    this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe(async (status) => {
       Logger.warn('wallet', 'EscTransactionPage ethTransactionStatus:', status)
       switch (status.status) {
         case ETHTransactionStatus.PACKED:
@@ -189,7 +190,7 @@ export class EscTransactionPage implements OnInit {
       }
     });
 
-    this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe((status) => {
+    this.ethTransactionSpeedupSub = EVMService.instance.ethTransactionSpeedup.subscribe((status) => {
       Logger.warn('wallet', 'EscTransactionPage ethTransactionStatus:', status)
       if (status) {
         this.gasPrice = status.gasPrice;

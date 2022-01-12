@@ -40,7 +40,7 @@ import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
+import { EVMService } from 'src/app/wallet/services/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
@@ -151,7 +151,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         private modalCtrl: ModalController,
         private popoverCtrl: PopoverController,
         private nameResolvingService: NameResolvingService,
-        private ethTransactionService: ETHTransactionService
+        private ethTransactionService: EVMService
     ) {
     }
 
@@ -205,7 +205,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (this.fromSubWallet instanceof StandardEVMSubWallet) {
             this.isEVMSubwallet = true;
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status) => {
+            this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe(async (status) => {
                 Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
                 switch (status.status) {
                     case ETHTransactionStatus.PACKED:
@@ -234,7 +234,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             });
 
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe(async (status) => {
+            this.ethTransactionSpeedupSub = EVMService.instance.ethTransactionSpeedup.subscribe(async (status) => {
                 Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
                 if (status) {
                     this.gasPrice = status.gasPrice;

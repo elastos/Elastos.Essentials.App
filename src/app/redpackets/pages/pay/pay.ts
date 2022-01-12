@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -8,8 +9,10 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
+import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
+import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
-import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
+import { EVMService } from 'src/app/wallet/services/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -32,6 +35,10 @@ export class PayPage {
   //private costs: PacketCosts = null;
   public sendingNativePayment = false;
   public sendingERC20Payment = false;
+  public nativeTokenBalanceIsEnough = false; // Enough native tokens to pay for the packet
+  public erc20TokenBalanceIsEnough = false; // Enough ERC20 tokens to pay for the packet
+  public currentNativeBalance = "";
+  public currentERC20Balance = "";
 
   constructor(
     public navCtrl: NavController,
@@ -44,7 +51,7 @@ export class PayPage {
     private globalSwitchNetworkService: GlobalSwitchNetworkService,
     private walletService: WalletService,
     private walletNetworkService: WalletNetworkService,
-    private ethTransactionService: ETHTransactionService
+    private ethTransactionService: EVMService
   ) {
     route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -66,8 +73,73 @@ export class PayPage {
    */
   private async fetchPacketInfo() {
     this.packet = await this.packetService.getPacketInfo(this.packetHash);
+    Logger.log("redpackets", "Packet to pay", this.packet);
+
+    // After getting a packet info (including costs), check if user balances are sufficient
+    await this.checkWalletBalances();
+
     this.fetchingPacketInfo = false;
-    console.log("packet", this.packet);
+  }
+
+  private async checkWalletBalances(): Promise<void> {
+    this.nativeTokenBalanceIsEnough = false;
+    this.erc20TokenBalanceIsEnough = false;
+
+    if (!this.packet)
+      return;
+
+    let evmSubWallet = await this.getNativePaymentSubWallet();
+    if (!evmSubWallet)
+      return;
+
+    this.currentNativeBalance = evmSubWallet.getBalance().toFixed(4);
+
+    if (this.packet.tokenType === TokenType.NATIVE_TOKEN) {
+      // Native packet: make sure that:
+      // - balance of native token > packet total cost (native) + fee for one native transaction
+
+      let nativeTransactionFees = await evmSubWallet.estimateTransferTransactionFees(); // human readable
+
+      let totalCost = new BigNumber(nativeTransactionFees).plus(this.packet.costs.nativeToken.total);
+      if (evmSubWallet.getBalance().gt(totalCost)) {
+        this.nativeTokenBalanceIsEnough = true;
+        Logger.log("redpackets", `All good, balance of native coin is enough. ${evmSubWallet.getBalance().toString()} owned. Cost is ${totalCost.toString()}`)
+      }
+      else {
+        Logger.warn("redpackets", `Balance of native coin is not enough. ${evmSubWallet.getBalance().toString()} owned but cost is ${totalCost.toString()}`)
+      }
+    }
+    else if (this.packet.tokenType === TokenType.ERC20_TOKEN) {
+      // ERC20 packet: make sure that:
+      // - balance of erc20 >= packet total cost (erc20)
+      // and:
+      // - balance of native token > fee for one ERC20 transaction * 2 (to avoid gas price fluctuation issues)
+
+      let erc20SubWallet = await this.getERC20PaymentSubWallet();
+      if (!erc20SubWallet)
+        return;
+
+      // Check ERC20 tokens balance
+      this.currentERC20Balance = erc20SubWallet.getBalance().toFixed(4);
+      if (erc20SubWallet.getBalance().gte(this.packet.costs.erc20Token.total)) {
+        this.erc20TokenBalanceIsEnough = true;
+        Logger.log("redpackets", `All good, balance of ERC20 coin is enough. ${erc20SubWallet.getBalance().toString()} owned. Cost is ${this.packet.costs.erc20Token.total.toString()}`);
+      }
+      else {
+        Logger.warn("redpackets", `Balance of ERC20 token is not enough. ${erc20SubWallet.getBalance().toString()} owned but cost is ${this.packet.costs.erc20Token.total.toString()}`);
+      }
+
+      // Also check the erc20 coin transaction fee cost in native coin
+      // Multiply by 2 to have a bit of margin regarding gas price fluctuation on some networks
+      let erc20TransferCostInNativeCoin = await (await evmSubWallet.estimateERC20TransferTransactionFees(this.packet.erc20ContractAddress)).multipliedBy(2);
+      if (evmSubWallet.getBalance().gt(erc20TransferCostInNativeCoin)) {
+        this.nativeTokenBalanceIsEnough = true;
+        Logger.log("redpackets", `All good, balance of native coin is enough. ${evmSubWallet.getBalance().toString()} owned. Cost is ${erc20TransferCostInNativeCoin.toString()}`)
+      }
+      else {
+        Logger.warn("redpackets", `Balance of native coin is not enough. ${evmSubWallet.getBalance().toString()} owned but cost is ${erc20TransferCostInNativeCoin.toString()}`)
+      }
+    }
   }
 
   public packetContainsERC20Tokens(): boolean {
@@ -143,6 +215,25 @@ export class PayPage {
     return true;
   }
 
+  private async getNativePaymentSubWallet(): Promise<StandardEVMSubWallet> {
+    // Now that we are on the right network, find the network wallet that has the right address
+    let evmSubWallet = await this.walletService.findStandardEVMSubWalletByAddress(this.packet.creatorAddress);
+    if (!evmSubWallet) {
+      Logger.log("redpackets", "Can't find the wallet with which the packet was created. Unable to pay");
+      return null;
+    }
+    return evmSubWallet;
+  }
+
+  private async getERC20PaymentSubWallet(): Promise<ERC20SubWallet> {
+    let erc20SubWallet = await this.walletService.findERC20SubWalletByContractAddress(this.packet.erc20ContractAddress, this.packet.creatorAddress);
+    if (!erc20SubWallet) {
+      Logger.error("redpackets", "Can't find the ERC20 subwallet with which the packet was created. Unable to pay");
+      return null;
+    }
+    return erc20SubWallet;
+  }
+
   /**
    * Directly sends the required native tokens to the service
    */
@@ -153,12 +244,9 @@ export class PayPage {
     if (!await this.checkRightNetwork())
       return;
 
-    // Now that we are on the right network, find the network wallet that has the right address
-    let evmSubWallet = await this.walletService.findStandardEVMSubWalletByAddress(this.packet.creatorAddress);
-    if (!evmSubWallet) {
-      Logger.log("redpackets", "Can't find the wallet with which the packet was created. Unable to pay");
+    let evmSubWallet = await this.getNativePaymentSubWallet();
+    if (!evmSubWallet)
       return;
-    }
 
     this.sendingNativePayment = true;
 
@@ -233,17 +321,13 @@ export class PayPage {
       return;
 
     // Now that we are on the right network, find the token subwallet
-    let erc20SubWallet = await this.walletService.findERC20SubWalletByContractAddress(this.packet.erc20ContractAddress, this.packet.creatorAddress);
-    if (!erc20SubWallet) {
-      Logger.error("redpackets", "Can't find the ERC20 subwallet with which the packet was created. Unable to pay");
+    let erc20SubWallet = await this.getERC20PaymentSubWallet();
+    if (!erc20SubWallet)
       return;
-    }
 
-    let evmSubWallet = await this.walletService.findStandardEVMSubWalletByAddress(this.packet.creatorAddress);
-    if (!evmSubWallet) {
-      Logger.log("redpackets", "Can't find the wallet with which the packet was created. Unable to pay");
+    let evmSubWallet = await this.getNativePaymentSubWallet();
+    if (!evmSubWallet)
       return;
-    }
 
     this.sendingERC20Payment = true;
 

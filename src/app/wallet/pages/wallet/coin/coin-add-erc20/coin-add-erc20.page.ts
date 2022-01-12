@@ -10,6 +10,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AddERCTokenRequestParams } from 'src/app/wallet/model/adderctokenrequest';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { EVMService } from 'src/app/wallet/services/evm.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { ERC20Coin } from '../../../../model/coin';
 import { ERC20CoinService } from '../../../../services/erc20coin.service';
@@ -50,6 +51,7 @@ export class CoinAddERC20Page implements OnInit {
         public events: Events,
         private walletManager: WalletService,
         private erc20CoinService: ERC20CoinService,
+        private evmService: EVMService,
         private translate: TranslateService,
         public theme: GlobalThemeService,
         private popup: PopupProvider,
@@ -117,7 +119,7 @@ export class CoinAddERC20Page implements OnInit {
     checkCoinAddress() {
         this.zone.run(() => {
             // Check if this looks like a valid address. If not, give feedback to user.
-            if (!this.erc20CoinService.isAddress(this.coinAddress)) {
+            if (!this.evmService.isAddress(this.networkWallet.network, this.coinAddress)) {
                 void this.popup.ionicAlert("wallet.not-a-valid-address", "wallet.coin-adderc20-not-a-erc20-contract", "common.ok");
                 this.coinAddress = '';
             } else {
@@ -144,7 +146,7 @@ export class CoinAddERC20Page implements OnInit {
     }
 
     private async tryFetchingCoinByAddress(address: string) {
-        if (address !== '' && this.erc20CoinService.isAddress(address)) {
+        if (address !== '' && this.evmService.isAddress(this.networkWallet.network, address)) {
             // Coin address entered/changed: fetch its info.
             this.fetchingCoinInfo = true;
             this.coinInfoFetched = false;
@@ -152,14 +154,14 @@ export class CoinAddERC20Page implements OnInit {
             //const ethAccountAddress = await this.getEthAccountAddress();
 
             try {
-                const contractCode = await this.erc20CoinService.isContractAddress(address);
+                const contractCode = await this.evmService.isContractAddress(this.networkWallet.network, address);
                 if (!contractCode) {
                     Logger.log('wallet', "Contract at " + address + " does not exist");
                     this.fetchingCoinInfo = false;
                     this.native.toast_trans('wallet.coin-adderc20-not-found');
                 } else {
                     Logger.log('wallet', "Found contract at address " + address);
-                    const coinInfo = await this.erc20CoinService.getCoinInfo(address, null /* ethAccountAddress */);
+                    const coinInfo = await this.erc20CoinService.getCoinInfo(this.networkWallet.network, address, null /* ethAccountAddress */);
 
                     if (coinInfo) {
                         this.coinName = coinInfo.coinName;
