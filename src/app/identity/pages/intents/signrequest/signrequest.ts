@@ -50,7 +50,7 @@ export class SignRequestPage {
     this.receivedIntent = this.intentService.getReceivedIntent();
   }
 
-  ionViewWillLeave() {
+  ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
         void this.rejectRequest(false);
     }

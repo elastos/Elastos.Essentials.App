@@ -119,7 +119,9 @@ export class CredentialImportRequestPage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+  }
 
+  ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
         void this.rejectRequest(false);
     }

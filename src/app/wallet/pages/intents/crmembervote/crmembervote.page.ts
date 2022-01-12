@@ -97,7 +97,7 @@ export class CRmembervotePage implements OnInit {
         }
     }
 
-    ionViewWillLeave() {
+    ngOnDestroy() {
         if (!this.alreadySentIntentResponce) {
             void this.cancelOperation(false);
         }

@@ -90,6 +90,9 @@ export class RegisterApplicationProfileRequestPage {
       this.publishresultSubscription.unsubscribe();
       this.publishresultSubscription = null;
     }
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
+    }
   }
 
   ionViewWillEnter() {
@@ -106,12 +109,6 @@ export class RegisterApplicationProfileRequestPage {
       this.receivedIntent.params.sharedclaims = [];
 
     Logger.log("identity", "Modified request data:", this.receivedIntent);
-  }
-
-  ionViewWillLeave() {
-    if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
-    }
   }
 
   acceptRequest() {

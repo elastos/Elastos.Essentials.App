@@ -114,7 +114,9 @@ export class EscTransactionPage implements OnInit {
   ionViewWillLeave() {
     if (this.publicationStatusSub) this.publicationStatusSub.unsubscribe();
     if (this.ethTransactionSpeedupSub) this.ethTransactionSpeedupSub.unsubscribe();
+  }
 
+  ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
         void this.cancelOperation(false);
     }

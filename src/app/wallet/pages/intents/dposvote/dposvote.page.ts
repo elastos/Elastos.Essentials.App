@@ -96,7 +96,7 @@ export class DPoSVotePage implements OnInit {
         }
     }
 
-    ionViewWillLeave() {
+    ngOnDestroy() {
         if (!this.alreadySentIntentResponce) {
             void this.cancelOperation(false);
         }

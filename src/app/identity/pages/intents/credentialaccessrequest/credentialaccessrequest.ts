@@ -208,9 +208,11 @@ export class CredentialAccessRequestPage {
       this.avatarSubscription.unsubscribe();
       this.avatarSubscription = null;
     }
+  }
 
+  ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
-      void this.rejectRequest(false);
+        void this.rejectRequest(false);
     }
   }
 
