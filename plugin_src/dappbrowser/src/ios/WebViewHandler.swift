@@ -64,7 +64,7 @@ class WebViewHandler:  NSObject {
         self.alertTitle = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as! String;
 
         super.init();
-        
+
         let filters = self.settings["customschemefilters"] as? String;
         if (filters != nil) {
             let items = filters!.split(separator: " ");
@@ -381,7 +381,7 @@ class WebViewHandler:  NSObject {
 }
 
 extension WebViewHandler: WKNavigationDelegate {
-    
+
     func getHeadAndSendCallback() {
         webView.evaluateJavaScript("(!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML", completionHandler: { (value: Any!, error: Error!) -> Void in
             if error == nil {
@@ -401,17 +401,17 @@ extension WebViewHandler: WKNavigationDelegate {
         }
     }
 
-    
-    func isDefinedCustomScheme(_ scheme: String) -> Bool {
+
+    func isDefinedCustomScheme(_ url: String) -> Bool {
         for filter in customSchemeFilters {
-            if (scheme.hasPrefix(filter)) {
+            if (url.hasPrefix(filter)) {
                 return true;
             }
         }
 
         return false;
     }
-    
+
     @objc func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         let url = navigationAction.request.url;
         let mainDocumentURL = navigationAction.request.mainDocumentURL;
@@ -459,7 +459,7 @@ extension WebViewHandler: WKNavigationDelegate {
     //        let allowedSchemes = ["itms-appss", "itms-apps", "tel", "sms", "mailto", "geo"];
         let allowedSchemes = ["https", "http"];
         if (!allowedSchemes.contains(url!.scheme!)) {
-            if (isDefinedCustomScheme(url!.scheme!)) {
+            if (isDefinedCustomScheme(url!.absoluteString)) {
                 self.brwoserPlugin.sendEventCallback(
                     ["type":WebViewHandler.CUSTOM_SCHEME_EVENT, "url":url?.absoluteString as Any]);
             }
