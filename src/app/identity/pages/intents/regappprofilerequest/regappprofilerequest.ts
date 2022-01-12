@@ -127,7 +127,7 @@ export class RegisterApplicationProfileRequestPage {
 
       // Publish new credential if permitted
       if (this.shouldPublishOnSidechain) {
-        await this.didSyncService.publishActiveDIDDIDDocument(password);
+        await this.didSyncService.publishActiveDIDDIDDocument(password, this.receivedIntent.intentId);
       } else {
         await this.sendIntentResponse();
       }

@@ -53,6 +53,9 @@ export class SetHiveProviderRequestPage {
       this.publishresultSubscription.unsubscribe();
       this.publishresultSubscription = null;
     }
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
+    }
   }
 
   ionViewWillEnter() {
@@ -67,9 +70,6 @@ export class SetHiveProviderRequestPage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-    if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
-    }
   }
 
   acceptRequest() {
@@ -89,7 +89,7 @@ export class SetHiveProviderRequestPage {
           void this.sendIntentResponse('error');
         }
       });
-      await this.didSyncService.publishActiveDIDDIDDocument(password);
+      await this.didSyncService.publishActiveDIDDIDDocument(password, this.receivedIntent.intentId);
     }, () => {
       // Cancelled
     });

@@ -57,7 +57,7 @@ export type PublicationStatus = {
 }
 
 abstract class DIDPublisher {
-    public abstract publishDID(didString: string, payloadObject: any, memo: string, showBlockingLoader: boolean): Promise<void>;
+    public abstract publishDID(didString: string, payloadObject: any, memo: string, showBlockingLoader: boolean, parentIntentId?: number): Promise<void>;
     public abstract resetStatus();
 }
 
@@ -122,7 +122,7 @@ namespace AssistPublishing {
          *
          * DOC FOR ASSIST API: https://github.com/tuum-tech/assist-restapi-backend#verify
          */
-        public async publishDID(didString: string, payloadObject: any, memo: string, showBlockingLoader = false): Promise<void> {
+        public async publishDID(didString: string, payloadObject: any, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
             Logger.log("publicationservice", "Requesting identity publication to Assist", didString);
 
             if (typeof payloadObject === "string")
@@ -328,7 +328,7 @@ namespace WalletPublishing {
         public init() {
         }
 
-        public async publishDID(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false): Promise<void> {
+        public async publishDID(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
             Logger.log("publicationservice", "Publishing DID with wallet:", payloadObject);
 
             // Make sure the active network is elastos, otherwise, ask user to change
@@ -348,7 +348,7 @@ namespace WalletPublishing {
                 this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.NO_ON_GOING_PUBLICATION;
                 await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
 
-                let response = await this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", params);
+                let response = await this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", params, parentIntentId);
 
                 Logger.log('publicationservice', "Got didtransaction intent response from the wallet.", response);
 
@@ -562,14 +562,14 @@ class DIDPublishingManager {
         return await this.prefs.getPublishIdentityMedium(GlobalDIDSessionsService.signedInDIDString);
     }
 
-    public async publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false): Promise<void> {
+    public async publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
         let publishMedium = await this.getPublishingMedium();
         if (publishMedium === 'assist')
             this.activePublisher = this.assistPublisher;
         else
             this.activePublisher = this.walletPublisher;
 
-        return this.activePublisher.publishDID(didString, payloadObject, memo, showBlockingLoader);
+        return this.activePublisher.publishDID(didString, payloadObject, memo, showBlockingLoader, parentIntentId);
     }
 
     /**
@@ -637,14 +637,14 @@ export class GlobalPublicationService {
     /**
      * Publish the given DID Request.
      */
-    public publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false): Promise<void> {
-        return this.manager.publishDIDFromRequest(didString, payloadObject, memo, showBlockingLoader);
+    public publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
+        return this.manager.publishDIDFromRequest(didString, payloadObject, memo, showBlockingLoader, parentIntentId);
     }
 
     /**
      * Opens a DID store, generates a DID request and publish it.
      */
-    public publishDIDFromStore(storeId: string, storePass: string, didString: string, showBlockingLoader = false): Promise<void> {
+    public publishDIDFromStore(storeId: string, storePass: string, didString: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
         Logger.log("publicationservice", "Starting the DID publication process");
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
@@ -656,7 +656,7 @@ export class GlobalPublicationService {
                 const payloadAsJson = JSON.parse(payload);
                 // TODO: Identiy will showLoading when publish did. we can improve it.
                 await this.globalNativeService.hideLoading();
-                await this.publishDIDFromRequest(didString, payloadAsJson, memo, showBlockingLoader);
+                await this.publishDIDFromRequest(didString, payloadAsJson, memo, showBlockingLoader, parentIntentId);
                 resolve();
             });
 
