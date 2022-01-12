@@ -34,6 +34,7 @@ class WebViewHandler:  NSObject {
     static let PROGRESS_EVENT = "progress";
     static let HEAD_EVENT = "head";
     static let URL_CHANGED_EVENT = "urlchanged";
+    static let CUSTOM_SCHEME_EVENT = "customscheme";
     static let EXIT_EVENT = "exit";
 
     var webView: WKWebView!
@@ -47,6 +48,7 @@ class WebViewHandler:  NSObject {
     var options: DappBrowserOptions!;
     var inputUrl: URL!;
     var currentURL: String?;
+    private var customSchemeFilters: [String] = [String]();
 
     var waitForBeforeload = false;
 
@@ -62,6 +64,14 @@ class WebViewHandler:  NSObject {
         self.alertTitle = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as! String;
 
         super.init();
+        
+        let filters = self.settings["customschemefilters"] as? String;
+        if (filters != nil) {
+            let items = filters!.split(separator: " ");
+            for item in items {
+                customSchemeFilters.append(String(item))
+            }
+        }
 
         self.createWebView(brwoserPlugin.viewController.view);
 
@@ -371,7 +381,7 @@ class WebViewHandler:  NSObject {
 }
 
 extension WebViewHandler: WKNavigationDelegate {
-
+    
     func getHeadAndSendCallback() {
         webView.evaluateJavaScript("(!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML", completionHandler: { (value: Any!, error: Error!) -> Void in
             if error == nil {
@@ -391,6 +401,17 @@ extension WebViewHandler: WKNavigationDelegate {
         }
     }
 
+    
+    func isDefinedCustomScheme(_ scheme: String) -> Bool {
+        for filter in customSchemeFilters {
+            if (scheme.hasPrefix(filter)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
     @objc func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         let url = navigationAction.request.url;
         let mainDocumentURL = navigationAction.request.mainDocumentURL;
@@ -438,8 +459,14 @@ extension WebViewHandler: WKNavigationDelegate {
     //        let allowedSchemes = ["itms-appss", "itms-apps", "tel", "sms", "mailto", "geo"];
         let allowedSchemes = ["https", "http"];
         if (!allowedSchemes.contains(url!.scheme!)) {
-            webView.stopLoading();
-            self.brwoserPlugin.openInSystem(url!);
+            if (isDefinedCustomScheme(url!.scheme!)) {
+                self.brwoserPlugin.sendEventCallback(
+                    ["type":WebViewHandler.CUSTOM_SCHEME_EVENT, "url":url?.absoluteString as Any]);
+            }
+            else {
+                webView.stopLoading();
+                self.brwoserPlugin.openInSystem(url!);
+            }
             shouldStart = false;
         }
         else if ((self.brwoserPlugin.callbackId != nil) && isTopLevelNavigation) {

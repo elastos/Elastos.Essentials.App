@@ -245,9 +245,10 @@ public class WebViewHandler {
 
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(options.useWideViewPort);
-        // Multiple Windows set to true to mitigate Chromium security bug.
-        //  See: https://bugs.chromium.org/p/chromium/issues/detail?id=1083819
-        settings.setSupportMultipleWindows(true);
+        //If open setSupportMultipleWindows, the shouldOverrideUrlLoading is not called
+//        // Multiple Windows set to true to mitigate Chromium security bug.
+//        //  See: https://bugs.chromium.org/p/chromium/issues/detail?id=1083819
+//        settings.setSupportMultipleWindows(true);
 
         webView.requestFocus();
         webView.requestFocusFromTouch();
