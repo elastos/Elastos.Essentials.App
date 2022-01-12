@@ -63,6 +63,7 @@ export const it = {
         'lrw-net': 'Rete LongRunWeather',
         'restart-prompt-info': 'Questa operazione richiede il riavvio',
         'restart-app': 'Riavvia l\'applicazione',
+        'restart-later': 'Riavvia più tardi',
 
         /********** Wallet Connect / Sessions Page **********/
         'wallet-connect-request': 'Collegamento con l\'applicazione',

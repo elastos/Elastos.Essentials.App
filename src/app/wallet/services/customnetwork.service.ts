@@ -135,7 +135,7 @@ export class CustomNetworkService {
         // As we are modifying the network config we have to destroy and configure the spvsdk again
         // NOTE: We should normally destroy the SPVSDK, set the new config, re-created the master wallets
         // to register the standard subwallet, etc. For convenience for now, we restart essentials.
-        await this.globalNavService.showRestartPrompt();
+        await this.globalNavService.showRestartPrompt(true);
     }
 
     public async deleteCustomNetwork(networkDiskEntry: CustomNetworkDiskEntry): Promise<void> {

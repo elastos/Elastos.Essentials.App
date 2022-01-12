@@ -63,6 +63,7 @@ export const zh = {
           'lrw-net': 'LongRunWeather Net',
           'restart-prompt-info': '此操作需要重启应用',
           'restart-app': '重启应用',
+          'restart-later': '稍后重启',
 
           /********** Wallet Connect Page **********/
           'wallet-connect-request': '应用连接请求',

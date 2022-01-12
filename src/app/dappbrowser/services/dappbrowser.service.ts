@@ -657,8 +657,10 @@ export class DappBrowserService implements GlobalService {
             if (!targetNetwork)
                 targetNetwork = WalletNetworkService.instance.getNetworkByKey(addedNetworkKey);
 
-            // Ask user to switch but we don't mind the result.
-            await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
+            if (targetNetwork) {
+                // Ask user to switch but we don't mind the result.
+                await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
+            }
         }
 
         if (networkWasAdded || existingNetwork) {

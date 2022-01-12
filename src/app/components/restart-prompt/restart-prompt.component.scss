@@ -34,19 +34,25 @@
   }
 
   .btn-row {
-    position: absolute;
-    bottom: 25px;
-    z-index: 100;
-    width: 100%;
-    padding: 0px 20px;
+    height: 80px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 
-    ion-button {
-      height: 50px;
-      width: 100%;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1px;
-      --border-radius: 8px;
+    .btn {
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        background-color: #f8f8ff;
+
+        ion-label {
+          font-size: 15px;
+          font-weight: 500;
+          color: #161740;
+          font-family: "Inter" !important;
+        }
     }
   }
 }
@@ -70,6 +76,8 @@
 
   .btn-row {
     .btn {
+      background: #161740;
+
       ion-label {
         color: #fdfeff;
       }

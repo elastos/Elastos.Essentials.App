@@ -231,21 +231,27 @@ export class GlobalNavService {
         window.location.href = "/";
     }
 
-    public async showRestartPrompt() {
-        let popover = await this.popoverCtrl.create({
-            mode: 'ios',
-            cssClass: 'wallet-warning-component',
-            component: RestartPromptComponent,
-            translucent: false,
-            backdropDismiss: false, // Can't cancel by clicking outside
-        });
+    public showRestartPrompt(showCancelButton = false): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise(async resolve => {
+            let popover = await this.popoverCtrl.create({
+                mode: 'ios',
+                cssClass: 'wallet-warning-component',
+                component: RestartPromptComponent,
+                componentProps: {
+                    showCancel: showCancelButton
+                },
+                translucent: false,
+                backdropDismiss: false, // Can't cancel by clicking outside
+            });
 
-        void popover.onWillDismiss().then(async (params) => {
-            if (params && params.data && params.data.confirm) {
-                await this.restartApp();
-            }
+            void popover.onWillDismiss().then(async (params) => {
+                if (params && params.data && params.data.confirm) {
+                    await this.restartApp();
+                }
+                resolve();
+            });
+             await popover.present();
         });
-
-        return await popover.present();
     }
 }
