@@ -863,7 +863,10 @@
     }
 
     func sendIntent(_ info: IntentInfo) throws {
-        if (info.action == "share") {
+        if (info.action == "rawurl") {
+            onReceiveIntent(info);
+        }
+        else if (info.action == "share") {
             sendNativeShareAction(info);
         }
         else if (info.action == "openurl") {

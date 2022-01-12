@@ -745,7 +745,10 @@ public class IntentManager {
     }
 
     void sendIntent(IntentInfo info) throws Exception {
-        if (info.action.equals("share")) {
+        if (info.action.equals("rawurl")) {
+            onReceiveIntent(info);
+        }
+        else if (info.action.equals("share")) {
             sendNativeShareAction(info);
         }
         else if (info.action.equals("openurl")) {
