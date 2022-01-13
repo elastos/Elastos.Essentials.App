@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
@@ -36,7 +37,8 @@ export class BrowserPage implements DappBrowserClient {
         public keyboard: Keyboard,
         private platform: Platform,
         public dappbrowserService: DappBrowserService,
-        private walletNetworkUIService: WalletNetworkUIService
+        private walletNetworkUIService: WalletNetworkUIService,
+        private globalIntentService: GlobalIntentService,
     ) {
     }
 
@@ -126,5 +128,11 @@ export class BrowserPage implements DappBrowserClient {
 
     onMenu() {
         void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
+    }
+
+    onCustomScheme(url: string) {
+        if (url.startsWith("wc:")) {
+            void this.globalIntentService.sendIntent("rawurl", {url: url});
+        }
     }
 }
