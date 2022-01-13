@@ -407,6 +407,9 @@
             else if (pathComponents.count == 2) {
                 try getParamsByJWT(pathComponents[1], info!);
             }
+            else if (pathComponents.count == 1) {
+                info!.params = "{}";
+            }
         }
 
         return info;

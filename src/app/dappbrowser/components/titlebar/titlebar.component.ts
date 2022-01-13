@@ -16,7 +16,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
     styleUrls: ['./titlebar.component.scss'],
 })
 export class BrowserTitleBarComponent extends TitleBarComponent {
-    public _url = "";
+    public _url = "http://192.168.8.214:3000";
     public _title: string = null;
     public urlBoxColSize = 8.25;
     public browserMode = true; // Whether dappbrowser page or home page

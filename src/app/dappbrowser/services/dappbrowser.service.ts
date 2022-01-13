@@ -123,9 +123,9 @@ export class DappBrowserService implements GlobalService {
 
     public getBrowseMode(): DAppsBrowseMode {
         // TMP TRUE
-        if (/* true ||  */this.platform.platforms().indexOf('ios') >= 0)
-            return DAppsBrowseMode.EXTERNAL_BROWSER;
-        else
+        // if (/* true ||  */this.platform.platforms().indexOf('ios') >= 0)
+        //     return DAppsBrowseMode.EXTERNAL_BROWSER;
+        // else
             return DAppsBrowseMode.IN_APP;
     }
 

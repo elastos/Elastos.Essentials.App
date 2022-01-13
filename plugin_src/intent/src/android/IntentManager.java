@@ -355,6 +355,9 @@ public class IntentManager {
             else if (list.size() == 2) {
                 getParamsByJWT(paths[1], info);
             }
+            else if (list.size() == 1) {
+                info.params = "{}";
+            }
         }
 
         return info;
