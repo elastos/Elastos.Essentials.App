@@ -178,7 +178,10 @@ export class EscTransactionPage implements OnInit {
             txid: status.txId,
             status: 'published'
           }
-          await this.sendIntentResponse(resultOk, this.intentTransfer.intentId);
+          // TODO: Wait for the ETHTransactionComponent exit.
+          setTimeout(() => {
+            void this.sendIntentResponse(resultOk, this.intentTransfer.intentId);
+          }, 3000);
           break;
         case ETHTransactionStatus.CANCEL:
           let result = {
