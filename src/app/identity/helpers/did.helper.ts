@@ -1,6 +1,7 @@
 import { Logger } from "src/app/logger";
 import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
 import { DIDNotUpToDateException } from "../model/exceptions/didnotuptodateexception";
+import { HiveInsufficientSpaceException } from "../model/exceptions/hiveinsufficientspaceexception";
 import { PasswordManagerCancelallationException } from "../model/exceptions/passwordmanagercancellationexception";
 import { WrongPasswordException } from "../model/exceptions/wrongpasswordexception.exception";
 
@@ -30,6 +31,10 @@ export class DIDHelper {
 
         if (e.message.includes("DIDNotUpToDate")) {
             return new DIDNotUpToDateException();
+        }
+
+        if (e.message.includes("not enough storage space")) {
+            return new HiveInsufficientSpaceException();
         }
       }
     }

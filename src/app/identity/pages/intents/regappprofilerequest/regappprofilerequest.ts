@@ -90,6 +90,9 @@ export class RegisterApplicationProfileRequestPage {
       this.publishresultSubscription.unsubscribe();
       this.publishresultSubscription = null;
     }
+    if (!this.alreadySentIntentResponce) {
+        void this.rejectRequest(false);
+    }
   }
 
   ionViewWillEnter() {
@@ -108,12 +111,6 @@ export class RegisterApplicationProfileRequestPage {
     Logger.log("identity", "Modified request data:", this.receivedIntent);
   }
 
-  ionViewWillLeave() {
-    if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
-    }
-  }
-
   acceptRequest() {
     // Prompt password if needed
     void AuthService.instance.checkPasswordThenExecute(async () => {
@@ -127,7 +124,7 @@ export class RegisterApplicationProfileRequestPage {
 
       // Publish new credential if permitted
       if (this.shouldPublishOnSidechain) {
-        await this.didSyncService.publishActiveDIDDIDDocument(password);
+        await this.didSyncService.publishActiveDIDDIDDocument(password, this.receivedIntent.intentId);
       } else {
         await this.sendIntentResponse();
       }

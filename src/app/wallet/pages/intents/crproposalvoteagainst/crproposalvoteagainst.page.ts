@@ -91,7 +91,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
         }
     }
 
-    ionViewWillLeave() {
+    ngOnDestroy() {
         if (!this.alreadySentIntentResponce) {
             void this.cancelOperation(false);
         }

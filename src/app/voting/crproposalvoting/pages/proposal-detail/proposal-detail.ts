@@ -101,7 +101,7 @@ export class ProposalDetailPage {
                         if (this.proposal.status == 'voteragreed') {
                             await this.setLastTracking(i);
                         }
-                        else if (this.proposal.status == 'finished' && budget.status == 'Withdrawable') {
+                        else if (this.isOwner && this.proposal.status == 'finished' && budget.status == 'Withdrawable') {
                             let milestone = this.proposal.milestone[i];
                             milestone.lastTracking = {command: 'withdraw', stage: budget.stage};
                         }

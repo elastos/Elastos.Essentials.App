@@ -123,9 +123,9 @@ export class DappBrowserService implements GlobalService {
 
     public getBrowseMode(): DAppsBrowseMode {
         // TMP TRUE
-        if (/* true ||  */this.platform.platforms().indexOf('ios') >= 0)
-            return DAppsBrowseMode.EXTERNAL_BROWSER;
-        else
+        // if (/* true ||  */this.platform.platforms().indexOf('ios') >= 0)
+        //     return DAppsBrowseMode.EXTERNAL_BROWSER;
+        // else
             return DAppsBrowseMode.IN_APP;
     }
 
@@ -657,8 +657,10 @@ export class DappBrowserService implements GlobalService {
             if (!targetNetwork)
                 targetNetwork = WalletNetworkService.instance.getNetworkByKey(addedNetworkKey);
 
-            // Ask user to switch but we don't mind the result.
-            await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
+            if (targetNetwork) {
+                // Ask user to switch but we don't mind the result.
+                await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
+            }
         }
 
         if (networkWasAdded || existingNetwork) {

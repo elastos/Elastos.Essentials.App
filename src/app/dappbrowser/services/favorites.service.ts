@@ -60,7 +60,8 @@ export class FavoritesService {
             description: appInfo.description,
             iconUrl: appInfo.iconUrl,
             url: appInfo.url,
-            networks: [] // All networks enabled by default
+            networks: [], // All networks enabled by default
+            useExternalBrowser: appInfo.useExternalBrowser
         };
         favorites.push(newFavorite);
         this.favoritesSubject.next(favorites);

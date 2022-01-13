@@ -200,9 +200,11 @@ export class RequestCredentialsPage {
       this.onlineDIDDocumentStatusSub.unsubscribe();
       this.onlineDIDDocumentStatusSub = null;
     }
+  }
 
+  ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
-      void this.rejectRequest(false);
+        void this.rejectRequest(false);
     }
   }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
@@ -8,19 +8,25 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
   styleUrls: ['./restart-prompt.component.scss'],
 })
 export class RestartPromptComponent implements OnInit {
+  public canCancel = false;
+
   constructor(
     public theme: GlobalThemeService,
+    private navParams: NavParams,
     private popoverCtrl: PopoverController,
-  ) { }
-
-  ngOnInit() {
+  ) {
+    this.canCancel = this.navParams.get('showCancel') || false;
   }
 
-  cancel() {
+  ngOnInit() {
+
+  }
+
+  public cancel() {
     void this.popoverCtrl.dismiss();
   }
 
-  confirm() {
+  public confirm() {
     void this.popoverCtrl.dismiss({
       confirm: true
     });

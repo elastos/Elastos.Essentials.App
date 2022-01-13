@@ -17,9 +17,11 @@ import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { area } from "../../../../assets/identity/area/area";
 import { PictureComponent } from "../../components/picture/picture.component";
+import { DIDHelper } from "../../helpers/did.helper";
 import { BasicCredentialEntry } from "../../model/basiccredentialentry.model";
 import { CountryCodeInfo } from "../../model/countrycodeinfo";
 import { DIDURL } from "../../model/didurl.model";
+import { HiveInsufficientSpaceException } from "../../model/exceptions/hiveinsufficientspaceexception";
 import { Profile } from "../../model/profile.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { AuthService } from "../../services/auth.service";
@@ -273,6 +275,12 @@ export class EditProfilePage {
         }
         catch (e) {
           Logger.error("identity", "Error while saving the avatar", e);
+          let reworkedEx = DIDHelper.reworkedPluginException(e);
+          if (reworkedEx instanceof HiveInsufficientSpaceException) {
+            await this.globalPopupService.ionicAlert("identity.save-avatar-error-title", "identity.save-avatar-error-insufficient-space");
+          } else {
+            await this.globalPopupService.ionicAlert("identity.save-avatar-error-title", e.message);
+          }
         }
 
         await this.native.hideLoading();

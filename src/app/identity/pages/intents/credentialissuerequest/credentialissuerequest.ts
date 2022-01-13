@@ -90,7 +90,7 @@ export class CredentialIssueRequestPage {
     });
   }
 
-  ionViewWillLeave() {
+  ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
         void this.rejectRequest(false);
     }

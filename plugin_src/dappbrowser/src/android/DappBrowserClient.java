@@ -53,6 +53,7 @@ public class DappBrowserClient extends WebViewClient {
     private static final String LOAD_START_EVENT = "loadstart";
     private static final String LOAD_STOP_EVENT = "loadstop";
     private static final String LOAD_ERROR_EVENT = "loaderror";
+    private static final String CUSTOM_SCHEME_EVENT = "customscheme";
     private static final String BEFORELOAD = "beforeload";
 
     CordovaWebView webView;
@@ -64,6 +65,8 @@ public class DappBrowserClient extends WebViewClient {
     public String atDocumentStartScript;
 //    private Boolean injected = false;
 
+    private String[] customSchemeFilters;
+
     public DappBrowserClient(DappBrowserPlugin brwoserPlugin, String atdocumentstartscript, String beforeload) {
         this.beforeload = beforeload;
         this.waitForBeforeload = beforeload != null;
@@ -71,6 +74,9 @@ public class DappBrowserClient extends WebViewClient {
         this.activity = brwoserPlugin.cordova.getActivity();
         this.webView = brwoserPlugin.webView;
         this.atDocumentStartScript = atdocumentstartscript;
+
+        String filters = brwoserPlugin.getPreferences().getString("CustomSchemeFilters", "");
+        customSchemeFilters = filters.split(" ");
     }
 
     /**
@@ -207,21 +213,21 @@ public class DappBrowserClient extends WebViewClient {
                 LOG.e(LOG_TAG, "Error sending sms " + url + ":" + e.toString());
             }
         }
-        // Test for whitelisted custom scheme names like mycoolapp:// or twitteroauthresponse:// (Twitter Oauth Response)
-        else if (!url.startsWith("http:") && !url.startsWith("https:") /*&& url.matches("^[A-Za-z0-9+.-]*://.*?$")*/) {
-            //direct open in system browser
-            brwoserPlugin.openExternal(url);
-
+        else if (isDefinedCustomScheme(url)) {
             try {
-
                 JSONObject obj = new JSONObject();
-                obj.put("type", "customscheme");
+                obj.put("type", CUSTOM_SCHEME_EVENT);
                 obj.put("url", url);
                 brwoserPlugin.sendEventCallback(obj, true);
                 override = true;
             } catch (Exception ex) {
                 LOG.e(LOG_TAG, "Custom Scheme URI passed in has caused a error.");
             }
+        }
+        // Test for whitelisted custom scheme names like mycoolapp:// or twitteroauthresponse:// (Twitter Oauth Response)
+        else if (!url.startsWith("http:") && !url.startsWith("https:") /*&& url.matches("^[A-Za-z0-9+.-]*://.*?$")*/) {
+            //direct open in system browser
+            brwoserPlugin.openExternal(url);
         }
 
         if (useBeforeload) {
@@ -558,4 +564,13 @@ public class DappBrowserClient extends WebViewClient {
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
     }
 
+    public boolean isDefinedCustomScheme(String url) {
+        for (int i = 0; i < customSchemeFilters.length; i++) {
+            if (url.startsWith(customSchemeFilters[i])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

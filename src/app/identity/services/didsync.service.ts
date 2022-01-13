@@ -99,7 +99,7 @@ export class DIDSyncService implements GlobalService {
   /**
    * Publish the currently active DID document on the DID sidechain.
    */
-  public async publishActiveDIDDIDDocument(password: string) {
+  public async publishActiveDIDDIDDocument(password: string, parentIntentId?: number) {
     try {
       await this.native.showLoading(this.translate.instant('common.please-wait'));
       await this.globalPublicationService.publishDIDFromStore(
@@ -107,7 +107,8 @@ export class DIDSyncService implements GlobalService {
           .getActiveDidStore().getId(),
         password,
         this.didService.getActiveDid().getDIDString(),
-        true
+        true,
+        parentIntentId
       );
 
       void this.native.hideLoading();

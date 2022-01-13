@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="elastos-essentials-plugin-intent" version="1.0.0"
+    xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>Intent</name>
+    <js-module name="IntentManager" src="www/Intent.js">
+        <clobbers target="essentialsIntentManager" />
+    </js-module>
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="IntentManager">
+                <param name="android-package" value="org.elastos.essentials.plugins.intent.IntentPlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/IntentPlugin.java" target-dir="src/org/elastos/essentials/plugins/intent" />
+        <source-file src="src/android/IntentInfo.java" target-dir="src/org/elastos/essentials/plugins/intent" />
+        <source-file src="src/android/IntentManager.java" target-dir="src/org/elastos/essentials/plugins/intent" />
+        <framework src="src/android/intent.gradle" custom="true" type="gradleReference"/>
+    </platform>
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="IntentManager">
+                <param name="ios-package" value="IntentPlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+
+         <podspec>
+            <config>
+                <source url="https://cdn.cocoapods.org/"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="SwiftJWT" spec="~> 3.5.3" swift-version="4.2"/>
+                <pod name="ElastosDIDSDK" spec='~> 2.2.0'/>
+                <pod name="AnyCodable-FlightSchool" spec='~> 0.2.3'/>
+                <pod name="PopupDialog" spec="~> 1.1"/>
+            </pods>
+        </podspec>
+
+        <source-file src="src/ios/IntentPlugin.swift" />
+        <source-file src="src/ios/IntentManager.swift" />
+        <header-file src="src/ios/IntentManager-Bridging-Header.h" type="BridgingHeader" />
+        <source-file src="src/ios/IntentUtility.swift" />
+    </platform>
+
+    <hook src="hooks/before_plugin_install/build_ts.js" type="before_plugin_install" />
+</plugin>

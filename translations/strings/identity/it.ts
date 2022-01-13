@@ -73,6 +73,8 @@ export const it = {
         'change-unpublished': 'Questa credenziale verrà resa privata la prossima volta che pubblicherai la tua identità',
         'change-not-published': 'Questa credenziale non verrà resa pubblica la prossima volta che pubblicherai la tua identità',
         'who-made-this': 'Who made this?',
+        'delete-credential': 'Elimina Credenziali',
+        'delete-credential-info': 'This credential will be removed from your identity. This action cannot be reverted.',
 
         // Credentiallist
         'publish-changes': 'Pubblica modifiche',
@@ -89,6 +91,8 @@ export const it = {
         'enter-here': 'Digita qui',
         'select-gender': 'Seleziona un genere',
         'saving-picture-to-hive': 'Salvare l\'immagine nello spazio di archiviazione di Elastos Hive',
+        'save-avatar-error-title': "Saving avatar error",
+        'save-avatar-error-insufficient-space': "Hive Insufficient Space",
 
         // tabnav
         'home': 'Home',

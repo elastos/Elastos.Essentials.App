@@ -120,7 +120,7 @@
     "cordova-sqlite-storage": "6.0.0",
     "elastos-essentials-plugin-dappbrowser": "file:plugin_src/dappbrowser",
     "elastos-essentials-plugin-fingerprint": "file:../Plugins/Fingerprint",
-    "elastos-essentials-plugin-intent": "file:../Plugins/EssentialsIntent",
+    "elastos-essentials-plugin-intent": "file:plugin_src/intent",
     "elastos-essentials-plugin-internal": "file:plugin_src/Internal",
     "elastos-essentials-plugin-passwordmanager": "file:../Plugins/PasswordManager",
     "elastos-essentials-plugin-wallet": "file:../Plugins/Wallet",
