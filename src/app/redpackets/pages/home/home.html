@@ -2,10 +2,10 @@
   <app-titlebar></app-titlebar>
   <ion-grid class="container ion-text-center ion-padding">
     <h1>Public packets</h1>
-    <div *ngIf="fetchingPublicPackets">
+    <!-- <div *ngIf="fetchingPublicPackets">
       <ion-spinner></ion-spinner>
-    </div>
-    <div *ngIf="!fetchingPublicPackets">
+    </div> -->
+    <div>
       <div *ngIf="publicPackets.length > 0">
         <packet-preview *ngFor="let packet of publicPackets" [packet]="packet" (click)="openPacket(packet)">
         </packet-preview>
@@ -15,7 +15,7 @@
 
     <div class="about">
       <div class="icon-container">
-        <img src="assets/redpackets/images/about.png" class="icon" />
+        <img src="assets/redpackets/images/packets.png" class="icon" />
         <div class="glow"></div>
       </div>
 

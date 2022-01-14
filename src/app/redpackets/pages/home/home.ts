@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
@@ -22,6 +23,7 @@ export class HomePage {
 
   // Model
   public publicPackets: Packet[] = [];
+  private publicPacketsSubscription: Subscription;
 
   // Callbacks
   public titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -70,13 +72,18 @@ export class HomePage {
     });
   }
 
-  async ionViewDidEnter() {
+  ionViewDidEnter() {
     this.fetchingPublicPackets = true;
-    this.publicPackets = await this.packetService.getPublicPackets();
-    this.fetchingPublicPackets = false;
+    //    this.publicPackets = await this.packetService.getPublicPackets();
+    //this.fetchingPublicPackets = false;
+
+    this.publicPacketsSubscription = this.packetService.publicPackets.subscribe(publicPackets => {
+      this.publicPackets = publicPackets;
+    });
   }
 
   ionViewWillLeave() {
+    this.publicPacketsSubscription.unsubscribe();
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 

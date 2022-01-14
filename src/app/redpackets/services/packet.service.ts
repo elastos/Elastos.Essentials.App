@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
@@ -20,6 +20,8 @@ export class PacketService {
 
   private myPackets: Packet[]; // List of packets created by this user.
   private grabbedPackets: GrabbedPacket[]; // List of packets already grabbed before (so we don't retry).
+
+  public publicPackets = new BehaviorSubject<Packet[]>([]);
 
   constructor(
     private http: HttpClient,
@@ -40,10 +42,14 @@ export class PacketService {
         this.handleGrabRequest(receivedIntent.params["g"]);
       }
     });
+
+    // Load public packets asynchrinously
+    void this.fetchPublicPackets();
   }
 
   public onUserSignOut() {
     this.intentSubscription.unsubscribe();
+    this.publicPackets.next([]);
   }
 
   /**
@@ -115,7 +121,7 @@ export class PacketService {
     }
   }
 
-  public async getPublicPackets(): Promise<Packet[]> {
+  public async fetchPublicPackets(): Promise<void> {
     try {
       let packets = await this.http.get<SerializedPacket[]>(`${GlobalConfig.RedPackets.serviceUrl}/publicpackets`, {}).toPromise();
       if (packets) {
@@ -125,13 +131,12 @@ export class PacketService {
         });
 
         Logger.log("redpackets", "Got public packets", deserializedPackets);
-
-        return deserializedPackets;
+        this.publicPackets.next(deserializedPackets);
       }
     }
     catch (err) {
       Logger.error("redpackets", "Get public packets request failure", err);
-      return [];
+      this.publicPackets.next([]);
     }
   }
 
