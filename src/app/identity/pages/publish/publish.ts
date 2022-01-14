@@ -123,7 +123,7 @@ export class PublishPage {
                     // If the credential is sensitive, make sure to let user confirm his choice first
                     let relatedCredential = entry.credential;
                     if (relatedCredential.isSensitiveCredential()) {
-                        let confirmed = await this.globalPopupService.showConfirmationPopup("Sensitive information", "This information is marked as sensitive. Please double check that you really want to publish this");
+                        let confirmed = await this.globalPopupService.showConfirmationPopup(this.translate.instant('identity.sensitive-title'), this.translate.instant('identity.sensitive-prompt'));
                         if (!confirmed) {
                             this.updatingVisibility = false;
                             return;

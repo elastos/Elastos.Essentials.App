@@ -225,6 +225,11 @@ export const zh = {
         'sethiveprovider-name': '名称：',
         'sethiveprovider-address': '地址：',
 
+        // page: requestcredentials
+        'request-credentials-match-not-enough': "您至少需要提供{{min}}个数据，但您现在只有{{match}个。您应该能够从以下外部应用程序获取更多信息:",
+        'request-credentials-no-match': "您至少需要提供{{count}}个数据。您应该能够从以下外部应用程序获取更多信息:",
+        'request-credentials-no-recommendation': '请询问dApp团队如何解决此问题。',
+
         'publishing': {
             'publish-did': '发布身份'
         },
@@ -276,5 +281,9 @@ export const zh = {
         'publish-error2': '发布错误',
         'publish-wait2': '您的身份正在发布，请稍等。',
         'publish-error-call-sync-did': "需要同步身份，设置->高级设置->同步身份",
+
+        // Sensitive popup
+        'sensitive-title': '敏感信息',
+        'sensitive-prompt': '此信息被标记为敏感信息。请再次确认是否要发布此内容',
     },
 };

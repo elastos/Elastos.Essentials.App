@@ -224,6 +224,11 @@ export const it = {
         'sethiveprovider-name': 'Nome:',
         'sethiveprovider-address': 'Indirizzo:',
 
+        // page: requestcredentials
+        'request-credentials-match-not-enough': "You are requested to provide at least {{min}} item(s) but you only have {{match}}. You should be able to get more information from the following external apps:",
+        'request-credentials-no-match': "You are requested to provide at least {{count}} item(s) but you don't have any. You should be able to get more information from the following external apps:",
+        'request-credentials-no-recommendation': 'Please ask the dApp team how to solve this problem.',
+
         // Global component: assist publishing
         'publishing': {
             'publish-did': 'Pubblicazione dell\'identità'
@@ -276,5 +281,9 @@ export const it = {
         'publish-error2': 'Errore di pubblicazione',
         'publish-wait2': 'Il tuo profilo pubblico è in fase di aggiornamento, attendi qualche secondo.',
         'publish-error-call-sync-did': "Need to synchronize identity, Settings->Advanced Settings->Synchronize Identity",
+
+        // Sensitive popup
+        'sensitive-title': 'Sensitive information',
+        'sensitive-prompt': 'This information is marked as sensitive. Please double check that you really want to publish this',
     }
 };

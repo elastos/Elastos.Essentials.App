@@ -156,7 +156,6 @@ export class CredentialDetailsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.iconLoaded = false;
     this.displayableProperties = this.getDisplayableProperties();
     this.titleBar.setTitle(this.translate.instant('identity.credentialdetails-title'));
     this.titleBar.setupMenuItems([
@@ -187,6 +186,7 @@ export class CredentialDetailsPage implements OnInit {
   prepareCredential() {
     Logger.log("identity", "Computing credential status");
 
+    this.iconLoaded = false;
     this.credential = null;
     this.segment = "validator";
 
@@ -211,11 +211,13 @@ export class CredentialDetailsPage implements OnInit {
 
     // Prepare the credential for display
     this.credential.onIconReady(iconSrc => {
-      console.log("onIconReady");
-      this.iconSrc = iconSrc;
-      this.iconLoaded = true;
+      Logger.log("identity", "onIconReady");
+      this.zone.run( () => {
+          this.iconSrc = iconSrc;
+          this.iconLoaded = true;
+      })
     });
-    console.log("prepareForDisplay");
+    Logger.log("identity", "prepareForDisplay");
     this.credential.prepareForDisplay();
 
     void this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(this.credential.pluginVerifiableCredential.getIssuer()).then(issuerDocumentStatus => {
@@ -529,7 +531,7 @@ export class CredentialDetailsPage implements OnInit {
           // If the credential is sensitive, make sure to let user confirm his choice first
           let relatedCredential = this.credential;
           if (relatedCredential.isSensitiveCredential()) {
-            let confirmed = await this.globalPopupService.showConfirmationPopup("Sensitive information", "This information is marked as sensitive. Please double check that you really want to publish this");
+            let confirmed = await this.globalPopupService.showConfirmationPopup(this.translate.instant('identity.sensitive-title'), this.translate.instant('identity.sensitive-prompt'));
             if (!confirmed) {
               this.isCredentialInLocalDIDDocument = false; // Revert user's UI choice as we cancel this.
               this.updatingVisibility = false;
