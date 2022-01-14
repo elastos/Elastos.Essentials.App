@@ -175,6 +175,7 @@ export const zh = {
                 "touch-to-select-a-personal-wallet": "轻触选择个人钱包",
                 "withdraw-note": "提现最小金额为0.0002ELA，且必须是0.00000001的整数倍",
                 'crosschain-note': "Elastos跨链转账一般需要15到25分钟。在此期间，您将无法看到这笔资金，请耐心等待",
+                "balance-locked": "( {{ locked }} 确认中 )",
 
                 /********************
                 * Coin Receive Page *

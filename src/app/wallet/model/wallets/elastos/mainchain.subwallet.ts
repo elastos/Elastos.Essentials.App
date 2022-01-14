@@ -1,4 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import { StandardCoinName } from '../../coin';
 import { ElastosTransaction, RawTransactionType, TransactionDirection } from '../../providers/transaction.types';
 import { NetworkWallet } from '../networkwallet';
@@ -27,6 +28,14 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
 
     public getDisplayTokenName(): string {
         return "ELA";
+    }
+
+    public getRawBalanceSpendable(): BigNumber {
+        return this.balanceSpendable;
+    }
+
+    public async updateBalanceSpendable() {
+        this.balanceSpendable = await this.getTotalBalanceByType(true);
     }
 
     protected async getTransactionName(transaction: ElastosTransaction, translate: TranslateService): Promise<string> {

@@ -83,6 +83,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public memo = '';
     public sendMax = false;
 
+    public displayBalanceString = '';
+    private displayBalanceLocked = '';
+
     // Display recharge wallets
     public fromSubWallet: AnySubWallet;
     public toSubWallet: AnySubWallet = null;
@@ -200,7 +203,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.fromSubWallet = this.networkWallet.getSubWallet(this.subWalletId);
         this.tokensymbol = this.fromSubWallet.getDisplayTokenName();
 
-        Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance());
+        Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance().toString());
 
         if (this.fromSubWallet instanceof StandardEVMSubWallet) {
             this.isEVMSubwallet = true;
@@ -317,6 +320,22 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.intentId = this.coinTransferService.intentTransfer.intentId;
                 break;
         }
+
+        this.displayBalanceString = this.uiService.getFixedBalance(this.networkWallet.subWallets[this.subWalletId].getDisplayBalance());
+        void this.getBalanceSpendable();
+    }
+
+    private async getBalanceSpendable() {
+        await this.fromSubWallet.updateBalanceSpendable();
+        this.zone.run( ()=> {
+            let balanceSpendable = this.fromSubWallet.getRawBalanceSpendable();
+            let balance = this.fromSubWallet.getRawBalance();
+            let margin = balance.minus(balanceSpendable);
+            if (margin.gt(1000)) { // 1000 : SELA
+                this.displayBalanceLocked = this.uiService.getFixedBalance(this.networkWallet.subWallets[this.subWalletId].getDisplayAmount(margin));
+                this.displayBalanceString = this.uiService.getFixedBalance(this.networkWallet.subWallets[this.subWalletId].getDisplayAmount(balanceSpendable));
+            }
+        })
     }
 
     /**

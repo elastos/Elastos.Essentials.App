@@ -21,7 +21,8 @@
                     <p>{{ uiService.getSubwalletSubtitle(fromSubWallet) }}</p>
                 </ion-col>
                 <ion-col size="4.2" class="right-col">
-                    <h1>{{ uiService.getFixedBalance(fromSubWallet.getDisplayBalance()) }}</h1>
+                    <h1>{{ displayBalanceString }} </h1><strong *ngIf="displayBalanceLocked != ''"> {{ 'wallet.balance-locked' |
+                            translate:{locked: displayBalanceLocked}  }}</strong>
                     <p *ngIf="fromSubWallet.getAmountInExternalCurrency(fromSubWallet.getDisplayBalance())">
                         {{ fromSubWallet.getAmountInExternalCurrency(fromSubWallet.getDisplayBalance()) }}
                         {{ currencyService.selectedCurrency.symbol }}
@@ -61,7 +62,7 @@
                     <ion-input *ngIf="!sendMax" type="number" name="amount" ngDefaultControl
                         placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="amount"></ion-input>
                     <ion-input *ngIf="sendMax"
-                        [value]="networkWallet.subWallets[subWalletId].getDisplayBalance().toFixed(6)"
+                        [value]="displayBalanceString"
                         (ionChange)="resetAmountInput()"></ion-input>
                     <p *ngIf="supportsMaxTransfer()" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}</p>
                 </ion-col>
@@ -85,7 +86,7 @@
                     <ion-input *ngIf="!sendMax" class="amount-input" type="number" name="amount" ngDefaultControl
                         placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="amount"></ion-input>
                     <ion-input *ngIf="sendMax" class="amount-input"
-                        [value]="networkWallet.subWallets[subWalletId].getDisplayBalance().toFixed(6)"
+                        [value]="displayBalanceString"
                         (ionChange)="resetAmountInput()"></ion-input>
                     <p *ngIf="amount && !sendMax">
                         {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(amount)) }}
@@ -102,8 +103,10 @@
                 <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}
                 </p>
                 <p [class.align-right]="!supportsMaxTransfer()">{{ 'wallet.balance' | translate }}: <strong>{{
-                        uiService.getFixedBalance(networkWallet.subWallets[subWalletId].getDisplayBalance())
-                        }}</strong></p>
+                    displayBalanceString  }}</strong>
+                    <strong *ngIf="displayBalanceLocked != ''"> {{ 'wallet.balance-locked' |
+                        translate:{locked: displayBalanceLocked}  }}</strong>
+                </p>
             </ion-row>
 
             <h1>{{ 'wallet.send-to' | translate }}</h1>

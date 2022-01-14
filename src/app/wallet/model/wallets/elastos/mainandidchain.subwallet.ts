@@ -21,6 +21,11 @@ import { ElastosTransactionsHelper } from './transactions.helper';
 
 const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, VoteType.CRCImpeachment]
 
+export type AvaliableUtxos = {
+    value: number;
+    utxo: Utxo[];
+}
+
 /**
  * Specialized standard sub wallet that shares Mainchain (ELA) and ID chain code.
  * Most code between these 2 chains is common, while ETH is quite different. This is the reason why this
@@ -164,11 +169,18 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     // Ignore gasPrice, gasLimit and nonce.
     public async createPaymentTransaction(toAddress: string, amount: number, memo = "", gasPrice: string = null, gasLimit: string = null, nonce: number = null): Promise<string> {
         let toAmount = 0;
+        let au : AvaliableUtxos = null;
+
         if (amount == -1) {
-            toAmount = Math.floor(this.balance.minus(10000).toNumber());
+            // toAmount = Math.floor(this.balance.minus(10000).toNumber());
+            au = await this.getAvailableUtxo(-1);
+            toAmount = au.value - 10000;// 10000: fee
         } else {
             toAmount = this.accMul(amount, Config.SELA);
+            au = await this.getAvailableUtxo(toAmount + 10000);// 10000: fee
         }
+        if (!au.utxo) return;
+
         Logger.log('wallet', 'createPaymentTransaction toAmount:', toAmount);
 
         let outputs = [{
@@ -176,13 +188,10 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             "Amount": toAmount.toString()
         }]
 
-        let utxo = await this.getAvailableUtxo(toAmount + 10000);// 10000: fee
-        if (!utxo) return;
-
         return this.masterWallet.walletManager.spvBridge.createTransaction(
             this.masterWallet.id,
             this.id, // From subwallet id
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             JSON.stringify(outputs),
             '10000',
             memo // User input memo
@@ -190,8 +199,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createVoteTransaction(voteContents: VoteContent[], memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(-1);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(-1);
+        if (!au.utxo) return;
 
         let newVoteContents = await this.mergeVoteContents(voteContents);
         Logger.log('wallet', 'createVoteTransaction:', JSON.stringify(newVoteContents));
@@ -199,7 +208,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         return this.masterWallet.walletManager.spvBridge.createVoteTransaction(
             this.masterWallet.id,
             this.id, // From subwallet id
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             JSON.stringify(newVoteContents),
             '10000',
             memo // User input memo
@@ -208,14 +217,19 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
     public async createDepositTransaction(toSubWalletId: StandardCoinName, toAddress: string, amount: number, memo = ""): Promise<string> {
         let toAmount = 0;
+        let au : AvaliableUtxos = null;
+
         if (amount == -1) {
-            toAmount = Math.floor(this.balance.minus(20000).toNumber());
+            // toAmount = Math.floor(this.balance.minus(20000).toNumber());
+            au = await this.getAvailableUtxo(-1);
+            toAmount = au.value - 20000;// 20000: fee, cross transafer need more fee.
         } else {
             toAmount = this.accMul(amount, Config.SELA);
+            au = await this.getAvailableUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
         }
+        if (!au.utxo) return;
+
         Logger.log('wallet', 'createDepositTransaction toAmount:', toAmount);
-        let utxo = await this.getAvailableUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
-        if (!utxo) return;
 
         let lockAddres = '';
         switch (toSubWalletId) {
@@ -237,7 +251,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             this.masterWallet.id,
             this.id,
             1,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             toSubWalletId,
             toAmount.toString(),
             toAddress,
@@ -250,19 +264,24 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     // Ignore gasPrice, gasLimit and nonce.
     public async createWithdrawTransaction(toAddress: string, amount: number, memo, gasPrice: string, gasLimit: string, nonce: number): Promise<string> {
         let toAmount = 0;
+        let au : AvaliableUtxos = null;
+
         if (amount == -1) {
-            toAmount = Math.floor(this.balance.minus(20000).toNumber());
+            // toAmount = Math.floor(this.balance.minus(20000).toNumber());
+            au = await this.getAvailableUtxo(-1);
+            toAmount = au.value - 20000;//20000: fee, cross transafer need more fee.
         } else {
             toAmount = this.accMul(amount, Config.SELA);
+            au = await this.getAvailableUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
         }
+        if (!au.utxo) return;
+
         Logger.log('wallet', 'createWithdrawTransaction toAmount:', toAmount);
-        let utxo = await this.getAvailableUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
-        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createWithdrawTransaction(
             this.masterWallet.id,
             this.id, // From subwallet id
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             toAmount.toString(),
             toAddress,
             '10000',
@@ -271,13 +290,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createIDTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createIdTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             memo, // User input memo
             '10000',
@@ -317,13 +336,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     //
 
     public async createProposalTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -331,13 +350,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createProposalChangeOwnerTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalChangeOwnerTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -345,13 +364,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createTerminateProposalTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createTerminateProposalTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -359,13 +378,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createSecretaryGeneralElectionTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createSecretaryGeneralElectionTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -373,13 +392,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createProposalTrackingTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalTrackingTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -387,13 +406,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createProposalReviewTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalReviewTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -401,13 +420,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createProposalWithdrawTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalWithdrawTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -415,13 +434,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createReserveCustomIDTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createReserveCustomIDTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -432,13 +451,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     //dpos registration transaction functions
     //
     public async createRegisterProducerTransaction(payload: string, amount: number, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(amount);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(amount);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createRegisterProducerTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             amount.toString(),
             '10000',
@@ -447,13 +466,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createCancelProducerTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createCancelProducerTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -461,13 +480,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createUpdateProducerTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createUpdateProducerTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -489,13 +508,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     //CR registration transaction functions
     //
     public async createRegisterCRTransaction(payload: string, amount: number, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(amount);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(amount);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createRegisterCRTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             amount.toString(),
             '10000',
@@ -504,13 +523,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createUnregisterCRTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createUnregisterCRTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -518,13 +537,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createUpdateCRTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createUpdateCRTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -532,13 +551,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createRetrieveCRDepositTransaction(amount: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createRetrieveCRDepositTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             amount,
             '10000',
             memo
@@ -546,13 +565,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createCRCouncilMemberClaimNodeTransaction(payload: string, memo = ""): Promise<string> {
-        let utxo = await this.getAvailableUtxo(20000);
-        if (!utxo) return;
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createCRCouncilMemberClaimNodeTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(utxo),
+            JSON.stringify(au.utxo),
             payload,
             '10000',
             memo
@@ -712,7 +731,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
      *
      * @param amountSELA SELA
      */
-    public async getAvailableUtxo(amountSELA: number) {
+    public async getAvailableUtxo(amountSELA: number): Promise<AvaliableUtxos> {
         let utxoArray: Utxo[] = null;
         if (this.id === StandardCoinName.ELA) {
             await this.getVotingUtxoByRPC();
@@ -728,7 +747,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
         if (utxoArray === null) {
             Logger.warn('wallet', 'Can not find utxo!')
-            return null;
+            return {value:0, utxo:null};
         }
 
         // Remove the utxo that used in pending transactions.
@@ -741,8 +760,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
         let utxoArrayForSDK = [];
         let getEnoughUTXO = false;
+        let totalAmount = 0;
         if (utxoArray) {
-            let totalAmount = 0;
             for (let i = 0, len = utxoArray.length; i < len; i++) {
                 let utxoAmountSELA = this.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
                 let utxoForSDK: UtxoForSDK = {
@@ -764,15 +783,15 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         if ((usedUTXOs.length > 0) && (!getEnoughUTXO || (amountSELA == -1))) {
             Logger.warn('wallet', 'used UTXOs count:', usedUTXOs.length);
             await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-pending');
-            return null;
+            return {value:0, utxo:null};
         }
 
         if (!getEnoughUTXO) {
             //TODO. Maybe the coinbase utxo is not avaliable? or popup the prompt?
             //return all the utxo.
-            return utxoArrayForSDK;
+            return {value:totalAmount, utxo:utxoArrayForSDK};
         } else {
-            return utxoArrayForSDK;
+            return {value:totalAmount, utxo:utxoArrayForSDK};
         }
     }
 
@@ -842,37 +861,47 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     /**
-     * Get balance by RPC
+     * Get balance by type
      */
-    public async getBalanceByRPC() {
+     public async getTotalBalanceByType(spendable = false) {
         let totalBalance = new BigNumber(0);
         let balance: BigNumber;
         // The Single Address Wallet should use the external address.
         if (!this.masterWallet.account.SingleAddress) {
-            balance = await this.getBalanceByAddress(true);
+            balance = await this.getBalanceByAddress(true, spendable);
             if (balance == null) {
-                return;
+                return null;
             }
             totalBalance = totalBalance.plus(balance);
         }
 
-        balance = await this.getBalanceByAddress(false);
+        balance = await this.getBalanceByAddress(false, spendable);
         if (balance == null) {
-            return;
+            return null;
         }
         totalBalance = totalBalance.plus(balance);
 
         if (this.id == StandardCoinName.ELA) {
             // Coinbase reward, eg. dpos
-            balance = await this.getBalanceByOwnerAddress();
+            balance = await this.getBalanceByOwnerAddress(spendable);
             if (balance == null) {
-                return;
+                return null;
             }
             totalBalance = totalBalance.plus(balance);
         }
 
-        this.balance = totalBalance;
-        await this.saveBalanceToCache();
+        return totalBalance;
+    }
+
+    /**
+     * Get balance by RPC
+     */
+    public async getBalanceByRPC() {
+        let totalBalance = await this.getTotalBalanceByType(false);
+        if (totalBalance !== null) {
+            this.balance = totalBalance;
+            await this.saveBalanceToCache();
+        }
 
         //Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
     }
@@ -885,13 +914,13 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         return this.ownerAddress;
     }
 
-    private async getBalanceByOwnerAddress() {
+    private async getBalanceByOwnerAddress(spendable = false) {
         if (this.id != StandardCoinName.ELA) return;
 
         let ownerAddress = await this.getOwnerAddress();
         let addressArray = [ownerAddress];
         try {
-            const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray);
+            const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
             if (balance === null) {
                 Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
                 return null
@@ -904,7 +933,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         }
     }
 
-    private async getBalanceByAddress(internalAddress: boolean) {
+    private async getBalanceByAddress(internalAddress: boolean, spendable = false) {
         let startIndex = 0;
         let totalBalance = new BigNumber(0);
         let addressArray: string[] = null;
@@ -923,7 +952,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             startIndex += addressArray.length;
 
             try {
-                const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray);
+                const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
                 if (balance === null) {
                     Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
                     return null
@@ -941,7 +970,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     // return balance in SELA
-    public async callGetBalanceByAddress(subWalletId: StandardCoinName, addressArray: string[]): Promise<BigNumber> {
+    public async callGetBalanceByAddress(subWalletId: StandardCoinName, addressArray: string[], spendable = false): Promise<BigNumber> {
         let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(subWalletId);
         const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
         if (rpcApiUrl === null) {
@@ -955,7 +984,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             const param = {
                 method: 'getreceivedbyaddress',
                 params: {
-                    address
+                    address,
+                    spendable
                 },
                 id: index.toString()
             };
@@ -1104,7 +1134,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             }
         } while (!this.masterWallet.account.SingleAddress);
 
-        Logger.log("wallet", ' utxoArray:', utxoArray);
+        Logger.log("wallet", ' utxoArray length:', utxoArray ? utxoArray.length : 0);
         return utxoArray;
     }
 

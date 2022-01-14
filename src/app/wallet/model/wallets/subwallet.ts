@@ -44,6 +44,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   public tokenDecimals: number;
   public tokenAmountMulipleTimes: BigNumber; // 10 ^ tokenDecimal
   protected balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
+  protected balanceSpendable: BigNumber = new BigNumber(NaN); // ELA: The coinbase utxo can not be used before be confirmed more than 100 times.
   public lastBlockTime: string = null;
 
   public balanceCache: TimeBasedPersistentCache<any> = null;
@@ -120,6 +121,14 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
 
   public getRawBalance(): BigNumber {
     return this.balance;
+  }
+
+  public getRawBalanceSpendable(): BigNumber {
+    // return this.balanceSpendable; // Only for ELA MainChain.
+    return this.balance;
+  }
+
+  public updateBalanceSpendable() {
   }
 
   /**

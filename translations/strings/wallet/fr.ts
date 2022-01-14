@@ -176,6 +176,7 @@ export const fr = {
         "touch-to-select-a-personal-wallet": "Toucher pour choisir un portefeuille personnel",
         "withdraw-note": "Le retrait minimal est de 0.0002 ELA et doit être un multiple de 0.00000001",
         'crosschain-note': "Les transferts inter-chaînes prennent généralement entre 15 et 25 minutes. Vous ne verrez pas vos fonds pendant ce temps, veuillez patienter.",
+        "balance-locked": "( {{ locked }} locked )",
 
         /********************
         * Coin Receive Page *
