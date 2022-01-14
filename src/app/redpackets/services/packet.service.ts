@@ -66,7 +66,7 @@ export class PacketService {
     return new Promise((resolve, reject) => {
       // Create a new packet
       this.http.post<SerializedPacket>(`${GlobalConfig.RedPackets.serviceUrl}/packets`, packet).subscribe(createdPacket => {
-        console.log("createdPacket", createdPacket);
+        Logger.log("Created packet:", createdPacket);
         if (createdPacket) {
           resolve(Packet.fromSerializedPacket(createdPacket));
         }

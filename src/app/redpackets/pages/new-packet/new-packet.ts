@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { AlertController, ModalController, NavController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController, NavController } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -8,6 +8,7 @@ import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuIte
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
@@ -56,7 +57,7 @@ export class NewPacketPage {
     private didSessions: GlobalDIDSessionsService,
     private alertCtrl: AlertController,
     private uiService: UiService,
-    private toastController: ToastController,
+    private globalNativeServce: GlobalNativeService,
     private walletService: WalletService,
     private walletNetworkService: WalletNetworkService,
     private walletNetworkUIService: WalletNetworkUIService,
@@ -150,7 +151,8 @@ export class NewPacketPage {
       tokenType: this.tokenSubwallet instanceof ERC20SubWallet ? TokenType.ERC20_TOKEN : TokenType.NATIVE_TOKEN,
       creatorAddress,
       creatorDID: this.didSessions.getSignedInIdentity().didString,
-      expirationDate: moment().add(this.expirationDays, "days").unix()
+      expirationDate: moment().add(this.expirationDays, "days").unix(),
+      visibility: this.visibility
     };
 
     // For ERC20 tokens, also save the token contract address into the packet
@@ -160,30 +162,27 @@ export class NewPacketPage {
 
     // Create a new packet on the backend
     this.createdPacket = await this.packetService.createPacket(packet);
-    Logger.log("redpackets", "Created packet:", this.createdPacket);
+    if (!this.createdPacket) {
+      // Something wrong happened, let user know
+      void this.globalNativeServce.errToast("The packet could not be created. Please try again later");
+    }
+    else {
+      // Save the packet locally
+      await this.packetService.addToMyPackets(this.createdPacket);
 
-    // Save the packet locally
-    await this.packetService.addToMyPackets(this.createdPacket);
-
-    // Reach the payment screen to continue
-    await this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay", {
-      state: {
-        packetHash: this.createdPacket.hash
-      }
-    });
+      // Reach the payment screen to continue
+      await this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/pay", {
+        state: {
+          packetHash: this.createdPacket.hash
+        }
+      });
+    }
 
     this.creatingPacket = false;
   }
 
-  async formErr(message: string) {
-    const toast = await this.toastController.create({
-      mode: 'ios',
-      color: 'danger',
-      header: 'Almost there but...',
-      message,
-      duration: 2000
-    });
-    void toast.present();
+  formErr(message: string) {
+    void this.globalNativeServce.errToast(message, 2000);
   }
 
   /**

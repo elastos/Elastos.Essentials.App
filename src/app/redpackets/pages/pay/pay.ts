@@ -201,6 +201,14 @@ export class PayPage {
     return this.uiService.getFixedBalance(this.packet.costs.nativeToken.standardServiceFees);
   }
 
+  public getNativeTokenPublicOptionFees(): string {
+    return this.packet.costs.nativeToken.options.publicPacketFees.toString();
+  }
+
+  public getERC20TokenPublicOptionFees(): string {
+    return this.packet.costs.erc20Token.options.publicPacketFees.toString();
+  }
+
   private async checkRightNetwork(): Promise<boolean> {
     // Force switch to the right network if we are on the wrong one
     let currentNetwork = this.walletNetworkService.activeNetwork.value;
