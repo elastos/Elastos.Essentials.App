@@ -3,16 +3,25 @@ import { ActivatedRoute, Router } from '@angular/router';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { GrabResponse, GrabStatus, PacketWinner } from '../../model/grab.model';
 import { Packet, TokenType } from '../../model/packets.model';
+import { DIDService } from '../../services/did.service';
 import { PacketService } from '../../services/packet.service';
+
+type WinnerDisplayEntry = {
+  winner: PacketWinner;
+  name: string;
+  avatarUrl: string;
+}
 
 @Component({
   selector: 'app-packet-details',
@@ -41,13 +50,15 @@ export class PacketDetailsPage implements OnInit {
   // UI Model
   public captchaPicture: string = null;
   public captchaString = "";
-  public winners: PacketWinner[] = [];
+  public winners: WinnerDisplayEntry[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private walletNetworkService: WalletNetworkService,
     private walletService: WalletService,
+    private didService: DIDService,
+    private uiService: UiService,
     private globalNavService: GlobalNavService,
     public packetService: PacketService
   ) {
@@ -203,8 +214,33 @@ export class PacketDetailsPage implements OnInit {
 
   private async fetchWinners() {
     this.fetchingWinners = true;
-    this.winners = await this.packetService.getPacketWinners(this.packet.hash);
+    let rawWinners = await this.packetService.getPacketWinners(this.packet.hash);
     this.fetchingWinners = false;
+
+    // For each winner, get DID information if any. During this time, we may display placeholders
+    // and then show avatar and real DID names as they arrive asynchronously
+    for (let winner of rawWinners) {
+      let winnerEntry: WinnerDisplayEntry = {
+        winner,
+        name: "",
+        avatarUrl: transparentPixelIconDataUrl() // TMP - use placeholder avatar picture
+      }
+      this.winners.push(winnerEntry);
+
+      if (winner.userDID) {
+        // Async
+        void this.didService.fetchUserInformation(winner.userDID).then(userInfo => {
+          console.log("userInfo", userInfo)
+          if (userInfo) {
+            if (userInfo.name)
+              winnerEntry.name = userInfo.name;
+
+            if (userInfo.avatarDataUrl)
+              winnerEntry.avatarUrl = userInfo.avatarDataUrl;
+          }
+        });
+      }
+    }
   }
 
   public userIsCreator(): boolean {
@@ -217,5 +253,9 @@ export class PacketDetailsPage implements OnInit {
         packetHash: this.packet.hash
       }
     });
+  }
+
+  public getWinnerAmount(winner: WinnerDisplayEntry): string {
+    return this.uiService.getFixedBalance(new BigNumber(winner.winner.winningAmount));
   }
 }

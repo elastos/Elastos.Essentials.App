@@ -23,16 +23,16 @@ export class DIDService {
             let userName = this.didDocumentsService.getRepresentativeOwnerName(docStatus.document);
             // Get the issuer icon
             let representativeIconSubject = this.didDocumentsService.getRepresentativeIcon(docStatus.document);
-            console.log("DEBUG representativeIconSubject", representativeIconSubject);
             if (representativeIconSubject) {
               // eslint-disable-next-line @typescript-eslint/no-misused-promises
               representativeIconSubject.subscribe(async iconBuffer => {
-                console.log("DEBUG", userName, iconBuffer);
-                resolve({
-                  did: did,
-                  name: userName,
-                  avatarDataUrl: await rawImageToBase64DataUrl(iconBuffer)
-                });
+                if (iconBuffer) {
+                  resolve({
+                    did: did,
+                    name: userName,
+                    avatarDataUrl: await rawImageToBase64DataUrl(iconBuffer)
+                  });
+                }
               });
             }
             else {

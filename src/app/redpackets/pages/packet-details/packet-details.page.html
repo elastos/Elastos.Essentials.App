@@ -115,12 +115,26 @@
         Nobody grabbed this packet yet!
       </ion-row>
 
-      <ion-row class="details" *ngFor="let winner of winners">
-        <h4 *ngIf="winner.userDID"> {{ winner.userDID }} </h4>
-        <p> {{ winner.winningAmount }} {{ getEarnedTokenSymbol() }}</p>
+      <ion-row class="winner-row" *ngFor="let winner of winners">
+        <div class="winner">
+          <div class="icon-col">
+            <img [src]="winner.avatarUrl" />
+          </div>
+          <div class="main-col">
+            <div class="creator">{{ winner.name }}</div>
+            <div class="amount">
+              2 days ago
+            </div>
+          </div>
+          <div class="right-col">
+            <img src="assets/redpackets/images/coins.svg" />
+            {{ getWinnerAmount(winner) }} {{ getEarnedTokenSymbol() }}
+          </div>
+        </div>
+        <!-- <h4 *ngIf="winner.userDID"> {{ winner.userDID }} </h4>
+        <p> {{ winner.winningAmount }} {{ getEarnedTokenSymbol() }}</p> -->
       </ion-row>
     </div>
-
 
   </ion-grid>
 </ion-content>

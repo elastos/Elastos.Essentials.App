@@ -186,8 +186,11 @@ export class DIDDocumentsService {
 
       if (avatarCredentials && avatarCredentials.length > 0) {
         let credSubject = avatarCredentials[0].getSubject();
-        if ("type" in credSubject && credSubject["type"] === "elastoshive")
-          hiveIconUrl = credSubject["data"];
+        if ("avatar" in credSubject) {
+          let avatar = credSubject["avatar"];
+          if ("type" in avatar && avatar["type"] === "elastoshive")
+            hiveIconUrl = avatar["data"];
+        }
       }
     }
 
