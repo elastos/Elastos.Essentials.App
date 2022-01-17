@@ -1,18 +1,141 @@
 @import "../../root.scss";
 
-.header {
-  font-weight: 600;
-  font-size: 16px;
-}
 
 .footer-margin {
   padding-bottom: 120px;
 }
 
-.section {
-  display: flex;
+.new-packet-section-container {
+  padding: 20px 15px;
+  background: #260404;
+  border-radius: 13px;
+  margin-bottom: 15px;
 
-  ion-col {
-    align-self: center;
+  display: flex;
+  flex-direction: column;
+
+  ion-row {
+    margin: 5px 0;
+  }
+
+  .form-flex-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-flex-row {
+    display: flex;
+    flex-direction: row;
+    .form-flex-row-label {
+      width: 60%;
+      max-width: 60%;
+      align-self: center;
+    }
+    .form-flex-row-input {
+      width: 40%;
+      max-width: 40%;
+    }
+  }
+
+  ion-input, ion-select, ion-textarea {
+    border-radius: 7px;
+    background: #351818;
+    --padding-top: 10px;
+    --padding-end: 11px;
+    --padding-bottom: 10px;
+    --padding-start: 11px;
+    margin: 7px 0;
+    min-height: 47px;
+
+    .after-input {
+      position: absolute;
+      right: 5px;
+    }
+  }
+
+  ion-textarea {
+    min-height: 100px;
+  }
+
+  .select-essentials {
+    padding: 10px 11px;
+    width: 100%;
+    background: #351818;
+    border-radius: 7px;
+    display: flex;
+    flex-direction: row;
+    margin: 7px 0;
+    .select-essentials-value {
+      display: flex;
+      flex-direction: column;
+      .select-essentials-value-main {
+        font-size: 13px
+      }
+      .select-essentials-value-sub {
+        font-size: 10px
+      }
+    }
+
+    .select-essentials-icon {
+      margin-left: auto;
+      align-self: center;
+    }
+  }
+
+  .form-flex-col-label-name, .form-flex-row-label-name {
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 16px;
+    margin-bottom: 5px;
+  }
+
+  .form-flex-col-label-helper, .form-flex-row-label-helper {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 13px;
+    color: #C9C9C9;
+  }
+
+  .additional-input-infos {
+    height: 30px;
+    margin-bottom: 5px;
+    font-size: 10px;
+  }
+
+  .category-slide-item {
+    height: 169px;
+    background: #351818;
+    box-sizing: border-box;
+    border-radius: 5px;
+    padding: 15px 10px;
+    display: flex;
+    flex-direction: column;
+    &.active {
+      border: 1px solid #724F4F;
+    }
+    .label {
+      width: 85px;
+      word-break: break-word;
+      min-height: 30px;
+      height: 30px;
+      margin-top: 15px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 400;
+      line-height: 12px;
+    }
+  }
+
+  .new-packet-about-section-title {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  ion-select::part(icon) {
+    content: url('/assets/redpackets/images/select_icon.svg');
+    width: 16px;
+    opacity: 1 !important;
   }
 }

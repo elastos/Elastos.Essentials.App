@@ -7,11 +7,11 @@ import { Packet } from '../../model/packets.model';
 import { DIDService } from '../../services/did.service';
 
 @Component({
-    selector: 'packet-preview',
-    templateUrl: './packet-preview.component.html',
-    styleUrls: ['./packet-preview.component.scss'],
+    selector: 'opened-packet-preview',
+    templateUrl: './opened-preview.component.html',
+    styleUrls: ['./opened-preview.component.scss'],
 })
-export class PacketPreviewComponent {
+export class OpenedPreviewComponent {
     @ViewChild("icon") iconElement: ElementRef;
 
     @Input()

@@ -1,31 +1,104 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-grid class="container ion-text-center ion-padding">
-    <h1>Public packets</h1>
-    <!-- <div *ngIf="fetchingPublicPackets">
-      <ion-spinner></ion-spinner>
-    </div> -->
-    <div>
-      <div *ngIf="publicPackets.length > 0">
-        <packet-preview *ngFor="let packet of publicPackets" [packet]="packet" (click)="openPacket(packet)">
-        </packet-preview>
-      </div>
-      <p *ngIf="publicPackets.length === 0">No public packet so far. What about creating your own?</p>
-    </div>
 
-    <div class="about">
-      <div class="icon-container">
-        <img src="assets/redpackets/images/packets.png" class="icon" />
-        <div class="glow"></div>
-      </div>
-
-      <h1>About red packets</h1>
-
-      <p>Traditionally used in China to celebrate special occasions and share happiness among friends,
-        red packets are derived from this idea in Elastos Essentials to celebrate, but also to create entertainment for
-        crypto communities.</p>
-
-      <p>Red packets introduce much more fun compared to “airdrops”, as luck and reactivity are involved.</p>
-    </div>
+  <ion-grid class="container ion-padding">
+    <ng-container *ngTemplateOutlet="publicPacketTemplate"></ng-container>
+    <ng-container *ngTemplateOutlet="myPacketTemplate"></ng-container>
+    <ng-container *ngTemplateOutlet="openedPacketsTemplate"></ng-container>
+    <ng-container *ngTemplateOutlet="aboutRedPacketsTemplate"></ng-container>
   </ion-grid>
+
 </ion-content>
+
+<ng-template #publicPacketTemplate>
+  <div class="redpacket-section-header">
+    <div class="redpacket-section-header-title">
+      Public
+    </div>
+    <div class="redpacket-section-header-link" *ngIf="publicPackets.length > 3"> <!-- Todo: check with Ben about this -->
+      View all
+    </div>
+  </div>
+
+  <ion-grid *ngIf="!fetchingPublicPackets && publicPackets.length > 0" style="padding: 0">
+    <packet-preview *ngFor="let packet of publicPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)"></packet-preview>
+  </ion-grid>
+
+  <div *ngIf="!fetchingPublicPackets && publicPackets.length === 0">
+    <div class="redpacket-container ion-text-center">
+      <p>No public Packets are available at the moment</p>
+    </div>
+  </div>
+
+  <div *ngIf="fetchingPublicPackets">
+    <div class="redpacket-container ion-text-center">
+      <ion-spinner></ion-spinner>
+    </div>
+  </div>
+
+</ng-template>
+
+
+<ng-template #myPacketTemplate>
+  <div class="redpacket-section-header">
+    <div class="redpacket-section-header-title">
+      My packets
+    </div>
+    <div class="redpacket-section-header-link" *ngIf="myPackets.length > 3">
+      View all
+    </div>
+  </div>
+
+  <ion-grid *ngIf="myPackets.length > 0" style="padding: 0">
+    <packet-preview *ngFor="let packet of myPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)">
+    </packet-preview>
+  </ion-grid>
+
+  <div class="redpacket-container ion-text-center" *ngIf="myPackets.length === 0">
+    <p>No Packets</p>
+    <ion-button (click)="navigateToNewPacket()" class="redpacket-button">
+      Create new packet
+    </ion-button>
+  </div>
+</ng-template>
+
+
+<ng-template #openedPacketsTemplate>
+  <div *ngIf="openedPackets.length > 0">
+    <div class="redpacket-section-header">
+      <div class="redpacket-section-header-title">
+        Opened packets
+      </div>
+      <div class="redpacket-section-header-link"> <!-- Todo: remove after validation -->
+        View all
+      </div>
+      <div class="redpacket-section-header-link" *ngIf="openedPackets.length > 3"> <!-- Todo: check with Ben about this -->
+        View all
+      </div>
+    </div>
+
+    <ion-grid style="padding: 0">
+      <packet-preview *ngFor="let packet of openedPackets"
+                      [packet]="packet"
+                      (click)="navigateToPacketDetails(packet)"></packet-preview>
+    </ion-grid>
+  </div>
+</ng-template>
+
+
+<ng-template #aboutRedPacketsTemplate>
+  <div class="redpacket-container about">
+    <div class="icon-container">
+      <img alt="redpacket-icon" src="assets/redpackets/images/packets.png" class="icon" />
+      <div class="glow"></div>
+    </div>
+
+    <h1>About Red Packets</h1>
+
+    <p>Traditionally used in China to celebrate special occasions and share happiness among friends,
+      red packets are derived from this idea in Elastos Essentials to celebrate, but also to create entertainment for
+      crypto communities.</p>
+
+    <p>Red packets introduce much more fun compared to “airdrops”, as luck and reactivity are involved.</p>
+  </div>
+</ng-template>

@@ -96,7 +96,7 @@
 
       <ion-row class="details">
         <h4>Packet Creator</h4>
-        <p>{{ packet.packet_creator }}</p>
+        <p>{{ packet.creatorDID }}</p>
       </ion-row>
     </div>
 
@@ -118,7 +118,7 @@
       <ion-row class="winner-row" *ngFor="let winner of winners">
         <div class="winner">
           <div class="icon-col">
-            <img [src]="winner.avatarUrl" />
+            <img [src]="winner.avatarUrl" alt="Winner avatar"/>
           </div>
           <div class="main-col">
             <div class="creator">{{ winner.name }}</div>
@@ -127,7 +127,7 @@
             </div>
           </div>
           <div class="right-col">
-            <img src="assets/redpackets/images/coins.svg" />
+            <img src="assets/redpackets/images/coins.svg" alt="Coin icon"/>
             {{ getWinnerAmount(winner) }} {{ getEarnedTokenSymbol() }}
           </div>
         </div>

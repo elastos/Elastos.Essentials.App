@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { AlertController, ModalController, NavController } from '@ionic/angular';
+import { AlertController, IonSlides, ModalController, NavController } from "@ionic/angular";
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -19,6 +19,8 @@ import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { TokenChooserComponent } from '../../../wallet/components/token-chooser/token-chooser.component';
 import { Packet, PacketDistributionType, PacketToCreate, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
+import { GlobalThemeService } from "../../../services/global.theme.service";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'page-new-packet',
@@ -27,16 +29,18 @@ import { PacketService } from '../../services/packet.service';
 })
 export class NewPacketPage {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  @ViewChild('categorySlides', { read: IonSlides }) categorySlides: IonSlides;
 
   // Packet info
   public tokenSubwallet: AnySubWallet; // Subwallet of the token chosen by user for the red packet. By default, use the main EVM subwallet
-  public packets: number = 19; // Number of red packets available
-  public tokenAmount: string = "0.01"; // Number of token (native or ERC20) to spend, totally
+  public packets = 19; // Number of red packets available
+  public tokenAmount = "0.01"; // Number of token (native or ERC20) to spend, totally
   public type: PacketType = PacketType.STANDARD; // Red packet type - TODO
   public distributionType: PacketDistributionType = PacketDistributionType.RANDOM; // Fixed amount for all packets, or random amounts?
   public category = "default"; // Red packet theme: christmas, chinese new year, etc
   public message = "temporary message"; // Message shown by users who open the packet
   public probability = 100;
+  public probabilityPercent = "100%";
   public expirationDays = 3; // Number of days after which the red packet expires
   public visibility: PacketVisibility = PacketVisibility.LINK_ONLY;
   public dAppUrl = "";
@@ -47,9 +51,37 @@ export class NewPacketPage {
   private createdPacket: Packet = null;
   public unsupportedNetwork = false;
 
+  // UI
+  public slideOpts = {
+    slidesPerView: 2.7,
+    spaceBetween: 10,
+  };
+
+  public distributionSelectOption: any = {
+    header: "Distribution",
+    cssClass: this.theme.darkMode ? "darkSelect" : "select",
+  };
+
+  public visibilitySelectOption: any = {
+    header: "Visibility",
+    cssClass: this.theme.darkMode ? "darkSelect" : "select",
+  };
+
   // Callbacks
   public titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private networkSubscription: Subscription = null;
+
+  updateProbability(probability:number):void {
+    probability = parseFloat(probability.toString().replace("%", ""));
+    if (probability > 100) {
+      probability = 100;
+    }
+    if (probability < 0) {
+      probability = 0;
+    }
+    this.probability = probability;
+    this.probabilityPercent = probability + '%';
+  }
 
   constructor(
     public navCtrl: NavController,
@@ -61,18 +93,20 @@ export class NewPacketPage {
     private walletService: WalletService,
     private walletNetworkService: WalletNetworkService,
     private walletNetworkUIService: WalletNetworkUIService,
+    private translate: TranslateService,
+    public theme: GlobalThemeService,
     private modalCtrl: ModalController,
     public packetService: PacketService
   ) { }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle("New Packet");
+    this.titleBar.setTitle("New Red Packet");
     this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
     this.name = this.didSessions.getSignedInIdentity().name;
 
-    this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
+    this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(() => {
       this.refreshNetwork();
     });
 
@@ -232,5 +266,9 @@ export class NewPacketPage {
     this.unsupportedNetwork = !this.tokenSubwallet;
     this.tokenAmount = "0.01";
     this.packets = 30;
+  }
+
+  selectCategory(packetCategory: string) {
+    this.category = packetCategory;
   }
 }

@@ -1,11 +1,39 @@
 @import "../../root.scss";
 
-.about {
+.redpacket-button {
+  --background: linear-gradient(140.79deg, #920E0E -7.72%, #EE5147 143.51%);
+  --background-activated: #920E0E;
+  border-radius: 15px;
+}
+
+.redpacket-section-header {
+  padding: 10px 0 10px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: row;
+
+  .redpacket-section-header-title {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .redpacket-section-header-link {
+    justify-self: end;
+    font-size: 14px;
+    align-self: center;
+    margin-left: auto;
+  }
+}
+
+.redpacket-container {
   background: rgba(62, 8, 8, 0.7);
-  backdrop-filter: blur(30px);
   border-radius: 10px;
-  padding: 20px;
-  margin-top: 60px;
+  padding: 40px 20px;
+}
+
+.about {
+  backdrop-filter: blur(30px);
+  margin-top: 20px;
   text-align: left;
   display: flex;
   flex-direction: column;
@@ -42,7 +70,21 @@
 
   p {
     font-weight: normal;
+    font-style: normal;
     font-size: 14px;
     line-height: 144%;
+  }
+}
+
+
+.redpacket-element {
+  .redpacket-element-title {
+    font-size: 12px;
+    line-height: 160%;
+    color: #C9C9C9;
+  }
+  .redpacket-element-name {
+    font-size: 13px;
+    line-height: 16px;
   }
 }

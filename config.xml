@@ -7,7 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content src="index.html" />
+    <content original-src="index.html" src="https://192.168.1.4:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -234,4 +234,5 @@
     <allow-navigation href="https://0.0.0.0:8100" sessionid="a89a190a" />
     <allow-navigation href="http://192.168.8.214:8100" sessionid="05830ffd" />
     <allow-navigation href="http://192.168.8.214:8101" sessionid="46ad38eb" />
+    <allow-navigation href="https://192.168.1.4:8100" sessionid="832f6029" />
 </widget>

@@ -30,7 +30,7 @@ export class PayPage {
 
   // Model
   public fetchingPacketInfo = true;
-  private packet: Packet = null;
+  public packet: Packet = null;
   private packetHash: string;
   //private costs: PacketCosts = null;
   public sendingNativePayment = false;
@@ -53,7 +53,7 @@ export class PayPage {
     private walletNetworkService: WalletNetworkService,
     private ethTransactionService: EVMService
   ) {
-    route.queryParams.subscribe(params => {
+    route.queryParams.subscribe(() => {
       if (this.router.getCurrentNavigation().extras.state) {
         this.packetHash = this.router.getCurrentNavigation().extras.state.packetHash;
         void this.fetchPacketInfo();
@@ -62,7 +62,7 @@ export class PayPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle("Finalize and pay");
+    this.titleBar.setTitle("Payment");
     this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
   }

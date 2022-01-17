@@ -6,183 +6,217 @@
   </ion-grid>
 
   <!-- Supported network and subwallet is set -->
-  <ion-grid class="container ion-text-center ion-padding footer-margin" *ngIf="tokenSubwallet && !unsupportedNetwork">
-    <ion-row class="section ion-padding-top">
-      <ion-col size="6" class="header">
-        Quantity
-      </ion-col>
-      <ion-col size="3">
+
+  <ion-grid class="container ion-padding footer-margin" *ngIf="tokenSubwallet && !unsupportedNetwork">
+
+    <div class="new-packet-section-container">
+
+      <ion-row class="form-flex-col">
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">
+            Quantity
+          </div>
+          <div class="form-flex-col-label-helper">
+            Sample text to explain quantities
+          </div>
+        </div>
         <ion-input [(ngModel)]="packets" type="number" placeholder="20" required></ion-input>
-      </ion-col>
-      <ion-col size="3">
-        packets
-      </ion-col>
-    </ion-row>
+      </ion-row>
 
-    <ion-row class="section">
-      <ion-col size="6" class="header">
-        Token
-      </ion-col>
-      <ion-col size="6" (click)="pickToken()">
-        {{tokenSubwallet.getDisplayTokenName()}}
-      </ion-col>
-    </ion-row>
+      <ion-row class="form-flex-col">
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">
+            Token
+          </div>
+          <div class="form-flex-col-label-helper">
+            Sample text to explain token
+          </div>
+        </div>
 
-    <ion-row class="section">
-      <ion-col size="6" class="header">
-        Total value
-      </ion-col>
-      <ion-col size="3">
-        <ion-input [(ngModel)]="tokenAmount" type="number" placeholder="10" required></ion-input>
-      </ion-col>
-      <ion-col size="3">
-        {{tokenSubwallet.getDisplayTokenName()}}
-      </ion-col>
-    </ion-row>
+        <div class="select-essentials" (click)="pickToken()">
+          <div class="select-essentials-value">
+            <div class="select-essentials-value-main">{{tokenSubwallet.getDisplayTokenName()}}</div>
+            <div class="select-essentials-value-sub">{{tokenSubwallet.networkWallet.network.name}}</div>
+          </div>
+          <div class="select-essentials-icon">
+            <img src="assets/redpackets/images/select_icon.svg" alt="Select icon">
+          </div>
+        </div>
+      </ion-row>
 
-    <!-- <ion-row class="section">
-      <ion-col size="6" class="header">
-        Type
-      </ion-col>
-      <ion-col size="6">
-        <ion-select [(ngModel)]="type" [placeholder]="'identity.select-one'|translate" [interfaceOptions]="option"
-          [cancelText]="'common.cancel'|translate" [okText]="'common.confirm'|translate" ngDefaultControl>
-          <ion-select-option value="standard">Standard</ion-select-option>
-        </ion-select>
-      </ion-col>
-    </ion-row> -->
+      <ion-row class="form-flex-row">
+        <div class="form-flex-row-label">
+          <div class="form-flex-row-label-name">
+            Amount
+          </div>
+          <div class="form-flex-row-label-helper">
+            Amount placeholder
+          </div>
+        </div>
+        <div class="form-flex-row-input">
+          <ion-input [(ngModel)]="tokenAmount" type="number" placeholder="10" required>
+            <span class="after-input">{{ tokenSubwallet.getDisplayTokenName() }}</span>
+          </ion-input>
+        </div>
+      </ion-row>
 
-    <ion-row class="section">
-      <ion-col size="6" class="header">
-        Distribution
-      </ion-col>
-      <ion-col size="6">
-        <ion-select [(ngModel)]="distributionType" [placeholder]="'identity.select-one'|translate"
-          [interfaceOptions]="option" [cancelText]="'common.cancel'|translate" [okText]="'common.confirm'|translate"
-          ngDefaultControl>
-          <ion-select-option value="fixed">Same value in all packets</ion-select-option>
-          <ion-select-option value="random">Random packet values</ion-select-option>
-        </ion-select>
-      </ion-col>
-    </ion-row>
+      <ion-row class="form-flex-col">
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">
+            Distribution
+          </div>
+          <div class="form-flex-col-label-helper">
+            Placeholder for distribution
+          </div>
+        </div>
+        <div class="form-flex-col-input">
+          <ion-select
+            [(ngModel)]="distributionType"
+            [placeholder]="'identity.select-one'|translate"
+            [interfaceOptions]="distributionSelectOption"
+            [cancelText]="'common.cancel'|translate"
+            [okText]="'common.confirm'|translate"
+            ngDefaultControl>
+            <ion-select-option value="fixed">Same value in all packets</ion-select-option>
+            <ion-select-option value="random">Random packet values</ion-select-option>
+          </ion-select>
+        </div>
+        <div class="additional-input-infos" *ngIf="distributionType === 'fixed'">*All winning users will receive {{getValuePerFixedPacket()}}
+          {{tokenSubwallet.getDisplayTokenName()}}.</div>
+        <div class="additional-input-infos" *ngIf="distributionType === 'random'">*Winning users will receive random amounts of
+          {{tokenSubwallet.getDisplayTokenName()}}.</div>
+      </ion-row>
 
-    <p *ngIf="distributionType === 'fixed'">All winning users will receive {{getValuePerFixedPacket()}}
-      {{tokenSubwallet.getDisplayTokenName()}}.</p>
-    <p *ngIf="distributionType === 'random'">Winning users will receive random amounts of
-      {{tokenSubwallet.getDisplayTokenName()}}.</p>
+      <ion-row class="form-flex-col">
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">
+            Probability
+          </div>
+          <div class="form-flex-col-label-helper">
+            If there are remaining packets, probability to get one. If lost, cannot try again
+          </div>
+        </div>
+        <div class="form-flex-row-input">
 
-    <ion-row class="section">
-      <ion-col size="6" class="header">
-        Probability
-      </ion-col>
-      <ion-col size="3">
-        <ion-input [(ngModel)]="probability" type="number" placeholder="100" required></ion-input>
-      </ion-col>
-      <ion-col size="3">
-        %
-      </ion-col>
-    </ion-row>
+          <span>
+            <ion-input
+              [ngModel]="probabilityPercent" (change)="updateProbability($event.target.value)"
+              required number
+              >
+            </ion-input>
+            </span>
+        </div>
+      </ion-row>
 
-    <ion-row class="section">
-      <ion-col size="6" class="header">
-        Expires in
-      </ion-col>
-      <ion-col size="3">
-        <ion-input [(ngModel)]="expirationDays" type="number" placeholder="7" required></ion-input>
-      </ion-col>
-      <ion-col size="3">
-        days
-      </ion-col>
-    </ion-row>
+      <ion-row class="form-flex-col">
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">
+            Visibility
+          </div>
+          <div class="form-flex-col-label-helper">
+            Placeholder for visibility explaination
+          </div>
+        </div>
+        <div class="form-flex-col-input">
+          <ion-select [(ngModel)]="visibility"
+                      [placeholder]="'identity.select-one'|translate"
+                      [interfaceOptions]="visibilitySelectOption"
+                      [cancelText]="'common.cancel'|translate"
+                      [okText]="'common.confirm'|translate" ngDefaultControl>
+            <ion-select-option value="link">Users with link only</ion-select-option>
+            <ion-select-option value="public">Public</ion-select-option>
+          </ion-select>
+        </div>
+      </ion-row>
 
-    <ion-row class="section">
-      <ion-col size="6" class="header">
-        Visibility
-      </ion-col>
-      <ion-col size="6">
-        <ion-select [(ngModel)]="visibility" [placeholder]="'identity.select-one'|translate" [interfaceOptions]="option"
-          [cancelText]="'common.cancel'|translate" [okText]="'common.confirm'|translate" ngDefaultControl>
-          <ion-select-option value="link">Users with link only</ion-select-option>
-          <ion-select-option value="public">Public</ion-select-option>
-        </ion-select>
-      </ion-col>
-    </ion-row>
+      <ion-row class="form-flex-row">
+        <div class="form-flex-row-label">
+          <div class="form-flex-row-label-name">
+            Duration
+          </div>
+          <div class="form-flex-row-label-helper">
+            Max 7 days
+          </div>
+        </div>
+        <div class="form-flex-row-input">
+          <ion-input [(ngModel)]="expirationDays" type="number" placeholder="7" required>
+            <span class="after-input">Days</span>
+          </ion-input>
+        </div>
+      </ion-row>
 
-    <ion-row class="section">
-      <ion-col size="6" class="header">
-        Category
-      </ion-col>
-      <ion-col size="6">
-        <ion-select [(ngModel)]="category" [placeholder]="'identity.select-one'|translate" [interfaceOptions]="option"
-          [cancelText]="'common.cancel'|translate" [okText]="'common.confirm'|translate" ngDefaultControl>
-          <ion-select-option value="default">Default</ion-select-option>
-          <ion-select-option value="christmas">Christmas</ion-select-option>
-          <ion-select-option value="cny">Chinese new year</ion-select-option>
-        </ion-select>
-      </ion-col>
-    </ion-row>
+    </div>
 
-    <ion-row class="section ion-padding-top">
-      <ion-col size="12">
-        <h4>About you</h4>
-      </ion-col>
-      <ion-col size="12">
-        This red packet will be published using your currently signed in user information:
-      </ion-col>
-    </ion-row>
+    <div class="new-packet-section-container">
 
-    <ion-row class="section ion-padding-top">
-      <ion-col size="6" class="header">
-        Avatar
-      </ion-col>
-      <ion-col size="6">
-        <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-          <img
-            [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
-        </ion-avatar>
-        <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
-          <img
-            [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
-        </ion-avatar>
-      </ion-col>
-    </ion-row>
+      <div class="new-packet-about-section-title">
+        About User
+      </div>
 
-    <ion-row class="section ion-padding-top">
-      <ion-col size="6" class="header">
-        Name
-      </ion-col>
-      <ion-col size="6">
-        <!-- Hardcoded name -->
-        {{name}}
-      </ion-col>
-    </ion-row>
+      <div class="redpacket-user-profile-container">
+        <div class="redpacket-user-profile-image">
+          <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
+            <img [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+          </ion-avatar>
+          <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
+            <img [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
+          </ion-avatar>
+        </div>
 
-    <ion-row class="section ion-padding-top">
-      <ion-col size="6" class="header">
-        Your dApp
-      </ion-col>
-      <ion-col size="6">
-        <ion-input [(ngModel)]="dAppUrl" type="text" placeholder="Your dApp url, if any" required></ion-input>
-      </ion-col>
-    </ion-row>
+        <div class="redpacket-user-profile-infos">
+          <div class="redpacket-user-profile-infos-name">{{ name }}</div>
+          <div class="redpacket-user-profile-infos-dapp">todo</div>
+        </div>
+      </div>
 
-    <ion-row class="section">
-      <ion-col size="12" class="header">
-        <h4>Message</h4>
-      </ion-col>
-      <ion-col size="12">
-        <ion-textarea [(ngModel)]="message" placeholder="Merry Christmas everyone!" type="text">
-        </ion-textarea>
-      </ion-col>
-    </ion-row>
+      <div class="form-flex-col">
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">Message</div>
+        </div>
+        <div class="form-flex-col-input">
+          <ion-textarea [(ngModel)]="message" placeholder="Happy Chinese New Year to you" type="text"></ion-textarea>
+        </div>
+      </div>
 
-    <div class="sticky-footer-margin"></div>
+      <div>
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">Category</div>
+        </div>
+
+        <ion-slides #categorySlides
+                    [options]="slideOpts">
+          <ion-slide class="category-slide-item"
+                     [ngClass]="{'active': category === 'default'}"
+                     (click)="selectCategory('default')">
+            <img src="assets/redpackets/images/cat_blue.svg" alt="Default category" />
+            <div class="label">Default</div>
+          </ion-slide>
+
+          <ion-slide class="category-slide-item"
+                     [ngClass]="{'active': category === 'christmas'}"
+                     (click)="selectCategory('christmas')">
+            <img src="assets/redpackets/images/cat_christmas.svg" alt="Christmas category" />
+            <div class="label">Christmas</div>
+          </ion-slide>
+
+          <ion-slide class="category-slide-item"
+                     [ngClass]="{'active': category === 'cny'}"
+                     (click)="selectCategory('cny')">
+            <img src="assets/redpackets/images/cat_cny.png" alt="Chinese new year category" />
+            <div class="label">Chinese New Year</div>
+          </ion-slide>
+        </ion-slides>
+      </div>
+    </div>
   </ion-grid>
 
-  <div class="sticky-footer pd1">
-    <div class="custom-btn" (click)="createPacket()">
-      <ion-label *ngIf="!creatingPacket">Create Red Packet</ion-label>
-      <ion-spinner *ngIf="creatingPacket"></ion-spinner>
+  <div class="redpacket-footer-container">
+    <div class="redpacket-footer-button">
+      <button (click)="createPacket()" >
+        <ion-label *ngIf="!creatingPacket">Continue</ion-label>
+        <ion-spinner *ngIf="creatingPacket"></ion-spinner>
+      </button>
     </div>
   </div>
+
 </ion-content>

@@ -1,1 +1,143 @@
 @import "../../root.scss";
+
+.balance-not-enough {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  div {
+    font-size: large;
+    text-align: center;
+  }
+}
+
+.payment-section-container {
+  margin-bottom: 15px;
+  padding: 20px 15px;
+  background: #260404;
+  border-radius: 13px;
+  display: flex;
+  flex-direction: column;
+
+  .payment-section-title {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: #FFFFFF;
+    margin-bottom: 15px;
+  }
+
+  .payment-section-step {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: row;
+
+    opacity: 0.6;
+
+    .payment-section-process-step {
+      width: 50px;
+      svg {
+        justify-self: center;
+      }
+    }
+
+    .payment-section-process-step-title {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 15px;
+      margin-bottom: 5px;
+    }
+
+    .payment-section-process-step-details {
+      font-size: 13px;
+      line-height: 16px;
+      margin-bottom: 5px;
+    }
+
+    .payment-section-process-step-button button {
+      height: 47px;
+      width: 152px;
+      border-radius: 8px;
+      text-align: center;
+      background: #C9C9C9;
+      opacity: 0.2;
+    }
+
+    .payment-section-process-step-final {
+      display: flex;
+      flex-direction: row;
+      .payment-section-process-step-final-label {
+        align-self: center;
+        margin-left: 5px;
+      }
+
+    }
+
+    .payment-section-process-step-success {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 22px;
+      color: #96FBC4;
+    }
+
+    &.active {
+      opacity: 1;
+      .payment-section-process-step-button button {
+        opacity: 1;
+        background: linear-gradient(65.64deg, #920E0E -34.46%, #EE5147 139.84%);
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 16px;
+        color: #FFFFFF;
+      }
+
+      svg {
+        circle {
+          fill: white;
+          stroke: white;
+        }
+      }
+
+      .payment-section-process-step-title {
+        font-size: 16px;
+        line-height: 20px;
+        opacity: 1;
+      }
+
+      .payment-section-process-step-final-label {
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 22px;
+        color: #96FBC4;
+      }
+
+    }
+  }
+
+  .payment-section-summary {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    .payment-section-summary-label, .payment-section-summary-value {
+      color: #ACACAC;
+      font-weight: 500;
+      font-size: 13px;
+      line-height: 16px;
+      &.total {
+        color: #FFFFFF;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 17px;
+      }
+    }
+
+    .payment-section-summary-value {
+      margin-left: auto;
+      font-size: 14px;
+      line-height: 17px;
+    }
+  }
+}

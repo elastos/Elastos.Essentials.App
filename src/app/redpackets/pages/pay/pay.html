@@ -1,91 +1,170 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <!-- Packet creation on the backend -->
-  <ion-grid class="container ion-text-center ion-padding" *ngIf="fetchingPacketInfo">
-    Getting packet information, please wait
+  <ion-grid class="container ion-padding payment-section-container" *ngIf="fetchingPacketInfo"
+            style="display: flex; flex-direction: column; align-items: center; text-align:center;">
+    <h3>Getting packet information, please wait</h3>
     <ion-spinner></ion-spinner>
   </ion-grid>
 
-  <!-- Payment info -->
-  <ion-grid class="container ion-text-center ion-padding" *ngIf="packet && !fetchingPacketInfo">
-    <!-- Intro -->
-    <p>
-      You are about to finalize your red packet. Please confirm sending the following tokens to the red packet service.
-    </p>
-    <p *ngIf="packetContainsERC20Tokens()">
-      <b>Note</b>: you have to send both native tokens and ERC20 tokens.
-    </p>
-    <p>
-      <b>Note</b>: unspent tokens and provisionning fees are returned at the expiration of the red packet.
-    </p>
-
-    <!-- Cost summary -->
-    <div class="nativeSummary">
-      <h4>{{getNativeTokenSymbol()}}</h4>
-      <ion-row>
-        <ion-col size="6" class="header">Red packet</ion-col>
-        <ion-col size="6" class="cost">{{getNativeRedPacketValue()}} {{getNativeTokenSymbol()}}</ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size="6" class="header">Transaction fees</ion-col>
-        <ion-col size="6" class="cost">{{getNativeTokenTxFees()}} {{getNativeTokenSymbol()}}</ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size="6" class="header">Service fees (${{getNativeTokenServiceFeesUSD()}} USD)</ion-col>
-        <ion-col size="6" class="cost">{{getNativeTokenServiceFees()}} {{getNativeTokenSymbol()}}</ion-col>
-      </ion-row>
-      <ion-row *ngIf="packet.visibility === 'public'">
-        <ion-col size="6" class="header">Option: public packet</ion-col>
-        <ion-col size="6" class="cost">{{getNativeTokenPublicOptionFees()}} {{getNativeTokenSymbol()}}</ion-col>
-      </ion-row>
-
-      <div class="custom-btn mt1" *ngIf="!isNativePaymentCompleted() && nativeTokenBalanceIsEnough"
-        (click)="sendNativeToken()">
-        <ion-label *ngIf="!sendingNativePayment">Send {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}</ion-label>
-        <ion-spinner *ngIf="sendingNativePayment"></ion-spinner>
-      </div>
-      <div *ngIf="!isNativePaymentCompleted() && !nativeTokenBalanceIsEnough">
-        <h2>Current balance of {{currentNativeBalance}} {{getNativeTokenSymbol()}} is not enough to pay
-          {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}</h2>
-      </div>
-      <div *ngIf="isNativePaymentCompleted()">
-        <h1>Already paid!</h1>
-      </div>
+  <!-- Not enough balance either native or ERC20 -->
+  <ion-grid class="container ion-padding balance-not-enough"
+            *ngIf="!fetchingPacketInfo && (!nativeTokenBalanceIsEnough || (packet.costs.erc20Token && !erc20TokenBalanceIsEnough))">
+    <div *ngIf="!nativeTokenBalanceIsEnough">
+      Current balance of {{currentNativeBalance}} {{getNativeTokenSymbol()}}
+      is not enough to pay
+      {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}
     </div>
 
-    <div class="erc20summary" *ngIf="packet.costs.erc20Token">
-      <h4>{{getERC20TokenSymbol()}}</h4>
-      <ion-row>
-        <ion-col size="6" class="header">Red packet</ion-col>
-        <ion-col size="6" class="cost">{{getERC20RedPacketValue()}} {{getERC20TokenSymbol()}}</ion-col>
-      </ion-row>
-      <ion-row *ngIf="packet.visibility === 'public'">
-        <ion-col size="6" class="header">Option: public packet</ion-col>
-        <ion-col size="6" class="cost">{{getERC20TokenPublicOptionFees()}} {{getERC20TokenSymbol()}}</ion-col>
-      </ion-row>
-
-      <div class="custom-btn mt1" *ngIf="!isERC20PaymentCompleted() && erc20TokenBalanceIsEnough"
-        (click)="sendERC20Tokens()">
-        <ion-label *ngIf="!sendingERC20Payment">Send {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</ion-label>
-        <ion-spinner *ngIf="sendingERC20Payment"></ion-spinner>
-      </div>
-      <div *ngIf="!isERC20PaymentCompleted() && !erc20TokenBalanceIsEnough">
-        <h2>Current balance of {{currentERC20Balance}} {{getERC20TokenSymbol()}} is not enough to pay
-          {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</h2>
-      </div>
-      <div *ngIf="isERC20PaymentCompleted()">
-        <h1>Already paid!</h1>
-      </div>
+    <div *ngIf="packet.costs.erc20Token && !erc20TokenBalanceIsEnough">
+      Current balance of {{currentERC20Balance}} {{getERC20TokenSymbol()}}
+      is not enough to pay
+      {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}
     </div>
-
-    <div *ngIf="areAllPaymentsCompleted()">
-      <h4>Status</h4>
-      <p>The red packet is live!</p>
-    </div>
-
-    <div class="custom-btn" *ngIf="areAllPaymentsCompleted()" (click)="openPacketDetails()">
-      <ion-label>View packet</ion-label>
-    </div>
-
   </ion-grid>
+
+  <!-- Payment info
+   //todo: maybe move this long if to ts
+   -->
+  <ion-grid *ngIf="packet && !fetchingPacketInfo" class="container ion-padding">
+    <div *ngIf="nativeTokenBalanceIsEnough &&
+  (!packet.costs.erc20Token || (packet.costs.erc20Token && erc20TokenBalanceIsEnough))">
+
+      <ion-row class="payment-section-container">
+        <div class="payment-section-title">Process</div>
+        <!-- Step 1 -->
+        <div id="step-1" class="payment-section-step active" [ngClass]="{'active': !isNativePaymentCompleted()}">
+          <div class="payment-section-process-step">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="11.5" stroke="#797979"/>
+              <circle cx="12" cy="12" r="9" fill="#797979"/>
+            </svg>
+          </div>
+
+          <div class="payment-section-process-instructions">
+            <div class="payment-section-process-step-title">Step 1</div>
+            <div class="payment-section-process-step-details">Balance: {{currentNativeBalance}} ELA</div>
+            <div class="payment-section-process-step-button">
+              <button *ngIf="!isNativePaymentCompleted() && nativeTokenBalanceIsEnough"
+                      (click)="sendNativeToken()">
+                <ion-label *ngIf="!sendingNativePayment">Send {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}</ion-label>
+                <ion-spinner *ngIf="sendingNativePayment"></ion-spinner>
+              </button>
+              <div class="payment-section-process-step-success" *ngIf="isNativePaymentCompleted()">{{getNativeTokenTotal()}} {{getNativeTokenSymbol()}} Sent!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="step-2" class="payment-section-step" *ngIf="packet.costs.erc20Token"
+             [ngClass]="{'active': isNativePaymentCompleted() && !areAllPaymentsCompleted()}">
+          <div class="payment-section-process-step">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="11.5" stroke="#797979"/>
+              <circle cx="12" cy="12" r="9" fill="#797979"/>
+            </svg>
+          </div>
+
+          <div class="payment-section-process-instructions">
+            <div class="payment-section-process-step-title">Step 2</div>
+            <div class="payment-section-process-step-details">Balance: {{ currentERC20Balance }} {{getERC20TokenSymbol()}}</div>
+            <div *ngIf="!isERC20PaymentCompleted() && !erc20TokenBalanceIsEnough">
+              <h2>Current balance of {{currentERC20Balance}} {{getERC20TokenSymbol()}} is not enough to pay
+                {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</h2>
+            </div>
+            <div class="payment-section-process-step-button">
+              <button [disabled]="!isNativePaymentCompleted()" (click)="sendERC20Tokens()">
+                <ion-label *ngIf="!sendingERC20Payment">Send {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</ion-label>
+                <ion-spinner *ngIf="sendingERC20Payment"></ion-spinner>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 or 3 if erc20 token -->
+        <div id="step-final" class="payment-section-step" [ngClass]="{'active': areAllPaymentsCompleted()}">
+          <div class="payment-section-process-step">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="11.5" stroke="#797979"/>
+              <circle cx="12" cy="12" r="9" fill="#797979"/>
+            </svg>
+          </div>
+
+          <div class="payment-section-process-instructions">
+            <div class="payment-section-process-step-title" *ngIf="!packet.costs.erc20Token">Step 2</div>
+            <div class="payment-section-process-step-title" *ngIf="packet.costs.erc20Token">Step 3</div>
+            <div class="payment-section-process-step-final">
+              <img *ngIf="!areAllPaymentsCompleted()" src="assets/redpackets/images/payment_packet_inactive.svg" alt="" class="payment-section-process-final-redpacketimg"/>
+              <img *ngIf="areAllPaymentsCompleted()" src="assets/redpackets/images/payment_packet_active.svg" alt="" class="payment-section-process-final-redpacketimg"/>
+              <div class="payment-section-process-step-final-label">The Red Packet is Live</div>
+            </div>
+          </div>
+        </div>
+      </ion-row>
+    </div>
+
+    <ion-row class="payment-section-container">
+      <div class="payment-section-summary">
+        <div class="payment-section-summary-label total">Total {{getNativeTokenSymbol()}}</div>
+        <div class="payment-section-summary-value total">{{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}</div>
+      </div>
+      <div class="payment-section-summary">
+        <div class="payment-section-summary-label">Transaction fees</div>
+        <div class="payment-section-summary-value">{{getNativeTokenTxFees()}} {{getNativeTokenSymbol()}}</div>
+      </div>
+      <div class="payment-section-summary">
+        <div class="payment-section-summary-label">Service Fees</div>
+        <div class="payment-section-summary-value">{{getNativeTokenServiceFees()}} {{getNativeTokenSymbol()}}</div>
+      </div>
+      <div class="payment-section-summary" *ngIf="packet.visibility === 'public'">
+        <div class="payment-section-summary-label">Option: public packet</div>
+        <div class="payment-section-summary-value">{{getNativeTokenPublicOptionFees()}} {{getNativeTokenSymbol()}}</div>
+      </div>
+    </ion-row>
+
+    <ion-row class="payment-section-container" *ngIf="packet.costs.erc20Token">
+      <div class="payment-section-summary">
+        <div class="payment-section-summary-label total">Total {{getERC20TokenSymbol()}}</div>
+        <div class="payment-section-summary-value total">{{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</div>
+      </div>
+      <div class="payment-section-summary">
+        <div class="payment-section-summary-label">Red Packets</div>
+        <div class="payment-section-summary-value">{{getERC20RedPacketValue()}} {{getERC20TokenSymbol()}}</div>
+      </div>
+      <div class="payment-section-summary" *ngIf="packet.visibility === 'public'">
+        <div class="payment-section-summary-label">Option: public packet</div>
+        <div class="payment-section-summary-value">{{getERC20TokenPublicOptionFees()}} {{getERC20TokenSymbol()}}</div>
+      </div>
+    </ion-row>
+
+    <!-- Notes -->
+    <div class="payment-section-container">
+      <div class="redpacket-note-container">
+        <div class="redpacket-note-info-logo">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path opacity="0.4" d="M14.34 0H5.67C2.28 0 0 2.38 0 5.92V14.09C0 17.62 2.28 20 5.67 20H14.34C17.73 20 20 17.62 20 14.09V5.92C20 2.38 17.73 0 14.34 0" fill="#C8C8C8"/>
+            <path d="M9.99512 8.48438C10.4771 8.48438 10.8701 8.87738 10.8701 9.35938V13.7794C10.8701 14.2614 10.4771 14.6544 9.99512 14.6544C9.51312 14.6544 9.12012 14.2614 9.12012 13.7794V9.35938C9.12012 8.87738 9.51312 8.48438 9.99512 8.48438Z" fill="white"/>
+            <path d="M9.995 7.0625C9.516 7.0625 9.125 6.6695 9.125 6.1875C9.125 5.7055 9.52 5.3125 10.005 5.3125C10.488 5.3125 10.88 5.7055 10.88 6.1875C10.88 6.6695 10.488 7.0625 9.995 7.0625Z" fill="white"/>
+          </svg>
+        </div>
+        <div class="redpacket-note-info-text">
+          <div class="redpacket-note-info-text-title">Note</div>
+          <div class="redpacket-note-info-text-content">
+            Unspent tokens and
+            provisionning fees are returned at
+            the expiration of the red packet.
+          </div>
+        </div>
+      </div>
+    </div>
+  </ion-grid>
+
+  <div class="redpacket-footer-container">
+    <div class="redpacket-footer-button" *ngIf="!fetchingPacketInfo && areAllPaymentsCompleted()">
+      <button (click)="openPacketDetails()">
+        <ion-label>View packet</ion-label>
+      </button>
+    </div>
+  </div>
+
 </ion-content>
