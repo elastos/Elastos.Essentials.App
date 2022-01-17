@@ -46,9 +46,7 @@ export class PacketPreviewComponent {
     private async preparePacket(packet: Packet) {
         if (packet) {
             let userInfo = await this.didService.fetchUserInformation(packet.creatorDID);
-            if (userInfo) {
-                this.creator = userInfo.name;
-            }
+            this.creator = userInfo && userInfo.name ? userInfo.name : packet.creatorDID.slice(0,20) + "...";
         }
     }
 

@@ -1,85 +1,87 @@
 @import "../../root.scss";
 
-.container {
-  .section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.redpacket-status {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
 
-    .network {
-      .logo {
-        height: 50px;
-        width: 50px;
-      }
+  > div {
+    width: 85%;
+    border-radius: 13px;
+    text-align: center;
+    padding: 5px 0;
+
+    font-weight: bold;
+    backdrop-filter: blur(4px);
+    font-size: 13px;
+    line-height: 16px;
+    color: #3C3C3C;
+
+    &.live {
+      background: linear-gradient(265.77deg, #02CB84 20.73%, #0CFFD3 109.25%);
     }
 
-    ion-label {
-      font-weight: 900;
-      font-size: 28px;
-    }
-
-    h4 {
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    span {
-      font-size: 20px;
-      font-weight: 800;
-      color: #f04141;
+    &.not-live {
+      background: #C9C9C9;
     }
   }
 
-  .winner-row {
-    .winner {
-      width: 100% auto;
-      padding: 10px;
-      display: flex;
-      margin: 0px;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      flex-grow: 1;
-      background: #260404;
-      border-radius: 13px;
 
-      .icon-col {
-        img {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-        }
-      }
+}
+.redpacket-view-header {
+  background-size: contain;
+  background-repeat: no-repeat;
+  aspect-ratio: 1 / 1;
 
-      .main-col {
-        min-width: 0; // Avoid left-col to push right-col out
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 50%;
-        padding: 10px;
-
-        .creator {
-          color: #c9c9c9;
-          text-align: left;
-          font-size: 12px;
-          margin-bottom: 5px;
-        }
-
-        .amount {
-        }
-      }
-
-      .right-col {
-        display: flex;
-        align-items: center;
-
-        img {
-          width: 20px;
-          margin-right: 5px;
-        }
-      }
-    }
+  &.redpacket-default-category {
+    background-image: url('/assets/redpackets/images/cat_default_details.png');
   }
+  &.redpacket-christmas-category {
+    background-image: url('/assets/redpackets/images/cat_christmas_details.png');
+  }
+  &.redpacket-cny-category {
+    background-image: url('/assets/redpackets/images/cat_cny_details.png');
+  }
+}
+
+.redpacket-view-header {
+  display: flex;
+  justify-content: center;
+}
+.redpacket-header-in-content {
+  ion-avatar {
+    margin: auto;
+  }
+  padding-top: 5%;
+  width: 75%;
+  text-align: center;
+}
+
+.redpacket-info-header-creator {
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+  padding: 15px 0;
+}
+
+.redpacket-info-header-token {
+  font-weight: 600;
+  font-size: 29px;
+  line-height: 35px;
+  margin-bottom: 20px;
+}
+
+
+.redpacket-info-header-message-title {
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.redpacket-info-header-message-content {
+  font-weight: bold;
+  font-size: 13px;
+  line-height: 139%;
 }

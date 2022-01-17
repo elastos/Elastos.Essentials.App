@@ -71,12 +71,7 @@
       <div class="redpacket-section-header-title">
         {{ 'redpackets.opened-packets' | translate }}
       </div>
-      <div class="redpacket-section-header-link">
-        <!-- Todo: remove after validation -->
-        {{ 'redpackets.view-all' | translate }}
-      </div>
       <div class="redpacket-section-header-link" *ngIf="openedPackets.length > 3">
-        <!-- Todo: check with Ben about this -->
         {{ 'redpackets.view-all' | translate }}
       </div>
     </div>
@@ -88,8 +83,9 @@
   </div>
 </ng-template>
 
+
 <ng-template #aboutRedPacketsTemplate>
-  <div class="redpacket-container about">
+  <div class="redpacket-container redpacket-light about">
     <div class="icon-container">
       <img alt="redpacket-icon" src="assets/redpackets/images/packets.png" class="icon" />
       <div class="glow"></div>

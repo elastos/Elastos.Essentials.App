@@ -1,138 +1,150 @@
 <ion-content>
   <app-titlebar></app-titlebar>
 
-  <ion-grid class="container ion-text-center ion-padding" *ngIf="packet">
-    <div *ngIf="packetFetchErrored">
-      Unable to retrieve red packet information, please retry later.
-    </div>
+  <div class="redpacket-loader"  *ngIf="checkingGrabStatus">
+    <ion-label>Trying to grab a packet... Please wait</ion-label>
+    <ion-spinner></ion-spinner>
+  </div>
 
-    <div *ngIf="packet">
-      <!-- For the creator: if packet is not active, go to "pay" -->
-      <div *ngIf="!fetchingPacket && userIsCreator() && !packet.isActive">
-        <div class="custom-btn" (click)="finalizePayment()">
-          <ion-label>Finalize payment</ion-label>
-        </div>
-      </div>
+  <div class="redpacket-status" *ngIf="!fetchingPacket && packet && userIsCreator()">
+    <div class="live" *ngIf="packet.isActive">Your packet is now Live !</div>
+    <div class="not-live" *ngIf="!packet.isActive">Your packet is not Live !</div>
+  </div>
 
-      <div *ngIf="checkingGrabStatus">
-        <ion-spinner></ion-spinner>
-        <ion-label>Trying to grab a packet... Please wait</ion-label>
-      </div>
-      <div *ngIf="grabStatusChecked">
-        <!-- Winning -->
-        <div *ngIf="justWon">
-          <ion-row>
-            <ion-col class="section">
-              <ion-label>You've got a packet!</ion-label>
-            </ion-col>
-          </ion-row>
+  <div class="redpacket-error-container" *ngIf="packetFetchErrored">
+    Unable to retrieve red packet information, please retry later.
+  </div>
 
-          <ion-row class="ion-text-center">
-            <ion-col class="section ion-padding">
-              <h4 class="ion-no-margin">
-                You've received {{ getEarnedAmount() }} {{ getEarnedTokenSymbol() }}!
-              </h4>
-            </ion-col>
-          </ion-row>
-        </div>
 
-        <!-- Lost -->
-        <div *ngIf="justMissed">
-          <h2>No luck this time!</h2>
-        </div>
+  <!-- Captcha TODO -->
+  <div *ngIf="captchaChallengeRequired">
+    <ion-button (click)="openGrabModal()">Grab me !</ion-button>
 
-        <!-- No more packets -->
-        <div *ngIf="justNoMorePackets">
-          <h2>Too late, no more packets...</h2>
-        </div>
+    <!-- TODO: move to grab comp -->
+    <ion-img [src]="captchaPicture"></ion-img>
+    <p>Please type the above letters (mind the case) to continue</p>
+    <ion-input type="url" [(ngModel)]="captchaString" ngDefaultControl></ion-input>
+    <ion-button (click)="testCaptcha()">Grab packet</ion-button>
+  </div>
 
-        <!-- Captcha -->
-        <div *ngIf="captchaChallengeRequired">
-          <ion-img [src]="captchaPicture"></ion-img>
-          <p>Please type the above letters (mind the case) to continue</p>
-          <ion-input type="url" [(ngModel)]="captchaString" ngDefaultControl></ion-input>
-          <ion-button (click)="testCaptcha()">Grab packet</ion-button>
-        </div>
-      </div>
-    </div>
+  <!-- PACKET DETAILS -->
+  <ion-grid class="container ion-padding" *ngIf="!fetchingPacket && packet">
 
-    <!-- Packet info -->
-    <div *ngIf="packet">
-      <ion-row class="ion-padding-top">
-        <ion-col size="12" class="summary">
-          <div class="network" *ngIf="network">
-            <ion-img [src]="network.logo"></ion-img>
-            <ion-label>{{network.name}}</ion-label>
+
+    <!-- Packet infos -->
+    <div
+      [ngClass]="{'redpacket-default-category': packet.category === 'default',
+      'redpacket-christmas-category': packet.category === 'christmas',
+      'redpacket-cny-category': packet.category === 'cny'
+      }"
+      class="redpacket-view-header">
+
+      <div class="redpacket-header-in-content">
+        <!-- Default view: captcha required or creator-->
+        <div *ngIf="(!justNoMorePackets && captchaChallengeRequired) || userIsCreator()" class="redpacket-info-header-intro">
+          <div class="redpacket-info-header-avatar">
+            <ion-avatar *ngIf="!creatorAvatar" class="noAvatar">
+              <img src="assets/launcher/default/darkmode/default-avatar.svg" alt="Default avatar">
+            </ion-avatar>
+            <ion-avatar *ngIf="creatorAvatar" class="hasAvatar">
+              <img [src]="creatorAvatar" alt="User avatar">
+            </ion-avatar>
           </div>
-        </ion-col>
-      </ion-row>
-
-      <ion-row class="section">
-        <ion-col size="6" class="header">
-          Initial quantity
-        </ion-col>
-        <ion-col size="6">
-          <ion-label>{{ packet.quantity }}</ion-label>
-        </ion-col>
-      </ion-row>
-
-      <ion-row class="section">
-        <ion-col size="6" class="header">
-          Creation
-        </ion-col>
-        <ion-col size="6">
-          <ion-label>{{ packet.creationDate }}</ion-label>
-        </ion-col>
-      </ion-row>
-
-      <ion-row class="section">
-        <ion-col size="6" class="header">
-          Expiration
-        </ion-col>
-        <ion-col size="6">
-          <ion-label>{{ packet.expirationDate }}</ion-label>
-        </ion-col>
-      </ion-row>
-
-      <ion-row class="details">
-        <h4>Packet Creator</h4>
-        <p>{{ packet.creatorDID }}</p>
-      </ion-row>
-    </div>
-
-    <div *ngIf="packet && packet.isActive">
-      <ion-row class="ion-padding-top">
-        <ion-col size="12" class="summary">
-          <h2>Winners</h2>
-        </ion-col>
-      </ion-row>
-
-      <ion-row *ngIf="fetchingWinners">
-        <ion-spinner></ion-spinner>
-      </ion-row>
-
-      <ion-row *ngIf="winners.length == 0">
-        Nobody grabbed this packet yet!
-      </ion-row>
-
-      <ion-row class="winner-row" *ngFor="let winner of winners">
-        <div class="winner">
-          <div class="icon-col">
-            <img [src]="winner.avatarUrl" alt="Winner avatar"/>
+          <div class="redpacket-info-header-creator">{{ packet.creatorDID.slice(0, 20) }}... is offering some </div>
+          <div class="redpacket-info-header-token">{{ packet.erc20TokenSymbol ? packet.erc20TokenSymbol : packet.nativeTokenSymbol }}</div>
+          <div class="redpacket-info-header-message">
+            <div class="redpacket-info-header-message-title">Message</div>
+            <div class="redpacket-info-header-message-content">{{packet.message}}</div>
           </div>
-          <div class="main-col">
-            <div class="creator">{{ winner.name }}</div>
-            <div class="amount">
-              2 days ago
+        </div>
+
+        <!-- Packet has been grabbed: people who passed captcha and are not creator -->
+        <div class="redpacket-grabbed" *ngIf="!captchaChallengeRequired && !userIsCreator()">
+          <div *ngIf="justWon" class="redpacket-info-header-grabbed">
+            <div class="redpacket-info-header-intro">
+              <div class="redpacket-info-header-creator">{{ packet.creatorDID }} sent you </div>
+              <div class="redpacket-info-header-token">{{ getEarnedAmount() }} {{ getEarnedTokenSymbol() }}</div>
             </div>
           </div>
-          <div class="right-col">
-            <img src="assets/redpackets/images/coins.svg" alt="Coin icon"/>
-            {{ getWinnerAmount(winner) }} {{ getEarnedTokenSymbol() }}
+
+          <div *ngIf="justMissed" class="redpacket-info-header-grabbed">
+            <h2>No luck this time!</h2>
+          </div>
+
+          <!-- No more packets after user tried to open it -->
+          <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
+            <h2>Too late, someone was faster at grabbing this one, no more packets...</h2>
           </div>
         </div>
-      </ion-row>
+
+        <!-- Special case here: if the user open the packet but it's no more available -->
+        <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
+          <h2>Too late, no more packets...</h2>
+        </div>
+      </div>
+
     </div>
 
+    <div class="redpacket-section-title">Informations</div>
+    <ion-row class="redpacket-container">
+      <div class="redpacket-summary-table">
+        <div class="redpacket-summary-label">Initial Pool Size</div>
+        <div class="redpacket-summary-value font-white">{{ packet.quantity }} {{ packet.erc20TokenSymbol ? packet.erc20TokenSymbol : packet.nativeTokenSymbol }}</div>
+      </div>
+      <div class="redpacket-summary-table">
+        <div class="redpacket-summary-label">Distribution model</div>
+        <div class="redpacket-summary-value font-white">{{ packet.distributionType.toString() }}</div>
+      </div>
+      <div class="redpacket-summary-table">
+        <div class="redpacket-summary-label">Probability to win</div>
+        <div class="redpacket-summary-value font-white">{{ packet.probability }}%</div>
+      </div>
+    </ion-row>
+
+    <div class="redpacket-section-title">Most Recent Winners</div>
+    <div class="redpacket-loader" *ngIf="fetchingWinners">
+      <ion-label>Getting the winners</ion-label>
+      <ion-spinner></ion-spinner>
+    </div>
+
+    <div class="redpacket-container redpacket-light redpacket-centered-text-content" *ngIf="!fetchingWinners && winners.length === 0">
+      <p>All the winners will be listed here</p>
+    </div>
+
+    <ion-row class="redpacket-container redpacket-inline redpacket-inline-three-rows" *ngFor="let winner of winners">
+      <!-- First column - the red packet icon -->
+      <ion-col size="2" class="redpacket-inline-first-col redpacket-user-profile-image">
+        <ion-avatar *ngIf="!winner.avatarUrl" class="noAvatar">
+          <img src="assets/launcher/default/darkmode/default-avatar.svg" alt="Default avatar">
+        </ion-avatar>
+        <ion-avatar *ngIf="winner.avatarUrl" class="hasAvatar">
+          <img [src]="winner.avatarUrl" alt="User avatar">
+        </ion-avatar>
+      </ion-col>
+
+      <!-- Second column - the red packet infos -->
+      <ion-col size="6" class="redpacket-inline-second-col">
+        <div class="first-line font-white">{{ winner.name ? winner.name : winner.winner.userDID.slice(0,20) + "..." }}</div>
+        <div class="second-line line-small">{{ winner.date }}</div>
+        <div class="third-line line-small">at {{ winner.time }}</div>
+      </ion-col>
+
+      <!-- Third column - the red packet published icon -->
+      <ion-col size="4" class="redpacket-inline-last-col">
+        <img src="assets/redpackets/images/coins.svg" style="margin-right: 5px" alt="Coin icon"/>
+
+        <div class="amount">{{ getWinnerAmount(winner) }} {{ getEarnedTokenSymbol() }}</div>
+      </ion-col>
+    </ion-row>
   </ion-grid>
+
+  <!-- For the creator: if packet is not active, go to "pay" -->
+  <div class="redpacket-footer-container" *ngIf="!fetchingPacket && packet && userIsCreator() && !packet.isActive">
+    <div class="redpacket-footer-button">
+      <button (click)="finalizePayment()" >
+        <ion-label>Complete payment</ion-label>
+      </button>
+    </div>
+  </div>
+
 </ion-content>

@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
-import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -16,11 +15,16 @@ import { GrabResponse, GrabStatus, PacketWinner } from '../../model/grab.model';
 import { Packet, TokenType } from '../../model/packets.model';
 import { DIDService } from '../../services/did.service';
 import { PacketService } from '../../services/packet.service';
+import moment from "moment";
+import { ModalController } from "@ionic/angular";
+import { GrabPacketComponent } from "../../components/grab-packet/grab-packet.component";
 
 type WinnerDisplayEntry = {
   winner: PacketWinner;
   name: string;
   avatarUrl: string;
+  date: string;
+  time: string;
 }
 
 @Component({
@@ -51,6 +55,7 @@ export class PacketDetailsPage implements OnInit {
   public captchaPicture: string = null;
   public captchaString = "";
   public winners: WinnerDisplayEntry[] = [];
+  public creatorAvatar = ""; // TODO
 
   constructor(
     private route: ActivatedRoute,
@@ -60,7 +65,8 @@ export class PacketDetailsPage implements OnInit {
     private didService: DIDService,
     private uiService: UiService,
     private globalNavService: GlobalNavService,
-    public packetService: PacketService
+    public packetService: PacketService,
+    public modalController: ModalController
   ) {
 
   }
@@ -167,8 +173,7 @@ export class PacketDetailsPage implements OnInit {
       this.grabResponse,
       this.captchaString,
       walletAddress,
-      this.didService.getProfileVisibility() ? GlobalDIDSessionsService.signedInDIDString : undefined)
-      ;
+      GlobalDIDSessionsService.signedInDIDString);
     await this.handleGrabResponse(this.grabResponse);
   }
 
@@ -215,7 +220,7 @@ export class PacketDetailsPage implements OnInit {
 
   private async fetchWinners() {
     this.fetchingWinners = true;
-    let rawWinners = await this.packetService.getPacketWinners(this.packet.hash);
+    let rawWinners: PacketWinner[] = await this.packetService.getPacketWinners(this.packet.hash);
     this.fetchingWinners = false;
 
     // For each winner, get DID information if any. During this time, we may display placeholders
@@ -224,9 +229,11 @@ export class PacketDetailsPage implements OnInit {
       let winnerEntry: WinnerDisplayEntry = {
         winner,
         name: "",
-        avatarUrl: transparentPixelIconDataUrl() // TMP - use placeholder avatar picture
+        avatarUrl: null, // TMP - use placeholder avatar picture
+        date: moment.unix(winner.creationDate).format('MMM D, YYYY'),
+        time: moment.unix(winner.creationDate).format('hh:mm:ss')
       }
-      this.winners.push(winnerEntry);
+      this.winners.push(winnerEntry); // todo: Limit the number here to only have 3 winners ?
 
       if (winner.userDID) {
         // Async
@@ -258,5 +265,16 @@ export class PacketDetailsPage implements OnInit {
 
   public getWinnerAmount(winner: WinnerDisplayEntry): string {
     return this.uiService.getFixedBalance(new BigNumber(winner.winner.winningAmount));
+  }
+
+  async openGrabModal(){
+    const modal = await this.modalController.create({
+      component: GrabPacketComponent,
+      cssClass: 'grab-packet-component',
+      componentProps: {
+        packet: this.packet,
+      }
+    });
+    return await modal.present()
   }
 }

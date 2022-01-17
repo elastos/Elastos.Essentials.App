@@ -9,7 +9,7 @@
 
   <ion-grid class="container ion-padding footer-margin" *ngIf="tokenSubwallet && !unsupportedNetwork">
 
-    <div class="new-packet-section-container">
+    <div class="redpacket-container new-packet-section-container">
 
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
@@ -96,10 +96,11 @@
           </div>
         </div>
         <div class="form-flex-row-input">
+
           <span>
             <ion-input [ngModel]="probabilityPercent" (change)="updateProbability($event.target.value)" required number>
             </ion-input>
-          </span>
+            </span>
         </div>
       </ion-row>
 
@@ -140,27 +141,24 @@
 
     </div>
 
-    <div class="new-packet-section-container">
+    <div class="redpacket-container new-packet-section-container">
 
       <div class="new-packet-about-section-title">
         {{ 'redpackets.about-you' | translate }}
       </div>
 
-      <div class="redpacket-user-profile-container">
+      <div class="redpacket-container redpacket-inline redpacket-user-profile-container">
         <div class="redpacket-user-profile-image">
           <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-            <img
-              [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+            <img [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
           </ion-avatar>
           <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
-            <img
-              [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
+            <img [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
           </ion-avatar>
         </div>
 
         <div class="redpacket-user-profile-infos">
           <div class="redpacket-user-profile-infos-name">{{ name }}</div>
-          <!-- <div class="redpacket-user-profile-infos-dapp">todo</div> -->
           <div class="form-flex-row-label-helper">{{ 'redpackets.profile-hint' | translate }}</div>
         </div>
       </div>
@@ -183,7 +181,7 @@
         <ion-slides #categorySlides [options]="slideOpts">
           <ion-slide class="category-slide-item" [ngClass]="{'active': category === 'default'}"
             (click)="selectCategory('default')">
-            <img src="assets/redpackets/images/cat_blue.svg" alt="Default category" />
+            <img src="assets/redpackets/images/cat_default.svg" alt="Default category" />
             <div class="label">{{ 'redpackets.theme-default' | translate }}</div>
           </ion-slide>
 
