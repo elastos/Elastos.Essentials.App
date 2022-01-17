@@ -116,6 +116,7 @@ export const it = {
         "coin-action-send": "INVIA",
         "coin-action-receive": "RICEVI",
         "coin-transactions": "Transazioni",
+        "coin-internal-transactions": "Internal Transactions",
         "coin-no-transactions": "Nessuna Transazione",
         "coin-op-received-token": "Ricevuti",
         "coin-op-sent-token": "Inviati",

@@ -45,6 +45,10 @@ export abstract class BTCNetworkBase extends Network {
     return this.nodeUrlApi;
   }
 
+  public getMainEvmAccountApiUrl(): string {
+    return null;
+  }
+
   public getMainTokenSymbol(): string {
     return 'BTC';
   }

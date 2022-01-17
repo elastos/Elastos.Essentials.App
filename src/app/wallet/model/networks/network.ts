@@ -63,6 +63,8 @@ export abstract class Network {
 
   public abstract getMainEvmRpcApiUrl(): string;
 
+  public abstract getMainEvmAccountApiUrl(): string;
+
   public abstract getMainTokenSymbol(): string;
 
   /**

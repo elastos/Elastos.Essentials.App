@@ -50,6 +50,10 @@ export abstract class ElastosNetworkBase extends Network {
     return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHSC));
   }
 
+  public getMainEvmAccountApiUrl(): string {
+    return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(StandardCoinName.ETHSC));
+  }
+
   public getMainTokenSymbol(): string {
     return 'ELA';
   }

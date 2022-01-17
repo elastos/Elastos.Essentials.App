@@ -3,6 +3,7 @@ import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { EVMNetworkWallet } from "../wallets/evm.networkwallet";
 import { StandardEVMSubWallet } from "../wallets/evm.subwallet";
 import { AnySubWallet } from "../wallets/subwallet";
+import { EVMSubWalletInternalTransactionProvider } from "./evm.subwallet.internalTransaction.provider";
 import { EVMSubWalletProvider } from "./evm.subwallet.provider";
 import { AnySubWalletTransactionProvider } from "./subwallet.provider";
 import { EVMSubWalletTokenProvider } from "./token.subwallet.provider";
@@ -14,6 +15,7 @@ import { TransactionProvider } from "./transaction.provider";
 export class EVMTransactionProvider extends TransactionProvider<EthTransaction> {
   private mainProvider: EVMSubWalletProvider<StandardEVMSubWallet> = null;
   private tokenProvider: EVMSubWalletTokenProvider<StandardEVMSubWallet> = null;
+  private internalTXProvider: EVMSubWalletInternalTransactionProvider<StandardEVMSubWallet> = null;
 
   constructor(protected networkWallet: EVMNetworkWallet) {
     super(networkWallet);
@@ -25,6 +27,9 @@ export class EVMTransactionProvider extends TransactionProvider<EthTransaction> 
 
     this.tokenProvider = this.createEVMTokenSubWalletProvider();
     await this.tokenProvider.initialize();
+
+    this.internalTXProvider = this.createEVMSubWalletInternalTransactionProvider();
+    await this.internalTXProvider.initialize();
 
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
@@ -49,12 +54,24 @@ export class EVMTransactionProvider extends TransactionProvider<EthTransaction> 
     return new EVMSubWalletTokenProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
   }
 
+  protected createEVMSubWalletInternalTransactionProvider(): EVMSubWalletInternalTransactionProvider<StandardEVMSubWallet> {
+    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as StandardEVMSubWallet;
+    return new EVMSubWalletInternalTransactionProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
+  }
+
   protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
     if (subWallet instanceof StandardEVMSubWallet)
       return this.mainProvider;
     else if (subWallet instanceof ERC20SubWallet)
       return this.tokenProvider;
     else
-      throw new Error("Heco transactions provider: getSubWalletTransactionProvider() is called with an unknown subwallet!");
+      throw new Error("Transactions provider: getSubWalletTransactionProvider() is called with an unknown subwallet!");
+  }
+
+  protected getSubWalletInternalTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
+    if (subWallet instanceof StandardEVMSubWallet)
+      return this.internalTXProvider;
+    else
+      return null;
   }
 }

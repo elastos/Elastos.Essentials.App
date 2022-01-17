@@ -36,6 +36,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
+import { TransactionListType } from 'src/app/wallet/model/evm.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
@@ -68,6 +69,9 @@ export class CoinHomePage implements OnInit {
     public transactionsLoaded = false;
     private transactions: GenericTransaction[] = []; // raw transactions received from the providers / cache
 
+    public transactionListType = TransactionListType.NORMAL;
+    public hasInternalTransactions = false;
+
     // Total transactions today
     public todaysTransactions = 0;
     // Only for fetchMoreTransactions
@@ -86,8 +90,6 @@ export class CoinHomePage implements OnInit {
     // are at the bottom of the list.
     private fetchMoreTriggerObserver: IntersectionObserver;
 
-    private syncSubscription: Subscription = null;
-    private syncCompletedSubscription: Subscription = null;
     private transactionListChangedSubscription: Subscription = null;
     private transactionFetchStatusChangedSubscription: Subscription = null;
 
@@ -116,6 +118,25 @@ export class CoinHomePage implements OnInit {
         this.init();
     }
 
+    ngOnDestroy() {
+        if (this.updateInterval) {
+            clearInterval(this.updateInterval);
+            this.updateInterval = null;
+        }
+        if (this.updateTmeout) {
+            clearTimeout(this.updateTmeout);
+            this.updateTmeout = null;
+        }
+        if (this.transactionListChangedSubscription) {
+            this.transactionListChangedSubscription.unsubscribe();
+            this.transactionListChangedSubscription = null;
+        }
+        if (this.transactionFetchStatusChangedSubscription) {
+            this.transactionFetchStatusChangedSubscription.unsubscribe();
+            this.transactionFetchStatusChangedSubscription = null;
+        }
+    }
+
     ngAfterViewInit() {
         const options: IntersectionObserverInit = {
             root: this.fetchMoreTrigger.nativeElement.closest('ion-content')
@@ -133,50 +154,6 @@ export class CoinHomePage implements OnInit {
     ionViewWillEnter() {
         this.coinTransferService.subWalletId = this.subWalletId;
         this.titleBar.setTitle(this.translate.instant('wallet.coin-transactions'));
-        void this.initData();
-
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe((value) => {
-            if (value === null) return; // null is the initial value.
-
-            void this.zone.run(async () => {
-                await this.updateTransactions();
-            });
-        });
-
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.transactionFetchStatusChangedSubscription = this.subWallet.transactionsFetchStatusChanged().subscribe(isFetching => {
-            this.zone.run(() => {
-                this.shouldShowLoadingSpinner = isFetching;
-            });
-        });
-    }
-
-    ionViewDidLeave() {
-        if (this.updateInterval) {
-            clearInterval(this.updateInterval);
-            this.updateInterval = null;
-        }
-        if (this.updateTmeout) {
-            clearTimeout(this.updateTmeout);
-            this.updateTmeout = null;
-        }
-        if (this.syncSubscription) {
-            this.syncSubscription.unsubscribe();
-            this.syncSubscription = null;
-        }
-        if (this.syncCompletedSubscription) {
-            this.syncCompletedSubscription.unsubscribe();
-            this.syncCompletedSubscription = null;
-        }
-        if (this.transactionListChangedSubscription) {
-            this.transactionListChangedSubscription.unsubscribe();
-            this.transactionListChangedSubscription = null;
-        }
-        if (this.transactionFetchStatusChangedSubscription) {
-            this.transactionFetchStatusChangedSubscription.unsubscribe();
-            this.transactionFetchStatusChangedSubscription = null;
-        }
     }
 
     init() {
@@ -196,27 +173,62 @@ export class CoinHomePage implements OnInit {
 
             this.startUpdateInterval();
         }
+
+        void this.initData(true);
+
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe((value) => {
+            if (value === null) return; // null is the initial value.
+
+            void this.zone.run(async () => {
+                await this.updateTransactions();
+            });
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.transactionFetchStatusChangedSubscription = this.subWallet.transactionsFetchStatusChanged().subscribe(isFetching => {
+            this.zone.run(() => {
+                this.shouldShowLoadingSpinner = isFetching;
+            });
+        });
     }
 
     ngOnInit() {
     }
 
-    initData(refreshing = false) {
+    async initData(updateAll = false) {
         this.shouldShowLoadingSpinner = true;
-        this.subWallet.fetchNewestTransactions();
+        if (updateAll) {
+            await this.subWallet.fetchNewestTransactions(TransactionListType.NORMAL);
+            await this.subWallet.fetchNewestTransactions(TransactionListType.INTERNAL);
+        } else {
+            await this.subWallet.fetchNewestTransactions(this.transactionListType);
+        }
     }
 
     async updateTransactions() {
         this.start = 0;
-        //this.MaxCount = 0;
         this.transferList = [];
         this.todaysTransactions = 0;
         await this.getAllTx();
+        await this.checkInternalTransactions();
     }
 
     async updateWalletInfo() {
         // Update balance and get the latest transactions.
         await this.subWallet.update();
+    }
+
+    async checkInternalTransactions() {
+        if (!this.hasInternalTransactions) {
+            let transactions = await this.subWallet.getTransactions(TransactionListType.INTERNAL);
+            if (transactions && transactions.length > 0) {
+                Logger.log('wallet', 'find internal transactions.')
+                this.zone.run( () => {
+                    this.hasInternalTransactions = true;
+                })
+            }
+        }
     }
 
     startUpdateInterval() {
@@ -250,7 +262,7 @@ export class CoinHomePage implements OnInit {
     }
 
     async getAllTx() {
-        let transactions = await this.subWallet.getTransactions();
+        let transactions = await this.subWallet.getTransactions(this.transactionListType);
         if (!transactions) {
             Logger.log('wallet', "Can not get transaction");
             this.canFetchMore = false;
@@ -259,11 +271,6 @@ export class CoinHomePage implements OnInit {
         this.transactionsLoaded = true;
         Logger.log('wallet', "Got all transactions: ", transactions.length);
 
-        //const transactions = allTransactions.transactions;
-        //this.MaxCount = allTransactions.total;
-        //this.MaxCount = transactions.length;
-
-        //if (this.start >= this.transactions.length) {
         if (this.subWallet.canFetchMoreTransactions()) {
             this.canFetchMore = true;
         }
@@ -392,7 +399,7 @@ export class CoinHomePage implements OnInit {
             await this.storage.setVisit(true);
         }
 
-        void this.initData(true);
+        void this.initData();
         // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
         setTimeout(() => {
             event.target.complete();
@@ -490,5 +497,10 @@ export class CoinHomePage implements OnInit {
 
     public useSmallFont(): boolean {
         return WalletUtil.getWholeBalance(this.networkWallet.subWallets[this.subWalletId].getDisplayBalance()).length >= 10;
+    }
+
+    public setTransactionListType(transactionlistType: TransactionListType) {
+        this.transactionListType = transactionlistType;
+        void this.initData(false);
     }
 }

@@ -145,27 +145,30 @@ export class CoinTxInfoPage implements OnInit {
                 }
             }
         } else {
-            // Address
-            if ((this.subWalletId === StandardCoinName.ETHSC) || (this.subWalletId === StandardCoinName.ETHDID)) {
-                const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
-                if (this.direction === TransactionDirection.SENT) {
-                    this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
-                } else if (this.direction === TransactionDirection.RECEIVED) {
-                    if (this.transactionInfo.isCrossChain === true) {
-                        // TODO: We can't get the real address for cross chain transafer.
-                        this.fromAddress = null;
-                    }
-                }
-            } else {
-                // TODO: We can remove invalid transaction when get the transactions list?
-                // For erc20, we use getTransactionDetails to check whether the transaction is valid.
-                if (this.status !== TransactionStatus.CONFIRMED) {
+            // TODO: There is no txid in internal transaction, use transactionHash and get more info?
+            if (this.transactionInfo.txid) {
+                // Address
+                if ((this.subWalletId === StandardCoinName.ETHSC) || (this.subWalletId === StandardCoinName.ETHDID)) {
                     const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
-                }
+                    if (this.direction === TransactionDirection.SENT) {
+                        this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
+                    } else if (this.direction === TransactionDirection.RECEIVED) {
+                        if (this.transactionInfo.isCrossChain === true) {
+                            // TODO: We can't get the real address for cross chain transafer.
+                            this.fromAddress = null;
+                        }
+                    }
+                } else {
+                    // TODO: We can remove invalid transaction when get the transactions list?
+                    // For erc20, we use getTransactionDetails to check whether the transaction is valid.
+                    if (this.status !== TransactionStatus.CONFIRMED) {
+                        const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
+                    }
 
-                // if (this.direction === TransactionDirection.RECEIVED) {
-                //     this.fromAddress = this.transactionInfo.from;
-                // }
+                    // if (this.direction === TransactionDirection.RECEIVED) {
+                    //     this.fromAddress = this.transactionInfo.from;
+                    // }
+                }
             }
         }
 

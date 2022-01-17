@@ -71,6 +71,10 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     return this.networkWallet.network.getMainTokenSymbol();
   }
 
+  public supportInternalTransactions() {
+    return true;
+  }
+
   public async getTokenAddress(): Promise<string> {
     if (!this.ethscAddress) {
       this.ethscAddress = (await this.createAddress()).toLowerCase();
@@ -100,11 +104,11 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   }
 
   public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
-    if (transaction.hide || !transaction.blockHash || (transaction.isError && transaction.isError != '0')) {
+    // There is no blockHash in the internal transactions.
+    if (transaction.hide || (transaction.blockHash === null) || (transaction.isError && transaction.isError != '0')) {
       return null;
     }
 
-    // console.log("tx", transaction);
     transaction.to = transaction.to.toLowerCase();
 
     const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds

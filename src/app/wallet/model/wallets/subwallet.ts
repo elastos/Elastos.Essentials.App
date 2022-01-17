@@ -9,6 +9,7 @@ import { CoinID, CoinType, StandardCoinName } from '../coin';
 import { BridgeProvider } from '../earn/bridgeprovider';
 import { EarnProvider } from '../earn/earnprovider';
 import { SwapProvider } from '../earn/swapprovider';
+import { TransactionListType } from '../evm.types';
 import { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../providers/transaction.types';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 import { MasterWallet } from './masterwallet';
@@ -248,6 +249,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
       return false;
   }
 
+  public supportInternalTransactions() {
+    return false;
+  }
+
   /**
    * Tells if this subwallet has a balance greater than or equal to the given amount.
    * For SPV subwallets, this method should be called only after wallet is synced.
@@ -268,18 +273,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   }
 
   /**
-   * Method that must be called by the UI before accessing subwallet transactions.
-   * Typically, this method loads the transaction cache for better UI reactivity right after.
-   */
-  /* public prepareTransactions(): Promise<void> {
-    return this.networkWallet.getTransactionDiscoveryProvider().prepareTransactions(this);
-  } */
-
-  /**
    * Get the list of transactions currently in local memory cache.
    */
-  public getTransactions(): Promise<TransactionType[]> {
-    return this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
+  public getTransactions(transactionListType = TransactionListType.NORMAL): Promise<TransactionType[]> {
+    return this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this, transactionListType);
   }
 
   /**
@@ -300,8 +297,8 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   /**
    * Request a network call to fetch the latest transactions for this subwallet.
    */
-  public fetchNewestTransactions() {
-    return this.networkWallet.getTransactionDiscoveryProvider().fetchNewestTransactions(this);
+  public fetchNewestTransactions(transactionListType = TransactionListType.NORMAL) {
+    return this.networkWallet.getTransactionDiscoveryProvider().fetchNewestTransactions(this, transactionListType);
   }
 
   public canFetchMoreTransactions(): boolean {
@@ -316,8 +313,12 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
     return this.networkWallet.getTransactionDiscoveryProvider().fetchMoreTransactions(this, afterTransaction);
   }
 
-  public getTransactionsCacheKey(): string {
-    return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-transactions";
+  public getTransactionsCacheKey(transactionListType = TransactionListType.NORMAL): string {
+      if (transactionListType === TransactionListType.NORMAL) {
+          return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-transactions";
+      } else {
+          return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-internaltransactions";
+      }
   }
 
   /**

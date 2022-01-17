@@ -14,6 +14,7 @@ export type EthTransaction = GenericTransaction & {
   gasPrice: string;
   gasUsed: string;
   hash: string;
+  index?: string;
   input: string;
   isError: string;
   logIndex?:string;
@@ -22,6 +23,7 @@ export type EthTransaction = GenericTransaction & {
   to: string;
   transactionIndex: string;
   txreceipt_status: string;
+  type?: string;
   value: string;
 
   // Computed
@@ -84,3 +86,8 @@ export enum ETHSCTransferType {
   TRANSFER = "ethTransfer",
   WITHDRAW = "crossChainEthWithdraw"
 }
+
+export enum TransactionListType {
+    NORMAL = 0,
+    INTERNAL = 1, // contract internal transaction.
+  }

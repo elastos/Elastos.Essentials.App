@@ -1,3 +1,4 @@
+import { TransactionListType } from "../evm.types";
 import { TimeBasedPersistentCache } from "../timebasedpersistentcache";
 import { AnySubWallet, SubWallet } from "../wallets/subwallet";
 import { ProviderTransactionInfo } from "./providertransactioninfo";
@@ -23,15 +24,18 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
     return;
   }
 
-  public async prepareTransactions(subWallet: AnySubWallet): Promise<void> {
+  /**
+   * Method that must be called by the UI before accessing subwallet transactions.
+   * Typically, this method loads the transaction cache for better UI reactivity right after.
+   */
+  public async prepareTransactions(cacheKey): Promise<void> {
     // Create the cache for preload transactions
-    await this.getCache(subWallet.getTransactionsCacheKey());
+    await this.getCache(cacheKey);
   }
 
-  public async getTransactions(subWallet: AnySubWallet): Promise<TransactionType[]> {
-    await this.prepareTransactions(subWallet);
-
-    let cacheKey = subWallet.getTransactionsCacheKey();
+  public async getTransactions(subWallet: AnySubWallet, transactionListType = TransactionListType.NORMAL): Promise<TransactionType[]> {
+    let cacheKey = subWallet.getTransactionsCacheKey(transactionListType);
+    await this.prepareTransactions(cacheKey);
     if (!this.transactionsCache.has(cacheKey))
       throw new Error("prepareTransactions() must be called before accessing getTransactions()");
 

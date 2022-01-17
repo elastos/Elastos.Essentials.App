@@ -116,6 +116,7 @@ export const zh = {
                 "coin-action-send": "发送",
                 "coin-action-receive": "接收",
                 "coin-transactions": "交易",
+                "coin-internal-transactions": "内部交易",
                 "coin-no-transactions": "没有交易",
                 "coin-op-received-token": "接收",
                 "coin-op-sent-token": "发送",

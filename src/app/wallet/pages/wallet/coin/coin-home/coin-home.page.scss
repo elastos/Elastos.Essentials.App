@@ -247,10 +247,10 @@
 
     .list-title-row {
         margin-bottom: 10px;
+        border-radius: 17px;
+        color: #ACACAC;
 
         .title-col {
-            margin-left: 5px;
-
             h1 {
                 margin: 0;
                 font-weight: 500;
@@ -259,6 +259,12 @@
                 font-size: 18px;
                 text-align: left;
             }
+        }
+
+        .active {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212021;
         }
 
         .spinner-col {
@@ -418,6 +424,14 @@
         p {
             color: #9D9D9D;
             opacity: 1;
+        }
+    }
+
+    .list-title-row {
+        color: #ACACAC;
+
+        .active {
+            color: #ffffff;
         }
     }
 

@@ -89,4 +89,8 @@ export class EidSubWallet extends ElastosEVMSubWallet {
   public getAvailableBridgeProviders(): BridgeProvider[] {
     return [];
   }
+
+  public supportInternalTransactions() {
+    return false;
+  }
 }

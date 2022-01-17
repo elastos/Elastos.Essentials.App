@@ -5,7 +5,7 @@ import { GlobalLanguageService } from "src/app/services/global.language.service"
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
 import { ERC20Coin, StandardCoinName, TokenAddress } from "../coin";
-import { ERCTokenInfo } from "../evm.types";
+import { ERCTokenInfo, TransactionListType } from "../evm.types";
 import { NFTType } from "../nfts/nft";
 import { NetworkWallet } from "../wallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../wallets/subwallet";
@@ -80,12 +80,23 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
   protected abstract getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider;
 
+  protected abstract getSubWalletInternalTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider;
+
   /**
    * Returns transactions currently in cache.
    */
-  public getTransactions(subWallet: SubWallet<GenericTransaction>): Promise<TransactionType[]> {
-    return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet);
+  public getTransactions(subWallet: SubWallet<GenericTransaction>, transactionListType = TransactionListType.NORMAL): Promise<TransactionType[]> {
+    if (transactionListType === TransactionListType.NORMAL) {
+        return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet, transactionListType);
+    } else {
+        if (subWallet.supportInternalTransactions()) {
+            return this.getSubWalletInternalTransactionProvider(subWallet).getTransactions(subWallet, transactionListType);
+        } else {
+            return null;
+        }
+    }
   }
+
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
     return this.getSubWalletTransactionProvider(subWallet).canFetchMoreTransactions(subWallet);
@@ -94,7 +105,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   /**
    * Fetch the most recent transactions from network.
    */
-  public async fetchNewestTransactions(subWallet: AnySubWallet) {
+  public async fetchNewestTransactions(subWallet: AnySubWallet, transactionListType = TransactionListType.NORMAL) {
     // Make sure to not fetch when we are already fetching
     if (this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).value === true) {
       Logger.warn("wallet", "fetchNewestTransactions() skipped. Transactions fetch already in progress");
@@ -105,7 +116,13 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(true);
 
     // Fetch
-    await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet);
+    if (transactionListType === TransactionListType.NORMAL) {
+        await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet);
+    } else {
+        if (subWallet.supportInternalTransactions()) {
+            await this.getSubWalletInternalTransactionProvider(subWallet).fetchTransactions(subWallet);
+        }
+    }
 
     // Not fetching
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);
@@ -143,10 +160,6 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   public updateTransactions(subWallet: AnySubWallet, transactons: TransactionType[]) {
     return this.getSubWalletTransactionProvider(subWallet).saveTransactions(transactons);
   }
-
-  /* public prepareTransactions(subWallet: AnySubWallet): Promise<void> {
-    return this.getSubWalletTransactionProvider(subWallet).prepareTransactions(subWallet);
-  } */
 
   /**
    * Subject that informs listeners whenever the transactions list gets updated.

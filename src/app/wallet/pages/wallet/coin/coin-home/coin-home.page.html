@@ -81,8 +81,12 @@
                 <div class="arrow-down"></div>
             </ion-row>
             <ion-row class="list-title-row">
-                <ion-col class="title-col" size="12">
+                <ion-col class="title-col" [size]="hasInternalTransactions ? 6 : 12" [class.active]="transactionListType == 0" (click)="setTransactionListType(0)">
                     <h1>{{ 'wallet.coin-transactions' | translate }}</h1>
+                </ion-col>
+
+                <ion-col *ngIf="hasInternalTransactions" class="title-col" size="6" [class.active]="transactionListType == 1" (click)="setTransactionListType(1)">
+                    <h1>{{ 'wallet.coin-internal-transactions' | translate }}</h1>
                 </ion-col>
                 <!-- <ion-col *ngIf="shouldShowLoadingSpinner" class="spinner-col" size="12">
                     <ion-spinner name="dots"></ion-spinner>

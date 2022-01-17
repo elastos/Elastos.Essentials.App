@@ -34,4 +34,8 @@ export class BTCTransactionProvider extends TransactionProvider<BTCTransaction> 
   protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
       return this.mainProvider;
   }
+
+  protected getSubWalletInternalTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
+    return null;
+  }
 }

@@ -1,7 +1,9 @@
 import { StandardCoinName } from "../../../coin";
+import { EVMSubWalletInternalTransactionProvider } from "../../../providers/evm.subwallet.internalTransaction.provider";
 import { AnySubWalletTransactionProvider } from "../../../providers/subwallet.provider";
 import { TransactionProvider } from "../../../providers/transaction.provider";
 import { ElastosTransaction } from "../../../providers/transaction.types";
+import { StandardEVMSubWallet } from "../../evm.subwallet";
 import { AnySubWallet } from "../../subwallet";
 import { EidSubWallet } from "../eid.evm.subwallet";
 import { ElastosERC20SubWallet } from "../elastos.erc20.subwallet";
@@ -24,6 +26,9 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
   private escProvider: ElastosEscSubWalletProvider;
   private eidProvider: ElastosEscSubWalletProvider;
   private tokenProvider: ElastosTokenSubWalletProvider;
+
+  // Only for ESC
+  private internalTXProvider: EVMSubWalletInternalTransactionProvider<StandardEVMSubWallet> = null;
 
   public async start(): Promise<void> {
     this.elaSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA) as MainchainSubWallet;
@@ -48,6 +53,9 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
         this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
         await this.tokenProvider.initialize();
 
+        this.internalTXProvider = new EVMSubWalletInternalTransactionProvider(this, this.escSubWallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
+        await this.internalTXProvider.initialize();
+
         // Discover new transactions globally for all tokens at once, in order to notify user
         // of NEW tokens received, and NEW payments received for existing tokens.
         this.refreshEvery(() => this.tokenProvider.discoverTokens(), 30000);
@@ -67,5 +75,12 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
       return this.tokenProvider;
     else
       throw new Error("Elastos transactions provider: getSubWalletTransactionProvider() is called with an unknown subwallet!");
+  }
+
+  protected getSubWalletInternalTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
+    if (subWallet instanceof StandardEVMSubWallet)
+      return this.internalTXProvider;
+    else
+      return null;
   }
 }

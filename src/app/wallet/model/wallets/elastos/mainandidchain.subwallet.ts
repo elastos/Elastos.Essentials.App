@@ -56,6 +56,10 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         return true;
     }
 
+    public supportInternalTransactions() {
+        return false;
+    }
+
     public async startBackgroundUpdates(): Promise<void> {
         await super.startBackgroundUpdates();
 
