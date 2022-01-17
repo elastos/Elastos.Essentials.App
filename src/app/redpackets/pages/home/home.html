@@ -13,20 +13,22 @@
 <ng-template #publicPacketTemplate>
   <div class="redpacket-section-header">
     <div class="redpacket-section-header-title">
-      Public
+      {{ 'redpackets.public-packets' | translate }}
     </div>
-    <div class="redpacket-section-header-link" *ngIf="publicPackets.length > 3"> <!-- Todo: check with Ben about this -->
-      View all
+    <div class="redpacket-section-header-link" *ngIf="publicPackets.length > 3">
+      <!-- Todo: check with Ben about this -->
+      {{ 'redpackets.view-all' | translate }}
     </div>
   </div>
 
   <ion-grid *ngIf="!fetchingPublicPackets && publicPackets.length > 0" style="padding: 0">
-    <packet-preview *ngFor="let packet of publicPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)"></packet-preview>
+    <packet-preview *ngFor="let packet of publicPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)">
+    </packet-preview>
   </ion-grid>
 
   <div *ngIf="!fetchingPublicPackets && publicPackets.length === 0">
     <div class="redpacket-container ion-text-center">
-      <p>No public Packets are available at the moment</p>
+      <p>{{ 'redpackets.no-public-packet' | translate }}</p>
     </div>
   </div>
 
@@ -42,10 +44,10 @@
 <ng-template #myPacketTemplate>
   <div class="redpacket-section-header">
     <div class="redpacket-section-header-title">
-      My packets
+      {{ 'redpackets.my-packets' | translate }}
     </div>
     <div class="redpacket-section-header-link" *ngIf="myPackets.length > 3">
-      View all
+      {{ 'redpackets.view-all' | translate }}
     </div>
   </div>
 
@@ -55,9 +57,9 @@
   </ion-grid>
 
   <div class="redpacket-container ion-text-center" *ngIf="myPackets.length === 0">
-    <p>No Packets</p>
+    <p>{{ 'redpackets.no-my-packet' | translate }}</p>
     <ion-button (click)="navigateToNewPacket()" class="redpacket-button">
-      Create new packet
+      {{ 'redpackets.create-new-packet' | translate }}
     </ion-button>
   </div>
 </ng-template>
@@ -67,24 +69,24 @@
   <div *ngIf="openedPackets.length > 0">
     <div class="redpacket-section-header">
       <div class="redpacket-section-header-title">
-        Opened packets
+        {{ 'redpackets.opened-packets' | translate }}
       </div>
-      <div class="redpacket-section-header-link"> <!-- Todo: remove after validation -->
-        View all
+      <div class="redpacket-section-header-link">
+        <!-- Todo: remove after validation -->
+        {{ 'redpackets.view-all' | translate }}
       </div>
-      <div class="redpacket-section-header-link" *ngIf="openedPackets.length > 3"> <!-- Todo: check with Ben about this -->
-        View all
+      <div class="redpacket-section-header-link" *ngIf="openedPackets.length > 3">
+        <!-- Todo: check with Ben about this -->
+        {{ 'redpackets.view-all' | translate }}
       </div>
     </div>
 
     <ion-grid style="padding: 0">
-      <packet-preview *ngFor="let packet of openedPackets"
-                      [packet]="packet"
-                      (click)="navigateToPacketDetails(packet)"></packet-preview>
+      <packet-preview *ngFor="let packet of openedPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)">
+      </packet-preview>
     </ion-grid>
   </div>
 </ng-template>
-
 
 <ng-template #aboutRedPacketsTemplate>
   <div class="redpacket-container about">
@@ -93,12 +95,9 @@
       <div class="glow"></div>
     </div>
 
-    <h1>About Red Packets</h1>
+    <h1>{{ 'redpackets.about-red-packets' | translate }}</h1>
 
-    <p>Traditionally used in China to celebrate special occasions and share happiness among friends,
-      red packets are derived from this idea in Elastos Essentials to celebrate, but also to create entertainment for
-      crypto communities.</p>
-
-    <p>Red packets introduce much more fun compared to “airdrops”, as luck and reactivity are involved.</p>
+    <p>{{ 'redpackets.about-red-packets-part-1' | translate }}</p>
+    <p>{{ 'redpackets.about-red-packets-part-2' | translate }}</p>
   </div>
 </ng-template>

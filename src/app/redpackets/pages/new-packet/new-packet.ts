@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { AlertController, IonSlides, ModalController, NavController } from "@ionic/angular";
+import { TranslateService } from "@ngx-translate/core";
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -16,11 +17,10 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { GlobalThemeService } from "../../../services/global.theme.service";
 import { TokenChooserComponent } from '../../../wallet/components/token-chooser/token-chooser.component';
 import { Packet, PacketDistributionType, PacketToCreate, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
-import { GlobalThemeService } from "../../../services/global.theme.service";
-import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'page-new-packet',
@@ -58,12 +58,12 @@ export class NewPacketPage {
   };
 
   public distributionSelectOption: any = {
-    header: "Distribution",
+    header: this.translate.instant("redpackets.distribution"),
     cssClass: this.theme.darkMode ? "darkSelect" : "select",
   };
 
   public visibilitySelectOption: any = {
-    header: "Visibility",
+    header: this.translate.instant("redpackets.visibility"),
     cssClass: this.theme.darkMode ? "darkSelect" : "select",
   };
 
@@ -71,7 +71,7 @@ export class NewPacketPage {
   public titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private networkSubscription: Subscription = null;
 
-  updateProbability(probability:number):void {
+  updateProbability(probability: number): void {
     probability = parseFloat(probability.toString().replace("%", ""));
     if (probability > 100) {
       probability = 100;
@@ -100,7 +100,7 @@ export class NewPacketPage {
   ) { }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle("New Red Packet");
+    this.titleBar.setTitle(this.translate.instant("redpackets.new-red-packet-title"));
     this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
@@ -133,29 +133,29 @@ export class NewPacketPage {
    */
   public validateInputs(): boolean {
     if (!this.packets) {
-      void this.formErr("Invalid number of packets");
+      void this.formErr(this.translate.instant("redpackets.error-invalid-number-of-packets"));
       return false;
     }
 
     console.log("this.tokenAmount", this.tokenAmount)
 
     if (!this.tokenAmount || this.tokenAmount === "") {
-      void this.formErr("Invalid number of tokens to distribute");
+      void this.formErr(this.translate.instant("redpackets.error-invalid-number-of-tokens"));
       return false;
     }
 
     if (!this.probability || this.probability < 0 || this.probability > 100) {
-      void this.formErr("Invalid probability. Use a 0-100 value");
+      void this.formErr(this.translate.instant("redpackets.error-invalid-probability"));
       return false;
     }
 
     if (!this.expirationDays || this.expirationDays > 7) {
-      void this.formErr("Invalid expiration time. Use 1-7 days");
+      void this.formErr(this.translate.instant("redpackets.error-invalid-expiration-time"));
       return false;
     }
 
     if (this.message.length === 0) {
-      void this.formErr("Be kind with your people, send them a nice message!");
+      void this.formErr(this.translate.instant("redpackets.error-no-message"));
       return false;
     }
 
@@ -198,7 +198,7 @@ export class NewPacketPage {
     this.createdPacket = await this.packetService.createPacket(packet);
     if (!this.createdPacket) {
       // Something wrong happened, let user know
-      void this.globalNativeServce.errToast("The packet could not be created. Please try again later");
+      void this.globalNativeServce.errToast(this.translate.instant("redpackets.error-packet-creation-failed"));
     }
     else {
       // Save the packet locally

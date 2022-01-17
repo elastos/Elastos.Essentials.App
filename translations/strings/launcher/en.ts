@@ -37,6 +37,7 @@ export const en = {
         'touch-to-create-wallet': 'Touch here to create a wallet',
         'manage-identity': 'My identity',
         'address-copied-to-clipboard': 'Copied address {{address}} to clipboard!',
+        'n-red-packets-to-grab': '{{ packets }} packets to grab!',
 
         /******** Components ********/
         'address': 'Address:',

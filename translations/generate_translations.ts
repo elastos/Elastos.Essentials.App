@@ -17,7 +17,8 @@ class TranslationsLoader {
         "launcher",
         "scanner",
         "settings",
-        "wallet"
+        "wallet",
+        "redpackets"
     ];
     static languagesToLoad = [
         "en",

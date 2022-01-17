@@ -37,6 +37,7 @@ export const zh = {
         'touch-to-create-wallet': '点击创建新钱包',
         'manage-identity': '我的身份',
         'address-copied-to-clipboard': '已复制地址 {{address}} 到剪切板！',
+        'n-red-packets-to-grab': '{{ packets }} packets to grab!',
 
         /******** Components ********/
         'address': '地址：',

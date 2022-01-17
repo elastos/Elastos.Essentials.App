@@ -2,7 +2,7 @@
   <app-titlebar></app-titlebar>
   <!-- Unsupported network -->
   <ion-grid *ngIf="tokenSubwallet && unsupportedNetwork">
-    This network is unsupported for red packets. Please select another one.
+    {{ 'redpackets.unsupported-network-intro' | translate }}
   </ion-grid>
 
   <!-- Supported network and subwallet is set -->
@@ -14,10 +14,10 @@
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
           <div class="form-flex-col-label-name">
-            Quantity
+            {{ 'redpackets.quantity' | translate }}
           </div>
           <div class="form-flex-col-label-helper">
-            Sample text to explain quantities
+            {{ 'redpackets.quantity-hint' | translate }}
           </div>
         </div>
         <ion-input [(ngModel)]="packets" type="number" placeholder="20" required></ion-input>
@@ -26,10 +26,10 @@
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
           <div class="form-flex-col-label-name">
-            Token
+            {{ 'redpackets.token' | translate }}
           </div>
           <div class="form-flex-col-label-helper">
-            Sample text to explain token
+            {{ 'redpackets.token-hint' | translate }}
           </div>
         </div>
 
@@ -47,10 +47,10 @@
       <ion-row class="form-flex-row">
         <div class="form-flex-row-label">
           <div class="form-flex-row-label-name">
-            Amount
+            {{ 'redpackets.amount' | translate }}
           </div>
           <div class="form-flex-row-label-helper">
-            Amount placeholder
+            {{ 'redpackets.amount-hint' | translate }}
           </div>
         </div>
         <div class="form-flex-row-input">
@@ -63,68 +63,61 @@
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
           <div class="form-flex-col-label-name">
-            Distribution
+            {{ 'redpackets.distribution' | translate }}
           </div>
           <div class="form-flex-col-label-helper">
-            Placeholder for distribution
+            {{ 'redpackets.distribution-hint' | translate }}
           </div>
         </div>
         <div class="form-flex-col-input">
-          <ion-select
-            [(ngModel)]="distributionType"
-            [placeholder]="'identity.select-one'|translate"
-            [interfaceOptions]="distributionSelectOption"
-            [cancelText]="'common.cancel'|translate"
-            [okText]="'common.confirm'|translate"
-            ngDefaultControl>
-            <ion-select-option value="fixed">Same value in all packets</ion-select-option>
-            <ion-select-option value="random">Random packet values</ion-select-option>
+          <ion-select [(ngModel)]="distributionType" [placeholder]="'identity.select-one'|translate"
+            [interfaceOptions]="distributionSelectOption" [cancelText]="'common.cancel'|translate"
+            [okText]="'common.confirm'|translate" ngDefaultControl>
+            <ion-select-option value="fixed">{{ 'redpackets.distribution-fixed' | translate }}</ion-select-option>
+            <ion-select-option value="random">{{ 'redpackets.distribution-random' | translate }}</ion-select-option>
           </ion-select>
         </div>
-        <div class="additional-input-infos" *ngIf="distributionType === 'fixed'">*All winning users will receive {{getValuePerFixedPacket()}}
-          {{tokenSubwallet.getDisplayTokenName()}}.</div>
-        <div class="additional-input-infos" *ngIf="distributionType === 'random'">*Winning users will receive random amounts of
-          {{tokenSubwallet.getDisplayTokenName()}}.</div>
+        <div class="additional-input-infos" *ngIf="distributionType === 'fixed'">
+          {{ 'redpackets.distribution-fixed-info' | translate : { value: getValuePerFixedPacket(), token:
+          tokenSubwallet.getDisplayTokenName() } }}
+        </div>
+        <div class="additional-input-infos" *ngIf="distributionType === 'random'">
+          {{ 'redpackets.distribution-random-info' | translate : { token: tokenSubwallet.getDisplayTokenName() } }}
+        </div>
       </ion-row>
 
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
           <div class="form-flex-col-label-name">
-            Probability
+            {{ 'redpackets.probability' | translate }}
           </div>
           <div class="form-flex-col-label-helper">
-            If there are remaining packets, probability to get one. If lost, cannot try again
+            {{ 'redpackets.probability-hint' | translate }}
           </div>
         </div>
         <div class="form-flex-row-input">
-
           <span>
-            <ion-input
-              [ngModel]="probabilityPercent" (change)="updateProbability($event.target.value)"
-              required number
-              >
+            <ion-input [ngModel]="probabilityPercent" (change)="updateProbability($event.target.value)" required number>
             </ion-input>
-            </span>
+          </span>
         </div>
       </ion-row>
 
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
           <div class="form-flex-col-label-name">
-            Visibility
+            {{ 'redpackets.visibility' | translate }}
           </div>
           <div class="form-flex-col-label-helper">
-            Placeholder for visibility explaination
+            {{ 'redpackets.visibility-hint' | translate }}
           </div>
         </div>
         <div class="form-flex-col-input">
-          <ion-select [(ngModel)]="visibility"
-                      [placeholder]="'identity.select-one'|translate"
-                      [interfaceOptions]="visibilitySelectOption"
-                      [cancelText]="'common.cancel'|translate"
-                      [okText]="'common.confirm'|translate" ngDefaultControl>
-            <ion-select-option value="link">Users with link only</ion-select-option>
-            <ion-select-option value="public">Public</ion-select-option>
+          <ion-select [(ngModel)]="visibility" [placeholder]="'identity.select-one'|translate"
+            [interfaceOptions]="visibilitySelectOption" [cancelText]="'common.cancel'|translate"
+            [okText]="'common.confirm'|translate" ngDefaultControl>
+            <ion-select-option value="link">{{ 'redpackets.visibility-link-only' | translate }}</ion-select-option>
+            <ion-select-option value="public">{{ 'redpackets.visibility-public' | translate }}</ion-select-option>
           </ion-select>
         </div>
       </ion-row>
@@ -132,15 +125,15 @@
       <ion-row class="form-flex-row">
         <div class="form-flex-row-label">
           <div class="form-flex-row-label-name">
-            Duration
+            {{ 'redpackets.duration' | translate }}
           </div>
           <div class="form-flex-row-label-helper">
-            Max 7 days
+            {{ 'redpackets.duration-hint' | translate }}
           </div>
         </div>
         <div class="form-flex-row-input">
           <ion-input [(ngModel)]="expirationDays" type="number" placeholder="7" required>
-            <span class="after-input">Days</span>
+            <span class="after-input">{{ 'redpackets.expiration-days' | translate }}</span>
           </ion-input>
         </div>
       </ion-row>
@@ -150,28 +143,31 @@
     <div class="new-packet-section-container">
 
       <div class="new-packet-about-section-title">
-        About User
+        {{ 'redpackets.about-you' | translate }}
       </div>
 
       <div class="redpacket-user-profile-container">
         <div class="redpacket-user-profile-image">
           <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-            <img [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+            <img
+              [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
           </ion-avatar>
           <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
-            <img [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
+            <img
+              [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
           </ion-avatar>
         </div>
 
         <div class="redpacket-user-profile-infos">
           <div class="redpacket-user-profile-infos-name">{{ name }}</div>
-          <div class="redpacket-user-profile-infos-dapp">todo</div>
+          <!-- <div class="redpacket-user-profile-infos-dapp">todo</div> -->
+          <div class="form-flex-row-label-helper">{{ 'redpackets.profile-hint' | translate }}</div>
         </div>
       </div>
 
       <div class="form-flex-col">
         <div class="form-flex-col-label">
-          <div class="form-flex-col-label-name">Message</div>
+          <div class="form-flex-col-label-name">{{ 'redpackets.message' | translate }}</div>
         </div>
         <div class="form-flex-col-input">
           <ion-textarea [(ngModel)]="message" placeholder="Happy Chinese New Year to you" type="text"></ion-textarea>
@@ -180,30 +176,27 @@
 
       <div>
         <div class="form-flex-col-label">
-          <div class="form-flex-col-label-name">Category</div>
+          <div class="form-flex-col-label-name">{{ 'redpackets.theme' | translate }}</div>
+          <div class="form-flex-row-label-helper">{{ 'redpackets.theme-hint' | translate }}</div>
         </div>
 
-        <ion-slides #categorySlides
-                    [options]="slideOpts">
-          <ion-slide class="category-slide-item"
-                     [ngClass]="{'active': category === 'default'}"
-                     (click)="selectCategory('default')">
+        <ion-slides #categorySlides [options]="slideOpts">
+          <ion-slide class="category-slide-item" [ngClass]="{'active': category === 'default'}"
+            (click)="selectCategory('default')">
             <img src="assets/redpackets/images/cat_blue.svg" alt="Default category" />
-            <div class="label">Default</div>
+            <div class="label">{{ 'redpackets.theme-default' | translate }}</div>
           </ion-slide>
 
-          <ion-slide class="category-slide-item"
-                     [ngClass]="{'active': category === 'christmas'}"
-                     (click)="selectCategory('christmas')">
+          <ion-slide class="category-slide-item" [ngClass]="{'active': category === 'christmas'}"
+            (click)="selectCategory('christmas')">
             <img src="assets/redpackets/images/cat_christmas.svg" alt="Christmas category" />
-            <div class="label">Christmas</div>
+            <div class="label">{{ 'redpackets.theme-christmas' | translate }}</div>
           </ion-slide>
 
-          <ion-slide class="category-slide-item"
-                     [ngClass]="{'active': category === 'cny'}"
-                     (click)="selectCategory('cny')">
+          <ion-slide class="category-slide-item" [ngClass]="{'active': category === 'cny'}"
+            (click)="selectCategory('cny')">
             <img src="assets/redpackets/images/cat_cny.png" alt="Chinese new year category" />
-            <div class="label">Chinese New Year</div>
+            <div class="label">{{ 'redpackets.theme-cny' | translate }}</div>
           </ion-slide>
         </ion-slides>
       </div>
@@ -212,8 +205,8 @@
 
   <div class="redpacket-footer-container">
     <div class="redpacket-footer-button">
-      <button (click)="createPacket()" >
-        <ion-label *ngIf="!creatingPacket">Continue</ion-label>
+      <button (click)="createPacket()">
+        <ion-label *ngIf="!creatingPacket">{{ 'redpackets.continue' | translate }}</ion-label>
         <ion-spinner *ngIf="creatingPacket"></ion-spinner>
       </button>
     </div>

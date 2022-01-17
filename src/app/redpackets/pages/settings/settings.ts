@@ -1,12 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalDIDSessionsService, IdentityAvatar } from "../../../services/global.didsessions.service";
 import { Packet } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
-import { GlobalDIDSessionsService, IdentityAvatar, IdentityEntry } from "../../../services/global.didsessions.service";
 
 /**
  * todo redpacket
@@ -34,11 +35,12 @@ export class SettingsPage {
     public navCtrl: NavController,
     private globalNavService: GlobalNavService,
     private didSessions: GlobalDIDSessionsService,
-    public packetService: PacketService
+    public packetService: PacketService,
+    private translate: TranslateService
   ) { }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle("Settings");
+    this.titleBar.setTitle(this.translate.instant("redpackets.settings-title"));
     this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 

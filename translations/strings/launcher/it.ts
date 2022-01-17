@@ -37,6 +37,7 @@ export const it = {
         'touch-to-create-wallet': 'Tocca qui per creare un portafoglio',
         'manage-identity': 'La mia identità',
         'address-copied-to-clipboard': 'Indirizzo {{address}} copiato negli appunti!',
+        'n-red-packets-to-grab': '{{ packets }} packets to grab!',
 
         /******** Components ********/
         'address': 'Indirizzo:',

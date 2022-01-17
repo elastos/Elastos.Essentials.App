@@ -179,9 +179,9 @@
         <img src="assets/redpackets/images/packets.png" />
       </div>
       <div class="main-col">
-        <div class="title">Red Packets</div>
+        <div class="title">{{ 'redpackets.red-packets' | translate }}</div>
         <div class="subtitle">
-          {{ publicRedPackets.length }} packets to grab!
+          {{ 'launcher.n-red-packets-to-grab' | translate: { packets: publicRedPackets.length } }}
         </div>
       </div>
       <div class="right-col">
