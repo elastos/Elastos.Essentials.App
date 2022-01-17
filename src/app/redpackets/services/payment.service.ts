@@ -7,7 +7,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { TokenType } from '../model/packets.model';
-import { PaymentStatusEntry } from '../model/payments.model';
+import { NotifyPaymentStatus } from '../model/payments.model';
 
 /**
  * Type of token paid
@@ -15,11 +15,6 @@ import { PaymentStatusEntry } from '../model/payments.model';
 export enum PaymentType {
   ERC20_TOKEN = "erc20",
   NATIVE_TOKEN = "native"
-}
-
-type NotifyPaymentResponse = {
-  confirmed: boolean; // Whether the payment is received/confirmed/remembered by the backend
-  status?: PaymentStatusEntry; // New status if successfully confirmed
 }
 
 type Payment = {
@@ -106,18 +101,23 @@ export class PaymentService implements GlobalService {
   /**
    * Let the red packet service know that a payment was made
    */
-  public async notifyServiceOfPayment(packetHash: string, transactionHash: string, tokenType: TokenType): Promise<PaymentStatusEntry> {
+  public async notifyServiceOfPayment(packetHash: string, transactionHash: string, tokenType: TokenType): Promise<NotifyPaymentStatus> {
     try {
-      let response = await this.http.post<NotifyPaymentResponse>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/notifypayment`, {
+      let response = await this.http.post<NotifyPaymentStatus>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/notifypayment`, {
         transactionHash,
         tokenType // native or erc20
       }).toPromise();
 
-      if (response && response.confirmed) {
-        Logger.log("redpackets", "Payment confirmed by the service. Marking it as completed locally", packetHash, transactionHash, response.status);
-        // Service has confirmed the payment was well received.
-        await this.setPaymentConfirmedByService(transactionHash);
-        return response.status;
+      if (response) {
+        if (response.confirmed) {
+          Logger.log("redpackets", "Payment confirmed by the service. Marking it as completed locally", packetHash, transactionHash, response.payment);
+          // Service has confirmed the payment was well received.
+          await this.setPaymentConfirmedByService(transactionHash);
+        }
+        else {
+          Logger.warn("redpackets", "Payment NOT confirmed by the service!", packetHash, transactionHash, response.errorMessage);
+        }
+        return response;
       }
       else {
         Logger.error("redpackets", "Notify payment: payment could not be confirmed", response);

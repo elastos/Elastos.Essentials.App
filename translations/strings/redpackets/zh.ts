@@ -66,6 +66,6 @@ export const zh = {
     ************/
     'settings-title': 'Settings',
     'profile-visibility': 'Profile Visibility',
-    'profile-visibility-hint': 'Send my Elastos DID profile when creating and grabbing red packets',
+    'profile-visibility-hint': 'Send my Elastos DID profile when grabbing red packets',
   }
 }

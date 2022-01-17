@@ -9,7 +9,7 @@
         <div class="redpacket-settings-option-text">{{ 'redpackets.profile-visibility-hint' | translate }}</div>
       </div>
       <div class="redpacket-settings-options-value">
-        <ion-toggle class="button" [(ngModel)]="isProfileVisibible"></ion-toggle>
+        <ion-toggle class="button" [(ngModel)]="isProfileVisibible" (ionChange)="visibilityChanged()"></ion-toggle>
       </div>
     </ion-row>
 

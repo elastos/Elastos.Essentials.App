@@ -13,3 +13,9 @@ export type PaymentStatus = {
   erc20Token: PaymentStatusEntry;
   // TODO: refund payments (the other way)
 }
+
+export type NotifyPaymentStatus = {
+  payment: PaymentStatusEntry; // Payment received
+  confirmed: boolean; // True is the payment was the expected one, false otherwise
+  errorMessage?: string; // Additional information as of why the payment was not confirmed.
+}

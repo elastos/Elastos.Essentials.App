@@ -76,6 +76,8 @@ export const zh = {
         'app-dpos-registration-description': 'DPoS 参选管理',
         'app-crcouncil-registration': 'CR 委员参选',
         'app-crcouncil-registration-description': 'CR 委员参选管理',
+        'app-redpackets': 'Red Packets',
+        'app-redpackets-description': 'Share happiness or promote your project, send red packets!',
 
         /*********** Tips generic ************/
         'tip-of-the-day': '每日提示',

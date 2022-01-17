@@ -76,6 +76,8 @@ export const it = {
         'app-dpos-registration-description': 'Gestore della registrazione DPoS',
         'app-crcouncil-registration': 'Registrazione CR',
         'app-crcouncil-registration-description': 'Gestore della registrazione CR',
+        'app-redpackets': 'Red Packets',
+        'app-redpackets-description': 'Share happiness or promote your project, send red packets!',
 
         /*********** Tips generic ************/
         'tip-of-the-day': 'Consiglio del giorno',

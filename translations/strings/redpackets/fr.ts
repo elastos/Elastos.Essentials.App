@@ -66,6 +66,6 @@ export const fr = {
     ************/
     'settings-title': 'Paramètres',
     'profile-visibility': 'Visibilité de votre profil',
-    'profile-visibility-hint': 'Attacher mon profil DID Elastos aux paquets créés et ouverts',
+    'profile-visibility-hint': 'Attacher mon profil DID Elastos sur les paquets ouverts',
   }
 }

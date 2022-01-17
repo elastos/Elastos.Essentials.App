@@ -167,7 +167,8 @@ export class PacketDetailsPage implements OnInit {
       this.grabResponse,
       this.captchaString,
       walletAddress,
-      GlobalDIDSessionsService.signedInDIDString);
+      this.didService.getProfileVisibility() ? GlobalDIDSessionsService.signedInDIDString : undefined)
+      ;
     await this.handleGrabResponse(this.grabResponse);
   }
 

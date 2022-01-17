@@ -2,15 +2,32 @@ import { Injectable } from '@angular/core';
 import { rawImageToBase64DataUrl } from 'src/app/helpers/picture.helpers';
 import { DIDDocumentsService } from 'src/app/identity/services/diddocuments.service';
 import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { UserInfo } from '../model/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DIDService {
-  constructor(private didDocumentsService: DIDDocumentsService) {
+  private showProfileToOthers: boolean; // Whether to send user's DID when grabbing a packet.
+
+  constructor(
+    private didDocumentsService: DIDDocumentsService,
+    private storage: GlobalStorageService) {
   }
 
+  public async onUserSignIn(): Promise<void> {
+    await this.loadProfileVisibility();
+  }
+
+  public async onUserSignOut(): Promise<void> {
+  }
+
+  /**
+   * From a given DID string, resolved the DID document and tries several ways to extract user
+   * avatar and name.
+   */
   public fetchUserInformation(did: string): Promise<UserInfo> {
     Logger.log("redpackets", "Fetching user information", did);
 
@@ -51,5 +68,23 @@ export class DIDService {
         }
       });
     });
+  }
+
+  private async loadProfileVisibility(): Promise<void> {
+    this.showProfileToOthers = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "profilevisibility", true);
+  }
+
+  /**
+   * Returns true if user wants to show his DID string/profile to others, false otherwise.
+   */
+  public getProfileVisibility(): boolean {
+    return this.showProfileToOthers;
+  }
+
+  public setProfileVisibility(showProfile: boolean): Promise<void> {
+    Logger.log("redpackets", "Changing DID profile visibility to", showProfile);
+
+    this.showProfileToOthers = showProfile;
+    return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "profilevisibility", showProfile);
   }
 }

@@ -39,6 +39,8 @@ export class PayPage {
   public erc20TokenBalanceIsEnough = false; // Enough ERC20 tokens to pay for the packet
   public currentNativeBalance = "";
   public currentERC20Balance = "";
+  public nativePaymentStepError: string = null;
+  public erc20PaymentStepError: string = null;
 
   constructor(
     public navCtrl: NavController,
@@ -292,14 +294,20 @@ export class PayPage {
           if (txStatus.status === ETHTransactionStatus.PACKED) {
             // Notify the backend about this payment, so it can update the packet status
             Logger.log("redpackets", "Transaction has been packed on chain. Telling this to the backend");
-            let confirmedPaymentStatus = await this.paymentService.notifyServiceOfPayment(this.packet.hash, txStatus.txId, TokenType.NATIVE_TOKEN);
-            if (confirmedPaymentStatus) {
-              // Payment is confirmed by the backend
-              this.packet.paymentStatus.nativeToken = confirmedPaymentStatus;
+            let notifiedPaymentStatus = await this.paymentService.notifyServiceOfPayment(this.packet.hash, txStatus.txId, TokenType.NATIVE_TOKEN);
+            if (notifiedPaymentStatus) {
+              if (notifiedPaymentStatus.confirmed) {
+                // Payment is confirmed by the backend
+                this.packet.paymentStatus.nativeToken = notifiedPaymentStatus.payment;
+              }
+              else {
+                // Payment could not be confirmed by the backend
+                this.nativePaymentStepError = notifiedPaymentStatus.errorMessage;
+              }
             }
             else {
-              // Payment could not be confirmed by the backend
-              // TODO
+              // Networking or other unexpected error during notification of payment -
+              this.nativePaymentStepError = "Unknown error";
             }
 
             this.sendingNativePayment = false;
@@ -373,14 +381,20 @@ export class PayPage {
           if (txStatus.status === ETHTransactionStatus.PACKED) {
             // Notify the backend about this payment, so it can update the packet status
             Logger.log("redpackets", "Transaction has been packed on chain. Telling this to the backend");
-            let confirmedPaymentStatus = await this.paymentService.notifyServiceOfPayment(this.packet.hash, txStatus.txId, TokenType.ERC20_TOKEN);
-            if (confirmedPaymentStatus) {
-              // Payment is confirmed by the backend
-              this.packet.paymentStatus.erc20Token = confirmedPaymentStatus;
+            let notifiedPaymentStatus = await this.paymentService.notifyServiceOfPayment(this.packet.hash, txStatus.txId, TokenType.ERC20_TOKEN);
+            if (notifiedPaymentStatus) {
+              if (notifiedPaymentStatus.confirmed) {
+                // Payment is confirmed by the backend
+                this.packet.paymentStatus.erc20Token = notifiedPaymentStatus.payment;
+              }
+              else {
+                // Payment could not be confirmed by the backend
+                this.erc20PaymentStepError = notifiedPaymentStatus.errorMessage;
+              }
             }
             else {
-              // Payment could not be confirmed by the backend
-              // TODO
+              // Networking or other unexpected error during notification of payment -
+              this.erc20PaymentStepError = "Unknown error";
             }
 
             this.sendingERC20Payment = false;
