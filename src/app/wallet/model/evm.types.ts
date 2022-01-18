@@ -14,13 +14,14 @@ export type EthTransaction = GenericTransaction & {
   gasPrice: string;
   gasUsed: string;
   hash: string;
-  index?: string;
+  index?: string; // Internal transaction
   input: string;
   isError: string;
   logIndex?:string;
   nonce: string;
   timeStamp: string; // Unix timestamp, seconds
   to: string;
+  transactionHash?: string; // Internal transaction
   transactionIndex: string;
   txreceipt_status: string;
   type?: string;

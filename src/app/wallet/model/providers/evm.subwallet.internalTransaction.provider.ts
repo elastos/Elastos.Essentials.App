@@ -22,7 +22,7 @@ export class EVMSubWalletInternalTransactionProvider<SubWalletType extends AnySu
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
     return {
       cacheKey: this.subWallet.masterWallet.id + "-" + this.subWallet.networkWallet.network.key + "-" + this.subWallet.id + "-internaltransactions",
-      cacheEntryKey: transaction.hash + transaction.index ? transaction.index : '',
+      cacheEntryKey: transaction.transactionHash + transaction.index,
       cacheTimeValue: parseInt(transaction.timeStamp),
       subjectKey: this.subWallet.id
     };
