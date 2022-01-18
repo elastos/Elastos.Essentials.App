@@ -177,6 +177,7 @@ export class NewPacketPage {
     // Prepare packet data
     let packet: PacketToCreate = {
       quantity: this.packets,
+      category: this.category,
       chainId: this.tokenSubwallet.networkWallet.network.getMainChainID(),
       value: new BigNumber(this.tokenAmount),
       distributionType: this.distributionType,

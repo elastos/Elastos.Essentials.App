@@ -257,6 +257,125 @@ ion-textarea {
   margin-top: 10px;
 }
 
+.redpacket-container {
+  padding: 20px 15px;
+  background: #260404;
+  border-radius: 13px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+
+  &.redpacket-light {
+    background: rgba(62, 8, 8, 0.7);
+    backdrop-filter: blur(30px);
+    border-radius: 10px;
+  }
+
+  &.redpacket-inline {
+    flex-direction: row;
+
+    &.redpacket-inline-three-rows {
+      border-radius: 18px;
+      margin-bottom: 10px;
+      padding: 10px 0;
+
+      .redpacket-inline-first-col {
+        display: flex;
+        justify-items: center;
+        align-items: center;
+      }
+
+      .redpacket-inline-first-col.icon img {
+        position: absolute;
+        width: 27.79px;
+        top: 50%;
+        left: 60%;
+        transform: translate(-50%, -50%);
+      }
+
+      .redpacket-inline-second-col {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        .first-line {
+          color: #c9c9c9;
+          text-align: left;
+          font-size: 12px;
+          margin-bottom: 5px;
+        }
+
+        .second-line {
+          color: #fff;
+          font-size: 13px;
+
+          &.line-small {
+            font-size: 12px;
+            color: #C9C9C9;
+            font-weight: normal;
+          }
+        }
+
+
+
+        .third-line {
+          display: flex;
+          flex-direction: row;
+          margin-top: 5px;
+
+          &.line-small {
+            font-size: 12px;
+            color: #C9C9C9;
+            font-weight: normal;
+          }
+
+          .time-left {
+            color: #ffe973;
+            font-size: 10px;
+          }
+
+          .dot-separator {
+            color: #8E8E8E;
+            align-self: center;
+            font-size: 10px;
+            margin: 0 7px;
+          }
+
+          .bottom-info-icon {
+            height: 13px;
+          }
+        }
+      }
+    }
+
+    .redpacket-inline-last-col {
+      align-self: center;
+      .icons {
+        float: right;
+        display: flex;
+
+        .icon {
+          flex-direction: column;
+          align-self: center;
+          display: flex;
+          justify-content: center;
+        }
+      }
+    }
+  }
+
+  &.redpacket-centered-text-content {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    p, div {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+  }
+}
+
 .redpacket-note-container {
   display: flex;
   flex-direction: row;
@@ -290,19 +409,26 @@ ion-textarea {
   }
 }
 
-.redpacket-user-profile-container {
-  background: #260404;
-  border-radius: 13px;
-  display: flex;
-  flex-direction: row;
-  padding: 15px;
-  justify-content: flex-start;
+.redpacket-section-title {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  color: #FFFFFF;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
 
-  .redpacket-user-profile-image {
-    img {
-      width: 48px;
-    }
+.redpacket-user-profile-image {
+  text-align: right;
+  img {
+    height: 44px;
+    width: 44px;
   }
+}
+
+
+.redpacket-user-profile-container {
+  padding: 15px;
 
   .redpacket-user-profile-infos {
     align-self: center;
@@ -333,6 +459,7 @@ ion-textarea {
 }
 
 .redpacket-footer-container {
+  padding-top: 80px;
   position: relative;
   .redpacket-footer-button {
     bottom: 0;
@@ -358,4 +485,42 @@ ion-textarea {
       text-align: center;
     }
   }
+}
+
+.redpacket-summary-table {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .redpacket-summary-label, .redpacket-summary-value {
+    color: #ACACAC;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 16px;
+    &.total {
+      color: #FFFFFF;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 17px;
+    }
+  }
+
+  .redpacket-summary-value {
+    margin-left: auto;
+    font-size: 14px;
+    line-height: 17px;
+  }
+}
+
+.font-bold {
+  font-weight: bold !important;
+}
+
+.font-white {
+  color: white !important;
 }
