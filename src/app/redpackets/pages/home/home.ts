@@ -73,17 +73,18 @@ export class HomePage {
 
     this.publicPacketsSubscription = this.packetService.publicPackets.subscribe(publicPackets => {
       // todo: should this use a pagination system in the API if not already done ?
-      this.publicPackets = publicPackets.length > 3 ? publicPackets.slice(0.3) : publicPackets;
+      // Slice to 4 even though we display 3 on the FE to get that view all link (>3) working.
+      this.publicPackets = publicPackets.length > 3 ? publicPackets.slice(0.4) : publicPackets;
       this.fetchingPublicPackets = false;
     });
 
     // todo: move this to observable ?
     // todo: why is this returning packets that are not mine ?
     const myPacketsResponse = this.packetService.getMyPackets();
-    this.myPackets = myPacketsResponse.length > 3 ? myPacketsResponse.slice(0, 3) : myPacketsResponse;
+    this.myPackets = myPacketsResponse.length > 3 ? myPacketsResponse.slice(0, 4) : myPacketsResponse;
 
     this.openedPacketsSubscriptions = this.packetService.openedPackets.subscribe(openedPackets => {
-      this.openedPackets = openedPackets.length > 3 ? openedPackets.slice(0, 3) : openedPackets;
+      this.openedPackets = openedPackets.length > 3 ? openedPackets.slice(0, 4) : openedPackets;
       this.fetchingOpenedPackets = false;
     });
   }

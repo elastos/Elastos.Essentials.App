@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from '@angular/router';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { ModalController } from "@ionic/angular";
@@ -57,10 +57,9 @@ export class PacketDetailsPage implements OnInit {
   public justNoMorePackets = false;
   public captchaChallengeRequired = false;
   public packetIsInactive = false; // Whether the packet is live for everyone or not (paid)
+  private walletAddress: string;
 
   // UI Model
-  public captchaPicture: string = null;
-  public captchaString = "";
   public winners: WinnerDisplayEntry[] = [];
   public creatorAvatar: string = null;
   public creatorName: string = null;
@@ -189,57 +188,17 @@ export class PacketDetailsPage implements OnInit {
   }
 
   private async sendInitialGrabRequest() {
-    let walletAddress = await this.getActiveWalletAddress();
+    this.walletAddress = await this.getActiveWalletAddress();
 
     this.grabStatusChecked = false;
-    this.captchaString = "";
-    this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet.hash, walletAddress);
-    this.grabStatusChecked = true;
+    this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet.hash, this.walletAddress);
 
-    await this.handleGrabResponse(this.grabResponse);
-  }
-
-  public async testCaptcha() {
-    let walletAddress = await this.getActiveWalletAddress();
-    this.grabResponse = await this.packetService.createGrabCaptchaVerification(
-      this.packet,
-      this.grabResponse,
-      this.captchaString,
-      walletAddress,
-      // Send grabber DID only if allowed in settings
-      this.didService.getProfileVisibility() ? GlobalDIDSessionsService.signedInDIDString : undefined
-    );
-    await this.handleGrabResponse(this.grabResponse);
-  }
-
-  private async handleGrabResponse(grabResponse: GrabResponse) {
-    this.captchaChallengeRequired = false;
-    this.justWon = false;
-    this.justMissed = false;
-    this.justNoMorePackets = false;
-
-    if (grabResponse) {
-      if (grabResponse.status == GrabStatus.CAPTCHA_CHALLENGE) {
-        // User needs to complete the captcha challenge to finalize the grab verification
-        this.captchaChallengeRequired = true;
-        this.captchaPicture = "data:image/svg+xml;base64," + Buffer.from(grabResponse.captchaPicture).toString("base64");
-      }
-      else if (grabResponse.status === GrabStatus.WRONG_CAPTCHA) {
-        // Wrong capcha: send a new grab request to get a new captcha
-        await this.sendInitialGrabRequest();
-      }
-      else if (grabResponse.status === GrabStatus.GRABBED) {
-        this.justWon = true;
-        // Update winners list (with ourself, mostly)
-        void this.fetchWinners();
-      }
-      else if (grabResponse.status === GrabStatus.MISSED) {
-        this.justMissed = true;
-      }
-      else if (grabResponse.status === GrabStatus.DEPLETED) {
-        this.justNoMorePackets = true;
-      }
+    if (this.grabResponse && this.grabResponse.status == GrabStatus.CAPTCHA_CHALLENGE) {
+      // User needs to complete the captcha challenge to finalize the grab verification
+      this.captchaChallengeRequired = true;
     }
+
+    this.grabStatusChecked = true;
   }
 
   public getEarnedAmount(): string {
@@ -333,13 +292,31 @@ export class PacketDetailsPage implements OnInit {
   }
 
   async openGrabModal() {
+    const eventEmitter = new EventEmitter<GrabStatus>();
+    eventEmitter.subscribe(grabStatus => {
+      if (grabStatus === GrabStatus.GRABBED) {
+        this.justWon = true;
+      } else if (grabStatus.status === GrabStatus.MISSED) {
+        this.justMissed = true;
+      } else if (grabStatus.status === GrabStatus.DEPLETED) {
+        this.justNoMorePackets = true;
+      }
+      this.captchaChallengeRequired = false;
+
+      // Update winners list
+      void this.fetchWinners();
+    });
+
     const modal = await this.modalController.create({
       component: GrabPacketComponent,
       cssClass: 'grab-packet-component',
       componentProps: {
         packet: this.packet,
+        grabEventEmitter: eventEmitter,
+        walletAddress: this.walletAddress
       }
     });
+
     return await modal.present()
   }
 
