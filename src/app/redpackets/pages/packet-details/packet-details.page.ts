@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ModalController } from "@ionic/angular";
+import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
+import moment from "moment";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -11,13 +14,11 @@ import { Network } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { GrabPacketComponent } from "../../components/grab-packet/grab-packet.component";
 import { GrabResponse, GrabStatus, PacketWinner } from '../../model/grab.model';
-import { Packet, TokenType } from '../../model/packets.model';
+import { Packet, PacketDistributionType, TokenType } from '../../model/packets.model';
 import { DIDService } from '../../services/did.service';
 import { PacketService } from '../../services/packet.service';
-import moment from "moment";
-import { ModalController } from "@ionic/angular";
-import { GrabPacketComponent } from "../../components/grab-packet/grab-packet.component";
 
 type WinnerDisplayEntry = {
   winner: PacketWinner;
@@ -43,6 +44,7 @@ export class PacketDetailsPage implements OnInit {
   public packetFetchErrored = false; // Error while fetching a remote packet info (network, not found...)
   public checkingGrabStatus = false; // Checking if the packet can be grabbed with the service
   public grabStatusChecked = false; // Grab status has been checked, we know if we won or not
+  public fetchingCreator = false;
   public fetchingWinners = false;
   public fetchingPacket = false;
   public justWon = false;
@@ -55,7 +57,8 @@ export class PacketDetailsPage implements OnInit {
   public captchaPicture: string = null;
   public captchaString = "";
   public winners: WinnerDisplayEntry[] = [];
-  public creatorAvatar = ""; // TODO
+  public creatorAvatar: string = null;
+  public creatorName: string = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -66,7 +69,8 @@ export class PacketDetailsPage implements OnInit {
     private uiService: UiService,
     private globalNavService: GlobalNavService,
     public packetService: PacketService,
-    public modalController: ModalController
+    public modalController: ModalController,
+    private translate: TranslateService
   ) {
 
   }
@@ -125,7 +129,7 @@ export class PacketDetailsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle("Packet details");
+    this.titleBar.setTitle(this.translate.instant("redpackets.red-packet"));
     this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
   }
@@ -135,6 +139,26 @@ export class PacketDetailsPage implements OnInit {
 
   private preparePacketDisplay() {
     this.network = this.walletNetworkService.getNetworkByChainId(this.packet.chainId);
+
+    void this.fetchCreatorInformation();
+  }
+
+  /**
+   * Get avatar and name from the creator DID, if any
+   */
+  private async fetchCreatorInformation(): Promise<void> {
+    this.fetchingCreator = true;
+    if (this.packet.creatorDID) {
+      let userInfo = await this.didService.fetchUserInformation(this.packet.creatorDID);
+      if (userInfo) {
+        if (userInfo.name)
+          this.creatorName = userInfo.name;
+
+        if (userInfo.avatarDataUrl)
+          this.creatorAvatar = userInfo.avatarDataUrl;
+      }
+    }
+    this.fetchingCreator = false;
   }
 
   /**
@@ -173,7 +197,9 @@ export class PacketDetailsPage implements OnInit {
       this.grabResponse,
       this.captchaString,
       walletAddress,
-      GlobalDIDSessionsService.signedInDIDString);
+      // Send grabber DID only if allowed in settings
+      this.didService.getProfileVisibility() ? GlobalDIDSessionsService.signedInDIDString : undefined
+    );
     await this.handleGrabResponse(this.grabResponse);
   }
 
@@ -218,6 +244,17 @@ export class PacketDetailsPage implements OnInit {
       return this.packet.erc20TokenSymbol;
   }
 
+  public getDisplayableDistribution(): string {
+    switch (this.packet.distributionType) {
+      case PacketDistributionType.RANDOM:
+        return "Random";
+      case PacketDistributionType.FIXED:
+        return "Fixed amounts";
+      default:
+        return (this.packet.distributionType as any).toString();
+    }
+  }
+
   private async fetchWinners() {
     this.fetchingWinners = true;
     let rawWinners: PacketWinner[] = await this.packetService.getPacketWinners(this.packet.hash);
@@ -251,6 +288,15 @@ export class PacketDetailsPage implements OnInit {
     }
   }
 
+  public getDisplayableWinnerName(winner: WinnerDisplayEntry) {
+    if (winner.name)
+      return winner.name; // Ideally we got a real name from the DID document, show it
+    else if (winner.winner.userDID)
+      return winner.winner.userDID.slice(0, 20) + "..."; // No name but not anonymous? Show the DID
+    else
+      return "Anonymous"; // Worst case - no info at all - show anonymous
+  }
+
   public userIsCreator(): boolean {
     return this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString);
   }
@@ -267,7 +313,7 @@ export class PacketDetailsPage implements OnInit {
     return this.uiService.getFixedBalance(new BigNumber(winner.winner.winningAmount));
   }
 
-  async openGrabModal(){
+  async openGrabModal() {
     const modal = await this.modalController.create({
       component: GrabPacketComponent,
       cssClass: 'grab-packet-component',

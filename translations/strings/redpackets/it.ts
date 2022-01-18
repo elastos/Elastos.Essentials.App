@@ -4,6 +4,7 @@ export const it = {
     * Generic *
     ***********/
     'red-packets': 'Red Packets',
+    'red-packet': 'Red Packet',
     'view-all': 'View all',
     'continue': 'Continue',
 

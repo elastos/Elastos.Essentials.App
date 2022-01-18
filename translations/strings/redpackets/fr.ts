@@ -4,6 +4,7 @@ export const fr = {
     * Generic *
     ***********/
     'red-packets': 'Paquets Rouges',
+    'red-packet': 'Paquet Rouge',
     'view-all': 'Tout voir',
     'continue': 'Continuer',
 

@@ -41,6 +41,7 @@ export class DIDService {
             // Get the issuer icon
             let representativeIconSubject = this.didDocumentsService.getRepresentativeIcon(docStatus.document);
             if (representativeIconSubject) {
+              Logger.log("redpackets", "Waiting to receive the DID representative icon");
               // eslint-disable-next-line @typescript-eslint/no-misused-promises
               representativeIconSubject.subscribe(async iconBuffer => {
                 if (iconBuffer) {
@@ -48,6 +49,13 @@ export class DIDService {
                     did: did,
                     name: userName,
                     avatarDataUrl: await rawImageToBase64DataUrl(iconBuffer)
+                  });
+                }
+                else {
+                  resolve({
+                    did: did,
+                    name: userName,
+                    avatarDataUrl: null
                   });
                 }
               });
