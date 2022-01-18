@@ -1,14 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { ModalController } from "@ionic/angular";
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from "moment";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -69,10 +73,13 @@ export class PacketDetailsPage implements OnInit {
     private didService: DIDService,
     private uiService: UiService,
     private globalNavService: GlobalNavService,
+    private globalNativeService: GlobalNativeService,
     public packetService: PacketService,
     public modalController: ModalController,
     private themeService: ThemeService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private globalIntentService: GlobalIntentService,
+    private clipboard: Clipboard
   ) {
 
   }
@@ -334,5 +341,21 @@ export class PacketDetailsPage implements OnInit {
       }
     });
     return await modal.present()
+  }
+
+  public getPacketUrl(): string {
+    return `${GlobalConfig.RedPackets.webUrl}/p?g=${this.packet.hash}`;
+  }
+
+  public copyPacketLink() {
+    void this.clipboard.copy(this.getPacketUrl());
+    void this.globalNativeService.genericToast(this.translate.instant("redpackets.packet-url-copied"));
+  }
+
+  public sharePacketLink() {
+    void this.globalIntentService.sendIntent("share", {
+      title: this.translate.instant("redpackets.packet-share-title"),
+      url: this.getPacketUrl()
+    });
   }
 }

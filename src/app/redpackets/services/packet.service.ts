@@ -44,7 +44,7 @@ export class PacketService {
     void this.loadOpenedPackets();
 
     this.intentSubscription = this.globalIntentService.intentListener.subscribe(receivedIntent => {
-      if (receivedIntent && receivedIntent.action.startsWith("https://packet.fun/p") && "g" in receivedIntent.params) {
+      if (receivedIntent && receivedIntent.action.startsWith(`${GlobalConfig.RedPackets.webUrl}/p`) && "g" in receivedIntent.params) {
         // Send the intent response immediatelly
         void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
         this.handleGrabRequest(receivedIntent.params["g"]);

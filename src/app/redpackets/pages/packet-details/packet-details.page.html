@@ -165,4 +165,16 @@
     </div>
   </div>
 
+  <!-- For the creator, when the packet is fully ready, to share his packet url -->
+  <div class="redpacket-footer-container" *ngIf="!fetchingPacket && packet && userIsCreator() && packet.isActive">
+    <div class="redpacket-footer-button">
+      <button (click)="copyPacketLink()">
+        <ion-label>Copy link</ion-label>
+      </button>
+      <button (click)="sharePacketLink()">
+        <ion-label>Share link</ion-label>
+      </button>
+    </div>
+  </div>
+
 </ion-content>

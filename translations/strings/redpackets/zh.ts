@@ -101,6 +101,8 @@ export const zh = {
     'random': 'Random',
     'fixed-amounts': 'Fixed amounts',
     'anonymous': "Anonymous",
+    'packet-url-copied': "Packet URL copied to clipboard, you can now share it!",
+    'packet-share-title': "A red packet for you!",
 
     /******
     * Pay *

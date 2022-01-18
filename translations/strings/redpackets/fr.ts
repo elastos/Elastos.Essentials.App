@@ -101,6 +101,8 @@ export const fr = {
     'random': 'Aléatoire',
     'fixed-amounts': 'Montants fixes',
     'anonymous': "Anonyme",
+    'packet-url-copied': "URL du paquet copiée dans le presse-papier, vous pouvez maintenant partager!",
+    'packet-share-title': "Un paquet rouge pour toi!",
 
     /******
     * Pay *
