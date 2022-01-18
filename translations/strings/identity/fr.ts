@@ -210,6 +210,10 @@ export const fr = {
         'credimport-success-title': 'Informations importées',
         'credimport-success': 'Les informations ont été ajoutées à votre profil DID.',
         'credimport-success-done': 'Terminer',
+        'credimport-note': 'NOTE: The application is requesting to publish the credentials. They will become part of your public DID profile.',
+        'credimport-wrong-did': 'Sorry, the credential you are trying to import is not for this identity.',
+        'credimport-show-details': 'Show details',
+        'credimport-hide-details': 'Hide details',
 
         // page: creddelete
         'credential-delete': 'Suppression d\'informations',

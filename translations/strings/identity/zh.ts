@@ -210,6 +210,10 @@ export const zh = {
         'credimport-success-title': '凭证已导入',
         'credimport-success': '太好了，该凭证已添加到您的DID个人资料中。',
         'credimport-success-done': '完成',
+        'credimport-note': '注意：应用程序正在请求发布凭据。该凭证将成为您公共档案的一部分。',
+        'credimport-wrong-did': '很抱歉，您尝试导入的凭据不属于此身份。',
+        'credimport-show-details': '显示详情',
+        'credimport-hide-details': '隐藏详情',
 
         // page: creddelete
         'credential-delete': '删除凭证',
