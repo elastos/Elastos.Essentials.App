@@ -75,8 +75,8 @@ export const it = {
     * Packet details *
     ******************/
     'grabbing-packet': 'Trying to grab a packet... Please wait',
-    'packet-is-live': 'Your packet is now Live!',
-    'packet-is-not-live': 'Your packet is not Live yet!',
+    'packet-is-live': 'Your packet is now live!',
+    'packet-is-not-live': 'Your packet is not live yet!',
     'error-retrieve-packet': 'Unable to retrieve red packet information, please retry later.',
     'grab-me': 'Grab me!',
     'grab-packet': 'Grab packet',
@@ -116,7 +116,7 @@ export const it = {
     'n-tokens-sent': '{{ amount }} {{ symbol }} sent!',
     'payment-confirmation-error': 'The payment could not be confirmed. This red packet will be cancelled and refunded, please try to create another. Reason: ',
     'balance-n-tokens': 'Balance: {{ amount }} {{ symbol }}',
-    'packet-is-live-pay': 'The Red Packet is Live',
+    'packet-is-live-pay': 'The Red Packet is live',
     'total-symbol': 'Total {{ symbol }}',
     'transaction-fees': 'Transaction fees',
     'service-fees': 'Service Fees',
