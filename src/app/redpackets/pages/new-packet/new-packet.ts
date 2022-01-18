@@ -20,6 +20,7 @@ import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { GlobalThemeService } from "../../../services/global.theme.service";
 import { TokenChooserComponent } from '../../../wallet/components/token-chooser/token-chooser.component';
 import { Packet, PacketDistributionType, PacketToCreate, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
+import { NetworksService } from '../../services/networks.service';
 import { PacketService } from '../../services/packet.service';
 import { RedPacketTheme, ThemeService } from '../../services/theme.service';
 
@@ -101,7 +102,8 @@ export class NewPacketPage {
     public theme: GlobalThemeService,
     private modalCtrl: ModalController,
     public packetService: PacketService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private networksService: NetworksService
   ) { }
 
   ionViewWillEnter() {
@@ -270,9 +272,10 @@ export class NewPacketPage {
       iconPath: this.walletNetworkService.activeNetwork.value.logo
     });
 
+    this.unsupportedNetwork = !this.networksService.isActiveNetworkSupported();
+
     // Reset values that don't make sense any more after swtiching a network (need to be re-entered by user)
     this.tokenSubwallet = this.walletService.activeNetworkWallet.value.getMainEvmSubWallet();
-    this.unsupportedNetwork = !this.tokenSubwallet;
     this.tokenAmount = "0.01";
     this.packets = 30;
   }

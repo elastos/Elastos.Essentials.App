@@ -1,7 +1,7 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <!-- Unsupported network -->
-  <ion-grid *ngIf="tokenSubwallet && unsupportedNetwork">
+  <ion-grid class="container unsupported-network-container" *ngIf="unsupportedNetwork">
     {{ 'redpackets.unsupported-network-intro' | translate }}
   </ion-grid>
 
@@ -191,7 +191,7 @@
     </div>
   </ion-grid>
 
-  <div class="redpacket-footer-container">
+  <div class="redpacket-footer-container" *ngIf="!unsupportedNetwork">
     <div class="redpacket-footer-button">
       <button (click)="createPacket()">
         <ion-label *ngIf="!creatingPacket">{{ 'redpackets.continue' | translate }}</ion-label>
