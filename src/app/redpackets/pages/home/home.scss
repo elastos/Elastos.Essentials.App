@@ -1,0 +1,84 @@
+@import "../../root.scss";
+
+.redpacket-button {
+  --background: linear-gradient(140.79deg, #920E0E -7.72%, #EE5147 143.51%);
+  --background-activated: #920E0E;
+  border-radius: 15px;
+}
+
+.redpacket-section-header {
+  padding: 10px 0 10px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: row;
+
+  .redpacket-section-header-title {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .redpacket-section-header-link {
+    justify-self: end;
+    font-size: 14px;
+    align-self: center;
+    margin-left: auto;
+  }
+}
+
+.about {
+  backdrop-filter: blur(30px);
+  margin-top: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+
+  .icon-container {
+    align-self: center;
+    position: relative;
+
+    .icon {
+      width: 112px;
+      height: 74px;
+    }
+
+    .glow {
+      background-image: radial-gradient(circle, rgba(250, 38, 38, 0.4) 0%, rgba(250, 38, 38, 0) 70%);
+      width: 140px;
+      height: 120px;
+      border-radius: 100%;
+      position: absolute;
+      top: -20px;
+      left: -16px;
+      z-index: -1;
+    }
+  }
+
+  h1 {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 29px;
+    margin-bottom: 0;
+  }
+
+  p {
+    font-weight: normal;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 144%;
+  }
+}
+
+
+.redpacket-element {
+  .redpacket-element-title {
+    font-size: 12px;
+    line-height: 160%;
+    color: #C9C9C9;
+  }
+  .redpacket-element-name {
+    font-size: 13px;
+    line-height: 16px;
+  }
+}

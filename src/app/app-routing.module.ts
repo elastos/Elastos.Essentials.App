@@ -21,6 +21,7 @@ const routes: Routes = [
   { path: 'crproposalvoting', loadChildren: './voting/crproposalvoting/module#CRProposalVotingModule', canActivate: [AuthGuardService] },
   { path: 'developertools', loadChildren: './developertools/module#DeveloperToolsModule', canActivate: [AuthGuardService] },
   { path: 'dappbrowser', loadChildren: './dappbrowser/module#DAppBrowserModule', canActivate: [AuthGuardService] },
+  { path: 'redpackets', loadChildren: './redpackets/module#RedPacketsModule', canActivate: [AuthGuardService] },
 
   // Prevent angular from calling a random default route sometimes when starting,
   // leading to crashes if platform is not ready yet

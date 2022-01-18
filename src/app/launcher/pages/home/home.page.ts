@@ -14,6 +14,8 @@ import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { reducedWalletAddress } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Packet } from 'src/app/redpackets/model/packets.model';
+import { PacketService } from 'src/app/redpackets/services/packet.service';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
@@ -61,6 +63,7 @@ export class HomePage implements OnInit {
   private walletConnectSub: Subscription = null; // Subscription to wallet connect active sessions
   private recentAppsSub: Subscription = null; // Susbcription to recently used dApps (browser)
   private themeSubscription: Subscription = null; // Subscription to theme change
+  private publicRedPacketsSubscription: Subscription = null; // Public red packets that can be grabbed
 
   // Widget data
   public networkWalletsList: NetworkWallet[] = [];
@@ -75,6 +78,7 @@ export class HomePage implements OnInit {
   } = null;
   public walletConnectConnectors: WalletConnect[] = [];
   public recentApps: BrowsedAppInfo[] = [];
+  public publicRedPackets: Packet[] = [];
 
   public walletsSlideOpts = {
     initialSlide: 0,
@@ -108,6 +112,7 @@ export class HomePage implements OnInit {
     private globalNavService: GlobalNavService,
     private globalNative: GlobalNativeService,
     private browserService: DappBrowserService,
+    private packetService: PacketService,
     private didSessions: GlobalDIDSessionsService) {
   }
 
@@ -238,15 +243,19 @@ export class HomePage implements OnInit {
       this.recentApps = await this.browserService.getRecentAppsWithInfo();
     });
 
-    Logger.log("launcher", "Launcher home screen will enter completed")
+    this.publicRedPacketsSubscription = this.packetService.publicPackets.subscribe(publicPackets => {
+      this.publicRedPackets = publicPackets;
+    });
+
+    //Logger.log("launcher", "Launcher home screen will enter completed")
   }
 
   ionViewDidEnter() {
-    Logger.log("launcher", "Launcher home screen did enter");
+    //Logger.log("launcher", "Launcher home screen did enter");
 
     this.globalStartupService.setStartupScreenReady();
 
-    Logger.log("launcher", "Launcher home screen did enter completed");
+    //Logger.log("launcher", "Launcher home screen did enter completed");
 
     /* console.log("TEST")
     this.ionSlides.changes.subscribe((comps: QueryList<IonSlide>) => {
@@ -282,6 +291,10 @@ export class HomePage implements OnInit {
     if (this.recentAppsSub) {
       this.recentAppsSub.unsubscribe();
       this.recentAppsSub = null;
+    }
+    if (this.publicRedPacketsSubscription) {
+      this.publicRedPacketsSubscription.unsubscribe();
+      this.publicRedPacketsSubscription = null;
     }
 
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
@@ -430,6 +443,10 @@ export class HomePage implements OnInit {
 
   public openRecentApp(app: BrowsedAppInfo) {
     void this.browserService.openRecentApp(app);
+  }
+
+  public viewPublicRedPackets() {
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/home");
   }
 
   public getReducedWalletAddress(address: string) {

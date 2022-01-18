@@ -37,6 +37,7 @@ export const it = {
         'touch-to-create-wallet': 'Tocca qui per creare un portafoglio',
         'manage-identity': 'La mia identità',
         'address-copied-to-clipboard': 'Indirizzo {{address}} copiato negli appunti!',
+        'n-red-packets-to-grab': '{{ packets }} packets to grab!',
 
         /******** Components ********/
         'address': 'Indirizzo:',
@@ -75,6 +76,8 @@ export const it = {
         'app-dpos-registration-description': 'Gestore della registrazione DPoS',
         'app-crcouncil-registration': 'Registrazione CR',
         'app-crcouncil-registration-description': 'Gestore della registrazione CR',
+        'app-redpackets': 'Red Packets',
+        'app-redpackets-description': 'Share happiness or promote your project, send red packets!',
 
         /*********** Tips generic ************/
         'tip-of-the-day': 'Consiglio del giorno',

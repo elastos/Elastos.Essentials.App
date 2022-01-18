@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ETHTransactionStatus } from '../../model/evm.types';
-import { ETHTransactionService, ETHTransactionSpeedup, ETHTransactionStatusInfo } from '../../services/ethtransaction.service';
+import { ETHTransactionSpeedup, ETHTransactionStatusInfo, EVMService } from '../../services/evm.service';
 
 
 @Component({
@@ -42,7 +42,7 @@ export class ETHTransactionComponent implements OnInit {
     this.publicationFailed = false;
 
     // Listen to publication event
-    this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe((status)=>{
+    this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe((status) => {
       Logger.log('wallet', 'ETHTransactionComponent status:', status)
       this.publicationStatus = status.status;
       switch (this.publicationStatus) {
@@ -79,12 +79,12 @@ export class ETHTransactionComponent implements OnInit {
   }
 
   speedup() {
-    let speedup : ETHTransactionSpeedup = {
+    let speedup: ETHTransactionSpeedup = {
       gasPrice: Math.floor(parseFloat(this.gasPrice) * this.GWEI).toString(),
       gasLimit: this.gasLimit,
       nonce: this.nonce,
     }
-    ETHTransactionService.instance.ethTransactionSpeedup.next(speedup);
+    EVMService.instance.ethTransactionSpeedup.next(speedup);
     this.exitComponent();
   }
 
@@ -92,12 +92,12 @@ export class ETHTransactionComponent implements OnInit {
     let status: ETHTransactionStatusInfo = {
       chainId: null,
       gasPrice: null,
-      gasLimit:  null,
+      gasLimit: null,
       status: ETHTransactionStatus.CANCEL,
       txId: null,
       nonce: null
     }
-    ETHTransactionService.instance.ethTransactionStatus.next(status)
+    EVMService.instance.ethTransactionStatus.next(status)
     this.exitComponent();
   }
 

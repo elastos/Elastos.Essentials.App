@@ -144,9 +144,14 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   }
 
   /**
-   * Returns the suwallet balance evaluated in USD.
+   * Returns the subwallet balance evaluated in USD.
    */
   public abstract getUSDBalance(): BigNumber;
+
+  /**
+   * Returns the value of 1 coin, in USD
+   */
+  public abstract getOneCoinUSDValue(): BigNumber;
 
   /**
    * If we get the transactions from cache, then we need update the transactions in 3s.
@@ -246,7 +251,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
 
   // Only ELA main chain support memo.
   public supportMemo() {
-      return false;
+    return false;
   }
 
   public supportInternalTransactions() {
@@ -353,7 +358,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
 
   // public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;
 
-  public abstract createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
+  public abstract createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
   public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
   public abstract publishTransaction(transaction: string): Promise<string>;
   public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;

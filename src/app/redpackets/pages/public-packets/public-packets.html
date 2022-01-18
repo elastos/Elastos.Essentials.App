@@ -1,0 +1,7 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="container ion-text-center ion-padding">
+    <packet-preview *ngFor="let packet of packets" [packet]="packet" (click)="openPacketDetails(packet)">
+    </packet-preview>
+  </ion-grid>
+</ion-content>

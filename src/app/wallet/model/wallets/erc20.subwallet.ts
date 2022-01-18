@@ -202,6 +202,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         return usdBalance || new BigNumber(0);
     }
 
+    public getOneCoinUSDValue(): BigNumber {
+        return CurrencyService.instance.getERC20TokenValue(new BigNumber(1), this.coin, this.networkWallet.network, 'USD');
+    }
+
     public getMainIcon(): string {
         return this.networkWallet.network.logo;
     }
@@ -244,7 +248,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     public async updateBalance() {
         //Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
-        if (typeof(this.tokenDecimals) == "undefined" || this.tokenDecimals === null) {
+        if (typeof (this.tokenDecimals) == "undefined" || this.tokenDecimals === null) {
             Logger.error("wallet", "Token decimals unknown for token " + this.coin.getID());
             return;
         }
@@ -398,7 +402,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         return Promise.resolve([]);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<any> {
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<any> {
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
@@ -410,7 +414,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         Logger.log('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
         // Convert the Token amount (ex: 20 TTECH) to contract amount (=token amount (20) * 10^decimals)
         let amountWithDecimals: BigNumber;
-        if (amount === -1) {//-1: send all.
+        if (amount.eq(-1)) {//-1: send all.
             amountWithDecimals = this.balance;
         } else {
             amountWithDecimals = new BigNumber(amount).multipliedBy(this.tokenAmountMulipleTimes);

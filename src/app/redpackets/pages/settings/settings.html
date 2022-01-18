@@ -1,0 +1,33 @@
+<ion-content class="redpacket-settings">
+  <app-titlebar></app-titlebar>
+  <ion-grid class="container ion-padding">
+
+    <!-- Options -->
+    <ion-row class="redpacket-settings-options-container">
+      <div class="redpacket-settings-options-text">
+        <div class="redpacket-settings-option-title">{{ 'redpackets.profile-visibility' | translate }}</div>
+        <div class="redpacket-settings-option-text">{{ 'redpackets.profile-visibility-hint' | translate }}</div>
+      </div>
+      <div class="redpacket-settings-options-value">
+        <ion-toggle class="button" [(ngModel)]="isProfileVisibible" (ionChange)="visibilityChanged()"></ion-toggle>
+      </div>
+    </ion-row>
+
+    <!-- Profile -->
+    <ion-row class="redpacket-container redpacket-inline redpacket-user-profile-container">
+      <div class="redpacket-user-profile-image">
+        <ion-avatar *ngIf="!userAvatar" class="noAvatar">
+          <img [src]="'assets/launcher/default/default-avatar.svg'" alt="Avatar">
+        </ion-avatar>
+        <ion-avatar *ngIf="userAvatar" class="hasAvatar">
+          <img [src]="'data:' + userAvatar.contentType + ';base64,' + userAvatar.base64ImageData" alt="Avatar">
+        </ion-avatar>
+      </div>
+
+      <div class="redpacket-user-profile-infos">
+        <div class="redpacket-user-profile-infos-name">{{ userName }}</div>
+        <div class="redpacket-user-profile-infos-did">{{ userDID }}</div>
+      </div>
+    </ion-row>
+  </ion-grid>
+</ion-content>

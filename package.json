@@ -7,6 +7,7 @@
     "ng": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng",
     "translations": "ts-node --project translations/tsconfig.json translations/generate_translations.ts",
     "start": "ng serve",
+    "start-dev": "ionic cordova run android --external -l --ssl",
     "ionic:build:before": "npm run translations",
     "build": "ng build",
     "test": "ng test",
@@ -29,6 +30,7 @@
     "@angular/platform-browser": "11.0.9",
     "@angular/platform-browser-dynamic": "11.0.9",
     "@angular/router": "11.0.9",
+    "@elastosfoundation/did-js-sdk": "^2.2.3",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "^2.0.2",
     "@ethersproject/experimental": "5.0.9",
     "@ionic-native/app-version": "5.32.0",
@@ -130,7 +132,7 @@
     "moment-locales-webpack-plugin": "1.2.0",
     "prettier": "^2.3.1",
     "ts-node": "9.1.1",
-    "typescript": "4.0.5",
+    "typescript": "^4.0.8",
     "webpack-bundle-analyzer": "4.4.0"
   },
   "browser": {

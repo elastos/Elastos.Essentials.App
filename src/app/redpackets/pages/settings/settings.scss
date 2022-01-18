@@ -1,0 +1,42 @@
+@import "../../root.scss";
+.redpacket-settings {
+  ion-row {
+    margin-bottom: 15px;
+  }
+
+  .redpacket-settings-options-container {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .redpacket-settings-options-text {
+      width: 70%;
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+
+      .redpacket-settings-option-title {
+        font-weight: 500;
+        margin-bottom: 5px;
+      }
+
+      .redpacket-settings-option-text {
+        opacity: 0.72;
+      }
+    }
+
+    .redpacket-settings-options-value {
+      margin-left: auto;
+      align-self: center;
+
+      ion-toggle {
+        --background: #260404;
+        --background-checked: #260404;
+        --handle-background-checked: #A0FF66;
+        height: 29px;
+        width: 57px;
+      }
+    }
+  }
+}

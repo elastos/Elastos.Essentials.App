@@ -40,7 +40,7 @@ import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
+import { EVMService } from 'src/app/wallet/services/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
@@ -154,7 +154,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         private modalCtrl: ModalController,
         private popoverCtrl: PopoverController,
         private nameResolvingService: NameResolvingService,
-        private ethTransactionService: ETHTransactionService
+        private ethTransactionService: EVMService
     ) {
     }
 
@@ -208,7 +208,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (this.fromSubWallet instanceof StandardEVMSubWallet) {
             this.isEVMSubwallet = true;
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status) => {
+            this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe(async (status) => {
                 Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
                 switch (status.status) {
                     case ETHTransactionStatus.PACKED:
@@ -221,7 +221,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                             }
                             await this.globalIntentService.sendIntentResponse(result, this.intentId);
                         }
-                        this.events.publish('wallet:transactionsent', {subwalletid: this.subWalletId, txid: status.txId});
+                        this.events.publish('wallet:transactionsent', { subwalletid: this.subWalletId, txid: status.txId });
                         break;
                     case ETHTransactionStatus.CANCEL:
                         if (this.intentId) {
@@ -237,7 +237,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             });
 
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe(async (status) => {
+            this.ethTransactionSpeedupSub = EVMService.instance.ethTransactionSpeedup.subscribe(async (status) => {
                 Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
                 if (status) {
                     this.gasPrice = status.gasPrice;
@@ -348,7 +348,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         // the spv sdk doesn't support ERC20 yet).
         const rawTx = await this.fromSubWallet.createPaymentTransaction(
             this.toAddress, // User input address
-            this.amount, // User input amount
+            new BigNumber(this.amount), // User input amount
             this.memo, // User input memo
             this.gasPrice,
             this.gasLimit,
@@ -553,13 +553,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             return false;
         } else {
             if (this.transferType === TransferType.WITHDRAW) {
-              if (this.amount < 0.0002) return false;
+                if (this.amount < 0.0002) return false;
 
-              const amountString = this.amount.toString();
-              const dotIndex = amountString.indexOf('.');
-              if ((dotIndex + 9) < amountString.length) {
-                return false;
-              }
+                const amountString = this.amount.toString();
+                const dotIndex = amountString.indexOf('.');
+                if ((dotIndex + 9) < amountString.length) {
+                    return false;
+                }
             }
             return true;
         }
@@ -697,7 +697,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         );
     }
 
-    accMul(arg1, arg2) {
+    accMul(arg1: number, arg2: number): number {
         let m = 0, s1 = arg1.toString(), s2 = arg2.toString();
         try { m += s1.split(".")[1].length } catch (e) { }
         try { m += s2.split(".")[1].length } catch (e) { }

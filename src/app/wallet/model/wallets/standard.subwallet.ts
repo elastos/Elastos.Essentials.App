@@ -47,6 +47,10 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
         return CurrencyService.instance.getMainTokenValue(this.getBalance(), this.networkWallet.network, 'USD') || new BigNumber(0);
     }
 
+    public getOneCoinUSDValue(): BigNumber {
+        return CurrencyService.instance.getMainTokenValue(new BigNumber(1), this.networkWallet.network, 'USD');
+    }
+
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
         let amount = CurrencyService.instance.getMainTokenValue(value, this.networkWallet.network);
         if (amount) {
@@ -110,7 +114,7 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
 
                 if (navigateHomeAfterCompletion) {
                     await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
-                    this.masterWallet.walletManager.events.publish('wallet:transactionsent', {subwalletid: this.id, txid: txid});
+                    this.masterWallet.walletManager.events.publish('wallet:transactionsent', { subwalletid: this.id, txid: txid });
                 }
 
                 let published = true;

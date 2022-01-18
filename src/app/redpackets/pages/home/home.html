@@ -1,0 +1,99 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+
+  <ion-grid class="container ion-padding">
+    <ng-container *ngTemplateOutlet="publicPacketTemplate"></ng-container>
+    <ng-container *ngTemplateOutlet="myPacketTemplate"></ng-container>
+    <ng-container *ngTemplateOutlet="openedPacketsTemplate"></ng-container>
+    <ng-container *ngTemplateOutlet="aboutRedPacketsTemplate"></ng-container>
+  </ion-grid>
+
+</ion-content>
+
+<ng-template #publicPacketTemplate>
+  <div class="redpacket-section-header">
+    <div class="redpacket-section-header-title">
+      {{ 'redpackets.public-packets' | translate }}
+    </div>
+    <div class="redpacket-section-header-link" *ngIf="publicPackets.length > 3">
+      <!-- Todo: check with Ben about this -->
+      {{ 'redpackets.view-all' | translate }}
+    </div>
+  </div>
+
+  <ion-grid *ngIf="!fetchingPublicPackets && publicPackets.length > 0" style="padding: 0">
+    <packet-preview *ngFor="let packet of publicPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)">
+    </packet-preview>
+  </ion-grid>
+
+  <div *ngIf="!fetchingPublicPackets && publicPackets.length === 0">
+    <div class="redpacket-container ion-text-center">
+      <p>{{ 'redpackets.no-public-packet' | translate }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="fetchingPublicPackets">
+    <div class="redpacket-container ion-text-center">
+      <ion-spinner></ion-spinner>
+    </div>
+  </div>
+
+</ng-template>
+
+
+<ng-template #myPacketTemplate>
+  <div class="redpacket-section-header">
+    <div class="redpacket-section-header-title">
+      {{ 'redpackets.my-packets' | translate }}
+    </div>
+    <div class="redpacket-section-header-link" *ngIf="myPackets.length > 3">
+      {{ 'redpackets.view-all' | translate }}
+    </div>
+  </div>
+
+  <ion-grid *ngIf="myPackets.length > 0" style="padding: 0">
+    <packet-preview *ngFor="let packet of myPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)">
+    </packet-preview>
+  </ion-grid>
+
+  <div class="redpacket-container ion-text-center" *ngIf="myPackets.length === 0">
+    <p>{{ 'redpackets.no-my-packet' | translate }}</p>
+    <ion-button (click)="navigateToNewPacket()" class="redpacket-button">
+      {{ 'redpackets.create-new-packet' | translate }}
+    </ion-button>
+  </div>
+</ng-template>
+
+
+<ng-template #openedPacketsTemplate>
+  <div *ngIf="openedPackets.length > 0">
+    <div class="redpacket-section-header">
+      <div class="redpacket-section-header-title">
+        {{ 'redpackets.opened-packets' | translate }}
+      </div>
+      <div class="redpacket-section-header-link" *ngIf="openedPackets.length > 3">
+        {{ 'redpackets.view-all' | translate }}
+      </div>
+    </div>
+
+    <ion-grid style="padding: 0">
+      <packet-preview *ngFor="let packet of openedPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)">
+      </packet-preview>
+    </ion-grid>
+  </div>
+</ng-template>
+
+
+<ng-template #aboutRedPacketsTemplate>
+  <div class="redpacket-container redpacket-light about">
+    <div class="icon-container">
+      <img alt="redpacket-icon" src="assets/redpackets/images/packets.png" class="icon" />
+      <div class="glow"></div>
+    </div>
+
+    <h1>{{ 'redpackets.about-red-packets' | translate }}</h1>
+
+    <p>{{ 'redpackets.about-red-packets-part-1' | translate }}</p>
+    <p>{{ 'redpackets.about-red-packets-part-2' | translate }}</p>
+  </div>
+</ng-template>

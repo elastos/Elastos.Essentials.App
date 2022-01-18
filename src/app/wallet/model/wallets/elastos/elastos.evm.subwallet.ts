@@ -201,7 +201,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string, nonceArg = -1): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const contractAbi = require("../../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
-    const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.withdrawContractAddress);
+    const ethscWithdrawContract = new (this.getWeb3().eth.Contract)(contractAbi, this.withdrawContractAddress);
     let gasPrice = gasPriceArg;
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
@@ -222,7 +222,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     // }
     // condition: _amount % 10000000000 == 0 && _amount.sub(_fee) >= _fee
     if (toAmount === -1) {
-      const estimateAmount = this.web3.utils.toWei(this.balance.toString());
+      const estimateAmount = this.getWeb3().utils.toWei(this.balance.toString());
       const method = ethscWithdrawContract.methods.receivePayload(toAddress, estimateAmount, Config.ETHSC_WITHDRAW_GASPRICE);
       let estimateGas = 0;
       try {
@@ -232,7 +232,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
           to: this.withdrawContractAddress,
           value: estimateAmount,
         }
-        estimateGas = await this.web3.eth.estimateGas(tx);
+        estimateGas = await this.getWeb3().eth.estimateGas(tx);
       } catch (error) {
         Logger.error('wallet', 'estimateGas error:', error);
         estimateGas = 28100; //In case of
@@ -250,14 +250,14 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     const fixedAmount = amountTemp.substring(0, amountTemp.lastIndexOf('.') + 9)
     // TODO fixedAmount >= 0.0002 (_amount.sub(_fee) >= _fee)
 
-    const toAmountSend = this.web3.utils.toWei(fixedAmount.toString());
+    const toAmountSend = this.getWeb3().utils.toWei(fixedAmount.toString());
     const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
 
     const data = method.encodeABI();
 
     let nonce = nonceArg;
     if (nonce === -1) {
-        nonce = await this.getNonce();
+      nonce = await this.getNonce();
     }
     Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' withdrawContractAddress:', this.withdrawContractAddress);
     return this.masterWallet.walletManager.spvBridge.createTransferGeneric(

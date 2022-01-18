@@ -37,6 +37,7 @@ export const fr = {
         'touch-to-create-wallet': 'Toucher pour créer un portefeuille',
         'manage-identity': 'Mon identité',
         'address-copied-to-clipboard': 'Adresse {{address}} copiée dans le presse-papier!',
+        'n-red-packets-to-grab': '{{ packets }} paquet(s) à ouvrir!',
 
         /******** Components ********/
         'address': 'Adresse:',
@@ -73,8 +74,10 @@ export const fr = {
         'app-browser-description': 'Découvrez des dApps utilisables dans Essentials',
         'app-dpos-registration': 'DPoS Registration',
         'app-dpos-registration-description': 'DPoS registration manager',
-        'app-crcouncil-registration': 'CR Registration',
-        'app-crcouncil-registration-description': 'CR  registration manager',
+        'app-crcouncil-registration': 'Candidature CR',
+        'app-crcouncil-registration-description': 'Gestionnaire de candidature CR',
+        'app-redpackets': 'Paquets rouges',
+        'app-redpackets-description': 'Partagez du fun ou faites la promo de votre projet, envoyez des paquets rouges!',
 
         /*********** Tips generic ************/
         'tip-of-the-day': 'Astuce du jour',

@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
+import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
+import Web3 from 'web3';
 import { ETHTransactionComponent } from '../components/eth-transaction/eth-transaction.component';
 import { ETHTransactionStatus } from '../model/evm.types';
+import { Network } from '../model/networks/network';
 import { RawTransactionPublishResult } from '../model/providers/transaction.types';
 import { StandardEVMSubWallet } from '../model/wallets/evm.subwallet';
 import { Transfer } from './cointransfer.service';
@@ -30,7 +34,7 @@ class ETHTransactionManager {
   private defaultGasLimit = '200000';
 
   constructor(
-    private publicationService: ETHTransactionService,
+    private publicationService: EVMService,
     private modalCtrl: ModalController,
   ) { }
 
@@ -53,39 +57,39 @@ class ETHTransactionManager {
       if (!result.published) {
         // The previous transaction needs to be accelerated.
         if (this.needToSpeedup(result)) {
-            if (result.txid) {
-                if (showBlockingLoader) {
-                    await this.displayPublicationLoader();
-                }
+          if (result.txid) {
+            if (showBlockingLoader) {
+              await this.displayPublicationLoader();
+            }
 
-                let tx = await subwallet.getTransactionDetails(result.txid);
-                let defaultGasprice = await subwallet.getGasPrice();
-                let status: ETHTransactionStatusInfo = {
-                chainId: subwallet.id,
-                gasPrice: defaultGasprice,
-                gasLimit: this.defaultGasLimit,
-                status: ETHTransactionStatus.UNPACKED,
-                txId: null,
-                nonce: parseInt(tx.nonce),
-                }
-                void this.emitEthTransactionStatusChange(status);
+            let tx = await subwallet.getTransactionDetails(result.txid);
+            let defaultGasprice = await subwallet.getGasPrice();
+            let status: ETHTransactionStatusInfo = {
+              chainId: subwallet.id,
+              gasPrice: defaultGasprice,
+              gasLimit: this.defaultGasLimit,
+              status: ETHTransactionStatus.UNPACKED,
+              txId: null,
+              nonce: parseInt(tx.nonce),
             }
+            void this.emitEthTransactionStatusChange(status);
+          }
         } else {
-            // 'nonce too low': The transaction already published.
-            if (result.message.includes('nonce too low')) {
-                let status: ETHTransactionStatusInfo = {
-                    chainId: subwallet.id,
-                    gasPrice: null,
-                    gasLimit: null,
-                    status: ETHTransactionStatus.PACKED,
-                    txId: null,
-                    nonce: -1
-                  }
-                  this.emitEthTransactionStatusChange(status);
+          // 'nonce too low': The transaction already published.
+          if (result.message.includes('nonce too low')) {
+            let status: ETHTransactionStatusInfo = {
+              chainId: subwallet.id,
+              gasPrice: null,
+              gasLimit: null,
+              status: ETHTransactionStatus.PACKED,
+              txId: null,
+              nonce: -1
             }
-            else {
-                await subwallet.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
-            }
+            this.emitEthTransactionStatusChange(status);
+          }
+          else {
+            await subwallet.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
+          }
         }
         return;
       }
@@ -135,10 +139,10 @@ class ETHTransactionManager {
 
   private async CheckPublishing(result: RawTransactionPublishResult) {
     if (result.message) {
-        if (result.message.includes('insufficient funds for gas * price + value')) {
-            await this.modalCtrl.dismiss();
-            return false;
-        }
+      if (result.message.includes('insufficient funds for gas * price + value')) {
+        await this.modalCtrl.dismiss();
+        return false;
+      }
     }
 
     return true;
@@ -221,10 +225,15 @@ class ETHTransactionManager {
 @Injectable({
   providedIn: 'root'
 })
-export class ETHTransactionService {
-  public static instance: ETHTransactionService = null;
+export class EVMService {
+  public static instance: EVMService = null;
 
   private manager: ETHTransactionManager = null;
+
+  // Cached web3 instances per network
+  private web3s: {
+    [networkName: string]: Web3;
+  } = {}
 
   public ethTransactionStatus: Subject<ETHTransactionStatusInfo> = null;
   public ethTransactionSpeedup: Subject<ETHTransactionSpeedup> = null;
@@ -232,7 +241,7 @@ export class ETHTransactionService {
   constructor(
     private modalCtrl: ModalController,
   ) {
-    ETHTransactionService.instance = this;
+    EVMService.instance = this;
 
     this.manager = new ETHTransactionManager(
       this,
@@ -251,4 +260,55 @@ export class ETHTransactionService {
   public publishTransaction(subwallet: StandardEVMSubWallet, transaction: string, transfer: Transfer, showBlockingLoader = false): Promise<void> {
     return this.manager.publishTransaction(subwallet, transaction, transfer, showBlockingLoader);
   }
+
+  /**
+   * Creates a new Web3 instance or return a cached one, for the given network.
+   */
+  public getWeb3(network: Network): Web3 {
+    if (network.name in this.web3s) {
+      return this.web3s[network.name];
+    }
+    else {
+      let web3 = new Web3(new EssentialsWeb3Provider(network.getMainEvmRpcApiUrl()));
+      this.web3s[network.name] = web3;
+      return web3;
+    }
+  }
+
+  /**
+   * Current gas price on given network, in raw token amount
+   */
+  public async getGasPrice(network: Network): Promise<string> {
+    let web3 = this.getWeb3(network);
+    let gasPrice = await web3.eth.getGasPrice();
+    return gasPrice;
+  }
+
+  /**
+   * Cost of any transfer, based on a given gas limit and gas price, in readable native coin amount.
+   */
+  public getTransactionFees(gasLimit: string, gasPrice: string): BigNumber {
+    let tokenAmountMulipleTimes = new BigNumber(10).pow(18); // Native coins are all 18 decimals
+    let transactionFees = new BigNumber(gasLimit).multipliedBy(gasPrice).dividedBy(tokenAmountMulipleTimes);
+    return transactionFees;
+  }
+
+  /**
+   * Cost of a native coin transfer, in readable native coin amount.
+   */
+  public async estimateTransferTransactionFees(network: Network): Promise<BigNumber> {
+    let gasLimit = "21000"; // All EVM seem to use this amount of gas for native coin transfer
+    let gasPrice = await this.getWeb3(network).eth.getGasPrice();
+    return this.getTransactionFees(gasLimit, gasPrice);
+  }
+
+  public isAddress(network: Network, address: string) {
+    return this.getWeb3(network).utils.isAddress(address);
+  }
+
+  public async isContractAddress(network: Network, address: string) {
+    const contractCode = await this.getWeb3(network).eth.getCode(address);
+    return contractCode === '0x' ? false : true;
+  }
+
 }

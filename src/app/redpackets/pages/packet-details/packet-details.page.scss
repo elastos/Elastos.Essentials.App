@@ -1,0 +1,74 @@
+@import "../../root.scss";
+
+.redpacket-status {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+
+  > div {
+    width: 85%;
+    border-radius: 13px;
+    text-align: center;
+    padding: 5px 0;
+
+    font-weight: bold;
+    backdrop-filter: blur(4px);
+    font-size: 13px;
+    line-height: 16px;
+    color: #3c3c3c;
+
+    &.live {
+      background: linear-gradient(265.77deg, #02cb84 20.73%, #0cffd3 109.25%);
+    }
+
+    &.not-live {
+      background: #c9c9c9;
+    }
+  }
+}
+.redpacket-view-header {
+  background-size: contain;
+  background-repeat: no-repeat;
+  aspect-ratio: 1 / 1;
+}
+
+.redpacket-view-header {
+  display: flex;
+  justify-content: center;
+}
+.redpacket-header-in-content {
+  ion-avatar {
+    margin: auto;
+  }
+  padding-top: 5%;
+  width: 75%;
+  text-align: center;
+}
+
+.redpacket-info-header-creator {
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+  padding: 15px 0;
+}
+
+.redpacket-info-header-token {
+  font-weight: 600;
+  font-size: 29px;
+  line-height: 35px;
+  margin-bottom: 20px;
+}
+
+.redpacket-info-header-message-title {
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.redpacket-info-header-message-content {
+  font-weight: bold;
+  font-size: 13px;
+  line-height: 139%;
+}

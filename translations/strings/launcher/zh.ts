@@ -37,6 +37,7 @@ export const zh = {
         'touch-to-create-wallet': '点击创建新钱包',
         'manage-identity': '我的身份',
         'address-copied-to-clipboard': '已复制地址 {{address}} 到剪切板！',
+        'n-red-packets-to-grab': '{{ packets }} packets to grab!',
 
         /******** Components ********/
         'address': '地址：',
@@ -75,6 +76,8 @@ export const zh = {
         'app-dpos-registration-description': 'DPoS 参选管理',
         'app-crcouncil-registration': 'CR 委员参选',
         'app-crcouncil-registration-description': 'CR 委员参选管理',
+        'app-redpackets': 'Red Packets',
+        'app-redpackets-description': 'Share happiness or promote your project, send red packets!',
 
         /*********** Tips generic ************/
         'tip-of-the-day': '每日提示',
