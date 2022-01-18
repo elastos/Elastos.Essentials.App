@@ -16,7 +16,7 @@ import { EVMService } from 'src/app/wallet/services/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { Packet, TokenType } from '../../model/packets.model';
+import { Packet, PacketVisibility, TokenType } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
 import { PaymentService, PaymentType } from '../../services/payment.service';
 
@@ -299,6 +299,7 @@ export class PayPage {
               if (notifiedPaymentStatus.confirmed) {
                 // Payment is confirmed by the backend
                 this.packet.paymentStatus.nativeToken = notifiedPaymentStatus.payment;
+                this.checkAllPaymentsCompleted();
               }
               else {
                 // Payment could not be confirmed by the backend
@@ -386,6 +387,7 @@ export class PayPage {
               if (notifiedPaymentStatus.confirmed) {
                 // Payment is confirmed by the backend
                 this.packet.paymentStatus.erc20Token = notifiedPaymentStatus.payment;
+                this.checkAllPaymentsCompleted();
               }
               else {
                 // Payment could not be confirmed by the backend
@@ -411,6 +413,16 @@ export class PayPage {
     }
 
     console.log("after erc20 payment");
+  }
+
+  private checkAllPaymentsCompleted() {
+    if (this.areAllPaymentsCompleted()) {
+      // As we've just finished funding a new packet, if this is a public, we reload the public packets
+      // to get a fresh list on the home screen
+      if (this.packet.visibility == PacketVisibility.PUBLIC) {
+        void this.packetService.fetchPublicPackets();
+      }
+    }
   }
 
   public openPacketDetails() {

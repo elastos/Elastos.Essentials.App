@@ -21,6 +21,7 @@ import { GlobalThemeService } from "../../../services/global.theme.service";
 import { TokenChooserComponent } from '../../../wallet/components/token-chooser/token-chooser.component';
 import { Packet, PacketDistributionType, PacketToCreate, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
+import { RedPacketTheme, ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'page-new-packet',
@@ -37,7 +38,7 @@ export class NewPacketPage {
   public tokenAmount = "0.01"; // Number of token (native or ERC20) to spend, totally
   public type: PacketType = PacketType.STANDARD; // Red packet type - TODO
   public distributionType: PacketDistributionType = PacketDistributionType.RANDOM; // Fixed amount for all packets, or random amounts?
-  public category = "default"; // Red packet theme: christmas, chinese new year, etc
+  public packetTheme: RedPacketTheme = null;
   public message = "temporary message"; // Message shown by users who open the packet
   public probability = 100;
   public probabilityPercent = "100%";
@@ -45,6 +46,9 @@ export class NewPacketPage {
   public visibility: PacketVisibility = PacketVisibility.LINK_ONLY;
   public dAppUrl = "";
   public name = ""; // Creator's name - display only - as on the DID.
+
+  // Model
+  public themes: RedPacketTheme[] = [];
 
   // Logic
   public creatingPacket = false;
@@ -96,7 +100,8 @@ export class NewPacketPage {
     private translate: TranslateService,
     public theme: GlobalThemeService,
     private modalCtrl: ModalController,
-    public packetService: PacketService
+    public packetService: PacketService,
+    private themeService: ThemeService
   ) { }
 
   ionViewWillEnter() {
@@ -117,6 +122,9 @@ export class NewPacketPage {
           break;
       }
     });
+
+    this.themes = this.themeService.getAvailableThemes();
+    this.packetTheme = this.themeService.getDefaultTheme();
   }
 
   ionViewWillLeave() {
@@ -177,7 +185,7 @@ export class NewPacketPage {
     // Prepare packet data
     let packet: PacketToCreate = {
       quantity: this.packets,
-      category: this.category,
+      category: this.packetTheme.key,
       chainId: this.tokenSubwallet.networkWallet.network.getMainChainID(),
       value: new BigNumber(this.tokenAmount),
       distributionType: this.distributionType,
@@ -269,7 +277,7 @@ export class NewPacketPage {
     this.packets = 30;
   }
 
-  selectCategory(packetCategory: string) {
-    this.category = packetCategory;
+  useTheme(theme: RedPacketTheme) {
+    this.packetTheme = theme;
   }
 }

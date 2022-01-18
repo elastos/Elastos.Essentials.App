@@ -19,6 +19,7 @@ import { GrabResponse, GrabStatus, PacketWinner } from '../../model/grab.model';
 import { Packet, PacketDistributionType, TokenType } from '../../model/packets.model';
 import { DIDService } from '../../services/did.service';
 import { PacketService } from '../../services/packet.service';
+import { ThemeService } from '../../services/theme.service';
 
 type WinnerDisplayEntry = {
   winner: PacketWinner;
@@ -70,6 +71,7 @@ export class PacketDetailsPage implements OnInit {
     private globalNavService: GlobalNavService,
     public packetService: PacketService,
     public modalController: ModalController,
+    private themeService: ThemeService,
     private translate: TranslateService
   ) {
 
@@ -253,6 +255,17 @@ export class PacketDetailsPage implements OnInit {
       default:
         return (this.packet.distributionType as any).toString();
     }
+  }
+
+  /**
+   * Background theme image at the top
+   */
+  public getThemeBackgroundImage(): string {
+    let theme = this.themeService.getThemeByKey(this.packet.category);
+    if (!theme)
+      theme = this.themeService.getDefaultTheme();
+
+    return `url(${theme.fullImage})`;
   }
 
   private async fetchWinners() {

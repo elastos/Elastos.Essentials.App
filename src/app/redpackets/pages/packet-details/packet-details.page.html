@@ -32,10 +32,7 @@
 
 
     <!-- Packet infos -->
-    <div [ngClass]="{'redpacket-default-category': packet.category === 'default',
-      'redpacket-christmas-category': packet.category === 'christmas',
-      'redpacket-cny-category': packet.category === 'cny'
-      }" class="redpacket-view-header">
+    <div [ngStyle]="{'background-image': getThemeBackgroundImage() }" class="redpacket-view-header">
 
       <div class="redpacket-header-in-content">
         <!-- Default view: captcha required or creator-->
@@ -97,8 +94,12 @@
     <div class="redpacket-section-title">Information</div>
     <ion-row class="redpacket-container">
       <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">Initial Pool Size</div>
-        <div class="redpacket-summary-value font-white">{{ packet.quantity }} {{ packet.erc20TokenSymbol ?
+        <div class="redpacket-summary-label">Distributed packets</div>
+        <div class="redpacket-summary-value font-white">{{ packet.quantity }} packets</div>
+      </div>
+      <div class="redpacket-summary-table">
+        <div class="redpacket-summary-label">Distributed tokens</div>
+        <div class="redpacket-summary-value font-white">{{ packet.value }} {{ packet.erc20TokenSymbol ?
           packet.erc20TokenSymbol : packet.nativeTokenSymbol }}</div>
       </div>
       <div class="redpacket-summary-table">

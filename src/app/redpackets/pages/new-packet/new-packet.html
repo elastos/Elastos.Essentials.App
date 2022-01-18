@@ -100,7 +100,7 @@
           <span>
             <ion-input [ngModel]="probabilityPercent" (change)="updateProbability($event.target.value)" required number>
             </ion-input>
-            </span>
+          </span>
         </div>
       </ion-row>
 
@@ -150,10 +150,12 @@
       <div class="redpacket-container redpacket-inline redpacket-user-profile-container">
         <div class="redpacket-user-profile-image">
           <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-            <img [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+            <img
+              [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
           </ion-avatar>
           <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
-            <img [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
+            <img
+              [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
           </ion-avatar>
         </div>
 
@@ -179,22 +181,10 @@
         </div>
 
         <ion-slides #categorySlides [options]="slideOpts">
-          <ion-slide class="category-slide-item" [ngClass]="{'active': category === 'default'}"
-            (click)="selectCategory('default')">
-            <img src="assets/redpackets/images/cat_default.svg" alt="Default category" />
-            <div class="label">{{ 'redpackets.theme-default' | translate }}</div>
-          </ion-slide>
-
-          <ion-slide class="category-slide-item" [ngClass]="{'active': category === 'christmas'}"
-            (click)="selectCategory('christmas')">
-            <img src="assets/redpackets/images/cat_christmas.svg" alt="Christmas category" />
-            <div class="label">{{ 'redpackets.theme-christmas' | translate }}</div>
-          </ion-slide>
-
-          <ion-slide class="category-slide-item" [ngClass]="{'active': category === 'cny'}"
-            (click)="selectCategory('cny')">
-            <img src="assets/redpackets/images/cat_cny.png" alt="Chinese new year category" />
-            <div class="label">{{ 'redpackets.theme-cny' | translate }}</div>
+          <ion-slide class="category-slide-item" *ngFor="let theme of themes"
+            [ngClass]="{'active': packetTheme.key === theme.key}" (click)="useTheme(theme)">
+            <img [src]="theme.thumbnailImage" />
+            <div class="label">{{ 'redpackets.theme-'+theme.key | translate }}</div>
           </ion-slide>
         </ion-slides>
       </div>
