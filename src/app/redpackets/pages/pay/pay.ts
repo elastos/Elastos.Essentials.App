@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
@@ -53,7 +54,8 @@ export class PayPage {
     private globalSwitchNetworkService: GlobalSwitchNetworkService,
     private walletService: WalletService,
     private walletNetworkService: WalletNetworkService,
-    private ethTransactionService: EVMService
+    private ethTransactionService: EVMService,
+    private translate: TranslateService
   ) {
     route.queryParams.subscribe(() => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -64,7 +66,7 @@ export class PayPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle("Payment");
+    this.titleBar.setTitle(this.translate.instant("redpackets.payment-title"));
     this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
   }
@@ -432,9 +434,5 @@ export class PayPage {
         packet: this.packet
       }
     });
-  }
-
-  private requestToCheckPayment() {
-    void this.packetService.requestToCheckPayment(this.packet.hash);
   }
 }

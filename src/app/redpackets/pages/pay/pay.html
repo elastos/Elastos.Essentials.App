@@ -2,8 +2,8 @@
   <app-titlebar></app-titlebar>
   <!-- Packet creation on the backend -->
   <ion-grid class="container ion-padding redpacket-container payment-section-container" *ngIf="fetchingPacketInfo"
-            style="display: flex; flex-direction: column; align-items: center; text-align:center;">
-    <h3>Getting packet information, please wait</h3>
+    style="display: flex; flex-direction: column; align-items: center; text-align:center;">
+    <h3>{{ 'redpackets.getting-packet-info' | translate }}</h3>
     <ion-spinner></ion-spinner>
   </ion-grid>
 
@@ -11,15 +11,13 @@
   <ion-grid class="container ion-padding balance-not-enough"
     *ngIf="!fetchingPacketInfo && (!nativeTokenBalanceIsEnough || (packet.costs.erc20Token && !erc20TokenBalanceIsEnough))">
     <div *ngIf="!nativeTokenBalanceIsEnough">
-      Current balance of {{currentNativeBalance}} {{getNativeTokenSymbol()}}
-      is not enough to pay
-      {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}
+      {{ 'redpackets.balance-not-enough' | translate: { currentTokens: currentNativeBalance, targetTokens:
+      getNativeTokenTotal(), symbol: getNativeTokenSymbol() } }}
     </div>
 
     <div *ngIf="packet.costs.erc20Token && !erc20TokenBalanceIsEnough">
-      Current balance of {{currentERC20Balance}} {{getERC20TokenSymbol()}}
-      is not enough to pay
-      {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}
+      {{ 'redpackets.balance-not-enough' | translate: { currentTokens: currentERC20Balance, targetTokens:
+      getERC20TokenTotal(), symbol: getERC20TokenSymbol() } }}
     </div>
   </ion-grid>
 
@@ -31,7 +29,7 @@
   (!packet.costs.erc20Token || (packet.costs.erc20Token && erc20TokenBalanceIsEnough))">
 
       <ion-row class="redpacket-container payment-section-container">
-        <div class="redpacket-section-title">Process</div>
+        <div class="redpacket-section-title">{{ 'redpackets.process' | translate }}</div>
         <!-- Step 1 -->
         <div id="step-1" class="payment-section-step active" [ngClass]="{'active': !isNativePaymentCompleted()}">
           <div class="payment-section-process-step">
@@ -42,22 +40,25 @@
           </div>
 
           <div class="payment-section-process-instructions">
-            <div class="payment-section-process-step-title">Step 1</div>
-            <div class="payment-section-process-step-details">Balance: {{currentNativeBalance}} ELA</div>
+            <div class="payment-section-process-step-title">{{ 'redpackets.step-n' | translate: { step: '1' } }}</div>
+            <div class="payment-section-process-step-details">{{ 'redpackets.balance-n-tokens' | translate: { amount:
+              currentNativeBalance, symbol: getNativeTokenSymbol() } }}</div>
             <div class="payment-section-process-step-button">
               <button *ngIf="!isNativePaymentCompleted() && nativeTokenBalanceIsEnough && !nativePaymentStepError"
                 (click)="sendNativeToken()">
-                <ion-label *ngIf="!sendingNativePayment">Send {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}
+                <ion-label *ngIf="!sendingNativePayment">
+                  {{ 'redpackets.send-n-tokens' | translate: { amount:
+                  getNativeTokenTotal(), symbol: getNativeTokenSymbol() } }}
                 </ion-label>
                 <ion-spinner *ngIf="sendingNativePayment"></ion-spinner>
               </button>
               <div class="payment-section-process-step-success" *ngIf="isNativePaymentCompleted()">
-                {{getNativeTokenTotal()}} {{getNativeTokenSymbol()}} Sent!</div>
+                {{ 'redpackets.n-tokens-sent' | translate: { amount:
+                getNativeTokenTotal(), symbol: getNativeTokenSymbol() } }}</div>
 
               <div class="payment-section-process-step-error" *ngIf="nativePaymentStepError">
-                The payment could not be confirmed. This red packet will be cancelled and refunded, please try to create
-                another.
-                Reason: {{ nativePaymentStepError }}
+                {{ 'redpackets.payment-confirmation-error' | translate }}
+                {{ nativePaymentStepError }}
               </div>
             </div>
           </div>
@@ -74,28 +75,33 @@
           </div>
 
           <div class="payment-section-process-instructions">
-            <div class="payment-section-process-step-title">Step 2</div>
-            <div class="payment-section-process-step-details">Balance: {{ currentERC20Balance }}
-              {{getERC20TokenSymbol()}}</div>
+            <div class="payment-section-process-step-title">{{ 'redpackets.step-n' | translate: { step: '2' } }}</div>
+            <div class="payment-section-process-step-details">
+              {{ 'redpackets.balance-n-tokens' | translate: { amount:
+              currentERC20Balance, symbol: getERC20TokenSymbol() } }}
+            </div>
             <div *ngIf="!isERC20PaymentCompleted() && !erc20TokenBalanceIsEnough">
-              <h2>Current balance of {{currentERC20Balance}} {{getERC20TokenSymbol()}} is not enough to pay
-                {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</h2>
+              <h2>
+                {{ 'redpackets.balance-not-enough' | translate: { currentTokens: currentERC20Balance, targetTokens:
+                getERC20TokenTotal(), symbol: getERC20TokenSymbol() } }}
+              </h2>
             </div>
             <div class="payment-section-process-step-button" *ngIf="!isERC20PaymentCompleted()">
               <button [disabled]="!isNativePaymentCompleted() || erc20PaymentStepError" (click)="sendERC20Tokens()">
-                <ion-label *ngIf="!sendingERC20Payment">Send {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}
+                <ion-label *ngIf="!sendingERC20Payment">{{ 'redpackets.send-n-tokens' | translate: { amount:
+                  getERC20TokenTotal(), symbol: getERC20TokenSymbol() } }}
                 </ion-label>
                 <ion-spinner *ngIf="sendingERC20Payment"></ion-spinner>
               </button>
             </div>
 
             <div class="payment-section-process-step-success" *ngIf="isERC20PaymentCompleted()">
-              {{getERC20TokenTotal()}} {{getERC20TokenSymbol()}} Sent!</div>
+              {{ 'redpackets.n-tokens-sent' | translate: { amount:
+              getERC20TokenTotal(), symbol: getERC20TokenSymbol() } }}</div>
 
             <div class="payment-section-process-step-error" *ngIf="erc20PaymentStepError">
-              The payment could not be confirmed. This red packet will be cancelled and refunded, please try to create
-              another.
-              Reason: {{ erc20PaymentStepError }}
+              {{ 'redpackets.payment-confirmation-error' | translate }}
+              {{ erc20PaymentStepError }}
             </div>
           </div>
         </div>
@@ -110,14 +116,17 @@
           </div>
 
           <div class="payment-section-process-instructions">
-            <div class="payment-section-process-step-title" *ngIf="!packet.costs.erc20Token">Step 2</div>
-            <div class="payment-section-process-step-title" *ngIf="packet.costs.erc20Token">Step 3</div>
+            <div class="payment-section-process-step-title" *ngIf="!packet.costs.erc20Token">{{ 'redpackets.step-n' |
+              translate: { step: '2' } }}</div>
+            <div class="payment-section-process-step-title" *ngIf="packet.costs.erc20Token">{{ 'redpackets.step-n' |
+              translate: { step: '3' } }}</div>
             <div class="payment-section-process-step-final">
               <img *ngIf="!areAllPaymentsCompleted()" src="assets/redpackets/images/payment_packet_inactive.svg" alt=""
                 class="payment-section-process-final-redpacketimg" />
               <img *ngIf="areAllPaymentsCompleted()" src="assets/redpackets/images/payment_packet_active.svg" alt=""
                 class="payment-section-process-final-redpacketimg" />
-              <div class="payment-section-process-step-final-label">The Red Packet is Live</div>
+              <div class="payment-section-process-step-final-label">{{ 'redpackets.packet-is-live-pay' | translate}}
+              </div>
             </div>
           </div>
         </div>
@@ -126,38 +135,40 @@
 
     <ion-row class="redpacket-container">
       <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label total">Total {{getNativeTokenSymbol()}}</div>
+        <div class="redpacket-summary-label total">{{ 'redpackets.total-symbol' | translate: { symbol :
+          getNativeTokenSymbol() } }}</div>
         <div class="redpacket-summary-value total">{{getNativeTokenTotal()}} {{getNativeTokenSymbol()}}</div>
       </div>
       <div class="redpacket-summary-table" *ngIf="!packetContainsERC20Tokens()">
-        <div class="redpacket-summary-label">Red Packets</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.red-packets' | translate }}</div>
         <div class="redpacket-summary-value">{{getNativeRedPacketValue()}} {{getNativeTokenSymbol()}}</div>
       </div>
       <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">Transaction fees</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.transaction-fees' | translate }}</div>
         <div class="redpacket-summary-value">{{getNativeTokenTxFees()}} {{getNativeTokenSymbol()}}</div>
       </div>
       <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">Service Fees</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.service-fees' | translate }}</div>
         <div class="redpacket-summary-value">{{getNativeTokenServiceFees()}} {{getNativeTokenSymbol()}}</div>
       </div>
       <div class="redpacket-summary-table" *ngIf="packet.visibility === 'public'">
-        <div class="redpacket-summary-label">Option: public packet</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.public-option-fees' | translate }}</div>
         <div class="redpacket-summary-value">{{getNativeTokenPublicOptionFees()}} {{getNativeTokenSymbol()}}</div>
       </div>
     </ion-row>
 
     <ion-row class="redpacket-container payment-section-container" *ngIf="packet.costs.erc20Token">
       <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label total">Total {{getERC20TokenSymbol()}}</div>
+        <div class="redpacket-summary-label total">{{ 'redpackets.total-symbol' | translate: { symbol :
+          getERC20TokenSymbol() } }}</div>
         <div class="redpacket-summary-value total">{{getERC20TokenTotal()}} {{getERC20TokenSymbol()}}</div>
       </div>
       <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">Red Packets</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.red-packets' | translate }}</div>
         <div class="redpacket-summary-value">{{getERC20RedPacketValue()}} {{getERC20TokenSymbol()}}</div>
       </div>
       <div class="redpacket-summary-table" *ngIf="packet.visibility === 'public'">
-        <div class="redpacket-summary-label">Option: public packet</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.public-option-fees' | translate }}</div>
         <div class="redpacket-summary-value">{{getERC20TokenPublicOptionFees()}} {{getERC20TokenSymbol()}}</div>
       </div>
     </ion-row>
@@ -167,17 +178,21 @@
       <div class="redpacket-note-container">
         <div class="redpacket-note-info-logo">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path opacity="0.4" d="M14.34 0H5.67C2.28 0 0 2.38 0 5.92V14.09C0 17.62 2.28 20 5.67 20H14.34C17.73 20 20 17.62 20 14.09V5.92C20 2.38 17.73 0 14.34 0" fill="#C8C8C8"/>
-            <path d="M9.99512 8.48438C10.4771 8.48438 10.8701 8.87738 10.8701 9.35938V13.7794C10.8701 14.2614 10.4771 14.6544 9.99512 14.6544C9.51312 14.6544 9.12012 14.2614 9.12012 13.7794V9.35938C9.12012 8.87738 9.51312 8.48438 9.99512 8.48438Z" fill="white"/>
-            <path d="M9.995 7.0625C9.516 7.0625 9.125 6.6695 9.125 6.1875C9.125 5.7055 9.52 5.3125 10.005 5.3125C10.488 5.3125 10.88 5.7055 10.88 6.1875C10.88 6.6695 10.488 7.0625 9.995 7.0625Z" fill="white"/>
+            <path opacity="0.4"
+              d="M14.34 0H5.67C2.28 0 0 2.38 0 5.92V14.09C0 17.62 2.28 20 5.67 20H14.34C17.73 20 20 17.62 20 14.09V5.92C20 2.38 17.73 0 14.34 0"
+              fill="#C8C8C8" />
+            <path
+              d="M9.99512 8.48438C10.4771 8.48438 10.8701 8.87738 10.8701 9.35938V13.7794C10.8701 14.2614 10.4771 14.6544 9.99512 14.6544C9.51312 14.6544 9.12012 14.2614 9.12012 13.7794V9.35938C9.12012 8.87738 9.51312 8.48438 9.99512 8.48438Z"
+              fill="white" />
+            <path
+              d="M9.995 7.0625C9.516 7.0625 9.125 6.6695 9.125 6.1875C9.125 5.7055 9.52 5.3125 10.005 5.3125C10.488 5.3125 10.88 5.7055 10.88 6.1875C10.88 6.6695 10.488 7.0625 9.995 7.0625Z"
+              fill="white" />
           </svg>
         </div>
         <div class="redpacket-note-info-text">
-          <div class="redpacket-note-info-text-title">Note</div>
+          <div class="redpacket-note-info-text-title">{{ 'redpackets.note' | translate }}</div>
           <div class="redpacket-note-info-text-content">
-            Unspent tokens and
-            provisionning fees are returned at
-            the expiration of the red packet.
+            {{ 'redpackets.unspent-tokens-refunded' | translate }}
           </div>
         </div>
       </div>
@@ -187,7 +202,7 @@
   <div class="redpacket-footer-container">
     <div class="redpacket-footer-button" *ngIf="!fetchingPacketInfo && areAllPaymentsCompleted()">
       <button (click)="openPacketDetails()">
-        <ion-label>View packet</ion-label>
+        <ion-label>{{ 'redpackets.view-packet' | translate }}</ion-label>
       </button>
     </div>
   </div>

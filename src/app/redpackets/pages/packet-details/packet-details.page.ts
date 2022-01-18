@@ -249,9 +249,9 @@ export class PacketDetailsPage implements OnInit {
   public getDisplayableDistribution(): string {
     switch (this.packet.distributionType) {
       case PacketDistributionType.RANDOM:
-        return "Random";
+        return this.translate.instant("redpackets.random");
       case PacketDistributionType.FIXED:
-        return "Fixed amounts";
+        return this.translate.instant("redpackets.fixed-amounts");
       default:
         return (this.packet.distributionType as any).toString();
     }
@@ -288,7 +288,6 @@ export class PacketDetailsPage implements OnInit {
       if (winner.userDID) {
         // Async
         void this.didService.fetchUserInformation(winner.userDID).then(userInfo => {
-          console.log("userInfo", userInfo)
           if (userInfo) {
             if (userInfo.name)
               winnerEntry.name = userInfo.name;
@@ -307,7 +306,7 @@ export class PacketDetailsPage implements OnInit {
     else if (winner.winner.userDID)
       return winner.winner.userDID.slice(0, 20) + "..."; // No name but not anonymous? Show the DID
     else
-      return "Anonymous"; // Worst case - no info at all - show anonymous
+      return this.translate.instant("redpackets.anonymous"); // Worst case - no info at all - show anonymous
   }
 
   public userIsCreator(): boolean {

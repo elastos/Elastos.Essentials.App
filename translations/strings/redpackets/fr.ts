@@ -61,6 +61,8 @@ export const fr = {
     'error-invalid-expiration-time': "Durée invalide. Entre 1 et 7 jours",
     'error-no-message': "Soyez sympa, laissez un message...",
     'error-packet-creation-failed': "Le paquet n\'a pas pu être créé, réessayez plus tard.",
+    'technical-preview-title': 'Note: Version de test',
+    'technical-preview-info': 'Ce service de paquets rouges a été lancé récemment et est en période de test. Assurez-vous de n\'utiliser que de faibles montants de jetons.',
 
     /***********
     * Settings *
@@ -68,5 +70,57 @@ export const fr = {
     'settings-title': 'Paramètres',
     'profile-visibility': 'Visibilité de votre profil',
     'profile-visibility-hint': 'Attacher mon profil DID Elastos sur les paquets ouverts',
+
+    /*****************
+    * Packet details *
+    ******************/
+    'grabbing-packet': 'Récupération du paquet, un instant...',
+    'packet-is-live': 'Votre paquet est prêt!',
+    'packet-is-not-live': 'Votre paquet n\'est pas encore prêt!',
+    'error-retrieve-packet': 'Impossible d\'obtenir les informations du paquet. Veuillez réessayer plus tard.',
+    'grab-me': 'Attrape moi!',
+    'grab-packet': 'Attraper le paquet',
+    'anonymous-offering': 'Un ami généreux offre des',
+    'creator-offering': '<b>{{ creator }}</b> offre des',
+    'grab-lost': 'Pas de chance cette fois ci!',
+    'grab-too-late': 'Trop tard, quelqu\'un a été plus rapide pour attraper celui ci, plus de paquets...',
+    'grab-too-late-2': 'Trop tard, plus de paquets...',
+    'information': 'Informations',
+    'distributed-packets': 'Paquets distribués',
+    'n-packets': '{{ packets }} paquets',
+    'distributed-tokens': 'Jetons distribués',
+    'n-tokens': '{{ tokens }} {{ symbol }}',
+    'distribution-model': 'Type de distribution',
+    'probability-to-win': 'Probabilité de gagner',
+    'most-recent-winners': 'Gagnants récents',
+    'fetching-winners': 'Récupération des gagnants',
+    'no-winner': 'Tous les gagnants seront affichés ici',
+    'complete-payment': 'Finaliser le paiement',
+    'date-time-at': 'à',
+    'creator-sent-you': '{{ creator }} vous a envoyé',
+    'random': 'Aléatoire',
+    'fixed-amounts': 'Montants fixes',
+    'anonymous': "Anonyme",
+
+    /******
+    * Pay *
+    *******/
+    'payment-title': 'Paiement',
+    'getting-packet-info': 'Récupération des infos du paquet, un instant',
+    'balance-not-enough': 'Votre balance actuelle de {{ currentTokens }} {{ symbol }} est insuffisante pour payer {{ targetTokens }} {{ symbol }}',
+    'process': 'Etapes',
+    'step-n': 'Etape {{ step }}',
+    'send-n-tokens': 'Envoi de {{ amount }} {{ symbol }}',
+    'n-tokens-sent': '{{ amount }} {{ symbol }} envoyés!',
+    'payment-confirmation-error': 'Le paiement n\'a pas pu être confirmé. Ce paquet a été annulé et les fonds vous seront retournés. Raison: ',
+    'balance-n-tokens': 'Balance: {{ amount }} {{ symbol }}',
+    'packet-is-live-pay': 'Le paquet rouge est prêt',
+    'total-symbol': 'Total d\'{{ symbol }}',
+    'transaction-fees': 'Frais de transactions',
+    'service-fees': 'Frais de service',
+    'public-option-fees': 'Option: paquet public',
+    'note': 'Note',
+    'unspent-tokens-refunded': 'Les jetons non dépensés vous seront retournés une fois le paquet rouge expiré.',
+    'view-packet': 'Voir le paquet'
   }
 }

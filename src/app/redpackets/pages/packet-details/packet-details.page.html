@@ -2,29 +2,29 @@
   <app-titlebar></app-titlebar>
 
   <div class="redpacket-loader" *ngIf="checkingGrabStatus">
-    <ion-label>Trying to grab a packet... Please wait</ion-label>
+    <ion-label>{{ 'redpackets.grabbing-packet' | translate }}</ion-label>
     <ion-spinner></ion-spinner>
   </div>
 
   <div class="redpacket-status" *ngIf="!fetchingPacket && packet && userIsCreator()">
-    <div class="live" *ngIf="packet.isActive">Your packet is now Live !</div>
-    <div class="not-live" *ngIf="!packet.isActive">Your packet is not Live !</div>
+    <div class="live" *ngIf="packet.isActive">{{ 'redpackets.packet-is-live' | translate }}</div>
+    <div class="not-live" *ngIf="!packet.isActive">{{ 'redpackets.packet-is-not-live' | translate }}</div>
   </div>
 
   <div class="redpacket-error-container" *ngIf="packetFetchErrored">
-    Unable to retrieve red packet information, please retry later.
+    {{ 'redpackets.error-retrieve-packet' | translate }}
   </div>
 
 
   <!-- Captcha TODO -->
   <div *ngIf="captchaChallengeRequired">
-    <ion-button (click)="openGrabModal()">Grab me !</ion-button>
+    <ion-button (click)="openGrabModal()">{{ 'redpackets.grab-me' | translate }}</ion-button>
 
     <!-- TODO: move to grab comp -->
     <ion-img [src]="captchaPicture"></ion-img>
     <p>Please type the above letters (mind the case) to continue</p>
     <ion-input type="url" [(ngModel)]="captchaString" ngDefaultControl></ion-input>
-    <ion-button (click)="testCaptcha()">Grab packet</ion-button>
+    <ion-button (click)="testCaptcha()">{{ 'redpackets.grab-packet' | translate }}</ion-button>
   </div>
 
   <!-- PACKET DETAILS -->
@@ -47,10 +47,11 @@
               <img [src]="creatorAvatar" alt="User avatar">
             </ion-avatar>
           </div>
-          <div class="redpacket-info-header-creator" *ngIf="!fetchingCreator && !creatorName">A generous anonymous
-            friend is offering some </div>
-          <div class="redpacket-info-header-creator" *ngIf="!fetchingCreator && creatorName"><b>{{ creatorName }}</b> is
-            offering some </div>
+          <div class="redpacket-info-header-creator" *ngIf="!fetchingCreator && !creatorName">
+            {{ 'redpackets.anonymous-offering' | translate }}
+          </div>
+          <div class="redpacket-info-header-creator" *ngIf="!fetchingCreator && creatorName"
+            [innerHTML]="'redpackets.creator-offering' | translate : { creator: creatorName }"></div>
           <ion-spinner *ngIf="fetchingCreator"></ion-spinner>
 
           <!-- Packet content info -->
@@ -59,7 +60,7 @@
 
           <!-- Message -->
           <div class="redpacket-info-header-message">
-            <div class="redpacket-info-header-message-title">Message</div>
+            <div class="redpacket-info-header-message-title">{{ 'redpackets.message' | translate }}</div>
             <div class="redpacket-info-header-message-content">{{packet.message}}</div>
           </div>
         </div>
@@ -68,59 +69,63 @@
         <div class="redpacket-grabbed" *ngIf="!captchaChallengeRequired && !userIsCreator()">
           <div *ngIf="justWon" class="redpacket-info-header-grabbed">
             <div class="redpacket-info-header-intro">
-              <div class="redpacket-info-header-creator">{{ packet.creatorDID }} sent you </div>
+              <div class="redpacket-info-header-creator">{{ 'redpackets.creator-sent-you' | translate: { creator:
+                creatorName } }}</div>
               <div class="redpacket-info-header-token">{{ getEarnedAmount() }} {{ getEarnedTokenSymbol() }}</div>
             </div>
           </div>
 
           <div *ngIf="justMissed" class="redpacket-info-header-grabbed">
-            <h2>No luck this time!</h2>
+            <h2>{{ 'redpackets.grab-lost' | translate }}</h2>
           </div>
 
           <!-- No more packets after user tried to open it -->
           <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
-            <h2>Too late, someone was faster at grabbing this one, no more packets...</h2>
+            <h2>{{ 'redpackets.grab-too-late' | translate }}</h2>
           </div>
         </div>
 
         <!-- Special case here: if the user open the packet but it's no more available -->
         <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
-          <h2>Too late, no more packets...</h2>
+          <h2>{{ 'redpackets.grab-too-late-2' | translate }}</h2>
         </div>
       </div>
 
     </div>
 
-    <div class="redpacket-section-title">Information</div>
+    <div class="redpacket-section-title">{{ 'redpackets.information' | translate }}</div>
     <ion-row class="redpacket-container">
       <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">Distributed packets</div>
-        <div class="redpacket-summary-value font-white">{{ packet.quantity }} packets</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.distributed-packets' | translate }}</div>
+        <div class="redpacket-summary-value font-white">{{ 'redpackets.n-packets' | translate: { packets:
+          packet.quantity } }}</div>
       </div>
       <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">Distributed tokens</div>
-        <div class="redpacket-summary-value font-white">{{ packet.value }} {{ packet.erc20TokenSymbol ?
-          packet.erc20TokenSymbol : packet.nativeTokenSymbol }}</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.distributed-tokens' | translate }}</div>
+        <div class="redpacket-summary-value font-white">
+          {{ 'redpackets.n-tokens' | translate: { tokens: packet.value, symbol: packet.erc20TokenSymbol ?
+          packet.erc20TokenSymbol : packet.nativeTokenSymbol } }}
+        </div>
       </div>
       <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">Distribution model</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.distribution-model' | translate }}</div>
         <div class="redpacket-summary-value font-white">{{ getDisplayableDistribution() }}</div>
       </div>
       <div class="redpacket-summary-table" *ngIf="packet.probability !== 100">
-        <div class="redpacket-summary-label">Probability to win</div>
+        <div class="redpacket-summary-label">{{ 'redpackets.probability-to-win' | translate }}</div>
         <div class="redpacket-summary-value font-white">{{ packet.probability }}%</div>
       </div>
     </ion-row>
 
-    <div class="redpacket-section-title">Most Recent Winners</div>
+    <div class="redpacket-section-title">{{ 'redpackets.most-recent-winners' | translate }}</div>
     <div class="redpacket-loader" *ngIf="fetchingWinners">
-      <ion-label>Getting the winners</ion-label>
+      <ion-label>{{ 'redpackets.fetching-winners' | translate }}</ion-label>
       <ion-spinner></ion-spinner>
     </div>
 
     <div class="redpacket-container redpacket-light redpacket-centered-text-content"
       *ngIf="!fetchingWinners && winners.length === 0">
-      <p>All the winners will be listed here</p>
+      <p>{{ 'redpackets.no-winner' | translate }}</p>
     </div>
 
     <ion-row class="redpacket-container redpacket-inline redpacket-inline-three-rows" *ngFor="let winner of winners">
@@ -139,7 +144,7 @@
         <div class="first-line font-white">{{ getDisplayableWinnerName(winner) }}
         </div>
         <div class="second-line line-small">{{ winner.date }}</div>
-        <div class="third-line line-small">at {{ winner.time }}</div>
+        <div class="third-line line-small">{{ 'redpackets.date-time-at' | translate }} {{ winner.time }}</div>
       </ion-col>
 
       <!-- Third column - the red packet published icon -->
@@ -155,7 +160,7 @@
   <div class="redpacket-footer-container" *ngIf="!fetchingPacket && packet && userIsCreator() && !packet.isActive">
     <div class="redpacket-footer-button">
       <button (click)="finalizePayment()">
-        <ion-label>Complete payment</ion-label>
+        <ion-label>{{ 'redpackets.complete-payment' | translate }}</ion-label>
       </button>
     </div>
   </div>

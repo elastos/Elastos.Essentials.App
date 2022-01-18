@@ -61,6 +61,8 @@ export const zh = {
     'error-invalid-expiration-time': "Invalid expiration time. Use 1-7 days",
     'error-no-message': "Be kind with your people, send them a nice message!",
     'error-packet-creation-failed': "The packet could not be created. Please try again later",
+    'technical-preview-title': 'Note: Technical Preview',
+    'technical-preview-info': 'The red packet service was recently launched and is this is still a technical release. Make sure to create only red packets with small amounts of tokens.',
 
     /***********
     * Settings *
@@ -68,5 +70,57 @@ export const zh = {
     'settings-title': 'Settings',
     'profile-visibility': 'Profile Visibility',
     'profile-visibility-hint': 'Send my Elastos DID profile when grabbing red packets',
+
+    /*****************
+    * Packet details *
+    ******************/
+    'grabbing-packet': 'Trying to grab a packet... Please wait',
+    'packet-is-live': 'Your packet is now Live!',
+    'packet-is-not-live': 'Your packet is not Live yet!',
+    'error-retrieve-packet': 'Unable to retrieve red packet information, please retry later.',
+    'grab-me': 'Grab me!',
+    'grab-packet': 'Grab packet',
+    'anonymous-offering': 'A generous anonymous friend is offering some',
+    'creator-offering': '<b>{{ creator }}</b> is offering some',
+    'grab-lost': 'No luck this time!',
+    'grab-too-late': 'Too late, someone was faster at grabbing this one, no more packets...',
+    'grab-too-late-2': 'Too late, no more packets...',
+    'information': 'Information',
+    'distributed-packets': 'Distributed packets',
+    'n-packets': '{{ packets }} packets',
+    'distributed-tokens': 'Distributed tokens',
+    'n-tokens': '{{ tokens }} {{ symbol }}',
+    'distribution-model': 'Distribution model',
+    'probability-to-win': 'Probability to win',
+    'most-recent-winners': 'Most Recent Winners',
+    'fetching-winners': 'Getting the winners',
+    'no-winner': 'All the winners will be listed here',
+    'complete-payment': 'Complete payment',
+    'date-time-at': 'at',
+    'creator-sent-you': '{{ creator }} sent you',
+    'random': 'Random',
+    'fixed-amounts': 'Fixed amounts',
+    'anonymous': "Anonymous",
+
+    /******
+    * Pay *
+    *******/
+    'payment-title': 'Payment',
+    'getting-packet-info': 'Getting packet information, please wait',
+    'balance-not-enough': 'Current balance of {{ currentTokens }} {{ symbol }} is not enough to pay {{ targetTokens }} {{ symbol }}',
+    'process': 'Process',
+    'step-n': 'Step {{ step }}',
+    'send-n-tokens': 'Send {{ amount }} {{ symbol }}',
+    'n-tokens-sent': '{{ amount }} {{ symbol }} sent!',
+    'payment-confirmation-error': 'The payment could not be confirmed. This red packet will be cancelled and refunded, please try to create another. Reason: ',
+    'balance-n-tokens': 'Balance: {{ amount }} {{ symbol }}',
+    'packet-is-live-pay': 'The Red Packet is Live',
+    'total-symbol': 'Total {{ symbol }}',
+    'transaction-fees': 'Transaction fees',
+    'service-fees': 'Service Fees',
+    'public-option-fees': 'Option: public packet',
+    'note': 'Note',
+    'unspent-tokens-refunded': 'Unspent tokens and provisionning fees are returned at the expiration of the red packet.',
+    'view-packet': 'View packet'
   }
 }
