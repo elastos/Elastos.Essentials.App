@@ -11,7 +11,7 @@
     <div class="not-live" *ngIf="!packet.isActive">{{ 'redpackets.packet-is-not-live' | translate }}</div>
   </div>
 
-  <div class="redpacket-error-container" *ngIf="packetFetchErrored">
+  <div class="container ion-padding redpacket-error-container" *ngIf="packetFetchErrored">
     {{ 'redpackets.error-retrieve-packet' | translate }}
   </div>
 
