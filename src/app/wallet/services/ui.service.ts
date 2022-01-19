@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import * as moment from 'moment';
+import { WalletSortType } from '../model/walletaccount';
 import { AnySubWallet } from '../model/wallets/subwallet';
 import { LocalStorage } from './storage.service';
 
@@ -10,6 +11,7 @@ import { LocalStorage } from './storage.service';
 export class UiService {
 
   public returnedUser = true;
+  private walletSortType = WalletSortType.NAME;
 
   constructor(
     private storage: LocalStorage
@@ -17,6 +19,7 @@ export class UiService {
 
   async init() {
     await this.getVisit();
+    void this.loadSortType();
   }
 
   async getVisit(): Promise<void> {
@@ -86,5 +89,22 @@ export class UiService {
     } else {
       return moment(timestamp).format('MMM Do YYYY');
     }
+  }
+
+  // Wallet sort type
+  public async loadSortType() {
+    this.walletSortType = await this.storage.get('walletsorttype');
+    if (!this.walletSortType) {
+        this.walletSortType = WalletSortType.NAME;
+    }
+  }
+
+  public getWalletSortType() {
+    return this.walletSortType;
+  }
+
+  public async setWalletSortTtype(sortType: WalletSortType) {
+      await this.storage.set('walletsorttype', sortType);
+      this.walletSortType = sortType;
   }
 }

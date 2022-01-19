@@ -10,6 +10,7 @@ import { Coin, CoinID, CoinType, StandardCoinName } from '../coin';
 import { Network } from '../networks/network';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { TransactionProvider } from '../providers/transaction.provider';
+import { WalletSortType } from '../walletaccount';
 import { StandardEVMSubWallet } from './evm.subwallet';
 import { MasterWallet } from './masterwallet';
 import { SerializedSubWallet, SubWallet } from './subwallet';
@@ -331,12 +332,21 @@ export abstract class NetworkWallet {
     /**
      * Convenient method to access subwallets as an array alphabetically.
      */
-    public getSubWallets(): SubWallet<any>[] {
+    public getSubWallets(sortType: WalletSortType = WalletSortType.NAME): SubWallet<any>[] {
         return Object.values(this.subWallets).sort((a, b) => {
             if (a.type == CoinType.STANDARD && (b.type == CoinType.STANDARD)) return 0;
             if (a.type == CoinType.STANDARD) return -1;
             if (b.type == CoinType.STANDARD) return 1;
-            return a.getFriendlyName() > b.getFriendlyName() ? 1 : -1
+            // sort by balance or alphabetical
+            if (sortType === WalletSortType.NAME) {
+                return a.getDisplayTokenName() > b.getDisplayTokenName() ? 1 : -1
+            } else {
+                let aBalance = a.getUSDBalance();
+                let bBalance = b.getUSDBalance();
+                if (aBalance.isEqualTo(bBalance)) {
+                    return a.getDisplayTokenName() > b.getDisplayTokenName() ? 1 : -1
+                } else return aBalance.gt(bBalance) ? -1 : 1;
+            }
         }
         );
     }

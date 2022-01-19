@@ -216,6 +216,11 @@ ion-slide,
         margin-bottom: 10px;
         margin-left: 5px;
 
+        ion-col {
+            display: flex;
+            align-items: center;
+        }
+
         h1 {
             margin: 0;
             font-size: 18px;
@@ -223,6 +228,12 @@ ion-slide,
             line-height: 0.8;
             letter-spacing: -0.45px;
             text-align: left;
+        }
+
+        .sort {
+            width: 15px;
+            height: 15px;
+            margin-left: 10px;
         }
     }
 

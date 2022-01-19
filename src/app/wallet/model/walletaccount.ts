@@ -15,3 +15,8 @@ export enum WalletCreateType {
     // PRIVATE_KEY_BTC = "privatekey_btc",
     KEYSTORE = "keystore"
 }
+
+export enum WalletSortType {
+    BALANCE = "balance",
+    NAME = "name",
+}

@@ -34,6 +34,7 @@ import { CoinType } from 'src/app/wallet/model/coin';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { WalletSortType } from 'src/app/wallet/model/walletaccount';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { DefiService, StakingData } from 'src/app/wallet/services/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -212,7 +213,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     private refreshSubWalletsList() {
-        this.displayableSubWallets = this.networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
+        let sortType = this.uiService.getWalletSortType();
+        this.displayableSubWallets = this.networkWallet.getSubWallets(sortType).filter(sw => sw.shouldShowOnHomeScreen());
     }
 
     private refreshStakingAssetsList() {
@@ -443,5 +445,16 @@ export class WalletHomePage implements OnInit, OnDestroy {
             masterWalletId: subWallet.networkWallet.masterWallet.id,
             subWalletId: subWallet.id
         });
+    }
+
+    public async setSortMode() {
+        let sortType = this.uiService.getWalletSortType();
+        let newSortType = WalletSortType.BALANCE;
+        if (sortType === WalletSortType.BALANCE) {
+            newSortType = WalletSortType.NAME;
+        }
+        await this.uiService.setWalletSortTtype(newSortType);
+
+        this.refreshSubWalletsList();
     }
 }

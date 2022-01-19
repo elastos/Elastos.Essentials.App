@@ -76,6 +76,7 @@
             <ion-row class="list-title-row">
                 <ion-col size="12">
                     <h1>{{ 'wallet.coin-list' | translate }}</h1>
+                    <img class="sort" [src]="!theme.darkMode ? 'assets/wallet/icons/sort.svg' : 'assets/wallet/icons/darkmode/sort.svg'" (click)="setSortMode()">
                 </ion-col>
             </ion-row>
             <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
