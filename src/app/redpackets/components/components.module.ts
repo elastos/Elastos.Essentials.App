@@ -6,6 +6,7 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
 import { GrabPacketComponent } from './grab-packet/grab-packet.component';
 import { OpenedPreviewComponent } from './opened-packet-preview/opened-preview.component';
 import { PacketPreviewComponent } from './packet-preview/packet-preview.component';
+import { FormsModule } from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { PacketPreviewComponent } from './packet-preview/packet-preview.componen
     CommonModule,
     IonicModule,
     TranslateModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    FormsModule
   ],
   exports: [
     PacketPreviewComponent,

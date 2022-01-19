@@ -16,13 +16,12 @@
       {{ 'redpackets.public-packets' | translate }}
     </div>
     <div class="redpacket-section-header-link" *ngIf="publicPackets.length > 3">
-      <!-- Todo: check with Ben about this -->
       {{ 'redpackets.view-all' | translate }}
     </div>
   </div>
 
   <ion-grid *ngIf="!fetchingPublicPackets && publicPackets.length > 0" style="padding: 0">
-    <packet-preview *ngFor="let packet of publicPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)">
+    <packet-preview *ngFor="let packet of (publicPackets ? publicPackets.slice(0, 2) : [])" [packet]="packet" (click)="navigateToPacketDetails(packet)">
     </packet-preview>
   </ion-grid>
 
@@ -52,7 +51,7 @@
   </div>
 
   <ion-grid *ngIf="myPackets.length > 0" style="padding: 0">
-    <packet-preview *ngFor="let packet of myPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)">
+    <packet-preview *ngFor="let packet of (myPackets ? myPackets.slice(0,3) : [])" [packet]="packet" (click)="navigateToPacketDetails(packet)">
     </packet-preview>
   </ion-grid>
 
@@ -77,7 +76,7 @@
     </div>
 
     <ion-grid style="padding: 0">
-      <packet-preview *ngFor="let packet of openedPackets" [packet]="packet" (click)="navigateToPacketDetails(packet)">
+      <packet-preview *ngFor="let packet of (openedPackets ? openedPackets : openedPackets.slice(0, 3))" [packet]="packet" (click)="navigateToPacketDetails(packet)">
       </packet-preview>
     </ion-grid>
   </div>

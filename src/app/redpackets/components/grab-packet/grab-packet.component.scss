@@ -1,0 +1,48 @@
+@import "../../root.scss";
+
+.flex-column-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+
+  .captcha-container {
+    width: 80%;
+    margin-top: 20%;
+  }
+
+  ion-input {
+    background: #353235;
+    border-radius: 7px;
+    height: 47px;
+    max-height: 47px;
+    padding: 11px 10px;
+    margin: 15px 0;
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
+  .grab-buttons {
+    display: flex;
+    justify-content: center;
+
+    ion-button {
+      box-sizing: border-box;
+      border-radius: 15px;
+      color: white;
+      margin-right: 10px;
+      &.button-cancel {
+        border: 1px solid #E1D6F7;
+        --background: transparent;
+      }
+      &.button-confirm {
+        --background: #592996;
+      }
+    }
+  }
+}
+
+.captcha-holder {
+  backdrop-filter: blur(30px);
+  border: 1px solid white;
+  border-radius: 10px;
+}

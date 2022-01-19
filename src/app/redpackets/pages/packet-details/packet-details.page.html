@@ -1,12 +1,35 @@
 <ion-content>
   <app-titlebar></app-titlebar>
+  <!-- Status (live - not live - error) -->
+  <ng-container *ngTemplateOutlet="status"></ng-container>
 
+  <!-- PACKET DETAILS -->
+  <ion-grid class="container ion-padding" *ngIf="!fetchingPacket && packet">
+    <!-- Grab me button opening the captcha modal -->
+    <div *ngIf="captchaChallengeRequired" class="grab-me ion-activatable">
+      <ion-button (click)="openGrabModal()">{{ 'redpackets.grab-me' | translate }}</ion-button>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+
+    <!-- Packet infos -->
+    <ng-container *ngTemplateOutlet="packetDetailsHead"></ng-container>
+    <!-- Summary table -->
+    <ng-container *ngTemplateOutlet="summaryTable"></ng-container>
+    <!-- Recent winners table -->
+    <ng-container *ngTemplateOutlet="recentWinners"></ng-container>
+  </ion-grid>
+
+  <ng-container *ngTemplateOutlet="footer"></ng-container>
+
+</ion-content>
+
+<ng-template #status>
   <div class="redpacket-loader" *ngIf="checkingGrabStatus">
     <ion-label>{{ 'redpackets.grabbing-packet' | translate }}</ion-label>
     <ion-spinner></ion-spinner>
   </div>
 
-  <div class="redpacket-status" *ngIf="!fetchingPacket && packet && userIsCreator()">
+  <div class="redpacket-status" *ngIf="!fetchingPacket && packet && userIsCreator() && !captchaChallengeRequired">
     <div class="live" *ngIf="packet.isActive">{{ 'redpackets.packet-is-live' | translate }}</div>
     <div class="not-live" *ngIf="!packet.isActive">{{ 'redpackets.packet-is-not-live' | translate }}</div>
   </div>
@@ -14,117 +37,83 @@
   <div class="container ion-padding redpacket-error-container" *ngIf="packetFetchErrored">
     {{ 'redpackets.error-retrieve-packet' | translate }}
   </div>
+</ng-template>
 
+<ng-template #packetDetailsHead>
+  <div [ngStyle]="{'background-image': getThemeBackgroundImage() }" class="redpacket-view-header">
+    <ion-spinner *ngIf="fetchingCreator"></ion-spinner>
 
-  <!-- Captcha TODO -->
-  <div *ngIf="captchaChallengeRequired">
-    <ion-button (click)="openGrabModal()">{{ 'redpackets.grab-me' | translate }}</ion-button>
+    <div class="redpacket-header-in-content">
+      <!-- Default view: won - captcha required - creator-->
+      <div *ngIf="(!justNoMorePackets && captchaChallengeRequired) || userIsCreator() || justWon"
+           class="redpacket-info-header-intro">
+        <!-- Creator info -->
+        <div class="redpacket-info-header-avatar" *ngIf="!fetchingCreator">
+          <ion-avatar *ngIf="!creatorAvatar" class="noAvatar">
+            <img src="assets/launcher/default/darkmode/default-avatar.svg" alt="Default avatar">
+          </ion-avatar>
+          <ion-avatar *ngIf="creatorAvatar" class="hasAvatar">
+            <img [src]="creatorAvatar" alt="User avatar">
+          </ion-avatar>
+        </div>
+        <div class="redpacket-info-header-creator" *ngIf="!fetchingCreator && !creatorName && !justWon">
+          {{ 'redpackets.anonymous-offering' | translate }}
+        </div>
+        <div class="redpacket-info-header-creator" *ngIf="!fetchingCreator && !creatorName && justWon">
+          {{ 'redpackets.anonymous-offered-you' | translate }}
+        </div>
+        <div class="redpacket-info-header-creator" *ngIf="!fetchingCreator && creatorName"
+             [innerHTML]="'redpackets.creator-offering' | translate : { creator: creatorName }"></div>
 
-    <!-- TODO: move to grab comp -->
-    <ion-img [src]="captchaPicture"></ion-img>
-    <p>Please type the above letters (mind the case) to continue</p>
-    <ion-input type="url" [(ngModel)]="captchaString" ngDefaultControl></ion-input>
-    <ion-button (click)="testCaptcha()">{{ 'redpackets.grab-packet' | translate }}</ion-button>
-  </div>
+        <!-- Packet content info -->
+        <div class="redpacket-info-header-token">{{ packet.erc20TokenSymbol ? packet.erc20TokenSymbol :
+          packet.nativeTokenSymbol }}</div>
 
-  <!-- PACKET DETAILS -->
-  <ion-grid class="container ion-padding" *ngIf="!fetchingPacket && packet">
+        <!-- Message -->
+        <div class="redpacket-info-header-message">
+          <div class="redpacket-info-header-message-title">{{ 'redpackets.message' | translate }}</div>
+          <div class="redpacket-info-header-message-content">{{packet.message}}</div>
+        </div>
+      </div>
 
-
-    <!-- Packet infos -->
-    <div [ngStyle]="{'background-image': getThemeBackgroundImage() }" class="redpacket-view-header">
-
-      <div class="redpacket-header-in-content">
-        <!-- Default view: captcha required or creator-->
-        <div *ngIf="(!justNoMorePackets && captchaChallengeRequired) || userIsCreator()"
-          class="redpacket-info-header-intro">
-          <!-- Creator info -->
-          <div class="redpacket-info-header-avatar" *ngIf="!fetchingCreator">
-            <ion-avatar *ngIf="!creatorAvatar" class="noAvatar">
-              <img src="assets/launcher/default/darkmode/default-avatar.svg" alt="Default avatar">
-            </ion-avatar>
-            <ion-avatar *ngIf="creatorAvatar" class="hasAvatar">
-              <img [src]="creatorAvatar" alt="User avatar">
-            </ion-avatar>
-          </div>
-          <div class="redpacket-info-header-creator" *ngIf="!fetchingCreator && !creatorName">
-            {{ 'redpackets.anonymous-offering' | translate }}
-          </div>
-          <div class="redpacket-info-header-creator" *ngIf="!fetchingCreator && creatorName"
-            [innerHTML]="'redpackets.creator-offering' | translate : { creator: creatorName }"></div>
-          <ion-spinner *ngIf="fetchingCreator"></ion-spinner>
-
-          <!-- Packet content info -->
-          <div class="redpacket-info-header-token">{{ packet.erc20TokenSymbol ? packet.erc20TokenSymbol :
-            packet.nativeTokenSymbol }}</div>
-
-          <!-- Message -->
-          <div class="redpacket-info-header-message">
-            <div class="redpacket-info-header-message-title">{{ 'redpackets.message' | translate }}</div>
-            <div class="redpacket-info-header-message-content">{{packet.message}}</div>
+      <!-- Packet has been grabbed: people who passed captcha and are not creator -->
+      <div class="redpacket-grabbed" *ngIf="!captchaChallengeRequired && !userIsCreator()">
+        <div *ngIf="justWon" class="redpacket-info-header-grabbed">
+          <div class="redpacket-info-header-intro">
+            <div class="redpacket-info-header-creator">{{ 'redpackets.creator-sent-you' | translate: { creator:
+              creatorName } }}</div>
+            <div class="redpacket-info-header-token">{{ getEarnedAmount() }} {{ getEarnedTokenSymbol() }}</div>
           </div>
         </div>
 
-        <!-- Packet has been grabbed: people who passed captcha and are not creator -->
-        <div class="redpacket-grabbed" *ngIf="!captchaChallengeRequired && !userIsCreator()">
-          <div *ngIf="justWon" class="redpacket-info-header-grabbed">
-            <div class="redpacket-info-header-intro">
-              <div class="redpacket-info-header-creator">{{ 'redpackets.creator-sent-you' | translate: { creator:
-                creatorName } }}</div>
-              <div class="redpacket-info-header-token">{{ getEarnedAmount() }} {{ getEarnedTokenSymbol() }}</div>
-            </div>
-          </div>
-
-          <div *ngIf="justMissed" class="redpacket-info-header-grabbed">
-            <h2>{{ 'redpackets.grab-lost' | translate }}</h2>
-          </div>
-
-          <!-- No more packets after user tried to open it -->
-          <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
-            <h2>{{ 'redpackets.grab-too-late' | translate }}</h2>
-          </div>
+        <div *ngIf="justMissed" class="redpacket-info-header-grabbed">
+          <h2>{{ 'redpackets.grab-lost' | translate }}</h2>
         </div>
 
-        <!-- Special case here: if the user open the packet but it's no more available -->
+        <!-- No more packets after user tried to open it -->
         <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
-          <h2>{{ 'redpackets.grab-too-late-2' | translate }}</h2>
+          <h2>{{ 'redpackets.grab-too-late' | translate }}</h2>
         </div>
       </div>
 
+      <!-- Special case here: if the user open the packet but it's no more available -->
+      <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
+        <h2>{{ 'redpackets.grab-too-late-2' | translate }}</h2>
+      </div>
     </div>
+  </div>
+</ng-template>
 
-    <div class="redpacket-section-title">{{ 'redpackets.information' | translate }}</div>
-    <ion-row class="redpacket-container">
-      <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">{{ 'redpackets.distributed-packets' | translate }}</div>
-        <div class="redpacket-summary-value font-white">{{ 'redpackets.n-packets' | translate: { packets:
-          packet.quantity } }}</div>
-      </div>
-      <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">{{ 'redpackets.distributed-tokens' | translate }}</div>
-        <div class="redpacket-summary-value font-white">
-          {{ 'redpackets.n-tokens' | translate: { tokens: packet.value, symbol: packet.erc20TokenSymbol ?
-          packet.erc20TokenSymbol : packet.nativeTokenSymbol } }}
-        </div>
-      </div>
-      <div class="redpacket-summary-table">
-        <div class="redpacket-summary-label">{{ 'redpackets.distribution-model' | translate }}</div>
-        <div class="redpacket-summary-value font-white">{{ getDisplayableDistribution() }}</div>
-      </div>
-      <div class="redpacket-summary-table" *ngIf="packet.probability !== 100">
-        <div class="redpacket-summary-label">{{ 'redpackets.probability-to-win' | translate }}</div>
-        <div class="redpacket-summary-value font-white">{{ packet.probability }}%</div>
-      </div>
-    </ion-row>
-
+<ng-template #recentWinners>
+  <div class="winner-container" style="margin-bottom: 20px">
     <div class="redpacket-section-title">{{ 'redpackets.most-recent-winners' | translate }}</div>
     <div class="redpacket-loader" *ngIf="fetchingWinners">
       <ion-label>{{ 'redpackets.fetching-winners' | translate }}</ion-label>
       <ion-spinner></ion-spinner>
     </div>
 
-    <div class="redpacket-container redpacket-light redpacket-centered-text-content"
-      *ngIf="!fetchingWinners && winners.length === 0">
+    <div class="redpacket-container redpacket-light redpacket-centered-text-content" style="margin-bottom: 20px"
+         *ngIf="!fetchingWinners && winners.length === 0">
       <p>{{ 'redpackets.no-winner' | translate }}</p>
     </div>
 
@@ -154,8 +143,36 @@
         <div class="amount">{{ getWinnerAmount(winner) }} {{ getEarnedTokenSymbol() }}</div>
       </ion-col>
     </ion-row>
-  </ion-grid>
+  </div>
+</ng-template>
 
+<ng-template #summaryTable>
+  <div class="redpacket-section-title">{{ 'redpackets.information' | translate }}</div>
+  <ion-row class="redpacket-container">
+    <div class="redpacket-summary-table">
+      <div class="redpacket-summary-label">{{ 'redpackets.distributed-packets' | translate }}</div>
+      <div class="redpacket-summary-value font-white">{{ 'redpackets.n-packets' | translate: { packets:
+        packet.quantity } }}</div>
+    </div>
+    <div class="redpacket-summary-table">
+      <div class="redpacket-summary-label">{{ 'redpackets.distributed-tokens' | translate }}</div>
+      <div class="redpacket-summary-value font-white">
+        {{ 'redpackets.n-tokens' | translate: { tokens: packet.value, symbol: packet.erc20TokenSymbol ?
+          packet.erc20TokenSymbol : packet.nativeTokenSymbol } }}
+      </div>
+    </div>
+    <div class="redpacket-summary-table">
+      <div class="redpacket-summary-label">{{ 'redpackets.distribution-model' | translate }}</div>
+      <div class="redpacket-summary-value font-white">{{ getDisplayableDistribution() }}</div>
+    </div>
+    <div class="redpacket-summary-table" *ngIf="packet.probability !== 100">
+      <div class="redpacket-summary-label">{{ 'redpackets.probability-to-win' | translate }}</div>
+      <div class="redpacket-summary-value font-white">{{ packet.probability }}%</div>
+    </div>
+  </ion-row>
+</ng-template>
+
+<ng-template #footer>
   <!-- For the creator: if packet is not active, go to "pay" -->
   <div class="redpacket-footer-container" *ngIf="!fetchingPacket && packet && userIsCreator() && !packet.isActive">
     <div class="redpacket-footer-button">
@@ -167,14 +184,39 @@
 
   <!-- For the creator, when the packet is fully ready, to share his packet url -->
   <div class="redpacket-footer-container" *ngIf="!fetchingPacket && packet && userIsCreator() && packet.isActive">
-    <div class="redpacket-footer-button">
-      <button (click)="copyPacketLink()">
+    <div class="redpacket-footer-button activable">
+      <ion-button (click)="copyPacketLink()" class="redpacket-button-with-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_3526_9782)">
+            <path d="M7.69246 5.38672H16.9232C17.5353 5.38672 18.1222 5.62985 18.555 6.06263C18.9878 6.4954 19.2309 7.08237 19.2309 7.69441V16.9252C19.2309 17.5372 18.9878 18.1242 18.555 18.557C18.1222 18.9897 17.5353 19.2329 16.9232 19.2329H7.69246C7.08042 19.2329 6.49345 18.9897 6.06067 18.557C5.6279 18.1242 5.38477 17.5372 5.38477 16.9252V7.69441C5.38477 7.08237 5.6279 6.4954 6.06067 6.06263C6.49345 5.62985 7.08042 5.38672 7.69246 5.38672V5.38672Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14.6154 5.38492V3.07722C14.6154 2.46519 14.3723 1.87822 13.9395 1.44544C13.5068 1.01266 12.9198 0.769531 12.3077 0.769531H3.07698C2.46494 0.769531 1.87797 1.01266 1.44519 1.44544C1.01242 1.87822 0.769287 2.46519 0.769287 3.07722V12.308C0.769287 12.92 1.01242 13.507 1.44519 13.9398C1.87797 14.3726 2.46494 14.6157 3.07698 14.6157H5.38467" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <defs>
+            <clipPath id="clip0_3526_9782">
+              <rect width="20" height="20" fill="white"/>
+            </clipPath>
+          </defs>
+        </svg>
+
         <ion-label>Copy link</ion-label>
-      </button>
-      <button (click)="sharePacketLink()">
+        <ion-ripple-effect></ion-ripple-effect>
+      </ion-button>
+      <ion-button (click)="sharePacketLink()" class="redpacket-button-with-icon">
+        <svg width="23" height="18" viewBox="0 0 23 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_3526_9791)">
+            <path d="M21.6487 1.38095C21.222 0.943238 20.7149 0.595936 20.1566 0.358961C19.5983 0.121986 18.9997 0 18.3951 0C17.7906 0 17.192 0.121986 16.6336 0.358961C16.0753 0.595936 15.5682 0.943238 15.1415 1.38095L16.2302 2.49373C16.5139 2.19631 16.8526 1.95942 17.2265 1.79681C17.6005 1.63419 18.0023 1.5491 18.4086 1.54645C18.815 1.54381 19.2179 1.62367 19.5938 1.7814C19.9698 1.93913 20.3113 2.17159 20.5987 2.4653C20.886 2.75901 21.1135 3.10812 21.2678 3.49237C21.4221 3.87662 21.5002 4.28837 21.4977 4.70373C21.4951 5.11908 21.4118 5.52978 21.2527 5.912C21.0936 6.29421 20.8619 6.64033 20.5709 6.93027L14.4468 13.1897C14.1623 13.481 13.8245 13.7122 13.4526 13.87C13.0807 14.0279 12.682 14.1094 12.2794 14.1097C11.8767 14.1101 11.4779 14.0295 11.1057 13.8723C10.7335 13.7152 10.3953 13.4846 10.1102 13.1939C9.82524 12.9031 9.59905 12.5578 9.4446 12.1777C9.29015 11.7976 9.21046 11.3901 9.21008 10.9785C9.20932 10.1473 9.53165 9.34982 10.1062 8.7615L11.1854 7.64871L10.1062 6.53593L9.01744 7.64871C8.16715 8.53479 7.69428 9.72864 7.702 10.9698C7.70972 12.2109 8.19741 13.3985 9.05866 14.2734C9.9199 15.1484 11.0848 15.6396 12.2991 15.64C13.5134 15.6404 14.6785 15.1498 15.5403 14.2753L21.6643 8.01593C22.5225 7.13367 23.0029 5.93934 23.0001 4.69527C22.9973 3.45121 22.5115 2.25915 21.6494 1.38095H21.6487Z" fill="white"/>
+            <path d="M2.46493 15.5127C2.17906 15.2219 1.95222 14.8762 1.79743 14.4955C1.64264 14.1149 1.56295 13.7067 1.56295 13.2944C1.56295 12.8822 1.64264 12.474 1.79743 12.0933C1.95222 11.7126 2.17906 11.367 2.46493 11.0762L8.58901 4.81674C8.87354 4.52455 9.21173 4.29269 9.58418 4.13448C9.95663 3.97627 10.356 3.89483 10.7593 3.89483C11.1626 3.89483 11.562 3.97627 11.9345 4.13448C12.3069 4.29269 12.6451 4.52455 12.9296 4.81674C13.2137 5.10994 13.4372 5.45843 13.5871 5.84156C13.7369 6.22469 13.81 6.63466 13.802 7.04718C13.8043 7.46089 13.7264 7.87097 13.5727 8.2537C13.419 8.63642 13.1925 8.98421 12.9065 9.27693L11.2836 10.9593L12.3723 12.0721L13.9952 10.4134C14.8493 9.52829 15.3263 8.3339 15.3222 7.09074C15.318 5.84759 14.833 4.65657 13.9729 3.77752C13.1129 2.89847 11.9476 2.40273 10.7313 2.39847C9.51505 2.3942 8.34648 2.88174 7.48055 3.75473L1.35648 10.0141C0.705627 10.6662 0.260921 11.5027 0.0797551 12.4156C-0.101411 13.3285 -0.010722 14.276 0.340117 15.1357C0.690957 15.9954 1.28584 16.728 2.04799 17.2387C2.81014 17.7495 3.70458 18.0151 4.61585 18.0012C5.84303 18.0023 7.02085 17.5073 7.89223 16.6241L6.8035 15.5113C6.51898 15.8035 6.18078 16.0354 5.80833 16.1936C5.43589 16.3518 5.03653 16.4332 4.6332 16.4332C4.22987 16.4332 3.83051 16.3518 3.45806 16.1936C3.08561 16.0354 2.74742 15.8035 2.46289 15.5113L2.46493 15.5127Z" fill="white"/>
+          </g>
+          <defs>
+            <clipPath id="clip0_3526_9791">
+              <rect width="23" height="18" fill="white"/>
+            </clipPath>
+          </defs>
+        </svg>
         <ion-label>Share link</ion-label>
-      </button>
+        <ion-ripple-effect></ion-ripple-effect>
+      </ion-button>
     </div>
   </div>
+</ng-template>
 
-</ion-content>

@@ -72,3 +72,34 @@
   font-size: 13px;
   line-height: 139%;
 }
+
+.redpacket-button-with-icon {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  &:first-child {
+    margin-right: 10px;
+  }
+  font-size: 12px;
+  height: 40px;
+  svg {
+    height: 20px;
+    width: 20px;
+    margin-right: 10px;
+  }
+}
+
+.grab-me {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+  ion-button {
+    width: 60%;
+    --background: linear-gradient(140.79deg, #920E0E -7.72%, #EE5147 143.51%);
+  }
+}
