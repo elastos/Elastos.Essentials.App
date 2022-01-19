@@ -8,6 +8,14 @@ export const fr = {
     'view-all': 'Tout voir',
     'continue': 'Continuer',
 
+    /*************
+    * Components *
+    **************/
+    'expired': 'Expiré',
+    'few-minutes-left': "Plus que quelques minutes",
+    'n-hours-left': "Encore {{ hours }} heures",
+    'n-days-left': "Encore {{ days }} jours",
+
     /*******
     * Home *
     ********/

@@ -14,7 +14,7 @@ export class TranslationService {
         TranslationService.instance = this;
     }
 
-    public translateInstant(key: string): string {
-        return this.translate.instant(key);
+    public translateInstant(key: string, interpolateParams?: unknown): string {
+        return this.translate.instant(key, interpolateParams);
     }
 }

@@ -5,6 +5,7 @@ import { GlobalNotificationsService } from 'src/app/services/global.notification
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Packet } from '../../model/packets.model';
 import { DIDService } from '../../services/did.service';
+import { PacketService } from '../../services/packet.service';
 
 @Component({
     selector: 'packet-preview',
@@ -37,7 +38,8 @@ export class PacketPreviewComponent {
         protected popoverCtrl: PopoverController,
         public globalNav: GlobalNavService,
         public globalNotifications: GlobalNotificationsService,
-        private didService: DIDService
+        private didService: DIDService,
+        public packetService: PacketService
     ) { }
 
     ionViewWillEnter() {
@@ -46,7 +48,7 @@ export class PacketPreviewComponent {
     private async preparePacket(packet: Packet) {
         if (packet) {
             let userInfo = await this.didService.fetchUserInformation(packet.creatorDID);
-            this.creator = userInfo && userInfo.name ? userInfo.name : packet.creatorDID.slice(0,20) + "...";
+            this.creator = userInfo && userInfo.name ? userInfo.name : packet.creatorDID.slice(0, 20) + "...";
         }
     }
 
