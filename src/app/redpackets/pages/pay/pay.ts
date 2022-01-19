@@ -317,6 +317,8 @@ export class PayPage {
 
             // Stop listening, we got everything we needed
             txStatusSub.unsubscribe();
+          } else if (txStatus.status === ETHTransactionStatus.CANCEL) {
+            this.sendingNativePayment = false;
           }
         }
       });

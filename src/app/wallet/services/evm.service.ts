@@ -55,6 +55,19 @@ class ETHTransactionManager {
       let result = await subwallet.signAndSendRawTransaction(transaction, transfer, false);
       Logger.log('wallet', 'publishTransaction ', result)
       if (!result.published) {
+        // User cancelled.
+        if (result.status && result.status === 'cancelled') {
+            let status: ETHTransactionStatusInfo = {
+                chainId: subwallet.id,
+                gasPrice: null,
+                gasLimit: null,
+                status: ETHTransactionStatus.CANCEL,
+                txId: null,
+                nonce: -1,
+              }
+              void this.emitEthTransactionStatusChange(status);
+              return;
+        }
         // The previous transaction needs to be accelerated.
         if (this.needToSpeedup(result)) {
           if (result.txid) {
