@@ -28,7 +28,7 @@
                                 [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
                         </ion-col>
                         <ion-col *ngIf="item.active" class="details-col" size="12" [ngSwitch]="item.type">
-                            <div *ngSwitchCase="'marked'" class="item" [innerHtml]="item.value"></div>
+                            <div *ngSwitchCase="'innerHtml'" class="item" [innerHtml]="item.value"></div>
                             <div *ngSwitchCase="'hash'" class="item" [innerHtml]="item.value"></div>
                             <div *ngSwitchCase="'array'" class="item" [innerHtml]="item.value"></div>
 

@@ -74,6 +74,8 @@ export class SuggestionDetail {
     newOwnerSignature?: string;
 
     reservedCustomizedIDList?: [string];
+    receivedCustomizedIDList?: [string];
+    receiverDID?: string;
 }
 
 export type SuggestionDetailResponse = {

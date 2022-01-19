@@ -64,6 +64,10 @@ export class ProposalDetails {
     closeProposalID?: string;
 
     reservedCustomizedIDList?: [string];
+    receivedCustomizedIDList?: [string];
+    receiverDID?: string;
+    rateOfCustomizedIDFee?: number;
+    EIDEffectiveHeight?: number;
 
     budgets: any;
 }

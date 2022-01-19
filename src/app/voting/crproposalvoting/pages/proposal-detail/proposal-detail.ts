@@ -251,7 +251,7 @@ export class ProposalDetailPage {
         this.proposalDetails.push(
             {
                 title: this.translate.instant('crproposalvoting.proposal'),
-                type: 'marked',
+                type: 'innerHtml',
                 value: this.proposal.title,
                 active: true
             },
@@ -263,19 +263,19 @@ export class ProposalDetailPage {
             },
             {
                 title: this.translate.instant('crproposalvoting.abstract'),
-                type: 'marked',
+                type: 'innerHtml',
                 value: this.proposal.abstract ? marked(this.proposal.abstract) : null,
                 active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.motivation'),
-                type: 'marked',
+                type: 'innerHtml',
                 value: this.proposal.motivation ? marked(this.proposal.motivation) : null,
                 active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.goal'),
-                type: 'marked',
+                type: 'innerHtml',
                 value: this.proposal.goal ? marked(this.proposal.goal) : null,
                 active: true
             },
@@ -299,7 +299,7 @@ export class ProposalDetailPage {
             },
             {
                 title: this.translate.instant('crproposalvoting.plan-statement'),
-                type: 'marked',
+                type: 'innerHtml',
                 value: this.proposal.planStatement ? marked(this.proposal.planStatement) : null,
                 active: true
             },
@@ -311,7 +311,7 @@ export class ProposalDetailPage {
             },
             {
                 title: this.translate.instant('crproposalvoting.budget-statement'),
-                type: 'marked',
+                type: 'innerHtml',
                 value: this.proposal.budgetStatement ? marked(this.proposal.budgetStatement) : null,
                 active: true
             },

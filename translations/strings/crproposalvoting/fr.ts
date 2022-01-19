@@ -19,6 +19,7 @@ export const fr = {
         'proposal-hash': 'Hash de la Proposition',
         'url': 'Url d\'origine',
         'reservecustomizedid': 'Reserve Customized DID',
+        'receivedcustomizedid': 'Received Customized DID',
         'time-remaining': 'Temps Restant',
         'reject-ratio': 'Ratio de Reject',
         'member-votes': 'Council Member Votes',
@@ -80,6 +81,7 @@ export const fr = {
         'proposaltype-closeproposal': 'Terminate Proposal',
         'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
         'proposaltype-reservecustomizedid': 'Motion to reserve Customized DID',
+        'proposaltype-receivecustomizedid': 'Enable Customized DID',
         'imprest': 'Imprest',
         'normalpayment': 'NormalPayment',
         'finalpayment': 'FinalPayment',
@@ -168,6 +170,7 @@ export const fr = {
         'receive-address': 'ELA Receive Address',
         'payment-schedule': 'Payment Schedule',
         'budget-statement': 'Budget Statement',
+        'receiver-did': 'Receiver DID',
 
         //Error
         'no-draft-data': 'Can not get the drafe data for now.',
