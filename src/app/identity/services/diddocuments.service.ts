@@ -186,7 +186,7 @@ export class DIDDocumentsService {
 
       if (avatarCredentials && avatarCredentials.length > 0) {
         let credSubject = avatarCredentials[0].getSubject();
-        if ("avatar" in credSubject) {
+        if ("avatar" in credSubject && typeof credSubject["avatar"] === "object") {
           let avatar = credSubject["avatar"];
           if ("type" in avatar && avatar["type"] === "elastoshive")
             hiveIconUrl = avatar["data"];
