@@ -2,7 +2,8 @@
   "compileOnSave": false,
   "include": [
     "src/**/*.ts",
-    "src/assets/web3providertest.js"
+    "src/assets/web3providertest.js",
+    "environment/set_env.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,0 +1,26 @@
+{
+  "include": ["**/*.ts" ],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "Node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "module": "CommonJS",
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types",
+    ],
+    "types": [
+      "node",
+    ],
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+  }
+}

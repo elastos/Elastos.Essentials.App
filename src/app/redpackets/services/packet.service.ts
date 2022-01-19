@@ -2,13 +2,13 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ToastController } from "@ionic/angular";
 import { BehaviorSubject, Subscription } from "rxjs";
-import { GlobalConfig } from "src/app/config/globalconfig";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
+import { environment } from "src/environments/environment";
 import { GrabbedPacket, GrabRequest, GrabResponse, GrabStatus, PacketWinner } from "../model/grab.model";
 import {
   Packet,
@@ -44,7 +44,7 @@ export class PacketService {
     void this.loadOpenedPackets();
 
     this.intentSubscription = this.globalIntentService.intentListener.subscribe(receivedIntent => {
-      if (receivedIntent && receivedIntent.action.startsWith(`${GlobalConfig.RedPackets.webUrl}/p`) && "g" in receivedIntent.params) {
+      if (receivedIntent && receivedIntent.action.startsWith(`${environment.RedPackets.webUrl}/p`) && "g" in receivedIntent.params) {
         // Send the intent response immediatelly
         void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
         this.handleGrabRequest(receivedIntent.params["g"]);
@@ -80,7 +80,7 @@ export class PacketService {
 
     return new Promise((resolve, reject) => {
       // Create a new packet
-      this.http.post<SerializedPacket>(`${GlobalConfig.RedPackets.serviceUrl}/packets`, packet).subscribe(createdPacket => {
+      this.http.post<SerializedPacket>(`${environment.RedPackets.serviceUrl}/packets`, packet).subscribe(createdPacket => {
         Logger.log("Created packet:", createdPacket);
         if (createdPacket) {
           resolve(Packet.fromSerializedPacket(createdPacket));
@@ -97,7 +97,7 @@ export class PacketService {
 
   public async requestToCheckPayment(packetHash: string): Promise<void> {
     try {
-      let response = await this.http.post(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/checkpayments`, {}).toPromise();
+      let response = await this.http.post(`${environment.RedPackets.serviceUrl}/packets/${packetHash}/checkpayments`, {}).toPromise();
       console.log("check payment response", response);
     }
     catch (err) {
@@ -107,7 +107,7 @@ export class PacketService {
 
   public async getPacketInfo(packetHash: string): Promise<Packet> {
     try {
-      let packetInfo = await this.http.get<SerializedPacket>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}`, {}).toPromise();
+      let packetInfo = await this.http.get<SerializedPacket>(`${environment.RedPackets.serviceUrl}/packets/${packetHash}`, {}).toPromise();
       if (packetInfo) {
         return Packet.fromSerializedPacket(packetInfo);
       }
@@ -120,7 +120,7 @@ export class PacketService {
 
   public async getPacketWinners(packetHash: string): Promise<PacketWinner[]> {
     try {
-      let winners = await this.http.get<PacketWinner[]>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/winners`, {}).toPromise();
+      let winners = await this.http.get<PacketWinner[]>(`${environment.RedPackets.serviceUrl}/packets/${packetHash}/winners`, {}).toPromise();
       Logger.log("redpackets", "Packet winners", winners);
       return winners;
     }
@@ -132,7 +132,7 @@ export class PacketService {
 
   public async fetchPublicPackets(): Promise<void> {
     try {
-      let packets = await this.http.get<SerializedPacket[]>(`${GlobalConfig.RedPackets.serviceUrl}/publicpackets`, {}).toPromise();
+      let packets = await this.http.get<SerializedPacket[]>(`${environment.RedPackets.serviceUrl}/publicpackets`, {}).toPromise();
       if (packets) {
         let deserializedPackets: Packet[] = [];
         packets.forEach(p => {
@@ -182,7 +182,7 @@ export class PacketService {
       let grabRequest: GrabRequest = {
         walletAddress
       };
-      let grabResponse = await this.http.post<GrabResponse>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/grab`, grabRequest).toPromise();
+      let grabResponse = await this.http.post<GrabResponse>(`${environment.RedPackets.serviceUrl}/packets/${packetHash}/grab`, grabRequest).toPromise();
       Logger.log('redpackets', 'Grab packet response', grabResponse);
       return grabResponse;
     }
@@ -201,7 +201,7 @@ export class PacketService {
         walletAddress,
         userDID
       };
-      let grabResponse = await this.http.post<GrabResponse>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packet.hash}/grab`, grabRequest).toPromise();
+      let grabResponse = await this.http.post<GrabResponse>(`${environment.RedPackets.serviceUrl}/packets/${packet.hash}/grab`, grabRequest).toPromise();
       Logger.log('redpackets', 'Grab packet with captcha response', grabResponse);
 
       // Save the "grabbed" (won or lost) status so we don't try to fetch again later

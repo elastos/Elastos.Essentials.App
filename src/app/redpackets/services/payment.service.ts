@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import moment from 'moment';
-import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { environment } from 'src/environments/environment';
 import { TokenType } from '../model/packets.model';
 import { NotifyPaymentStatus } from '../model/payments.model';
 
@@ -103,7 +103,7 @@ export class PaymentService implements GlobalService {
    */
   public async notifyServiceOfPayment(packetHash: string, transactionHash: string, tokenType: TokenType): Promise<NotifyPaymentStatus> {
     try {
-      let response = await this.http.post<NotifyPaymentStatus>(`${GlobalConfig.RedPackets.serviceUrl}/packets/${packetHash}/notifypayment`, {
+      let response = await this.http.post<NotifyPaymentStatus>(`${environment.RedPackets.serviceUrl}/packets/${packetHash}/notifypayment`, {
         transactionHash,
         tokenType // native or erc20
       }).toPromise();

@@ -52,13 +52,12 @@
  *
  */
 
-import './zone-flags.ts';
-
 /***************************************************************************************************
  * Zone JS is required by default for Angular itself.
  */
+import 'zone.js/dist/zone'; // Included with Angular CLI.
+import './zone-flags.ts';
 
-import 'zone.js/dist/zone';  // Included with Angular CLI.
 
 
 /***************************************************************************************************
@@ -72,7 +71,7 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 (window as any).process.env = {};
 (window as any).process.browser = true;
 (window as any).process.version = '';
-(window as any).process.versions = {node: false};
+(window as any).process.versions = { node: false };
 (window as any).process.nextTick = (() => {
     const canSetImmediate = typeof window !== 'undefined'
         && (window as any).setImmediate;

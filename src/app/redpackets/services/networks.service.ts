@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { environment } from 'src/environments/environment';
 import { PublicNetworkInfo } from '../model/networks.model';
 
 @Injectable({
@@ -26,7 +26,7 @@ export class NetworksService {
    */
   public async fetchSupportedNetworks(): Promise<void> {
     try {
-      this.supportedNetworks = await this.http.get<PublicNetworkInfo[]>(`${GlobalConfig.RedPackets.serviceUrl}/chains`).toPromise();
+      this.supportedNetworks = await this.http.get<PublicNetworkInfo[]>(`${environment.RedPackets.serviceUrl}/chains`).toPromise();
       if (!this.supportedNetworks) {
         Logger.warn("redpackets", "Unable to fetch supported networks. Red packets can't be created later.");
         this.supportedNetworks = [];

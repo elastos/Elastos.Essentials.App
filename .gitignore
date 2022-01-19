@@ -16,3 +16,4 @@ plugins/
 scripts/cache/
 src/assets/generated/
 resources/ios/icon/
+.env

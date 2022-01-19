@@ -7,7 +7,6 @@ import BigNumber from 'bignumber.js';
 import moment from "moment";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -18,6 +17,7 @@ import { Network } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { environment } from "src/environments/environment";
 import { GrabPacketComponent } from "../../components/grab-packet/grab-packet.component";
 import { GrabResponse, GrabStatus, PacketWinner } from '../../model/grab.model';
 import { Packet, PacketDistributionType, TokenType } from '../../model/packets.model';
@@ -323,7 +323,7 @@ export class PacketDetailsPage implements OnInit {
   }
 
   public getPacketUrl(): string {
-    return `${GlobalConfig.RedPackets.webUrl}/p?g=${this.packet.hash}`;
+    return `${environment.RedPackets.webUrl}/p?g=${this.packet.hash}`;
   }
 
   public copyPacketLink() {
