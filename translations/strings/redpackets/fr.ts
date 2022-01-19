@@ -98,12 +98,12 @@ export const fr = {
     'grab-too-late': 'Trop tard, quelqu\'un a été plus rapide pour attraper celui ci, plus de paquets...',
     'grab-too-late-2': 'Trop tard, plus de paquets...',
     'information': 'Informations',
-    'distributed-packets': 'Paquets distribués',
+    'distributed-packets': 'Paquets',
     'n-packets': '{{ packets }} paquets',
-    'distributed-tokens': 'Jetons distribués',
+    'distributed-tokens': 'Jetons',
     'n-tokens': '{{ tokens }} {{ symbol }}',
-    'distribution-model': 'Type de distribution',
-    'probability-to-win': 'Probabilité de gagner',
+    'distribution-model': 'Type',
+    'probability-to-win': 'Probabilité de gain',
     'most-recent-winners': 'Gagnants récents',
     'fetching-winners': 'Récupération des gagnants',
     'no-winner': 'Tous les gagnants seront affichés ici',
@@ -115,6 +115,7 @@ export const fr = {
     'anonymous': "Anonyme",
     'packet-url-copied': "URL du paquet copiée dans le presse-papier, vous pouvez maintenant partager!",
     'packet-share-title': "Un paquet rouge pour toi!",
+    'got-it': 'Paquet attrapé! Les jetons arriveront dans votre portefeuille sous peu',
 
     /******
     * Pay *

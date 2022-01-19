@@ -98,11 +98,11 @@ export const zh = {
     'grab-too-late': 'Too late, someone was faster at grabbing this one, no more packets...',
     'grab-too-late-2': 'Too late, no more packets...',
     'information': 'Information',
-    'distributed-packets': 'Distributed packets',
+    'distributed-packets': 'Packets',
     'n-packets': '{{ packets }} packets',
-    'distributed-tokens': 'Distributed tokens',
+    'distributed-tokens': 'Tokens',
     'n-tokens': '{{ tokens }} {{ symbol }}',
-    'distribution-model': 'Distribution model',
+    'distribution-model': 'Model',
     'probability-to-win': 'Probability to win',
     'most-recent-winners': 'Most Recent Winners',
     'fetching-winners': 'Getting the winners',
@@ -115,6 +115,7 @@ export const zh = {
     'anonymous': "Anonymous",
     'packet-url-copied': "Packet URL copied to clipboard, you can now share it!",
     'packet-share-title': "A red packet for you!",
+    'got-it': 'You\'ve grabbed a packet! Tokens will arrive in your wallet soon',
 
     /******
     * Pay *
