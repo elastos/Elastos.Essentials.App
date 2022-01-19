@@ -45,10 +45,11 @@ export class PacketPreviewComponent {
     ionViewWillEnter() {
     }
 
-    private async preparePacket(packet: Packet) {
+    private preparePacket(packet: Packet) {
         if (packet) {
-            let userInfo = await this.didService.fetchUserInformation(packet.creatorDID);
-            this.creator = userInfo && userInfo.name ? userInfo.name : packet.creatorDID.slice(0, 20) + "...";
+            this.didService.fetchUserInformation(packet.creatorDID).subscribe(userInfo => {
+                this.creator = userInfo && userInfo.name ? userInfo.name : packet.creatorDID.slice(0, 20) + "...";
+            });
         }
     }
 

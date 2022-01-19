@@ -154,17 +154,18 @@ export class PacketDetailsPage implements OnInit {
   /**
    * Get avatar and name from the creator DID, if any
    */
-  private async fetchCreatorInformation(): Promise<void> {
+  private fetchCreatorInformation() {
     this.fetchingCreator = true;
     if (this.packet.creatorDID) {
-      let userInfo = await this.didService.fetchUserInformation(this.packet.creatorDID);
-      if (userInfo) {
-        if (userInfo.name)
-          this.creatorName = userInfo.name;
+      this.didService.fetchUserInformation(this.packet.creatorDID).subscribe(userInfo => {
+        if (userInfo) {
+          if (userInfo.name)
+            this.creatorName = userInfo.name;
 
-        if (userInfo.avatarDataUrl)
-          this.creatorAvatar = userInfo.avatarDataUrl;
-      }
+          if (userInfo.avatarDataUrl)
+            this.creatorAvatar = userInfo.avatarDataUrl;
+        }
+      });
     }
     this.fetchingCreator = false;
   }
@@ -253,8 +254,9 @@ export class PacketDetailsPage implements OnInit {
 
       if (winner.userDID) {
         // Async
-        void this.didService.fetchUserInformation(winner.userDID).then(userInfo => {
+        this.didService.fetchUserInformation(winner.userDID).subscribe(userInfo => {
           if (userInfo) {
+            console.log("Got winner user info", userInfo);
             if (userInfo.name)
               winnerEntry.name = userInfo.name;
 
@@ -269,8 +271,6 @@ export class PacketDetailsPage implements OnInit {
   public getDisplayableWinnerName(winner: WinnerDisplayEntry) {
     if (winner.name)
       return winner.name; // Ideally we got a real name from the DID document, show it
-    else if (winner.winner.userDID)
-      return winner.winner.userDID.slice(0, 20) + "..."; // No name but not anonymous? Show the DID
     else
       return this.translate.instant("redpackets.anonymous"); // Worst case - no info at all - show anonymous
   }

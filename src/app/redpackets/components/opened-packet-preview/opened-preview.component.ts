@@ -45,10 +45,11 @@ export class OpenedPreviewComponent {
 
     private async preparePacket(packet: Packet) {
         if (packet) {
-            let userInfo = await this.didService.fetchUserInformation(packet.creatorDID);
-            if (userInfo) {
-                this.creator = userInfo.name;
-            }
+            await this.didService.fetchUserInformation(packet.creatorDID).subscribe(userInfo => {
+                if (userInfo) {
+                    this.creator = userInfo.name;
+                }
+            });
         }
     }
 
