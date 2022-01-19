@@ -88,7 +88,7 @@ export class GrabPacketComponent {
     }
 
     async closeModal() {
-        const close: string = "Modal Removed";
+        const close = "Modal Removed";
         await this.popoverController.dismiss(close);
     }
 }

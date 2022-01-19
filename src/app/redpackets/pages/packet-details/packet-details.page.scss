@@ -26,6 +26,10 @@
     &.not-live {
       background: #c9c9c9;
     }
+
+    &.expired {
+      background: gray;
+    }
   }
 }
 .redpacket-view-header {
@@ -100,6 +104,6 @@
   font-weight: bold;
   ion-button {
     width: 60%;
-    --background: linear-gradient(140.79deg, #920E0E -7.72%, #EE5147 143.51%);
+    --background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
   }
 }

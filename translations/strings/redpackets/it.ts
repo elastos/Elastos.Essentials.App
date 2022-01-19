@@ -88,6 +88,7 @@ export const it = {
     'grabbing-packet': 'Trying to grab a packet... Please wait',
     'packet-is-live': 'Your packet is now live!',
     'packet-is-not-live': 'Your packet is not live yet!',
+    'packet-is-expired': 'This packet is expired',
     'error-retrieve-packet': 'Unable to retrieve red packet information, please retry later.',
     'grab-me': 'Grab me!',
     'grab-packet': 'Grab packet',
