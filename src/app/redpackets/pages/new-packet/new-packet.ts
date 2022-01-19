@@ -35,12 +35,12 @@ export class NewPacketPage {
 
   // Packet info
   public tokenSubwallet: AnySubWallet; // Subwallet of the token chosen by user for the red packet. By default, use the main EVM subwallet
-  public packets = 19; // Number of red packets available
-  public tokenAmount = "0.01"; // Number of token (native or ERC20) to spend, totally
-  public type: PacketType = PacketType.STANDARD; // Red packet type - TODO
+  public packets: number = null; // Number of red packets available
+  public tokenAmount = ""; // Number of token (native or ERC20) to spend, totally
+  public type: PacketType = PacketType.STANDARD; // Red packet type
   public distributionType: PacketDistributionType = PacketDistributionType.RANDOM; // Fixed amount for all packets, or random amounts?
   public packetTheme: RedPacketTheme = null;
-  public message = "temporary message"; // Message shown by users who open the packet
+  public message = ""; // Message shown by users who open the packet
   public probability = 100;
   public probabilityPercent = "100%";
   public expirationDays = 3; // Number of days after which the red packet expires
@@ -243,8 +243,9 @@ export class NewPacketPage {
       Logger.log('redpackets', 'Token subwallet selected:', params);
       if (params.data && params.data.selectedSubwallet) {
         if (this.tokenSubwallet && this.tokenSubwallet.id !== params.data.selectedSubwallet.id) {
-          // The token is a different one, reset the amount to avoid mistakes
-          this.tokenAmount = "0.01";
+          // The token is a different one, reset the amounts to avoid mistakes
+          this.tokenAmount = "";
+          this.packets = null;
         }
 
         this.tokenSubwallet = params.data.selectedSubwallet;
@@ -276,8 +277,8 @@ export class NewPacketPage {
 
     // Reset values that don't make sense any more after swtiching a network (need to be re-entered by user)
     this.tokenSubwallet = this.walletService.activeNetworkWallet.value.getMainEvmSubWallet();
-    this.tokenAmount = "0.01";
-    this.packets = 30;
+    this.tokenAmount = "";
+    this.packets = null;
   }
 
   useTheme(theme: RedPacketTheme) {

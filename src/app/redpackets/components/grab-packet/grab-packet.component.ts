@@ -25,6 +25,7 @@ export class GrabPacketComponent {
     public captchaPicture: string;
     public captchaString = "";
     public captchaError = false;
+    public fetchingGrabData = false;
     private grabResponse: GrabResponse;
 
     constructor(
@@ -40,7 +41,9 @@ export class GrabPacketComponent {
     }
 
     private async sendGrabRequest() {
+        this.fetchingGrabData = true;
         this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet.hash, this.walletAddress);
+        this.fetchingGrabData = false;
 
         await this.handleGrabResponse(this.grabResponse);
     }
@@ -50,6 +53,7 @@ export class GrabPacketComponent {
             void this.globalNativeServce.errToast(this.translate.instant("redpackets.error-captcha-is-required"), 2000);
             return false;
         }
+        this.fetchingGrabData = true;
         this.grabResponse = await this.packetService.createGrabCaptchaVerification(
             this.packet,
             this.grabResponse,
@@ -58,6 +62,7 @@ export class GrabPacketComponent {
             // Send grabber DID only if allowed in settings
             this.didService.getProfileVisibility() ? GlobalDIDSessionsService.signedInDIDString : undefined
         );
+        this.fetchingGrabData = false;
         await this.handleGrabResponse(this.grabResponse);
     }
 
@@ -84,6 +89,10 @@ export class GrabPacketComponent {
                 this.grabEventEmitter.emit(GrabStatus.DEPLETED)
                 void this.closeModal();
             }
+        }
+        else {
+            // Unexpected error (such as already grabbed recently) - close the modal, user will have to try again later.
+            void this.closeModal();
         }
     }
 

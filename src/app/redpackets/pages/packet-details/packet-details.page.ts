@@ -242,6 +242,7 @@ export class PacketDetailsPage implements OnInit {
 
     // For each winner, get DID information if any. During this time, we may display placeholders
     // and then show avatar and real DID names as they arrive asynchronously
+    this.winners = [];
     for (let winner of rawWinners) {
       let winnerEntry: WinnerDisplayEntry = {
         winner,
@@ -256,7 +257,7 @@ export class PacketDetailsPage implements OnInit {
         // Async
         this.didService.fetchUserInformation(winner.userDID).subscribe(userInfo => {
           if (userInfo) {
-            console.log("Got winner user info", userInfo);
+            //console.log("Got winner user info", userInfo);
             if (userInfo.name)
               winnerEntry.name = userInfo.name;
 

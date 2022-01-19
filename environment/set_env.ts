@@ -37,16 +37,6 @@ const prodEnvironmentFile = `
 export const environment = ${JSON.stringify(prodEnv, null, 2)};
 `;
 
-/* const devEnvironmentFile = `export const environment = {
-  production: false,
-
-  RedPackets: {
-    webUrl: 'https://packet.fun',
-    serviceUrl: '${localEnv.NG_APP_RED_PACKETS_SERVICE_URL || 'https://api.packet.fun/api/v1'}'
-  }
-};
-`; */
-
 writeFile('./src/environments/environment.ts', devEnvironmentFile, function (err) {
   if (err) {
     throw console.error(err);
@@ -62,7 +52,3 @@ writeFile('./src/environments/environment.prod.ts', prodEnvironmentFile, functio
     console.log(`environment.prod.ts file generated`);
   }
 });
-
-/*
-Run npm node set-env.js (or npm ts-node set-env.ts) to generate your file
-*/

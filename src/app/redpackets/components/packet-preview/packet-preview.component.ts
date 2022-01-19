@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
+import { TranslationService } from 'src/app/identity/services/translation.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -48,7 +49,7 @@ export class PacketPreviewComponent {
     private preparePacket(packet: Packet) {
         if (packet) {
             this.didService.fetchUserInformation(packet.creatorDID).subscribe(userInfo => {
-                this.creator = userInfo && userInfo.name ? userInfo.name : packet.creatorDID.slice(0, 20) + "...";
+                this.creator = userInfo && userInfo.name ? userInfo.name : TranslationService.instance.translateInstant("redpackets.anonymous");
             });
         }
     }

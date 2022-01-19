@@ -17,6 +17,7 @@ export const it = {
     'n-days-left': "{{ days }} days left",
     'enter-captcha-placeholder': 'Enter the captcha to open packet',
     'wrong-captcha': 'Wrong captcha, please try again',
+    'error-captcha-is-required': 'Please type the captcha to continue',
 
     /*******
     * Home *

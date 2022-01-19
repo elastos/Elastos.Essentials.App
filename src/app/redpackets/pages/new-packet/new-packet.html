@@ -63,18 +63,6 @@
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
           <div class="form-flex-col-label-name">
-            {{ 'redpackets.quantity' | translate }}
-          </div>
-          <div class="form-flex-col-label-helper">
-            {{ 'redpackets.quantity-hint' | translate }}
-          </div>
-        </div>
-        <ion-input [(ngModel)]="packets" type="number" placeholder="20" required></ion-input>
-      </ion-row>
-
-      <ion-row class="form-flex-col">
-        <div class="form-flex-col-label">
-          <div class="form-flex-col-label-name">
             {{ 'redpackets.token' | translate }}
           </div>
           <div class="form-flex-col-label-helper">
@@ -91,6 +79,18 @@
             <img src="assets/redpackets/images/select_icon.svg" alt="Select icon">
           </div>
         </div>
+      </ion-row>
+
+      <ion-row class="form-flex-col">
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">
+            {{ 'redpackets.quantity' | translate }}
+          </div>
+          <div class="form-flex-col-label-helper">
+            {{ 'redpackets.quantity-hint' | translate }}
+          </div>
+        </div>
+        <ion-input [(ngModel)]="packets" type="number" placeholder="20" required></ion-input>
       </ion-row>
 
       <ion-row class="form-flex-row">

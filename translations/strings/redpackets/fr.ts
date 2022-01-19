@@ -17,6 +17,7 @@ export const fr = {
     'n-days-left': "Encore {{ days }} jours",
     'enter-captcha-placeholder': 'Saisir le captcha pour ouvrir le paquet',
     'wrong-captcha': 'Mauvais captcha, essayez à nouveau',
+    'error-captcha-is-required': 'Recopier le captcha pour continuer',
 
     /*******
     * Home *

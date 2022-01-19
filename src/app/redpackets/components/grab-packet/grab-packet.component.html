@@ -4,12 +4,15 @@
       <div class="captcha-holder">
         <ion-img [src]="captchaPicture"></ion-img>
       </div>
-      <ion-input type="string" [placeholder]="'redpackets.enter-captcha-placeholder' | translate" required=true
-        [(ngModel)]="captchaString" ngDefaultControl></ion-input>
+      <!-- Keep url type here, only way to getthe first letter not capitalized -->
+      <ion-input type="url" autocomplete="off" autocorrect="off"
+        [placeholder]="'redpackets.enter-captcha-placeholder' | translate" required=true [(ngModel)]="captchaString"
+        ngDefaultControl></ion-input>
 
       <div class="grab-buttons">
         <ion-button class="button-cancel" (click)="closeModal()">{{ 'common.cancel' | translate }}</ion-button>
-        <ion-button class="button-confirm" (click)="testCaptcha()">{{ 'redpackets.grab-packet' | translate }}
+        <ion-button [disabled]="fetchingGrabData" class="button-confirm" (click)="testCaptcha()">{{
+          'redpackets.grab-packet' | translate }}
         </ion-button>
       </div>
     </div>

@@ -370,6 +370,7 @@ export class PayPage {
       // Listen to transaction events in order to catch the published transaction hash.
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       let txStatusSub = this.ethTransactionService.ethTransactionStatus.subscribe(async txStatus => {
+        console.log("TEST txstatus", txStatus)
         // Make sure we are receiving a status for our current operation, not for something else
         // Note: this check if far from being robust, let's assume for now that there is only one on going
         // transaction at a time... Can't do much better over the existing mechanism.
@@ -407,8 +408,13 @@ export class PayPage {
             txStatusSub.unsubscribe();
           }
         }
+        else if (txStatus.status === ETHTransactionStatus.CANCEL) {
+          this.sendingERC20Payment = false;
+          txStatusSub.unsubscribe();
+        }
       });
-      await this.ethTransactionService.publishTransaction(evmSubWallet, rawTx, transfer, true);
+      let test = await this.ethTransactionService.publishTransaction(evmSubWallet, rawTx, transfer, true);
+      console.log("TEST TX", test);
     }
     catch (err) {
       Logger.error('redpackets', 'publishTransaction ERC20 error:', err)

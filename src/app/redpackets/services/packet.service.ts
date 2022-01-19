@@ -214,7 +214,7 @@ export class PacketService {
       return grabResponse;
     }
     catch (err) {
-      Logger.error("redpackets", "Grab packet with captch request failure", err);
+      Logger.error("redpackets", "Grab packet with captcha request failure", err);
       return null;
     }
   }

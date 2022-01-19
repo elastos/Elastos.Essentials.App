@@ -4,6 +4,6 @@ export const environment = {
   "production": false,
   "RedPackets": {
     "webUrl": "https://packet.fun",
-    "serviceUrl": "https://192.168.1.4:5080/api/v1"
+    "serviceUrl": "https://api.packet.fun/api/v1"
   }
 };
