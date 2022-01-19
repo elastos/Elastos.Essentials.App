@@ -4,14 +4,13 @@
       <div class="captcha-holder">
         <ion-img [src]="captchaPicture"></ion-img>
       </div>
-      <ion-input type="string"
-                 placeholder="Enter the Captcha to Open Packet"
-                 required=true
-                 [(ngModel)]="captchaString" ngDefaultControl></ion-input>
+      <ion-input type="string" [placeholder]="'redpackets.enter-captcha-placeholder' | translate" required=true
+        [(ngModel)]="captchaString" ngDefaultControl></ion-input>
 
       <div class="grab-buttons">
-        <ion-button class="button-cancel" (click)="closeModal()">{{ 'redpackets.cancel' | translate }}</ion-button>
-        <ion-button class="button-confirm" (click)="testCaptcha()">{{ 'redpackets.grab-packet' | translate }}</ion-button>
+        <ion-button class="button-cancel" (click)="closeModal()">{{ 'common.cancel' | translate }}</ion-button>
+        <ion-button class="button-confirm" (click)="testCaptcha()">{{ 'redpackets.grab-packet' | translate }}
+        </ion-button>
       </div>
     </div>
   </div>

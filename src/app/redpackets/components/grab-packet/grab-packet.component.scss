@@ -5,10 +5,12 @@
   flex-direction: column;
   align-items: center;
   justify-items: center;
+  border-radius: 10px;
+  background: #212021;
 
   .captcha-container {
-    width: 80%;
-    margin-top: 20%;
+    width: 100%;
+    padding: 10px;
   }
 
   ion-input {
@@ -28,11 +30,12 @@
     ion-button {
       box-sizing: border-box;
       border-radius: 15px;
+      width: 50%;
       color: white;
-      margin-right: 10px;
       &.button-cancel {
-        border: 1px solid #E1D6F7;
+        border: 1px solid #e1d6f7;
         --background: transparent;
+        margin-right: 10px;
       }
       &.button-confirm {
         --background: #592996;
@@ -43,6 +46,5 @@
 
 .captcha-holder {
   backdrop-filter: blur(30px);
-  border: 1px solid white;
   border-radius: 10px;
 }

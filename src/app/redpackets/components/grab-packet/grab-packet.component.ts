@@ -1,13 +1,13 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
-import { ModalController } from "@ionic/angular";
-import { Packet } from "../../model/packets.model";
-import { GrabResponse, GrabStatus } from "../../model/grab.model";
-import { PacketService } from "../../services/packet.service";
-import { GlobalDIDSessionsService } from "../../../services/global.didsessions.service";
-import { DIDService } from "../../services/did.service";
-import { TitleBarComponent } from "../../../components/titlebar/titlebar.component";
-import { GlobalNativeService } from "../../../services/global.native.service";
+import { Component, ElementRef, EventEmitter, Input, ViewChild } from "@angular/core";
+import { PopoverController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
+import { TitleBarComponent } from "../../../components/titlebar/titlebar.component";
+import { GlobalDIDSessionsService } from "../../../services/global.didsessions.service";
+import { GlobalNativeService } from "../../../services/global.native.service";
+import { GrabResponse, GrabStatus } from "../../model/grab.model";
+import { Packet } from "../../model/packets.model";
+import { DIDService } from "../../services/did.service";
+import { PacketService } from "../../services/packet.service";
 
 @Component({
     selector: 'grab-packet',
@@ -28,11 +28,11 @@ export class GrabPacketComponent {
     private grabResponse: GrabResponse;
 
     constructor(
-      private modalController: ModalController,
-      private globalNativeServce: GlobalNativeService,
-      private translate: TranslateService,
-      private packetService: PacketService,
-      private didService: DIDService,
+        private popoverController: PopoverController,
+        private globalNativeServce: GlobalNativeService,
+        private translate: TranslateService,
+        private packetService: PacketService,
+        private didService: DIDService,
     ) { }
 
     ionViewWillEnter() {
@@ -51,12 +51,12 @@ export class GrabPacketComponent {
             return false;
         }
         this.grabResponse = await this.packetService.createGrabCaptchaVerification(
-          this.packet,
-          this.grabResponse,
-          this.captchaString,
-          this.walletAddress,
-          // Send grabber DID only if allowed in settings
-          this.didService.getProfileVisibility() ? GlobalDIDSessionsService.signedInDIDString : undefined
+            this.packet,
+            this.grabResponse,
+            this.captchaString,
+            this.walletAddress,
+            // Send grabber DID only if allowed in settings
+            this.didService.getProfileVisibility() ? GlobalDIDSessionsService.signedInDIDString : undefined
         );
         await this.handleGrabResponse(this.grabResponse);
     }
@@ -89,6 +89,6 @@ export class GrabPacketComponent {
 
     async closeModal() {
         const close: string = "Modal Removed";
-        await this.modalController.dismiss(close);
+        await this.popoverController.dismiss(close);
     }
 }

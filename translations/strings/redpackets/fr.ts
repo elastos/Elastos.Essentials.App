@@ -15,6 +15,8 @@ export const fr = {
     'few-minutes-left': "Plus que quelques minutes",
     'n-hours-left': "Encore {{ hours }} heures",
     'n-days-left': "Encore {{ days }} jours",
+    'enter-captcha-placeholder': 'Saisir le captcha pour ouvrir le paquet',
+    'wrong-captcha': 'Mauvais captcha, essayez à nouveau',
 
     /*******
     * Home *

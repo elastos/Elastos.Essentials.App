@@ -312,12 +312,10 @@ ion-textarea {
 
           &.line-small {
             font-size: 12px;
-            color: #C9C9C9;
+            color: #c9c9c9;
             font-weight: normal;
           }
         }
-
-
 
         .third-line {
           display: flex;
@@ -326,7 +324,7 @@ ion-textarea {
 
           &.line-small {
             font-size: 12px;
-            color: #C9C9C9;
+            color: #c9c9c9;
             font-weight: normal;
           }
 
@@ -336,7 +334,7 @@ ion-textarea {
           }
 
           .dot-separator {
-            color: #8E8E8E;
+            color: #8e8e8e;
             align-self: center;
             font-size: 10px;
             margin: 0 7px;
@@ -369,7 +367,8 @@ ion-textarea {
     align-items: center;
     justify-content: center;
     text-align: center;
-    p, div {
+    p,
+    div {
       padding-top: 20px;
       padding-bottom: 20px;
     }
@@ -413,7 +412,7 @@ ion-textarea {
   font-weight: 600;
   font-size: 16px;
   line-height: 20px;
-  color: #FFFFFF;
+  color: #ffffff;
   margin-bottom: 15px;
   margin-top: 15px;
 }
@@ -425,7 +424,6 @@ ion-textarea {
     width: 44px;
   }
 }
-
 
 .redpacket-user-profile-container {
   padding: 15px;
@@ -442,7 +440,7 @@ ion-textarea {
 
     .redpacket-user-profile-infos-dapp {
       font-size: 12px;
-      color: #C9C9C9;
+      color: #c9c9c9;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -450,7 +448,7 @@ ion-textarea {
 
     .redpacket-user-profile-infos-did {
       font-size: 12px;
-      color: #C9C9C9;
+      color: #c9c9c9;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -466,7 +464,7 @@ ion-textarea {
     left: 0;
     position: absolute;
     height: 113px;
-    background: #4F0404;
+    background: #4f0404;
     display: flex;
     align-items: center;
     width: 100%;
@@ -475,14 +473,15 @@ ion-textarea {
     border-radius: 30px 30px 0 0;
     padding: 0 10px;
 
-    button, ion-button {
+    button,
+    ion-button {
       width: 80%;
-      color: #FFFFFF;
-      --color: #FFFFFF;
+      color: #ffffff;
+      --color: #ffffff;
       font-weight: 500;
       font-size: 16px;
-      background: linear-gradient(140.79deg, #920E0E -7.72%, #EE5147 143.51%);
-      --background: linear-gradient(140.79deg, #920E0E -7.72%, #EE5147 143.51%);
+      background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
+      --background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
       border-radius: 15px;
       --border-radius: 15px;
       padding: 20px 0;
@@ -502,13 +501,14 @@ ion-textarea {
     margin-bottom: 0;
   }
 
-  .redpacket-summary-label, .redpacket-summary-value {
-    color: #ACACAC;
+  .redpacket-summary-label,
+  .redpacket-summary-value {
+    color: #acacac;
     font-weight: 500;
     font-size: 13px;
     line-height: 16px;
     &.total {
-      color: #FFFFFF;
+      color: #ffffff;
       font-style: normal;
       font-weight: bold;
       font-size: 14px;

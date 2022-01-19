@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from '@angular/router';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
-import { ModalController } from "@ionic/angular";
+import { PopoverController } from "@ionic/angular";
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from "moment";
@@ -74,7 +74,7 @@ export class PacketDetailsPage implements OnInit {
     private globalNavService: GlobalNavService,
     private globalNativeService: GlobalNativeService,
     public packetService: PacketService,
-    public modalController: ModalController,
+    public popoverController: PopoverController,
     private themeService: ThemeService,
     private translate: TranslateService,
     private globalIntentService: GlobalIntentService,
@@ -307,9 +307,11 @@ export class PacketDetailsPage implements OnInit {
       void this.fetchWinners();
     });
 
-    const modal = await this.modalController.create({
+    const modal = await this.popoverController.create({
       component: GrabPacketComponent,
-      cssClass: 'grab-packet-component',
+      mode: 'ios',
+      cssClass: 'grab-packet-popover-component',
+      translucent: true,
       componentProps: {
         packet: this.packet,
         grabEventEmitter: eventEmitter,

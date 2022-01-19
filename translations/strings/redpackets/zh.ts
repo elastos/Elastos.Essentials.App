@@ -15,6 +15,8 @@ export const zh = {
     'few-minutes-left': "A few minutes left",
     'n-hours-left': "{{ hours }} hours left",
     'n-days-left': "{{ days }} days left",
+    'enter-captcha-placeholder': 'Enter the captcha to open packet',
+    'wrong-captcha': 'Wrong captcha, please try again',
 
     /*******
     * Home *
