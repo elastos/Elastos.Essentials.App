@@ -492,6 +492,19 @@ ion-textarea {
   }
 }
 
+.sticky-bottom-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0px -20px 30px #000;
+}
+
+// Bottom padding for content behind sticky footers
+.sticky-bottom-container-padding {
+  padding-bottom: 120px;
+}
+
 .redpacket-summary-table {
   display: flex;
   flex-direction: row;

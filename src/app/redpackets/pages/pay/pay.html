@@ -199,8 +199,9 @@
     </div>
   </ion-grid>
 
-  <div class="redpacket-footer-container">
-    <div class="redpacket-footer-button" *ngIf="!fetchingPacketInfo && areAllPaymentsCompleted()">
+  <div class="redpacket-footer-container sticky-bottom-container"
+    *ngIf="!fetchingPacketInfo && areAllPaymentsCompleted()">
+    <div class="redpacket-footer-button">
       <button (click)="openPacketDetails()">
         <ion-label>{{ 'redpackets.view-packet' | translate }}</ion-label>
       </button>
