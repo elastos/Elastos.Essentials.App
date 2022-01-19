@@ -117,6 +117,8 @@ export const en = {
     'packet-url-copied': "Packet URL copied to clipboard, you can now share it!",
     'packet-share-title': "A red packet for you!",
     'got-it': 'You\'ve grabbed a packet! Tokens will arrive in your wallet soon',
+    'copy-link': 'Copy link',
+    'share-link': 'Share link',
 
     /******
     * Pay *

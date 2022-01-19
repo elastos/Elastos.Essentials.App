@@ -117,6 +117,8 @@ export const fr = {
     'packet-url-copied': "URL du paquet copiée dans le presse-papier, vous pouvez maintenant partager!",
     'packet-share-title': "Un paquet rouge pour toi!",
     'got-it': 'Paquet attrapé! Les jetons arriveront dans votre portefeuille sous peu',
+    'copy-link': 'Copy link',
+    'share-link': 'Share link',
 
     /******
     * Pay *
