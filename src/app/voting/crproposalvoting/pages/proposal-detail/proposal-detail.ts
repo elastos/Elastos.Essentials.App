@@ -334,6 +334,18 @@ export class ProposalDetailPage {
                 active: true
             },
             {
+                title: this.translate.instant('crproposalvoting.receivedcustomizedid'),
+                type: 'array',
+                value: this.uxService.getArrayString(this.proposal.receivedCustomizedIDList),
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.receiver-did'),
+                type: 'receive-address',
+                value: this.proposal.receiverDID,
+                active: true
+            },
+            {
                 title: this.translate.instant('crproposalvoting.member-votes'),
                 type: 'member-votes',
                 value: this.proposal.crVotes && this.proposal.crVotes.length > 0 ? this.proposal.crVotes : null,
