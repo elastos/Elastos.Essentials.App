@@ -660,7 +660,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
         let needUpdate = false;
         for (let i = 0; i < txList.length; i++) {
-            if (txList[i].result.confirmations > 0) {
+            if (txList[i].result && txList[i].result.confirmations > 0) {
                 // Update info: Status, height, time
                 let tx = pendingTransactions.find(tx => {
                     return tx.txid === txList[i].result.txid;
