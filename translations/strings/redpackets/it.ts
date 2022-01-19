@@ -54,6 +54,7 @@ export const it = {
     'theme-hint': 'Choose to customize the visual appearance of opened red packets, for special events.',
     'theme-default': 'Default',
     'theme-christmas': 'Christmas',
+    'theme-summer_holidays': 'Summer Holidays',
     'theme-cny': 'Chinese New Year',
     'error-invalid-number-of-packets': 'Invalid number of packets',
     'error-invalid-number-of-tokens': "Invalid number of tokens to distribute",

@@ -11,6 +11,55 @@
 
     <div class="redpacket-container new-packet-section-container">
 
+      <div class="new-packet-about-section-title">
+        {{ 'redpackets.about-you' | translate }}
+      </div>
+
+      <div class="redpacket-container redpacket-inline redpacket-user-profile-container">
+        <div class="redpacket-user-profile-image">
+          <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
+            <img
+              [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+          </ion-avatar>
+          <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
+            <img
+              [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
+          </ion-avatar>
+        </div>
+
+        <div class="redpacket-user-profile-infos">
+          <div class="redpacket-user-profile-infos-name">{{ name }}</div>
+          <div class="form-flex-row-label-helper">{{ 'redpackets.profile-hint' | translate }}</div>
+        </div>
+      </div>
+
+      <div class="form-flex-col">
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">{{ 'redpackets.message' | translate }}</div>
+        </div>
+        <div class="form-flex-col-input">
+          <ion-textarea [(ngModel)]="message" placeholder="Happy Chinese New Year to you" type="text"></ion-textarea>
+        </div>
+      </div>
+
+      <div>
+        <div class="form-flex-col-label">
+          <div class="form-flex-col-label-name">{{ 'redpackets.theme' | translate }}</div>
+          <div class="form-flex-row-label-helper">{{ 'redpackets.theme-hint' | translate }}</div>
+        </div>
+
+        <ion-slides #categorySlides [options]="slideOpts" class="themes-container">
+          <ion-slide class="category-slide-item" *ngFor="let theme of themes"
+            [ngClass]="{'active': packetTheme.key === theme.key}" (click)="useTheme(theme)">
+            <img [src]="theme.thumbnailImage" />
+            <div class="label">{{ 'redpackets.theme-'+theme.key | translate }}</div>
+          </ion-slide>
+        </ion-slides>
+      </div>
+    </div>
+
+    <div class="redpacket-container new-packet-section-container">
+
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
           <div class="form-flex-col-label-name">
@@ -151,55 +200,6 @@
         </div>
       </ion-row>
 
-    </div>
-
-    <div class="redpacket-container new-packet-section-container">
-
-      <div class="new-packet-about-section-title">
-        {{ 'redpackets.about-you' | translate }}
-      </div>
-
-      <div class="redpacket-container redpacket-inline redpacket-user-profile-container">
-        <div class="redpacket-user-profile-image">
-          <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-            <img
-              [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
-          </ion-avatar>
-          <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
-            <img
-              [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
-          </ion-avatar>
-        </div>
-
-        <div class="redpacket-user-profile-infos">
-          <div class="redpacket-user-profile-infos-name">{{ name }}</div>
-          <div class="form-flex-row-label-helper">{{ 'redpackets.profile-hint' | translate }}</div>
-        </div>
-      </div>
-
-      <div class="form-flex-col">
-        <div class="form-flex-col-label">
-          <div class="form-flex-col-label-name">{{ 'redpackets.message' | translate }}</div>
-        </div>
-        <div class="form-flex-col-input">
-          <ion-textarea [(ngModel)]="message" placeholder="Happy Chinese New Year to you" type="text"></ion-textarea>
-        </div>
-      </div>
-
-      <div>
-        <div class="form-flex-col-label">
-          <div class="form-flex-col-label-name">{{ 'redpackets.theme' | translate }}</div>
-          <div class="form-flex-row-label-helper">{{ 'redpackets.theme-hint' | translate }}</div>
-        </div>
-
-        <ion-slides #categorySlides [options]="slideOpts">
-          <ion-slide class="category-slide-item" *ngFor="let theme of themes"
-            [ngClass]="{'active': packetTheme.key === theme.key}" (click)="useTheme(theme)">
-            <img [src]="theme.thumbnailImage" />
-            <div class="label">{{ 'redpackets.theme-'+theme.key | translate }}</div>
-          </ion-slide>
-        </ion-slides>
-      </div>
     </div>
   </ion-grid>
 

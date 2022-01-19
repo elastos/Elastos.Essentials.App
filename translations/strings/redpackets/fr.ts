@@ -54,6 +54,7 @@ export const fr = {
     'theme-hint': 'Personnalisez l\'apparence des paquets ouvert, en fonction d\'occasions spéciales.',
     'theme-default': 'Par défault',
     'theme-christmas': 'Noël',
+    'theme-summer_holidays': 'Vacances d\'été',
     'theme-cny': 'Nouvel an Chinois',
     'error-invalid-number-of-packets': 'Nombre de paquets invalide',
     'error-invalid-number-of-tokens': "Nomre de jetons invalide",
