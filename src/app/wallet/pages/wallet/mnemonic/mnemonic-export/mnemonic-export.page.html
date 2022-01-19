@@ -21,8 +21,8 @@
                 <ion-label>{{ item }}</ion-label>
             </ion-col>
         </ion-row>
-        <p>{{ 'wallet.export-private-key-intro' | translate }}</p>
-        <div class="key" (click)="copyPrivateKey()">
+        <p *ngIf="evmPrivateKey">{{ 'wallet.export-private-key-intro' | translate }}</p>
+        <div *ngIf="evmPrivateKey" class="key" (click)="copyPrivateKey()">
             {{ evmPrivateKey }}
         </div>
         <ion-row *ngIf="!hideMnemonic && !isFromIntent" class="btn-container">
