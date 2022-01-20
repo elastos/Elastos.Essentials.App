@@ -14,10 +14,10 @@ export const zh = {
     'expired': '过期',
     'few-minutes-left': "剩余几分钟",
     'n-hours-left': "剩余 {{ hours }} 小时",
-    'n-days-left': "剩余{{ days }} 天",
+    'n-days-left': "剩余 {{ days }} 天",
     'enter-captcha-placeholder': '输入验证码以打开红包',
     'wrong-captcha': '验证码错误，请重试',
-    'error-captcha-is-required': 'Please type the captcha to continue',
+    'error-captcha-is-required': '请键入验证码以继续',
 
     /*******
     * Home *
@@ -29,8 +29,8 @@ export const zh = {
     'no-my-packet': '您还没有创建任何红包',
     'opened-packets': '已打开红包',
     'about-red-packets': '关于红包',
-    'about-red-packets-part-1': '红包在中国传统文化中用于庆祝特殊场合并在朋友之间分享快乐，Elastos Essentials红包正源于此理念用于庆祝，同时也为加密社区创造娱乐',
-    'about-red-packets-part-2': '与"空投"相比，红包会带来更多的乐趣，因为这涉及运气和反应性。',
+    'about-red-packets-part-1': '红包在中国传统文化中用于庆祝特殊场合，以及在朋友之间分享快乐。Elastos Essentials 红包正是基于此想法而衍生出来的，不仅是为了庆祝，也是为了给加密社区创造娱乐。',
+    'about-red-packets-part-2': '与“空投”相比，红包带来了更多的乐趣，因为这牵涉到运气和反应能力。',
 
     /*************
     * New packet *
@@ -47,10 +47,10 @@ export const zh = {
     'distribution-hint': '选择平均或随机分配',
     'distribution-fixed': '所有红包金额相同',
     'distribution-random': '红包金额随机',
-    'distribution-random-info': '* 获奖用户将获得随机数量的 {{ token }}.',
-    'distribution-fixed-info': '* 所有获奖用户将获得 {{ value }} {{ token }}.',
+    'distribution-random-info': '* 获奖用户将获得随机数量的 {{ token }}',
+    'distribution-fixed-info': '* 所有获奖用户将获得 {{ value }} {{ token }}',
     'probability': '概率',
-    'probability-hint': '如果还有红包，那有可能抢到一个。失败后，不能重试',
+    'probability-hint': '如果还有红包，那有可能抢到一个。失败后，不能重试。',
     'visibility': '可见性',
     'visibility-hint': '选择只让有链接的用户抢红包，或者公开你的红包。公开红包会出现在 Essentials 主屏幕上，可用于推广项目，但成本略高。',
     'visibility-link-only': '通过链接抢红包',
@@ -69,12 +69,12 @@ export const zh = {
     'theme-cny': '中国春节',
     'error-invalid-number-of-packets': '红包数量无效',
     'error-invalid-number-of-tokens': "红包金额无效",
-    'error-invalid-probability': "概率错误. 请使用 0-100 ",
-    'error-invalid-expiration-time': "有效期错误. 请使用 1-7 天",
+    'error-invalid-probability': "概率错误，请使用 0-100 ",
+    'error-invalid-expiration-time': "有效期错误，请使用 1-7 天",
     'error-no-message': "善待你的好友，给他们一个问候!",
-    'error-packet-creation-failed': "无法创建红包，请稍后再试",
+    'error-packet-creation-failed': "无法创建红包，请稍后再试。",
     'technical-preview-title': '备注: 技术预览版',
-    'technical-preview-info': '红包服务是最近推出的服务，目前仍然是技术预览版。请确保只创建小额代币的红包',
+    'technical-preview-info': '红包服务是最近推出的服务，目前仍然是技术预览版。请确保只创建小额代币的红包。',
 
     /***********
     * Settings *
@@ -89,7 +89,7 @@ export const zh = {
     'grabbing-packet': '正在抢红包...请稍候',
     'packet-is-live': '您的红包已上线!',
     'packet-is-not-live': '您的红包还未上线!',
-    'this-packet-is-not-live': 'This packet is not live yet',
+    'this-packet-is-not-live': '此红包尚未启用',
     'packet-is-expired': '此红包已过期',
     'error-retrieve-packet': '无法获取红包信息，请稍后重试',
     'grab-me': '抢!',
