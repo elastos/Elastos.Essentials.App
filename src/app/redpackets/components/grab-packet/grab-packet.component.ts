@@ -72,6 +72,8 @@ export class GrabPacketComponent {
                 // User needs to complete the captcha challenge to finalize the grab verification
                 this.captchaPicture = "data:image/svg+xml;base64," + Buffer.from(grabResponse.captchaPicture).toString("base64");
             } else if (grabResponse.status === GrabStatus.WRONG_CAPTCHA) {
+                // Empty the text input to retry
+                this.captchaString = "";
                 // Wrong capcha: send a new grab request to get a new captcha
                 await this.sendGrabRequest();
                 void this.globalNativeServce.errToast(this.translate.instant("redpackets.wrong-captcha"), 2000);
