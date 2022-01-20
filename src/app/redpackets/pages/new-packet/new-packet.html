@@ -38,7 +38,8 @@
           <div class="form-flex-col-label-name">{{ 'redpackets.message' | translate }}</div>
         </div>
         <div class="form-flex-col-input">
-          <ion-textarea [(ngModel)]="message" placeholder="Happy Chinese New Year to you" type="text"></ion-textarea>
+          <ion-textarea [(ngModel)]="message" [placeholder]="'redpackets.packet-message-placeholder' | translate"
+            type="text"></ion-textarea>
         </div>
       </div>
 

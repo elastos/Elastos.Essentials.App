@@ -61,6 +61,7 @@ export const it = {
     'about-you': 'About you',
     'profile-hint': 'If published, your avatar and name will be seen by others.',
     'message': 'Message',
+    'packet-message-placeholder': 'Happy Chinese New Year to you',
     'theme': 'Theme',
     'theme-hint': 'Choose to customize the visual appearance of opened red packets, for special events.',
     'theme-default': 'Default',

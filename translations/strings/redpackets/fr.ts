@@ -61,6 +61,7 @@ export const fr = {
     'about-you': 'A propos de vous',
     'profile-hint': 'Si publié, votre avatar et nom seront visibles avec le paquet.',
     'message': 'Message',
+    'packet-message-placeholder': 'Ex: Joyeuse année du Tigre!',
     'theme': 'Thème',
     'theme-hint': 'Personnalisez l\'apparence des paquets ouvert, en fonction d\'occasions spéciales.',
     'theme-default': 'Par défault',
