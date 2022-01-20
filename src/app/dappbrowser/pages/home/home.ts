@@ -172,7 +172,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://www.idriss-crypto.com/',
                 useExternalBrowser: false,
                 walletConnectSupported: false,
-                networks: ["elastos", "bsc"]
+                networks: ["elastos", "polygon"]
             },
             /* {
                 icon: '/assets/browser/dapps/profile.png',
