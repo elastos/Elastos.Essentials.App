@@ -84,8 +84,6 @@ export class PacketPreviewComponent implements OnInit, OnDestroy {
         if (!this._packet)
             return false;
 
-        console.log("activeWalletAddress", this.activeWalletAddress, "this._packet.creatorAddress", this._packet.creatorAddress)
-
         return this._packet.creatorAddress === this.activeWalletAddress;
     }
 
