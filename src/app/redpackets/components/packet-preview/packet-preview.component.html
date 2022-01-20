@@ -35,7 +35,7 @@
   <ion-col size="4" class="redpacket-inline-last-col">
     <!-- Packet can be opened, and not opened yet? Show an enveloppe -->
     <img class="published-icon" src="assets/redpackets/images/message.svg" alt="Message icon"
-      *ngIf="_packet.isActive && !packetWasOpened" />
+      *ngIf="_packet.isActive && !packetWasOpened && !activeWalletIsCreator()" />
 
     <!-- Packet was opened and won? Show the earned coins -->
     <div class="earned-coins" *ngIf="packetWasOpened && walletWonThePacket">

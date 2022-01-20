@@ -36,6 +36,8 @@ export class PacketService {
   ) { }
 
   public async onUserSignIn(): Promise<void> {
+    //await this.dev_clearLocalStorage(); // Development only
+
     await this.loadMyPackets();
     await this.loadGrabbedPackets();
 
@@ -55,6 +57,11 @@ export class PacketService {
     this.intentSubscription.unsubscribe();
     this.publicPackets.next([]);
     this.grabbedPackets.next([]);
+  }
+
+  private async dev_clearLocalStorage(): Promise<void> {
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "grabbedpackets", []);
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "mypackets", []);
   }
 
   /**
