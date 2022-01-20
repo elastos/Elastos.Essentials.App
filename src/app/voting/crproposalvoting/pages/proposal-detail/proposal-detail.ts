@@ -286,12 +286,6 @@ export class ProposalDetailPage {
                 active: true
             },
             {
-                title: this.translate.instant('crproposalvoting.proposal-hash'),
-                type: 'hash',
-                value: this.proposal.proposalHash,
-                active: true
-            },
-            {
                 title: this.translate.instant('crproposalvoting.implementation-team'),
                 type: 'implementationTeam',
                 value: this.proposal.implementationTeam,
@@ -316,12 +310,6 @@ export class ProposalDetailPage {
                 active: true
             },
             {
-                title: this.translate.instant('crproposalvoting.url'),
-                type: 'original-url',
-                value: this.proposal.originalURL,
-                active: true
-            },
-            {
                 title: this.translate.instant('crproposalvoting.receive-address'),
                 type: 'receive-address',
                 value: this.proposal.recipient,
@@ -343,6 +331,30 @@ export class ProposalDetailPage {
                 title: this.translate.instant('crproposalvoting.receiver-did'),
                 type: 'receive-address',
                 value: this.proposal.receiverDID,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.rate-of-customized-id-fee'),
+                type: 'number',
+                value: this.proposal.rateOfCustomizedIDFee,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.eid-effective-height'),
+                type: 'number',
+                value: this.proposal.EIDEffectiveHeight,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.proposal-hash'),
+                type: 'hash',
+                value: this.proposal.proposalHash,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.url'),
+                type: 'original-url',
+                value: this.proposal.originalURL,
                 active: true
             },
             {
