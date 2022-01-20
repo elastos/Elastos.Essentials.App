@@ -1,7 +1,9 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <!-- Status (live - not live - error) -->
-  <ng-container *ngTemplateOutlet="status"></ng-container>
+
+  <div class="container ion-padding redpacket-error-container" *ngIf="packetFetchErrored">
+    {{ 'redpackets.error-retrieve-packet' | translate }}
+  </div>
 
   <ion-grid class="container ion-padding sticky-bottom-container-padding" *ngIf="fetchingPacket">
     <div class="redpacket-loader">
@@ -12,6 +14,9 @@
 
   <!-- PACKET DETAILS -->
   <ion-grid class="container ion-padding sticky-bottom-container-padding" *ngIf="!fetchingPacket && packet">
+    <!-- Status (live - not live - error) -->
+    <ng-container *ngTemplateOutlet="status"></ng-container>
+
     <!-- Grab me button opening the captcha modal -->
     <div *ngIf="grabStatusChecked && captchaChallengeRequired" class="grab-me ion-activatable">
       <ion-button (click)="openGrabModal()">{{ 'redpackets.grab-me' | translate }}</ion-button>
@@ -36,6 +41,8 @@
     <ion-spinner></ion-spinner>
   </div>
 
+  <!-- {{fetchingPacket}} {{grabStatusChecked}} {{activeWalletIsCreator()}} {{captchaChallengeRequired}} {{packet.isActive}} -->
+
   <div class="redpacket-status"
     *ngIf="!fetchingPacket && grabStatusChecked && packet && activeWalletIsCreator() && !captchaChallengeRequired">
     <div class="live" *ngIf="packet.isActive && !packet.isExpired()">{{ 'redpackets.packet-is-live' | translate }}</div>
@@ -47,10 +54,6 @@
   <!-- If a user (not the creator) opened an inactive packet link by mistake -->
   <div class="redpacket-status" *ngIf="!fetchingPacket && packet && !activeWalletIsCreator() && !packet.isActive">
     <div class="not-live" *ngIf="!packet.isActive">{{ 'redpackets.this-packet-is-not-live' | translate }}</div>
-  </div>
-
-  <div class="container ion-padding redpacket-error-container" *ngIf="packetFetchErrored">
-    {{ 'redpackets.error-retrieve-packet' | translate }}
   </div>
 </ng-template>
 

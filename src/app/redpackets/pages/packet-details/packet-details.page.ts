@@ -126,11 +126,11 @@ export class PacketDetailsPage implements OnInit {
             if (this.packet.isActive) {
               // TMP DEBUG if (!this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString))
               void this.checkIfNeedToGrab();
-
               void this.fetchWinners();
             }
             else {
               this.packetIsInactive = true;
+              this.grabStatusChecked = true; // Consider as checked because nothing to check yet
             }
           }
           else {
