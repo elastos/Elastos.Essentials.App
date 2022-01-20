@@ -24,7 +24,7 @@
   <!-- Payment info
    //todo: maybe move this long if to ts
    -->
-  <ion-grid *ngIf="packet && !fetchingPacketInfo" class="container ion-padding">
+  <ion-grid *ngIf="packet && !fetchingPacketInfo" class="container ion-padding sticky-bottom-container-padding">
     <div *ngIf="nativeTokenBalanceIsEnough &&
   (!packet.costs.erc20Token || (packet.costs.erc20Token && erc20TokenBalanceIsEnough))">
 
