@@ -206,13 +206,14 @@ export class PacketService {
   }
 
   private async saveGrabbedPacket(packet: Packet, status: GrabStatus, earnedAmount: string): Promise<void> {
+    // Insert at position 0 to keep the most recently created packet first
     let grabbedPackets = this.grabbedPackets.value;
-    grabbedPackets.push({
+    grabbedPackets.splice(0, 0, {
       packet: packet.serialize(),
       status,
       earnedAmount
     });
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "grabbedpackets", this.grabbedPackets.value);
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "grabbedpackets", grabbedPackets);
 
     this.grabbedPackets.next(grabbedPackets);
   }
