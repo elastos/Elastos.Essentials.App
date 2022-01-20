@@ -17,7 +17,7 @@ export const zh = {
     'n-days-left': "剩余 {{ days }} 天",
     'enter-captcha-placeholder': '输入验证码以打开红包',
     'wrong-captcha': '验证码错误，请重试',
-    'error-captcha-is-required': '请键入验证码以继续',
+    'error-captcha-is-required': '请输入验证码以继续',
 
     /*******
     * Home *
