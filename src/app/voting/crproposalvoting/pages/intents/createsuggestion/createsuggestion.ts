@@ -13,7 +13,6 @@ import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
-import { UXService } from '../../../services/ux.service';
 
 
 export type CreateSuggestionCommand = CRCommand & {
@@ -58,7 +57,6 @@ export class CreateSuggestionPage {
         private walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
-        public uxService: UXService,
     ) {
     }
 
@@ -254,22 +252,6 @@ export class CreateSuggestionPage {
         return Util.reverseHexToBE(digest);
     }
 
-    private async getReceiveCustomizeDidDigest(): Promise<any> {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            ReceivedCustomIDList: this.suggestionDetail.receivedCustomizedIDList,
-            ReceiverDID: this.suggestionDetail.receiverDID,
-        };
-
-        Logger.log(App.CRSUGGESTION, "getReceiveCustomizeDidDigest.", payload);
-        let digest = await this.walletManager.spvBridge.receiveCustomIDOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
-        return Util.reverseHexToBE(digest);
-    }
-
     private getDigest(): Promise<any> {
         switch (this.proposaltype) {
             case "normal":
@@ -282,8 +264,6 @@ export class CreateSuggestionPage {
                 return this.getSecretaryGeneralDigest();
             case "reservecustomizedid":
                 return this.getReserveCustomizeDidDigest();
-            case "receivecustomizedid":
-                return this.getReceiveCustomizeDidDigest();
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }

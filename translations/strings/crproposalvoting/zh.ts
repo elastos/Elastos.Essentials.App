@@ -20,7 +20,6 @@ export const zh = {
         'proposal-hash': '提案哈希',
         'url': '原始网址',
         'reservecustomizedid': '预留自定义DID',
-        'receivedcustomizedid': '申请自定义DID',
         'time-remaining': '剩余时间',
         'reject-ratio': '拒绝率',
         'member-votes': '委员投票结果',
@@ -82,7 +81,6 @@ export const zh = {
         'proposaltype-closeproposal': '关闭提议',
         'proposaltype-secretarygeneral': '新的CR委员秘书长',
         'proposaltype-reservecustomizedid': '预留自定义DID动议',
-        'proposaltype-receivecustomizedid': '启用预留自定义DID',
         'imprest': '首付款/预付款',
         'normalpayment': '阶段款',
         'finalpayment': '结项款/尾款',
@@ -170,7 +168,6 @@ export const zh = {
         'receive-address': 'ELA接收地址',
         'payment-schedule': '付款安排',
         'budget-statement': '预算说明',
-        'receiver-did': '接收者DID',
 
         //Error
         'no-draft-data': '暂时不能获取draftData。',

@@ -104,33 +104,20 @@ export class CreateProposalPage {
     }
 
     private getPayload(): any {
-        var payload: any;
         switch (this.proposaltype) {
             case "normal":
-                payload = this.getNormalPayload();
-                break;
+                return this.getNormalPayload();
             case "changeproposalowner":
-                payload = this.getChangeOwnerPayload();
-                break;
+                return this.getChangeOwnerPayload();
             case "closeproposal":
-                payload = this.getTerminatePayload();
-                break;
+                return this.getTerminatePayload();
             case "secretarygeneral":
-                payload = this.getSecretaryGeneralPayload();
-                break;
+                return this.getSecretaryGeneralPayload();
             case "reservecustomizedid":
-                payload = this.getReserveCustomizeDidPayload();
-                break;
-            case "receivecustomizedid":
-                payload = this.getReceiveCustomizeDidPayload();
-                break;
+                return this.getReserveCustomizeDidPayload();
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
-
-        payload.Signature = this.onGoingCommand.data.signature;
-        payload.CRCouncilMemberDID = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
-        return payload;
     }
 
     private async digestFunction(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
@@ -145,8 +132,6 @@ export class CreateProposalPage {
                 return await this.walletManager.spvBridge.proposalSecretaryGeneralElectionCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             case "reservecustomizedid":
                 return await this.walletManager.spvBridge.reserveCustomIDCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
-            case "receivecustomizedid":
-                return await this.walletManager.spvBridge.receiveCustomIDCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
@@ -164,8 +149,6 @@ export class CreateProposalPage {
                 return await this.voteService.sourceSubwallet.createSecretaryGeneralElectionTransaction(payload, memo);
             case "reservecustomizedid":
                 return await this.voteService.sourceSubwallet.createReserveCustomIDTransaction(payload, memo);
-            case "receivecustomizedid":
-                return await this.voteService.sourceSubwallet.createReceiveCustomIDTransaction(payload, memo);
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
@@ -221,6 +204,9 @@ export class CreateProposalPage {
             DraftData: data.draftData,
             Budgets: [],
             Recipient: data.recipient,
+
+            Signature: data.signature,
+            CRCouncilMemberDID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
         };
 
         // Need to convert from the API "string" type to SPV SDK "int"...
@@ -252,6 +238,8 @@ export class CreateProposalPage {
             NewRecipient: data.newrecipient,
             NewOwnerPublicKey: data.newownerpublickey,
             NewOwnerSignature: data.newownersignature,
+            Signature: data.signature,
+            CRCouncilMemberDID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
         };
         return payload;
     }
@@ -264,6 +252,8 @@ export class CreateProposalPage {
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             TargetProposalHash: data.targetproposalhash,
+            Signature: data.signature,
+            CRCouncilMemberDID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
         };
         return payload;
     }
@@ -277,7 +267,9 @@ export class CreateProposalPage {
             DraftData: data.draftData,
             SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
             SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
+            Signature: data.signature,
             SecretaryGeneralSignature: data.secretarygenerasignature,
+            CRCouncilMemberDID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
         };
 
         return payload;
@@ -291,20 +283,8 @@ export class CreateProposalPage {
             DraftHash: data.draftHash,
             DraftData: data.draftData,
             ReservedCustomIDList: this.suggestionDetail.reservedCustomizedIDList,
-        };
-
-        return payload;
-    }
-
-    private getReceiveCustomizeDidPayload(): any {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            ReceivedCustomIDList: this.suggestionDetail.receivedCustomizedIDList,
-            ReceiverDID: this.suggestionDetail.receiverDID,
+            Signature: data.signature,
+            CRCouncilMemberDID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
         };
 
         return payload;

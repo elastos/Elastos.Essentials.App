@@ -135,7 +135,7 @@ export class SuggestionDetailPage {
         this.suggestionDetails.push(
             {
                 title: this.translate.instant('crproposalvoting.suggestion'),
-                type: 'innerHtml',
+                type: 'marked',
                 value: this.suggestion.title,
                 active: true
             },
@@ -147,19 +147,19 @@ export class SuggestionDetailPage {
             },
             {
                 title: this.translate.instant('crproposalvoting.abstract'),
-                type: 'innerHtml',
+                type: 'marked',
                 value: this.suggestion.abstract ? marked(this.suggestion.abstract) : null,
                 active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.motivation'),
-                type: 'innerHtml',
+                type: 'marked',
                 value: this.suggestion.motivation ? marked(this.suggestion.motivation) : null,
                 active: true
             },
             {
                 title: this.translate.instant('crproposalvoting.goal'),
-                type: 'innerHtml',
+                type: 'marked',
                 value: this.suggestion.goal ? marked(this.suggestion.goal) : null,
                 active: true
             },
@@ -177,7 +177,7 @@ export class SuggestionDetailPage {
             },
             {
                 title: this.translate.instant('crproposalvoting.plan-statement'),
-                type: 'innerHtml',
+                type: 'marked',
                 value: this.suggestion.planStatement ? marked(this.suggestion.planStatement) : null,
                 active: true
             },
@@ -189,7 +189,7 @@ export class SuggestionDetailPage {
             },
             {
                 title: this.translate.instant('crproposalvoting.budget-statement'),
-                type: 'innerHtml',
+                type: 'marked',
                 value: this.suggestion.budgetStatement ? marked(this.suggestion.budgetStatement) : null,
                 active: true
             },
@@ -209,18 +209,6 @@ export class SuggestionDetailPage {
                 title: this.translate.instant('crproposalvoting.reservecustomizedid'),
                 type: 'array',
                 value: this.uxService.getArrayString(this.suggestion.reservedCustomizedIDList),
-                active: true
-            },
-            {
-                title: this.translate.instant('crproposalvoting.receivedcustomizedid'),
-                type: 'array',
-                value: this.uxService.getArrayString(this.suggestion.receivedCustomizedIDList),
-                active: true
-            },
-            {
-                title: this.translate.instant('crproposalvoting.receiver-did'),
-                type: 'receive-address',
-                value: this.suggestion.receiverDID,
                 active: true
             },
         );
