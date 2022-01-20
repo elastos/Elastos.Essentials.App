@@ -253,7 +253,7 @@ export class PacketDetailsPage implements OnInit {
         name: "",
         avatarUrl: null, // TMP - use placeholder avatar picture
         date: moment.unix(winner.creationDate).format('MMM D, YYYY'),
-        time: moment.unix(winner.creationDate).format('hh:mm:ss')
+        time: moment.unix(winner.creationDate).format('HH:mm:ss')
       }
       this.winners.push(winnerEntry); // todo: Limit the number here to only have 3 winners ?
 
