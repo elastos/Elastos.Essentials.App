@@ -3,6 +3,10 @@
     --ripple-color: var(--ion-color-danger);
   }
 
+  ion-button {
+    --background-activated: linear-gradient(180deg, #c4c4c4 0%, #fc4047 0.01%, #bc1f23 100%);
+  }
+
   ion-tab-button.tab-selected {
     ion-icon,
     ion-label {
