@@ -197,7 +197,8 @@ export class NewPacketPage {
       creatorAddress,
       creatorDID: this.didSessions.getSignedInIdentity().didString,
       expirationDate: moment().add(this.expirationDays, "days").unix(),
-      visibility: this.visibility
+      visibility: this.visibility,
+      probability: this.probability
     };
 
     // For ERC20 tokens, also save the token contract address into the packet

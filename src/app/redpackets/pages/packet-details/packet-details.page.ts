@@ -63,6 +63,7 @@ export class PacketDetailsPage implements OnInit {
   public winners: WinnerDisplayEntry[] = [];
   public creatorAvatar: string = null;
   public creatorName: string = null;
+  public activeWalletAsWinner: WinnerDisplayEntry = null; // If active wallet is a winner, the winner entry
 
   constructor(
     private route: ActivatedRoute,
@@ -107,6 +108,8 @@ export class PacketDetailsPage implements OnInit {
 
         // Don't block the UI
         void (async () => {
+          this.walletAddress = await this.getActiveWalletAddress();
+
           // Refresh packet with latest data
           if (packetHash) {
             Logger.log("redpackets", "Fetching packet details for hash", packetHash);
@@ -192,8 +195,6 @@ export class PacketDetailsPage implements OnInit {
   }
 
   private async sendInitialGrabRequest() {
-    this.walletAddress = await this.getActiveWalletAddress();
-
     this.grabStatusChecked = false;
     this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet.hash, this.walletAddress);
 
@@ -270,6 +271,9 @@ export class PacketDetailsPage implements OnInit {
         });
       }
     }
+
+    // Now that we have a fresh winners list,
+    this.checkActiveWalletAsWinner();
   }
 
   public getDisplayableWinnerName(winner: WinnerDisplayEntry) {
@@ -281,6 +285,17 @@ export class PacketDetailsPage implements OnInit {
 
   public userIsCreator(): boolean {
     return this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString);
+  }
+
+  public activeWalletIsCreator(): boolean {
+    return this.packet.creatorAddress === this.walletAddress;
+  }
+
+  /**
+   * If the active wallet is a winner, updates the active user as winner entry.
+   */
+  public checkActiveWalletAsWinner() {
+    this.activeWalletAsWinner = this.winners.find(w => w.winner.walletAddress === this.walletAddress);
   }
 
   public finalizePayment() {

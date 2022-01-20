@@ -29,6 +29,7 @@ export type PacketWinner = {
   creationDate: number; // Timestamp
   userDID?: string;
   winningAmount?: string; // Number of tokens earned. Human readable
+  walletAddress: string;
 }
 
 /**

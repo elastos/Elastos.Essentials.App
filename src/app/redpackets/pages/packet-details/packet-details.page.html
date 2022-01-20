@@ -13,7 +13,7 @@
   <!-- PACKET DETAILS -->
   <ion-grid class="container ion-padding sticky-bottom-container-padding" *ngIf="!fetchingPacket && packet">
     <!-- Grab me button opening the captcha modal -->
-    <div *ngIf="captchaChallengeRequired" class="grab-me ion-activatable">
+    <div *ngIf="grabStatusChecked && captchaChallengeRequired" class="grab-me ion-activatable">
       <ion-button (click)="openGrabModal()">{{ 'redpackets.grab-me' | translate }}</ion-button>
       <ion-ripple-effect></ion-ripple-effect>
     </div>
@@ -36,7 +36,8 @@
     <ion-spinner></ion-spinner>
   </div>
 
-  <div class="redpacket-status" *ngIf="!fetchingPacket && packet && userIsCreator() && !captchaChallengeRequired">
+  <div class="redpacket-status"
+    *ngIf="!fetchingPacket && grabStatusChecked && packet && userIsCreator() && !captchaChallengeRequired">
     <div class="live" *ngIf="packet.isActive && !packet.isExpired()">{{ 'redpackets.packet-is-live' | translate }}</div>
     <div class="not-live" *ngIf="!packet.isActive">{{ 'redpackets.packet-is-not-live' | translate }}</div>
     <div class="expired" *ngIf="packet.isActive && packet.isExpired()">{{ 'redpackets.packet-is-expired' | translate }}
@@ -85,6 +86,13 @@
         </div>
       </div>
 
+
+
+      <!-- TODO User is a winner -->
+      <div class="redpacket-status" *ngIf="grabStatusChecked && activeWalletAsWinner">
+        <div class="live">You got XXXX YYY from this packet :-)</div>
+      </div>
+
       <!-- Packet has been grabbed: people who passed captcha and are not creator -->
       <div class="redpacket-grabbed" *ngIf="!captchaChallengeRequired && !userIsCreator()">
         <div *ngIf="justWon" class="redpacket-info-header-grabbed">
@@ -95,7 +103,9 @@
           </div>
         </div>
 
-        <div *ngIf="justMissed" class="redpacket-info-header-grabbed">
+        <!-- Just missed, or missed earlier -->
+        <div *ngIf="justMissed || (grabStatusChecked && !activeWalletIsCreator() && !activeWalletAsWinner)"
+          class="redpacket-info-header-grabbed">
           <h2>{{ 'redpackets.grab-lost' | translate }}</h2>
         </div>
 
