@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
@@ -22,12 +23,13 @@ export class MyPacketsPage {
   constructor(
     public navCtrl: NavController,
     private globalNavService: GlobalNavService,
-    public packetService: PacketService
+    public packetService: PacketService,
+    private translate: TranslateService
   ) { }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle("My Packets");
-    this.titleBar.setBackgroundColor("#f04141");
+    this.titleBar.setTitle(this.translate.instant("redpackets.my-packets"));
+    this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
     this.packets = this.packetService.getMyPackets();

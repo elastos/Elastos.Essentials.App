@@ -86,7 +86,7 @@ export class HomePage {
 
     this.openedPacketsSubscriptions = this.packetService.grabbedPackets.subscribe(grabbedPackets => {
       // Note: filtering for undefined "packet" in grabbed packets - normally not needed, but legacy bug
-      let openedPackets = grabbedPackets.filter(gp => gp.packet).map(gp => Packet.fromSerializedPacket(gp.packet));
+      let openedPackets = this.packetService.getOpenedPackets();
       this.openedPackets = openedPackets.length > 3 ? openedPackets.slice(0, 4) : openedPackets;
       this.fetchingOpenedPackets = false;
     });
@@ -108,5 +108,17 @@ export class HomePage {
         packet: packet
       }
     });
+  }
+
+  public navigateToPublicPackets() {
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/public-packets");
+  }
+
+  public navigateToMyPackets() {
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/my-packets");
+  }
+
+  public navigateToOpenedPackets() {
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/opened-packets");
   }
 }

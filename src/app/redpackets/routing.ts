@@ -14,7 +14,8 @@ const routes: Routes = [
   { path: 'pay', loadChildren: () => import('./pages/pay/pay.module').then(m => m.PayModule) },
   { path: 'packet-details', loadChildren: () => import('./pages/packet-details/packet-details.module').then(m => m.PacketDetailsPageModule) },
   { path: 'my-packets', loadChildren: () => import('./pages/my-packets/my-packets.module').then(m => m.MyPacketsModule) },
-  { path: 'opened-packets', loadChildren: () => import('./pages/opened-packets/opened-packets.module').then(m => m.OpenedPacketsModule) }
+  { path: 'opened-packets', loadChildren: () => import('./pages/opened-packets/opened-packets.module').then(m => m.OpenedPacketsModule) },
+  { path: 'public-packets', loadChildren: () => import('./pages/public-packets/public-packets.module').then(m => m.PublicPacketsModule) }
 ];
 
 @NgModule({

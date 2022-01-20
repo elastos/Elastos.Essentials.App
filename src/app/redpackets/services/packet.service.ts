@@ -229,6 +229,11 @@ export class PacketService {
     return !!this.getGrabbedPacket(hash);
   }
 
+  public getOpenedPackets(): Packet[] {
+    // Note: filtering for undefined "packet" in grabbed packets - normally not needed, but legacy bug
+    return this.grabbedPackets.value.filter(gp => gp.packet).map(gp => Packet.fromSerializedPacket(gp.packet));
+  }
+
   private async loadMyPackets(): Promise<void> {
     let serializedPackets = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "mypackets", []);
     this.myPackets = serializedPackets.map(p => Packet.fromSerializedPacket(p));

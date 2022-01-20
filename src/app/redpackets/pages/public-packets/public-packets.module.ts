@@ -6,10 +6,10 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { ComponentsModule } from '../../components/components.module';
-import { MyPacketsPage } from './public-packets';
+import { PublicPacketsPage } from './public-packets';
 
 @NgModule({
-  declarations: [MyPacketsPage],
+  declarations: [PublicPacketsPage],
   imports: [
     CommonModule,
     IonicModule,
@@ -19,7 +19,7 @@ import { MyPacketsPage } from './public-packets';
     ComponentsModule,
     RouterModule.forChild([{
       path: '',
-      component: MyPacketsPage,
+      component: PublicPacketsPage,
     }])
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
