@@ -85,7 +85,7 @@ export class PacketDetailsPage implements OnInit {
 
   ngOnInit() {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.route.queryParams.subscribe(async params => {
+    this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
         let state = this.router.getCurrentNavigation().extras.state as { packet?: Packet; packetHash?: string };
 
@@ -105,33 +105,36 @@ export class PacketDetailsPage implements OnInit {
           packetHash = state.packetHash;
         }
 
-        // Refresh packet with latest data
-        if (packetHash) {
-          Logger.log("redpackets", "Fetching packet details for hash", packetHash);
-          this.fetchingPacket = true;
-          this.packet = await this.packetService.getPacketInfo(packetHash);
-          this.fetchingPacket = false;
-        }
+        // Don't block the UI
+        void (async () => {
+          // Refresh packet with latest data
+          if (packetHash) {
+            Logger.log("redpackets", "Fetching packet details for hash", packetHash);
+            this.fetchingPacket = true;
+            this.packet = await this.packetService.getPacketInfo(packetHash);
+            this.fetchingPacket = false;
+          }
 
-        if (this.packet) {
-          Logger.log("redpackets", "Showing packet details", this.packet);
-          this.preparePacketDisplay();
+          if (this.packet) {
+            Logger.log("redpackets", "Showing packet details", this.packet);
+            this.preparePacketDisplay();
 
-          // Only try to grab / get winners if the packet is live
-          if (this.packet.isActive) {
-            // TMP DEBUG if (!this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString))
-            void this.checkIfNeedToGrab();
+            // Only try to grab / get winners if the packet is live
+            if (this.packet.isActive) {
+              // TMP DEBUG if (!this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString))
+              void this.checkIfNeedToGrab();
 
-            void this.fetchWinners();
+              void this.fetchWinners();
+            }
+            else {
+              this.packetIsInactive = true;
+            }
           }
           else {
-            this.packetIsInactive = true;
+            Logger.error("redpackets", "Unable to get packet information for packet hash " + packetHash);
+            this.packetFetchErrored = true;
           }
-        }
-        else {
-          Logger.error("redpackets", "Unable to get packet information for packet hash " + packetHash);
-          this.packetFetchErrored = true;
-        }
+        })();
       }
     });
   }
@@ -249,7 +252,7 @@ export class PacketDetailsPage implements OnInit {
         name: "",
         avatarUrl: null, // TMP - use placeholder avatar picture
         date: moment.unix(winner.creationDate).format('MMM D, YYYY'),
-        time: moment.unix(winner.creationDate).format('HH:mm:ss')
+        time: moment.unix(winner.creationDate).format('hh:mm:ss')
       }
       this.winners.push(winnerEntry); // todo: Limit the number here to only have 3 winners ?
 

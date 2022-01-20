@@ -107,3 +107,10 @@
     --background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
   }
 }
+
+.redpacket-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 4;
+}

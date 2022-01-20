@@ -3,6 +3,13 @@
   <!-- Status (live - not live - error) -->
   <ng-container *ngTemplateOutlet="status"></ng-container>
 
+  <ion-grid class="container ion-padding sticky-bottom-container-padding" *ngIf="fetchingPacket">
+    <div class="redpacket-loader">
+      <ion-label>{{ 'redpackets.getting-packet-info' | translate }}</ion-label>
+      <ion-spinner></ion-spinner>
+    </div>
+  </ion-grid>
+
   <!-- PACKET DETAILS -->
   <ion-grid class="container ion-padding sticky-bottom-container-padding" *ngIf="!fetchingPacket && packet">
     <!-- Grab me button opening the captcha modal -->
@@ -142,7 +149,7 @@
       <ion-col size="4" class="redpacket-inline-last-col">
         <img src="assets/redpackets/images/coins.svg" style="margin-right: 5px" alt="Coin icon" />
 
-        <div class="amount">{{ getWinnerAmount(winner) }} {{ getEarnedTokenSymbol() }}</div>
+        <div class="amount">{{ getWinnerAmount(winner) }}<br />{{ getEarnedTokenSymbol() }}</div>
       </ion-col>
     </ion-row>
   </div>
