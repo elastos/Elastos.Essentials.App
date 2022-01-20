@@ -37,11 +37,16 @@
   </div>
 
   <div class="redpacket-status"
-    *ngIf="!fetchingPacket && grabStatusChecked && packet && userIsCreator() && !captchaChallengeRequired">
+    *ngIf="!fetchingPacket && grabStatusChecked && packet && activeWalletIsCreator() && !captchaChallengeRequired">
     <div class="live" *ngIf="packet.isActive && !packet.isExpired()">{{ 'redpackets.packet-is-live' | translate }}</div>
     <div class="not-live" *ngIf="!packet.isActive">{{ 'redpackets.packet-is-not-live' | translate }}</div>
     <div class="expired" *ngIf="packet.isActive && packet.isExpired()">{{ 'redpackets.packet-is-expired' | translate }}
     </div>
+  </div>
+
+  <!-- If a user (not the creator) opened an inactive packet link by mistake -->
+  <div class="redpacket-status" *ngIf="!fetchingPacket && packet && !activeWalletIsCreator() && !packet.isActive">
+    <div class="not-live" *ngIf="!packet.isActive">{{ 'redpackets.this-packet-is-not-live' | translate }}</div>
   </div>
 
   <div class="container ion-padding redpacket-error-container" *ngIf="packetFetchErrored">
@@ -50,13 +55,40 @@
 </ng-template>
 
 <ng-template #packetDetailsHead>
+  <div class="redpacket-win-lost-status">
+    <!-- Packet has been grabbed: people who passed captcha and are not creator -->
+    <div class="redpacket-grabbed" *ngIf="!captchaChallengeRequired && !activeWalletIsCreator()">
+      <div *ngIf="isActiveWalletAWinner()" class="redpacket-info-header-grabbed">
+        <div class="redpacket-info-header-intro">
+          <div class="redpacket-info-header-creator">{{ 'redpackets.creator-sent-you' | translate: { creator:
+            creatorName } }}</div>
+          <div class="redpacket-info-header-token">{{ getEarnedAmount() }} {{ getEarnedTokenSymbol() }}</div>
+        </div>
+      </div>
+
+      <!-- Just missed, or missed earlier -->
+      <div *ngIf="!justNoMorePackets && isActiveWalletALoser()" class="redpacket-info-header-grabbed">
+        <h2>{{ 'redpackets.grab-lost' | translate }}</h2>
+      </div>
+
+      <!-- No more packets after user tried to open it -->
+      <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
+        <h2>{{ 'redpackets.grab-too-late' | translate }}</h2>
+      </div>
+    </div>
+
+    <!-- Special case here: if the user open the packet but it's no more available -->
+    <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
+      <h2>{{ 'redpackets.grab-too-late-2' | translate }}</h2>
+    </div>
+  </div>
+
   <div [ngStyle]="{'background-image': getThemeBackgroundImage() }" class="redpacket-view-header">
     <ion-spinner *ngIf="fetchingCreator"></ion-spinner>
 
     <div class="redpacket-header-in-content">
       <!-- Default view: won - captcha required - creator-->
-      <div *ngIf="(!justNoMorePackets && captchaChallengeRequired) || userIsCreator() || justWon"
-        class="redpacket-info-header-intro">
+      <div *ngIf="!justNoMorePackets" class="redpacket-info-header-intro">
         <!-- Creator info -->
         <div class="redpacket-info-header-avatar" *ngIf="!fetchingCreator">
           <ion-avatar *ngIf="!creatorAvatar" class="noAvatar">
@@ -84,40 +116,6 @@
           <div class="redpacket-info-header-message-title">{{ 'redpackets.message' | translate }}</div>
           <div class="redpacket-info-header-message-content">{{packet.message}}</div>
         </div>
-      </div>
-
-
-
-      <!-- TODO User is a winner -->
-      <div class="redpacket-status" *ngIf="grabStatusChecked && activeWalletAsWinner">
-        <div class="live">You got XXXX YYY from this packet :-)</div>
-      </div>
-
-      <!-- Packet has been grabbed: people who passed captcha and are not creator -->
-      <div class="redpacket-grabbed" *ngIf="!captchaChallengeRequired && !userIsCreator()">
-        <div *ngIf="justWon" class="redpacket-info-header-grabbed">
-          <div class="redpacket-info-header-intro">
-            <div class="redpacket-info-header-creator">{{ 'redpackets.creator-sent-you' | translate: { creator:
-              creatorName } }}</div>
-            <div class="redpacket-info-header-token">{{ getEarnedAmount() }} {{ getEarnedTokenSymbol() }}</div>
-          </div>
-        </div>
-
-        <!-- Just missed, or missed earlier -->
-        <div *ngIf="justMissed || (grabStatusChecked && !activeWalletIsCreator() && !activeWalletAsWinner)"
-          class="redpacket-info-header-grabbed">
-          <h2>{{ 'redpackets.grab-lost' | translate }}</h2>
-        </div>
-
-        <!-- No more packets after user tried to open it -->
-        <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
-          <h2>{{ 'redpackets.grab-too-late' | translate }}</h2>
-        </div>
-      </div>
-
-      <!-- Special case here: if the user open the packet but it's no more available -->
-      <div *ngIf="justNoMorePackets" class="redpacket-info-header-grabbed">
-        <h2>{{ 'redpackets.grab-too-late-2' | translate }}</h2>
       </div>
     </div>
   </div>
@@ -194,7 +192,7 @@
 <ng-template #footer>
   <!-- For the creator: if packet is not active, go to "pay" -->
   <div class="redpacket-footer-container sticky-bottom-container"
-    *ngIf="!fetchingPacket && packet && userIsCreator() && !packet.isActive">
+    *ngIf="!fetchingPacket && packet && activeWalletIsCreator() && !packet.isActive">
     <div class="redpacket-footer-button">
       <button (click)="finalizePayment()">
         <ion-label>{{ 'redpackets.complete-payment' | translate }}</ion-label>

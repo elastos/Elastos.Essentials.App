@@ -89,6 +89,7 @@ export const fr = {
     'grabbing-packet': 'Récupération du paquet, un instant...',
     'packet-is-live': 'Votre paquet est prêt!',
     'packet-is-not-live': 'Votre paquet n\'est pas encore prêt!',
+    'this-packet-is-not-live': 'Ce paquet n\'est pas encore disponible.',
     'packet-is-expired': 'Ce paquet a expiré',
     'error-retrieve-packet': 'Impossible d\'obtenir les informations du paquet. Veuillez réessayer plus tard.',
     'grab-me': 'Attrape moi!',

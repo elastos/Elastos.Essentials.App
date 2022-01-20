@@ -207,7 +207,7 @@ export class PacketDetailsPage implements OnInit {
   }
 
   public getEarnedAmount(): string {
-    return new BigNumber(this.grabResponse.earnedAmount).toFixed(5);
+    return new BigNumber(this.activeWalletAsWinner.winner.winningAmount).toFixed(5);
   }
 
   public getEarnedTokenSymbol(): string {
@@ -215,6 +215,14 @@ export class PacketDetailsPage implements OnInit {
       return this.packet.nativeTokenSymbol;
     else
       return this.packet.erc20TokenSymbol;
+  }
+
+  public isActiveWalletAWinner(): boolean {
+    return this.grabStatusChecked && !!this.activeWalletAsWinner;
+  }
+
+  public isActiveWalletALoser(): boolean {
+    return this.grabStatusChecked && !this.activeWalletAsWinner;
   }
 
   public getDisplayableDistribution(): string {
@@ -320,6 +328,7 @@ export class PacketDetailsPage implements OnInit {
       } else if (grabStatus.status === GrabStatus.DEPLETED) {
         this.justNoMorePackets = true;
       }
+
       this.captchaChallengeRequired = false;
 
       // Update winners list

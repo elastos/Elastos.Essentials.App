@@ -89,6 +89,7 @@ export const zh = {
     'grabbing-packet': '正在抢红包...请稍候',
     'packet-is-live': '您的红包已上线!',
     'packet-is-not-live': '您的红包还未上线!',
+    'this-packet-is-not-live': 'This packet is not live yet',
     'packet-is-expired': '此红包已过期',
     'error-retrieve-packet': '无法获取红包信息，请稍后重试',
     'grab-me': '抢!',
