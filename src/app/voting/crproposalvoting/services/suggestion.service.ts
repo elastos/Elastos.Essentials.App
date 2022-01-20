@@ -178,4 +178,114 @@ export class SuggestionService {
             delete this.blockWaitingDict[suggestionId];
         }
     }
+
+    //-----------------get paylaod ---------------------
+    private getPayloadCommon(data: any): any {
+        return {
+            CategoryData: data.categorydata || "",
+            OwnerPublicKey: data.ownerPublicKey,
+            DraftHash: data.draftHash,
+            DraftData: data.draftData,
+        }
+    }
+
+    private getNormalPayload(data: any): any {
+        let payload = this.getPayloadCommon(data);
+        payload = Object.assign(payload, {
+            Type: 0,
+            Budgets: [],
+            Recipient: data.recipient,
+        });
+
+        // Need to convert from the API "string" type to SPV SDK "int"...
+        let budgetTypes = {
+            imprest: 0,
+            normalpayment: 1,
+            finalpayment: 2
+        }
+
+        for (let suggestionBudget of data.budgets) {
+            payload.Budgets.push({
+                Type: budgetTypes[suggestionBudget.type.toLowerCase()],
+                Stage: suggestionBudget.stage,
+                Amount: suggestionBudget.amount
+            });
+        }
+
+        return payload;
+    }
+
+    private getChangeOwnerPayload(data: any): any {
+        let payload = this.getPayloadCommon(data);
+        payload = Object.assign(payload, {
+            TargetProposalHash: data.targetproposalhash,
+            NewRecipient: data.newrecipient,
+            NewOwnerPublicKey: data.newownerpublickey,
+            NewOwnerSignature: data.newownersignature,
+        });
+        return payload;
+    }
+
+    private getTerminatePayload(data: any): any {
+        let payload = this.getPayloadCommon(data);
+        payload.TargetProposalHash = data.targetproposalhash;
+        return payload;
+    }
+
+    private getSecretaryGeneralPayload(data: any): any {
+        let payload = this.getPayloadCommon(data);
+        payload = Object.assign(payload, {
+            SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
+            SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
+            SecretaryGeneralSignature: data.secretarygenerasignature,
+        });
+
+        return payload;
+    }
+
+    private getReserveCustomizeDidPayload(data: any): any {
+        let payload = this.getPayloadCommon(data);
+        payload.ReservedCustomIDList = data.reservedCustomizedIDList;
+        return payload;
+    }
+
+    private getReceiveCustomizeDidPayload(data: any): any {
+        let payload = this.getPayloadCommon(data);
+        payload = Object.assign(payload, {
+            ReceivedCustomIDList: data.receivedCustomizedIDList,
+            ReceiverDID: data.receiverDID,
+        });
+
+        return payload;
+    }
+
+    private getChangeCustomIDFeeOwnerPayload(data: any): any {
+        let payload = this.getPayloadCommon(data);
+        payload.CustomIDFeeRateInfo = {
+            RateOfCustomIDFee: data.rateOfCustomizedIDFee,
+            EIDEffectiveHeight:  data.EIDEffectiveHeight
+        }
+        return payload;
+    }
+
+    public getPayload(proposaltype: string, data: any) {
+        switch (proposaltype) {
+            case "normal":
+                return this.getNormalPayload(data);
+            case "changeproposalowner":
+                return this.getChangeOwnerPayload(data);
+            case "closeproposal":
+                return this.getTerminatePayload(data);
+            case "secretarygeneral":
+                return this.getSecretaryGeneralPayload(data);
+            case "reservecustomizedid":
+                return this.getReserveCustomizeDidPayload(data);
+            case "receivecustomizedid":
+                return this.getReceiveCustomizeDidPayload(data);
+            case "changecustomizedidfee":
+                return this.getChangeCustomIDFeeOwnerPayload(data);
+            default:
+                throw new Error("Don't support this type: " + proposaltype);
+        }
+    }
 }

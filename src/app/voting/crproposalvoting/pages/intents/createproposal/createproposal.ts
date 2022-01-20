@@ -104,52 +104,41 @@ export class CreateProposalPage {
     }
 
     private getPayload(): any {
-        var payload: any;
-        switch (this.proposaltype) {
-            case "normal":
-                payload = this.getNormalPayload();
-                break;
-            case "changeproposalowner":
-                payload = this.getChangeOwnerPayload();
-                break;
-            case "closeproposal":
-                payload = this.getTerminatePayload();
-                break;
-            case "secretarygeneral":
-                payload = this.getSecretaryGeneralPayload();
-                break;
-            case "reservecustomizedid":
-                payload = this.getReserveCustomizeDidPayload();
-                break;
-            case "receivecustomizedid":
-                payload = this.getReceiveCustomizeDidPayload();
-                break;
-            default:
-                throw new Error("Don't support this type: " + this.proposaltype);
-        }
-
+        let payload = this.suggestionService.getPayload(this.proposaltype, this.onGoingCommand.data);
         payload.Signature = this.onGoingCommand.data.signature;
         payload.CRCouncilMemberDID = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
         return payload;
     }
 
-    private async digestFunction(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    private async getDigest(payload: string): Promise<any> {
+        var digestFunction: any;
         switch (this.proposaltype) {
             case "normal":
-                return await this.walletManager.spvBridge.proposalCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
+                digestFunction = this.walletManager.spvBridge.proposalCRCouncilMemberDigest;
+                break;
             case "changeproposalowner":
-                return await this.walletManager.spvBridge.proposalChangeOwnerCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
+                digestFunction = this.walletManager.spvBridge.proposalChangeOwnerCRCouncilMemberDigest;
+                break;
             case "closeproposal":
-                return await this.walletManager.spvBridge.terminateProposalCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
+                digestFunction = this.walletManager.spvBridge.terminateProposalCRCouncilMemberDigest;
+                break;
             case "secretarygeneral":
-                return await this.walletManager.spvBridge.proposalSecretaryGeneralElectionCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
+                digestFunction = this.walletManager.spvBridge.proposalSecretaryGeneralElectionCRCouncilMemberDigest;
+                break;
             case "reservecustomizedid":
-                return await this.walletManager.spvBridge.reserveCustomIDCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
+                digestFunction = this.walletManager.spvBridge.reserveCustomIDCRCouncilMemberDigest;
+                break;
             case "receivecustomizedid":
-                return await this.walletManager.spvBridge.receiveCustomIDCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
+                digestFunction = this.walletManager.spvBridge.receiveCustomIDCRCouncilMemberDigest;
+                break;
+            case "changecustomizedidfee":
+                digestFunction = this.walletManager.spvBridge.changeCustomIDFeeCRCouncilMemberDigest;
+                break;
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
+        let digest = await digestFunction(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+        return Util.reverseHexToBE(digest);
     }
 
     private async creatTransactionFunction(payload: string, memo: string): Promise<string> {
@@ -166,6 +155,8 @@ export class CreateProposalPage {
                 return await this.voteService.sourceSubwallet.createReserveCustomIDTransaction(payload, memo);
             case "receivecustomizedid":
                 return await this.voteService.sourceSubwallet.createReceiveCustomIDTransaction(payload, memo);
+            case "changecustomizedidfee":
+                return await this.voteService.sourceSubwallet.createChangeCustomIDFeeTransaction(payload, memo);
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
@@ -180,12 +171,11 @@ export class CreateProposalPage {
 
         try {
             //Get payload
-            var payload = this.getPayload();
+            let payload = this.getPayload();
             Logger.log(App.CRPROPOSAL_VOTING, 'get payload', payload);
 
             //Get digest
-            var digest = await this.digestFunction(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
-            digest = Util.reverseHexToBE(digest);
+            let digest = await this.getDigest(JSON.stringify(payload));
 
             //Get did sign digest
             let ret = await this.signDigest(digest);
@@ -209,105 +199,6 @@ export class CreateProposalPage {
 
         this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
-    }
-
-    private getNormalPayload(): any {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            Type: 0,
-            CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            Budgets: [],
-            Recipient: data.recipient,
-        };
-
-        // Need to convert from the API "string" type to SPV SDK "int"...
-        let budgetTypes = {
-            imprest: 0,
-            normalpayment: 1,
-            finalpayment: 2
-        }
-
-        for (let suggestionBudget of data.budgets) {
-            payload.Budgets.push({
-                Type: budgetTypes[suggestionBudget.type.toLowerCase()],
-                Stage: suggestionBudget.stage,
-                Amount: suggestionBudget.amount
-            });
-        }
-
-        return payload;
-    }
-
-    private getChangeOwnerPayload(): any {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            TargetProposalHash: data.targetproposalhash,
-            NewRecipient: data.newrecipient,
-            NewOwnerPublicKey: data.newownerpublickey,
-            NewOwnerSignature: data.newownersignature,
-        };
-        return payload;
-    }
-
-    private getTerminatePayload(): any {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            TargetProposalHash: data.targetproposalhash,
-        };
-        return payload;
-    }
-
-    private getSecretaryGeneralPayload(): any {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
-            SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
-            SecretaryGeneralSignature: data.secretarygenerasignature,
-        };
-
-        return payload;
-    }
-
-    private getReserveCustomizeDidPayload(): any {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            ReservedCustomIDList: this.suggestionDetail.reservedCustomizedIDList,
-        };
-
-        return payload;
-    }
-
-    private getReceiveCustomizeDidPayload(): any {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            ReceivedCustomIDList: this.suggestionDetail.receivedCustomizedIDList,
-            ReceiverDID: this.suggestionDetail.receiverDID,
-        };
-
-        return payload;
     }
 
     async signDigest(digest: string): Promise<string> {

@@ -194,12 +194,6 @@ export class SuggestionDetailPage {
                 active: true
             },
             {
-                title: this.translate.instant('crproposalvoting.url'),
-                type: 'original-url',
-                value: this.suggestion.originalURL,
-                active: true
-            },
-            {
                 title: this.translate.instant('crproposalvoting.receive-address'),
                 type: 'receive-address',
                 value: this.suggestion.recipient,
@@ -221,6 +215,24 @@ export class SuggestionDetailPage {
                 title: this.translate.instant('crproposalvoting.receiver-did'),
                 type: 'receive-address',
                 value: this.suggestion.receiverDID,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.rate-of-customized-id-fee'),
+                type: 'number',
+                value: this.suggestion.rateOfCustomizedIDFee,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.eid-effective-height'),
+                type: 'number',
+                value: this.suggestion.EIDEffectiveHeight,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.url'),
+                type: 'original-url',
+                value: this.suggestion.originalURL,
                 active: true
             },
         );

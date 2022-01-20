@@ -76,6 +76,8 @@ export class SuggestionDetail {
     reservedCustomizedIDList?: [string];
     receivedCustomizedIDList?: [string];
     receiverDID?: string;
+    rateOfCustomizedIDFee?: number;
+    EIDEffectiveHeight?: number;
 }
 
 export type SuggestionDetailResponse = {

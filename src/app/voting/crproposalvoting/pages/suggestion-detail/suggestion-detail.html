@@ -25,6 +25,7 @@
                         <ion-col *ngIf="item.active" class="details-col" size="12" [ngSwitch]="item.type">
                             <div *ngSwitchCase="'innerHtml'" class="item" [innerHtml]="item.value"></div>
                             <div *ngSwitchCase="'array'" class="item" [innerHtml]="item.value"></div>
+                            <div *ngSwitchCase="'number'" class="item">{{ item.value }}</div>
 
                             <div *ngSwitchCase="'type'" class="item">
                                 <h4>{{ 'crproposalvoting.proposaltype-' + item.value | translate }}</h4>

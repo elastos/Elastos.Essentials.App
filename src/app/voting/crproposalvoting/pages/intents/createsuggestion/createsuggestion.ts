@@ -110,8 +110,12 @@ export class CreateSuggestionPage {
         try {
             // Create the suggestion/proposal digest - ask the SPVSDK to do this with a silent intent.
 
+            //Get payload
+            let payload = this.suggestionService.getPayload(this.proposaltype, this.onGoingCommand.data);
+            Logger.log(App.CRPROPOSAL_VOTING, 'get payload', payload);
+
             //Get digest
-            let digest = await this.getDigest();
+            let digest = await this.getDigest(JSON.stringify(payload));
             Logger.log(App.CRSUGGESTION, "Got proposal digest.", digest);
 
             //Sign Suggestion Digest As JWT
@@ -158,135 +162,35 @@ export class CreateSuggestionPage {
         return result.responseJWT;
     }
 
-    private async getNormalDigest(): Promise<any> {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            Type: 0,
-            CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            Budgets: [],
-            Recipient: data.recipient
-        };
-
-        // Need to convert from the API "string" type to SPV SDK "int"...
-        let budgetTypes = {
-            imprest: 0,
-            normalpayment: 1,
-            finalpayment: 2
-        }
-
-        for (let suggestionBudget of data.budgets) {
-            payload.Budgets.push({
-                Type: budgetTypes[suggestionBudget.type.toLowerCase()],
-                Stage: suggestionBudget.stage,
-                Amount: suggestionBudget.amount
-            });
-        }
-
-        Logger.log(App.CRSUGGESTION, "getNormalDigest.", payload);
-
-        let digest = await this.walletManager.spvBridge.proposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
-        return Util.reverseHexToBE(digest);
-    }
-
-    private async getChangeOwnerDigest(): Promise<any> {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            TargetProposalHash: data.targetproposalhash,
-            NewRecipient: data.newrecipient,
-            NewOwnerPublicKey: data.newownerpublickey,
-        };
-
-        Logger.log(App.CRSUGGESTION, "getChangeOwnerDigest.", payload);
-        let digest = await this.walletManager.spvBridge.proposalChangeOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
-        return Util.reverseHexToBE(digest);
-    }
-
-    private async getTerminateDigest(): Promise<any> {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            TargetProposalHash: data.targetproposalhash,
-        };
-
-        Logger.log(App.CRSUGGESTION, "getTerminateDigest.", payload);
-        let digest = await this.walletManager.spvBridge.terminateProposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
-        return Util.reverseHexToBE(digest);
-    }
-
-    private async getSecretaryGeneralDigest(): Promise<any> {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata,
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
-            SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
-        };
-
-        Logger.log(App.CRSUGGESTION, "getSecretaryGeneralDigest.", payload);
-        let digest = await this.walletManager.spvBridge.proposalSecretaryGeneralElectionDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
-        return Util.reverseHexToBE(digest);
-    }
-
-    private async getReserveCustomizeDidDigest(): Promise<any> {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            ReservedCustomIDList: this.suggestionDetail.reservedCustomizedIDList,
-        };
-
-        Logger.log(App.CRSUGGESTION, "getReserveCustomizeDidDigest.", payload);
-        let digest = await this.walletManager.spvBridge.reserveCustomIDOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
-        return Util.reverseHexToBE(digest);
-    }
-
-    private async getReceiveCustomizeDidDigest(): Promise<any> {
-        let data = this.onGoingCommand.data;
-        let payload = {
-            CategoryData: data.categorydata || "",
-            OwnerPublicKey: data.ownerPublicKey,
-            DraftHash: data.draftHash,
-            DraftData: data.draftData,
-            ReceivedCustomIDList: this.suggestionDetail.receivedCustomizedIDList,
-            ReceiverDID: this.suggestionDetail.receiverDID,
-        };
-
-        Logger.log(App.CRSUGGESTION, "getReceiveCustomizeDidDigest.", payload);
-        let digest = await this.walletManager.spvBridge.receiveCustomIDOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
-        return Util.reverseHexToBE(digest);
-    }
-
-    private getDigest(): Promise<any> {
+    private async getDigest(payload: string): Promise<any> {
+        var digestFunction: any;
         switch (this.proposaltype) {
             case "normal":
-                return this.getNormalDigest();
+                digestFunction = this.walletManager.spvBridge.proposalOwnerDigest;
+                break;
             case "changeproposalowner":
-                return this.getChangeOwnerDigest();
+                digestFunction = this.walletManager.spvBridge.proposalChangeOwnerDigest;
+                break;
             case "closeproposal":
-                return this.getTerminateDigest();
+                digestFunction = this.walletManager.spvBridge.terminateProposalOwnerDigest;
+                break;
             case "secretarygeneral":
-                return this.getSecretaryGeneralDigest();
+                digestFunction = this.walletManager.spvBridge.proposalSecretaryGeneralElectionDigest;
+                break;
             case "reservecustomizedid":
-                return this.getReserveCustomizeDidDigest();
+                digestFunction = this.walletManager.spvBridge.reserveCustomIDOwnerDigest;
+                break;
             case "receivecustomizedid":
-                return this.getReceiveCustomizeDidDigest();
+                digestFunction = this.walletManager.spvBridge.receiveCustomIDOwnerDigest;
+                break;
+            case "changecustomizedidfee":
+                digestFunction = this.walletManager.spvBridge.changeCustomIDFeeOwnerDigest;
+                break;
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
+        let digest = await digestFunction(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+        return Util.reverseHexToBE(digest);
     }
 
     private async exitIntentWithSuccess() {
