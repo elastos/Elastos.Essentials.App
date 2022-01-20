@@ -257,6 +257,13 @@ export const en = {
         "eth-gasprice": "Gas Price(GWEI)",
         "eth-gaslimit": "Gas Limit",
 
+        /**************************
+        * Token chooser component *
+        ***************************/
+
+        'select-a-token': 'Select a token',
+        'select-token-intro': 'Which token would you like to use next?',
+
         /********************************************** Wallet Settings Screens ***********************************************/
 
         /***********************

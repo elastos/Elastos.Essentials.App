@@ -61,6 +61,7 @@ export const zh = {
     'about-you': '关于你',
     'profile-hint': '如果发布，您的头像和姓名将被其他人看到',
     'message': '消息',
+    'packet-message-placeholder': 'Happy Chinese New Year to you',
     'theme': '主题',
     'theme-hint': '选择自定义的红包主题',
     'theme-default': '默认',
