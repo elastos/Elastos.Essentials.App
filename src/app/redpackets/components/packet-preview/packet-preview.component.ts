@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
@@ -7,6 +7,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { GrabStatus } from '../../model/grab.model';
 import { Packet, TokenType } from '../../model/packets.model';
 import { DIDService } from '../../services/did.service';
@@ -17,7 +18,7 @@ import { PacketService } from '../../services/packet.service';
     templateUrl: './packet-preview.component.html',
     styleUrls: ['./packet-preview.component.scss'],
 })
-export class PacketPreviewComponent {
+export class PacketPreviewComponent implements OnInit, OnDestroy {
     @ViewChild("icon") iconElement: ElementRef;
 
     @Input()
@@ -34,6 +35,7 @@ export class PacketPreviewComponent {
 
     // Model
     public _packet: Packet = null;
+    private activeWalletAddress: string;
 
     // UI Model
     public creator = ""; // Packet creator's name
@@ -52,16 +54,20 @@ export class PacketPreviewComponent {
         public globalNotifications: GlobalNotificationsService,
         private didService: DIDService,
         private uiService: UiService,
+        private walletService: WalletService,
         public packetService: PacketService
     ) { }
 
-    ionViewWillEnter() {
+    async ngOnInit() {
+        if (this.walletService.getActiveNetworkWallet().getMainEvmSubWallet())
+            this.activeWalletAddress = await this.walletService.getActiveNetworkWallet().getMainEvmSubWallet().createAddress();
+
         this.grabbedPacketsSubscription = this.packetService.grabbedPackets.subscribe(grabbedPackets => {
             this.updatePacketStatus();
         });
     }
 
-    ionViewWillLeave() {
+    ngOnDestroy() {
         this.grabbedPacketsSubscription.unsubscribe();
     }
 
@@ -72,6 +78,15 @@ export class PacketPreviewComponent {
                 this.creator = userInfo && userInfo.name ? userInfo.name : TranslationService.instance.translateInstant("redpackets.anonymous");
             });
         }
+    }
+
+    public activeWalletIsCreator(): boolean {
+        if (!this._packet)
+            return false;
+
+        console.log("activeWalletAddress", this.activeWalletAddress, "this._packet.creatorAddress", this._packet.creatorAddress)
+
+        return this._packet.creatorAddress === this.activeWalletAddress;
     }
 
     public onClicked() {
