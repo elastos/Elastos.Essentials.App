@@ -1,14 +1,14 @@
 @import "../../root.scss";
 
 .redpacket-button {
-  --background: linear-gradient(140.79deg, #920E0E -7.72%, #EE5147 143.51%);
-  --background-activated: #920E0E;
+  --background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
+  --background-activated: #920e0e;
   border-radius: 15px;
 }
 
 .redpacket-section-header {
-  padding: 10px 0 10px;
-  color: #FFFFFF;
+  padding: 10px 5px 10px;
+  color: #ffffff;
   display: flex;
   flex-direction: row;
 
@@ -70,12 +70,11 @@
   }
 }
 
-
 .redpacket-element {
   .redpacket-element-title {
     font-size: 12px;
     line-height: 160%;
-    color: #C9C9C9;
+    color: #c9c9c9;
   }
   .redpacket-element-name {
     font-size: 13px;
