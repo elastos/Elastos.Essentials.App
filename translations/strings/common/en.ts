@@ -46,6 +46,7 @@ export const en = {
         'name-is-missing': "Please enter a name",
         'error': 'Error',
         'sentry-message': 'Sorry, the application encountered an error. This has been reported to the team.',
+        'network-or-server-error': 'Network or server error, please try again later!',
 
         // Related to DID
         'sign-in': 'Sign In',

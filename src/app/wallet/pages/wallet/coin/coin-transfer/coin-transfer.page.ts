@@ -29,7 +29,9 @@ import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
+import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -244,7 +246,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     this.gasLimit = status.gasLimit;
                     this.nonce = status.nonce;
                     // Do Transaction
-                    void await this.transaction();
+                    await this.transaction();
                     // Reset gas price.
                     this.gasPrice = null;
                     this.gasLimit = null;
@@ -346,14 +348,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         // Call dedicated api to the source subwallet to generate the appropriate transaction type.
         // For example, ERC20 token transactions are different from standard coin transactions (for now - as
         // the spv sdk doesn't support ERC20 yet).
-        const rawTx = await this.fromSubWallet.createPaymentTransaction(
-            this.toAddress, // User input address
-            new BigNumber(this.amount), // User input amount
-            this.memo, // User input memo
-            this.gasPrice,
-            this.gasLimit,
-            this.nonce
-        );
+        let rawTx = null;
+        try {
+            rawTx = await this.fromSubWallet.createPaymentTransaction(
+                this.toAddress, // User input address
+                new BigNumber(this.amount), // User input amount
+                this.memo, // User input memo
+                this.gasPrice,
+                this.gasLimit,
+                this.nonce
+            );
+        } catch (err) {
+            await this.parseException(err);
+        }
         await this.native.hideLoading();
         if (rawTx) {
             const transfer = new Transfer();
@@ -396,13 +403,17 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async createRechargeTransaction() {
         await this.native.showLoading(this.translate.instant('common.please-wait'));
 
-        const rawTx =
-            await (this.fromSubWallet as MainAndIDChainSubWallet).createDepositTransaction(
-                this.coinTransferService.toSubWalletId as StandardCoinName, // To subwallet id
-                this.toAddress, // to address
-                this.amount, // User input amount
-                this.memo // Memo, not necessary
-            );
+        let rawTx = null;
+        try {
+            rawTx = await (this.fromSubWallet as MainAndIDChainSubWallet).createDepositTransaction(
+                    this.coinTransferService.toSubWalletId as StandardCoinName, // To subwallet id
+                    this.toAddress, // to address
+                    this.amount, // User input amount
+                    this.memo // Memo, not necessary
+                );
+        } catch (err) {
+            await this.parseException(err);
+        }
 
         await this.native.hideLoading();
 
@@ -427,14 +438,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * From sidechain (ID, ETH) to mainchain
      */
     async createWithdrawTransaction() {
-        const rawTx = await this.fromSubWallet.createWithdrawTransaction(
-            this.toAddress,
-            this.amount,
-            this.memo,
-            this.gasPrice,
-            this.gasLimit,
-            this.nonce
-        );
+        let rawTx = null;
+        try {
+            rawTx = await this.fromSubWallet.createWithdrawTransaction(
+                this.toAddress,
+                this.amount,
+                this.memo,
+                this.gasPrice,
+                this.gasLimit,
+                this.nonce
+            );
+        } catch (err) {
+            await this.parseException(err);
+        }
 
         if (rawTx) {
             const transfer = new Transfer();
@@ -626,6 +642,16 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             }
         } catch (error) {
             this.native.toast_trans('wallet.not-a-valid-address');
+        }
+    }
+
+    private async parseException(err) {
+        Logger.error('wallet', "transaction error:", err);
+        let reworkedEx = WalletExceptionHelper.reworkedWeb3Exception(err);
+        if (reworkedEx instanceof Web3Exception) {
+            await this.walletManager.popupProvider.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
+        } else {
+            await this.walletManager.popupProvider.ionicAlert("wallet.transaction-fail", err.message);
         }
     }
 

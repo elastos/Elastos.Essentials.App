@@ -46,6 +46,7 @@ export const it = {
         'name-is-missing': 'Inserisci un nome per favore',
         'error': 'Errore',
         'sentry-message': 'Spiacenti, l\'applicazione ha riscontrato un errore. Il team di sviluppo è stato informato.',
+        'network-or-server-error': 'Network or server error, please try again later!',
 
         // Related to DID
         'sign-in': 'Accedi',
