@@ -2,11 +2,12 @@
   (click)="onClicked()">
   <!-- First column - the red packet icon -->
   <ion-col size="2" class="redpacket-inline-first-col icon">
-    <img src="assets/redpackets/images/packet.png" alt="Packet icon" />
+    <img src="assets/redpackets/images/packet.png" alt="Packet icon" *ngIf="!packetWasOpened" />
+    <img src="assets/redpackets/images/packet-opened.png" alt="Packet icon" *ngIf="packetWasOpened" />
   </ion-col>
 
   <!-- Second column - the red packet infos -->
-  <ion-col size="8" class="redpacket-inline-second-col">
+  <ion-col size="6" class="redpacket-inline-second-col">
     <div class="first-line">{{ creator }}</div>
     <div class="second-line">{{ _packet.message }}</div>
     <div class="third-line">
@@ -24,16 +25,23 @@
           d="M7.30692 7.38927L8.86366 6.49042L10.4204 5.58635L8.86366 4.6875L7.30692 5.58635L5.75018 4.6875L4.19336 5.58635L5.75018 6.49042L7.30692 7.38927Z"
           fill="black" />
       </svg>
-      <span class="dot-separator">&bull;</span>
-      <!-- <div *ngIf="!_packet.isActive" class="inactive">
-        Not active yet
-      </div> -->
+    </div>
+    <div *ngIf="!_packet.isActive" class="fourth-line inactive">
+      Not active yet
     </div>
   </ion-col>
 
-  <!-- Third column - the red packet published icon -->
-  <ion-col size="2" class="redpacket-inline-last-col">
-    <img class="published-icon" src="assets/redpackets/images/message.svg" alt="Message icon" />
+  <!-- Third column -->
+  <ion-col size="4" class="redpacket-inline-last-col">
+    <!-- Packet can be opened, and not opened yet? Show an enveloppe -->
+    <img class="published-icon" src="assets/redpackets/images/message.svg" alt="Message icon"
+      *ngIf="_packet.isActive && !packetWasOpened" />
+
+    <!-- Packet was opened and won? Show the earned coins -->
+    <div class="earned-coins" *ngIf="packetWasOpened && walletWonThePacket">
+      <img src="assets/redpackets/images/coins.svg" style="margin-right: 5px" alt="Coin icon" />
+      <div class="amount">{{ wonAmount }}<br />{{ wonSymbol }}</div>
+    </div>
   </ion-col>
 
   <ion-ripple-effect></ion-ripple-effect>

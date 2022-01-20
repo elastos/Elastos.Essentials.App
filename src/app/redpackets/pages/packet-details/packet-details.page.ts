@@ -207,7 +207,11 @@ export class PacketDetailsPage implements OnInit {
   }
 
   public getEarnedAmount(): string {
-    return new BigNumber(this.activeWalletAsWinner.winner.winningAmount).toFixed(5);
+    return this.getWinnerAmount(this.activeWalletAsWinner);
+  }
+
+  public getWinnerAmount(winner: WinnerDisplayEntry): string {
+    return this.uiService.getFixedBalance(new BigNumber(winner.winner.winningAmount));
   }
 
   public getEarnedTokenSymbol(): string {
@@ -312,10 +316,6 @@ export class PacketDetailsPage implements OnInit {
         packetHash: this.packet.hash
       }
     });
-  }
-
-  public getWinnerAmount(winner: WinnerDisplayEntry): string {
-    return this.uiService.getFixedBalance(new BigNumber(winner.winner.winningAmount));
   }
 
   async openGrabModal() {
