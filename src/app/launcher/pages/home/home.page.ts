@@ -244,7 +244,8 @@ export class HomePage implements OnInit {
     });
 
     this.publicRedPacketsSubscription = this.packetService.publicPackets.subscribe(publicPackets => {
-      this.publicRedPackets = publicPackets;
+      // Keep only the packets not grabbed by the user yet
+      this.publicRedPackets = publicPackets.filter(p => !this.packetService.packetAlreadyGrabbed(p.hash));
     });
 
     //Logger.log("launcher", "Launcher home screen will enter completed")
