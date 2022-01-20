@@ -47,6 +47,7 @@ export const zh = {
         'name-is-missing': "请输入名称",
         'error': '错误',
         'sentry-message': '抱歉，程序出错了，已向开发团队报告。',
+        'network-or-server-error': '网络或服务器错误，请稍后重试!',
 
         // Related to DID
         'sign-in': '登录',

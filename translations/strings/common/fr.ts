@@ -46,6 +46,7 @@ export const fr = {
         'name-is-missing': "Veuillez saisir un nom",
         'error': 'Erreur',
         'sentry-message': 'Aie désolés... une erreur est apparue dans l\'application. L\'équipe de développement en a été informée.',
+        'network-or-server-error': 'Network or server error, please try again later!',
 
         // Related to DID
         'sign-in': 'Connexion',
