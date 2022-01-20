@@ -983,6 +983,31 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    // Proposal Register side-chain
+    registerSidechainOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.registerSidechainOwnerDigest([masterWalletId, subWalletId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("registerSidechainOwnerDigest", err, reject); });
+        });
+    }
+
+    registerSidechainCRCouncilMemberDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.registerSidechainCRCouncilMemberDigest([masterWalletId, subWalletId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("registerSidechainCRCouncilMemberDigest", err, reject); });
+        });
+    }
+
+    createRegisterSidechainTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.createRegisterSidechainTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("createRegisterSidechainTransaction", err, reject); });
+        });
+    }
+
     // Change Custom ID Fee
     changeCustomIDFeeOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
