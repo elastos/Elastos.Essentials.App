@@ -92,7 +92,7 @@
         <!-- Creator info -->
         <div class="redpacket-info-header-avatar" *ngIf="!fetchingCreator">
           <ion-avatar *ngIf="!creatorAvatar" class="noAvatar">
-            <img src="assets/launcher/default/darkmode/default-avatar.svg" alt="Default avatar">
+            <img src="assets/redpackets/images/default-avatar.png" alt="Default avatar">
           </ion-avatar>
           <ion-avatar *ngIf="creatorAvatar" class="hasAvatar">
             <img [src]="creatorAvatar" alt="User avatar">
@@ -138,7 +138,7 @@
       <!-- First column - the red packet icon -->
       <ion-col size="2" class="redpacket-inline-first-col redpacket-user-profile-image">
         <ion-avatar *ngIf="!winner.avatarUrl" class="noAvatar">
-          <img src="assets/launcher/default/darkmode/default-avatar.svg" alt="Default avatar">
+          <img src="assets/redpackets/images/default-avatar.png" alt="Default avatar">
         </ion-avatar>
         <ion-avatar *ngIf="winner.avatarUrl" class="hasAvatar">
           <img [src]="winner.avatarUrl" alt="User avatar">
