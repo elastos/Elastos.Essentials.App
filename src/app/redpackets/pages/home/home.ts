@@ -82,8 +82,11 @@ export class HomePage {
     // todo: why is this returning packets that are not mine ?
     const myPacketsResponse = this.packetService.getMyPackets();
     this.myPackets = myPacketsResponse.length > 3 ? myPacketsResponse.slice(0, 4) : myPacketsResponse;
+    console.log("my packets", this.myPackets)
 
-    this.openedPacketsSubscriptions = this.packetService.openedPackets.subscribe(openedPackets => {
+    this.openedPacketsSubscriptions = this.packetService.grabbedPackets.subscribe(grabbedPackets => {
+      // Note: filtering for undefined "packet" in grabbed packets - normally not needed, but legacy bug
+      let openedPackets = grabbedPackets.filter(gp => gp.packet).map(gp => Packet.fromSerializedPacket(gp.packet));
       this.openedPackets = openedPackets.length > 3 ? openedPackets.slice(0, 4) : openedPackets;
       this.fetchingOpenedPackets = false;
     });

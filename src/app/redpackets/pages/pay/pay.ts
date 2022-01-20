@@ -301,7 +301,7 @@ export class PayPage {
               if (notifiedPaymentStatus.confirmed) {
                 // Payment is confirmed by the backend
                 this.packet.paymentStatus.nativeToken = notifiedPaymentStatus.payment;
-                this.checkAllPaymentsCompleted();
+                await this.checkAllPaymentsCompleted();
               }
               else {
                 // Payment could not be confirmed by the backend
@@ -392,7 +392,7 @@ export class PayPage {
               if (notifiedPaymentStatus.confirmed) {
                 // Payment is confirmed by the backend
                 this.packet.paymentStatus.erc20Token = notifiedPaymentStatus.payment;
-                this.checkAllPaymentsCompleted();
+                await this.checkAllPaymentsCompleted();
               }
               else {
                 // Payment could not be confirmed by the backend
@@ -425,8 +425,12 @@ export class PayPage {
     console.log("after erc20 payment");
   }
 
-  private checkAllPaymentsCompleted() {
+  private async checkAllPaymentsCompleted(): Promise<void> {
     if (this.areAllPaymentsCompleted()) {
+      // Update local cache with latest info (ie: isActive, paymentStatus) - fetch a fresh status
+      this.packet = await this.packetService.getPacketInfo(this.packet.hash);
+      await this.packetService.updateToMyPackets(this.packet);
+
       // As we've just finished funding a new packet, if this is a public, we reload the public packets
       // to get a fresh list on the home screen
       if (this.packet.visibility == PacketVisibility.PUBLIC) {
