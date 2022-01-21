@@ -19,7 +19,7 @@ export const zh = {
     'wrong-captcha': '验证码错误，请重试',
     'error-captcha-is-required': '请输入验证码以继续',
     'not-active-yet': '未激活',
-    'ip-rate-limitation': 'Hey, don\'t grab packets too quickly, please wait a few minutes',
+    'ip-rate-limitation': '抢红包过于频繁，请稍等几分钟',
 
     /*******
     * Home *
