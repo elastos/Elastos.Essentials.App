@@ -28,12 +28,12 @@ export class DIDService {
   /**
    * From a given DID string, resolved the DID document and tries several ways to extract user
    * avatar and name.
-   * 
+   *
    * A behavior subject is returned as user information will likely arrive in several steps:
    * - name first
    * - then avatar later
    */
-  public fetchUserInformation(did: string): BehaviorSubject<UserInfo> {
+  public fetchUserInformation(did: string, retrieveAvatar = true): BehaviorSubject<UserInfo> {
     Logger.log("redpackets", "Fetching user information", did);
 
     // No info at first
@@ -47,30 +47,39 @@ export class DIDService {
 
         if (docStatus.document) {
           let userName = this.didDocumentsService.getRepresentativeOwnerName(docStatus.document);
-          // Get the issuer icon
-          let representativeIconSubject = this.didDocumentsService.getRepresentativeIcon(docStatus.document);
-          if (representativeIconSubject) {
-            Logger.log("redpackets", "Waiting to receive the DID representative icon");
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            representativeIconSubject.subscribe(async iconBuffer => {
-              if (iconBuffer) {
-                subject.next({
-                  did: did,
-                  name: userName,
-                  avatarDataUrl: await rawImageToBase64DataUrl(iconBuffer)
-                });
-              }
-              else {
-                subject.next({
-                  did: did,
-                  name: userName,
-                  avatarDataUrl: null
-                });
-              }
-            });
+          if (retrieveAvatar) {
+            // Get the issuer icon
+            let representativeIconSubject = this.didDocumentsService.getRepresentativeIcon(docStatus.document);
+            if (representativeIconSubject) {
+              Logger.log("redpackets", "Waiting to receive the DID representative icon");
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
+              representativeIconSubject.subscribe(async iconBuffer => {
+                if (iconBuffer) {
+                  subject.next({
+                    did: did,
+                    name: userName,
+                    avatarDataUrl: await rawImageToBase64DataUrl(iconBuffer)
+                  });
+                }
+                else {
+                  subject.next({
+                    did: did,
+                    name: userName,
+                    avatarDataUrl: null
+                  });
+                }
+              });
+            }
+            else {
+              console.warn("No representative icon for DID", did);
+              subject.next({
+                did: did,
+                name: userName
+              });
+            }
           }
           else {
-            console.warn("No representative icon for DID", did);
+            console.warn("Requested to not fetch a representative icon", did);
             subject.next({
               did: did,
               name: userName

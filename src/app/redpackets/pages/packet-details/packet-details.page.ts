@@ -272,7 +272,7 @@ export class PacketDetailsPage implements OnInit {
 
       if (winner.userDID) {
         // Async
-        this.didService.fetchUserInformation(winner.userDID).subscribe(userInfo => {
+        this.didService.fetchUserInformation(winner.userDID, false).subscribe(userInfo => {
           if (userInfo) {
             //console.log("Got winner user info", userInfo);
             if (userInfo.name)
