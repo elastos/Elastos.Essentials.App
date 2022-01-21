@@ -34,9 +34,11 @@
   }
 }
 .redpacket-view-header {
-  background-size: cover !important;
+  height: 0;
+  padding: 0 0 100%;
   background-repeat: no-repeat !important;;
-  aspect-ratio: 1 / 1 !important;;
+  background-position: center center;
+  background-size: 100%;
   display: flex;
   justify-content: center;
 }
