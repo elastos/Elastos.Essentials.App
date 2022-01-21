@@ -13,4 +13,8 @@
 .earned-coins {
   display: flex;
   margin-right: 10px;
+
+  .amount {
+    text-align: left;
+  }
 }
