@@ -18,6 +18,7 @@ export const fr = {
     'enter-captcha-placeholder': 'Saisir le captcha pour ouvrir le paquet',
     'wrong-captcha': 'Mauvais captcha, essayez à nouveau',
     'error-captcha-is-required': 'Recopier le captcha pour continuer',
+    'not-active-yet': 'Pas encore finalisé',
 
     /*******
     * Home *
@@ -61,7 +62,7 @@ export const fr = {
     'about-you': 'A propos de vous',
     'profile-hint': 'Si publié, votre avatar et nom seront visibles avec le paquet.',
     'message': 'Message',
-    'packet-message-placeholder': 'Ex: Joyeuse année du Tigre!',
+    'packet-message-placeholder': 'Ex: Joyeuse année du tigre!',
     'theme': 'Thème',
     'theme-hint': 'Personnalisez l\'apparence des paquets ouvert, en fonction d\'occasions spéciales.',
     'theme-default': 'Par défault',
