@@ -163,33 +163,35 @@ export class CreateSuggestionPage {
     }
 
     private async getDigest(payload: string): Promise<any> {
-        var digestFunction: any;
+        let digest: string;
         switch (this.proposaltype) {
             case "normal":
-                digestFunction = this.walletManager.spvBridge.proposalOwnerDigest;
+                digest = await this.walletManager.spvBridge.proposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;
             case "changeproposalowner":
-                digestFunction = this.walletManager.spvBridge.proposalChangeOwnerDigest;
+                digest = await this.walletManager.spvBridge.proposalChangeOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;
             case "closeproposal":
-                digestFunction = this.walletManager.spvBridge.terminateProposalOwnerDigest;
+                digest = await this.walletManager.spvBridge.terminateProposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;
             case "secretarygeneral":
-                digestFunction = this.walletManager.spvBridge.proposalSecretaryGeneralElectionDigest;
+                digest = await this.walletManager.spvBridge.proposalSecretaryGeneralElectionDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;
             case "reservecustomizedid":
-                digestFunction = this.walletManager.spvBridge.reserveCustomIDOwnerDigest;
+                digest = await this.walletManager.spvBridge.reserveCustomIDOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;
             case "receivecustomizedid":
-                digestFunction = this.walletManager.spvBridge.receiveCustomIDOwnerDigest;
+                digest = await this.walletManager.spvBridge.receiveCustomIDOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;
             case "changecustomizedidfee":
-                digestFunction = this.walletManager.spvBridge.changeCustomIDFeeOwnerDigest;
+                digest = await this.walletManager.spvBridge.changeCustomIDFeeOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+                break;
+            case "registersidechain":
+                digest = await this.walletManager.spvBridge.registerSidechainOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
-        let digest = await digestFunction(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
         return Util.reverseHexToBE(digest);
     }
 

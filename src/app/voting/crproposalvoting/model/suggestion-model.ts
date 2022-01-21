@@ -78,6 +78,15 @@ export class SuggestionDetail {
     receiverDID?: string;
     rateOfCustomizedIDFee?: number;
     EIDEffectiveHeight?: number;
+
+    //SideChain Info
+    sideChainName?: string;
+    magicNumber?: number;
+    genesisHash?: string;
+    exchangeRate?: number;
+    effectiveHeight?: number;
+    resourcePath?: string;
+    otherInfo?: string;
 }
 
 export type SuggestionDetailResponse = {

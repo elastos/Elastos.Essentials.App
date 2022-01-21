@@ -229,6 +229,49 @@ export class SuggestionDetailPage {
                 value: this.suggestion.EIDEffectiveHeight,
                 active: true
             },
+            //SideChain Info
+            {
+                title: this.translate.instant('crproposalvoting.side-chain-name'),
+                type: 'innerHtml',
+                value: this.suggestion.sideChainName,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.magic-number'),
+                type: 'number',
+                value: this.suggestion.magicNumber,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.genesis-hash'),
+                type: 'hash',
+                value: this.suggestion.genesisHash,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.exchange-rate'),
+                type: 'number',
+                value: this.suggestion.exchangeRate,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.effective-height'),
+                type: 'innerHtml',
+                value: this.suggestion.effectiveHeight,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.resource-path'),
+                type: 'innerHtml',
+                value: this.suggestion.resourcePath,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.other-info'),
+                type: 'innerHtml',
+                value: this.suggestion.otherInfo ? marked(this.suggestion.otherInfo) : null,
+                active: true
+            },
             {
                 title: this.translate.instant('crproposalvoting.url'),
                 type: 'original-url',

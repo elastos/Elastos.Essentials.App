@@ -268,6 +268,19 @@ export class SuggestionService {
         return payload;
     }
 
+    private getRegisterSideChainPayload(data: any): any {
+        let payload = this.getPayloadCommon(data);
+        payload.SidechainInfo = {
+                SideChainName: data.sideChainName,
+                MagicNumber: data.magicNumber,
+                GenesisHash: data.genesisHash,
+                ExchangeRate: data.exchangeRate,
+                EffectiveHeight: data.effectiveHeight,
+                ResourcePath: data.resourcePath,
+        }
+        return payload;
+    }
+
     public getPayload(proposaltype: string, data: any) {
         switch (proposaltype) {
             case "normal":
@@ -284,6 +297,8 @@ export class SuggestionService {
                 return this.getReceiveCustomizeDidPayload(data);
             case "changecustomizedidfee":
                 return this.getChangeCustomIDFeeOwnerPayload(data);
+            case "registersidechain":
+                return this.getRegisterSideChainPayload(data);
             default:
                 throw new Error("Don't support this type: " + proposaltype);
         }
