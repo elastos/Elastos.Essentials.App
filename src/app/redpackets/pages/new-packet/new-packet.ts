@@ -159,7 +159,7 @@ export class NewPacketPage {
       return false;
     }
 
-    if (!this.expirationDays || this.expirationDays > 7) {
+    if (!this.expirationDays || this.expirationDays < 1 || this.expirationDays > 7) {
       void this.formErr(this.translate.instant("redpackets.error-invalid-expiration-time"));
       return false;
     }
