@@ -19,6 +19,7 @@ export const fr = {
     'wrong-captcha': 'Mauvais captcha, essayez à nouveau',
     'error-captcha-is-required': 'Recopier le captcha pour continuer',
     'not-active-yet': 'Pas encore finalisé',
+    'ip-rate-limitation': 'Hey, laissez quelques paquets pour les autres, attendez quelques minutes SVP',
 
     /*******
     * Home *

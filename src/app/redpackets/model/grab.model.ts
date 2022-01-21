@@ -6,6 +6,7 @@ export enum GrabStatus {
   GRABBED = "grabbed", // Packet was won
   MISSED = "missed", // There were remaining packetss, but failed to win one
   DEPLETED = "depleted", // There were no more packets available
+  TOO_MANY_REQUEST = "too_many_request" // 429 HTTP error converted to a client side GrabStatus
 }
 
 export type GrabRequest = {
