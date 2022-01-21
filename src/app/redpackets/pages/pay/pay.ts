@@ -440,11 +440,13 @@ export class PayPage {
   }
 
   public openPacketDetails() {
-    // Use navigateRoot to make sure used doesn't come back to the pay step once payment is completed.
-    void this.globalNavService.navigateRoot(App.RED_PACKETS, "/redpackets/packet-details", {
+    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/packet-details", {
       state: {
         packet: this.packet
       }
     });
+
+    // Remove the packet payment screen from the history to not come back
+    this.globalNavService.clearIntermediateRoutes(["/redpackets/pay"]);
   }
 }
