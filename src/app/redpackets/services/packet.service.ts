@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ToastController } from "@ionic/angular";
 import { BehaviorSubject, Subscription } from "rxjs";
@@ -200,6 +200,15 @@ export class PacketService {
       return grabResponse;
     }
     catch (err) {
+      if (err instanceof HttpErrorResponse) {
+        if (err.status == 429) { // Too many requests - IP rate limitation
+          return {
+            status: GrabStatus.TOO_MANY_REQUEST
+          };
+        }
+      }
+
+      // All other cases
       Logger.error("redpackets", "Grab packet with captcha request failure", err);
       return null;
     }

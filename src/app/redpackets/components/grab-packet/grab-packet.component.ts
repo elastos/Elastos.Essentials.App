@@ -91,6 +91,11 @@ export class GrabPacketComponent {
                 this.grabEventEmitter.emit(GrabStatus.DEPLETED)
                 void this.closeModal();
             }
+            else if (grabResponse.status === GrabStatus.TOO_MANY_REQUEST) {
+                void this.globalNativeServce.genericToast(this.translate.instant("redpackets.ip-rate-limitation"), 2000);
+                this.grabEventEmitter.emit(GrabStatus.TOO_MANY_REQUEST)
+                void this.closeModal();
+            }
         }
         else {
             // Unexpected error (such as already grabbed recently) - close the modal, user will have to try again later.
