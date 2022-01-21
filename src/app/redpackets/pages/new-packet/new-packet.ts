@@ -222,6 +222,8 @@ export class NewPacketPage {
           packetHash: this.createdPacket.hash
         }
       });
+      // Remove the packet creation screen from the history
+      this.globalNavService.clearIntermediateRoutes(["/redpackets/new"]);
     }
 
     this.creatingPacket = false;

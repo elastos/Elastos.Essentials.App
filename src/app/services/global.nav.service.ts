@@ -118,6 +118,15 @@ export class GlobalNavService {
     }
 
     /**
+     * Removes the given routes from the history, without navigating anywhere. 
+     * This is used to clear some routes where we don't want to go back in order to go back to the
+     * "screen before the previous screen" in some cases.
+     */
+    public clearIntermediateRoutes(routes: string[]) {
+        this.navigationHistory = this.navigationHistory.filter(step => routes.indexOf(step.route) < 0);
+    }
+
+    /**
      * Navigates back to the didSession home and clears the whole navigation history for all
      * contexts. Fresh restart.
      */
@@ -251,7 +260,7 @@ export class GlobalNavService {
                 }
                 resolve();
             });
-             await popover.present();
+            await popover.present();
         });
     }
 }

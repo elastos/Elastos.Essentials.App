@@ -254,6 +254,7 @@ export class PacketDetailsPage implements OnInit {
   private async fetchWinners() {
     this.fetchingWinners = true;
     let rawWinners: PacketWinner[] = await this.packetService.getPacketWinners(this.packet.hash);
+    // Winners are already sorted by most recent first by the backend.
     this.fetchingWinners = false;
 
     // For each winner, get DID information if any. During this time, we may display placeholders
