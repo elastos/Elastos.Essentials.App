@@ -261,8 +261,8 @@ export const zh = {
                 * Token chooser component *
                 ***************************/
 
-                'select-a-token': 'Select a token',
-                'select-token-intro': 'Which token would you like to use next?',
+                'select-a-token': '选择代币',
+                'select-token-intro': '您下一步要使用哪个代币?',
 
                 /********************************************** Wallet Settings Screens ***********************************************/
 
