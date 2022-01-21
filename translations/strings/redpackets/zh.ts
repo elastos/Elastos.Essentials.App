@@ -18,7 +18,7 @@ export const zh = {
     'enter-captcha-placeholder': '输入验证码以打开红包',
     'wrong-captcha': '验证码错误，请重试',
     'error-captcha-is-required': '请输入验证码以继续',
-    'not-active-yet': 'Not active yet',
+    'not-active-yet': '未激活',
 
     /*******
     * Home *
@@ -62,7 +62,7 @@ export const zh = {
     'about-you': '关于你',
     'profile-hint': '如果发布，您的头像和姓名将被其他人看到',
     'message': '消息',
-    'packet-message-placeholder': 'Happy Chinese New Year to you',
+    'packet-message-placeholder': '祝您新春快乐',
     'theme': '主题',
     'theme-hint': '选择自定义的红包主题',
     'theme-default': '默认',
@@ -89,9 +89,9 @@ export const zh = {
     * Packet details *
     ******************/
     'grabbing-packet': '正在抢红包...请稍候',
-    'packet-is-live': '您的红包已上线!',
-    'packet-is-not-live': '您的红包还未上线!',
-    'this-packet-is-not-live': '此红包尚未启用',
+    'packet-is-live': '您的红包已激活!',
+    'packet-is-not-live': '您的红包还未激活!',
+    'this-packet-is-not-live': '此红包尚未激活',
     'packet-is-expired': '此红包已过期',
     'error-retrieve-packet': '无法获取红包信息，请稍后重试',
     'grab-me': '抢!',
