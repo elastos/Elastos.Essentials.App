@@ -34,15 +34,13 @@
   }
 }
 .redpacket-view-header {
-  background-size: contain;
-  background-repeat: no-repeat;
-  aspect-ratio: 1 / 1;
-}
-
-.redpacket-view-header {
+  background-size: cover !important;
+  background-repeat: no-repeat !important;;
+  aspect-ratio: 1 / 1 !important;;
   display: flex;
   justify-content: center;
 }
+
 .redpacket-header-in-content {
   ion-avatar {
     margin: auto;
