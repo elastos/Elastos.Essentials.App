@@ -189,6 +189,12 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
    */
   public abstract createAddress(): Promise<string>;
 
+  public async isAddressValid(address: string) {
+    return await  this.masterWallet.walletManager.spvBridge.isSubWalletAddressValid(
+        this.masterWallet.id, this.id, address
+    );
+  }
+
   /**
    * Returns the path to the main icon representing the subwallet.
    * For standard subwallets, this is usually the network icon. For ERC20 subwallets,

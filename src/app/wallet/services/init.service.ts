@@ -7,6 +7,7 @@ import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { CryptoNameResolver } from '../model/address-resolvers';
+import { IdrissResolver } from '../model/address-resolvers/resolvers/IdrissAddressResolver';
 import { UnstoppableDomainsAddressResolver } from '../model/address-resolvers/resolvers/UnstoppableDomainsAddressResolver';
 import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/arbitrum.mainnet.network';
 import { AvalancheCChainMainNetNetwork } from '../model/networks/avalanchecchain/avalanchecchain.mainnet.network';
@@ -166,6 +167,7 @@ export class WalletInitService extends GlobalService {
   private registerNameResolvers() {
     this.nameResolvingService.registernameResolver(new CryptoNameResolver(this.httpClient));
     this.nameResolvingService.registernameResolver(new UnstoppableDomainsAddressResolver(this.httpClient));
+    this.nameResolvingService.registernameResolver(new IdrissResolver());
   }
 
   public async stop(): Promise<void> {

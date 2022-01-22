@@ -63,6 +63,13 @@ export class Util {
         return mPattern.test(text);
     }
 
+    // Start with phonenumber
+    // TODO: to improve
+    static startwithphonenumber(text): boolean {
+        const mPattern = /^[+0-9]+/;
+        return mPattern.test(text);
+    }
+
     static username(text): boolean {
         var uPattern = /^[a-zA-Z0-9_-]{4,16}$/;
         return uPattern.test(text);

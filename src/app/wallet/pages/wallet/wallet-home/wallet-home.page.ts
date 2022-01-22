@@ -62,7 +62,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', { static: false }) slider: IonSlides;
 
-    public masterWallet: MasterWallet = null;
     public networkWallet: NetworkWallet = null;
     private displayableSubWallets: AnySubWallet[] = null;
     public stakingAssets: StakingData[] = null;

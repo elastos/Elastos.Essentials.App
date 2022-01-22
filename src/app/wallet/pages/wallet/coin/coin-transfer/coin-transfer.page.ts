@@ -742,11 +742,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             return;
         }
 
-        // Quick and dirty way to not try to resolve a name when it's actually an address already, not name.
-        // Could be improved later.
-        if (enteredText.length > 20) {
-            return;
-        }
+        // // Quick and dirty way to not try to resolve a name when it's actually an address already, not name.
+        // // Could be improved later.
+        // if (enteredText.length > 20) {
+        //     return;
+        // }
 
         // Cryptoname
         if (enteredText.length >= 3) {
