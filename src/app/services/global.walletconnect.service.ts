@@ -70,7 +70,6 @@ export class GlobalWalletConnectService extends GlobalService {
         return;
 
       // Android receives the raw url.
-      // iOS receives a https://essentials.elastos.net/wc?uri=wc:xxxx
       if (receivedIntent.action === "rawurl") {
         if (receivedIntent.params && receivedIntent.params.url) { // NOTE: urL
           // Make sure this raw url coming from outside is for us
@@ -87,7 +86,14 @@ export class GlobalWalletConnectService extends GlobalService {
             }
           }
         }
+        else {
+          // Send empty intent response to unlock the intent service
+          void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
+        }
       }
+      // iOS receives:
+      // - https://essentials.elastos.net/wc?uri=wc:xxxx for real connections
+      // - optionally, https://essentials.elastos.net/wc to just "reappear", like on android - should not be handled
       else if (receivedIntent.action === "https://essentials.elastos.net/wc") {
         if (receivedIntent.params && receivedIntent.params.uri) { // NOTE: urI
           // Make sure this raw url coming from outside is for us
@@ -103,6 +109,10 @@ export class GlobalWalletConnectService extends GlobalService {
               void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
             }
           }
+        }
+        else {
+          // Send empty intent response to unlock the intent service
+          void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
         }
       }
     });
@@ -437,7 +447,7 @@ export class GlobalWalletConnectService extends GlobalService {
       await this.handleSignTypedDataRequest(connector, request);
     }
     else if (request.method.startsWith("personal_sign")) {
-        await this.handlePersonalSignRequest(connector, request);
+      await this.handlePersonalSignRequest(connector, request);
     }
     else {
       try {
