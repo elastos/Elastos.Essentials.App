@@ -42,7 +42,7 @@ export class GrabPacketComponent {
 
     private async sendGrabRequest() {
         this.fetchingGrabData = true;
-        this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet.hash, this.walletAddress);
+        this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet, this.walletAddress);
         this.fetchingGrabData = false;
 
         await this.handleGrabResponse(this.grabResponse);

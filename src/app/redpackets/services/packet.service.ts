@@ -162,14 +162,20 @@ export class PacketService {
       ));
   }
 
-  public async createGrabPacketRequest(packetHash: string, walletAddress: string): Promise<GrabResponse> {
-    Logger.log('redpackets', 'Grabbing packet', packetHash, walletAddress);
+  public async createGrabPacketRequest(packet: Packet, walletAddress: string): Promise<GrabResponse> {
+    Logger.log('redpackets', 'Grabbing packet', packet.hash, walletAddress);
     try {
       let grabRequest: GrabRequest = {
         walletAddress
       };
-      let grabResponse = await this.http.post<GrabResponse>(`${environment.RedPackets.serviceUrl}/packets/${packetHash}/grab`, grabRequest).toPromise();
+      let grabResponse = await this.http.post<GrabResponse>(`${environment.RedPackets.serviceUrl}/packets/${packet.hash}/grab`, grabRequest).toPromise();
       Logger.log('redpackets', 'Grab packet response', grabResponse);
+
+      // "Depleted" can be received instantly and must be saved to know that we tried to "open" the packet.
+      if (grabResponse.status === GrabStatus.DEPLETED) {
+        await this.saveGrabbedPacket(packet, grabResponse.status, grabResponse.earnedAmount);
+      }
+
       return grabResponse;
     }
     catch (err) {

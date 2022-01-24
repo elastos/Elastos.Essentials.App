@@ -196,7 +196,7 @@ export class PacketDetailsPage implements OnInit {
 
   private async sendInitialGrabRequest() {
     this.grabStatusChecked = false;
-    this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet.hash, this.walletAddress);
+    this.grabResponse = await this.packetService.createGrabPacketRequest(this.packet, this.walletAddress);
 
     if (this.grabResponse && this.grabResponse.status == GrabStatus.CAPTCHA_CHALLENGE) {
       // User needs to complete the captcha challenge to finalize the grab verification
