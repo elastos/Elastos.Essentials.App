@@ -70,4 +70,13 @@ export class ProposalDetails {
     EIDEffectiveHeight?: number;
 
     budgets: any;
+
+    //SideChain Info
+    sideChainName?: string;
+    magicNumber?: number;
+    genesisHash?: string;
+    exchangeRate?: number;
+    effectiveHeight?: number;
+    resourcePath?: string;
+    otherInfo?: string;
 }

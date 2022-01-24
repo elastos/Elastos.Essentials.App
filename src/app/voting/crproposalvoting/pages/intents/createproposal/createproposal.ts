@@ -161,7 +161,6 @@ export class CreateProposalPage {
                 return await this.voteService.sourceSubwallet.createChangeCustomIDFeeTransaction(payload, memo);
             case "registersidechain":
                 return await this.voteService.sourceSubwallet.createRegisterSidechainTransaction(payload, memo);
-                break;
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
