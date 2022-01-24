@@ -94,6 +94,7 @@ export class GlobalIntentService {
     else {
       // Already some intents being processed
       let rootIntentBeingProcessed = this.intentsBeingProcessed.find(i => !i.parentIntentId); // There should be always one, and only one root item
+      Logger.log("intents", "Root intent being processed:", rootIntentBeingProcessed);
       let childIntentsForRootIntent = this.intentsQueue.find(i => i.parentIntentId === rootIntentBeingProcessed.intent.intentId);
       if (childIntentsForRootIntent) {
         // A child intent from an active parent intent has been found, so we can process it.
@@ -128,15 +129,15 @@ export class GlobalIntentService {
     }
 
     try {
-        return await essentialsIntentManager.sendIntent(action, params);
+      return await essentialsIntentManager.sendIntent(action, params);
     }
     catch (err) {
-        // No Activity found to handle Intent
-        if (action !== "openurl") {
-            this.intentJustCreated = null;
-            this.intentsQueue.pop();
-        }
-        throw err;
+      // No Activity found to handle Intent
+      if (action !== "openurl") {
+        this.intentJustCreated = null;
+        this.intentsQueue.pop();
+      }
+      throw err;
     }
   }
 
@@ -149,13 +150,13 @@ export class GlobalIntentService {
     }
     this.intentsQueue.push(this.intentJustCreated);
     try {
-        return await essentialsIntentManager.sendUrlIntent(url)
+      return await essentialsIntentManager.sendUrlIntent(url)
     }
     catch (err) {
-        // No Activity found to handle Intent
-        this.intentJustCreated = null;
-        this.intentsQueue.pop();
-        throw err;
+      // No Activity found to handle Intent
+      this.intentJustCreated = null;
+      this.intentsQueue.pop();
+      throw err;
     }
   }
 
@@ -169,9 +170,9 @@ export class GlobalIntentService {
       this.intentsBeingProcessed.push(nextProcessableIntent);
 
       if (!this.unprocessedIntentInterval) {
-          this.unprocessedIntentInterval = setInterval(() => {
-              Logger.warn("Intents", "No intent response sent after several seconds!", this.intentsBeingProcessed);
-          }, 20000);
+        this.unprocessedIntentInterval = setInterval(() => {
+          Logger.warn("Intents", "No intent response sent after several seconds!", this.intentsBeingProcessed);
+        }, 20000);
       }
 
       this.intentListener.next(nextProcessableIntent.intent);
@@ -187,8 +188,8 @@ export class GlobalIntentService {
     this.intentsBeingProcessed.splice(this.intentsBeingProcessed.findIndex(i => i.intent.intentId === intentId), 1);
 
     if (this.intentsBeingProcessed.length === 0) {
-        clearInterval(this.unprocessedIntentInterval);
-        this.unprocessedIntentInterval = null;
+      clearInterval(this.unprocessedIntentInterval);
+      this.unprocessedIntentInterval = null;
     }
     if (navigateBack)
       await this.globalNav.exitCurrentContext();
