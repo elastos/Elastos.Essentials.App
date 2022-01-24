@@ -272,7 +272,7 @@ export class PacketDetailsPage implements OnInit {
 
       if (winner.userDID) {
         // Async
-        this.didService.fetchUserInformation(winner.userDID, false).subscribe(userInfo => {
+        this.didService.fetchUserInformation(winner.userDID).subscribe(userInfo => {
           if (userInfo) {
             //console.log("Got winner user info", userInfo);
             if (userInfo.name)
@@ -324,9 +324,9 @@ export class PacketDetailsPage implements OnInit {
     eventEmitter.subscribe(grabStatus => {
       if (grabStatus === GrabStatus.GRABBED) {
         this.justWon = true;
-      } else if (grabStatus.status === GrabStatus.MISSED) {
+      } else if (grabStatus === GrabStatus.MISSED) {
         this.justMissed = true;
-      } else if (grabStatus.status === GrabStatus.DEPLETED) {
+      } else if (grabStatus === GrabStatus.DEPLETED) {
         this.justNoMorePackets = true;
       }
 
