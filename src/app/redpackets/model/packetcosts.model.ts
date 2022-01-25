@@ -9,6 +9,7 @@ export type PacketCosts = {
   erc20Token?: { // Undefined if the packet contains native coin (no ERC20).
     redPacket: BigNumber; // Cost in token. Undefined if the packet contains no ERC20
     options: {
+      publicPacketFeesTokenPercent?: BigNumber;
       publicPacketFees: BigNumber; // Number of ERC20 tokens to pay for the "public packet" option, to the Essentials team
     },
     total: BigNumber; // Sum of all above costs
@@ -19,6 +20,8 @@ export type PacketCosts = {
     standardServiceFeesUSD: BigNumber; // Number of USD
     standardServiceFees: BigNumber; // Number of native tokens worth of USD to pay for the red packets services, to the Essentials team
     options: {
+      publicPacketFeesTokenPercent?: BigNumber;
+      publicPacketFeesUSD: BigNumber;
       publicPacketFees: BigNumber; // Number of native tokens to pay for the "public packet" option, to the Essentials team
     },
     total: BigNumber; // Sum of all above costs
@@ -33,6 +36,7 @@ export type SerializablePacketCosts = {
   erc20Token?: {
     redPacket: string;
     options: {
+      publicPacketFeesTokenPercent?: string;
       publicPacketFees: string;
     },
     total: string;
@@ -43,6 +47,8 @@ export type SerializablePacketCosts = {
     standardServiceFeesUSD: string;
     standardServiceFees: string;
     options: {
+      publicPacketFeesTokenPercent?: string;
+      publicPacketFeesUSD: string;
       publicPacketFees: string;
     },
     total: string;
@@ -54,6 +60,7 @@ export const deserializeCosts = (costs: SerializablePacketCosts): PacketCosts =>
     erc20Token: costs.erc20Token ? {
       redPacket: new BigNumber(costs.erc20Token.redPacket),
       options: {
+        publicPacketFeesTokenPercent: costs.erc20Token.options.publicPacketFeesTokenPercent ? new BigNumber(costs.erc20Token.options.publicPacketFeesTokenPercent) : undefined,
         publicPacketFees: new BigNumber(costs.erc20Token.options.publicPacketFees)
       },
       total: new BigNumber(costs.erc20Token.total)
@@ -64,6 +71,8 @@ export const deserializeCosts = (costs: SerializablePacketCosts): PacketCosts =>
       standardServiceFeesUSD: new BigNumber(costs.nativeToken.standardServiceFeesUSD),
       standardServiceFees: new BigNumber(costs.nativeToken.standardServiceFees),
       options: {
+        publicPacketFeesTokenPercent: costs.nativeToken.options.publicPacketFeesTokenPercent ? new BigNumber(costs.nativeToken.options.publicPacketFeesTokenPercent) : undefined,
+        publicPacketFeesUSD: new BigNumber(costs.nativeToken.options.publicPacketFeesUSD),
         publicPacketFees: new BigNumber(costs.nativeToken.options.publicPacketFees)
       },
       total: new BigNumber(costs.nativeToken.total)
@@ -76,6 +85,7 @@ export const serializeCosts = (costs: PacketCosts): SerializablePacketCosts => {
     erc20Token: costs.erc20Token ? {
       redPacket: costs.erc20Token.redPacket.toString(),
       options: {
+        publicPacketFeesTokenPercent: costs.erc20Token.options.publicPacketFeesTokenPercent ? costs.erc20Token.options.publicPacketFeesTokenPercent.toString() : undefined,
         publicPacketFees: costs.erc20Token.options.publicPacketFees.toString()
       },
       total: costs.erc20Token.total.toString()
@@ -86,6 +96,8 @@ export const serializeCosts = (costs: PacketCosts): SerializablePacketCosts => {
       standardServiceFeesUSD: costs.nativeToken.standardServiceFeesUSD.toString(),
       standardServiceFees: costs.nativeToken.standardServiceFees.toString(),
       options: {
+        publicPacketFeesTokenPercent: costs.nativeToken.options.publicPacketFeesTokenPercent ? costs.nativeToken.options.publicPacketFeesTokenPercent.toString() : undefined,
+        publicPacketFeesUSD: costs.nativeToken.options.publicPacketFeesUSD.toString(),
         publicPacketFees: costs.nativeToken.options.publicPacketFees.toString()
       },
       total: costs.nativeToken.total.toString()

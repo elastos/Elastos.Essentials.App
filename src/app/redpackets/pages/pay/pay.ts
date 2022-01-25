@@ -150,6 +150,10 @@ export class PayPage {
     return !!this.packet.erc20ContractAddress;
   }
 
+  public getPacketSymbol(): string {
+    return this.packet.tokenType === TokenType.NATIVE_TOKEN ? this.getNativeTokenSymbol() : this.getERC20TokenSymbol();
+  }
+
   public getNativeTokenSymbol(): string {
     return this.packet.nativeTokenSymbol;
   }
@@ -211,6 +215,15 @@ export class PayPage {
 
   public getERC20TokenPublicOptionFees(): string {
     return this.packet.costs.erc20Token.options.publicPacketFees.toString();
+  }
+
+  // ie: $5 
+  public getPublicOptionNativeFeesUSD(): string {
+    return this.packet.costs.nativeToken.options.publicPacketFeesUSD.toString();
+  }
+
+  public getPublicOptionFeesPercentage(): string {
+    return this.packet.tokenType === TokenType.NATIVE_TOKEN ? this.packet.costs.nativeToken.options.publicPacketFeesTokenPercent.toString() : this.packet.costs.erc20Token.options.publicPacketFeesTokenPercent.toString();
   }
 
   private async checkRightNetwork(): Promise<boolean> {

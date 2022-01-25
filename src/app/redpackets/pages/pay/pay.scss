@@ -41,7 +41,7 @@
     width: 152px;
     border-radius: 8px;
     text-align: center;
-    background: #C9C9C9;
+    background: #c9c9c9;
     opacity: 0.2;
   }
 
@@ -52,25 +52,24 @@
       align-self: center;
       margin-left: 5px;
     }
-
   }
 
   .payment-section-process-step-success {
     font-size: 18px;
     font-weight: 400;
     line-height: 22px;
-    color: #96FBC4;
+    color: #96fbc4;
   }
 
   &.active {
     opacity: 1;
     .payment-section-process-step-button button {
       opacity: 1;
-      background: linear-gradient(65.64deg, #920E0E -34.46%, #EE5147 139.84%);
+      background: linear-gradient(65.64deg, #920e0e -34.46%, #ee5147 139.84%);
       font-weight: 500;
       font-size: 13px;
       line-height: 16px;
-      color: #FFFFFF;
+      color: #ffffff;
     }
 
     svg {
@@ -90,9 +89,17 @@
       font-size: 18px;
       font-weight: 400;
       line-height: 22px;
-      color: #96FBC4;
+      color: #96fbc4;
     }
-
   }
 }
 
+.fee-info-container {
+  margin-bottom: 5px;
+  color: #acacac;
+}
+
+.redpacket-note-info-text-content {
+  color: #acacac;
+  font-size: 11px !important;
+}

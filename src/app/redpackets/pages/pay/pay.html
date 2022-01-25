@@ -133,6 +133,7 @@
       </ion-row>
     </div>
 
+    <!-- Native tokens cost -->
     <ion-row class="redpacket-container">
       <div class="redpacket-summary-table">
         <div class="redpacket-summary-label total">{{ 'redpackets.total-symbol' | translate: { symbol :
@@ -157,6 +158,7 @@
       </div>
     </ion-row>
 
+    <!-- ERC20 tokens cost -->
     <ion-row class="redpacket-container payment-section-container" *ngIf="packet.costs.erc20Token">
       <div class="redpacket-summary-table">
         <div class="redpacket-summary-label total">{{ 'redpackets.total-symbol' | translate: { symbol :
@@ -172,6 +174,42 @@
         <div class="redpacket-summary-value">{{getERC20TokenPublicOptionFees()}} {{getERC20TokenSymbol()}}</div>
       </div>
     </ion-row>
+
+    <!-- Service fees notes -->
+    <div class="redpacket-container payment-section-container">
+      <div class="redpacket-note-container">
+        <div class="redpacket-note-info-logo">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path opacity="0.4"
+              d="M14.34 0H5.67C2.28 0 0 2.38 0 5.92V14.09C0 17.62 2.28 20 5.67 20H14.34C17.73 20 20 17.62 20 14.09V5.92C20 2.38 17.73 0 14.34 0"
+              fill="#C8C8C8" />
+            <path
+              d="M9.99512 8.48438C10.4771 8.48438 10.8701 8.87738 10.8701 9.35938V13.7794C10.8701 14.2614 10.4771 14.6544 9.99512 14.6544C9.51312 14.6544 9.12012 14.2614 9.12012 13.7794V9.35938C9.12012 8.87738 9.51312 8.48438 9.99512 8.48438Z"
+              fill="white" />
+            <path
+              d="M9.995 7.0625C9.516 7.0625 9.125 6.6695 9.125 6.1875C9.125 5.7055 9.52 5.3125 10.005 5.3125C10.488 5.3125 10.88 5.7055 10.88 6.1875C10.88 6.6695 10.488 7.0625 9.995 7.0625Z"
+              fill="white" />
+          </svg>
+        </div>
+        <div class="redpacket-note-info-text">
+          <div class="redpacket-note-info-text-title">{{ 'redpackets.service-fees' | translate }}</div>
+          <div class="redpacket-note-info-text-content">
+            <div class="fee-info-container">
+              {{ 'redpackets.base-service-fee-info' | translate : { baseFee: getNativeTokenServiceFeesUSD(), symbol:
+              getNativeTokenSymbol() } }}
+            </div>
+            <div class="fee-info-container" *ngIf="packet.visibility === 'public'">
+              {{ 'redpackets.public-service-fee-info' | translate : { publicFee: getPublicOptionNativeFeesUSD(), symbol:
+              getNativeTokenSymbol(), publicFeePercentage: getPublicOptionFeesPercentage(), packetSymbol:
+              getPacketSymbol() } }}
+            </div>
+            <div class="fee-info-container">
+              {{ 'redpackets.transaction-fees-info' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Notes -->
     <div class="redpacket-container payment-section-container">

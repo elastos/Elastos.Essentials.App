@@ -143,6 +143,9 @@ export const it = {
     'public-option-fees': 'Option: public packet',
     'note': 'Note',
     'unspent-tokens-refunded': 'Unspent tokens and provisionning fees are returned at the expiration of the red packet.',
-    'view-packet': 'View packet'
+    'view-packet': 'View packet',
+    'base-service-fee-info': 'Base service fee of ${{ baseFee }}, paid in {{ symbol }}.',
+    'public-service-fee-info': 'Additional public packet option at ${{ publicFee }}, paid in {{ symbol }}, plus {{ publicFeePercentage }}% of the total {{ packetSymbol }} in the packet.',
+    'transaction-fees-info': 'Transaction fees are estimated based on the number of packets the service will send to winners.'
   }
 }

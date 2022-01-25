@@ -143,6 +143,9 @@ export const zh = {
     'public-option-fees': '选项: 公共红包',
     'note': '备注',
     'unspent-tokens-refunded': '未使用的代币和预置费用在红包到期时会退还',
-    'view-packet': '查看红包'
+    'view-packet': '查看红包',
+    'base-service-fee-info': 'Base service fee of ${{ baseFee }}, paid in {{ symbol }}.',
+    'public-service-fee-info': 'Additional public packet option at ${{ publicFee }}, paid in {{ symbol }}, plus {{ publicFeePercentage }}% of the total {{ packetSymbol }} in the packet.',
+    'transaction-fees-info': 'Transaction fees are estimated based on the number of packets the service will send to winners.'
   }
 }

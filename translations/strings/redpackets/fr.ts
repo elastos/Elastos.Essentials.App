@@ -143,6 +143,9 @@ export const fr = {
     'public-option-fees': 'Option: paquet public',
     'note': 'Note',
     'unspent-tokens-refunded': 'Les jetons non dépensés vous seront retournés une fois le paquet rouge expiré.',
-    'view-packet': 'Voir le paquet'
+    'view-packet': 'Voir le paquet',
+    'base-service-fee-info': 'Frais de service de {{ baseFee }}$, payés en {{ symbol }}.',
+    'public-service-fee-info': 'Option paquet public à {{ publicFee }}$, payée en {{ symbol }}, plus {{ publicFeePercentage }}% du total des {{ packetSymbol }} dans le paquet.',
+    'transaction-fees-info': 'Les frais de transactions sont estimés en fonction du nombre de paquets à distribuer aux gagnants.'
   }
 }
