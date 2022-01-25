@@ -123,6 +123,7 @@ export const zh = {
     'got-it': '您已抢到一个红包，代币很快就会送到您的钱包',
     'copy-link': '复制链接',
     'share-link': '分享链接',
+    'no-user-wallet': 'You currently don\'t have any wallet. Please create or import a wallet in Essentials in order to grab packets or to create your own packets.',
 
     /******
     * Pay *

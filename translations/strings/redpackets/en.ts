@@ -123,6 +123,7 @@ export const en = {
     'got-it': 'You\'ve grabbed a packet! Tokens will arrive in your wallet soon',
     'copy-link': 'Copy link',
     'share-link': 'Share link',
+    'no-user-wallet': 'You currently don\'t have any wallet. Please create or import a wallet in Essentials in order to grab packets or to create your own packets.',
 
     /******
     * Pay *

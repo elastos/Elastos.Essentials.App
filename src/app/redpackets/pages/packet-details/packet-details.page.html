@@ -14,6 +14,11 @@
 
   <!-- PACKET DETAILS -->
   <ion-grid class="container ion-padding sticky-bottom-container-padding" *ngIf="!fetchingPacket && packet">
+    <!-- User has no wallet -->
+    <div class="ion-padding redpacket-error-container" *ngIf="!walletAddress">
+      {{ 'redpackets.no-user-wallet' | translate }}
+    </div>
+
     <!-- Status (live - not live - error) -->
     <ng-container *ngTemplateOutlet="status"></ng-container>
 

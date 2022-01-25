@@ -59,7 +59,7 @@ export class PacketPreviewComponent implements OnInit, OnDestroy {
     ) { }
 
     async ngOnInit() {
-        if (this.walletService.getActiveNetworkWallet().getMainEvmSubWallet())
+        if (this.walletService.getActiveNetworkWallet() && this.walletService.getActiveNetworkWallet().getMainEvmSubWallet())
             this.activeWalletAddress = await this.walletService.getActiveNetworkWallet().getMainEvmSubWallet().createAddress();
 
         this.grabbedPacketsSubscription = this.packetService.grabbedPackets.subscribe(grabbedPackets => {

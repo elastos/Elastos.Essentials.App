@@ -59,7 +59,7 @@
 
   <div class="redpacket-container ion-text-center" *ngIf="myPackets.length === 0">
     <p>{{ 'redpackets.no-my-packet' | translate }}</p>
-    <ion-button (click)="navigateToNewPacket()" class="redpacket-button">
+    <ion-button (click)="navigateToNewPacket()" class="redpacket-button" *ngIf="walletAddress">
       {{ 'redpackets.create-new-packet' | translate }}
     </ion-button>
   </div>

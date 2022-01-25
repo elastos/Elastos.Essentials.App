@@ -191,6 +191,9 @@ export class PacketDetailsPage implements OnInit {
   }
 
   private getActiveWalletAddress(): Promise<string> {
+    if (!this.walletService.getActiveNetworkWallet() || !this.walletService.getActiveNetworkWallet().getMainEvmSubWallet())
+      return null;
+
     return this.walletService.getActiveNetworkWallet().getMainEvmSubWallet().createAddress();
   }
 

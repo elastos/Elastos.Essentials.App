@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Packet } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
 
@@ -32,6 +33,7 @@ export class HomePage {
   private openedPacketsSubscriptions: Subscription;
   public publicPackets: Packet[] = [];
   private publicPacketsSubscription: Subscription;
+  public walletAddress: string;
 
   // Callbacks
   public titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -40,18 +42,23 @@ export class HomePage {
     public navCtrl: NavController,
     private globalNavService: GlobalNavService,
     public packetService: PacketService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private walletService: WalletService
   ) { }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.red-packets"));
     this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
-    this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
-      iconPath: 'assets/redpackets/images/ic-plus.svg',
-      key: 'create-packet'
-    })
+    this.walletAddress = await this.getActiveWalletAddress();
+
+    if (this.walletAddress) {
+      this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
+        iconPath: 'assets/redpackets/images/ic-plus.svg',
+        key: 'create-packet'
+      });
+    }
 
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       iconPath: 'assets/redpackets/images/settings.svg',
@@ -120,5 +127,12 @@ export class HomePage {
 
   public navigateToOpenedPackets() {
     void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/opened-packets");
+  }
+
+  private getActiveWalletAddress(): Promise<string> {
+    if (!this.walletService.getActiveNetworkWallet() || !this.walletService.getActiveNetworkWallet().getMainEvmSubWallet())
+      return null;
+
+    return this.walletService.getActiveNetworkWallet().getMainEvmSubWallet().createAddress();
   }
 }

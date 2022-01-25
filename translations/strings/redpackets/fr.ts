@@ -123,6 +123,7 @@ export const fr = {
     'got-it': 'Paquet attrapé! Les jetons arriveront dans votre portefeuille sous peu',
     'copy-link': 'Copy link',
     'share-link': 'Share link',
+    'no-user-wallet': 'Vous n\'avez actuellement aucun portefeuille. Veuillez en créer un dans Essentials afin de pouvoir attraper des paquets rouges ou de créer les votres.',
 
     /******
     * Pay *
