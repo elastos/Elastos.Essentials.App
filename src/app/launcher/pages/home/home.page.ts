@@ -52,7 +52,7 @@ export class HomePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('walletsSlider') walletsSlider: IonSlides;
 
-  private popover: any = null;
+  private popover: HTMLIonPopoverElement = null;
   private modal: any = null;
   public identityNeedsBackup = false;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -300,7 +300,8 @@ export class HomePage implements OnInit {
 
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     if (this.popover) {
-      this.popover.dimiss();
+      void this.popover.dismiss();
+      this.popover = null;
     }
   }
 
@@ -352,7 +353,7 @@ export class HomePage implements OnInit {
       event: ev,
       translucent: false
     });
-    this.popover.onWillDismiss().then(() => {
+    void this.popover.onWillDismiss().then(() => {
       this.popover = null;
     });
     return await this.popover.present();
@@ -490,7 +491,7 @@ export class HomePage implements OnInit {
       event: event,
       translucent: false
     });
-    this.popover.onWillDismiss().then((resp) => {
+    void this.popover.onWillDismiss().then((resp) => {
       this.popover = null;
     });
     return await this.popover.present();
