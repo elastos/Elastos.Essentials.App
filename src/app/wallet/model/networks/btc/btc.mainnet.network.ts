@@ -9,6 +9,7 @@ export class BTCMainNetNetwork extends BTCNetworkBase {
     super("BTC",
       BTCAPI.getApiUrl(BTCApiType.NODE, MAINNET_TEMPLATE),
       BTCAPI.getApiUrl(BTCApiType.EXPLORER, MAINNET_TEMPLATE),
+      MAINNET_TEMPLATE,
       [
       ],
       [

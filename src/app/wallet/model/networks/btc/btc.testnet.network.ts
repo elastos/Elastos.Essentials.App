@@ -9,6 +9,7 @@ export class BTCTestNetNetwork extends BTCNetworkBase {
     super("BTC Testnet",
       BTCAPI.getApiUrl(BTCApiType.NODE, TESTNET_TEMPLATE),
       BTCAPI.getApiUrl(BTCApiType.EXPLORER, TESTNET_TEMPLATE),
+      TESTNET_TEMPLATE,
       [
       ],
       [

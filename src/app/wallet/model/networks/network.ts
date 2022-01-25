@@ -28,6 +28,7 @@ export abstract class Network {
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
     public logo: string, // Path to the network icon
+    public networkTemplate: string, // For which network template is this network available
     public earnProviders: EarnProvider[] = [],
     public swapProviders: SwapProvider[] = [],
     public bridgeProviders: BridgeProvider[] = [],
@@ -74,7 +75,7 @@ export abstract class Network {
   public abstract getMainChainID(networkTemplate?: string): number;
 
   public supportedWalletCreateTypes(): WalletCreateType[] {
-      return [WalletCreateType.MNEMONIC, WalletCreateType.PRIVATE_KEY_EVM, WalletCreateType.KEYSTORE];
+    return [WalletCreateType.MNEMONIC, WalletCreateType.PRIVATE_KEY_EVM, WalletCreateType.KEYSTORE];
   }
 
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);

@@ -4,7 +4,7 @@ import { ElastosNetworkBase } from "./elastos.base.network";
 
 export class ElastosLRWNetwork extends ElastosNetworkBase {
   constructor() {
-    super("Elastos LRW");
+    super("Elastos LRW", "LRW");
   }
 
   public getBuiltInERC20Coins(): ERC20Coin[] {

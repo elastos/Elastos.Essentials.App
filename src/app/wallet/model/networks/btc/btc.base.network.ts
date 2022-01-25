@@ -16,6 +16,7 @@ export abstract class BTCNetworkBase extends Network {
     displayName: string,
     public nodeUrlApi: string,
     explorerUrlApi: string,
+    networkTemplate: string,
     earnProviders?: EarnProvider[],
     swapProviders?: SwapProvider[],
     bridgeProviders?: BridgeProvider[]) {
@@ -23,6 +24,7 @@ export abstract class BTCNetworkBase extends Network {
       "btc",
       displayName,
       "assets/wallet/networks/btc.svg",
+      networkTemplate,
       earnProviders,
       swapProviders,
       bridgeProviders);
@@ -54,7 +56,7 @@ export abstract class BTCNetworkBase extends Network {
   }
 
   public getMainChainID(): number {
-      return -1;
+    return -1;
   }
 
   public supportedWalletCreateTypes(): WalletCreateType[] {

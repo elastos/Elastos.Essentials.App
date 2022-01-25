@@ -13,6 +13,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { Network } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
@@ -368,5 +369,15 @@ export class PacketDetailsPage implements OnInit {
       title: this.translate.instant("redpackets.packet-share-title"),
       url: this.getPacketUrl()
     });
+  }
+
+  /**
+   * Tells if the active packet was created on a main network (mainnet) or not.
+   */
+  public packetOnAMainNetwork(): boolean {
+    if (!this.packet || !this.network)
+      return false;
+
+    return this.network.networkTemplate === MAINNET_TEMPLATE;
   }
 }

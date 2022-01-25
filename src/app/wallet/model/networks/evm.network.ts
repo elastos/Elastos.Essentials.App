@@ -20,14 +20,14 @@ export class EVMNetwork extends Network {
     protected mainTokenFriendlyName: string, // Ex: Huobi Token
     public mainRpcUrlApi: string,
     public accountRpcUrlApi: string,
-    networkTemplateAvailability: string, // For which network template is this network available
+    networkTemplate: string, // For which network template is this network available
     protected chainID: number,
     protected builtInCoins?: ERC20Coin[],
     earnProviders: EarnProvider[] = [],
     swapProviders: SwapProvider[] = [],
     bridgeProviders: BridgeProvider[] = []
   ) {
-    super(key, name, logo, earnProviders, swapProviders, bridgeProviders);
+    super(key, name, logo, networkTemplate, earnProviders, swapProviders, bridgeProviders);
   }
 
   /**

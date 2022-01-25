@@ -16,6 +16,7 @@ export abstract class ElastosNetworkBase extends Network {
 
   constructor(
     displayName: string,
+    networkTemplate: string,
     earnProviders?: EarnProvider[],
     swapProviders?: SwapProvider[],
     bridgeProviders?: BridgeProvider[],
@@ -24,6 +25,7 @@ export abstract class ElastosNetworkBase extends Network {
       "elastos",
       displayName,
       "assets/wallet/networks/elastos.svg",
+      networkTemplate,
       earnProviders,
       swapProviders,
       bridgeProviders,

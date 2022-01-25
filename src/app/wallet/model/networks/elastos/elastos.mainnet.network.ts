@@ -14,6 +14,7 @@ export class ElastosMainNetNetwork extends ElastosNetworkBase {
 
   constructor() {
     super("Elastos",
+      MAINNET_TEMPLATE,
       [
         elastosMainnetElkEarnProvider
       ],

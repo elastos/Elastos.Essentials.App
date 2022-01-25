@@ -77,7 +77,7 @@ export const it = {
     'error-no-message': "Be kind with your people, send them a nice message!",
     'error-packet-creation-failed': "The packet could not be created. Please try again later",
     'technical-preview-title': 'Note: Technical Preview',
-    'technical-preview-info': 'The red packet service was recently launched and is this is still a technical release. Make sure to create only red packets with small amounts of tokens.',
+    'technical-preview-info': 'The red packet service was recently launched and this is still a technical release. Make sure to create only red packets with small amounts of tokens.',
 
     /***********
     * Settings *

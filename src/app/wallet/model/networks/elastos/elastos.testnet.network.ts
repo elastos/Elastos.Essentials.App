@@ -5,7 +5,7 @@ import { ElastosNetworkBase } from "./elastos.base.network";
 
 export class ElastosTestNetNetwork extends ElastosNetworkBase {
   constructor() {
-    super("Elastos Testnet");
+    super("Elastos Testnet", TESTNET_TEMPLATE);
   }
 
   public getBuiltInERC20Coins(): ERC20Coin[] {
