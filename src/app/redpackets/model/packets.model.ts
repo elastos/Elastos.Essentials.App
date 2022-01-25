@@ -56,6 +56,7 @@ export class SerializedPacket {
   creatorAddress: string; // Creator's wallet address (EVM 0x address)
   creatorDID: string; // Creator's DID string
   expirationDate: number; // Unix timestamp at which the red packet will expire
+  isCancelled?: boolean; // In case or error somewhere, the packet can have been cancelled, meaning that it should not be used any more and will be/was refund
 
   hash?: string; // Unique packet hash just created
   creationDate: number; // Timestamp
@@ -82,6 +83,7 @@ export class Packet {
   creatorAddress: string; // Creator's wallet address (EVM 0x address)
   creatorDID: string; // Creator's DID string
   expirationDate: number; // Unix timestamp at which the red packet will expire
+  isCancelled?: boolean; // In case or error somewhere, the packet can have been cancelled, meaning that it should not be used any more and will be/was refund
 
   hash?: string; // Unique packet hash just created
   creationDate: number; // Timestamp

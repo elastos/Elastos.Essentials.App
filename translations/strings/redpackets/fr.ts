@@ -126,6 +126,7 @@ export const fr = {
     'copy-link': 'Copy link',
     'share-link': 'Share link',
     'no-user-wallet': 'Vous n\'avez actuellement aucun portefeuille. Veuillez en créer un dans Essentials afin de pouvoir attraper des paquets rouges ou de créer les votres.',
+    'packet-cancelled': 'Ce paquet a été annulé, probablement suite à une erreur de paiement. Les fonds seront retournés, ou ont déjà été retournés au créateur du paquet.',
 
     /******
     * Pay *

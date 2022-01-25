@@ -1,10 +1,12 @@
 <ion-content>
   <app-titlebar></app-titlebar>
 
+  <!-- Failure to get packet info -->
   <div class="container ion-padding redpacket-error-container" *ngIf="packetFetchErrored">
     {{ 'redpackets.error-retrieve-packet' | translate }}
   </div>
 
+  <!-- Retrieving packet - spinner -->
   <ion-grid class="container ion-padding sticky-bottom-container-padding" *ngIf="fetchingPacket">
     <div class="redpacket-loader">
       <ion-label>{{ 'redpackets.getting-packet-info' | translate }}</ion-label>
@@ -12,8 +14,15 @@
     </div>
   </ion-grid>
 
+  <!-- Packet has been cancelled, ie in case or wrong amount sent - packet will be refunded -->
+  <ion-grid class="container ion-padding redpacket-error-container"
+    *ngIf="!fetchingPacket && packet && packet.isCancelled">
+    <ion-label>{{ 'redpackets.packet-cancelled' | translate }}</ion-label>
+  </ion-grid>
+
   <!-- PACKET DETAILS -->
-  <ion-grid class="container ion-padding sticky-bottom-container-padding" *ngIf="!fetchingPacket && packet">
+  <ion-grid class="container ion-padding sticky-bottom-container-padding"
+    *ngIf="!fetchingPacket && packet && !packet.isCancelled">
     <!-- Testnet warning -->
     <ng-container *ngTemplateOutlet="testnet"></ng-container>
 
@@ -234,7 +243,7 @@
 <ng-template #footer>
   <!-- For the creator: if packet is not active, go to "pay" -->
   <div class="redpacket-footer-container sticky-bottom-container"
-    *ngIf="!fetchingPacket && packet && activeWalletIsCreator() && !packet.isActive">
+    *ngIf="!fetchingPacket && packet && activeWalletIsCreator() && !packet.isActive && !packet.isCancelled">
     <div class="redpacket-footer-button">
       <button (click)="finalizePayment()">
         <ion-label>{{ 'redpackets.complete-payment' | translate }}</ion-label>

@@ -126,6 +126,7 @@ export const zh = {
     'copy-link': '复制链接',
     'share-link': '分享链接',
     'no-user-wallet': 'You currently don\'t have any wallet. Please create or import a wallet in Essentials in order to grab packets or to create your own packets.',
+    'packet-cancelled': 'This packet has been cancelled, probably because of a payment error. Funds will be returned or have already been returned to the packet creator.',
 
     /******
     * Pay *

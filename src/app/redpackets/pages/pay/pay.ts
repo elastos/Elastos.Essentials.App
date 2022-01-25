@@ -217,7 +217,7 @@ export class PayPage {
     return this.packet.costs.erc20Token.options.publicPacketFees.toString();
   }
 
-  // ie: $5 
+  // ie: $5
   public getPublicOptionNativeFeesUSD(): string {
     return this.packet.costs.nativeToken.options.publicPacketFeesUSD.toString();
   }
