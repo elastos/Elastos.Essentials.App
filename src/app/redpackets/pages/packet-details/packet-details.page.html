@@ -68,8 +68,11 @@
     <div class="redpacket-grabbed" *ngIf="!captchaChallengeRequired && !activeWalletIsCreator()">
       <div *ngIf="isActiveWalletAWinner()" class="redpacket-info-header-grabbed">
         <div class="redpacket-info-header-intro">
-          <div class="redpacket-info-header-creator">{{ 'redpackets.creator-sent-you' | translate: { creator:
+          <div class="redpacket-info-header-creator" *ngIf="creatorName">{{ 'redpackets.creator-sent-you' | translate: {
+            creator:
             creatorName } }}</div>
+          <div class="redpacket-info-header-creator" *ngIf="!creatorName">{{ 'redpackets.you-grabbed' | translate }}
+          </div>
           <div class="redpacket-info-header-token">{{ getEarnedAmount() }} {{ getEarnedTokenSymbol() }}</div>
         </div>
       </div>
