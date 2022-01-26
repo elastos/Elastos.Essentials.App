@@ -4,7 +4,8 @@
 
         <!-- TRANSACTION HEADER -->
         <ion-card
-            [class.received]="type === 1"
+            [class.received]="(type === 1) && !isRedPacket"
+            [class.redpacket]="(type === 1) && isRedPacket"
             [class.sent]="type === 2"
             [class.transferred]="type === 3"
         >

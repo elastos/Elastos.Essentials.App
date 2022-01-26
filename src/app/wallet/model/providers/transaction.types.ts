@@ -86,6 +86,7 @@ export type TransactionInfo = {
     erc20TokenSymbol?: string,
     erc20TokenValue?: string,
     erc20TokenContractAddress?: string,
+    isRedPacket?: boolean,
 };
 
 /**

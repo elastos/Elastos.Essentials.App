@@ -30,7 +30,8 @@ export type EthTransaction = GenericTransaction & {
   // Computed
   Direction?: TransactionDirection;
   isERC20TokenTransfer?: boolean;
-  hide?: boolean
+  hide?: boolean;
+  isRedPacket?: boolean
 };
 
 export type ElastosSCEthTransaction = EthTransaction & {

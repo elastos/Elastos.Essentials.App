@@ -1,6 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
+import { GlobalRedPacketServiceAddresses } from 'src/app/config/globalconfig';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
@@ -31,6 +32,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     protected spvConfigEVMCode: string = null; // Ex: ETHHECO, ETHSC
     private fetchTokenValueTimer: any = null;
+    private redPacketServerAddress = null;
 
     public static async newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = await networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
@@ -78,6 +80,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
         // Standard ERC20 contract ABI
         this.erc20ABI = require("../../../../assets/wallet/ethereum/StandardErc20ABI.json");
+
+        this.redPacketServerAddress = GlobalRedPacketServiceAddresses[this.spvConfigEVMCode];
     }
 
     public async startBackgroundUpdates(): Promise<void> {
@@ -242,6 +246,14 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         }
     }
 
+    private checkRedPacketTransaction(transaction: EthTransaction) {
+        if (transaction.from.toLowerCase() === this.redPacketServerAddress) {
+            transaction.isRedPacket = true;
+        } else {
+            transaction.isRedPacket = false;
+        }
+    }
+
     public async update() {
         await this.updateBalance();
     }
@@ -323,6 +335,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         const direction = await this.getERC20TransactionDirection(transaction.to);
         transaction.Direction = direction;
 
+        if (direction === TransactionDirection.RECEIVED) {
+            this.checkRedPacketTransaction(transaction);
+        }
+
         const transactionInfo: TransactionInfo = {
             amount: this.getDisplayValue(transaction.value),
             confirmStatus: parseInt(transaction.confirmations),
@@ -342,6 +358,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             txid: transaction.hash,
             type: null,
             isCrossChain: false,
+            isRedPacket: transaction.isRedPacket,
         };
 
         // Use Config.WEI: because the gas is ETHSC.
@@ -388,7 +405,11 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     protected async getTransactionIconPath(transaction: EthTransaction): Promise<string> {
         const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.to);
         if (direction === TransactionDirection.RECEIVED) {
-            return './assets/wallet/buttons/receive.png';
+            if (transaction.isRedPacket) {
+                return './assets/redpackets/images/default-avatar.png';
+            } else {
+                return './assets/wallet/buttons/receive.png';
+            }
         } else if (direction === TransactionDirection.SENT) {
             return './assets/wallet/buttons/send.png';
         } else if (direction === TransactionDirection.MOVED) {

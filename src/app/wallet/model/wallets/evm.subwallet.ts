@@ -1,5 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
+import { GlobalRedPacketServiceAddresses } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
@@ -22,6 +23,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   protected ethscAddress: string = null;
   protected withdrawContractAddress: string = null;
   protected publishdidContractAddress: string = null;
+  private redPacketServerAddress = null;
   // private erc20ABI: any;
 
   protected tokenList: ERCTokenInfo[] = null;
@@ -43,6 +45,8 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     this.tokenDecimals = 18;
     this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
     // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
+
+    this.redPacketServerAddress = GlobalRedPacketServiceAddresses[this.id];
   }
 
   public async startBackgroundUpdates(): Promise<void> {
@@ -125,6 +129,10 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     const direction = await this.getTransactionDirection(transaction.to);
     transaction.Direction = direction;
 
+    if (direction === TransactionDirection.RECEIVED) {
+        this.checkRedPacketTransaction(transaction);
+    }
+
     const isERC20TokenTransfer = await this.isERC20TokenTransfer(transaction.to);
     transaction.isERC20TokenTransfer = isERC20TokenTransfer;
     let erc20TokenTransactionInfo: ERC20TokenTransactionInfo = null;
@@ -154,6 +162,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       erc20TokenSymbol: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenSymbol : null,
       erc20TokenValue: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenValue : null,
       erc20TokenContractAddress: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenContractAddress : null,
+      isRedPacket: transaction.isRedPacket,
     };
 
     transactionInfo.amount = new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes);
@@ -202,7 +211,11 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction.to);
     switch (direction) {
       case TransactionDirection.RECEIVED:
-        return './assets/wallet/buttons/receive.png';
+        if (transaction.isRedPacket) {
+          return './assets/redpackets/images/default-avatar.png';
+        } else {
+          return './assets/wallet/buttons/receive.png';
+        }
       case TransactionDirection.SENT:
         return './assets/wallet/buttons/send.png';
     }
@@ -214,6 +227,14 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       return TransactionDirection.RECEIVED;
     } else {
       return TransactionDirection.SENT;
+    }
+  }
+
+  private checkRedPacketTransaction(transaction: EthTransaction) {
+    if (transaction.from.toLowerCase() === this.redPacketServerAddress) {
+        transaction.isRedPacket = true;
+    } else {
+        transaction.isRedPacket = false;
     }
   }
 

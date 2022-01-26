@@ -63,6 +63,7 @@ export class CoinTxInfoPage implements OnInit {
     // public payType: string = '';
     public targetAddress = null;
     public fromAddress = null;
+    public isRedPacket = false;
 
 
     // Show the ERC20 Token detail in ETHSC transaction.
@@ -119,6 +120,7 @@ export class CoinTxInfoPage implements OnInit {
             this.fromAddress = this.transactionInfo.from;
             this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
             this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.amount, this.subWallet.tokenDecimals);
+            this.isRedPacket = this.transactionInfo.isRedPacket;
 
             void this.getTransactionDetails();
         }

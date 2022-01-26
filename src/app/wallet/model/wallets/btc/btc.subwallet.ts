@@ -110,6 +110,7 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
             txid: transaction.txid,
             type: null,
             isCrossChain: false,
+            isRedPacket: false,
         };
 
         if (transaction.confirmations > 0) {
