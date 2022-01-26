@@ -212,6 +212,11 @@ export class IntentService {
                 navigationState = JSON.parse(JSON.stringify(intent));
                 break;
 
+            case 'insecureethsign':
+                this.nextScreen = '/wallet/intents/insecureethsign';
+                navigationState = JSON.parse(JSON.stringify(intent));
+                break;
+
             case 'pay':
                 this.nextScreen = '/wallet/coin-transfer';
                 let ret = await this.handlePayIntent(intent);

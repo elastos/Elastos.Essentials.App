@@ -478,6 +478,84 @@
   }
   events.once = once_1;
 
+  /*
+      https://tools.ietf.org/html/rfc3629
+
+      UTF8-char = UTF8-1 / UTF8-2 / UTF8-3 / UTF8-4
+
+      UTF8-1    = %x00-7F
+
+      UTF8-2    = %xC2-DF UTF8-tail
+
+      UTF8-3    = %xE0 %xA0-BF UTF8-tail
+                  %xE1-EC 2( UTF8-tail )
+                  %xED %x80-9F UTF8-tail
+                  %xEE-EF 2( UTF8-tail )
+
+      UTF8-4    = %xF0 %x90-BF 2( UTF8-tail )
+                  %xF1-F3 3( UTF8-tail )
+                  %xF4 %x80-8F 2( UTF8-tail )
+
+      UTF8-tail = %x80-BF
+  */
+  /**
+   * Check if a Node.js Buffer or Uint8Array is UTF-8.
+   */
+  function isUtf8(buf) {
+      if (!buf) {
+          return false;
+      }
+      var i = 0;
+      var len = buf.length;
+      while (i < len) {
+          // UTF8-1 = %x00-7F
+          if (buf[i] <= 0x7F) {
+              i++;
+              continue;
+          }
+          // UTF8-2 = %xC2-DF UTF8-tail
+          if (buf[i] >= 0xC2 && buf[i] <= 0xDF) {
+              // if(buf[i + 1] >= 0x80 && buf[i + 1] <= 0xBF) {
+              if (buf[i + 1] >> 6 === 2) {
+                  i += 2;
+                  continue;
+              }
+              else {
+                  return false;
+              }
+          }
+          // UTF8-3 = %xE0 %xA0-BF UTF8-tail
+          // UTF8-3 = %xED %x80-9F UTF8-tail
+          if (((buf[i] === 0xE0 && buf[i + 1] >= 0xA0 && buf[i + 1] <= 0xBF) ||
+              (buf[i] === 0xED && buf[i + 1] >= 0x80 && buf[i + 1] <= 0x9F)) && buf[i + 2] >> 6 === 2) {
+              i += 3;
+              continue;
+          }
+          // UTF8-3 = %xE1-EC 2( UTF8-tail )
+          // UTF8-3 = %xEE-EF 2( UTF8-tail )
+          if (((buf[i] >= 0xE1 && buf[i] <= 0xEC) ||
+              (buf[i] >= 0xEE && buf[i] <= 0xEF)) &&
+              buf[i + 1] >> 6 === 2 &&
+              buf[i + 2] >> 6 === 2) {
+              i += 3;
+              continue;
+          }
+          // UTF8-4 = %xF0 %x90-BF 2( UTF8-tail )
+          //          %xF1-F3 3( UTF8-tail )
+          //          %xF4 %x80-8F 2( UTF8-tail )
+          if (((buf[i] === 0xF0 && buf[i + 1] >= 0x90 && buf[i + 1] <= 0xBF) ||
+              (buf[i] >= 0xF1 && buf[i] <= 0xF3 && buf[i + 1] >> 6 === 2) ||
+              (buf[i] === 0xF4 && buf[i + 1] >= 0x80 && buf[i + 1] <= 0x8F)) &&
+              buf[i + 2] >> 6 === 2 &&
+              buf[i + 3] >> 6 === 2) {
+              i += 4;
+              continue;
+          }
+          return false;
+      }
+      return true;
+  }
+
   function createCommonjsModule(fn) {
     var module = { exports: {} };
   	return fn(module, module.exports), module.exports;
@@ -3141,14 +3219,22 @@
       }
       eth_sign(payload) {
           const buffer = Utils.messageToBuffer(payload.params[1]);
-          Utils.bufferToHex(buffer);
-          throw new Error("eth_sign NOT IMPLEMENTED");
-          // TODO: unclear why this is a "personal message" if the buffer is utf8...
-          /* if (isUtf8(buffer)) {
-            this.postMessage("personal_sign", payload.id, { data: hex });
-          } else {
-            this.postMessage("signMessage", payload.id, { data: hex });
-          } */
+          const hex = Utils.bufferToHex(buffer);
+          /**
+           * Historically eth_sign can either receive:
+           * - a very insecure raw message (hex) - supported by metamask
+           * - a prefixed message (utf8) - standardized implementation
+           *
+           * So we detect the format here:
+           * - if that's a utf8 prefixed string -> eth_sign = personal_sign
+           * - if that's a buffer (insecure hex that could sign any transaction) -> insecure eth_sign screen
+           */
+          if (isUtf8(buffer)) {
+              this.postMessage("personal_sign", payload.id, { data: hex });
+          }
+          else {
+              this.postMessage("signInsecureMessage", payload.id, { data: hex });
+          }
       }
       personal_sign(payload) {
           const message = payload.params[0];
@@ -3304,5 +3390,5 @@
   // Expose this class globally to be able to create instances from the browser dApp.
   window["DappBrowserWeb3Provider"] = DappBrowserWeb3Provider;
 
-})();
+}());
 //# sourceMappingURL=essentialsiabweb3provider.js.map

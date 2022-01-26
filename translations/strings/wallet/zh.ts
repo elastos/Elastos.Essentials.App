@@ -454,6 +454,7 @@ export const zh = {
                 "signtypeddata-title": "数据签名",
                 "signtypeddata-subtitle": "数据签名",
                 "signtypeddata-intro": "调用应用程序需要您使用钱包签署一些数据才能继续。请确认",
+                "signtypeddata-danger": "Signing this message can be dangerous. This signature could potentially perform any operation on your account's behalf, including granting complete control of your account and all of its assets to the requesting site. Only sign this message if you know what you're doing or completely trust the requesting site.",
 
                 /***********************
                 * No Wallet *

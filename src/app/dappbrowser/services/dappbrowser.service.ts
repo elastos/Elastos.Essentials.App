@@ -19,6 +19,7 @@ import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwor
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { EthSignIntentResult } from 'src/app/wallet/pages/intents/ethsign/ethsign.page';
 import { PersonalSignIntentResult } from 'src/app/wallet/pages/intents/personalsign/personalsign.page';
 import { SignTypedDataIntentResult } from 'src/app/wallet/pages/intents/signtypeddata/signtypeddata.page';
 import { EditCustomNetworkIntentResult } from 'src/app/wallet/pages/settings/edit-custom-network/edit-custom-network.page';
@@ -491,6 +492,11 @@ export class DappBrowserService implements GlobalService {
                 await this.handlePersonalSign(message);
                 void dappBrowser.show();
                 break;
+            case "signInsecureMessage":
+                dappBrowser.hide();
+                await this.handleInsecureEthSign(message);
+                void dappBrowser.show();
+                break;
             case "wallet_switchEthereumChain":
                 Logger.log("dappbrowser", "Received switch ethereum chain request");
                 dappBrowser.hide();
@@ -586,9 +592,23 @@ export class DappBrowserService implements GlobalService {
     /**
      * Sign data with wallet private key according to EIP 712.
      */
-     private async handlePersonalSign(message: DABMessage): Promise<void> {
-        let rawData = message.data.object
+    private async handlePersonalSign(message: DABMessage): Promise<void> {
+        let rawData: { data: unknown } = message.data.object
         let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/personalsign", rawData);
+
+        this.sendWeb3IABResponse(
+            message.data.id,
+            response.result.signedData
+        );
+    }
+
+    /**
+     * Sign data with wallet private key according. Legacy insecure eth_sign command support.
+     */
+    private async handleInsecureEthSign(message: DABMessage): Promise<void> {
+        let rawData: { data: unknown } = message.data.object
+        console.log("debug handleInsecureEthSign", rawData)
+        let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/insecureethsign", rawData);
 
         this.sendWeb3IABResponse(
             message.data.id,

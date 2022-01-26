@@ -1,11 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
 import WalletConnect from "@walletconnect/client";
+import isUtf8 from "isutf8";
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { NetworkWallet } from '../wallet/model/wallets/networkwallet';
+import { EthSignIntentResult } from '../wallet/pages/intents/ethsign/ethsign.page';
 import { PersonalSignIntentResult } from '../wallet/pages/intents/personalsign/personalsign.page';
 import { SignTypedDataIntentResult } from '../wallet/pages/intents/signtypeddata/signtypeddata.page';
 import { EditCustomNetworkIntentResult } from '../wallet/pages/settings/edit-custom-network/edit-custom-network.page';
@@ -449,6 +451,9 @@ export class GlobalWalletConnectService extends GlobalService {
     else if (request.method.startsWith("personal_sign")) {
       await this.handlePersonalSignRequest(connector, request);
     }
+    else if (request.method.startsWith("eth_sign")) {
+      await this.handleEthSignRequest(connector, request);
+    }
     else {
       try {
         Logger.log("walletconnect", "Sending esctransaction intent", request);
@@ -677,8 +682,11 @@ export class GlobalWalletConnectService extends GlobalService {
   }
 
   private async handlePersonalSignRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    let data = request.params[0];
+    let account = request.params[1]; // TODO: for now we use the active account... not the requested one (could possibly be another account)
+
     let rawData = {
-      payload: request.params
+      data
     };
     let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/personalsign", rawData);
 
@@ -696,6 +704,48 @@ export class GlobalWalletConnectService extends GlobalService {
           message: "Errored or cancelled"
         }
       });
+    }
+  }
+
+  /**
+   * Legacy eth_sign. Can receive either a raw hex buffer (unsafe), or a prefixed utf8 string (safe)
+   */
+  private async handleEthSignRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    const buffer = this.messageToBuffer(request.params[1]);
+    const hex = this.bufferToHex(buffer);
+
+    /**
+     * Historically eth_sign can either receive:
+     * - a very insecure raw message (hex) - supported by metamask
+     * - a prefixed message (utf8) - standardized implementation
+     *
+     * So we detect the format here:
+     * - if that's a utf8 prefixed string -> eth_sign = personal_sign
+     * - if that's a buffer (insecure hex that could sign any transaction) -> insecure eth_sign screen
+     */
+    if (isUtf8(buffer)) {
+      return this.handlePersonalSignRequest(connector, request);
+    } else {
+      let rawData = {
+        data: hex
+      };
+      let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/insecureethsign", rawData);
+
+      if (response && response.result) {
+        connector.approveRequest({
+          id: request.id,
+          result: response.result.signedData
+        });
+      }
+      else {
+        connector.rejectRequest({
+          id: request.id,
+          error: {
+            code: -1,
+            message: "Errored or cancelled"
+          }
+        });
+      }
     }
   }
 
@@ -856,5 +906,24 @@ export class GlobalWalletConnectService extends GlobalService {
       sessions.splice(existingSessionIndex, 1);
 
     await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "walletconnect", "sessions", sessions);
+  }
+
+  // message: Bytes | string
+  private messageToBuffer(message: string | any): Buffer {
+    var buffer = Buffer.from([]);
+    try {
+      if ((typeof (message) === "string")) {
+        buffer = Buffer.from(message.replace("0x", ""), "hex");
+      } else {
+        buffer = Buffer.from(message);
+      }
+    } catch (err) {
+      console.log(`messageToBuffer error: ${err}`);
+    }
+    return buffer;
+  }
+
+  private bufferToHex(buf: Buffer): string {
+    return "0x" + Buffer.from(buf).toString("hex");
   }
 }

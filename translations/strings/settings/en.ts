@@ -95,7 +95,7 @@ export const en = {
         'startupscreen-home-title': 'Essentials Home',
         'startupscreen-home-description': 'Default home screen with all features and widgets.',
         'startupscreen-wallets-title': 'Wallets',
-        'startupscreen-wallets-description': 'Shows your active wallet by default. If assets if what matters most for you.',
+        'startupscreen-wallets-description': 'Shows your active wallet by default. If assets is what matters most for you.',
         'startupscreen-dapps-title': 'DApps Portal',
         'startupscreen-dapps-description': 'You can\'t stop browsing dApps all day long? This mode is for you.',
 

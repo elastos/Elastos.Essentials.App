@@ -72,6 +72,7 @@
     "hammerjs": "2.0.8",
     "idriss-crypto": "^1.2.0",
     "ion-bottom-drawer": "2.0.0",
+    "isutf8": "^4.0.0",
     "jsonpath": "^1.1.1",
     "jszip": "^3.7.1",
     "lodash-es": "4.17.21",

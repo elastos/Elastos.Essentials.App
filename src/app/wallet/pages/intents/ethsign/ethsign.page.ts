@@ -23,7 +23,8 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { personalSign } from 'eth-sig-util';
+import { concatSig } from 'eth-sig-util';
+import { ecsign, stripHexPrefix } from 'ethereumjs-util';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -40,16 +41,20 @@ import { PopupProvider } from '../../../services/popup.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
-export type PersonalSignIntentResult = {
+export type EthSignIntentResult = {
   signedData: string;
 }
 
+/**
+ * This operation is dangerous and is deprecated, but we handle it for backward compatibility
+ * with some dApps.
+ */
 @Component({
-  selector: 'app-personalsign',
-  templateUrl: './personalsign.page.html',
-  styleUrls: ['./personalsign.page.scss'],
+  selector: 'app-ethsign',
+  templateUrl: './ethsign.page.html',
+  styleUrls: ['./ethsign.page.scss'],
 })
-export class PersonalSignPage implements OnInit {
+export class EthSignPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private networkWallet: NetworkWallet = null;
@@ -150,29 +155,31 @@ export class PersonalSignPage implements OnInit {
   }
 
   async confirmSign(): Promise<void> {
-    const payPassword = await this.authService.getWalletPassword(this.networkWallet.masterWallet.id);
+    const payPassword = await this.authService.getWalletPassword(this.networkWallet.masterWallet.id, true, true);
     if (payPassword === null) { // cancelled by user
+      await this.cancelOperation();
       return;
     }
 
     let privateKeyHexNoprefix = await this.walletManager.spvBridge.exportETHSCPrivateKey(this.networkWallet.masterWallet.id, this.evmSubWallet.id, payPassword);
 
     let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");
-    let signedData: string = null;
 
+    // Implementation taken from Metamask unsafe signing:
+    // https://github.com/MetaMask/eth-simple-keyring/blob/main/index.js
     try {
-      signedData = personalSign(privateKey, {
-        data: this.payloadToBeSigned
-      });
+      const message = stripHexPrefix(this.payloadToBeSigned);
+      const msgSig = ecsign(Buffer.from(message, 'hex'), privateKey);
+      const rawMsgSig = concatSig(msgSig.v, msgSig.r, msgSig.s);
 
       void this.sendIntentResponse({
-        signedData
+        signedData: rawMsgSig
       }, this.receivedIntent.intentId);
     }
     catch (e) {
       // Sign method can throw exception in case some provided content has an invalid format
       // i.e.: array value, with "address" type. In such case, we fail silently.
-      Logger.warn('wallet', ' personalSign error:', e)
+      Logger.warn('wallet', 'eth_sign intent error:', e)
       await this.sendIntentResponse(
         { data: null },
         this.receivedIntent.intentId
