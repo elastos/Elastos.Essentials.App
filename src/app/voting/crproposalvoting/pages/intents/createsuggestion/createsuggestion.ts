@@ -111,7 +111,7 @@ export class CreateSuggestionPage {
             // Create the suggestion/proposal digest - ask the SPVSDK to do this with a silent intent.
 
             //Get payload
-            let payload = this.suggestionService.getPayload(this.proposaltype, this.onGoingCommand.data);
+            let payload = this.suggestionService.getPayload(this.proposaltype, this.onGoingCommand.data, this.suggestionDetail);
             Logger.log(App.CRPROPOSAL_VOTING, 'get payload', payload);
 
             //Get digest

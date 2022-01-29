@@ -104,7 +104,7 @@ export class CreateProposalPage {
     }
 
     private getPayload(): any {
-        let payload = this.suggestionService.getPayload(this.proposaltype, this.onGoingCommand.data);
+        let payload = this.suggestionService.getPayload(this.proposaltype, this.onGoingCommand.data, this.suggestionDetail);
         payload.Signature = this.onGoingCommand.data.signature;
         payload.CRCouncilMemberDID = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
         return payload;

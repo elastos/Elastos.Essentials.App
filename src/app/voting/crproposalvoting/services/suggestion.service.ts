@@ -243,45 +243,45 @@ export class SuggestionService {
         return payload;
     }
 
-    private getReserveCustomizeDidPayload(data: any): any {
+    private getReserveCustomizeDidPayload(data: any, suggestionDetail: SuggestionDetail): any {
         let payload = this.getPayloadCommon(data);
-        payload.ReservedCustomIDList = data.reservedCustomizedIDList;
+        payload.ReservedCustomIDList = suggestionDetail.reservedCustomizedIDList;
         return payload;
     }
 
-    private getReceiveCustomizeDidPayload(data: any): any {
+    private getReceiveCustomizeDidPayload(data: any, suggestionDetail: SuggestionDetail): any {
         let payload = this.getPayloadCommon(data);
         payload = Object.assign(payload, {
-            ReceivedCustomIDList: data.receivedCustomizedIDList,
-            ReceiverDID: data.receiverDID,
+            ReceivedCustomIDList: suggestionDetail.receivedCustomizedIDList,
+            ReceiverDID: suggestionDetail.receiverDID,
         });
 
         return payload;
     }
 
-    private getChangeCustomIDFeeOwnerPayload(data: any): any {
+    private getChangeCustomIDFeeOwnerPayload(data: any, suggestionDetail: SuggestionDetail): any {
         let payload = this.getPayloadCommon(data);
         payload.CustomIDFeeRateInfo = {
-            RateOfCustomIDFee: data.rateOfCustomizedIDFee,
-            EIDEffectiveHeight:  data.EIDEffectiveHeight
+            RateOfCustomIDFee: suggestionDetail.rateOfCustomizedIDFee,
+            EIDEffectiveHeight: suggestionDetail.EIDEffectiveHeight
         }
         return payload;
     }
 
-    private getRegisterSideChainPayload(data: any): any {
+    private getRegisterSideChainPayload(data: any, suggestionDetail: SuggestionDetail): any {
         let payload = this.getPayloadCommon(data);
         payload.SidechainInfo = {
-                SideChainName: data.sideChainName,
-                MagicNumber: data.magicNumber,
-                GenesisHash: data.genesisHash,
-                ExchangeRate: data.exchangeRate,
-                EffectiveHeight: data.effectiveHeight,
-                ResourcePath: data.resourcePath,
+                SideChainName: suggestionDetail.sideChainName,
+                MagicNumber: suggestionDetail.magicNumber,
+                GenesisHash: suggestionDetail.genesisHash,
+                ExchangeRate: suggestionDetail.exchangeRate,
+                EffectiveHeight: suggestionDetail.effectiveHeight,
+                ResourcePath: suggestionDetail.resourcePath,
         }
         return payload;
     }
 
-    public getPayload(proposaltype: string, data: any) {
+    public getPayload(proposaltype: string, data: any, suggestionDetail: SuggestionDetail) {
         switch (proposaltype) {
             case "normal":
                 return this.getNormalPayload(data);
@@ -292,13 +292,13 @@ export class SuggestionService {
             case "secretarygeneral":
                 return this.getSecretaryGeneralPayload(data);
             case "reservecustomizedid":
-                return this.getReserveCustomizeDidPayload(data);
+                return this.getReserveCustomizeDidPayload(data, suggestionDetail);
             case "receivecustomizedid":
-                return this.getReceiveCustomizeDidPayload(data);
+                return this.getReceiveCustomizeDidPayload(data, suggestionDetail);
             case "changecustomizedidfee":
-                return this.getChangeCustomIDFeeOwnerPayload(data);
+                return this.getChangeCustomIDFeeOwnerPayload(data, suggestionDetail);
             case "registersidechain":
-                return this.getRegisterSideChainPayload(data);
+                return this.getRegisterSideChainPayload(data, suggestionDetail);
             default:
                 throw new Error("Don't support this type: " + proposaltype);
         }
