@@ -54,13 +54,13 @@ export const zh = {
     'probability': '概率',
     'probability-hint': '如果还有红包，那有可能抢到一个。失败后，不能重试。',
     'visibility': '可见性',
-    'visibility-hint': '选择只让有链接的用户抢红包，或者公开你的红包。公开红包会出现在 Essentials 主屏幕上，可用于推广项目，但成本略高。',
+    'visibility-hint': '选择只让有链接的用户抢红包，或者公开您的红包。公开红包会出现在 Essentials 主屏幕上，可用于推广项目，但成本略高。',
     'visibility-link-only': '通过链接抢红包',
     'visibility-public': '公共红包',
     'duration': '有效期',
     'duration-hint': '有效期结束后，未被抢的红包资金将退还给您，有效期最长7天',
     'expiration-days': '天',
-    'about-you': '关于你',
+    'about-you': '关于您',
     'profile-hint': '如果发布，您的头像和姓名将被其他人看到',
     'message': '消息',
     'packet-message-placeholder': '祝您新春快乐',
@@ -74,7 +74,7 @@ export const zh = {
     'error-invalid-number-of-tokens': "红包金额无效",
     'error-invalid-probability': "概率错误，请使用 0-100 ",
     'error-invalid-expiration-time': "有效期错误，请使用 1-7 天",
-    'error-no-message': "善待你的好友，给他们一个问候!",
+    'error-no-message': "善待您的好友，给他们一个问候!",
     'error-packet-creation-failed': "无法创建红包，请稍后再试。",
     'technical-preview-title': '备注: 技术预览版',
     'technical-preview-info': '红包服务是最近推出的服务，目前仍然是技术预览版。请确保只创建小额代币的红包。',
@@ -98,7 +98,7 @@ export const zh = {
     'grab-me': '抢!',
     'grab-packet': '抢红包',
     'anonymous-offering': '一位慷慨的匿名朋友正在提供一些',
-    'anonymous-offered-you': 'A generous anonymous friend just offered you',
+    'anonymous-offered-you': '一位慷慨的匿名朋友刚刚给了您',
     'creator-offering': '<b>{{ creator }}</b> 提供一些',
     'grab-lost': '祝您下次好运!',
     'grab-too-late': '太慢了，红包已被抢光...',
@@ -115,8 +115,8 @@ export const zh = {
     'no-winner': '显示所有抢到红包者',
     'complete-payment': '完成支付',
     'date-time-at': '',
-    'creator-sent-you': '{{ creator }} 发给你',
-    'you-grabbed': 'Congratulations, you grabbed',
+    'creator-sent-you': '{{ creator }} 发给您',
+    'you-grabbed': '恭喜！您抢到了',
     'random': '随机',
     'fixed-amounts': '固定金额',
     'anonymous': "匿名",
@@ -125,8 +125,8 @@ export const zh = {
     'got-it': '您已抢到一个红包，代币很快就会送到您的钱包',
     'copy-link': '复制链接',
     'share-link': '分享链接',
-    'no-user-wallet': 'You currently don\'t have any wallet. Please create or import a wallet in Essentials in order to grab packets or to create your own packets.',
-    'packet-cancelled': 'This packet has been cancelled, probably because of a payment error. Funds will be returned or have already been returned to the packet creator.',
+    'no-user-wallet': '您当前没有钱包。请在Essentials中创建或导入钱包以抢红包或创建红包。',
+    'packet-cancelled': '该红包已被取消，可能是因为支付错误。资金将被退还或已经退还给红包创建者。',
 
     /******
     * Pay *
@@ -148,8 +148,8 @@ export const zh = {
     'note': '备注',
     'unspent-tokens-refunded': '未使用的代币和预置费用在红包到期时会退还',
     'view-packet': '查看红包',
-    'base-service-fee-info': 'Base service fee of ${{ baseFee }}, paid in {{ symbol }}.',
-    'public-service-fee-info': 'Additional public packet option at ${{ publicFee }}, paid in {{ symbol }}, plus {{ publicFeePercentage }}% of the total {{ packetSymbol }} in the packet.',
-    'transaction-fees-info': 'Transaction fees are estimated based on the number of packets the service will send to winners.'
+    'base-service-fee-info': '基础服务费 ${{ baseFee }}，以{{ symbol }}支付。',
+    'public-service-fee-info': '额外的公共红包选项为 ${{ publicFee }}，以 {{ symbol }}支付，外加红包中总金额 {{ packetSymbol }} 的 {{ publicFeePercentage }}%。',
+    'transaction-fees-info': '交易费是根据该服务将发送给抢到红包者的红包数量估计的。'
   }
 }
