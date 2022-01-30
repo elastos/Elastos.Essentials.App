@@ -4,7 +4,7 @@ export const it = {
       // Titlebar
       'create-identity': 'Creazione dell\'identità',
       'import-my-did': 'Importa un\'identità',
-      'identity-name': 'Scelta del nome',
+      'identity-name': 'Scegli un nome',
       'mnemonic-security': 'Parole segrete mnemoniche',
       'verify-mnemonic': 'Verifica la frase mnemonica',
       'pick-identity': 'Scelta dell\'identità',
@@ -33,7 +33,7 @@ export const it = {
       'import-again-cancel': 'Annulla',
       'import-again-yes': 'Si',
       'did-corrupted-title': 'Errore DID danneggiato',
-      'did-corrupted-info': 'Apparentemente, il tuo DID è danneggiato e Essentials non può recuperarlo. L\'unica soluzione per ora è creare un nuovo DID.',
+      'did-corrupted-info': 'Apparentemente, il tuo DID è danneggiato e Essentials non può recuperarlo. L\'unica soluzione per ora è creare una nuova DID.',
       'got-it': 'Fatto',
 
       // Create screen
