@@ -174,7 +174,7 @@ export const it = {
         //Suggestion detail
         'make-into-proposal': 'Trasforma in Proposta',
         'sign-suggestion': 'Sign Suggestion',
-        'motivation': 'Motivation',
+        'motivation': 'Motivazione',
 
         'goal': 'Obbiettivo',
         'milestone': 'Pietre miliari',
@@ -184,7 +184,7 @@ export const it = {
         'total-budget': 'Budget Totale ',
         'receive-address': 'Indirizzo di ricezione ELA',
         'payment-schedule': 'Programma di pagamento',
-        'budget-statement': 'Dichiarazione di bilanzio',
+        'budget-statement': 'Dichiarazione di bilancio',
         'receiver-did': 'Receiver DID',
 
         //Error
