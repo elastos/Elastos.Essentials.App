@@ -21,7 +21,7 @@ export const it = {
         'welcome-back': 'Ben tornato/a!',
         'identity-not-published-on-blockchain': 'Identità non pubblicata',
         'identity-published-on-blockchain': 'Identità pubblicata',
-        'credentials-published-on-blockchain': 'Credenziali pubblicate',
+        'credentials-published-on-blockchain': 'Credenziali pubbliche',
         'credentials-verified': 'Credenziali verificate',
         'current-actions': 'Azioni attuali',
         'current-options': 'Opzioni attuali',
