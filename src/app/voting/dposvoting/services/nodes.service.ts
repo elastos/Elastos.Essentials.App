@@ -240,10 +240,10 @@ export class NodesService {
     }
 
     async fetchNodes() {
-        let ownerPublicKey = '';
+        var ownerPublicKey = '';
         //The wallet imported by private key has no ELA subwallet.
         if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
-            await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
+            ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
         }
         this.dposInfo = {
             nickname: "test",
