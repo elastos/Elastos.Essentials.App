@@ -101,6 +101,7 @@
     "@angular/language-service": "11.0.9",
     "@elastosfoundation/elastos-connectivity-sdk-js": "1.0.11",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.5",
+    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.45",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.23",
     "@ionic/angular-toolkit": "3.1.0",
     "@types/marked": "^2.0.5",
@@ -151,6 +152,7 @@
     "plugins": {
       "cordova-plugin-add-swift-support": {},
       "@elastosfoundation/elastos-cordova-plugin-carrier": {},
+      "@elastosfoundation/elastos-cordova-plugin-did": {},
       "@elastosfoundation/elastos-cordova-plugin-hive": {},
       "cordova-clipboard": {},
       "cordova-plugin-camera": {
@@ -174,7 +176,6 @@
       "elastos-essentials-plugin-intent": {},
       "cordova-plugin-statusbar": {},
       "elastos-essentials-plugin-internal": {},
-      "@elastosfoundation/elastos-cordova-plugin-did": {},
       "cordova-sqlite-storage": {},
       "cordova-plugin-firebasex": {
         "FIREBASE_ANALYTICS_COLLECTION_ENABLED": "true",
@@ -186,8 +187,7 @@
       "elastos-essentials-plugin-dappbrowser": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "android"
     ]
   }
 }
