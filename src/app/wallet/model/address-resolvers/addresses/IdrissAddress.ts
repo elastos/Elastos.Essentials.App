@@ -6,6 +6,6 @@ export class IdrissAddress extends Address {
     }
 
     public getDisplayName() {
-        return "Idriss: "+this.name;
+        return "IDriss: "+this.name;
     }
 }

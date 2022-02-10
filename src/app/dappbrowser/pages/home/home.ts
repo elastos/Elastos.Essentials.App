@@ -168,8 +168,8 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             {
                 icon: '/assets/browser/dapps/idriss.png',
                 title: 'Idriss Crypto Transactions',
-                description: ' Link wallet addresses from multiple networks to your email or phone number, enabling quick-lookup & seamless payments.(registry on BSC).',
-                url: 'https://www.idriss-crypto.com/',
+                description: 'Link wallet addresses from multiple networks to emails, phone numbers or @Twitter usernames, enabling quick lookup and payments (registry on Polygon).',
+                url: 'https://www.idriss.xyz/',
                 useExternalBrowser: false,
                 walletConnectSupported: false,
                 networks: ["elastos", "polygon"]

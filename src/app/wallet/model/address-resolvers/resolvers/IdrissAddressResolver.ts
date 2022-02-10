@@ -48,8 +48,12 @@ export class IdrissResolver extends Resolver {
     // input:[phone, email] + [secret]
     private isInputValid(input: string): boolean {
         let phonenumber = Util.startwithphonenumber(input);
-        let email = Util.email(input);
+        if (phonenumber) return true;
 
-        return phonenumber || email;
+        let email = Util.email(input);
+        if (email) return true;
+
+        let isTwitter = input.startsWith('@');
+        return isTwitter
     }
 }
