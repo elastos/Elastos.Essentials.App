@@ -1,8 +1,5 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <div class="ion-text-center header">
-        <ion-label><span>{{ getSelectedNodes() }}</span>/36 {{ 'dposvoting.vote-selected' | translate }}</ion-label>
-    </div>
 
     <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length; else loadingList">
 
@@ -83,8 +80,12 @@
     </ng-template>
 </ion-content>
 
-<div *ngIf="nodesService._nodes.length > 0 && voteService.canVote() && !voting" class="vote-btn ion-activatable ripple animate-btn" (click)="castVote()">
-    <h1 *ngIf="voted">{{ 'dposvoting.vote-voted' | translate }}</h1>
-    <h1 *ngIf="!voted">{{ 'dposvoting.vote-not-voted' | translate }}</h1>
+<div *ngIf="nodesService.activeNodes.length > 0 && voteService.canVote() && !voting"
+    class="vote-btn ion-activatable ripple animate-btn" (click)="castVote()">
+    <div>
+        <h1 *ngIf="voted">{{ 'dposvoting.vote-voted' | translate }}</h1>
+        <h1 *ngIf="!voted">{{ 'dposvoting.vote-not-voted' | translate }}</h1>
+        <p><span>{{ getSelectedNodes() }}</span>/{{ nodesService.activeNodes.length }} {{ 'dposvoting.vote-selected' | translate }}</p>
+    </div>
     <ion-ripple-effect></ion-ripple-effect>
 </div>
