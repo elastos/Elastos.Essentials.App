@@ -167,7 +167,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             },
             {
                 icon: '/assets/browser/dapps/idriss.png',
-                title: 'Idriss Crypto Transactions',
+                title: 'IDriss',
                 description: 'Link wallet addresses from multiple networks to emails, phone numbers or @Twitter usernames, enabling quick lookup and payments (registry on Polygon).',
                 url: 'https://www.idriss.xyz/',
                 useExternalBrowser: false,
