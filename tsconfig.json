@@ -50,6 +50,9 @@
       ],
       "stream": [
         "node_modules/stream-browserify"
+      ],
+      "path": [
+        "./node_modules/path-browserify"
       ]
     }
   }
