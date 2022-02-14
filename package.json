@@ -22,7 +22,6 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/build-angular": "0.1101.0",
     "@angular/animations": "13.1.1",
     "@angular/cdk": "13.1.1",
     "@angular/common": "13.1.1",
@@ -85,6 +84,7 @@
     "moment": "2.29.1",
     "node-wget-promise": "0.1.6",
     "p-queue": "^7.1.0",
+    "path-browserify": "^1.0.1",
     "qr-scanner": "1.2.0",
     "rxjs": "^7.5.2",
     "stream-browserify": "3.0.0",
@@ -94,6 +94,7 @@
     "tsdx": "^0.14.1",
     "tslib": "2.3.1",
     "unorm": "1.6.0",
+    "url": "^0.11.0",
     "web3": "^1.5.2",
     "web3-core": "^1.6.1",
     "xcode": "3.0.1",
@@ -101,8 +102,8 @@
     "zone.js": "0.11.4"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "13.0.0",
-    "@angular-devkit/build-angular": "13.1.1",
+    "@angular-builders/custom-webpack": "13.1.0",
+    "@angular-devkit/build-angular": "13.2.3",
     "@angular/cli": "13.1.2",
     "@angular/compiler": "13.1.1",
     "@angular/compiler-cli": "13.1.1",
@@ -195,7 +196,8 @@
       "elastos-essentials-plugin-dappbrowser": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }
