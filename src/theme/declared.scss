@@ -106,6 +106,7 @@
 
 .didsessions-warning-component {
   --min-height: 302px;
+  --width: 100%;
 
   animation: didsessionsWarningAnimate;
   animation-duration: 300ms;
@@ -124,14 +125,12 @@
     background: transparent !important;
   }
 
-  .popover-wrapper {
-    .popover-content {
+  .popover-viewport {
       position: relative !important;
       margin: 0 auto !important;
       left: auto !important;
       top: auto !important;
       width: 85vw !important;
-    }
   }
 }
 
@@ -166,10 +165,12 @@
 
 .identity-publishmode-component-base {
   --height: 35%;
+  --width: 100%;
 }
 
 .identity-warning-component {
   --min-height: 302px;
+  --width: 100%;
 
   animation: identityWarningAnimate;
   animation-duration: 300ms;
@@ -188,14 +189,12 @@
     background: transparent !important;
   }
 
-  .popover-wrapper {
-    .popover-content {
-      position: relative !important;
-      margin: 0 auto !important;
-      left: auto !important;
-      top: auto !important;
-      width: 85vw !important;
-    }
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
   }
 }
 
@@ -242,6 +241,7 @@
 }
 
 .wallet-tx-component {
+  --width: 100%;
   --background: transparent;
   animation: walletTxAnimate;
   animation-duration: 300ms;
@@ -260,19 +260,18 @@
     background: transparent !important;
   }
 
-  .popover-wrapper {
-    .popover-content {
-      position: relative !important;
-      margin: 0 auto !important;
-      left: auto !important;
-      top: auto !important;
-      width: 85vw !important;
-    }
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
   }
 }
 
 .wallet-warning-component {
   --min-height: 302px;
+  --width: 100%;
 
   animation: walletWarningAnimate;
   animation-duration: 300ms;
@@ -291,14 +290,12 @@
     background: transparent !important;
   }
 
-  .popover-wrapper {
-    .popover-content {
-      position: relative !important;
-      margin: 0 auto !important;
-      left: auto !important;
-      top: auto !important;
-      width: 85vw !important;
-    }
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
   }
 }
 
@@ -353,6 +350,7 @@
 
 .contacts-warning-component {
   --min-height: 302px;
+  --width: 100%;
 
   animation: contactsWarningAnimate;
   animation-duration: 300ms;
@@ -371,14 +369,12 @@
     background: transparent !important;
   }
 
-  .popover-wrapper {
-    .popover-content {
-      position: relative !important;
-      margin: 0 auto !important;
-      left: auto !important;
-      top: auto !important;
-      width: 85vw !important;
-    }
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
   }
 }
 
@@ -407,14 +403,12 @@
     opacity: 0.1 !important;
   }
 
-  .popover-wrapper {
-    .popover-content {
-      position: relative !important;
-      margin: 0 auto !important;
-      left: auto !important;
-      top: auto !important;
-      width: 85vw !important;
-    }
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
   }
 }
 
@@ -434,18 +428,16 @@
   --width: 100%;
   backdrop-filter: blur(5px);
 
-  .popover-wrapper {
-    .popover-content {
-      position: relative !important;
-      left: auto !important;
-      top: auto !important;
-      width: 85vw !important;
-      max-width: 400px;
+  .popover-viewport {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
+    max-width: 400px;
 
-      ion-content {
-        --background: transparent;
-        justify-content: center;
-      }
+    ion-content {
+    --background: transparent;
+    justify-content: center;
     }
   }
 }
