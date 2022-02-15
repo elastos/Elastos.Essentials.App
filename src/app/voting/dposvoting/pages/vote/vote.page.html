@@ -8,22 +8,22 @@
     </ion-button> -->
 
         <app-node-slider-vote *ngIf="showNode" [nodeIndex]="nodeIndex" [node]="node"
-            [totalVotes]="nodesService.totalVotes" [_nodes]="nodesService.activeNodes">
+            [totalVotes]="nodesService.totalVotes" [_nodes]="nodesService.dposList">
         </app-node-slider-vote>
 
         <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.darkContainer]="theme.darkMode">
-            <ion-item *ngFor="let node of nodesService.activeNodes">
+            <ion-item *ngFor="let node of nodesService.dposList">
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
                         <ion-col size="1" class="rank-container ion-no-padding"
-                            (click)="_showNode(nodesService.activeNodes.indexOf(node), node)">
-                            {{ nodesService.activeNodes.indexOf(node) + 1 }}
+                            (click)="_showNode(nodesService.dposList.indexOf(node), node)">
+                            {{ nodesService.dposList.indexOf(node) + 1 }}
                         </ion-col>
                         <ion-col size="2" class="img-container"
-                            (click)="_showNode(nodesService.activeNodes.indexOf(node), node)">
+                            (click)="_showNode(nodesService.dposList.indexOf(node), node)">
                             <img [src]="node.imageUrl ? node.imageUrl : '../assets/dposvoting/icon/elastos-icon.svg'">
                         </ion-col>
-                        <ion-col size="7.5" (click)="_showNode(nodesService.activeNodes.indexOf(node), node)"
+                        <ion-col size="7.5" (click)="_showNode(nodesService.dposList.indexOf(node), node)"
                             class="label-col">
                             <ion-label>
                                 <h4>{{ node.nickname }}</h4>
@@ -37,7 +37,7 @@
                         </ion-col>
                         <ion-col size="1.5" class="checkbox-container" *ngIf="voteService.canVote()">
                             <ion-checkbox value="node" [(ngModel)]="node.isChecked" mode="ios"
-                                [disabled]="selectedNodes > 35 && !node.isChecked"></ion-checkbox>
+                                [disabled]="node.state === 'Inactive'"></ion-checkbox>
                         </ion-col>
                     </ion-row>
                 </ion-grid>
@@ -80,12 +80,12 @@
     </ng-template>
 </ion-content>
 
-<div *ngIf="nodesService.activeNodes.length > 0 && voteService.canVote() && !voting"
+<div *ngIf="nodesService.dposList.length > 0 && voteService.canVote() && !voting"
     class="vote-btn ion-activatable ripple animate-btn" (click)="castVote()">
     <div>
         <h1 *ngIf="voted">{{ 'dposvoting.vote-voted' | translate }}</h1>
         <h1 *ngIf="!voted">{{ 'dposvoting.vote-not-voted' | translate }}</h1>
-        <p><span>{{ getSelectedNodes() }}</span>/{{ nodesService.activeNodes.length }} {{ 'dposvoting.vote-selected' | translate }}</p>
+        <p><span>{{ getSelectedNodes() }}</span>/{{ nodesService.dposList.length }} {{ 'dposvoting.vote-selected' | translate }}</p>
     </div>
     <ion-ripple-effect></ion-ripple-effect>
 </div>

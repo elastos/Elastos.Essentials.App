@@ -130,7 +130,7 @@ export class VotePage implements OnInit {
     async castVote() {
         this.voting = true;
         let castedNodeKeys: string[] = [];
-        this.nodesService.activeNodes.forEach(node => {
+        this.nodesService.dposList.forEach(node => {
             if (node.isChecked === true) {
                 castedNodeKeys = castedNodeKeys.concat(node.ownerpublickey);
             }
@@ -191,7 +191,7 @@ export class VotePage implements OnInit {
 
     getSelectedNodes(): number {
         this.selectedNodes = 0;
-        this.nodesService.activeNodes.forEach(node => {
+        this.nodesService.dposList.forEach(node => {
             if (node.isChecked === true) {
                 this.selectedNodes++;
             }

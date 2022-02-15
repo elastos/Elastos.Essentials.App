@@ -50,7 +50,7 @@ export class NodesService {
     public _nodes: DPosNode[] = [];
     public activeNodes: DPosNode[] = [];
     public totalVotes = 0;
-    public dposList: DPoSRegistrationInfo[] = [];
+    public dposList: DPosNode[] = [];
 
     // Stats
     public statsFetched = false;
@@ -276,7 +276,6 @@ export class NodesService {
 
             if (result && !Util.isEmptyObject(result.producers)) {
                 Logger.log(App.DPOS_VOTING, "dposlist:", result.producers);
-                this.dposList = result.producers;
                 this.totalVotes = result.totalvotes;
                 this._nodes = result.producers;
                 for (const node of result.producers) {
@@ -284,12 +283,18 @@ export class NodesService {
                         this.dposInfo = node;
                     }
                     node.index += 1;
-                    if (node.state === 'Active') {
-                        this.activeNodes.push(node);
+
+                    if (node.state === 'Active' || (node.state === 'Inactive')) {
+                        if (node.state === 'Active') {
+                            this.activeNodes.push(node);
+                        }
+                        if ((vote != null) && vote.keys.includes(node.ownerpublickey)) {
+                            node.isChecked = true;
+                        }
+
+                        this.dposList.push(node);
                     }
-                    if ((vote != null) && vote.keys.includes(node.ownerpublickey) && (node.state === 'Active')) {
-                        node.isChecked = true;
-                    }
+
                     this.getNodeIcon(node);
                 }
                 Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
