@@ -3,13 +3,13 @@
   <div class="ion-text-center header">
     <ion-label>{{ 'dposvoting.stats-overview' | translate }}</ion-label>
   </div>
-  
+
 <!--   <ion-refresher class="ion-margin-top ion-padding-top" slot="fixed" (ionRefresh)="updateStats($event)">
     <ion-refresher-content class="ion-margin-top ion-padding-top"></ion-refresher-content>
   </ion-refresher>
  -->
- 
-  <ion-grid 
+
+  <ion-grid
     *ngIf="nodesService._nodes.length; else loadingList"
     class="container ion-no-padding ion-no-margin"
     [class.dark-container]="theme.darkMode"
@@ -117,7 +117,7 @@
               </ion-label>
             </ion-col>
             <ion-col size="3" class="number-container ion-padding-end">
-              <h4>{{ nodesService.activeNodes.length }} / {{ nodesService._nodes.length }}</h4>
+              <h4>{{ nodesService.activeNodes.length }} / {{ nodesService.dposList.length }}</h4>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -310,7 +310,7 @@
       </ion-list>
     </ion-grid>
   </ng-template>
- 
+
 
 </ion-content>
 
