@@ -3,9 +3,11 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { Config } from 'src/app/wallet/config/Config';
 import { SuggestionDetail, SuggestionSearchResult, SuggestionStatus } from '../model/suggestion-model';
 
 @Injectable({
@@ -274,7 +276,7 @@ export class SuggestionService {
                 SideChainName: suggestionDetail.sideChainName,
                 MagicNumber: suggestionDetail.magicNumber,
                 GenesisHash: suggestionDetail.genesisHash,
-                ExchangeRate: suggestionDetail.exchangeRate,
+                ExchangeRate: Util.accMul(suggestionDetail.exchangeRate, Config.SELA),
                 EffectiveHeight: suggestionDetail.effectiveHeight,
                 ResourcePath: suggestionDetail.resourcePath,
         }
