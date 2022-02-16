@@ -17,8 +17,8 @@ import { BSCTestNetNetwork } from '../model/networks/bsc/bsc.testnet.network';
 import { BTCMainNetNetwork } from '../model/networks/btc/btc.mainnet.network';
 import { BTCTestNetNetwork } from '../model/networks/btc/btc.testnet.network';
 import { ElastosLRWNetwork } from '../model/networks/elastos/elastos.lrw.network';
-import { ElastosMainNetNetwork } from '../model/networks/elastos/elastos.mainnet.network';
-import { ElastosTestNetNetwork } from '../model/networks/elastos/elastos.testnet.network';
+import { ElastosIdentityChainMainNetNetwork, ElastosMainChainMainNetNetwork, ElastosSmartChainMainNetNetwork } from '../model/networks/elastos/elastos.mainnet.network';
+import { ElastosIdentityChainTestNetNetwork, ElastosMainChainTestNetNetwork, ElastosSmartChainTestNetNetwork } from '../model/networks/elastos/elastos.testnet.network';
 import { EthereumMainNetNetwork } from '../model/networks/ethereum/ethereum.mainnet.network';
 import { EthereumRopstenNetwork } from '../model/networks/ethereum/ethereum.ropsten.network';
 import { FantomMainNetNetwork } from '../model/networks/fantom/fantom.mainnet.network';
@@ -117,9 +117,6 @@ export class WalletInitService extends GlobalService {
     await this.walletManager.init();
     await this.intentService.init();
     await this.swapService.init();
-
-    // TMP TEST
-    //await this.currencyV2Service.getTokenUSDValue(null, null);
   }
 
   public async onUserSignOut(): Promise<void> {
@@ -130,7 +127,9 @@ export class WalletInitService extends GlobalService {
     let networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
-        await this.createAndRegisterNetwork(new ElastosMainNetNetwork(), true);
+        await this.createAndRegisterNetwork(new ElastosMainChainMainNetNetwork(), true);
+        await this.createAndRegisterNetwork(new ElastosSmartChainMainNetNetwork());
+        await this.createAndRegisterNetwork(new ElastosIdentityChainMainNetNetwork());
         await this.createAndRegisterNetwork(new BTCMainNetNetwork());
         await this.createAndRegisterNetwork(new EthereumMainNetNetwork());
         await this.createAndRegisterNetwork(new HECOMainNetNetwork());
@@ -143,7 +142,9 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new TelosMainNetNetwork());
         return;
       case TESTNET_TEMPLATE:
-        await this.createAndRegisterNetwork(new ElastosTestNetNetwork(), true);
+        await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork(), true);
+        await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork());
+        await this.createAndRegisterNetwork(new ElastosIdentityChainTestNetNetwork());
         await this.createAndRegisterNetwork(new BTCTestNetNetwork());
         await this.createAndRegisterNetwork(new EthereumRopstenNetwork());
         await this.createAndRegisterNetwork(new HECOTestNetNetwork());

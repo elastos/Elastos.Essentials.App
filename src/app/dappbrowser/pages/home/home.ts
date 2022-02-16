@@ -82,7 +82,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://feeds.trinity-feeds.app/nav/?page=home',
                 useExternalBrowser: true,
                 walletConnectSupported: true,
-                networks: ["elastos"]
+                networks: ["elastossmartchain"]
             },
             {
                 icon: '/assets/browser/dapps/glidefinance.png',
@@ -91,7 +91,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://glidefinance.io/',
                 useExternalBrowser: false,
                 walletConnectSupported: true,
-                networks: ["elastos"]
+                networks: ["elastossmartchain"]
             },
             {
                 icon: '/assets/browser/dapps/elacity.png',
@@ -100,7 +100,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://ela.city/',
                 useExternalBrowser: false,
                 walletConnectSupported: true,
-                networks: ["elastos"]
+                networks: ["elastossmartchain"]
             },
             {
                 icon: '/assets/browser/dapps/kycme.png',
@@ -109,7 +109,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://kyc-me.io?theme=' + (this.theme.darkMode ? "dark" : "light"),
                 useExternalBrowser: false,
                 walletConnectSupported: true,
-                networks: ["elastos"]
+                networks: ["elastossmartchain"]
             },
             {
                 icon: '/assets/browser/dapps/cyberrepublic.svg',
@@ -118,7 +118,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://www.cyberrepublic.org/',
                 useExternalBrowser: false,
                 walletConnectSupported: true, // Not really, but we can open on ios, as this is a non web3 dapps
-                networks: ["elastos"]
+                networks: ["elastossmartchain"]
             },
             {
                 icon: '/assets/browser/dapps/anyswap.svg',
@@ -145,7 +145,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://app.elk.finance/',
                 useExternalBrowser: false,
                 walletConnectSupported: false,
-                networks: ["elastos", "heco", "bsc", "avalanchecchain", "fantom", "polygon", "telos"]
+                networks: ["elastossmartchain", "heco", "bsc", "avalanchecchain", "fantom", "polygon", "telos"]
             },
             {
                 icon: '/assets/browser/dapps/vitrim.png',
@@ -154,7 +154,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://vitrim.io/',
                 useExternalBrowser: false,
                 walletConnectSupported: true,
-                networks: ["elastos"]
+                networks: ["elastossmartchain"]
             },
             {
                 icon: '/assets/browser/dapps/filda.png',
@@ -172,7 +172,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://www.idriss.xyz/',
                 useExternalBrowser: false,
                 walletConnectSupported: false,
-                networks: ["elastos", "polygon"]
+                networks: ["elastossmartchain", "polygon"]
             },
             /* {
                 icon: '/assets/browser/dapps/profile.png',
@@ -180,7 +180,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 description: 'A better way to be online using Elastos DID',
                 url: 'https://profile.site/',
                 useExternalBrowser: false,
-                networks: ["elastos"]
+                networks: ["elastossmartchain"]
             }, */
             {
                 icon: '/assets/browser/dapps/mdex.png',
@@ -216,7 +216,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://raven.moe/',
                 useExternalBrowser: false,
                 walletConnectSupported: false,
-                networks: ["elastos", "polygon"]
+                networks: ["elastossmartchain", "polygon"]
             },
             {
                 icon: '/assets/browser/dapps/tokbridge.svg',
@@ -225,7 +225,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://tokbridge.net/',
                 useExternalBrowser: false,
                 walletConnectSupported: false, // Seems to be supported on the website but not working
-                networks: ["elastos", "heco", "bsc", "ethereum"]
+                networks: ["elastossmartchain", "heco", "bsc", "ethereum"]
             },
             {
                 icon: '/assets/browser/dapps/tokswap.png',
@@ -234,7 +234,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://tokswap.net/',
                 useExternalBrowser: false,
                 walletConnectSupported: false,
-                networks: ["elastos"]
+                networks: ["elastossmartchain"]
             },
             {
                 icon: '/assets/browser/dapps/tin.jpg',
@@ -252,7 +252,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 url: 'https://cryptoname.org/',
                 useExternalBrowser: false,
                 walletConnectSupported: false,
-                networks: ["elastos"]
+                networks: ["elastossmartchain"]
             },
             {
                 icon: '/assets/browser/dapps/sushiswap.png',

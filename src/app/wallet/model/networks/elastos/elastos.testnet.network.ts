@@ -1,11 +1,41 @@
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "../../../services/wallet.service";
 import { ERC20Coin } from "../../coin";
+import { ElastosIdentityChainNetworkWallet } from "../../wallets/elastos/networkwallets/identitychain.networkwallet";
+import { ElastosMainChainNetworkWallet } from "../../wallets/elastos/networkwallets/mainchain.networkwallet";
+import { ElastosSmartChainNetworkWallet } from "../../wallets/elastos/networkwallets/smartchain.networkwallet";
+import { MasterWallet } from "../../wallets/masterwallet";
+import { NetworkWallet } from "../../wallets/networkwallet";
 import { ElastosNetworkBase } from "./elastos.base.network";
 
-export class ElastosTestNetNetwork extends ElastosNetworkBase {
+export class ElastosMainChainTestNetNetwork extends ElastosNetworkBase {
   constructor() {
-    super("Elastos Testnet", TESTNET_TEMPLATE);
+    super("elastos", "Elastos main chain Testnet", TESTNET_TEMPLATE);
+  }
+
+  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
+    let wallet = new ElastosMainChainNetworkWallet(masterWallet, this);
+    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
+  }
+
+  public getMainChainID(): number {
+    return -1;
+  }
+
+  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
+    onGoingConfig['ELA'] = {};
+    onGoingConfig['IDChain'] = {};
+  }
+}
+
+export class ElastosSmartChainTestNetNetwork extends ElastosNetworkBase {
+  constructor() {
+    super("elastossmartchain", "Elastos smart chain Testnet", TESTNET_TEMPLATE);
+  }
+
+  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
+    let wallet = new ElastosSmartChainNetworkWallet(masterWallet, this);
+    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public getBuiltInERC20Coins(): ERC20Coin[] {
@@ -19,9 +49,28 @@ export class ElastosTestNetNetwork extends ElastosNetworkBase {
   }
 
   public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
-    onGoingConfig['ELA'] = {};
-    onGoingConfig['IDChain'] = {};
     onGoingConfig['ETHSC'] = { ChainID: 21, NetworkID: 21 };
+  }
+}
+
+/**
+ * Elastos identity chain
+ */
+export class ElastosIdentityChainTestNetNetwork extends ElastosNetworkBase {
+  constructor() {
+    super("elastosidchain", "Elastos identity chain", TESTNET_TEMPLATE);
+  }
+
+  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
+    let wallet = new ElastosIdentityChainNetworkWallet(masterWallet, this);
+    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
+  }
+
+  public getMainChainID(): number {
+    return 23;
+  }
+
+  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
     onGoingConfig['ETHDID'] = { ChainID: 23, NetworkID: 23 };
   }
 }

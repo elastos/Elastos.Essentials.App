@@ -10,8 +10,8 @@ import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.serv
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { EthTransaction } from 'src/app/wallet/model/evm.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { ElastosNetworkWallet } from 'src/app/wallet/model/wallets/elastos/elastos.networkwallet';
 import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
+import { ElastosMainChainNetworkWallet } from 'src/app/wallet/model/wallets/elastos/networkwallets/mainchain.networkwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
@@ -128,7 +128,7 @@ export class CoinTxInfoPage implements OnInit {
 
     async getTransactionDetails() {
         // TODO: To Improve
-        if ((this.networkWallet instanceof ElastosNetworkWallet) && ((this.subWalletId === StandardCoinName.ELA) || (this.subWalletId === StandardCoinName.IDChain))) {
+        if ((this.networkWallet instanceof ElastosMainChainNetworkWallet) && ((this.subWalletId === StandardCoinName.ELA) || (this.subWalletId === StandardCoinName.IDChain))) {
             const transaction = await (this.subWallet as MainAndIDChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             if (transaction) {
                 this.transactionInfo.confirmStatus = transaction.confirmations;

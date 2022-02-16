@@ -23,105 +23,105 @@
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { ElastosNetworkWallet } from '../model/wallets/elastos/elastos.networkwallet';
+import { ElastosMainChainNetworkWallet } from '../model/wallets/elastos/networkwallets/mainchain.networkwallet';
 import { AuthService } from './auth.service';
 import { WalletNetworkService } from './network.service';
 import { WalletService } from './wallet.service';
 
 export type SelectableMnemonic = {
-    text: string;
-    selected: boolean;
+  text: string;
+  selected: boolean;
 };
 
 export enum NewWallet {
-    CREATE = 1,
-    IMPORT = 2,
+  CREATE = 1,
+  IMPORT = 2,
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class WalletCreationService {
-    // Below fields are shared by several screens while creating (new/import) a master wallet.
-    // Consider this service as a singleton shared class.
-    public type: NewWallet;
-    public masterId: string;
-    public mnemonicList: SelectableMnemonic[];
-    public mnemonicStr: string;
-    public singleAddress: boolean;
-    public isMulti: boolean;
-    public name: string;
-    public mnemonicPassword: string;
+  // Below fields are shared by several screens while creating (new/import) a master wallet.
+  // Consider this service as a singleton shared class.
+  public type: NewWallet;
+  public masterId: string;
+  public mnemonicList: SelectableMnemonic[];
+  public mnemonicStr: string;
+  public singleAddress: boolean;
+  public isMulti: boolean;
+  public name: string;
+  public mnemonicPassword: string;
 
-    constructor(private walletService: WalletService, private authService: AuthService, private networkService: WalletNetworkService) {
-        this.reset();
-    }
+  constructor(private walletService: WalletService, private authService: AuthService, private networkService: WalletNetworkService) {
+    this.reset();
+  }
 
-    /**
-     * Resets all service fields to their default value to restart a new wallet creation.
-     */
-    public reset() {
-        this.type = null;
-        this.masterId = null;
-        this.mnemonicStr = null;
-        this.mnemonicList = [];
-        this.singleAddress = null;
-        this.isMulti = null;
-        this.name = null;
+  /**
+   * Resets all service fields to their default value to restart a new wallet creation.
+   */
+  public reset() {
+    this.type = null;
+    this.masterId = null;
+    this.mnemonicStr = null;
+    this.mnemonicList = [];
+    this.singleAddress = null;
+    this.isMulti = null;
+    this.name = null;
 
-        this.mnemonicPassword = null;
-    }
+    this.mnemonicPassword = null;
+  }
 
-    /**
-     * Creates a wallet that uses the same mnemonic as the DID.
-     * Usually this method should be called only once per new DID created, so the newly created
-     * user also has a default wallet.
-     */
-     public async createWalletFromNewIdentity(walletName: string, mnemonic: string, mnemonicPassphrase: string): Promise<void> {
-        Logger.log("wallet", "Creating wallet from new identity");
-        let masterWalletId = Util.uuid(6, 16);
-        const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
-        if (payPassword) {
-          try {
-            // First create multi address wallet.
-            await this.walletService.importWalletWithMnemonic(
-              masterWalletId,
-              walletName,
-              mnemonic,
-              mnemonicPassphrase || "",
-              payPassword,
-              false,
-              true
-            );
+  /**
+   * Creates a wallet that uses the same mnemonic as the DID.
+   * Usually this method should be called only once per new DID created, so the newly created
+   * user also has a default wallet.
+   */
+  public async createWalletFromNewIdentity(walletName: string, mnemonic: string, mnemonicPassphrase: string): Promise<void> {
+    Logger.log("wallet", "Creating wallet from new identity");
+    let masterWalletId = Util.uuid(6, 16);
+    const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
+    if (payPassword) {
+      try {
+        // First create multi address wallet.
+        await this.walletService.importWalletWithMnemonic(
+          masterWalletId,
+          walletName,
+          mnemonic,
+          mnemonicPassphrase || "",
+          payPassword,
+          false,
+          true
+        );
 
-            // Get the elastos network wallet instance to know if this wallet is single or multi address, as
-            // we want to return this information.
-            let elastosNetworkWallet = await this.networkService.getNetworkByKey("elastos").createNetworkWallet(this.walletService.getMasterWallet(masterWalletId), false) as ElastosNetworkWallet;
-            if (await elastosNetworkWallet.multipleAddressesInUse()) {
-              await elastosNetworkWallet.startBackgroundUpdates();
-              Logger.log('wallet', 'Multi address wallet!')
-              return;
-            }
-
-            Logger.log('wallet', 'Single address wallet!')
-            // Not multi address wallet, delete multi address wallet and create a single address wallet.
-            await this.walletService.destroyMasterWallet(masterWalletId, false);
-            await this.walletService.importWalletWithMnemonic(
-              masterWalletId,
-              walletName,
-              mnemonic,
-              mnemonicPassphrase || "",
-              payPassword,
-              true,
-              true
-            );
-
-            // Re-create the wallet again in order to initialize the subwallets again.
-            elastosNetworkWallet = await this.networkService.getNetworkByKey("elastos").createNetworkWallet(this.walletService.getMasterWallet(masterWalletId), true) as ElastosNetworkWallet;
-          }
-          catch (err) {
-            Logger.error('wallet', 'Wallet import error:', err);
-          }
+        // Get the elastos network wallet instance to know if this wallet is single or multi address, as
+        // we want to return this information.
+        let elastosNetworkWallet = await this.networkService.getNetworkByKey("elastos").createNetworkWallet(this.walletService.getMasterWallet(masterWalletId), false) as ElastosMainChainNetworkWallet;
+        if (await elastosNetworkWallet.multipleAddressesInUse()) {
+          await elastosNetworkWallet.startBackgroundUpdates();
+          Logger.log('wallet', 'Multi address wallet!')
+          return;
         }
+
+        Logger.log('wallet', 'Single address wallet!')
+        // Not multi address wallet, delete multi address wallet and create a single address wallet.
+        await this.walletService.destroyMasterWallet(masterWalletId, false);
+        await this.walletService.importWalletWithMnemonic(
+          masterWalletId,
+          walletName,
+          mnemonic,
+          mnemonicPassphrase || "",
+          payPassword,
+          true,
+          true
+        );
+
+        // Re-create the wallet again in order to initialize the subwallets again.
+        elastosNetworkWallet = await this.networkService.getNetworkByKey("elastos").createNetworkWallet(this.walletService.getMasterWallet(masterWalletId), true) as ElastosMainChainNetworkWallet;
+      }
+      catch (err) {
+        Logger.error('wallet', 'Wallet import error:', err);
+      }
     }
+  }
 }

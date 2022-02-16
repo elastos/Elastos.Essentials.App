@@ -33,7 +33,14 @@ export class SubWalletBuilder {
             /* case CoinType.STANDARD:
                 return StandardSubWalletBuilder.newFromSerializedSubWallet(networkWallet.masterWallet, serializedSubWallet); */
             case CoinType.ERC20:
-                return ERC20SubWallet.newFromSerializedSubWallet(networkWallet, serializedSubWallet);
+                // Normally we shouldn't have any serialized subwallet of type ERC20 in network wallets that don't
+                // support this but this happens for legacy reasons (elastos network split into more networks), so
+                // we manually check it here.
+                debugger;
+                if (networkWallet.supportsERC20Coins())
+                    return ERC20SubWallet.newFromSerializedSubWallet(networkWallet, serializedSubWallet);
+                else
+                    return null;
             default:
                 Logger.warn('wallet', "Unsupported subwallet type", serializedSubWallet.type);
                 break;

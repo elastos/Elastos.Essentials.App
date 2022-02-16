@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import Resolution from '@unstoppabledomains/resolution';
 import { Logger } from "src/app/logger";
 import { BSCMainNetNetwork } from '../../networks/bsc/bsc.mainnet.network';
-import { ElastosMainNetNetwork } from '../../networks/elastos/elastos.mainnet.network';
+import { ElastosMainChainMainNetNetwork, ElastosSmartChainMainNetNetwork } from '../../networks/elastos/elastos.mainnet.network';
 import { EthereumMainNetNetwork } from '../../networks/ethereum/ethereum.mainnet.network';
 import { FantomMainNetNetwork } from '../../networks/fantom/fantom.mainnet.network';
 import { HECOMainNetNetwork } from '../../networks/heco/heco.mainnet.network';
@@ -26,11 +26,15 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
      * Returns UD's record key to be used for a given Essential's network.
      */
     private resolutionRecordKeyForWallet(subWallet: AnySubWallet): string {
-        if (subWallet.networkWallet.network instanceof ElastosMainNetNetwork) {
+        if (subWallet.networkWallet.network instanceof ElastosMainChainMainNetNetwork) {
+            if (subWallet instanceof MainchainSubWallet)
+                return "crypto.ELA.version.ELA.address";
+            else
+                return null;
+        }
+        else if (subWallet.networkWallet.network instanceof ElastosSmartChainMainNetNetwork) {
             if (subWallet instanceof EscSubWallet)
                 return "crypto.ELA.version.ESC.address";
-            else if (subWallet instanceof MainchainSubWallet)
-                return "crypto.ELA.version.ELA.address";
             else
                 return null;
         }
