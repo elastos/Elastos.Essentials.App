@@ -8,7 +8,7 @@
     "translations": "ts-node --project translations/tsconfig.json translations/generate_translations.ts",
     "build-env": "ts-node --project environment/tsconfig.json environment/set_env.ts",
     "start": "ng serve",
-    "start-dev": "ionic cordova run android --external -l --ssl",
+    "start-dev-android": "ionic cordova run android --external -l --ssl",
     "ionic:serve:before": "npm run build-env && npm run translations",
     "ionic:build:before": "npm run build-env && npm run translations",
     "build": "ng build",
