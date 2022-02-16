@@ -75,6 +75,12 @@
             ]
           },
           "configurations": {
+            "development": {
+              "optimization": false,
+              "namedChunks": true,
+              "buildOptimizer": false,
+              "aot": false
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -101,7 +107,8 @@
             "ci": {
               "progress": false
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
@@ -109,13 +116,17 @@
             "browserTarget": "app:build"
           },
           "configurations": {
+            "development": {
+              "browserTarget": "app:build"
+            },
             "production": {
               "browserTarget": "app:build:production"
             },
             "ci": {
               "progress": false
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -150,17 +161,6 @@
               "progress": false,
               "watch": false
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         },
         "ionic-cordova-build": {
@@ -206,15 +206,6 @@
             "ci": {
               "devServerTarget": "app:serve:ci"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
