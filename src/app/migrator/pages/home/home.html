@@ -1,0 +1,18 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+
+  <ion-grid class="container ion-padding">
+    <p *ngIf="!migrationStarted">We need to update a few things before you can continue.</p>
+    <ion-button *ngIf="!migrationStarted" (click)="processToMigration()">Start</ion-button>
+
+    <p *ngIf="currentMigrationTitle">On going operation: <b>{{ currentMigrationTitle }}</b></p>
+    <ion-spinner *ngIf="migrationStarted && !migrationSuccessfullyEnded && !migrationFailed"></ion-spinner>
+
+    <p *ngIf="migrationStarted && migrationSuccessfullyEnded">All good, please touch to continue!</p>
+    <ion-button *ngIf="migrationStarted && migrationSuccessfullyEnded" (click)="continueAfterSuccess()">Continue
+    </ion-button>
+    <p *ngIf="migrationFailed">Unfortunately the update has failed. Please let the team know about this.</p>
+    <p *ngIf="errorInfo"><b>{{ errorInfo }}</b></p>
+  </ion-grid>
+
+</ion-content>

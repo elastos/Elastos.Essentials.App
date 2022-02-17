@@ -290,7 +290,7 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    exportWalletWithMnemonic(masterWalletId: string, payPassWord: string): Promise<any> {
+    exportWalletWithMnemonic(masterWalletId: string, payPassWord: string): Promise<string> {
         return new Promise((resolve, reject) => {
             walletManager.exportWalletWithMnemonic([masterWalletId, payPassWord],
                 (ret) => { resolve(ret); },
@@ -1062,7 +1062,8 @@ export class SPVWalletPluginBridge {
     // show any popup or send message. Each method should handle that case by case
     // TODO: replace hardcoded error code with enum: http://elastos.ela.spv.cpp/SDK/Common/ErrorChecker.h
     async handleError(caller: string, err: any, promiseRejectHandler: (reason?: any) => void) {
-        await this.native.hideLoading();
+        if (this.native)
+            await this.native.hideLoading();
 
         // The error has caught, Senty should not capture this exception
         err.caller = caller;

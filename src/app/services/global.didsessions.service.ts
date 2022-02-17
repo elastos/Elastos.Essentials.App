@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
 import { Logger } from '../logger';
-import { GlobalStorageService } from './global.storage.service';
+import { GlobalIntentService } from './global.intent.service';
+import { GlobalNativeService } from './global.native.service';
 import { Direction, GlobalNavService } from './global.nav.service';
 import { GlobalServiceManager } from './global.service.manager';
-import { GlobalIntentService } from './global.intent.service';
+import { GlobalStorageService } from './global.storage.service';
+import { MigrationService } from './migrator/migration.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 
@@ -15,7 +19,7 @@ export type IdentityAvatar = {
 }
 
 export type IdentityEntry = {
-  /** ID of the DID store that containes this DID entry */
+  /** ID of the DID store that contains this DID entry */
   didStoreId: string;
   /** DID string (ex: did:elastos:abcdef) */
   didString: string;
@@ -25,28 +29,38 @@ export type IdentityEntry = {
   avatar?: IdentityAvatar;
   /** DID data storage path, for save did data and the other module data, such as spv */
   didStoragePath: string;
+  /** Date at which this identity entry was created. NOTE: some old sessions don't have this info */
+  creationDate?: number;
 }
 
 /**
 * Option parameters that can be passed during the sign in operation.
 */
 export type SignInOptions = {
-  /** Suggested session langauge code to use? */
+  /** Suggested session language code to use? */
   sessionLanguage?: string;
+  showBlockingSignInDialog?: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalDIDSessionsService {
+  public static instance: GlobalDIDSessionsService = null;
+
   private identities: IdentityEntry[] = null;
   private signedInIdentity: IdentityEntry | null = null;
 
   public static signedInDIDString: string | null = null; // Convenient way to get the signed in user's DID, used in many places
 
   constructor(private storage: GlobalStorageService,
+    private migrationService: MigrationService,
     private globalNavService: GlobalNavService,
-    private globalIntentService: GlobalIntentService) {
+    private globalIntentService: GlobalIntentService,
+    public globalNativeService: GlobalNativeService,
+    public translate: TranslateService,
+  ) {
+    GlobalDIDSessionsService.instance = this;
   }
 
   public async init(): Promise<void> {
@@ -87,8 +101,20 @@ export class GlobalDIDSessionsService {
    * entry is updated.
    */
   public async addIdentityEntry(entry: IdentityEntry): Promise<void> {
-    // Delete before adding again (update)
-    this.deleteIdentityEntryIfExists(entry.didString);
+    if (this.getIdentityIndex(entry.didString) >= 0) {
+      // Delete before adding again (update)
+      this.deleteIdentityEntryIfExists(entry.didString);
+    }
+    else {
+      // Real DID creation
+      // Let the migration service know about this newly created session
+      await this.migrationService.onDIDSessionCreated(entry.didString);
+    }
+
+    // Save the session creation date
+    if (!entry.creationDate) {
+      entry.creationDate = moment().unix(); // Just creating: session creation date is now.
+    }
 
     // Add again
     this.identities.push(entry);
@@ -126,6 +152,10 @@ export class GlobalDIDSessionsService {
     return this.signedInIdentity;
   }
 
+  public getIdentityEntry(did: string): IdentityEntry {
+    return this.identities.find(i => i.didString === did);
+  }
+
   /**
    * Signs a given identity entry in.
    *
@@ -144,11 +174,24 @@ export class GlobalDIDSessionsService {
       entry.didStoragePath = await internalManager.getDidStoragePath(entry.didStoreId, entry.didString);
     }
 
+    // Fix session creation date: old accounts don't have one.
+    if (!entry.creationDate) {
+      // Set the creation date to "now" even if that's not really the case.
+      entry.creationDate = moment().unix();
+      await this.saveDidSessionsToDisk();
+    }
+
+    // Check if some migrations are due - fully block the process and UI until all
+    // migrations are fully completed
+    await this.migrationService.checkAndNavigateToMigration(entry);
+
     this.signedInIdentity = entry;
 
     GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
 
+    void this.globalNativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
+    void this.globalNativeService.hideLoading();
 
     await this.saveSignedInIdentityToDisk();
 
