@@ -233,6 +233,7 @@ export class DappBrowserService implements GlobalService {
             titlebarheight: 50,
             backgroundcolor: "#bfbfbf",
             hidden: (target == "_webview"),
+            did: GlobalDIDSessionsService.signedInDIDString.replace(/:/g, "_"),
             atdocumentstartscript: this.web3ProviderCode + this.elastosConnectorCode, // Inject the web3 provider and connector at document start
         }
 

@@ -31,6 +31,7 @@ public class DappBrowserOptions {
     public boolean progressbar = true;
     public boolean loadurl = true;
     public String backgroundcolor = "#FFFFFF";
+    public String did = "did";
 
     public boolean cleardata = false;
     public boolean clearcache = false;

@@ -378,6 +378,42 @@ class WebViewHandler:  NSObject {
     public func setAlpha(_ alpha: CGFloat) {
         self.webView.alpha = alpha
     }
+
+    static func clearData(_ urlStr: String) {
+        let url = URL(string: urlStr)!;
+        let hostname = url.host;
+
+        if (hostname != nil) {
+            let dataStore = WKWebsiteDataStore.default()
+            dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+                records.forEach { record in
+                    print("[WebCacheCleaner] Record \(record)");
+                    if record.displayName.contains(hostname!) {
+                        dataStore.removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {
+                            print("remove data:\(record)")
+                        })
+                    }
+                }
+            }
+        }
+
+        let configuration = WKWebViewConfiguration()
+        configuration.preferences.javaScriptEnabled = true;
+        configuration.processPool = (CDVWKProcessPoolFactory.shared()?.sharedProcessPool()!)!;
+
+        let webView = WKWebView(frame: CGRect.zero, configuration: configuration)
+        let str = "<script>" +
+            "localStorage.clear();" +
+            "if (window.indexedDB.databases) {" +
+            "   window.indexedDB.databases().then((r) => {" +
+            "       for (var i = 0; i < r.length; i++) " +
+            "           window.indexedDB.deleteDatabase(r[i].name);" +
+            "   });" +
+             "}" +
+            "</script>";
+        webView.loadHTMLString(str, baseURL: url)
+    }
+
 }
 
 extension WebViewHandler: WKNavigationDelegate {

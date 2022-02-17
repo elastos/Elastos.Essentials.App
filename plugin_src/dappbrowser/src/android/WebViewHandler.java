@@ -39,6 +39,8 @@ import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -53,8 +55,10 @@ import android.view.WindowManager.LayoutParams;
 import org.apache.cordova.LOG;
 import org.apache.cordova.CallbackContext;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 
 public class WebViewHandler {
     protected static final String LOG_TAG = "WebViewHandler";
@@ -64,6 +68,9 @@ public class WebViewHandler {
     public static final String HEAD_EVENT = "head";
     private static final String URL_CHANGED_EVENT = "urlchanged";
     private static final String EXIT_EVENT = "exit";
+
+    private static final String BROWSER_DATA_DIRNAME = "/browserdata/";
+    private static final String APP_CACAHE_DIRNAME = "/webappcache";
 
     public WebView webView;
     public ProgressBar progressBar;
@@ -228,11 +235,15 @@ public class WebViewHandler {
         Bundle appSettings = this.activity.getIntent().getExtras();
         boolean enableDatabase = appSettings == null ? true : appSettings.getBoolean("DappBrowserStorageEnabled", true);
         if (enableDatabase) {
-            String databasePath = this.activity.getApplicationContext().getDir("dappBrowserDB", Context.MODE_PRIVATE).getPath();
+            String databasePath = getDatabasePath();
             settings.setDatabasePath(databasePath);
             settings.setDatabaseEnabled(true);
         }
         settings.setDomStorageEnabled(true);
+
+        // settings.setAppCacheEnabled(true);
+        // String cachePath = getAppCachePath(activity);
+        // settings.setAppCachePath(cachePath);
 
        if (options.clearcache) {
             CookieManager.getInstance().removeAllCookies(null);
@@ -463,11 +474,70 @@ public class WebViewHandler {
         webView.setAlpha(alpha);
     }
 
-    // private static final String APP_CACAHE_DIRNAME = "/webcache";
+    private String getDataPath() {
+        String ret = activity.getFilesDir().toString() + BROWSER_DATA_DIRNAME + options.did + "/";
+        return ret;
+    }
 
-    // public void clearWebViewCache(Context context) {
+    public static String getAppCachePath(Activity activity) {
+        String dir = activity.getFilesDir().toString() + BROWSER_DATA_DIRNAME + "appcache";
+        File dest = new File(dir);
+        if (!dest.exists()) {
+            dest.mkdirs();
+        }
+        return dir;
+    }
 
-    //     try {/*from  ww w  . j  a  va2s  .c  o m*/
+    private String getDatabasePath() {
+        String dir = getDataPath() + "database";
+        File dest = new File(dir);
+        if (!dest.exists()) {
+            dest.mkdirs();
+        }
+        return dir;
+    }
+
+    public static void clearData(String url) {
+        //Clear cookies
+        CookieManager cm = CookieManager.getInstance();
+        String cookies = cm.getCookie(url);
+        if (cookies != null) {
+            for (String cookie : cookies.split("; ")) {
+                cm.setCookie(url, cookie.split("=")[0] + "=");
+            }
+        }
+
+        Activity activity = DappBrowserPlugin.getInstance().cordova.getActivity();
+        WebView webView = new WebView(activity);
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDatabaseEnabled(true);
+        settings.setDomStorageEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                String str = "<script>" +
+                        "localStorage.clear();" +
+                        "if (window.indexedDB.databases) {" +
+                        "   window.indexedDB.databases().then((r) => {" +
+                        "       for (var i = 0; i < r.length; i++) " +
+                        "           window.indexedDB.deleteDatabase(r[i].name);" +
+                        "   });" +
+                        "}" +
+                        "</script>";
+                InputStream data = new ByteArrayInputStream(str.getBytes());
+                WebResourceResponse response = new WebResourceResponse("text/html", "UTF-8", data);
+                return response;
+            }
+        });
+
+        webView.loadUrl(url);
+        webView.clearHistory();
+    }
+
+  // public void clearWebViewCache(Context context) {
+
+    //     try {
     //         context.deleteDatabase("webview.db");
     //         context.deleteDatabase("webviewCache.db");
     //     } catch (Exception e) {

@@ -273,5 +273,12 @@ declare namespace DappBrowserPlugin {
          */
         removeEventListener(): Promise<void>;
 
+        /**
+         *
+         * Clear data for url.
+         *
+         */
+        clearData(url: string): Promise<void>;
+
     }
 }

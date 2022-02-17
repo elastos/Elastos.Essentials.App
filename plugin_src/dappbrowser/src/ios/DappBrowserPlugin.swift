@@ -437,5 +437,12 @@
             }
          }
      }
+     
+     @objc func clearData(_ command: CDVInvokedUrlCommand) {
+         let url = command.arguments[0] as? String;
+         if (url != nil) {
+             WebViewHandler.clearData(url!);
+         }
+     }
 
  }

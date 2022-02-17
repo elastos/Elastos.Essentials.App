@@ -258,6 +258,18 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             'DappBrowser', 'removeEventListener', []);
         });
     }
+
+    clearData(url: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            exec(() => {
+                resolve();
+            },
+            (err) => {
+                reject(err);
+            },
+            'DappBrowser', 'clearData', [url]);
+        });
+    }
 }
 
 export = new DappBrowserImpl();

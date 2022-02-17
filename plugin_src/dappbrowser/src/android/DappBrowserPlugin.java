@@ -165,6 +165,10 @@ public class DappBrowserPlugin extends CordovaPlugin {
                 case "removeEventListener":
                     this.removeEventListener(callbackContext);
                     break;
+
+                case "clearData":
+                    this.clearData(args, callbackContext);
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -192,6 +196,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
             case "setAlpha":
             case "addEventListener":
             case "removeEventListener":
+            case "clearData":
                 break;
             default:
                 return false;
@@ -458,6 +463,11 @@ public class DappBrowserPlugin extends CordovaPlugin {
         }
 
         callbackContext.success();
+    }
+
+    private void clearData(JSONArray args, CallbackContext callbackContext) throws Exception {
+        final String url = args.getString(0);
+        WebViewHandler.clearData(url);
     }
 
     /**
