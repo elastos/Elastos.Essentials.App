@@ -9,7 +9,7 @@ import { MasterWallet } from "../../masterwallet";
 import { NetworkWallet, WalletAddressInfo } from "../../networkwallet";
 import { ElastosEVMSubWallet } from "../elastos.evm.subwallet";
 import { EscSubWallet } from "../esc.evm.subwallet";
-import { ElastosTransactionProvider } from "../providers/elastos.transaction.provider";
+import { ElastosSmartChainTransactionProvider } from "../providers/elastos.smartchain.tx.provider";
 
 export class ElastosSmartChainNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: ElastosEVMSubWallet = null;
@@ -19,7 +19,7 @@ export class ElastosSmartChainNetworkWallet extends NetworkWallet {
   }
 
   protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
-    return new ElastosTransactionProvider(this);
+    return new ElastosSmartChainTransactionProvider(this);
   }
 
   protected async prepareStandardSubWallets(): Promise<void> {

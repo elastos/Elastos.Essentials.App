@@ -6,7 +6,7 @@ import { StandardEVMSubWallet } from "../../evm.subwallet";
 import { MasterWallet } from "../../masterwallet";
 import { NetworkWallet, WalletAddressInfo } from "../../networkwallet";
 import { EidSubWallet } from "../eid.evm.subwallet";
-import { ElastosTransactionProvider } from "../providers/elastos.transaction.provider";
+import { ElastosIdentityTransactionProvider } from "../providers/elastos.identitychain.tx.provider";
 
 export class ElastosIdentityChainNetworkWallet extends NetworkWallet {
   constructor(masterWallet: MasterWallet, network: Network) {
@@ -14,7 +14,7 @@ export class ElastosIdentityChainNetworkWallet extends NetworkWallet {
   }
 
   protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
-    return new ElastosTransactionProvider(this);
+    return new ElastosIdentityTransactionProvider(this);
   }
 
   protected async prepareStandardSubWallets(): Promise<void> {
@@ -52,5 +52,13 @@ export class ElastosIdentityChainNetworkWallet extends NetworkWallet {
 
   public getAverageBlocktime(): number {
     return 5;
+  }
+
+  public supportsERC20Coins() {
+    return false;
+  }
+
+  public supportsERCNFTs() {
+    return false;
   }
 }

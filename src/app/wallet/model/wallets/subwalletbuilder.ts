@@ -36,7 +36,6 @@ export class SubWalletBuilder {
                 // Normally we shouldn't have any serialized subwallet of type ERC20 in network wallets that don't
                 // support this but this happens for legacy reasons (elastos network split into more networks), so
                 // we manually check it here.
-                debugger;
                 if (networkWallet.supportsERC20Coins())
                     return ERC20SubWallet.newFromSerializedSubWallet(networkWallet, serializedSubWallet);
                 else

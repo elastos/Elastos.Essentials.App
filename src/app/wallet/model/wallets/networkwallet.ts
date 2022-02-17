@@ -469,11 +469,15 @@ export abstract class NetworkWallet {
             }
 
             this.nfts = [];
-            if (extendedInfo.nfts) {
-                for (let serializedNFT of extendedInfo.nfts) {
-                    let nft: NFT = NFT.parse(serializedNFT);
-                    if (nft) {
-                        this.nfts.push(nft);
+            // Legacy support: normally, no need to check if the network supports NFTs as there would be no NFT
+            // founds earlier, but keep it happens (elastos network split) so keep this check.
+            if (this.supportsERCNFTs()) {
+                if (extendedInfo.nfts) {
+                    for (let serializedNFT of extendedInfo.nfts) {
+                        let nft: NFT = NFT.parse(serializedNFT);
+                        if (nft) {
+                            this.nfts.push(nft);
+                        }
                     }
                 }
             }
@@ -534,7 +538,17 @@ export abstract class NetworkWallet {
         else return [];
     }
 
+    /**
+     * Supports EVM ERC20?
+     */
     public supportsERC20Coins() {
+        return true;
+    }
+
+    /**
+     * Supports at least one of ERC721 or ERC1155?
+     */
+    public supportsERCNFTs() {
         return true;
     }
 }
