@@ -50,6 +50,10 @@
     "@ionic-native/qr-scanner": "5.36.0",
     "@ionic/angular": "6.0.1",
     "@ionic/storage": "2.3.1",
+    "@ledgerhq/devices": "^6.24.1",
+    "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/hw-transport": "^6.24.1",
+    "@ledgerhq/logs": "^6.10.0",
     "@ngx-translate/core": "14.0.0",
     "@sentry/browser": "6.8.0",
     "@sentry/tracing": "6.8.0",
@@ -127,6 +131,7 @@
     "cordova-ios": "6.2.0",
     "cordova-plugin-add-swift-support": "2.0.2",
     "cordova-plugin-app-version": "0.1.12",
+    "cordova-plugin-ble-central": "^1.4.2",
     "cordova-plugin-camera": "5.0.1",
     "cordova-plugin-firebasex": "^13.0.1-cli",
     "cordova-plugin-ionic-keyboard": "2.2.0",
@@ -198,7 +203,13 @@
         "ANDROID_FIREBASE_PERFORMANCE_MONITORING": "false"
       },
       "elastos-essentials-plugin-dappbrowser": {},
-      "elastos-essentials-plugin-wallet": {}
+      "elastos-essentials-plugin-wallet": {},
+      "cordova-plugin-ble-central": {
+        "BLUETOOTH_RESTORE_STATE": "true",
+        "ACCESS_BACKGROUND_LOCATION": "false",
+        "IOS_INIT_ON_LOAD": "true",
+        "BLUETOOTH_USAGE_DESCRIPTION": " "
+      }
     },
     "platforms": [
       "android"

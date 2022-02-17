@@ -149,6 +149,11 @@
         <config-file parent="ITSAppUsesNonExemptEncryption" target="*-Info.plist">
             <false />
         </config-file>
+        <config-file parent="UIBackgroundModes" target="*-Info.plist">
+            <array>
+                <string>bluetooth-central</string>
+            </array>
+        </config-file>
         <preference name="SwiftVersion" value="5.2" />
         <preference name="UseSwiftLanguageVersion" value="5.2" />
         <config-file parent="com.apple.developer.associated-domains" target="*-Debug.plist">
