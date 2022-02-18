@@ -164,7 +164,7 @@ export const it = {
         "coin-transfer-withdraw-title": "Trasferimento di denaro",
         "payment-title": 'Pagamento',
         "transfer-from": "Trasferisci da",
-        "transfer-to": "Trasferire a",
+        "transfer-to": "Trasferisci a",
         "transfer-amount": "Importo del trasferimento",
         "transfer-receiver-address": "Indirizzo del destinatario",
         "transfer-send-ela": "Invia ELA",
@@ -175,7 +175,7 @@ export const it = {
         "max": "MAX",
         "touch-to-select-a-personal-wallet": "Tocca per scegliere un portafoglio personale",
         "withdraw-note": "L'importo minimo di prelievo è 0,0002 ELA e deve essere un multiplo intero di 0,00000001",
-        'crosschain-note': "Elastos cross-chain transfers usually take between 15 and 25 minutes. During this time you will not see your funds, please be patient",
+        'crosschain-note': "I trasferimenti cross-chain di ELA richiedono solitamente dai 15 ai 25 minuti. Durante questo periodo non vedrai i tuoi fondi, per favore sii paziente",
         "balance-locked": "( {{ locked }} locked )",
 
         /********************
@@ -272,8 +272,8 @@ export const it = {
         "wallet-settings-title": "Impostazioni del portafoglio",
         "wallet-settings-backup-wallet": "Backup del Portafoglio",
         "wallet-settings-backup-wallet-subtitle": "Visualizza il tuo mnemonico per salvarlo in un luogo sicuro.",
-        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
-        "wallet-settings-backup-wallet-keystore": "Export Keystore",
+        "wallet-settings-backup-wallet-export": "Esporta mnemonico e chiave privata",
+        "wallet-settings-backup-wallet-keystore": "Esporta Keystore",
         "wallet-settings-change-name": "Cambia nome",
         "wallet-settings-change-name-subtitle": "Organizza i tuoi portafogli assegnando loro un nome personalizzato.",
         "wallet-settings-change-theme": "Cambia tema",
@@ -327,7 +327,7 @@ export const it = {
         /*****************
         * Add ERC20 Page *
         ******************/
-        "coin-adderc20-title": "Aggiungi token ERC20",
+        "coin-adderc20-title": "Aggiungi token",
         "coin-adderc20-intro": 'Inserisci l\'indirizzo del token,',
         "coin-adderc20-intro2": 'o scansiona il suo codice QR.',
         "coin-adderc20-enteraddress": 'Inserisci l\'indirizzo del token',
@@ -523,13 +523,13 @@ export const it = {
         /***********************
         * Export Keystore Page *
         ************************/
-        "keystore-title": "Export Keystore",
-        "keystore-export-intro": "Touch to copy",
-        "keystore-input-password": "Set Keystore password",
-        "keystore-reinput-password": "Repeat Keystore password",
-        "keystore-export": "Export",
-        "keystore-password-validator-repeat": "The two input passwords are inconsistent",
-        "keystore-password-validator-min-length": "The password must be at least 8 characters",
+        "keystore-title": "Esporta Keystore",
+        "keystore-export-intro": "Tocca per copiare",
+        "keystore-input-password": "Imposta la password del Keystore",
+        "keystore-reinput-password": "Ripeti la password del Keystore",
+        "keystore-export": "Esporta",
+        "keystore-password-validator-repeat": "Le due password non corrispondono",
+        "keystore-password-validator-min-length": "La password deve essere di almeno 8 caratteri",
 
         /********************************
         * Advanced Mnemonic Import Page *
@@ -543,7 +543,7 @@ export const it = {
         * Import Wallet by private key Page *
         *********************************/
         'import-wallet-by-privatekey-info': 'Sono supportate solo le chiavi private dei portafogli EVM compatibili (tipo Ethereum). ',
-        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
+        'import-wallet-by-keystore-info': 'Keystore: È supportato solo il keystore ELA',
         'paste-privatekey': 'Incolla o Inserisci la chiave privata',
         'wrong-privatekey-msg': 'Si prega di inserire una Chiave Privata valida',
         'import-private-key-sucess': 'Portafoglio importato dalla Chiave Privata',

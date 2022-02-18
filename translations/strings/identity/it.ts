@@ -21,7 +21,7 @@ export const it = {
         'welcome-back': 'Ben tornato/a!',
         'identity-not-published-on-blockchain': 'Identità non pubblicata',
         'identity-published-on-blockchain': 'Identità pubblicata',
-        'credentials-published-on-blockchain': 'Credenziali pubblicate',
+        'credentials-published-on-blockchain': 'Credenziali pubbliche',
         'credentials-verified': 'Credenziali verificate',
         'current-actions': 'Azioni attuali',
         'current-options': 'Opzioni attuali',
@@ -199,7 +199,7 @@ export const it = {
         'expire': 'Scadenza',
         'credential-issued': 'Credenziale creata',
         'credential-issued-success': 'Ottimo, la credenziale è stata creata!',
-        'credential-issued-error': 'Spiacenti, non è stato possibile creare la credenziale.',
+        'credential-issued-error': 'Siamo spiacenti, non è stato possibile creare la credenziale.',
 
         // page: credimport
         'credential-import': 'Importa credenziali',
@@ -209,10 +209,10 @@ export const it = {
         'credimport-success-title': 'Credenziali importate',
         'credimport-success': 'Ottimo, la credenziale è stata aggiunta al tuo profilo DID.',
         'credimport-success-done': 'Fatto',
-        'credimport-note': 'NOTE: The application is requesting to publish the credentials. They will become part of your public DID profile.',
-        'credimport-wrong-did': 'Sorry, the credential you are trying to import is not for this identity.',
-        'credimport-show-details': 'Show details',
-        'credimport-hide-details': 'Hide details',
+        'credimport-note': 'NOTA: L\'applicazione richiede la pubblicazione delle credenziali. Diventeranno parte del tuo profilo DID pubblico.',
+        'credimport-wrong-did': 'Siamo spiacenti, la credenziale che stai tentando di importare non è per questa identità.',
+        'credimport-show-details': 'Mostra i dettagli',
+        'credimport-hide-details': 'Nascondi i dettagli',
 
         // page: creddelete
         'credential-delete': 'Elimina credenziali',

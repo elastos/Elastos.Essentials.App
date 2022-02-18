@@ -6,7 +6,7 @@ export const it = {
         'council-members': 'Membri del Consiglio CR',
         'my-candidates': 'I miei candidati',
         'vote-history': 'Cronologia dei voti',
-        'votes': 'Voti',
+        'votes': ' Voti',
         'votes-remaining': 'Voti rimanenti',
         'dist-votes': 'Distribuisci voti',
         'pledge-ela': 'Impegna ELA',

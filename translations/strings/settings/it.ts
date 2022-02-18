@@ -88,7 +88,7 @@ export const it = {
         'wallet-accounts': 'Conto del portafoglio',
         'connect': 'Connetti',
         'wallet-connect-no-session': 'Nessuna sessione attiva',
-        'wallet-connect-no-session-info': 'Al momento non c\'è alcuna connessione con un\'app di terze parti tramite Wallet Connect. Trova il pulsante Wallet Connect nell\'applicazione esterna e scansiona il codice QR fornito con lo Scanner di Elastos Essentials.',
+        'wallet-connect-no-session-info': 'Al momento tramite Wallet Connect non c\'è alcuna connessione con dApp di terze parti. Trova il pulsante Wallet Connect nella dApp esterna e scansiona il codice QR fornito con lo Scanner di Elastos Essentials.',
 
         /********** Startup Screen Page **********/
         'startupscreen': 'Schermata iniziale',
@@ -101,7 +101,7 @@ export const it = {
 
         /*********** Privacy page **********/
         'privacy': 'Privacy',
-        'identity-publishing': 'Pubblicazione di identità',
+        'identity-publishing': 'Pubblicazione dell\'identità',
         'publish-identity-medium-assist': 'Pubblica rapidamente le identità tramite il servizio ASSIST di terze parti',
         'publish-identity-medium-wallet': 'Pubblica identità usando il mio portafoglio',
 
