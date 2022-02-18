@@ -79,7 +79,8 @@
               "optimization": false,
               "namedChunks": true,
               "buildOptimizer": false,
-              "aot": false
+              "aot": false,
+              "sourceMap": true
             },
             "production": {
               "fileReplacements": [
