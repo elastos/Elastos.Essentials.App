@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -58,6 +58,7 @@ export class VotePage implements OnInit {
         public theme: GlobalThemeService,
         public popupProvider: GlobalPopupService,
         private router: Router,
+        public zone: NgZone,
     ) {
         const navigation = this.router.getCurrentNavigation();
         if (navigation.extras.state && navigation.extras.state.refreash) {
@@ -70,6 +71,7 @@ export class VotePage implements OnInit {
 
     private async setRegistrationIcon() {
         await this.nodesService.init();
+        this.getSelectedNodes();
 
         if (!this.voteService.canVote()) {
             return;
@@ -190,12 +192,13 @@ export class VotePage implements OnInit {
     }
 
     getSelectedNodes(): number {
-        this.selectedNodes = 0;
+        var selectedNodes = 0;
         this.nodesService.dposList.forEach(node => {
             if (node.isChecked === true) {
-                this.selectedNodes++;
+                selectedNodes++;
             }
         });
+        this.selectedNodes = selectedNodes;
         return this.selectedNodes;
     }
 
@@ -285,6 +288,17 @@ export class VotePage implements OnInit {
             duration: 2000
         });
         await toast.present();
+    }
+
+    clickCheckBox(node: any) {
+        this.zone.run(() => {
+            if (node.isChecked) {
+                this.selectedNodes--;
+            }
+            else {
+                this.selectedNodes++;
+            }
+        });
     }
 }
 
