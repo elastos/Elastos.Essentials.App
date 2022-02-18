@@ -284,6 +284,12 @@ export class CROperationsService {
                 case "createproposal":
                     data.draftHash = data.drafthash || data.draftHash;
                     data.draftData = await this.getDraftData(data.draftHash);
+                    data.targetproposalhash = data.targetproposalhash || data.targetProposalhash || data.targetProposalHash;
+                    data.newrecipient = data.newrecipient || data.newRecipient;
+                    data.newownerpublickey = data.newownerpublickey || data.newOwnerPublicKey;
+                    data.newownersignature = data.newownersignature || data.newOwnerSignature;
+                    data.secretarygeneralpublickey = data.secretarygeneralpublickey || data.newSecretaryPublicKey;
+                    data.secretarygenerasignature = data.secretarygenerasignature || data.secretaryGeneralSignature;
                     break;
                 case "reviewproposal":
                     if (this.onGoingCommand.type == CRCommandType.Scan) {
