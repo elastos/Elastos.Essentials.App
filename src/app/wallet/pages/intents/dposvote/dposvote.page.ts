@@ -28,7 +28,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
+import { Candidates, VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
 import { Config } from '../../../config/Config';
 import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';

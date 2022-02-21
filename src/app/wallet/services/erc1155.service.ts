@@ -49,11 +49,15 @@ type ERC1155Transfer = {
     providedIn: 'root'
 })
 export class ERC1155Service {
+    public static instance: ERC1155Service = null;
+
     /** Web3 variables to call smart contracts */
     private web3: Web3;
     private erc1155ABI: any;
 
     constructor(private prefs: WalletPrefsService, private http: HttpClient, private networkService: WalletNetworkService) {
+        ERC1155Service.instance = this;
+
         this.networkService.activeNetwork.subscribe(activeNetwork => {
             if (activeNetwork) {
                 this.web3 = null;

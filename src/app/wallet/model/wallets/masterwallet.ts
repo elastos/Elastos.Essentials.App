@@ -1,17 +1,22 @@
 import { Logger } from 'src/app/logger';
-import { ERC1155Service } from '../../services/erc1155.service';
-import { ERC721Service } from '../../services/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
 import { WalletService } from '../../services/wallet.service';
+import { MasterWalletInfo, WalletCreator, WalletNetworkOptions } from '../wallet.types';
 import { WalletAccount, WalletAccountType, WalletCreateType } from '../walletaccount';
 
 export type WalletID = string;
 
+/**
+ * @deprecated DELETE ME AFTER MIGRATION
+ */
 export type Theme = {
     background: string,
     color: string
 };
 
+/**
+ * @deprecated DELETE ME AFTER MIGRATION
+ */
 export class ExtendedMasterWalletInfo {
     /** User defined wallet name */
     name: string;
@@ -23,23 +28,30 @@ export class ExtendedMasterWalletInfo {
     createType: WalletCreateType;
 }
 
-export class MasterWallet {
+export class MasterWallet implements MasterWalletInfo {
     public id: string = null;
     public name: string = null;
     public theme: Theme = null;
-    public createdBySystem = false;
-    public createType: WalletCreateType = WalletCreateType.MNEMONIC;
+    public createdBySystem = false; // DELETE ME
+    public createType: WalletCreateType = WalletCreateType.MNEMONIC; // DELETE ME
+    seed?: string;
+    mnemonic?: string;
+    public hasPassphrase?: boolean;
+    privateKey?: string;
+    privateKeyType: any;
+    public networkOptions: WalletNetworkOptions[];
+    public creator: WalletCreator;
 
     public account: WalletAccount = {
         Type: WalletAccountType.STANDARD,
         SingleAddress: false
     };
 
-    constructor(
-        public walletManager: WalletService,
-        public erc721Service: ERC721Service,
-        public erc1155Service: ERC1155Service,
-        private localStorage: LocalStorage,
+    constructor(walletInfo: MasterWalletInfo) {
+        Object.assign(this, walletInfo);
+    }
+
+    /* constructor(
         id: string,
         createdBySystem: boolean,
         createType: WalletCreateType,
@@ -54,12 +66,12 @@ export class MasterWallet {
             color: '#752fcf',
             background: '/assets/wallet/cards/maincards/card-purple.svg'
         };
-    }
+    } */
 
-    public static async extendedInfoExistsForMasterId(masterId: string): Promise<boolean> {
+    /* public static async extendedInfoExistsForMasterId(masterId: string): Promise<boolean> {
         const extendedInfo = await LocalStorage.instance.getExtendedMasterWalletInfo(masterId);
         return !!extendedInfo; // not null or undefined
-    }
+    } */
 
     public async prepareAfterCreation(): Promise<void> {
         const extendedInfo = await LocalStorage.instance.getExtendedMasterWalletInfo(this.id);
@@ -73,9 +85,12 @@ export class MasterWallet {
         const extendedInfo = this.getExtendedWalletInfo();
         Logger.log('wallet', "Saving master wallet extended info", this, extendedInfo);
 
-        await this.localStorage.setExtendedMasterWalletInfo(this.id, extendedInfo);
+        await LocalStorage.instance.setExtendedMasterWalletInfo(this.id, extendedInfo);
     }
 
+    /**
+     * @deprecated - only used by the migration
+     */
     public getExtendedWalletInfo(): ExtendedMasterWalletInfo {
         let extendedInfo = new ExtendedMasterWalletInfo();
 
@@ -96,7 +111,7 @@ export class MasterWallet {
         Logger.log("wallet", "Populating master wallet with extended info", this.id, extendedInfo);
 
         // Retrieve wallet account type
-        this.account = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.id);
+        this.account = await WalletService.instance.spvBridge.getMasterWalletBasicInfo(this.id);
 
         if (extendedInfo) {
             this.name = extendedInfo.name;

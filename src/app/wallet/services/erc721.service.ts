@@ -34,11 +34,15 @@ import { WalletPrefsService } from './pref.service';
     providedIn: 'root'
 })
 export class ERC721Service {
+    public static instance: ERC721Service = null;
+
     /** Web3 variables to call smart contracts */
     private web3: Web3;
     private erc721ABI: any;
 
     constructor(private prefs: WalletPrefsService, private http: HttpClient, private networkService: WalletNetworkService) {
+        ERC721Service.instance = this;
+
         this.networkService.activeNetwork.subscribe(activeNetwork => {
             if (activeNetwork) {
                 this.web3 = null;

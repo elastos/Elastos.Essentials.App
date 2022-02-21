@@ -4,10 +4,10 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { Config } from '../config/Config';
-import { Native } from '../services/native.service';
-import { PopupProvider } from '../services/popup.service';
-import { StandardCoinName } from './coin';
-import { WalletAccountType } from './walletaccount';
+import { StandardCoinName } from '../model/coin';
+import { WalletAccountType } from '../model/walletaccount';
+import { Native } from './native.service';
+import { PopupProvider } from './popup.service';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -79,13 +79,19 @@ export type AllAddresses = {
     MaxCount: number;
 };
 
-export class SPVWalletPluginBridge {
+/**
+ * Service that communicates with the SPVSDK and maintains a link between the "JS side" wallets
+ * and their counterpart in the Elastos SPV SDK.
+ *
+ * NOTE: This is a legacy from when only the elastos network was used, and when the SPVSDK managed all operations.
+ * A migration is currently on going and more and more features are being moved to JS instead of relying on the
+ * SPVSDK, for better reactivity. Though during some time, we still rely on SPVSDK features for some time.
+ */
+export class SPVService {
+    public static instance: SPVService = null;
 
-    constructor(
-        private native: Native,
-        private event: Events,
-        private popupProvider: PopupProvider
-    ) {
+    constructor(private native: Native, private event: Events, private popupProvider: PopupProvider) {
+        SPVService.instance = this;
     }
 
     public setNetwork(netType: string, config: string): Promise<void> {

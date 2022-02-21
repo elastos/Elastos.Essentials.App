@@ -28,11 +28,11 @@ import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Config } from '../../../config/Config';
-import { VoteContent, VoteType } from '../../../model/SPVWalletPluginBridge';
 import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
+import { VoteContent, VoteType } from '../../../services/spv.service';
 import { WalletService } from '../../../services/wallet.service';
 
 

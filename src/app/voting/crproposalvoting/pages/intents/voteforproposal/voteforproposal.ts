@@ -10,9 +10,9 @@ import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
 import { WalletAccountType } from 'src/app/wallet/model/walletaccount';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 

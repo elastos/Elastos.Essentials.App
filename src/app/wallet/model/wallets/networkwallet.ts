@@ -5,6 +5,8 @@ import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { CurrencyService } from '../../services/currency.service';
 import { DefiService, StakingData } from '../../services/defi.service';
+import { ERC1155Service } from '../../services/erc1155.service';
+import { ERC721Service } from '../../services/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
 import { Coin, CoinID, CoinType, StandardCoinName } from '../coin';
 import { Network } from '../networks/network';
@@ -373,7 +375,7 @@ export abstract class NetworkWallet {
 
     public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<void> {
         if (nftType === NFTType.ERC721) {
-            let resolvedInfo = await this.masterWallet.erc721Service.getCoinInfo(contractAddress);
+            let resolvedInfo = await ERC721Service.instance.getCoinInfo(contractAddress);
             if (resolvedInfo) {
                 let nft = new NFT(nftType, contractAddress, balance);
                 nft.setResolvedInfo(resolvedInfo);
@@ -383,7 +385,7 @@ export abstract class NetworkWallet {
             }
         }
         else if (nftType === NFTType.ERC1155) {
-            let resolvedInfo = await this.masterWallet.erc1155Service.getCoinInfo(contractAddress);
+            let resolvedInfo = await ERC1155Service.instance.getCoinInfo(contractAddress);
             if (resolvedInfo) {
                 let nft = new NFT(nftType, contractAddress, balance);
                 nft.setResolvedInfo(resolvedInfo);
@@ -408,11 +410,11 @@ export abstract class NetworkWallet {
     public async refreshNFTAssets(nft: NFT): Promise<void> {
         let accountAddress = await this.getMainEvmSubWallet().createAddress();
         if (nft.type == NFTType.ERC721) {
-            let assets = await this.masterWallet.erc721Service.fetchAllAssets(accountAddress, nft.contractAddress);
+            let assets = await ERC721Service.instance.fetchAllAssets(accountAddress, nft.contractAddress);
             nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
         }
         else if (nft.type == NFTType.ERC1155) {
-            let assets = await this.masterWallet.erc1155Service.fetchAllAssets(accountAddress, nft.contractAddress);
+            let assets = await ERC1155Service.instance.fetchAllAssets(accountAddress, nft.contractAddress);
             nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
         }
     }

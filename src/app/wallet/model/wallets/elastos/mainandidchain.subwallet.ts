@@ -7,13 +7,13 @@ import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.serv
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { Config } from '../../../config/Config';
+import { Candidates, VoteContent, VoteType } from '../../../services/spv.service';
 import { StandardCoinName } from '../../coin';
 import { BridgeProvider } from '../../earn/bridgeprovider';
 import { EarnProvider } from '../../earn/earnprovider';
 import { SwapProvider } from '../../earn/swapprovider';
 import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
 import { ElastosTransaction, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../providers/transaction.types';
-import { Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
 import { NetworkWallet } from '../networkwallet';
 import { StandardSubWallet } from '../standard.subwallet';
 import { ElastosTransactionsHelper } from './transactions.helper';
