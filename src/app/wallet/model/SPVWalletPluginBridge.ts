@@ -229,6 +229,22 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    importWalletWithSeed(
+        masterWalletId: string,
+        seed: string,
+        payPassword,
+        singleAddress: boolean,
+        mnemonic: string,
+        phrasePassword: string,
+    ): Promise<MasterWalletBasicInfo> {
+        return new Promise((resolve, reject) => {
+            walletManager.importWalletWithSeed(
+                [masterWalletId, seed, payPassword, singleAddress, mnemonic.normalize("NFKD"), phrasePassword],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("importWalletWithSeed", err, reject); });
+        });
+    }
+
     getAllMasterWallets(): Promise<string[]> {
         return new Promise((resolve, reject) => {
             Logger.log("wallet", "Getting all master wallets");
@@ -295,6 +311,14 @@ export class SPVWalletPluginBridge {
             walletManager.exportWalletWithMnemonic([masterWalletId, payPassWord],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("exportWalletWithMnemonic", err, reject); });
+        });
+    }
+
+    exportWalletWithSeed(masterWalletId: string, payPassWord: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            walletManager.exportWalletWithSeed([masterWalletId, payPassWord],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("exportWalletWithSeed", err, reject); });
         });
     }
 
