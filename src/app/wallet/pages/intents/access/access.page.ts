@@ -7,7 +7,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../config/Config';
 import { StandardCoinName } from '../../../model/coin';
 import { IntentTransfer } from '../../../services/cointransfer.service';
@@ -35,7 +35,7 @@ export class AccessPage implements OnInit {
     public Config = Config;
     public intentTransfer: IntentTransfer;
     public requestDapp = '';
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     public exportMnemonic = false;
     public title = '';
     public requestItems: ClaimRequest[] = [];

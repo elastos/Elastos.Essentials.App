@@ -4,6 +4,13 @@
   EVM = "m/44'/60'/0'/0"
 } */
 
+export enum WalletType {
+  STANDARD = "standard",
+  MULTI_SIGN_STANDARD = "multi_sign_standard",
+  MULTI_SIGN_EVM_GNOSIS = "multi_sign_evm_gnosis",
+  LEDGER = "ledger"
+}
+
 export type WalletNetworkOptions = {
   network: string; // Network key. eg: elastos, bsc...
 }
@@ -35,38 +42,51 @@ export enum PrivateKeyType {
 /**
  * New model (as of 2022.02) used to store master wallets info in user's settings instead of relying on
  * the SPVSDK. This contains info that was both previously handled by the SPVSDK (ID, mnemonic...) and
- * by "extended info" (wallet name, theme, shown coins...)
+ * by "extended info" (wallet name, theme, shown coins...).
+ *
+ * Seed, mnemonic and private keys are AES encrypted by the pay password. This is not securing anything much,
+ * but this is to avoid showing sensitive information directly in case the master wallet info would appear in
+ * logs or sentry reports by mistake.
  */
-export interface MasterWalletInfo {
+export type SerializedMasterWallet = {
+  type: WalletType;
   /** JS ".2" wallet ID format */
   id: string;
   /** User defined wallet name */
   name: string;
   /** Wallet theme (colors) */
   theme: Theme;
-  /** Root seed key */
-  seed?: string;
-  /** 12 mnemonic words */
-  mnemonic?: string;
-  /** For security reasons (to not store a user's usual password) we don't store the passphrase, but we remember if a passphrase was used to remind the user in the future */
-  hasPassphrase?: boolean;
-  /** Derived private key, for wallets imported by private key. If privateKey is set, seed and mnemonic may not exist */
-  privateKey?: string;
-  /**  */
-  privateKeyType?: PrivateKeyType;
-  //privateKeyType?; // TBD - enum?
   /** List of network specific options. Eg: for elastos, "single/multi address wallet" */
   networkOptions: WalletNetworkOptions[];
   /** Origin of this wallet creation */
   creator: WalletCreator;
 }
 
+// TODO: move to another file
+export type SerializedStandardMasterWallet = SerializedMasterWallet & {
+  /** Encrypted root seed key.*/
+  seed?: string;
+  /** Encrypted 12 mnemonic words */
+  mnemonic?: string;
+  /** For security reasons (to not store a user's usual password) we don't store the passphrase, but we remember if a passphrase was used to remind the user in the future */
+  hasPassphrase?: boolean;
+  /** Encrypted derived private key, for wallets imported by private key. If privateKey is set, seed and mnemonic may not exist */
+  privateKey?: string;
+  /**  */
+  privateKeyType?: PrivateKeyType;
+}
+
+// TODO: move to another file
+export type SerializedLedgerMasterWallet = SerializedMasterWallet & {
+  // TODO: info such as the device name, account name
+}
+
 /**
 * @deprecated
 */
-export class ExtendedMasterWalletInfo {
-  /* Created by system when create a new identity */
-  createdBySystem: boolean; // TODO: REPLACED BY WalletCreator
-  /* Created by mnemonic or private key */
-  createType: WalletCreateType;
-}
+//export class ExtendedMasterWalletInfo {
+/* Created by system when create a new identity */
+  //createdBySystem: boolean; // TODO: REPLACED BY WalletCreator
+/* Created by mnemonic or private key */
+  //createType: WalletCreateType;
+//}

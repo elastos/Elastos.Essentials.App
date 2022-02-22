@@ -8,7 +8,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { WalletCreateType } from 'src/app/wallet/model/walletaccount';
+import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { AuthService } from '../../../../services/auth.service';
 import { IntentTransfer } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
@@ -34,7 +34,6 @@ export class MnemonicExportPage implements OnInit {
     public walletname = "";
     public hasMnemonic = true;
     public evmPrivateKey = '';
-    public account: any = {};
     public intentTransfer: IntentTransfer;
 
     constructor(
@@ -84,9 +83,7 @@ export class MnemonicExportPage implements OnInit {
 
             const masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
             this.walletname = masterWallet.name;
-            this.account = masterWallet.account.Type;
-            this.hasMnemonic = masterWallet.createType === WalletCreateType.MNEMONIC
-                || masterWallet.createType === WalletCreateType.KEYSTORE;
+            this.hasMnemonic = masterWallet.hasMnemonicSupport();
             if (this.hasMnemonic) {
                 void this.showMnemonics();
             } else {
@@ -129,7 +126,7 @@ export class MnemonicExportPage implements OnInit {
     }
 
     async showMnemonics() {
-        const ret = await this.walletManager.spvBridge.exportWalletWithMnemonic(this.masterWalletId, this.payPassword);
+        const ret = await this.walletManager.spvBridge.exportWalletWithMnemonic(jsToSpvWalletId(this.masterWalletId), this.payPassword);
         this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('common.mnemonic'));
@@ -145,7 +142,7 @@ export class MnemonicExportPage implements OnInit {
     }
 
     async showPrivateKey() {
-        this.evmPrivateKey = await this.walletManager.spvBridge.exportETHSCPrivateKey(this.masterWalletId, "ETHSC", this.payPassword);
+        this.evmPrivateKey = await this.walletManager.spvBridge.exportETHSCPrivateKey(jsToSpvWalletId(this.masterWalletId), "ETHSC", this.payPassword);
         if (!this.hasMnemonic) {
             this.titleBar.setBackgroundColor('#732cd0');
             this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);

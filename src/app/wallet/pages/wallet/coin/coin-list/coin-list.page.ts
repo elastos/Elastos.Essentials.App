@@ -8,9 +8,9 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
-import { Coin, CoinType, StandardCoinName } from '../../../../model/coin';
+import { Coin, CoinType } from '../../../../model/coin';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -34,7 +34,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     masterWallet: MasterWallet = null;
-    networkWallet: NetworkWallet = null;
+    networkWallet: AnyNetworkWallet = null;
     coinList: EditableCoinInfo[] = null;
     newCoinList: EditableCoinInfo[] = null;
     coinListCache = {};
@@ -158,19 +158,16 @@ export class CoinListPage implements OnInit, OnDestroy {
         this.coinList = [];
         for (let availableCoin of await this.networkWallet.network.getAvailableCoins()) {
             const coinID = availableCoin.getID();
-            // Do not show IDChain in coin list.
-            if (coinID !== StandardCoinName.IDChain) {
-                let isOpen = (coinID in this.networkWallet.subWallets);
-                //Logger.log('wallet', availableCoin, "isOpen?", isOpen);
-                this.coinList.push({ coin: availableCoin, isOpen: isOpen });
-            }
+            let isOpen = (coinID in this.networkWallet.subWallets);
+            //Logger.log('wallet', availableCoin, "isOpen?", isOpen);
+            this.coinList.push({ coin: availableCoin, isOpen: isOpen });
         }
 
         this.sortCoinList();
 
         const lastAccessTime = this.networkWallet.network.getLastAccessTime();
-        this.newCoinList = this.coinList.filter( (coin) => {
-          return (coin.coin.getCreatedTime() > lastAccessTime)
+        this.newCoinList = this.coinList.filter((coin) => {
+            return (coin.coin.getCreatedTime() > lastAccessTime)
         })
 
         const timestamp = (new Date()).valueOf();
@@ -179,29 +176,29 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     private sortCoinList() {
-      this.coinList.sort((a, b) => {
-        if (a.isOpen == b.isOpen) {
-          return a.coin.getName() > b.coin.getName() ? 1 : -1;
-        }
-        if (a.isOpen) return -1;
-        if (b.isOpen) return 1;
-      })
+        this.coinList.sort((a, b) => {
+            if (a.isOpen == b.isOpen) {
+                return a.coin.getName() > b.coin.getName() ? 1 : -1;
+            }
+            if (a.isOpen) return -1;
+            if (b.isOpen) return 1;
+        })
     }
 
     public getShownCoinList() {
-      if (this.searchKey.length === 0) {
-        if (this.coinList.length > this.maxCountForDisplay) {
-          return this.coinList.slice(0, this.maxCountForDisplay)
+        if (this.searchKey.length === 0) {
+            if (this.coinList.length > this.maxCountForDisplay) {
+                return this.coinList.slice(0, this.maxCountForDisplay)
+            } else {
+                return this.coinList;
+            }
         } else {
-          return this.coinList;
+            const searchKey = this.searchKey.toLowerCase();
+            const searchResult = this.coinList.filter((coin) => {
+                return coin.coin.getName().toLowerCase().indexOf(searchKey) !== -1;
+            })
+            return searchResult;
         }
-      } else {
-        const searchKey = this.searchKey.toLowerCase();
-        const searchResult = this.coinList.filter((coin) => {
-          return coin.coin.getName().toLowerCase().indexOf(searchKey) !== -1;
-        })
-        return searchResult;
-      }
     }
 
     public getShownNewCoinList() {
@@ -214,24 +211,24 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     async createSubWallet(coin: Coin) {
         try {
-          // Create the sub Wallet (ex: IDChain)
-          await this.networkWallet.createNonStandardSubWallet(coin);
-          await this.native.hideLoading();
+            // Create the sub Wallet (ex: IDChain)
+            await this.networkWallet.createNonStandardSubWallet(coin);
+            await this.native.hideLoading();
         } catch (error) {
             this.currentCoin["open"] = false; // TODO: currentCoin type
         }
     }
 
     async destroySubWallet(coin: Coin) {
-      await this.networkWallet.removeNonStandardSubWallet(coin);
-      await this.native.hideLoading();
+        await this.networkWallet.removeNonStandardSubWallet(coin);
+        await this.native.hideLoading();
     }
 
     async onSelect(item: EditableCoinInfo) {
         Logger.log('wallet', 'Toggle triggered!', item);
         this.clickOngoing = true;
         try {
-          await this.switchCoin(item, item.isOpen);
+            await this.switchCoin(item, item.isOpen);
         }
         catch (error) {
 

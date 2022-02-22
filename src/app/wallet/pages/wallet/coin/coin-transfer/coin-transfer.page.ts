@@ -39,19 +39,21 @@ import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.serv
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/standard/subwallets/elastos.evm.subwallet';
+import { MainChainSubWallet } from 'src/app/wallet/model/wallets/elastos/standard/subwallets/mainchain.subwallet';
 import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { EVMService } from 'src/app/wallet/services/evm.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
+import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
 import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from '../../../../components/tx-success/tx-success.component';
 import { Config } from '../../../../config/Config';
 import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
 import { CoinType, StandardCoinName } from '../../../../model/coin';
-import { MainAndIDChainSubWallet } from '../../../../model/wallets/elastos/mainandidchain.subwallet';
 import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
 import { CoinTransferService, Transfer, TransferType } from '../../../../services/cointransfer.service';
@@ -72,7 +74,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild(IonContent) contentArea: IonContent;
 
-    public networkWallet: NetworkWallet;
+    public networkWallet: AnyNetworkWallet;
     public tokensymbol = '';
 
     // Define transfer type
@@ -266,11 +268,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.transaction = this.createRechargeTransaction;
                 this.toAddress = await this.toSubWallet.createAddress();
 
-                // Auto suggest a transfer amount of 0.1 ELA (enough) to the ID chain. Otherwise, let user define his own amount.
-                if (this.toSubWallet.id === StandardCoinName.IDChain) {
-                    this.amount = 0.1;
-                }
-
                 Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
                 Logger.log('wallet', 'Transferring To..', this.toSubWallet);
                 Logger.log('wallet', 'Subwallet address', this.toAddress);
@@ -329,7 +326,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     private async getBalanceSpendable() {
         await this.fromSubWallet.updateBalanceSpendable();
-        this.zone.run( ()=> {
+        this.zone.run(() => {
             let balanceSpendable = this.fromSubWallet.getRawBalanceSpendable();
             let balance = this.fromSubWallet.getRawBalance();
             let margin = balance.minus(balanceSpendable);
@@ -405,12 +402,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         let rawTx = null;
         try {
-            rawTx = await (this.fromSubWallet as MainAndIDChainSubWallet).createDepositTransaction(
-                    this.coinTransferService.toSubWalletId as StandardCoinName, // To subwallet id
-                    this.toAddress, // to address
-                    this.amount, // User input amount
-                    this.memo // Memo, not necessary
-                );
+            rawTx = await (this.fromSubWallet as MainChainSubWallet).createDepositTransaction(
+                this.coinTransferService.toSubWalletId as StandardCoinName, // To subwallet id
+                this.toAddress, // to address
+                this.amount, // User input amount
+                this.memo // Memo, not necessary
+            );
         } catch (err) {
             await this.parseException(err);
         }
@@ -611,8 +608,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     async startTransaction() {
-        if (this.subWalletId === StandardCoinName.ELA || this.subWalletId === StandardCoinName.IDChain) {
-            const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.subWalletId] as MainAndIDChainSubWallet;
+        if (this.subWalletId === StandardCoinName.ELA) {
+            const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.subWalletId] as MainChainSubWallet;
             const isAvailableBalanceEnough =
                 await mainAndIDChainSubWallet.isAvailableBalanceEnough(new BigNumber(this.amount).multipliedBy(mainAndIDChainSubWallet.tokenAmountMulipleTimes));
 
@@ -649,9 +646,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         Logger.error('wallet', "transaction error:", err);
         let reworkedEx = WalletExceptionHelper.reworkedWeb3Exception(err);
         if (reworkedEx instanceof Web3Exception) {
-            await this.walletManager.popupProvider.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
+            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
         } else {
-            await this.walletManager.popupProvider.ionicAlert("wallet.transaction-fail", err.message);
+            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", err.message);
         }
     }
 
@@ -659,7 +656,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         let subWalletIdTemp = subWalletId;
         switch (subWalletIdTemp) {
             case StandardCoinName.ELA:
-            case StandardCoinName.IDChain:
             case StandardCoinName.BTC:
                 break;
             default:
@@ -668,7 +664,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         }
 
         const isAddressValid = await this.walletManager.spvBridge.isSubWalletAddressValid(
-            masterWalletId,
+            jsToSpvWalletId(masterWalletId),
             subWalletIdTemp,
             address
         );

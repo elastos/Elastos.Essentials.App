@@ -31,22 +31,22 @@ import { PolygonMainNetNetwork } from '../model/networks/polygon/polygon.mainnet
 import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet.network';
 import { TelosMainNetNetwork } from '../model/networks/telos/telos.mainnet.network';
 import { TelosTestNetNetwork } from '../model/networks/telos/telos.testnet.network';
-import { BridgeService } from './bridge.service';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
-import { CustomNetworkService } from './customnetwork.service';
-import { DefiService } from './defi.service';
-import { EarnService } from './earn.service';
-import { ERC20CoinService } from './erc20coin.service';
-import { EVMService } from './evm.service';
+import { BridgeService } from './evm/bridge.service';
+import { CustomNetworkService } from './evm/customnetwork.service';
+import { DefiService } from './evm/defi.service';
+import { EarnService } from './evm/earn.service';
+import { ERC20CoinService } from './evm/erc20coin.service';
+import { EVMService } from './evm/evm.service';
+import { SwapService } from './evm/swap.service';
+import { UniswapCurrencyService } from './evm/uniswap.currency.service';
 import { IntentService } from './intent.service';
 import { NameResolvingService } from './nameresolving.service';
 import { NavService } from './nav.service';
 import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
-import { SwapService } from './swap.service';
 import { UiService } from './ui.service';
-import { UniswapCurrencyService } from './uniswap.currency.service';
 import { WalletService } from './wallet.service';
 
 @Injectable({

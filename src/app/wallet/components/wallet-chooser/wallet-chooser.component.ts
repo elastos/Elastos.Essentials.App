@@ -6,13 +6,13 @@ import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from '../../model/coin';
 import { WalletUtil } from '../../model/wallet.util';
-import { NetworkWallet } from '../../model/wallets/networkwallet';
+import { AnyNetworkWallet } from '../../model/wallets/networkwallet';
 import { CurrencyService } from '../../services/currency.service';
 import { UiService } from '../../services/ui.service';
 import { WalletService } from '../../services/wallet.service';
 
 export type WalletChooserComponentOptions = {
-  currentNetworkWallet: NetworkWallet;
+  currentNetworkWallet: AnyNetworkWallet;
 }
 
 @Component({
@@ -25,8 +25,8 @@ export class WalletChooserComponent implements OnInit {
 
   public CoinType = CoinType;
   public options: WalletChooserComponentOptions = null;
-  public networkWallet: NetworkWallet;
-  public walletsToShowInList: NetworkWallet[];
+  public networkWallet: AnyNetworkWallet;
+  public walletsToShowInList: AnyNetworkWallet[];
 
   // Helper
   public WalletUtil = WalletUtil;
@@ -49,7 +49,7 @@ export class WalletChooserComponent implements OnInit {
     this.walletsToShowInList = this.walletService.getNetworkWalletsList();
   }
 
-  selectWallet(wallet: NetworkWallet) {
+  selectWallet(wallet: AnyNetworkWallet) {
     Logger.log("wallet", "Wallet selected", wallet);
 
     void this.modalCtrl.dismiss({

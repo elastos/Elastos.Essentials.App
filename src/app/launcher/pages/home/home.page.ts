@@ -27,7 +27,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { Network } from 'src/app/wallet/model/networks/network';
-import { NetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/wallets/networkwallet';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -66,7 +66,7 @@ export class HomePage implements OnInit {
   private publicRedPacketsSubscription: Subscription = null; // Public red packets that can be grabbed
 
   // Widget data
-  public networkWalletsList: NetworkWallet[] = [];
+  public networkWalletsList: AnyNetworkWallet[] = [];
   public activeNetwork: Network = null;
   private activeWalletAddresses: { [walletId: string]: WalletAddressInfo[] } = {};
   public hiveVaultLinked = false;
@@ -468,14 +468,14 @@ export class HomePage implements OnInit {
     void this.globalNative.copyClipboard(address);
   }
 
-  public getWalletAddresses(wallet: NetworkWallet): WalletAddressInfo[] {
+  public getWalletAddresses(wallet: AnyNetworkWallet): WalletAddressInfo[] {
     if (!this.activeWalletAddresses[wallet.id])
       return [];
 
     return Object.values(this.activeWalletAddresses[wallet.id]);
   }
 
-  public async pickWalletAddress(event, networkWallet: NetworkWallet) {
+  public async pickWalletAddress(event, networkWallet: AnyNetworkWallet) {
     event.preventDefault();
     event.stopPropagation();
 

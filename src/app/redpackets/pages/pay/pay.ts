@@ -11,9 +11,9 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
-import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
+import { AnyStandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
-import { EVMService } from 'src/app/wallet/services/evm.service';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -240,7 +240,7 @@ export class PayPage {
     return true;
   }
 
-  private async getNativePaymentSubWallet(): Promise<StandardEVMSubWallet> {
+  private async getNativePaymentSubWallet(): Promise<AnyStandardEVMSubWallet> {
     // Now that we are on the right network, find the network wallet that has the right address
     let evmSubWallet = await this.walletService.findStandardEVMSubWalletByAddress(this.packet.creatorAddress);
     if (!evmSubWallet) {

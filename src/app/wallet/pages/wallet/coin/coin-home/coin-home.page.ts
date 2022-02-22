@@ -37,12 +37,13 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { TransactionListType } from 'src/app/wallet/model/evm.types';
+import { WalletCreator } from 'src/app/wallet/model/wallet.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
 import { CoinType, StandardCoinName } from '../../../../model/coin';
-import { GenericTransaction, TransactionInfo } from '../../../../model/providers/transaction.types';
+import { GenericTransaction, TransactionInfo } from '../../../../model/tx-providers/transaction.types';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
@@ -62,7 +63,7 @@ export class CoinHomePage implements OnInit {
     @ViewChild('fetchmoretrigger', { static: true }) fetchMoreTrigger: ElementRef;
 
     public masterWalletInfo = '';
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     public subWallet: AnySubWallet = null;
     public subWalletId: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
@@ -167,7 +168,6 @@ export class CoinHomePage implements OnInit {
             this.coinTransferService.reset();
             this.coinTransferService.masterWalletId = masterWalletId;
             this.coinTransferService.subWalletId = this.subWalletId;
-            this.coinTransferService.walletInfo = Util.clone(this.networkWallet.masterWallet.account);
 
             this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
 
@@ -224,7 +224,7 @@ export class CoinHomePage implements OnInit {
             let transactions = await this.subWallet.getTransactions(TransactionListType.INTERNAL);
             if (transactions && transactions.length > 0) {
                 Logger.log('wallet', 'find internal transactions.')
-                this.zone.run( () => {
+                this.zone.run(() => {
                     this.hasInternalTransactions = true;
                 })
             }
@@ -247,10 +247,6 @@ export class CoinHomePage implements OnInit {
 
     chainIsELA(): boolean {
         return this.subWalletId === StandardCoinName.ELA;
-    }
-
-    chainIsDID(): boolean {
-        return this.subWalletId === StandardCoinName.IDChain;
     }
 
     chainIsETHSC(): boolean {
@@ -324,7 +320,7 @@ export class CoinHomePage implements OnInit {
     }
 
     async receiveFunds() {
-        if (this.networkWallet.masterWallet.createdBySystem) {
+        if (this.networkWallet.masterWallet.creator === WalletCreator.WALLET_APP) {
             const needsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
             if (needsBackup) {
                 await this.showBackupPrompt()

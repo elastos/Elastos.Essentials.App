@@ -7,10 +7,9 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { WalletCreateType } from 'src/app/wallet/model/walletaccount';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { Config } from '../../../config/Config';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { AuthService } from '../../../services/auth.service';
@@ -30,7 +29,7 @@ export class WalletSettingsPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public masterWallet: MasterWallet;
-    public networkWallet: NetworkWallet;
+    public networkWallet: AnyNetworkWallet;
 
     public walletName = "";
     private masterWalletId = "1";
@@ -105,12 +104,11 @@ export class WalletSettingsPage implements OnInit {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
         this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
-        this.canExportKeystore = this.masterWallet.createType === WalletCreateType.MNEMONIC
-                || this.masterWallet.createType === WalletCreateType.KEYSTORE;
+        this.canExportKeystore = false; // TODO - repair - export "private key" keystores, not "elastos keystores" //this.masterWallet.createType === WalletCreateType.MNEMONIC || this.masterWallet.createType === WalletCreateType.KEYSTORE;
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
         await this.getMasterWalletBasicInfo();
 
-        if (this.networkWallet.supportsERC20Coins()) {
+        if (this.networkWallet.network.supportsERC20Coins()) {
             this.settings.push({
                 type: 'coin-list',
                 route: "/wallet/coin-list",
@@ -118,22 +116,6 @@ export class WalletSettingsPage implements OnInit {
                 subtitle: this.translate.instant("wallet.wallet-settings-manage-coin-list-subtitle"),
                 icon: '/assets/wallet/settings/coins.svg',
                 iconDarkmode: '/assets/wallet/settings/darkmode/coins.svg'
-            });
-        }
-
-        // Legacy support: ability to migrate remaining balances from DID 1 to DID 2 chains
-        // Show this menu entry only if the DID 1.0 subwallet balance is non 0 to not pollute all users
-        // with this later on.
-        let did1SubWallet = this.networkWallet.getSubWallet(StandardCoinName.IDChain);
-        // Cross chain transaction need 20000 for fee.
-        if (did1SubWallet && did1SubWallet.getRawBalance().gt(20000)) {
-            this.settings.push({
-                type: 'wallet-did1-transfer',
-                route: null,
-                title: this.translate.instant("wallet.wallet-settings-migrate-did1"),
-                subtitle: this.translate.instant("wallet.wallet-settings-migrate-did1-subtitle"),
-                icon: '/assets/wallet/settings/dollar.svg',
-                iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg'
             });
         }
 
@@ -163,12 +145,6 @@ export class WalletSettingsPage implements OnInit {
         } catch (e) {
             Logger.error('wallet', 'onDelete getWalletPassword error:' + e);
         }
-    }
-
-    private goToDID1Transfer() {
-        this.native.go('/wallet/wallet-did1-transfer', {
-            masterWalletId: this.networkWallet.id
-        });
     }
 
     async showDeletePrompt() {
@@ -204,7 +180,7 @@ export class WalletSettingsPage implements OnInit {
     }
 
     private async getMasterWalletBasicInfo() {
-        let ret = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.masterWalletId);
+        let ret = await this.walletManager.spvBridge.getMasterWalletBasicInfo(jsToSpvWalletId(this.masterWalletId));
 
         this.masterWalletType = ret["Type"];
         this.singleAddress = ret["SingleAddress"];
@@ -224,9 +200,6 @@ export class WalletSettingsPage implements OnInit {
             }
         } else if (item.type === 'wallet-delete') {
             void this.onDelete();
-        }
-        else if (item.type === 'wallet-did1-transfer') {
-            this.goToDID1Transfer();
         } else {
             this.native.go(item.route);
         }

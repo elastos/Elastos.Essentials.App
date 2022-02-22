@@ -51,7 +51,7 @@ export class WalletNetworkUIService {
     async chooseActiveNetwork(): Promise<boolean> {
         let options: NetworkChooserComponentOptions = {
             currentNetwork: this.networkService.activeNetwork.value,
-            walletCreateType: this.walletService.getActiveMasterWallet().createType
+            masterWallet: this.walletService.getActiveMasterWallet()
         };
 
         let modal = await this.modalCtrl.create({

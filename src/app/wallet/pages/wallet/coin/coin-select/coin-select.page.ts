@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
 import { CoinType } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
@@ -22,7 +22,7 @@ import { WalletService } from '../../../../services/wallet.service';
 export class CoinSelectPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public networkWallet: NetworkWallet;
+    public networkWallet: AnyNetworkWallet;
     // Available subwallets to transfer to
     public subWallets: AnySubWallet[] = [];
 

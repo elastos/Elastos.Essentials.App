@@ -5,9 +5,14 @@ import { BridgeProvider } from "../../earn/bridgeprovider";
 import { EarnProvider } from "../../earn/earnprovider";
 import { SwapProvider } from "../../earn/swapprovider";
 import { ERC1155Provider } from "../../nfts/erc1155.provider";
+import { WalletType } from "../../wallet.types";
 import { ElastosERC20SubWallet } from "../../wallets/elastos/elastos.erc20.subwallet";
+import { ElastosIdentityChainStandardNetworkWallet } from "../../wallets/elastos/standard/networkwallets/identitychain.networkwallet";
+import { ElastosMainChainStandardNetworkWallet } from "../../wallets/elastos/standard/networkwallets/mainchain.networkwallet";
+import { ElastosSmartChainStandardNetworkWallet } from "../../wallets/elastos/standard/networkwallets/smartchain.networkwallet";
 import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
-import { NetworkWallet } from "../../wallets/networkwallet";
+import { MasterWallet, StandardMasterWallet } from "../../wallets/masterwallet";
+import { AnyNetworkWallet } from "../../wallets/networkwallet";
 import { Network } from "../network";
 
 export abstract class ElastosNetworkBase extends Network {
@@ -31,14 +36,14 @@ export abstract class ElastosNetworkBase extends Network {
       erc1155Providers);
   }
 
-  protected async initCreatedNetworkWallet(wallet: NetworkWallet, startBackgroundUpdates: boolean): Promise<NetworkWallet> {
+  protected async initCreatedNetworkWallet(wallet: AnyNetworkWallet, startBackgroundUpdates: boolean): Promise<AnyNetworkWallet> {
     await wallet.initialize();
     if (startBackgroundUpdates)
       void wallet.startBackgroundUpdates();
     return wallet;
   }
 
-  public async createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
+  public async createERC20SubWallet(networkWallet: AnyNetworkWallet, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
     let subWallet = new ElastosERC20SubWallet(networkWallet, coinID);
     await subWallet.initialize();
     if (startBackgroundUpdates)
@@ -65,4 +70,65 @@ export abstract class ElastosNetworkBase extends Network {
   public abstract getMainChainID(): number;
 
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig);
+}
+
+export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase {
+  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
+    let wallet: AnyNetworkWallet = null;
+    switch (masterWallet.type) {
+      case WalletType.STANDARD:
+        wallet = new ElastosMainChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
+        break;
+      default:
+        return null;
+    }
+
+    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
+  }
+}
+
+export abstract class ElastosSmartChainNetworkBase extends ElastosNetworkBase {
+  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
+    let wallet: AnyNetworkWallet = null;
+    switch (masterWallet.type) {
+      case WalletType.STANDARD:
+        wallet = new ElastosSmartChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
+        break;
+      default:
+        return null;
+    }
+
+    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
+  }
+
+  public supportsERC20Coins() {
+    return true;
+  }
+
+  public supportsERCNFTs() {
+    return true;
+  }
+}
+
+export abstract class ElastosIdentityChainNetworkBase extends ElastosNetworkBase {
+  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
+    let wallet: AnyNetworkWallet = null;
+    switch (masterWallet.type) {
+      case WalletType.STANDARD:
+        wallet = new ElastosIdentityChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
+        break;
+      default:
+        return null;
+    }
+
+    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
+  }
+
+  public supportsERC20Coins() {
+    return false;
+  }
+
+  public supportsERCNFTs() {
+    return false;
+  }
 }

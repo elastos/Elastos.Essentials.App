@@ -10,10 +10,11 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import Web3 from 'web3';
 import { JsonRpcPayload, JsonRpcResponse } from "web3-core-helpers";
 import { StandardCoinName } from '../../model/coin';
-import { ElastosEVMSubWallet } from '../../model/wallets/elastos/elastos.evm.subwallet';
-import { NetworkWallet } from '../../model/wallets/networkwallet';
+import { ElastosEVMSubWallet } from '../../model/wallets/elastos/standard/subwallets/elastos.evm.subwallet';
+import { AnyNetworkWallet } from '../../model/wallets/networkwallet';
 import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
 import { Native } from '../../services/native.service';
+import { jsToSpvWalletId } from '../../services/spv.service';
 import { LocalStorage } from '../../services/storage.service';
 import { WalletService } from '../../services/wallet.service';
 
@@ -24,7 +25,7 @@ const DEFAULT_DEADLINE_FROM_NOW = 60 * 20 // 20 minutes, denominated in seconds
 class InternalWeb3Provider extends EssentialsWeb3Provider {
     private elaEthSubwallet: ElastosEVMSubWallet;
 
-    constructor(private walletManager: WalletService, private networkWallet: NetworkWallet) {
+    constructor(private walletManager: WalletService, private networkWallet: AnyNetworkWallet) {
         super(ElastosApiUrlType.ETHSC_RPC);
         this.elaEthSubwallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as ElastosEVMSubWallet;
     }
@@ -38,7 +39,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
         let nonce = await this.elaEthSubwallet.getNonce();
         const rawTx =
             await this.walletManager.spvBridge.createTransferGeneric(
-                this.networkWallet.id,
+                jsToSpvWalletId(this.networkWallet.id),
                 StandardCoinName.ETHSC,
                 payload.params[0].to,
                 payload.params[0].value,
@@ -82,7 +83,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
     styleUrls: ['./swap-test.page.scss'],
 })
 export class SwapTestPage implements OnInit {
-    private networkWallet: NetworkWallet;
+    private networkWallet: AnyNetworkWallet;
     public status: string[] = [];
 
     constructor(public walletManager: WalletService,

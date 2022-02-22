@@ -26,9 +26,9 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { WalletType } from 'src/app/wallet/model/wallet.types';
 import { VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
-import { WalletAccountType } from '../../../model/walletaccount';
-import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
+import { MainChainSubWallet } from '../../../model/wallets/elastos/standard/subwallets/mainchain.subwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -44,7 +44,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     masterWalletId: string;
-    sourceSubwallet: MainchainSubWallet = null;
+    sourceSubwallet: MainChainSubWallet = null;
     subWalletId: string; // ELA
     transfer: Transfer = null;
     intentTransfer: IntentTransfer;
@@ -85,7 +85,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
     ionViewDidEnter() {
         // TODO
         // this.titleBar.setTitle(this.translate.instant(''));
-        if (this.coinTransferService.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
+        if (this.sourceSubwallet.masterWallet.type !== WalletType.STANDARD) {
             // TODO: reject voting if multi sign (show error popup), as multi sign wallets cannot vote.
             void this.cancelOperation();
         }
@@ -102,7 +102,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.subWalletId = this.coinTransferService.subWalletId;
         this.masterWalletId = this.coinTransferService.masterWalletId;
-        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainChainSubWallet;
         this.balance = this.sourceSubwallet.getDisplayBalance().toString();
 
         void this.hasPendingVoteTransaction();

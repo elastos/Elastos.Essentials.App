@@ -32,10 +32,12 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/ethtransactioninfoparser';
 import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
-import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
-import { EVMService } from 'src/app/wallet/services/evm.service';
+import { WalletType } from 'src/app/wallet/model/wallet.types';
+import { AnyStandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
+import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -50,10 +52,9 @@ import { WalletService } from '../../../services/wallet.service';
 export class EscTransactionPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private networkWallet: NetworkWallet = null;
-  private evmSubWallet: StandardEVMSubWallet = null;
+  private networkWallet: AnyNetworkWallet = null;
+  private evmSubWallet: AnyStandardEVMSubWallet = null;
   private intentTransfer: IntentTransfer;
-  private walletInfo = {};
   public balance: BigNumber; // ELA
   public gasPrice: string;
   public gasPriceGwei: number;
@@ -105,7 +106,7 @@ export class EscTransactionPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    if (this.walletInfo["Type"] === "Multi-Sign") {
+    if (this.networkWallet.masterWallet.type !== WalletType.STANDARD) {
       // TODO: reject esctransaction if multi sign (show error popup)
       void this.cancelOperation();
     }
@@ -124,7 +125,6 @@ export class EscTransactionPage implements OnInit {
 
   async init() {
     this.intentTransfer = this.coinTransferService.intentTransfer;
-    this.walletInfo = this.coinTransferService.walletInfo;
     this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
@@ -280,7 +280,7 @@ export class EscTransactionPage implements OnInit {
     let nonce = await this.evmSubWallet.getNonce();
     const rawTx =
       await this.walletManager.spvBridge.createTransferGeneric(
-        this.networkWallet.id,
+        jsToSpvWalletId(this.networkWallet.id),
         this.evmSubWallet.id,
         this.coinTransferService.payloadParam.to,
         this.coinTransferService.payloadParam.value || "0",

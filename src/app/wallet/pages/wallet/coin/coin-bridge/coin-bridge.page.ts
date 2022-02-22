@@ -8,10 +8,10 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
 import { BridgeProvider } from 'src/app/wallet/model/earn/bridgeprovider';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
-import { BridgeService } from 'src/app/wallet/services/bridge.service';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
+import { BridgeService } from 'src/app/wallet/services/evm/bridge.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
@@ -28,7 +28,7 @@ export class CoinBridgePage implements OnInit {
     public WalletUtil = WalletUtil;
     public CoinType = CoinType;
 
-    public networkWallet: NetworkWallet;
+    public networkWallet: AnyNetworkWallet;
     public subWallet: AnySubWallet;
 
     constructor(

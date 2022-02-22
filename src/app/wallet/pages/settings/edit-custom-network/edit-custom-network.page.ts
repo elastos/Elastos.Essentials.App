@@ -9,7 +9,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { CustomNetworkService } from 'src/app/wallet/services/customnetwork.service';
+import { CustomNetworkService } from 'src/app/wallet/services/evm/customnetwork.service';
 import { CustomNetworkDiskEntry, WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 
@@ -163,7 +163,7 @@ export class EditCustomNetworkPage implements OnInit {
 
       // Some servers return "{}" when the request body is "{}".
       // So it is better to call eth_blockNumber.
-      let testCallResult = await this.http.post(this.editedNetworkEntry.rpcUrl, JSON.stringify({"method":"eth_blockNumber", "jsonrpc": "2.0","id":"test01"}), httpOptions).toPromise();
+      let testCallResult = await this.http.post(this.editedNetworkEntry.rpcUrl, JSON.stringify({ "method": "eth_blockNumber", "jsonrpc": "2.0", "id": "test01" }), httpOptions).toPromise();
       if (testCallResult && "jsonrpc" in testCallResult)
         rpcUrlIsReachable = true;
     }

@@ -35,8 +35,8 @@ import { Network } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { WalletSortType } from 'src/app/wallet/model/walletaccount';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { DefiService, StakingData } from 'src/app/wallet/services/defi.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { DefiService, StakingData } from 'src/app/wallet/services/evm/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
@@ -62,7 +62,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', { static: false }) slider: IonSlides;
 
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     private displayableSubWallets: AnySubWallet[] = null;
     public stakingAssets: StakingData[] = null;
 
@@ -111,7 +111,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private globalStartupService: GlobalStartupService,
         private events: Events,
         private zone: NgZone,
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.showRefresher();
@@ -217,7 +217,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     private refreshStakingAssetsList() {
-        this.zone.run( ()=> {
+        this.zone.run(() => {
             this.stakingAssets = this.networkWallet.getStakingAssets();
         })
     }
@@ -257,7 +257,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.native.go("/wallet/wallet-manager");
     }
 
-    public getPotentialActiveWallets(): NetworkWallet[] {
+    public getPotentialActiveWallets(): AnyNetworkWallet[] {
         return this.walletManager.getNetworkWalletsList();
     }
 
@@ -293,7 +293,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.walletUIService.chooseActiveWallet();
     }
 
-    public selectActiveWallet(wallet: NetworkWallet) {
+    public selectActiveWallet(wallet: AnyNetworkWallet) {
         void this.walletManager.setActiveNetworkWallet(wallet);
     }
 
@@ -353,7 +353,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.storage.setVisit(true);
     }
 
-    public goNFTHome(networkWallet: NetworkWallet, nft: NFT) {
+    public goNFTHome(networkWallet: AnyNetworkWallet, nft: NFT) {
         this.native.go("/wallet/coin-nft-home", {
             masterWalletId: networkWallet.masterWallet.id,
             contractAddress: nft.contractAddress
@@ -388,14 +388,14 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     public async onRefreshStakingAssetClicked() {
-        this.zone.run( ()=> {
+        this.zone.run(() => {
             this.refreshingStakedAssets = true;
         })
 
         await this.networkWallet.fetchStakingAssets();
 
         setTimeout(() => {
-            this.zone.run( ()=> {
+            this.zone.run(() => {
                 this.refreshingStakedAssets = false;
             })
         }, 1000);

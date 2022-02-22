@@ -3,11 +3,12 @@ import { CoinID } from "../../coin";
 import { BridgeProvider } from "../../earn/bridgeprovider";
 import { EarnProvider } from "../../earn/earnprovider";
 import { SwapProvider } from "../../earn/swapprovider";
+import { PrivateKeyType, WalletType } from "../../wallet.types";
 import { WalletCreateType } from "../../walletaccount";
-import { BTCNetworkWallet } from "../../wallets/btc/btc.networkwallet";
+import { BTCNetworkWallet } from "../../wallets/btc/standard/btc.networkwallet";
 import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
-import { MasterWallet } from "../../wallets/masterwallet";
-import { NetworkWallet } from "../../wallets/networkwallet";
+import { MasterWallet, StandardMasterWallet } from "../../wallets/masterwallet";
+import { AnyNetworkWallet } from "../../wallets/networkwallet";
 import { Network } from "../network";
 
 export abstract class BTCNetworkBase extends Network {
@@ -30,16 +31,25 @@ export abstract class BTCNetworkBase extends Network {
       bridgeProviders);
   }
 
-  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
-    let wallet = new BTCNetworkWallet(masterWallet, this);
+  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
+    let wallet: AnyNetworkWallet = null;
+    switch (masterWallet.type) {
+      case WalletType.STANDARD:
+        wallet = new BTCNetworkWallet(masterWallet as StandardMasterWallet, this);
+        break;
+      default:
+        return null;
+    }
+
     await wallet.initialize();
 
     if (startBackgroundUpdates)
       void wallet.startBackgroundUpdates();
+
     return wallet;
   }
 
-  public async createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
+  public async createERC20SubWallet(networkWallet: AnyNetworkWallet, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
     return await null;
   }
 
@@ -65,5 +75,9 @@ export abstract class BTCNetworkBase extends Network {
 
   public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
     onGoingConfig['BTC'] = {};
+  }
+
+  public supportedPrivateKeyTypes(): PrivateKeyType[] {
+    return [PrivateKeyType.BTC_LEGACY, PrivateKeyType.BTC_SEGWIT];
   }
 }

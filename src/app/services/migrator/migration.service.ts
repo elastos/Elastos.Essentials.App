@@ -2,10 +2,11 @@ import { Injectable } from "@angular/core";
 import { sleep } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
-import { IdentityEntry } from "../global.didsessions.service";
+import { GlobalDIDSessionsService, IdentityEntry } from "../global.didsessions.service";
 import { GlobalNavService } from "../global.nav.service";
 import { GlobalStorageService } from "../global.storage.service";
 import { Migration } from "./migration";
+import { JSWalletListMigration } from "./migrations/jswalletlist.migration";
 
 /**
  * IMPORTANT: INCREMENT THIS VERSION EVERY TIME A NEW MIGRATION IS ADDED OTHERWISE NEW MIGRATIONS
@@ -18,7 +19,7 @@ const LATEST_MIGRATION_ID = 1;
 // IMPORTANT: KEEP THIS LIST ORDERED FROM OLD TO RECENT TO RUN MIGRATIONS IN THE RIGHT ORDER
 const MIGRATIONS: Migration[] = [
   // Convert wallets list managed by the SPVSDK into a JS/App side management (reduce dependencies to the SPVSDK)
-  //new JSWalletListMigration(1)
+  new JSWalletListMigration(1)
 ];
 
 type MigrationEvent = {
@@ -123,6 +124,9 @@ export class MigrationService {
     let migrationsToRun = MIGRATIONS.filter(migration => migration.uniquelyIncrementedId > lastCheckedMigrationId);
     statsCallback(migrationsToRun.length);
 
+    // Simulate the target DID as the "signed in" one because many APIs relied on this field
+    GlobalDIDSessionsService.signedInDIDString = this.identityToMigrate.didString;
+
     // Run all the migrations that were added at a migration ID higher than current user's most recent check
     let migrationStep = 0;
     for (let migration of migrationsToRun) {
@@ -150,6 +154,9 @@ export class MigrationService {
 
       migrationStep++;
     }
+
+    // Restore the "signed in identity" to none - DID sessions flow will handle this for real.
+    GlobalDIDSessionsService.signedInDIDString = null;
 
     return true;
   }

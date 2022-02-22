@@ -4,18 +4,19 @@ import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { CurrencyService } from '../../services/currency.service';
-import { DefiService, StakingData } from '../../services/defi.service';
-import { ERC1155Service } from '../../services/erc1155.service';
-import { ERC721Service } from '../../services/erc721.service';
+import { DefiService, StakingData } from '../../services/evm/defi.service';
+import { ERC1155Service } from '../../services/evm/erc1155.service';
+import { ERC721Service } from '../../services/evm/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
-import { Coin, CoinID, CoinType, StandardCoinName } from '../coin';
+import { Coin, CoinID, CoinType } from '../coin';
 import { Network } from '../networks/network';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
-import { TransactionProvider } from '../providers/transaction.provider';
+import { TransactionProvider } from '../tx-providers/transaction.provider';
+import { WalletNetworkOptions } from '../wallet.types';
 import { WalletSortType } from '../walletaccount';
 import { StandardEVMSubWallet } from './evm.subwallet';
 import { MasterWallet } from './masterwallet';
-import { SerializedSubWallet, SubWallet } from './subwallet';
+import { AnySubWallet, SerializedSubWallet } from './subwallet';
 import { SubWalletBuilder } from './subwalletbuilder';
 
 export class ExtendedNetworkWalletInfo {
@@ -39,18 +40,18 @@ export type WalletAddressInfo = {
  * A network wallet is an instance of a master wallet (one root key) for a
  * given network (elastos, heco, etc).
  */
-export abstract class NetworkWallet {
+export abstract class NetworkWallet<MasterWalletType extends MasterWallet, WalletNetworkOptionsType extends WalletNetworkOptions> {
     public id: string = null;
     protected transactionDiscoveryProvider: TransactionProvider<any> = null;
     private initializationComplete = false;
 
     public subWallets: {
-        [k: string]: SubWallet<any>
+        [k: string]: AnySubWallet
     } = {};
 
     public nfts: NFT[] = [];
 
-    public subWalletsListChange = new Subject<SubWallet<any>>(); // Subwallet added or created
+    public subWalletsListChange = new Subject<AnySubWallet>(); // Subwallet added or created
     public stakedAssetsUpdate = new Subject<StakingData[]>();
 
     private fetchMainTokenTimer: any = null;
@@ -60,7 +61,7 @@ export abstract class NetworkWallet {
     private stakingInfo: StakingInfo = null;
 
     constructor(
-        public masterWallet: MasterWallet,
+        public masterWallet: MasterWalletType,
         public network: Network,
         public displayToken: string // Ex: "HT", "BSC"
     ) {
@@ -278,16 +279,15 @@ export abstract class NetworkWallet {
     /**
      * Returns the list of all subwallets except the excluded one.
      */
-    public subWalletsWithExcludedCoin(excludedCoinName: CoinID, type: CoinType = null): SubWallet<any>[] {
+    public subWalletsWithExcludedCoin(excludedCoinName: CoinID, type: CoinType = null): AnySubWallet[] {
         // Hide the id chain, do not use the id chain any more.
         return Object.values(this.subWallets).filter((sw) => {
-            return (sw.id !== excludedCoinName) && (sw.id !== StandardCoinName.IDChain) && (type !== null ? sw.type === type : true);
+            return (sw.id !== excludedCoinName) && (type !== null ? sw.type === type : true);
         });
     }
 
     /**
-     * Each inheriting network wallet must create its standard subwallets to the SPVSDK if
-     * not yet created, and push instances of those subwallets so we can store them.
+     * Make standard subwallets ready, when the network wallet initializes.
      */
     protected abstract prepareStandardSubWallets(): Promise<void>;
 
@@ -296,8 +296,10 @@ export abstract class NetworkWallet {
     /**
      * Returns the main subwallet inside this network wallet, responsible for refreshing the list of
      * ERC20 tokens, NFTs, etc. For elastos, this is the ESC sidechain (no EID support for now).
+     * 
+     * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
-    public abstract getMainEvmSubWallet(): StandardEVMSubWallet;
+    public abstract getMainEvmSubWallet(): StandardEVMSubWallet<WalletNetworkOptionsType>;
 
     /**
      * Adds a new subwallet to this network wallet, based on a given coin type.
@@ -334,7 +336,7 @@ export abstract class NetworkWallet {
     /**
      * Convenient method to access subwallets as an array alphabetically.
      */
-    public getSubWallets(sortType: WalletSortType = WalletSortType.NAME): SubWallet<any>[] {
+    public getSubWallets(sortType: WalletSortType = WalletSortType.NAME): AnySubWallet[] {
         return Object.values(this.subWallets).sort((a, b) => {
             if (a.type == CoinType.STANDARD && (b.type == CoinType.STANDARD)) return 0;
             if (a.type == CoinType.STANDARD) return -1;
@@ -353,14 +355,14 @@ export abstract class NetworkWallet {
         );
     }
 
-    public getSubWallet(id: CoinID): SubWallet<any> {
+    public getSubWallet(id: CoinID): AnySubWallet {
         return this.subWallets[id];
     }
 
     /**
      * Returns the list of all subwallets by CoinType
      */
-    public getSubWalletsByType(type: CoinType): SubWallet<any>[] {
+    public getSubWalletsByType(type: CoinType): AnySubWallet[] {
         return Object.values(this.subWallets).filter((sw) => {
             return (sw.type === type);
         });
@@ -368,11 +370,16 @@ export abstract class NetworkWallet {
 
     /**
      * Tells if this master wallet contains a NFT information, based on the NFT's contract address.
+     * 
+     * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
     public containsNFT(contractAddress: string): boolean {
         return this.nfts.findIndex(nft => nft.contractAddress === contractAddress) !== -1;
     }
 
+    /**
+     * TODO: MOVE TO EVM NETWORK WALLETS ONLY
+     */
     public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<void> {
         if (nftType === NFTType.ERC721) {
             let resolvedInfo = await ERC721Service.instance.getCoinInfo(contractAddress);
@@ -396,16 +403,24 @@ export abstract class NetworkWallet {
         }
     }
 
+    /**
+     * TODO: MOVE TO EVM NETWORK WALLETS ONLY
+     */
     public getNFTs(): NFT[] {
         return this.nfts;
     }
 
+    /**
+     * TODO: MOVE TO EVM NETWORK WALLETS ONLY
+     */
     public getNFTByAddress(contractAddress: string): NFT {
         return this.nfts.find(n => n.contractAddress === contractAddress);
     }
 
     /**
      * Retrieves latest information about assets on chain and update the local cache and model.
+     * 
+     * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
     public async refreshNFTAssets(nft: NFT): Promise<void> {
         let accountAddress = await this.getMainEvmSubWallet().createAddress();
@@ -473,7 +488,7 @@ export abstract class NetworkWallet {
             this.nfts = [];
             // Legacy support: normally, no need to check if the network supports NFTs as there would be no NFT
             // founds earlier, but keep it happens (elastos network split) so keep this check.
-            if (this.supportsERCNFTs()) {
+            if (this.network.supportsERCNFTs()) {
                 if (extendedInfo.nfts) {
                     for (let serializedNFT of extendedInfo.nfts) {
                         let nft: NFT = NFT.parse(serializedNFT);
@@ -540,17 +555,9 @@ export abstract class NetworkWallet {
         else return [];
     }
 
-    /**
-     * Supports EVM ERC20?
-     */
-    public supportsERC20Coins() {
-        return true;
-    }
-
-    /**
-     * Supports at least one of ERC721 or ERC1155?
-     */
-    public supportsERCNFTs() {
-        return true;
+    public getNetworkOptions(): WalletNetworkOptionsType {
+        return this.masterWallet.networkOptions.find(no => no.network === this.network.key) as WalletNetworkOptionsType;
     }
 }
+
+export abstract class AnyNetworkWallet extends NetworkWallet<MasterWallet, any> { }

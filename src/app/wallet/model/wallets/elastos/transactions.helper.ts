@@ -1,8 +1,8 @@
 import { TranslateService } from "@ngx-translate/core";
 import BigNumber from "bignumber.js";
 import { Config } from "src/app/wallet/config/Config";
-import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo } from "../../providers/transaction.types";
 import { TransactionsHelper } from "../../transactions.helper";
+import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo } from "../../tx-providers/transaction.types";
 import { WalletUtil } from "../../wallet.util";
 
 export class ElastosTransactionsHelper {

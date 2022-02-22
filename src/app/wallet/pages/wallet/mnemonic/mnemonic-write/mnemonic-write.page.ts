@@ -8,6 +8,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { WalletCreator } from 'src/app/wallet/model/wallet.types';
 import { AuthService } from '../../../../services/auth.service';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -20,8 +21,8 @@ import { WalletCreationService } from '../../../../services/walletcreation.servi
 })
 export class MnemonicWritePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    @ViewChild('slider', {static: false}) slider: IonSlides;
-    @ViewChild('input', {static: false}) input: IonInput;
+    @ViewChild('slider', { static: false }) slider: IonSlides;
+    @ViewChild('input', { static: false }) input: IonInput;
 
     slideOpts = {
         initialSlide: 0,
@@ -52,7 +53,7 @@ export class MnemonicWritePage implements OnInit {
     }
 
     ngOnInit() {
-        for (let i = 0; i < 12; i ++) {
+        for (let i = 0; i < 12; i++) {
             this.inputList.push({
                 input: ''
             });
@@ -67,20 +68,20 @@ export class MnemonicWritePage implements OnInit {
     }
 
     ionViewDidEnter() {
-   /*      setTimeout(() => {
-            this.input.setFocus();
-        }, 200); */
+        /*      setTimeout(() => {
+                 this.input.setFocus();
+             }, 200); */
     }
 
-/*     goToNextInput(event, nextInput?: any) {
-        if (nextInput) {
-            nextInput === 'input5' || nextInput === 'input9' ?
-                this.slider.slideNext().then(() => { nextInput.setFocus(); }) :
-                nextInput.setFocus();
-        } else {
-            this.onNext();
-        }
-    } */
+    /*     goToNextInput(event, nextInput?: any) {
+            if (nextInput) {
+                nextInput === 'input5' || nextInput === 'input9' ?
+                    this.slider.slideNext().then(() => { nextInput.setFocus(); }) :
+                    nextInput.setFocus();
+            } else {
+                this.onNext();
+            }
+        } */
 
     slideNext(slide) {
         slide.slideNext();
@@ -133,13 +134,14 @@ export class MnemonicWritePage implements OnInit {
                     if (payPassword) {
                         try {
                             await this.native.showLoading(this.translate.instant('common.please-wait'));
-                            await this.walletManager.createNewMasterWallet(
+                            await this.walletManager.newWalletWithMnemonic(
                                 this.walletCreationService.masterId,
                                 this.walletCreationService.name,
                                 this.mnemonicStr,
                                 this.walletCreationService.mnemonicPassword,
                                 payPassword,
-                                this.walletCreationService.singleAddress
+                                this.walletCreationService.singleAddress,
+                                WalletCreator.USER
                             );
                             await this.native.hideLoading();
 

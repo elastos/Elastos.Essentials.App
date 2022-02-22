@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, Injectable, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, Injectable, NgModule, Provider } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -16,6 +16,7 @@ import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLo
 import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { TranslationsLoader } from 'src/translationsloader';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -37,19 +38,6 @@ import { DPoSRegistrationInitModule } from './voting/dposregistration/init.modul
 import { DPoSVotingInitModule } from './voting/dposvoting/init.module';
 import { WalletInitModule } from './wallet/init.module';
 
-
-
-
-
-Sentry.init({
-  dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
-  release: "default",
-  integrations: [
-    new Integrations.BrowserTracing(),
-  ],
-  tracesSampleRate: 1.0,
-});
-
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
   private version = ''
@@ -68,7 +56,7 @@ export class SentryErrorHandler implements ErrorHandler {
    * Let a few special errors be handled silently.
    */
   private shouldHandleAsSilentError(error) {
-    let stringifiedError = ""+error;
+    let stringifiedError = "" + error;
 
     // Error unhandled by the wallet connect 1.0 library, but this is not a real error (caused by calling
     // disconnect when not connected). This can be removed after upgrading to wallet connect 2.0.
@@ -112,10 +100,10 @@ export class SentryErrorHandler implements ErrorHandler {
 class CustomTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
     return new Observable<any>(observer => {
-        void TranslationsLoader.getTranslations(lang).then((translations) => {
-            observer.next(translations);
-            observer.complete();
-        })
+      void TranslationsLoader.getTranslations(lang).then((translations) => {
+        observer.next(translations);
+        observer.complete();
+      })
     });
   }
 }
@@ -179,6 +167,32 @@ export function TranslateLoaderFactory() {
   }
 }*/
 
+let providers: Provider[] = [
+  AppVersion,
+  Keyboard,
+  ScreenOrientation,
+  SplashScreen,
+  StatusBar,
+  FirebaseX,
+  { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
+  //{ provide: TranslateModule, deps: [TranslationsLoader.loadAllModulesAndMerge("")]}
+]
+
+// Add sentry to prod build only
+if (environment.production) {
+  providers.push({ provide: ErrorHandler, useClass: SentryErrorHandler });
+
+  Sentry.init({
+    dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
+    release: "default",
+    integrations: [
+      new Integrations.BrowserTracing(),
+    ],
+    tracesSampleRate: 1.0,
+  });
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -226,7 +240,7 @@ export function TranslateLoaderFactory() {
         provide: TranslateLoader,
         useFactory: (TranslateLoaderFactory)
       },
-      missingTranslationHandler: {provide: MissingTranslationHandler, useClass: CustomMissingTranslationHandler},
+      missingTranslationHandler: { provide: MissingTranslationHandler, useClass: CustomMissingTranslationHandler },
     }),
     IonicStorageModule.forRoot({
       name: '__essentials.db',
@@ -234,18 +248,7 @@ export function TranslateLoaderFactory() {
     }),
     BrowserAnimationsModule,
   ],
-  providers: [
-    AppVersion,
-    Keyboard,
-    ScreenOrientation,
-    SplashScreen,
-    StatusBar,
-    FirebaseX,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-   // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
-    { provide: ErrorHandler, useClass: SentryErrorHandler },
-    //{ provide: TranslateModule, deps: [TranslationsLoader.loadAllModulesAndMerge("")]}
-  ],
+  providers,
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

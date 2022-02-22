@@ -10,7 +10,7 @@ import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { WalletAccountType } from 'src/app/wallet/model/walletaccount';
+import { WalletType } from 'src/app/wallet/model/wallet.types';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -97,7 +97,7 @@ export class VoteForProposalPage {
 
 
     async goTransaction(): Promise<boolean> {
-        if (this.voteService.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
+        if (this.voteService.sourceSubwallet.masterWallet.type !== WalletType.STANDARD) {
             await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.multi-sign-reject-voting');
             return false;
         }

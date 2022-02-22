@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { ExtendedMasterWalletInfo, WalletID } from '../model/wallets/masterwallet';
+import { SerializedMasterWallet } from '../model/wallet.types';
+import { WalletID } from '../model/wallets/masterwallet';
 import { ExtendedNetworkWalletInfo } from '../model/wallets/networkwallet';
 import { Contact } from './contacts.service';
 
@@ -68,16 +69,16 @@ export class LocalStorage {
         return await this.get(network + "cur-masterId");
     }
 
-    public saveMappingTable(obj) {
+    /* public saveMappingTable(obj) {
         let key = "map-table";
         return this.add(key, obj);
-    }
+    } */
 
     /**
      * Additional wallet info that can't be saved in the SPV SDK, so we save it on the app side.
      * Ex: wallet name given by the user.
      */
-    public setExtendedMasterWalletInfo(masterId: WalletID, extendedInfo: ExtendedMasterWalletInfo): Promise<void> {
+    /* public setExtendedMasterWalletInfo(masterId: WalletID, extendedInfo: ExtendedMasterWalletInfo): Promise<void> {
         let key = "extended-wallet-infos-" + masterId;
         return this.set(key, JSON.stringify(extendedInfo));
     }
@@ -85,6 +86,42 @@ export class LocalStorage {
     public async getExtendedMasterWalletInfo(masterId: WalletID): Promise<ExtendedMasterWalletInfo> {
         let key = "extended-wallet-infos-" + masterId;
         return await this.get(key);
+    }*/
+
+    /**
+     * Saves the list of wallets. This list is used to reload all the wallets later on.
+     */
+    public saveWalletsList(masterWalletIDs: string[]): Promise<void> {
+        let key = "wallets-list";
+        return this.set(key, JSON.stringify(masterWalletIDs));
+    }
+
+    /**
+     * Returns the list of JS wallet IDs
+     */
+    public async getWalletsList(): Promise<string[]> {
+        let key = "wallets-list";
+        let rawWallets = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key, null);
+        if (!rawWallets)
+            return [];
+        else
+            return JSON.parse(rawWallets);
+    }
+
+
+    public saveMasterWallet(masterWalletId: string, masterWalletInfo: SerializedMasterWallet): Promise<void> {
+        let key = "master-wallet-info-" + masterWalletId;
+        return this.set(key, JSON.stringify(masterWalletInfo));
+    }
+
+    public async loadMasterWallet(masterWalletId: string): Promise<SerializedMasterWallet> {
+        let key = "master-wallet-info-" + masterWalletId;
+        return await this.get(key);
+    }
+
+    public deleteMasterWallet(masterWalletId: string): Promise<void> {
+        let key = "master-wallet-info-" + masterWalletId;
+        return this.storage.deleteSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key);
     }
 
     /**

@@ -38,7 +38,6 @@ const routes: Routes = [
     { path: 'wallet-create-name', loadChildren: () => import('./pages/wallet/wallet-create-name/module').then(m => m.WalletCreateNameModule) },
     { path: 'wallet-edit-name', loadChildren: () => import('./pages/wallet/wallet-edit-name/module').then(m => m.WalletEditNameModule) },
     { path: 'wallet-settings', loadChildren: () => import('./pages/wallet/wallet-settings/module').then(m => m.WalletSettingsModule) },
-    { path: 'wallet-did1-transfer', loadChildren: () => import('./pages/wallet/wallet-did1-transfer/module').then(m => m.WalletDID1TransferModule) },
     { path: 'mnemonic', loadChildren: () => import('./pages/wallet/mnemonic/module').then(m => m.MnemonicModule) },
 
     // Settings

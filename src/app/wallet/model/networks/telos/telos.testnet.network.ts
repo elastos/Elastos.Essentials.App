@@ -1,7 +1,7 @@
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { MasterWallet } from "../../wallets/masterwallet";
-import { NetworkWallet } from "../../wallets/networkwallet";
-import { TelosNetworkWallet } from "../../wallets/telos/telos.network.wallet";
+import { StandardMasterWallet } from "../../wallets/masterwallet";
+import { AnyNetworkWallet } from "../../wallets/networkwallet";
+import { TelosNetworkWallet } from "../../wallets/telos/standard/telos.network.wallet";
 import { EVMNetwork } from "../evm.network";
 import { TelosAPI, TelosAPIType } from "./telos.api";
 
@@ -24,7 +24,7 @@ export class TelosTestNetNetwork extends EVMNetwork {
     this.averageBlocktime = 5 // 2;
   }
 
-  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
+  public async createNetworkWallet(masterWallet: StandardMasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
     let wallet = new TelosNetworkWallet(masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName);
     await wallet.initialize();
     if (startBackgroundUpdates)

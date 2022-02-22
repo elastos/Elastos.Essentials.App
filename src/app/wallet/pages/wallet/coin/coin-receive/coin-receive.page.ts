@@ -6,7 +6,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/wallets/elastos/standard/networkwallets/mainchain.networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { StandardCoinName } from '../../../../model/coin';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
@@ -20,7 +21,7 @@ import { WalletService } from '../../../../services/wallet.service';
 export class CoinReceivePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     private masterWalletId = '1';
     public subWalletId: string;
     public tokenName = '';
@@ -66,8 +67,9 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     isSingleAddressSubwallet() {
-        if ((this.subWalletId === StandardCoinName.ELA) || (this.subWalletId === StandardCoinName.IDChain)) {
-            this.isSingleAddress = this.networkWallet.masterWallet.account.SingleAddress;
+        if (this.subWalletId === StandardCoinName.ELA) {
+            let elastosMainChainMasterWallet = this.networkWallet as ElastosMainChainStandardNetworkWallet;
+            this.isSingleAddress = elastosMainChainMasterWallet.getNetworkOptions().singleAddress;
         } else {
             this.isSingleAddress = true;
         }

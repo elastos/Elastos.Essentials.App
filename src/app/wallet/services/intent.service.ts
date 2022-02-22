@@ -13,6 +13,7 @@ import { CoinTransferService, TransferType } from './cointransfer.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
 import { PopupProvider } from './popup.service';
+import { jsToSpvWalletId } from './spv.service';
 import { WalletService } from './wallet.service';
 import { WalletAccessService } from './walletaccess.service';
 import { WalletEditionService } from './walletedition.service';
@@ -177,14 +178,6 @@ export class IntentService {
                 this.coinTransferService.transfer.crDID = intent.params.crDID;
                 break;
 
-            case 'crmemberretrieve':
-                Logger.log("wallet", 'CR member retrieve Transaction intent content:', intent.params);
-                this.nextScreen = '/wallet/intents/crmemberregister';
-                this.coinTransferService.subWalletId = StandardCoinName.IDChain;
-                this.coinTransferService.transfer.amount = this.getNumberFromParam(intent.params.amount);
-                this.coinTransferService.transfer.publickey = intent.params.publickey;
-                break;
-
             case 'dposvotetransaction':
                 Logger.log("wallet", 'DPOS Transaction intent content:', intent.params);
                 this.nextScreen = '/wallet/intents/dposvote';
@@ -241,7 +234,6 @@ export class IntentService {
 
         // if (intentRequiresWalletSelection) {
         this.coinTransferService.masterWalletId = this.activeWallet.id;
-        this.coinTransferService.walletInfo = this.activeWallet.account;
 
         this.native.setRootRouter(this.nextScreen, navigationState);
         // }
@@ -313,7 +305,7 @@ export class IntentService {
 
         if (intent && intent.params && intent.params.proposal) {
             let masterWalletID = await this.walletManager.getCurrentMasterIdFromStorage();
-            let digest = await this.walletManager.spvBridge.proposalOwnerDigest(masterWalletID, StandardCoinName.ELA, intent.params.proposal);
+            let digest = await this.walletManager.spvBridge.proposalOwnerDigest(jsToSpvWalletId(masterWalletID), StandardCoinName.ELA, intent.params.proposal);
 
             // This is a silent intent, app will close right after calling sendIntentresponse()
             await this.globalIntentService.sendIntentResponse({ digest: digest }, intent.intentId);
@@ -383,10 +375,6 @@ export class IntentService {
         switch (currency) {
             case 'ELA':
                 subWalletId = StandardCoinName.ELA;
-                break;
-            case 'IDChain':
-            case 'ELA/ID':
-                subWalletId = StandardCoinName.IDChain;
                 break;
             case 'ETHSC':
             case 'ELA/ETHSC':

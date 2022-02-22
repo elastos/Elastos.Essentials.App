@@ -5,6 +5,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { WalletCreator } from 'src/app/wallet/model/wallet.types';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -23,14 +24,14 @@ export class WalletAdvancedImportPage implements OnInit {
   public mnemonicWords = new Array<any>();
 
   constructor(
-    private walletManager: WalletService,
+    private walletService: WalletService,
     private walletCreateService: WalletCreationService,
     private authService: AuthService,
     private native: Native,
     public translate: TranslateService,
     public events: Events,
   ) {
-    this.masterWalletId = Util.uuid(6, 16);
+    this.masterWalletId = walletService.createMasterWalletID();
   }
 
   ngOnInit() {
@@ -43,7 +44,7 @@ export class WalletAdvancedImportPage implements OnInit {
   }
 
   onMnemonicSentenceChanged() {
-    let standardMnemonicSentence = this.mnemonicSentence.trim().replace(/[\r\n]/g,"");
+    let standardMnemonicSentence = this.mnemonicSentence.trim().replace(/[\r\n]/g, "");
     let chineseMnemonic = Util.chinese(this.mnemonicSentence[0]);
     if (chineseMnemonic) {
       // You can input chinese mnemonics without space.
@@ -63,38 +64,40 @@ export class WalletAdvancedImportPage implements OnInit {
 
   async onImport() {
     if (this.inputMnemonicCompleted()) {
-        Logger.log('wallet', 'Input string is valid');
+      Logger.log('wallet', 'Input string is valid');
 
-        const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
-        if (payPassword) {
-          try {
-            await this.native.showLoading(this.translate.instant('common.please-wait'));
-            await this.importWalletWithMnemonic(payPassword);
-            await this.native.hideLoading();
-          } catch (err) {
-            Logger.error('wallet', 'Wallet import error:', err);
-            await this.native.hideLoading();
-          }
+      const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
+      if (payPassword) {
+        try {
+          await this.native.showLoading(this.translate.instant('common.please-wait'));
+          await this.importWalletWithMnemonic(payPassword);
+          await this.native.hideLoading();
+        } catch (err) {
+          Logger.error('wallet', 'Wallet import error:', err);
+          await this.native.hideLoading();
         }
+      }
     } else {
-        this.native.toast(this.translate.instant("wallet.mnemonic-import-missing-words"));
+      this.native.toast(this.translate.instant("wallet.mnemonic-import-missing-words"));
     }
   }
 
   async importWalletWithMnemonic(payPassword: string) {
     const mnemonicStr = this.mnemonicWords.join(' ').toLowerCase();
-    await this.walletManager.importMasterWalletWithMnemonic(
-        this.masterWalletId,
-        this.walletCreateService.name,
-        mnemonicStr,
-        this.walletCreateService.mnemonicPassword,
-        payPassword,
-        this.walletCreateService.singleAddress
+    await this.walletService.newWalletWithMnemonic(
+      this.masterWalletId,
+      this.walletCreateService.name,
+      mnemonicStr,
+      this.walletCreateService.mnemonicPassword,
+      payPassword,
+      this.walletCreateService.singleAddress,
+      WalletCreator.USER
     );
+    this.native.setRootRouter("/wallet/wallet-home");
 
     this.events.publish("masterwalletcount:changed", {
-        action: 'add',
-        walletId: this.masterWalletId
+      action: 'add',
+      walletId: this.masterWalletId
     });
 
     this.native.toast_trans('wallet.import-text-word-sucess');

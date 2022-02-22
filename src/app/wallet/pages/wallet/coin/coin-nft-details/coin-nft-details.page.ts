@@ -30,8 +30,8 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { NFTAsset } from 'src/app/wallet/model/nfts/nftasset';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { ERC721Service } from 'src/app/wallet/services/erc721.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';
@@ -47,7 +47,7 @@ import { WalletService } from '../../../../services/wallet.service';
 export class CoinNFTDetailsPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     public nft: NFT = null;
     public asset: NFTAsset = null;
 

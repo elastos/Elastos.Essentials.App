@@ -12,6 +12,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { UiService } from '../../services/ui.service';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type TokenChooserComponentOptions = {
 }
 
@@ -33,7 +34,7 @@ export class TokenChooserComponent implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public activeNetwork: Network = null;
-  private nativeTokenWallet: StandardEVMSubWallet = null;
+  private nativeTokenWallet: StandardEVMSubWallet<any> = null;
   public tokens: TokenToShow[] = [];
 
   constructor(

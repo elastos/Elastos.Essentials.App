@@ -1,18 +1,10 @@
 import { SPVNetworkConfig } from "../../../services/wallet.service";
 import { ERC20Coin } from "../../coin";
-import { ElastosMainChainNetworkWallet } from "../../wallets/elastos/networkwallets/mainchain.networkwallet";
-import { MasterWallet } from "../../wallets/masterwallet";
-import { NetworkWallet } from "../../wallets/networkwallet";
-import { ElastosNetworkBase } from "./elastos.base.network";
+import { ElastosMainChainNetworkBase } from "./elastos.base.network";
 
-export class ElastosLRWNetwork extends ElastosNetworkBase {
+export class ElastosLRWNetwork extends ElastosMainChainNetworkBase {
   constructor() {
     super("elastos", "ElastosLRW", "LRW");
-  }
-
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
-    let wallet = new ElastosMainChainNetworkWallet(masterWallet, this);
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public getBuiltInERC20Coins(): ERC20Coin[] {

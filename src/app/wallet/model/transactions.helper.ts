@@ -1,5 +1,5 @@
 import { TranslateService } from "@ngx-translate/core";
-import { TransactionStatus } from "./providers/transaction.types";
+import { TransactionStatus } from "./tx-providers/transaction.types";
 
 export class TransactionsHelper {
   /**

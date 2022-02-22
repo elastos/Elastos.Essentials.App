@@ -1,21 +1,11 @@
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "../../../services/wallet.service";
 import { ERC20Coin } from "../../coin";
-import { ElastosIdentityChainNetworkWallet } from "../../wallets/elastos/networkwallets/identitychain.networkwallet";
-import { ElastosMainChainNetworkWallet } from "../../wallets/elastos/networkwallets/mainchain.networkwallet";
-import { ElastosSmartChainNetworkWallet } from "../../wallets/elastos/networkwallets/smartchain.networkwallet";
-import { MasterWallet } from "../../wallets/masterwallet";
-import { NetworkWallet } from "../../wallets/networkwallet";
-import { ElastosNetworkBase } from "./elastos.base.network";
+import { ElastosIdentityChainNetworkBase, ElastosMainChainNetworkBase, ElastosSmartChainNetworkBase } from "./elastos.base.network";
 
-export class ElastosMainChainTestNetNetwork extends ElastosNetworkBase {
+export class ElastosMainChainTestNetNetwork extends ElastosMainChainNetworkBase {
   constructor() {
     super("elastos", "Elastos main chain Testnet", TESTNET_TEMPLATE);
-  }
-
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
-    let wallet = new ElastosMainChainNetworkWallet(masterWallet, this);
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public getMainChainID(): number {
@@ -28,14 +18,9 @@ export class ElastosMainChainTestNetNetwork extends ElastosNetworkBase {
   }
 }
 
-export class ElastosSmartChainTestNetNetwork extends ElastosNetworkBase {
+export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBase {
   constructor() {
     super("elastossmartchain", "Elastos smart chain Testnet", TESTNET_TEMPLATE);
-  }
-
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
-    let wallet = new ElastosSmartChainNetworkWallet(masterWallet, this);
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public getBuiltInERC20Coins(): ERC20Coin[] {
@@ -56,14 +41,9 @@ export class ElastosSmartChainTestNetNetwork extends ElastosNetworkBase {
 /**
  * Elastos identity chain
  */
-export class ElastosIdentityChainTestNetNetwork extends ElastosNetworkBase {
+export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetworkBase {
   constructor() {
     super("elastosidchain", "Elastos identity chain", TESTNET_TEMPLATE);
-  }
-
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
-    let wallet = new ElastosIdentityChainNetworkWallet(masterWallet, this);
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public getMainChainID(): number {

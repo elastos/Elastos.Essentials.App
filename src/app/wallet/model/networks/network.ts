@@ -8,10 +8,10 @@ import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
 import { SwapProvider } from "../earn/swapprovider";
 import { ERC1155Provider } from "../nfts/erc1155.provider";
-import { WalletCreateType } from "../walletaccount";
+import { PrivateKeyType } from "../wallet.types";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
-import { NetworkWallet } from "../wallets/networkwallet";
+import { AnyNetworkWallet } from "../wallets/networkwallet";
 import { UniswapCurrencyProvider } from "./uniswap.currencyprovider";
 
 export abstract class Network {
@@ -53,14 +53,14 @@ export abstract class Network {
    * If startBackgroundUpdates is true some initializations such as getting balance or transactions are launched in background.
    * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
    */
-  public abstract createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates?: boolean): Promise<NetworkWallet>;
+  public abstract createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates?: boolean): Promise<AnyNetworkWallet>;
 
   /**
    * Creates the right ERC20 sub wallet instance for this network.
    * If startBackgroundUpdates is true some initializations such as getting balance or transactions are launched in background.
    * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
    */
-  public abstract createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID, startBackgroundUpdates?: boolean): Promise<ERC20SubWallet>;
+  public abstract createERC20SubWallet(networkWallet: AnyNetworkWallet, coinID: CoinID, startBackgroundUpdates?: boolean): Promise<ERC20SubWallet>;
 
   public abstract getMainEvmRpcApiUrl(): string;
 
@@ -74,8 +74,17 @@ export abstract class Network {
    */
   public abstract getMainChainID(networkTemplate?: string): number;
 
-  public supportedWalletCreateTypes(): WalletCreateType[] {
+  /* public supportedWalletCreateTypes(): WalletCreateType[] {
     return [WalletCreateType.MNEMONIC, WalletCreateType.PRIVATE_KEY_EVM, WalletCreateType.KEYSTORE];
+  } */
+
+  /**
+   * List of private key types that are supported by this network.
+   */
+  public supportedPrivateKeyTypes(): PrivateKeyType[] {
+    // None by default. If this method is not overriden by the network, 
+    // the network can't handle any import by private key
+    return [];
   }
 
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);
@@ -83,6 +92,14 @@ export abstract class Network {
   // Ex: ETHHECO, ETHSC, etc
   public getEVMSPVConfigName(): string {
     return "ETH" + this.key.toUpperCase();
+  }
+
+  public supportsERC20Coins(): boolean {
+    return false;
+  }
+
+  public supportsERCNFTs(): boolean {
+    return false;
   }
 
   private async refreshCoins() {

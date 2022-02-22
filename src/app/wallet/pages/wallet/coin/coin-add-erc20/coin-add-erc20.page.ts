@@ -9,11 +9,11 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AddERCTokenRequestParams } from 'src/app/wallet/model/adderctokenrequest';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { EVMService } from 'src/app/wallet/services/evm.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { ERC20Coin } from '../../../../model/coin';
-import { ERC20CoinService } from '../../../../services/erc20coin.service';
+import { ERC20CoinService } from '../../../../services/evm/erc20coin.service';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
@@ -29,7 +29,7 @@ export class CoinAddERC20Page implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     //public walletname: string = "";
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     public allCustomERC20Coins: ERC20Coin[] = [];
 
     // public coinAddress: string = "0xa4e4a46b228f3658e96bf782741c67db9e1ef91c"; // TEST - TTECH ERC20 on mainnet

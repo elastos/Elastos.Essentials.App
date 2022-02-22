@@ -2,13 +2,13 @@ import { Logger } from "src/app/logger";
 import { Coin, CoinType } from "../coin";
 import { ERC20SubWallet } from "./erc20.subwallet";
 import { NetworkWallet } from "./networkwallet";
-import { SerializedSubWallet, SubWallet } from "./subwallet";
+import { AnySubWallet, SerializedSubWallet, SubWallet } from "./subwallet";
 
 export class SubWalletBuilder {
     /**
      * Newly created wallet, base on a coin type.
      */
-    static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<SubWallet<any>> {
+    static newFromCoin(networkWallet: NetworkWallet<any, any>, coin: Coin): Promise<SubWallet<any, any>> {
         Logger.log("wallet", "Creating new subwallet using coin", coin);
 
         switch (coin.getType()) {
@@ -25,7 +25,7 @@ export class SubWalletBuilder {
     /**
      * Restored wallet from local storage info.
      */
-    static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): Promise<SubWallet<any>> {
+    static newFromSerializedSubWallet(networkWallet: NetworkWallet<any, any>, serializedSubWallet: SerializedSubWallet): Promise<AnySubWallet> {
         if (!serializedSubWallet)
             return null; // Should never happen, but happened because of some other bugs.
 
@@ -36,7 +36,7 @@ export class SubWalletBuilder {
                 // Normally we shouldn't have any serialized subwallet of type ERC20 in network wallets that don't
                 // support this but this happens for legacy reasons (elastos network split into more networks), so
                 // we manually check it here.
-                if (networkWallet.supportsERC20Coins())
+                if (networkWallet.network.supportsERC20Coins())
                     return ERC20SubWallet.newFromSerializedSubWallet(networkWallet, serializedSubWallet);
                 else
                     return null;

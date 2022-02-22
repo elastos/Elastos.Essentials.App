@@ -10,14 +10,14 @@ import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.serv
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { EthTransaction } from 'src/app/wallet/model/evm.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
-import { ElastosMainChainNetworkWallet } from 'src/app/wallet/model/wallets/elastos/networkwallets/mainchain.networkwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/wallets/elastos/standard/networkwallets/mainchain.networkwallet';
+import { MainChainSubWallet } from 'src/app/wallet/model/wallets/elastos/standard/subwallets/mainchain.subwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
 import { StandardCoinName } from '../../../../model/coin';
-import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../../model/providers/transaction.types';
-import { ElastosEVMSubWallet } from '../../../../model/wallets/elastos/elastos.evm.subwallet';
+import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../../model/tx-providers/transaction.types';
+import { ElastosEVMSubWallet } from '../../../../model/wallets/elastos/standard/subwallets/elastos.evm.subwallet';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -38,13 +38,12 @@ export class CoinTxInfoPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     // General Values
-    private networkWallet: NetworkWallet = null;
+    private networkWallet: AnyNetworkWallet = null;
     private mainTokenSymbol = '';
     public subWalletId = '';
     public subWallet: AnySubWallet = null;
     public transactionInfo: TransactionInfo;
     private blockchain_url = Config.BLOCKCHAIN_URL;
-    private idchain_url = Config.IDCHAIN_URL;
 
     // Header Display Values
     public type: TransactionType;
@@ -128,8 +127,8 @@ export class CoinTxInfoPage implements OnInit {
 
     async getTransactionDetails() {
         // TODO: To Improve
-        if ((this.networkWallet instanceof ElastosMainChainNetworkWallet) && ((this.subWalletId === StandardCoinName.ELA) || (this.subWalletId === StandardCoinName.IDChain))) {
-            const transaction = await (this.subWallet as MainAndIDChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
+        if ((this.networkWallet instanceof ElastosMainChainStandardNetworkWallet) && (this.subWalletId === StandardCoinName.ELA)) {
+            const transaction = await (this.subWallet as MainChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             if (transaction) {
                 this.transactionInfo.confirmStatus = transaction.confirmations;
                 // If the fee is too small, then amount doesn't subtract fee
@@ -140,7 +139,7 @@ export class CoinTxInfoPage implements OnInit {
                 // Tx is ETH - Define amount, fee, total cost and address
                 if (this.direction === TransactionDirection.SENT) {
                     // Address: sender address or receiver address
-                    this.targetAddress = await (this.subWallet as MainAndIDChainSubWallet).getRealAddressInCrosschainTx(transaction);
+                    this.targetAddress = await (this.subWallet as MainChainSubWallet).getRealAddressInCrosschainTx(transaction);
 
                 } else if (this.direction === TransactionDirection.RECEIVED) {
                     // TODO: show all the inputs and outputs.
@@ -281,7 +280,8 @@ export class CoinTxInfoPage implements OnInit {
 
             if (this.targetAddress) {
                 // Only show the receiving address for multiable address wallet.
-                if (((this.subWalletId === StandardCoinName.ELA) || (this.subWalletId === StandardCoinName.IDChain)) && !this.networkWallet.masterWallet.account.SingleAddress) {
+                let elastosMainChainStandardNetworkWallet = this.networkWallet as ElastosMainChainStandardNetworkWallet;
+                if (this.subWalletId === StandardCoinName.ELA && !elastosMainChainStandardNetworkWallet.getNetworkOptions().singleAddress) {
                     this.txDetails.unshift(
                         {
                             type: 'address',
@@ -295,11 +295,7 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     goWebSite(subWalletId, txid) {
-        if (subWalletId === StandardCoinName.ELA) {
-            this.native.openUrl(this.blockchain_url + 'tx/' + txid);
-        } else {
-            this.native.openUrl(this.idchain_url + 'tx/' + txid);
-        }
+        this.native.openUrl(this.blockchain_url + 'tx/' + txid);
     }
 
     doRefresh(event) {

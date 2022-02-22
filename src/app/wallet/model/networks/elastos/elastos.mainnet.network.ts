@@ -1,30 +1,20 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "../../../services/wallet.service";
 import { ERC20Coin } from "../../coin";
-import { ElastosIdentityChainNetworkWallet } from "../../wallets/elastos/networkwallets/identitychain.networkwallet";
-import { ElastosMainChainNetworkWallet } from "../../wallets/elastos/networkwallets/mainchain.networkwallet";
-import { ElastosSmartChainNetworkWallet } from "../../wallets/elastos/networkwallets/smartchain.networkwallet";
-import { MasterWallet } from "../../wallets/masterwallet";
-import { NetworkWallet } from "../../wallets/networkwallet";
 import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
 import { ElastosMainnetUniswapCurrencyProvider } from "./currency/elastos.uniswap.currency.provider";
 import { elastosMainnetElkBridgeProvider, elastosMainnetGlideBridgeProvider, elastosMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { elastosMainnetElkEarnProvider } from "./earn/earn.providers";
 import { elastosMainnetElkSwapProvider, elastosMainnetGlideSwapProvider } from "./earn/swap.providers";
-import { ElastosNetworkBase } from "./elastos.base.network";
+import { ElastosIdentityChainNetworkBase, ElastosMainChainNetworkBase, ElastosSmartChainNetworkBase } from "./elastos.base.network";
 import { ElastosPasarERC1155Provider } from "./nfts/pasar.provider";
 
 /**
  * Elastos main chain
  */
-export class ElastosMainChainMainNetNetwork extends ElastosNetworkBase {
+export class ElastosMainChainMainNetNetwork extends ElastosMainChainNetworkBase {
   constructor() {
     super("elastos", "Elastos main chain", MAINNET_TEMPLATE);
-  }
-
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
-    let wallet = new ElastosMainChainNetworkWallet(masterWallet, this);
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public getMainChainID(): number {
@@ -35,12 +25,20 @@ export class ElastosMainChainMainNetNetwork extends ElastosNetworkBase {
     onGoingConfig['ELA'] = {};
     onGoingConfig['IDChain'] = {};
   }
+
+  public supportsERC20Coins() {
+    return false;
+  }
+
+  public supportsERCNFTs() {
+    return false;
+  }
 }
 
 /**
  * Elastos smart chain
  */
-export class ElastosSmartChainMainNetNetwork extends ElastosNetworkBase {
+export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBase {
   private uniswapCurrencyProvider: ElastosMainnetUniswapCurrencyProvider = null;
 
   constructor() {
@@ -68,11 +66,6 @@ export class ElastosSmartChainMainNetNetwork extends ElastosNetworkBase {
     this.uniswapCurrencyProvider = new ElastosMainnetUniswapCurrencyProvider();
   }
 
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
-    let wallet = new ElastosSmartChainNetworkWallet(masterWallet, this);
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
-  }
-
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
     return this.uniswapCurrencyProvider;
   }
@@ -97,14 +90,9 @@ export class ElastosSmartChainMainNetNetwork extends ElastosNetworkBase {
 /**
  * Elastos EID chain (EVM based)
  */
-export class ElastosIdentityChainMainNetNetwork extends ElastosNetworkBase {
+export class ElastosIdentityChainMainNetNetwork extends ElastosIdentityChainNetworkBase {
   constructor() {
     super("elastosidchain", "Elastos identity chain", MAINNET_TEMPLATE);
-  }
-
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
-    let wallet = new ElastosIdentityChainNetworkWallet(masterWallet, this);
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public getMainChainID(): number {

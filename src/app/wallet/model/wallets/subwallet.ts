@@ -1,17 +1,19 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
-import { BridgeService } from '../../services/bridge.service';
 import { Transfer } from '../../services/cointransfer.service';
-import { EarnService } from '../../services/earn.service';
-import { SwapService } from '../../services/swap.service';
+import { BridgeService } from '../../services/evm/bridge.service';
+import { EarnService } from '../../services/evm/earn.service';
+import { SwapService } from '../../services/evm/swap.service';
+import { jsToSpvWalletId, SPVService } from '../../services/spv.service';
 import { CoinID, CoinType, StandardCoinName } from '../coin';
 import { BridgeProvider } from '../earn/bridgeprovider';
 import { EarnProvider } from '../earn/earnprovider';
 import { SwapProvider } from '../earn/swapprovider';
 import { TransactionListType } from '../evm.types';
-import { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../providers/transaction.types';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
+import { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../tx-providers/transaction.types';
+import { WalletNetworkOptions } from '../wallet.types';
 import { MasterWallet } from './masterwallet';
 import { NetworkWallet } from './networkwallet';
 
@@ -28,7 +30,7 @@ export class SerializedSubWallet {
    * and the balance type of subwallet is bigNumber,
    * It needs to be converted to string and then saved to localstorage.
    */
-  public static fromSubWallet(subWallet: SubWallet<any>): SerializedSubWallet {
+  public static fromSubWallet(subWallet: SubWallet<any, any>): SerializedSubWallet {
     const serializedSubWallet = new SerializedSubWallet();
     serializedSubWallet.type = subWallet.type;
     serializedSubWallet.id = subWallet.id as StandardCoinName;
@@ -37,9 +39,9 @@ export class SerializedSubWallet {
 }
 
 // Convenient type to avoid adding SubWallet<any> everywhere.
-export type AnySubWallet = SubWallet<GenericTransaction>;
+export type AnySubWallet = SubWallet<GenericTransaction, any>;
 
-export abstract class SubWallet<TransactionType extends GenericTransaction> {
+export abstract class SubWallet<TransactionType extends GenericTransaction, WalletNetworkOptionsType extends WalletNetworkOptions> {
   public masterWallet: MasterWallet;
   public id: CoinID = null;
   public tokenDecimals: number;
@@ -54,7 +56,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   public loadTxDataFromCache = true;
   public subwalletTransactionStatusID = '';
 
-  constructor(public networkWallet: NetworkWallet, id: CoinID, public type: CoinType) {
+  constructor(public networkWallet: NetworkWallet<any, WalletNetworkOptionsType>, id: CoinID, public type: CoinType) {
     this.masterWallet = networkWallet.masterWallet;
     this.id = id;
     this.type = type;
@@ -190,8 +192,8 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   public abstract createAddress(): Promise<string>;
 
   public async isAddressValid(address: string) {
-    return await  this.masterWallet.walletManager.spvBridge.isSubWalletAddressValid(
-        this.masterWallet.id, this.id, address
+    return await SPVService.instance.isSubWalletAddressValid(
+      jsToSpvWalletId(this.masterWallet.id), this.id, address
     );
   }
 
@@ -325,11 +327,11 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   }
 
   public getTransactionsCacheKey(transactionListType = TransactionListType.NORMAL): string {
-      if (transactionListType === TransactionListType.NORMAL) {
-          return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-transactions";
-      } else {
-          return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-internaltransactions";
-      }
+    if (transactionListType === TransactionListType.NORMAL) {
+      return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-transactions";
+    } else {
+      return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-internaltransactions";
+    }
   }
 
   /**

@@ -2,14 +2,20 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { Transfer } from '../../services/cointransfer.service';
 import { CurrencyService } from '../../services/currency.service';
+import { Native } from '../../services/native.service';
+import { PopupProvider } from '../../services/popup.service';
+import { jsToSpvWalletId, SPVService } from '../../services/spv.service';
+import { WalletService } from '../../services/wallet.service';
 import { CoinType } from '../coin';
-import { GenericTransaction, RawTransactionPublishResult } from '../providers/transaction.types';
+import { GenericTransaction, RawTransactionPublishResult } from '../tx-providers/transaction.types';
+import { WalletNetworkOptions } from '../wallet.types';
 import { StandardEVMSubWallet } from './evm.subwallet';
+import { MasterWallet } from './masterwallet';
 import { NetworkWallet } from './networkwallet';
 import { SubWallet } from './subwallet';
 
-export abstract class StandardSubWallet<TransactionType extends GenericTransaction> extends SubWallet<TransactionType> {
-    constructor(networkWallet: NetworkWallet, id: string) {
+export abstract class StandardSubWallet<TransactionType extends GenericTransaction, WalletNetworkOptionsType extends WalletNetworkOptions> extends SubWallet<TransactionType, WalletNetworkOptionsType> {
+    constructor(networkWallet: NetworkWallet<MasterWallet, any>, id: string) {
         super(networkWallet, id, CoinType.STANDARD);
     }
 
@@ -19,7 +25,7 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
 
     public async destroy() {
         try {
-            await this.masterWallet.walletManager.spvBridge.destroySubWallet(this.masterWallet.id, this.id);
+            await SPVService.instance.destroySubWallet(jsToSpvWalletId(this.masterWallet.id), this.id);
         }
         catch (e) {
             Logger.error('wallet', 'destroySubWallet error:', this.id, e)
@@ -28,7 +34,7 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
     }
 
     public async createAddress(): Promise<string> {
-        return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.id);
+        return await SPVService.instance.createAddress(jsToSpvWalletId(this.masterWallet.id), this.id);
     }
 
     public abstract getFriendlyName(): string;
@@ -73,17 +79,13 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
         return true;
     }
 
-    /* protected abstract getTransactionName(transaction: TransactionType, translate: TranslateService): Promise<string>;
-
-    protected abstract getTransactionIconPath(transaction: TransactionType): Promise<string>; */
-
     // Signs raw transaction and sends the signed transaction to the SPV SDK for publication.
     public signAndSendRawTransaction(transaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve) => {
             // Logger.log("wallet", 'Received raw transaction', transaction);
             try {
-                const password = await this.masterWallet.walletManager.openPayModal(transfer);
+                const password = await WalletService.instance.openPayModal(transfer);
                 if (!password) {
                     Logger.log("wallet", "No password received. Cancelling");
                     resolve({
@@ -96,10 +98,10 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
 
                 Logger.log("wallet", "Password retrieved. Now signing the transaction.");
 
-                await this.masterWallet.walletManager.native.showLoading(this.masterWallet.walletManager.translate.instant('common.please-wait'));
+                await Native.instance.showLoading(WalletService.instance.translate.instant('common.please-wait'));
 
-                const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
-                    this.masterWallet.id,
+                const signedTx = await SPVService.instance.signTransaction(
+                    jsToSpvWalletId(this.masterWallet.id),
                     this.id,
                     transaction,
                     password
@@ -110,11 +112,11 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
 
                 Logger.log("wallet", "publishTransaction txid:", txid);
 
-                await this.masterWallet.walletManager.native.hideLoading();
+                await Native.instance.hideLoading();
 
                 if (navigateHomeAfterCompletion) {
-                    await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
-                    this.masterWallet.walletManager.events.publish('wallet:transactionsent', { subwalletid: this.id, txid: txid });
+                    await Native.instance.setRootRouter('/wallet/wallet-home');
+                    WalletService.instance.events.publish('wallet:transactionsent', { subwalletid: this.id, txid: txid });
                 }
 
                 let published = true;
@@ -130,12 +132,12 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
                 });
             }
             catch (err) {
-                await this.masterWallet.walletManager.native.hideLoading();
+                await Native.instance.hideLoading();
                 Logger.error("wallet", "Publish error:", err);
                 // ETHTransactionManager handle this error if the subwallet is StandardEVMSubWallet.
                 // Maybe need to speed up.
                 if (!(this instanceof StandardEVMSubWallet)) {
-                    await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
+                    await PopupProvider.instance.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
                 }
                 resolve({
                     published: false,

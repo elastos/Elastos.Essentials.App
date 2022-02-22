@@ -67,9 +67,12 @@
     "angularx-qrcode": "^13.0.2",
     "base-58": "^0.0.1",
     "bignumber.js": "9.0.1",
+    "bip39": "^3.0.4",
     "crypto-browserify": "3.12.0",
+    "crypto-js": "^4.1.1",
     "easyqrcodejs": "4.4.10",
     "eth-sig-util": "^3.0.1",
+    "ethereum-hdwallet": "^0.0.27",
     "ethereumjs-tx": "2.1.2",
     "fast-average-color": "^7.0.1",
     "hammerjs": "2.0.8",
@@ -113,6 +116,7 @@
     "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.45",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.23",
     "@ionic/angular-toolkit": "^4.0.0",
+    "@types/crypto-js": "^4.1.1",
     "@types/marked": "^2.0.5",
     "@types/node": "15.6.0",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
@@ -180,7 +184,6 @@
         "FACEID_USAGE_DESCRIPTION": " "
       },
       "elastos-essentials-plugin-passwordmanager": {},
-      "elastos-essentials-plugin-wallet": {},
       "cordova-plugin-app-version": {},
       "elastos-essentials-plugin-intent": {},
       "cordova-plugin-statusbar": {},
@@ -193,7 +196,8 @@
         "ANDROID_ICON_ACCENT": "#FF00FFFF",
         "ANDROID_FIREBASE_PERFORMANCE_MONITORING": "false"
       },
-      "elastos-essentials-plugin-dappbrowser": {}
+      "elastos-essentials-plugin-dappbrowser": {},
+      "elastos-essentials-plugin-wallet": {}
     },
     "platforms": [
       "android"

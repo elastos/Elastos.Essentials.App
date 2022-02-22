@@ -13,15 +13,18 @@ import Web3 from 'web3';
 import { Config } from '../../config/Config';
 import { Transfer } from '../../services/cointransfer.service';
 import { CurrencyService } from '../../services/currency.service';
+import { Native } from '../../services/native.service';
+import { jsToSpvWalletId, SPVService } from '../../services/spv.service';
+import { WalletService } from '../../services/wallet.service';
 import { Coin, CoinID, CoinType, ERC20Coin } from '../coin';
 import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
-import { RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
+import { RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../tx-providers/transaction.types';
 import { WalletUtil } from '../wallet.util';
-import { NetworkWallet } from './networkwallet';
+import { AnyNetworkWallet } from './networkwallet';
 import { SerializedSubWallet, SubWallet } from './subwallet';
 
 
-export class ERC20SubWallet extends SubWallet<EthTransaction> {
+export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     /** Coin related to this wallet */
     public coin: ERC20Coin;
     /** Web3 variables to call smart contracts */
@@ -34,12 +37,12 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     private fetchTokenValueTimer: any = null;
     private redPacketServerAddress = null;
 
-    public static async newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
+    public static async newFromCoin(networkWallet: AnyNetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = await networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
         return subWallet;
     }
 
-    public static async newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): Promise<ERC20SubWallet> {
+    public static async newFromSerializedSubWallet(networkWallet: AnyNetworkWallet, serializedSubWallet: SerializedSubWallet): Promise<ERC20SubWallet> {
         //Logger.log('wallet', "Initializing ERC20 subwallet from serialized sub wallet", serializedSubWallet);
         if (!serializedSubWallet.id) {
             Logger.error('wallet', 'newFromSerializedSubWallet id is null');
@@ -57,7 +60,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public constructor(
-        public networkWallet: NetworkWallet,
+        public networkWallet: AnyNetworkWallet,
         id: CoinID,
         private rpcApiUrl: string,
         protected displayableERC20TokenInfo: string // Ex: "HRC20 Token"
@@ -116,7 +119,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     public async createAddress(): Promise<string> {
         // Create on ETH always returns the same unique address.
-        return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.spvConfigEVMCode);
+        return await SPVService.instance.createAddress(jsToSpvWalletId(this.masterWallet.id), this.spvConfigEVMCode);
     }
 
     public async getTokenAccountAddress(): Promise<string> {
@@ -460,8 +463,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
         let nonce = await this.getNonce();
         const rawTx =
-            await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
-                this.masterWallet.id,
+            await SPVService.instance.createTransferGeneric(
+                jsToSpvWalletId(this.masterWallet.id),
                 this.spvConfigEVMCode,
                 contractAddress,
                 '0',
@@ -486,7 +489,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve) => {
             try {
-                const password = await this.masterWallet.walletManager.openPayModal(transfer);
+                const password = await WalletService.instance.openPayModal(transfer);
                 if (!password) {
                     Logger.log('wallet', "No password received. Cancelling");
                     resolve({
@@ -499,8 +502,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
                 Logger.log('wallet', "Password retrieved. Now signing the transaction.");
 
-                const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
-                    this.masterWallet.id,
+                const signedTx = await SPVService.instance.signTransaction(
+                    jsToSpvWalletId(this.masterWallet.id),
                     this.spvConfigEVMCode,
                     transaction,
                     password
@@ -524,7 +527,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
                 });
             }
             catch (err) {
-                await this.masterWallet.walletManager.native.hideLoading();
+                await Native.instance.hideLoading();
                 Logger.error("wallet", "Publish error:", err);
                 resolve({
                     published: false,

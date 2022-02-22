@@ -31,11 +31,11 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { NFTAsset } from 'src/app/wallet/model/nfts/nftasset';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { ERC721Service } from 'src/app/wallet/services/erc721.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 import { Config } from '../../../../config/Config';
 import { CoinType } from '../../../../model/coin';
-import { TransactionInfo } from '../../../../model/providers/transaction.types';
+import { TransactionInfo } from '../../../../model/tx-providers/transaction.types';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -53,7 +53,7 @@ export class CoinNFTHomePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     //public masterWalletInfo = '';
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     public nft: NFT = null;
     //public subWallet: SubWallet = null;
     //public subWalletId: StandardCoinName = null;

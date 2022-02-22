@@ -1,12 +1,13 @@
 import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
-import { ElastosWalletNetworkOptions, MasterWalletInfo, PrivateKeyType, WalletCreator } from "src/app/wallet/model/wallet.types";
-import { WalletCreateType } from "src/app/wallet/model/walletaccount";
+import { AESEncrypt } from "src/app/wallet/model/crypto";
+import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedStandardMasterWallet, WalletCreator, WalletType } from "src/app/wallet/model/wallet.types";
+import { defaultWalletName, defaultWalletTheme } from "src/app/wallet/model/wallets/masterwallet";
 import { AuthService as WalletAuthService } from "src/app/wallet/services/auth.service";
 import { SPVService } from "src/app/wallet/services/spv.service";
-import { LocalStorage } from "src/app/wallet/services/storage.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
-import { IdentityEntry } from "../../global.didsessions.service";
+import { GlobalDIDSessionsService, IdentityEntry } from "../../global.didsessions.service";
+import { GlobalStorageService } from "../../global.storage.service";
 
 /**
  * Find the first possible EVM subwallet in a master wallet, if any.
@@ -54,18 +55,20 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
           privateKey = await spvService.exportETHSCPrivateKey(spvWalletId, subWalletId, payPassword);
       }
 
-      let extendedInfo = await LocalStorage.instance.getExtendedMasterWalletInfo(spvWalletId);
+      let legacyExtendedWalletInfoKey = "extended-wallet-infos-" + spvWalletId;
+      let rawExtendedInfo = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", legacyExtendedWalletInfoKey, null);
 
-      if (!extendedInfo) {
+      if (!rawExtendedInfo) {
         Logger.warn("migrations", "No extended info found for wallet, not migrating!", spvWalletId);
         continue;
       }
 
+      let extendedInfo = JSON.parse(rawExtendedInfo);
+
+      Logger.log("migrations", "Existing extended infos:", extendedInfo);
+
       let jsWalletID = WalletService.instance.createMasterWalletID();
 
-      // SURE ABOUT THAT?? WHY? We migrate only MNEMONIC and PRIVATEKEY wallets, not KEYSTORE ones
-      // No "createType" means old wallets always mnemonic based.
-      let creationType = extendedInfo.createType ? extendedInfo.createType : WalletCreateType.MNEMONIC;
       let spvAccountInfo = await spvService.getMasterWalletBasicInfo(spvWalletId);
 
       let elastosNetworkOptions: ElastosWalletNetworkOptions = {
@@ -73,35 +76,40 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
         singleAddress: spvAccountInfo.SingleAddress || true
       };
 
-      let walletInfo: MasterWalletInfo = {
+      let walletInfo: SerializedStandardMasterWallet = {
+        type: WalletType.STANDARD,
         id: jsWalletID,
-        name: extendedInfo.name,
-        theme: {
+        name: extendedInfo ? extendedInfo.name : defaultWalletName(),
+        theme: extendedInfo && extendedInfo.theme ? {
           background: extendedInfo.theme.background,
           color: extendedInfo.theme.color
-        },
-        seed,
-        mnemonic,
+        } : defaultWalletTheme(),
         hasPassphrase: spvAccountInfo.HasPassPhrase || false,
         networkOptions: [elastosNetworkOptions],
-        creator: extendedInfo.createdBySystem ? WalletCreator.WALLET_APP : WalletCreator.USER
+        creator: extendedInfo && extendedInfo.createdBySystem ? WalletCreator.WALLET_APP : WalletCreator.USER
       };
 
+      if (seed)
+        walletInfo.seed = AESEncrypt(seed, payPassword);
+
+      if (mnemonic)
+        walletInfo.mnemonic = AESEncrypt(mnemonic, payPassword);
+
       if (privateKey) {
-        walletInfo.privateKey = privateKey;
+        walletInfo.privateKey = AESEncrypt(privateKey, payPassword);
         // All existing wallets imported by private key use EVM private keys.
         walletInfo.privateKeyType = PrivateKeyType.EVM;
       }
 
-      let masterWallet = await WalletService.instance.createMasterWalletFromInfo(walletInfo);
+      // Save the link between the new JS wallet ID and the existing SPV wallet ID
+      await spvService.setMasterWalletIDMapping(jsWalletID, spvWalletId);
+
+      // Add wallet to the new JS model.
+      let masterWallet = await WalletService.instance.createMasterWalletFromSerializedInfo(walletInfo);
       if (!masterWallet) {
         Logger.warn("Master wallet couldn't be created during migration, it won't appear in the list! Continuing anyway to get other wallets");
         continue;
       }
-
-      // TODO: call wallet service to silently create a new JS wallet based on mnemonic / pkey
-      //      -> remove duplicate createNewMasterWallet VS importWalletWithMnemonic
-      // TODO: change wallet service to load master wallets from JS, not from SPVSDK
     }
 
     await spvService.destroy();

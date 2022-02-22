@@ -1,6 +1,8 @@
+import { jsToSpvWalletId, SPVService } from '../../services/spv.service';
 import { EVMNetwork } from '../networks/evm.network';
-import { EVMTransactionProvider } from '../providers/evm.transaction.provider';
-import { TransactionProvider } from '../providers/transaction.provider';
+import { EVMTransactionProvider } from '../tx-providers/evm.transaction.provider';
+import { TransactionProvider } from '../tx-providers/transaction.provider';
+import { WalletNetworkOptions } from '../wallet.types';
 import { StandardEVMSubWallet } from './evm.subwallet';
 import { MasterWallet } from './masterwallet';
 import { NetworkWallet, WalletAddressInfo } from './networkwallet';
@@ -8,11 +10,11 @@ import { NetworkWallet, WalletAddressInfo } from './networkwallet';
 /**
  * Network wallet type for standard EVM networks
  */
-export class EVMNetworkWallet extends NetworkWallet {
-    private mainTokenSubWallet: StandardEVMSubWallet = null;
+export class EVMNetworkWallet<MasterWalletType extends MasterWallet, WalletNetworkOptionsType extends WalletNetworkOptions> extends NetworkWallet<MasterWalletType, WalletNetworkOptionsType> {
+    private mainTokenSubWallet: StandardEVMSubWallet<WalletNetworkOptionsType> = null;
 
     constructor(
-        public masterWallet: MasterWallet,
+        public masterWallet: MasterWalletType,
         public network: EVMNetwork,
         public displayToken: string, // Ex: "HT", "BSC"
         public mainSubWalletFriendlyName: string, // Ex: "Huobi Token"
@@ -34,7 +36,7 @@ export class EVMNetworkWallet extends NetworkWallet {
         );
         await this.mainTokenSubWallet.initialize();
         this.subWallets[this.network.getEVMSPVConfigName()] = this.mainTokenSubWallet;
-        await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, this.network.getEVMSPVConfigName());
+        await SPVService.instance.createSubWallet(jsToSpvWalletId(this.masterWallet.id), this.network.getEVMSPVConfigName());
     }
 
     public async getAddresses(): Promise<WalletAddressInfo[]> {
@@ -46,7 +48,7 @@ export class EVMNetworkWallet extends NetworkWallet {
         ];
     }
 
-    public getMainEvmSubWallet(): StandardEVMSubWallet {
+    public getMainEvmSubWallet(): StandardEVMSubWallet<WalletNetworkOptionsType> {
         return this.mainTokenSubWallet;
     }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { PopoverController, NavParams } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 export enum OptionsType {
   CONTACTS = 'Contacts',
@@ -32,18 +32,18 @@ export class OptionsComponent implements OnInit {
   }
 
   pasteFromClipboard() {
-    this.popoverCtrl.dismiss(OptionsType.Paste);
+    void this.popoverCtrl.dismiss(OptionsType.Paste);
   }
 
   goContacts() {
-    this.popoverCtrl.dismiss(OptionsType.CONTACTS);
+    void this.popoverCtrl.dismiss(OptionsType.CONTACTS);
   }
 
   goScan() {
-    this.popoverCtrl.dismiss(OptionsType.SCAN);
+    void this.popoverCtrl.dismiss(OptionsType.SCAN);
   }
 
   goCryponames() {
-    this.popoverCtrl.dismiss(OptionsType.CRYPTONAMES);
+    void this.popoverCtrl.dismiss(OptionsType.CRYPTONAMES);
   }
 }

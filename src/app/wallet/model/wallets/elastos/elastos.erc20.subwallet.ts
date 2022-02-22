@@ -2,13 +2,13 @@ import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.serv
 import { GlobalLanguageService } from "src/app/services/global.language.service";
 import { CoinID, StandardCoinName } from "../../coin";
 import { ERC20SubWallet } from "../erc20.subwallet";
-import { NetworkWallet } from "../networkwallet";
+import { AnyNetworkWallet } from "../networkwallet";
 
 /**
  * Subwallet for Elastos-ERC20 tokens.
  */
 export class ElastosERC20SubWallet extends ERC20SubWallet {
-  constructor(networkWallet: NetworkWallet, coinID: CoinID) {
+  constructor(networkWallet: AnyNetworkWallet, coinID: CoinID) {
     let rpcApiUrl = GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC);
     super(networkWallet, coinID, rpcApiUrl, "Elastos-ERC20 token");
 

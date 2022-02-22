@@ -8,7 +8,7 @@ import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatu
 import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model';
 import { StandardCoinName } from '../wallet/model/coin';
 import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/evm.types';
-import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/providers/transaction.types';
+import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/tx-providers/transaction.types';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalLanguageService } from './global.language.service';
@@ -22,8 +22,6 @@ declare let hiveManager: HivePlugin.HiveManager;
 export enum ElastosApiUrlType {
     // Main chain
     ELA_RPC = "mainChainRPC",
-    // DID 1.0 deprecated chain
-    DID_RPC = "idChainRPC",
     // ESC chain
     ETHSC_RPC = "escRPC",
     ETHSC_MISC = "escMiscRPC",
@@ -438,8 +436,6 @@ export class GlobalElastosAPIService extends GlobalService {
         switch (elastosChainCode) {
             case StandardCoinName.ELA:
                 return ElastosApiUrlType.ELA_RPC;
-            case StandardCoinName.IDChain:
-                return ElastosApiUrlType.DID_RPC;
             case StandardCoinName.ETHSC:
                 return ElastosApiUrlType.ETHSC_RPC;
             case StandardCoinName.ETHDID:

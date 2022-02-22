@@ -1,7 +1,7 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { FusionNetworkWallet } from "../../wallets/fusion/fusion.network.wallet";
-import { MasterWallet } from "../../wallets/masterwallet";
-import { NetworkWallet } from "../../wallets/networkwallet";
+import { FusionNetworkWallet } from "../../wallets/fusion/standard/fusion.network.wallet";
+import { StandardMasterWallet } from "../../wallets/masterwallet";
+import { AnyNetworkWallet } from "../../wallets/networkwallet";
 import { EVMNetwork } from "../evm.network";
 import { FusionAPI, FusionApiType } from "./fusion.api";
 
@@ -24,7 +24,7 @@ export class FusionMainNetNetwork extends EVMNetwork {
     this.averageBlocktime = 5;
   }
 
-  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
+  public async createNetworkWallet(masterWallet: StandardMasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
     let wallet = new FusionNetworkWallet(masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName);
     await wallet.initialize();
     if (startBackgroundUpdates)

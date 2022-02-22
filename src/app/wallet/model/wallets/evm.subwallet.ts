@@ -5,21 +5,23 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import Web3 from 'web3';
-import { ERC20CoinService } from '../../services/erc20coin.service';
-import { EVMService } from '../../services/evm.service';
+import { ERC20CoinService } from '../../services/evm/erc20coin.service';
+import { EVMService } from '../../services/evm/evm.service';
+import { jsToSpvWalletId, SPVService } from '../../services/spv.service';
 import { StandardCoinName } from '../coin';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { EVMNetwork } from '../networks/evm.network';
-import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
+import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../tx-providers/transaction.types';
+import { WalletNetworkOptions } from '../wallet.types';
 import { WalletUtil } from '../wallet.util';
 import { ERC20SubWallet } from './erc20.subwallet';
-import { NetworkWallet } from './networkwallet';
+import { AnyNetworkWallet } from './networkwallet';
 import { StandardSubWallet } from './standard.subwallet';
 
 /**
  * Specialized standard sub wallet for EVM compatible chains (elastos EID, elastos ESC, heco, etc)
  */
-export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
+export class StandardEVMSubWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends StandardSubWallet<EthTransaction, WalletNetworkOptionsType> {
   protected ethscAddress: string = null;
   protected withdrawContractAddress: string = null;
   protected publishdidContractAddress: string = null;
@@ -29,7 +31,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   protected tokenList: ERCTokenInfo[] = null;
 
   constructor(
-    networkWallet: NetworkWallet,
+    networkWallet: AnyNetworkWallet,
     id: string,
     public rpcApiUrl: string,
     protected friendlyName: string
@@ -96,7 +98,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
 
   public async createAddress(): Promise<string> {
     // Create on ETH always returns the same unique address.
-    return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.id);
+    return await SPVService.instance.createAddress(jsToSpvWalletId(this.masterWallet.id), this.id);
   }
 
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {
@@ -130,7 +132,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     transaction.Direction = direction;
 
     if (direction === TransactionDirection.RECEIVED) {
-        this.checkRedPacketTransaction(transaction);
+      this.checkRedPacketTransaction(transaction);
     }
 
     const isERC20TokenTransfer = await this.isERC20TokenTransfer(transaction.to);
@@ -232,9 +234,9 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
 
   private checkRedPacketTransaction(transaction: EthTransaction) {
     if (transaction.from.toLowerCase() === this.redPacketServerAddress) {
-        transaction.isRedPacket = true;
+      transaction.isRedPacket = true;
     } else {
-        transaction.isRedPacket = false;
+      transaction.isRedPacket = false;
     }
   }
 
@@ -366,8 +368,8 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       nonce = await this.getNonce();
     }
     Logger.log('wallet', 'createPaymentTransaction amount:', amount.toString(), ' nonce:', nonce)
-    return this.masterWallet.walletManager.spvBridge.createTransfer(
-      this.masterWallet.id,
+    return SPVService.instance.createTransfer(
+      jsToSpvWalletId(this.masterWallet.id),
       this.id,
       toAddress,
       amount.toString(), // Amount in ether
@@ -454,3 +456,5 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     }
   } */
 }
+
+export class AnyStandardEVMSubWallet extends StandardEVMSubWallet<any> { }

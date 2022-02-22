@@ -21,7 +21,6 @@
  */
 
 import { Injectable } from '@angular/core';
-import { WalletAccount } from '../model/walletaccount';
 import { WalletID } from '../model/wallets/masterwallet';
 
 export class Transfer {
@@ -97,8 +96,7 @@ export class CoinTransferService {
     public subWalletId: string;
     // To subwallet (only for recharging funds)
     public toSubWalletId: string;
-    public walletInfo: WalletAccount;
-
+    // DELETEME public walletInfo: WalletAccount;
 
     /******************
     * Intent Values *
@@ -131,7 +129,6 @@ export class CoinTransferService {
     public reset() {
         this.transfer = new Transfer();
 
-        this.walletInfo = new WalletAccount();
         this.transferType = null;
         this.masterWalletId = null;
         this.subWalletId = null;

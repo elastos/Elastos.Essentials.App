@@ -6,8 +6,8 @@ import { ElastosMainChainMainNetNetwork, ElastosSmartChainMainNetNetwork } from 
 import { EthereumMainNetNetwork } from '../../networks/ethereum/ethereum.mainnet.network';
 import { FantomMainNetNetwork } from '../../networks/fantom/fantom.mainnet.network';
 import { HECOMainNetNetwork } from '../../networks/heco/heco.mainnet.network';
-import { EscSubWallet } from '../../wallets/elastos/esc.evm.subwallet';
-import { MainchainSubWallet } from '../../wallets/elastos/mainchain.subwallet';
+import { EscSubWallet } from '../../wallets/elastos/standard/subwallets/esc.evm.subwallet';
+import { MainChainSubWallet } from '../../wallets/elastos/standard/subwallets/mainchain.subwallet';
 import { AnySubWallet } from '../../wallets/subwallet';
 import { Address } from '../addresses/Address';
 import { UnstoppableDomainsAddress } from '../addresses/UnstoppableDomainsAddress';
@@ -27,7 +27,7 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
      */
     private resolutionRecordKeyForWallet(subWallet: AnySubWallet): string {
         if (subWallet.networkWallet.network instanceof ElastosMainChainMainNetNetwork) {
-            if (subWallet instanceof MainchainSubWallet)
+            if (subWallet instanceof MainChainSubWallet)
                 return "crypto.ELA.version.ELA.address";
             else
                 return null;

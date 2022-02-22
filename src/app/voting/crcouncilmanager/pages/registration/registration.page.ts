@@ -13,7 +13,7 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
-import { Utxo, UtxoType } from 'src/app/wallet/model/providers/transaction.types';
+import { Utxo, UtxoType } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -89,7 +89,7 @@ export class CRCouncilRegistrationPage implements OnInit {
         this.did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
         this.masterWalletId = this.voteService.masterWalletId;
 
-        const crPublickeys = await this.walletManager.spvBridge.getPublicKeys(this.masterWalletId, StandardCoinName.IDChain, 0, 1, false);
+        const crPublickeys = await this.walletManager.spvBridge.getPublicKeys(this.masterWalletId, StandardCoinName.ELA, 0, 1, false);
         this.crPublicKey = crPublickeys.PublicKeys[0];
 
         //Get cr ower info

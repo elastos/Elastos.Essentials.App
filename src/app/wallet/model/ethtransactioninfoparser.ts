@@ -1,6 +1,6 @@
 import abiDecoder from "abi-decoder";
 import { Logger } from "src/app/logger";
-import { ERC20CoinService } from "../services/erc20coin.service";
+import { ERC20CoinService } from "../services/evm/erc20coin.service";
 import { Network } from "./networks/network";
 
 export enum ETHTransactionType {

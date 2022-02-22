@@ -23,6 +23,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { mnemonicToSeedSync } from "bip39";
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
@@ -33,21 +34,22 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { CoinType } from '../model/coin';
 import { Network } from '../model/networks/network';
-import { MasterWalletInfo, WalletCreationNetworkOptions } from '../model/wallet.types';
-import { WalletAccount, WalletAccountType, WalletCreateType } from '../model/walletaccount';
+import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletType } from '../model/wallet.types';
 import { ERC20SubWallet } from '../model/wallets/erc20.subwallet';
 import { StandardEVMSubWallet } from '../model/wallets/evm.subwallet';
-import { MasterWallet, WalletID } from '../model/wallets/masterwallet';
-import { NetworkWallet } from '../model/wallets/networkwallet';
+import { defaultWalletTheme, MasterWallet, WalletID } from '../model/wallets/masterwallet';
+import { MasterWalletBuilder } from '../model/wallets/masterwalletbuilder';
+import { AnyNetworkWallet } from '../model/wallets/networkwallet';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
-import { ERC1155Service } from './erc1155.service';
-import { ERC721Service } from './erc721.service';
+import { ERC1155Service } from './evm/erc1155.service';
+import { ERC721Service } from './evm/erc721.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
 import { PopupProvider } from './popup.service';
-import { SPVService } from './spv.service';
+import { jsToSpvWalletId, SPVService } from './spv.service';
 import { LocalStorage } from './storage.service';
+
 
 
 class SubwalletTransactionStatus {
@@ -92,7 +94,7 @@ export class WalletService {
     } = {};
 
     private networkWallets: {
-        [index: string]: NetworkWallet
+        [index: string]: AnyNetworkWallet
     } = {};
 
     public hasPromptTransfer2IDChain = true;
@@ -104,7 +106,7 @@ export class WalletService {
 
     private networkTemplate: string;
 
-    public activeNetworkWallet = new BehaviorSubject<NetworkWallet>(null);
+    public activeNetworkWallet = new BehaviorSubject<AnyNetworkWallet>(null);
     public walletServiceStatus = new BehaviorSubject<boolean>(false); // Whether the initial initialization is completed or not
 
     public subwalletTransactionStatus = new SubwalletTransactionStatus();
@@ -170,7 +172,7 @@ export class WalletService {
         this.networkWallets = {};
     }
 
-    private async initWallets(): Promise<boolean> {
+    /* private async initWallets(): Promise<boolean> {
         Logger.log('wallet', "Initializing wallets");
 
         try {
@@ -224,6 +226,53 @@ export class WalletService {
             return false;
         }
         return true;
+    } */
+
+    /**
+     * Loads master wallet from disk and initializes them.
+     */
+    private async initWallets(): Promise<boolean> {
+        Logger.log('wallet', "Initializing master wallets");
+
+        try {
+            this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
+
+            // Update the SPV SDK with the right network configuration
+            await this.prepareSPVNetworkConfiguration();
+
+            let signedInEntry = await this.didSessions.getSignedInIdentity();
+            let rootPath = signedInEntry.didStoragePath;
+            await this.spvBridge.init(rootPath);
+
+            Logger.log('wallet', "Loading master wallets list");
+            const idList = await this.localStorage.getWalletsList();
+
+            if (idList.length === 0) {
+                Logger.log('wallet', "No master wallet found yet");
+                return false;
+            }
+
+            Logger.log('wallet', `Got ${idList.length} wallets from storage`);
+
+            // Rebuild our local model for all loaded wallets.
+            for (let i = 0; i < idList.length; i++) {
+                const masterId = idList[i];
+
+                let serializedMasterWallet = await this.localStorage.loadMasterWallet(masterId);
+
+                // Create a model instance from the persistent object.
+                this.masterWallets[masterId] = MasterWalletBuilder.newFromSerializedWallet(serializedMasterWallet);
+            }
+
+            this.activeMasterWalletId = await this.getCurrentMasterIdFromStorage();
+            Logger.log('wallet', 'Active master wallet id:', this.activeMasterWalletId)
+
+            return Object.values(this.masterWallets).length > 0;
+        } catch (error) {
+            Logger.error('wallet', 'initWallets error:', error);
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -242,23 +291,24 @@ export class WalletService {
             for (let masterWallet of this.getMasterWalletsList()) {
                 Logger.log("wallet", "Creating network wallet for master wallet:", masterWallet);
 
-                let networkWallet: NetworkWallet = null;
+                let networkWallet: AnyNetworkWallet = null;
                 try {
                     networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
                     if (networkWallet)
                         this.networkWallets[masterWallet.id] = networkWallet;
                 }
                 catch (err) {
+                    // TODO: Remove this "if" after we use the SPVSDK only for elastos, when everything else is migrated to JS
                     if (err.code == 20006) {
                         Logger.log("wallet", "Need to call IMasterWallet::VerifyPayPassword():", masterWallet, err);
                         // We don't call verifyPayPassword for the wallet imported by private key on BTC network.
-                        if ((activatedNetwork.getMainChainID() !== -1) || (masterWallet.createType !== WalletCreateType.PRIVATE_KEY_EVM)) {
+                        if ((activatedNetwork.getMainChainID() !== -1) || (masterWallet.hasMnemonicSupport())) {
                             // 20006: Need to call IMasterWallet::VerifyPayPassword() or re-import wallet first.
                             // A password is required to generate a public key in spvsdk.
                             // Usually occurs when a new network is first supported, eg. EVM, BTC.
                             const payPassword = await this.authService.getWalletPassword(masterWallet.id);
                             if (payPassword) {
-                                await this.spvBridge.verifyPayPassword(masterWallet.id, payPassword);
+                                await this.spvBridge.verifyPayPassword(jsToSpvWalletId(masterWallet.id), payPassword);
                                 try {
                                     networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
                                 }
@@ -306,7 +356,7 @@ export class WalletService {
             network.updateSPVNetworkConfig(networkConfig, this.networkTemplate);
         }
 
-        Logger.log('wallet', "Setting network config to ", this.networkTemplate, networkConfig);
+        Logger.log('wallet', "Setting SPV network config to ", this.networkTemplate, networkConfig);
         await this.spvBridge.setNetwork(spvsdkNetwork, JSON.stringify(networkConfig));
         // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
     }
@@ -319,7 +369,7 @@ export class WalletService {
         }
     }
 
-    public async setActiveNetworkWallet(networkWallet: NetworkWallet): Promise<void> {
+    public async setActiveNetworkWallet(networkWallet: AnyNetworkWallet): Promise<void> {
         Logger.log('wallet', 'Changing the active network wallet to', networkWallet);
         this.activeNetworkWallet.next(networkWallet);
         await this.setActiveMasterWallet(networkWallet.masterWallet.id);
@@ -339,7 +389,7 @@ export class WalletService {
         return this.masterWallets[masterId];
     }
 
-    public getActiveNetworkWallet(): NetworkWallet {
+    public getActiveNetworkWallet(): AnyNetworkWallet {
         return this.activeNetworkWallet.value;
     }
 
@@ -352,10 +402,13 @@ export class WalletService {
         });
     }
 
-    public getNetworkWalletFromMasterWalletId(masterId: WalletID): NetworkWallet {
+    public getNetworkWalletFromMasterWalletId(masterId: WalletID): AnyNetworkWallet {
         return Object.values(this.networkWallets).find(w => w.id === masterId);
     }
 
+    /**
+     * Gets the list of master wallets, sorted alphabetically.
+     */
     public getMasterWalletsList(): MasterWallet[] {
         return Object.values(this.masterWallets).sort((a, b) => {
             return a.name > b.name ? 1 : -1;
@@ -377,15 +430,12 @@ export class WalletService {
      * Returns the list of network wallets, based on the list of master wallets, for the
      * active network.
      */
-    public getNetworkWalletsList(): NetworkWallet[] {
+    public getNetworkWalletsList(): AnyNetworkWallet[] {
         if (this.networkService.isActiveNetworkEVM()) {
             // return all network wallets.
             return Object.values(this.networkWallets);
         } else {
-            let supportedWalletCreateTypes = WalletNetworkService.instance.activeNetwork.value.supportedWalletCreateTypes();
-            return Object.values(this.networkWallets).filter((nw) => {
-                return supportedWalletCreateTypes.indexOf(nw.masterWallet.createType) !== -1;
-            });
+            return Object.values(this.networkWallets).filter(nw => nw.masterWallet.supportsNetwork(nw.network));
         }
     }
 
@@ -393,7 +443,7 @@ export class WalletService {
      * Tries to find the standard "main" EVM subwallet that has the given address in the list of
      * all subwallets for the active network
      */
-    public async findStandardEVMSubWalletByAddress(address: string): Promise<StandardEVMSubWallet> {
+    public async findStandardEVMSubWalletByAddress(address: string): Promise<StandardEVMSubWallet<any>> {
         for (let networkWallet of this.getNetworkWalletsList()) {
             let mainEVMSubWallet = networkWallet.getMainEvmSubWallet();
             if (mainEVMSubWallet) {
@@ -436,7 +486,7 @@ export class WalletService {
         if (data && data["masterId"] && this.masterWallets[data["masterId"]]) {
             return data["masterId"];
         } else {
-            // Compatible with older versions.
+            // Compatibility with older versions that didn't store the current masterId.
             let walletList = this.getMasterWalletsList();
             if (walletList.length > 0) {
                 await this.setActiveMasterWallet(walletList[0].id);
@@ -456,131 +506,91 @@ export class WalletService {
         return Util.uuid(6, 16) + ".2";
     }
 
-    public async newMasterWalletFromMnemonic(
-        walletName: string,
-        mnemonic: string,
-        mnemonicPassphrase: string | null,
-        networkOptions: WalletCreationNetworkOptions[] // elastos -> single address
-    ): Promise<{ masterWallet: MasterWallet, payPassword: string }> {
-
-        // save options to settings - later use them when first switching to the network
-
-
-        return;
-    }
-
     /**
      * Creates a new master wallet both in the SPV SDK and in our local model.
-     * 
-     * @deprecated SPVSDK style
+     *
+     *  SPVSDK style
      */
-    public async createNewMasterWallet(
-        masterId: WalletID,
-        walletName: string,
-        mnemonicStr: string,
-        mnemonicPassword: string,
-        payPassword: string,
-        singleAddress: boolean
-    ) {
-        Logger.log('wallet', "Creating new master wallet");
+    /*  public async createNewMasterWallet(
+         masterId: WalletID,
+         walletName: string,
+         mnemonicStr: string,
+         mnemonicPassword: string,
+         payPassword: string,
+         singleAddress: boolean
+     ) {
+         Logger.log('wallet', "Creating new master wallet");
 
-        await this.spvBridge.createMasterWallet(
-            masterId,
-            mnemonicStr,
-            mnemonicPassword,
-            payPassword,
-            singleAddress
-        );
+         await this.spvBridge.createMasterWallet(
+             masterId,
+             mnemonicStr,
+             mnemonicPassword,
+             payPassword,
+             singleAddress
+         );
 
-        const account: WalletAccount = {
-            SingleAddress: singleAddress,
-            Type: WalletAccountType.STANDARD
-        };
+         const account: WalletAccount = {
+             SingleAddress: singleAddress,
+             Type: WalletAccountType.STANDARD
+         };
 
-        await this.addMasterWalletToLocalModel(masterId, walletName, account, true, WalletCreateType.MNEMONIC);
+         await this.addMasterWalletToLocalModel(masterId, walletName, account, true, WalletCreateType.MNEMONIC);
 
-        // Go to wallet's home page.
-        this.native.setRootRouter("/wallet/wallet-home");
-    }
+         // Go to wallet's home page.
+         this.native.setRootRouter("/wallet/wallet-home");
+     } */
 
     /**
-     * After creates a new master wallet both in the SPV SDK and in our local model, using a given mnemonic.
-     * Go to wallet home page
+     * Creates a new standard master wallet using a given mnemonic.
+     * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    public async importMasterWalletWithMnemonic(
-        masterId: WalletID,
+    public async newWalletWithMnemonic(
+        masterId: string,
         walletName: string,
         mnemonicStr: string,
-        mnemonicPassword: string,
-        payPassword: string,
-        singleAddress: boolean
-    ) {
-        await this.importWalletWithMnemonic(masterId, walletName, mnemonicStr, mnemonicPassword, payPassword, singleAddress, false);
-
-        // Go to wallet's home page.
-        this.native.setRootRouter("/wallet/wallet-home");
-    }
-
-    /**
-     * Creates a new master wallet both in the SPV SDK and in our local model, using a given mnemonic.
-     * 
-     * @deprecated SPVSDK-style
-     */
-    public async importWalletWithMnemonic(
-        masterId: WalletID,
-        walletName: string,
-        mnemonicStr: string,
-        mnemonicPassword: string,
+        mnemonicPassphrase: string,
         payPassword: string,
         singleAddress: boolean,
-        createdBySystem: boolean
+        // TODO networkOptions: WalletNetworkOptions[] // elastos -> single address
+        walletCreator: WalletCreator
     ) {
         Logger.log('wallet', "Importing new master wallet with mnemonic");
 
-        if (mnemonicPassword && mnemonicPassword.length > 0)
+        let hasPassphrase = false;
+        if (mnemonicPassphrase && mnemonicPassphrase.length > 0) {
             Logger.log('wallet', "A passphrase is being used");
+            hasPassphrase = true;
+        }
 
-        await this.spvBridge.importWalletWithMnemonic(masterId, mnemonicStr, mnemonicPassword, payPassword, singleAddress);
+        //TODO: MOVE THIS TO THE ELASTOS NETWORK CREATION
+        //   await this.spvBridge.importWalletWithMnemonic(jsToSpvWalletId(masterId), mnemonicStr, mnemonicPassphrase, payPassword, singleAddress);
 
-        const account: WalletAccount = {
-            SingleAddress: singleAddress,
-            Type: WalletAccountType.STANDARD
-        };
+        // Calculate the seed key from mnemonic + passphrase
+        let seed = mnemonicToSeedSync(mnemonicStr, mnemonicPassphrase).toString();
 
-        await this.addMasterWalletToLocalModel(masterId, walletName, account, createdBySystem, WalletCreateType.MNEMONIC);
-    }
+        let masterWalletInfo: SerializedStandardMasterWallet = {
+            type: WalletType.STANDARD,
+            id: masterId,
+            name: walletName,
+            theme: defaultWalletTheme(),
+            seed,
+            mnemonic: mnemonicStr,
+            hasPassphrase,
+            // TODO: get options from params
+            networkOptions: [{
+                network: "elastos", // elastos mainchain
+                singleAddress: singleAddress
+            } as ElastosWalletNetworkOptions],
+            creator: walletCreator
+        }
 
-    /**
-     * Creates a new master wallet both in the SPV SDK and in our local model, using a given mnemonic.
-     * 
-     * @deprecated SPVSDK-style
-     */
-    public async importWalletWithKeystore(
-        masterId: WalletID,
-        walletName: string,
-        keystore: string,
-        backupPassword: string,
-        payPassword: string,
-    ) {
-        Logger.log('wallet', "Importing new master wallet with keystore");
-
-        await this.spvBridge.importWalletWithKeystore(masterId, keystore, backupPassword, payPassword);
-
-        const account: WalletAccount = {
-            SingleAddress: true,
-            Type: WalletAccountType.STANDARD
-        };
-
-        await this.addMasterWalletToLocalModel(masterId, walletName, account, false, WalletCreateType.KEYSTORE);
-
-        // Go to wallet's home page.
-        this.native.setRootRouter("/wallet/wallet-home");
+        await this.createMasterWalletFromSerializedInfo(masterWalletInfo);
     }
 
     /**
      * Creates a new master wallet both in the SPV SDK and in our local model, using a given private key.
      * Only support EVM private key.
-     * 
+     *
      * @deprecated SPVSDK-style
      */
     public async importWalletWithPrivateKey(
@@ -592,22 +602,53 @@ export class WalletService {
         Logger.log('wallet', "Importing new master wallet with priv key");
 
         await this.spvBridge.createMasterWalletWithPrivKey(
-            masterId,
+            jsToSpvWalletId(masterId),
             privKey,
             payPassword,
         );
+
+        let masterWalletInfo: SerializedStandardMasterWallet = {
+            type: WalletType.STANDARD,
+            id: masterId,
+            privateKey: privKey,
+            privateKeyType: PrivateKeyType.EVM, // TODO: only EVM pkey supported for now
+            name: walletName,
+            theme: defaultWalletTheme(),
+            networkOptions: [],
+            creator: WalletCreator.USER
+        }
+
+        await this.createMasterWalletFromSerializedInfo(masterWalletInfo);
+    }
+
+    /**
+     * Creates a new master wallet both in the SPV SDK and in our local model, using a given mnemonic.
+     *
+     * SPVSDK-style
+     */
+    /* public async importWalletWithKeystore(
+        masterId: WalletID,
+        walletName: string,
+        keystore: string,
+        backupPassword: string,
+        payPassword: string,
+    ) {
+        Logger.log('wallet', "Importing new master wallet with keystore");
+
+        await this.spvBridge.importWalletWithKeystore(jsToSpvWalletId(masterId), keystore, backupPassword, payPassword);
+
         const account: WalletAccount = {
             SingleAddress: true,
             Type: WalletAccountType.STANDARD
         };
 
-        await this.addMasterWalletToLocalModel(masterId, walletName, account, false, WalletCreateType.PRIVATE_KEY_EVM);
+        await this.addMasterWalletToLocalModel(masterId, walletName, account, false, WalletCreateType.KEYSTORE);
 
         // Go to wallet's home page.
         this.native.setRootRouter("/wallet/wallet-home");
-    }
+    } */
 
-    private async addMasterWallet(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean, createType: WalletCreateType) {
+    /* private async addMasterWallet(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean, createType: WalletCreateType) {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
         try {
             // Add a new wallet to our local model
@@ -635,29 +676,33 @@ export class WalletService {
             void this.destroyMasterWallet(id, false);
             throw err;
         }
-    }
+    } */
 
     /**
-     * Saves a new "JS" wallet into the local model (not related to the legacy SPVSDK).
+     * Saves a NEW "JS" wallet into the local model (not related to the legacy SPVSDK).
      */
-    public async createMasterWalletFromInfo(walletInfo: MasterWalletInfo): Promise<MasterWallet> {
-        let wallet = new MasterWallet(walletInfo);
+    public async createMasterWalletFromSerializedInfo(walletInfo: SerializedMasterWallet): Promise<MasterWallet> {
+        let wallet = MasterWalletBuilder.newFromSerializedWallet(walletInfo);
+
+        // Add a new wallet to our local model
+        this.masterWallets[wallet.id] = wallet;
 
         // Save state to local storage
-        await this.masterWallets[wallet.id].save();
+        await wallet.save();
+
+        // Add to persistant list of wallets
+        await this.saveWalletsList();
 
         return wallet;
     }
 
     /**
-     * Loads wallet in memory a master wallet in memory and create the associated network wallet 
+     * Loads wallet in memory a master wallet in memory and create the associated network wallet
      * as well for the currently active network.
      */
     private async activateMasterWallet(wallet: MasterWallet) {
         Logger.log('wallet', "Adding master wallet to local model", wallet.id, name);
         //try {
-        // Add a new wallet to our local model
-        this.masterWallets[wallet.id] = wallet;
 
         // Build the associated network Wallet
         let activeNetwork = this.networkService.activeNetwork.value;
@@ -675,7 +720,14 @@ export class WalletService {
     }
 
     /**
-     * @deprecated SPVSDK style - DELETE ME
+     * Saves the current list of wallets to persistant storage
+     */
+    private saveWalletsList(): Promise<void> {
+        return this.localStorage.saveWalletsList(this.getMasterWalletsList().map(mw => mw.id));
+    }
+
+    /**
+     * SPVSDK style - DELETE ME
      */
     /* private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean, createType: WalletCreateType) {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
@@ -717,10 +769,10 @@ export class WalletService {
         // TODO await this.masterWallets[id].destroyAllSubWallet();
 
         // Destroy the wallet in the wallet plugin
-        await this.spvBridge.destroyWallet(id);
+        await this.spvBridge.destroyWallet(jsToSpvWalletId(id));
 
         // Save this modification to our permanent local storage
-        await this.localStorage.setExtendedMasterWalletInfo(this.masterWallets[id].id, null);
+        await this.localStorage.deleteMasterWallet(this.masterWallets[id].id);
 
         // Destroy from our local model
         delete this.masterWallets[id];

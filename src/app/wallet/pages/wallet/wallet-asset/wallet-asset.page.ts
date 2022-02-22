@@ -28,8 +28,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { DefiService, StakingData } from 'src/app/wallet/services/defi.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { DefiService, StakingData } from 'src/app/wallet/services/evm/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { AnySubWallet } from '../../../model/wallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
@@ -193,7 +193,7 @@ export class WalletAssetPage implements OnDestroy {
 
     // Find the specified index from assetsInfo array.
     // Create a new NetworkWalletAssetInfo if can not find it.
-    private findWalletIndex(networkWallet: NetworkWallet) {
+    private findWalletIndex(networkWallet: AnyNetworkWallet) {
         let networkWalletIndex = this.assetsInfo.findIndex((wallet) => {
             return wallet.id === networkWallet.masterWallet.id;
         })
@@ -212,7 +212,7 @@ export class WalletAssetPage implements OnDestroy {
     }
 
     // Get all subwallets that the balance is bigger than the threshold.
-    private async getSubwalletsShouldShowOn(networkWallet: NetworkWallet, updateBalance = false) {
+    private async getSubwalletsShouldShowOn(networkWallet: AnyNetworkWallet, updateBalance = false) {
         let showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
         if (!updateBalance) {
             this.totalSubwalletCount += showSubwalets.length;

@@ -1,6 +1,6 @@
 import { TransferType } from "../services/cointransfer.service";
 import { TokenType } from "./coin";
-import { GenericTransaction, TransactionDirection } from "./providers/transaction.types";
+import { GenericTransaction, TransactionDirection } from "./tx-providers/transaction.types";
 
 export type EthTransaction = GenericTransaction & {
   // Returned from rpc
@@ -17,7 +17,7 @@ export type EthTransaction = GenericTransaction & {
   index?: string; // Internal transaction
   input: string;
   isError: string;
-  logIndex?:string;
+  logIndex?: string;
   nonce: string;
   timeStamp: string; // Unix timestamp, seconds
   to: string;
@@ -90,6 +90,6 @@ export enum ETHSCTransferType {
 }
 
 export enum TransactionListType {
-    NORMAL = 0,
-    INTERNAL = 1, // contract internal transaction.
-  }
+  NORMAL = 0,
+  INTERNAL = 1, // contract internal transaction.
+}

@@ -3,6 +3,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Config } from '../config/Config';
 import { StandardCoinName } from '../model/coin';
 import { WalletAccountType } from '../model/walletaccount';
@@ -79,6 +80,11 @@ export type AllAddresses = {
     MaxCount: number;
 };
 
+type JSSPVMasterWalletIDPair = {
+    jsWalletId: string;
+    spvWalletId: string;
+}
+
 /**
  * Service that communicates with the SPVSDK and maintains a link between the "JS side" wallets
  * and their counterpart in the Elastos SPV SDK.
@@ -86,12 +92,63 @@ export type AllAddresses = {
  * NOTE: This is a legacy from when only the elastos network was used, and when the SPVSDK managed all operations.
  * A migration is currently on going and more and more features are being moved to JS instead of relying on the
  * SPVSDK, for better reactivity. Though during some time, we still rely on SPVSDK features for some time.
+ *
+ * NOTE: For most APIs below, "masterWalletId" referes to the SPV wallet ID, not the JS one.
  */
 export class SPVService {
     public static instance: SPVService = null;
 
+    private masterWalletIdMapping: JSSPVMasterWalletIDPair[] = [];
+
     constructor(private native: Native, private event: Events, private popupProvider: PopupProvider) {
         SPVService.instance = this;
+    }
+
+    // Called every time a new user signs in, by the wallet service
+    public async init(rootPath: string): Promise<void> {
+        await this.loadMasterWalletIDMapping();
+
+        return new Promise((resolve, reject) => {
+            walletManager.init([rootPath],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("init", err, reject); });
+        });
+    }
+
+    private async loadMasterWalletIDMapping(): Promise<void> {
+        this.masterWalletIdMapping = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "jsspvwalletidmapping", []);
+    }
+
+    /**
+     * Maps a JS wallet (.2 format) to the related master wallet ID the SPVSDK
+     */
+    public async setMasterWalletIDMapping(jsWalletId: string, spvWalletId: string): Promise<void> {
+        // Remove the current entry if existing
+        this.masterWalletIdMapping = this.masterWalletIdMapping.filter(mapping => mapping.jsWalletId !== jsWalletId);
+
+        // Add the new entry
+        this.masterWalletIdMapping.push({
+            jsWalletId, spvWalletId
+        });
+
+        await this.saveMasterWalletIDMapping();
+    }
+
+    private async saveMasterWalletIDMapping(): Promise<void> {
+        await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "jsspvwalletidmapping", this.masterWalletIdMapping);
+    }
+
+    /**
+     * Returns a SPV master wallet ID previously bound to a JS wallet ID.
+     *
+     * @param jsWalletId ".2" wallet id format
+     */
+    public getSPVMasterID(jsWalletId: string): string {
+        let mapping = this.masterWalletIdMapping.find(mapping => mapping.jsWalletId === jsWalletId);
+        if (!mapping)
+            return null;
+
+        return mapping.spvWalletId;
     }
 
     public setNetwork(netType: string, config: string): Promise<void> {
@@ -107,14 +164,6 @@ export class SPVService {
             walletManager.setLogLevel([loglevel],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("setLogLevel", err, reject); });
-        });
-    }
-
-    public init(rootPath: string): Promise<void> {
-        return new Promise((resolve, reject) => {
-            walletManager.init([rootPath],
-                (ret) => { resolve(ret); },
-                (err) => { void this.handleError("init", err, reject); });
         });
     }
 
@@ -1162,4 +1211,8 @@ export class SPVService {
 
         if (promiseRejectHandler) promiseRejectHandler(err);
     }
+}
+
+export const jsToSpvWalletId = (jsWalletId: string): string => {
+    return SPVService.instance.getSPVMasterID(jsWalletId);
 }

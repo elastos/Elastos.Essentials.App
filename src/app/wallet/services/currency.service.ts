@@ -6,9 +6,9 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ERC20Coin } from '../model/coin';
 import { Network } from '../model/networks/network';
 import { TimeBasedPersistentCache } from '../model/timebasedpersistentcache';
+import { UniswapCurrencyService } from './evm/uniswap.currency.service';
 import { WalletNetworkService } from './network.service';
 import { LocalStorage } from './storage.service';
-import { UniswapCurrencyService } from './uniswap.currency.service';
 
 const TOKEN_VALUE_REFRESH_DELAY = 20;//(60 * 5); // 5 minutes - Number of seconds without refreshing a token price if alerady in cache
 
@@ -122,7 +122,7 @@ export class CurrencyService {
     await this.computeExchangeRatesFromCurrenciesService();
 
     this.updateInterval = setInterval(() => {
-        void this.fetchTokenStatsFromPriceService();
+      void this.fetchTokenStatsFromPriceService();
     }, 120000);// 120s
 
     Logger.log('wallet', "Currency service initialization complete");
@@ -130,8 +130,8 @@ export class CurrencyService {
 
   stop() {
     if (this.updateInterval) {
-        clearInterval(this.updateInterval);
-        this.updateInterval = null;
+      clearInterval(this.updateInterval);
+      this.updateInterval = null;
     }
   }
 
@@ -142,8 +142,8 @@ export class CurrencyService {
   private loadAllTokenSymbol() {
     let networks = this.walletNetworkService.getAvailableNetworks();
     for (let i = 0; i < networks.length; i++) {
-        let tokenSymbol = networks[i].getMainTokenSymbol()
-        this.networkMainTokenPrice[tokenSymbol] = null;
+      let tokenSymbol = networks[i].getMainTokenSymbol()
+      this.networkMainTokenPrice[tokenSymbol] = null;
     }
   }
 
@@ -204,23 +204,23 @@ export class CurrencyService {
     return new Promise(resolve => {
       this.http.get<any>(this.trinityPriceUrl).subscribe((res: TrinityPriceAPITokenStats[]) => {
         if (res) {
-            for (let tokenSymbol in this.networkMainTokenPrice) {
-                let tokenStats = res[tokenSymbol];
-                if (tokenStats) {
-                    this.networkMainTokenPrice[tokenSymbol] = tokenStats;
-                } else {
-                    this.networkMainTokenPrice[tokenSymbol] = null;
-                }
+          for (let tokenSymbol in this.networkMainTokenPrice) {
+            let tokenStats = res[tokenSymbol];
+            if (tokenStats) {
+              this.networkMainTokenPrice[tokenSymbol] = tokenStats;
+            } else {
+              this.networkMainTokenPrice[tokenSymbol] = null;
             }
-            // Set exchange for BTC => USD
-            this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
+          }
+          // Set exchange for BTC => USD
+          this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
 
-            this.pricefetched = true;
-            // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
-            resolve(true);
+          this.pricefetched = true;
+          // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
+          resolve(true);
         }
         else {
-            resolve(false);
+          resolve(false);
         }
       }, (err) => {
         Logger.error('wallet', 'Fetch CMC Stats err', err);
@@ -289,7 +289,7 @@ export class CurrencyService {
     //return;
 
     if (!this.pricefetched) {
-        await this.fetchTokenStatsFromPriceService();
+      await this.fetchTokenStatsFromPriceService();
     }
 
     let tokenStats = this.networkMainTokenPrice[network.getMainTokenSymbol()];
@@ -447,5 +447,5 @@ type CurrenciesExchangeRate = {
 }
 
 type TrinityPriceAPITokenStats = {
-    [symbol: string]: string
+  [symbol: string]: string
 }

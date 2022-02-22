@@ -6,7 +6,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { ERC20Coin } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
 import { Native } from '../../../../services/native.service';
@@ -23,7 +23,7 @@ import { WalletEditionService } from '../../../../services/walletedition.service
 export class CoinErc20DetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private networkWallet: NetworkWallet = null;
+  private networkWallet: AnyNetworkWallet = null;
   private subWallet: AnySubWallet = null;
   public coin: ERC20Coin;
   public contractAddress = '1234';

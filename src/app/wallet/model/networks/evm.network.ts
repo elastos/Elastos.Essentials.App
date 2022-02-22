@@ -3,10 +3,11 @@ import { CoinID, ERC20Coin } from "../coin";
 import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
 import { SwapProvider } from "../earn/swapprovider";
+import { PrivateKeyType } from "../wallet.types";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { EVMNetworkWallet } from "../wallets/evm.networkwallet";
 import { MasterWallet } from "../wallets/masterwallet";
-import { NetworkWallet } from "../wallets/networkwallet";
+import { AnyNetworkWallet } from "../wallets/networkwallet";
 import { Network } from "./network";
 
 export class EVMNetwork extends Network {
@@ -47,7 +48,7 @@ export class EVMNetwork extends Network {
     return this.builtInCoins || [];
   }
 
-  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
+  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
     let wallet = new EVMNetworkWallet(masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName, this.averageBlocktime);
     await wallet.initialize();
     if (startBackgroundUpdates)
@@ -55,7 +56,7 @@ export class EVMNetwork extends Network {
     return wallet;
   }
 
-  public async createERC20SubWallet(networkWallet: EVMNetworkWallet, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
+  public async createERC20SubWallet(networkWallet: EVMNetworkWallet<any, any>, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
     let subWallet = new ERC20SubWallet(networkWallet, coinID, networkWallet.network.getMainEvmRpcApiUrl(), "");
     await subWallet.initialize();
     if (startBackgroundUpdates)
@@ -84,5 +85,17 @@ export class EVMNetwork extends Network {
       ChainID: this.getMainChainID(networkTemplate),
       NetworkID: this.getMainChainID(networkTemplate)
     };
+  }
+
+  public supportedPrivateKeyTypes(): PrivateKeyType[] {
+    return [PrivateKeyType.EVM];
+  }
+
+  public supportsERC20Coins(): boolean {
+    return true;
+  }
+
+  public supportsERCNFTs(): boolean {
+    return true;
   }
 }

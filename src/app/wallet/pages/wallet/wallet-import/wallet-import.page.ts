@@ -4,8 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { WalletCreator } from 'src/app/wallet/model/wallet.types';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -14,8 +14,8 @@ import { WalletService } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
 
 export enum MnemonicLanguage {
-  CHINESE_SIMPLIFIED,
-  OTHERS
+    CHINESE_SIMPLIFIED,
+    OTHERS
 }
 
 @Component({
@@ -26,7 +26,7 @@ export enum MnemonicLanguage {
 
 export class WalletImportPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    @ViewChild('slider', {static: false}) slider: IonSlides;
+    @ViewChild('slider', { static: false }) slider: IonSlides;
 
     slideOpts = {
         initialSlide: 0,
@@ -42,11 +42,11 @@ export class WalletImportPage implements OnInit {
 
     private walletIsCreating = false; // Just in case, Ignore user action when the wallet is creating.
 
-    public inputList: Array<{input:string}> = [];
+    public inputList: Array<{ input: string }> = [];
     private inputStr = "";
 
     constructor(
-        public walletManager: WalletService,
+        public walletService: WalletService,
         public native: Native,
         public localStorage: LocalStorage,
         public events: Events,
@@ -56,11 +56,11 @@ export class WalletImportPage implements OnInit {
         private translate: TranslateService,
         private walletCreateService: WalletCreationService
     ) {
-        this.masterWalletId = Util.uuid(6, 16);
+        this.masterWalletId = walletService.createMasterWalletID();
     }
 
     ngOnInit() {
-        for (let i = 0; i < 12; i ++) {
+        for (let i = 0; i < 12; i++) {
             this.inputList.push({
                 input: ''
             });
@@ -75,20 +75,20 @@ export class WalletImportPage implements OnInit {
     }
 
 
- /*    goToNextInput(event, nextInput?: any) {
-        Logger.log('wallet', 'Input key code', event);
-
-        // Convenient way to paste a full mnemonic (non chinese only): if only the first input has text,
-        // try to split the existing input with spaces and dispatch the words into the other inputs automatically.
-        let allInputFieldsWereFilled = this.tryToSplitFirstInputWords();
-
-        if (nextInput && !allInputFieldsWereFilled) {
-            nextInput === 'input5' || nextInput === 'input9' ? this.slider.slideNext() : () => {};
-            nextInput.setFocus();
-        } else {
-            this.onImport();
-        }
-    } */
+    /*    goToNextInput(event, nextInput?: any) {
+           Logger.log('wallet', 'Input key code', event);
+   
+           // Convenient way to paste a full mnemonic (non chinese only): if only the first input has text,
+           // try to split the existing input with spaces and dispatch the words into the other inputs automatically.
+           let allInputFieldsWereFilled = this.tryToSplitFirstInputWords();
+   
+           if (nextInput && !allInputFieldsWereFilled) {
+               nextInput === 'input5' || nextInput === 'input9' ? this.slider.slideNext() : () => {};
+               nextInput.setFocus();
+           } else {
+               this.onImport();
+           }
+       } */
 
     slideNext(slider) {
         slider.slideNext();
@@ -197,14 +197,16 @@ export class WalletImportPage implements OnInit {
     async importWalletWithMnemonic(payPassword: string) {
         // Trim leading and trailing spaces for each word
         Logger.log('wallet', 'Importing with mnemonic');
-        await this.walletManager.importMasterWalletWithMnemonic(
+        await this.walletService.newWalletWithMnemonic(
             this.masterWalletId,
             this.walletCreateService.name,
             this.inputStr.toLowerCase(),
             this.walletCreateService.mnemonicPassword,
             payPassword,
-            this.walletCreateService.singleAddress
+            this.walletCreateService.singleAddress,
+            WalletCreator.USER
         );
+        this.native.setRootRouter("/wallet/wallet-home");
 
         this.events.publish("masterwalletcount:changed", {
             action: 'add',

@@ -28,9 +28,10 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { EidSubWallet } from 'src/app/wallet/model/wallets/elastos/eid.evm.subwallet';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { WalletType } from 'src/app/wallet/model/wallet.types';
+import { EidSubWallet } from 'src/app/wallet/model/wallets/elastos/standard/subwallets/eid.evm.subwallet';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/standard/subwallets/elastos.evm.subwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -45,12 +46,11 @@ import { WalletService } from '../../../services/wallet.service';
 export class DidTransactionPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    private networkWallet: NetworkWallet;
+    private networkWallet: AnyNetworkWallet;
     private sourceSubwallet: ElastosEVMSubWallet;
     private intentTransfer: IntentTransfer;
     private balance: number; // ELA
     private subWalletId: string; // IDChain
-    private walletInfo = {};
 
     private alreadySentIntentResponce = false;
 
@@ -88,7 +88,7 @@ export class DidTransactionPage implements OnInit {
     }
 
     ionViewDidEnter() {
-        if (this.walletInfo["Type"] === "Multi-Sign") {
+        if (this.networkWallet.masterWallet.type !== WalletType.STANDARD) {
             // TODO: reject didtransaction if multi sign (show error popup)
             void this.cancelOperation();
         }
@@ -103,7 +103,6 @@ export class DidTransactionPage implements OnInit {
     init() {
         this.subWalletId = this.coinTransferService.subWalletId;
         this.intentTransfer = this.coinTransferService.intentTransfer;
-        this.walletInfo = this.coinTransferService.walletInfo;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
         this.sourceSubwallet = this.networkWallet.getSubWallet(this.subWalletId) as ElastosEVMSubWallet;

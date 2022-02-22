@@ -18,7 +18,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Network } from 'src/app/wallet/model/networks/network';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { EthSignIntentResult } from 'src/app/wallet/pages/intents/ethsign/ethsign.page';
 import { PersonalSignIntentResult } from 'src/app/wallet/pages/intents/personalsign/personalsign.page';
 import { SignTypedDataIntentResult } from 'src/app/wallet/pages/intents/signtypeddata/signtypeddata.page';
@@ -346,7 +346,7 @@ export class DappBrowserService implements GlobalService {
         await this.setActiveBrowsedAppInfoNetwork(activeNetwork.key);
     }
 
-    private async sendActiveWalletToDApp(networkWallet: NetworkWallet) {
+    private async sendActiveWalletToDApp(networkWallet: AnyNetworkWallet) {
         // Get the active wallet address
         if (networkWallet) {
             let subwallet = networkWallet.getMainEvmSubWallet();
