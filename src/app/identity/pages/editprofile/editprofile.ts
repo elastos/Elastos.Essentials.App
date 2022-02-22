@@ -11,6 +11,7 @@ import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { GlobalHiveService } from "src/app/services/global.hive.service";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
+import { GlobalLanguageService } from "src/app/services/global.language.service";
 import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
@@ -56,6 +57,8 @@ export class EditProfilePage {
   private selectCountrySubscription: Subscription = null;
   private showmenuSubscription: Subscription = null;
   private hwBackKeySubscription: Subscription = null;
+
+  public datetime_locale = 'en-US';
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -106,6 +109,22 @@ export class EditProfilePage {
     this.hwBackKeySubscription = this.platform.backButton.subscribeWithPriority(0, (processNext) => {
       void this.next();
     });
+
+    let language = GlobalLanguageService.instance.activeLanguage.value;
+    switch (language) {
+        case 'zh':
+            this.datetime_locale = 'zh';
+            break;
+        case 'fr':
+            this.datetime_locale = 'fr-FR';
+            break;
+        case 'it':
+            this.datetime_locale = 'it';
+            break;
+        default:
+            this.datetime_locale = 'en-US';
+            break;
+    }
 
     this.showMenu();
     Logger.log('Identity', this.profile);

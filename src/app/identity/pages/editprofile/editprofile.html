@@ -164,16 +164,17 @@
                 <ion-text *ngIf="entry.value">{{ entry.value }}</ion-text>
 
                 <!-- See styles in global.scss -->
-                <ion-modal trigger="open-datetime">
+                <ion-modal class="datetime-modal" trigger="open-datetime">
                 <ng-template>
                     <ion-content>
                     <ion-datetime
+                        [locale]="datetime_locale"
                         [cancelText]="'common.cancel'|translate"
                         [doneText]="'common.confirm'|translate"
                         [(ngModel)]="entry.value"
                         (ionChange)="formatBirthDay(entry)"
+                        [presentation]="month-year"
                         [showDefaultButtons]="true"
-                        [showDefaultTimeLabel]="false"
                     ></ion-datetime>
                     </ion-content>
                 </ng-template>

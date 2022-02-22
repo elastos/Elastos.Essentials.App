@@ -11,7 +11,7 @@ ion-footer {
     justify-content: center;
     align-items: center;
     padding: 15px 10px;
-  
+
     ion-button {
         height: 50px;
         width: 100%;
@@ -21,6 +21,17 @@ ion-footer {
         font-weight: 500;
         letter-spacing: 0.1px;
     }
+}
+
+.datetime-modal {
+    --border-radius: 8px;
+    width: 100%;
+    max-width: 100%;
+}
+
+ion-datetime {
+    width: 100%;
+    max-width: 100%;
 }
 
 /****************** Ionic elements with default classes ******************/
