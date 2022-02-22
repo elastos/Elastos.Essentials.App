@@ -198,6 +198,9 @@ export class SPVService {
         });
     }
 
+    /**
+     * Create walelt by EVM private key format
+     */
     createMasterWalletWithPrivKey(
         masterWalletId: string,
         singlePrivateKey: string,
@@ -284,6 +287,11 @@ export class SPVService {
         });
     }
 
+    /**
+     * @param mnemonic Not null. Use "" if none
+     * @param phrasePassword Not null. Use "" if none
+     * @returns
+     */
     importWalletWithSeed(
         masterWalletId: string,
         seed: string,

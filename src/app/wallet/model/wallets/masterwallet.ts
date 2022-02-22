@@ -200,10 +200,10 @@ export abstract class MasterWallet {
 export class StandardMasterWallet extends MasterWallet {
     public hasPassphrase?: boolean;
 
-    private seed?: string;
-    private mnemonic?: string;
-    private privateKey?: string;
-    private privateKeyType?: PrivateKeyType;
+    public seed?: string;
+    public mnemonic?: string;
+    public privateKey?: string;
+    public privateKeyType?: PrivateKeyType;
 
     public static newFromSerializedWallet(serialized: SerializedStandardMasterWallet): StandardMasterWallet {
         let masterWallet = new StandardMasterWallet();

@@ -1,4 +1,5 @@
 import { Logger } from "src/app/logger";
+import { Util } from "src/app/model/util";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../coin";
@@ -7,6 +8,13 @@ import { ElastosWalletNetworkOptions } from "../../wallet.types";
 import { AnySubWallet, SubWallet } from "../subwallet";
 
 export class WalletHelper {
+    /**
+     * Creates a master wallet ID for SPV wallets.
+     */
+    public static createSPVMasterWalletId(): string {
+        return Util.uuid(6, 16);
+    }
+
     public static async getOwnerAddress(subWallet: AnySubWallet): Promise<string> {
         return await SPVService.instance.getOwnerAddress(
             jsToSpvWalletId(subWallet.masterWallet.id), subWallet.id);

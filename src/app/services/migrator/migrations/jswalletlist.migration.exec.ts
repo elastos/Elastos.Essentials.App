@@ -105,7 +105,7 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
       await spvService.setMasterWalletIDMapping(jsWalletID, spvWalletId);
 
       // Add wallet to the new JS model.
-      let masterWallet = await WalletService.instance.createMasterWalletFromSerializedInfo(walletInfo);
+      let masterWallet = await WalletService.instance.createMasterWalletFromSerializedInfo(walletInfo, false);
       if (!masterWallet) {
         Logger.warn("Master wallet couldn't be created during migration, it won't appear in the list! Continuing anyway to get other wallets");
         continue;

@@ -6,7 +6,6 @@ import { GlobalDIDSessionsService, IdentityEntry } from "../global.didsessions.s
 import { GlobalNavService } from "../global.nav.service";
 import { GlobalStorageService } from "../global.storage.service";
 import { Migration } from "./migration";
-import { JSWalletListMigration } from "./migrations/jswalletlist.migration";
 
 /**
  * IMPORTANT: INCREMENT THIS VERSION EVERY TIME A NEW MIGRATION IS ADDED OTHERWISE NEW MIGRATIONS
@@ -19,7 +18,7 @@ const LATEST_MIGRATION_ID = 1;
 // IMPORTANT: KEEP THIS LIST ORDERED FROM OLD TO RECENT TO RUN MIGRATIONS IN THE RIGHT ORDER
 const MIGRATIONS: Migration[] = [
   // Convert wallets list managed by the SPVSDK into a JS/App side management (reduce dependencies to the SPVSDK)
-  new JSWalletListMigration(1)
+  // TMP DONT DO - new JSWalletListMigration(1)
 ];
 
 type MigrationEvent = {

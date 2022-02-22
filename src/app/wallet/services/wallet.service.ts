@@ -33,6 +33,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { CoinType } from '../model/coin';
+import { AESEncrypt } from '../model/crypto';
 import { Network } from '../model/networks/network';
 import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletType } from '../model/wallet.types';
 import { ERC20SubWallet } from '../model/wallets/erc20.subwallet';
@@ -562,9 +563,6 @@ export class WalletService {
             hasPassphrase = true;
         }
 
-        //TODO: MOVE THIS TO THE ELASTOS NETWORK CREATION
-        //   await this.spvBridge.importWalletWithMnemonic(jsToSpvWalletId(masterId), mnemonicStr, mnemonicPassphrase, payPassword, singleAddress);
-
         // Calculate the seed key from mnemonic + passphrase
         let seed = mnemonicToSeedSync(mnemonicStr, mnemonicPassphrase).toString();
 
@@ -573,10 +571,10 @@ export class WalletService {
             id: masterId,
             name: walletName,
             theme: defaultWalletTheme(),
-            seed,
-            mnemonic: mnemonicStr,
+            seed: AESEncrypt(seed, payPassword),
+            mnemonic: AESEncrypt(mnemonicStr, payPassword),
             hasPassphrase,
-            // TODO: get options from params
+            // TODO: get options from UI params
             networkOptions: [{
                 network: "elastos", // elastos mainchain
                 singleAddress: singleAddress
@@ -610,7 +608,7 @@ export class WalletService {
         let masterWalletInfo: SerializedStandardMasterWallet = {
             type: WalletType.STANDARD,
             id: masterId,
-            privateKey: privKey,
+            privateKey: AESEncrypt(privKey, payPassword),
             privateKeyType: PrivateKeyType.EVM, // TODO: only EVM pkey supported for now
             name: walletName,
             theme: defaultWalletTheme(),
@@ -681,7 +679,7 @@ export class WalletService {
     /**
      * Saves a NEW "JS" wallet into the local model (not related to the legacy SPVSDK).
      */
-    public async createMasterWalletFromSerializedInfo(walletInfo: SerializedMasterWallet): Promise<MasterWallet> {
+    public async createMasterWalletFromSerializedInfo(walletInfo: SerializedMasterWallet, activateAfterCreation = true): Promise<MasterWallet> {
         let wallet = MasterWalletBuilder.newFromSerializedWallet(walletInfo);
 
         // Add a new wallet to our local model
@@ -692,6 +690,9 @@ export class WalletService {
 
         // Add to persistant list of wallets
         await this.saveWalletsList();
+
+        if (activateAfterCreation)
+            await this.activateMasterWallet(wallet);
 
         return wallet;
     }
