@@ -24,7 +24,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { Network } from '../model/networks/network';
+import { AnyNetwork } from '../model/networks/network';
 import { MasterWallet } from '../model/wallets/masterwallet';
 import { Native } from './native.service';
 import { PopupProvider } from './popup.service';
@@ -49,13 +49,13 @@ export type CustomNetworkDiskEntry = {
 export class WalletNetworkService {
     public static instance: WalletNetworkService = null;
 
-    private networks: Network[] = [];
+    private networks: AnyNetwork[] = [];
     private customNetworkDiskEntries: CustomNetworkDiskEntry[] = [];
 
-    public activeNetwork = new BehaviorSubject<Network>(null);
+    public activeNetwork = new BehaviorSubject<AnyNetwork>(null);
 
     /** Notifies whenever the networks list changes (custom networks added/removed) */
-    public networksList = new BehaviorSubject<Network[]>([]);
+    public networksList = new BehaviorSubject<AnyNetwork[]>([]);
 
     private priorityNetworkChangeCallback?: PriorityNetworkChangeCallback = null;
 
@@ -79,7 +79,7 @@ export class WalletNetworkService {
      * Appends a usable network to the list. We let networks register themselves, we don't
      * use networks in this service, to avoid circular dependencies.
      */
-    public async registerNetwork(network: Network, useAsDefault = false): Promise<void> {
+    public async registerNetwork(network: AnyNetwork, useAsDefault = false): Promise<void> {
         this.networks.push(network);
 
         let savedNetworkKey = await this.localStorage.get('activenetwork') as string;
@@ -111,7 +111,7 @@ export class WalletNetworkService {
      * Possibly filter out some unsupported networks:
      * eg: do not support the BTC network when the wallet is imported by EVM private key.
      */
-    public getAvailableNetworks(masterWallet: MasterWallet = null): Network[] {
+    public getAvailableNetworks(masterWallet: MasterWallet = null): AnyNetwork[] {
         if (masterWallet) {
             return this.networks.filter(n => masterWallet.supportsNetwork(n));
         } else {
@@ -131,7 +131,7 @@ export class WalletNetworkService {
         this.priorityNetworkChangeCallback = null;
     }
 
-    public async setActiveNetwork(network: Network) {
+    public async setActiveNetwork(network: AnyNetwork) {
         Logger.log("wallet", "Setting active network to", network);
 
         // Save choice to local storage
@@ -140,7 +140,7 @@ export class WalletNetworkService {
         await this.notifyNetworkChange(network);
     }
 
-    private async notifyNetworkChange(network: Network): Promise<void> {
+    private async notifyNetworkChange(network: AnyNetwork): Promise<void> {
         // Inform and await the priority callback (wallet service)
         if (this.priorityNetworkChangeCallback) {
             await this.priorityNetworkChangeCallback(network);
@@ -151,11 +151,11 @@ export class WalletNetworkService {
         this.activeNetwork.next(network);
     }
 
-    public getNetworkByKey(key: string): Network {
+    public getNetworkByKey(key: string): AnyNetwork {
         return this.networks.find(n => n.key === key);
     }
 
-    public getNetworkByChainId(chainId: number): Network {
+    public getNetworkByChainId(chainId: number): AnyNetwork {
         return this.networks.find(n => n.getMainChainID() == chainId);
     }
 

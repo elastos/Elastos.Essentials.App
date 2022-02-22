@@ -1,6 +1,7 @@
 import { Logger } from 'src/app/logger';
+import { WalletNetworkService } from '../../services/network.service';
 import { LocalStorage } from '../../services/storage.service';
-import { Network } from '../networks/network';
+import { AnyNetwork } from '../networks/network';
 import { PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from '../wallet.types';
 
 export type WalletID = string;
@@ -134,7 +135,23 @@ export abstract class MasterWallet {
      * Tells if this master wallet is supported on the given network.
      * eg: a wallet imported by EVM private key can't run on the bitcoin network.
      */
-    public abstract supportsNetwork(network: Network): boolean;
+    public abstract supportsNetwork(network: AnyNetwork): boolean;
+
+    /**
+     * Returns the configured wallet options for this network. Those options have been proposed and chosen
+     * to users during wallet creation. 
+     * 
+     * NOTE:
+     * - In case no network options are found (eg: network added after wallet creation), default options are returned
+     * - In any case, default options are merged with persistent options in order to make sure we also get new options fields (forward compatibility)
+     */
+    public getNetworkOptions(networkKey: string): WalletNetworkOptions {
+        let defaultNetworkOptions = WalletNetworkService.instance.getNetworkByKey(networkKey).getDefaultWalletNetworkOptions();
+
+        let networkOptions = this.networkOptions.find(no => no.network === networkKey);
+
+        return Object.assign({}, defaultNetworkOptions, networkOptions);
+    }
 
     /**
      * @deprecated - only used by the migration
@@ -243,7 +260,7 @@ export class StandardMasterWallet extends MasterWallet {
     }
 
 
-    public supportsNetwork(network: Network): boolean {
+    public supportsNetwork(network: AnyNetwork): boolean {
         if (this.hasMnemonicSupport())
             return true; // If we have a mnemonic, we can run everywhere.
 

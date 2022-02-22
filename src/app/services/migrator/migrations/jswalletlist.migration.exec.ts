@@ -43,7 +43,15 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
 
     Logger.log("migrations", `Found ${masterWallets.length} SPV wallets to migrate`);
     for (let spvWalletId of masterWallets) {
+      // Make sure that the wallet has not yet been migrated in case or error during a previous attempt
+      let existingJsWalletId = spvService.getJSMasterID(spvWalletId);
+      if (existingJsWalletId) {
+        Logger.log("migrations", `JS wallet ID ${existingJsWalletId} already bound to SPV wallet ID ${spvWalletId}. Not migrating`);
+        continue;
+      }
+
       let payPassword = await WalletAuthService.instance.getWalletPassword(spvWalletId);
+
       let mnemonic = await spvService.exportWalletWithMnemonic(spvWalletId, payPassword);
       let seed = await spvService.exportWalletWithSeed(spvWalletId, payPassword);
 

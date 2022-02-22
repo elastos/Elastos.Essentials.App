@@ -25,7 +25,7 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { ERC20Coin } from '../../model/coin';
 import { EVMNetwork } from '../../model/networks/evm.network';
-import { Network } from '../../model/networks/network';
+import { AnyNetwork } from '../../model/networks/network';
 import { WalletNetworkService } from '../network.service';
 import { WalletPrefsService } from '../pref.service';
 import { EVMService } from './evm.service';
@@ -53,7 +53,7 @@ export class ERC20CoinService {
         this.erc20ABI = require('../../../../assets/wallet/ethereum/StandardErc20ABI.json');
     }
 
-    public async getCoinDecimals(network: Network, address: string) {
+    public async getCoinDecimals(network: AnyNetwork, address: string) {
         let coinDecimals = 0;
         const erc20Contract = new (this.evmService.getWeb3(network).eth.Contract)(this.erc20ABI, address);
         if (erc20Contract) {
@@ -63,7 +63,7 @@ export class ERC20CoinService {
         return coinDecimals;
     }
 
-    public async getCoinInfo(network: Network, address: string, ethAccountAddress: string) {
+    public async getCoinInfo(network: AnyNetwork, address: string, ethAccountAddress: string) {
         try {
             const erc20Contract = new (this.evmService.getWeb3(network).eth.Contract)(this.erc20ABI, address, /* { from: ethAccountAddress } */);
             Logger.log('wallet', 'erc20Contract', erc20Contract);
@@ -84,7 +84,7 @@ export class ERC20CoinService {
         }
     }
 
-    public async getERC20Coin(network: Network, address: string, ethAccountAddress: string): Promise<ERC20Coin> {
+    public async getERC20Coin(network: AnyNetwork, address: string, ethAccountAddress: string): Promise<ERC20Coin> {
         const coinInfo = await this.getCoinInfo(network, address, ethAccountAddress);
         const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinName, address, coinInfo.coinDecimals, this.prefs.getNetworkTemplate(), false);
         return newCoin;

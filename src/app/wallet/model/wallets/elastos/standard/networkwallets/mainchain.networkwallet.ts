@@ -1,7 +1,7 @@
 import { Logger } from "src/app/logger";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../../../coin";
-import { Network } from "../../../../networks/network";
+import { AnyNetwork } from "../../../../networks/network";
 import { ElastosMainChainTransactionProvider } from "../../../../tx-providers/elastos/elastos.mainchain.tx.provider";
 import { TransactionProvider } from "../../../../tx-providers/transaction.provider";
 import { StandardMasterWallet } from "../../../masterwallet";
@@ -12,7 +12,7 @@ import { MainChainSubWallet } from "../subwallets/mainchain.subwallet";
 import { ElastosStandardNetworkWallet } from "./elastos.networkwallet";
 
 export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetworkWallet {
-  constructor(masterWallet: StandardMasterWallet, network: Network) {
+  constructor(masterWallet: StandardMasterWallet, network: AnyNetwork) {
     super(masterWallet, network, "ELA");
   }
 
@@ -51,7 +51,7 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
 
   /**
    * Tells whether this wallet currently has many addresses in use or not.
-   * 
+   *
    * TODO: move to the standard subwallet (ela mainchain), make more generic
    */
   public async multipleAddressesInUse(): Promise<boolean> {
@@ -76,6 +76,6 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
     return 120;
   }
 }
-/* 
+/*
 export class ElastosMainChainStandardNetworkWallet extends ElastosMainChainNetworkWallet {
 } */

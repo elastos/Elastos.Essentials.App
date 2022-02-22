@@ -34,7 +34,7 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { CoinType } from '../model/coin';
 import { AESEncrypt } from '../model/crypto';
-import { Network } from '../model/networks/network';
+import { AnyNetwork } from '../model/networks/network';
 import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletType } from '../model/wallet.types';
 import { ERC20SubWallet } from '../model/wallets/erc20.subwallet';
 import { StandardEVMSubWallet } from '../model/wallets/evm.subwallet';
@@ -282,7 +282,7 @@ export class WalletService {
      * newly active network. This happens through the creation of a whole new set of network wallets
      * for each master wallet.
      */
-    private async onActiveNetworkChanged(activatedNetwork: Network): Promise<void> {
+    private async onActiveNetworkChanged(activatedNetwork: AnyNetwork): Promise<void> {
         // Terminate all the active network wallets
         await this.terminateActiveNetworkWallets();
 

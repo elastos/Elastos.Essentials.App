@@ -6,6 +6,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from "../global.didsessions.s
 import { GlobalNavService } from "../global.nav.service";
 import { GlobalStorageService } from "../global.storage.service";
 import { Migration } from "./migration";
+import { JSWalletListMigration } from "./migrations/jswalletlist.migration";
 
 /**
  * IMPORTANT: INCREMENT THIS VERSION EVERY TIME A NEW MIGRATION IS ADDED OTHERWISE NEW MIGRATIONS
@@ -18,7 +19,7 @@ const LATEST_MIGRATION_ID = 1;
 // IMPORTANT: KEEP THIS LIST ORDERED FROM OLD TO RECENT TO RUN MIGRATIONS IN THE RIGHT ORDER
 const MIGRATIONS: Migration[] = [
   // Convert wallets list managed by the SPVSDK into a JS/App side management (reduce dependencies to the SPVSDK)
-  // TMP DONT DO - new JSWalletListMigration(1)
+  new JSWalletListMigration(1)
 ];
 
 type MigrationEvent = {
@@ -142,7 +143,7 @@ export class MigrationService {
         Logger.log("migrations", `Migration ID ${migration.uniquelyIncrementedId} is completed`);
 
         migrationCallback({ event: "migrationcompleted", migration, migrationStep });
-        // TODO - RE-ENABLE AFTER TESTS await this.saveLastCheckedMigrationId(this.didToMigrate, migration.uniquelyIncrementedId);
+        await this.saveLastCheckedMigrationId(this.identityToMigrate.didString, migration.uniquelyIncrementedId);
       }
       catch (e) {
         Logger.error("migrations", `Migration ID ${migration.uniquelyIncrementedId} has failed!`, e);

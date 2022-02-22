@@ -9,7 +9,7 @@ import { ERC1155Service } from '../../services/evm/erc1155.service';
 import { ERC721Service } from '../../services/evm/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
 import { Coin, CoinID, CoinType } from '../coin';
-import { Network } from '../networks/network';
+import { AnyNetwork } from '../networks/network';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { TransactionProvider } from '../tx-providers/transaction.provider';
 import { WalletNetworkOptions } from '../wallet.types';
@@ -62,7 +62,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
     constructor(
         public masterWallet: MasterWalletType,
-        public network: Network,
+        public network: AnyNetwork,
         public displayToken: string // Ex: "HT", "BSC"
     ) {
         this.id = masterWallet.id;

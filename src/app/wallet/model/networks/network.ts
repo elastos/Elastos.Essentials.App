@@ -8,13 +8,13 @@ import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
 import { SwapProvider } from "../earn/swapprovider";
 import { ERC1155Provider } from "../nfts/erc1155.provider";
-import { PrivateKeyType } from "../wallet.types";
+import { PrivateKeyType, WalletNetworkOptions } from "../wallet.types";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
 import { AnyNetworkWallet } from "../wallets/networkwallet";
 import { UniswapCurrencyProvider } from "./uniswap.currencyprovider";
 
-export abstract class Network {
+export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOptions> {
   private availableCoins: Coin[] = null;
   private deletedERC20Coins: ERC20Coin[] = [];
 
@@ -41,6 +41,13 @@ export abstract class Network {
     this.localStorageKey = this.key + '-' + activeNetworkTemplate;
     await this.refreshCoins();
   }
+
+  /**
+   * Returns default options to customize the wallet for the network.
+   * For example in the case of the elastos network, this defines if new wallets are instantiated using 
+   * single or multi address mode.
+   */
+  public abstract getDefaultWalletNetworkOptions(): WalletNetworkOptionsType;
 
   /**
    * Returns a list of available ERC20 coins that we trust for this network, and that user will be able to
@@ -232,7 +239,7 @@ export abstract class Network {
     return customCoins;
   }
 
-  private async initDeletedCustomERC20Coins(network: Network): Promise<ERC20Coin[]> {
+  private async initDeletedCustomERC20Coins(network: AnyNetwork): Promise<ERC20Coin[]> {
     const rawCoinList = await LocalStorage.instance.get("custom-erc20-coins-deleted-" + network.key);
     if (!rawCoinList) {
       return [];
@@ -274,3 +281,5 @@ export abstract class Network {
     return null;
   }
 }
+
+export abstract class AnyNetwork extends Network<any> { }

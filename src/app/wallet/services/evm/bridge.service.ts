@@ -23,7 +23,7 @@
 import { Injectable } from '@angular/core';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { BridgeProvider } from '../../model/earn/bridgeprovider';
-import { Network } from '../../model/networks/network';
+import { AnyNetwork } from '../../model/networks/network';
 import { ERC20SubWallet } from '../../model/wallets/erc20.subwallet';
 import { AnySubWallet } from '../../model/wallets/subwallet';
 import { WalletNetworkService } from '../network.service';
@@ -84,7 +84,7 @@ export class BridgeService {
      * networks for a provider. Those target networks are found by browsing all networks and checking if they
      * are using the same base provider.
      */
-    public getDestinationNetworksForProvider(bridgeProvider: BridgeProvider, sourceNetwork: Network): Network[] {
+    public getDestinationNetworksForProvider(bridgeProvider: BridgeProvider, sourceNetwork: AnyNetwork): AnyNetwork[] {
         let availableNetworks = this.networkService.getAvailableNetworks();
         let targetNetworks = availableNetworks.filter(n => {
             if (n.key === sourceNetwork.key)

@@ -14,7 +14,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { Network } from 'src/app/wallet/model/networks/network';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -43,7 +43,7 @@ export class PacketDetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public packet: Packet;
-  public network: Network = null;
+  public network: AnyNetwork = null;
   private grabResponse: GrabResponse = null;
 
   // UI Logic

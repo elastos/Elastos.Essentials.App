@@ -4,13 +4,16 @@ import { EVMTransactionProvider } from '../tx-providers/evm.transaction.provider
 import { TransactionProvider } from '../tx-providers/transaction.provider';
 import { WalletNetworkOptions } from '../wallet.types';
 import { StandardEVMSubWallet } from './evm.subwallet';
-import { MasterWallet } from './masterwallet';
+import { StandardMasterWallet } from './masterwallet';
 import { NetworkWallet, WalletAddressInfo } from './networkwallet';
 
 /**
  * Network wallet type for standard EVM networks
+ *
+ * TODO: Split this class into "EVMNetworkWallet for standard wallet types" and "EVMNetworkWallet for ledger/multisig".
+ * Currently forced to "StandardMasterWallet"
  */
-export class EVMNetworkWallet<MasterWalletType extends MasterWallet, WalletNetworkOptionsType extends WalletNetworkOptions> extends NetworkWallet<MasterWalletType, WalletNetworkOptionsType> {
+export class EVMNetworkWallet<MasterWalletType extends StandardMasterWallet, WalletNetworkOptionsType extends WalletNetworkOptions> extends NetworkWallet<MasterWalletType, WalletNetworkOptionsType> {
     private mainTokenSubWallet: StandardEVMSubWallet<WalletNetworkOptionsType> = null;
 
     constructor(
@@ -21,6 +24,14 @@ export class EVMNetworkWallet<MasterWalletType extends MasterWallet, WalletNetwo
         public averageBlocktime = 5 // Unit Second
     ) {
         super(masterWallet, network, displayToken);
+    }
+
+    public async initialize(): Promise<void> {
+        // TODO: Stop using the SPVSDK for EVM network wallets
+        if (!await SPVService.instance.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
+            return;
+
+        await super.initialize();
     }
 
     protected createTransactionDiscoveryProvider(): TransactionProvider<any> {

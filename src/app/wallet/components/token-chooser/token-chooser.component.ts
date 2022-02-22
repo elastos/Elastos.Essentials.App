@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Network } from 'src/app/wallet/model/networks/network';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
 import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
@@ -33,7 +33,7 @@ type TokenToShow = {
 export class TokenChooserComponent implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  public activeNetwork: Network = null;
+  public activeNetwork: AnyNetwork = null;
   private nativeTokenWallet: StandardEVMSubWallet<any> = null;
   public tokens: TokenToShow[] = [];
 

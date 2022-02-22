@@ -1,7 +1,7 @@
 import { Logger } from "src/app/logger";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../../../coin";
-import { Network } from "../../../../networks/network";
+import { AnyNetwork } from "../../../../networks/network";
 import { ElastosIdentityTransactionProvider } from "../../../../tx-providers/elastos/elastos.identitychain.tx.provider";
 import { TransactionProvider } from "../../../../tx-providers/transaction.provider";
 import { StandardMasterWallet } from "../../../masterwallet";
@@ -11,7 +11,7 @@ import { ElastosEVMSubWallet } from "../subwallets/elastos.evm.subwallet";
 import { ElastosStandardNetworkWallet } from "./elastos.networkwallet";
 
 export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardNetworkWallet {
-  constructor(masterWallet: StandardMasterWallet, network: Network) {
+  constructor(masterWallet: StandardMasterWallet, network: AnyNetwork) {
     super(masterWallet, network, "ELA");
   }
 

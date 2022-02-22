@@ -26,7 +26,7 @@ import { FantomTestNetNetwork } from '../model/networks/fantom/fantom.testnet.ne
 import { FusionMainNetNetwork } from '../model/networks/fusion/fusion.mainnet.network';
 import { HECOMainNetNetwork } from '../model/networks/heco/heco.mainnet.network';
 import { HECOTestNetNetwork } from '../model/networks/heco/heco.testnet.network';
-import { Network } from '../model/networks/network';
+import { AnyNetwork } from '../model/networks/network';
 import { PolygonMainNetNetwork } from '../model/networks/polygon/polygon.mainnet.network';
 import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet.network';
 import { TelosMainNetNetwork } from '../model/networks/telos/telos.mainnet.network';
@@ -160,7 +160,7 @@ export class WalletInitService extends GlobalService {
     }
   }
 
-  private async createAndRegisterNetwork(network: Network, isDefault = false): Promise<void> {
+  private async createAndRegisterNetwork(network: AnyNetwork, isDefault = false): Promise<void> {
     await network.init();
     await this.networkService.registerNetwork(network, isDefault);
   }

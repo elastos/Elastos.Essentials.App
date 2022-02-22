@@ -26,7 +26,7 @@ import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
-import { Network } from 'src/app/wallet/model/networks/network';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/wallets/networkwallet';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
@@ -67,7 +67,7 @@ export class HomePage implements OnInit {
 
   // Widget data
   public networkWalletsList: AnyNetworkWallet[] = [];
-  public activeNetwork: Network = null;
+  public activeNetwork: AnyNetwork = null;
   private activeWalletAddresses: { [walletId: string]: WalletAddressInfo[] } = {};
   public hiveVaultLinked = false;
   public hiveVaultStorageStats: {

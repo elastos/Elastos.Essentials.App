@@ -8,7 +8,7 @@ import { Util } from 'src/app/model/util';
 import Web3 from 'web3';
 import { ETHTransactionComponent } from '../../components/eth-transaction/eth-transaction.component';
 import { ETHTransactionStatus } from '../../model/evm.types';
-import { Network } from '../../model/networks/network';
+import { AnyNetwork } from '../../model/networks/network';
 import { RawTransactionPublishResult } from '../../model/tx-providers/transaction.types';
 import { StandardEVMSubWallet } from '../../model/wallets/evm.subwallet';
 import { Transfer } from '../cointransfer.service';
@@ -278,7 +278,7 @@ export class EVMService {
   /**
    * Creates a new Web3 instance or return a cached one, for the given network.
    */
-  public getWeb3(network: Network): Web3 {
+  public getWeb3(network: AnyNetwork): Web3 {
     if (network.name in this.web3s) {
       return this.web3s[network.name];
     }
@@ -292,7 +292,7 @@ export class EVMService {
   /**
    * Current gas price on given network, in raw token amount
    */
-  public async getGasPrice(network: Network): Promise<string> {
+  public async getGasPrice(network: AnyNetwork): Promise<string> {
     let web3 = this.getWeb3(network);
     let gasPrice = await web3.eth.getGasPrice();
     return gasPrice;
@@ -310,17 +310,17 @@ export class EVMService {
   /**
    * Cost of a native coin transfer, in readable native coin amount.
    */
-  public async estimateTransferTransactionFees(network: Network): Promise<BigNumber> {
+  public async estimateTransferTransactionFees(network: AnyNetwork): Promise<BigNumber> {
     let gasLimit = "21000"; // All EVM seem to use this amount of gas for native coin transfer
     let gasPrice = await this.getWeb3(network).eth.getGasPrice();
     return this.getTransactionFees(gasLimit, gasPrice);
   }
 
-  public isAddress(network: Network, address: string) {
+  public isAddress(network: AnyNetwork, address: string) {
     return this.getWeb3(network).utils.isAddress(address);
   }
 
-  public async isContractAddress(network: Network, address: string) {
+  public async isContractAddress(network: AnyNetwork, address: string) {
     const contractCode = await this.getWeb3(network).eth.getCode(address);
     return contractCode === '0x' ? false : true;
   }

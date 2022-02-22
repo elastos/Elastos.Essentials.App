@@ -31,7 +31,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
-import { Network } from 'src/app/wallet/model/networks/network';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { WalletSortType } from 'src/app/wallet/model/walletaccount';
@@ -87,7 +87,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public shownSubWalletDetails: AnySubWallet = null;
 
     // Dummy Current Network
-    public currentNetwork: Network = null;
+    public currentNetwork: AnyNetwork = null;
 
     private sendTransactionSubscription: Subscription = null;
 
@@ -297,7 +297,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.walletManager.setActiveNetworkWallet(wallet);
     }
 
-    public selectActiveNetwork(network: Network) {
+    public selectActiveNetwork(network: AnyNetwork) {
         // TODO: Use network object, not string
         void this.networkService.setActiveNetwork(network);
     }

@@ -5,14 +5,14 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from '../../model/coin';
-import { Network } from '../../model/networks/network';
+import { AnyNetwork } from '../../model/networks/network';
 import { MasterWallet } from '../../model/wallets/masterwallet';
 import { CurrencyService } from '../../services/currency.service';
 import { WalletNetworkService } from '../../services/network.service';
 import { UiService } from '../../services/ui.service';
 
 export type NetworkChooserComponentOptions = {
-  currentNetwork: Network;
+  currentNetwork: AnyNetwork;
   masterWallet: MasterWallet
 }
 
@@ -26,8 +26,8 @@ export class NetworkChooserComponent implements OnInit {
 
   public CoinType = CoinType;
   public options: NetworkChooserComponentOptions = null;
-  public currentNetwork: Network;
-  public networksToShowInList: Network[];
+  public currentNetwork: AnyNetwork;
+  public networksToShowInList: AnyNetwork[];
 
   constructor(
     private navParams: NavParams,
@@ -47,7 +47,7 @@ export class NetworkChooserComponent implements OnInit {
     this.networksToShowInList = this.networkService.getAvailableNetworks(this.options.masterWallet);
   }
 
-  selectNetwork(network: Network) {
+  selectNetwork(network: AnyNetwork) {
     Logger.log("wallet", "Network selected", network);
 
     void this.modalCtrl.dismiss({

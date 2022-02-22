@@ -1,6 +1,6 @@
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../../coin";
-import { Network } from "../../../networks/network";
+import { AnyNetwork } from "../../../networks/network";
 import { BTCTransactionProvider } from "../../../tx-providers/btc/btc.transaction.provider";
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
 import { StandardEVMSubWallet } from "../../evm.subwallet";
@@ -18,9 +18,16 @@ export class BTCNetworkWallet extends StandardNetworkWallet<any> {
 
     constructor(
         public masterWallet: StandardMasterWallet,
-        public network: Network
+        public network: AnyNetwork
     ) {
         super(masterWallet, network, 'BTC');
+    }
+
+    public async initialize(): Promise<void> {
+        if (!await SPVService.instance.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
+            return;
+
+        await super.initialize();
     }
 
     protected createTransactionDiscoveryProvider(): TransactionProvider<any> {

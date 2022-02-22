@@ -1,7 +1,7 @@
 import abiDecoder from "abi-decoder";
 import { Logger } from "src/app/logger";
 import { ERC20CoinService } from "../services/evm/erc20coin.service";
-import { Network } from "./networks/network";
+import { AnyNetwork } from "./networks/network";
 
 export enum ETHTransactionType {
   TOKEN_APPROVE = "token_approve", // The contract seems to be a request to approve a caller to spend tokens on behalf of the user
@@ -27,7 +27,7 @@ export class ETHTransactionInfoParser {
    * @param txValue Value to be spent by the transaction
    * @param txTo Transaction destination address
    */
-  constructor(private network: Network, private txData: string, private txValue: string, private txTo: string) {
+  constructor(private network: AnyNetwork, private txData: string, private txValue: string, private txTo: string) {
     if (!txData || !txData.startsWith("0x")) {
       throw new Error("ETHTransactionInfoParser can be created only with a valid transaction data string starting with 0x");
     }

@@ -3,7 +3,7 @@ import { GlobalNetworksService } from "src/app/services/global.networks.service"
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { StandardCoinName } from "../../../../coin";
-import { Network } from "../../../../networks/network";
+import { AnyNetwork } from "../../../../networks/network";
 import { ElastosSmartChainTransactionProvider } from "../../../../tx-providers/elastos/elastos.smartchain.tx.provider";
 import { TransactionProvider } from "../../../../tx-providers/transaction.provider";
 import { StandardMasterWallet } from "../../../masterwallet";
@@ -15,7 +15,7 @@ import { ElastosStandardNetworkWallet } from "./elastos.networkwallet";
 export class ElastosSmartChainStandardNetworkWallet extends ElastosStandardNetworkWallet {
   private mainTokenSubWallet: ElastosEVMSubWallet = null;
 
-  constructor(masterWallet: StandardMasterWallet, network: Network) {
+  constructor(masterWallet: StandardMasterWallet, network: AnyNetwork) {
     super(masterWallet, network, "ELA");
   }
 

@@ -15,10 +15,10 @@ export class AuthService {
     }
 
     public async createAndSaveWalletPassword(walletId: string): Promise<string> {
-        const passwordKey = "wallet-"+walletId;
+        const passwordKey = "wallet-" + walletId;
         let oldPassword = await passwordManager.getPasswordInfo(passwordKey) as PasswordManagerPlugin.GenericPasswordInfo;
         if (oldPassword) { // In case of user click 'createMasterwallet' too quickly.
-          return oldPassword.password;
+            return oldPassword.password;
         }
 
         let password = await passwordManager.generateRandomPassword();
@@ -51,10 +51,11 @@ export class AuthService {
                     promptPasswordIfLocked: showMasterPromptIfDatabaseLocked,
                     forceMasterPasswordPrompt: forceShowMasterPrompt
                 };
-                let passwordInfo = await passwordManager.getPasswordInfo("wallet-"+walletId, options) as PasswordManagerPlugin.GenericPasswordInfo;
+                let key = "wallet-" + walletId;
+                let passwordInfo = await passwordManager.getPasswordInfo(key, options) as PasswordManagerPlugin.GenericPasswordInfo;
                 if (!passwordInfo) {
                     // Master password is right, but no data for the requested key...
-                    Logger.log('wallet', "Master password was right, but no password found for the requested key")
+                    Logger.log('wallet', "Master password was right, but no password found for the requested key", key);
 
                     resolve(null);
                 }
@@ -75,7 +76,7 @@ export class AuthService {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise<string>(async (resolve, reject) => {
             try {
-                const resultInfo = await passwordManager.deletePasswordInfo("wallet-"+walletId) as PasswordManagerPlugin.BooleanWithReason;
+                const resultInfo = await passwordManager.deletePasswordInfo("wallet-" + walletId) as PasswordManagerPlugin.BooleanWithReason;
                 if (resultInfo) {
                     if (resultInfo.value) {
                         resolve(null);

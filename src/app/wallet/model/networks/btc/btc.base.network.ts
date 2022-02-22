@@ -3,7 +3,7 @@ import { CoinID } from "../../coin";
 import { BridgeProvider } from "../../earn/bridgeprovider";
 import { EarnProvider } from "../../earn/earnprovider";
 import { SwapProvider } from "../../earn/swapprovider";
-import { PrivateKeyType, WalletType } from "../../wallet.types";
+import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../../wallet.types";
 import { WalletCreateType } from "../../walletaccount";
 import { BTCNetworkWallet } from "../../wallets/btc/standard/btc.networkwallet";
 import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
@@ -11,7 +11,7 @@ import { MasterWallet, StandardMasterWallet } from "../../wallets/masterwallet";
 import { AnyNetworkWallet } from "../../wallets/networkwallet";
 import { Network } from "../network";
 
-export abstract class BTCNetworkBase extends Network {
+export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
 
   constructor(
     displayName: string,
@@ -29,6 +29,12 @@ export abstract class BTCNetworkBase extends Network {
       earnProviders,
       swapProviders,
       bridgeProviders);
+  }
+
+  public getDefaultWalletNetworkOptions(): WalletNetworkOptions {
+    return {
+      network: this.key
+    }
   }
 
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {

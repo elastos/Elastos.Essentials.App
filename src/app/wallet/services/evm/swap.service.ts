@@ -29,7 +29,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SwapProvider } from '../../model/earn/swapprovider';
-import { Network } from '../../model/networks/network';
+import { AnyNetwork } from '../../model/networks/network';
 import { ERC20SubWallet } from '../../model/wallets/erc20.subwallet';
 import { AnySubWallet } from '../../model/wallets/subwallet';
 import { WalletNetworkService } from '../network.service';
@@ -125,11 +125,11 @@ export class SwapService {
     /**
      * Handle network changes so that we can refresh token lists tokens sometimes.
      */
-    private onActiveNetworkChanged(network: Network) {
+    private onActiveNetworkChanged(network: AnyNetwork) {
         void this.updateTokenLists(network);
     }
 
-    private async updateTokenLists(network: Network) {
+    private async updateTokenLists(network: AnyNetwork) {
         let activeUserDID = GlobalDIDSessionsService.signedInDIDString;
         let currentTime = moment().unix();
 

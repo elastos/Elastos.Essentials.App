@@ -7,7 +7,7 @@ import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import BigNumber from 'bignumber.js';
 import { Pair, Trade } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
 import { ERC20Coin } from '../../model/coin';
-import { Network } from '../../model/networks/network';
+import { AnyNetwork } from '../../model/networks/network';
 import { LocalStorage } from '../storage.service';
 
 @Injectable({
@@ -48,7 +48,7 @@ export class UniswapCurrencyService {
    *
    * Note: trades use the wrapped versions of the native currency (ether, bnb, etc), not directly the native token.
    */
-  async getTokenUSDValue(network: Network, erc20coin: ERC20Coin): Promise<number> {
+  async getTokenUSDValue(network: AnyNetwork, erc20coin: ERC20Coin): Promise<number> {
     let currencyProvider = network.getUniswapCurrencyProvider();
     if (!currencyProvider)
       return 0;

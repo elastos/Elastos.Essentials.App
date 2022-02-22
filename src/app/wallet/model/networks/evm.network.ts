@@ -3,14 +3,14 @@ import { CoinID, ERC20Coin } from "../coin";
 import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
 import { SwapProvider } from "../earn/swapprovider";
-import { PrivateKeyType } from "../wallet.types";
+import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../wallet.types";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { EVMNetworkWallet } from "../wallets/evm.networkwallet";
-import { MasterWallet } from "../wallets/masterwallet";
+import { MasterWallet, StandardMasterWallet } from "../wallets/masterwallet";
 import { AnyNetworkWallet } from "../wallets/networkwallet";
 import { Network } from "./network";
 
-export class EVMNetwork extends Network {
+export class EVMNetwork extends Network<WalletNetworkOptions> {
   protected averageBlocktime = 5; // Unit Second
 
   constructor(
@@ -31,6 +31,12 @@ export class EVMNetwork extends Network {
     super(key, name, logo, networkTemplate, earnProviders, swapProviders, bridgeProviders);
   }
 
+  public getDefaultWalletNetworkOptions(): WalletNetworkOptions {
+    return {
+      network: this.key
+    }
+  }
+
   /**
    * Live update of this network instance info. Used for example when a custom network info is modified
    * by the user.
@@ -49,18 +55,30 @@ export class EVMNetwork extends Network {
   }
 
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
-    let wallet = new EVMNetworkWallet(masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName, this.averageBlocktime);
+    let wallet: AnyNetworkWallet = null;
+    switch (masterWallet.type) {
+      case WalletType.STANDARD:
+        wallet = new EVMNetworkWallet(masterWallet as StandardMasterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName, this.averageBlocktime);
+        break;
+      default:
+        return null;
+    }
+
     await wallet.initialize();
+
     if (startBackgroundUpdates)
       void wallet.startBackgroundUpdates();
+
     return wallet;
   }
 
   public async createERC20SubWallet(networkWallet: EVMNetworkWallet<any, any>, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
     let subWallet = new ERC20SubWallet(networkWallet, coinID, networkWallet.network.getMainEvmRpcApiUrl(), "");
     await subWallet.initialize();
+
     if (startBackgroundUpdates)
       void subWallet.startBackgroundUpdates();
+
     return subWallet;
   }
 

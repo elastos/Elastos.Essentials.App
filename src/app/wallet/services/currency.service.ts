@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ERC20Coin } from '../model/coin';
-import { Network } from '../model/networks/network';
+import { AnyNetwork } from '../model/networks/network';
 import { TimeBasedPersistentCache } from '../model/timebasedpersistentcache';
 import { UniswapCurrencyService } from './evm/uniswap.currency.service';
 import { WalletNetworkService } from './network.service';
@@ -257,7 +257,7 @@ export class CurrencyService {
    * or in the given currency.
    * Ex: 30 ELA -> 300 USD
    */
-  public getMainTokenValue(quantity: BigNumber, network?: Network, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
+  public getMainTokenValue(quantity: BigNumber, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
     if (!network)
       network = this.walletNetworkService.activeNetwork.value;
 
@@ -281,7 +281,7 @@ export class CurrencyService {
     }
   }
 
-  public async fetchMainTokenValue(quantity: BigNumber, network?: Network, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
+  public async fetchMainTokenValue(quantity: BigNumber, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
     let cacheKey = network.key + network.getMainTokenSymbol();
     let currentTime = Date.now() / 1000;
 
@@ -321,7 +321,7 @@ export class CurrencyService {
   }
 
   // ERC20 tokens
-  public getERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: Network, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
+  public getERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
     if (!network)
       network = this.walletNetworkService.activeNetwork.value;
 
@@ -345,7 +345,7 @@ export class CurrencyService {
     }
   }
 
-  public fetchERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: Network, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
+  public fetchERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
     let cacheKey = network.key + coin.getContractAddress();
     this.queueUniswapTokenFetch(cacheKey, network, coin);
     return;
@@ -357,12 +357,12 @@ export class CurrencyService {
    */
   private uniswapTokenFetchQueue: {
     [cacheKey: string]: {
-      network: Network;
+      network: AnyNetwork;
       coin: ERC20Coin;
     }
   } = {};
   private onGoingUniswapTokenFetch: string = null; // Cache key of the token being fetched, if any.
-  private queueUniswapTokenFetch(cacheKey: string, network: Network, coin: ERC20Coin) {
+  private queueUniswapTokenFetch(cacheKey: string, network: AnyNetwork, coin: ERC20Coin) {
     if (cacheKey in this.uniswapCurrencyService || cacheKey === this.onGoingUniswapTokenFetch) {
       this.checkFetchNextUniswapToken();
       return; // Token fetch is already queued, don't queue again.

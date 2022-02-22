@@ -6,7 +6,12 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Config } from '../config/Config';
 import { StandardCoinName } from '../model/coin';
+import { AESDecrypt } from '../model/crypto';
+import { ElastosWalletNetworkOptions } from '../model/wallet.types';
 import { WalletAccountType } from '../model/walletaccount';
+import { WalletHelper } from '../model/wallets/elastos/wallet.helper';
+import { StandardMasterWallet } from '../model/wallets/masterwallet';
+import { AuthService } from './auth.service';
 import { Native } from './native.service';
 import { PopupProvider } from './popup.service';
 
@@ -149,6 +154,64 @@ export class SPVService {
             return null;
 
         return mapping.spvWalletId;
+    }
+
+    /**
+     * Opposite of getSPVMasterID().
+     */
+    public getJSMasterID(spvWalletId: string): string {
+        let mapping = this.masterWalletIdMapping.find(mapping => mapping.spvWalletId === spvWalletId);
+        if (!mapping)
+            return null;
+
+        return mapping.jsWalletId;
+    }
+
+    /** Some standard wallets depend on the SPVSDK for some operations. We lazily initialize wallets
+     * in the SPVSDK here in case they are not created yet.
+     * We know that a JS wallet has its SPV SDK counterpart if there is a mapping between JS wallet ID
+     * and SPV wallet ID in the SPV service.
+     */
+    public async maybeCreateStandardSPVWalletFromJSWallet(masterWallet: StandardMasterWallet): Promise<boolean> {
+        // If we find an existing mapping in the SPV service, nothing to do
+        let spvMasterId = SPVService.instance.getSPVMasterID(masterWallet.id);
+        console.log("checkSPVWalletState", masterWallet.id, spvMasterId)
+        if (spvMasterId)
+            return true; // Already initialized
+
+        Logger.log("wallet", "Creating the SPV wallet counterpart for wallet ", masterWallet.id);
+
+        let payPassword = await AuthService.instance.getWalletPassword(masterWallet.id);
+        if (!payPassword)
+            return false; // Can't continue without the wallet password - cancel the initialization
+
+        // No SPV wallet matching this JS wallet yet. Import one, in a different way depending on how the JS wallet
+        // was imported
+        if (masterWallet.seed) {
+            // Decrypt the seed
+            let decryptedSeed = AESDecrypt(masterWallet.seed, payPassword);
+
+            let elastosNetworkOptions = masterWallet.getNetworkOptions("elastos") as ElastosWalletNetworkOptions;
+
+            // Import the seed as new SPV SDK wallet
+            let spvWalletId = WalletHelper.createSPVMasterWalletId();
+            await SPVService.instance.importWalletWithSeed(
+                spvWalletId,
+                decryptedSeed,
+                payPassword,
+                elastosNetworkOptions.singleAddress, // This is an info set in the "elastos" (mainchain) network options
+                "",
+                "");
+
+            // Save the JS<->SPV wallet id mapping
+            await SPVService.instance.setMasterWalletIDMapping(masterWallet.id, spvWalletId);
+        }
+        else {
+            //TODO
+            console.log("SPV LAZY IMPORT BY PRIVATE KEY TODO");
+        }
+
+        return true;
     }
 
     public setNetwork(netType: string, config: string): Promise<void> {
