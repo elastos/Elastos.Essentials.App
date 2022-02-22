@@ -770,7 +770,7 @@ export class WalletService {
         // TODO await this.masterWallets[id].destroyAllSubWallet();
 
         // Destroy the wallet in the wallet plugin
-        await this.spvBridge.destroyWallet(jsToSpvWalletId(id));
+        await this.spvBridge.destroyWallet(jsToSpvWalletId(id)); // TODO: Move this out of here, this is not generic
 
         // Save this modification to our permanent local storage
         await this.localStorage.deleteMasterWallet(this.masterWallets[id].id);

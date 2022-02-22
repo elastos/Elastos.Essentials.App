@@ -9,4 +9,6 @@ export abstract class Migration {
 
   // Must throw an exception in case of error
   public abstract migrate(identityEntry: IdentityEntry): Promise<void>;
+
+  public abstract debugClearMigrationState(identityEntry: IdentityEntry): Promise<void>;
 }

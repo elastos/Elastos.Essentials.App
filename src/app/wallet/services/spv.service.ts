@@ -167,6 +167,14 @@ export class SPVService {
         return mapping.jsWalletId;
     }
 
+    /**
+     * DEBUG ONLY - CLEARS ALL LINKS BETWEEN JS AND SPV WALLETS
+     */
+    public async debugResetMasterWalletIDMapping(): Promise<void> {
+        this.masterWalletIdMapping = [];
+        await this.saveMasterWalletIDMapping();
+    }
+
     /** Some standard wallets depend on the SPVSDK for some operations. We lazily initialize wallets
      * in the SPVSDK here in case they are not created yet.
      * We know that a JS wallet has its SPV SDK counterpart if there is a mapping between JS wallet ID

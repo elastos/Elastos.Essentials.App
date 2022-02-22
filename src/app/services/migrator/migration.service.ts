@@ -54,6 +54,9 @@ export class MigrationService {
    * after everything is completed. UI is totally blocked.
    */
   public async checkAndNavigateToMigration(identityToMigrate: IdentityEntry): Promise<void> {
+
+    //await this.debugClearMigrationState(identityToMigrate); // TMP DEBUG
+
     // No migrations are due? Directly exit and probably continue to the real sign in
     if (!await this.migrationsRequiredForDID(identityToMigrate.didString))
       return;
@@ -159,5 +162,22 @@ export class MigrationService {
     GlobalDIDSessionsService.signedInDIDString = null;
 
     return true;
+  }
+
+  /**
+   * DEBUG ONLY - Resets migration index state to restart all migrations from 0.
+   */
+  private async debugClearMigrationState(identityEntry: IdentityEntry): Promise<void> {
+    // Simulate the target DID as the "signed in" one because many APIs relied on this field
+    GlobalDIDSessionsService.signedInDIDString = identityEntry.didString;
+
+    await this.saveLastCheckedMigrationId(identityEntry.didString, 0);
+
+    // Let migrations reset their own data
+    for (let migration of MIGRATIONS) {
+      await migration.debugClearMigrationState(identityEntry);
+    }
+
+    GlobalDIDSessionsService.signedInDIDString = null;
   }
 }

@@ -51,6 +51,10 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
       }
 
       let payPassword = await WalletAuthService.instance.getWalletPassword(spvWalletId);
+      if (!payPassword) {
+        Logger.log("migrations", `No pay password found for SPV wallet ID ${spvWalletId}. This wallet was probably created after the migration, by a JS wallet. Skipping`);
+        continue;
+      }
 
       let mnemonic = await spvService.exportWalletWithMnemonic(spvWalletId, payPassword);
       let seed = await spvService.exportWalletWithSeed(spvWalletId, payPassword);
@@ -75,7 +79,11 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
 
       Logger.log("migrations", "Existing extended infos:", extendedInfo);
 
+      // Create a JS wallet ID
       let jsWalletID = WalletService.instance.createMasterWalletID();
+
+      // Save a new password entry for the JS wallet payment password for this new wallet (same as the SPV one)
+      await WalletAuthService.instance.saveWalletPassword(jsWalletID, payPassword);
 
       let spvAccountInfo = await spvService.getMasterWalletBasicInfo(spvWalletId);
 
@@ -124,4 +132,12 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
   }, () => {
     throw new Error("Master password not provided");
   }, true, false, identityEntry.didStoreId);
+}
+
+export const debugClearMigrationState = async (identityEntry: IdentityEntry): Promise<void> => {
+  let spvService = new SPVService(null, null, null);
+
+  await spvService.debugResetMasterWalletIDMapping();
+
+  await spvService.destroy();
 }

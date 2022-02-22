@@ -23,18 +23,24 @@ export class AuthService {
 
         let password = await passwordManager.generateRandomPassword();
 
+        return this.saveWalletPassword(walletId, password);
+    }
+
+    public async saveWalletPassword(walletId: string, payPassword: string): Promise<string> {
+        const passwordKey = "wallet-" + walletId;
+
         // Save the did store password with a master password
         let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
             type: PasswordManagerPlugin.PasswordType.GENERIC_PASSWORD,
             key: passwordKey,
             displayName: "Wallet password",
-            password: password,
+            password: payPassword,
             // TODO: visible: false
         }
         let result = await passwordManager.setPasswordInfo(passwordInfo);
         if (result.value) {
             // Master password was created and wallet password could be saved
-            return password;
+            return payPassword;
         }
         else {
             // Cancellation, or failure
