@@ -145,6 +145,10 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   ion-slides {
     --bullet-background: #808080;
   }
+
+  ion-datetime {
+    --background: #ffffff;
+  }
 }
 
 /*
@@ -280,6 +284,10 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
 
   ion-slides {
     --bullet-background: #F5F5FD;
+  }
+
+  ion-datetime {
+    --background: #121212;
   }
 }
 
