@@ -107,6 +107,7 @@
 .didsessions-warning-component {
   --min-height: 302px;
   --width: 100%;
+  --background: transparent !important;
 
   animation: didsessionsWarningAnimate;
   animation-duration: 300ms;
@@ -171,6 +172,7 @@
 .identity-warning-component {
   --min-height: 302px;
   --width: 100%;
+  --background: transparent !important;
 
   animation: identityWarningAnimate;
   animation-duration: 300ms;
@@ -242,7 +244,7 @@
 
 .wallet-tx-component {
   --width: 100%;
-  --background: transparent;
+  --background: transparent !important;
   animation: walletTxAnimate;
   animation-duration: 300ms;
   animation-fill-mode: forwards;
@@ -272,6 +274,7 @@
 .wallet-warning-component {
   --min-height: 302px;
   --width: 100%;
+  --background: transparent !important;
 
   animation: walletWarningAnimate;
   animation-duration: 300ms;
@@ -351,6 +354,7 @@
 .contacts-warning-component {
   --min-height: 302px;
   --width: 100%;
+  --background: transparent !important;
 
   animation: contactsWarningAnimate;
   animation-duration: 300ms;
