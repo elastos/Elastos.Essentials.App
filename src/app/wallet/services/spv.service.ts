@@ -183,7 +183,6 @@ export class SPVService {
     public async maybeCreateStandardSPVWalletFromJSWallet(masterWallet: StandardMasterWallet): Promise<boolean> {
         // If we find an existing mapping in the SPV service, nothing to do
         let spvMasterId = SPVService.instance.getSPVMasterID(masterWallet.id);
-        console.log("checkSPVWalletState", masterWallet.id, spvMasterId)
         if (spvMasterId)
             return true; // Already initialized
 
@@ -195,9 +194,9 @@ export class SPVService {
 
         // No SPV wallet matching this JS wallet yet. Import one, in a different way depending on how the JS wallet
         // was imported
-        if (masterWallet.seed) {
+        if (masterWallet.getSeed()) {
             // Decrypt the seed
-            let decryptedSeed = AESDecrypt(masterWallet.seed, payPassword);
+            let decryptedSeed = AESDecrypt(masterWallet.getSeed(), payPassword);
 
             let elastosNetworkOptions = masterWallet.getNetworkOptions("elastos") as ElastosWalletNetworkOptions;
 
@@ -215,8 +214,18 @@ export class SPVService {
             await SPVService.instance.setMasterWalletIDMapping(masterWallet.id, spvWalletId);
         }
         else {
-            //TODO
-            console.log("SPV LAZY IMPORT BY PRIVATE KEY TODO");
+            // Decrypt the private key
+            let descryptedPrivateKey = AESDecrypt(masterWallet.getPrivateKey(), payPassword);
+
+            // Import the seed as new SPV SDK wallet
+            let spvWalletId = WalletHelper.createSPVMasterWalletId();
+            await SPVService.instance.createMasterWalletWithPrivKey(
+                spvWalletId,
+                descryptedPrivateKey,
+                payPassword);
+
+            // Save the JS<->SPV wallet id mapping
+            await SPVService.instance.setMasterWalletIDMapping(masterWallet.id, spvWalletId);
         }
 
         return true;

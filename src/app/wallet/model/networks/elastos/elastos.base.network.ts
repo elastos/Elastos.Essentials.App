@@ -5,7 +5,7 @@ import { BridgeProvider } from "../../earn/bridgeprovider";
 import { EarnProvider } from "../../earn/earnprovider";
 import { SwapProvider } from "../../earn/swapprovider";
 import { ERC1155Provider } from "../../nfts/erc1155.provider";
-import { ElastosWalletNetworkOptions, WalletNetworkOptions, WalletType } from "../../wallet.types";
+import { ElastosWalletNetworkOptions, PrivateKeyType, WalletNetworkOptions, WalletType } from "../../wallet.types";
 import { ElastosERC20SubWallet } from "../../wallets/elastos/elastos.erc20.subwallet";
 import { ElastosIdentityChainStandardNetworkWallet } from "../../wallets/elastos/standard/networkwallets/identitychain.networkwallet";
 import { ElastosMainChainStandardNetworkWallet } from "../../wallets/elastos/standard/networkwallets/mainchain.networkwallet";
@@ -120,6 +120,14 @@ export abstract class ElastosSmartChainNetworkBase extends ElastosNetworkBase<Wa
     return {
       network: this.key
     }
+  }
+
+  public supportedPrivateKeyTypes(): PrivateKeyType[] {
+    // None by default. If this method is not overriden by the network, 
+    // the network can't handle any import by private key
+    return [
+      PrivateKeyType.EVM
+    ];
   }
 }
 

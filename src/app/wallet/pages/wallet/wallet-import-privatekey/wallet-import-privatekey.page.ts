@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/wallet/config/Config';
+import { PrivateKeyType } from 'src/app/wallet/model/wallet.types';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
@@ -114,10 +115,11 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
       this.privatekey = this.privatekey.substring(2);
     }
 
-    await this.walletManager.importWalletWithPrivateKey(
+    await this.walletManager.newWalletWithPrivateKey(
       this.masterWalletId,
       this.walletCreateService.name,
       this.privatekey,
+      PrivateKeyType.EVM, // TODO: Support other private key formats later
       payPassword,
     );
 

@@ -1,8 +1,9 @@
 import { Logger } from 'src/app/logger';
 import { WalletNetworkService } from '../../services/network.service';
+import { SafeService, StandardWalletSafe } from '../../services/safe.service';
 import { LocalStorage } from '../../services/storage.service';
 import { AnyNetwork } from '../networks/network';
-import { PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from '../wallet.types';
+import { SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from '../wallet.types';
 
 export type WalletID = string;
 
@@ -139,8 +140,8 @@ export abstract class MasterWallet {
 
     /**
      * Returns the configured wallet options for this network. Those options have been proposed and chosen
-     * to users during wallet creation. 
-     * 
+     * to users during wallet creation.
+     *
      * NOTE:
      * - In case no network options are found (eg: network added after wallet creation), default options are returned
      * - In any case, default options are merged with persistent options in order to make sure we also get new options fields (forward compatibility)
@@ -217,11 +218,6 @@ export abstract class MasterWallet {
 export class StandardMasterWallet extends MasterWallet {
     public hasPassphrase?: boolean;
 
-    public seed?: string;
-    public mnemonic?: string;
-    public privateKey?: string;
-    public privateKeyType?: PrivateKeyType;
-
     public static newFromSerializedWallet(serialized: SerializedStandardMasterWallet): StandardMasterWallet {
         let masterWallet = new StandardMasterWallet();
 
@@ -235,10 +231,13 @@ export class StandardMasterWallet extends MasterWallet {
         super.deserialize(serialized);
 
         this.hasPassphrase = serialized.hasPassphrase;
-        this.seed = serialized.seed;
-        this.mnemonic = serialized.mnemonic;
-        this.privateKey = serialized.privateKey;
-        this.privateKeyType = serialized.privateKeyType;
+
+        // Save sensitive information to the safe
+        let safe = this.getSafe();
+        safe.seed = serialized.seed;
+        safe.mnemonic = serialized.mnemonic;
+        safe.privateKey = serialized.privateKey;
+        safe.privateKeyType = serialized.privateKeyType;
     }
 
     public serialize(): SerializedStandardMasterWallet {
@@ -247,24 +246,40 @@ export class StandardMasterWallet extends MasterWallet {
         super._serialize(serialized as SerializedStandardMasterWallet);
 
         serialized.hasPassphrase = this.hasPassphrase;
-        serialized.mnemonic = this.mnemonic;
-        serialized.seed = this.seed;
-        serialized.privateKey = this.privateKey;
-        serialized.privateKeyType = this.privateKeyType;
+
+        let safe = this.getSafe();
+        serialized.mnemonic = safe.mnemonic;
+        serialized.seed = safe.seed;
+        serialized.privateKey = safe.privateKey;
+        serialized.privateKeyType = safe.privateKeyType;
 
         return serialized;
     }
 
     public hasMnemonicSupport(): boolean {
-        return !!this.mnemonic; // A mnemonic must be defined
+        return !!this.getSafe().mnemonic; // A mnemonic must be defined
     }
-
 
     public supportsNetwork(network: AnyNetwork): boolean {
         if (this.hasMnemonicSupport())
             return true; // If we have a mnemonic, we can run everywhere.
 
-        return network.supportedPrivateKeyTypes().indexOf(this.privateKeyType) >= 0;
+        return network.supportedPrivateKeyTypes().indexOf(this.getSafe().privateKeyType) >= 0;
     }
 
+    public getSeed(): string {
+        return this.getSafe().seed;
+    }
+
+    public getMnemonic(): string {
+        return this.getSafe().mnemonic;
+    }
+
+    public getPrivateKey(): string {
+        return this.getSafe().privateKey;
+    }
+
+    private getSafe(): StandardWalletSafe {
+        return SafeService.instance.getStandardWalletSafe(this.id);
+    }
 }

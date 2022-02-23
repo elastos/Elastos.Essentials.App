@@ -21,6 +21,10 @@ const findEVMSubWalletId = async (spvBridge: SPVService, spvWalletId: string): P
   return null;
 }
 
+const seedExists = (seed: string): boolean => {
+  return !!seed && seed !== '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+}
+
 /**
  * STEP 1:
  * - Keep using the SPVSDK for everything.
@@ -60,7 +64,10 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
       let seed = await spvService.exportWalletWithSeed(spvWalletId, payPassword);
 
       let privateKey: string = null;
-      if (!seed) {
+      if (!seedExists(seed)) {
+        // Reset the strange 00000 seed to null to not save anything
+        seed = null;
+
         // No seed - try to gt the private key
         let subWalletId = await findEVMSubWalletId(spvService, spvWalletId);
         if (subWalletId)

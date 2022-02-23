@@ -48,6 +48,7 @@ import { ERC721Service } from './evm/erc721.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
 import { PopupProvider } from './popup.service';
+import { SafeService } from './safe.service';
 import { jsToSpvWalletId, SPVService } from './spv.service';
 import { LocalStorage } from './storage.service';
 
@@ -124,6 +125,7 @@ export class WalletService {
         private authService: AuthService,
         public popupProvider: PopupProvider,
         private prefs: GlobalPreferencesService,
+        private safeService: SafeService, // Keep this - init
         private networkService: WalletNetworkService,
         private globalNetworksService: GlobalNetworksService,
         private didSessions: GlobalDIDSessionsService,
@@ -551,7 +553,7 @@ export class WalletService {
         mnemonicStr: string,
         mnemonicPassphrase: string,
         payPassword: string,
-        singleAddress: boolean,
+        singleAddress: boolean, // TODO: remove, replaced with elastos network options
         // TODO networkOptions: WalletNetworkOptions[] // elastos -> single address
         walletCreator: WalletCreator
     ) {
@@ -586,33 +588,27 @@ export class WalletService {
     }
 
     /**
-     * Creates a new master wallet both in the SPV SDK and in our local model, using a given private key.
-     * Only support EVM private key.
-     *
-     * @deprecated SPVSDK-style
+     * Creates a new standard master wallet using a given private key.
+     * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    public async importWalletWithPrivateKey(
-        masterId: WalletID,
+    public async newWalletWithPrivateKey(
+        walletId: WalletID,
         walletName: string,
-        privKey: string,
+        privateKey: string,
+        privateKeyType: PrivateKeyType,
+        // TODO networkOptions: WalletNetworkOptions[] // elastos -> single address
         payPassword: string
     ) {
         Logger.log('wallet', "Importing new master wallet with priv key");
 
-        await this.spvBridge.createMasterWalletWithPrivKey(
-            jsToSpvWalletId(masterId),
-            privKey,
-            payPassword,
-        );
-
         let masterWalletInfo: SerializedStandardMasterWallet = {
             type: WalletType.STANDARD,
-            id: masterId,
-            privateKey: AESEncrypt(privKey, payPassword),
-            privateKeyType: PrivateKeyType.EVM, // TODO: only EVM pkey supported for now
+            id: walletId,
             name: walletName,
             theme: defaultWalletTheme(),
-            networkOptions: [],
+            privateKey: AESEncrypt(privateKey, payPassword),
+            privateKeyType,
+            networkOptions: [], // TODO: get options from UI params
             creator: WalletCreator.USER
         }
 
