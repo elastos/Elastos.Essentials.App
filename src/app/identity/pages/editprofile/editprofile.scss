@@ -1,5 +1,6 @@
 @import "src/app/identity/root.scss";
 
+
 .container {
   .header-row {
     .avatar-col {
@@ -7,7 +8,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-  
+
       .avatar {
         width: 215.1px;
         height: 214.6px;
@@ -19,7 +20,7 @@
         background-image: url("/assets/identity/svg/empty-balloon.svg");
         background-blend-mode: multiply;
         padding: 35px;
-    
+
         ion-icon {
           display: block;
           margin: auto;
@@ -37,7 +38,7 @@
           height: 100%;
         }
       }
-  
+
       span {
         font-size: 13px;
         font-weight: 500;
@@ -77,12 +78,12 @@
           object-fit: contain;
         }
       }
-  
+
       .subject-col {
         display: flex;
         justify-content: flex-start;
         align-items: center;
-      
+
         ion-label, span {
           font-size: 13px;
           font-weight: 600;
@@ -90,17 +91,17 @@
           text-align: left;
           --color: #121212;
         }
-      
+
         .avatar-label {
           line-height: 3.24;
         }
       }
-  
+
       .edit-col {
         display: flex;
         justify-content: flex-end;
         align-items: center;
-      
+
         ion-input,
         ion-label,
         ion-select,
@@ -114,11 +115,11 @@
           --padding-end: 5px;
           --padding-top: 3px;
         }
-      
+
         ion-input, ion-datetime {
           --padding-start: 0px;
         }
-      
+
         ion-select {
           width: 150px;
           position: relative;
@@ -138,7 +139,7 @@
       }
     }
   }
-  
+
   .btn-row {
     display: flex;
     justify-content: center;
@@ -177,7 +178,7 @@
           --color: #ffffff;
         }
       }
-    
+
       .edit-col {
         ion-label,
         ion-select,

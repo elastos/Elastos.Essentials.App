@@ -1,4 +1,5 @@
 import { Logger } from "src/app/logger";
+import { NetworkException } from "src/app/model/exceptions/network.exception";
 import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
 import { DIDNotUpToDateException } from "../model/exceptions/didnotuptodateexception";
 import { HiveInsufficientSpaceException } from "../model/exceptions/hiveinsufficientspaceexception";
@@ -35,6 +36,10 @@ export class DIDHelper {
 
         if (e.message.includes("not enough storage space")) {
             return new HiveInsufficientSpaceException();
+        }
+
+        if (e.message.includes("Network error")) {
+            return new NetworkException();
         }
       }
     }

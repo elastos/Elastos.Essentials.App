@@ -120,6 +120,7 @@ export const zh = {
         'available-options': '可用选项',
         'sync-did-profile': '同步身份',
         'did-sync-success': '身份同步成功',
+        'did-sync-error': '同步失败',
 
         /******************** Component Screens ********************/
         // component: qrcode

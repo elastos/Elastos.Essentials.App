@@ -163,11 +163,10 @@
                 <ion-text class="placeholder" *ngIf="!entry.value">{{ 'identity.select-date' | translate }}</ion-text>
                 <ion-text *ngIf="entry.value">{{ entry.value }}</ion-text>
 
-                <!-- See styles in global.scss -->
                 <ion-modal class="datetime-modal" trigger="open-datetime">
-                <ng-template>
+                  <ng-template>
                     <ion-content>
-                    <ion-datetime
+                      <ion-datetime
                         [locale]="datetime_locale"
                         [cancelText]="'common.cancel'|translate"
                         [doneText]="'common.confirm'|translate"
@@ -175,9 +174,9 @@
                         (ionChange)="formatBirthDay(entry)"
                         [presentation]="month-year"
                         [showDefaultButtons]="true"
-                    ></ion-datetime>
+                      ></ion-datetime>
                     </ion-content>
-                </ng-template>
+                  </ng-template>
                 </ion-modal>
               </ion-col>
             </ion-row>

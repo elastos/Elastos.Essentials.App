@@ -120,6 +120,7 @@ export const fr = {
         'available-options': 'Options disponibles',
         'sync-did-profile': 'Synchroniser l\'identité',
         'did-sync-success': 'Synchronisation de l\'identité réussie',
+        'did-sync-error': 'Synchronisation de l\'identité a échoué',
 
         /******************** Component Screens ********************/
         // component: qrcode
