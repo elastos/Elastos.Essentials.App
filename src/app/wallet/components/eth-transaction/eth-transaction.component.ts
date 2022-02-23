@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { ETHTransactionStatus } from '../../model/evm.types';
+import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import { ETHTransactionSpeedup, ETHTransactionStatusInfo, EVMService } from '../../services/evm/evm.service';
 
 

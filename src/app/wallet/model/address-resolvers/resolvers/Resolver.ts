@@ -1,4 +1,4 @@
-import { AnySubWallet } from '../../wallets/subwallet';
+import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { Address } from "../addresses/Address";
 
 export abstract class Resolver {

@@ -22,8 +22,8 @@
 
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
-import { WalletCreator } from '../model/wallet.types';
-import { ElastosMainChainStandardNetworkWallet } from '../model/wallets/elastos/standard/networkwallets/mainchain.networkwallet';
+import { WalletCreator } from '../model/masterwallets/wallet.types';
+import { ElastosMainChainStandardNetworkWallet } from '../model/networks/elastos/networkwallets/standard/mainchain.networkwallet';
 import { AuthService } from './auth.service';
 import { WalletNetworkService } from './network.service';
 import { WalletService } from './wallet.service';

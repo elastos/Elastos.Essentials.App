@@ -10,8 +10,8 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import Web3 from 'web3';
 import { JsonRpcPayload, JsonRpcResponse } from "web3-core-helpers";
 import { StandardCoinName } from '../../model/coin';
-import { ElastosEVMSubWallet } from '../../model/wallets/elastos/standard/subwallets/elastos.evm.subwallet';
-import { AnyNetworkWallet } from '../../model/wallets/networkwallet';
+import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
+import { ElastosEVMSubWallet } from '../../model/networks/elastos/subwallets/elastos.evm.subwallet';
 import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
 import { Native } from '../../services/native.service';
 import { jsToSpvWalletId } from '../../services/spv.service';

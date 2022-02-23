@@ -21,7 +21,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { PrivateKeyType } from '../model/wallet.types';
+import { PrivateKeyType } from '../model/masterwallets/wallet.types';
 
 export type StandardWalletSafe = {
     seed?: string;

@@ -7,11 +7,11 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
 import { Coin, CoinType } from '../../../../model/coin';
-import { MasterWallet } from '../../../../model/wallets/masterwallet';
+import { MasterWallet } from '../../../../model/masterwallets/masterwallet';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';

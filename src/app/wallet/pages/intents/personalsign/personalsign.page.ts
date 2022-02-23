@@ -29,9 +29,9 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { WalletType } from 'src/app/wallet/model/wallet.types';
-import { AnyStandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
-import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AnyStandardEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';

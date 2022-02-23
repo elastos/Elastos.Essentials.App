@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { WalletCreator } from 'src/app/wallet/model/wallet.types';
+import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -73,7 +73,6 @@ export class WalletImportPage implements OnInit {
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('wallet.import-wallet'));
     }
-
 
     /*    goToNextInput(event, nextInput?: any) {
            Logger.log('wallet', 'Input key code', event);

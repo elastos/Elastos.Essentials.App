@@ -23,9 +23,9 @@
 import { Injectable } from '@angular/core';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { BridgeProvider } from '../../model/earn/bridgeprovider';
+import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
+import { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
 import { AnyNetwork } from '../../model/networks/network';
-import { ERC20SubWallet } from '../../model/wallets/erc20.subwallet';
-import { AnySubWallet } from '../../model/wallets/subwallet';
 import { WalletNetworkService } from '../network.service';
 
 /**

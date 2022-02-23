@@ -7,12 +7,12 @@ import { Coin, CoinID, CoinType, ERC20Coin } from "../coin";
 import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
 import { SwapProvider } from "../earn/swapprovider";
-import { ERC1155Provider } from "../nfts/erc1155.provider";
-import { PrivateKeyType, WalletNetworkOptions } from "../wallet.types";
-import { ERC20SubWallet } from "../wallets/erc20.subwallet";
-import { MasterWallet } from "../wallets/masterwallet";
-import { AnyNetworkWallet } from "../wallets/networkwallet";
-import { UniswapCurrencyProvider } from "./uniswap.currencyprovider";
+import { MasterWallet } from "../masterwallets/masterwallet";
+import { PrivateKeyType, WalletNetworkOptions } from "../masterwallets/wallet.types";
+import { AnyNetworkWallet } from "./base/networkwallets/networkwallet";
+import { ERC1155Provider } from "./evms/nfts/erc1155.provider";
+import { ERC20SubWallet } from "./evms/subwallets/erc20.subwallet";
+import { UniswapCurrencyProvider } from "./evms/uniswap.currencyprovider";
 
 export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOptions> {
   private availableCoins: Coin[] = null;

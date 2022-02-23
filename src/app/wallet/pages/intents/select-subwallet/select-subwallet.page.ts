@@ -6,7 +6,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from '../../../model/coin';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
+import { MasterWallet } from '../../../model/masterwallets/masterwallet';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';

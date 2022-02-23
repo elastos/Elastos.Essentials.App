@@ -23,8 +23,8 @@
 import { Injectable } from '@angular/core';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { EarnProvider } from '../../model/earn/earnprovider';
-import { ERC20SubWallet } from '../../model/wallets/erc20.subwallet';
-import { AnySubWallet } from '../../model/wallets/subwallet';
+import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
+import { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
 
 /**
  * Service responsible for managing staking/earn features.

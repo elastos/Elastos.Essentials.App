@@ -1,6 +1,6 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../coin";
-import { UniswapCurrencyProvider } from "../../uniswap.currencyprovider";
+import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
 
 export class ArbitrumMainnetUniswapCurrencyProvider extends UniswapCurrencyProvider {
   private referenceUSDCoin = new ERC20Coin("USDT", "USDT", "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9", 6, MAINNET_TEMPLATE, false, true);

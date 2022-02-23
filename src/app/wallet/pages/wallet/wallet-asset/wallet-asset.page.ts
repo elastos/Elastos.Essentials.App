@@ -28,10 +28,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { DefiService, StakingData } from 'src/app/wallet/services/evm/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { AnySubWallet } from '../../../model/wallets/subwallet';
+import { AnySubWallet } from '../../../model/networks/base/subwallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';

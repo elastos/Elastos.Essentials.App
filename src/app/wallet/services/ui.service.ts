@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import * as moment from 'moment';
+import { AnySubWallet } from '../model/networks/base/subwallets/subwallet';
 import { WalletSortType } from '../model/walletaccount';
-import { AnySubWallet } from '../model/wallets/subwallet';
 import { LocalStorage } from './storage.service';
 
 @Injectable({
@@ -95,7 +95,7 @@ export class UiService {
   public async loadSortType() {
     this.walletSortType = await this.storage.get('walletsorttype');
     if (!this.walletSortType) {
-        this.walletSortType = WalletSortType.NAME;
+      this.walletSortType = WalletSortType.NAME;
     }
   }
 
@@ -104,7 +104,7 @@ export class UiService {
   }
 
   public async setWalletSortTtype(sortType: WalletSortType) {
-      await this.storage.set('walletsorttype', sortType);
-      this.walletSortType = sortType;
+    await this.storage.set('walletsorttype', sortType);
+    this.walletSortType = sortType;
   }
 }

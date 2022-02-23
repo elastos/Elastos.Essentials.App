@@ -7,7 +7,7 @@ import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProp
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
 import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model';
 import { StandardCoinName } from '../wallet/model/coin';
-import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/evm.types';
+import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/networks/evms/evm.types';
 import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/tx-providers/transaction.types';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';

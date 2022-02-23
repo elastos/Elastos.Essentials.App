@@ -28,10 +28,10 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { WalletType } from 'src/app/wallet/model/wallet.types';
-import { EidSubWallet } from 'src/app/wallet/model/wallets/elastos/standard/subwallets/eid.evm.subwallet';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/standard/subwallets/elastos.evm.subwallet';
-import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { EidSubWallet } from 'src/app/wallet/model/networks/elastos/subwallets/eid.evm.subwallet';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/subwallets/elastos.evm.subwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';

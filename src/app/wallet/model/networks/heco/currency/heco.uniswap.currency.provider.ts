@@ -1,6 +1,6 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../coin";
-import { UniswapCurrencyProvider } from "../../uniswap.currencyprovider";
+import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
 
 export class HecoMainnetUniswapCurrencyProvider extends UniswapCurrencyProvider {
   private referenceUSDCoin = new ERC20Coin("USDT", "USDT", "0xa71edc38d189767582c38a3145b5873052c3e47a", 18, MAINNET_TEMPLATE, false, true);

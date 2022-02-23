@@ -1,5 +1,5 @@
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { EVMNetwork } from "../evm.network";
+import { EVMNetwork } from "../evms/evm.network";
 import { FantomAPI, FantomApiType } from "./fantom.api";
 
 export class FantomTestNetNetwork extends EVMNetwork {

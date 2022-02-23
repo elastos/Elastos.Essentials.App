@@ -1,6 +1,6 @@
-import { TransactionListType } from "../evm.types";
+import { AnySubWallet } from "../networks/base/subwallets/subwallet";
+import { TransactionListType } from "../networks/evms/evm.types";
 import { TimeBasedPersistentCache } from "../timebasedpersistentcache";
-import { AnySubWallet } from "../wallets/subwallet";
 import { ProviderTransactionInfo } from "./providertransactioninfo";
 import { TransactionProvider } from "./transaction.provider";
 import { GenericTransaction } from "./transaction.types";

@@ -7,10 +7,10 @@ import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
 import Web3 from 'web3';
 import { ETHTransactionComponent } from '../../components/eth-transaction/eth-transaction.component';
-import { ETHTransactionStatus } from '../../model/evm.types';
+import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
+import { StandardEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../model/networks/network';
 import { RawTransactionPublishResult } from '../../model/tx-providers/transaction.types';
-import { StandardEVMSubWallet } from '../../model/wallets/evm.subwallet';
 import { Transfer } from '../cointransfer.service';
 import { PopupProvider } from '../popup.service';
 

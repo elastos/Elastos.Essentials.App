@@ -26,9 +26,9 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { WalletType } from 'src/app/wallet/model/wallet.types';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
-import { MainChainSubWallet } from '../../../model/wallets/elastos/standard/subwallets/mainchain.subwallet';
+import { MainChainSubWallet } from '../../../model/networks/elastos/subwallets/mainchain.subwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';

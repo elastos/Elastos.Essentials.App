@@ -29,9 +29,9 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SwapProvider } from '../../model/earn/swapprovider';
+import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
+import { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
 import { AnyNetwork } from '../../model/networks/network';
-import { ERC20SubWallet } from '../../model/wallets/erc20.subwallet';
-import { AnySubWallet } from '../../model/wallets/subwallet';
 import { WalletNetworkService } from '../network.service';
 
 type TokenListCacheEntry = {

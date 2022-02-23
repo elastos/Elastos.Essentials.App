@@ -21,7 +21,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { WalletID } from '../model/wallets/masterwallet';
+import { WalletID } from '../model/masterwallets/masterwallet';
 
 export class Transfer {
     masterWalletId: WalletID = null;

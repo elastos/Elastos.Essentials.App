@@ -3,7 +3,7 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { reducedWalletAddress } from 'src/app/helpers/wallet.helper';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { WalletAddressInfo } from 'src/app/wallet/model/wallets/networkwallet';
+import { WalletAddressInfo } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { GlobalThemeService } from '../../../services/global.theme.service';
 
 export type WalletAddressChooseComponentOptions = {

@@ -25,8 +25,8 @@ import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import Web3 from 'web3';
-import { NFTAsset } from '../../model/nfts/nftasset';
-import { NFTResolvedInfo } from '../../model/nfts/resolvedinfo';
+import { NFTAsset } from '../../model/networks/evms/nfts/nftasset';
+import { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
 import { WalletNetworkService } from '../network.service';
 import { WalletPrefsService } from '../pref.service';
 

@@ -6,8 +6,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/wallets/elastos/standard/networkwallets/mainchain.networkwallet';
-import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/networkwallets/standard/mainchain.networkwallet';
 import { StandardCoinName } from '../../../../model/coin';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';

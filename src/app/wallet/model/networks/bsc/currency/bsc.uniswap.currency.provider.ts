@@ -1,6 +1,6 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../coin";
-import { UniswapCurrencyProvider } from "../../uniswap.currencyprovider";
+import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
 
 /* 
     const REALM = new Token(chainId, '0x464fdb8affc9bac185a7393fd4298137866dcfb8', 18, 'REALM', 'REALM')

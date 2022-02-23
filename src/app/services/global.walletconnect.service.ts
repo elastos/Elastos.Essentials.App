@@ -6,7 +6,7 @@ import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
-import { AnyNetworkWallet } from '../wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from '../wallet/model/networks/base/networkwallets/networkwallet';
 import { EthSignIntentResult } from '../wallet/pages/intents/ethsign/ethsign.page';
 import { PersonalSignIntentResult } from '../wallet/pages/intents/personalsign/personalsign.page';
 import { SignTypedDataIntentResult } from '../wallet/pages/intents/signtypeddata/signtypeddata.page';

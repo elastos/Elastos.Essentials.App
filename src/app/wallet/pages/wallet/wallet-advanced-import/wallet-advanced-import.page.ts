@@ -5,7 +5,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
-import { WalletCreator } from 'src/app/wallet/model/wallet.types';
+import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';

@@ -1,6 +1,6 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../coin";
-import { UniswapCurrencyProvider } from "../../uniswap.currencyprovider";
+import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
 
 export class ElastosMainnetUniswapCurrencyProvider extends UniswapCurrencyProvider {
   private referenceUSDCoin = new ERC20Coin("USDC", "USD Coin on Elastos", "0xa06be0f5950781ce28d965e5efc6996e88a8c141", 6, MAINNET_TEMPLATE, false, true);

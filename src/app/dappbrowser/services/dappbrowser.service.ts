@@ -17,8 +17,8 @@ import { GlobalService, GlobalServiceManager } from 'src/app/services/global.ser
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
-import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { EthSignIntentResult } from 'src/app/wallet/pages/intents/ethsign/ethsign.page';
 import { PersonalSignIntentResult } from 'src/app/wallet/pages/intents/personalsign/personalsign.page';
 import { SignTypedDataIntentResult } from 'src/app/wallet/pages/intents/signtypeddata/signtypeddata.page';

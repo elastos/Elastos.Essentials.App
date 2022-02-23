@@ -136,16 +136,6 @@ export enum RawTransactionType {
   RevertToDPOS = 0x42
 }
 
-/**
- * Raw list of transactions as received from the SPVSDK.
- */
-/* export type AllTransactions = {
-    MaxCount: number,
-    Transactions: EthTransaction[] // TODO: ETH transactions? So this Alltransactions type is for ETH only? Rename and move to EVM types?
-}; */
-
-// ****************************************
-
 // Base transaction type for all networks, all chains
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type GenericTransaction = {

@@ -1,5 +1,5 @@
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { EVMNetwork } from "../evm.network";
+import { EVMNetwork } from "../evms/evm.network";
 import { EthereumAPI, EthereumAPIType } from "./ethereum.api";
 
 // https://rpc.info/#ethereum-rpc

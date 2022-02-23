@@ -24,7 +24,7 @@ import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { ERC20Coin } from '../../model/coin';
-import { EVMNetwork } from '../../model/networks/evm.network';
+import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { AnyNetwork } from '../../model/networks/network';
 import { WalletNetworkService } from '../network.service';
 import { WalletPrefsService } from '../pref.service';

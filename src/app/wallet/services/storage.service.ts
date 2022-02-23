@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { SerializedMasterWallet } from '../model/wallet.types';
-import { WalletID } from '../model/wallets/masterwallet';
-import { ExtendedNetworkWalletInfo } from '../model/wallets/networkwallet';
+import { WalletID } from '../model/masterwallets/masterwallet';
+import { SerializedMasterWallet } from '../model/masterwallets/wallet.types';
+import { ExtendedNetworkWalletInfo } from '../model/networks/base/networkwallets/networkwallet';
 import { Contact } from './contacts.service';
 
 

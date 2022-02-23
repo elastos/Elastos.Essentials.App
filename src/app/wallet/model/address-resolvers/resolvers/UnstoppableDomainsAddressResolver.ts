@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import Resolution from '@unstoppabledomains/resolution';
 import { Logger } from "src/app/logger";
+import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { BSCMainNetNetwork } from '../../networks/bsc/bsc.mainnet.network';
-import { ElastosMainChainMainNetNetwork, ElastosSmartChainMainNetNetwork } from '../../networks/elastos/elastos.mainnet.network';
+import { ElastosMainChainMainNetNetwork, ElastosSmartChainMainNetNetwork } from '../../networks/elastos/network/elastos.mainnet.network';
+import { EscSubWallet } from '../../networks/elastos/subwallets/esc.evm.subwallet';
+import { MainChainSubWallet } from '../../networks/elastos/subwallets/mainchain.subwallet';
 import { EthereumMainNetNetwork } from '../../networks/ethereum/ethereum.mainnet.network';
 import { FantomMainNetNetwork } from '../../networks/fantom/fantom.mainnet.network';
 import { HECOMainNetNetwork } from '../../networks/heco/heco.mainnet.network';
-import { EscSubWallet } from '../../wallets/elastos/standard/subwallets/esc.evm.subwallet';
-import { MainChainSubWallet } from '../../wallets/elastos/standard/subwallets/mainchain.subwallet';
-import { AnySubWallet } from '../../wallets/subwallet';
 import { Address } from '../addresses/Address';
 import { UnstoppableDomainsAddress } from '../addresses/UnstoppableDomainsAddress';
 import { Resolver } from "./Resolver";

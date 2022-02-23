@@ -27,7 +27,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { AnyNetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { WalletAccount, WalletAccountType } from '../../../model/walletaccount';
 import { AuthService } from '../../../services/auth.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';

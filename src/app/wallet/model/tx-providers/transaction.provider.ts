@@ -5,10 +5,10 @@ import { GlobalLanguageService } from "src/app/services/global.language.service"
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
 import { ERC20Coin, StandardCoinName, TokenAddress } from "../coin";
-import { ERCTokenInfo, TransactionListType } from "../evm.types";
-import { NFTType } from "../nfts/nft";
-import { AnyNetworkWallet } from "../wallets/networkwallet";
-import { AnySubWallet, SubWallet } from "../wallets/subwallet";
+import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
+import { AnySubWallet, SubWallet } from "../networks/base/subwallets/subwallet";
+import { ERCTokenInfo, TransactionListType } from "../networks/evms/evm.types";
+import { NFTType } from "../networks/evms/nfts/nft";
 import { AnySubWalletTransactionProvider } from "./subwallet.provider";
 import { GenericTransaction } from "./transaction.types";
 

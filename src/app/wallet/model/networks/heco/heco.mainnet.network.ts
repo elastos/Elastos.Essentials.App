@@ -1,7 +1,7 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
-import { EVMNetwork } from "../evm.network";
-import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
+import { EVMNetwork } from "../evms/evm.network";
+import { UniswapCurrencyProvider } from "../evms/uniswap.currencyprovider";
 import { HecoMainnetUniswapCurrencyProvider } from "./currency/heco.uniswap.currency.provider";
 import { hecoMainnetElkBridgeProvider, hecoMainnetGlideBridgeProvider, hecoMainnetO3BridgeProvider, hecoMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { hecoMainnetChannelsEarnProvider, hecoMainnetElkEarnProvider, hecoMainnetFildaEarnProvider } from "./earn/earn.providers";

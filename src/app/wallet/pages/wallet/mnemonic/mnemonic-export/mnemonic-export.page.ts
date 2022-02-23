@@ -8,7 +8,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { StandardMasterWallet } from 'src/app/wallet/model/wallets/masterwallet';
+import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { AuthService } from '../../../../services/auth.service';
 import { IntentTransfer } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
