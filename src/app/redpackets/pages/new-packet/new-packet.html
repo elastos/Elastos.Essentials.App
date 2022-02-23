@@ -66,9 +66,6 @@
           <div class="form-flex-col-label-name">
             {{ 'redpackets.token' | translate }}
           </div>
-          <div class="form-flex-col-label-helper">
-            {{ 'redpackets.token-hint' | translate }}
-          </div>
         </div>
 
         <div class="select-essentials" (click)="pickToken()">
@@ -80,18 +77,24 @@
             <img src="assets/redpackets/images/select_icon.svg" alt="Select icon">
           </div>
         </div>
+
+        <div class="form-hint">
+          {{ 'redpackets.token-hint' | translate }}
+        </div>
       </ion-row>
 
-      <ion-row class="form-flex-col">
-        <div class="form-flex-col-label">
-          <div class="form-flex-col-label-name">
+      <ion-row class="form-flex-row">
+        <div class="form-flex-row-label">
+          <div class="form-flex-row-label-name">
             {{ 'redpackets.quantity' | translate }}
           </div>
-          <div class="form-flex-col-label-helper">
-            {{ 'redpackets.quantity-hint' | translate }}
-          </div>
         </div>
-        <ion-input [(ngModel)]="packets" type="number" placeholder="20" required></ion-input>
+        <div class="form-flex-row-input">
+            <ion-input [(ngModel)]="packets" type="number" placeholder="20" required class="right"></ion-input>
+        </div>
+        <div class=" form-hint">
+          {{ 'redpackets.quantity-hint' | translate }}
+        </div>
       </ion-row>
 
       <ion-row class="form-flex-row">
@@ -99,14 +102,14 @@
           <div class="form-flex-row-label-name">
             {{ 'redpackets.amount' | translate }}
           </div>
-          <div class="form-flex-row-label-helper">
-            {{ 'redpackets.amount-hint' | translate }}
-          </div>
         </div>
         <div class="form-flex-row-input">
           <ion-input [(ngModel)]="tokenAmount" type="number" placeholder="10" required>
             <span class="after-input">{{ tokenSubwallet.getDisplayTokenName() }}</span>
           </ion-input>
+        </div>
+        <div class="form-flex-row-hint form-hint">
+          {{ 'redpackets.amount-hint' | translate }}
         </div>
       </ion-row>
 
@@ -127,9 +130,6 @@
           <div class="form-flex-col-label-name">
             {{ 'redpackets.distribution' | translate }}
           </div>
-          <div class="form-flex-col-label-helper">
-            {{ 'redpackets.distribution-hint' | translate }}
-          </div>
         </div>
         <div class="form-flex-col-input">
           <ion-select [(ngModel)]="distributionType" [placeholder]="'identity.select-one'|translate"
@@ -146,15 +146,16 @@
         <div class="additional-input-infos" *ngIf="distributionType === 'random'">
           {{ 'redpackets.distribution-random-info' | translate : { token: tokenSubwallet.getDisplayTokenName() } }}
         </div>
+        <div class="form-hint">
+          {{ 'redpackets.distribution-hint' | translate }}
+        </div>
+
       </ion-row>
 
-      <ion-row class="form-flex-col">
-        <div class="form-flex-col-label">
-          <div class="form-flex-col-label-name">
+      <ion-row class="form-flex-row">
+        <div class="form-flex-row-label">
+          <div class="form-flex-row-label-name">
             {{ 'redpackets.probability' | translate }}
-          </div>
-          <div class="form-flex-col-label-helper">
-            {{ 'redpackets.probability-hint' | translate }}
           </div>
         </div>
         <div class="form-flex-row-input">
@@ -164,15 +165,16 @@
             </ion-input>
           </span>
         </div>
+
+        <div class="form-hint">
+          {{ 'redpackets.probability-hint' | translate }}
+        </div>
       </ion-row>
 
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
           <div class="form-flex-col-label-name">
             {{ 'redpackets.visibility' | translate }}
-          </div>
-          <div class="form-flex-col-label-helper">
-            {{ 'redpackets.visibility-hint' | translate }}
           </div>
         </div>
         <div class="form-flex-col-input">
@@ -183,6 +185,9 @@
             <ion-select-option value="public">{{ 'redpackets.visibility-public' | translate }}</ion-select-option>
           </ion-select>
         </div>
+        <div class="form-hint">
+          {{ 'redpackets.visibility-hint' | translate }}
+        </div>
       </ion-row>
 
       <ion-row class="form-flex-row">
@@ -190,14 +195,15 @@
           <div class="form-flex-row-label-name">
             {{ 'redpackets.duration' | translate }}
           </div>
-          <div class="form-flex-row-label-helper">
-            {{ 'redpackets.duration-hint' | translate }}
-          </div>
         </div>
         <div class="form-flex-row-input">
           <ion-input [(ngModel)]="expirationDays" type="number" placeholder="7" required>
             <span class="after-input">{{ 'redpackets.expiration-days' | translate }}</span>
           </ion-input>
+        </div>
+
+        <div class="form-flex-row-label-helper">
+          {{ 'redpackets.duration-hint' | translate }}
         </div>
       </ion-row>
 

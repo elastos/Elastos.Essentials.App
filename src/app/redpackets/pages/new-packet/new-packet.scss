@@ -41,6 +41,12 @@
     }
   }
 
+  .form-hint {
+    font-weight: 500;
+    font-size: 11px;
+    color: #C9C9C9;
+  }
+
   ion-input,
   ion-select,
   ion-textarea {
@@ -56,6 +62,10 @@
     .after-input {
       position: absolute;
       right: 5px;
+    }
+
+    &.right {
+      text-align: right;
     }
   }
 
@@ -105,8 +115,11 @@
     color: #c9c9c9;
   }
 
+  .form-flex-col-input {
+
+  }
+
   .additional-input-infos {
-    height: 30px;
     margin-bottom: 5px;
     font-size: 10px;
   }
