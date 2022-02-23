@@ -2,6 +2,7 @@ import { Logger } from 'src/app/logger';
 import { WalletNetworkService } from '../../services/network.service';
 import { SafeService, StandardWalletSafe } from '../../services/safe.service';
 import { LocalStorage } from '../../services/storage.service';
+import { AESDecrypt } from '../crypto';
 import { AnyNetwork } from '../networks/network';
 import { SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from '../wallet.types';
 
@@ -267,16 +268,37 @@ export class StandardMasterWallet extends MasterWallet {
         return network.supportedPrivateKeyTypes().indexOf(this.getSafe().privateKeyType) >= 0;
     }
 
-    public getSeed(): string {
-        return this.getSafe().seed;
+    /**
+     * Returns the encrypted seed by default, or the decoded one if the 
+     * wallet pay password is provided.
+     */
+    public getSeed(decryptedWithPayPassword?: string): string {
+        if (!decryptedWithPayPassword)
+            return this.getSafe().seed;
+        else
+            return AESDecrypt(this.getSafe().seed, decryptedWithPayPassword);
     }
 
-    public getMnemonic(): string {
-        return this.getSafe().mnemonic;
+    /**
+     * Returns the encrypted mnemonic by default, or the decoded one if the 
+     * wallet pay password is provided.
+     */
+    public getMnemonic(decryptedWithPayPassword?: string): string {
+        if (!decryptedWithPayPassword)
+            return this.getSafe().mnemonic;
+        else
+            return AESDecrypt(this.getSafe().mnemonic, decryptedWithPayPassword);
     }
 
-    public getPrivateKey(): string {
-        return this.getSafe().privateKey;
+    /**
+     * Returns the encrypted private key by default, or the decoded one if the 
+     * wallet pay password is provided.
+     */
+    public getPrivateKey(decryptedWithPayPassword?: string): string {
+        if (!decryptedWithPayPassword)
+            return this.getSafe().privateKey;
+        else
+            return AESDecrypt(this.getSafe().privateKey, decryptedWithPayPassword);
     }
 
     private getSafe(): StandardWalletSafe {
