@@ -130,6 +130,7 @@ export const zh = {
         'max-votes-suf': '票',
         'multi-sign-reject-voting': '多签钱包不能投票。',
         'greater-than-max-votes': '超过有效的票数。',
+        'less-than-equal-zero-votes': '小于或等于0票。',
         'voteforproposal-successfully': '投票成功，请等待交易确认。',
         'voteforproposal-failed': '投票失败，请重新投票。',
 

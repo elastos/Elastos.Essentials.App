@@ -31,6 +31,7 @@ export const zh = {
         'dismiss': '忽略',
         'vote-success': '投票成功！',
         'save-changes': '保存',
+        'max': '全部',
 
         // Navigation
         'settings': '设置',

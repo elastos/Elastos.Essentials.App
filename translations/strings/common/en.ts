@@ -30,6 +30,7 @@ export const en = {
         'dismiss': 'Dismiss',
         'vote-success': 'Votes successfully casted!',
         'save-changes': 'Save changes',
+        'max': 'MAX',
 
         // Navigation
         'settings': 'Settings',

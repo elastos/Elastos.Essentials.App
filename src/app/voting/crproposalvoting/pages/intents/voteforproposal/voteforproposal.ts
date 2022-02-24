@@ -121,7 +121,8 @@ export class VoteForProposalPage {
             await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.greater-than-max-votes');
             return false;
         }
-        else if (this.amount == 0) {
+        else if (this.amount <= 0) {
+            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.less-than-equal-zero-votes');
             return false;
         }
 

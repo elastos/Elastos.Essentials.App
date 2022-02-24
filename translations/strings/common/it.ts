@@ -30,6 +30,7 @@ export const it = {
         'dismiss': 'Ignora',
         'vote-success': 'Voti espressi con successo!',
         'save-changes': 'Salva modifiche',
+        'max': 'MAX',
 
         // Navigation
         'settings': 'Impostazioni',

@@ -129,6 +129,7 @@ export const fr = {
         'max-votes-suf': ' Votes',
         'multi-sign-reject-voting': 'Multi sign reject voting.',
         'greater-than-max-votes': 'Greater than avalible votes.',
+        'less-than-equal-zero-votes': 'Less than or equal to 0 votes.',
         'voteforproposal-successfully': 'Vote successfully, please wait for transaction confirmation.',
         'voteforproposal-failed': 'Failed to vote, please vote again.',
 

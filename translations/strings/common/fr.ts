@@ -30,6 +30,7 @@ export const fr = {
         'dismiss': 'Annuler',
         'vote-success': 'Votes sauvegardés!',
         'save-changes': 'Enregistrer',
+        'max': 'MAX',
 
         // Navigation
         'settings': 'Paramètres',
