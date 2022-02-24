@@ -240,7 +240,7 @@ export class SuggestionService {
         let payload = this.getPayloadCommon(data);
         payload = Object.assign(payload, {
             SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
-            SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
+            SecretaryGeneralDID: data.newSecretaryDID.replace("did:elastos:", ""),
             SecretaryGeneralSignature: data.secretarygenerasignature,
         });
 

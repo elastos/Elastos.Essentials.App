@@ -288,6 +288,7 @@ export class CROperationsService {
                     data.newRecipient = data.newrecipient || data.newRecipient;
                     data.newownerpublickey = data.newownerpublickey || data.newOwnerPublicKey;
                     data.newownersignature = data.newownersignature || data.newOwnerSignature;
+                    data.newSecretaryDID = data.newSecretaryDID || data.secretarygeneraldid;
                     data.secretarygeneralpublickey = data.secretarygeneralpublickey || data.newSecretaryPublicKey;
                     data.secretarygenerasignature = data.secretarygenerasignature || data.secretaryGeneralSignature;
                     break;
