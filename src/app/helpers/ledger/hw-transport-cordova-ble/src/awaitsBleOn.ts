@@ -1,26 +1,35 @@
 import { BluetoothRequired } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
+import { Logger } from "src/app/logger";
 import timer from "./timer";
-import type { BleManager } from "./types";
-export const awaitsBleOn = (bleManager: BleManager, ms = 3000): Promise<void> =>
+
+declare let ble: BLECentralPlugin.BLECentralPluginStatic;
+
+export const awaitsBleOn = (ms = 3000): Promise<void> =>
   new Promise((resolve, reject) => {
     let done = false;
     let lastState = "Unknown";
-    const stateSub = bleManager.onStateChange((state) => {
-      lastState = state;
-      log("ble-verbose", `ble state -> ${state}`);
 
-      if (state === "PoweredOn") {
-        if (done) return;
-        removeTimeout();
-        done = true;
-        stateSub.remove();
-        resolve();
-      }
-    }, true);
+    ble.startStateNotifications((state) => {
+        lastState = state;
+        Logger.warn('ledger', "StateNotifications Bluetooth is " + state)
+
+        if (state === "on") {
+            if (done) return;
+            removeTimeout();
+            done = true;
+            ble.stopStateNotifications();
+            resolve();
+          }
+    }, (error)=> {
+        reject(
+            new BluetoothRequired("", {
+              state: lastState,
+            })
+        );
+    });
     const removeTimeout = timer.timeout(() => {
       if (done) return;
-      stateSub.remove();
+      ble.stopStateNotifications();
       reject(
         new BluetoothRequired("", {
           state: lastState,
