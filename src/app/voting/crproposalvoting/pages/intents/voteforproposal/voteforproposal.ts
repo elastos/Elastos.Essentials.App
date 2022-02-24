@@ -1,4 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
@@ -35,6 +36,7 @@ export class VoteForProposalPage {
     public signingAndSendingProposalResponse = false;
     public maxVotes = 0;
     public amount = 0;
+    public isKeyboardHide = true;
 
     constructor(
         private crOperations: CROperationsService,
@@ -45,6 +47,8 @@ export class VoteForProposalPage {
         private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
+        public keyboard: Keyboard,
+        public zone: NgZone,
     ) {
 
     }
@@ -63,6 +67,18 @@ export class VoteForProposalPage {
         this.proposalDetailFetched = true;
 
         if (this.proposalDetail) {
+            this.keyboard.onKeyboardWillShow().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = false;
+                });
+            });
+
+            this.keyboard.onKeyboardWillHide().subscribe(() => {
+                this.zone.run(() => {
+                    this.isKeyboardHide = true;
+                });
+            });
+
             const stakeAmount = this.voteService.sourceSubwallet.getRawBalance().minus(this.votingFees());
             if (!stakeAmount.isNegative()) {
                 this.maxVotes = Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
@@ -79,12 +95,7 @@ export class VoteForProposalPage {
     }
 
     async voteAgainstProposal() {
-        if (await this.goTransaction()) {
-            await this.exitIntentWithSuccess();
-        }
-        else {
-            await this.exitIntentWithError();
-        }
+        await this.goTransaction();
     }
 
     private async exitIntentWithSuccess() {
@@ -161,6 +172,14 @@ export class VoteForProposalPage {
 
         this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
+    }
+
+    click0() {
+        this.amount = 0;
+    }
+
+    clickMax() {
+        this.amount = this.maxVotes;
     }
 
 }
