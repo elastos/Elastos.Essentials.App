@@ -4,8 +4,6 @@ import {
     getBluetoothServiceUuids,
     getInfosForServiceUuid
 } from "@ledgerhq/devices";
-// import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
-// import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
 import {
     CantOpenDevice, DisconnectedDeviceDuringOperation, TransportError
 } from "@ledgerhq/errors";
@@ -13,6 +11,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { defer, from, merge, Observable } from "rxjs";
 import { first, ignoreElements, map, share, tap } from "rxjs/operators";
 import { Logger } from "src/app/logger";
+import { receiveAPDU, sendAPDU } from "./apduhelper";
 import { awaitsBleOn } from "./awaitsBleOn";
 import { BLECentralPluginBridge } from "./BLECentralPluginBridge";
 import { Device } from "./device";
@@ -46,6 +45,8 @@ const retrieveInfos = (device) => {
   return infos;
 };
 
+
+
 type ReconnectionConfig = {
   pairingThreshold: number;
   delayAfterFirstPairing: number;
@@ -74,6 +75,7 @@ var stringToArrayBuffer = function (str) {
 var base64ToArrayBuffer = function (b64) {
     return stringToArrayBuffer(atob(b64));
 };
+
 
 async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   let device = null;
@@ -441,6 +443,8 @@ export default class BluetoothTransport extends Transport {
     Logger.log(TAG, "BleTransport new BluetoothTransport ", this);
   }
 
+
+
   /**
    * communicate with a BLE transport
    */
@@ -451,16 +455,15 @@ export default class BluetoothTransport extends Transport {
         const msgIn = apdu.toString("hex");
         Logger.log(TAG, "apdu", `=> ${msgIn}`);
 
-        // TODO
-        // const data = await merge(
-        //   this.notifyObservable.pipe(receiveAPDU),
-        //   sendAPDU(this.write, apdu, this.mtuSize)
-        // ).toPromise();
-        // const msgOut = (data as Buffer).toString("hex");
-        // Logger.log(TAG, "apdu", `<= ${msgOut}`);
-        // return data as Buffer;
+        const data = await merge(
+          this.notifyObservable.pipe(receiveAPDU),
+          sendAPDU(this.write, apdu, this.mtuSize)
+        ).toPromise();
+        const msgOut = (data as Buffer).toString("hex");
+        Logger.log(TAG, "apdu", `<= ${msgOut}`);
+        return data as Buffer;
       } catch (e: any) {
-        Logger.log(TAG, "ble-error", "exchange got ", e);
+        Logger.log(TAG, "exchange got error:", e);
 
         if (this.notYetDisconnected) {
           // in such case we will always disconnect because something is bad.
