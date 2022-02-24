@@ -142,7 +142,7 @@ export class SuggestionDetailPage {
             {
                 title: this.translate.instant('crproposalvoting.type'),
                 type: 'type',
-                value: this.suggestion.type,
+                value: this.suggestionService.getProposalTypeForChangeProposal(this.suggestion.type, this.suggestion),
                 active: true
             },
             {

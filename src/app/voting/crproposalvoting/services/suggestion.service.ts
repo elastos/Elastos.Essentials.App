@@ -90,6 +90,8 @@ export class SuggestionService {
                 }
                 detail.sid = suggestionId;
                 this.currentSuggestion = detail;
+                //TODO:: temp for api-3 result is newrecipient
+                detail.newRecipient = detail.newRecipient || detail.newrecipient;
                 return detail;
             }
             else {
@@ -221,7 +223,7 @@ export class SuggestionService {
         let payload = this.getPayloadCommon(data);
         payload = Object.assign(payload, {
             TargetProposalHash: data.targetproposalhash,
-            NewRecipient: data.newrecipient,
+            NewRecipient: data.newRecipient,
             NewOwnerPublicKey: data.newownerpublickey,
             NewOwnerSignature: data.newownersignature,
         });
@@ -304,5 +306,12 @@ export class SuggestionService {
             default:
                 throw new Error("Don't support this type: " + proposaltype);
         }
+    }
+
+    public getProposalTypeForChangeProposal(proposaltype: string, suggestionDetail: SuggestionDetail) {
+        if (proposaltype == "changeproposalowner" && suggestionDetail.newRecipient && !suggestionDetail.newOwnerDID) {
+            proposaltype = "changeproposaladdress";
+        }
+        return proposaltype
     }
 }

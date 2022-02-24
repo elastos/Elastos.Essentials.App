@@ -88,9 +88,7 @@ export class CreateSuggestionPage {
             }
 
             Logger.log(App.CRSUGGESTION, "suggestionDetail", this.suggestionDetail);
-            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
-                this.proposaltype = "changeproposaladdress";
-            }
+            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.proposaltype, this.suggestionDetail);
             this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
         }
     }
@@ -111,7 +109,7 @@ export class CreateSuggestionPage {
             // Create the suggestion/proposal digest - ask the SPVSDK to do this with a silent intent.
 
             //Get payload
-            let payload = this.suggestionService.getPayload(this.proposaltype, this.onGoingCommand.data, this.suggestionDetail);
+            let payload = this.suggestionService.getPayload(this.suggestionDetail.type, this.onGoingCommand.data, this.suggestionDetail);
             Logger.log(App.CRPROPOSAL_VOTING, 'get payload', payload);
 
             //Get digest
@@ -164,7 +162,7 @@ export class CreateSuggestionPage {
 
     private async getDigest(payload: string): Promise<any> {
         let digest: string;
-        switch (this.proposaltype) {
+        switch (this.suggestionDetail.type) {
             case "normal":
                 digest = await this.walletManager.spvBridge.proposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;

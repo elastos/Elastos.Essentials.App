@@ -88,9 +88,7 @@ export class CreateProposalPage {
                 }
             }
 
-            if (this.proposaltype == "changeproposalowner" && this.suggestionDetail.newRecipient && !this.suggestionDetail.newOwnerDID) {
-                this.proposaltype = "changeproposaladdress";
-            }
+            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.proposaltype, this.suggestionDetail);
             this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
         }
     }
@@ -104,7 +102,7 @@ export class CreateProposalPage {
     }
 
     private getPayload(): any {
-        let payload = this.suggestionService.getPayload(this.proposaltype, this.onGoingCommand.data, this.suggestionDetail);
+        let payload = this.suggestionService.getPayload(this.suggestionDetail.type, this.onGoingCommand.data, this.suggestionDetail);
         payload.Signature = this.onGoingCommand.data.signature;
         payload.CRCouncilMemberDID = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
         return payload;
@@ -112,7 +110,7 @@ export class CreateProposalPage {
 
     private async getDigest(payload: string): Promise<any> {
         let digest: string;
-        switch (this.proposaltype) {
+        switch (this.suggestionDetail.type) {
             case "normal":
                 digest = await this.walletManager.spvBridge.proposalCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;
@@ -138,13 +136,13 @@ export class CreateProposalPage {
                 digest = await this.walletManager.spvBridge.registerSidechainCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
                 break;
             default:
-                throw new Error("Don't support this type: " + this.proposaltype);
+                throw new Error("Don't support this type: " + this.suggestionDetail.type);
         }
         return Util.reverseHexToBE(digest);
     }
 
     private async creatTransactionFunction(payload: string, memo: string): Promise<string> {
-        switch (this.proposaltype) {
+        switch (this.suggestionDetail.type) {
             case "normal":
                 return await this.voteService.sourceSubwallet.createProposalTransaction(payload, memo);
             case "changeproposalowner":
@@ -162,7 +160,7 @@ export class CreateProposalPage {
             case "registersidechain":
                 return await this.voteService.sourceSubwallet.createRegisterSidechainTransaction(payload, memo);
             default:
-                throw new Error("Don't support this type: " + this.proposaltype);
+                throw new Error("Don't support this type: " + this.suggestionDetail.type);
         }
     }
 
