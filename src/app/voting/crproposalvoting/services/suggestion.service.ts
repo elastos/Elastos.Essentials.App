@@ -239,9 +239,9 @@ export class SuggestionService {
     private getSecretaryGeneralPayload(data: any): any {
         let payload = this.getPayloadCommon(data);
         payload = Object.assign(payload, {
-            SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
+            SecretaryGeneralPublicKey: data.newSecretaryPublicKey,
             SecretaryGeneralDID: data.newSecretaryDID.replace("did:elastos:", ""),
-            SecretaryGeneralSignature: data.secretarygenerasignature,
+            SecretaryGeneralSignature: data.newSecretarySignature,
         });
 
         return payload;
@@ -313,5 +313,15 @@ export class SuggestionService {
             proposaltype = "changeproposaladdress";
         }
         return proposaltype
+    }
+
+    public getSuggectionStatus(status: string, suggestionDetail: SuggestionDetail) {
+        if (suggestionDetail.type == "secretarygeneral" && suggestionDetail.status != 'proposed') {
+            if (!suggestionDetail.newSecretarySignature &&
+                !(Util.isSelfDid(suggestionDetail.did) && !Util.isSelfDid(suggestionDetail.newSecretaryDID))) {
+                return "unsigned";
+            }
+        }
+        return status
     }
 }

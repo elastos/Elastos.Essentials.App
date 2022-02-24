@@ -289,8 +289,8 @@ export class CROperationsService {
                     data.newownerpublickey = data.newownerpublickey || data.newOwnerPublicKey;
                     data.newownersignature = data.newownersignature || data.newOwnerSignature;
                     data.newSecretaryDID = data.newSecretaryDID || data.secretarygeneraldid;
-                    data.secretarygeneralpublickey = data.secretarygeneralpublickey || data.newSecretaryPublicKey;
-                    data.secretarygenerasignature = data.secretarygenerasignature || data.secretaryGeneralSignature;
+                    data.newSecretaryPublicKey = data.secretarygeneralpublickey || data.newSecretaryPublicKey;
+                    data.newSecretarySignature = data.secretarygenerasignature || data.newSecretarySignature;
                     break;
                 case "reviewproposal":
                     if (this.onGoingCommand.type == CRCommandType.Scan) {

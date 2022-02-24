@@ -85,11 +85,15 @@ export class SuggestionDetailPage {
             this.commandName = null;
             this.buttonLabel = null;
 
-            if (this.isCRMember && this.suggestion.status == 'signed') {
+            this.suggestion.status =  this.suggestionService.getSuggectionStatus(this.suggestion.status, this.suggestion);
+
+            if (this.isCRMember && this.suggestion.status == 'signed' && !(this.suggestion.type == "secretarygeneral"
+                    && !this.suggestion.newSecretarySignature)) {
                 this.commandName = "createproposal";
                 this.buttonLabel = "crproposalvoting.make-into-proposal";
             }
-            else if (this.isSelf && this.suggestion.status == 'unsigned'){
+            else if (this.suggestion.status == 'unsigned' && (this.isSelf
+                    || (this.suggestion.type == "secretarygeneral" && Util.isSelfDid(this.suggestion.newSecretaryDID)))) {
                 this.commandName = "createsuggestion";
                 this.buttonLabel = "crproposalvoting.sign-suggestion";
             }
@@ -215,6 +219,18 @@ export class SuggestionDetailPage {
                 title: this.translate.instant('crproposalvoting.receiver-did'),
                 type: 'receive-address',
                 value: this.suggestion.receiverDID,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.new-recipient-address'),
+                type: 'innerHtml',
+                value: this.suggestion.newRecipient,
+                active: true
+            },
+            {
+                title: this.translate.instant('crproposalvoting.new-secretarygeneraldid'),
+                type: 'innerHtml',
+                value: this.suggestion.newSecretaryDID,
                 active: true
             },
             {

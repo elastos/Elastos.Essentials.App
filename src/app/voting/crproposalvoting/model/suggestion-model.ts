@@ -64,7 +64,9 @@ export class SuggestionDetail {
 
     newOwnerDID?: string;
     newRecipient?: string;
+    newSecretaryDID?: string;
     newSecretaryPublicKey?: string;
+    newSecretarySignature?: string;
 
     type: string;
     draftHash: string;

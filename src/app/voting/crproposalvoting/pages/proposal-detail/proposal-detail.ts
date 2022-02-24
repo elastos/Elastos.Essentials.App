@@ -78,7 +78,6 @@ export class ProposalDetailPage {
             Logger.log('CRProposal', "proposal", this.proposal);
 
             this.isOwner = Util.isSelfDid(this.proposal.did);
-            // this.isOwner = true;
 
             //Set last tracking for show on page
             if (this.proposal.milestone) {
