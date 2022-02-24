@@ -11,10 +11,11 @@ import { LocalStorage } from '../../../../services/storage.service';
 import { Coin, CoinID, CoinType } from '../../../coin';
 import { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import { Safe } from '../../../safes/safe';
 import { TransactionProvider } from '../../../tx-providers/transaction.provider';
 import { WalletSortType } from '../../../walletaccount';
 import { NFT, NFTType, SerializedNFT } from '../../evms/nfts/nft';
-import { StandardEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
+import { MainCoinEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../network';
 import { AnySubWallet, SerializedSubWallet } from '../subwallets/subwallet';
 import { SubWalletBuilder } from '../subwallets/subwalletbuilder';
@@ -63,6 +64,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     constructor(
         public masterWallet: MasterWalletType,
         public network: AnyNetwork,
+        public safe: Safe,
         public displayToken: string // Ex: "HT", "BSC"
     ) {
         this.id = masterWallet.id;
@@ -71,6 +73,11 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     }
 
     public async initialize(): Promise<void> {
+        // Initialize the safe
+        await this.safe.initialize();
+
+        await this.prepareStandardSubWallets();
+
         // First time we use this wallet? Add some default useful ERC20 coins
         await this.checkFirstTimeUseAddCoins();
 
@@ -87,6 +94,11 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     }
 
     protected abstract createTransactionDiscoveryProvider(): TransactionProvider<any>;
+
+    /**
+     * Make standard subwallets ready, when the network wallet initializes.
+     */
+    protected abstract prepareStandardSubWallets(): Promise<void>;
 
     /**
      * Starts network wallet and subwallets updates in background.
@@ -293,7 +305,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      *
      * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
-    public abstract getMainEvmSubWallet(): StandardEVMSubWallet<WalletNetworkOptionsType>;
+    public abstract getMainEvmSubWallet(): MainCoinEVMSubWallet<WalletNetworkOptionsType>;
 
     /**
      * Adds a new subwallet to this network wallet, based on a given coin type.

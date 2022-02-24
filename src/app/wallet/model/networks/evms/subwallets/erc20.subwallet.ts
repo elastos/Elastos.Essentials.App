@@ -17,12 +17,14 @@ import { Native } from '../../../../services/native.service';
 import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
 import { WalletService } from '../../../../services/wallet.service';
 import { Coin, CoinID, CoinType, ERC20Coin } from '../../../coin';
+import { MasterWallet } from '../../../masterwallets/masterwallet';
+import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { SerializedSubWallet, SubWallet } from '../../base/subwallets/subwallet';
 import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
-
+import { AnyEVMNetworkWallet, EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
 
 export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     /** Coin related to this wallet */
@@ -37,12 +39,12 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     private fetchTokenValueTimer: any = null;
     private redPacketServerAddress = null;
 
-    public static async newFromCoin(networkWallet: AnyNetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
+    public static async newFromCoin(networkWallet: EVMNetworkWallet<MasterWallet, WalletNetworkOptions>, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = await networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
         return subWallet;
     }
 
-    public static async newFromSerializedSubWallet(networkWallet: AnyNetworkWallet, serializedSubWallet: SerializedSubWallet): Promise<ERC20SubWallet> {
+    public static async newFromSerializedSubWallet(networkWallet: AnyEVMNetworkWallet, serializedSubWallet: SerializedSubWallet): Promise<ERC20SubWallet> {
         //Logger.log('wallet', "Initializing ERC20 subwallet from serialized sub wallet", serializedSubWallet);
         if (!serializedSubWallet.id) {
             Logger.error('wallet', 'newFromSerializedSubWallet id is null');

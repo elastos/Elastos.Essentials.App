@@ -4,7 +4,7 @@ import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EthTransaction } from "../evm.types";
 import { EVMNetworkWallet } from "../networkwallets/evm.networkwallet";
 import { ERC20SubWallet } from "../subwallets/erc20.subwallet";
-import { StandardEVMSubWallet } from "../subwallets/evm.subwallet";
+import { MainCoinEVMSubWallet } from "../subwallets/evm.subwallet";
 import { EVMSubWalletInternalTransactionProvider } from "./evm.subwallet.internalTransaction.provider";
 import { EVMSubWalletProvider } from "./evm.subwallet.provider";
 import { EVMSubWalletTokenProvider } from "./token.subwallet.provider";
@@ -13,9 +13,9 @@ import { EVMSubWalletTokenProvider } from "./token.subwallet.provider";
  * STandard transaction provider for regular EVM networks.
  */
 export class EVMTransactionProvider extends TransactionProvider<EthTransaction> {
-  private mainProvider: EVMSubWalletProvider<StandardEVMSubWallet<any>> = null;
-  private tokenProvider: EVMSubWalletTokenProvider<StandardEVMSubWallet<any>> = null;
-  private internalTXProvider: EVMSubWalletInternalTransactionProvider<StandardEVMSubWallet<any>> = null;
+  private mainProvider: EVMSubWalletProvider<MainCoinEVMSubWallet<any>> = null;
+  private tokenProvider: EVMSubWalletTokenProvider<MainCoinEVMSubWallet<any>> = null;
+  private internalTXProvider: EVMSubWalletInternalTransactionProvider<MainCoinEVMSubWallet<any>> = null;
 
   constructor(protected networkWallet: EVMNetworkWallet<any, any>) {
     super(networkWallet);
@@ -40,8 +40,8 @@ export class EVMTransactionProvider extends TransactionProvider<EthTransaction> 
    * Creates the EVM subwallet provider (main token) - can be overriden if needed, but usually the
    * standard EVM subwallet provider is enough.
    */
-  protected createEVMSubWalletProvider(): EVMSubWalletProvider<StandardEVMSubWallet<any>> {
-    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as StandardEVMSubWallet<any>;
+  protected createEVMSubWalletProvider(): EVMSubWalletProvider<MainCoinEVMSubWallet<any>> {
+    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as MainCoinEVMSubWallet<any>;
     return new EVMSubWalletProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
   }
 
@@ -49,18 +49,18 @@ export class EVMTransactionProvider extends TransactionProvider<EthTransaction> 
    * Creates the token subwallet provider - can be overriden if needed, but usually the
    * standard token subwallet provider is enough.
    */
-  protected createEVMTokenSubWalletProvider(): EVMSubWalletTokenProvider<StandardEVMSubWallet<any>> {
-    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as StandardEVMSubWallet<any>;
+  protected createEVMTokenSubWalletProvider(): EVMSubWalletTokenProvider<MainCoinEVMSubWallet<any>> {
+    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as MainCoinEVMSubWallet<any>;
     return new EVMSubWalletTokenProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
   }
 
-  protected createEVMSubWalletInternalTransactionProvider(): EVMSubWalletInternalTransactionProvider<StandardEVMSubWallet<any>> {
-    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as StandardEVMSubWallet<any>;
+  protected createEVMSubWalletInternalTransactionProvider(): EVMSubWalletInternalTransactionProvider<MainCoinEVMSubWallet<any>> {
+    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as MainCoinEVMSubWallet<any>;
     return new EVMSubWalletInternalTransactionProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
   }
 
   protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
-    if (subWallet instanceof StandardEVMSubWallet)
+    if (subWallet instanceof MainCoinEVMSubWallet)
       return this.mainProvider;
     else if (subWallet instanceof ERC20SubWallet)
       return this.tokenProvider;
@@ -69,7 +69,7 @@ export class EVMTransactionProvider extends TransactionProvider<EthTransaction> 
   }
 
   protected getSubWalletInternalTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
-    if (subWallet instanceof StandardEVMSubWallet)
+    if (subWallet instanceof MainCoinEVMSubWallet)
       return this.internalTXProvider;
     else
       return null;

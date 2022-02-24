@@ -39,10 +39,10 @@ import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.serv
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/subwallets/elastos.evm.subwallet';
-import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/subwallets/mainchain.subwallet';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
-import { StandardEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
@@ -54,7 +54,7 @@ import { TxSuccessComponent } from '../../../../components/tx-success/tx-success
 import { Config } from '../../../../config/Config';
 import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
 import { CoinType, StandardCoinName } from '../../../../model/coin';
-import { StandardSubWallet } from '../../../../model/networks/base/subwallets/standard.subwallet';
+import { MainCoinSubWallet } from '../../../../model/networks/base/subwallets/maincoin.subwallet';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
 import { CoinTransferService, Transfer, TransferType } from '../../../../services/cointransfer.service';
 import { ContactsService } from '../../../../services/contacts.service';
@@ -209,7 +209,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance().toString());
 
-        if (this.fromSubWallet instanceof StandardEVMSubWallet) {
+        if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
             this.isEVMSubwallet = true;
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe(async (status) => {
@@ -788,7 +788,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     isStandardSubwallet(subWallet: AnySubWallet) {
-        return subWallet instanceof StandardSubWallet;
+        return subWallet instanceof MainCoinSubWallet;
     }
 
     convertAmountToBigNumber(amount: number) {

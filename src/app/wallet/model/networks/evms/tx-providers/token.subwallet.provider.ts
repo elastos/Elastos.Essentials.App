@@ -9,7 +9,7 @@ import { TransactionDirection } from "../../../tx-providers/transaction.types";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { ERCTokenInfo, EthTokenTransaction, EthTransaction } from "../evm.types";
 import { ERC20SubWallet } from "../subwallets/erc20.subwallet";
-import { StandardEVMSubWallet } from "../subwallets/evm.subwallet";
+import { MainCoinEVMSubWallet } from "../subwallets/evm.subwallet";
 
 const MAX_RESULTS_PER_FETCH = 30
 
@@ -17,7 +17,7 @@ const MAX_RESULTS_PER_FETCH = 30
  * Root class for all EVM compatible chains to handle ERC20 tokens, as they use the same endpoints to get the list
  * of transactions.
  */
-export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
+export class EVMSubWalletTokenProvider<SubWalletType extends MainCoinEVMSubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
   private canFetchMore = true;
 
   constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, protected rpcApiUrl: string, protected accountApiUrl: string) {

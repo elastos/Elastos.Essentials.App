@@ -1,5 +1,6 @@
 import { Logger } from "src/app/logger";
 import { Coin, CoinType } from "../../../coin";
+import { AnyEVMNetworkWallet } from "../../evms/networkwallets/evm.networkwallet";
 import { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
 import { NetworkWallet } from "../networkwallets/networkwallet";
 import { AnySubWallet, SerializedSubWallet, SubWallet } from "./subwallet";
@@ -15,7 +16,7 @@ export class SubWalletBuilder {
             /* case CoinType.STANDARD:
                 return StandardSubWalletBuilder.newFromCoin(networkWallet.masterWallet, coin); */
             case CoinType.ERC20:
-                return ERC20SubWallet.newFromCoin(networkWallet, coin);
+                return ERC20SubWallet.newFromCoin(networkWallet as AnyEVMNetworkWallet, coin);
             default:
                 Logger.warn('wallet', "Unsupported coin type", coin.getType());
                 break;
@@ -37,7 +38,7 @@ export class SubWalletBuilder {
                 // support this but this happens for legacy reasons (elastos network split into more networks), so
                 // we manually check it here.
                 if (networkWallet.network.supportsERC20Coins())
-                    return ERC20SubWallet.newFromSerializedSubWallet(networkWallet, serializedSubWallet);
+                    return ERC20SubWallet.newFromSerializedSubWallet(networkWallet as AnyEVMNetworkWallet, serializedSubWallet);
                 else
                     return null;
             default:

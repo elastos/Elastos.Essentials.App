@@ -6,7 +6,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
-import { StandardEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -34,7 +34,7 @@ export class TokenChooserComponent implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public activeNetwork: AnyNetwork = null;
-  private nativeTokenWallet: StandardEVMSubWallet<any> = null;
+  private nativeTokenWallet: MainCoinEVMSubWallet<any> = null;
   public tokens: TokenToShow[] = [];
 
   constructor(

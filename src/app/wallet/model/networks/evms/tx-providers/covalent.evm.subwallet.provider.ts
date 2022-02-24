@@ -3,7 +3,7 @@ import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { TransactionDirection } from "../../../tx-providers/transaction.types";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EthTransaction } from "../evm.types";
-import { StandardEVMSubWallet } from "../subwallets/evm.subwallet";
+import { MainCoinEVMSubWallet } from "../subwallets/evm.subwallet";
 import { EVMSubWalletProvider } from "./evm.subwallet.provider";
 
 const MAX_RESULTS_PER_FETCH = 30;
@@ -75,7 +75,7 @@ type CovalentResult = {
 }
 
 // Use covalent blockchain data API to get transactions.
-export class CovalentEvmSubWalletProvider extends EVMSubWalletProvider<StandardEVMSubWallet<any>> {
+export class CovalentEvmSubWalletProvider extends EVMSubWalletProvider<MainCoinEVMSubWallet<any>> {
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
     return this.canFetchMore;
   }

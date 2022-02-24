@@ -5,10 +5,11 @@ import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
+import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import Web3 from 'web3';
 import { ETHTransactionComponent } from '../../components/eth-transaction/eth-transaction.component';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
-import { StandardEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
+import { MainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../model/networks/network';
 import { RawTransactionPublishResult } from '../../model/tx-providers/transaction.types';
 import { Transfer } from '../cointransfer.service';
@@ -51,7 +52,7 @@ class ETHTransactionManager {
     this.checkTimes = 0;
   }
 
-  public async publishTransaction(subwallet: StandardEVMSubWallet<any>, transaction: string, transfer: Transfer, showBlockingLoader = false) {
+  public async publishTransaction(subwallet: MainCoinEVMSubWallet<any>, transaction: string, transfer: Transfer, showBlockingLoader = false) {
     try {
       let result = await subwallet.signAndSendRawTransaction(transaction, transfer, false);
       Logger.log('wallet', 'publishTransaction ', result)
@@ -184,7 +185,7 @@ class ETHTransactionManager {
     }
   }
 
-  private async checkPublicationStatusAndUpdate(subwallet: StandardEVMSubWallet<any>, txid: string): Promise<void> {
+  private async checkPublicationStatusAndUpdate(subwallet: MainCoinEVMSubWallet<any>, txid: string): Promise<void> {
     let result = await subwallet.getTransactionDetails(txid);
     Logger.log('wallet', 'checkPublicationStatusAndUpdate ', result)
     if (result.blockHash) {
@@ -271,7 +272,7 @@ export class EVMService {
     this.manager.resetStatus();
   }
 
-  public publishTransaction(subwallet: StandardEVMSubWallet<any>, transaction: string, transfer: Transfer, showBlockingLoader = false): Promise<void> {
+  public publishTransaction(subwallet: MainCoinEVMSubWallet<any>, transaction: string, transfer: Transfer, showBlockingLoader = false): Promise<void> {
     return this.manager.publishTransaction(subwallet, transaction, transfer, showBlockingLoader);
   }
 
@@ -296,6 +297,21 @@ export class EVMService {
     let web3 = this.getWeb3(network);
     let gasPrice = await web3.eth.getGasPrice();
     return gasPrice;
+  }
+
+  /**
+   * Get the current nonce for an account address, on the main node in use for a given network.
+   */
+  public async getNonce(network: AnyNetwork, accountAddress: string): Promise<number> {
+    try {
+      let nonce = await GlobalEthereumRPCService.instance.getETHSCNonce(network.getMainEvmRpcApiUrl(), accountAddress);
+      return nonce;
+    }
+    catch (err) {
+      Logger.error('wallet', 'Failed to get nonce', network, accountAddress, err);
+    }
+
+    return -1;
   }
 
   /**

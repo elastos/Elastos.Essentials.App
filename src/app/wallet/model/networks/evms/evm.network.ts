@@ -8,6 +8,7 @@ import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../../masterwa
 import { AnyNetworkWallet } from "../base/networkwallets/networkwallet";
 import { Network } from "../network";
 import { EVMNetworkWallet } from "./networkwallets/evm.networkwallet";
+import { StandardEVMNetworkWallet } from "./networkwallets/standard/standard.evm.networkwallet";
 import { ERC20SubWallet } from "./subwallets/erc20.subwallet";
 
 export class EVMNetwork extends Network<WalletNetworkOptions> {
@@ -58,7 +59,7 @@ export class EVMNetwork extends Network<WalletNetworkOptions> {
     let wallet: AnyNetworkWallet = null;
     switch (masterWallet.type) {
       case WalletType.STANDARD:
-        wallet = new EVMNetworkWallet(masterWallet as StandardMasterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName, this.averageBlocktime);
+        wallet = new StandardEVMNetworkWallet(masterWallet as StandardMasterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName, this.averageBlocktime);
         break;
       default:
         return null;
@@ -72,6 +73,11 @@ export class EVMNetwork extends Network<WalletNetworkOptions> {
     return wallet;
   }
 
+  /**
+ * Creates the right ERC20 sub wallet instance for this network.
+ * If startBackgroundUpdates is true some initializations such as getting balance or transactions are launched in background.
+ * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
+ */
   public async createERC20SubWallet(networkWallet: EVMNetworkWallet<any, any>, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
     let subWallet = new ERC20SubWallet(networkWallet, coinID, networkWallet.network.getMainEvmRpcApiUrl(), "");
     await subWallet.initialize();

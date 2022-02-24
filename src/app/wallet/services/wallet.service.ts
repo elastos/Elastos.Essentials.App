@@ -39,7 +39,7 @@ import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder'
 import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletType } from '../model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
 import { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
-import { StandardEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
+import { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../model/networks/network';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
@@ -446,7 +446,7 @@ export class WalletService {
      * Tries to find the standard "main" EVM subwallet that has the given address in the list of
      * all subwallets for the active network
      */
-    public async findStandardEVMSubWalletByAddress(address: string): Promise<StandardEVMSubWallet<any>> {
+    public async findStandardEVMSubWalletByAddress(address: string): Promise<MainCoinEVMSubWallet<any>> {
         for (let networkWallet of this.getNetworkWalletsList()) {
             let mainEVMSubWallet = networkWallet.getMainEvmSubWallet();
             if (mainEVMSubWallet) {

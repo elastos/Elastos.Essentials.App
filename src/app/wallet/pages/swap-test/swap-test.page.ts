@@ -11,7 +11,7 @@ import Web3 from 'web3';
 import { JsonRpcPayload, JsonRpcResponse } from "web3-core-helpers";
 import { StandardCoinName } from '../../model/coin';
 import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
-import { ElastosEVMSubWallet } from '../../model/networks/elastos/subwallets/elastos.evm.subwallet';
+import { ElastosEVMSubWallet } from '../../model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
 import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
 import { Native } from '../../services/native.service';
 import { jsToSpvWalletId } from '../../services/spv.service';

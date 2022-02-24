@@ -365,9 +365,13 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
 
   // public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;
 
+  // TODO: split in 2 different methods: native coin payment (in maincoinsubwallet) and erc payment (in erc20 subwallet)
   public abstract createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
+  // TODO: same as createPaymentTransaction
   public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
+  // TODO: ask the network to do this
   public abstract publishTransaction(transaction: string): Promise<string>;
+  // TODO: ask the 'safe' to do this
   public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;
 
   public getAvailableEarnProviders(): EarnProvider[] {

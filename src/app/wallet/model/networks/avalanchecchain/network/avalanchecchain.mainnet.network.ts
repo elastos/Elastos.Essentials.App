@@ -45,7 +45,12 @@ export class AvalancheCChainMainNetNetwork extends EVMNetwork {
     let wallet: AnyNetworkWallet = null;
     switch (masterWallet.type) {
       case WalletType.STANDARD:
-        wallet = new AvalancheCChainNetworkWallet(masterWallet as StandardMasterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName);
+        wallet = new AvalancheCChainNetworkWallet(
+          masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
         break;
       default:
         return null;

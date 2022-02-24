@@ -8,7 +8,7 @@ export enum WalletType {
   /** Single signature, wallet keys managed by Essentials */
   STANDARD = "standard",
   /** Single signature, wallet keys managed by a Ledger hardware device */
-  LEDGER = "edger",
+  LEDGER = "ledger",
   /** Multi signature, following the elastos/bitcoin "public key based" multi-wallet mechanism */
   MULTI_SIG_STANDARD = "multi_sign_standard",
   /** Multi signature, following the gnosis EVM contract mechanism (account addresses) */

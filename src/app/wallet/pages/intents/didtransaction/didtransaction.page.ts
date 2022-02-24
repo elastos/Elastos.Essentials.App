@@ -30,8 +30,8 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { EidSubWallet } from 'src/app/wallet/model/networks/elastos/subwallets/eid.evm.subwallet';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/subwallets/elastos.evm.subwallet';
+import { IdentityTransactionBuilder } from 'src/app/wallet/model/networks/elastos/evms/eid/tx-builders/identity.txbuilder';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -145,9 +145,12 @@ export class DidTransactionPage implements OnInit {
     async createIDTransaction() {
         Logger.log('wallet', 'Calling createIdTransaction()');
         await this.native.showLoading(this.translate.instant('common.please-wait'));
-        const rawTx = await (this.sourceSubwallet as EidSubWallet).createIDTransaction(
+
+        /* const rawTx = await (this.sourceSubwallet as EidSubWallet).createIDTransaction(
             JSON.stringify(this.coinTransferService.didrequest),
-        );
+        ); */
+        let identityTxBuilder = new IdentityTransactionBuilder(this.sourceSubwallet.networkWallet);
+        const rawTx = await identityTxBuilder.createIDTransaction(JSON.stringify(this.coinTransferService.didrequest));
         await this.native.hideLoading();
         if (rawTx) {
             Logger.log('wallet', 'Created raw DID transaction');

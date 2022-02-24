@@ -31,7 +31,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { Candidates, VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
 import { Config } from '../../../config/Config';
-import { MainChainSubWallet } from '../../../model/networks/elastos/subwallets/mainchain.subwallet';
+import { MainChainSubWallet } from '../../../model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';

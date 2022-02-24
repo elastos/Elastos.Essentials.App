@@ -42,7 +42,7 @@ import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.servi
 import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
 import { Config } from '../../../config/Config';
 import { MasterWallet } from '../../../model/masterwallets/masterwallet';
-import { StandardSubWallet } from '../../../model/networks/base/subwallets/standard.subwallet';
+import { MainCoinSubWallet } from '../../../model/networks/base/subwallets/maincoin.subwallet';
 import { AnySubWallet } from '../../../model/networks/base/subwallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
@@ -345,7 +345,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     isStandardSubwallet(subWallet: AnySubWallet) {
-        return subWallet instanceof StandardSubWallet;
+        return subWallet instanceof MainCoinSubWallet;
     }
 
     closeRefreshBox() {

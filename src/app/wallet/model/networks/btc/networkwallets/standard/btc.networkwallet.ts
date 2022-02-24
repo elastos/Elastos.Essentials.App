@@ -1,25 +1,26 @@
+import { SPVSDKSafe } from "src/app/wallet/model/safes/spvsdk.safe";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../../../coin";
 import { StandardMasterWallet } from "../../../../masterwallets/masterwallet";
 import { TransactionProvider } from "../../../../tx-providers/transaction.provider";
 import { WalletAddressInfo } from "../../../base/networkwallets/networkwallet";
 import { StandardNetworkWallet } from "../../../base/networkwallets/standard.networkwallet";
-import { StandardEVMSubWallet } from "../../../evms/subwallets/evm.subwallet";
+import { MainCoinEVMSubWallet } from "../../../evms/subwallets/evm.subwallet";
 import { AnyNetwork } from "../../../network";
 import { BTCTransactionProvider } from "../../tx-providers/btc.transaction.provider";
 import { BTCSubWallet } from "./btc.subwallet";
 
 /**
- * Network wallet type for standard EVM networks
+ * Network wallet type for the bitcoin network
  */
 export class BTCNetworkWallet extends StandardNetworkWallet<any> {
-    // private mainTokenSubWallet: StandardEVMSubWallet = null;
-
-    constructor(
-        public masterWallet: StandardMasterWallet,
-        public network: AnyNetwork
-    ) {
-        super(masterWallet, network, 'BTC');
+    constructor(public masterWallet: StandardMasterWallet, public network: AnyNetwork) {
+        super(
+            masterWallet,
+            network,
+            new SPVSDKSafe(masterWallet, "BTC"),
+            'BTC'
+        );
     }
 
     public async initialize(): Promise<void> {
@@ -48,7 +49,7 @@ export class BTCNetworkWallet extends StandardNetworkWallet<any> {
         ];
     }
 
-    public getMainEvmSubWallet(): StandardEVMSubWallet<any> {
+    public getMainEvmSubWallet(): MainCoinEVMSubWallet<any> {
         return null;
     }
 

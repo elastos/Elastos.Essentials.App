@@ -13,22 +13,20 @@ import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
-import { StandardSubWallet } from '../../base/subwallets/standard.subwallet';
+import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
 import { EVMNetwork } from '../evm.network';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { ERC20SubWallet } from './erc20.subwallet';
 
 /**
- * Specialized standard sub wallet for EVM compatible chains (elastos EID, elastos ESC, heco, etc)
+ * Specialized sub wallet for EVM compatible chains main coins (elastos EID, elastos ESC, heco, etc)
  */
-export class StandardEVMSubWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends StandardSubWallet<EthTransaction, WalletNetworkOptionsType> {
+export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends MainCoinSubWallet<EthTransaction, WalletNetworkOptionsType> {
   protected ethscAddress: string = null;
   protected withdrawContractAddress: string = null;
   protected publishdidContractAddress: string = null;
-  private redPacketServerAddress = null;
-  // private erc20ABI: any;
-
   protected tokenList: ERCTokenInfo[] = null;
+  private redPacketServerAddress = null;
 
   constructor(
     networkWallet: AnyNetworkWallet,
@@ -457,4 +455,4 @@ export class StandardEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   } */
 }
 
-export class AnyStandardEVMSubWallet extends StandardEVMSubWallet<any> { }
+export class AnyStandardEVMSubWallet extends MainCoinEVMSubWallet<any> { }

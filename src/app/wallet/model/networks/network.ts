@@ -11,7 +11,6 @@ import { MasterWallet } from "../masterwallets/masterwallet";
 import { PrivateKeyType, WalletNetworkOptions } from "../masterwallets/wallet.types";
 import { AnyNetworkWallet } from "./base/networkwallets/networkwallet";
 import { ERC1155Provider } from "./evms/nfts/erc1155.provider";
-import { ERC20SubWallet } from "./evms/subwallets/erc20.subwallet";
 import { UniswapCurrencyProvider } from "./evms/uniswap.currencyprovider";
 
 export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOptions> {
@@ -62,15 +61,10 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    */
   public abstract createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates?: boolean): Promise<AnyNetworkWallet>;
 
-  /**
-   * Creates the right ERC20 sub wallet instance for this network.
-   * If startBackgroundUpdates is true some initializations such as getting balance or transactions are launched in background.
-   * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
-   */
-  public abstract createERC20SubWallet(networkWallet: AnyNetworkWallet, coinID: CoinID, startBackgroundUpdates?: boolean): Promise<ERC20SubWallet>;
-
+  // TODO: MOVE TO EVMNetwork
   public abstract getMainEvmRpcApiUrl(): string;
 
+  // TODO: MOVE TO EVMNetwork
   public abstract getMainEvmAccountApiUrl(): string;
 
   public abstract getMainTokenSymbol(): string;
@@ -78,6 +72,8 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
   /**
    * Returns the EVM chain ID for this network (i.e. 128 for heco) according to the active network template.
    * For elastos, as there are multiple EVM chains, the ETHSC is the "main" one.
+   * 
+   * TODO: MOVE TO EVMNetwork
    */
   public abstract getMainChainID(networkTemplate?: string): number;
 
@@ -97,6 +93,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);
 
   // Ex: ETHHECO, ETHSC, etc
+  // TODO: MOVE TO EVMNetwork
   public getEVMSPVConfigName(): string {
     return "ETH" + this.key.toUpperCase();
   }

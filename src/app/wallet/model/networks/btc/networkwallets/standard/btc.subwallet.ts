@@ -12,7 +12,7 @@ import { SwapProvider } from '../../../../earn/swapprovider';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, UtxoForSDK } from '../../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../../wallet.util';
 import { AnyNetworkWallet } from '../../../base/networkwallets/networkwallet';
-import { StandardSubWallet } from '../../../base/subwallets/standard.subwallet';
+import { MainCoinSubWallet } from '../../../base/subwallets/maincoin.subwallet';
 
 const TRANSACTION_LIMIT = 50;
 
@@ -21,7 +21,7 @@ const TRANSACTION_LIMIT = 50;
  * Most code between these 2 chains is common, while ETH is quite different. This is the reason why this
  * specialized class exists.
  */
-export class BTCSubWallet extends StandardSubWallet<BTCTransaction, any> {
+export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     private legacyAddress: string = null;
     private transactionsList: string[] = null;
     private totalTransactionCount = 0;

@@ -4,24 +4,18 @@ import { CoinID, ERC20Coin, StandardCoinName } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
 import { SwapProvider } from "../../../earn/swapprovider";
-import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
-import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
-import { ElastosWalletNetworkOptions, PrivateKeyType, WalletNetworkOptions, WalletType } from "../../../masterwallets/wallet.types";
+import { WalletNetworkOptions } from "../../../masterwallets/wallet.types";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { ERC1155Provider } from "../../evms/nfts/erc1155.provider";
 import { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
 import { Network } from "../../network";
-import { ElastosMainChainLedgerNetworkWallet } from "../networkwallets/ledger/mainchain.networkwallet";
-import { ElastosIdentityChainStandardNetworkWallet } from "../networkwallets/standard/identitychain.networkwallet";
-import { ElastosMainChainStandardNetworkWallet } from "../networkwallets/standard/mainchain.networkwallet";
-import { ElastosSmartChainStandardNetworkWallet } from "../networkwallets/standard/smartchain.networkwallet";
-import { ElastosERC20SubWallet } from "../subwallets/elastos.erc20.subwallet";
+import { ElastosERC20SubWallet } from "../evms/esc/subwallets/elastos.erc20.subwallet";
 
 export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends WalletNetworkOptions> extends Network<WalletNetworkOptionsType> {
-
   constructor(
     key: string,
     displayName: string,
+    logo: string,
     networkTemplate: string,
     earnProviders?: EarnProvider[],
     swapProviders?: SwapProvider[],
@@ -30,7 +24,7 @@ export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends Wallet
     super(
       key,
       displayName,
-      "assets/wallet/networks/elastos.svg",
+      logo,
       networkTemplate,
       earnProviders,
       swapProviders,
@@ -53,10 +47,12 @@ export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends Wallet
     return subWallet;
   }
 
+  // TODO: MOVE TO ESC
   public getMainEvmRpcApiUrl(): string {
     return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHSC));
   }
 
+  // TODO: MOVE TO ESC
   public getMainEvmAccountApiUrl(): string {
     return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(StandardCoinName.ETHSC));
   }
@@ -65,6 +61,7 @@ export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends Wallet
     return 'ELA';
   }
 
+  // TODO: MOVE TO EVM NETWORK
   public getBuiltInERC20Coins(): ERC20Coin[] {
     return [];
   }
@@ -72,95 +69,4 @@ export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends Wallet
   public abstract getMainChainID(): number;
 
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig);
-}
-
-export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<ElastosWalletNetworkOptions> {
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
-    let wallet: AnyNetworkWallet = null;
-    switch (masterWallet.type) {
-      case WalletType.STANDARD:
-        wallet = new ElastosMainChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
-        break;
-      case WalletType.LEDGER:
-        wallet = new ElastosMainChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
-        break;
-      default:
-        return null;
-    }
-
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
-  }
-
-  public getDefaultWalletNetworkOptions(): ElastosWalletNetworkOptions {
-    return {
-      network: this.key,
-      singleAddress: true
-    }
-  }
-}
-
-export abstract class ElastosSmartChainNetworkBase extends ElastosNetworkBase<WalletNetworkOptions> {
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
-    let wallet: AnyNetworkWallet = null;
-    switch (masterWallet.type) {
-      case WalletType.STANDARD:
-        wallet = new ElastosSmartChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
-        break;
-      default:
-        return null;
-    }
-
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
-  }
-
-  public supportsERC20Coins() {
-    return true;
-  }
-
-  public supportsERCNFTs() {
-    return true;
-  }
-
-  public getDefaultWalletNetworkOptions(): WalletNetworkOptions {
-    return {
-      network: this.key
-    }
-  }
-
-  public supportedPrivateKeyTypes(): PrivateKeyType[] {
-    // None by default. If this method is not overriden by the network, 
-    // the network can't handle any import by private key
-    return [
-      PrivateKeyType.EVM
-    ];
-  }
-}
-
-export abstract class ElastosIdentityChainNetworkBase extends ElastosNetworkBase<WalletNetworkOptions> {
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
-    let wallet: AnyNetworkWallet = null;
-    switch (masterWallet.type) {
-      case WalletType.STANDARD:
-        wallet = new ElastosIdentityChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
-        break;
-      default:
-        return null;
-    }
-
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
-  }
-
-  public supportsERC20Coins() {
-    return false;
-  }
-
-  public supportsERCNFTs() {
-    return false;
-  }
-
-  public getDefaultWalletNetworkOptions(): WalletNetworkOptions {
-    return {
-      network: this.key
-    }
-  }
 }

@@ -1,9 +1,8 @@
-import { StandardMasterWallet } from "../../../../masterwallets/masterwallet";
 import { TransactionProvider } from "../../../../tx-providers/transaction.provider";
-import { EVMNetworkWallet } from "../../../evms/networkwallets/evm.networkwallet";
+import { StandardEVMNetworkWallet } from "../../../evms/networkwallets/standard/standard.evm.networkwallet";
 import { FusionTransactionProvider } from "../../tx-providers/fusion.transaction.provider";
 
-export class FusionNetworkWallet extends EVMNetworkWallet<StandardMasterWallet, any> {
+export class FusionNetworkWallet extends StandardEVMNetworkWallet<any> {
   protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
     return new FusionTransactionProvider(this);
   }
