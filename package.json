@@ -147,6 +147,7 @@
     "elastos-essentials-plugin-wallet": "file:../Plugins/Wallet",
     "es6-promise-plugin": "4.2.2",
     "eslint": "^8.5.0",
+    "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-no-async-foreach": "^0.1.1",
     "eslint-plugin-node": "^11.1.0",
     "moment-locales-webpack-plugin": "1.2.0",

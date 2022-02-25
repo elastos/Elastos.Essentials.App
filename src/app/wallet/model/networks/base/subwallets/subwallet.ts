@@ -17,30 +17,6 @@ import { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from
 import { TransactionListType } from '../../evms/evm.types';
 import { NetworkWallet } from '../networkwallets/networkwallet';
 
-/**
- * Subwallet representation ready to save to local storage for persistance.
- * Only non standard subwallets are serialized
- */
-export class SerializedSubWallet {
-  public type: CoinType = null;
-  public id: StandardCoinName = null;
-
-  /**
-   * Serialize only fields that we are willing to have in the serialized output.
-   * and the balance type of subwallet is bigNumber,
-   * It needs to be converted to string and then saved to localstorage.
-   */
-  public static fromSubWallet(subWallet: SubWallet<any, any>): SerializedSubWallet {
-    const serializedSubWallet = new SerializedSubWallet();
-    serializedSubWallet.type = subWallet.type;
-    serializedSubWallet.id = subWallet.id as StandardCoinName;
-    return serializedSubWallet;
-  }
-}
-
-// Convenient type to avoid adding SubWallet<any> everywhere.
-export type AnySubWallet = SubWallet<GenericTransaction, any>;
-
 export abstract class SubWallet<TransactionType extends GenericTransaction, WalletNetworkOptionsType extends WalletNetworkOptions> {
   public masterWallet: MasterWallet;
   public id: CoinID = null;
@@ -365,13 +341,11 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
 
   // public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;
 
-  // TODO: split in 2 different methods: native coin payment (in maincoinsubwallet) and erc payment (in erc20 subwallet)
-  public abstract createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
   // TODO: same as createPaymentTransaction
   public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
   // TODO: ask the network to do this
   public abstract publishTransaction(transaction: string): Promise<string>;
-  // TODO: ask the 'safe' to do this
+  // TODO: make this "transfer" object disappear...
   public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;
 
   public getAvailableEarnProviders(): EarnProvider[] {
@@ -386,3 +360,27 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
     return BridgeService.instance.getAvailableBridgeProviders(this);
   }
 }
+
+/**
+ * Subwallet representation ready to save to local storage for persistance.
+ * Only non standard subwallets are serialized
+ */
+export class SerializedSubWallet {
+  public type: CoinType = null;
+  public id: StandardCoinName = null;
+
+  /**
+   * Serialize only fields that we are willing to have in the serialized output.
+   * and the balance type of subwallet is bigNumber,
+   * It needs to be converted to string and then saved to localstorage.
+   */
+  public static fromSubWallet(subWallet: SubWallet<any, any>): SerializedSubWallet {
+    const serializedSubWallet = new SerializedSubWallet();
+    serializedSubWallet.type = subWallet.type;
+    serializedSubWallet.id = subWallet.id as StandardCoinName;
+    return serializedSubWallet;
+  }
+}
+
+// Convenient type to avoid adding SubWallet<any> everywhere.
+export type AnySubWallet = SubWallet<GenericTransaction, any>;

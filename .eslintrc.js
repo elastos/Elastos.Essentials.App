@@ -6,11 +6,13 @@ module.exports = {
   },
   plugins: [
     '@typescript-eslint',
-    'no-async-foreach'
+    'no-async-foreach',
+    'import'
   ],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended'
   ],
   rules: {
     // Generic JS
@@ -49,6 +51,10 @@ module.exports = {
     "@typescript-eslint/no-this-alias": "off",
     "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-empty-interface": "off"
+    "@typescript-eslint/no-empty-interface": "off",
+
+    // Import plugin
+    "import/no-unresolved": "off",
+    "import/no-cycle": ["off", { maxDepth: 5 }]
   }
 };

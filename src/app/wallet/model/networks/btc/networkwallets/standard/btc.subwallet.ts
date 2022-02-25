@@ -201,7 +201,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     // Ignore gasPrice, gasLimit and nonce.
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", gasPrice: string = null, gasLimit: string = null, nonce: number = null): Promise<string> {
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
         let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
 
         // TODO: Normally the data less than 1KB.

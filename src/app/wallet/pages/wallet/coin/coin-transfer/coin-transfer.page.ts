@@ -42,6 +42,7 @@ import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwall
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
+import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
@@ -347,14 +348,26 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         // the spv sdk doesn't support ERC20 yet).
         let rawTx = null;
         try {
-            rawTx = await this.fromSubWallet.createPaymentTransaction(
-                this.toAddress, // User input address
-                new BigNumber(this.amount), // User input amount
-                this.memo, // User input memo
-                this.gasPrice,
-                this.gasLimit,
-                this.nonce
-            );
+            if (this.fromSubWallet instanceof ERC20SubWallet) {
+                rawTx = await this.fromSubWallet.createPaymentTransaction(
+                    this.toAddress, // User input address
+                    new BigNumber(this.amount), // User input amount
+                    this.memo, // User input memo
+                    this.gasPrice,
+                    this.gasLimit,
+                    this.nonce
+                );
+            }
+            else if (this.fromSubWallet instanceof MainCoinSubWallet) {
+                rawTx = await this.fromSubWallet.createPaymentTransaction(
+                    this.toAddress, // User input address
+                    new BigNumber(this.amount), // User input amount
+                    this.memo // User input memo
+                );
+            }
+            else {
+                throw new Error("Unknown subwallet type used for payment!");
+            }
         } catch (err) {
             await this.parseException(err);
         }
