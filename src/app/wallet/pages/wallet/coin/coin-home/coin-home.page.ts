@@ -25,7 +25,6 @@ import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
-import { Moment } from 'moment';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
@@ -443,7 +442,7 @@ export class CoinHomePage implements OnInit {
         // await this.subWallet.signAndSendRawTransaction(rawTx, transfer);
     }
 
-    countAsDailyTransactionIfNeeded(today: Moment, timestamp: number) {
+    countAsDailyTransactionIfNeeded(today: moment.Moment, timestamp: number) {
         if (today.isSame(moment(timestamp).startOf('day'))) {
             this.todaysTransactions++;
         }

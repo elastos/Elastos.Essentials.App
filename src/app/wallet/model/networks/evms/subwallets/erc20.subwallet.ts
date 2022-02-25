@@ -17,14 +17,14 @@ import { Native } from '../../../../services/native.service';
 import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
 import { WalletService } from '../../../../services/wallet.service';
 import { Coin, CoinID, CoinType, ERC20Coin } from '../../../coin';
-import { MasterWallet } from '../../../masterwallets/masterwallet';
+import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
-import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
+import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { SerializedSubWallet, SubWallet } from '../../base/subwallets/subwallet';
-import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
-import { AnyEVMNetworkWallet, EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
+import type { EthTransaction, SignedETHSCTransaction } from '../evm.types';
+import type { AnyEVMNetworkWallet, EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
 
 export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     /** Coin related to this wallet */
@@ -582,4 +582,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         await this.transactionsCache.save();
       }
     } */
+
+    public getSwapInputCurrency(): string {
+        return this.coin.getContractAddress();
+    }
 }

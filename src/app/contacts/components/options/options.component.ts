@@ -1,14 +1,14 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { PopoverController, NavParams } from '@ionic/angular';
-
-import { FriendsService } from '../../services/friends.service';
-import { DidService } from '../../services/did.service';
-
-import { Contact } from '../../models/contact.model';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Contact } from '../../models/contact.model';
+import { DidService } from '../../services/did.service';
+import { FriendsService } from '../../services/friends.service';
+
+
 
 @Component({
   selector: 'app-options',
@@ -36,8 +36,8 @@ export class OptionsComponent implements OnInit {
     Logger.log('contacts', 'Options ', this.contact);
   }
 
-  async deleteContact() {
-    this.events.publish( 'showDeleteContactPrompt', this.contact );
-    this.popover.dismiss();
+  deleteContact() {
+    this.events.publish('showDeleteContactPrompt', this.contact);
+    void this.popover.dismiss();
   }
 }

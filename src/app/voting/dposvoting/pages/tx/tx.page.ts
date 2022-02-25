@@ -1,18 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import * as moment from 'moment';
-
-import { Vote } from '../../model/history.model';
-import { NodesService } from '../../services/nodes.service';
-import { DPosNode } from '../../model/nodes.model';
-import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
-import { TranslateService } from '@ngx-translate/core';
-import { App } from 'src/app/model/app.enum';
 import { NavController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import * as moment from 'moment';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Vote } from '../../model/history.model';
+import { DPosNode } from '../../model/nodes.model';
+import { NodesService } from '../../services/nodes.service';
+
 
 @Component({
     selector: 'app-tx',
@@ -27,7 +25,7 @@ export class TxPage implements OnInit {
     public _nodes: DPosNode[] = [];
 
     // DPosNode Detail
-    public showNode: boolean = false;
+    public showNode = false;
     public nodeIndex: number;
     public node: DPosNode;
 
@@ -45,7 +43,7 @@ export class TxPage implements OnInit {
     ngOnInit() {
         this.route.paramMap.subscribe(paramMap => {
             if (!paramMap.has('txid')) {
-                this.globalNav.navigateBack();
+                void this.globalNav.navigateBack();
                 return;
             }
             this.vote = this.nodesService.getVote(paramMap.get('txid'));
@@ -58,7 +56,7 @@ export class TxPage implements OnInit {
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
         this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, { key: null, iconPath: BuiltInIcon.BACK });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-            this.navCtrl.navigateBack('/dposvoting/menu/history');
+            void this.navCtrl.navigateBack('/dposvoting/menu/history');
         });
     }
 

@@ -12,7 +12,8 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:import/recommended'
+    'plugin:import/recommended',
+    'plugin:import/typescript'
   ],
   rules: {
     // Generic JS
@@ -55,6 +56,12 @@ module.exports = {
 
     // Import plugin
     "import/no-unresolved": "off",
-    "import/no-cycle": ["off", { maxDepth: 5 }]
+    "import/no-cycle": [
+      "warn",
+      {
+        "maxDepth": 5,
+        "ignoreExternal": true
+      }
+    ]
   }
 };

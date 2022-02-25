@@ -34,7 +34,7 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { CoinType } from '../model/coin';
 import { AESEncrypt } from '../model/crypto';
-import { defaultWalletTheme, MasterWallet, WalletID } from '../model/masterwallets/masterwallet';
+import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
 import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletType } from '../model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
@@ -378,7 +378,7 @@ export class WalletService {
         await this.setActiveMasterWallet(networkWallet.masterWallet.id);
     }
 
-    public async setActiveMasterWallet(masterId: WalletID): Promise<void> {
+    public async setActiveMasterWallet(masterId: string): Promise<void> {
         Logger.log('wallet', 'Requested to set active master wallet to:', masterId);
         if (masterId && (this.masterWallets[masterId])) {
             this.activeMasterWalletId = masterId;
@@ -386,7 +386,7 @@ export class WalletService {
         }
     }
 
-    public getMasterWallet(masterId: WalletID): MasterWallet {
+    public getMasterWallet(masterId: string): MasterWallet {
         if (masterId === null)
             throw new Error("getMasterWallet() can't be called with a null ID");
         return this.masterWallets[masterId];
@@ -405,7 +405,7 @@ export class WalletService {
         });
     }
 
-    public getNetworkWalletFromMasterWalletId(masterId: WalletID): AnyNetworkWallet {
+    public getNetworkWalletFromMasterWalletId(masterId: string): AnyNetworkWallet {
         return Object.values(this.networkWallets).find(w => w.id === masterId);
     }
 
@@ -592,7 +592,7 @@ export class WalletService {
      * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
     public async newWalletWithPrivateKey(
-        walletId: WalletID,
+        walletId: string,
         walletName: string,
         privateKey: string,
         privateKeyType: PrivateKeyType,

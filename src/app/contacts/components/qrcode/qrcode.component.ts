@@ -7,8 +7,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { FriendsService } from '../../services/friends.service';
 import { NativeService } from '../../services/native.service';
 
-
-
 @Component({
   selector: 'app-qrcode',
   templateUrl: './qrcode.component.html',
@@ -16,9 +14,9 @@ import { NativeService } from '../../services/native.service';
 })
 export class QRCodeComponent implements OnInit {
 
-  public name: string = "";
-  public didString: string = "";
-  public qrCodeString: string = "";
+  public name = "";
+  public didString = "";
+  public qrCodeString = "";
 
   constructor(
     public theme: GlobalThemeService,
@@ -39,11 +37,11 @@ export class QRCodeComponent implements OnInit {
   }
 
   hideModal() {
-    this.modalCtrl.dismiss(null);
+    void this.modalCtrl.dismiss(null);
   }
 
-  copyDIDToClipboard() {
-    this.clipboard.copy(this.didString);
+  async copyDIDToClipboard() {
+    await this.clipboard.copy(this.didString);
     this.native.shareToast();
   }
 
@@ -52,6 +50,6 @@ export class QRCodeComponent implements OnInit {
       title: this.translate.instant("common.share-friend"),
       url: this.qrCodeString
     });
-    this.modalCtrl.dismiss();
+    void this.modalCtrl.dismiss();
   }
 }

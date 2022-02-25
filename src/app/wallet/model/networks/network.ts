@@ -2,16 +2,16 @@ import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { LocalStorage } from "../../services/storage.service";
-import { SPVNetworkConfig } from "../../services/wallet.service";
+import type { SPVNetworkConfig } from "../../services/wallet.service";
 import { Coin, CoinID, CoinType, ERC20Coin } from "../coin";
 import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
-import { SwapProvider } from "../earn/swapprovider";
-import { MasterWallet } from "../masterwallets/masterwallet";
-import { PrivateKeyType, WalletNetworkOptions } from "../masterwallets/wallet.types";
-import { AnyNetworkWallet } from "./base/networkwallets/networkwallet";
-import { ERC1155Provider } from "./evms/nfts/erc1155.provider";
-import { UniswapCurrencyProvider } from "./evms/uniswap.currencyprovider";
+import type { SwapProvider } from "../earn/swapprovider";
+import type { MasterWallet } from "../masterwallets/masterwallet";
+import type { PrivateKeyType, WalletNetworkOptions } from "../masterwallets/wallet.types";
+import type { AnyNetworkWallet } from "./base/networkwallets/networkwallet";
+import type { ERC1155Provider } from "./evms/nfts/erc1155.provider";
+import type { UniswapCurrencyProvider } from "./evms/uniswap.currencyprovider";
 
 export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOptions> {
   private availableCoins: Coin[] = null;
@@ -43,7 +43,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
 
   /**
    * Returns default options to customize the wallet for the network.
-   * For example in the case of the elastos network, this defines if new wallets are instantiated using 
+   * For example in the case of the elastos network, this defines if new wallets are instantiated using
    * single or multi address mode.
    */
   public abstract getDefaultWalletNetworkOptions(): WalletNetworkOptionsType;
@@ -72,7 +72,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
   /**
    * Returns the EVM chain ID for this network (i.e. 128 for heco) according to the active network template.
    * For elastos, as there are multiple EVM chains, the ETHSC is the "main" one.
-   * 
+   *
    * TODO: MOVE TO EVMNetwork
    */
   public abstract getMainChainID(networkTemplate?: string): number;
@@ -85,7 +85,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    * List of private key types that are supported by this network.
    */
   public supportedPrivateKeyTypes(): PrivateKeyType[] {
-    // None by default. If this method is not overriden by the network, 
+    // None by default. If this method is not overriden by the network,
     // the network can't handle any import by private key
     return [];
   }

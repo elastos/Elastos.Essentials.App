@@ -6,8 +6,6 @@ import { AESDecrypt } from '../crypto';
 import { AnyNetwork } from '../networks/network';
 import { SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from './wallet.types';
 
-export type WalletID = string;
-
 export const defaultWalletName = (): string => {
     return 'Anonymous wallet';
 }

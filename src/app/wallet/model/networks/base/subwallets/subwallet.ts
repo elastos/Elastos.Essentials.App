@@ -1,7 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
-import { Transfer } from '../../../../services/cointransfer.service';
+import type { Transfer } from '../../../../services/cointransfer.service';
 import { BridgeService } from '../../../../services/evm/bridge.service';
 import { EarnService } from '../../../../services/evm/earn.service';
 import { SwapService } from '../../../../services/evm/swap.service';
@@ -10,12 +10,12 @@ import { CoinID, CoinType, StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
-import { MasterWallet } from '../../../masterwallets/masterwallet';
-import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import type { MasterWallet } from '../../../masterwallets/masterwallet';
+import type { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { TimeBasedPersistentCache } from '../../../timebasedpersistentcache';
-import { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../../../tx-providers/transaction.types';
+import type { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../../../tx-providers/transaction.types';
 import { TransactionListType } from '../../evms/evm.types';
-import { NetworkWallet } from '../networkwallets/networkwallet';
+import type { NetworkWallet } from '../networkwallets/networkwallet';
 
 export abstract class SubWallet<TransactionType extends GenericTransaction, WalletNetworkOptionsType extends WalletNetworkOptions> {
   public masterWallet: MasterWallet;
@@ -358,6 +358,14 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
 
   public getAvailableBridgeProviders(): BridgeProvider[] {
     return BridgeService.instance.getAvailableBridgeProviders(this);
+  }
+
+  /**
+   * Returns a specific ERC20 token address (0x...), or coin name ("btc"), used as a parameter for swap provider urls
+   * to directly target a coin to swap.
+   */
+  public getSwapInputCurrency(): string {
+    return "";
   }
 }
 

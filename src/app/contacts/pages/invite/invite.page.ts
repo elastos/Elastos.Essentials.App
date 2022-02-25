@@ -10,8 +10,6 @@ import { Contact } from '../../models/contact.model';
 import { FriendsService } from '../../services/friends.service';
 import { UxService } from '../../services/ux.service';
 
-
-
 @Component({
   selector: 'app-invite',
   templateUrl: './invite.page.html',
@@ -37,7 +35,7 @@ export class InvitePage implements OnInit {
     public translate: TranslateService,
     private globalNav: GlobalNavService,
     public theme: GlobalThemeService
-  ) {}
+  ) { }
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -59,7 +57,7 @@ export class InvitePage implements OnInit {
         this.isFilter = false;
         this.sortContacts(this.isFilter);
       }
-      if(params.intent) {
+      if (params.intent) {
         this.intent = params.intent;
       }
     });
@@ -84,7 +82,7 @@ export class InvitePage implements OnInit {
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     if (this.intent.length > 0 && !this.actionByUser) {
-        this.friendsService.sendEmptyIntentRes();
+      this.friendsService.sendEmptyIntentRes();
     }
   }
 
@@ -94,23 +92,23 @@ export class InvitePage implements OnInit {
 
   sortContacts(isFilter: boolean) {
     this.letters = [];
-    if(isFilter) {
+    if (isFilter) {
       this.friendsService.filteredContacts.map((contact) => {
         // Add letter for 'anonymous' contact
-        if(
+        if (
           !contact.credentials.name && contact.customName && contact.customName === 'Anonymous Contact' && !this.letters.includes('Anonymous') ||
           !contact.credentials.name && !contact.customName && !this.letters.includes('Anonymous')
         ) {
           this.letters.push('Anonymous');
-        };
+        }
         // Add letter for name credential
-        if(
+        if (
           contact.credentials.name && !contact.customName && !this.letters.includes(contact.credentials.name[0].toUpperCase())
         ) {
           this.letters.push(contact.credentials.name[0].toUpperCase());
         }
         // Add letter for custom name
-        if(
+        if (
           !contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase()) ||
           contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase())
         ) {
@@ -123,20 +121,20 @@ export class InvitePage implements OnInit {
     } else {
       this.friendsService.contacts.map((contact) => {
         // Add letter for 'anonymous' contact
-        if(
+        if (
           !contact.credentials.name && contact.customName && contact.customName === 'Anonymous Contact' && !this.letters.includes('Anonymous') ||
           !contact.credentials.name && !contact.customName && !this.letters.includes('Anonymous')
         ) {
           this.letters.push('Anonymous');
-        };
+        }
         // Add letter for name credential
-        if(
+        if (
           contact.id !== 'did:elastos' && contact.credentials.name && !contact.customName && !this.letters.includes(contact.credentials.name[0].toUpperCase())
         ) {
           this.letters.push(contact.credentials.name[0].toUpperCase());
         }
         // Add letter for custom name
-        if(
+        if (
           !contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase()) ||
           contact.id !== 'did:elastos' && contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase())
         ) {
@@ -152,7 +150,7 @@ export class InvitePage implements OnInit {
   // If pick-friend intent is single invite, disable checkboxes if a friend is picked //
   singlePicked(isFilter: boolean) {
     let selectedFriends = 0;
-    if(!isFilter) {
+    if (!isFilter) {
       this.friendsService.contacts.map(contact => {
         if (contact.isPicked) {
           selectedFriends++;
@@ -166,7 +164,7 @@ export class InvitePage implements OnInit {
       });
     }
 
-    if(selectedFriends >= 1) {
+    if (selectedFriends >= 1) {
       return true;
     } else {
       return false;

@@ -1,7 +1,7 @@
-import { Component, OnInit, NgZone } from '@angular/core';
-import { ContactsService, Contact } from '../../services/contacts.service';
+import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Contact, ContactsService } from '../../services/contacts.service';
 
 @Component({
   selector: 'app-contacts',
@@ -26,7 +26,7 @@ export class ContactsComponent implements OnInit {
   }
 
   selectContact(contact: Contact) {
-    this.modalCtrl.dismiss({
+    void this.modalCtrl.dismiss({
       contact: contact
     });
   }

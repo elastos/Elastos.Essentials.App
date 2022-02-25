@@ -29,9 +29,9 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SwapProvider } from '../../model/earn/swapprovider';
-import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
-import { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
-import { AnyNetwork } from '../../model/networks/network';
+import type { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
+import type { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
+import type { AnyNetwork } from '../../model/networks/network';
 import { WalletNetworkService } from '../network.service';
 
 type TokenListCacheEntry = {
@@ -112,10 +112,7 @@ export class SwapService {
         let targetUrl = provider.swapUrl || provider.baseProvider.projectUrl;
 
         // Check if the url contains specific tag that we can replace for better UX (ex: directly open the right screen)
-        var inputCurrency = "";
-        if (subWallet && subWallet instanceof ERC20SubWallet) {
-            inputCurrency = subWallet.coin.getContractAddress();
-        }
+        var inputCurrency = subWallet ? subWallet.getSwapInputCurrency() : "";
         targetUrl = targetUrl.replace("${inputCurrency}", inputCurrency);
         targetUrl = targetUrl.replace("${theme}", this.theme.darkMode ? "dark" : "light");
 

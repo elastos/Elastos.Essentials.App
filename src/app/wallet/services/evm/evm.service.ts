@@ -9,7 +9,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 import Web3 from 'web3';
 import { ETHTransactionComponent } from '../../components/eth-transaction/eth-transaction.component';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
-import { MainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
+import type { MainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../model/networks/network';
 import { RawTransactionPublishResult } from '../../model/tx-providers/transaction.types';
 import { Transfer } from '../cointransfer.service';
