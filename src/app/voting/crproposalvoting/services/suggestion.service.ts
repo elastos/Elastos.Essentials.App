@@ -224,8 +224,8 @@ export class SuggestionService {
         payload = Object.assign(payload, {
             TargetProposalHash: data.targetproposalhash,
             NewRecipient: data.newRecipient,
-            NewOwnerPublicKey: data.newownerpublickey,
-            NewOwnerSignature: data.newownersignature,
+            NewOwnerPublicKey: data.newOwnerPublicKey,
+            NewOwnerSignature: data.newOwnerSignature,
         });
         return payload;
     }
@@ -308,20 +308,28 @@ export class SuggestionService {
         }
     }
 
-    public getProposalTypeForChangeProposal(proposaltype: string, suggestionDetail: SuggestionDetail) {
-        if (proposaltype == "changeproposalowner" && suggestionDetail.newRecipient && !suggestionDetail.newOwnerDID) {
-            proposaltype = "changeproposaladdress";
+    public getProposalTypeForChangeProposal(suggestionDetail: SuggestionDetail) {
+        if (suggestionDetail.type == "changeproposalowner" && suggestionDetail.newRecipient && !suggestionDetail.newOwnerDID) {
+            return "changeproposaladdress";
         }
-        return proposaltype
+        return suggestionDetail.type;
     }
 
-    public getSuggectionStatus(status: string, suggestionDetail: SuggestionDetail) {
-        if (suggestionDetail.type == "secretarygeneral" && suggestionDetail.status != 'proposed') {
+    public adjustSuggectionStatus(suggestionDetail: SuggestionDetail) {
+        let type = this.getProposalTypeForChangeProposal(suggestionDetail);
+        let status = suggestionDetail.status;
+        if (type == "secretarygeneral" && status != 'proposed') {
             if (!suggestionDetail.newSecretarySignature &&
                 !(Util.isSelfDid(suggestionDetail.did) && !Util.isSelfDid(suggestionDetail.newSecretaryDID))) {
-                return "unsigned";
+                    suggestionDetail.status = "unsigned";
             }
         }
-        return status
+        else  if (type == "changeproposalowner" && status != 'proposed') {
+            if (!suggestionDetail.newOwnerSignature &&
+                !(Util.isSelfDid(suggestionDetail.did) && !Util.isSelfDid(suggestionDetail.newOwnerDID))) {
+                    suggestionDetail.status = "unsigned";
+            }
+        }
+        return suggestionDetail.status
     }
 }

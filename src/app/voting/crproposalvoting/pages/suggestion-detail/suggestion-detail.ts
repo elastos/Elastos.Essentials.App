@@ -43,6 +43,7 @@ export class SuggestionDetailPage {
 
     private commandReturnSub: Subscription = null;
     public suggestionId: string;
+    public proposaltype: string;
 
     constructor(
         public uxService: UXService,
@@ -85,15 +86,18 @@ export class SuggestionDetailPage {
             this.commandName = null;
             this.buttonLabel = null;
 
-            this.suggestion.status =  this.suggestionService.getSuggectionStatus(this.suggestion.status, this.suggestion);
+            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.suggestion),
+            this.suggestionService.adjustSuggectionStatus(this.suggestion);
 
-            if (this.isCRMember && this.suggestion.status == 'signed' && !(this.suggestion.type == "secretarygeneral"
-                    && !this.suggestion.newSecretarySignature)) {
+            if (this.isCRMember && this.suggestion.status == 'signed'
+                    && !(this.proposaltype == "secretarygeneral" && !this.suggestion.newSecretarySignature)
+                    && !(this.proposaltype == "changeproposalowner" && !this.suggestion.newOwnerSignature)) {
                 this.commandName = "createproposal";
                 this.buttonLabel = "crproposalvoting.make-into-proposal";
             }
             else if (this.suggestion.status == 'unsigned' && (this.isSelf
-                    || (this.suggestion.type == "secretarygeneral" && Util.isSelfDid(this.suggestion.newSecretaryDID)))) {
+                    || (this.proposaltype == "secretarygeneral" && Util.isSelfDid(this.suggestion.newSecretaryDID))
+                    || (this.proposaltype == "changeproposalowner" && Util.isSelfDid(this.suggestion.newOwnerDID)))) {
                 this.commandName = "createsuggestion";
                 this.buttonLabel = "crproposalvoting.sign-suggestion";
             }
@@ -146,7 +150,7 @@ export class SuggestionDetailPage {
             {
                 title: this.translate.instant('crproposalvoting.type'),
                 type: 'type',
-                value: this.suggestionService.getProposalTypeForChangeProposal(this.suggestion.type, this.suggestion),
+                value: this.proposaltype,
                 active: true
             },
             {

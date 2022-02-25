@@ -62,8 +62,12 @@ export class SuggestionDetail {
     targetProposalTitle: string;
     targetProposalHash: string;
 
-    newOwnerDID?: string;
     newRecipient?: string;
+
+    newOwnerDID?: string;
+    newOwnerPublicKey?: string;
+    newOwnerSignature?: string;
+
     newSecretaryDID?: string;
     newSecretaryPublicKey?: string;
     newSecretarySignature?: string;
@@ -73,7 +77,6 @@ export class SuggestionDetail {
 
     signature?: string;
     secretaryGeneralSignature?: string;
-    newOwnerSignature?: string;
 
     reservedCustomizedIDList?: [string];
     receivedCustomizedIDList?: [string];

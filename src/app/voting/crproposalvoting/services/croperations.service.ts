@@ -286,8 +286,8 @@ export class CROperationsService {
                     data.draftData = await this.getDraftData(data.draftHash);
                     data.targetproposalhash = data.targetproposalhash || data.targetProposalhash || data.targetProposalHash;
                     data.newRecipient = data.newrecipient || data.newRecipient;
-                    data.newownerpublickey = data.newownerpublickey || data.newOwnerPublicKey;
-                    data.newownersignature = data.newownersignature || data.newOwnerSignature;
+                    data.newOwnerPublicKey = data.newownerpublickey || data.newOwnerPublicKey;
+                    data.newOwnerSignature = data.newownersignature || data.newOwnerSignature;
                     data.newSecretaryDID = data.newSecretaryDID || data.secretarygeneraldid;
                     data.newSecretaryPublicKey = data.secretarygeneralpublickey || data.newSecretaryPublicKey;
                     data.newSecretarySignature = data.secretarygenerasignature || data.newSecretarySignature;

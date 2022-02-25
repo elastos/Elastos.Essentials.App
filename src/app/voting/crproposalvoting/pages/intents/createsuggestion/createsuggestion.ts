@@ -76,7 +76,7 @@ export class CreateSuggestionPage {
         this.suggestionDetailFetched = true;
 
         if (this.suggestionDetail) {
-            this.proposaltype = this.suggestionDetail.type;
+            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.suggestionDetail);
             this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
 
             this.bugetAmount = 0;
@@ -88,7 +88,6 @@ export class CreateSuggestionPage {
             }
 
             Logger.log(App.CRSUGGESTION, "suggestionDetail", this.suggestionDetail);
-            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.proposaltype, this.suggestionDetail);
             this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
         }
     }

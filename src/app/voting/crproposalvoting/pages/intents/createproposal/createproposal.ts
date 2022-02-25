@@ -78,7 +78,7 @@ export class CreateProposalPage {
         this.suggestionDetail = await this.crOperations.getCurrentSuggestion();
         this.suggestionDetailFetched = true;
         if (this.suggestionDetail) {
-            this.proposaltype = this.suggestionDetail.type;
+            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.suggestionDetail);
 
             this.bugetAmount = 0;
             if (this.proposaltype == "normal") {
@@ -88,7 +88,6 @@ export class CreateProposalPage {
                 }
             }
 
-            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.proposaltype, this.suggestionDetail);
             this.creationDate = Util.timestampToDateTime(this.suggestionDetail.createdAt * 1000);
         }
     }
