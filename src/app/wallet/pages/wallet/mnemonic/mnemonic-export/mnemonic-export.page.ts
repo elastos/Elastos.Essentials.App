@@ -146,6 +146,9 @@ export class MnemonicExportPage implements OnInit {
 
     async showPrivateKey() {
         this.evmPrivateKey = await this.walletManager.spvBridge.exportETHSCPrivateKey(this.masterWalletId, "ETHSC", this.payPassword);
+        if (this.evmPrivateKey && !this.evmPrivateKey.startsWith('0x')) {
+            this.evmPrivateKey = '0x' + this.evmPrivateKey;
+        }
         if (!this.hasMnemonic) {
             this.titleBar.setBackgroundColor('#732cd0');
             this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
