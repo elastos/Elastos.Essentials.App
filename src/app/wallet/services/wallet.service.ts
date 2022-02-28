@@ -36,7 +36,7 @@ import { CoinType } from '../model/coin';
 import { AESEncrypt } from '../model/crypto';
 import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
-import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletType } from '../model/masterwallets/wallet.types';
+import { PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
 import type { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
 import type { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
 import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
@@ -463,8 +463,7 @@ export class WalletService {
         mnemonicStr: string,
         mnemonicPassphrase: string,
         payPassword: string,
-        singleAddress: boolean, // TODO: remove, replaced with elastos network options
-        // TODO networkOptions: WalletNetworkOptions[] // elastos -> single address
+        networkOptions: WalletNetworkOptions[], // elastos -> single address
         walletCreator: WalletCreator
     ) {
         Logger.log('wallet', "Importing new master wallet with mnemonic");
@@ -486,11 +485,7 @@ export class WalletService {
             seed: AESEncrypt(seed, payPassword),
             mnemonic: AESEncrypt(mnemonicStr, payPassword),
             hasPassphrase,
-            // TODO: get options from UI params
-            networkOptions: [{
-                network: "elastos", // elastos mainchain
-                singleAddress: singleAddress
-            } as ElastosWalletNetworkOptions],
+            networkOptions,
             creator: walletCreator
         }
 

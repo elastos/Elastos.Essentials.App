@@ -19,7 +19,9 @@ export type WalletNetworkOptions = {
   network: string; // Network key. eg: elastos, bsc...
 }
 
-export type ElastosWalletNetworkOptions = WalletNetworkOptions & {
+export type ElastosMainChainWalletNetworkOptions = WalletNetworkOptions & {
+  network: "elastos",
+
   singleAddress: boolean;
 }
 

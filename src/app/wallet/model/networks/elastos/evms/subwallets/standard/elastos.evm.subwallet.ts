@@ -5,7 +5,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 import { jsToSpvWalletId, SPVService } from 'src/app/wallet/services/spv.service';
 import { Config } from '../../../../../../config/Config';
 import { StandardCoinName } from '../../../../../coin';
-import { ElastosWalletNetworkOptions } from '../../../../../masterwallets/wallet.types';
+import { ElastosMainChainWalletNetworkOptions } from '../../../../../masterwallets/wallet.types';
 import { EthTransaction } from '../../../../evms/evm.types';
 import { MainCoinEVMSubWallet } from '../../../../evms/subwallets/evm.subwallet';
 import { ElastosStandardNetworkWallet } from '../../../networkwallets/standard/elastos.networkwallet';
@@ -13,7 +13,7 @@ import { ElastosStandardNetworkWallet } from '../../../networkwallets/standard/e
 /**
  * Specialized standard sub wallet for the ETH sidechain.
  */
-export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosWalletNetworkOptions> {
+export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWalletNetworkOptions> {
   constructor(networkWallet: ElastosStandardNetworkWallet, id: StandardCoinName, friendlyName: string) {
     let rpcApiUrl = GlobalElastosAPIService.instance.getApiUrlForChainCode(id);
 

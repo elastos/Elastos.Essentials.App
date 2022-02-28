@@ -14,7 +14,7 @@ export class SPVSDKSafe extends Safe {
   protected spvWalletId: string;
 
   constructor(protected masterWallet: StandardMasterWallet, protected chainId: string) {
-    super();
+    super(masterWallet);
 
     this.spvWalletId = jsToSpvWalletId(masterWallet.id);
   }

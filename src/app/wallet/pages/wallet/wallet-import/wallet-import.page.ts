@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { ElastosMainChainWalletNetworkOptions, WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -54,7 +54,7 @@ export class WalletImportPage implements OnInit {
         public zone: NgZone,
         private authService: AuthService,
         private translate: TranslateService,
-        private walletCreateService: WalletCreationService
+        private walletCreationService: WalletCreationService
     ) {
         this.masterWalletId = walletService.createMasterWalletID();
     }
@@ -194,15 +194,20 @@ export class WalletImportPage implements OnInit {
     }
 
     async importWalletWithMnemonic(payPassword: string) {
+        let elastosNetworkOptions: ElastosMainChainWalletNetworkOptions = {
+            network: "elastos", // mainchain
+            singleAddress: this.walletCreationService.singleAddress
+        };
+
         // Trim leading and trailing spaces for each word
         Logger.log('wallet', 'Importing with mnemonic');
         await this.walletService.newStandardWalletWithMnemonic(
             this.masterWalletId,
-            this.walletCreateService.name,
+            this.walletCreationService.name,
             this.inputStr.toLowerCase(),
-            this.walletCreateService.mnemonicPassword,
+            this.walletCreationService.mnemonicPassword,
             payPassword,
-            this.walletCreateService.singleAddress,
+            [elastosNetworkOptions],
             WalletCreator.USER
         );
         this.native.setRootRouter("/wallet/wallet-home");

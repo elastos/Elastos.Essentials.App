@@ -3,7 +3,7 @@ import { Util } from "src/app/model/util";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../coin";
-import { ElastosWalletNetworkOptions } from "../../masterwallets/wallet.types";
+import { ElastosMainChainWalletNetworkOptions } from "../../masterwallets/wallet.types";
 import { ElastosTransaction, PaginatedTransactions } from "../../tx-providers/transaction.types";
 import { AnySubWallet, SubWallet } from "../base/subwallets/subwallet";
 
@@ -20,7 +20,7 @@ export class WalletHelper {
             jsToSpvWalletId(subWallet.masterWallet.id), subWallet.id);
     }
 
-    public static async getTransactionByAddress(subWallet: SubWallet<any, ElastosWalletNetworkOptions>, internalAddress: boolean, transactionLimit: number, timestamp = 0): Promise<PaginatedTransactions<ElastosTransaction>[]> {
+    public static async getTransactionByAddress(subWallet: SubWallet<any, ElastosMainChainWalletNetworkOptions>, internalAddress: boolean, transactionLimit: number, timestamp = 0): Promise<PaginatedTransactions<ElastosTransaction>[]> {
         let startIndex = 0
         let txListTotal: PaginatedTransactions<ElastosTransaction>[] = [];
 

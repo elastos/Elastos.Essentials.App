@@ -2,7 +2,7 @@ import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
 import { AESEncrypt } from "src/app/wallet/model/crypto";
 import { defaultWalletName, defaultWalletTheme } from "src/app/wallet/model/masterwallets/masterwallet";
-import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedStandardMasterWallet, WalletCreator, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
+import { ElastosMainChainWalletNetworkOptions, PrivateKeyType, SerializedStandardMasterWallet, WalletCreator, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
 import { AuthService as WalletAuthService } from "src/app/wallet/services/auth.service";
 import { SPVService } from "src/app/wallet/services/spv.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
@@ -101,7 +101,7 @@ export const migrateSPVNetworkTemplate = async (networkTemplate: string, identit
 
     let spvAccountInfo = await spvService.getMasterWalletBasicInfo(spvWalletId);
 
-    let elastosNetworkOptions: ElastosWalletNetworkOptions = {
+    let elastosNetworkOptions: ElastosMainChainWalletNetworkOptions = {
       network: 'elastos', // Elastos main chain
       singleAddress: spvAccountInfo.SingleAddress || true
     };

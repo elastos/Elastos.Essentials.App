@@ -22,7 +22,7 @@
 
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
-import { WalletCreator } from '../model/masterwallets/wallet.types';
+import { ElastosMainChainWalletNetworkOptions, WalletCreator } from '../model/masterwallets/wallet.types';
 import { ElastosMainChainStandardNetworkWallet } from '../model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
 import { AuthService } from './auth.service';
 import { WalletNetworkService } from './network.service';
@@ -90,7 +90,9 @@ export class WalletCreationService {
           mnemonic,
           mnemonicPassphrase || "",
           payPassword,
-          false,
+          [
+            { network: "elastos", singleAddress: false } as ElastosMainChainWalletNetworkOptions
+          ],
           WalletCreator.WALLET_APP
         );
 
@@ -112,7 +114,9 @@ export class WalletCreationService {
           mnemonic,
           mnemonicPassphrase || "",
           payPassword,
-          true,
+          [
+            { network: "elastos", singleAddress: false } as ElastosMainChainWalletNetworkOptions
+          ],
           WalletCreator.WALLET_APP
         );
 

@@ -6,7 +6,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { ElastosWalletNetworkOptions } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { ElastosMainChainWalletNetworkOptions } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { Config } from '../../../../../config/Config';
 import { Candidates, jsToSpvWalletId, SPVService, VoteContent, VoteType } from '../../../../../services/spv.service';
@@ -28,7 +28,7 @@ export type AvalaibleUtxos = {
     utxo: Utxo[];
 }
 
-export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, ElastosWalletNetworkOptions> {
+export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, ElastosMainChainWalletNetworkOptions> {
     private TRANSACTION_LIMIT = 50;
 
     // voting

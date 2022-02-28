@@ -79,6 +79,8 @@ export interface DappBrowserClient {
     providedIn: 'root'
 })
 export class DappBrowserService implements GlobalService {
+    public static instance: DappBrowserService = null;
+
     private userAddress: string = null;
     private web3ProviderCode: string = null;
     private elastosConnectorCode: string = null;
@@ -106,6 +108,8 @@ export class DappBrowserService implements GlobalService {
         private g: GlobalDIDSessionsService,
         private globalIntentService: GlobalIntentService
     ) {
+        DappBrowserService.instance = this;
+
         void this.init();
     }
 
@@ -885,7 +889,7 @@ export class DappBrowserService implements GlobalService {
     }
 
     /**
-     * Add a browsed url to recently browsed apps. The recents apps array is always sorted by most
+     * Add a browsed url to recently browsed apps. The recent apps array is always sorted by most
      * recent first.
      */
     private async addAppToRecent(url: string) {

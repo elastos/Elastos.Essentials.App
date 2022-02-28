@@ -15,7 +15,7 @@ export class ElastosMainChainLedgerNetworkWallet extends ElastosLedgerNetworkWal
     super(
       masterWallet,
       network,
-      new MainChainLedgerSafe(),
+      new MainChainLedgerSafe(masterWallet),
       "ELA"
     );
   }

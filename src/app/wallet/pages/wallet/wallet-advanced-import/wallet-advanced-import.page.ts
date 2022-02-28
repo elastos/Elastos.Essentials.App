@@ -5,7 +5,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
-import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { ElastosMainChainWalletNetworkOptions, WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -25,7 +25,7 @@ export class WalletAdvancedImportPage implements OnInit {
 
   constructor(
     private walletService: WalletService,
-    private walletCreateService: WalletCreationService,
+    private walletCreationService: WalletCreationService,
     private authService: AuthService,
     private native: Native,
     public translate: TranslateService,
@@ -83,14 +83,19 @@ export class WalletAdvancedImportPage implements OnInit {
   }
 
   async importWalletWithMnemonic(payPassword: string) {
+    let elastosNetworkOptions: ElastosMainChainWalletNetworkOptions = {
+      network: "elastos", // mainchain
+      singleAddress: this.walletCreationService.singleAddress
+    };
+
     const mnemonicStr = this.mnemonicWords.join(' ').toLowerCase();
     await this.walletService.newStandardWalletWithMnemonic(
       this.masterWalletId,
-      this.walletCreateService.name,
+      this.walletCreationService.name,
       mnemonicStr,
-      this.walletCreateService.mnemonicPassword,
+      this.walletCreationService.mnemonicPassword,
       payPassword,
-      this.walletCreateService.singleAddress,
+      [elastosNetworkOptions],
       WalletCreator.USER
     );
     this.native.setRootRouter("/wallet/wallet-home");

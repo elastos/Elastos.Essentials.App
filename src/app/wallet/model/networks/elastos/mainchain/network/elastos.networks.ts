@@ -1,14 +1,14 @@
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
-import { ElastosWalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
+import { ElastosMainChainWalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
 import { SPVNetworkConfig } from "../../../../../services/wallet.service";
 import { AnyNetworkWallet } from "../../../base/networkwallets/networkwallet";
 import { ElastosNetworkBase } from "../../network/elastos.base.network";
 import { ElastosMainChainLedgerNetworkWallet } from "../networkwallets/ledger/mainchain.networkwallet";
 import { ElastosMainChainStandardNetworkWallet } from "../networkwallets/standard/mainchain.networkwallet";
 
-export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<ElastosWalletNetworkOptions> {
+export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<ElastosMainChainWalletNetworkOptions> {
   public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
     let wallet: AnyNetworkWallet = null;
     switch (masterWallet.type) {
@@ -25,9 +25,9 @@ export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<Ela
     return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
-  public getDefaultWalletNetworkOptions(): ElastosWalletNetworkOptions {
+  public getDefaultWalletNetworkOptions(): ElastosMainChainWalletNetworkOptions {
     return {
-      network: this.key,
+      network: "elastos",
       singleAddress: true
     }
   }

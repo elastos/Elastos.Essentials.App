@@ -1,14 +1,14 @@
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardCoinName } from "../../../../coin";
-import { ElastosWalletNetworkOptions } from "../../../../masterwallets/wallet.types";
+import { ElastosMainChainWalletNetworkOptions } from "../../../../masterwallets/wallet.types";
 import { ProviderTransactionInfo } from "../../../../tx-providers/providertransactioninfo";
 import { SubWalletTransactionProvider } from "../../../../tx-providers/subwallet.provider";
 import { ElastosTransaction, PaginatedTransactions, TransactionDirection, TransactionStatus } from "../../../../tx-providers/transaction.types";
 import { AnySubWallet, SubWallet } from "../../../base/subwallets/subwallet";
 import { WalletHelper } from "../../wallet.helper";
 
-export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends SubWallet<ElastosTransaction, ElastosWalletNetworkOptions>> extends SubWalletTransactionProvider<SubWalletType, ElastosTransaction> {
+export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends SubWallet<ElastosTransaction, ElastosMainChainWalletNetworkOptions>> extends SubWalletTransactionProvider<SubWalletType, ElastosTransaction> {
   private TRANSACTION_LIMIT = 50;
   private needtoLoadMoreAddresses: string[] = [];
   private alreadyTriedToFetchMore = false;

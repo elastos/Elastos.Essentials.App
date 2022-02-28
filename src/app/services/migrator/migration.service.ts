@@ -6,6 +6,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from "../global.didsessions.s
 import { GlobalNavService } from "../global.nav.service";
 import { GlobalStorageService } from "../global.storage.service";
 import { Migration } from "./migration";
+import { BrowserFavoritesElastosNetworkSplitMigration } from "./migrations/browserfavoriteselastosnet.migration";
 import { JSWalletListMigration } from "./migrations/jswalletlist.migration";
 
 /**
@@ -14,12 +15,13 @@ import { JSWalletListMigration } from "./migrations/jswalletlist.migration";
  *
  * EACH MIGRATION MUST HAVE A DIFFERENT ID
  */
-const LATEST_MIGRATION_ID = 1;
+const LATEST_MIGRATION_ID = 2;
 
 // IMPORTANT: KEEP THIS LIST ORDERED FROM OLD TO RECENT TO RUN MIGRATIONS IN THE RIGHT ORDER
 const MIGRATIONS: Migration[] = [
   // Convert wallets list managed by the SPVSDK into a JS/App side management (reduce dependencies to the SPVSDK)
-  new JSWalletListMigration(1)
+  new JSWalletListMigration(1),
+  new BrowserFavoritesElastosNetworkSplitMigration(2)
 ];
 
 type MigrationEvent = {

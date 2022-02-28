@@ -8,7 +8,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
-import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { ElastosMainChainWalletNetworkOptions, WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../../services/auth.service';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -133,6 +133,11 @@ export class MnemonicWritePage implements OnInit {
                     const payPassword = await this.authService.createAndSaveWalletPassword(this.walletCreationService.masterId);
                     if (payPassword) {
                         try {
+                            let elastosNetworkOptions: ElastosMainChainWalletNetworkOptions = {
+                                network: "elastos", // mainchain
+                                singleAddress: this.walletCreationService.singleAddress
+                            };
+
                             await this.native.showLoading(this.translate.instant('common.please-wait'));
                             await this.walletManager.newStandardWalletWithMnemonic(
                                 this.walletCreationService.masterId,
@@ -140,7 +145,7 @@ export class MnemonicWritePage implements OnInit {
                                 this.mnemonicStr,
                                 this.walletCreationService.mnemonicPassword,
                                 payPassword,
-                                this.walletCreationService.singleAddress,
+                                [elastosNetworkOptions],
                                 WalletCreator.USER
                             );
                             await this.native.hideLoading();

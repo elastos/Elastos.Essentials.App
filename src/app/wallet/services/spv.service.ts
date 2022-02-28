@@ -8,7 +8,7 @@ import { Config } from '../config/Config';
 import { StandardCoinName } from '../model/coin';
 import { AESDecrypt } from '../model/crypto';
 import { StandardMasterWallet } from '../model/masterwallets/masterwallet';
-import { ElastosWalletNetworkOptions } from '../model/masterwallets/wallet.types';
+import { ElastosMainChainWalletNetworkOptions } from '../model/masterwallets/wallet.types';
 import { WalletHelper } from '../model/networks/elastos/wallet.helper';
 import { WalletAccountType } from '../model/walletaccount';
 import { AuthService } from './auth.service';
@@ -198,7 +198,7 @@ export class SPVService {
             // Decrypt the seed
             let decryptedSeed = AESDecrypt(masterWallet.getSeed(), payPassword);
 
-            let elastosNetworkOptions = masterWallet.getNetworkOptions("elastos") as ElastosWalletNetworkOptions;
+            let elastosNetworkOptions = masterWallet.getNetworkOptions("elastos") as ElastosMainChainWalletNetworkOptions;
 
             // Import the seed as new SPV SDK wallet
             let spvWalletId = WalletHelper.createSPVMasterWalletId();
