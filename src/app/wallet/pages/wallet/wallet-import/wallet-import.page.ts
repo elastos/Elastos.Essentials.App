@@ -196,7 +196,7 @@ export class WalletImportPage implements OnInit {
     async importWalletWithMnemonic(payPassword: string) {
         // Trim leading and trailing spaces for each word
         Logger.log('wallet', 'Importing with mnemonic');
-        await this.walletService.newWalletWithMnemonic(
+        await this.walletService.newStandardWalletWithMnemonic(
             this.masterWalletId,
             this.walletCreateService.name,
             this.inputStr.toLowerCase(),

@@ -1,4 +1,5 @@
 import { Transfer } from "../../services/cointransfer.service";
+import { MasterWallet } from "../masterwallets/masterwallet";
 import { SignTransactionResult } from "./safe.types";
 
 /**
@@ -10,6 +11,8 @@ import { SignTransactionResult } from "./safe.types";
  * on wallet private keys. 
  */
 export abstract class Safe {
+  constructor(protected masterWallet: MasterWallet) { }
+
   /**
    * Initialization method that can be overriden by subclasses.
    */

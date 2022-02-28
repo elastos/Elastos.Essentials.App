@@ -3,11 +3,13 @@ import { CoinID, ERC20Coin } from "../../coin";
 import { BridgeProvider } from "../../earn/bridgeprovider";
 import { EarnProvider } from "../../earn/earnprovider";
 import { SwapProvider } from "../../earn/swapprovider";
+import { LedgerMasterWallet } from "../../masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "../../masterwallets/masterwallet";
 import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../../masterwallets/wallet.types";
 import { AnyNetworkWallet } from "../base/networkwallets/networkwallet";
 import { Network } from "../network";
 import { EVMNetworkWallet } from "./networkwallets/evm.networkwallet";
+import { LedgerEVMNetworkWallet } from "./networkwallets/ledger/ledger.evm.networkwallet";
 import { StandardEVMNetworkWallet } from "./networkwallets/standard/standard.evm.networkwallet";
 import { ERC20SubWallet } from "./subwallets/erc20.subwallet";
 
@@ -60,6 +62,9 @@ export class EVMNetwork extends Network<WalletNetworkOptions> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
         wallet = new StandardEVMNetworkWallet(masterWallet as StandardMasterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName, this.averageBlocktime);
+        break;
+      case WalletType.LEDGER:
+        wallet = new LedgerEVMNetworkWallet(masterWallet as LedgerMasterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName, this.averageBlocktime);
         break;
       default:
         return null;

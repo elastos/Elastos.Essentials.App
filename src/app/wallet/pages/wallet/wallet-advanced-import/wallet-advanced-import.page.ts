@@ -84,7 +84,7 @@ export class WalletAdvancedImportPage implements OnInit {
 
   async importWalletWithMnemonic(payPassword: string) {
     const mnemonicStr = this.mnemonicWords.join(' ').toLowerCase();
-    await this.walletService.newWalletWithMnemonic(
+    await this.walletService.newStandardWalletWithMnemonic(
       this.masterWalletId,
       this.walletCreateService.name,
       mnemonicStr,

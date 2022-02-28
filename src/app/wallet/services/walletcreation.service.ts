@@ -84,7 +84,7 @@ export class WalletCreationService {
     if (payPassword) {
       try {
         // First create multi address wallet.
-        await this.walletService.newWalletWithMnemonic(
+        await this.walletService.newStandardWalletWithMnemonic(
           masterWalletId,
           walletName,
           mnemonic,
@@ -106,7 +106,7 @@ export class WalletCreationService {
         Logger.log('wallet', 'Single address wallet!')
         // Not multi address wallet, delete multi address wallet and create a single address wallet.
         await this.walletService.destroyMasterWallet(masterWalletId, false);
-        await this.walletService.newWalletWithMnemonic(
+        await this.walletService.newStandardWalletWithMnemonic(
           masterWalletId,
           walletName,
           mnemonic,

@@ -561,14 +561,6 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return -1;
     }
 
-    /* public async saveTransactions(transactionsList: EthTransaction[]): Promise<void> {
-      for (let i = 0, len = transactionsList.length; i < len; i++) {
-        this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
-      }
-      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length)
-      await this.transactionsCache.save();
-    } */
-
     /* TODO private async removeInvalidTransaction(hash: string): Promise<void> {
       let existingIndex = (this.paginatedTransactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
       if (existingIndex >= 0) {

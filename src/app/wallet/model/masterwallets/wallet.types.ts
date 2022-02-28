@@ -68,6 +68,8 @@ export type SerializedMasterWallet = {
 
 // TODO: move to another file
 export type SerializedStandardMasterWallet = SerializedMasterWallet & {
+  type: WalletType.STANDARD;
+
   /** Encrypted root seed key.*/
   seed?: string;
   /** Encrypted 12 mnemonic words */
@@ -82,7 +84,12 @@ export type SerializedStandardMasterWallet = SerializedMasterWallet & {
 
 // TODO: move to another file
 export type SerializedLedgerMasterWallet = SerializedMasterWallet & {
-  // TODO: info such as the device name, account name
+  type: WalletType.LEDGER;
+
+  /** Identifier of the ledger device bound to this master wallet */
+  deviceID: string;
+  /** Identifier of the ledger accounts bound to this master wallet */
+  accountID: string;
 }
 
 /**

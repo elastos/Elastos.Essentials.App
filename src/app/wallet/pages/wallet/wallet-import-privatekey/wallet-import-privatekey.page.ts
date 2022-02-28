@@ -115,7 +115,7 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
       this.privatekey = this.privatekey.substring(2);
     }
 
-    await this.walletManager.newWalletWithPrivateKey(
+    await this.walletManager.newStandardWalletWithPrivateKey(
       this.masterWalletId,
       this.walletCreateService.name,
       this.privatekey,

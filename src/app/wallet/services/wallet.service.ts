@@ -36,7 +36,7 @@ import { CoinType } from '../model/coin';
 import { AESEncrypt } from '../model/crypto';
 import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
-import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletType } from '../model/masterwallets/wallet.types';
+import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletType } from '../model/masterwallets/wallet.types';
 import type { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
 import type { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
 import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
@@ -174,62 +174,6 @@ export class WalletService {
         this.masterWallets = {};
         this.networkWallets = {};
     }
-
-    /* private async initWallets(): Promise<boolean> {
-        Logger.log('wallet', "Initializing wallets");
-
-        try {
-            this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
-
-            // Update the SPV SDK with the right network configuration
-            await this.prepareSPVNetworkConfiguration();
-
-            let signedInEntry = await this.didSessions.getSignedInIdentity();
-            let rootPath = signedInEntry.didStoragePath;
-            await this.spvBridge.init(rootPath);
-
-            Logger.log('wallet', "Getting all master wallets from the SPV SDK");
-            const idList = await this.spvBridge.getAllMasterWallets();
-
-            if (idList.length === 0) {
-                Logger.log('wallet', "No SPV wallet found, going to launcher screen");
-                //this.goToLauncherScreen();
-                return false;
-            }
-
-            Logger.log('wallet', "Got " + idList.length + " wallets from the SPVSDK");
-
-            // Rebuild our local model for all wallets returned by the SPV SDK.
-            for (let i = 0; i < idList.length; i++) {
-                const masterId = idList[i];
-
-                //Logger.log('wallet', "Rebuilding local model for wallet id " + masterId);
-
-                // Try to retrieve locally storage extended info about this wallet
-                if (!(await MasterWallet.extendedInfoExistsForMasterId(masterId))) {
-                    // No backward compatibility support: old wallets are just destroyed.
-                    await this.spvBridge.destroyWallet(masterId);
-                    continue;
-                }
-                else {
-                    //Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId);
-
-                    // Create a model instance for each master wallet returned by the SPV SDK.
-                    this.masterWallets[masterId] = new MasterWallet(this, masterId, false, WalletCreateType.MNEMONIC);
-                    await this.masterWallets[masterId].prepareAfterCreation();
-                }
-            }
-
-            this.activeMasterWalletId = await this.getCurrentMasterIdFromStorage();
-            Logger.log('wallet', 'active master wallet id:', this.activeMasterWalletId)
-
-            return Object.values(this.masterWallets).length > 0;
-        } catch (error) {
-            Logger.error('wallet', 'initWallets error:', error);
-            return false;
-        }
-        return true;
-    } */
 
     /**
      * Loads master wallet from disk and initializes them.
@@ -510,44 +454,10 @@ export class WalletService {
     }
 
     /**
-     * Creates a new master wallet both in the SPV SDK and in our local model.
-     *
-     *  SPVSDK style
-     */
-    /*  public async createNewMasterWallet(
-         masterId: WalletID,
-         walletName: string,
-         mnemonicStr: string,
-         mnemonicPassword: string,
-         payPassword: string,
-         singleAddress: boolean
-     ) {
-         Logger.log('wallet', "Creating new master wallet");
-
-         await this.spvBridge.createMasterWallet(
-             masterId,
-             mnemonicStr,
-             mnemonicPassword,
-             payPassword,
-             singleAddress
-         );
-
-         const account: WalletAccount = {
-             SingleAddress: singleAddress,
-             Type: WalletAccountType.STANDARD
-         };
-
-         await this.addMasterWalletToLocalModel(masterId, walletName, account, true, WalletCreateType.MNEMONIC);
-
-         // Go to wallet's home page.
-         this.native.setRootRouter("/wallet/wallet-home");
-     } */
-
-    /**
      * Creates a new standard master wallet using a given mnemonic.
      * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    public async newWalletWithMnemonic(
+    public async newStandardWalletWithMnemonic(
         masterId: string,
         walletName: string,
         mnemonicStr: string,
@@ -591,7 +501,7 @@ export class WalletService {
      * Creates a new standard master wallet using a given private key.
      * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    public async newWalletWithPrivateKey(
+    public async newStandardWalletWithPrivateKey(
         walletId: string,
         walletName: string,
         privateKey: string,
@@ -616,61 +526,30 @@ export class WalletService {
     }
 
     /**
-     * Creates a new master wallet both in the SPV SDK and in our local model, using a given mnemonic.
-     *
-     * SPVSDK-style
+     * Creates a new ledger master wallet.
+     * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    /* public async importWalletWithKeystore(
-        masterId: WalletID,
+    public async newLedgerWallet(
+        masterId: string,
         walletName: string,
-        keystore: string,
-        backupPassword: string,
-        payPassword: string,
+        deviceID: string,
+        accountID: string
     ) {
-        Logger.log('wallet', "Importing new master wallet with keystore");
+        Logger.log('wallet', "Importing new legder master wallet");
 
-        await this.spvBridge.importWalletWithKeystore(jsToSpvWalletId(masterId), keystore, backupPassword, payPassword);
-
-        const account: WalletAccount = {
-            SingleAddress: true,
-            Type: WalletAccountType.STANDARD
-        };
-
-        await this.addMasterWalletToLocalModel(masterId, walletName, account, false, WalletCreateType.KEYSTORE);
-
-        // Go to wallet's home page.
-        this.native.setRootRouter("/wallet/wallet-home");
-    } */
-
-    /* private async addMasterWallet(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean, createType: WalletCreateType) {
-        Logger.log('wallet', "Adding master wallet to local model", id, name);
-        try {
-            // Add a new wallet to our local model
-            this.masterWallets[id] = new MasterWallet(this, id, createdBySystem, createType, name);
-
-            // Set some wallet account info
-            this.masterWallets[id].account = walletAccount;
-
-            // Get some basic information ready in our model.
-            await this.masterWallets[id].populateWithExtendedInfo(null);
-
-            // Built networkWallet
-            let activeNetwork = this.networkService.activeNetwork.value;
-            let networkWallet = await activeNetwork.createNetworkWallet(this.masterWallets[id]);
-            this.networkWallets[id] = networkWallet;
-
-            // Save state to local storage
-            await this.masterWallets[id].save();
-
-            // Notify that this network wallet is the active one
-            await this.setActiveNetworkWallet(networkWallet);
+        let masterWalletInfo: SerializedLedgerMasterWallet = {
+            type: WalletType.LEDGER,
+            id: masterId,
+            name: walletName,
+            theme: defaultWalletTheme(),
+            networkOptions: [], // TODO: We may not have this at all for ledger? Should this move to standard wallet?
+            creator: WalletCreator.USER,
+            deviceID,
+            accountID
         }
-        catch (err) {
-            Logger.error('wallet', "Adding master wallet error:", err);
-            void this.destroyMasterWallet(id, false);
-            throw err;
-        }
-    } */
+
+        await this.createMasterWalletFromSerializedInfo(masterWalletInfo);
+    }
 
     /**
      * Saves a NEW "JS" wallet into the local model (not related to the legacy SPVSDK).
@@ -699,7 +578,6 @@ export class WalletService {
      */
     private async activateMasterWallet(wallet: MasterWallet) {
         Logger.log('wallet', "Adding master wallet to local model", wallet.id, name);
-        //try {
 
         // Build the associated network Wallet
         let activeNetwork = this.networkService.activeNetwork.value;
@@ -708,12 +586,6 @@ export class WalletService {
 
         // Notify that this network wallet is the active one
         await this.setActiveNetworkWallet(networkWallet);
-        /* }
-        catch (err) {
-            Logger.error('wallet', "Adding master wallet error:", err);
-            void this.destroyMasterWallet(id, false);
-            throw err;
-        } */
     }
 
     /**
