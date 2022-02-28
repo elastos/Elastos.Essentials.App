@@ -76,7 +76,9 @@
             <ion-row class="list-title-row">
                 <ion-col size="12">
                     <h1>{{ 'wallet.coin-list' | translate }}</h1>
-                    <img class="sort" [src]="!theme.darkMode ? 'assets/wallet/icons/sort.svg' : 'assets/wallet/icons/darkmode/sort.svg'" (click)="setSortMode()">
+                    <img class="sort"
+                        [src]="!theme.darkMode ? 'assets/wallet/icons/sort.svg' : 'assets/wallet/icons/darkmode/sort.svg'"
+                        (click)="setSortMode()">
                 </ion-col>
             </ion-row>
             <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
@@ -163,7 +165,8 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="reload-staked-assets" (click)="onRefreshStakingAssetClicked()" *ngIf="isEVMNetworkWallet && !refreshingStakedAssets">
+            <ion-row class="reload-staked-assets" (click)="onRefreshStakingAssetClicked()"
+                *ngIf="isEVMNetworkWallet && !refreshingStakedAssets">
                 <img
                     [src]="!theme.darkMode ? '/assets/browser/icons/icon-reload.svg' : 'assets/browser/icons/dark_mode/icon-reload.svg'" />
                 <ion-label>{{ 'wallet.staking-assets-refresh' | translate }}</ion-label>
@@ -175,11 +178,10 @@
             </ion-row>
 
             <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
-                *ngFor="let stakingAsset of stakingAssets"
-                (click)="onStakingAssetClicked(stakingAsset)">
+                *ngFor="let stakingAsset of stakingAssets" (click)="onStakingAssetClicked(stakingAsset)">
                 <ion-col size="2" class="left-col">
                     <div class="icon-container">
-                        <img [src]="stakingAsset.farmIconUrl">
+                        <img [src]="stakingAsset.farmIconUrl" [src-fallback]="getDefaultStakedAssetIcon()">
                     </div>
                 </ion-col>
                 <ion-col [size]="5" class="middle-col">
