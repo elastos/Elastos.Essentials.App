@@ -4,7 +4,7 @@ import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { TransactionDirection } from "../../../tx-providers/transaction.types";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EthTransaction } from "../../evms/evm.types";
-import { AnyStandardEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
+import { AnyMainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
 import { EVMSubWalletProvider } from "../../evms/tx-providers/evm.subwallet.provider";
 
 const MAX_RESULTS_PER_FETCH = 200;
@@ -47,7 +47,7 @@ type TelosTransaction = {
   "@timestamp": string; // ie "2021-11-02T02:48:20.000"
 }
 
-export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<AnyStandardEVMSubWallet> {
+export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<AnyMainCoinEVMSubWallet> {
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
     return false; // TODO
   }

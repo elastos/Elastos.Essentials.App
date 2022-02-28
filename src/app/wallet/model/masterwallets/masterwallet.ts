@@ -17,28 +17,6 @@ export const defaultWalletTheme = (): Theme => {
     };
 }
 
-/**
- * DELETE ME AFTER MIGRATION
- */
-/* export type Theme = {
-    background: string,
-    color: string
-}; */
-
-/**
- * DELETE ME AFTER MIGRATION
- */
-//export class ExtendedMasterWalletInfo {
-/** User defined wallet name */
-//name: string;
-/* Wallet theme */
-//theme: Theme;
-/* Created by system when create a new identity */
-//createdBySystem: boolean;
-/* Created by mnemonic or private key */
-//createType: WalletCreateType;
-//}
-
 export abstract class MasterWallet {
     public type: WalletType = null;
     public id: string = null;
@@ -47,48 +25,11 @@ export abstract class MasterWallet {
     public networkOptions: WalletNetworkOptions[];
     public creator: WalletCreator;
 
-    // TODO GETTER ONLY seed?: string;
-    // TODO GETTER ONLY  mnemonic?: string;
-    // TODO GETTER ONLY privateKey?: string;
-    // TODO GETTER ONLY privateKeyType: any;
-
-    /* public account: WalletAccount = {
-        Type: WalletAccountType.STANDARD,
-        SingleAddress: false
-    }; */
-
     constructor() {
         // Default values - could be overwritten by deserialization
         this.name = defaultWalletName();
         this.theme = defaultWalletTheme();
     }
-
-    /* constructor(
-        id: string,
-        createdBySystem: boolean,
-        createType: WalletCreateType,
-        name?: string,
-        theme?: Theme,
-    ) {
-        this.id = id;
-        this.createdBySystem = createdBySystem;
-        this.createType = createType;
-        this.name = name || 'Anonymous Wallet';
-        this.theme = theme || {
-            color: '#752fcf',
-            background: '/assets/wallet/cards/maincards/card-purple.svg'
-        };
-    } */
-
-    /* public static async extendedInfoExistsForMasterId(masterId: string): Promise<boolean> {
-        const extendedInfo = await LocalStorage.instance.getExtendedMasterWalletInfo(masterId);
-        return !!extendedInfo; // not null or undefined
-    } */
-
-    /* public async prepareAfterCreation(): Promise<void> {
-        const extendedInfo = await LocalStorage.instance.getExtendedMasterWalletInfo(this.id);
-        await this.populateWithExtendedInfo(extendedInfo);
-    } */
 
     public abstract serialize(): SerializedMasterWallet;
 
@@ -152,41 +93,6 @@ export abstract class MasterWallet {
 
         return Object.assign({}, defaultNetworkOptions, networkOptions);
     }
-
-    /**
-     * @deprecated - only used by the migration
-     */
-    /* public getExtendedWalletInfo(): ExtendedMasterWalletInfo {
-        let extendedInfo = new ExtendedMasterWalletInfo();
-
-        extendedInfo.name = this.name;
-        extendedInfo.theme = this.theme;
-        extendedInfo.createdBySystem = this.createdBySystem;
-        extendedInfo.createType = this.createType;
-
-        return extendedInfo;
-    } */
-
-    /**
-     * Appends extended info from the local storage to this wallet model.
-     * This includes everything the SPV plugin could not save and that we saved in our local
-     * storage instead.
-     */
-    /* public async populateWithExtendedInfo(extendedInfo: ExtendedMasterWalletInfo): Promise<void> {
-        Logger.log("wallet", "Populating master wallet with extended info", this.id, extendedInfo);
-
-        // Retrieve wallet account type
-        this.account = await WalletService.instance.spvBridge.getMasterWalletBasicInfo(this.id);
-
-        if (extendedInfo) {
-            this.name = extendedInfo.name;
-            this.theme = extendedInfo.theme;
-            this.createdBySystem = extendedInfo.createdBySystem;
-            this.createType = extendedInfo.createType ? extendedInfo.createType : WalletCreateType.MNEMONIC;
-        }
-
-        Logger.log("wallet", "Populated master wallet:", this);
-    } */
 
     /**
      * Removes a subwallet (coin - ex: ela, idchain) from the given wallet.

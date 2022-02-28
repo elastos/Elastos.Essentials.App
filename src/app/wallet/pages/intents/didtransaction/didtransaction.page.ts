@@ -158,7 +158,7 @@ export class DidTransactionPage implements OnInit {
             Object.assign(transfer, {
                 masterWalletId: this.networkWallet.id,
                 subWalletId: this.subWalletId,
-                rawTransaction: rawTx,
+                //rawTransaction: rawTx,
                 payPassword: '',
                 action: this.intentTransfer.action,
                 intentId: this.intentTransfer.intentId,

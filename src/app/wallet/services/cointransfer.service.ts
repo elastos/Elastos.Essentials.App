@@ -32,7 +32,7 @@ export class Transfer {
     url: string = null;
     crPublicKey: string = null;
     account: string = null;
-    rawTransaction: any = null;
+    // rawTransaction: any = null;
     location: number = null;
     crDID: string = null;
     from: string = null;

@@ -2,7 +2,7 @@ import { StandardCoinName } from "../../../../../coin";
 import { AnySubWalletTransactionProvider } from "../../../../../tx-providers/subwallet.provider";
 import { TransactionProvider } from "../../../../../tx-providers/transaction.provider";
 import { ElastosTransaction } from "../../../../../tx-providers/transaction.types";
-import { AnyStandardEVMSubWallet } from "../../../../evms/subwallets/evm.subwallet";
+import { AnyMainCoinEVMSubWallet } from "../../../../evms/subwallets/evm.subwallet";
 import { EVMSubWalletInternalTransactionProvider } from "../../../../evms/tx-providers/evm.subwallet.internalTransaction.provider";
 import { EscSubWallet } from "../subwallets/esc.evm.subwallet";
 import { ElastosEscSubWalletProvider } from "./esc.subwallet.provider";
@@ -15,7 +15,7 @@ export class ElastosSmartChainTransactionProvider extends TransactionProvider<El
   private tokenProvider: ElastosTokenSubWalletProvider;
 
   // Only for ESC
-  private internalTXProvider: EVMSubWalletInternalTransactionProvider<AnyStandardEVMSubWallet> = null;
+  private internalTXProvider: EVMSubWalletInternalTransactionProvider<AnyMainCoinEVMSubWallet> = null;
 
   public async start(): Promise<void> {
     this.escSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as EscSubWallet;

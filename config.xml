@@ -233,5 +233,5 @@
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <allow-navigation href="https://0.0.0.0:8100" sessionid="a89a190a" />
     <allow-navigation href="https://192.168.76.158:8100" sessionid="ca0d3fe5" />
-    <allow-navigation href="https://192.168.1.4:8100" sessionid="1e5496ca" />
+    <allow-navigation href="https://192.168.1.4:8100" sessionid="8ed3aee7" />
 </widget>

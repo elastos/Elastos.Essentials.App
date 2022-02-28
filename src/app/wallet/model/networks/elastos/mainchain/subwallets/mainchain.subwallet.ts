@@ -398,14 +398,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
+    /**
+     * @param transaction Raw transaction payload ready to be published
+     */
     public async publishTransaction(transaction: string): Promise<string> {
-        let rawTx = await SPVService.instance.convertToRawTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            transaction,
-        )
-
-        let txid = await this.sendRawTransaction(this.id as StandardCoinName, rawTx);
+        let txid = await this.sendRawTransaction(this.id as StandardCoinName, transaction);
         return txid;
     }
 

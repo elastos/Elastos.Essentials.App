@@ -11,7 +11,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
-import { AnyStandardEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -240,7 +240,7 @@ export class PayPage {
     return true;
   }
 
-  private async getNativePaymentSubWallet(): Promise<AnyStandardEVMSubWallet> {
+  private async getNativePaymentSubWallet(): Promise<AnyMainCoinEVMSubWallet> {
     // Now that we are on the right network, find the network wallet that has the right address
     let evmSubWallet = await this.walletService.findStandardEVMSubWalletByAddress(this.packet.creatorAddress);
     if (!evmSubWallet) {
@@ -335,7 +335,7 @@ export class PayPage {
           }
         }
       });
-      await this.ethTransactionService.publishTransaction(evmSubWallet, rawTx, transfer, true);
+      await this.ethTransactionService.publishTransaction(evmSubWallet, rawTx, transfer);
     }
     catch (err) {
       Logger.error('redpackets', 'publishTransaction error:', err)
@@ -385,7 +385,6 @@ export class PayPage {
       // Listen to transaction events in order to catch the published transaction hash.
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       let txStatusSub = this.ethTransactionService.ethTransactionStatus.subscribe(async txStatus => {
-        console.log("TEST txstatus", txStatus)
         // Make sure we are receiving a status for our current operation, not for something else
         // Note: this check if far from being robust, let's assume for now that there is only one on going
         // transaction at a time... Can't do much better over the existing mechanism.
@@ -428,7 +427,7 @@ export class PayPage {
           txStatusSub.unsubscribe();
         }
       });
-      let test = await this.ethTransactionService.publishTransaction(evmSubWallet, rawTx, transfer, true);
+      let test = await this.ethTransactionService.publishTransaction(evmSubWallet, rawTx, transfer);
       console.log("TEST TX", test);
     }
     catch (err) {

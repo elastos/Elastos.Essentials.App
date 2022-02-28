@@ -2,7 +2,7 @@ import { SPVSDKSafe } from 'src/app/wallet/model/safes/spvsdk.safe';
 import { jsToSpvWalletId, SPVService } from '../../../../../services/spv.service';
 import { StandardMasterWallet } from '../../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../../masterwallets/wallet.types';
-import { EVMNetwork } from '../../evm.network';
+import type { EVMNetwork } from '../../evm.network';
 import { MainCoinEVMSubWallet } from '../../subwallets/evm.subwallet';
 import { EVMNetworkWallet } from '../evm.networkwallet';
 
@@ -22,6 +22,13 @@ export class StandardEVMNetworkWallet<WalletNetworkOptionsType extends WalletNet
             mainSubWalletFriendlyName,
             averageBlocktime
         );
+    }
+
+    public async initialize(): Promise<void> {
+        if (!await SPVService.instance.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
+            return;
+
+        await super.initialize();
     }
 
     protected async prepareStandardSubWallets(): Promise<void> {

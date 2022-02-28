@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { SerializedMasterWallet } from '../model/masterwallets/wallet.types';
+import type { SerializedMasterWallet } from '../model/masterwallets/wallet.types';
 import type { ExtendedNetworkWalletInfo } from '../model/networks/base/networkwallets/networkwallet';
 import type { Contact } from './contacts.service';
 
@@ -89,23 +89,26 @@ export class LocalStorage {
     /**
      * Saves the list of wallets. This list is used to reload all the wallets later on.
      */
-    public saveWalletsList(masterWalletIDs: string[]): Promise<void> {
-        let key = "wallets-list";
+    public saveWalletsList(networkTemplate: string, masterWalletIDs: string[]): Promise<void> {
+        let key = "wallets-list-" + networkTemplate;
+        console.log("saveWalletsList", key, masterWalletIDs);
+
         return this.set(key, JSON.stringify(masterWalletIDs));
     }
 
     /**
-     * Returns the list of JS wallet IDs
+     * Returns the list of JS wallet IDs for a given network template (mainnets, testnets, etc)
      */
-    public async getWalletsList(): Promise<string[]> {
-        let key = "wallets-list";
+    public async getWalletsList(networkTemplate: string): Promise<string[]> {
+        let key = "wallets-list-" + networkTemplate;
         let rawWallets = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key, null);
         if (!rawWallets)
             return [];
-        else
+        else {
+            console.log("getWalletsList", key, JSON.parse(rawWallets));
             return JSON.parse(rawWallets);
+        }
     }
-
 
     public saveMasterWallet(masterWalletId: string, masterWalletInfo: SerializedMasterWallet): Promise<void> {
         let key = "master-wallet-info-" + masterWalletId;

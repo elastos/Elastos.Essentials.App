@@ -7,7 +7,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import { ETHTransactionSpeedup, ETHTransactionStatusInfo, EVMService } from '../../services/evm/evm.service';
 
-
 @Component({
   selector: 'app-eth-transaction',
   templateUrl: './eth-transaction.component.html',
@@ -31,6 +30,7 @@ export class ETHTransactionComponent implements OnInit {
     public theme: GlobalThemeService,
     private zone: NgZone,
     private modalCtrl: ModalController,
+    private evmService: EVMService
   ) { }
 
   ngOnInit(): void {
@@ -42,7 +42,7 @@ export class ETHTransactionComponent implements OnInit {
     this.publicationFailed = false;
 
     // Listen to publication event
-    this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe((status) => {
+    this.publicationStatusSub = this.evmService.ethTransactionStatus.subscribe((status) => {
       Logger.log('wallet', 'ETHTransactionComponent status:', status)
       this.publicationStatus = status.status;
       switch (this.publicationStatus) {
@@ -84,7 +84,7 @@ export class ETHTransactionComponent implements OnInit {
       gasLimit: this.gasLimit,
       nonce: this.nonce,
     }
-    EVMService.instance.ethTransactionSpeedup.next(speedup);
+    this.evmService.ethTransactionSpeedup.next(speedup);
     this.exitComponent();
   }
 
@@ -97,7 +97,7 @@ export class ETHTransactionComponent implements OnInit {
       txId: null,
       nonce: null
     }
-    EVMService.instance.ethTransactionStatus.next(status)
+    this.evmService.ethTransactionStatus.next(status)
     this.exitComponent();
   }
 

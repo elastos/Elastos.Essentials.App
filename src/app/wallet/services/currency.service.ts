@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ERC20Coin } from '../model/coin';
-import { AnyNetwork } from '../model/networks/network';
+import type { AnyNetwork } from '../model/networks/network';
 import { TimeBasedPersistentCache } from '../model/timebasedpersistentcache';
 import { UniswapCurrencyService } from './evm/uniswap.currency.service';
 import { WalletNetworkService } from './network.service';

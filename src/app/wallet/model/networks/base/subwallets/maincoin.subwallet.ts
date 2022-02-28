@@ -1,16 +1,11 @@
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
-import { Transfer } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
-import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
 import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
-import { WalletService } from '../../../../services/wallet.service';
 import { CoinType } from '../../../coin';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
-import { GenericTransaction, RawTransactionPublishResult } from '../../../tx-providers/transaction.types';
-import { MainCoinEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
-import { AnyNetworkWallet } from '../networkwallets/networkwallet';
+import { GenericTransaction } from '../../../tx-providers/transaction.types';
+import type { AnyNetworkWallet } from '../networkwallets/networkwallet';
 import { SubWallet } from './subwallet';
 
 export abstract class MainCoinSubWallet<TransactionType extends GenericTransaction, WalletNetworkOptionsType extends WalletNetworkOptions> extends SubWallet<TransactionType, WalletNetworkOptionsType> {
@@ -80,150 +75,4 @@ export abstract class MainCoinSubWallet<TransactionType extends GenericTransacti
     }
 
     public abstract createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string): Promise<string>;
-
-    // Signs raw transaction and sends the signed transaction to the SPV SDK for publication.
-    /* public signAndSendRawTransaction(transaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-        return new Promise(async (resolve) => {
-            // Logger.log("wallet", 'Received raw transaction', transaction);
-            try {
-                const password = await WalletService.instance.openPayModal(transfer);
-                if (!password) {
-                    Logger.log("wallet", "No password received. Cancelling");
-                    resolve({
-                        published: false,
-                        txid: null,
-                        status: 'cancelled'
-                    });
-                    return;
-                }
-
-                Logger.log("wallet", "Password retrieved. Now signing the transaction.");
-
-                await Native.instance.showLoading(WalletService.instance.translate.instant('common.please-wait'));
-
-                const signedTx = await SPVService.instance.signTransaction(
-                    jsToSpvWalletId(this.masterWallet.id),
-                    this.id,
-                    transaction,
-                    password
-                );
-
-                Logger.log("wallet", "Transaction signed. Now publishing.");
-                let txid = await this.publishTransaction(signedTx);
-
-                Logger.log("wallet", "publishTransaction txid:", txid);
-
-                await Native.instance.hideLoading();
-
-                if (navigateHomeAfterCompletion) {
-                    await Native.instance.setRootRouter('/wallet/wallet-home');
-                    WalletService.instance.events.publish('wallet:transactionsent', { subwalletid: this.id, txid: txid });
-                }
-
-                let published = true;
-                let status = 'published';
-                if (!txid || txid.length == 0) {
-                    published = false;
-                    status = 'error';
-                }
-                resolve({
-                    published,
-                    status,
-                    txid
-                });
-            }
-            catch (err) {
-                await Native.instance.hideLoading();
-                Logger.error("wallet", "Publish error:", err);
-                // ETHTransactionManager handle this error if the subwallet is StandardEVMSubWallet.
-                // Maybe need to speed up.
-                if (!(this instanceof MainCoinEVMSubWallet)) {
-                    await PopupProvider.instance.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
-                }
-                resolve({
-                    published: false,
-                    txid: null,
-                    status: 'error',
-                    code: err.code,
-                    message: err.message,
-                });
-            }
-        });
-    } */
-
-    /**
-     * Signs a given raw transaction with the current safe, and sends it.
-     */
-    public signAndSendRawTransaction(transaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
-
-        // TODO TODO TODO await this.networkWallet.safe.signTransaction(transaction, )
-
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-        return new Promise(async (resolve) => {
-            try {
-                const password = await WalletService.instance.openPayModal(transfer);
-                if (!password) {
-                    Logger.log("wallet", "No password received. Cancelling");
-                    resolve({
-                        published: false,
-                        txid: null,
-                        status: 'cancelled'
-                    });
-                    return;
-                }
-
-                Logger.log("wallet", "Password retrieved. Now signing the transaction.");
-
-                await Native.instance.showLoading(WalletService.instance.translate.instant('common.please-wait'));
-
-                const signedTx = await SPVService.instance.signTransaction(
-                    jsToSpvWalletId(this.masterWallet.id),
-                    this.id,
-                    transaction,
-                    password
-                );
-
-                Logger.log("wallet", "Transaction signed. Now publishing.");
-                let txid = await this.publishTransaction(signedTx);
-
-                Logger.log("wallet", "publishTransaction txid:", txid);
-
-                await Native.instance.hideLoading();
-
-                if (navigateHomeAfterCompletion) {
-                    await Native.instance.setRootRouter('/wallet/wallet-home');
-                    WalletService.instance.events.publish('wallet:transactionsent', { subwalletid: this.id, txid: txid });
-                }
-
-                let published = true;
-                let status = 'published';
-                if (!txid || txid.length == 0) {
-                    published = false;
-                    status = 'error';
-                }
-                resolve({
-                    published,
-                    status,
-                    txid
-                });
-            }
-            catch (err) {
-                await Native.instance.hideLoading();
-                Logger.error("wallet", "Publish error:", err);
-                // ETHTransactionManager handle this error if the subwallet is StandardEVMSubWallet.
-                // Maybe need to speed up.
-                if (!(this instanceof MainCoinEVMSubWallet)) {
-                    await PopupProvider.instance.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
-                }
-                resolve({
-                    published: false,
-                    txid: null,
-                    status: 'error',
-                    code: err.code,
-                    message: err.message,
-                });
-            }
-        });
-    }
 }

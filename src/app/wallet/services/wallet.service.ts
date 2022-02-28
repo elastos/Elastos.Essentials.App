@@ -37,9 +37,9 @@ import { AESEncrypt } from '../model/crypto';
 import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
 import { ElastosWalletNetworkOptions, PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletType } from '../model/masterwallets/wallet.types';
-import { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
-import { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
-import { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
+import type { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
+import type { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
+import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../model/networks/network';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
@@ -248,7 +248,7 @@ export class WalletService {
             await this.spvBridge.init(rootPath);
 
             Logger.log('wallet', "Loading master wallets list");
-            const idList = await this.localStorage.getWalletsList();
+            const idList = await this.localStorage.getWalletsList(this.networkTemplate);
 
             if (idList.length === 0) {
                 Logger.log('wallet', "No master wallet found yet");
@@ -675,7 +675,7 @@ export class WalletService {
     /**
      * Saves a NEW "JS" wallet into the local model (not related to the legacy SPVSDK).
      */
-    public async createMasterWalletFromSerializedInfo(walletInfo: SerializedMasterWallet, activateAfterCreation = true): Promise<MasterWallet> {
+    public async createMasterWalletFromSerializedInfo(walletInfo: SerializedMasterWallet, activateAfterCreation = true, networkTemplate?: string): Promise<MasterWallet> {
         let wallet = MasterWalletBuilder.newFromSerializedWallet(walletInfo);
 
         // Add a new wallet to our local model
@@ -685,7 +685,7 @@ export class WalletService {
         await wallet.save();
 
         // Add to persistant list of wallets
-        await this.saveWalletsList();
+        await this.saveWalletsList(networkTemplate);
 
         if (activateAfterCreation)
             await this.activateMasterWallet(wallet);
@@ -719,42 +719,22 @@ export class WalletService {
     /**
      * Saves the current list of wallets to persistant storage
      */
-    private saveWalletsList(): Promise<void> {
-        return this.localStorage.saveWalletsList(this.getMasterWalletsList().map(mw => mw.id));
+    private saveWalletsList(networkTemplate?: string): Promise<void> {
+        // Used forced, or active network template
+        if (!networkTemplate)
+            networkTemplate = this.networkTemplate;
+
+        return this.localStorage.saveWalletsList(networkTemplate, this.getMasterWalletsList().map(mw => mw.id));
     }
 
     /**
-     * SPVSDK style - DELETE ME
+     * CAUTION - Empties the local list of master wallets. Used primarily for the wallet migration
+     * scripts, should never be used anywhere else as other model entries and events are not handled
+     * here!
      */
-    /* private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean, createType: WalletCreateType) {
-        Logger.log('wallet', "Adding master wallet to local model", id, name);
-        try {
-            // Add a new wallet to our local model
-            this.masterWallets[id] = new MasterWallet(this, id, createdBySystem, createType, name);
-
-            // Set some wallet account info
-            this.masterWallets[id].account = walletAccount;
-
-            // Get some basic information ready in our model.
-            await this.masterWallets[id].populateWithExtendedInfo(null);
-
-            // Built networkWallet
-            let activeNetwork = this.networkService.activeNetwork.value;
-            let networkWallet = await activeNetwork.createNetworkWallet(this.masterWallets[id]);
-            this.networkWallets[id] = networkWallet;
-
-            // Save state to local storage
-            await this.masterWallets[id].save();
-
-            // Notify that this network wallet is the active one
-            await this.setActiveNetworkWallet(networkWallet);
-        }
-        catch (err) {
-            Logger.error('wallet', "Adding master wallet error:", err);
-            void this.destroyMasterWallet(id, false);
-            throw err;
-        }
-    } */
+    public clearMasterWalletsList() {
+        this.masterWallets = {};
+    }
 
     /**
      * Destroy a master wallet, active or not, base on its id.

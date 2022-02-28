@@ -34,7 +34,7 @@ import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
-import { AnyStandardEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
@@ -53,7 +53,7 @@ export class EscTransactionPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private networkWallet: AnyNetworkWallet = null;
-  private evmSubWallet: AnyStandardEVMSubWallet = null;
+  private evmSubWallet: AnyMainCoinEVMSubWallet = null;
   private intentTransfer: IntentTransfer;
   public balance: BigNumber; // ELA
   public gasPrice: string;
@@ -299,14 +299,14 @@ export class EscTransactionPage implements OnInit {
       Object.assign(transfer, {
         masterWalletId: this.networkWallet.id,
         subWalletId: this.evmSubWallet.id,
-        rawTransaction: rawTx,
+        //rawTransaction: rawTx,
         payPassword: '',
         action: this.intentTransfer.action,
         intentId: this.intentTransfer.intentId,
       });
 
       try {
-        await this.ethTransactionService.publishTransaction(this.evmSubWallet, rawTx, transfer, true)
+        await this.ethTransactionService.publishTransaction(this.evmSubWallet, rawTx, transfer)
       }
       catch (err) {
         Logger.error('wallet', 'EscTransactionPage publishTransaction error:', err)

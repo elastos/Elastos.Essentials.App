@@ -197,7 +197,7 @@ export class CRmembervotePage implements OnInit {
             Object.assign(transfer, {
                 masterWalletId: this.masterWalletId,
                 subWalletId: this.subWalletId,
-                rawTransaction: rawTx,
+                //rawTransaction: rawTx,
                 payPassword: '',
                 action: this.intentTransfer.action,
                 intentId: this.intentTransfer.intentId,

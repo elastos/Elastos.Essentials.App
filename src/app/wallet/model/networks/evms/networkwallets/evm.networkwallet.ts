@@ -1,9 +1,9 @@
 import { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { Safe } from '../../../safes/safe';
-import { TransactionProvider } from '../../../tx-providers/transaction.provider';
+import type { TransactionProvider } from '../../../tx-providers/transaction.provider';
 import { NetworkWallet, WalletAddressInfo } from '../../base/networkwallets/networkwallet';
-import { EVMNetwork } from '../evm.network';
+import type { EVMNetwork } from '../evm.network';
 import { MainCoinEVMSubWallet } from '../subwallets/evm.subwallet';
 import { EVMTransactionProvider } from '../tx-providers/evm.transaction.provider';
 

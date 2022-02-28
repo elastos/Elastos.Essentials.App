@@ -9,21 +9,19 @@ import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import Web3 from 'web3';
 import { Config } from '../../../../config/Config';
-import { Transfer } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
-import { Native } from '../../../../services/native.service';
 import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
-import { WalletService } from '../../../../services/wallet.service';
 import { Coin, CoinID, CoinType, ERC20Coin } from '../../../coin';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
-import { RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
+import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { SerializedSubWallet, SubWallet } from '../../base/subwallets/subwallet';
-import type { EthTransaction, SignedETHSCTransaction } from '../evm.types';
+import type { EthTransaction } from '../evm.types';
 import type { AnyEVMNetworkWallet, EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
 
 export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
@@ -480,13 +478,14 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return rawTx;
     }
 
-    public async publishTransaction(transaction: string): Promise<string> {
-        let obj = JSON.parse(transaction) as SignedETHSCTransaction;
-        let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(this.rpcApiUrl, obj.TxSigned);
-        return txid;
+    public publishTransaction(transaction: string): Promise<string> {
+        /*  let obj = JSON.parse(transaction) as SignedETHSCTransaction;
+         let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(this.rpcApiUrl, obj.TxSigned);
+         return txid; */
+        return EVMService.instance.publishTransaction(this, transaction, null);
     }
 
-    public signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult> {
+    /* public signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult> {
         Logger.log('wallet', "ERC20 signAndSendRawTransaction transaction:", transaction, transfer);
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve) => {
@@ -540,7 +539,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
                 });
             }
         });
-    }
+    } */
 
     /**
      * Returns the current gas price on chain.

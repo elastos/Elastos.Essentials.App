@@ -7,9 +7,9 @@ import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import Web3 from 'web3';
-import { ETHTransactionComponent } from '../../components/eth-transaction/eth-transaction.component';
-import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
-import type { MainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
+import { ETHTransactionStatus, SignedETHSCTransaction } from '../../model/networks/evms/evm.types';
+import { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
+import type { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../model/networks/network';
 import { RawTransactionPublishResult } from '../../model/tx-providers/transaction.types';
 import { Transfer } from '../cointransfer.service';
@@ -52,30 +52,52 @@ class ETHTransactionManager {
     this.checkTimes = 0;
   }
 
-  public async publishTransaction(subwallet: MainCoinEVMSubWallet<any>, transaction: string, transfer: Transfer, showBlockingLoader = false) {
+  /**
+   * - Shows a blocking dialog
+   * - Send the signed transaction to the EVM node
+   * - Checks the result and propose to speedup in case the transaction takes too much time
+   * - Emit ETH transaction status events
+   * 
+   * @returns The publish transaction ID, if any.
+   */
+  public async publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, signedTransaction: string, transfer: Transfer): Promise<string> {
     try {
-      let result = await subwallet.signAndSendRawTransaction(transaction, transfer, false);
+      await this.displayPublicationLoader();
+
+      let result: RawTransactionPublishResult;
+      try {
+        let obj = JSON.parse(signedTransaction) as SignedETHSCTransaction;
+        let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(subwallet.networkWallet.network.getMainEvmRpcApiUrl(), obj.TxSigned);
+
+        let published = true;
+        let status = 'published';
+        if (!txid || txid.length == 0) {
+          published = false;
+          status = 'error';
+        }
+        result = {
+          published,
+          status,
+          txid
+        };
+      }
+      catch (err) {
+        // err format from EVM RPC: { code: number, message: string, txid?: string }
+        result = {
+          published: false,
+          txid: null,
+          status: 'error',
+          code: err.code,
+          message: err.message,
+        }
+      }
+
       Logger.log('wallet', 'publishTransaction ', result)
       if (!result.published) {
-        // User cancelled.
-        if (result.status && result.status === 'cancelled') {
-          let status: ETHTransactionStatusInfo = {
-            chainId: subwallet.id,
-            gasPrice: null,
-            gasLimit: null,
-            status: ETHTransactionStatus.CANCEL,
-            txId: null,
-            nonce: -1,
-          }
-          void this.emitEthTransactionStatusChange(status);
-          return;
-        }
         // The previous transaction needs to be accelerated.
         if (this.needToSpeedup(result)) {
           if (result.txid) {
-            if (showBlockingLoader) {
-              await this.displayPublicationLoader();
-            }
+            await this.displayPublicationLoader();
 
             let tx = await subwallet.getTransactionDetails(result.txid);
             let defaultGasprice = await subwallet.getGasPrice();
@@ -106,12 +128,11 @@ class ETHTransactionManager {
             await PopupProvider.instance.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
           }
         }
-        return;
+        return result.txid;
       }
 
-      if (showBlockingLoader) {
-        await this.displayPublicationLoader();
-      }
+      await this.displayPublicationLoader();
+
       const isPublishingOnGoing = await this.CheckPublishing(result)
       if (!isPublishingOnGoing) {
         Logger.warn('wallet', 'publishTransaction error ', result)
@@ -126,7 +147,7 @@ class ETHTransactionManager {
           nonce: -1
         }
         void this.emitEthTransactionStatusChange(status);
-        return;
+        return result.txid;
       }
 
       this.waitforTimes = subwallet.getAverageBlocktime() * 5;
@@ -146,9 +167,11 @@ class ETHTransactionManager {
           void this.checkPublicationStatusAndUpdate(subwallet, result.txid);
         }, 5000);
       }
+
+      return result.txid;
     }
     catch (err) {
-      Logger.error('wallet', 'publishTransaction error:', err, ' transaction:', transaction)
+      Logger.error('wallet', 'publishTransaction error:', err)
     }
   }
 
@@ -185,7 +208,7 @@ class ETHTransactionManager {
     }
   }
 
-  private async checkPublicationStatusAndUpdate(subwallet: MainCoinEVMSubWallet<any>, txid: string): Promise<void> {
+  private async checkPublicationStatusAndUpdate(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, txid: string): Promise<void> {
     let result = await subwallet.getTransactionDetails(txid);
     Logger.log('wallet', 'checkPublicationStatusAndUpdate ', result)
     if (result.blockHash) {
@@ -220,10 +243,14 @@ class ETHTransactionManager {
 
   /**
    * Shows a blocking modal that shows the transaction status.
+   *
+   * TODO: MAKE A SIMILAR COMPONENT DIALOG FOR OTHER NETWORK, SAME UI
    */
   public async displayPublicationLoader(): Promise<void> {
+
     const modal = await this.modalCtrl.create({
-      component: ETHTransactionComponent,
+      // eslint-disable-next-line import/no-cycle
+      component: (await import('../../components/eth-transaction/eth-transaction.component')).ETHTransactionComponent,
       componentProps: {},
       backdropDismiss: false, // Not closeable
       cssClass: "wallet-component-base"
@@ -272,8 +299,8 @@ export class EVMService {
     this.manager.resetStatus();
   }
 
-  public publishTransaction(subwallet: MainCoinEVMSubWallet<any>, transaction: string, transfer: Transfer, showBlockingLoader = false): Promise<void> {
-    return this.manager.publishTransaction(subwallet, transaction, transfer, showBlockingLoader);
+  public publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, transaction: string, transfer: Transfer): Promise<string> {
+    return this.manager.publishTransaction(subwallet, transaction, transfer);
   }
 
   /**

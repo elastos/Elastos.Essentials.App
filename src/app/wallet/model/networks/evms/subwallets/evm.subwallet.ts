@@ -12,9 +12,9 @@ import { StandardCoinName } from '../../../coin';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
-import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
+import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
-import { EVMNetwork } from '../evm.network';
+import type { EVMNetwork } from '../evm.network';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { ERC20SubWallet } from './erc20.subwallet';
 
@@ -383,8 +383,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return Promise.resolve([]);
   }
 
-  public async publishTransaction(transaction: string): Promise<string> {
-    let obj = JSON.parse(transaction) as SignedETHSCTransaction;
+  public async publishTransaction(signedTransaction: string): Promise<string> {
+    let obj = JSON.parse(signedTransaction) as SignedETHSCTransaction;
     let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(this.rpcApiUrl, obj.TxSigned);
     return txid;
   }
@@ -455,4 +455,4 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   } */
 }
 
-export class AnyStandardEVMSubWallet extends MainCoinEVMSubWallet<any> { }
+export class AnyMainCoinEVMSubWallet extends MainCoinEVMSubWallet<any> { }

@@ -1,3 +1,6 @@
+import { Transfer } from "../../services/cointransfer.service";
+import { SignTransactionResult } from "./safe.types";
+
 /**
  * Hosts and manipulates sensitive wallet information such as mnemonic, seed, private keys.
  * Wallets use different safes depending if they the wallet credentials are stored locally in the app,
@@ -15,5 +18,7 @@ export abstract class Safe {
   }
 
   public abstract getAddresses(): Promise<string[]>; // TODO
-  public abstract signTransaction(rawTx: Buffer): Promise<string>; // TODO
+
+  // TODO: remove this Transfer object, dirty.
+  public abstract signTransaction(rawTx: string, transfer: Transfer): Promise<SignTransactionResult>;
 }

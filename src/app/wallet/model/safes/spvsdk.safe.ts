@@ -1,15 +1,19 @@
-import { LedgerSafe } from "src/app/wallet/model/safes/ledger.safe";
+import { Logger } from "src/app/logger";
+import { Transfer } from "../../services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "../../services/spv.service";
+import { WalletService } from "../../services/wallet.service";
 import { StandardMasterWallet } from "../masterwallets/masterwallet";
+import { Safe } from "./safe";
+import { SignTransactionErrorType, SignTransactionResult } from "./safe.types";
 
 /**
  * Temporary safe to experiment the new architecture, and keep using SPVSDK commands.
  * Later on, SPVSDKSafes must be replaced with StandardSafes (signatures managed by essentials JS).
  */
-export class SPVSDKSafe extends LedgerSafe {
+export class SPVSDKSafe extends Safe {
   protected spvWalletId: string;
 
-  constructor(private masterWallet: StandardMasterWallet, private chainId: string) {
+  constructor(protected masterWallet: StandardMasterWallet, protected chainId: string) {
     super();
 
     this.spvWalletId = jsToSpvWalletId(masterWallet.id);
@@ -27,13 +31,24 @@ export class SPVSDKSafe extends LedgerSafe {
     throw new Error("Method not implemented.");
   }
 
-  public async signTransaction(rawTransaction: Buffer): Promise<string> {
-    const signedTx = await SPVService.instance.signTransaction(
-      this.spvWalletId,
+  public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
+    const password = await WalletService.instance.openPayModal(transfer);
+    if (!password) {
+      Logger.log("wallet", "No password received. Cancelling");
+      return {
+        errorType: SignTransactionErrorType.CANCELLED
+      };
+    }
+
+    Logger.log("wallet", "Password retrieved. Now signing the transaction with SPVSDK.");
+
+    const signedTransaction = await SPVService.instance.signTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
       this.chainId,
-      rawTransaction.toString(), // TODO - IMPORTANT - is this byte-safe to convert buffer to string ?
-      "password" // TODO: GET REAL PAY PASSWORD - BUT ONLY FOR SOFTWARE SAFE, NOT LEDGER - USE A CALLBACK in constructor to get missing pwd?
+      rawTransaction.toString(),
+      password
     );
-    return signedTx;
+
+    return { signedTransaction };
   }
 }

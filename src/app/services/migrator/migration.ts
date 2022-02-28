@@ -1,4 +1,4 @@
-import { IdentityEntry } from "../global.didsessions.service";
+import type { IdentityEntry } from "../global.didsessions.service";
 
 /**
  * Base interface for each migration that needs to be run.

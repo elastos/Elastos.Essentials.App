@@ -1,6 +1,10 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
+import { Logger } from 'src/app/logger';
+import { Native } from 'src/app/wallet/services/native.service';
+import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import type { Transfer } from '../../../../services/cointransfer.service';
 import { BridgeService } from '../../../../services/evm/bridge.service';
 import { EarnService } from '../../../../services/evm/earn.service';
@@ -12,9 +16,11 @@ import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import type { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import { SignTransactionErrorType } from '../../../safes/safe.types';
 import { TimeBasedPersistentCache } from '../../../timebasedpersistentcache';
 import type { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../../../tx-providers/transaction.types';
 import { TransactionListType } from '../../evms/evm.types';
+import { MainCoinEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
 import type { NetworkWallet } from '../networkwallets/networkwallet';
 
 export abstract class SubWallet<TransactionType extends GenericTransaction, WalletNetworkOptionsType extends WalletNetworkOptions> {
@@ -343,11 +349,77 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
 
   // TODO: same as createPaymentTransaction
   public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<string>;
-  // TODO: ask the network to do this
-  public abstract publishTransaction(transaction: string): Promise<string>;
-  // TODO: make this "transfer" object disappear...
-  public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;
 
+  /**
+   * Executes a SIGNED transaction publication process, including UI flows such as blocking popups.
+   */
+  protected abstract publishTransaction(signedTransaction: string): Promise<string>;
+
+  /**
+   * Signs a RAW transaction using a safe, and initiates the publication flow by calling
+   * publishTransaction().
+   *
+   * Optionally navigates home after completion. TODO: MOVE THIS NAVIGATION IN SCREENS
+   */
+  // TODO: make this "transfer" object disappear...
+  public async signAndSendRawTransaction(rawTransaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
+    // Ask the safe to sign the transaction. This include potential password prompt or other UI operations
+    // depending on the safe requirements.
+    let signedTxResult = await this.networkWallet.safe.signTransaction(rawTransaction, transfer);
+    if (!signedTxResult.signedTransaction) {
+      return {
+        published: false,
+        txid: null,
+        status: (signedTxResult.errorType === SignTransactionErrorType.CANCELLED) ? 'cancelled' : 'error'
+      }
+    }
+
+    try {
+      //await Native.instance.showLoading(WalletService.instance.translate.instant('common.please-wait'));
+
+      Logger.log("wallet", "Transaction signed. Now publishing.");
+      let txid = await this.publishTransaction(signedTxResult.signedTransaction);
+
+      Logger.log("wallet", "publishTransaction txid:", txid);
+
+      //await Native.instance.hideLoading();
+
+      if (navigateHomeAfterCompletion) {
+        await Native.instance.setRootRouter('/wallet/wallet-home');
+        WalletService.instance.events.publish('wallet:transactionsent', { subwalletid: this.id, txid: txid });
+      }
+
+      let published = true;
+      let status = 'published';
+      if (!txid || txid.length == 0) {
+        published = false;
+        status = 'error';
+      }
+      return {
+        published,
+        status,
+        txid
+      };
+    }
+    catch (err) {
+      await Native.instance.hideLoading();
+      Logger.error("wallet", "Publish error:", err);
+
+      // ETHTransactionManager handle this error if the subwallet is StandardEVMSubWallet.
+      // Maybe need to speed up.
+      if (!(this instanceof MainCoinEVMSubWallet)) {
+        await PopupProvider.instance.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
+      }
+
+      return {
+        published: false,
+        txid: null,
+        status: 'error',
+        code: err.code,
+        message: err.message,
+      };
+    }
+  }
   public getAvailableEarnProviders(): EarnProvider[] {
     return EarnService.instance.getAvailableEarnProviders(this);
   }

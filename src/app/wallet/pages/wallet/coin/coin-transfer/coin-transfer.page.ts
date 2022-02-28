@@ -343,6 +343,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      */
     async createSendTransaction() {
         await this.native.showLoading(this.translate.instant('common.please-wait'));
+
         // Call dedicated api to the source subwallet to generate the appropriate transaction type.
         // For example, ERC20 token transactions are different from standard coin transactions (for now - as
         // the spv sdk doesn't support ERC20 yet).
@@ -372,31 +373,33 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             await this.parseException(err);
         }
         await this.native.hideLoading();
+
+        // SIGN AND PUBLISH
         if (rawTx) {
             const transfer = new Transfer();
             Object.assign(transfer, {
                 masterWalletId: this.networkWallet.id,
                 subWalletId: this.subWalletId,
-                rawTransaction: rawTx,
+                //rawTransaction: rawTx,
                 action: this.action,
                 intentId: this.intentId
             });
 
-            if (this.isEVMSubwallet) {
+            /* if (this.isEVMSubwallet) {
                 try {
-                    await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
+                    TODO MOVE TO EVM await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer)
                 }
                 catch (err) {
                     Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
                 }
-            } else {
-                const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-                if (result.published)
-                    void this.showSuccess();
-                if (transfer.intentId) {
-                    await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
-                }
+            } else { */
+            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+            if (result.published)
+                void this.showSuccess();
+            if (transfer.intentId) {
+                await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
             }
+            //}
         } else {
             if (this.intentId) {
                 await this.globalIntentService.sendIntentResponse(
@@ -432,7 +435,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             Object.assign(transfer, {
                 masterWalletId: this.networkWallet.id,
                 subWalletId: this.subWalletId,
-                rawTransaction: rawTx,
+                //rawTransaction: rawTx,
                 payPassword: '',
                 action: null,
                 intentId: null,
@@ -467,7 +470,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             Object.assign(transfer, {
                 masterWalletId: this.networkWallet.id,
                 subWalletId: this.subWalletId,
-                rawTransaction: rawTx,
+                //rawTransaction: rawTx,
                 payPassword: '',
                 action: null,
                 intentId: null,
@@ -475,7 +478,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
             if (this.isEVMSubwallet) {
                 try {
-                    await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
+                    await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer)
                 }
                 catch (err) {
                     Logger.error('wallet', 'coin-transfer publishTransaction error:', err)

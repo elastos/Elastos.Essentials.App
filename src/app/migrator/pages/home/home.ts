@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -37,6 +38,7 @@ export class HomePage {
     private globalNavService: GlobalNavService,
     private translate: TranslateService,
     private walletService: WalletService,
+    private splashScreen: SplashScreen,
     private migrationService: MigrationService
   ) { }
 
@@ -47,6 +49,8 @@ export class HomePage {
   }
 
   ionViewDidEnter() {
+    // We are ready, we can hide the splash screen
+    this.splashScreen.hide();
   }
 
   ionViewWillLeave() {
