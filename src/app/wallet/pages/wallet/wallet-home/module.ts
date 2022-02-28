@@ -5,10 +5,11 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { ImgFallbackDirective } from 'src/app/helpers/directives/img-fallback.directive';
 import { WalletHomePage } from './wallet-home.page';
 
 @NgModule({
-    declarations: [WalletHomePage],
+    declarations: [WalletHomePage, ImgFallbackDirective],
     imports: [
         SharedComponentsModule,
         CommonModule,
@@ -20,4 +21,4 @@ import { WalletHomePage } from './wallet-home.page';
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class WalletHomeModule {}
+export class WalletHomeModule { }
