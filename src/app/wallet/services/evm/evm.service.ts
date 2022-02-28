@@ -57,7 +57,7 @@ class ETHTransactionManager {
    * - Send the signed transaction to the EVM node
    * - Checks the result and propose to speedup in case the transaction takes too much time
    * - Emit ETH transaction status events
-   * 
+   *
    * @returns The publish transaction ID, if any.
    */
   public async publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, signedTransaction: string, transfer: Transfer): Promise<string> {
@@ -67,6 +67,12 @@ class ETHTransactionManager {
       let result: RawTransactionPublishResult;
       try {
         let obj = JSON.parse(signedTransaction) as SignedETHSCTransaction;
+        if (!obj.TxSigned) {
+          Logger.error("wallet", "Unsigned transaction received in EVM's publishTransaction() !");
+
+          return null;
+        }
+
         let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(subwallet.networkWallet.network.getMainEvmRpcApiUrl(), obj.TxSigned);
 
         let published = true;
@@ -92,8 +98,46 @@ class ETHTransactionManager {
         }
       }
 
-      Logger.log('wallet', 'publishTransaction ', result)
-      if (!result.published) {
+      Logger.log('wallet', 'EVM publishTransaction result:', result)
+      if (result.published) {
+        const isPublishingOnGoing = await this.CheckPublishing(result)
+        if (!isPublishingOnGoing) {
+          Logger.warn('wallet', 'publishTransaction error ', result)
+
+          let defaultGasprice = await subwallet.getGasPrice();
+          let status: ETHTransactionStatusInfo = {
+            chainId: subwallet.id,
+            gasPrice: defaultGasprice,
+            gasLimit: this.defaultGasLimit,
+            status: ETHTransactionStatus.UNPACKED,
+            txId: null,
+            nonce: -1
+          }
+          void this.emitEthTransactionStatusChange(status);
+          return result.txid;
+        }
+
+        this.waitforTimes = subwallet.getAverageBlocktime() * 5;
+        if (this.needToSpeedup(result)) {
+          let defaultGasprice = await subwallet.getGasPrice();
+          let status: ETHTransactionStatusInfo = {
+            chainId: subwallet.id,
+            gasPrice: defaultGasprice,
+            gasLimit: this.defaultGasLimit,
+            status: ETHTransactionStatus.UNPACKED,
+            txId: null,
+            nonce: -1
+          }
+          void this.emitEthTransactionStatusChange(status);
+        } else {
+          setTimeout(() => {
+            void this.checkPublicationStatusAndUpdate(subwallet, result.txid);
+          }, 5000);
+        }
+
+        return result.txid;
+      }
+      else {
         // The previous transaction needs to be accelerated.
         if (this.needToSpeedup(result)) {
           if (result.txid) {
@@ -130,45 +174,6 @@ class ETHTransactionManager {
         }
         return result.txid;
       }
-
-      await this.displayPublicationLoader();
-
-      const isPublishingOnGoing = await this.CheckPublishing(result)
-      if (!isPublishingOnGoing) {
-        Logger.warn('wallet', 'publishTransaction error ', result)
-
-        let defaultGasprice = await subwallet.getGasPrice();
-        let status: ETHTransactionStatusInfo = {
-          chainId: subwallet.id,
-          gasPrice: defaultGasprice,
-          gasLimit: this.defaultGasLimit,
-          status: ETHTransactionStatus.UNPACKED,
-          txId: null,
-          nonce: -1
-        }
-        void this.emitEthTransactionStatusChange(status);
-        return result.txid;
-      }
-
-      this.waitforTimes = subwallet.getAverageBlocktime() * 5;
-      if (this.needToSpeedup(result)) {
-        let defaultGasprice = await subwallet.getGasPrice();
-        let status: ETHTransactionStatusInfo = {
-          chainId: subwallet.id,
-          gasPrice: defaultGasprice,
-          gasLimit: this.defaultGasLimit,
-          status: ETHTransactionStatus.UNPACKED,
-          txId: null,
-          nonce: -1
-        }
-        void this.emitEthTransactionStatusChange(status);
-      } else {
-        setTimeout(() => {
-          void this.checkPublicationStatusAndUpdate(subwallet, result.txid);
-        }, 5000);
-      }
-
-      return result.txid;
     }
     catch (err) {
       Logger.error('wallet', 'publishTransaction error:', err)

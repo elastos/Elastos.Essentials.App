@@ -306,7 +306,8 @@ export class EscTransactionPage implements OnInit {
       });
 
       try {
-        await this.ethTransactionService.publishTransaction(this.evmSubWallet, rawTx, transfer)
+        const result = await this.evmSubWallet.signAndSendRawTransaction(rawTx, transfer, false);
+        //await this.ethTransactionService.publishTransaction(this.evmSubWallet, rawTx, transfer)
       }
       catch (err) {
         Logger.error('wallet', 'EscTransactionPage publishTransaction error:', err)

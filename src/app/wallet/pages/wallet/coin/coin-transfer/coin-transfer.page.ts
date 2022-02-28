@@ -39,7 +39,6 @@ import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.serv
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
@@ -385,21 +384,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 intentId: this.intentId
             });
 
-            /* if (this.isEVMSubwallet) {
-                try {
-                    TODO MOVE TO EVM await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer)
-                }
-                catch (err) {
-                    Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
-                }
-            } else { */
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
             if (result.published)
                 void this.showSuccess();
+
             if (transfer.intentId) {
                 await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
             }
-            //}
         } else {
             if (this.intentId) {
                 await this.globalIntentService.sendIntentResponse(
@@ -476,18 +467,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 intentId: null,
             });
 
-            if (this.isEVMSubwallet) {
-                try {
-                    await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer)
-                }
-                catch (err) {
-                    Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
-                }
-            } else {
-                const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-                if (result.published)
-                    void this.showSuccess();
-            }
+            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+            if (result.published)
+                void this.showSuccess();
         }
     }
 

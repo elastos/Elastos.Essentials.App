@@ -363,7 +363,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    */
   // TODO: make this "transfer" object disappear...
   public async signAndSendRawTransaction(rawTransaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
-    // Ask the safe to sign the transaction. This include potential password prompt or other UI operations
+    // Ask the safe to sign the transaction. This includes potential password prompt or other UI operations
     // depending on the safe requirements.
     let signedTxResult = await this.networkWallet.safe.signTransaction(rawTransaction, transfer);
     if (!signedTxResult.signedTransaction) {

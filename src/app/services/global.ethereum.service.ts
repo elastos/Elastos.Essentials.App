@@ -120,6 +120,9 @@ export class GlobalEthereumRPCService {
     }
 
     public eth_sendRawTransaction(rpcApiUrl: string, txHash: string) {
+        if (!txHash)
+            throw new Error("eth_sendRawTransaction(): transaction hash can't be empty!");
+
         if (!txHash.startsWith('0x')) {
             txHash = '0x' + txHash;
         }
