@@ -2,7 +2,9 @@ import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { DefiService, StakingData } from '../../../../services/evm/defi.service';
 import { ERC1155Service } from '../../../../services/evm/erc1155.service';
@@ -509,6 +511,23 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
                 void this.save()
             }
         }
+    }
+
+    /**
+     * Saves any key/value information that can be custom for each network wallet.
+     * The information is sandboxed for each network template + network + wallet.
+     */
+    public saveContextInfo<T>(key: string, value: T): Promise<void> {
+        let fullKey = GlobalNetworksService.instance.activeNetworkTemplate.value + "_" + this.network.key + "_" + this.masterWallet.id + "_" + key;
+        return GlobalStorageService.instance.setSetting<T>(GlobalDIDSessionsService.signedInDIDString, "wallet", fullKey, value);
+    }
+
+    /**
+     * @see saveContextInfo()
+     */
+    public loadContextInfo<T>(key: string): Promise<T> {
+        let fullKey = GlobalNetworksService.instance.activeNetworkTemplate.value + "_" + this.network.key + "_" + this.masterWallet.id + "_" + key;
+        return GlobalStorageService.instance.getSetting<T>(GlobalDIDSessionsService.signedInDIDString, "wallet", fullKey, null);
     }
 
     public getTransactionDiscoveryProvider(): TransactionProvider<any> {
