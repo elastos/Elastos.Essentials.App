@@ -327,6 +327,6 @@ export class SuggestionDetailPage {
     }
 
     handleCommand() {
-        void this.crOperations.handleSuggestionDetailPageCommand(this.commandName);
+        void this.crOperations.handleSuggestionDetailPageCommand(this.commandName, this.suggestionId, this.suggestion);
     }
 }

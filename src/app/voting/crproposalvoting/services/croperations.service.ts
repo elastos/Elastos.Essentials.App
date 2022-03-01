@@ -161,12 +161,8 @@ export class CROperationsService {
         void this.handleCRProposalCommand(crCommand, null);
     }
 
-    public handleSuggestionDetailPageCommand(commandName: string, exData?: any) {
-        let data =  this.suggestionService.currentSuggestion;
-        if (exData) {
-            data = Object.assign(data, exData);
-        }
-        let crCommand = { command: commandName, data: data, sid: data.sid, type: CRCommandType.SuggestionDetailPage } as CRCommand;
+    public handleSuggestionDetailPageCommand(commandName: string, suggestionId: string, suggestion: any) {
+        let crCommand = { command: commandName, data: suggestion, sid: suggestionId, type: CRCommandType.SuggestionDetailPage } as CRCommand;
         Logger.log(App.CRSUGGESTION, "Command:", crCommand);
         void this.handleCRProposalCommand(crCommand, null);
     }
