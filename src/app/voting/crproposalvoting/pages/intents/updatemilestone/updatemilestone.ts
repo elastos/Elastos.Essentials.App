@@ -89,7 +89,7 @@ export class UpdatMilestonePage {
 
             this.originalRequestJWT = this.crOperations.originalRequestJWT;
             this.onGoingCommand.data.newownerpubkey = this.onGoingCommand.data.newownerpubkey || "";
-            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getOwnerPublicKey();
+            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getSelfPublicKey();
         }
     }
 

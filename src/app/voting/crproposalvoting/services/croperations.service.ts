@@ -285,6 +285,7 @@ export class CROperationsService {
                     data.draftHash = data.drafthash || data.draftHash;
                     data.draftData = await this.getDraftData(data.draftHash);
                     data.targetproposalhash = data.targetproposalhash || data.targetProposalhash || data.targetProposalHash;
+                    data.ownerPublicKey = data.ownerPublicKey || data.ownerpublicKey || await this.getSelfPublicKey();
                     data.newRecipient = data.newrecipient || data.newRecipient;
                     data.newOwnerPublicKey = data.newownerpublickey || data.newOwnerPublicKey;
                     data.newOwnerSignature = data.newownersignature || data.newOwnerSignature;
@@ -395,7 +396,7 @@ export class CROperationsService {
         }
     }
 
-    async getOwnerPublicKey(): Promise<string> {
+    async getSelfPublicKey(): Promise<string> {
         let base58Key = await DIDService.instance.getActiveDid().getLocalDIDDocument().getDefaultPublicKey();
         let buf = new Buffer(Base58.decode(base58Key));
         let ret = buf.toString('hex');

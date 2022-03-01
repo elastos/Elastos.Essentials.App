@@ -315,8 +315,8 @@ export class SuggestionService {
         return suggestionDetail.type;
     }
 
-    public adjustSuggectionStatus(suggestionDetail: SuggestionDetail) {
-        let type = this.getProposalTypeForChangeProposal(suggestionDetail);
+    public adjustSuggectionStatus(suggestionDetail: SuggestionDetail, selfPublicKey?: string) {
+        let type = suggestionDetail.type;
         let status = suggestionDetail.status;
         if (type == "secretarygeneral" && status != 'proposed') {
             if (!suggestionDetail.newSecretarySignature &&
@@ -326,7 +326,7 @@ export class SuggestionService {
         }
         else  if (type == "changeproposalowner" && status != 'proposed') {
             if (!suggestionDetail.newOwnerSignature &&
-                !(Util.isSelfDid(suggestionDetail.did) && !Util.isSelfDid(suggestionDetail.newOwnerDID))) {
+                !(Util.isSelfDid(suggestionDetail.did) && (suggestionDetail.newOwnerPublicKey != selfPublicKey))) {
                     suggestionDetail.status = "unsigned";
             }
         }

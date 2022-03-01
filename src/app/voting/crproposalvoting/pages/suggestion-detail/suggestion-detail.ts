@@ -86,18 +86,19 @@ export class SuggestionDetailPage {
             this.commandName = null;
             this.buttonLabel = null;
 
-            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.suggestion),
-            this.suggestionService.adjustSuggectionStatus(this.suggestion);
+            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.suggestion);
+            let selfPublicKey = await this.crOperations.getSelfPublicKey();
+            this.suggestionService.adjustSuggectionStatus(this.suggestion, selfPublicKey);
 
             if (this.isCRMember && this.suggestion.status == 'signed'
-                    && !(this.proposaltype == "secretarygeneral" && !this.suggestion.newSecretarySignature)
-                    && !(this.proposaltype == "changeproposalowner" && !this.suggestion.newOwnerSignature)) {
+                    && !(this.suggestion.type == "secretarygeneral" && !this.suggestion.newSecretarySignature)
+                    && !(this.suggestion.type == "changeproposalowner" && !this.suggestion.newOwnerSignature)) {
                 this.commandName = "createproposal";
                 this.buttonLabel = "crproposalvoting.make-into-proposal";
             }
             else if (this.suggestion.status == 'unsigned' && (this.isSelf
-                    || (this.proposaltype == "secretarygeneral" && Util.isSelfDid(this.suggestion.newSecretaryDID))
-                    || (this.proposaltype == "changeproposalowner" && Util.isSelfDid(this.suggestion.newOwnerDID)))) {
+                    || (this.suggestion.type == "secretarygeneral" && Util.isSelfDid(this.suggestion.newSecretaryDID && this.suggestion.signature))
+                    || (this.suggestion.type == "changeproposalowner" && selfPublicKey == this.suggestion.newOwnerPublicKey && this.suggestion.signature))) {
                 this.commandName = "createsuggestion";
                 this.buttonLabel = "crproposalvoting.sign-suggestion";
             }
