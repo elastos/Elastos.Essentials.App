@@ -8,6 +8,7 @@ import { CoinType } from '../../model/coin';
 import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
 import { WalletUtil } from '../../model/wallet.util';
 import { CurrencyService } from '../../services/currency.service';
+import { Native } from '../../services/native.service';
 import { UiService } from '../../services/ui.service';
 import { WalletService } from '../../services/wallet.service';
 
@@ -38,7 +39,8 @@ export class WalletChooserComponent implements OnInit {
     public translate: TranslateService,
     public theme: GlobalThemeService,
     public currencyService: CurrencyService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private native: Native
   ) {
   }
 
@@ -59,6 +61,11 @@ export class WalletChooserComponent implements OnInit {
 
   cancelOperation() {
     Logger.log("wallet", "Wallet selection cancelled");
+    void this.modalCtrl.dismiss();
+  }
+
+  goToCreateWallet() {
+    this.native.go("/wallet/launcher")
     void this.modalCtrl.dismiss();
   }
 }
