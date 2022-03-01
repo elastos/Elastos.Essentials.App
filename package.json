@@ -148,7 +148,7 @@
     "moment-locales-webpack-plugin": "1.2.0",
     "prettier": "^2.5.1",
     "ts-node": "10.2.1",
-    "typescript": "^4.5.4",
+    "typescript": "4.5.5",
     "webpack-bundle-analyzer": "4.5.0"
   },
   "browser": {
