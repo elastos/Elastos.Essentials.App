@@ -6,7 +6,7 @@ import { SubWalletTransactionProvider } from "../../../tx-providers/subwallet.pr
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
 import { TransactionDirection } from "../../../tx-providers/transaction.types";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
-import { BTCSubWallet } from "../networkwallets/standard/btc.subwallet";
+import { BTCSubWallet } from "../subwallets/btc.subwallet";
 
 const MAX_RESULTS_PER_FETCH = 50;
 

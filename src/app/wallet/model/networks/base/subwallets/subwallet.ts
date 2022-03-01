@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Native } from 'src/app/wallet/services/native.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { OutgoingTransactionState, TransactionService } from 'src/app/wallet/services/transaction.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import type { Transfer } from '../../../../services/cointransfer.service';
 import { BridgeService } from '../../../../services/evm/bridge.service';
@@ -352,8 +353,31 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
 
   /**
    * Executes a SIGNED transaction publication process, including UI flows such as blocking popups.
+   * This method returns when a transaction ID is obtained, without waiting for confirmation.
+   * But some implementations like the EVM one continue to check for confirmations and emit
+   * a evm transaction status event later on.
    */
   protected abstract publishTransaction(signedTransaction: string): Promise<string>;
+
+  /**
+   * (Optionally) Internally called by implementations of publishTransaction() to display a generic publication
+   * dialog.
+   */
+  protected markGenericOutgoingTransactionStart() {
+    TransactionService.instance.resetTransactionPublicationStatus();
+    TransactionService.instance.setOnGoingPublishedTransactionState(OutgoingTransactionState.PUBLISHING);
+  }
+
+  /**
+   * (Optionally) Internally called by implementations of publishTransaction() to hide a generic publication
+   * dialog.
+   */
+  protected markGenericOutgoingTransactionEnd(txid: string) {
+    if (txid)
+      TransactionService.instance.setOnGoingPublishedTransactionState(OutgoingTransactionState.PUBLISHED);
+    else
+      TransactionService.instance.setOnGoingPublishedTransactionState(OutgoingTransactionState.ERRORED);
+  }
 
   /**
    * Signs a RAW transaction using a safe, and initiates the publication flow by calling
@@ -377,8 +401,13 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
     try {
       //await Native.instance.showLoading(WalletService.instance.translate.instant('common.please-wait'));
 
-      Logger.log("wallet", "Transaction signed. Now publishing.");
+      Logger.log("wallet", "Transaction signed. Now publishing.", signedTxResult.signedTransaction);
+
+      await this.markGenericOutgoingTransactionStart();
+
       let txid = await this.publishTransaction(signedTxResult.signedTransaction);
+
+      await this.markGenericOutgoingTransactionEnd(txid);
 
       Logger.log("wallet", "publishTransaction txid:", txid);
 
@@ -402,7 +431,8 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
       };
     }
     catch (err) {
-      await Native.instance.hideLoading();
+      await this.markGenericOutgoingTransactionEnd(null);
+      //await Native.instance.hideLoading();
       Logger.error("wallet", "Publish error:", err);
 
       // ETHTransactionManager handle this error if the subwallet is StandardEVMSubWallet.

@@ -7,8 +7,8 @@ import { WalletAddressInfo } from "../../../base/networkwallets/networkwallet";
 import { StandardNetworkWallet } from "../../../base/networkwallets/standard.networkwallet";
 import { MainCoinEVMSubWallet } from "../../../evms/subwallets/evm.subwallet";
 import { AnyNetwork } from "../../../network";
+import { BTCSubWallet } from "../../subwallets/btc.subwallet";
 import { BTCTransactionProvider } from "../../tx-providers/btc.transaction.provider";
-import { BTCSubWallet } from "./btc.subwallet";
 
 /**
  * Network wallet type for the bitcoin network

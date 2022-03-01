@@ -3,7 +3,7 @@ import { StandardCoinName } from "../../../coin";
 import { AnySubWalletTransactionProvider } from "../../../tx-providers/subwallet.provider";
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
-import { BTCSubWallet } from "../networkwallets/standard/btc.subwallet";
+import { BTCSubWallet } from "../subwallets/btc.subwallet";
 import { BTCSubWalletProvider } from "./btc.subwallet.provider";
 
 export class BTCTransactionProvider extends TransactionProvider<BTCTransaction> {

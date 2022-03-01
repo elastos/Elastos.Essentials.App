@@ -3,16 +3,16 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { jsToSpvWalletId, SPVService } from 'src/app/wallet/services/spv.service';
-import { Config } from '../../../../../config/Config';
-import { BTCTransaction, BTCUTXO } from '../../../../btc.types';
-import { StandardCoinName } from '../../../../coin';
-import { BridgeProvider } from '../../../../earn/bridgeprovider';
-import { EarnProvider } from '../../../../earn/earnprovider';
-import { SwapProvider } from '../../../../earn/swapprovider';
-import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, UtxoForSDK } from '../../../../tx-providers/transaction.types';
-import { WalletUtil } from '../../../../wallet.util';
-import { AnyNetworkWallet } from '../../../base/networkwallets/networkwallet';
-import { MainCoinSubWallet } from '../../../base/subwallets/maincoin.subwallet';
+import { Config } from '../../../../config/Config';
+import { BTCTransaction, BTCUTXO } from '../../../btc.types';
+import { StandardCoinName } from '../../../coin';
+import { BridgeProvider } from '../../../earn/bridgeprovider';
+import { EarnProvider } from '../../../earn/earnprovider';
+import { SwapProvider } from '../../../earn/swapprovider';
+import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, UtxoForSDK } from '../../../tx-providers/transaction.types';
+import { WalletUtil } from '../../../wallet.util';
+import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
+import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
 
 const TRANSACTION_LIMIT = 50;
 

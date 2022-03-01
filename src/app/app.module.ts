@@ -24,7 +24,6 @@ import { SharedComponentsModule } from './components/sharedcomponents.module';
 import { ContactsInitModule } from './contacts/init.module';
 import { DeveloperToolsInitModule } from './developertools/init.module';
 import { DIDSessionsInitModule } from './didsessions/init.module';
-import { ImgFallbackDirective } from './helpers/directives/img-fallback.directive';
 import { HiveManagerInitModule } from './hivemanager/init.module';
 import { IdentityInitModule } from './identity/init.module';
 import { LauncherModule } from './launcher/module';
@@ -196,9 +195,7 @@ if (environment.production) {
 
 @NgModule({
   declarations: [
-    AppComponent,
-
-    ImgFallbackDirective
+    AppComponent
   ],
   entryComponents: [
     AppComponent

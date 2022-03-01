@@ -2,6 +2,7 @@ import { TransferType } from "../../../services/cointransfer.service";
 import { TokenType } from "../../coin";
 import { GenericTransaction, TransactionDirection } from "../../tx-providers/transaction.types";
 
+// TODO: rename to "evm", not "eth"
 export type EthTransaction = GenericTransaction & {
   // Returned from rpc
   blockHash: string;
@@ -34,6 +35,7 @@ export type EthTransaction = GenericTransaction & {
   isRedPacket?: boolean
 };
 
+// TODO: move to elastos network
 export type ElastosSCEthTransaction = EthTransaction & {
   transferType: TransferType;
 }
@@ -76,13 +78,14 @@ export type ERCTokenInfo = {
   hasOutgoTx: boolean;
 }
 
-// For speedup eth transaction.
+// To speedup eth transactions.
 export enum ETHTransactionStatus {
   CANCEL = 'cancel',
   PACKED = 'packed',
   UNPACKED = 'unpacked',
   ERROR = 'error'
 }
+
 export enum ETHSCTransferType {
   DEPOSIT = "crossChainEthDeposit",
   TRANSFER = "ethTransfer",

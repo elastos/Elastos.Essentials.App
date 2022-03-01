@@ -46,7 +46,7 @@ export class Native {
         Native.instance = this;
     }
 
-    public toast(msg = '操作完成', duration = 2000): void {
+    public toast(msg = '', duration = 2000): void {
         this.globalNative.genericToast(msg, duration);
     }
 

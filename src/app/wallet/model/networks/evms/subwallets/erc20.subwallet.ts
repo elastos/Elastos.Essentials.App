@@ -479,9 +479,6 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     public publishTransaction(transaction: string): Promise<string> {
-        /*  let obj = JSON.parse(transaction) as SignedETHSCTransaction;
-         let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(this.rpcApiUrl, obj.TxSigned);
-         return txid; */
         return EVMService.instance.publishTransaction(this, transaction, null);
     }
 

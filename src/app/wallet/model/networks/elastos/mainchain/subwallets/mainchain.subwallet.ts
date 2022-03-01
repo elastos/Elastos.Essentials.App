@@ -8,6 +8,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { ElastosMainChainWalletNetworkOptions } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../../config/Config';
 import { Candidates, jsToSpvWalletId, SPVService, VoteContent, VoteType } from '../../../../../services/spv.service';
 import { StandardCoinName } from '../../../../coin';
@@ -402,8 +403,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
      * @param transaction Raw transaction payload ready to be published
      */
     public async publishTransaction(transaction: string): Promise<string> {
-        let txid = await this.sendRawTransaction(this.id as StandardCoinName, transaction);
-        return txid;
+        await TransactionService.instance.displayGenericPublicationLoader();
+        return await this.sendRawTransaction(this.id as StandardCoinName, transaction);
     }
 
     protected async sendRawTransaction(subWalletId: StandardCoinName, payload: string): Promise<string> {

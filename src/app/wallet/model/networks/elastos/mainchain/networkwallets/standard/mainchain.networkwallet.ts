@@ -1,5 +1,4 @@
 import { Logger } from "src/app/logger";
-import { SPVSDKSafe } from "src/app/wallet/model/safes/spvsdk.safe";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../../../../coin";
 import { StandardMasterWallet } from "../../../../../masterwallets/masterwallet";
@@ -8,6 +7,7 @@ import { WalletAddressInfo } from "../../../../base/networkwallets/networkwallet
 import { AnyNetwork } from "../../../../network";
 import { ElastosEVMSubWallet } from "../../../evms/subwallets/standard/elastos.evm.subwallet";
 import { ElastosStandardNetworkWallet } from "../../../networkwallets/standard/elastos.networkwallet";
+import { MainChainSPVSDKSafe } from "../../../safes/mainchain.spvsdk.safe";
 import { WalletHelper } from "../../../wallet.helper";
 import { MainChainSubWallet } from "../../subwallets/mainchain.subwallet";
 import { ElastosMainChainTransactionProvider } from "../../tx-providers/elastos.mainchain.tx.provider";
@@ -17,7 +17,7 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
     super(
       masterWallet,
       network,
-      new SPVSDKSafe(masterWallet, StandardCoinName.ELA),
+      new MainChainSPVSDKSafe(masterWallet, StandardCoinName.ELA),
       "ELA"
     );
   }

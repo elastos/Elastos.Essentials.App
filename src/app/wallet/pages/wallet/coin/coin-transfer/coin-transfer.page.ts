@@ -110,7 +110,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public amountCanBeEditedInPayIntent = true;
 
     // Submit transaction
-    public transaction: any;
+    public transaction: () => void;
 
     // CryptoName and Contacts
     public addressName: string = null;
@@ -385,8 +385,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             });
 
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-            if (result.published)
-                void this.showSuccess();
 
             if (transfer.intentId) {
                 await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
@@ -433,8 +431,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             });
 
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-            if (result.published)
-                void this.showSuccess();
         }
     }
 
@@ -468,8 +464,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             });
 
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-            if (result.published)
-                void this.showSuccess();
         }
     }
 
@@ -545,8 +539,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (this.sendMax || this.valuesReady()) {
             await this.startTransaction();
         }
-
-        // this.showSuccess();
     }
 
     // For revealing button

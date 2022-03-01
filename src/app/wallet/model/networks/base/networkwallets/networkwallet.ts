@@ -322,7 +322,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
             this.subWalletsListChange.next(newSubWallet);
         }
         catch (err) {
-            if (err.code !== 20001) {// 20001: Unsupported subwallet in some test network.
+            if (err.code !== 20001) { // SPVSDK - 20001: Unsupported subwallet in some test networks.
                 throw err;
             }
         }

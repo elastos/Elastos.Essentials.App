@@ -9,6 +9,7 @@ import { ETHTransactionComponent } from './eth-transaction/eth-transaction.compo
 import { HelpComponent } from './help/help.component';
 import { NetworkChooserComponent } from './network-chooser/network-chooser.component';
 import { OptionsComponent } from './options/options.component';
+import { StdTransactionComponent } from './std-transaction/std-transaction.component';
 import { TokenChooserComponent } from './token-chooser/token-chooser.component';
 import { TransferWalletChooserComponent } from './transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { TxConfirmComponent } from './tx-confirm/tx-confirm.component';
@@ -28,7 +29,8 @@ import { WarningComponent } from './warning/warning.component';
     TransferWalletChooserComponent,
     NetworkChooserComponent,
     WalletChooserComponent,
-    TokenChooserComponent
+    TokenChooserComponent,
+    StdTransactionComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +54,8 @@ import { WarningComponent } from './warning/warning.component';
     TransferWalletChooserComponent,
     NetworkChooserComponent,
     WalletChooserComponent,
-    TokenChooserComponent
+    TokenChooserComponent,
+    StdTransactionComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

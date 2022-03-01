@@ -14,6 +14,7 @@ import { AnyNetwork } from '../../model/networks/network';
 import { RawTransactionPublishResult } from '../../model/tx-providers/transaction.types';
 import { Transfer } from '../cointransfer.service';
 import { PopupProvider } from '../popup.service';
+import { TransactionService } from '../transaction.service';
 
 export type ETHTransactionStatusInfo = {
   chainId: string;
@@ -38,12 +39,13 @@ class ETHTransactionManager {
   constructor(
     private publicationService: EVMService,
     private modalCtrl: ModalController,
+    private transactionService: TransactionService
   ) { }
 
   /**
   * Emit a public publication status event.
   */
-  public emitEthTransactionStatusChange(status) {
+  public emitEthTransactionStatusChange(status: ETHTransactionStatusInfo) {
     this.publicationService.ethTransactionStatus.next(status);
     void this.resetStatus();
   }
@@ -54,11 +56,11 @@ class ETHTransactionManager {
 
   /**
    * - Shows a blocking dialog
-   * - Send the signed transaction to the EVM node
+   * - Sends the signed transaction to the EVM node
    * - Checks the result and propose to speedup in case the transaction takes too much time
-   * - Emit ETH transaction status events
+   * - Emits ETH transaction status events
    *
-   * @returns The publish transaction ID, if any.
+   * @returns The published transaction ID, if any.
    */
   public async publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, signedTransaction: string, transfer: Transfer): Promise<string> {
     try {
@@ -69,11 +71,11 @@ class ETHTransactionManager {
         let obj = JSON.parse(signedTransaction) as SignedETHSCTransaction;
         if (!obj.TxSigned) {
           Logger.error("wallet", "Unsigned transaction received in EVM's publishTransaction() !");
-
           return null;
         }
 
         let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(subwallet.networkWallet.network.getMainEvmRpcApiUrl(), obj.TxSigned);
+        console.log("POST eth_sendRawTransaction");
 
         let published = true;
         let status = 'published';
@@ -132,7 +134,7 @@ class ETHTransactionManager {
         } else {
           setTimeout(() => {
             void this.checkPublicationStatusAndUpdate(subwallet, result.txid);
-          }, 5000);
+          }, 3000);
         }
 
         return result.txid;
@@ -252,7 +254,6 @@ class ETHTransactionManager {
    * TODO: MAKE A SIMILAR COMPONENT DIALOG FOR OTHER NETWORK, SAME UI
    */
   public async displayPublicationLoader(): Promise<void> {
-
     const modal = await this.modalCtrl.create({
       // eslint-disable-next-line import/no-cycle
       component: (await import('../../components/eth-transaction/eth-transaction.component')).ETHTransactionComponent,
@@ -287,12 +288,14 @@ export class EVMService {
 
   constructor(
     private modalCtrl: ModalController,
+    private transactionService: TransactionService
   ) {
     EVMService.instance = this;
 
     this.manager = new ETHTransactionManager(
       this,
-      this.modalCtrl);
+      this.modalCtrl,
+      this.transactionService);
   }
 
   public init(): void {

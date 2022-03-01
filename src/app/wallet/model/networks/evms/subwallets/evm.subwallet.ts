@@ -384,9 +384,6 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public publishTransaction(signedTransaction: string): Promise<string> {
-    /* let obj = JSON.parse(signedTransaction) as SignedETHSCTransaction;
-    let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(this.rpcApiUrl, obj.TxSigned);
-    return txid; */
     return EVMService.instance.publishTransaction(this, signedTransaction, null);
   }
 

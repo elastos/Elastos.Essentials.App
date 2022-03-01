@@ -1,0 +1,49 @@
+ion-grid {
+    height: 100%;
+    padding: 10px 20px;
+
+    ion-icon, ion-spinner {
+        width: 25px;
+        height: 25px;
+        color: #565bdb;
+    }
+
+    ion-row {
+      ion-button {
+        width: 90%;
+      }
+
+      h1, h2 {
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 18px;
+      }
+
+      h2 {
+        font-size: 14px;
+      }
+    }
+
+    .spinner {
+        margin-top: 40px;
+    }
+
+    .result {
+        margin-top: 20px;
+    }
+
+    .success-row {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        p {
+            padding: 0px 20px;
+            font-size: 12px;
+            font-weight: 600;
+        };
+    }
+}
