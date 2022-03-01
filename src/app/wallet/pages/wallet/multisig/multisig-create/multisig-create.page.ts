@@ -4,22 +4,20 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Native } from '../../services/native.service';
-import { WalletCreationService } from '../../services/walletcreation.service';
+import { Native } from '../../../../services/native.service';
 
 @Component({
-    selector: 'app-launcher',
-    templateUrl: './launcher.page.html',
-    styleUrls: ['./launcher.page.scss'],
+    selector: 'app-multisig-create',
+    templateUrl: './multisig-create.page.html',
+    styleUrls: ['./multisig-create.page.scss'],
 })
-export class LauncherPage implements OnInit {
+export class MultiSigCreatePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public useBackNav = false;
 
     constructor(
         public native: Native,
-        private walletCreationService: WalletCreationService,
         public translate: TranslateService,
         private theme: GlobalThemeService,
         private globalStartupService: GlobalStartupService
@@ -31,11 +29,10 @@ export class LauncherPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTheme('#732cd0', TitleBarForegroundMode.LIGHT)
-        this.titleBar.setTitle(this.translate.instant('launcher.app-wallet'));
+        this.titleBar.setTitle('New multi-sig wallet');
     }
 
     ionViewDidEnter() {
-        this.globalStartupService.setStartupScreenReady();
     }
 
     ionViewWillLeave() {
@@ -44,21 +41,7 @@ export class LauncherPage implements OnInit {
         });
     }
 
-    createStandardWallet() {
-        this.walletCreationService.reset();
-        this.walletCreationService.isMulti = false;
-        this.walletCreationService.type = 1; // new
-        this.native.go("/wallet/wallet-create");
-    }
-
-    importStandardWallet() {
-        this.walletCreationService.reset();
-        this.walletCreationService.isMulti = false;
-        this.walletCreationService.type = 2; // import
-        this.native.go("/wallet/wallet-create");
-    }
-
-    createMultiSigWallet() {
-        this.native.go("/wallet/multisig/create");
+    createStandardMultiSigWallet() {
+        this.native.go("/wallet/multisig/standard/create");
     }
 }

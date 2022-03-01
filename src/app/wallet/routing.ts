@@ -62,6 +62,9 @@ const routes: Routes = [
     // Intents
     { path: 'intents', loadChildren: () => import('./pages/intents/module').then(m => m.IntentsModule) },
 
+    // Multisig
+    { path: 'multisig', loadChildren: () => import('./pages/wallet/multisig/module').then(m => m.MultiSigModule) },
+
     // TEST
     { path: 'swap-test', loadChildren: () => import('./pages/swap-test/module').then(m => m.SwapTestModule) },
 ];

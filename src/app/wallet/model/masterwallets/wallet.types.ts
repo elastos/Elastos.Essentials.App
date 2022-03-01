@@ -94,6 +94,12 @@ export type SerializedLedgerMasterWallet = SerializedMasterWallet & {
   accountID: string;
 }
 
+export type SerializedStandardMultiSigMasterWallet = SerializedMasterWallet & {
+  type: WalletType.MULTI_SIG_STANDARD;
+
+  // TODO: public keys, options, etc
+}
+
 /**
 * @deprecated
 */

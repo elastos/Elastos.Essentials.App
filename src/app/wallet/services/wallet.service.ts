@@ -36,7 +36,7 @@ import { CoinType } from '../model/coin';
 import { AESEncrypt } from '../model/crypto';
 import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
-import { PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
+import { PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
 import type { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
 import type { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
 import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
@@ -457,7 +457,7 @@ export class WalletService {
      * Creates a new standard master wallet using a given mnemonic.
      * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    public async newStandardWalletWithMnemonic(
+    public newStandardWalletWithMnemonic(
         masterId: string,
         walletName: string,
         mnemonicStr: string,
@@ -465,7 +465,7 @@ export class WalletService {
         payPassword: string,
         networkOptions: WalletNetworkOptions[], // elastos -> single address
         walletCreator: WalletCreator
-    ) {
+    ): Promise<MasterWallet> {
         Logger.log('wallet', "Importing new master wallet with mnemonic");
 
         let hasPassphrase = false;
@@ -489,21 +489,21 @@ export class WalletService {
             creator: walletCreator
         }
 
-        await this.createMasterWalletFromSerializedInfo(masterWalletInfo);
+        return this.createMasterWalletFromSerializedInfo(masterWalletInfo);
     }
 
     /**
      * Creates a new standard master wallet using a given private key.
      * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    public async newStandardWalletWithPrivateKey(
+    public newStandardWalletWithPrivateKey(
         walletId: string,
         walletName: string,
         privateKey: string,
         privateKeyType: PrivateKeyType,
         // TODO networkOptions: WalletNetworkOptions[] // elastos -> single address
         payPassword: string
-    ) {
+    ): Promise<MasterWallet> {
         Logger.log('wallet', "Importing new master wallet with priv key");
 
         let masterWalletInfo: SerializedStandardMasterWallet = {
@@ -517,19 +517,19 @@ export class WalletService {
             creator: WalletCreator.USER
         }
 
-        await this.createMasterWalletFromSerializedInfo(masterWalletInfo);
+        return this.createMasterWalletFromSerializedInfo(masterWalletInfo);
     }
 
     /**
      * Creates a new ledger master wallet.
      * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    public async newLedgerWallet(
+    public newLedgerWallet(
         masterId: string,
         walletName: string,
         deviceID: string,
         accountID: string
-    ) {
+    ): Promise<MasterWallet> {
         Logger.log('wallet', "Importing new legder master wallet");
 
         let masterWalletInfo: SerializedLedgerMasterWallet = {
@@ -543,7 +543,30 @@ export class WalletService {
             accountID
         }
 
-        await this.createMasterWalletFromSerializedInfo(masterWalletInfo);
+        return this.createMasterWalletFromSerializedInfo(masterWalletInfo);
+    }
+
+    /**
+     * Creates a new ledger master wallet.
+     * The new master wallet is saved to storage, and instanciated/added to the local model.
+     */
+    public newMultiSigStandardWallet(
+        masterId: string,
+        walletName: string
+        // TODO: public keys
+    ): Promise<MasterWallet> {
+        Logger.log('wallet', "Creating a new standard multi-sig master wallet");
+
+        let masterWalletInfo: SerializedStandardMultiSigMasterWallet = {
+            type: WalletType.MULTI_SIG_STANDARD,
+            id: masterId,
+            name: walletName,
+            theme: defaultWalletTheme(),
+            networkOptions: [], // TODO
+            creator: WalletCreator.USER,
+        }
+
+        return this.createMasterWalletFromSerializedInfo(masterWalletInfo);
     }
 
     /**

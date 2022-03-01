@@ -1,0 +1,42 @@
+@import 'src/app/wallet/root.scss';
+
+.container {
+    position: relative;
+    min-height: 100%;
+    padding: 10px 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('/assets/wallet/background/background.svg');
+    object-fit: cover;
+
+    img {
+        width: 164.2px;
+        height: 153.8px;
+        object-fit: contain;
+    }
+
+    h1 {
+        margin: 70px 0 90px;
+        font-size: 27px;
+        font-weight: 500;
+        line-height: 1.23;
+        letter-spacing: -0.6px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    p {
+        margin: 0;
+        padding: 30px 0;
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: -0.31px;
+        color: #fdfeff;
+    }
+
+    .btn-container {
+        width: 100%;
+    }
+}

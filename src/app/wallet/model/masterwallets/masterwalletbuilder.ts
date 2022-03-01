@@ -1,6 +1,7 @@
 import { LedgerMasterWallet } from "./ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "./masterwallet";
-import { SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, WalletType } from "./wallet.types";
+import { StandardMultiSigMasterWallet } from "./standard.multisig.masterwallet";
+import { SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletType } from "./wallet.types";
 
 export class MasterWalletBuilder {
   public static newFromSerializedWallet<SerializedWalletType extends SerializedMasterWallet>(serialized: SerializedWalletType): MasterWallet {
@@ -10,8 +11,9 @@ export class MasterWalletBuilder {
       case WalletType.LEDGER:
         return LedgerMasterWallet.newFromSerializedWallet(serialized as unknown as SerializedLedgerMasterWallet);
       case WalletType.MULTI_SIG_STANDARD:
+        return StandardMultiSigMasterWallet.newFromSerializedWallet(serialized as unknown as SerializedStandardMultiSigMasterWallet);
       case WalletType.MULTI_SIG_EVM_GNOSIS:
-        return null; // TODO
+        throw new Error("Master wallet type not implemented - " + serialized.type);
     }
   }
 }
