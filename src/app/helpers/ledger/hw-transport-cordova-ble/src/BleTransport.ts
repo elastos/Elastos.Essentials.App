@@ -39,7 +39,6 @@ const retrieveInfos = (device) => {
   if (!device || !device.services) return;
   const [serviceUUID] = device.services;
   if (!serviceUUID) return;
-  Logger.warn(TAG, 'getInfosForServiceUuid serviceUUID:', serviceUUID)
   const infos = getInfosForServiceUuid(serviceUUID);
   if (!infos) return;
   return infos;
@@ -80,7 +79,6 @@ var base64ToArrayBuffer = function (b64) {
 async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   let device = null;
 
-  Logger.log(TAG, ' open deviceOrId:', deviceOrId, ' needsReconnect:', needsReconnect)
   if (typeof deviceOrId === "string") {
     if (transportsCache[deviceOrId]) {
       Logger.log(TAG, "Transport in cache, using that.");
@@ -113,8 +111,6 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     // }
 
     if (!device) {
-      Logger.log(TAG, "connectToDevice", deviceOrId);
-
       try {
         // device = await bleManager.connectToDevice(deviceOrId, connectOptions);
         device = await bleManager.connect(deviceOrId);
@@ -136,14 +132,12 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
       throw new CantOpenDevice();
     }
   } else {
-    Logger.log(TAG, "deviceOrId is an object");
     device = new Device(deviceOrId);
   }
 
-  Logger.warn(TAG, ' open device:', device)
-
-  if (!(await device.isConnected())) {
-    Logger.log(TAG, "not connected. connecting...");
+// TODO: We need to get the PeripheralDataExtended, so call connect.
+//   if (!(await device.isConnected())) {
+    // Logger.log(TAG, "not connected. connecting...");
 
     try {
     // TODO: connectOptions?: requestMtu is not supported on iOS.
@@ -160,23 +154,19 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
         throw e;
     //   }
     }
-  }
+//   }
 
-  await device.discoverAllServicesAndCharacteristics();
+//   await device.discoverAllServicesAndCharacteristics();
   let res = retrieveInfos(device);
   let characteristics;
-  Logger.warn(TAG, ' retrieveInfos:', res)
   if (!res) {
     for (const uuid of getBluetoothServiceUuids()) {
       try {
-        Logger.log(TAG, 'getInfosForServiceUuid uuid:', uuid)
         characteristics = await device.characteristicsForService(uuid);
         if (characteristics.length  == 0) {
-            Logger.log(TAG, 'can not find characteristics for', uuid)
             continue;
         } else {
             res = getInfosForServiceUuid(uuid);
-            Logger.log(TAG, 'getInfosForServiceUuid uuid:', uuid, ' Infos:', res)
             break;
 
         }
@@ -204,7 +194,6 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   let writeCmdC;
   let notifyC;
 
-  Logger.log(TAG, 'characteristics:', characteristics)
   for (const c of characteristics) {
     if (c.characteristic === writeUuid) {
       writeC = c;
@@ -311,7 +300,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   if (needsReconnect) {
     return open(device, false);
   }
-  Logger.log(TAG, 'open return transport', transport);
+
   return transport;
 }
 /**
@@ -354,7 +343,6 @@ export default class BluetoothTransport extends Transport {
     let unsubscribed;
     // $FlowFixMe
     bleManager.startStateNotifications(async (state) => {
-      Logger.log(TAG, ' StateNotifications ', state)
       if (state === "on") {
         await bleManager.stopStateNotifications();
         const devices = await bleManager.connectedDevices(
@@ -367,7 +355,7 @@ export default class BluetoothTransport extends Transport {
           )
         );
         if (unsubscribed) return;
-        Logger.warn(TAG, ' startScan ')
+
         bleManager.startScan(
           getBluetoothServiceUuids(),
           (device: BLECentralPlugin.PeripheralData) => {
@@ -392,7 +380,6 @@ export default class BluetoothTransport extends Transport {
 
     const unsubscribe = () => {
       unsubscribed = true;
-      Logger.warn(TAG, ' unsubscribe stopScan ')
       void bleManager.stopScan();
       void bleManager.stopStateNotifications();
       Logger.log(TAG, "done listening.");
@@ -409,7 +396,6 @@ export default class BluetoothTransport extends Transport {
    */
   // eslint-disable-next-line require-await
   static async open(deviceOrId: Device | string) {
-    Logger.warn(TAG, ' BluetoothTransport open ', deviceOrId)
     return open(deviceOrId, true);
   }
 
@@ -443,7 +429,6 @@ export default class BluetoothTransport extends Transport {
     this.writeCmdCharacteristic = writeCmdCharacteristic;
     this.notifyObservable = notifyObservable;
     this.deviceModel = deviceModel;
-    Logger.log(TAG, "BleTransport new BluetoothTransport ", this);
   }
 
 
@@ -503,7 +488,6 @@ export default class BluetoothTransport extends Transport {
 
     if (mtu > 23) {
       const mtuSize = mtu - 3;
-      Logger.log(TAG, 'BleTransport', this.id, ' mtu set to ', mtuSize);
       this.mtuSize = mtuSize;
     }
 

@@ -12,9 +12,9 @@ export const monitorCharacteristic = (
   characteristic: Characteristic
 ): Observable<Buffer> =>
   new Observable((o) => {
-    Logger.log(TAG, "start notification ", characteristic.characteristic);
+    // Logger.log(TAG, "start notification ", characteristic.characteristic);
     ble.startNotification(device_id, characteristic.service, characteristic.characteristic, (rawData:ArrayBuffer)=>{
-        Logger.log(TAG, "got notification rawData:", rawData);
+        // Logger.log(TAG, "got notification rawData:", rawData);
         if (!rawData) {
             o.error(new TransportError("characteristic monitor null value",
                     "CharacteristicMonitorNull"));
@@ -31,7 +31,6 @@ export const monitorCharacteristic = (
         o.error(error);
     });
     return () => {
-        Logger.log(TAG,  "end notification " + characteristic.characteristic);
         void ble.withPromises.stopNotification(device_id, characteristic.service, characteristic.characteristic);
     };
   });

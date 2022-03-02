@@ -78,13 +78,16 @@ export class LedgerConnectPage implements OnInit {
     }
 
     async doConnect() {
-        try {
+        // try {
+            if (this.transport) {
+                await this.transport.close();
+            }
             this.transport = await BluetoothTransport.open(this.device);
             Logger.warn('ledger', ' initLedger this.transport:', this.transport)
-        }
-        catch (e) {
-            Logger.error('ledger', ' initLedger error:', e)
-        }
+        // }
+        // catch (e) {
+        //     Logger.error('ledger', ' initLedger error:', e)
+        // }
     }
 
     async getAddresses(accountsLength = 5, accountsOffset = 0) {

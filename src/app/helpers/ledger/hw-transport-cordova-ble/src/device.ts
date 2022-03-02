@@ -20,7 +20,6 @@ export class Device {
     }
 
     private copyData(data:BLECentralPlugin.PeripheralDataExtended) {
-        Logger.log(TAG, ' copyData', data)
         if (!data) return;
         this.name = data.name;
         this.id = data.id
@@ -41,7 +40,6 @@ export class Device {
     }
 
     public isConnected(): Promise<boolean> {
-        Logger.log(TAG, ' isConnected')
         return new Promise((resolve, reject) => {
             ble.isConnected(this.id,
                 () => { resolve(true); },
@@ -50,7 +48,6 @@ export class Device {
     }
 
     public connect(): Promise<BLECentralPlugin.PeripheralDataExtended> {
-        Logger.log(TAG, ' connect')
         return new Promise((resolve, reject) => {
             ble.connect(this.id,
                 (data: BLECentralPlugin.PeripheralDataExtended) => {
@@ -89,7 +86,7 @@ export class Device {
 
     // TODO:
     public onDisconnected(fun:any) {
-
+        Logger.error(TAG, 'device onDisconnected not implement', this.id)
     }
 
 }

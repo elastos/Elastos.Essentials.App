@@ -56,16 +56,15 @@ export class BLECentralPluginBridge {
         Logger.log(TAG, ' connectedDevices serviceUUIDs:', serviceUUIDs)
         return new Promise((resolve, reject) => {
             // if (this.platform.platforms().indexOf('ios') >= 0) {
-                ble.connectedPeripheralsWithServices(serviceUUIDs,
-                    (data: BLECentralPlugin.PeripheralData[]) => { resolve(data); },
-                    () => { resolve([]); });
+                // ble.connectedPeripheralsWithServices(serviceUUIDs,
+                //     (data: BLECentralPlugin.PeripheralData[]) => { resolve(data); },
+                //     () => { resolve([]); });
             // } else {
-            //     ble.bondedDevices(
-            //         (data: BLECentralPlugin.PeripheralData[]) => {
-            //             // TODO: get the matched data.
-            //             resolve([]);
-            //         },
-            //         () => { resolve([]); });
+                ble.bondedDevices(
+                    (data: BLECentralPlugin.PeripheralData[]) => {
+                        resolve(data);
+                    },
+                    () => { resolve([]); });
             // }
         });
     }
