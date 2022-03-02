@@ -97,15 +97,12 @@ export type SerializedLedgerMasterWallet = SerializedMasterWallet & {
 export type SerializedStandardMultiSigMasterWallet = SerializedMasterWallet & {
   type: WalletType.MULTI_SIG_STANDARD;
 
-  // TODO: public keys, options, etc
-}
+  /** Other existing wallet (standard, ledger) used as signer for the current user */
+  signingWalletId: string;
+  /** Number of signatures required for transactions */
+  requiredSigners: number;
+  /** Extended public keys of all the co-signers, including current user's entry */
+  signersExtPubKeys: string[];
 
-/**
-* @deprecated
-*/
-//export class ExtendedMasterWalletInfo {
-/* Created by system when create a new identity */
-  //createdBySystem: boolean; // TODO: REPLACED BY WalletCreator
-/* Created by mnemonic or private key */
-  //createType: WalletCreateType;
-//}
+  // TODO: network options?
+}

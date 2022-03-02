@@ -3,6 +3,10 @@ import { MasterWallet } from "./masterwallet";
 import { SerializedStandardMultiSigMasterWallet } from "./wallet.types";
 
 export class StandardMultiSigMasterWallet extends MasterWallet {
+  public signingWalletId: string;
+  public requiredSigners: number;
+  public signersExtPubKeys: string[];
+
   public static newFromSerializedWallet(serialized: SerializedStandardMultiSigMasterWallet): StandardMultiSigMasterWallet {
     let masterWallet = new StandardMultiSigMasterWallet();
 
@@ -15,7 +19,9 @@ export class StandardMultiSigMasterWallet extends MasterWallet {
   protected deserialize(serialized: SerializedStandardMultiSigMasterWallet) {
     super.deserialize(serialized);
 
-    // TODO: multisig specific data
+    this.signingWalletId = serialized.signingWalletId;
+    this.signersExtPubKeys = serialized.signersExtPubKeys;
+    this.requiredSigners = serialized.requiredSigners;
   }
 
   public serialize(): StandardMultiSigMasterWallet {
@@ -23,7 +29,9 @@ export class StandardMultiSigMasterWallet extends MasterWallet {
 
     super._serialize(serialized as StandardMultiSigMasterWallet);
 
-    // TODO: multisig specific data
+    serialized.signingWalletId = this.signingWalletId;
+    serialized.signersExtPubKeys = this.signersExtPubKeys;
+    serialized.requiredSigners = this.requiredSigners;
 
     return serialized;
   }
@@ -34,7 +42,10 @@ export class StandardMultiSigMasterWallet extends MasterWallet {
   }
 
   public supportsNetwork(network: AnyNetwork): boolean {
-    console.log("Multisig masterwallet supportsNetwork not implemented");
-    return true; // TODO: implement
+    // Hardcoded for now - improve
+    return [
+      "elastos", // elastos mainchain
+      "btc" // BTC
+    ].indexOf(network.key) >= 0;
   }
 }

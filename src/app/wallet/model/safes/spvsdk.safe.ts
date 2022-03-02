@@ -27,8 +27,14 @@ export class SPVSDKSafe extends Safe {
     await super.initialize();
   }
 
-  public getAddresses(): Promise<string[]> {
-    throw new Error("Method not implemented.");
+  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
+    return SPVService.instance.getAddresses(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      startIndex,
+      count,
+      internalAddresses
+    );
   }
 
   public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {

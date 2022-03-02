@@ -1,23 +1,22 @@
 import { Logger } from "src/app/logger";
-import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
-import { StandardCoinName } from "../../../../../coin";
-import { StandardMasterWallet } from "../../../../../masterwallets/masterwallet";
+import { StandardCoinName } from "src/app/wallet/model/coin";
+import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
+import { ElastosMainChainWalletNetworkOptions } from "src/app/wallet/model/masterwallets/wallet.types";
 import { TransactionProvider } from "../../../../../tx-providers/transaction.provider";
 import { WalletAddressInfo } from "../../../../base/networkwallets/networkwallet";
+import { StandardMultiSigNetworkWallet } from "../../../../base/networkwallets/standard.multisig.networkwallet";
 import { AnyNetwork } from "../../../../network";
 import { ElastosEVMSubWallet } from "../../../evms/subwallets/standard/elastos.evm.subwallet";
-import { ElastosStandardNetworkWallet } from "../../../networkwallets/standard/elastos.networkwallet";
-import { WalletHelper } from "../../../wallet.helper";
-import { MainChainSPVSDKSafe } from "../../safes/mainchain.spvsdk.safe";
+import { MainChainMultiSigSafe } from "../../safes/multisig/mainchain.multisig.safe";
 import { MainChainSubWallet } from "../../subwallets/mainchain.subwallet";
 import { ElastosMainChainTransactionProvider } from "../../tx-providers/elastos.mainchain.tx.provider";
 
-export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetworkWallet {
-  constructor(masterWallet: StandardMasterWallet, network: AnyNetwork) {
+export class ElastosMainChainStandardMultiSigNetworkWallet extends StandardMultiSigNetworkWallet<ElastosMainChainWalletNetworkOptions> {
+  constructor(masterWallet: StandardMultiSigMasterWallet, network: AnyNetwork) {
     super(
       masterWallet,
       network,
-      new MainChainSPVSDKSafe(masterWallet, StandardCoinName.ELA),
+      new MainChainMultiSigSafe(masterWallet),
       "ELA"
     );
   }
@@ -28,27 +27,26 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
 
   protected async prepareStandardSubWallets(): Promise<void> {
     try {
-      await SPVService.instance.createSubWallet(jsToSpvWalletId(this.masterWallet.id), StandardCoinName.ELA);
       this.subWallets[StandardCoinName.ELA] = new MainChainSubWallet(this);
       await this.subWallets[StandardCoinName.ELA].initialize();
     }
     catch (err) {
-      Logger.error("wallet", "Can not Create Elastos main chain standard subwallets ", err);
+      Logger.error("wallet", "Can not Create Elastos main chain multi-sig subwallets ", err);
     }
   }
 
   public async getAddresses(): Promise<WalletAddressInfo[]> {
     let addresses = [];
 
-    // No ELA when imported by private key.
-    if (this.subWallets[StandardCoinName.ELA]) {
-      addresses.push({
-        title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
-        address: await this.subWallets[StandardCoinName.ELA].createAddress()
-      });
-    }
+    /*  // No ELA when imported by private key.
+     if (this.subWallets[StandardCoinName.ELA]) {
+       addresses.push({
+         title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
+         address: await this.subWallets[StandardCoinName.ELA].createAddress()
+       });
+     } */
 
-    return addresses;
+    return await addresses;
   }
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
@@ -59,7 +57,7 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
    * Tells whether this wallet currently has many addresses in use or not.
    */
   public async multipleAddressesInUse(): Promise<boolean> {
-    let mainChainSubWallet: MainChainSubWallet = this.subWallets[StandardCoinName.ELA] as MainChainSubWallet;
+    /* let mainChainSubWallet: MainChainSubWallet = this.subWallets[StandardCoinName.ELA] as MainChainSubWallet;
     let txListsInternal = await WalletHelper.getTransactionByAddress(mainChainSubWallet, true, 2);
     if (txListsInternal.length > 1) {
       return true;
@@ -69,7 +67,8 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
       return true;
     }
 
-    return false;
+    return false; */
+    return await false; // TODO
   }
 
   public getAverageBlocktime(): number {

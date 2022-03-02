@@ -389,6 +389,7 @@ export class SPVService {
     }
 
     getAllMasterWallets(): Promise<string[]> {
+        Logger.warn("spv", "Call to getAllMasterWallets");
         return new Promise((resolve, reject) => {
             Logger.log("wallet", "Getting all master wallets");
 
@@ -423,6 +424,7 @@ export class SPVService {
     }
 
     getAllSubWallets(masterWalletId: string): Promise<StandardCoinName[]> {
+        Logger.warn("spv", "Call to getAllSubWallets");
         return new Promise((resolve, reject) => {
             walletManager.getAllSubWallets([masterWalletId],
                 (ret) => { resolve(ret); },
@@ -431,6 +433,7 @@ export class SPVService {
     }
 
     createSubWallet(masterWalletId: string, subWalletId: string): Promise<any> {
+        Logger.warn("spv", "Call to createSubWallet");
         return new Promise((resolve, reject) => {
             walletManager.createSubWallet([masterWalletId, subWalletId],
                 (ret) => {
@@ -507,6 +510,7 @@ export class SPVService {
     }
 
     isAddressValid(masterWalletId: string, address: string): Promise<boolean> {
+        Logger.warn("spv", "Call to isAddressValid");
         return new Promise((resolve, reject) => {
             walletManager.isAddressValid([masterWalletId, address],
                 (ret) => { resolve(ret); },
@@ -523,6 +527,7 @@ export class SPVService {
     }
 
     getSupportedChains(masterWalletId: string): Promise<string[]> {
+        Logger.warn("spv", "Call to getSupportedChains");
         return new Promise((resolve, reject) => {
             walletManager.getSupportedChains([masterWalletId],
                 (ret) => { resolve(ret); },
@@ -539,6 +544,7 @@ export class SPVService {
     }
 
     createAddress(masterWalletId: string, subWalletId: string): Promise<string> {
+        Logger.warn("spv", "Call to createAddress");
         return new Promise((resolve, reject) => {
             walletManager.getAddresses([masterWalletId, subWalletId, 0, 1, false],
                 (ret) => { resolve(ret[0]); },
@@ -547,6 +553,7 @@ export class SPVService {
     }
 
     getAddresses(masterWalletId: string, subWalletId: string, start: number, count: number, internal: boolean): Promise<string[]> {
+        Logger.warn("spv", "Call to getAddresses");
         return new Promise((resolve, reject) => {
             walletManager.getAddresses([masterWalletId, subWalletId, start, count, internal],
                 (ret) => { resolve(ret); },
@@ -568,6 +575,7 @@ export class SPVService {
         rawTransaction: string,
         payPassword: string
     ): Promise<SignedTransaction> {
+        Logger.warn("spv", "Call to signTransaction");
         return new Promise((resolve, reject) => {
             walletManager.signTransaction(
                 [
@@ -619,6 +627,7 @@ export class SPVService {
         subWalletId: string,
         tx: string,
     ): Promise<string> {
+        Logger.warn("spv", "Call to convertToRawTransaction");
         return new Promise((resolve, reject) => {
             walletManager.convertToRawTransaction(
                 [

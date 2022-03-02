@@ -65,7 +65,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(async () => {
-            if (!this.networkWallet.getNetworkOptions().singleAddress) {
+            if (!this.isSingleAddress()) {
                 await this.checkAddresses(true);
                 await this.checkAddresses(false);
             }
@@ -159,12 +159,20 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return ElastosTransactionsHelper.getTransactionName(transaction, translate);
     }
 
+    protected isSingleAddress(): boolean {
+        if (!this.networkWallet.getNetworkOptions())
+            return false;
+
+        return this.networkWallet.getNetworkOptions().singleAddress;
+    }
+
     /**
      * Returns the first payment address for this ELA wallet. This should be a constant address
      * for a given mnemonic.
      */
     public async getRootPaymentAddress(): Promise<string> {
-        let allAddresses = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, 0, 1, false);
+        let allAddresses = await this.networkWallet.safe.getAddresses(0, 1, false);
+        //let allAddresses = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, 0, 1, false);
         if (!allAddresses || allAddresses.length == 0)
             return null;
 
@@ -172,7 +180,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public getAddressCount(internal: boolean): number {
-        if (this.networkWallet.getNetworkOptions().singleAddress) {
+        if (this.isSingleAddress()) {
             if (internal) return 0;
             else return 1;
         } else {
@@ -440,7 +448,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         try {
             do {
                 findTx = false;
-                let addressArray = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, checkCount, internal);
+                let addressArray = await this.networkWallet.safe.getAddresses(startIndex, checkCount, internal);
+                //let addressArray = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, checkCount, internal);
                 const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
                 if (txRawList && txRawList.length > 0) {
                     findTx = true;
@@ -712,8 +721,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public async getTotalBalanceByType(spendable = false) {
         let totalBalance = new BigNumber(0);
         let balance: BigNumber;
+
         // The Single Address Wallet should use the external address.
-        if (!this.networkWallet.getNetworkOptions().singleAddress) {
+        if (this.isSingleAddress()) {
             balance = await this.getBalanceByAddress(true, spendable);
             if (balance == null) {
                 return null;
@@ -793,9 +803,12 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                     break;
                 }
             }
-            addressArray = await SPVService.instance.getAddresses(
+
+            addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress);
+
+            /* addressArray = await SPVService.instance.getAddresses(
                 jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, count, internalAddress);
-            startIndex += addressArray.length;
+            startIndex += addressArray.length; */
 
             try {
                 const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
@@ -808,7 +821,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 Logger.error("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
                 throw e;
             }
-        } while (!this.networkWallet.getNetworkOptions().singleAddress);
+        } while (!this.isSingleAddress());
 
         //Logger.log("wallet", 'balance:', totalBalance.toString());
 
@@ -908,7 +921,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     async getAllUtxoByType(type: UtxoType) {
         let utxoArray = await this.getAllUtxoByAddress(false, type);
 
-        if (!this.networkWallet.getNetworkOptions().singleAddress) {
+        if (!this.isSingleAddress()) {
             let utxos = await this.getAllUtxoByAddress(true, type);
             if (utxos && utxos.length > 0) {
                 if (utxoArray)
@@ -954,8 +967,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                     break;
                 }
             }
-            addressArray = await SPVService.instance.getAddresses(
-                jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, count, internalAddress);
+
+            addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress);
+            //addressArray = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, count, internalAddress);
 
             // The ownerAddress is different with the external address even in single address wallet.
             if ((startIndex === 0) && !internalAddress && (this.id === StandardCoinName.ELA)) {
@@ -978,7 +992,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 Logger.error("wallet", 'jsonRPCService.getAllUtxoByAddress exception:', e);
                 throw e;
             }
-        } while (!this.networkWallet.getNetworkOptions().singleAddress);
+        } while (!this.isSingleAddress());
 
         Logger.log("wallet", ' utxoArray length:', utxoArray ? utxoArray.length : 0);
         return utxoArray;

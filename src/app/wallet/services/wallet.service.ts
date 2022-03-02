@@ -552,8 +552,10 @@ export class WalletService {
      */
     public newMultiSigStandardWallet(
         masterId: string,
-        walletName: string
-        // TODO: public keys
+        walletName: string,
+        signingWalletId: string,
+        requiredSigners: number,
+        signersExtPubKeys: string[]
     ): Promise<MasterWallet> {
         Logger.log('wallet', "Creating a new standard multi-sig master wallet");
 
@@ -564,6 +566,9 @@ export class WalletService {
             theme: defaultWalletTheme(),
             networkOptions: [], // TODO
             creator: WalletCreator.USER,
+            signingWalletId,
+            requiredSigners,
+            signersExtPubKeys
         }
 
         return this.createMasterWalletFromSerializedInfo(masterWalletInfo);
@@ -599,11 +604,17 @@ export class WalletService {
 
         // Build the associated network Wallet
         let activeNetwork = this.networkService.activeNetwork.value;
-        let networkWallet = await activeNetwork.createNetworkWallet(this.masterWallets[wallet.id]);
-        this.networkWallets[wallet.id] = networkWallet;
+        let masterWallet = this.masterWallets[wallet.id];
+        let networkWallet = await activeNetwork.createNetworkWallet(masterWallet);
+        if (!networkWallet) {
+            Logger.warn("wallet", "Failed to create network wallet", masterWallet, activeNetwork);
+        }
+        else {
+            this.networkWallets[wallet.id] = networkWallet;
 
-        // Notify that this network wallet is the active one
-        await this.setActiveNetworkWallet(networkWallet);
+            // Notify that this network wallet is the active one
+            await this.setActiveNetworkWallet(networkWallet);
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
-import { SignTransactionResult } from "../../../safes/safe.types";
-import { SPVSDKSafe } from "../../../safes/spvsdk.safe";
+import { SignTransactionResult } from "../../../../safes/safe.types";
+import { SPVSDKSafe } from "../../../../safes/spvsdk.safe";
 
 export class MainChainSPVSDKSafe extends SPVSDKSafe {
   public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {

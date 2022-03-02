@@ -3,7 +3,7 @@ import { SignTransactionResult } from "../../../safes/safe.types";
 import { EVMSafe } from "../../evms/safes/evm.safe";
 
 export class ETHSafe extends EVMSafe {
-  public getAddresses(): Promise<string[]> {
+  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
     // TODO: Move this code to each network, because not all EVM networks support ledger,
     // and they use a different ledger app each time (AppEth)
 

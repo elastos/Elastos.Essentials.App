@@ -4,17 +4,17 @@ import { TransactionProvider } from "../../../../tx-providers/transaction.provid
 import { ElastosTransaction } from "../../../../tx-providers/transaction.types";
 import { AnySubWallet } from "../../../base/subwallets/subwallet";
 import { MainChainSubWallet } from "../subwallets/mainchain.subwallet";
-import { ElastosMainAndOldIDChainSubWalletProvider } from "./mainandidchain.subwallet.provider";
+import { ElastosMainChainSubWalletProvider } from "./mainchain.subwallet.provider";
 
 export class ElastosMainChainTransactionProvider extends TransactionProvider<ElastosTransaction> {
   private elaSubWallet: MainChainSubWallet;
 
-  private mainChainProvider: ElastosMainAndOldIDChainSubWalletProvider<MainChainSubWallet>;
+  private mainChainProvider: ElastosMainChainSubWalletProvider<MainChainSubWallet>;
 
   public async start(): Promise<void> {
     this.elaSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
 
-    this.mainChainProvider = new ElastosMainAndOldIDChainSubWalletProvider(this, this.elaSubWallet);
+    this.mainChainProvider = new ElastosMainChainSubWalletProvider(this, this.elaSubWallet);
     await this.mainChainProvider.initialize();
   }
 

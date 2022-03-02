@@ -20,7 +20,14 @@ export abstract class Safe {
     return;
   }
 
-  public abstract getAddresses(): Promise<string[]>; // TODO
+  /**
+   * Convenient method to get a set of derived addresses from a start index.
+   * Requested addresses can be internal (hardened derivation path) or external.
+   * 
+   * If multiple addresses are requested on wallets that can't get them (eg single address
+   * wallets), an exception is thrown.
+   */
+  public abstract getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]>; // TODO
 
   // TODO: remove this Transfer object, dirty.
   public abstract signTransaction(rawTx: string, transfer: Transfer): Promise<SignTransactionResult>;

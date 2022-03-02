@@ -8,7 +8,7 @@ import { ElastosTransaction, PaginatedTransactions, TransactionDirection, Transa
 import { AnySubWallet, SubWallet } from "../../../base/subwallets/subwallet";
 import { WalletHelper } from "../../wallet.helper";
 
-export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends SubWallet<ElastosTransaction, ElastosMainChainWalletNetworkOptions>> extends SubWalletTransactionProvider<SubWalletType, ElastosTransaction> {
+export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<ElastosTransaction, ElastosMainChainWalletNetworkOptions>> extends SubWalletTransactionProvider<SubWalletType, ElastosTransaction> {
   private TRANSACTION_LIMIT = 50;
   private needtoLoadMoreAddresses: string[] = [];
   private alreadyTriedToFetchMore = false;
@@ -94,9 +94,6 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
     return (!this.alreadyTriedToFetchMore || this.needtoLoadMoreAddresses.length > 0);
   }
 
-  // Call this when load more transactions.
-  // TODO: NOT USED CURRENTLY
-  //
   async fetchMoreMainChainTransactions(times: number) {
     if (this.needtoLoadMoreAddresses.length === 0) {
       Logger.log('wallet', 'All Transactions are loaded...')
@@ -148,14 +145,6 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
     // For send transactions, every input and output has a transactions.
     // If all the output is the address of this wallet, then this transaction direction is 'MOVED'
     await this.mergeTransactionList(txList);
-
-    // sort by block height
-    /* NOT NEEDED ANY MORE - THE CACHE WILL SORT BY TIME VALUE - let transactions = this.getTransactions(this.subWallet).sort(function (t1, t2) {
-      // The height is 0 if the transaction is pending.
-      if (t2.height === 0) return 1;
-      if (t1.height === 0) return -1;
-      return t2.height - t1.height;
-    }); */
 
     this.timestampEnd = await this.getLastConfirmedTransactionTimestamp();
   }
@@ -246,10 +235,6 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
     await this.saveTransactions(transactions);
   }
 
-  /**
-   *
-   * @param transactionsArray
-   */
   private mergeTransactionsWithSameTxid(transactionsArray) {
     // update value, inputs, type
     let sendTx = [], recvTx = [], sentInputs = [], sentOutputs = [], recvAddress = [];
