@@ -61,4 +61,8 @@ export class LauncherPage implements OnInit {
     createMultiSigWallet() {
         this.native.go("/wallet/multisig/create");
     }
+
+    createLedgerWallet() {
+        this.native.go("/wallet/ledger/scan");
+    }
 }

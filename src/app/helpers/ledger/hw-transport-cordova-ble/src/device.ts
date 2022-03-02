@@ -12,7 +12,8 @@ export class Device {
     public services: string[];
     public characteristics: BLECentralPlugin.PeripheralCharacteristic[];
 
-    public mtu = 156;
+    // public mtu = 156;
+    public mtu = 64;
 
     constructor(data:BLECentralPlugin.PeripheralDataExtended) {
         this.copyData(data);
@@ -20,6 +21,7 @@ export class Device {
 
     private copyData(data:BLECentralPlugin.PeripheralDataExtended) {
         Logger.log(TAG, ' copyData', data)
+        if (!data) return;
         this.name = data.name;
         this.id = data.id
         this.rssi = data.rssi;

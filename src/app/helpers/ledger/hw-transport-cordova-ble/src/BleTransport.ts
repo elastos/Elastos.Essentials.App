@@ -367,11 +367,11 @@ export default class BluetoothTransport extends Transport {
           )
         );
         if (unsubscribed) return;
-        Logger.log(TAG, ' startScan ')
+        Logger.warn(TAG, ' startScan ')
         bleManager.startScan(
           getBluetoothServiceUuids(),
           (device: BLECentralPlugin.PeripheralData) => {
-            Logger.warn(TAG, "... find device:", device)
+            Logger.log(TAG, "... find device:", device)
             const res = retrieveInfos(device);
             const deviceModel = res && res.deviceModel;
             observer.next({
@@ -385,11 +385,14 @@ export default class BluetoothTransport extends Transport {
             unsubscribe();
           }
         );
+      } else if (state === "off") {
+        observer.error("bluetooth is not enable");
       }
     });
 
     const unsubscribe = () => {
       unsubscribed = true;
+      Logger.warn(TAG, ' unsubscribe stopScan ')
       void bleManager.stopScan();
       void bleManager.stopStateNotifications();
       Logger.log(TAG, "done listening.");
@@ -453,14 +456,14 @@ export default class BluetoothTransport extends Transport {
       Logger.log(TAG, "exchange exchangeAtomicImpl");
       try {
         const msgIn = apdu.toString("hex");
-        Logger.log(TAG, "apdu", `=> ${msgIn}`);
+        Logger.log(TAG, "apdu: send message ", `=> ${msgIn}`);
 
         const data = await merge(
           this.notifyObservable.pipe(receiveAPDU),
           sendAPDU(this.write, apdu, this.mtuSize)
         ).toPromise();
         const msgOut = (data as Buffer).toString("hex");
-        Logger.log(TAG, "apdu", `<= ${msgOut}`);
+        Logger.log(TAG, "apdu got message:", `<= ${msgOut}`);
         return data as Buffer;
       } catch (e: any) {
         Logger.log(TAG, "exchange got error:", e);
@@ -478,6 +481,7 @@ export default class BluetoothTransport extends Transport {
   async inferMTU() {
     let { mtu } = this.device;
     await this.exchangeAtomicImpl(async () => {
+      Logger.log(TAG, "inferMTU exchangeAtomicImpl");
       try {
         mtu =
           (await merge(

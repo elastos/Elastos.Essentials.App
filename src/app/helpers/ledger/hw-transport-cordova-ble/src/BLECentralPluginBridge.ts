@@ -3,12 +3,6 @@ import { Logger } from "src/app/logger";
 declare let ble: BLECentralPlugin.BLECentralPluginStatic;
 const TAG = 'LedgerBleCentralPluginBridge';
 export class BLECentralPluginBridge {
-
-
-    constructor() {
-    }
-
-
     public scan(services: string[], seconds: number): Promise<BLECentralPlugin.PeripheralData> {
         Logger.log(TAG, ' scan ', services)
         return new Promise((resolve, reject) => {
@@ -101,6 +95,10 @@ export class BLECentralPluginBridge {
                 () => { resolve(true); },
                 () => { resolve(false); });
             });
+    }
+
+    public showBluetoothSettings() {
+        return ble.withPromises.showBluetoothSettings();
     }
 
     public startStateNotifications(success: (state: string) => any, failure?: (error: string) => any) {

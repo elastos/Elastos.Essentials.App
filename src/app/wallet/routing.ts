@@ -65,6 +65,11 @@ const routes: Routes = [
     // Multisig
     { path: 'multisig', loadChildren: () => import('./pages/wallet/multisig/module').then(m => m.MultiSigModule) },
 
+    // Ledger
+    { path: 'ledger', loadChildren: () => import('./pages/wallet/ledger/module').then(m => m.LedgerModule) },
+    // { path: 'ledgertest', loadChildren: () => import('./pages/wallet/ledgertest/module').then(m => m.LedgerTestModule) },
+
+
     // TEST
     { path: 'swap-test', loadChildren: () => import('./pages/swap-test/module').then(m => m.SwapTestModule) },
 ];

@@ -1,0 +1,27 @@
+@import "src/app/wallet/root.scss";
+
+.title-row {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 50px;
+
+    .title {
+        font-size: 18px;
+        font-weight: 600;
+    }
+}
+
+.note-row {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 50px;
+
+    .search-prompt {
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
