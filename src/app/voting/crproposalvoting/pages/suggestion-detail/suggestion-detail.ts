@@ -97,7 +97,7 @@ export class SuggestionDetailPage {
                 this.buttonLabel = "crproposalvoting.make-into-proposal";
             }
             else if (this.suggestion.status == 'unsigned' && (this.isSelf
-                    || (this.suggestion.type == "secretarygeneral" && Util.isSelfDid(this.suggestion.newSecretaryDID && this.suggestion.signature))
+                    || (this.suggestion.type == "secretarygeneral" && Util.isSelfDid(this.suggestion.newSecretaryDID) && this.suggestion.signature)
                     || (this.suggestion.type == "changeproposalowner" && selfPublicKey == this.suggestion.newOwnerPublicKey && this.suggestion.signature))) {
                 this.commandName = "createsuggestion";
                 this.buttonLabel = "crproposalvoting.sign-suggestion";
