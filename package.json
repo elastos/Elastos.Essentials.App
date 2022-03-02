@@ -52,6 +52,7 @@
     "@ionic/storage": "2.3.1",
     "@ledgerhq/devices": "^6.24.1",
     "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/hw-app-eth": "^6.25.0",
     "@ledgerhq/hw-transport": "^6.24.1",
     "@ledgerhq/logs": "^6.10.0",
     "@ngx-translate/core": "14.0.0",

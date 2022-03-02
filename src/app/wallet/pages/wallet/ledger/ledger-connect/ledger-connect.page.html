@@ -5,7 +5,27 @@
         <ion-row class="title-row">
             <div class='title'>{{ 'wallet.ledger-connect' | translate }}</div>
         </ion-row>
+        <ion-row class="note-row" *ngIf="device">
+            <ion-label>{{ device.name }}</ion-label>
+        </ion-row>
 
+        <ion-row>
+            <ion-button color="primary" (click)="doConnect()">
+                <ion-label> Connect </ion-label>
+            </ion-button>
+        </ion-row>
+        <ion-row>
+            <ion-button color="primary" (click)="getAddresses(5, 0)">
+                <ion-label> Get Addresses </ion-label>
+            </ion-button>
+        </ion-row>
+
+        <ion-row class="note-row" *ngIf="hasGotAddress()">
+            <ion-label> Addresses </ion-label>
+        </ion-row>
+        <ion-row class="note-row" *ngFor="let item of addresses | keyvalue" (click)="selectAddress(item)">
+            <ion-label> {{ item.value }} </ion-label>
+        </ion-row>
 
     </ion-content>
 </ion-content>

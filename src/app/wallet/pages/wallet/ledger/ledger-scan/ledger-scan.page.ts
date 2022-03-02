@@ -21,7 +21,7 @@
 */
 
 import { Component, OnInit, ViewChild } from '@angular/core';
-import Transport, { TransportError } from "@ledgerhq/hw-transport";
+import { TransportError } from "@ledgerhq/hw-transport";
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BLECentralPluginBridge } from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BLECentralPluginBridge';
@@ -40,11 +40,10 @@ const TAG = 'ledger';
 export class LedgerScanPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public device = null;
-    public scanning = false;
-
+    public device: BLECentralPlugin.PeripheralData = null;
     private bleManager: BLECentralPluginBridge = null;
 
+    public scanning = false;
     public isBluetoothEnable = true;
 
     public errorMessge = '';
@@ -73,14 +72,13 @@ export class LedgerScanPage implements OnInit {
     connectLedger() {
         Logger.log(TAG, "connectLedger:", this.device);
         if (this.device) {
-            this.native.go("/wallet/ledger/connect");
+            this.native.go("/wallet/ledger/connect", {device: this.device});
         }
     }
 
     showBluetoothSetting() {
         void this.bleManager.showBluetoothSettings();
     }
-
 
     async doScan() {
         this.errorMessge = null;
@@ -89,17 +87,20 @@ export class LedgerScanPage implements OnInit {
         this.isBluetoothEnable = await this.bleManager.isEnabled();
         if (this.isBluetoothEnable) {
             this.scanning = true;
-            this.device = await this.searchLedgerDevice(15000).catch ( (e) => {
+            let ret = await this.searchLedgerDevice(15000).catch ( (e) => {
                 Logger.warn(TAG, ' searchLedgerDevice exception ', e)
             })
             this.scanning = false;
+
+            if (ret) {
+                this.device = ret;
+            }
         } else {
             this.errorMessge = this.ErrorMessage_BluetoothNoEnable;
-            Logger.warn(TAG, this.errorMessge)
         }
     }
 
-    searchLedgerDevice(listenTimeout?: number): Promise<Transport> {
+    searchLedgerDevice(listenTimeout?: number): Promise<BLECentralPlugin.PeripheralData> {
         return new Promise((resolve, reject) => {
           let found = false;
           const sub = BluetoothTransport.listen({
@@ -118,18 +119,14 @@ export class LedgerScanPage implements OnInit {
             complete: () => {
               if (listenTimeoutId) clearTimeout(listenTimeoutId);
               if (!found) {
-                reject(
-                  new TransportError(this.ErrorMessage_NoDeviceFound, "NoDeviceFound")
-                );
+                reject(new TransportError(this.ErrorMessage_NoDeviceFound, "NoDeviceFound"));
               }
             },
           });
           const listenTimeoutId = listenTimeout
             ? setTimeout(() => {
                 sub.unsubscribe();
-                reject(
-                  new TransportError(this.ErrorMessage_ListenTimeout, "ListenTimeout")
-                );
+                reject(new TransportError(this.ErrorMessage_ListenTimeout, "ListenTimeout"));
               }, listenTimeout)
             : null;
         });
