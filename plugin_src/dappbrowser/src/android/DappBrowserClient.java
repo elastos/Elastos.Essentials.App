@@ -28,10 +28,13 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.cordova.LOG;
@@ -62,6 +65,7 @@ public class DappBrowserClient extends WebViewClient {
     private Activity activity;
     private DappBrowserPlugin brwoserPlugin;
     public String originUrl;
+    public String redirectUrl;
     public String atDocumentStartScript;
 //    private Boolean injected = false;
 
@@ -162,7 +166,12 @@ public class DappBrowserClient extends WebViewClient {
             }
         }
 
-        if (url.startsWith(WebView.SCHEME_TEL)) {
+        if (url.equals(redirectUrl)) {
+            brwoserPlugin.webViewHandler.loadUrl(redirectUrl);
+            redirectUrl = null;
+            return false;
+        }
+        else if (url.startsWith(WebView.SCHEME_TEL)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse(url));
@@ -276,7 +285,13 @@ public class DappBrowserClient extends WebViewClient {
         if (request.isForMainFrame() || this.originUrl == null || urlString.equals(this.originUrl)) {
             try {
                 URL url = new URL(urlString);
-                URLConnection connection = url.openConnection();
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+
+                // For connection don't follow the redirects, and the webview follow the redirects.
+                // When the shouldOverrideUrlLoading is called, it must reload the redirect url.
+                // If don't do that, the webview will direct load the redirect url,
+                // and don't call the shouldInterceptRequest for the redirect url, can't inject the js.
+                connection.setInstanceFollowRedirects(false);
 
                 // Pass the web resource request headers to the url connection headers
                 Map<String, String> requestHeaders = request.getRequestHeaders();
@@ -292,14 +307,38 @@ public class DappBrowserClient extends WebViewClient {
                         //TODO:: maybe try get charset from mimeType.
                         encoding = "UTF-8";
                     }
-                    InputStream inputStream = connection.getInputStream();
-                    inputStream = injectJSInHeadTag(inputStream);
-                    if (inputStream != null) {
-                        resourceResponse = new WebResourceResponse("text/html", encoding, inputStream);
+
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode >= 300 && responseCode <= 399) {
+                        redirectUrl = connection.getHeaderField("Location");
+                    }
+                    else {
+                        InputStream inputStream = connection.getInputStream();
+                        inputStream = injectJSInHeadTag(inputStream);
+
+                        if (inputStream != null) {
+                            resourceResponse = new WebResourceResponse("text/html", encoding, inputStream);
+
+                            //set headers
+                            Map<String, String> responseHeaders = new HashMap<String, String>();
+                            Map<String, List<String>> map = connection.getHeaderFields();
+                            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                                responseHeaders.put(entry.getKey(), connection.getHeaderField(entry.getKey()));
+                            }
+                            resourceResponse.setResponseHeaders(responseHeaders);
+
+                            //set response code
+                            if (responseCode != 200) {
+                                //use reflection to set the actual response code, if don't will crash
+                                Field f = WebResourceResponse.class.getDeclaredField("mStatusCode");
+                                f.setAccessible(true);
+                                f.setInt(resourceResponse, responseCode);
+                            }
+                        }
                     }
                 }
             }
-            catch (IOException e) {
+            catch (IOException | NoSuchFieldException | IllegalAccessException e) {
                 LOG.e(LOG_TAG, e.getLocalizedMessage());
             }
         }
