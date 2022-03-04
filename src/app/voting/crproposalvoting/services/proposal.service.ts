@@ -238,7 +238,7 @@ export class ProposalService {
             }
         }
         catch (err) {
-            Logger.error(App.CRCOUNCIL_VOTING,  'fetchWithdraws error', err);
+            Logger.error(App.CRCOUNCIL_VOTING, 'fetchWithdraws error', err);
         }
         Logger.log(App.CRCOUNCIL_VOTING, "withdraw amount:", amount);
         return amount;

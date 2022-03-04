@@ -1,9 +1,10 @@
 
 import { Injectable } from '@angular/core';
+import Base58 from 'base-58/Base58';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
+import { DIDService } from '../identity/services/did.service';
 import { GlobalDIDSessionsService } from '../services/global.didsessions.service';
-
 @Injectable()
 export class Util {
     public static uuid(len, radix): string {
@@ -235,6 +236,13 @@ export class Util {
             return true;
         }
         return false;
+    }
+
+    public static async getSelfPublicKey(): Promise<string> {
+        let base58Key = await DIDService.instance.getActiveDid().getLocalDIDDocument().getDefaultPublicKey();
+        let buf = new Buffer(Base58.decode(base58Key));
+        let ret = buf.toString('hex');
+        return ret;
     }
 
 }

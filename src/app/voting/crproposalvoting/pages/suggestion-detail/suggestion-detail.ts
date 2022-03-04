@@ -87,8 +87,9 @@ export class SuggestionDetailPage {
             this.buttonLabel = null;
 
             this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.suggestion);
-            let selfPublicKey = await this.crOperations.getSelfPublicKey();
-            this.suggestionService.adjustSuggectionStatus(this.suggestion, selfPublicKey);
+            this.suggestionService.adjustSuggectionStatus(this.suggestion);
+
+            let selfPublicKey = await Util.getSelfPublicKey();
 
             if (this.isCRMember && this.suggestion.status == 'signed'
                     && !(this.suggestion.type == "secretarygeneral" && !this.suggestion.newSecretarySignature)

@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import Base58 from 'base-58/Base58';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { DIDService } from 'src/app/identity/services/did.service';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -281,7 +279,7 @@ export class CROperationsService {
                     data.draftHash = data.drafthash || data.draftHash;
                     data.draftData = await this.getDraftData(data.draftHash);
                     data.targetproposalhash = data.targetproposalhash || data.targetProposalhash || data.targetProposalHash;
-                    data.ownerPublicKey = data.ownerPublicKey || data.ownerpublicKey || await this.getSelfPublicKey();
+                    data.ownerPublicKey = data.ownerPublicKey || data.ownerpublicKey || await Util.getSelfPublicKey();
                     data.newRecipient = data.newrecipient || data.newRecipient;
                     data.newOwnerPublicKey = data.newownerpublickey || data.newOwnerPublicKey;
                     data.newOwnerSignature = data.newownersignature || data.newOwnerSignature;
@@ -390,13 +388,6 @@ export class CROperationsService {
                 void this.globalNav.navigateBack();
                 break;
         }
-    }
-
-    async getSelfPublicKey(): Promise<string> {
-        let base58Key = await DIDService.instance.getActiveDid().getLocalDIDDocument().getDefaultPublicKey();
-        let buf = new Buffer(Base58.decode(base58Key));
-        let ret = buf.toString('hex');
-        return ret;
     }
 
     public async signAndSendRawTransaction(rawTx: any) {

@@ -64,7 +64,7 @@ export class WithdrawPage {
         this.proposalDetailFetched = true;
 
         if (this.proposalDetail) {
-            this.onGoingCommand.data.ownerPublicKey = await this.crOperations.getSelfPublicKey();
+            this.onGoingCommand.data.ownerPublicKey = await Util.getSelfPublicKey();
 
             this.amount = await this.proposalService.fetchWithdraws(this.proposalDetail.proposalHash) * Config.SELA;
             this.amount = Math.round(this.amount);

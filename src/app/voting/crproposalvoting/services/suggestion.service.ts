@@ -21,6 +21,7 @@ export class SuggestionService {
     public selectedSuggestion: SuggestionSearchResult;
     public blockWaitingDict = {};
     public currentSuggestion: SuggestionDetail = null;
+    public selfPublicKey: string;
 
     constructor(
         private http: HttpClient,
@@ -30,7 +31,7 @@ export class SuggestionService {
     ) { }
 
     init() {
-
+        this.selfPublicKey = void Util.getSelfPublicKey();
     }
 
     public stop() {
@@ -59,6 +60,7 @@ export class SuggestionService {
             Logger.log(App.CRSUGGESTION, "fetchSuggestions", url, result);
             if (this.pageNumbersLoaded < page) {
                 if (result && result.data && result.data.suggestions) {
+                    await this.adjustSuggectionResultStatus(result.data.suggestions);
                     this.allResults = this.allResults.concat(result.data.suggestions);
                     this.pageNumbersLoaded = page;
                 }
@@ -90,8 +92,6 @@ export class SuggestionService {
                 }
                 detail.sid = suggestionId;
                 this.currentSuggestion = detail;
-                //TODO:: temp for api-3 result is newrecipient
-                detail.newRecipient = detail.newRecipient || detail.newrecipient;
                 return detail;
             }
             else {
@@ -126,8 +126,9 @@ export class SuggestionService {
             }
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log(App.CRSUGGESTION, 'fetchSearchedSuggestion:', url, result);
-            if (result && result.data) {
-		this.allSearchResults = this.allSearchResults.concat(result.data.suggestions);
+            if (result && result.data && result.data.suggestions) {
+                await this.adjustSuggectionResultStatus(result.data.suggestions);
+		        this.allSearchResults = this.allSearchResults.concat(result.data.suggestions);
             }
             return this.allSearchResults;
         }
@@ -315,7 +316,11 @@ export class SuggestionService {
         return suggestionDetail.type;
     }
 
-    public adjustSuggectionStatus(suggestionDetail: SuggestionDetail, selfPublicKey?: string) {
+    public adjustSuggectionStatus(suggestionDetail: SuggestionDetail) {
+        if (!this.selfPublicKey) {
+            this.selfPublicKey = void Util.getSelfPublicKey();
+        }
+
         let type = suggestionDetail.type;
         let status = suggestionDetail.status;
         if (type == "secretarygeneral" && status != 'proposed') {
@@ -326,10 +331,20 @@ export class SuggestionService {
         }
         else  if (type == "changeproposalowner" && status != 'proposed') {
             if (!suggestionDetail.newOwnerSignature &&
-                !(Util.isSelfDid(suggestionDetail.did) && (suggestionDetail.newOwnerPublicKey != selfPublicKey))) {
+                !(Util.isSelfDid(suggestionDetail.did) && (suggestionDetail.newOwnerPublicKey != this.selfPublicKey))) {
                     suggestionDetail.status = "unsigned";
             }
         }
         return suggestionDetail.status
     }
+
+    public async adjustSuggectionResultStatus(results: SuggestionSearchResult[]) {
+        for (let result of results) {
+            if (result.type == "secretarygeneral" || result.type == "changeproposalowner") {
+                let suggestionDetail = await this.fetchSuggestionDetail(result.sid);
+                result.status = this.adjustSuggectionStatus(suggestionDetail) as SuggestionStatus;
+            }
+        }
+    }
+
 }
