@@ -103,7 +103,7 @@ export const migrateSPVNetworkTemplate = async (networkTemplate: string, identit
 
     let elastosNetworkOptions: ElastosMainChainWalletNetworkOptions = {
       network: 'elastos', // Elastos main chain
-      singleAddress: spvAccountInfo.SingleAddress || true
+      singleAddress: !!spvAccountInfo.SingleAddress
     };
 
     let walletInfo: SerializedStandardMasterWallet = {
