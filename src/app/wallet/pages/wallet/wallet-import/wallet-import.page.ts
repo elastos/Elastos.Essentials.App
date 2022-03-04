@@ -45,6 +45,7 @@ export class WalletImportPage implements OnInit {
     public inputList: Array<{ input: string }> = [];
     private inputStr = "";
 
+
     constructor(
         public walletService: WalletService,
         public native: Native,
@@ -76,11 +77,11 @@ export class WalletImportPage implements OnInit {
 
     /*    goToNextInput(event, nextInput?: any) {
            Logger.log('wallet', 'Input key code', event);
-   
+
            // Convenient way to paste a full mnemonic (non chinese only): if only the first input has text,
            // try to split the existing input with spaces and dispatch the words into the other inputs automatically.
            let allInputFieldsWereFilled = this.tryToSplitFirstInputWords();
-   
+
            if (nextInput && !allInputFieldsWereFilled) {
                nextInput === 'input5' || nextInput === 'input9' ? this.slider.slideNext() : () => {};
                nextInput.setFocus();
@@ -184,6 +185,9 @@ export class WalletImportPage implements OnInit {
             }
             catch (err) {
                 Logger.error('wallet', 'Wallet import error:', err);
+                // Spvsdk throw exception if the master wallet already exists.
+                // So we should delete the wallet info from local storage.
+                await this.localStorage.deleteMasterWallet(this.masterWalletId);
             }
             await this.native.hideLoading();
             this.walletIsCreating = false;
