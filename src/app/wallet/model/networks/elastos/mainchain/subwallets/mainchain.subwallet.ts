@@ -808,7 +808,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
             /* addressArray = await SPVService.instance.getAddresses(
                 jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, count, internalAddress);
-            startIndex += addressArray.length; */
+            */
+
+            startIndex += addressArray.length;
 
             try {
                 const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
