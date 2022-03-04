@@ -115,7 +115,7 @@ export class WalletCreationService {
           mnemonicPassphrase || "",
           payPassword,
           [
-            { network: "elastos", singleAddress: false } as ElastosMainChainWalletNetworkOptions
+            { network: "elastos", singleAddress: true } as ElastosMainChainWalletNetworkOptions
           ],
           WalletCreator.WALLET_APP
         );

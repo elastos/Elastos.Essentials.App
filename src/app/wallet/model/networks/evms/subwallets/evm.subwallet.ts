@@ -96,7 +96,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   public async createAddress(): Promise<string> {
     // Create on EVM networks always returns the same unique address.
-    return await SPVService.instance.createAddress(jsToSpvWalletId(this.masterWallet.id), this.id);
+    let address = await this.networkWallet.safe.getAddresses(0, 1, false);
+    return (address && address[0]) ? address[0] : null;
   }
 
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {

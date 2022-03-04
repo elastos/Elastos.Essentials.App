@@ -143,6 +143,13 @@ export class SPVService {
         await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "jsspvwalletidmapping", this.masterWalletIdMapping);
     }
 
+    public async removeMasterWalletIDMapping(spvWalletId: string) {
+        // Remove the entry
+        this.masterWalletIdMapping = this.masterWalletIdMapping.filter(mapping => mapping.spvWalletId !== spvWalletId);
+
+        await this.saveMasterWalletIDMapping();
+    }
+
     /**
      * Returns a SPV master wallet ID previously bound to a JS wallet ID.
      *
@@ -183,8 +190,7 @@ export class SPVService {
     public async maybeCreateStandardSPVWalletFromJSWallet(masterWallet: StandardMasterWallet): Promise<boolean> {
         // If we find an existing mapping in the SPV service, nothing to do
         let spvMasterId = SPVService.instance.getSPVMasterID(masterWallet.id);
-        if (spvMasterId)
-            return true; // Already initialized
+        if (spvMasterId) return true; // Already initialized
 
         Logger.log("wallet", "Creating the SPV wallet counterpart for wallet ", masterWallet.id);
 
@@ -402,7 +408,10 @@ export class SPVService {
     destroyWallet(masterWalletId: string): Promise<void> {
         return new Promise((resolve, reject) => {
             walletManager.destroyWallet([masterWalletId],
-                (ret) => { resolve(ret); },
+                async (ret) => {
+                    await SPVService.instance.removeMasterWalletIDMapping(masterWalletId);
+                    resolve(ret);
+                },
                 (err) => { void this.handleError("destroyWallet", err, reject); });
         });
     }
@@ -433,11 +442,11 @@ export class SPVService {
     }
 
     createSubWallet(masterWalletId: string, subWalletId: string): Promise<any> {
-        Logger.warn("spv", "Call to createSubWallet");
+        Logger.warn("spv", "Call to createSubWallet", masterWalletId, subWalletId);
         return new Promise((resolve, reject) => {
             walletManager.createSubWallet([masterWalletId, subWalletId],
                 (ret) => {
-                    //Logger.log("wallet", "Created subwallet in SPVSDK, wallet ID:", masterWalletId, "Chain code:", subWalletId);
+                    // Logger.log("wallet", "Created subwallet in SPVSDK, wallet ID:", masterWalletId, "Chain code:", subWalletId);
                     resolve(ret);
                 },
                 (err) => { void this.handleError("createSubWallet", err, reject); });
