@@ -442,7 +442,7 @@ export const zh = {
                 "esctransaction-title": "交易",
                 "esctransaction-smart-contract": "智能合约",
                 "esctransaction-intro": "您将签署并运行智能合约",
-                "esctransaction-approve-token": "Approve Token",
+                "esctransaction-approve-token": "批准代币",
                 "esctransaction-approve-token-intro": "此应用程序或网站将被允许代表您提取和使用您的 {{token}} 代币",
                 "esctransaction-you-are-using": "您正在花费：",
                 "esctransaction-value": "金额:",
@@ -454,7 +454,7 @@ export const zh = {
                 "signtypeddata-title": "数据签名",
                 "signtypeddata-subtitle": "数据签名",
                 "signtypeddata-intro": "调用应用程序需要您使用钱包签署一些数据才能继续。请确认",
-                "signtypeddata-danger": "Signing this message can be dangerous. This signature could potentially perform any operation on your account's behalf, including granting complete control of your account and all of its assets to the requesting site. Only sign this message if you know what you're doing or completely trust the requesting site.",
+                "signtypeddata-danger": "签名此信息可能很危险。此签名可能会代表您的帐户执行任何操作，包括将您的帐户及其所有资产的完全控制权授予请求站点。只有在您知道自己在做什么或完全信任请求站点的情况下，才能在此信息上签名。",
 
                 /***********************
                 * No Wallet *
