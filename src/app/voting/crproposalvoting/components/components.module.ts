@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CrVotesComponent } from './crvotes/crvotes.component';
 import { MileStoneOptionsComponent } from './milestone-options/milestone-options.component';
+import { TitleOptionsComponent } from './title-options/title-options.component';
 import { ProposalTitleBarComponent } from './titlebar/titlebar.component';
 import { VoteResultComponent } from './vote-result/vote-result.component';
 
@@ -12,6 +13,7 @@ import { VoteResultComponent } from './vote-result/vote-result.component';
         CrVotesComponent,
         VoteResultComponent,
         MileStoneOptionsComponent,
+        TitleOptionsComponent,
         ProposalTitleBarComponent,
     ],
     imports: [
@@ -23,6 +25,7 @@ import { VoteResultComponent } from './vote-result/vote-result.component';
         CrVotesComponent,
         VoteResultComponent,
         MileStoneOptionsComponent,
+        TitleOptionsComponent,
         ProposalTitleBarComponent,
     ],
     providers: [
@@ -31,6 +34,7 @@ import { VoteResultComponent } from './vote-result/vote-result.component';
         CrVotesComponent,
         VoteResultComponent,
         MileStoneOptionsComponent,
+        TitleOptionsComponent,
         ProposalTitleBarComponent,
     ],
 })

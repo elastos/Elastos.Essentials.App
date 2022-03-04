@@ -12,6 +12,7 @@ import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.serv
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { MileStoneOptionsComponent } from '../../components/milestone-options/milestone-options.component';
+import { TitleOptionsComponent } from '../../components/title-options/title-options.component';
 import { ProposalDetails, VoteResultType } from '../../model/proposal-details';
 import { ProposalSearchResult } from '../../model/proposal-search-result';
 import { CRCommandType, CROperationsService } from '../../services/croperations.service';
@@ -136,10 +137,13 @@ export class ProposalDetailPage {
                 this.commandName = "reviewproposal";
                 this.buttonLabel = "crproposalvoting.review-proposal";
             }
+            else if (this.proposal.status == 'cragreed') {
+                this.titleBar.setMenuVisibility(true);
+                this.titleBar.setMenuComponent(TitleOptionsComponent);
+            }
 
             this.addProposalDetails();
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposal-details'));
-            this.titleBar.setMenuComponent(MileStoneOptionsComponent);
             Logger.log('CRProposal', "Proposal info:", this.proposal);
         }
         catch (err) {
