@@ -475,7 +475,7 @@ export class WalletService {
         }
 
         // Calculate the seed key from mnemonic + passphrase
-        let seed = mnemonicToSeedSync(mnemonicStr, mnemonicPassphrase).toString();
+        let seed = mnemonicToSeedSync(mnemonicStr, mnemonicPassphrase).toString('hex');
 
         let masterWalletInfo: SerializedStandardMasterWallet = {
             type: WalletType.STANDARD,
