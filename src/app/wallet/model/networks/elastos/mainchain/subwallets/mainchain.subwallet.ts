@@ -723,7 +723,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let balance: BigNumber;
 
         // The Single Address Wallet should use the external address.
-        if (this.isSingleAddress()) {
+        if (!this.isSingleAddress()) {
             balance = await this.getBalanceByAddress(true, spendable);
             if (balance == null) {
                 return null;
