@@ -1,14 +1,18 @@
+import { Logger } from "src/app/logger";
 import { AnyNetwork } from "../networks/network";
 import { MasterWallet } from "./masterwallet";
-import { SerializedLedgerMasterWallet } from "./wallet.types";
+import { LedgerAccountOptions, SerializedLedgerMasterWallet } from "./wallet.types";
 
 export class LedgerMasterWallet extends MasterWallet {
+  public deviceID = '';
+  public accountOptions: LedgerAccountOptions[] = [];
+
   public static newFromSerializedWallet(serialized: SerializedLedgerMasterWallet): LedgerMasterWallet {
     let masterWallet = new LedgerMasterWallet();
 
     // Base type deserialization
     masterWallet.deserialize(serialized);
-
+    Logger.warn('wallet', 'LedgerMasterWallet newFromSerializedWallet serialized:', serialized, 'masterWallet:', masterWallet)
     return masterWallet;
   }
 
@@ -16,6 +20,9 @@ export class LedgerMasterWallet extends MasterWallet {
     super.deserialize(serialized);
 
     // TODO: ledger specific data
+    this.deviceID = serialized.deviceID;
+
+    this.accountOptions = serialized.accountOptions;
   }
 
   public serialize(): SerializedLedgerMasterWallet {
@@ -24,7 +31,8 @@ export class LedgerMasterWallet extends MasterWallet {
     super._serialize(serialized as SerializedLedgerMasterWallet);
 
     // TODO: ledger specific data
-
+    serialized.deviceID = this.deviceID;
+    serialized.accountOptions = this.accountOptions;
     return serialized;
   }
 

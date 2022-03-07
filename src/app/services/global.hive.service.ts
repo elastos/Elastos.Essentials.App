@@ -219,7 +219,7 @@ export class GlobalHiveService extends GlobalService {
 
     let vault = await hiveClient.createVault(didString, vaultProviderAddress);
     // We don't check if the vault is null or not. NULL without exception means the vault already exists, so that's ok.
-
+    Logger.log("GlobalHiveService", "vault", vault);
     vault = await hiveClient.getVault(didString);
     if (!vault) {
       Logger.error("GlobalHiveService", "NULL vault returned, unable to get the vault for this DID.");

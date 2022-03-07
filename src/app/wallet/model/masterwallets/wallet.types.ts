@@ -4,6 +4,8 @@
   EVM = "m/44'/60'/0'/0"
 } */
 
+import { LeddgerAccountType } from "../ledger.types";
+
 export enum WalletType {
   /** Single signature, wallet keys managed by Essentials */
   STANDARD = "standard",
@@ -84,14 +86,22 @@ export type SerializedStandardMasterWallet = SerializedMasterWallet & {
   privateKeyType?: PrivateKeyType;
 }
 
+export type LedgerAccountOptions = {
+    type: LeddgerAccountType;
+    accountID: string;
+    accountPathIndex: number
+}
+
 // TODO: move to another file
 export type SerializedLedgerMasterWallet = SerializedMasterWallet & {
   type: WalletType.LEDGER;
 
   /** Identifier of the ledger device bound to this master wallet */
   deviceID: string;
-  /** Identifier of the ledger accounts bound to this master wallet */
-  accountID: string;
+//   /** Identifier of the ledger accounts bound to this master wallet */
+//   accountID: string;
+
+  accountOptions: LedgerAccountOptions[]
 }
 
 export type SerializedStandardMultiSigMasterWallet = SerializedMasterWallet & {

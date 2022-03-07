@@ -34,9 +34,10 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { CoinType } from '../model/coin';
 import { AESEncrypt } from '../model/crypto';
+import { LeddgerAccountType } from '../model/ledger.types';
 import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
-import { PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
+import { LedgerAccountOptions, PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
 import type { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
 import type { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
 import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
@@ -528,10 +529,18 @@ export class WalletService {
         masterId: string,
         walletName: string,
         deviceID: string,
-        accountID: string
+        accountID: string,
+        accountPathIndex = 0,
+        accountType = LeddgerAccountType.EVM
     ): Promise<MasterWallet> {
         Logger.log('wallet', "Importing new legder master wallet");
 
+        // TODO: Save account with saveContextInfo?
+        let accountOptions : LedgerAccountOptions[] = [{
+            type : accountType,
+            accountID,
+            accountPathIndex
+        }]
         let masterWalletInfo: SerializedLedgerMasterWallet = {
             type: WalletType.LEDGER,
             id: masterId,
@@ -540,7 +549,7 @@ export class WalletService {
             networkOptions: [], // TODO: We may not have this at all for ledger? Should this move to standard wallet?
             creator: WalletCreator.USER,
             deviceID,
-            accountID
+            accountOptions
         }
 
         return this.createMasterWalletFromSerializedInfo(masterWalletInfo);

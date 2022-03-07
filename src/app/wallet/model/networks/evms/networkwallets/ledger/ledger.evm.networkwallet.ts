@@ -1,11 +1,14 @@
+import { Logger } from 'src/app/logger';
 import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
 import { WalletNetworkOptions } from '../../../../masterwallets/wallet.types';
-import { ETHSafe } from '../../../ethereum/safes/eth.safe';
 import type { EVMNetwork } from '../../evm.network';
+import { EVMSafe } from '../../safes/evm.safe';
 import { MainCoinEVMSubWallet } from '../../subwallets/evm.subwallet';
 import { EVMNetworkWallet } from '../evm.networkwallet';
 
 export class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends EVMNetworkWallet<LedgerMasterWallet, WalletNetworkOptionsType> {
+    public accountID = '';
+
     constructor(
         masterWallet: LedgerMasterWallet,
         network: EVMNetwork,
@@ -16,11 +19,13 @@ export class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetwo
         super(
             masterWallet,
             network,
-            new ETHSafe(masterWallet),
+            new EVMSafe(masterWallet),
             displayToken,
             mainSubWalletFriendlyName,
             averageBlocktime
         );
+
+        Logger.warn('wallet', 'LedgerEVMNetworkWallet constructor:', this)
     }
 
     protected async prepareStandardSubWallets(): Promise<void> {
@@ -32,5 +37,7 @@ export class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetwo
         );
         await this.mainTokenSubWallet.initialize();
         this.subWallets[this.network.getEVMSPVConfigName()] = this.mainTokenSubWallet;
+
+        Logger.warn('wallet', 'LedgerEVMNetworkWallet prepareStandardSubWallets:', this)
     }
 }

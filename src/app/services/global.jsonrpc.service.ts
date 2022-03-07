@@ -42,7 +42,7 @@ export class GlobalJsonRPCService {
                             resolve(result);
                         } else {
                             if (result.error) {
-                                Logger.error("GlobalJsonRPCService", 'httpPost error:', result);
+                                Logger.error("GlobalJsonRPCService", 'httpPost error :', result, ', rpc url:', rpcApiUrl);
                                 reject(result.error);
                             }
                             else if (result.code && result.code != 200 && result.message) {
@@ -55,25 +55,26 @@ export class GlobalJsonRPCService {
 
                         resolve(result);
                     } catch(e) {
-                        Logger.error("GlobalJsonRPCService", 'httpPost error:', e);
+                        Logger.error("GlobalJsonRPCService", 'httpPost error:', e, ', rpc url:', rpcApiUrl);
                         reject("Invalid JSON response returned by the JSON RPC");
                     }
                 }
             };
 
             request.ontimeout = function() {
-                Logger.error("GlobalJsonRPCService", 'httpPost timeout');
+                Logger.error("GlobalJsonRPCService", 'httpPost timeout, rpc url:', rpcApiUrl);
                 reject("Timeout");
             };
 
             request.onerror = function(error) {
-                Logger.error("GlobalJsonRPCService", 'httpPost error:', error);
+                Logger.error("GlobalJsonRPCService", 'httpPost onerror:', error, ', rpc url:', rpcApiUrl);
                 reject(error);
             }
 
             try {
                 request.send(JSON.stringify(param));
             } catch(error) {
+                Logger.error("GlobalJsonRPCService", 'httpPost send exception:', error, ', rpc url:', rpcApiUrl);
                 reject("Connection error");
             }
         });
@@ -115,7 +116,7 @@ export class GlobalJsonRPCService {
                 // Logger.log('GlobalJsonRPCService', res);
                 resolve(res);
             }, (err) => {
-                Logger.error('GlobalJsonRPCService', 'http get error:', err);
+                Logger.error('GlobalJsonRPCService', 'http get error:', err, ' url:',url);
                 reject(err);
             });
         });

@@ -23,8 +23,8 @@
         <ion-row class="note-row" *ngIf="hasGotAddress()">
             <ion-label> Addresses </ion-label>
         </ion-row>
-        <ion-row class="note-row" *ngFor="let item of addresses | keyvalue" (click)="selectAddress(item)">
-            <ion-label> {{ item.value }} </ion-label>
+        <ion-row class="note-row" *ngFor="let item of addresses" (click)="selectAddress(item)">
+            <ion-label> {{ item.address }} </ion-label>
         </ion-row>
 
     </ion-content>
