@@ -652,11 +652,12 @@ export class WalletService {
      * triggerEvent: If the wallet is deleted by the system, no related event need be triggered
      */
     async destroyMasterWallet(id: string, triggerEvent = true) {
-        // Delete all subwallet
-        // TODO await this.masterWallets[id].destroyAllSubWallet();
+        if (!this.masterWallets[id]) {
+            Logger.warn('wallet', 'destroyMasterWallet: the master wallet is not exist!')
+            return;
+        }
 
-        // Destroy the wallet in the wallet plugin
-        await this.spvBridge.destroyWallet(jsToSpvWalletId(id)); // TODO: Move this out of here, this is not generic
+        await this.masterWallets[id].destroy()
 
         // Save this modification to our permanent local storage
         await this.localStorage.deleteMasterWallet(this.masterWallets[id].id);

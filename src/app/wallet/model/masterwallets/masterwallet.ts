@@ -1,6 +1,7 @@
 import { Logger } from 'src/app/logger';
 import { WalletNetworkService } from '../../services/network.service';
 import { SafeService, StandardWalletSafe } from '../../services/safe.service';
+import { jsToSpvWalletId, SPVService } from '../../services/spv.service';
 import { LocalStorage } from '../../services/storage.service';
 import { AESDecrypt } from '../crypto';
 import { AnyNetwork } from '../networks/network';
@@ -94,6 +95,13 @@ export abstract class MasterWallet {
         return Object.assign({}, defaultNetworkOptions, networkOptions);
     }
 
+    public async destroy() {
+        // TODO: Delete all subwallet
+
+        // Destroy the wallet in the wallet plugin
+        await SPVService.instance.destroyWallet(jsToSpvWalletId(this.id));
+    }
+
     /**
      * Removes a subwallet (coin - ex: ela, idchain) from the given wallet.
      */
@@ -102,7 +110,7 @@ export abstract class MasterWallet {
        if (subWallet) {
          await subWallet.destroy();
 
-         // Delete the subwallet from out local model.
+         // Delete the subwallet from our local model.
          delete this.standardSubWallets[coinId];
 
          await this.masterWallet.save();

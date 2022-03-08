@@ -1,5 +1,7 @@
+import { Logger } from "src/app/logger";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "src/app/wallet/model/coin";
+import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { PrivateKeyType, WalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
@@ -10,6 +12,7 @@ import { ElastosMainnetUniswapCurrencyProvider } from "../currency/elastos.unisw
 import { elastosMainnetElkBridgeProvider, elastosMainnetGlideBridgeProvider, elastosMainnetShadowTokenBridgeProvider } from "../earn/bridge.providers";
 import { elastosMainnetElkEarnProvider } from "../earn/earn.providers";
 import { elastosMainnetElkSwapProvider, elastosMainnetGlideSwapProvider } from "../earn/swap.providers";
+import { ElastosSmartChainLedgerNetworkWallet } from "../networkwallets/ledger/smartchain.networkwallet";
 import { ElastosSmartChainStandardNetworkWallet } from "../networkwallets/standard/smartchain.networkwallet";
 import { ElastosPasarERC1155Provider } from "../nfts/pasar.provider";
 
@@ -20,7 +23,11 @@ export abstract class ElastosSmartChainNetworkBase extends ElastosNetworkBase<Wa
       case WalletType.STANDARD:
         wallet = new ElastosSmartChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
         break;
+      case WalletType.LEDGER:
+        wallet = new ElastosSmartChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
+        break;
       default:
+        Logger.warn('wallet', 'Elastos Smart Chain does not support ', masterWallet.type);
         return null;
     }
 

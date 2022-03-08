@@ -45,4 +45,8 @@ export class LedgerMasterWallet extends MasterWallet {
     console.log("Ledger masterwallet supportsNetwork not implemented");
     return true; // TODO: implement
   }
+
+  public async destroy() {
+      // Do nothing
+  }
 }

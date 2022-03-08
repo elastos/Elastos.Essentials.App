@@ -1,10 +1,13 @@
+import { Logger } from "src/app/logger";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { WalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { AnyNetworkWallet } from "../../../../base/networkwallets/networkwallet";
 import { ElastosNetworkBase } from "../../../network/elastos.base.network";
-import { ElastosIdentityChainStandardNetworkWallet } from "../networkwallets/identitychain.networkwallet";
+import { ElastosIdentityChainLedgerNetworkWallet } from "../networkwallets/ledger/identitychain.networkwallet";
+import { ElastosIdentityChainStandardNetworkWallet } from "../networkwallets/standard/identitychain.networkwallet";
 
 export abstract class ElastosIdentityChainNetworkBase extends ElastosNetworkBase<WalletNetworkOptions> {
   public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
@@ -13,7 +16,11 @@ export abstract class ElastosIdentityChainNetworkBase extends ElastosNetworkBase
       case WalletType.STANDARD:
         wallet = new ElastosIdentityChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
         break;
+      case WalletType.LEDGER:
+        wallet = new ElastosIdentityChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
+        break;
       default:
+        Logger.warn('wallet', 'Elastos Identity Chain does not support ', masterWallet.type);
         return null;
     }
 

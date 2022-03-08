@@ -1,10 +1,10 @@
 import { Config } from "src/app/wallet/config/Config";
 import { StandardCoinName } from "../../../../../coin";
-import { ElastosStandardNetworkWallet } from "../../../networkwallets/standard/elastos.networkwallet";
+import { AnyNetworkWallet } from "../../../../base/networkwallets/networkwallet";
 import { ElastosEVMSubWallet } from "../../subwallets/standard/elastos.evm.subwallet";
 
 export class EscSubWallet extends ElastosEVMSubWallet {
-  constructor(networkWallet: ElastosStandardNetworkWallet) {
+  constructor(networkWallet: AnyNetworkWallet) {
     super(networkWallet, StandardCoinName.ETHSC, "Smart Chain");
   }
 

@@ -6,20 +6,18 @@ import { jsToSpvWalletId, SPVService } from 'src/app/wallet/services/spv.service
 import { Config } from '../../../../../../config/Config';
 import { StandardCoinName } from '../../../../../coin';
 import { ElastosMainChainWalletNetworkOptions } from '../../../../../masterwallets/wallet.types';
+import { AnyNetworkWallet } from '../../../../base/networkwallets/networkwallet';
 import { EthTransaction } from '../../../../evms/evm.types';
 import { MainCoinEVMSubWallet } from '../../../../evms/subwallets/evm.subwallet';
-import { ElastosStandardNetworkWallet } from '../../../networkwallets/standard/elastos.networkwallet';
 
 /**
  * Specialized standard sub wallet for the ETH sidechain.
  */
 export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWalletNetworkOptions> {
-  constructor(networkWallet: ElastosStandardNetworkWallet, id: StandardCoinName, friendlyName: string) {
+  constructor(networkWallet: AnyNetworkWallet, id: StandardCoinName, friendlyName: string) {
     let rpcApiUrl = GlobalElastosAPIService.instance.getApiUrlForChainCode(id);
 
     super(networkWallet, id, rpcApiUrl, friendlyName);
-
-    void this.initialize();
 
     this.tokenDecimals = 18;
     this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)

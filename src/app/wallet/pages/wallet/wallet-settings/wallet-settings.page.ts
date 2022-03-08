@@ -9,7 +9,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { Config } from '../../../config/Config';
 import { MasterWallet } from '../../../model/masterwallets/masterwallet';
 import { AuthService } from '../../../services/auth.service';
@@ -100,13 +99,12 @@ export class WalletSettingsPage implements OnInit {
     ) {
     }
 
-    async ngOnInit() {
+    ngOnInit() {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
         this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
         this.canExportKeystore = false; // TODO - repair - export "private key" keystores, not "elastos keystores" //this.masterWallet.createType === WalletCreateType.MNEMONIC || this.masterWallet.createType === WalletCreateType.KEYSTORE;
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
-        await this.getMasterWalletBasicInfo();
 
         if (this.networkWallet.network.supportsERC20Coins()) {
             this.settings.push({
@@ -177,14 +175,6 @@ export class WalletSettingsPage implements OnInit {
         this.events.publish("masterwalletcount:changed", {
             action: 'remove',
         });
-    }
-
-    private async getMasterWalletBasicInfo() {
-        let ret = await this.walletManager.spvBridge.getMasterWalletBasicInfo(jsToSpvWalletId(this.masterWalletId));
-
-        this.masterWalletType = ret["Type"];
-        this.singleAddress = ret["SingleAddress"];
-        this.readonly = ret["InnerType"] || "";
     }
 
     /*   public goToSetting(item) {

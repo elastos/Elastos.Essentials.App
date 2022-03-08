@@ -1,15 +1,15 @@
 import { Logger } from "src/app/logger";
+import { StandardCoinName } from "src/app/wallet/model/coin";
+import { StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
+import { WalletAddressInfo } from "src/app/wallet/model/networks/base/networkwallets/networkwallet";
+import { AnyNetwork } from "src/app/wallet/model/networks/network";
 import { SPVSDKSafe } from "src/app/wallet/model/safes/spvsdk.safe";
+import { TransactionProvider } from "src/app/wallet/model/tx-providers/transaction.provider";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
-import { StandardCoinName } from "../../../../../coin";
-import { StandardMasterWallet } from "../../../../../masterwallets/masterwallet";
-import { TransactionProvider } from "../../../../../tx-providers/transaction.provider";
-import { WalletAddressInfo } from "../../../../base/networkwallets/networkwallet";
-import { AnyNetwork } from "../../../../network";
-import { ElastosStandardNetworkWallet } from "../../../networkwallets/standard/elastos.networkwallet";
-import { ElastosEVMSubWallet } from "../../subwallets/standard/elastos.evm.subwallet";
-import { EidSubWallet } from "../subwallets/standard/eid.evm.subwallet";
-import { ElastosIdentityTransactionProvider } from "../tx-providers/elastos.eid.tx.provider";
+import { ElastosStandardNetworkWallet } from "../../../../networkwallets/standard/elastos.networkwallet";
+import { ElastosEVMSubWallet } from "../../../subwallets/standard/elastos.evm.subwallet";
+import { EidSubWallet } from "../../subwallets/standard/eid.evm.subwallet";
+import { ElastosIdentityTransactionProvider } from "../../tx-providers/elastos.eid.tx.provider";
 
 export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardNetworkWallet {
   constructor(masterWallet: StandardMasterWallet, network: AnyNetwork) {
@@ -29,7 +29,6 @@ export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardNe
     try {
       await SPVService.instance.createSubWallet(jsToSpvWalletId(this.masterWallet.id), StandardCoinName.ETHDID);
       this.subWallets[StandardCoinName.ETHDID] = new EidSubWallet(this);
-      await this.subWallets[StandardCoinName.ETHDID].initialize();
     }
     catch (err) {
       Logger.error("wallet", "Can not Create Elastos EID subwallet", err);
