@@ -10,7 +10,6 @@ import type { Transfer } from '../../../../services/cointransfer.service';
 import { BridgeService } from '../../../../services/evm/bridge.service';
 import { EarnService } from '../../../../services/evm/earn.service';
 import { SwapService } from '../../../../services/evm/swap.service';
-import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
 import { CoinID, CoinType, StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
@@ -174,11 +173,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    */
   public abstract createAddress(): Promise<string>;
 
-  public async isAddressValid(address: string) {
-    return await SPVService.instance.isSubWalletAddressValid(
-      jsToSpvWalletId(this.masterWallet.id), this.id, address
-    );
-  }
+  public abstract isAddressValid(address: string): boolean;
 
   /**
    * Returns the path to the main icon representing the subwallet.

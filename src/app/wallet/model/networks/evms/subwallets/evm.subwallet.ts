@@ -79,6 +79,10 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return true;
   }
 
+  public isAddressValid(address: string) {
+    return WalletUtil.isEVMAddress(address);
+  }
+
   public async getTokenAddress(): Promise<string> {
     if (!this.ethscAddress) {
       this.ethscAddress = (await this.createAddress()).toLowerCase();

@@ -60,6 +60,10 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return 'BTC';
     }
 
+    public isAddressValid(address: string) {
+        return WalletUtil.isBTCAddress(address);
+    }
+
     public async createAddress(): Promise<string> {
         if (!this.legacyAddress) {
             let legacyAddresses = await SPVService.instance.getLegacyAddresses(

@@ -7,6 +7,7 @@ import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.serv
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { ElastosMainChainWalletNetworkOptions } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../../config/Config';
@@ -88,6 +89,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public getDisplayTokenName(): string {
         return "ELA";
+    }
+
+    public isAddressValid(address: string) {
+        return WalletUtil.isELAAddress(address);
     }
 
     public getRawBalanceSpendable(): BigNumber {

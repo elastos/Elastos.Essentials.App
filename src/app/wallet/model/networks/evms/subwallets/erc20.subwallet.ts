@@ -145,6 +145,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return coin.getName();
     }
 
+    public isAddressValid(address: string) {
+        return WalletUtil.isEVMAddress(address);
+    }
+
     public transactionsListChanged(): Subject<void> {
         return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.coin.getContractAddress().toLowerCase());
     }

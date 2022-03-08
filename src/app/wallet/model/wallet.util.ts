@@ -20,8 +20,13 @@
  * SOFTWARE.
  */
 import BigNumber from 'bignumber.js';
+import { Network, validate } from 'bitcoin-address-validation';
 import moment from 'moment';
+import { Logger } from 'src/app/logger';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import Web3 from 'web3';
 import { CurrencyService } from '../services/currency.service';
+import { CoinID } from './coin';
 
 export class WalletUtil {
   static isInvalidWalletName(text): boolean {
@@ -81,5 +86,30 @@ export class WalletUtil {
   public static getDisplayDate(timestamp: number) {
     const today = moment(new Date()).startOf('day').valueOf();
     return timestamp < today ? moment(timestamp).format("YYYY-MM-DD HH:mm") : moment(timestamp).startOf('minutes').fromNow();
+  }
+
+  public static isAddress(address: string, chainId: CoinID) {
+    switch (chainId) {
+        case "ELA":
+            return WalletUtil.isELAAddress(address)
+        case "BTC":
+            return WalletUtil.isBTCAddress(address)
+        default:
+            return WalletUtil.isEVMAddress(address)
+    }
+  }
+
+  public static isELAAddress(address : string) {
+    Logger.warn('wallet', 'The implementation is missing. Later we will replace with elastos JS wallet sdk api!');
+    return true;
+  }
+
+  public static isBTCAddress(address : string) {
+    let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
+    return validate(address, network as Network)
+  }
+
+  public static isEVMAddress(address : string) {
+    return Web3.utils.isAddress(address);
   }
 }

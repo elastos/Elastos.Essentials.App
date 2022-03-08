@@ -43,11 +43,11 @@ import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainch
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
 import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from '../../../../components/tx-success/tx-success.component';
@@ -62,7 +62,6 @@ import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
-
 
 @Component({
     selector: 'app-coin-transfer',
@@ -507,7 +506,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.toAddress = await this.native.pasteFromClipboard();
 
         const toSubWalletId = this.toSubWallet ? this.toSubWallet.id : this.subWalletId;
-        const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toSubWalletId, this.toAddress);
+        const isAddressValid = WalletUtil.isAddress(this.toAddress, toSubWalletId);
         if (!isAddressValid) {
             this.native.toast_trans('wallet.not-a-valid-address');
             return;
@@ -616,7 +615,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             }
 
             const toSubWalletId = this.toSubWallet ? this.toSubWallet.id : this.subWalletId;
-            const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toSubWalletId, this.toAddress);
+            const isAddressValid = WalletUtil.isAddress(this.toAddress, toSubWalletId);
             if (!isAddressValid) {
                 this.native.toast_trans('wallet.not-a-valid-address');
                 return;
@@ -640,25 +639,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         } else {
             await PopupProvider.instance.ionicAlert("wallet.transaction-fail", err.message);
         }
-    }
-
-    private async isSubWalletAddressValid(masterWalletId: string, subWalletId: string, address: string) {
-        let subWalletIdTemp = subWalletId;
-        switch (subWalletIdTemp) {
-            case StandardCoinName.ELA:
-            case StandardCoinName.BTC:
-                break;
-            default:
-                subWalletIdTemp = StandardCoinName.ETHSC;
-                break;
-        }
-
-        const isAddressValid = await this.walletManager.spvBridge.isSubWalletAddressValid(
-            jsToSpvWalletId(masterWalletId),
-            subWalletIdTemp,
-            address
-        );
-        return isAddressValid;
     }
 
     async showConfirm() {
