@@ -20,7 +20,10 @@
  * SOFTWARE.
  */
 
+import { Error, ErrorChecker } from "../common/ErrorChecker";
 import { Lockable } from "../common/Lockable";
+import { Log } from "../common/Log";
+import { Config, CONFIG_MAINNET, CONFIG_PRVNET, CONFIG_REGTEST, CONFIG_TESTNET } from "../Config";
 import { WalletStorage } from "../persistance/WalletStorage";
 import { json } from "../types";
 import { MasterWallet } from "./MasterWallet";
@@ -42,78 +45,78 @@ export class MasterWalletManager {
 	constructor(
 		storage: WalletStorage,
 				/* const std::string &rootPath */, netType: string,
-		config: json, dataPath: string):
+		config: json, dataPath: string) {
 		// TODO _rootPath(rootPath),
 		// TODO _dataPath(dataPath),
-		_lock(new Lockable()) {
+		this._lock = new Lockable();
 
-	// TODO if (_dataPath.empty())
-	// TODO 	_dataPath = _rootPath;
+		// TODO if (_dataPath.empty())
+		// TODO 	_dataPath = _rootPath;
 
-	// TODO ErrorChecker.CheckPathExists(_rootPath, false);
-	// TODO ErrorChecker::CheckPathExists(_dataPath, false);
+		// TODO ErrorChecker.CheckPathExists(_rootPath, false);
+		// TODO ErrorChecker::CheckPathExists(_dataPath, false);
 
-	// TODO Log.registerMultiLogger(_dataPath);
+		// TODO Log.registerMultiLogger(_dataPath);
 
-	Log:: setLevel(spdlog:: level:: level_enum(SPVLOG_LEVEL));
-	Log:: info("spvsdk version {}", SPVSDK_VERSION_MESSAGE);
+		Log.setLevel(spdlog:: level:: level_enum(SPVLOG_LEVEL));
+		Log.info("spvsdk version {}", SPVSDK_VERSION_MESSAGE);
 
-	if (netType != CONFIG_MAINNET && netType != CONFIG_TESTNET &&
-		netType != CONFIG_REGTEST && netType != CONFIG_PRVNET) {
-		ErrorChecker:: ThrowParamException(Error:: InvalidArgument, "invalid NetType");
+		if (netType != CONFIG_MAINNET && netType != CONFIG_TESTNET &&
+			netType != CONFIG_REGTEST && netType != CONFIG_PRVNET) {
+			ErrorChecker.ThrowParamException(Error.Code.InvalidArgument, "invalid NetType");
+		}
+
+		this._config = Config.newFromParams(netType, config);
+		if (this._config.getNetType() == CONFIG_MAINNET) {
+			HDKeychain.setVersions(ExtKeyVersionMap["bip32"]["mainnet"]["prv"], ExtKeyVersionMap["bip32"]["mainnet"]["pub"]);
+		} else {
+			HDKeychain.setVersions(ExtKeyVersionMap["bip32"]["testnet"]["prv"], ExtKeyVersionMap["bip32"]["testnet"]["pub"]);
+
+			this._dataPath = this._dataPath + "/" + this._config.getNetType();
+			if (!boost:: filesystem:: exists(_dataPath))
+			boost:: filesystem:: create_directory(_dataPath);
+		}
+
+		this.LoadMasterWalletID();
 	}
 
-	_config = new Config(netType, config);
-	if (_config -> GetNetType() == CONFIG_MAINNET) {
-		HDKeychain:: setVersions(ExtKeyVersionMap["bip32"]["mainnet"]["prv"], ExtKeyVersionMap["bip32"]["mainnet"]["pub"]);
-	} else {
-		HDKeychain:: setVersions(ExtKeyVersionMap["bip32"]["testnet"]["prv"], ExtKeyVersionMap["bip32"]["testnet"]["pub"]);
+	/*MasterWalletManager::~MasterWalletManager() {
+		for (MasterWalletMap::iterator it = _masterWalletMap.begin(); it != _masterWalletMap.end();) {
+			MasterWallet *masterWallet = static_cast<MasterWallet *>(it->second);
+			if (masterWallet != nullptr) {
+				std::string id = masterWallet->GetID();
+				Log::info("closing master wallet (ID = {})...", id);
+				masterWallet->CloseAllSubWallets();
+				it = _masterWalletMap.erase(it);
 
-		_dataPath = _dataPath + "/" + _config -> GetNetType();
-		if (!boost:: filesystem:: exists(_dataPath))
-		boost:: filesystem:: create_directory(_dataPath);
-	}
-
-	this.LoadMasterWalletID();
-}
-
-		/*MasterWalletManager::~MasterWalletManager() {
-			for (MasterWalletMap::iterator it = _masterWalletMap.begin(); it != _masterWalletMap.end();) {
-				MasterWallet *masterWallet = static_cast<MasterWallet *>(it->second);
-				if (masterWallet != nullptr) {
-					std::string id = masterWallet->GetID();
-					Log::info("closing master wallet (ID = {})...", id);
-					masterWallet->CloseAllSubWallets();
-					it = _masterWalletMap.erase(it);
-
-					delete masterWallet;
-					masterWallet = nullptr;
-					Log::info("closed master wallet (ID = {})", id);
-				} else {
-					++it;
-				}
+				delete masterWallet;
+				masterWallet = nullptr;
+				Log::info("closed master wallet (ID = {})", id);
+			} else {
+				++it;
 			}
-			delete _config;
-			_config = nullptr;
-			delete _lock;
-			_lock = nullptr;
-		}*/
+		}
+		delete _config;
+		_config = nullptr;
+		delete _lock;
+		_lock = nullptr;
+	}*/
 
-		private LoadMasterWalletID() {
-	boost:: filesystem::path rootpath(_dataPath);
-	for (directory_iterator it(rootpath); it != directory_iterator(); ++it) {
+	private LoadMasterWalletID() {
+		boost:: filesystem::path rootpath(_dataPath);
+		for (directory_iterator it(rootpath); it != directory_iterator(); ++it) {
 
 				path temp = * it;
-		if (!exists(temp) || !is_directory(temp)) {
-			continue;
-		}
+			if (!exists(temp) || !is_directory(temp)) {
+				continue;
+			}
 
-		std::string masterWalletID = temp.filename().string();
-		if (exists((* it) / LOCAL_STORE_FILE) || exists((* it) / MASTER_WALLET_STORE_FILE)) {
-			_masterWalletMap[masterWalletID] = nullptr;
+			std::string masterWalletID = temp.filename().string();
+			if (exists((* it) / LOCAL_STORE_FILE) || exists((* it) / MASTER_WALLET_STORE_FILE)) {
+				_masterWalletMap[masterWalletID] = nullptr;
+			}
 		}
 	}
-}
 
 	/*	IMasterWallet *MasterWalletManager::LoadMasterWallet(const std::string &masterWalletID) const {
 			boost::filesystem::path walletStore(_dataPath);
@@ -151,10 +154,10 @@ export class MasterWalletManager {
 		}
 
 		IMasterWallet *MasterWalletManager::CreateMasterWallet(const std::string &masterWalletID,
-															   const std::string &mnemonic,
-															   const std::string &passphrase,
-															   const std::string &passwd,
-															   bool singleAddress) {
+																 const std::string &mnemonic,
+																 const std::string &passphrase,
+																 const std::string &passwd,
+																 bool singleAddress) {
 
 			ArgInfo("{}", GetFunName());
 			ArgInfo("masterWalletID: {}", masterWalletID);
@@ -178,8 +181,8 @@ export class MasterWalletManager {
 			ErrorChecker::CheckLogic(!Mnemonic::Validate(mnemonic), Error::Mnemonic, "Invalid mnemonic");
 
 			MasterWallet *masterWallet = new MasterWallet(masterWalletID, mnemonic, passphrase, passwd,
-                                                          singleAddress, ConfigPtr(new Config(*_config)),
-                                                          _dataPath);
+																													singleAddress, ConfigPtr(new Config(*_config)),
+																													_dataPath);
 			checkRedundant(masterWallet);
 			_masterWalletMap[masterWalletID] = masterWallet;
 
@@ -188,28 +191,28 @@ export class MasterWalletManager {
 			return masterWallet;
 		}
 
-        IMasterWallet *MasterWalletManager::CreateMasterWallet(const std::string &masterWalletID,
-                                                               const std::string &singlePrivateKey,
-                                                               const std::string &passwd) {
-            ArgInfo("{}", GetFunName());
-            ArgInfo("masterWalletID: {}", masterWalletID);
-            ArgInfo("singlePrivateKey: *");
-            ArgInfo("passwd: *");
+				IMasterWallet *MasterWalletManager::CreateMasterWallet(const std::string &masterWalletID,
+																															 const std::string &singlePrivateKey,
+																															 const std::string &passwd) {
+						ArgInfo("{}", GetFunName());
+						ArgInfo("masterWalletID: {}", masterWalletID);
+						ArgInfo("singlePrivateKey: *");
+						ArgInfo("passwd: *");
 
-            ErrorChecker::CheckParamNotEmpty(masterWalletID, "Master wallet ID");
-            ErrorChecker::CheckPassword(passwd, "Pay");
-            if (_masterWalletMap.find(masterWalletID) != _masterWalletMap.end()) {
-                ArgInfo("r => already exist");
-                return _masterWalletMap[masterWalletID];
-            }
+						ErrorChecker::CheckParamNotEmpty(masterWalletID, "Master wallet ID");
+						ErrorChecker::CheckPassword(passwd, "Pay");
+						if (_masterWalletMap.find(masterWalletID) != _masterWalletMap.end()) {
+								ArgInfo("r => already exist");
+								return _masterWalletMap[masterWalletID];
+						}
 
-            MasterWallet *masterWallet = new MasterWallet(masterWalletID, singlePrivateKey, passwd, ConfigPtr(new Config(*_config)), _dataPath);
-            checkRedundant(masterWallet);
-            _masterWalletMap[masterWalletID] = masterWallet;
+						MasterWallet *masterWallet = new MasterWallet(masterWalletID, singlePrivateKey, passwd, ConfigPtr(new Config(*_config)), _dataPath);
+						checkRedundant(masterWallet);
+						_masterWalletMap[masterWalletID] = masterWallet;
 
-            ArgInfo("r => create master wallet done");
-            return masterWallet;
-        }
+						ArgInfo("r => create master wallet done");
+						return masterWallet;
+				}
 
 		IMasterWallet *MasterWalletManager::CreateMultiSignMasterWallet(const std::string &masterWalletID,
 																		const nlohmann::json &cosigners,
@@ -253,8 +256,8 @@ export class MasterWalletManager {
 			}
 
 			MasterWallet *masterWallet = new MasterWallet(masterWalletID, pubKeyRing, m,
-														  ConfigPtr(new Config(*_config)), _dataPath,
-														  singleAddress, compatible);
+															ConfigPtr(new Config(*_config)), _dataPath,
+															singleAddress, compatible);
 			checkRedundant(masterWallet);
 			_masterWalletMap[masterWalletID] = masterWallet;
 
@@ -310,9 +313,9 @@ export class MasterWalletManager {
 			}
 
 			MasterWallet *masterWallet = new MasterWallet(masterWalletID, xprv, payPassword, pubKeyRing,
-														  m, ConfigPtr(new Config(*_config)), _dataPath,
-														  singleAddress,
-														  compatible);
+															m, ConfigPtr(new Config(*_config)), _dataPath,
+															singleAddress,
+															compatible);
 			checkRedundant(masterWallet);
 			_masterWalletMap[masterWalletID] = masterWallet;
 
@@ -372,8 +375,8 @@ export class MasterWalletManager {
 			}
 
 			MasterWallet *masterWallet = new MasterWallet(masterWalletID, mnemonic, passphrase, payPassword,
-														  pubKeyRing, m, ConfigPtr(new Config(*_config)), _dataPath,
-														  singleAddress, compatible);
+															pubKeyRing, m, ConfigPtr(new Config(*_config)), _dataPath,
+															singleAddress, compatible);
 			checkRedundant(masterWallet);
 			_masterWalletMap[masterWalletID] = masterWallet;
 			return masterWallet;
@@ -423,9 +426,9 @@ export class MasterWalletManager {
 
 		IMasterWallet *
 		MasterWalletManager::ImportWalletWithKeystore(const std::string &masterWalletID,
-													  const nlohmann::json &keystoreContent,
-													  const std::string &backupPassword,
-													  const std::string &payPassword) {
+														const nlohmann::json &keystoreContent,
+														const std::string &backupPassword,
+														const std::string &payPassword) {
 			ArgInfo("{}", GetFunName());
 			ArgInfo("masterWalletID: {}", masterWalletID);
 			ArgInfo("keystore: *");
@@ -445,7 +448,7 @@ export class MasterWalletManager {
 
 
 			MasterWallet *masterWallet = new MasterWallet(masterWalletID, keystoreContent, backupPassword,
-														  payPassword, ConfigPtr(new Config(*_config)), _dataPath);
+															payPassword, ConfigPtr(new Config(*_config)), _dataPath);
 			checkRedundant(masterWallet);
 			_masterWalletMap[masterWalletID] = masterWallet;
 			masterWallet->InitSubWallets();
@@ -483,8 +486,8 @@ export class MasterWalletManager {
 			ErrorChecker::CheckLogic(!Mnemonic::Validate(mnemonic), Error::Mnemonic, "Invalid mnemonic");
 
 			MasterWallet *masterWallet = new MasterWallet(masterWalletID, mnemonic, phrasePassword, payPassword,
-														  singleAddress, ConfigPtr(new Config(*_config)),
-														  _dataPath);
+															singleAddress, ConfigPtr(new Config(*_config)),
+															_dataPath);
 			checkRedundant(masterWallet);
 			_masterWalletMap[masterWalletID] = masterWallet;
 
@@ -531,12 +534,12 @@ export class MasterWalletManager {
 			boost::mutex::scoped_lock scoped_lock(_lock->GetLock());
 
 			std::for_each(_masterWalletMap.begin(), _masterWalletMap.end(),
-						  [](const MasterWalletMap::value_type &item) {
-							  if (item.second != nullptr) {
-								  MasterWallet *masterWallet = dynamic_cast<MasterWallet *>(item.second);
-								  masterWallet->FlushData();
-							  }
-						  });
+							[](const MasterWalletMap::value_type &item) {
+								if (item.second != nullptr) {
+									MasterWallet *masterWallet = dynamic_cast<MasterWallet *>(item.second);
+									masterWallet->FlushData();
+								}
+							});
 		}
 
 		void MasterWalletManager::SetLogLevel(const std::string &level) {
@@ -563,9 +566,9 @@ export class MasterWalletManager {
 
 			std::vector<std::string> result;
 			std::for_each(_masterWalletMap.begin(), _masterWalletMap.end(),
-						  [&result](const MasterWalletMap::value_type &item) {
-							  result.push_back(item.first);
-						  });
+							[&result](const MasterWalletMap::value_type &item) {
+								result.push_back(item.first);
+							});
 
 			std::string chainID = "";
 			for (size_t i = 0; i < result.size(); ++i)
@@ -610,20 +613,20 @@ export class MasterWalletManager {
 
 			bool hasRedundant = false;
 			std::for_each(_masterWalletMap.begin(), _masterWalletMap.end(),
-						  [masterWallet, &hasRedundant](const MasterWalletMap::value_type &item) {
-							  if (item.second != nullptr) {
-								  const MasterWallet *createdWallet = static_cast<const MasterWallet *>(item.second);
-								  if (!hasRedundant)
-									  hasRedundant = masterWallet->IsEqual(*createdWallet);
-							  }
-						  });
+							[masterWallet, &hasRedundant](const MasterWalletMap::value_type &item) {
+								if (item.second != nullptr) {
+									const MasterWallet *createdWallet = static_cast<const MasterWallet *>(item.second);
+									if (!hasRedundant)
+										hasRedundant = masterWallet->IsEqual(*createdWallet);
+								}
+							});
 
 			if (hasRedundant) {
 				Log::info("{} Destroying redundant wallet", masterWallet->GetWalletID());
 
 				masterWallet->CloseAllSubWallets();
-                Log::info("Clearing local", masterWallet->GetID());
-                masterWallet->RemoveLocalStore();
+								Log::info("Clearing local", masterWallet->GetID());
+								masterWallet->RemoveLocalStore();
 
 				delete masterWallet;
 				masterWallet = nullptr;
@@ -632,4 +635,4 @@ export class MasterWalletManager {
 			ErrorChecker::CheckCondition(hasRedundant, Error::CreateMasterWalletError,
 										 "Master wallet already exist.");
 		} */
-	}
+}

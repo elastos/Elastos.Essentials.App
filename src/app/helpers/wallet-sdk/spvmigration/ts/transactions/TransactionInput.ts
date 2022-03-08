@@ -2,7 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 
 import BigNumber from "bignumber.js";
-import { ByteBuffer } from "../common/bytebuffer";
+import { ByteStream } from "../common/bytestream";
 import { JsonSerializer } from "../common/JsonSerializer";
 import { Log } from "../common/Log";
 import { ELAMessage } from "../ELAMessage";
@@ -23,22 +23,19 @@ export class TransactionInput extends ELAMessage implements JsonSerializer {
 
 		TransactionInput::TransactionInput(const TransactionInput &input) {
 			this->operator=(input);
-		}
-
-		TransactionInput &TransactionInput::operator=(const TransactionInput &input) {
-			_txHash = input._txHash;
-			_index = input._index;
-			_sequence = input._sequence;
-
-			return *this;
-		}
-
-		TransactionInput::TransactionInput(const uint256 &txHash, uint16_t index) :
-			_txHash(txHash),
-			_index(index),
-			_sequence(0) {
-
 		}*/
+
+	public static newFromTransactionInput(input: TransactionInput): TransactionInput {
+		return TransactionInput.newFromParams(input._txHash, input._index, input._sequence);
+	}
+
+	public static newFromParams(txHash: uint256, index: uint16_t, sequence = 0): TransactionInput {
+		let transactionInput = new TransactionInput();
+		transactionInput._txHash = txHash;
+		transactionInput._index = index;
+		transactionInput._sequence = sequence;
+		return transactionInput;
+	}
 
 	public TxHash(): uint256 {
 		return this._txHash;
@@ -69,19 +66,19 @@ export class TransactionInput extends ELAMessage implements JsonSerializer {
 		return 32 + 2 + 4; // uint256 + uint16 + uint32
 	}
 
-	/* bool TransactionInput::operator==(const TransactionInput &in) const {
-		bool equal = _txHash == in._txHash &&
-					 _index == in._index &&
-					 _sequence == in._sequence;
+	public equals(ti: TransactionInput): boolean {
+		let equal = this._txHash == ti._txHash &&
+			this._index == ti._index &&
+			this._sequence == ti._sequence;
 
 		return equal;
 	}
 
-	bool TransactionInput::operator!=(const TransactionInput &in) const {
+	/*bool TransactionInput::operator!=(const TransactionInput &in) const {
 		return !operator==(in);
 	} */
 
-	public EstimateSize(): size_t {
+	public estimateSize(): size_t {
 		let size: size_t = 0;
 
 		size += 32; // WAS this._txHash.size(); (uint256)
@@ -91,14 +88,14 @@ export class TransactionInput extends ELAMessage implements JsonSerializer {
 		return size;
 	}
 
-	public Serialize(stream: ByteBuffer) {
-		stream.writeBNAsUInt256(this._txHash); // WAS stream.WriteBytes(this._txHash);
+	public serialize(stream: ByteStream) {
+		stream.writeBNAsUIntOfSize(this._txHash, 32); // WAS stream.WriteBytes(this._txHash);
 		stream.writeUInt16(this._index); // WAS stream.WriteUint16(this._index);
 		stream.writeUInt32(this._sequence); // WAS stream.WriteUint32(this._sequence);
 	}
 
-	public Deserialize(stream: ByteBuffer): boolean {
-		this._txHash = stream.readUInt256AsBN();
+	public deserialize(stream: ByteStream): boolean {
+		this._txHash = stream.readUIntOfBytesAsBN(32);
 		if (this._txHash === null) {
 			Log.error("deser input txHash");
 			return false;
@@ -119,7 +116,7 @@ export class TransactionInput extends ELAMessage implements JsonSerializer {
 		return true;
 	}
 
-	public ToJson(): json {
+	public toJson(): json {
 		return {
 			TxHash: this._txHash.toString(16), // WAS this._txHash.GetHex(),
 			Index: this._index,
@@ -127,7 +124,7 @@ export class TransactionInput extends ELAMessage implements JsonSerializer {
 		};
 	}
 
-	public FromJson(j: json) {
+	public fromJson(j: json) {
 		this._txHash = new BigNumber(j["TxHash"] as any); // WAS uint256(j["TxHash"].get<std::string>());
 		this._index = j["Index"] as uint16_t; // WAS j["Index"].get<uint16_t>();
 		this._sequence = j["Sequence"] as uint32_t; // WAS j["Sequence"].get<uint32_t>();

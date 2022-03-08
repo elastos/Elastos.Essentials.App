@@ -1,7 +1,11 @@
+import BigNumber from "bignumber.js";
+import { ByteStream } from "../common/bytestream";
+import { Error, ErrorChecker } from "../common/ErrorChecker";
 import { Transaction } from "../transactions/Transaction";
-import { ByteStream, json } from "../types";
+import { bytes_t, json, uint64_t } from "../types";
 import { IElastosBaseSubWallet } from "./IElastosBaseSubWallet";
 import { SubWallet } from "./SubWallet";
+import { CHAINID_IDCHAIN, CHAINID_MAINCHAIN, CHAINID_TOKENCHAIN } from "./WalletCommon";
 
 /*
  * Copyright (c) 2019 Elastos Foundation
@@ -134,7 +138,7 @@ export class ElastosBaseSubWallet extends SubWallet implements IElastosBaseSubWa
         return result;
     }*/
 
-    SignTransaction(tx: json, payPassword: string): json {
+    public SignTransaction(tx: json, payPassword: string): json {
         /* ArgInfo("{} {}", GetSubWalletID(), GetFunName());
         ArgInfo("tx: {}", tx.dump());
         ArgInfo("passwd: *"); */
@@ -207,7 +211,7 @@ export class ElastosBaseSubWallet extends SubWallet implements IElastosBaseSubWa
 
     // TODO: result as return value
     protected EncodeTx(result: json, tx: Transaction) {
-        let stream: ByteStream;
+        let stream = new ByteStream();
         tx.Serialize(stream);
         const bytes_t & hex = stream.GetBytes();
 
@@ -219,7 +223,7 @@ export class ElastosBaseSubWallet extends SubWallet implements IElastosBaseSubWa
     }
 
     // TODO: replace json with structured type
-    /*protected DecodeTx(encodedTx: json): Transaction {
+    protected DecodeTx(encodedTx: json): Transaction {
         if (!("Algorithm" in encodedTx) ||
             !("Data" in encodedTx) ||
             !("ChainID" in encodedTx)) {
@@ -227,39 +231,39 @@ export class ElastosBaseSubWallet extends SubWallet implements IElastosBaseSubWa
         }
 
         let algorithm: string, data: string, chainID: string;
-        let fee: uint64_t = 0;
+        let fee: uint64_t = new BigNumber(0);
 
         try {
-            algorithm = encodedTx["Algorithm"].get < std:: string > ();
-            data = encodedTx["Data"].get < std:: string > ();
-            chainID = encodedTx["ChainID"].get < std:: string > ();
-            if (encodedTx.contains("Fee"))
-                fee = encodedTx["Fee"].get<uint64_t>();
-        } catch (const std:: exception & e) {
-            ErrorChecker:: ThrowParamException(Error:: InvalidArgument, "Invalid input: " + std:: string(e.what()));
+            algorithm = encodedTx["Algorithm"] as string;
+            data = encodedTx["Data"] as string;
+            chainID = encodedTx["ChainID"] as string;
+            if ("Fee" in encodedTx)
+                fee = new BigNumber(encodedTx["Fee"] as string); // WAS encodedTx["Fee"].get<uint64_t>();
+        } catch (e) {
+            ErrorChecker.ThrowParamException(Error.Code.InvalidArgument, "Invalid input: " + e);
         }
 
-        if (chainID != GetChainID()) {
-            ErrorChecker:: ThrowParamException(Error:: InvalidArgument,
+        if (chainID != this.getChainID()) {
+            ErrorChecker.ThrowParamException(Error.Code.InvalidArgument,
                 "Invalid input: tx is not belongs to current subwallet");
         }
 
-        let tx: Transaction;
-        if (GetChainID() == CHAINID_MAINCHAIN) {
-            tx = TransactionPtr(new Transaction());
-        } else if (GetChainID() == CHAINID_IDCHAIN || GetChainID() == CHAINID_TOKENCHAIN) {
-            tx = TransactionPtr(new IDTransaction());
+        let tx: Transaction = null;
+        if (this.getChainID() == CHAINID_MAINCHAIN) {
+            tx = new Transaction();
+        } else if (this.getChainID() == CHAINID_IDCHAIN || this.getChainID() == CHAINID_TOKENCHAIN) {
+            // TODO tx = new IDTransaction();
         }
 
         let rawHex: bytes_t;
         if (algorithm == "base64") {
             rawHex.setBase64(data);
         } else {
-            ErrorChecker:: CheckCondition(true, Error:: InvalidArgument, "Decode tx with unknown algorithm");
+            ErrorChecker.CheckCondition(true, Error.Code.InvalidArgument, "Decode tx with unknown algorithm");
         }
 
-        ByteStream stream(rawHex);
-        ErrorChecker.CheckParam(!tx.Deserialize(stream), Error.Code.InvalidArgument, "Invalid input: deserialize fail");
+        let stream = new ByteStream(rawHex);
+        ErrorChecker.CheckParam(!tx.deserialize(stream), Error.Code.InvalidArgument, "Invalid input: deserialize fail");
         tx.SetFee(fee);
 
         //SPVLOG_DEBUG("decoded tx: {}", tx->ToJson().dump(4));

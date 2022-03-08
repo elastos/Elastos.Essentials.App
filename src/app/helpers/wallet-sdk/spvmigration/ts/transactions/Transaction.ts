@@ -2,54 +2,60 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-import { ByteStream, time_t, uint256, uint32_t, uint64_t, uint8_t } from "../types";
+import BigNumber from "bignumber.js";
+import { ByteStream } from "../common/bytestream";
+import { Error, ErrorChecker } from "../common/ErrorChecker";
+import { Log } from "../common/Log";
+import { INT32_MAX, json, JSONArray, size_t, time_t, uint256, uint32_t, uint64_t, uint8_t } from "../types";
+import { SHA256 } from "../walletcore/sha256";
 import { Attribute } from "./Attribute";
+import { CoinBase } from "./payload/CoinBase";
 import { Payload } from "./payload/Payload";
 import { Program } from "./Program";
 import { TransactionInput } from "./TransactionInput";
 import { TransactionOutput } from "./TransactionOutput";
 
-/* export enum {
-	coinBase                 = 0x00,
-	registerAsset            = 0x01,
-	transferAsset            = 0x02,
-	record                   = 0x03,
-	deploy                   = 0x04,
-	sideChainPow             = 0x05,
-	rechargeToSideChain      = 0x06,
-	withdrawFromSideChain    = 0x07,
-	transferCrossChainAsset  = 0x08,
+export enum TransactionType {
+	coinBase = 0x00,
+	registerAsset = 0x01,
+	transferAsset = 0x02,
+	record = 0x03,
+	deploy = 0x04,
+	sideChainPow = 0x05,
+	rechargeToSideChain = 0x06,
+	withdrawFromSideChain = 0x07,
+	transferCrossChainAsset = 0x08,
 
-	registerProducer         = 0x09,
-	cancelProducer           = 0x0a,
-	updateProducer           = 0x0b,
-	returnDepositCoin        = 0x0c,
-	activateProducer         = 0x0d,
+	registerProducer = 0x09,
+	cancelProducer = 0x0a,
+	updateProducer = 0x0b,
+	returnDepositCoin = 0x0c,
+	activateProducer = 0x0d,
 
-	IllegalProposalEvidence  = 0x0e,
-	IllegalVoteEvidence      = 0x0f,
-	IllegalBlockEvidence     = 0x10,
+	IllegalProposalEvidence = 0x0e,
+	IllegalVoteEvidence = 0x0f,
+	IllegalBlockEvidence = 0x10,
 	IllegalSidechainEvidence = 0x11,
-	InactiveArbitrators      = 0x12,
-	UpdateVersion            = 0x13,
-	nextTurnDPOSInfo         = 0x14,
+	InactiveArbitrators = 0x12,
+	UpdateVersion = 0x13,
+	nextTurnDPOSInfo = 0x14,
 
-	registerCR               = 0x21,
-	unregisterCR             = 0x22,
-	updateCR                 = 0x23,
-	returnCRDepositCoin      = 0x24,
+	registerCR = 0x21,
+	unregisterCR = 0x22,
+	updateCR = 0x23,
+	returnCRDepositCoin = 0x24,
 
-	crcProposal              = 0x25,
-	crcProposalReview        = 0x26,
-	crcProposalTracking      = 0x27,
-	crcAppropriation         = 0x28,
-	crcProposalWithdraw      = 0x29,
-	crcProposalRealWithdraw  = 0x2a,
-	crcAssetsRectify         = 0x2b,
+	crcProposal = 0x25,
+	crcProposalReview = 0x26,
+	crcProposalTracking = 0x27,
+	crcAppropriation = 0x28,
+	crcProposalWithdraw = 0x29,
+	crcProposalRealWithdraw = 0x2a,
+	crcAssetsRectify = 0x2b,
 	crCouncilMemberClaimNode = 0x31,
 
 	TypeMaxCount
-}; */
+}
 
 export enum TxVersion {
 	Default = 0x00,
@@ -58,19 +64,15 @@ export enum TxVersion {
 
 // TODO: remove all those Ptr
 //type WalletPtr = Wallet;
-type OutputPtr = TransactionOutput;
-type OutputArray = OutputPtr[];
-type InputPtr = TransactionInput;
-type InputArray = InputPtr[];
-type ProgramPtr = Program;
-type ProgramArray = ProgramPtr[];
-type AttributePtr = Attribute;
-type AttributeArray = AttributePtr[];
+type OutputArray = TransactionOutput[];
+type InputArray = TransactionInput[];
+type ProgramArray = Program[];
+type AttributeArray = Attribute[];
 
-/* #define DEFAULT_PAYLOAD_TYPE  transferAsset
-#define TX_LOCKTIME          0x00000000
-#define TX_UNCONFIRMED       INT32_MAX   // block height indicating transaction is unconfirmed
- */
+const DEFAULT_PAYLOAD_TYPE = TransactionType.transferAsset;
+const TX_LOCKTIME = 0x00000000;
+const TX_UNCONFIRMED = INT32_MAX;   // block height indicating transaction is unconfirmed
+
 export class Transaction {
 	protected _isRegistered: boolean;
 	protected _txHash: uint256;
@@ -88,7 +90,6 @@ export class Transaction {
 	protected _attributes: AttributeArray;
 	protected _programs: ProgramArray;
 
-
 	/* Transaction::Transaction() :
 			_version(TxVersion::Default),
 			_lockTime(TX_LOCKTIME),
@@ -101,156 +102,154 @@ export class Transaction {
 			_txHash(0),
 			_timestamp(0) {
 		_payload = InitPayload(_type);
-	}
-
-	Transaction::Transaction(uint8_t type, PayloadPtr payload) :
-		_version(TxVersion::Default),
-		_lockTime(TX_LOCKTIME),
-		_blockHeight(TX_UNCONFIRMED),
-		_payloadVersion(0),
-		_fee(0),
-		_type(type),
-		_isRegistered(false),
-		_txHash(0),
-		_timestamp(0),
-		_payload(std::move(payload)) {
-	}
-
-	Transaction::Transaction(const Transaction &tx) {
-		this->operator=(tx);
-	} */
-
-	/* Transaction &Transaction::operator=(const Transaction &orig) {
-		_isRegistered = orig._isRegistered;
-		_txHash = orig.GetHash();
-
-		_version = orig._version;
-		_lockTime = orig._lockTime;
-		_blockHeight = orig._blockHeight;
-		_timestamp = orig._timestamp;
-
-		_type = orig._type;
-		_payloadVersion = orig._payloadVersion;
-		_fee = orig._fee;
-
-		_payload = InitPayload(orig._type);
-
-		*_payload = *orig._payload;
-
-		_inputs.clear();
-		for (size_t i = 0; i < orig._inputs.size(); ++i) {
-			_inputs.push_back(InputPtr(new TransactionInput(*orig._inputs[i])));
-		}
-
-		_outputs.clear();
-		for (size_t i = 0; i < orig._outputs.size(); ++i) {
-			_outputs.push_back(OutputPtr(new TransactionOutput(*orig._outputs[i])));
-		}
-
-		_attributes.clear();
-		for (size_t i = 0; i < orig._attributes.size(); ++i) {
-			_attributes.push_back(AttributePtr(new Attribute(*orig._attributes[i])));
-		}
-
-		_programs.clear();
-		for (size_t i = 0; i < orig._programs.size(); ++i) {
-			_programs.push_back(ProgramPtr(new Program(*orig._programs[i])));
-		}
-
-		return *this;
-	}
-
-	bool Transaction::operator==(const Transaction &tx) const {
-		bool equal = _version == tx._version &&
-					 _lockTime == tx._lockTime &&
-					 _blockHeight == tx._blockHeight &&
-					 _timestamp == tx._timestamp &&
-					 _type == tx._type &&
-					 _payloadVersion == tx._payloadVersion &&
-					 _outputs.size() == tx._outputs.size() &&
-					 _inputs.size() == tx._inputs.size() &&
-					 _attributes.size() == tx._attributes.size() &&
-					 _programs.size() == tx._programs.size();
-
-		if (equal)
-			equal = _payload->Equal(*tx._payload, _payloadVersion);
-
-		if (equal)
-			for (int i = 0; i < _outputs.size(); ++i)
-				if (*_outputs[i] != *tx._outputs[i]) {
-					equal = false;
-					break;
-				}
-
-		if (equal)
-			for (int i = 0; i < _inputs.size(); ++i)
-				if (*_inputs[i] != *tx._inputs[i]) {
-					equal = false;
-					break;
-				}
-
-		if (equal)
-			for (int i = 0; i < _attributes.size(); ++i)
-				if (*_attributes[i] != *tx._attributes[i]) {
-					equal = false;
-					break;
-				}
-
-		if (equal)
-			for (int i = 0; i < _programs.size(); ++i)
-				if (*_programs[i] != *tx._programs[i]) {
-					equal = false;
-					break;
-				}
-
-		return equal;
-	}
-
-	Transaction::~Transaction() {
-	}
-
-	bool Transaction::IsRegistered() const {
-		return _isRegistered;
-	}
-
-	bool &Transaction::IsRegistered() {
-		return _isRegistered;
-	}
-
-	void Transaction::ResetHash() {
-		_txHash = 0;
 	}*/
 
-	GetHash(): uint256 {
-		if (this._txHash == 0) {
+	public static newFromParams(type: uint8_t, payload: Payload): Transaction {
+		let tx = new Transaction();
+		tx._version = TxVersion.Default;
+		tx._lockTime = TX_LOCKTIME,
+			tx._blockHeight = TX_UNCONFIRMED,
+			tx._payloadVersion = 0,
+			tx._fee = 0,
+			tx._type = type,
+			tx._isRegistered = false,
+			tx._txHash = new BigNumber(0),
+			tx._timestamp = 0,
+			tx._payload = payload; // WAS std::move(payload)
+
+		return tx;
+	}
+
+	/*	Transaction::Transaction(const Transaction &tx) {
+			this->operator=(tx);
+		} */
+
+	public static newFromTransaction(orig: Transaction): Transaction {
+		let transaction = new Transaction();
+
+		transaction._isRegistered = orig._isRegistered;
+		transaction._txHash = orig.GetHash();
+
+		transaction._version = orig._version;
+		transaction._lockTime = orig._lockTime;
+		transaction._blockHeight = orig._blockHeight;
+		transaction._timestamp = orig._timestamp;
+
+		transaction._type = orig._type;
+		transaction._payloadVersion = orig._payloadVersion;
+		transaction._fee = orig._fee;
+
+		transaction._payload = transaction.InitPayload(orig._type);
+
+		transaction._payload = orig._payload;
+
+		transaction._inputs = [];
+		for (let input of orig._inputs) {
+			transaction._inputs.push(TransactionInput.newFromTransactionInput(input));
+		}
+
+		transaction._outputs = [];
+		for (let output of orig._outputs) {
+			transaction._outputs.push(TransactionOutput.newFromTransactionOutput(output));
+		}
+
+		transaction._attributes = [];
+		for (let attr of orig._attributes) {
+			transaction._attributes.push(Attribute.newFromAttribute(attr));
+		}
+
+		transaction._programs = [];
+		for (let program of orig._programs) {
+			transaction._programs.push(Program.newFromProgram(program));
+		}
+
+		return transaction;
+	}
+
+	/*	bool Transaction::operator==(const Transaction &tx) const {
+			bool equal = _version == tx._version &&
+						 _lockTime == tx._lockTime &&
+						 _blockHeight == tx._blockHeight &&
+						 _timestamp == tx._timestamp &&
+						 _type == tx._type &&
+						 _payloadVersion == tx._payloadVersion &&
+						 _outputs.size() == tx._outputs.size() &&
+						 _inputs.size() == tx._inputs.size() &&
+						 _attributes.size() == tx._attributes.size() &&
+						 _programs.size() == tx._programs.size();
+
+			if (equal)
+				equal = _payload->Equal(*tx._payload, _payloadVersion);
+
+			if (equal)
+				for (int i = 0; i < _outputs.size(); ++i)
+					if (*_outputs[i] != *tx._outputs[i]) {
+						equal = false;
+						break;
+					}
+
+			if (equal)
+				for (int i = 0; i < _inputs.size(); ++i)
+					if (*_inputs[i] != *tx._inputs[i]) {
+						equal = false;
+						break;
+					}
+
+			if (equal)
+				for (int i = 0; i < _attributes.size(); ++i)
+					if (*_attributes[i] != *tx._attributes[i]) {
+						equal = false;
+						break;
+					}
+
+			if (equal)
+				for (int i = 0; i < _programs.size(); ++i)
+					if (*_programs[i] != *tx._programs[i]) {
+						equal = false;
+						break;
+					}
+
+			return equal;
+		}
+*/
+	public IsRegistered(): boolean {
+		return this._isRegistered;
+	}
+
+	public ResetHash() {
+		this._txHash = new BigNumber(0);
+	}
+
+	public GetHash(): uint256 {
+		if (this._txHash.eq(0)) {
 			let stream: ByteStream;
 			this.SerializeUnsigned(stream);
-			this._txHash = sha256_2(stream.GetBytes());
+			this._txHash = sha256_2(stream.getBytes());
 		}
 		return this._txHash;
 	}
 
-	/*void Transaction::SetHash(const uint256 &hash) {
-		_txHash = hash;
+	public SetHash(hash: uint256) {
+		this._txHash = hash;
 	}
 
-	uint8_t Transaction::GetVersion() const {
-		return _version;
+	public GetVersion(): uint8_t {
+		return this._version;
 	}
 
-	void Transaction::SetVersion(uint8_t version) {
-		_version = version;
+	public SetVersion(version: uint8_t) {
+		this._version = version;
 	}
 
-	uint8_t Transaction::GetTransactionType() const {
-		return _type;
+	public GetTransactionType(): uint8_t {
+		return this._type;
 	}
 
-	void Transaction::SetTransactionType(uint8_t type) {
-		_type = type;
+	public SetTransactionType(type: uint8_t) {
+		this._type = type;
 	}
 
-	std::vector<uint8_t> Transaction::GetDPoSTxTypes() {
+	/*std::vector<uint8_t> Transaction::GetDPoSTxTypes() {
 		return {registerProducer, cancelProducer, updateProducer, returnDepositCoin, activateProducer};
 	}
 
@@ -261,22 +260,22 @@ export class Transaction {
 	std::vector<uint8_t> Transaction::GetProposalTypes() {
 		return {crcProposal, crcProposalReview, crcProposalTracking, crcAppropriation, crcProposalWithdraw};
 	}
+*/
+	private Reinit() {
+		this.Cleanup();
+		this._type = DEFAULT_PAYLOAD_TYPE;
+		this._payload = this.InitPayload(this._type);
 
-	private void Transaction::Reinit() {
-		Cleanup();
-		_type = DEFAULT_PAYLOAD_TYPE;
-		_payload = InitPayload(_type);
-
-		_version = TxVersion::Default;
-		_lockTime = TX_LOCKTIME;
-		_blockHeight = TX_UNCONFIRMED;
-		_payloadVersion = 0;
-		_fee = 0;
+		this._version = TxVersion.Default;
+		this._lockTime = TX_LOCKTIME;
+		this._blockHeight = TX_UNCONFIRMED;
+		this._payloadVersion = 0;
+		this._fee = 0;
 	}
 
-	const std::vector<OutputPtr> &Transaction::GetOutputs() const {
-		return _outputs;
-	}*/
+	public GetOutputs(): TransactionOutput[] {
+		return this._outputs;
+	}
 
 	public SetOutputs(outputs: OutputArray) {
 		this._outputs = outputs;
@@ -305,7 +304,7 @@ export class Transaction {
 			return _inputs;
 		}*/
 
-	public AddInput(Input: InputPtr) {
+	public AddInput(Input: TransactionInput) {
 		this._inputs.push(Input);
 	}
 
@@ -343,137 +342,137 @@ export class Transaction {
 
 		void Transaction::SetTimestamp(time_t t) {
 			_timestamp = t;
-		}
-
-		size_t Transaction::EstimateSize() const {
-			size_t i, txSize = 0;
-			ByteStream stream;
-
-			if (_version >= TxVersion::V09)
-				txSize += 1;
-
-			// type, payloadversion
-			txSize += 2;
-
-			// payload
-			txSize += _payload->EstimateSize(_payloadVersion);
-
-			txSize += stream.WriteVarUint(_attributes.size());
-			for (i = 0; i < _attributes.size(); ++i)
-				txSize += _attributes[i]->EstimateSize();
-
-			txSize += stream.WriteVarUint(_inputs.size());
-			for (i = 0; i < _inputs.size(); ++i)
-				txSize += _inputs[i]->EstimateSize();
-
-			txSize += stream.WriteVarUint(_outputs.size());
-			for (i = 0; i < _outputs.size(); ++i)
-				txSize += _outputs[i]->EstimateSize();
-
-			txSize += sizeof(_lockTime);
-
-			txSize += stream.WriteVarUint(_programs.size());
-			for (i = 0; i < _programs.size(); ++i)
-				txSize += _programs[i]->EstimateSize();
-
-			return txSize;
-		}
-
-		nlohmann::json Transaction::GetSignedInfo() const {
-			nlohmann::json info;
-			uint256 md = GetShaData();
-
-			for (size_t i = 0; i < _programs.size(); ++i) {
-				info.push_back(_programs[i]->GetSignedInfo(md));
-			}
-			return info;
-		}
-
-		bool Transaction::IsSigned() const {
-			if (_type == rechargeToSideChain || _type == coinBase)
-				return true;
-
-			if (_programs.size() == 0)
-				return false;
-
-			uint256 md = GetShaData();
-
-			for (size_t i = 0; i < _programs.size(); ++i) {
-				if (!_programs[i]->VerifySignature(md))
-					return false;
-			}
-
-			return true;
-		}
-
-		bool Transaction::IsCoinBase() const {
-			return _type == coinBase;
-		}
-
-		bool Transaction::IsUnconfirmed() const {
-			return _blockHeight == TX_UNCONFIRMED;
-		}
-
-		bool Transaction::IsValid() const {
-			if (!IsSigned()) {
-				Log::error("verify tx signature fail");
-				return false;
-			}
-
-			for (size_t i = 0; i < _attributes.size(); ++i) {
-				if (!_attributes[i]->IsValid()) {
-					Log::error("tx attribute is invalid");
-					return false;
-				}
-			}
-
-			if (_payload == nullptr || !_payload->IsValid(_payloadVersion)) {
-				Log::error("tx payload invalid");
-				return false;
-			}
-
-			if (_outputs.size() == 0) {
-				Log::error("tx without output");
-				return false;
-			}
-
-			for (size_t i = 0; i < _outputs.size(); ++i) {
-				if (!_outputs[i]->IsValid()) {
-					Log::error("tx output is invalid");
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		const IPayload *Transaction::GetPayload() const {
-			return _payload.get();
-		}
-
-		IPayload *Transaction::GetPayload() {
-			return _payload.get();
-		}
-
-		const PayloadPtr &Transaction::GetPayloadPtr() const {
-			return _payload;
-		}
-
-		void Transaction::SetPayload(const PayloadPtr &payload) {
-			_payload = payload;
 		}*/
 
-	addAttribute(attribute: Attribute) {
+	public EstimateSize(): size_t {
+		let i: size_t, txSize = 0;
+		let stream = new ByteStream();
+
+		if (this._version >= TxVersion.V09)
+			txSize += 1;
+
+		// type, payloadversion
+		txSize += 2;
+
+		// payload
+		txSize += this._payload.estimateSize(this._payloadVersion);
+
+		txSize += stream.writeVarUInt(this._attributes.length);
+		for (i = 0; i < this._attributes.length; ++i)
+			txSize += this._attributes[i].estimateSize();
+
+		txSize += stream.writeVarUInt(this._inputs.length);
+		for (i = 0; i < this._inputs.length; ++i)
+			txSize += this._inputs[i].estimateSize();
+
+		txSize += stream.writeVarUInt(this._outputs.length);
+		for (i = 0; i < this._outputs.length; ++i)
+			txSize += this._outputs[i].estimateSize();
+
+		txSize += 4; // WAS sizeof(this._lockTime);
+
+		txSize += stream.writeVarUInt(this._programs.length);
+		for (i = 0; i < this._programs.length; ++i)
+			txSize += this._programs[i].estimateSize();
+
+		return txSize;
+	}
+
+	public getSignedInfo(): JSONArray {
+		let info = [];
+		let md: uint256 = this.GetShaData();
+
+		for (let i = 0; i < this._programs.length; ++i) {
+			info.push(this._programs[i].getSignedInfo(md));
+		}
+		return info;
+	}
+
+	isSigned(): boolean {
+		if (this._type == TransactionType.rechargeToSideChain || this._type == TransactionType.coinBase)
+			return true;
+
+		if (this._programs.length == 0)
+			return false;
+
+		let md: uint256 = this.GetShaData();
+
+		for (let i = 0; i < this._programs.length; ++i) {
+			if (!this._programs[i].verifySignature(md))
+				return false;
+		}
+
+		return true;
+	}
+
+	public IsCoinBase(): boolean {
+		return this._type == TransactionType.coinBase;
+	}
+
+	public IsUnconfirmed(): boolean {
+		return this._blockHeight == TX_UNCONFIRMED;
+	}
+
+	public IsValid(): boolean {
+		if (!this.isSigned()) {
+			Log.error("verify tx signature fail");
+			return false;
+		}
+
+		for (let i = 0; i < this._attributes.length; ++i) {
+			if (!this._attributes[i].isValid()) {
+				Log.error("tx attribute is invalid");
+				return false;
+			}
+		}
+
+		if (this._payload === null || !this._payload.isValid(this._payloadVersion)) {
+			Log.error("tx payload invalid");
+			return false;
+		}
+
+		if (this._outputs.length == 0) {
+			Log.error("tx without output");
+			return false;
+		}
+
+		for (let i = 0; i < this._outputs.length; ++i) {
+			if (!this._outputs[i].IsValid()) {
+				Log.error("tx output is invalid");
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/*const IPayload *Transaction::GetPayload() const {
+		return _payload.get();
+	}
+
+	IPayload *Transaction::GetPayload() {
+		return _payload.get();
+	}
+
+	const PayloadPtr &Transaction::GetPayloadPtr() const {
+		return _payload;
+	}
+
+	void Transaction::SetPayload(const PayloadPtr &payload) {
+		_payload = payload;
+	}*/
+
+	public addAttribute(attribute: Attribute) {
 		this._attributes.push(attribute);
 	}
 
-	/*const std::vector<AttributePtr> &Transaction::GetAttributes() const {
-		return _attributes;
-	}*/
+	public getAttributes(): Attribute[] {
+		return this._attributes;
+	}
 
-	public AddUniqueProgram(program: ProgramPtr): boolean {
+	public addUniqueProgram(program: Program): boolean {
 		for (let i = 0; i < this._programs.length; ++i) {
-			if (this._programs[i].GetCode().equals(program.GetCode())) {
+			if (this._programs[i].getCode().equals(program.getCode())) {
 				return false;
 			}
 		}
@@ -483,59 +482,52 @@ export class Transaction {
 		return true;
 	}
 
-	/*void Transaction::AddProgram(const ProgramPtr &program) {
-		_programs.push_back(program);
+	public addProgram(program: Program) {
+		this._programs.push(program);
 	}
 
-	const std::vector<ProgramPtr> &Transaction::GetPrograms() const {
-		return _programs;
+	public getPrograms(): Program[] {
+		return this._programs;
 	}
 
-	void Transaction::ClearPrograms() {
-		_programs.clear();
-	}*/
+	public clearPrograms() {
+		this._programs = [];
+	}
 
-	public Serialize(ostream: ByteStream) {
-		this.SerializeUnsigned(ostream);
+	public serialize(ostream: ByteStream) {
+		this.serializeUnsigned(ostream);
 
-		ostream.WriteVarUint(_programs.size());
+		ostream.writeVarUInt(this._programs.length);
 		for (let i = 0; i < this._programs.length; i++) {
-			this._programs[i].Serialize(ostream);
+			this._programs[i].serialize(ostream);
 		}
 	}
 
-	/*void Transaction::SerializeUnsigned(ByteStream &ostream) const {
-		if (_version >= TxVersion::V09) {
-			ostream.WriteByte(_version);
+	public serializeUnsigned(ostream: ByteStream) {
+		if (this._version >= TxVersion.V09) {
+			ostream.writeByte(this._version);
 		}
-		ostream.WriteByte(_type);
+		ostream.writeByte(this._type);
 
-		ostream.WriteByte(_payloadVersion);
+		ostream.writeByte(this._payloadVersion);
 
-		ErrorChecker::CheckCondition(_payload == nullptr, Error::Transaction,
-									 "payload should not be null");
+		ErrorChecker.CheckCondition(this._payload == null, Error.Code.Transaction, "payload should not be null");
 
-		_payload->Serialize(ostream, _payloadVersion);
+		this._payload.serialize(ostream, this._payloadVersion);
 
-		ostream.WriteVarUint(_attributes.size());
-		for (size_t i = 0; i < _attributes.size(); i++) {
-			_attributes[i]->Serialize(ostream);
-		}
+		ostream.writeVarUInt(this._attributes.length);
+		this._attributes.forEach(a => a.serialize(ostream));
 
-		ostream.WriteVarUint(_inputs.size());
-		for (size_t i = 0; i < _inputs.size(); i++) {
-			_inputs[i]->Serialize(ostream);
-		}
+		ostream.writeVarUInt(this._inputs.length);
+		this._inputs.forEach(i => i.serialize(ostream));
 
-		ostream.WriteVarUint(_outputs.size());
-		for (size_t i = 0; i < _outputs.size(); i++) {
-			_outputs[i]->Serialize(ostream, _version);
-		}
+		ostream.writeVarUInt(this._outputs.length);
+		this._outputs.forEach(o => o.serialize(ostream, this._version));
 
-		ostream.WriteUint32(_lockTime);
+		ostream.writeUInt32(this._lockTime);
 	}
 
-	bool Transaction::DeserializeType(const ByteStream &istream) {
+	/*bool Transaction::DeserializeType(const ByteStream &istream) {
 		uint8_t flagByte = 0;
 		if (!istream.ReadByte(flagByte)) {
 			Log::error("deserialize flag byte error");
@@ -652,80 +644,75 @@ export class Transaction {
 #endif
 
 		return true;
+	}*/
+
+	public ToJson(): json {
+		return {
+			IsRegistered: this._isRegistered,
+			TxHash: this.GetHash().toString(16),
+			Version: this._version,
+			LockTime: this._lockTime,
+			BlockHeight: this._blockHeight,
+			Timestamp: this._timestamp,
+			Inputs: this._inputs,
+			Type: this._type,
+			PayloadVersion: this._payloadVersion,
+			PayLoad: this._payload.toJson(this._payloadVersion),
+			Attributes: this._attributes,
+			Programs: this._programs,
+			Outputs: this._outputs,
+			Fee: this._fee
+		};
 	}
 
-	nlohmann::json Transaction::ToJson() const {
-		nlohmann::json j;
-
-		j["IsRegistered"] = _isRegistered;
-
-		j["TxHash"] = GetHash().GetHex();
-		j["Version"] = _version;
-		j["LockTime"] = _lockTime;
-		j["BlockHeight"] = _blockHeight;
-		j["Timestamp"] = _timestamp;
-		j["Inputs"] = _inputs;
-		j["Type"] = _type;
-		j["PayloadVersion"] = _payloadVersion;
-		j["PayLoad"] = _payload->ToJson(_payloadVersion);
-		j["Attributes"] = _attributes;
-		j["Programs"] = _programs;
-		j["Outputs"] = _outputs;
-		j["Fee"] = _fee;
-
-		return j;
-	}
-
-	void Transaction::FromJson(const nlohmann::json &j) {
-		Reinit();
+	public FromJson(j: json) {
+		this.Reinit();
 
 		try {
-			_isRegistered = j["IsRegistered"];
+			this._isRegistered = j["IsRegistered"] as boolean;
 
-			uint8_t version = j["Version"].get<uint8_t>();
-			_version = static_cast<TxVersion>(version);
-			_lockTime = j["LockTime"].get<uint32_t>();
-			_blockHeight = j["BlockHeight"].get<uint32_t>();
-			_timestamp = j["Timestamp"].get<uint32_t>();
-			_inputs = j["Inputs"].get<InputArray>();
-			_type = j["Type"].get<uint8_t>();
-			_payloadVersion = j["PayloadVersion"];
-			_payload = InitPayload(_type);
+			this._version = j["Version"] as TxVersion;
+			this._lockTime = j["LockTime"] as uint32_t;
+			this._blockHeight = j["BlockHeight"] as uint32_t;
+			this._timestamp = j["Timestamp"] as uint32_t
+			this._inputs = j["Inputs"].get<InputArray>();
+			this._type = j["Type"] as uint8_t;
+			this._payloadVersion = j["PayloadVersion"] as number;
+			this._payload = this.InitPayload(this._type);
 
-			if (_payload == nullptr) {
-				Log::error("_payload is nullptr when convert from json");
+			if (this._payload === null) {
+				Log.error("_payload is nullptr when convert from json");
 			} else {
-				_payload->FromJson(j["PayLoad"], _payloadVersion);
+				this._payload.fromJson(j["PayLoad"] as json, this._payloadVersion);
 			}
 
-			_attributes = j["Attributes"].get<AttributeArray>();
-			_programs = j["Programs"].get<ProgramArray>();
-			_outputs = j["Outputs"].get<OutputArray>();
-			_fee = j["Fee"].get<uint64_t>();
+			this._attributes = j["Attributes"].get<AttributeArray>();
+			this._programs = j["Programs"].get<ProgramArray>();
+			this._outputs = j["Outputs"].get<OutputArray>();
+			this._fee = j["Fee"] as uint64_t;
 
-			_txHash.SetHex(j["TxHash"].get<std::string>());
-		} catch (const nlohmann::detail::exception &e) {
-			ErrorChecker::ThrowLogicException(Error::Code::JsonFormatError, "tx from json: " +
-																			std::string(e.what()));
+			this._txHash = new BigNumber(j["TxHash"] as string, 16);
+		} catch (e) {
+			ErrorChecker.ThrowLogicException(Error.Code.JsonFormatError, "tx from json: " + e);
 		}
 	}
 
-	uint64_t Transaction::CalculateFee(uint64_t feePerKb) {
-		return ((EstimateSize() + 999) / 1000) * feePerKb;
+	public CalculateFee(feePerKb: uint64_t): uint64_t {
+		return ((this.EstimateSize() + 999) / 1000) * feePerKb;
 	}
 
-	uint256 Transaction::GetShaData() const {
-		ByteStream stream;
-		SerializeUnsigned(stream);
-		return uint256(sha256(stream.GetBytes()));
+	GetShaData(): uint256 {
+		let stream = new ByteStream();
+		this.SerializeUnsigned(stream);
+		return new BigNumber(SHA256.encodeToString(stream.getBytes())); // WAS uint256(sha256(stream.GetBytes()));
 	}
 
-	PayloadPtr Transaction::InitPayload(uint8_t type) {
-		PayloadPtr payload = nullptr;
+	public InitPayload(type: uint8_t): Payload {
+		let payload: Payload = null;
 
-		if (type == coinBase) {
-			payload = PayloadPtr(new CoinBase());
-		} else if (type == registerAsset) {
+		if (type == TransactionType.coinBase) {
+			payload = new CoinBase();
+		} /* TODO else if (type == registerAsset) {
 			payload = PayloadPtr(new RegisterAsset());
 		} else if (type == transferAsset) {
 			payload = PayloadPtr(new TransferAsset());
@@ -770,59 +757,58 @@ export class Transaction {
 			payload = PayloadPtr(new CRCAssetsRectify());
 		} else if (type == crCouncilMemberClaimNode) {
 			payload = PayloadPtr(new CRCouncilMemberClaimNode());
-		}
+		} */
 
 		return payload;
 	}
 
-	void Transaction::Cleanup() {
-		_inputs.clear();
-		_outputs.clear();
-		_attributes.clear();
-		_programs.clear();
-		_payload.reset();
+	private Cleanup() {
+		this._inputs = [];
+		this._outputs = [];
+		this._attributes = [];
+		this._programs = [];
+		// TODO - WHERE IS THIS Payload.reset() IN C++? this._payload.reset();
 	}
 
-	uint8_t Transaction::GetPayloadVersion() const {
-		return _payloadVersion;
+	public GetPayloadVersion(): uint8_t {
+		return this._payloadVersion;
 	}
 
-	void Transaction::SetPayloadVersion(uint8_t version) {
-		_payloadVersion = version;
+	public SetPayloadVersion(version: uint8_t) {
+		this._payloadVersion = version;
 	}
 
-	uint64_t Transaction::GetFee() const {
-		return _fee;
+	public GetFee(): uint64_t {
+		return this._fee;
 	}
 
-	void Transaction::SetFee(uint64_t f) {
-		_fee = f;
+	public SetFee(f: uint64_t) {
+		this._fee = f;
 	}
 
-	bool Transaction::IsEqual(const Transaction &tx) const {
-		return GetHash() == tx.GetHash();
+	public IsEqual(tx: Transaction): boolean {
+		return this.GetHash() == tx.GetHash();
 	}
 
-	uint32_t Transaction::GetConfirms(uint32_t walletBlockHeight) const {
-		if (_blockHeight == TX_UNCONFIRMED)
+	public GetConfirms(walletBlockHeight: uint32_t): uint32_t {
+		if (this._blockHeight == TX_UNCONFIRMED)
 			return 0;
 
-		return walletBlockHeight >= _blockHeight ? walletBlockHeight - _blockHeight + 1 : 0;
+		return walletBlockHeight >= this._blockHeight ? walletBlockHeight - this._blockHeight + 1 : 0;
 	}
 
-	std::string Transaction::GetConfirmStatus(uint32_t walletBlockHeight) const {
-		uint32_t confirm = GetConfirms(walletBlockHeight);
+	GetConfirmStatus(walletBlockHeight: uint32_t): string {
+		let confirm = this.GetConfirms(walletBlockHeight);
 
-		std::string status;
-		if (IsCoinBase()) {
+		let status: string;
+		if (this.IsCoinBase()) {
 			status = confirm <= 100 ? "Pending" : "Confirmed";
 		} else {
 			status = confirm < 2 ? "Pending" : "Confirmed";
 		}
 
 		return status;
-	} */
-
+	}
 }
 
 

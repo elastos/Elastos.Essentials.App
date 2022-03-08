@@ -2,21 +2,23 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+import { ByteStream } from "../../../common/bytestream";
 import { JsonSerializer } from "../../../common/JsonSerializer";
 import { ELAMessage } from "../../../ELAMessage";
-import { ByteStream, bytes_t } from "../../../types";
+import { bytes_t, json } from "../../../types";
 
-export class OutputPayload extends ELAMessage implements JsonSerializer {
-	getData(): bytes_t {
+export abstract class OutputPayload extends ELAMessage implements JsonSerializer {
+	public getData(): bytes_t {
 		let stream: ByteStream;
-		this.Serialize(stream);
+		this.serialize(stream);
 
-		return stream.GetBytes();
+		return stream.getBytes();
 	}
+
+	public abstract toJson(): json;
+	public abstract fromJson(j: json);
 
 	// TODO virtual IOutputPayload &operator=(const IOutputPayload &payload) = 0;
 
-	// TODO virtual bool operator==(const IOutputPayload &payload) const = 0;
+	public abstract equals(payload: OutputPayload): boolean;
 }
-
-export type OutputPayloadPtr = OutputPayload;

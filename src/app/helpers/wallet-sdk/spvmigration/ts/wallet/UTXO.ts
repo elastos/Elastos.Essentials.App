@@ -4,48 +4,36 @@
 
 import BigNumber from "bignumber.js";
 import { TransactionInput } from "../transactions/TransactionInput";
-import { uint16_t, uint256 } from "../types";
+import { INT32_MAX, uint16_t, uint256 } from "../types";
 import { Address } from "../walletcore/Address";
 
 export type UTXOArray = UTXO[];
+
+const TX_UNCONFIRMED = INT32_MAX;
 
 export class UTXO {
 	protected _address: Address;
 	protected _amount: BigNumber;
 	protected _hash: uint256;
-	protected _n: uint16_t;
+	protected _n: uint16_t = 0;
 
-	/* #define TX_UNCONFIRMED INT32_MAX
+	public static newFromUTXO(u: UTXO): UTXO {
+		let utxo = new UTXO();
+		utxo._address = u._address;
+		utxo._amount = u._amount;
+		utxo._hash = u._hash;
+		utxo._n = u._n;
+		return utxo;
+	}
 
-		UTXO::UTXO() :
-			_n(0) {
-		}
-
-		UTXO::UTXO(const UTXO &u) {
-			this->operator=(u);
-		}
-
-		UTXO &UTXO::operator=(const UTXO &u) {
-						this->_address = u._address;
-						this->_amount = u._amount;
-			this->_hash = u._hash;
-						this->_n = u._n;
-			return *this;
-		}
-
-		UTXO::UTXO(const uint256 &hash, uint16_t n, const Address &address, const BigInt &amount) :
-			_hash(hash),
-			_n(n),
-			_address(address),
-			_amount(amount) {
-		}
-
-		UTXO::~UTXO() {
-		}
-
-		bool UTXO::operator==(const UTXO &u) const {
-			return _hash == u._hash && _n == u._n;
-		}*/
+	public static newFromParams(hash: uint256, n: uint16_t, address: Address, amount: BigNumber): UTXO {
+		let utxo = new UTXO();
+		utxo._hash = hash;
+		utxo._n = n;
+		utxo._address = address;
+		utxo._amount = amount;
+		return utxo;
+	}
 
 	public Hash(): uint256 {
 		return this._hash;
@@ -85,5 +73,24 @@ export class UTXO {
 
 	public Equals(hash: uint256, index: uint16_t): boolean { // WAS Equals
 		return this._hash == hash && index == this._n;
+	}
+
+	public equalsUTXO(utxo: UTXO): boolean {
+		return this.Equals(utxo.Hash(), utxo.Index());
+	}
+}
+
+/**
+ * Array of UTXO, always sorted
+ */
+export class UTXOSet extends Array<UTXO> {
+	public sortUTXOs() {
+		this.sort((x, y) => {
+			if (x.Hash() === y.Hash()) {
+				return x.Index() - y.Index();
+			} else {
+				return x.Hash().minus(y.Hash()).toNumber();
+			}
+		})
 	}
 }

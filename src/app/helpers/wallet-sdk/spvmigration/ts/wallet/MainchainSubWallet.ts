@@ -21,7 +21,9 @@ import { ElastosBaseSubWallet } from "./ElastosBaseSubWallet";
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-export class MainchainSubWallet extends ElastosBaseSubWallet implements IMainchainSubWallet {
+
+// TODO: Migrate all COMMENTS from the C++ IMainchainSubWallet interface here.
+export class MainchainSubWallet extends ElastosBaseSubWallet {
 
 	/* #define DEPOSIT_MIN_ELA 5000
 

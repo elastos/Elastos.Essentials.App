@@ -1,9 +1,12 @@
 // Copyright (c) 2012-2018 The Elastos Open Source Project
 // Distributed under the MIT software license, see the accompanying
 
+import { ByteStream } from "../common/bytestream";
 import { JsonSerializer } from "../common/JsonSerializer";
+import { Log } from "../common/Log";
 import { ELAMessage } from "../ELAMessage";
-import { bytes_t, json } from "../types";
+import { bytes_t, json, size_t } from "../types";
+import { SignType } from "../walletcore/Address";
 
 export type ProgramPtr = Program;
 export type ProgramArray = ProgramPtr[];
@@ -13,29 +16,26 @@ export class Program extends ELAMessage implements JsonSerializer {
 	private _code: bytes_t;
 	private _parameter: bytes_t;
 
-	/* Program::Program() {
-	}
-
+	/*
 	Program::Program(const Program &program) {
 		operator=(program);
 	}
-
-	Program::Program(const bytes_t &code, const bytes_t &parameter) :
-			_parameter(parameter),
-			_code(code) {
-
+*/
+	public static newFromParams(code: bytes_t, parameter: bytes_t): Program {
+		let program = new Program();
+		program._parameter = parameter;
+		program._code = code;
+		return program;
 	}
 
-	Program::~Program() {
+	public static newFromProgram(p: Program): Program {
+		let program = new Program();
+		program._code = p._code;
+		program._parameter = p._parameter;
+		return program;
 	}
 
-	Program &Program::operator=(const Program &p) {
-		_code = p._code;
-		_parameter = p._parameter;
-		return *this;
-	}
-
-	bool Program::VerifySignature(const uint256 &md) const {
+	/*bool Program::VerifySignature(const uint256 &md) const {
 		Key key;
 		uint8_t signatureCount = 0;
 
@@ -148,83 +148,82 @@ export class Program extends ELAMessage implements JsonSerializer {
 		return signType;
 	}*/
 
-	public GetCode(): bytes_t {
+	public getCode(): bytes_t {
 		return this._code;
 	}
 
-	/*const bytes_t &Program::GetParameter() const {
-		return _parameter;
+	public getParameter(): bytes_t {
+		return this._parameter;
 	}
 
-	void Program::SetCode(const bytes_t &code) {
-		_code = code;
+	public setCode(code: bytes_t) {
+		this._code = code;
 	}
 
-	void Program::SetParameter(const bytes_t &parameter) {
-		_parameter = parameter;
+	public setParameter(parameter: bytes_t) {
+		this._parameter = parameter;
 	}
 
-	size_t Program::EstimateSize() const {
-		size_t size = 0;
-		ByteStream stream;
+	estimateSize(): size_t {
+		let size: size_t = 0;
+		let stream = new ByteStream();
 
-		if (_parameter.empty()) {
-			if (SignType(_code.back()) == SignTypeMultiSign) {
-				uint8_t m = (uint8_t)(_code[0] - OP_1 + 1);
+		if (!this._parameter) {
+			if (this._code[this._code.length - 1] == SignType.SignTypeMultiSign) { // WAS SignType(this._code.back())
+				uint8_t m = (uint8_t)(this._code[0] - OP_1 + 1);
 				uint64_t signLen = m * 64ul;
-				size += stream.WriteVarUint(signLen);
+				size += stream.writeVarUInt(signLen);
 				size += signLen;
-			} else if (SignType(_code.back()) == SignTypeStandard) {
+			} else if (this._code[this._code.length - 1] == SignType.SignTypeStandard) { // WAS SignType(this._code.back())
 				size += 65;
 			}
 		} else {
-			size += stream.WriteVarUint(_parameter.size());
-			size += _parameter.size();
+			size += stream.writeVarUInt(this._parameter.length);
+			size += this._parameter.length;
 		}
 
-		size += stream.WriteVarUint(_code.size());
-		size += _code.size();
+		size += stream.writeVarUInt(this._code.length);
+		size += this._code.length;
 
 		return size;
 	}
 
-	void Program::Serialize(ByteStream &stream) const {
-		stream.WriteVarBytes(_parameter);
-		stream.WriteVarBytes(_code);
+	public serialize(stream: ByteStream) {
+		stream.writeVarBytes(this._parameter);
+		stream.writeVarBytes(this._code);
 	}
 
-	bool Program::Deserialize(const ByteStream &stream) {
-		if (!stream.ReadVarBytes(_parameter)) {
-			Log::error("Program deserialize parameter fail");
+	public deserialize(stream: ByteStream): boolean {
+		if (!stream.readVarBytes(this._parameter)) {
+			Log.error("Program deserialize parameter fail");
 			return false;
 		}
 
-		if (!stream.ReadVarBytes(_code)) {
-			Log::error("Program deserialize code fail");
+		if (!stream.readVarBytes(this._code)) {
+			Log.error("Program deserialize code fail");
 			return false;
 		}
 
 		return true;
-	}*/
+	}
 
-	public ToJson(): json {
+	public toJson(): json {
 		return {
-			Parameter: this._parameter.getHex(),
-			Code: this._code.getHex()
+			Parameter: this._parameter.toString("hex"),
+			Code: this._code.toString("hex")
 		}
 	}
 
-	/*void Program::FromJson(const nlohmann::json &j) {
-		_parameter.setHex(j["Parameter"].get<std::string>());
-		_code.setHex(j["Code"].get<std::string>());
+	public fromJson(j: json) {
+		this._parameter = Buffer.from(j["Parameter"] as string, "hex");
+		this._code = Buffer.from(j["Code"] as string, "hex");
 	}
 
-	bool Program::operator==(const Program &p) const {
-		return _code == p._code && _parameter == p._parameter;
+	public equals(p: Program): boolean {
+		return this._code == p._code && this._parameter == p._parameter;
 	}
 
-	bool Program::operator!=(const Program &p) const {
+	/*bool Program::operator!=(const Program &p) const {
 		return !operator==(p);
 	} */
-
 }

@@ -2,10 +2,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+import { ByteStream } from "../common/bytestream";
 import { JsonSerializer } from "../common/JsonSerializer";
+import { Log } from "../common/Log";
 import { ELAMessage } from "../ELAMessage";
-import { bytes_t } from "../types";
-
+import { bytes_t, json, size_t } from "../types";
 
 export enum Usage {
 	Nonce = 0x00,
@@ -42,71 +43,70 @@ export class Attribute extends ELAMessage implements JsonSerializer {
 
 	const bytes_t &Attribute::GetData() const {
 		return _data;
+	}*/
+
+	isValid(): boolean {
+		return (this._usage == Usage.Description ||
+			this._usage == Usage.DescriptionUrl ||
+			this._usage == Usage.Memo ||
+			this._usage == Usage.Script ||
+			this._usage == Usage.Nonce ||
+			this._usage == Usage.Confirmations);
 	}
 
-	bool Attribute::IsValid() const {
-		return (_usage == Attribute::Usage::Description ||
-				_usage == Attribute::Usage::DescriptionUrl ||
-				_usage == Attribute::Usage::Memo ||
-				_usage == Attribute::Usage::Script ||
-				_usage == Attribute::Usage::Nonce ||
-				_usage == Attribute::Usage::Confirmations);
-	}
-
-	size_t Attribute::EstimateSize() const {
-		size_t size = 0;
-		ByteStream stream;
+	estimateSize(): size_t {
+		let size: size_t = 0;
+		let stream = new ByteStream();
 
 		size += 1;
-		size += stream.WriteVarUint(_data.size());
-		size += _data.size();
+		size += stream.writeVarUInt(this._data.length);
+		size += this._data.length;
 
 		return size;
 	}
 
-	void Attribute::Serialize(ByteStream &stream) const {
-		stream.WriteUint8(_usage);
-		stream.WriteVarBytes(_data);
+	public serialize(stream: ByteStream) {
+		stream.writeUInt8(this._usage);
+		stream.writeVarBytes(this._data);
 	}
 
-	bool Attribute::Deserialize(const ByteStream &stream) {
-		if (!stream.ReadBytes(&_usage, 1)) {
-			Log::error("Attribute deserialize usage fail");
+	public deserialize(stream: ByteStream): boolean {
+		this._usage = stream.readUInt8();
+		if (this._usage === null) {
+			Log.error("Attribute deserialize usage fail");
 			return false;
 		}
 
-		if (!IsValid()) {
-			Log::error("invalid attribute usage: {}", (uint8_t)_usage);
+		if (!this.isValid()) {
+			Log.error("invalid attribute usage: ", this._usage);
 			return false;
 		}
 
-		if (!stream.ReadVarBytes(_data)) {
-			Log::error("Attribute deserialize data fail");
+		if (!stream.readVarBytes(this._data)) {
+			Log.error("Attribute deserialize data fail");
 			return false;
 		}
 
 		return true;
 	}
 
-	nlohmann::json Attribute::ToJson() const {
-		nlohmann::json j;
-		j["Usage"] = _usage;
-		j["Data"] = _data.getHex();
-
-		return j;
+	public toJson(): json {
+		return {
+			Usage: this._usage,
+			Data: this._data.toString("hex")
+		}
 	}
 
-	void Attribute::FromJson(const nlohmann::json &j) {
-		_usage = j["Usage"].get<Usage>();
-		_data.setHex(j["Data"].get<std::string>());
+	public fromJson(j: json) {
+		this._usage = j["Usage"] as Usage;
+		this._data = Buffer.from(j["Data"] as string, "hex");
 	}
 
-	bool Attribute::operator==(const Attribute &a) const {
-		return _usage == a._usage && _data == a._data;
+	public equals(a: Attribute): boolean {
+		return this._usage == a._usage && this._data == a._data;
 	}
 
-	bool Attribute::operator!=(const Attribute &a) const {
+	/*bool Attribute::operator!=(const Attribute &a) const {
 		return !operator==(a);
 	} */
-
 }

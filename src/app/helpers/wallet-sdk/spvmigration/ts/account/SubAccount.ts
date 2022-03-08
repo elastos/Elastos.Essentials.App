@@ -20,12 +20,16 @@
  * SOFTWARE.
  */
 
-import { uint32_t } from "../types";
-import { Address, AddressArray } from "../walletcore/Address";
+import { ByteStream } from "../common/bytestream";
+import { Error, ErrorChecker } from "../common/ErrorChecker";
+import { Log } from "../common/Log";
+import { Transaction } from "../transactions/Transaction";
+import { bytes_t, uint256, uint32_t } from "../types";
+import { Address, AddressArray, SignType } from "../walletcore/Address";
 import { Account } from "./Account";
 
 export class SubAccount {
-    // mutable std::map<uint32_t, AddressArray> 
+    // mutable std::map<uint32_t, AddressArray>
     private _chainAddressCached: {
         [index: uint32_t]: AddressArray;
     } = {};
@@ -237,47 +241,45 @@ export class SubAccount {
         }
 
         return false;
-    }
+    }*/
 
-    void SubAccount::SignTransaction(const TransactionPtr &tx, const std::string &payPasswd) const {
-        std::string addr;
-        Key key;
-        bytes_t signature;
-        ByteStream stream;
+    public signTransaction(tx: Transaction, payPasswd: string) {
+        let addr: string;
+        let key: Key;
+        let signature: bytes_t;
+        let stream = new ByteStream();
 
-        ErrorChecker::CheckParam(_parent->Readonly(), Error::Sign, "Readonly wallet can not sign tx");
-        ErrorChecker::CheckParam(tx->IsSigned(), Error::AlreadySigned, "Transaction signed");
-        ErrorChecker::CheckParam(tx->GetPrograms().empty(), Error::InvalidTransaction,
-                                 "Invalid transaction program");
+        ErrorChecker.CheckParam(this._parent.Readonly(), Error.Code.Sign, "Readonly wallet can not sign tx");
+        ErrorChecker.CheckParam(tx.isSigned(), Error.Code.AlreadySigned, "Transaction signed");
+        ErrorChecker.CheckParam(!tx.getPrograms(), Error.Code.InvalidTransaction, "Invalid transaction program");
 
-        uint256 md = tx->GetShaData();
+        let md: uint256 = tx.getShaData();
 
-        const std::vector<ProgramPtr> &programs = tx->GetPrograms();
-        for (size_t i = 0; i < programs.size(); ++i) {
-            std::vector<bytes_t> publicKeys;
-            SignType type = programs[i]->DecodePublicKey(publicKeys);
-            ErrorChecker::CheckLogic(type != SignTypeMultiSign && type != SignTypeStandard, Error::InvalidArgument,
-                                     "Invalid redeem script");
+        let programs = tx.getPrograms();
+        for (let i = 0; i < programs.length; ++i) {
+            std:: vector < bytes_t > publicKeys;
+            let type: SignType = programs[i].decodePublicKey(publicKeys);
+            ErrorChecker.CheckLogic(type != SignType.SignTypeMultiSign && type != SignType.SignTypeStandard, Error.Code.InvalidArgument, "Invalid redeem script");
 
-            bool found = FindPrivateKey(key, type, publicKeys, payPasswd);
-            ErrorChecker::CheckLogic(!found, Error::PrivateKeyNotFound, "Private key not found");
+            let found = this.findPrivateKey(key, type, publicKeys, payPasswd);
+            ErrorChecker.CheckLogic(!found, Error.Code.PrivateKeyNotFound, "Private key not found");
 
-            stream.Reset();
-            if (programs[i]->GetParameter().size() > 0) {
-                ByteStream verifyStream(programs[i]->GetParameter());
-                while (verifyStream.ReadVarBytes(signature)) {
-                    ErrorChecker::CheckLogic(key.Verify(md, signature), Error::AlreadySigned, "Already signed");
+            stream.reset();
+            if (programs[i].getParameter().length > 0) {
+                let verifyStream = new ByteStream(programs[i].getParameter());
+                while (verifyStream.readVarBytes(signature)) {
+                    ErrorChecker.CheckLogic(key.Verify(md, signature), Error.Code.AlreadySigned, "Already signed");
                 }
-                stream.WriteBytes(programs[i]->GetParameter());
+                stream.writeBytes(programs[i].getParameter());
             }
 
-            signature = key.Sign(md);
-            stream.WriteVarBytes(signature);
-            programs[i]->SetParameter(stream.GetBytes());
+            signature = key.sign(md);
+            stream.writeVarBytes(signature);
+            programs[i].setParameter(stream.getBytes());
         }
     }
 
-    Key SubAccount::GetKeyWithAddress(const Address &addr, const std::string &payPasswd) const {
+    /*Key SubAccount::GetKeyWithAddress(const Address &addr, const std::string &payPasswd) const {
         if (_parent->GetSignType() != IAccount::MultiSign) {
             for (auto it = _chainAddressCached.begin(); it != _chainAddressCached.end(); ++it) {
                 uint32_t chain = it->first;
@@ -308,46 +310,45 @@ export class SubAccount {
     Key SubAccount::DeriveDIDKey(const std::string &payPasswd) {
         return _parent->RootKey(payPasswd)->getChild("44'/0'/0'/0/0");
     }
+*/
+    GetCode(addr: Address, code: bytes_t): boolean {
+        let index: uint32_t;
+        let pubKey: bytes_t;
 
-    bool SubAccount::GetCode(const Address &addr, bytes_t &code) const {
-        uint32_t index;
-        bytes_t pubKey;
-
-        if (IsProducerDepositAddress(addr)) {
+        if (this.IsProducerDepositAddress(addr)) {
             // "44'/0'/1'/0/0";
             code = _depositAddress.RedeemScript();
             return true;
         }
 
-        if (IsOwnerAddress(addr)) {
+        if (this.IsOwnerAddress(addr)) {
             // "44'/0'/1'/0/0";
             code = _ownerAddress.RedeemScript();
             return true;
         }
 
-        if (IsCRDepositAddress(addr)) {
+        if (this.IsCRDepositAddress(addr)) {
             // "44'/0'/0'/0/0";
             code = _crDepositAddress.RedeemScript();
             return true;
         }
 
-        for (auto it = _chainAddressCached.begin(); it != _chainAddressCached.end(); ++it) {
-            AddressArray &chainAddr = it->second;
-            for (index = chainAddr.size(); index > 0; index--) {
+        for (let chainAddr of Object.values(this._chainAddressCached)) {
+            for (index = chainAddr.length; index > 0; index--) {
                 if (chainAddr[index - 1] == addr) {
                     code = chainAddr[index - 1].RedeemScript();
                     return true;
                 }
 
-                if (_parent->GetSignType() != IAccount::MultiSign) {
-                    Address cid(chainAddr[index - 1]);
+                if (this._parent.GetSignType() != IAccount.MultiSign) {
+                    let cid = Address.newFromAddress(chainAddr[index - 1]);
                     cid.ChangePrefix(PrefixIDChain);
                     if (addr == cid) {
                         code = cid.RedeemScript();
                         return true;
                     }
 
-                    Address did(cid);
+                    let did = Address.newFromAddress(cid);
                     did.ConvertToDID();
                     if (addr == did) {
                         code = did.RedeemScript();
@@ -357,13 +358,13 @@ export class SubAccount {
             }
         }
 
-        Log::error("Can't found code and path for address {}", addr.String());
+        Log.error("Can't found code and path for address {}", addr.String());
 
         return false;
     }
-
-    AccountPtr SubAccount::Parent() const {
-        return _parent;
-    }
-*/
+    /*
+        AccountPtr SubAccount::Parent() const {
+            return _parent;
+        }
+    */
 }

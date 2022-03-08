@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Elastos Foundation
+ * Copyright (c) 2021 Elastos Foundation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +20,26 @@
  * SOFTWARE.
  */
 
-//import { Mutex, MutexInterface } from 'async-mutex';
+import createHash from 'create-hash';
 
-export class Lockable {
-	/*
-	 NOTE: Normally in without ny SPV SDK synchronization operation, no semaphorization should be needed.
-	 We keep methods synchronous and unprotected for now. This can change later.
+export class SHA256 {
+    public static hashTwice(buffer: Buffer): Buffer {
+        let firstHash = createHash('sha256').update(buffer).digest();
+        return createHash('sha256').update(firstHash).digest()
+    }
 
-	protected lock: Mutex;
+    public static sha256ripemd160(buffer: Buffer): Buffer {
+        let firstHash = createHash('sha256').update(buffer).digest();
+        return createHash('ripemd160').update(firstHash).digest()
+    }
 
-		public Lock(): Promise<MutexInterface.Releaser> {
-			return this.lock.acquire();
-		}
+    public static encodeToString(...inputs: Buffer[]): string {
+        let fullInput = inputs.reduce((acc, curr) => Buffer.concat([acc, curr]), Buffer.from(""));
+        return createHash("sha256").update(fullInput).digest().toString();
+    }
 
-		public Unlock() {
-			return this.lock.release();
-		}
-
-		GetLock(): Mutex {
-			return this.lock;
-		} */
+    public static encodeToBuffer(...inputs: Buffer[]): Buffer {
+        let fullInput = inputs.reduce((acc, curr) => Buffer.concat([acc, curr]), Buffer.from(""));
+        return createHash("sha256").update(fullInput).digest();
+    }
 }

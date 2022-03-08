@@ -2,32 +2,35 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+import { Error, ErrorChecker } from "../common/ErrorChecker";
+import { Log } from "../common/Log";
 import { bytes_t, uint168 } from "../types";
+import { Base58 } from "./Base58";
 
-/* #define ELA_SIDECHAIN_DESTROY_ADDR "1111111111111111111114oLvT2"
-#define OP_0           0x00
-#define OP_PUSHDATA1   0x4c
-#define OP_PUSHDATA2   0x4d
-#define OP_PUSHDATA4   0x4e
-#define OP_1NEGATE     0x4f
-#define OP_1           0x51
-#define OP_16          0x60
-#define OP_DUP         0x76
-#define OP_EQUAL       0x87
-#define OP_EQUALVERIFY 0x88
-#define OP_HASH160     0xa9
-#define OP_CHECKSIG    0xac */
+export const ELA_SIDECHAIN_DESTROY_ADDR = "1111111111111111111114oLvT2";
+export const OP_0 = 0x00;
+export const OP_PUSHDATA1 = 0x4c;
+export const OP_PUSHDATA2 = 0x4d;
+export const OP_PUSHDATA4 = 0x4e;
+export const OP_1NEGATE = 0x4f
+export const OP_1 = 0x51;
+export const OP_16 = 0x60;
+export const OP_DUP = 0x76;
+export const OP_EQUAL = 0x87;
+export const OP_EQUALVERIFY = 0x88;
+export const OP_HASH160 = 0xa9;
+export const OP_CHECKSIG = 0xac;
 
-enum SignType {
+export enum SignType {
 	SignTypeInvalid = 0,
 	SignTypeStandard = 0xAC,
 	SignTypeDID = 0xAD,
 	SignTypeMultiSign = 0xAE,
 	SignTypeCrossChain = 0xAF,
 	SignTypeDestroy = 0xAA,
-};
+}
 
-enum Prefix {
+export enum Prefix {
 	PrefixStandard = 0x21,
 	PrefixMultiSign = 0x12,
 	PrefixCrossChain = 0x4B,
@@ -39,32 +42,39 @@ enum Prefix {
 
 export type AddressArray = Address[];
 
-
 export class Address {
 	private _programHash: uint168;
 	private _code: bytes_t;
-	private _isValid: boolean;
+	private _isValid = false;
 
-	/* Address:: Address() {
-		_isValid = false;
-	} */
+	public static newFromAddressString(address: string): Address {
+		let addr = new Address();
 
-	/* Address::Address(const std::string &address) {
-		if (address.empty()) {
-			_isValid = false;
+		if (!address) {
+			addr._isValid = false;
 		} else {
-			bytes_t payload;
-			if (Base58::CheckDecode(address, payload)) {
-				_programHash = uint168(payload);
-				CheckValid();
+			let payload: bytes_t;
+			if (Base58.CheckDecode(address, payload)) {
+				addr._programHash = uint168(payload);
+				addr.checkValid();
 			} else {
-				Log::error("invalid address {}", address);
-				_isValid = false;
+				Log.error("invalid address {}", address);
+				addr._isValid = false;
 			}
 		}
+		return addr;
 	}
 
-	Address::Address(Prefix prefix, const bytes_t &pubKey, bool did) :
+	public static newFromAddress(address: Address): Address {
+		let addr = new Address();
+		addr._programHash = address._programHash;
+		addr._code = address._code;
+		addr._isValid = address._isValid;
+		return addr;
+	}
+
+
+	/*Address::Address(Prefix prefix, const bytes_t &pubKey, bool did) :
 		Address(prefix, {pubKey}, 1, did) {
 	}
 
@@ -93,22 +103,22 @@ export class Address {
 
 	/*bool Address::IsIDAddress() const {
 		return _isValid && _programHash.prefix() == PrefixIDChain;
+	}*/
+
+	public String(): string {
+		return Base58.CheckEncode(this._programHash.bytes());
 	}
 
-	std::string Address::String() const {
-		return Base58::CheckEncode(_programHash.bytes());
+	public ProgramHash(): uint168 {
+		return this._programHash;
 	}
 
-	const uint168 &Address::ProgramHash() const {
-		return _programHash;
+	SetProgramHash(programHash: uint168) {
+		this._programHash = programHash;
+		this.checkValid();
 	}
 
-	void Address::SetProgramHash(const uint168 &programHash) {
-		_programHash = programHash;
-					CheckValid();
-	}
-
-	SignType Address::PrefixToSignType(Prefix prefix) const {
+	/*SignType Address::PrefixToSignType(Prefix prefix) const {
 		SignType type;
 
 		switch (prefix) {
@@ -133,16 +143,16 @@ export class Address {
 		}
 
 		return type;
+	}*/
+
+	public SetRedeemScript(prefix: Prefix, code: bytes_t) {
+		this._code = code;
+		this.GenerateProgramHash(prefix);
+		this.CheckValid();
+		ErrorChecker.CheckCondition(!this._isValid, Error.Code.InvalidArgument, "redeemscript is invalid");
 	}
 
-	void Address::SetRedeemScript(Prefix prefix, const bytes_t &code) {
-		_code = code;
-		GenerateProgramHash(prefix);
-		CheckValid();
-		ErrorChecker::CheckCondition(!_isValid, Error::InvalidArgument, "redeemscript is invalid");
-	}
-
-	bool Address::ChangePrefix(Prefix prefix) {
+	/*bool Address::ChangePrefix(Prefix prefix) {
 		ErrorChecker::CheckCondition(!_isValid, Error::Address, "can't change prefix with invalid addr");
 		SignType oldSignType = SignType(_code.back());
 		if (oldSignType == SignTypeMultiSign || PrefixToSignType(prefix) == SignTypeMultiSign)
@@ -167,78 +177,70 @@ export class Address {
 	bool Address::operator<(const Address &address) const {
 		return _programHash < address._programHash;
 	}
+*/
 
-	Address& Address::operator=(const Address &address) {
-		_programHash = address._programHash;
-		_code = address._code;
-		_isValid = address._isValid;
-		return *this;
+	public equals(address: Address | string): boolean {
+		if (typeof address === "string")
+			return this._isValid && this.String() === address;
+		else
+			return this._isValid == address._isValid && this._programHash == address._programHash;
 	}
 
-	bool Address::operator==(const Address &address) const {
-		return _isValid == address._isValid && _programHash == address._programHash;
-	}
+	/*	bool Address::operator!=(const Address &address) const {
+			return _programHash != address._programHash;
+		}
 
-	bool Address::operator==(const std::string &address) const {
-		return _isValid && this->String() == address;
-	}
+		bool Address::operator!=(const std::string &address) const {
+			return this->String() != address;
+		}
 
-	bool Address::operator!=(const Address &address) const {
-		return _programHash != address._programHash;
-	}
+		void Address::GenerateCode(Prefix prefix, const std::vector<bytes_t> &pubkeys, uint8_t m, bool did) {
+			ErrorChecker::CheckLogic(m > pubkeys.size() || m == 0, Error::MultiSignersCount, "Invalid m");
 
-	bool Address::operator!=(const std::string &address) const {
-		return this->String() != address;
-	}
+			if (m == 1 && pubkeys.size() == 1) {
+				_code.push_back(pubkeys[0].size());
+				_code += pubkeys[0];
+				if (did)
+					_code.push_back(SignTypeDID);
+				else
+					_code.push_back(PrefixToSignType(prefix));
+			} else {
+				ErrorChecker::CheckCondition(pubkeys.size() > sizeof(uint8_t) - OP_1, Error::MultiSignersCount,
+											 "Signers should less than 205.");
 
-	void Address::GenerateCode(Prefix prefix, const std::vector<bytes_t> &pubkeys, uint8_t m, bool did) {
-		ErrorChecker::CheckLogic(m > pubkeys.size() || m == 0, Error::MultiSignersCount, "Invalid m");
+				std::vector<bytes_t> sortedSigners(pubkeys.begin(), pubkeys.end());
+				std::sort(sortedSigners.begin(), sortedSigners.end(), [](const bytes_t &a, const bytes_t &b) {
+					return a.getHex() < b.getHex();
+				});
 
-		if (m == 1 && pubkeys.size() == 1) {
-			_code.push_back(pubkeys[0].size());
-			_code += pubkeys[0];
-			if (did)
-				_code.push_back(SignTypeDID);
-			else
+				_code.push_back(uint8_t(OP_1 + m - 1));
+				for (size_t i = 0; i < sortedSigners.size(); i++) {
+					_code.push_back(uint8_t(sortedSigners[i].size()));
+					_code += sortedSigners[i];
+				}
+				_code.push_back(uint8_t(OP_1 + sortedSigners.size() - 1));
 				_code.push_back(PrefixToSignType(prefix));
-		} else {
-			ErrorChecker::CheckCondition(pubkeys.size() > sizeof(uint8_t) - OP_1, Error::MultiSignersCount,
-										 "Signers should less than 205.");
-
-			std::vector<bytes_t> sortedSigners(pubkeys.begin(), pubkeys.end());
-			std::sort(sortedSigners.begin(), sortedSigners.end(), [](const bytes_t &a, const bytes_t &b) {
-				return a.getHex() < b.getHex();
-			});
-
-			_code.push_back(uint8_t(OP_1 + m - 1));
-			for (size_t i = 0; i < sortedSigners.size(); i++) {
-				_code.push_back(uint8_t(sortedSigners[i].size()));
-				_code += sortedSigners[i];
 			}
-			_code.push_back(uint8_t(OP_1 + sortedSigners.size() - 1));
-			_code.push_back(PrefixToSignType(prefix));
 		}
-	}
 
-	void Address::GenerateProgramHash(Prefix prefix) {
-		bytes_t hash = hash160(_code);
-		_programHash = uint168(prefix, hash);
-	}
-
-	bool Address::CheckValid() {
-		if (_programHash.prefix() == PrefixDeposit ||
-			_programHash.prefix() == PrefixStandard ||
-			_programHash.prefix() == PrefixCrossChain ||
-			_programHash.prefix() == PrefixMultiSign ||
-			_programHash.prefix() == PrefixIDChain ||
-			_programHash.prefix() == PrefixDestroy ||
-			_programHash.prefix() == PrefixCRExpenses) {
-			_isValid = true;
+		void Address::GenerateProgramHash(Prefix prefix) {
+			bytes_t hash = hash160(_code);
+			_programHash = uint168(prefix, hash);
+		}
+*/
+	public checkValid(): boolean {
+		if (this._programHash.prefix() == Prefix.PrefixDeposit ||
+			this._programHash.prefix() == Prefix.PrefixStandard ||
+			this._programHash.prefix() == Prefix.PrefixCrossChain ||
+			this._programHash.prefix() == Prefix.PrefixMultiSign ||
+			this._programHash.prefix() == Prefix.PrefixIDChain ||
+			this._programHash.prefix() == Prefix.PrefixDestroy ||
+			this._programHash.prefix() == Prefix.PrefixCRExpenses) {
+			this._isValid = true;
 		} else {
-			_isValid = false;
+			this._isValid = false;
 		}
 
-		return _isValid;
-	} */
-
+		return this._isValid;
+	}
 }

@@ -23,8 +23,8 @@
 import { json } from "../types";
 
 export interface JsonSerializer {
-	ToJson(): json;
-	FromJson(j: json);
+	toJson(): json;
+	fromJson(j: json);
 }
 
 /*

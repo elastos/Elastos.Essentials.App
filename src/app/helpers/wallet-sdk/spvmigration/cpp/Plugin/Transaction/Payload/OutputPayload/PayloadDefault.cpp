@@ -62,6 +62,5 @@ namespace Elastos {
 			}
 			return false;
 		}
-
 	}
 }

@@ -140,7 +140,7 @@ export class ErrorChecker {
 		this.CheckCondition(condition, err, msg, Exception.Type.LogicError);
 	}
 
-	public static CheckCondition(condition: boolean, err: Error.Code, msg: string, type: Exception.Type, enableLog = true) {
+	public static CheckCondition(condition: boolean, err: Error.Code, msg: string, type: Exception.Type = Exception.Type.LogicError, enableLog = true) {
 		if (condition) {
 			let errJson = this.MakeErrorJson(err, msg);
 

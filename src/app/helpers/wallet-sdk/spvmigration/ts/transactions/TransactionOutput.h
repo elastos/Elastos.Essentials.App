@@ -26,11 +26,6 @@ namespace Elastos {
 
 			TransactionOutput &operator=(const TransactionOutput &tx);
 
-			TransactionOutput(const BigInt &amount, const Address &toAddress, const uint256 &assetID = Asset::GetELAAssetID(),
-							  Type type = Default, const OutputPayloadPtr &payload = nullptr);
-
-			~TransactionOutput();
-
 			size_t EstimateSize() const;
 
 			void Serialize(ByteStream &stream, uint8_t txVersion) const;

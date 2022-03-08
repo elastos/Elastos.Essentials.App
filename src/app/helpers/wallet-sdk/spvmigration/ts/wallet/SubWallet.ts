@@ -20,11 +20,23 @@
  * SOFTWARE.
  */
 
+import { warnLog } from "../common/Log";
+import { ChainConfig } from "../Config";
+import { json, uint32_t } from "../types";
+import { CoinInfo } from "../walletcore/CoinInfo";
+import type { MasterWallet } from "./MasterWallet";
+
+export const SELA_PER_ELA = 100000000;
+export const DEPOSIT_OR_WITHDRAW_FEE = 10000;
+
 // TODO: merge methods doc from ISubwallet.h
-export class SubWallet {
+export abstract class SubWallet {
+	protected _parent: MasterWallet;
+	protected _info: CoinInfo;
+	protected _config: ChainConfig;
 
 	/* #define WarnLog() SPVLOG_WARN("SubWallet::{} should not be here", GetFunName())
-	
+
 			SubWallet::SubWallet(const CoinInfoPtr &info,
 								 const ChainConfigPtr &config,
 								 MasterWallet *parent) :
@@ -32,57 +44,54 @@ export class SubWallet {
 				_info(info),
 				_config(config) {
 			}
-	
+
 			SubWallet::~SubWallet() {
 			}
-	
+
 					void SubWallet::FlushData() {
 					WarnLog();
-					}
-	
-					//default implement ISubWallet
-			std::string SubWallet::GetChainID() const {
-				return _info->GetChainID();
-			}
-	
-					nlohmann::json SubWallet::GetBasicInfo() const {
-							ArgInfo("{} {}", GetSubWalletID(), GetFunName());
-	
-							nlohmann::json j;
-							j["Info"] = {};
-							j["ChainID"] = _info->GetChainID();
-	
-							ArgInfo("r => {}", j.dump());
-							return j;
-					}
-	
-					nlohmann::json SubWallet::GetAddresses(uint32_t index, uint32_t count, bool internal) const {
-							WarnLog();
-							return nlohmann::json();
-			}
-	
-					nlohmann::json SubWallet::GetPublicKeys(uint32_t index, uint32_t count, bool internal) const {
-							WarnLog();
-				return nlohmann::json();
-			}
-	
-			nlohmann::json SubWallet::SignTransaction(const nlohmann::json &tx, const std::string &passwd) const {
-					WarnLog();
-				return nlohmann::json();
-			}
-	
-					std::string SubWallet::SignDigest(const std::string &address, const std::string &digest, const std::string &passwd) const {
-							WarnLog();
-							return "";
-			}
-	
-					bool SubWallet::VerifyDigest(const std::string &publicKey, const std::string &digest, const std::string &signature) const {
-							WarnLog();
-					return false;
-			}
-	
-					std::string SubWallet::GetSubWalletID() const {
-							return _parent->GetWalletID() + ":" + _info->GetChainID();
-					} */
+					}*/
 
+	//default implement ISubWallet
+	public getChainID(): string {
+		return this._info.getChainID();
+	}
+
+	public GetBasicInfo(): json {
+		//ArgInfo("{} {}", GetSubWalletID(), GetFunName());
+
+		return {
+			Info: {},
+			ChainID: this._info.getChainID()
+		}
+	}
+
+	public getAddresses(index: uint32_t, count: uint32_t, internal = false): json {
+		warnLog();
+		return {};
+	}
+
+	public getPublicKeys(index: uint32_t, count: uint32_t, internal = false): json {
+		warnLog();
+		return {};
+	}
+
+	public SignTransaction(tx: json, passwd: string): json {
+		warnLog();
+		return {};
+	}
+
+	public SignDigest(address: string, digest: string, passwd: string): string {
+		warnLog();
+		return "";
+	}
+
+	public VerifyDigest(publicKey: string, digest: string, signature: string): boolean {
+		warnLog();
+		return false;
+	}
+
+	protected getSubWalletID(): string {
+		return this._parent.getWalletID() + ":" + this._info.getChainID();
+	}
 }

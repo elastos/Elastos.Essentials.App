@@ -118,7 +118,6 @@ namespace Elastos {
 
 			friend class SubWallet;
 
-			typedef std::map<std::string, ISubWallet *> WalletMap;
 
 			MasterWallet(
 					const std::string &id,
@@ -198,13 +197,7 @@ namespace Elastos {
 		    void SetupNetworkParameters();
 
 		protected:
-			mutable WalletMap _createdWallets;
-
-			AccountPtr _account;
-
-			std::string _id;
-
-			ConfigPtr _config;
+		
 
 		};
 

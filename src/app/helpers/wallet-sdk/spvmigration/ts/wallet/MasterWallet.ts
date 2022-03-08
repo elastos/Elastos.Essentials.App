@@ -20,7 +20,19 @@
  * SOFTWARE.
  */
 
+import { Account } from "../account/Account";
+import { Config } from "../Config";
+import { SubWallet } from "./SubWallet";
+
+type WalletMap = {
+	[id: string]: SubWallet
+};
+
 export class MasterWallet {
+	protected _createdWallets: WalletMap;
+	protected _account: Account;
+	protected _id: string;
+	protected _config: Config;
 
 	/* MasterWallet::MasterWallet(const std::string &id,
 								 const ConfigPtr &config,
@@ -140,44 +152,41 @@ export class MasterWallet {
 
 	void MasterWallet::RemoveLocalStore() {
 		_account->Remove();
+	}*/
+
+	public getID(): string {
+		return this._id;
 	}
 
-	std::string MasterWallet::GetID() const {
-		return _id;
+	public getWalletID(): string {
+		return this._id;
 	}
 
-	std::string MasterWallet::GetWalletID() const {
-		return _id;
+	public getAllSubWallets(): SubWallet[] {
+		//ArgInfo("{} {}", _id, GetFunName());
+
+		let subWallets: SubWallet[] = Object.values(this._createdWallets);
+
+		let result;
+		for (let i = 0; i < subWallets.length; ++i)
+			result += subWallets[i].getChainID() + ",";
+
+		//ArgInfo("r => {}", result);
+		return subWallets;
 	}
 
-	std::vector<ISubWallet *> MasterWallet::GetAllSubWallets() const {
-		ArgInfo("{} {}", _id, GetFunName());
+	public getSubWallet(chainID: string): SubWallet {
+		//ArgInfo("{} {}", _id, GetFunName());
+		//ArgInfo("chainID: {}", chainID);
 
-		std::vector<ISubWallet *> subwallets;
-		for (WalletMap::const_iterator it = _createdWallets.cbegin(); it != _createdWallets.cend(); ++it) {
-			subwallets.push_back(it->second);
+		if (chainID in this._createdWallets) {
+			return this._createdWallets[chainID];
 		}
 
-		std::string result;
-		for (size_t i = 0; i < subwallets.size(); ++i)
-			result += subwallets[i]->GetChainID() + ",";
-
-		ArgInfo("r => {}", result);
-		return subwallets;
+		return null;
 	}
 
-	ISubWallet *MasterWallet::GetSubWallet(const std::string &chainID) const {
-		ArgInfo("{} {}", _id, GetFunName());
-		ArgInfo("chainID: {}", chainID);
-
-		if (_createdWallets.find(chainID) != _createdWallets.end()) {
-			return _createdWallets[chainID];
-		}
-
-		return nullptr;
-	}
-
-	ISubWallet *MasterWallet::CreateSubWallet(const std::string &chainID) {
+	/*ISubWallet *MasterWallet::CreateSubWallet(const std::string &chainID) {
 		ArgInfo("{} {}", _id, GetFunName());
 		ArgInfo("chainID: {}", chainID);
 
