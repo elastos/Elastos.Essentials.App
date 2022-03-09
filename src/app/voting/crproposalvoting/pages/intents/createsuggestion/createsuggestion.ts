@@ -76,7 +76,7 @@ export class CreateSuggestionPage {
         this.suggestionDetailFetched = true;
 
         if (this.suggestionDetail) {
-            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.suggestionDetail);
+            this.proposaltype = this.crOperations.getProposalTypeForChangeProposal(this.suggestionDetail);
 
             this.bugetAmount = 0;
             if (this.proposaltype == "normal") {
@@ -125,7 +125,14 @@ export class CreateSuggestionPage {
             }
 
             await this.suggestionService.postSignSuggestionCommandResponse(signedJWT);
-            this.crOperations.handleSuccessReturn();
+
+            if ((this.suggestionDetail.type == "changeproposalowner" || this.suggestionDetail.type == "changeproposalowner")
+                    && !this.suggestionDetail.signature) {
+                this.crOperations.handleSuccessReturn("sign");    // First sign
+            }
+            else {
+                this.crOperations.handleSuccessReturn();
+            }
         }
         catch (e) {
             this.signingAndSendingSuggestionResponse = false;

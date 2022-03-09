@@ -407,9 +407,10 @@ export class CROperationsService {
         }
     }
 
-    public handleSuccessReturn() {
+    public handleSuccessReturn(command?: string) {
         this.goBack();
-        this.globalNative.genericToast('crproposalvoting.' + this.onGoingCommand.command + '-successfully', 2000, "success");
+        command = command || this.onGoingCommand.command;
+        this.globalNative.genericToast('crproposalvoting.' + command + '-successfully', 2000, "success");
     }
 
     public async popupErrorMessage(error: any) {
@@ -431,5 +432,12 @@ export class CROperationsService {
 
         await this.globalPopupService.ionicAlert("common.error", this.translate.instant('crproposalvoting.' + this.onGoingCommand.command + '-failed') + "[" + message + "]");
         Logger.error('crproposal', this.onGoingCommand.command + ' error:', message);
+    }
+
+    public getProposalTypeForChangeProposal(detail: any) {
+        if (detail.type == "changeproposalowner" && detail.newRecipient && !detail.newOwnerDID) {
+            return "changeproposaladdress";
+        }
+        return detail.type;
     }
 }

@@ -86,8 +86,8 @@ export class SuggestionDetailPage {
             this.commandName = null;
             this.buttonLabel = null;
 
-            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.suggestion);
-            this.suggestionService.adjustSuggectionStatus(this.suggestion);
+            this.proposaltype = this.crOperations.getProposalTypeForChangeProposal(this.suggestion);
+            await this.suggestionService.adjustSuggectionStatus(this.suggestion);
 
             let selfPublicKey = await Util.getSelfPublicKey();
 

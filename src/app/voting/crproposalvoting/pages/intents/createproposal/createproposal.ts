@@ -78,7 +78,7 @@ export class CreateProposalPage {
         this.suggestionDetail = await this.crOperations.getCurrentSuggestion();
         this.suggestionDetailFetched = true;
         if (this.suggestionDetail) {
-            this.proposaltype = this.suggestionService.getProposalTypeForChangeProposal(this.suggestionDetail);
+            this.proposaltype = this.crOperations.getProposalTypeForChangeProposal(this.suggestionDetail);
 
             this.bugetAmount = 0;
             if (this.proposaltype == "normal") {

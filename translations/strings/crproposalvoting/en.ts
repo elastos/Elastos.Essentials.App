@@ -101,6 +101,7 @@ export const en = {
         'sign-create-suggestion': 'Sign and Create Suggestion',
         'createsuggestion-successfully': 'Suggestion created successfully.',
         'createsuggestion-failed': 'Failed to sign suggestion, please sign suggestion again.',
+        'sign-successfully': 'Suggestion signed successfully.',
 
         'create-proposal': 'Create Proposal',
         'create-proposal-msg': 'You are about to create the following proposal. Please review it, and follow the process to sign and publish it.',

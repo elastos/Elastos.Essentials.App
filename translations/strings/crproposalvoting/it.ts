@@ -101,6 +101,7 @@ export const it = {
         'sign-create-suggestion': 'Firma e crea suggerimento',
         'createsuggestion-successfully': 'Suggestion created successfully.',
         'createsuggestion-failed': 'Failed to sign suggestion, please sign suggestion again.',
+        'sign-successfully': 'Suggestion signed successfully.',
 
         'create-proposal': 'Crea proposta',
         'create-proposal-msg': 'Stai per creare la seguente proposta. Si prega di controllare il contenuto e seguire le istruzioni per la firma e la pubblicazione.',

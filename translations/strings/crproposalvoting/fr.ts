@@ -106,6 +106,7 @@ export const fr = {
         'sign-create-proposal': 'Signer et Créer la Proposition',
         'createproposal-successfully': 'Proposal created successfully, please wait for transaction confirmation.',
         'createproposal-failed': 'Failed to create proposal, please recreate proposal.',
+        'sign-successfully': 'Suggestion signed successfully.',
 
         'review-proposal': 'Vote pour une Proposition',
         'review-proposal-msg': 'Vous êtes sur le point de voter pour la proposition suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',

@@ -309,29 +309,24 @@ export class SuggestionService {
         }
     }
 
-    public getProposalTypeForChangeProposal(suggestionDetail: SuggestionDetail) {
-        if (suggestionDetail.type == "changeproposalowner" && suggestionDetail.newRecipient && !suggestionDetail.newOwnerDID) {
-            return "changeproposaladdress";
-        }
-        return suggestionDetail.type;
-    }
-
-    public adjustSuggectionStatus(suggestionDetail: SuggestionDetail) {
-        if (!this.selfPublicKey) {
-            this.selfPublicKey = void Util.getSelfPublicKey();
-        }
-
+    public async adjustSuggectionStatus(suggestionDetail: SuggestionDetail): Promise<string> {
         let type = suggestionDetail.type;
         let status = suggestionDetail.status;
         if (type == "secretarygeneral" && status != 'proposed') {
             if (!suggestionDetail.newSecretarySignature &&
-                !(Util.isSelfDid(suggestionDetail.did) && !Util.isSelfDid(suggestionDetail.newSecretaryDID))) {
+                (!(Util.isSelfDid(suggestionDetail.did) && !Util.isSelfDid(suggestionDetail.newSecretaryDID))
+                || (suggestionDetail.signature && !Util.isSelfDid(suggestionDetail.newSecretaryDID)))) {
                     suggestionDetail.status = "unsigned";
             }
         }
         else  if (type == "changeproposalowner" && status != 'proposed') {
+            if (!this.selfPublicKey) {
+                this.selfPublicKey = await Util.getSelfPublicKey();
+            }
+
             if (!suggestionDetail.newOwnerSignature &&
-                !(Util.isSelfDid(suggestionDetail.did) && (suggestionDetail.newOwnerPublicKey != this.selfPublicKey))) {
+                (!(Util.isSelfDid(suggestionDetail.did) && (suggestionDetail.newOwnerPublicKey != this.selfPublicKey))
+                || (suggestionDetail.signature && (suggestionDetail.newOwnerPublicKey == this.selfPublicKey)))) {
                     suggestionDetail.status = "unsigned";
             }
         }
@@ -342,7 +337,7 @@ export class SuggestionService {
         for (let result of results) {
             if (result.type == "secretarygeneral" || result.type == "changeproposalowner") {
                 let suggestionDetail = await this.fetchSuggestionDetail(result.sid);
-                result.status = this.adjustSuggectionStatus(suggestionDetail) as SuggestionStatus;
+                result.status = await this.adjustSuggectionStatus(suggestionDetail) as SuggestionStatus;
             }
         }
     }
