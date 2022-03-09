@@ -381,7 +381,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    * Optionally navigates home after completion. TODO: MOVE THIS NAVIGATION IN SCREENS
    */
   // TODO: make this "transfer" object disappear...
-  public async signAndSendRawTransaction(rawTransaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
+  public async signAndSendRawTransaction(rawTransaction: any, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
     // Ask the safe to sign the transaction. This includes potential password prompt or other UI operations
     // depending on the safe requirements.
     let signedTxResult = await this.networkWallet.safe.signTransaction(rawTransaction, transfer);

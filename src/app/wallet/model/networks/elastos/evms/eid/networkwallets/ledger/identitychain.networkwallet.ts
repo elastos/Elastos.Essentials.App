@@ -15,7 +15,7 @@ export class ElastosIdentityChainLedgerNetworkWallet extends ElastosLedgerNetwor
     super(
       masterWallet,
       network,
-      new EVMSafe(masterWallet),
+      new EVMSafe(masterWallet, network.getMainChainID()),
       "ELA"
     );
   }

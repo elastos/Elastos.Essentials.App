@@ -7,7 +7,6 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 import Web3 from 'web3';
 import { ERC20CoinService } from '../../../../services/evm/erc20coin.service';
 import { EVMService } from '../../../../services/evm/evm.service';
-import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
 import { StandardCoinName } from '../../../coin';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
@@ -17,6 +16,8 @@ import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
 import type { EVMNetwork } from '../evm.network';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction } from '../evm.types';
 import { ERC20SubWallet } from './erc20.subwallet';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+var Common = require('ethereumjs-common').default;
 
 /**
  * Specialized sub wallet for EVM compatible chains main coins (elastos EID, elastos ESC, heco, etc)
@@ -371,17 +372,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       nonce = await this.getNonce();
     }
     Logger.log('wallet', 'createPaymentTransaction amount:', amount.toString(), ' nonce:', nonce)
-    return SPVService.instance.createTransfer(
-      jsToSpvWalletId(this.masterWallet.id),
-      this.id,
-      toAddress,
-      amount.toString(), // Amount in ether
-      6, // ETHER_ETHER
-      gasPrice,
-      0, // WEI
-      gasLimit,
-      nonce
-    );
+
+    return this.networkWallet.safe.createTransfer(toAddress, amount.toString(), gasPrice, gasLimit, nonce);
   }
 
   public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {

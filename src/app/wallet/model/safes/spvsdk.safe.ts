@@ -37,6 +37,20 @@ export class SPVSDKSafe extends Safe {
     );
   }
 
+  public createTransfer(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
+    return SPVService.instance.createTransfer(
+        jsToSpvWalletId(this.masterWallet.id),
+        this.chainId,
+        toAddress,
+        amount,
+        6, // ETHER_ETHER
+        gasPrice,
+        0,
+        gasLimit,
+        nonce
+      );
+  }
+
   public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
     const password = await WalletService.instance.openPayModal(transfer);
     if (!password) {

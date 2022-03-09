@@ -19,7 +19,7 @@ export class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetwo
         super(
             masterWallet,
             network,
-            new EVMSafe(masterWallet),
+            new EVMSafe(masterWallet, network.getMainChainID()),
             displayToken,
             mainSubWalletFriendlyName,
             averageBlocktime
