@@ -178,7 +178,8 @@ class ETHTransactionManager {
       }
     }
     catch (err) {
-      Logger.error('wallet', 'publishTransaction error:', err)
+      Logger.error('wallet', 'ETHTransactionManager publishTransaction error:', err)
+      throw err;
     }
   }
 

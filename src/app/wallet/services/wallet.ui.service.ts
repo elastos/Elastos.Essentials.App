@@ -22,9 +22,12 @@
 
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { LedgerSignComponent, LedgerSignComponentOptions } from '../components/ledger-sign/ledger-sign.component';
 import { WalletChooserComponent, WalletChooserComponentOptions } from '../components/wallet-chooser/wallet-chooser.component';
+import { Safe } from '../model/safes/safe';
 import { WalletService } from './wallet.service';
 
 export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
@@ -67,6 +70,33 @@ export class WalletUIService {
                 }
                 else
                     resolve(false);
+            });
+            void modal.present();
+        });
+    }
+
+    /**
+     *
+     */
+     async connectLedger(deviceId: string, safe: Safe): Promise<BluetoothTransport> {
+        let options: LedgerSignComponentOptions = {
+            deviceId: deviceId,
+            safe: safe,
+        };
+
+        let modal = await this.modalCtrl.create({
+            component: LedgerSignComponent,
+            componentProps: options,
+            backdropDismiss: false,
+        });
+
+        return new Promise(resolve => {
+            void modal.onWillDismiss().then((params) => {
+                if (params.data) {
+                    resolve(params.data);
+                }
+                else
+                    resolve(null);
             });
             void modal.present();
         });

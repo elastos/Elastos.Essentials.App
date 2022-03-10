@@ -7,6 +7,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { ContactsComponent } from './contacts/contacts.component';
 import { ETHTransactionComponent } from './eth-transaction/eth-transaction.component';
 import { HelpComponent } from './help/help.component';
+import { LedgerSignComponent } from './ledger-sign/ledger-sign.component';
 import { NetworkChooserComponent } from './network-chooser/network-chooser.component';
 import { OptionsComponent } from './options/options.component';
 import { StdTransactionComponent } from './std-transaction/std-transaction.component';
@@ -24,6 +25,7 @@ import { WarningComponent } from './warning/warning.component';
     HelpComponent,
     ContactsComponent,
     ETHTransactionComponent,
+    LedgerSignComponent,
     OptionsComponent,
     WarningComponent,
     TransferWalletChooserComponent,
@@ -44,18 +46,19 @@ import { WarningComponent } from './warning/warning.component';
   providers: [
   ],
   entryComponents: [
+    ContactsComponent,
+    ETHTransactionComponent,
+    HelpComponent,
+    LedgerSignComponent,
+    NetworkChooserComponent,
+    OptionsComponent,
+    StdTransactionComponent,
+    TokenChooserComponent,
+    TransferWalletChooserComponent,
     TxConfirmComponent,
     TxSuccessComponent,
-    HelpComponent,
-    ContactsComponent,
-    OptionsComponent,
-    WarningComponent,
-    ETHTransactionComponent,
-    TransferWalletChooserComponent,
-    NetworkChooserComponent,
     WalletChooserComponent,
-    TokenChooserComponent,
-    StdTransactionComponent
+    WarningComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

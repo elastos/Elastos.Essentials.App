@@ -3,6 +3,7 @@ import { Transaction as EthereumTx, TxData } from "ethereumjs-tx";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
+import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
 import Web3 from "web3";
 import { LeddgerAccountType } from "../../../ledger.types";
 import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
@@ -16,6 +17,8 @@ var Common = require('ethereumjs-common').default;
  */
 export class EVMSafe extends Safe {
     private evmAddress = null;
+    private evmTx: EthereumTx = null;
+
     constructor(protected masterWallet: LedgerMasterWallet, protected chainId: number) {
         super(masterWallet);
 
@@ -61,42 +64,49 @@ export class EVMSafe extends Safe {
 
     public async signTransaction(txData: TxData, transfer: Transfer): Promise<SignTransactionResult> {
         Logger.log('ledger', "EVMSafe::signTransaction chainId:", this.chainId);
+        let signTransactionResult: SignTransactionResult = {
+            signedTransaction : null
+        }
+
+        this.createEthereumTx(txData)
+
+        // Wait for the ledger sign the transaction.
+        let signed = await WalletUIService.instance.connectLedger(this.masterWallet.deviceID, this)
+        if (!signed) {
+            Logger.log('ledger', "EVMSafe::signTransaction can't connect to ledger or user canceled");
+            return signTransactionResult;
+        }
+
+        let signedTx = {
+            TxSigned: this.evmTx.serialize().toString('hex')
+        }
+        signTransactionResult.signedTransaction  = JSON.stringify(signedTx)
+        return signTransactionResult;
+    }
+
+    public async signTransactionByLedger(transport: BluetoothTransport) {
+        let unsignedTx = this.evmTx.serialize().toString('hex')
+
+        const eth = new AppEth(transport);
+        // TODO: use the right HD derivation path.
+        const r = await eth.signTransaction("44'/60'/0'/0/0", unsignedTx);
+
+        this.evmTx.v = Buffer.from(r.v, "hex");
+        this.evmTx.r = Buffer.from(r.r, "hex");
+        this.evmTx.s = Buffer.from(r.s, "hex");
+    }
+
+    private createEthereumTx(txData: TxData) {
         let common = Common.forCustomChain(
             'mainnet',
             {chainId: this.chainId},
             'petersburg'
         );
-        let tx = new EthereumTx(txData, {'common': common});
+        this.evmTx = new EthereumTx(txData, {'common': common});
 
         // Set the EIP155 bits
-        tx.raw[6] = Buffer.from([this.chainId]); // v
-        tx.raw[7] = Buffer.from([]); // r
-        tx.raw[8] = Buffer.from([]); // s
-
-        let serializedTx = tx.serialize().toString('hex')
-
-        // Wait for the ledger and create the transport
-        // TODO: show a popup, wait for connect to ledger.
-
-        let transport = await BluetoothTransport.open(this.masterWallet.deviceID);
-        Logger.log('ledger', "transport:", transport);
-
-        const eth = new AppEth(transport);
-        const r = await eth.signTransaction("44'/60'/0'/0/0", serializedTx);
-
-        transport.close();
-
-        tx.v = Buffer.from(r.v, "hex");
-        tx.r = Buffer.from(r.r, "hex");
-        tx.s = Buffer.from(r.s, "hex");
-
-        let signedTx = {
-            TxSigned: tx.serialize().toString('hex')
-        }
-        let signTransactionResult: SignTransactionResult = {
-            signedTransaction : JSON.stringify(signedTx)
-        }
-        Logger.warn('ledger', "signTransaction tx :", signTransactionResult.signedTransaction);
-        return Promise.resolve(signTransactionResult);
+        this.evmTx.raw[6] = Buffer.from([this.chainId]); // v
+        this.evmTx.raw[7] = Buffer.from([]); // r
+        this.evmTx.raw[8] = Buffer.from([]); // s
     }
 }

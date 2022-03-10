@@ -81,6 +81,10 @@ export class MainChainMultiSigSafe extends Safe {
     return await [address]; // TODO: only one address for now - how to get more addresses?
   }
 
+  public createTransfer(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
   public signTransaction(rawTx: string, transfer: Transfer): Promise<SignTransactionResult> {
     throw new Error("Method not implemented.");
   }
