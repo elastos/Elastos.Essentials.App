@@ -261,7 +261,7 @@ export class ProposalDetailPage {
             {
                 title: this.translate.instant('crproposalvoting.type'),
                 type: 'type',
-                value: this.proposal.type,
+                value: this.crOperations.getProposalTypeForChangeProposal(this.proposal),
                 active: true
             },
             {
