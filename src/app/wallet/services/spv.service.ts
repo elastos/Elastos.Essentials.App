@@ -4,7 +4,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { AESDecrypt } from '../../helpers/wallet-sdk/crypto/aes';
+import { AESDecrypt } from '../../helpers/crypto/aes';
 import { Config } from '../config/Config';
 import { StandardCoinName } from '../model/coin';
 import { StandardMasterWallet } from '../model/masterwallets/masterwallet';

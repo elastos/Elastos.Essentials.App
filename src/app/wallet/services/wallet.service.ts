@@ -32,7 +32,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { AESEncrypt } from '../../helpers/wallet-sdk/crypto/aes';
+import { AESEncrypt } from '../../helpers/crypto/aes';
 import { CoinType } from '../model/coin';
 import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';

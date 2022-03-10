@@ -1,4 +1,4 @@
-import { AESEncrypt } from "src/app/helpers/wallet-sdk/crypto/aes";
+import { AESEncrypt } from "src/app/helpers/crypto/aes";
 import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
 import { defaultWalletName, defaultWalletTheme } from "src/app/wallet/model/masterwallets/masterwallet";

@@ -1,7 +1,4 @@
 import BIP32Factory from 'bip32';
-import { mnemonicToSeedSync } from "bip39";
-import { ELASTOS_MAINCHAIN_VERSIONS, HDKey } from 'src/app/helpers/wallet-sdk/hdkey';
-import { Multisig } from "src/app/helpers/wallet-sdk/multisig";
 import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
 import { SignTransactionResult } from 'src/app/wallet/model/safes/safe.types';
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -75,7 +72,7 @@ export class MainChainMultiSigSafe extends Safe {
     //console.log("testXpubKey", testXpubKey.getPublicKeyBase58(), testXpubKey.getPublicKeyString());
 
     //let mnemonic = "zero zero zero zero zero zero zero zero zero zero zero zero";
-    let mnemonic = "plug air wave link situate width turtle devote hidden ticket method company";
+    /*let mnemonic = "plug air wave link situate width turtle devote hidden ticket method company";
     let seed = mnemonicToSeedSync(mnemonic);
     //console.log("zeroSeed", zeroSeed.toString("hex"))
 
@@ -93,12 +90,12 @@ export class MainChainMultiSigSafe extends Safe {
     console.log("derived Private key", derived.getPrivateKeyString());
 
     // TEST FOR NOW
-    /* let pubKeys = this.masterWallet.signersExtPubKeys.map(hex => Buffer.from(hex, 'hex'));
-    const { address } = payments.p2sh({
-      redeem: payments.p2ms({
-        m: 2, pubkeys: pubKeys // TODO: what is m: 2 ? number of mandatory signers?
-      }),
-    }); */
+    // let pubKeys = this.masterWallet.signersExtPubKeys.map(hex => Buffer.from(hex, 'hex'));
+    //const { address } = payments.p2sh({
+    //  redeem: payments.p2ms({
+    //    m: 2, pubkeys: pubKeys // TODO: what is m: 2 ? number of mandatory signers?
+    //  }),
+    //});
 
     // TMP FORCE KEYS FOR TESTS - TODO: get them from multisig master wallet
     this.masterWallet.signersExtPubKeys = [
@@ -137,7 +134,7 @@ export class MainChainMultiSigSafe extends Safe {
     console.log("cosignersKeysForAddress", cosignersKeysForAddress);
 
     let multiSigAddress = HDKey.getElastosMainChainMultiSigAddress(this.masterWallet.requiredSigners, cosignersKeysForAddress);
-    console.log("multiSigAddress", multiSigAddress);
+    console.log("multiSigAddress", multiSigAddress);*/
 
     /*  1. Get the cosigner_index by sorting the public key "m/45'/*" by lexicographically sorting
  2. Store the cosigner_index and public key together, and derive the corresponding public key according to the required address.The rules are the same as BIP44.
