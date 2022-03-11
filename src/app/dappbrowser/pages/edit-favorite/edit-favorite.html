@@ -4,7 +4,7 @@
     <ion-grid [class.dark-container]="theme.darkMode">
         <ion-grid class="app-info">
             <div class="icon-container">
-                <img class="icon" [src]="favorite.iconUrl" />
+                <img class="icon" [src]="favorite.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
             </div>
             <div class="title">{{favorite.name}}</div>
             <div class="description">{{favorite.description}}</div>

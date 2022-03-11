@@ -5,7 +5,8 @@
             <ion-row *ngIf="appMetaLoaded()">
                 <ion-col size="3" class="icon-col">
                     <div class="icon-container">
-                        <img class="icon" [src]="browsedAppInfo.iconUrl" />
+                        <img class="icon" [src]="browsedAppInfo.iconUrl"
+                            src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
                     </div>
                 </ion-col>
                 <ion-col size="8" class="info-container">
