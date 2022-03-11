@@ -127,8 +127,8 @@ export const zh = {
     'share-link': '分享链接',
     'no-user-wallet': '您当前没有钱包。请在Essentials中创建或导入钱包以抢红包或创建红包。',
     'packet-cancelled': '该红包已被取消，可能是因为支付错误。资金将被退还或已经退还给红包创建者。',
-    'test-network-title': 'This is a test network!',
-    'test-network-info': 'This red packet was created on a test network. Tokens will be transferred but have no value. Make sure to share this packet only with testers.',
+    'test-network-title': '这是一个测试网络！',
+    'test-network-info': '这个红包是在测试网络上创建的。代币将被转移，但没有价值。请确保仅与测试人员共享此红包。',
 
     /******
     * Pay *
