@@ -103,6 +103,15 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 networks: ["elastos"]
             },
             {
+                icon: '/assets/browser/dapps/pasar.png',
+                title: 'Pasar Protocol',
+                description: 'Web3.0 Decentralized Marketplace (DeMKT) and Data Exchange',
+                url: 'https://pasarprotocol.io/',
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["elastos"]
+            },
+            {
                 icon: '/assets/browser/dapps/kycme.png',
                 title: 'KYC-me',
                 description: 'Get DID credentials from your real identity here, to get access to more dApps such as ELAB.',
