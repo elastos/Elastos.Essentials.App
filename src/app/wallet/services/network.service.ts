@@ -24,6 +24,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { Network } from '../model/networks/network';
 import { WalletCreateType } from '../model/walletaccount';
 import { Native } from './native.service';
@@ -63,6 +64,7 @@ export class WalletNetworkService {
         public events: Events,
         public native: Native,
         public popupProvider: PopupProvider,
+        private globalNetworksService: GlobalNetworksService,
         private localStorage: LocalStorage) {
         WalletNetworkService.instance = this;
     }
@@ -109,17 +111,37 @@ export class WalletNetworkService {
 
     /**
      * Returns the list of available networks, previously registered.
-     * Those networks are the ones of the ones of the active network template (mainnet, testnet...) only.
-     * 
+     * Those networks are the ones of the ones of the given network template (mainnet, testnet...) only
+     * (or if none given, for the active template).
+     *
      * If walletCreateType is passed, networks are filtered to return only network supported for this
      * kind of wallet. Eg: We do not support BTC network when the wallet is imported by private key.
      */
-    public getAvailableNetworks(walletCreateType: WalletCreateType = null): Network[] {
+    public getAvailableNetworks(walletCreateType: WalletCreateType = null, networkTemplate: string = null): Network[] {
+        if (!networkTemplate)
+            networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
+
+        // Keep only networks for the target network template.
+        let networks = this.networks.filter(n => n.networkTemplate === networkTemplate);
+
         if (walletCreateType) {
-            return this.networks.filter((n) => { return n.supportedWalletCreateTypes().indexOf(walletCreateType) !== -1 });
+            return networks.filter((n) => { return n.supportedWalletCreateTypes().indexOf(walletCreateType) !== -1 });
         } else {
-            return this.networks;
+            return networks;
         }
+    }
+
+    /**
+     * Returns chain ids of networks that belong to the given network template (if passed), or by default,
+     * to the active network tempplate.
+     */
+    public getAvailableEVMChainIDs(networkTemplate: string = null): number[] {
+        let availableNetworks = this.getAvailableNetworks(null, networkTemplate);
+        let displayableEVMChainIds = availableNetworks
+            .map(n => n.getMainChainID())
+            .filter(chainId => chainId !== -1);
+
+        return displayableEVMChainIds;
     }
 
     /**
@@ -154,8 +176,11 @@ export class WalletNetworkService {
         this.activeNetwork.next(network);
     }
 
-    public getNetworkByKey(key: string): Network {
-        return this.networks.find(n => n.key === key);
+    public getNetworkByKey(key: string, networkTemplate: string = null): Network {
+        if (!networkTemplate)
+            networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
+
+        return this.networks.find(n => n.key === key && n.networkTemplate === networkTemplate);
     }
 
     public getNetworkByChainId(chainId: number): Network {

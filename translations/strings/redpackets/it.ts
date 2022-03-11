@@ -127,6 +127,8 @@ export const it = {
     'share-link': 'Condividi link',
     'no-user-wallet': 'Al momento non hai alcun portafoglio. Crea o importa un portafoglio in Essentials per prendere i pacchetti o per creare i tuoi pacchetti.',
     'packet-cancelled': 'Questo pacchetto è stato cancellato, probabilmente a causa di un errore del pagamento. I fondi verranno restituiti o sono già stati restituiti al creatore del pacchetto.',
+    'test-network-title': 'This is a test network!',
+    'test-network-info': 'This red packet was created on a test network. Tokens will be transferred but have no value. Make sure to share this packet only with testers.',
 
     /******
     * Pay *

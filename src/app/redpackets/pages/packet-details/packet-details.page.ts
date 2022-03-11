@@ -378,6 +378,6 @@ export class PacketDetailsPage implements OnInit {
     if (!this.packet || !this.network)
       return false;
 
-    return this.network.networkTemplate === MAINNET_TEMPLATE;
+    return (this.walletNetworkService.getAvailableEVMChainIDs(MAINNET_TEMPLATE).indexOf(this.packet.chainId) >= 0);
   }
 }

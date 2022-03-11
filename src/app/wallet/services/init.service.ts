@@ -128,39 +128,42 @@ export class WalletInitService extends GlobalService {
 
   private async registerNetworks(): Promise<void> {
     let networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
-    switch (networkTemplate) {
-      case MAINNET_TEMPLATE:
-        await this.createAndRegisterNetwork(new ElastosMainNetNetwork(), true);
-        await this.createAndRegisterNetwork(new BTCMainNetNetwork());
-        await this.createAndRegisterNetwork(new EthereumMainNetNetwork());
-        await this.createAndRegisterNetwork(new HECOMainNetNetwork());
-        await this.createAndRegisterNetwork(new BSCMainNetNetwork());
-        await this.createAndRegisterNetwork(new FusionMainNetNetwork());
-        await this.createAndRegisterNetwork(new ArbitrumMainNetNetwork());
-        await this.createAndRegisterNetwork(new PolygonMainNetNetwork());
-        await this.createAndRegisterNetwork(new FantomMainNetNetwork());
-        await this.createAndRegisterNetwork(new AvalancheCChainMainNetNetwork());
-        await this.createAndRegisterNetwork(new TelosMainNetNetwork());
-        return;
-      case TESTNET_TEMPLATE:
-        await this.createAndRegisterNetwork(new ElastosTestNetNetwork(), true);
-        await this.createAndRegisterNetwork(new BTCTestNetNetwork());
-        await this.createAndRegisterNetwork(new EthereumRopstenNetwork());
-        await this.createAndRegisterNetwork(new HECOTestNetNetwork());
-        await this.createAndRegisterNetwork(new BSCTestNetNetwork());
-        // await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
-        await this.createAndRegisterNetwork(new PolygonTestNetNetwork());
-        await this.createAndRegisterNetwork(new FantomTestNetNetwork());
-        await this.createAndRegisterNetwork(new AvalancheCChainTestNetNetwork());
-        await this.createAndRegisterNetwork(new TelosTestNetNetwork());
-        return;
-      case "LRW":
-        await this.createAndRegisterNetwork(new ElastosLRWNetwork(), true);
-    }
+
+    await this.createAndRegisterNetwork(new ElastosMainNetNetwork(), networkTemplate === MAINNET_TEMPLATE);
+    await this.createAndRegisterNetwork(new BTCMainNetNetwork());
+    await this.createAndRegisterNetwork(new EthereumMainNetNetwork());
+    await this.createAndRegisterNetwork(new HECOMainNetNetwork());
+    await this.createAndRegisterNetwork(new BSCMainNetNetwork());
+    await this.createAndRegisterNetwork(new FusionMainNetNetwork());
+    await this.createAndRegisterNetwork(new ArbitrumMainNetNetwork());
+    await this.createAndRegisterNetwork(new PolygonMainNetNetwork());
+    await this.createAndRegisterNetwork(new FantomMainNetNetwork());
+    await this.createAndRegisterNetwork(new AvalancheCChainMainNetNetwork());
+    await this.createAndRegisterNetwork(new TelosMainNetNetwork());
+
+    await this.createAndRegisterNetwork(new ElastosTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
+    await this.createAndRegisterNetwork(new BTCTestNetNetwork());
+    await this.createAndRegisterNetwork(new EthereumRopstenNetwork());
+    await this.createAndRegisterNetwork(new HECOTestNetNetwork());
+    await this.createAndRegisterNetwork(new BSCTestNetNetwork());
+    // await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
+    await this.createAndRegisterNetwork(new PolygonTestNetNetwork());
+    await this.createAndRegisterNetwork(new FantomTestNetNetwork());
+    await this.createAndRegisterNetwork(new AvalancheCChainTestNetNetwork());
+    await this.createAndRegisterNetwork(new TelosTestNetNetwork());
+
+    await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
   }
 
   private async createAndRegisterNetwork(network: Network, isDefault = false): Promise<void> {
-    await network.init();
+    let networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
+
+    // Initialize the network, only if the network belongs to the active network template
+    if (network.networkTemplate === networkTemplate)
+      await network.init();
+
+    // Register all networks, no matter if they are for the active network template or not,
+    // as they are sometimes needed.
     await this.networkService.registerNetwork(network, isDefault);
   }
 

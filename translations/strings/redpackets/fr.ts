@@ -127,6 +127,8 @@ export const fr = {
     'share-link': 'Share link',
     'no-user-wallet': 'Vous n\'avez actuellement aucun portefeuille. Veuillez en créer un dans Essentials afin de pouvoir attraper des paquets rouges ou de créer les votres.',
     'packet-cancelled': 'Ce paquet a été annulé, probablement suite à une erreur de paiement. Les fonds seront retournés, ou ont déjà été retournés au créateur du paquet.',
+    'test-network-title': 'Paquet de test!',
+    'test-network-info': 'Ce paquet rouge a été créé sur un réseau de test. Les jetons seront transferés mais n\'ont aucune valeur. Assurez-vous de ne le partager qu\'avec des testeurs.',
 
     /******
     * Pay *

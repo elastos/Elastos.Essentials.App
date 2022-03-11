@@ -14,7 +14,7 @@ export class FusionMainNetNetwork extends EVMNetwork {
       "assets/wallet/networks/fusion.png",
       "FSN",
       "FSN",
-      FusionAPI.getApiUrl(FusionApiType.RPC),
+      FusionAPI.getApiUrl(FusionApiType.RPC, MAINNET_TEMPLATE),
       null,
       MAINNET_TEMPLATE,
       32659,

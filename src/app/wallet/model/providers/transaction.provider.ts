@@ -87,13 +87,13 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    */
   public getTransactions(subWallet: SubWallet<GenericTransaction>, transactionListType = TransactionListType.NORMAL): Promise<TransactionType[]> {
     if (transactionListType === TransactionListType.NORMAL) {
-        return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet, transactionListType);
+      return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet, transactionListType);
     } else {
-        if (subWallet.supportInternalTransactions()) {
-            return this.getSubWalletInternalTransactionProvider(subWallet).getTransactions(subWallet, transactionListType);
-        } else {
-            return null;
-        }
+      if (subWallet.supportInternalTransactions()) {
+        return this.getSubWalletInternalTransactionProvider(subWallet).getTransactions(subWallet, transactionListType);
+      } else {
+        return null;
+      }
     }
   }
 
@@ -117,11 +117,11 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
     // Fetch
     if (transactionListType === TransactionListType.NORMAL) {
-        await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet);
+      await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet);
     } else {
-        if (subWallet.supportInternalTransactions()) {
-            await this.getSubWalletInternalTransactionProvider(subWallet).fetchTransactions(subWallet);
-        }
+      if (subWallet.supportInternalTransactions()) {
+        await this.getSubWalletInternalTransactionProvider(subWallet).fetchTransactions(subWallet);
+      }
     }
 
     // Not fetching
@@ -239,7 +239,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
                 }
               }
             } catch (e) {
-              Logger.log("wallet", 'updateERC20TokenList exception:', e);
+              Logger.log("wallet", 'onTokenInfoFound exception:', e);
             }
           }
         } else {
