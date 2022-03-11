@@ -30,6 +30,8 @@ export const it = {
     'menu-action-share': 'Condividi',
     'added-to-favorites': 'Aggiunto ai preferiti',
     'removed-from-favorites': 'Rimosso dai preferiti',
+    'clear-browser-data': 'Clear cache',
+    'browser-data-cleared': 'Browser data cleared',
 
     // Edit favorite
     'edit-favorite-title': 'Modifica preferito',

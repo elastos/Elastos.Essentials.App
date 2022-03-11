@@ -30,6 +30,8 @@ export const zh = {
     'menu-action-share': '分享',
     'added-to-favorites': '已添加到收藏夹',
     'removed-from-favorites': '已从收藏夹中删除',
+    'clear-browser-data': 'Clear cache',
+    'browser-data-cleared': 'Browser data cleared',
 
     // Edit favorite
     'edit-favorite-title': '编辑收藏',

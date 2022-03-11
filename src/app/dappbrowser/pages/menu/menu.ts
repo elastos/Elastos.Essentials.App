@@ -155,4 +155,20 @@ export class MenuPage {
         else
             return "";
     }
+
+    /**
+     * Asks the browser plugin to clear cached data for the current url:
+     * - local storage
+     * - databases
+     */
+    public async clearBrowserData() {
+        if (!this.browsedAppInfo || !this.browsedAppInfo.url)
+            return;
+
+        Logger.log("dappbrowser", "Clearing browser data for url", this.browsedAppInfo.url);
+        await dappBrowser.clearData(this.browsedAppInfo.url);
+        this.reloadPage();
+
+        this.globalNative.genericToast('dappbrowser.browser-data-cleared', 2000, "success");
+    }
 }

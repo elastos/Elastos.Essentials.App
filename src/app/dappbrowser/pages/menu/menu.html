@@ -105,7 +105,18 @@
                     </div>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>
+                <!--  <ion-col size="4" class="ripple ion-activatable">
+                    <div class="action" (click)="clearBrowserData()">
+                        <img
+                            [src]="!theme.darkMode ? '/assets/browser/icons/icon-close.svg' : '/assets/browser/icons/dark_mode/icon-close.svg'" />
+                        {{ 'dappbrowser.menu-action-clear-data' | translate }}
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col> -->
             </ion-row>
         </ion-grid>
+        <ion-row class="clear-data" (click)="clearBrowserData()">
+            {{ 'dappbrowser.clear-browser-data' | translate }}
+        </ion-row>
     </ion-grid>
 </ion-content>
