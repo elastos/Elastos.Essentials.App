@@ -95,7 +95,7 @@ export class WalletNetworkService {
 
         // Order networks list alphabetically
         this.networks.sort((a, b) => {
-          return a.name > b.name ? 1 : -1;
+            return a.name > b.name ? 1 : -1;
         })
     }
 
@@ -108,11 +108,15 @@ export class WalletNetworkService {
     }
 
     /**
-     * Do not support BTC network when the wallet is imported by private key.
+     * Returns the list of available networks, previously registered.
+     * Those networks are the ones of the ones of the active network template (mainnet, testnet...) only.
+     * 
+     * If walletCreateType is passed, networks are filtered to return only network supported for this
+     * kind of wallet. Eg: We do not support BTC network when the wallet is imported by private key.
      */
     public getAvailableNetworks(walletCreateType: WalletCreateType = null): Network[] {
         if (walletCreateType) {
-            return this.networks.filter( (n) => {return n.supportedWalletCreateTypes().indexOf(walletCreateType) !== -1});
+            return this.networks.filter((n) => { return n.supportedWalletCreateTypes().indexOf(walletCreateType) !== -1 });
         } else {
             return this.networks;
         }
@@ -175,7 +179,7 @@ export class WalletNetworkService {
     /**
      * Tells if the currently active network is the EVM network.
      */
-     public isActiveNetworkEVM(): boolean {
+    public isActiveNetworkEVM(): boolean {
         if (this.activeNetwork.value) {
             let network = this.getNetworkByKey(this.activeNetwork.value.key);
             if (network.getMainChainID() !== -1) return true;

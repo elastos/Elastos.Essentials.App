@@ -8,6 +8,7 @@ import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.se
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
+import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { environment } from "src/environments/environment";
 import { GrabbedPacket, GrabRequest, GrabResponse, GrabStatus, PacketWinner } from "../model/grab.model";
 import {
@@ -32,6 +33,7 @@ export class PacketService {
     private toastController: ToastController,
     private globalIntentService: GlobalIntentService,
     private globalNavService: GlobalNavService,
+    private walletNetworkService: WalletNetworkService,
     private storage: GlobalStorageService
   ) { }
 
@@ -142,6 +144,9 @@ export class PacketService {
           deserializedPackets.push(Packet.fromSerializedPacket(p))
         });
 
+        // Filter out some unwanted public packets
+        deserializedPackets = this.removeUnsupportedPublicPackets(deserializedPackets);
+
         Logger.log("redpackets", "Got public packets", deserializedPackets);
         this.publicPackets.next(deserializedPackets);
       }
@@ -150,6 +155,20 @@ export class PacketService {
       Logger.error("redpackets", "Get public packets request failure", err);
       this.publicPackets.next([]);
     }
+  }
+
+  /**
+   * Keep only packets that can be handled by the active network template. Eg: packet for "mainnet"
+   * networks when essentials is running on the mainnet template, etc.
+   * Goal: avoid showing testnet public packets to mainnet users.
+   */
+  private removeUnsupportedPublicPackets(packets: Packet[]): Packet[] {
+    let availableNetworks = this.walletNetworkService.getAvailableNetworks();
+    let displayableEVMChainIds = availableNetworks
+      .map(n => n.getMainChainID())
+      .filter(chainId => chainId !== -1);
+
+    return packets.filter(p => displayableEVMChainIds.indexOf(p.chainId) >= 0);
   }
 
   /**

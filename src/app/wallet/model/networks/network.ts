@@ -70,7 +70,7 @@ export abstract class Network {
 
   /**
    * Returns the EVM chain ID for this network (i.e. 128 for heco) according to the active network template.
-   * For elastos, as there are multiple EVM chains, the ETHSC is the "main" one.
+   * Returns -1 if the network is not an EVM.
    */
   public abstract getMainChainID(networkTemplate?: string): number;
 
