@@ -1,5 +1,57 @@
 @import "../suggestion-detail/suggestion-detail.scss";
 
+ion-card-title {
+    font-size: 14px !important;
+    color: #8052FF;
+}
+
+ion-card-subtitle {
+    margin-top: 10px;
+    padding: 0 !important;
+    font-size: 16px !important;
+}
+
+crvotes {
+    margin: 8px 0;
+}
+
+.status-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .status-info {
+        min-width: 96px;
+        max-width: 158px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        h5 {
+            margin: 3px 0;
+            font-size: 10px;
+        }
+
+        p {
+            font-size: 11px;
+            font-weight:bold;
+            color: #3C3C3C;
+            text-align: center;
+        }
+    }
+
+    .status-gap-container {
+        padding: 2px 5px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .status-gap-container .inner {
+        width: 1px;
+        background-color: #C9C9C9;
+    }
+}
+
 .lastTrackingInfo {
     width: 100%;
     background-color: #f6f6f6;
@@ -30,6 +82,24 @@
 }
 
 .darkContainer {
+    ion-card-title {
+        color: #AB8CFF !important;
+    }
+
+    .status-container {
+        h5 {
+            color: #C9C9C9;
+        }
+
+        p {
+            color: #C9C9C9;
+        }
+
+        .status-gap-container .inner {
+            background-color: #767676;
+        }
+    }
+
     .lastTrackingInfo {
         background-color: #2f2d2f;
 

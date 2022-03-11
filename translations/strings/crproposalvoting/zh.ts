@@ -37,6 +37,11 @@ export const zh = {
         'no': '否决',
         'abstain': '弃权',
         'by': '提案人:',
+        'voting-ends-in': '投票剩余时间',
+        'days': '天',
+        'day': '天',
+        'hours': '小时',
+        'minutes': '分钟',
 
         'suggestions': '建议',
         'search-suggestion': '搜索建议',
@@ -49,6 +54,7 @@ export const zh = {
         'suggestion-id': '建议ID',
 
         // Status
+        'status': '状态',
         'registered': '委员评议',
         'cragreed': '公示中',
         'voteragreed': '执行中',
@@ -88,6 +94,7 @@ export const zh = {
         'proposaltype-normal': '普通',
         'proposaltype-changeproposalowner': '改变负责人',
         'proposaltype-changeproposaladdress': '改变接收地址',
+        'proposaltype-changeproposal': '修改提案',
         'proposaltype-closeproposal': '关闭提议',
         'proposaltype-secretarygeneral': '新的CR委员秘书长',
         'proposaltype-reservecustomizedid': '预留自定义DID动议',

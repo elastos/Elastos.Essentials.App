@@ -37,6 +37,11 @@ export const it = {
         'no': 'No',
         'abstain': 'Astenuto',
         'by': 'Di',
+        'voting-ends-in': 'Voting Ends In',
+        'days': ' Days',
+        'day': 'Day',
+        'hours': 'Hours',
+        'minutes': 'Minutes',
 
         'suggestions': 'Suggerimenti',
         'search-suggestion': 'Cerca suggerimento',
@@ -49,6 +54,7 @@ export const it = {
         'suggestion-id': 'ID Suggerimento',
 
         // Status
+        'status': 'Status',
         'registered': 'Sotto esame del Consiglio',
         'cragreed': 'Sotto la revisione della comunità',
         'voteragreed': 'Attivo',
@@ -88,6 +94,7 @@ export const it = {
         'proposaltype-normal': 'Normale',
         'proposaltype-changeproposalowner': 'Change Proposal Owner',
         'proposaltype-changeproposaladdress': 'Change Proposal Address',
+        'proposaltype-changeproposal': 'Change Proposal',
         'proposaltype-closeproposal': 'Terminate Proposal',
         'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
         'proposaltype-reservecustomizedid': 'Motion to reserve Customized DID',

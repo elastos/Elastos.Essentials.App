@@ -49,6 +49,8 @@ export class ProposalDetailPage {
     private commandReturnSub: Subscription = null;
 
     private popover: any = null;
+    public proposaltype: string;
+    public remainingTime: string;
 
     constructor(
         public uxService: UXService,
@@ -152,6 +154,8 @@ export class ProposalDetailPage {
 
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposal-details'));
         this.proposalDetailFetched = true;
+        this.proposaltype =  this.proposal.type == "changeproposalowner" ? "changeproposal" : this.proposal.type;
+        this.remainingTime = await this.proposalService.getRemainingTime(this.proposal);
     }
 
     async setLastTracking(i: number) {
@@ -258,12 +262,12 @@ export class ProposalDetailPage {
                 value: this.proposal.title,
                 active: true
             },
-            {
-                title: this.translate.instant('crproposalvoting.type'),
-                type: 'type',
-                value: this.crOperations.getProposalTypeForChangeProposal(this.proposal),
-                active: true
-            },
+            // {
+            //     title: this.translate.instant('crproposalvoting.type'),
+            //     type: 'type',
+            //     value: this.proposaltype,
+            //     active: true
+            // },
             {
                 title: this.translate.instant('crproposalvoting.abstract'),
                 type: 'innerHtml',

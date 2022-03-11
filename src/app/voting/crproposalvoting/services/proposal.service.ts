@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
@@ -26,6 +27,7 @@ export class ProposalService {
         private http: HttpClient,
         private nav: GlobalNavService,
         public jsonRPCService: GlobalJsonRPCService,
+        private translate: TranslateService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) { }
 
@@ -211,6 +213,99 @@ export class ProposalService {
         return this.allResults.find((proposal) => {
             return proposal.id == proposalId;
         })
+    }
+
+    async getCrProposalState(proposalHash: string): Promise<any> {
+        Logger.log(App.CRPROPOSAL_VOTING, 'Get cr proposal state...');
+
+        const param = {
+            method: 'getcrproposalstate',
+            params: {
+                proposalhash: proposalHash,
+            },
+        };
+
+        var ret;
+        try {
+            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+            Logger.log(App.CRPROPOSAL_VOTING, 'Get cr proposal state', result);
+            if (result && result.proposalstate && result.proposalstate) {
+                ret = result.proposalstate;
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRCOUNCIL_VOTING, 'getcrproposalstate error', err);
+        }
+
+        return ret;
+    }
+
+    async getCurrentHeight(): Promise<number> {
+        Logger.log(App.CRPROPOSAL_VOTING, 'Get Current Height...');
+
+        const param = {
+            method: 'getcurrentheight',
+            params: {
+            },
+        };
+
+        try {
+            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+            Logger.log(App.CRPROPOSAL_VOTING, 'getCurrentHeight', result);
+            if (result) {
+                return result;
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRCOUNCIL_VOTING, 'getCurrentHeight error', err);
+        }
+
+        return 0;
+    }
+
+
+    async getRemainingTime(proposal: ProposalDetails): Promise<string> {
+        var ret;
+        var remainingTime = -1;
+        if (proposal.status == "registered" || proposal.status == "cragreed") {
+            let state = await this.getCrProposalState(proposal.proposalHash);
+            if (state && state.registerheight) {
+                let currentHeight = await this.getCurrentHeight();
+                if (currentHeight >= state.registerheight) {
+                    if (proposal.status == "registered") {
+                        remainingTime = (720 * 7 - (currentHeight - state.registerheight)) * 2;
+                    }
+                    else if (proposal.status == "cragreed") {
+                        remainingTime = (720 * 14 - (currentHeight - state.registerheight)) * 2;
+                    }
+                }
+            }
+        }
+
+        if (remainingTime > 0) {
+            ret = this.getRemainingTimeString(remainingTime);
+        }
+        return ret;
+    }
+
+    getRemainingTimeString(remainingTime: number): Promise<string> {
+        var ret;
+        if (remainingTime >= (1440 * 2)) { //more 2 days
+            ret = Math.floor(remainingTime / 1440) + " " + this.translate.instant('crproposalvoting.days');
+        }
+        else if (remainingTime > 1440) {
+            ret = "1 " + this.translate.instant('crproposalvoting.day') + " " + Math.floor((remainingTime % 1440) / 60) + " " + this.translate.instant('crproposalvoting.hours');
+        }
+        else if (remainingTime == 1440) {
+            ret = "1 " + this.translate.instant('crproposalvoting.day');
+        }
+        else if (remainingTime > 60) {
+            ret = Math.floor(remainingTime / 60) + " " + this.translate.instant('crproposalvoting.hours');
+        }
+        else {
+            ret = remainingTime + " " + this.translate.instant('crproposalvoting.minutes');
+        }
+        return ret;
     }
 
     async fetchWithdraws(proposalHash: string): Promise<number> {
