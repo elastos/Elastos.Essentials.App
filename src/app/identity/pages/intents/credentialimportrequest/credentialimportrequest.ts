@@ -123,7 +123,7 @@ export class CredentialImportRequestPage {
 
   ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
+      void this.rejectRequest(false);
     }
   }
 
@@ -270,7 +270,7 @@ export class CredentialImportRequestPage {
       }
     });
 
-    await this.didService.getActiveDid().getLocalDIDDocument().publish(AuthService.instance.getCurrentUserPassword());
+    await this.didService.getActiveDid().getLocalDIDDocument().publish(AuthService.instance.getCurrentUserPassword(), this.receivedIntent.intentId);
   }
 
   private finalizeRequest(importedCredentials: string[]) {
@@ -287,6 +287,8 @@ export class CredentialImportRequestPage {
   }
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
+    this.intentService.clearOnGoingIntentId();
+
     this.alreadySentIntentResponce = true;
     await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }

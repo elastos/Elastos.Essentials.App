@@ -7,6 +7,7 @@ import { SetHiveProviderIdentityIntent } from 'src/app/identity/model/identity.i
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AuthService } from '../../../services/auth.service';
@@ -41,6 +42,7 @@ export class SetHiveProviderRequestPage {
     private didSyncService: DIDSyncService,
     public theme: GlobalThemeService,
     private intentService: IntentReceiverService,
+    private globalHiveService: GlobalHiveService,
     private globalPublicationService: GlobalPublicationService
   ) {
   }
@@ -54,7 +56,7 @@ export class SetHiveProviderRequestPage {
       this.publishresultSubscription = null;
     }
     if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
+      void this.rejectRequest(false);
     }
   }
 
@@ -83,19 +85,28 @@ export class SetHiveProviderRequestPage {
       let pubSubscription = this.globalPublicationService.publicationStatus.subscribe((status) => {
         if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
           pubSubscription.unsubscribe();
+
+          // Refresh user's hive using the new address
+          Logger.log("identity", "New DID document published. Asking the global hive manager to refresh its status");
+
+          // Refresh user's vault, but don't wait.
+          void this.globalHiveService.retrieveVaultLinkStatus();
+
           void this.sendIntentResponse('published');
         } else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
           pubSubscription.unsubscribe();
           void this.sendIntentResponse('error');
         }
       });
-      await this.didSyncService.publishActiveDIDDIDDocument(password, this.receivedIntent.intentId);
+      await this.didService.getActiveDid().getLocalDIDDocument().publish(AuthService.instance.getCurrentUserPassword(), this.receivedIntent.intentId);
     }, () => {
       // Cancelled
     });
   }
 
   async sendIntentResponse(status: string, navigateBack = true) {
+    this.intentService.clearOnGoingIntentId();
+
     this.alreadySentIntentResponce = true;
     // Send the intent response as everything is completed
     await this.appServices.sendIntentResponse({ status: status }, this.receivedIntent.intentId, navigateBack);

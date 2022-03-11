@@ -118,8 +118,10 @@ export class DIDDocument {
     /**
      * Start publishing this DID document on chain.
      * Response will be received in DIDStore.createIdTransactionCallback().
+     * 
+     * @param parentIntentId If publishing a DID from an on going intent screen, pass the on going intent id to not block the intent manager.
      */
-    publish(storepass: string): Promise<void> {
+    publish(storepass: string, parentIntentId?: number): Promise<void> {
         return new Promise((resolve, reject) => {
             this.pluginDidDocument.publish(
                 storepass,

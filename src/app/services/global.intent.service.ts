@@ -179,6 +179,14 @@ export class GlobalIntentService {
     }
   }
 
+  /**
+   * Among the list of intents currently BEING processed (one root intent, and potential children
+   * intents), returns the last one started (the deepest child).
+   */
+  /* public getMostRecentBeingProcessedIntent(): QueuedIntent {
+
+  } */
+
   async sendIntentResponse(result: any, intentId: number, navigateBack = true): Promise<void> {
     // Can not show the data in logs. Private data, confidential. eg. mnemonic.
     Logger.log("Intents", "Sending intent response ", intentId, navigateBack);

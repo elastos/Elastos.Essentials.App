@@ -20,8 +20,10 @@ type SignDigestIntentParams = IdentityIntentParams & {
     signatureFieldName?: string,
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type SignDigestIntent = IdentityIntent<SignDigestIntentParams> & {
 }
+
 @Component({
     selector: 'page-signdigest',
     templateUrl: 'signdigest.html',

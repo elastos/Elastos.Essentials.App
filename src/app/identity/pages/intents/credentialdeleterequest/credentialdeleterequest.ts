@@ -96,7 +96,7 @@ export class CredentialDeleteRequestPage {
 
   ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
+      void this.rejectRequest(false);
     }
   }
 
@@ -266,6 +266,7 @@ export class CredentialDeleteRequestPage {
   }
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
+    this.intentService.clearOnGoingIntentId();
     this.alreadySentIntentResponce = true;
     await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }

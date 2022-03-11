@@ -11,11 +11,12 @@ import { GlobalService, GlobalServiceManager } from "src/app/services/global.ser
 import { DIDHelper } from "../helpers/did.helper";
 import { DIDDocument } from "../model/diddocument.model";
 import {
-    DIDDocumentPublishEvent
+  DIDDocumentPublishEvent
 } from "../model/eventtypes.model";
 import { DIDNotUpToDateException } from "../model/exceptions/didnotuptodateexception";
 import { DIDService } from "./did.service";
 import { DIDDocumentsService } from "./diddocuments.service";
+import { IntentReceiverService } from "./intentreceiver.service";
 import { LocalStorage } from "./localstorage";
 import { Native } from "./native";
 import { PopupProvider } from "./popup";
@@ -43,7 +44,7 @@ export class DIDSyncService implements GlobalService {
     private didService: DIDService,
     public native: Native,
     private didDocumentsService: DIDDocumentsService,
-    private globalPublicationService: GlobalPublicationService,
+    private globalPublicationService: GlobalPublicationService
   ) {
     DIDSyncService.instance = this;
   }
@@ -117,9 +118,9 @@ export class DIDSyncService implements GlobalService {
       Logger.error("identity", JSON.stringify(err));
       let reworkedEx = DIDHelper.reworkedPluginException(err);
       if (reworkedEx instanceof DIDNotUpToDateException) {
-          await this.popupProvider.ionicAlert("identity.publish-error-title", "identity.publish-error-call-sync-did");
+        await this.popupProvider.ionicAlert("identity.publish-error-title", "identity.publish-error-call-sync-did");
       } else {
-          await this.popupProvider.ionicAlert("identity.publish-error-title", err.message);
+        await this.popupProvider.ionicAlert("identity.publish-error-title", err.message);
       }
     }
   }
@@ -134,7 +135,7 @@ export class DIDSyncService implements GlobalService {
 
   private async publishDIDTransaction(payload: string, memo: string) {
     // Open the "fast did publishing" screen.
-    await this.globalPublicationService.publishDIDFromRequest(this.didService.getActiveDid().getDIDString(), JSON.parse(payload), memo, true);
+    await this.globalPublicationService.publishDIDFromRequest(this.didService.getActiveDid().getDIDString(), JSON.parse(payload), memo, true, IntentReceiverService.instance.getOnGoingIntentId());
   }
 
   private onDIDDocumentPublishResponse(result: DIDDocumentPublishEvent) {

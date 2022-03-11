@@ -459,7 +459,7 @@ export class GlobalHiveService extends GlobalService {
       }
       catch (e) {
         // Can't download the asset
-        Logger.warn("GlobalHiveService", "Failed to download hive asset at "+hiveScriptUrl, e);
+        Logger.warn("GlobalHiveService", "Failed to download hive asset at " + hiveScriptUrl, e);
         resolve(null);
       }
     });
@@ -486,8 +486,8 @@ export class GlobalHiveService extends GlobalService {
   public getHiveAvatarUrlFromDIDAvatarCredential(avatarCredentialSubject: JSONObject): string {
     if (avatarCredentialSubject.type && avatarCredentialSubject.type == "elastoshive") {
       if (avatarCredentialSubject.data && avatarCredentialSubject["content-type"]) {
-          let hiveUrl = avatarCredentialSubject.data as string;
-          return hiveUrl;
+        let hiveUrl = avatarCredentialSubject.data as string;
+        return hiveUrl;
       }
     }
     // Other cases: return nothing.

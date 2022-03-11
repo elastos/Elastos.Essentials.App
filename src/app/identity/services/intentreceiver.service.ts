@@ -19,7 +19,10 @@ import { UXService } from './ux.service';
     providedIn: 'root'
 })
 export class IntentReceiverService {
+    public static instance: IntentReceiverService;
+
     private receivedIntent: IdentityIntent<IdentityIntentParams>;
+    private onGoingIntentId: number = null;
 
     constructor(
         public translate: TranslateService,
@@ -32,6 +35,7 @@ export class IntentReceiverService {
         private profileService: ProfileService,
         private globalPublicationService: GlobalPublicationService
     ) {
+        IntentReceiverService.instance = this;
     }
 
     init() {
@@ -111,6 +115,8 @@ export class IntentReceiverService {
                 Logger.log('identity', "Received credential import intent request");
                 if (this.checkCredImportIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
+
+                    this.setOnGoingIntentId(intent.intentId); // Save globally in case the launched screen needs to send a child intent
                     void this.native.setRootRouter("/identity/intents/credimportrequest");
                 }
                 else {
@@ -133,6 +139,8 @@ export class IntentReceiverService {
                 Logger.log('identity', "Received credential delete intent request");
                 if (this.checkCredDeleteIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
+
+                    this.setOnGoingIntentId(intent.intentId); // Save globally in case the launched screen needs to send a child intent
                     void this.native.setRootRouter("/identity/intents/creddeleterequest");
                 }
                 else {
@@ -200,6 +208,8 @@ export class IntentReceiverService {
                 Logger.log('identity', "Received set hiveprovider intent request");
                 if (this.checkSetHiveProviderIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
+
+                    this.setOnGoingIntentId(intent.intentId); // Save globally in case the launched screen needs to send a child intent
                     void this.native.setRootRouter("/identity/intents/sethiveproviderrequest");
                 }
                 else {
@@ -210,6 +220,27 @@ export class IntentReceiverService {
                 }
                 break;
         }
+    }
+
+    /**
+     * Saves the intent ID currently being processed by one of the identity intent screens.
+     * this allows some intent screens to launch sub-intents, such as publishing a DID with a
+     * wallet intent.
+     *
+     * Implementation reason:
+     * - cred import (publish) -> call wallet did publish intent (stuck)
+     * - But the flow to "publish" contains several events, not convenient to just "forward" the parent intent id
+     */
+    public setOnGoingIntentId(intentId: number) {
+        this.onGoingIntentId = intentId;
+    }
+
+    public getOnGoingIntentId(): number {
+        return this.onGoingIntentId;
+    }
+
+    public clearOnGoingIntentId() {
+        this.onGoingIntentId = null;
     }
 
     /**

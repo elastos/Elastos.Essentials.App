@@ -241,12 +241,7 @@ export class PickProviderPage implements OnInit {
 
     this.publishingProvider = true;
     let publicationStarted = await this.globalHiveService.publishVaultProvider(providerName, providerAddress);
-
     this.publishingProvider = false;
-
-    // Refresh the link status
-    this.vaultLinkStatus = await this.globalHiveService.retrieveVaultLinkStatus();
-    Logger.log("HiveManager", "Vault link status:", this.vaultLinkStatus)
 
     this.forceProviderChange = false;
   }

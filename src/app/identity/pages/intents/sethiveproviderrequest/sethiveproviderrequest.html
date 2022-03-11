@@ -3,7 +3,8 @@
     <ion-grid *ngIf="receivedIntent" class="container" [class.dark-container]="theme.darkMode">
         <ion-card>
             <img src="assets/identity/images/fingerprint.svg">
-            <ion-card-title *ngIf="receivedIntent.params.from">{{ 'identity.sethiveprovider-app-id' | translate }}</ion-card-title>
+            <ion-card-title *ngIf="receivedIntent.params.from">{{ 'identity.sethiveprovider-app-id' | translate }}
+            </ion-card-title>
             <ion-card-subtitle *ngIf="receivedIntent.params.from">{{ receivedIntent.params.from }}</ion-card-subtitle>
         </ion-card>
 
@@ -27,7 +28,7 @@
 
         <ion-row class="btn-container" (click)="acceptRequest()">
             <ion-button color="tertiary">
-                <ion-label>{{ 'identity.accept' | translate }}</ion-label>
+                <ion-label>{{ 'identity.accept-and-publish' | translate }}</ion-label>
             </ion-button>
         </ion-row>
 
