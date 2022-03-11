@@ -410,8 +410,18 @@ export class DappBrowserService implements GlobalService {
         }
 
         if (!title) {
-            // No title found, use a placeholder
-            title = "Untitled";
+            // No standard <title> tag found, try to get more info from the metas.
+            let metas = htmlHeader.getElementsByTagName("meta");
+            if (metas && metas.length > 0) {
+                let appNameMeta = Array.from(metas).find(m => m.name && m.name.toLowerCase() === "application-name");
+                if (appNameMeta)
+                    title = appNameMeta.content;
+            }
+
+            if (!title) {
+                // No title found, use a placeholder
+                title = "Untitled";
+            }
         }
 
         // DESCRIPTION
