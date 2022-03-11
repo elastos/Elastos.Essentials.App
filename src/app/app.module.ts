@@ -23,7 +23,6 @@ import { SharedComponentsModule } from './components/sharedcomponents.module';
 import { ContactsInitModule } from './contacts/init.module';
 import { DeveloperToolsInitModule } from './developertools/init.module';
 import { DIDSessionsInitModule } from './didsessions/init.module';
-import { ImgFallbackDirective } from './helpers/directives/img-fallback.directive';
 import { HiveManagerInitModule } from './hivemanager/init.module';
 import { IdentityInitModule } from './identity/init.module';
 import { LauncherModule } from './launcher/module';
@@ -69,7 +68,7 @@ export class SentryErrorHandler implements ErrorHandler {
    * Let a few special errors be handled silently.
    */
   private shouldHandleAsSilentError(error) {
-    let stringifiedError = ""+error;
+    let stringifiedError = "" + error;
 
     // Error unhandled by the wallet connect 1.0 library, but this is not a real error (caused by calling
     // disconnect when not connected). This can be removed after upgrading to wallet connect 2.0.
@@ -113,10 +112,10 @@ export class SentryErrorHandler implements ErrorHandler {
 class CustomTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
     return new Observable<any>(observer => {
-        void TranslationsLoader.getTranslations(lang).then((translations) => {
-            observer.next(translations);
-            observer.complete();
-        })
+      void TranslationsLoader.getTranslations(lang).then((translations) => {
+        observer.next(translations);
+        observer.complete();
+      })
     });
   }
 }
@@ -182,9 +181,7 @@ export function TranslateLoaderFactory() {
 
 @NgModule({
   declarations: [
-    AppComponent,
-
-    ImgFallbackDirective
+    AppComponent
   ],
   entryComponents: [
     AppComponent
@@ -229,7 +226,7 @@ export function TranslateLoaderFactory() {
         provide: TranslateLoader,
         useFactory: (TranslateLoaderFactory)
       },
-      missingTranslationHandler: {provide: MissingTranslationHandler, useClass: CustomMissingTranslationHandler},
+      missingTranslationHandler: { provide: MissingTranslationHandler, useClass: CustomMissingTranslationHandler },
     }),
     IonicStorageModule.forRoot({
       name: '__essentials.db',
@@ -245,7 +242,7 @@ export function TranslateLoaderFactory() {
     StatusBar,
     FirebaseX,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-   // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
+    // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
     { provide: ErrorHandler, useClass: SentryErrorHandler },
     //{ provide: TranslateModule, deps: [TranslationsLoader.loadAllModulesAndMerge("")]}
   ],

@@ -146,7 +146,7 @@
       <!-- Has recent apps - Apps list -->
       <ion-col class="apps-col" size="12" *ngIf="recentApps.length > 0">
         <div class="recent-app" *ngFor="let app of recentApps" (click)="openRecentApp(app)">
-          <img [src]="app.iconUrl" />
+          <img [src]="app.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
           <img class="network" [src]="getRecentAppNetworkIcon(app)">
           <div class="title">{{ getShortRecentAppTitle(app)}}</div>
         </div>

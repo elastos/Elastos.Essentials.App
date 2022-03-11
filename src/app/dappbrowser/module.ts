@@ -6,6 +6,7 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { GlobalDirectivesModule } from '../helpers/directives/module';
 import { BrowserTitleBarComponent } from './components/titlebar/titlebar.component';
 import { BrowserPage } from './pages/browser/browser';
 import { EditFavoritePage } from './pages/edit-favorite/edit-favorite';
@@ -29,7 +30,8 @@ import { DAppBrowserRoutingModule } from './routing';
     FormsModule,
     IonicStorageModule,
     IonicModule,
-    TranslateModule
+    TranslateModule,
+    GlobalDirectivesModule
   ],
   bootstrap: [],
   entryComponents: [

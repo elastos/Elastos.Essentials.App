@@ -169,6 +169,12 @@ export class DidTransactionPage implements OnInit {
                     await this.popupProvider.ionicAlert('wallet.transaction-fail', 'wallet.did-oversize');
                 }
             }
+
+            // TMP TEST
+            let test = await this.sourceSubwallet.getTransactionDetails(result.txid)
+            console.log("TX", test);
+            // TMP TEST END
+
             await this.sendIntentResponse(result, transfer.intentId);
         } else {
             await this.sendIntentResponse(

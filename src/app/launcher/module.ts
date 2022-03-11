@@ -4,6 +4,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { GlobalDirectivesModule } from '../helpers/directives/module';
 import { ComponentsModule as WalletComponentsModule } from '../wallet/components/components.module';
 import { ComponentsModule } from './components/components.module';
 import { HomePage } from './pages/home/home.page';
@@ -37,7 +38,8 @@ import { EmptyPage, LauncherRoutingModule } from './routing';
     ComponentsModule,
     TranslateModule,
     LauncherRoutingModule,
-    WalletComponentsModule
+    WalletComponentsModule,
+    GlobalDirectivesModule
   ],
   providers: [
     //LauncherService
