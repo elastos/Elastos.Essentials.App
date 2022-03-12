@@ -20,9 +20,8 @@
 * SOFTWARE.
 */
 
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import AppEth from "@ledgerhq/hw-app-eth";
 import Transport from '@ledgerhq/hw-transport';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -31,18 +30,14 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.ledgerapp';
+import { EVMLedgerApp } from 'src/app/wallet/model/ledger/evm.ledgerapp';
+import { LedgerAccount } from 'src/app/wallet/model/ledger/ledgerapp';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { Native } from 'src/app/wallet/services/native.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 
 const TAG = 'ledger';
-
-type LedgerAccount = {
-    type: string;
-    address: string;
-    pathIndex: number;
-    path: string;
-}
 
 @Component({
     selector: 'app-ledger-connect',
@@ -53,10 +48,10 @@ export class LedgerConnectPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     // public device = null;
-    public device = {id:'11:22:33:44:55:66'};
+    public device = {id:'DE:F1:60:10:C6:9D'};
     public transport: Transport = null;
+    public connecting = false;
 
-    private paths = ["44'/60'/x'/0/0", "44'/60'/0'/x"];
     // public addresses = {};
     // for test
     public addresses: LedgerAccount[] = [
@@ -79,7 +74,6 @@ export class LedgerConnectPage implements OnInit {
         private translate: TranslateService,
         public theme: GlobalThemeService,
         public walletService: WalletService,
-        private zone: NgZone,
     ) {}
 
     ngOnInit() {
@@ -104,38 +98,49 @@ export class LedgerConnectPage implements OnInit {
         try {
             if (this.transport) {
                 await this.transport.close();
+                this.transport = null;
             }
-            this.transport = await BluetoothTransport.open(this.device as any);
+            this.connecting = true;
+            this.transport = await BluetoothTransport.open(this.device.id);
             Logger.log('ledger', ' initLedger this.transport:', this.transport)
         }
         catch (e) {
             Logger.error('ledger', ' initLedger error:', e)
         }
+        this.connecting = false;
     }
 
-    async getAddresses(accountsLength = 5, accountsOffset = 0) {
-        try {
-          const eth = new AppEth(this.transport);
-          this.addresses = [];
-          for (let i = accountsOffset; i < accountsOffset + accountsLength; i++) {
-            // const x = Math.floor(i / this.paths.length);
-            // const pathIndex = i - this.paths.length * x;
-            // const path = this.paths[pathIndex].replace("x", String(x));
-            const path = this.paths[0].replace("x", String(i));
-            const address = await eth.getAddress(path, false, false);
+    async getEVMAddresses(accountsLength = 5, accountsOffset = 0) {
+      try {
+          let ethApp = new EVMLedgerApp(this.transport);
+          this.addresses = await ethApp.getAddresses(accountsOffset, accountsLength, false);
 
-            this.zone.run( ()=> {
-                this.addresses.push({
-                    type:'EVM',
-                    address:address.address.toLowerCase(),
-                    pathIndex:i,
-                    path
-                })
-            })
-          }
+          Logger.warn('ledger', "EVM Addresses :", this.addresses);
         } catch (e) {
-            Logger.warn(TAG, 'getAddresses exception:', e)
+          Logger.warn(TAG, 'getAddresses exception:', e)
         }
+    }
+
+    async getBTCAddress(accountsLength = 2, accountsOffset = 0) {
+      try {
+        let btcApp = new BTCLedgerApp(this.transport);
+        this.addresses = await btcApp.getAddresses(accountsOffset, accountsLength, false);
+
+        Logger.warn('ledger', "BTC Addresses :", this.addresses);
+      } catch (e) {
+        Logger.warn(TAG, 'getAddresses exception:', e)
+      }
+    }
+
+    async getElaAddress() {
+        // try {
+        //     const ela = new Ela(this.transport);
+        //     Logger.warn('ledger', "call ela.getAddress ");
+        //     const r = await ela.getAddress();
+        //     Logger.warn('ledger', "ELA addresses :", r);
+        // } catch (err) {
+        //     Logger.warn('ledger', "getAddress error :", err);
+        // }
     }
 
     hasGotAddress() {

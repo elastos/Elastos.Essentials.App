@@ -9,14 +9,26 @@
             <ion-label>{{ device.name }}</ion-label>
         </ion-row>
 
+        <ion-spinner *ngIf="connecting" class="spinner"></ion-spinner>
+
         <ion-row>
             <ion-button color="primary" (click)="doConnect()">
                 <ion-label> Connect </ion-label>
             </ion-button>
         </ion-row>
         <ion-row>
-            <ion-button color="primary" (click)="getAddresses(5, 0)">
-                <ion-label> Get Addresses </ion-label>
+            <ion-button color="primary" (click)="getEVMAddresses(5, 0)">
+                <ion-label> Get EVM Addresses </ion-label>
+            </ion-button>
+        </ion-row>
+        <ion-row>
+          <ion-button color="primary" (click)="getBTCAddress()">
+              <ion-label> Get BTC Address </ion-label>
+          </ion-button>
+      </ion-row>
+        <ion-row>
+            <ion-button color="primary" (click)="getElaAddress()">
+                <ion-label> Get ELA Address </ion-label>
             </ion-button>
         </ion-row>
 
@@ -24,7 +36,7 @@
             <ion-label> Addresses </ion-label>
         </ion-row>
         <ion-row class="note-row" *ngFor="let item of addresses" (click)="selectAddress(item)">
-            <ion-label> {{ item.address }} </ion-label>
+            <p> {{ item.address }} </p>
         </ion-row>
 
     </ion-content>
