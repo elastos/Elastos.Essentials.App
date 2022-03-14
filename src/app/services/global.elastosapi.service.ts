@@ -507,6 +507,10 @@ export class GlobalElastosAPIService extends GlobalService {
         const paramArray = [];
         let index = 0;
 
+        if (!addressArray || addressArray.length === 0) {
+            throw new Error("Elastos API - getTransactionsByAddress() cannot be called with an empty address array");
+        }
+
         for (const address of addressArray) {
             const param = {
                 method: 'gethistory',

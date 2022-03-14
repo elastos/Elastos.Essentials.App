@@ -9,39 +9,45 @@
                         <p>{{ 'wallet.explore-your-wallets' | translate }}</p>
                     </ion-label>
                 </ion-col>
-                <ion-col size="2"  (click)="goToCreateWallet()">
+                <ion-col size="2" (click)="goToCreateWallet()">
                     <ion-icon class="add-wallet-icon" name="add-outline"></ion-icon>
                 </ion-col>
             </ion-row>
-            <ion-row *ngFor="let netWallet of walletsToShowInList" class="wallet-row"
-                [class.selected-wallet]="netWallet.id === networkWallet.id" (click)="selectWallet(netWallet)">
+            <ion-row *ngFor="let masterWallet of masterWalletsToShowInList" class="wallet-row"
+                [class.selected-wallet]="masterWallet.id === selectedMasterWallet.id"
+                (click)="selectWallet(masterWallet)">
                 <ion-col size="2" class="color-col">
                     <div class="color-block" [ngStyle]="
                         {
-                            'background-image': netWallet.masterWallet.theme ?
-                            'url(' + netWallet.masterWallet.theme.background + ')' :
+                            'background-image': masterWallet.theme ?
+                            'url(' + masterWallet.theme.background + ')' :
                             'url(/assets/wallet/cards/maincards/card-purple.svg)'
                         }"></div>
                 </ion-col>
-                <ion-col size="8" class="left-col">
-                    <div class="wallet-name">{{ netWallet.masterWallet.name }}</div>
-                    <div class="wallet-amount">
-                      <h4 *ngIf="!currencyService.useCurrency">{{
-                        WalletUtil.getWholeBalance(netWallet.getDisplayBalance()) }}<span class="dot"
-                            *ngIf="!netWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(netWallet.getDisplayBalance())">.</span>
-                        <span>{{ WalletUtil.getDecimalBalance(netWallet.getDisplayBalance(), netWallet.getDecimalPlaces())
-                            }}</span>
-                        <span>{{ netWallet.getDisplayTokenName() }}</span>
-                      </h4>
-                      <h4 *ngIf="currencyService.useCurrency">{{
-                          WalletUtil.getWholeBalance(netWallet.getDisplayBalanceInActiveCurrency())
-                          }}<span class="dot"
-                              *ngIf="!netWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(netWallet.getDisplayBalance()))">.</span>
-                          <span>{{
-                              WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(netWallet.getDisplayBalance()))
-                              }}</span>
-                          <span> {{ currencyService.selectedCurrency.symbol }}</span>
-                      </h4>
+                <ion-col size="8" class="left-col" *ngFor="let netWallet of [getNetworkWallet(masterWallet)]">
+                    <!-- ngFor: Hack to get a netWallet variable -->
+                    <div class="wallet-name">{{ masterWallet.name }}</div>
+                    <div class="wallet-amount" *ngIf="netWallet">
+                        <h4 *ngIf="!currencyService.useCurrency">{{
+                            WalletUtil.getWholeBalance(netWallet.getDisplayBalance()) }}<span class="dot"
+                                *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(netWallet.getDisplayBalance())">.</span>
+                            <span>{{ WalletUtil.getDecimalBalance(netWallet.getDisplayBalance(),
+                                netWallet.getDecimalPlaces())
+                                }}</span>
+                            <span>{{ netWallet.getDisplayTokenName() }}</span>
+                        </h4>
+                        <h4 *ngIf="currencyService.useCurrency">{{
+                            WalletUtil.getWholeBalance(netWallet.getDisplayBalanceInActiveCurrency())
+                            }}<span class="dot"
+                                *ngIf="!netWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(netWallet.getDisplayBalance()))">.</span>
+                            <span>{{
+                                WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(netWallet.getDisplayBalance()))
+                                }}</span>
+                            <span> {{ currencyService.selectedCurrency.symbol }}</span>
+                        </h4>
+                    </div>
+                    <div class="wallet-amount" *ngIf="!netWallet">
+                        Unsupported on the {{networkService.activeNetwork.value.name}} network.
                     </div>
                 </ion-col>
                 <ion-col size="2" class="right-col">

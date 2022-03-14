@@ -27,8 +27,12 @@ export abstract class MainCoinSubWallet<TransactionType extends GenericTransacti
         await super.destroy();
     }
 
+    /**
+     * @deprecated TODO: use getAddress(), and use createAddress() only for multi address wallets to really start using a NEW address
+     */
     // TODO: move to network wallet then to the "safe"
     public async createAddress(): Promise<string> {
+        Logger.warn("wallet", "createAddress() is deprecated, stop using it!");
         return await SPVService.instance.createAddress(jsToSpvWalletId(this.masterWallet.id), this.id);
     }
 

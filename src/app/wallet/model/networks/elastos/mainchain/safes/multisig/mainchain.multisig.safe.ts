@@ -3,11 +3,13 @@ import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets
 import { SignTransactionResult } from 'src/app/wallet/model/safes/safe.types';
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import * as ecc from 'tiny-secp256k1';
+import { Native } from "../../../../../../services/native.service";
 import { Safe } from "../../../../../safes/safe";
+import { ElastosMainChainSafe } from '../mainchain.safe';
 
 const bip32 = BIP32Factory(ecc);
 
-export class MainChainMultiSigSafe extends Safe {
+export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe {
   constructor(protected masterWallet: StandardMultiSigMasterWallet) {
     super(masterWallet);
   }
@@ -149,7 +151,14 @@ export class MainChainMultiSigSafe extends Safe {
     - add screen to export multisig xpub
     */
 
-    return await [""]; // TODO: only one address for now - how to get more addresses?
+    if (startIndex === 0)
+      return await ["XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf"]; // TODO - hardcoded tests for now - single address
+    else
+      return [];
+  }
+
+  public async getOwnerAddress(): Promise<string> {
+    return await "XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf"; // Hardcoded - equivalent of SVP getOwnerAddress();
   }
 
   public createTransfer(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
@@ -157,6 +166,11 @@ export class MainChainMultiSigSafe extends Safe {
   }
 
   public signTransaction(rawTx: string, transfer: Transfer): Promise<SignTransactionResult> {
-    throw new Error("Method not implemented.");
+
+    Native.instance.go("/multisig/status");
+
+    return null;
+
+    //throw new Error("Method not implemented.");
   }
 }

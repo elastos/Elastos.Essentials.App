@@ -27,6 +27,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { LedgerSignComponent, LedgerSignComponentOptions } from '../components/ledger-sign/ledger-sign.component';
 import { WalletChooserComponent, WalletChooserComponentOptions } from '../components/wallet-chooser/wallet-chooser.component';
+import { MasterWallet } from '../model/masterwallets/masterwallet';
 import { Safe } from '../model/safes/safe';
 import { WalletService } from './wallet.service';
 
@@ -65,7 +66,12 @@ export class WalletUIService {
                 Logger.log('wallet', 'New wallet selected:', params);
                 if (params.data && params.data.selectedMasterWalletId) {
                     let wallet = this.walletService.getNetworkWalletFromMasterWalletId(params.data.selectedMasterWalletId);
-                    void this.walletService.setActiveNetworkWallet(wallet);
+
+                    let masterWallet: MasterWallet;
+                    if (!wallet)
+                        masterWallet = this.walletService.getMasterWallet(params.data.selectedMasterWalletId);
+
+                    void this.walletService.setActiveNetworkWallet(wallet, masterWallet);
                     resolve(true);
                 }
                 else
@@ -78,7 +84,7 @@ export class WalletUIService {
     /**
      *
      */
-     async connectLedger(deviceId: string, safe: Safe): Promise<BluetoothTransport> {
+    async connectLedger(deviceId: string, safe: Safe): Promise<BluetoothTransport> {
         let options: LedgerSignComponentOptions = {
             deviceId: deviceId,
             safe: safe,

@@ -20,8 +20,7 @@
             </ion-row>
         </div>
 
-        <ion-grid *ngIf="networkWallet" class="single-slide" [class.dark-slide]="theme.darkMode"
-            [class.blur]="native.popup">
+        <ion-grid class="single-slide" [class.dark-slide]="theme.darkMode" [class.blur]="native.popup">
             <!-- <ion-row class="main-title-row">
             <ion-col size="12">
                 <h1>{{ 'wallet.wallet-overview' | translate }}</h1>
@@ -31,23 +30,23 @@
 
             <ion-row class="card-row" [ngStyle]="
                 {
-                    'background-image': networkWallet.masterWallet.theme ?
-                    'url(' + networkWallet.masterWallet.theme.background + ')' :
+                    'background-image': masterWallet.theme ?
+                    'url(' + masterWallet.theme.background + ')' :
                     'url(/assets/wallet/cards/maincards/card-purple.svg)'
                 }">
                 <ion-row class="card-label-row">
                     <ion-row class="top-row">
                         <ion-col size="8" class="left-col">
-                            <h1>{{ networkWallet.masterWallet.name }}</h1>
+                            <h1>{{ masterWallet.name }}</h1>
                         </ion-col>
                         <ion-col size="4" class="right-col">
                             <img src="assets/wallet/icons/darkmode/change-wallet.svg"
                                 *ngIf="getPotentialActiveWallets().length > 1" (click)="pickOtherWallet()">
-                            <img src="assets/wallet/icons/dots.svg" (click)="goToWalletSettings(networkWallet)">
+                            <img src="assets/wallet/icons/dots.svg" (click)="goToWalletSettings(masterWallet)">
                         </ion-col>
                     </ion-row>
-                    <h3>{{ 'wallet.total-amount' | translate }}</h3>
-                    <div (click)="currencyService.toggleCurrencyDisplay()">
+                    <h3 *ngIf="networkWallet">{{ 'wallet.total-amount' | translate }}</h3>
+                    <div *ngIf="networkWallet" (click)="currencyService.toggleCurrencyDisplay()">
                         <h4 *ngIf="!currencyService.useCurrency">{{
                             WalletUtil.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"
                                 *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance(), networkWallet.getDecimalPlaces())">.</span>
@@ -68,158 +67,166 @@
                     </div>
                 </ion-row>
                 <div class="arrow-down" [ngStyle]="{
-                    'background-color': networkWallet.masterWallet.theme ?
-                    networkWallet.masterWallet.theme.color : '#752fcf'
+                    'background-color': masterWallet.theme ?
+                    masterWallet.theme.color : '#752fcf'
                 }">
                 </div>
             </ion-row>
-            <ion-row class="list-title-row">
-                <ion-col size="12">
-                    <h1>{{ 'wallet.coin-list' | translate }}</h1>
-                    <img class="sort"
-                        [src]="!theme.darkMode ? 'assets/wallet/icons/sort.svg' : 'assets/wallet/icons/darkmode/sort.svg'"
-                        (click)="setSortMode()">
-                </ion-col>
+            <ion-row *ngIf="!networkWallet">
+                This wallet is unsupported on the {{ currentNetwork.name }} network. Please select another network or
+                wallet.
             </ion-row>
-            <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
-                *ngFor="let subWallet of getDisplayableSubWallets()" (click)="onSubWalletClicked(subWallet)">
-                <ion-col size="2" class="left-col">
-                    <div class="icon-container">
-                        <img [src]="subWallet.getMainIcon()">
-                        <div *ngIf="subWallet.getSecondaryIcon()" class="ela-icon">
-                            <img [src]="subWallet.getSecondaryIcon()" />
+            <div *ngIf="networkWallet" style="width:100%">
+                <ion-row class="list-title-row">
+                    <ion-col size="12">
+                        <h1>{{ 'wallet.coin-list' | translate }}</h1>
+                        <img class="sort"
+                            [src]="!theme.darkMode ? 'assets/wallet/icons/sort.svg' : 'assets/wallet/icons/darkmode/sort.svg'"
+                            (click)="setSortMode()">
+                    </ion-col>
+                </ion-row>
+                <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
+                    *ngFor="let subWallet of getDisplayableSubWallets()" (click)="onSubWalletClicked(subWallet)">
+                    <ion-col size="2" class="left-col">
+                        <div class="icon-container">
+                            <img [src]="subWallet.getMainIcon()">
+                            <div *ngIf="subWallet.getSecondaryIcon()" class="ela-icon">
+                                <img [src]="subWallet.getSecondaryIcon()" />
+                            </div>
                         </div>
-                    </div>
-                </ion-col>
-                <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 7.5 : 5" class="middle-col">
-                    <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
-                    <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
-                </ion-col>
-                <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 2.5 : 5" class="right-col">
-                    <h1>{{ uiService.getFixedBalance(subWallet.getDisplayBalance()) }}</h1>
-                    <p *ngIf="subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance())">
-                        {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance()) }}
-                        {{ currencyService.selectedCurrency.symbol }}
-                    </p>
-                </ion-col>
-                <ion-col offset="2" size="10" class="bottom-col">
-                    <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{
-                        subWallet.getDisplayableERC20TokenInfo() }}</span>
-                </ion-col>
-                <ion-col offset="2" size="10" class="providers" [hidden]="!shouldShowSubWalletDetails(subWallet)">
-                    <div class="view-transactions ripple ion-activatable" (click)="viewTransactions($event, subWallet)">
-                        {{ 'wallet.view-transactions' | translate }}
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </div>
-                    <div class="earn-providers ripple ion-activatable" (click)="earn($event, subWallet)"
-                        *ngIf="subWallet.getAvailableEarnProviders().length > 0">
-                        <ion-col size="6">
-                            {{ 'wallet.earn' | translate }}
-                        </ion-col>
-                        <ion-col size="6" class="logos">
-                            <img *ngFor="let earnProvider of subWallet.getAvailableEarnProviders()"
-                                [src]="earnProvider.baseProvider.logo" class="logo">
-                        </ion-col>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </div>
-                    <ion-row class="swap-providers ripple ion-activatable" (click)="swap($event, subWallet)"
-                        *ngIf="subWallet.getAvailableSwapProviders().length > 0">
-                        <ion-col size="6">
-                            {{ 'wallet.swap' | translate }}
-                        </ion-col>
-                        <ion-col size="6" class="logos">
-                            <img *ngFor="let swapProvider of subWallet.getAvailableSwapProviders()"
-                                [src]="swapProvider.baseProvider.logo" class="logo">
-                        </ion-col>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </ion-row>
-                    <div class="bridge-providers ripple ion-activatable" (click)="bridge($event, subWallet)"
-                        *ngIf="subWallet.getAvailableBridgeProviders().length > 0">
-                        <ion-col size="6">
-                            {{ 'wallet.bridge' | translate }}
-                        </ion-col>
-                        <ion-col size="6" class="logos">
-                            <img *ngFor="let bridgeProvider of subWallet.getAvailableBridgeProviders()"
-                                [src]="bridgeProvider.baseProvider.logo" class="logo">
-                        </ion-col>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </div>
-                </ion-col>
-            </ion-row>
+                    </ion-col>
+                    <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 7.5 : 5" class="middle-col">
+                        <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
+                        <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
+                    </ion-col>
+                    <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 2.5 : 5" class="right-col">
+                        <h1>{{ uiService.getFixedBalance(subWallet.getDisplayBalance()) }}</h1>
+                        <p *ngIf="subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance())">
+                            {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance()) }}
+                            {{ currencyService.selectedCurrency.symbol }}
+                        </p>
+                    </ion-col>
+                    <ion-col offset="2" size="10" class="bottom-col">
+                        <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{
+                            subWallet.getDisplayableERC20TokenInfo() }}</span>
+                    </ion-col>
+                    <ion-col offset="2" size="10" class="providers" [hidden]="!shouldShowSubWalletDetails(subWallet)">
+                        <div class="view-transactions ripple ion-activatable"
+                            (click)="viewTransactions($event, subWallet)">
+                            {{ 'wallet.view-transactions' | translate }}
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </div>
+                        <div class="earn-providers ripple ion-activatable" (click)="earn($event, subWallet)"
+                            *ngIf="subWallet.getAvailableEarnProviders().length > 0">
+                            <ion-col size="6">
+                                {{ 'wallet.earn' | translate }}
+                            </ion-col>
+                            <ion-col size="6" class="logos">
+                                <img *ngFor="let earnProvider of subWallet.getAvailableEarnProviders()"
+                                    [src]="earnProvider.baseProvider.logo" class="logo">
+                            </ion-col>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </div>
+                        <ion-row class="swap-providers ripple ion-activatable" (click)="swap($event, subWallet)"
+                            *ngIf="subWallet.getAvailableSwapProviders().length > 0">
+                            <ion-col size="6">
+                                {{ 'wallet.swap' | translate }}
+                            </ion-col>
+                            <ion-col size="6" class="logos">
+                                <img *ngFor="let swapProvider of subWallet.getAvailableSwapProviders()"
+                                    [src]="swapProvider.baseProvider.logo" class="logo">
+                            </ion-col>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-row>
+                        <div class="bridge-providers ripple ion-activatable" (click)="bridge($event, subWallet)"
+                            *ngIf="subWallet.getAvailableBridgeProviders().length > 0">
+                            <ion-col size="6">
+                                {{ 'wallet.bridge' | translate }}
+                            </ion-col>
+                            <ion-col size="6" class="logos">
+                                <img *ngFor="let bridgeProvider of subWallet.getAvailableBridgeProviders()"
+                                    [src]="bridgeProvider.baseProvider.logo" class="logo">
+                            </ion-col>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </div>
+                    </ion-col>
+                </ion-row>
 
-            <ion-row class="list-title-row staked-assets-row" *ngIf="isEVMNetworkWallet">
-                <ion-col size="6">
-                    <h1>{{ 'wallet.staking-assets' | translate }}</h1>
-                </ion-col>
-                <ion-col size="6" class="service-provider ripple ion-activatable" (click)="openStakedAssetsProvider()">
-                    <div class="cell">By</div>
-                    <div class="cell">
-                        <img
-                            [src]="theme.darkMode ? 'assets/wallet/earn/darkmode/tinnetwork.png' : 'assets/wallet/earn/tinnetwork.png'" />
-                    </div>
-                    <div class="cell">
-                        <img class="go"
-                            [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/right-arrow.svg' : 'assets/wallet/icons/right-arrow.svg'" />
-                    </div>
+                <ion-row class="list-title-row staked-assets-row" *ngIf="isEVMNetworkWallet">
+                    <ion-col size="6">
+                        <h1>{{ 'wallet.staking-assets' | translate }}</h1>
+                    </ion-col>
+                    <ion-col size="6" class="service-provider ripple ion-activatable"
+                        (click)="openStakedAssetsProvider()">
+                        <div class="cell">By</div>
+                        <div class="cell">
+                            <img
+                                [src]="theme.darkMode ? 'assets/wallet/earn/darkmode/tinnetwork.png' : 'assets/wallet/earn/tinnetwork.png'" />
+                        </div>
+                        <div class="cell">
+                            <img class="go"
+                                [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/right-arrow.svg' : 'assets/wallet/icons/right-arrow.svg'" />
+                        </div>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="reload-staked-assets" (click)="onRefreshStakingAssetClicked()"
+                    *ngIf="isEVMNetworkWallet && !refreshingStakedAssets">
+                    <img
+                        [src]="!theme.darkMode ? '/assets/browser/icons/icon-reload.svg' : 'assets/browser/icons/dark_mode/icon-reload.svg'" />
+                    <ion-label>{{ 'wallet.staking-assets-refresh' | translate }}</ion-label>
+                </ion-row>
+
+                <ion-row class="reload-staked-assets" *ngIf="isEVMNetworkWallet && refreshingStakedAssets">
+                    <ion-spinner name="crescent"></ion-spinner>
+                    <ion-label>{{ 'wallet.staking-assets-refreshing' | translate }}</ion-label>
+                </ion-row>
+
+                <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+                    *ngFor="let stakingAsset of stakingAssets" (click)="onStakingAssetClicked(stakingAsset)">
+                    <ion-col size="2" class="left-col">
+                        <div class="icon-container">
+                            <img [src]="stakingAsset.farmIconUrl" [src-fallback]="getDefaultStakedAssetIcon()">
+                        </div>
+                    </ion-col>
+                    <ion-col [size]="5" class="middle-col">
+                        <h1>{{ stakingAsset.farmName }}</h1>
+                    </ion-col>
+                    <ion-col [size]="5" class="right-col">
+                        <h1>{{ usdToCurrencyAmount(stakingAsset.amountUSD, networkWallet.getDecimalPlaces()) }}</h1>
+                        <p>
+                            {{ currencyService.selectedCurrency.symbol }}
+                        </p>
+                    </ion-col>
                     <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-            </ion-row>
+                </ion-row>
 
-            <ion-row class="reload-staked-assets" (click)="onRefreshStakingAssetClicked()"
-                *ngIf="isEVMNetworkWallet && !refreshingStakedAssets">
-                <img
-                    [src]="!theme.darkMode ? '/assets/browser/icons/icon-reload.svg' : 'assets/browser/icons/dark_mode/icon-reload.svg'" />
-                <ion-label>{{ 'wallet.staking-assets-refresh' | translate }}</ion-label>
-            </ion-row>
-
-            <ion-row class="reload-staked-assets" *ngIf="isEVMNetworkWallet && refreshingStakedAssets">
-                <ion-spinner name="crescent"></ion-spinner>
-                <ion-label>{{ 'wallet.staking-assets-refreshing' | translate }}</ion-label>
-            </ion-row>
-
-            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
-                *ngFor="let stakingAsset of stakingAssets" (click)="onStakingAssetClicked(stakingAsset)">
-                <ion-col size="2" class="left-col">
-                    <div class="icon-container">
-                        <img [src]="stakingAsset.farmIconUrl" [src-fallback]="getDefaultStakedAssetIcon()">
-                    </div>
-                </ion-col>
-                <ion-col [size]="5" class="middle-col">
-                    <h1>{{ stakingAsset.farmName }}</h1>
-                </ion-col>
-                <ion-col [size]="5" class="right-col">
-                    <h1>{{ usdToCurrencyAmount(stakingAsset.amountUSD, networkWallet.getDecimalPlaces()) }}</h1>
-                    <p>
-                        {{ currencyService.selectedCurrency.symbol }}
-                    </p>
-                </ion-col>
-                <ion-ripple-effect></ion-ripple-effect>
-            </ion-row>
-
-            <ion-row *ngIf="networkWallet.getNFTs().length" class="list-title-row collectibles-title">
-                <ion-col size="12">
-                    <h1>{{ 'wallet.collectibles' | translate }}</h1>
-                </ion-col>
-            </ion-row>
-            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
-                *ngFor="let nft of networkWallet.getNFTs()" (click)="goNFTHome(networkWallet, nft)">
-                <ion-col size="2" class="left-col">
-                    <div class="icon-container">
-                        <img [src]="networkWallet.getMainEvmSubWallet().getMainIcon()">
-                        <div *ngIf="networkWallet.getMainEvmSubWallet().getSecondaryIcon()" class="ela-icon">
-                            <img [src]="networkWallet.getMainEvmSubWallet().getSecondaryIcon()" />
+                <ion-row *ngIf="networkWallet.getNFTs().length" class="list-title-row collectibles-title">
+                    <ion-col size="12">
+                        <h1>{{ 'wallet.collectibles' | translate }}</h1>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+                    *ngFor="let nft of networkWallet.getNFTs()" (click)="goNFTHome(networkWallet, nft)">
+                    <ion-col size="2" class="left-col">
+                        <div class="icon-container">
+                            <img [src]="networkWallet.getMainEvmSubWallet().getMainIcon()">
+                            <div *ngIf="networkWallet.getMainEvmSubWallet().getSecondaryIcon()" class="ela-icon">
+                                <img [src]="networkWallet.getMainEvmSubWallet().getSecondaryIcon()" />
+                            </div>
                         </div>
-                    </div>
-                </ion-col>
-                <ion-col size="8" class="middle-col">
-                    <h1>{{ nft.name }}</h1>
-                    <div class="bottom-col"><span class="synced">ELASTOS {{nft.type}} NFT</span></div>
-                </ion-col>
-                <ion-col size="2" class="right-col">
-                    <h1>{{ nft.balance }}</h1>
-                </ion-col>
-                <ion-ripple-effect></ion-ripple-effect>
-            </ion-row>
+                    </ion-col>
+                    <ion-col size="8" class="middle-col">
+                        <h1>{{ nft.name }}</h1>
+                        <div class="bottom-col"><span class="synced">ELASTOS {{nft.type}} NFT</span></div>
+                    </ion-col>
+                    <ion-col size="2" class="right-col">
+                        <h1>{{ nft.balance }}</h1>
+                    </ion-col>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-row>
+            </div>
         </ion-grid>
     </ion-content>
 </ion-content>

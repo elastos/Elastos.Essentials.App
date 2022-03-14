@@ -170,8 +170,19 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
 
   /**
    * Create a new wallet address for receiving payments.
+   * @deprecated
    */
   public abstract createAddress(): Promise<string>;
+
+
+  /**
+   * Address to use to receive a payment. For single address wallets this is always the first address.
+   */
+  public getCurrentReceiverAddress(): Promise<string> {
+    // Default implementation (for single address wallets): always return the first address.
+    // Multi address wallets override this to return the real "current" receiving address.
+    return this.networkWallet.safe.getAddresses(0, 1, false)[0];
+  }
 
   public abstract isAddressValid(address: string): boolean;
 

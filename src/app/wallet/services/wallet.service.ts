@@ -37,7 +37,7 @@ import { CoinType } from '../model/coin';
 import { LeddgerAccountType } from '../model/ledger.types';
 import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
-import { LedgerAccountOptions, PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
+import { ElastosMainChainWalletNetworkOptions, LedgerAccountOptions, PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
 import type { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
 import type { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
 import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
@@ -236,6 +236,7 @@ export class WalletService {
         if (activatedNetwork) {
             Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork);
 
+            this.networkWallets = {};
             for (let masterWallet of this.getMasterWalletsList()) {
                 Logger.log("wallet", "Creating network wallet for master wallet:", masterWallet);
 
@@ -317,10 +318,31 @@ export class WalletService {
         }
     }
 
-    public async setActiveNetworkWallet(networkWallet: AnyNetworkWallet): Promise<void> {
+    /**
+     * Sets the new network wallet to the given value, and also sets the active master wallet to the
+     * network wallet's master wallet.
+     * In case the network wallet is null (can happen if the master wallet is not supported on the
+     * network), then a forced masted wallet must be passed to still change the active master wallet even
+     * without network wallet
+     */
+    public async setActiveNetworkWallet(networkWallet: AnyNetworkWallet, forcedMasterWallet?: MasterWallet): Promise<void> {
+        if (networkWallet && forcedMasterWallet)
+            throw new Error("setActiveNetworkWallet(): networkWallet and forcedMasterWallet cannot be both used at the same time");
+
+        if (!networkWallet && !forcedMasterWallet)
+            throw new Error("setActiveNetworkWallet(): either networkWallet or forcedMasterWallet must be passed");
+
+        if (networkWallet) {
+            Logger.log('wallet', 'Changing the active master wallet to', networkWallet.masterWallet.id);
+            await this.setActiveMasterWallet(networkWallet.masterWallet.id);
+        }
+        else {
+            Logger.log('wallet', 'Changing the active master wallet (forced) to', forcedMasterWallet.id);
+            await this.setActiveMasterWallet(forcedMasterWallet.id);
+        }
+
         Logger.log('wallet', 'Changing the active network wallet to', networkWallet);
         this.activeNetworkWallet.next(networkWallet);
-        await this.setActiveMasterWallet(networkWallet.masterWallet.id);
     }
 
     public async setActiveMasterWallet(masterId: string): Promise<void> {
@@ -573,7 +595,13 @@ export class WalletService {
             id: masterId,
             name: walletName,
             theme: defaultWalletTheme(),
-            networkOptions: [], // TODO
+            networkOptions: [
+                // TODO
+                {
+                    network: "elastos",
+                    singleAddress: true
+                } as ElastosMainChainWalletNetworkOptions
+            ],
             creator: WalletCreator.USER,
             signingWalletId,
             requiredSigners,
@@ -615,12 +643,13 @@ export class WalletService {
         let activeNetwork = this.networkService.activeNetwork.value;
         let masterWallet = this.masterWallets[wallet.id];
         let networkWallet = await activeNetwork.createNetworkWallet(masterWallet);
+
+        this.networkWallets[wallet.id] = networkWallet; // It's ok to be a null network wallet
+
         if (!networkWallet) {
             Logger.warn("wallet", "Failed to create network wallet", masterWallet, activeNetwork);
         }
         else {
-            this.networkWallets[wallet.id] = networkWallet;
-
             // Notify that this network wallet is the active one
             await this.setActiveNetworkWallet(networkWallet);
         }

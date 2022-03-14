@@ -2,8 +2,9 @@ import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { SignTransactionResult } from "../../../../safes/safe.types";
 import { SPVSDKSafe } from "../../../../safes/spvsdk.safe";
+import { ElastosMainChainSafe } from "./mainchain.safe";
 
-export class MainChainSPVSDKSafe extends SPVSDKSafe {
+export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainSafe {
   public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
     let txResult = await super.signTransaction(rawTransaction, transfer);
 
@@ -26,5 +27,9 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe {
     return {
       signedTransaction: rawSignedTransaction
     }
+  }
+
+  public getOwnerAddress(): Promise<string> {
+    return SPVService.instance.getOwnerAddress(jsToSpvWalletId(this.masterWallet.id), this.chainId);
   }
 }

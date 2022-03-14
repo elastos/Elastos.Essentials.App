@@ -5,10 +5,12 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from '../../model/coin';
+import { MasterWallet } from '../../model/masterwallets/masterwallet';
 import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
 import { WalletUtil } from '../../model/wallet.util';
 import { CurrencyService } from '../../services/currency.service';
 import { Native } from '../../services/native.service';
+import { WalletNetworkService } from '../../services/network.service';
 import { UiService } from '../../services/ui.service';
 import { WalletService } from '../../services/wallet.service';
 
@@ -16,6 +18,11 @@ export type WalletChooserComponentOptions = {
   currentNetworkWallet: AnyNetworkWallet;
 }
 
+/**
+ * This dialog shows the list of all master wallets so that user can pick one.
+ * For master wallets that are supported on the active network (network wallet exists), we show
+ * more info such as the current native token balance here.
+ */
 @Component({
   selector: 'app-wallet-chooser',
   templateUrl: './wallet-chooser.component.html',
@@ -26,8 +33,11 @@ export class WalletChooserComponent implements OnInit {
 
   public CoinType = CoinType;
   public options: WalletChooserComponentOptions = null;
-  public networkWallet: AnyNetworkWallet;
-  public walletsToShowInList: AnyNetworkWallet[];
+  public selectedMasterWallet: MasterWallet;
+  public masterWalletsToShowInList: MasterWallet[];
+  public networkWalletsToShowInList: {
+    [walletId: string]: AnyNetworkWallet;
+  } = {};
 
   // Helper
   public WalletUtil = WalletUtil;
@@ -40,6 +50,7 @@ export class WalletChooserComponent implements OnInit {
     public theme: GlobalThemeService,
     public currencyService: CurrencyService,
     private modalCtrl: ModalController,
+    public networkService: WalletNetworkService,
     private native: Native
   ) {
   }
@@ -47,15 +58,27 @@ export class WalletChooserComponent implements OnInit {
   ngOnInit() {
     this.options = this.navParams.data as WalletChooserComponentOptions;
 
-    this.networkWallet = this.options.currentNetworkWallet;
-    this.walletsToShowInList = this.walletService.getNetworkWalletsList();
+    this.selectedMasterWallet = this.options.currentNetworkWallet ? this.options.currentNetworkWallet.masterWallet : this.walletService.getActiveMasterWallet();
+    this.masterWalletsToShowInList = this.walletService.getMasterWalletsList();
+
+    // Build the list of available network wallets from the master wallets
+    this.networkWalletsToShowInList = {};
+    this.masterWalletsToShowInList.forEach(mw => {
+      let networkWallet = this.walletService.getNetworkWalletFromMasterWalletId(mw.id);
+      if (networkWallet)
+        this.networkWalletsToShowInList[mw.id] = networkWallet;
+    });
   }
 
-  selectWallet(wallet: AnyNetworkWallet) {
+  public getNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+    return this.networkWalletsToShowInList[masterWallet.id];
+  }
+
+  selectWallet(wallet: MasterWallet) {
     Logger.log("wallet", "Wallet selected", wallet);
 
     void this.modalCtrl.dismiss({
-      selectedMasterWalletId: wallet.masterWallet.id
+      selectedMasterWalletId: wallet.id
     });
   }
 

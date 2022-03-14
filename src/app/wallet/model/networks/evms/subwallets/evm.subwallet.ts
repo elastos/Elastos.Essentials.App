@@ -15,7 +15,7 @@ import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
 import type { EVMNetwork } from '../evm.network';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction } from '../evm.types';
-import { ERC20SubWallet } from './erc20.subwallet';
+import type { ERC20SubWallet } from './erc20.subwallet';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var Common = require('ethereumjs-common').default;
 

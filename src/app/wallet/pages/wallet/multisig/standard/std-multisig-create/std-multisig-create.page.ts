@@ -4,9 +4,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Util } from 'src/app/model/util';
+import { Events } from 'src/app/services/events.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { AuthService } from 'src/app/wallet/services/auth.service';
 import { Native } from 'src/app/wallet/services/native.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 
@@ -31,6 +33,8 @@ export class StandardMultiSigCreatePage implements OnInit {
         private theme: GlobalThemeService,
         private native: Native,
         private walletService: WalletService,
+        private events: Events,
+        private authService: AuthService,
         private globalStartupService: GlobalStartupService
     ) {
     }
@@ -71,6 +75,7 @@ export class StandardMultiSigCreatePage implements OnInit {
 
     async createWallet() {
         let walletId = this.walletService.createMasterWalletID();
+        await this.authService.createAndSaveWalletPassword(walletId);
         let testWallet = await this.walletService.newMultiSigStandardWallet(
             walletId,
             this.wallet.name,
@@ -84,9 +89,12 @@ export class StandardMultiSigCreatePage implements OnInit {
             ]
         );
 
-        // TEST PUBLISH HERE
-        console.log("testWallet multisig", testWallet);
+        this.native.setRootRouter("/wallet/wallet-home");
 
+        this.events.publish("masterwalletcount:changed", {
+            action: 'add',
+            walletId: walletId
+        });
 
         /*  this.walletCreationService.name = this.wallet.name;
          this.walletCreationService.singleAddress = this.wallet.singleAddress;

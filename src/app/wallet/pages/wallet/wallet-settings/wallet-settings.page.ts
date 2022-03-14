@@ -106,7 +106,7 @@ export class WalletSettingsPage implements OnInit {
         this.canExportKeystore = false; // TODO - repair - export "private key" keystores, not "elastos keystores" //this.masterWallet.createType === WalletCreateType.MNEMONIC || this.masterWallet.createType === WalletCreateType.KEYSTORE;
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
 
-        if (this.networkWallet.network.supportsERC20Coins()) {
+        if (this.networkWallet && this.networkWallet.network.supportsERC20Coins()) {
             this.settings.push({
                 type: 'coin-list',
                 route: "/wallet/coin-list",

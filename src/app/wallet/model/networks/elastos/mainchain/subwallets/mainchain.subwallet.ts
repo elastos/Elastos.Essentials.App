@@ -1,6 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
@@ -21,6 +22,7 @@ import { AnyNetworkWallet } from '../../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../../base/subwallets/maincoin.subwallet';
 import { ElastosTransactionsHelper } from '../../transactions.helper';
 import { InvalidVoteCandidatesHelper } from '../invalidvotecandidates.helper';
+import { ElastosMainChainSafe } from '../safes/mainchain.safe';
 
 
 const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, VoteType.CRCImpeachment]
@@ -65,7 +67,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         this.invalidVoteCandidatesHelper = new InvalidVoteCandidatesHelper();
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        setTimeout(async () => {
+        runDelayed(async () => {
             if (!this.isSingleAddress()) {
                 await this.checkAddresses(true);
                 await this.checkAddresses(false);
@@ -278,8 +280,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return await this.balance.gt(amount);
     }
 
-    // Ignore gasPrice, gasLimit and nonce.
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", gasPrice: string = null, gasLimit: string = null, nonce: number = null): Promise<string> {
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
         let toAmount = 0;
         let au: AvalaibleUtxos = null;
 
@@ -447,11 +448,13 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     protected async checkAddresses(internal: boolean) {
         const checkCount = 10;
         let startIndex = this.externalAddressCount;
+
         if (!internal) startIndex = this.internalAddressCount - checkCount;
 
         let findTx = false;
         try {
             do {
+                console.log("mainchain subwallet checkAddresses ", startIndex);
                 findTx = false;
                 let addressArray = await this.networkWallet.safe.getAddresses(startIndex, checkCount, internal);
                 //let addressArray = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, checkCount, internal);
@@ -769,8 +772,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async getOwnerAddress(): Promise<string> {
         if (!this.ownerAddress) {
-            this.ownerAddress = await SPVService.instance.getOwnerAddress(
-                jsToSpvWalletId(this.masterWallet.id), this.id);
+            this.ownerAddress = await (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerAddress();
+            //this.ownerAddress = await SPVService.instance.getOwnerAddress(jsToSpvWalletId(this.masterWallet.id), this.id);
         }
         return this.ownerAddress;
     }

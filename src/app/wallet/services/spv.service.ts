@@ -562,7 +562,6 @@ export class SPVService {
     }
 
     getAddresses(masterWalletId: string, subWalletId: string, start: number, count: number, internal: boolean): Promise<string[]> {
-        Logger.warn("spv", "Call to getAddresses");
         return new Promise((resolve, reject) => {
             walletManager.getAddresses([masterWalletId, subWalletId, start, count, internal],
                 (ret) => { resolve(ret); },

@@ -62,6 +62,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', { static: false }) slider: IonSlides;
 
+    public masterWallet: MasterWallet = null;
     public networkWallet: AnyNetworkWallet = null;
     private displayableSubWallets: AnySubWallet[] = null;
     public stakingAssets: StakingData[] = null;
@@ -116,8 +117,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
     ngOnInit() {
         this.showRefresher();
         this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe((activeNetworkWallet) => {
+            this.networkWallet = activeNetworkWallet;
+
+            this.masterWallet = this.walletManager.getActiveMasterWallet();
+
             if (activeNetworkWallet) {
-                this.networkWallet = activeNetworkWallet;
                 this.isEVMNetworkWallet = this.networkWallet.getMainEvmSubWallet() ? true : false;
 
                 this.refreshSubWalletsList();
@@ -131,6 +135,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
                 this.stakedAssetsUpdateSubscription = this.networkWallet.stakedAssetsUpdate.subscribe((data) => {
                     this.refreshStakingAssetsList();
                 })
+            }
+            else {
+                // Nothing to do, unsupported wallet for the active network
             }
         });
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
