@@ -104,6 +104,8 @@ export const en = {
         'imprest': 'Imprest',
         'normalpayment': 'NormalPayment',
         'finalpayment': 'FinalPayment',
+        "apply-date": "Apply Date",
+        "audit-date": "Audit Date",
 
         'sign-create-suggestion': 'Sign and Create Suggestion',
         'createsuggestion-successfully': 'Suggestion created successfully.',

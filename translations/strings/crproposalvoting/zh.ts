@@ -104,6 +104,8 @@ export const zh = {
         'imprest': '首付款/预付款',
         'normalpayment': '阶段款',
         'finalpayment': '结项款/尾款',
+        "apply-date": "申请日期",
+        "audit-date": "审核日期",
 
         'sign-create-suggestion': '签名并提交建议',
         'createsuggestion-successfully': '创建建议成功。',

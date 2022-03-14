@@ -70,32 +70,26 @@
                                                 <h5 class="milestone-goal">{{ entry.goal }}</h5>
                                                 <div class="lastTrackingInfo"
                                                     *ngIf="entry.lastTrackingInfo && entry.lastTrackingInfo.apply">
-                                                    <ion-row>
-                                                        <ion-col size="9">
-                                                            <div>
-                                                                <div
-                                                                    *ngIf="entry.lastTrackingInfo.apply && entry.lastTrackingInfo.apply.content">
-                                                                    <h5>{{ entry.lastTrackingInfo.apply.content }}</h5>
-                                                                    <h5 class="timestamp">{{
-                                                                        uxService.formatDate(entry.lastTrackingInfo.apply.timestamp)}}
-                                                                    </h5>
-                                                                </div>
-                                                                <div *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.content"
-                                                                    class="review">
-                                                                    <h5>{{ entry.lastTrackingInfo.review.content }}</h5>
-                                                                    <h5 class="timestamp">{{
-                                                                        uxService.formatDate(entry.lastTrackingInfo.review.timestamp)
-                                                                        }}</h5>
-                                                                </div>
-                                                            </div>
-                                                        </ion-col>
-                                                        <ion-col size="3" class="review-opinion"
-                                                            *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.opinion">
-                                                            <p>{{ 'crproposalvoting.' +
-                                                                entry.lastTrackingInfo.review.opinion |
-                                                                translate }}</p>
-                                                        </ion-col>
-                                                    </ion-row>
+                                                    <div *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.opinion">
+                                                        <p class="review-opinion" [class.approve]="entry.lastTrackingInfo.review.opinion === 'approve'"
+                                                                [class.reject]="entry.lastTrackingInfo.review.opinion === 'reject'">
+                                                            {{ 'crproposalvoting.' + entry.lastTrackingInfo.review.opinion | translate }}
+                                                        </p>
+                                                    </div>
+                                                    <div *ngIf="entry.lastTrackingInfo.apply && entry.lastTrackingInfo.apply.content">
+                                                        <p class="content">{{ entry.lastTrackingInfo.apply.content }}</p>
+                                                        <h5 class="timestamp">
+                                                            {{ ('crproposalvoting.apply-date'  | translate) + ": " }}
+                                                            {{ uxService.formatDate(entry.lastTrackingInfo.apply.timestamp)}}
+                                                        </h5>
+                                                    </div>
+                                                    <div *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.content">
+                                                        <p class="content">{{ entry.lastTrackingInfo.review.content }}</p>
+                                                        <h5 class="timestamp">
+                                                            {{ ('crproposalvoting.audit-date'  | translate) + ": " }}
+                                                            {{ uxService.formatDate(entry.lastTrackingInfo.review.timestamp) }}
+                                                        </h5>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </ion-col>

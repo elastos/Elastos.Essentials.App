@@ -103,6 +103,8 @@ export const fr = {
         'imprest': 'Imprest',
         'normalpayment': 'NormalPayment',
         'finalpayment': 'FinalPayment',
+        "apply-date": "Apply Date",
+        "audit-date": "Audit Date",
 
         'sign-create-suggestion': 'Signer et Créer la Suggestion',
         'createsuggestion-successfully': 'Suggestion created successfully.',

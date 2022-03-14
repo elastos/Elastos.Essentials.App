@@ -104,6 +104,8 @@ export const it = {
         'imprest': 'Imprest',
         'normalpayment': 'NormalPayment',
         'finalpayment': 'FinalPayment',
+        "apply-date": "Apply Date",
+        "audit-date": "Audit Date",
 
         'sign-create-suggestion': 'Firma e crea suggerimento',
         'createsuggestion-successfully': 'Suggestion created successfully.',

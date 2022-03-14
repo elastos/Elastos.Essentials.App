@@ -54,24 +54,45 @@ crvotes {
 
 .lastTrackingInfo {
     width: 100%;
+    padding: 8px;
     background-color: #f6f6f6;
     flex-wrap:wrap;
+    border-radius: 8px;
+
+    .review-opinion {
+        font-size: 10px;
+    }
+
+    .approve {
+        color: #2dd36f;
+    }
+
+    .reject {
+        color: #f04141;
+    }
 
     div {
         padding: 0;
         width: 100%;
 
-        h5 {
+        * {
             margin: 5px 0;
         }
 
-        .review {
-            margin-top: 10px;
+        .content {
+            padding: 0;
+            font-size: 12px;
+            font-weight: 400;
         }
 
         .timestamp {
+            font-size: 10px;
             color: #AAAAAA;
         }
+    }
+
+    div + div {
+        margin-top: 10px;
     }
 }
 
@@ -104,8 +125,12 @@ crvotes {
         background-color: #2f2d2f;
 
         div {
+            .content {
+                color: #FFFFFF;
+            }
+
             .timestamp {
-                color: #ECECEC;
+                color: #C9C9C9;
             }
         }
     }
