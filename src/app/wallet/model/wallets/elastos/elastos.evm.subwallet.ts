@@ -222,7 +222,9 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     // }
     // condition: _amount % 10000000000 == 0 && _amount.sub(_fee) >= _fee
     if (toAmount === -1) {
-      const estimateAmount = this.getWeb3().utils.toWei(this.balance.toString());
+      let balanceString = this.balance.toFixed()
+      //amount % 10000000000 == 0
+      let estimateAmount = balanceString.substring(0, balanceString.length - 10) + "0000000000"
       const method = ethscWithdrawContract.methods.receivePayload(toAddress, estimateAmount, Config.ETHSC_WITHDRAW_GASPRICE);
       let estimateGas = 0;
       try {
@@ -233,6 +235,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
           value: estimateAmount,
         }
         estimateGas = await this.getWeb3().eth.estimateGas(tx);
+
       } catch (error) {
         Logger.error('wallet', 'estimateGas error:', error);
         estimateGas = 28100; //In case of
