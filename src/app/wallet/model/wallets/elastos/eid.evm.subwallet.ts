@@ -50,8 +50,12 @@ export class EidSubWallet extends ElastosEVMSubWallet {
     try {
       // Estimate gas cost
       let gasLimitTemp = await method.estimateGas();
-      //'* 1.5': Make sure the gaslimit is big enough.
-      gasLimit = Util.ceil(gasLimitTemp * 1.5);
+      //'* 2.5': Make sure the gaslimit is big enough.
+      // NOTE: we used to use 1.5 like metamask but because the EID chain estimateGas() currently
+      // returns underpriced values, 1.5 makes transactions fails. 2.5 is "ok" for now, waiting for the
+      // blockchain team to fix this. See https://app.clickup.com/t/2fr39u9 to know status updates.
+      // When estimateGas() is fixed, this can be reverted to 1.5 here.
+      gasLimit = Util.ceil(gasLimitTemp * 2.5);
     } catch (error) {
       Logger.warn('wallet', 'estimateGas error:', error);
     }
