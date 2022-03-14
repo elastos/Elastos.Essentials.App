@@ -1,6 +1,6 @@
+import { AESEncrypt } from "src/app/helpers/crypto/aes";
 import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
-import { AESEncrypt } from "src/app/wallet/model/crypto";
 import { defaultWalletName, defaultWalletTheme } from "src/app/wallet/model/masterwallets/masterwallet";
 import { ElastosMainChainWalletNetworkOptions, PrivateKeyType, SerializedStandardMasterWallet, WalletCreator, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
 import { AuthService as WalletAuthService } from "src/app/wallet/services/auth.service";

@@ -7,7 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content original-src="index.html" src="https://192.168.1.4:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -149,11 +149,6 @@
         <config-file parent="ITSAppUsesNonExemptEncryption" target="*-Info.plist">
             <false />
         </config-file>
-        <config-file parent="UIBackgroundModes" target="*-Info.plist">
-            <array>
-                <string>bluetooth-central</string>
-            </array>
-        </config-file>
         <preference name="SwiftVersion" value="5.2" />
         <preference name="UseSwiftLanguageVersion" value="5.2" />
         <config-file parent="com.apple.developer.associated-domains" target="*-Debug.plist">
@@ -238,5 +233,5 @@
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <allow-navigation href="https://0.0.0.0:8100" sessionid="a89a190a" />
     <allow-navigation href="https://192.168.76.158:8100" sessionid="ca0d3fe5" />
-    <allow-navigation href="https://192.168.1.4:8100" sessionid="8ed3aee7" />
+    <allow-navigation href="https://192.168.1.4:8100" sessionid="f7fc65ee" />
 </widget>

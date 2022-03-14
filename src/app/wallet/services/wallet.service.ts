@@ -32,8 +32,8 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { AESEncrypt } from '../../helpers/crypto/aes';
 import { CoinType } from '../model/coin';
-import { AESEncrypt } from '../model/crypto';
 import { LeddgerAccountType } from '../model/ledger.types';
 import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
@@ -536,8 +536,8 @@ export class WalletService {
         Logger.log('wallet', "Importing new legder master wallet");
 
         // TODO: Save account with saveContextInfo?
-        let accountOptions : LedgerAccountOptions[] = [{
-            type : accountType,
+        let accountOptions: LedgerAccountOptions[] = [{
+            type: accountType,
             accountID,
             accountPathIndex
         }]

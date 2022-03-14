@@ -1,9 +1,9 @@
 import { Logger } from 'src/app/logger';
+import { AESDecrypt } from '../../../helpers/crypto/aes';
 import { WalletNetworkService } from '../../services/network.service';
 import { SafeService, StandardWalletSafe } from '../../services/safe.service';
 import { jsToSpvWalletId, SPVService } from '../../services/spv.service';
 import { LocalStorage } from '../../services/storage.service';
-import { AESDecrypt } from '../crypto';
 import { AnyNetwork } from '../networks/network';
 import { SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from './wallet.types';
 
