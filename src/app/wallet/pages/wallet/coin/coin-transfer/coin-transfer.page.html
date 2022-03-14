@@ -35,7 +35,7 @@
                     <p>{{ 'wallet.transfer-to' | translate }}</p>
                 </ion-col>
             </ion-row>
-            <ion-row class="item-row">
+            <ion-row class="item-row" *ngIf="toSubWallet">
                 <ion-col size="2.3" class="left-col">
                     <img [src]="toSubWallet.getMainIcon()">
                 </ion-col>

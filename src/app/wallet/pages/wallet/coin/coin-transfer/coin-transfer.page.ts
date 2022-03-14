@@ -47,6 +47,7 @@ import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
 import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
@@ -261,9 +262,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             case TransferType.RECHARGE:
                 // Setup page display
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", { coinName: this.coinTransferService.toSubWalletId }));
-                this.toSubWallet = this.networkWallet.getSubWallet(this.coinTransferService.toSubWalletId);
+                this.toSubWallet = await this.getELASubwalletByID(this.coinTransferService.toSubWalletId as StandardCoinName);
 
                 // Setup params for recharge transaction
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createRechargeTransaction;
                 this.toAddress = await this.toSubWallet.createAddress();
 
@@ -274,9 +276,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             case TransferType.WITHDRAW:
                 // Setup page display
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title"));
-                this.toSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA);
+
+                this.toSubWallet = await this.getELASubwalletByID(StandardCoinName.ELA);
 
                 // Setup params for withdraw transaction
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createWithdrawTransaction;
                 this.toAddress = await this.toSubWallet.createAddress();
 
@@ -287,6 +291,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             // For Send Transfer
             case TransferType.SEND:
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-send-title"));
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createSendTransaction;
 
                 if (this.subWalletId === StandardCoinName.ELA) {
@@ -305,6 +310,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             // For Pay Intent
             case TransferType.PAY:
                 this.titleBar.setTitle(this.translate.instant("wallet.payment-title"));
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createSendTransaction;
 
                 Logger.log('wallet', 'Pay intent params', this.coinTransferService.payTransfer);
@@ -898,5 +904,24 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.modal = null;
         });
         this.modal.present();
+    }
+
+    // for cross chain transaction.
+    async getELASubwalletByID(id: StandardCoinName) {
+      let networkKey = 'elastos';
+      switch (id) {
+        case StandardCoinName.ETHDID:
+          networkKey = 'elastosidchain';
+        break;
+        case StandardCoinName.ETHSC:
+          networkKey = 'elastossmartchain';
+        break;
+        default:
+        break;
+      }
+
+      let network = WalletNetworkService.instance.getNetworkByKey(networkKey);
+      let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
+      return networkWallet.getSubWallet(id);
     }
 }

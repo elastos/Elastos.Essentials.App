@@ -4,8 +4,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
-import { CoinType } from '../../../../model/coin';
+import { CoinType, StandardCoinName } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
@@ -40,7 +41,7 @@ export class CoinSelectPage implements OnInit {
         public currencyService: CurrencyService,
         public uiService: UiService
     ) {
-        this.init();
+        void this.init();
     }
 
     ngOnInit() {
@@ -50,14 +51,15 @@ export class CoinSelectPage implements OnInit {
         this.titleBar.setTitle(this.translate.instant("wallet.coin-select-title"));
     }
 
-    init() {
+    async init() {
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
         // Filter out the subwallet being transferred from
         if (this.coinTransferService.subWalletId !== 'ELA') {
+            // TODO: remove it, subWalletId should alway be ELA.
             this.subWallets = [this.networkWallet.getSubWallet('ELA')];
         } else {
-            this.subWallets = this.networkWallet.subWalletsWithExcludedCoin(this.coinTransferService.subWalletId, CoinType.STANDARD);
+            this.subWallets = await this.getELASideChainSubwallets();
         }
     }
 
@@ -66,5 +68,23 @@ export class CoinSelectPage implements OnInit {
         this.coinTransferService.toSubWalletId = wallet.id;
 
         this.native.go("/wallet/coin-transfer");
+    }
+
+    // for cross chain transaction.
+    async getELASideChainSubwallets() {
+      let subwallets: AnySubWallet[] = [];
+
+      let idchian = WalletNetworkService.instance.getNetworkByKey('elastosidchain');
+      let idNetworkWallet = await idchian.createNetworkWallet(this.networkWallet.masterWallet, false);
+      let idsubwallet = idNetworkWallet.getSubWallet(StandardCoinName.ETHDID);
+
+      subwallets.push(idsubwallet);
+
+      let escchian = WalletNetworkService.instance.getNetworkByKey('elastossmartchain');
+      let escNetworkWallet = await escchian.createNetworkWallet(this.networkWallet.masterWallet, false);
+      let escsubwallet = escNetworkWallet.getSubWallet(StandardCoinName.ETHSC);
+
+      subwallets.push(escsubwallet);
+      return subwallets;
     }
 }
