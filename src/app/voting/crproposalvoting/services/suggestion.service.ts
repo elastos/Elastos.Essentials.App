@@ -315,7 +315,7 @@ export class SuggestionService {
         if (type == "secretarygeneral" && status != 'proposed') {
             if (!suggestionDetail.newSecretarySignature &&
                 (!(Util.isSelfDid(suggestionDetail.did) && !Util.isSelfDid(suggestionDetail.newSecretaryDID))
-                || (suggestionDetail.signature && !Util.isSelfDid(suggestionDetail.newSecretaryDID)))) {
+                || (suggestionDetail.signature && Util.isSelfDid(suggestionDetail.newSecretaryDID)))) {
                     suggestionDetail.status = "unsigned";
             }
         }
