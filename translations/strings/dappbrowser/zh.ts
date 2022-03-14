@@ -21,7 +21,7 @@ export const zh = {
     'menu-active-net-wallet': '当前网络和钱包',
     'network': '网络',
     'wallet': '钱包',
-    'menu-actions': '行动',
+    'menu-actions': '操作',
     'menu-action-add-to-favorites': '添加到收藏夹',
     'menu-action-remove-from-favorites': '从收藏夹中删除',
     'menu-action-external-browser': '外部浏览器',

@@ -110,7 +110,7 @@ export const zh = {
         'sign-create-suggestion': '签名并提交建议',
         'createsuggestion-successfully': '创建建议成功。',
         'createsuggestion-failed': '签名建议失败，请重新签名建议。',
-        'sign-successfully': '签名建议成功.',
+        'sign-successfully': '签名建议成功。',
 
         'create-proposal': '发布提案',
         'create-proposal-msg': '您将要发布以下提案。请对其进行审核，并按照流程进行签名和发布。',

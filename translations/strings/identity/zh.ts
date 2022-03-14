@@ -14,8 +14,8 @@ export const zh = {
         'verify': '立即验证',
         'expired': '已到期',
         'sensitive': '敏感的',
-        'delivered-by': '制作者',
-        'delivered-by-unknown-issuer': 'Unknown issuer',
+        'delivered-by': '发行人：',
+        'delivered-by-unknown-issuer': '未知发行人',
 
         /******************** Main Screens  ********************/
         // page: myprofile
@@ -77,7 +77,7 @@ export const zh = {
         'who-made-this': '这是谁做的？',
         'delete-credential': '删除凭证',
         'delete-credential-info': '此凭证将从您的身份中删除。此操作无法撤消。',
-        'issuer-not-found-info': "The person or service who created this credential cannot be found on the public registry. His DID is probably not published.",
+        'issuer-not-found-info': "在公共注册表上找不到创建此凭据的人员或服务。他的 DID 很可能没有发布。",
 
         // Credentiallist
         'publish-changes': '发布更新',
@@ -162,7 +162,7 @@ export const zh = {
         // page: appidcredissue
         'appidcredential-issue': '应用识别',
         'appidcredential-package-id': '应用ID:',
-        'appidcredissue-intro': '您确认发出请求的应用与上述信息匹配吗？ 请注意，这将授权访问此应用的 Hive Vault 存储。',
+        'appidcredissue-intro': '您确认发出请求的应用与上述信息匹配吗？请注意，这将授权访问此应用的 Hive Vault 存储。',
         'app-instancedid': '应用实例DID',
         'app-did': '应用DID',
 
@@ -173,22 +173,22 @@ export const zh = {
         'app-profile': '应用信息',
         'register-app': '注册应用：',
         'registerapp-intro': '创建的应用程序配置文件可以设置为可见或私有。',
-        'registerapp-msg': '您的应用配置文件发布到链上，每个人都可以发现此应用。 （仅需支付小额交易费）',
+        'registerapp-msg': '您的应用配置文件发布到链上，每个人都可以发现此应用。（仅需支付小额交易费）',
         'registerapp-msg2': '只有您指定的联系人才能看到此应用程序',
         'visible': '可见： ',
         'private': '私有： ',
 
         // page: credaccess
         'profile-request': '请求个人资料',
-        'credaccess-intro': '要运行此应用程序，我们需要访问您的身份。 请查看我们需要您提供的以下事项：',
+        'credaccess-intro': '要运行此应用程序，我们需要访问您的身份。请查看我们需要您提供的以下事项：',
         'credaccess-missing': '缺少身份信息，无法执行此请求。请先填写必填项，然后再继续',
         'mandatory-data-access': '必需数据',
         'optional-data-access': '可选数据',
         'credaccess-information-missing': '您的个人资料中缺少必填信息。请先完成您的个人资料，然后重试。',
         'cant-be-displayed': "（无法显示）",
-        'credaccess-publish-required': '必须具有公开的身份才能满足此请求。 请先发布您的身份，然后再试一次。',
+        'credaccess-publish-required': '必须具有公开的身份才能满足此请求。请先发布您的身份，然后再试一次。',
         'credaccess-alert-publish-required-title': '需要公开身份',
-        'credaccess-alert-publish-required-msg': '默认情况下，访问凭证要求发布您的身份。 请先发布您的身份，然后再试一次。',
+        'credaccess-alert-publish-required-msg': '默认情况下，访问凭证要求发布您的身份。请先发布您的身份，然后再试一次。',
         'credaccess-alert-publish-required-btn': '好的',
         'publish-status': '状态',
         'published-did-required': '需要公开身份',
