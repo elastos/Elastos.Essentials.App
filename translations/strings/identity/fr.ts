@@ -15,6 +15,7 @@ export const fr = {
         'expired': 'Expiré',
         'sensitive': 'Sensible',
         'delivered-by': 'Créé par',
+        'delivered-by-unknown-issuer': 'Créateur inconnu',
 
         /******************** Main Screens  ********************/
         // page: myprofile (Home)
@@ -76,6 +77,7 @@ export const fr = {
         'who-made-this': 'Qui l\'a créé?',
         'delete-credential': 'Supprimer',
         'delete-credential-info': 'This credential will be removed from your identity. This action cannot be reverted.',
+        'issuer-not-found-info': "La personne ou le service qui a créé ce crédentiel n'a pas été trouvé dans le registre public. Son DID n'a probablement pas été publié.",
 
         // Credentiallist
         'publish-changes': 'Publier les Changements',

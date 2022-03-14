@@ -15,6 +15,7 @@ export const zh = {
         'expired': '已到期',
         'sensitive': '敏感的',
         'delivered-by': '制作者',
+        'delivered-by-unknown-issuer': 'Unknown issuer',
 
         /******************** Main Screens  ********************/
         // page: myprofile
@@ -76,6 +77,7 @@ export const zh = {
         'who-made-this': '这是谁做的？',
         'delete-credential': '删除凭证',
         'delete-credential-info': '此凭证将从您的身份中删除。此操作无法撤消。',
+        'issuer-not-found-info': "The person or service who created this credential cannot be found on the public registry. His DID is probably not published.",
 
         // Credentiallist
         'publish-changes': '发布更新',
