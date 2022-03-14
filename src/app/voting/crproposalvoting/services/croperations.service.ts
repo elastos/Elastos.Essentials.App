@@ -435,9 +435,10 @@ export class CROperationsService {
     }
 
     public getProposalTypeForChangeProposal(detail: any) {
-        if (detail.type == "changeproposalowner" && detail.newRecipient && !detail.newOwnerDID) {
-            return "changeproposaladdress";
-        }
-        return detail.type;
+        // if (detail.type == "changeproposalowner" && detail.newRecipient && !detail.newOwnerDID) {
+        //     return "changeproposaladdress";
+        // }
+        // return detail.type;
+        return detail.type == "changeproposalowner" ? "changeproposal" : detail.type;
     }
 }

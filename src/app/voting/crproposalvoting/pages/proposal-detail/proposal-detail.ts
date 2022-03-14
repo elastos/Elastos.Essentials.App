@@ -154,7 +154,7 @@ export class ProposalDetailPage {
 
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposal-details'));
         this.proposalDetailFetched = true;
-        this.proposaltype =  this.proposal.type == "changeproposalowner" ? "changeproposal" : this.proposal.type;
+        this.proposaltype =  this.crOperations.getProposalTypeForChangeProposal(this.proposal);
         this.remainingTime = await this.proposalService.getRemainingTime(this.proposal);
     }
 
