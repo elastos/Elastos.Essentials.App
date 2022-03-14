@@ -168,11 +168,11 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             {
                 icon: '/assets/browser/dapps/filda.png',
                 title: 'FilDA',
-                description: 'HECO-based lending and borrowing, with ELA support',
+                description: 'Multi-assets lending and borrowing DeFi platform',
                 url: 'https://app.filda.io/',
                 useExternalBrowser: false,
                 walletConnectSupported: true,
-                networks: ["heco", "bsc"]
+                networks: ["heco", "bsc", "elastos"]
             },
             {
                 icon: '/assets/browser/dapps/idriss.png',
