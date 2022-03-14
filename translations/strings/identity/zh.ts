@@ -72,16 +72,16 @@ export const zh = {
         'change-visibility': '更改可见性',
         'change-visibility-info': '选择是否让每个人都可以看到此信息',
         'change-visible': '此凭证将在您下次发布身份时对所有人可见',
-        'change-unpublished': '下次发布身份时，将取消发布此凭证',
+        'change-unpublished': '下次发布身份时将取消发布此凭证',
         'change-not-published': '下次发布身份时将不会发布此凭证',
         'who-made-this': '这是谁做的？',
         'delete-credential': '删除凭证',
         'delete-credential-info': '此凭证将从您的身份中删除。此操作无法撤消。',
-        'issuer-not-found-info': "在公共注册表上找不到创建此凭据的人员或服务。他的 DID 很可能没有发布。",
+        'issuer-not-found-info': "在公共注册表上找不到创建此凭证的人员或服务。他的 DID 很可能没有发布。",
 
         // Credentiallist
         'publish-changes': '发布更新',
-        'publish-popup-content': '确认后信息将存储并保存在区块链上！',
+        'publish-popup-content': '确认后信息将存储在区块链上！',
         'publish-popup-confirm-question': '确定？',
 
         // page: editprofile
