@@ -465,9 +465,9 @@ public class DappBrowserPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    private void clearData(JSONArray args, CallbackContext callbackContext) throws Exception {
+    private void clearData(JSONArray args, CallbackContext callbackContext) throws JSONException {
         final String url = args.getString(0);
-        WebViewHandler.clearData(url);
+        WebViewHandler.clearData(url, callbackContext);
     }
 
     /**

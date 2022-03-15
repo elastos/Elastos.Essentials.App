@@ -497,7 +497,7 @@ public class WebViewHandler {
         return dir;
     }
 
-    public static void clearData(String url) {
+    public static void clearData(String url, CallbackContext callbackContext) {
         //Clear cookies
         CookieManager cm = CookieManager.getInstance();
         String cookies = cm.getCookie(url);
@@ -529,10 +529,18 @@ public class WebViewHandler {
                 WebResourceResponse response = new WebResourceResponse("text/html", "UTF-8", data);
                 return response;
             }
+
+             @Override
+             public void onPageFinished(WebView view, String url) {
+                 super.onPageFinished(view, url);
+                 view.clearHistory();
+                 if (callbackContext != null) {
+                     callbackContext.success();
+                 }
+             }
         });
 
         webView.loadUrl(url);
-        webView.clearHistory();
     }
 
   // public void clearWebViewCache(Context context) {
