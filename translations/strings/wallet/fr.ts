@@ -84,6 +84,8 @@ export const fr = {
         "settings-currency-subtitle": "Selectionnez la devise à afficher",
         "settings-custom-networks": "Réseaux Personnalisés",
         "settings-custom-networks-subtitle": "Ajoutez et modifiez vos réseaux personnalisés ici",
+        "settings-manage-networks": "Gestion les Réseaux",
+        "settings-manage-networks-subtitle": "Affichez et cachez certains réseaux, et ajoutez des réseaux personnalisés",
 
         /***********************
         * Select-Currency Page *
@@ -340,6 +342,12 @@ export const fr = {
         "coin-adderc20-invalid-contract-or-network-error": "Le contenu n'est pas une adresse de jeton ERC20 valide, ou erreur réseau.",
         'coin-adderc20-alreadyadded': 'Ce jeton est déjà dans la liste',
         'coin-adderc20-not-found': 'Impossible de trouver l\'adresse du jeton.',
+
+        /***********************
+        * Manage networks Page *
+        ************************/
+        'manage-networks-title': 'Gestion des réseaux',
+        'manage-networks-intro': 'Sélectionnez les réseaux que vous souhaitez voir dans la liste des réseaux courants. Cachez ceux que vous n\'utilisez pas. Vous pouvez aussi ajouter des réseaux personnalisés compatibles Ethereum via l\'icône plus ci-dessus.',
 
         /***********************
         * Custom networks Page *

@@ -9,8 +9,8 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { CustomNetworkService } from 'src/app/wallet/services/evm/customnetwork.service';
-import { CustomNetworkDiskEntry, WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { CustomNetworkDiskEntry, CustomNetworkService } from 'src/app/wallet/services/evm/customnetwork.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 
 export type EditCustomNetworkRoutingParams = {

@@ -69,12 +69,12 @@ export class SettingsPage implements OnInit {
             type: 'currency-select'
         },
         {
-            route: "/wallet/settings/custom-networks",
-            title: this.translate.instant("wallet.settings-custom-networks"),
-            subtitle: this.translate.instant("wallet.settings-custom-networks-subtitle"),
+            route: "/wallet/settings/manage-networks",
+            title: this.translate.instant("wallet.settings-manage-networks"),
+            subtitle: this.translate.instant("wallet.settings-manage-networks-subtitle"),
             icon: '/assets/wallet/settings/custom-networks.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/custom-networks.svg',
-            type: 'custom-networks'
+            type: 'manage-networks'
         },
     ];
 

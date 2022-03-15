@@ -83,6 +83,8 @@ export const zh = {
                 "settings-currency-subtitle": "选择默认的货币",
                 "settings-custom-networks": "自定义网络",
                 "settings-custom-networks-subtitle": "在此添加或编辑自定义网络",
+                "settings-manage-networks": "Manage Networks",
+                "settings-manage-networks-subtitle": "Show and hide networks, add custom ones",
 
                 /***********************
                 * Select-Currency Page *
@@ -339,6 +341,12 @@ export const zh = {
                 "coin-adderc20-invalid-contract-or-network-error": "不是有效的 ERC20 币种地址 或 网络错误",
                 'coin-adderc20-alreadyadded': '币种已经添加',
                 'coin-adderc20-not-found': '此币种地址未注册，请检查您输入的币种地址',
+
+                /***********************
+        * Manage networks Page *
+        ************************/
+                'manage-networks-title': 'Manage networks',
+                'manage-networks-intro': 'Select networks that you want to see in networks list. Hide networks that you don\'t use. You can also add custom ethereum-compatible networks from the plus icon above.',
 
                 /***********************
                 * Custom networks Page *

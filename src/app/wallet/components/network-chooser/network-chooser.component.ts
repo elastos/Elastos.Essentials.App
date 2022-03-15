@@ -44,7 +44,7 @@ export class NetworkChooserComponent implements OnInit {
     this.options = this.navParams.data as NetworkChooserComponentOptions;
 
     this.currentNetwork = this.options.currentNetwork;
-    this.networksToShowInList = this.networkService.getAvailableNetworks();
+    this.networksToShowInList = this.networkService.getDisplayableNetworks();
   }
 
   selectNetwork(network: AnyNetwork) {

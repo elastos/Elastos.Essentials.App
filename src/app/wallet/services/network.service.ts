@@ -24,6 +24,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import type { MasterWallet } from '../model/masterwallets/masterwallet';
 import { AnyNetwork } from '../model/networks/network';
 import { Native } from './native.service';
@@ -32,17 +34,6 @@ import { LocalStorage } from './storage.service';
 
 export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
 
-export type CustomNetworkDiskEntry = {
-    key: string; // Ex: "randomKey"
-    name: string; // Ex: "My network"
-    rpcUrl: string; // Ex: "https://my.net.work/rpc"
-    accountRpcUrl: string; // Standard account/scan url to query transactions list, tokens...
-    chainId: string; // Ex: "12345"
-    networkTemplate: string; // Ex: "MainNet"
-    mainCurrencySymbol: string; // Ex: "HT"
-    colorScheme: string; // Ex: #9A67EB
-}
-
 @Injectable({
     providedIn: 'root'
 })
@@ -50,11 +41,13 @@ export class WalletNetworkService {
     public static instance: WalletNetworkService = null;
 
     private networks: AnyNetwork[] = [];
-    private customNetworkDiskEntries: CustomNetworkDiskEntry[] = [];
+    private networkVisibilities: {
+        [networkKey: string]: boolean // Key value of network key -> visible in network chooser or not.
+    } = {};
 
     public activeNetwork = new BehaviorSubject<AnyNetwork>(null);
 
-    /** Notifies whenever the networks list changes (custom networks added/removed) */
+    /** Notifies whenever the networks list changes (initial registration, custom networks added/removed) */
     public networksList = new BehaviorSubject<AnyNetwork[]>([]);
 
     private priorityNetworkChangeCallback?: PriorityNetworkChangeCallback = null;
@@ -63,14 +56,22 @@ export class WalletNetworkService {
         public events: Events,
         public native: Native,
         public popupProvider: PopupProvider,
+        private globalStorageService: GlobalStorageService,
         private localStorage: LocalStorage) {
         WalletNetworkService.instance = this;
     }
 
-    public init() {
+    /**
+     * Called every time a user signs in
+     */
+    public async init(): Promise<void> {
         this.networks = [];
+        await this.loadNetworkVisibilities();
     }
 
+    /**
+     * Called every time a user signs out
+     */
     public stop() {
         this.networks = [];
     }
@@ -96,7 +97,9 @@ export class WalletNetworkService {
         // Order networks list alphabetically
         this.networks.sort((a, b) => {
             return a.name > b.name ? 1 : -1;
-        })
+        });
+
+        this.networksList.next(this.networks);
     }
 
     /**
@@ -108,6 +111,7 @@ export class WalletNetworkService {
     }
 
     /**
+     * Returns the list of all networks.
      * Possibly filter out some unsupported networks:
      * eg: do not support the BTC network when the wallet is imported by EVM private key.
      */
@@ -117,6 +121,14 @@ export class WalletNetworkService {
         } else {
             return this.networks;
         }
+    }
+
+    /**
+     * Returns the list of available networks, but only for networks that user has chosen
+     * to make visible in settings.
+     */
+    public getDisplayableNetworks(): AnyNetwork[] {
+        return this.getAvailableNetworks().filter(n => this.getNetworkVisible(n));
     }
 
     /**
@@ -183,6 +195,25 @@ export class WalletNetworkService {
         }
         return false;
     }
+
+    public async loadNetworkVisibilities(): Promise<void> {
+        this.networkVisibilities = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "network-visibilities", {});
+    }
+
+    public saveNetworkVisibilities(): Promise<void> {
+        return this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "network-visibilities", this.networkVisibilities);
+    }
+
+    public getNetworkVisible(network: AnyNetwork): boolean {
+        // By default, if no saved info about a network visibility, we consider the network visible
+        if (!(network.key in this.networkVisibilities))
+            return true;
+
+        return this.networkVisibilities[network.key];
+    }
+
+    public setNetworkVisible(network: AnyNetwork, visible: boolean): Promise<void> {
+        this.networkVisibilities[network.key] = visible;
+        return this.saveNetworkVisibilities();
+    }
 }
-
-

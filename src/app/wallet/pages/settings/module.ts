@@ -8,10 +8,16 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
 import { CurrencySelectPage } from './currency-select/currency-select.page';
 import { CustomNetworksPage } from './custom-networks/custom-networks.page';
 import { EditCustomNetworkPage } from './edit-custom-network/edit-custom-network.page';
+import { ManageNetworksPage } from './manage-networks/manage-networks.page';
 import { SettingsPage } from './settings.page';
 
 @NgModule({
-    declarations: [SettingsPage, CurrencySelectPage, CustomNetworksPage, EditCustomNetworkPage],
+    declarations: [
+        SettingsPage,
+        ManageNetworksPage,
+        CurrencySelectPage,
+        CustomNetworksPage,
+        EditCustomNetworkPage],
     imports: [
         SharedComponentsModule,
         CommonModule,
@@ -21,6 +27,7 @@ import { SettingsPage } from './settings.page';
         RouterModule.forChild([
             { path: '', component: SettingsPage },
             { path: 'currency-select', component: CurrencySelectPage },
+            { path: 'manage-networks', component: ManageNetworksPage },
             { path: 'custom-networks', component: CustomNetworksPage },
             { path: 'edit-custom-network', component: EditCustomNetworkPage },
         ])

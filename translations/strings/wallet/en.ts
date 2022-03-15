@@ -83,6 +83,8 @@ export const en = {
         "settings-currency-subtitle": "Select the default currency",
         "settings-custom-networks": "Custom Networks",
         "settings-custom-networks-subtitle": "Add and edit your custom networks here",
+        "settings-manage-networks": "Manage Networks",
+        "settings-manage-networks-subtitle": "Show and hide networks, add custom ones",
 
         /***********************
         * Select-Currency Page *
@@ -339,6 +341,12 @@ export const en = {
         "coin-adderc20-invalid-contract-or-network-error": "The provided ERC20 token address is not valid or there is a network error.",
         'coin-adderc20-alreadyadded': 'Token already added',
         'coin-adderc20-not-found': "The token address can't be found, please check it!",
+
+        /***********************
+        * Manage networks Page *
+        ************************/
+        'manage-networks-title': 'Manage networks',
+        'manage-networks-intro': 'Select networks that you want to see in networks list. Hide networks that you don\'t use. You can also add custom ethereum-compatible networks from the plus icon above.',
 
         /***********************
         * Custom networks Page *

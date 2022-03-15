@@ -1,0 +1,26 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <ion-row class="main-title-row">
+            <ion-col size="12">
+                <p>{{ 'wallet.manage-networks-intro' | translate }}</p>
+            </ion-col>
+        </ion-row>
+        <ion-row class="network-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+            *ngFor="let networkWithVisibility of availableNetworks" (click)="onNetworkClicked(networkWithVisibility)">
+            <ion-col size="2" class="left-col">
+                <img class="logo" [src]="networkWithVisibility.network.logo">
+            </ion-col>
+            <ion-col size="8" class="middle-col">
+                {{ networkWithVisibility.network.name }}
+            </ion-col>
+            <ion-col size="2" class="right-col">
+                <ion-toggle mode="ios" [(ngModel)]="networkWithVisibility.isShown"
+                    (ionChange)="onVisibilityChange($event, networkWithVisibility)" (click)="$event.stopPropagation()"
+                    [disabled]="clickOngoing">
+                </ion-toggle>
+            </ion-col>
+            <ion-ripple-effect *ngIf="networkWithVisibility.isCustom"></ion-ripple-effect>
+        </ion-row>
+    </ion-grid>
+</ion-content>
