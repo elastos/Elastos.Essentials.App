@@ -3,11 +3,15 @@
     <div class="network-container networkOptions-container" [class.dark-network-container]="theme.darkMode">
         <div class="network-options">
             <ion-row class="header-row">
-                <ion-col size="12">
+                <ion-col size="9">
                     <ion-label>
                         <h1>{{ 'wallet.networks' | translate }}</h1>
                         <p>{{ 'wallet.choose-active-network' | translate }}</p>
                     </ion-label>
+                </ion-col>
+                <ion-col size="3" class="settings-col">
+                    <img (click)="manageNetworks()"
+                        [src]="theme.darkMode ? 'assets/components/titlebar/darkmode/settings.svg' : 'assets/components/titlebar/settings.svg'" />
                 </ion-col>
             </ion-row>
             <ion-row *ngFor="let network of networksToShowInList" class="network-row"
