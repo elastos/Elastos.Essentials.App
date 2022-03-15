@@ -108,6 +108,10 @@
   --min-height: 302px;
   --width: 100%;
   --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
 
   animation: didsessionsWarningAnimate;
   animation-duration: 300ms;
@@ -173,6 +177,10 @@
   --min-height: 302px;
   --width: 100%;
   --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
 
   animation: identityWarningAnimate;
   animation-duration: 300ms;
@@ -245,6 +253,11 @@
 .wallet-tx-component {
   --width: 100%;
   --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
+
   animation: walletTxAnimate;
   animation-duration: 300ms;
   animation-fill-mode: forwards;
@@ -275,6 +288,10 @@
   --min-height: 302px;
   --width: 100%;
   --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
 
   animation: walletWarningAnimate;
   animation-duration: 300ms;
@@ -355,6 +372,10 @@
   --min-height: 302px;
   --width: 100%;
   --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
 
   animation: contactsWarningAnimate;
   animation-duration: 300ms;
@@ -402,6 +423,12 @@
 
 .developertools-delete-component {
   --width: 90%;
+  --min-height: 302px;
+  --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
 
   ion-backdrop {
     opacity: 0.1 !important;
@@ -430,6 +457,12 @@
 
 .grab-packet-popover-component {
   --width: 100%;
+  --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
+
   backdrop-filter: blur(5px);
 
   .popover-viewport {
