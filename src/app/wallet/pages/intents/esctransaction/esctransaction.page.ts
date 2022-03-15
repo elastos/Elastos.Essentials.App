@@ -127,6 +127,8 @@ export class EscTransactionPage implements OnInit {
     this.intentTransfer = this.coinTransferService.intentTransfer;
     this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
+    Logger.log("wallet", "ESC Transaction params", this.coinTransferService.payloadParam);
+
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
     await this.evmSubWallet.updateBalance()
     this.balance = await this.evmSubWallet.getDisplayBalance();

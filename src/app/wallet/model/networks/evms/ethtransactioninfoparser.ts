@@ -37,9 +37,8 @@ export class ETHTransactionInfoParser {
    * Computes and returns the transaction information.
    */
   public async computeInfo(): Promise<ETHTransactionInfo> {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    let erc20ABI = import("../../../../../assets/wallet/ethereum/StandardErc20ABI.json");
-    abiDecoder.addABI([erc20ABI]);
+    let erc20ABI = await (await import("../../../../../assets/wallet/ethereum/StandardErc20ABI.json")).default;
+    abiDecoder.addABI(erc20ABI);
 
     // Try to parse a ERC20 method from the data. Is the transaciton is not ERC20 or for any
     // other reason, method will be undefined.
