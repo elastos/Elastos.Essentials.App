@@ -207,9 +207,10 @@ export class WalletService {
                 const masterId = idList[i];
 
                 let serializedMasterWallet = await this.localStorage.loadMasterWallet(masterId);
-
-                // Create a model instance from the persistent object.
-                this.masterWallets[masterId] = MasterWalletBuilder.newFromSerializedWallet(serializedMasterWallet);
+                if (serializedMasterWallet) {
+                  // Create a model instance from the persistent object.
+                  this.masterWallets[masterId] = MasterWalletBuilder.newFromSerializedWallet(serializedMasterWallet);
+                }
             }
 
             this.activeMasterWalletId = await this.getCurrentMasterIdFromStorage();

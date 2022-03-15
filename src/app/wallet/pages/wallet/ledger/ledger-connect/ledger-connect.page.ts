@@ -30,6 +30,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { LeddgerAccountType } from 'src/app/wallet/model/ledger.types';
 import { BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.ledgerapp';
 import { EVMLedgerApp } from 'src/app/wallet/model/ledger/evm.ledgerapp';
 import { LedgerAccount } from 'src/app/wallet/model/ledger/ledgerapp';
@@ -55,14 +56,16 @@ export class LedgerConnectPage implements OnInit {
     // public addresses = {};
     // for test
     public addresses: LedgerAccount[] = [
-        {'type':'EVM', 'address': '0xC7Da7De66A8Bc2D84E17D14906128179D015cE3A', 'pathIndex': 0, 'path': "44'/60'/x'/0/0"},
-        {'type':'EVM', 'address': '0x60583B3465D2e886C1C2E4304af7eC784660F95a', 'pathIndex': 1, 'path': "44'/60'/x'/0/1"}
+        {'type':LeddgerAccountType.EVM, 'address': '0xC7Da7De66A8Bc2D84E17D14906128179D015cE3A', 'pathIndex': 0, 'path': "44'/60'/x'/0/0"},
+        {'type':LeddgerAccountType.EVM, 'address': '0x60583B3465D2e886C1C2E4304af7eC784660F95a', 'pathIndex': 1, 'path': "44'/60'/x'/0/1"},
+        {'type':LeddgerAccountType.BTC, 'address': 'tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6', 'pathIndex': 0, 'path': "84'/1'/x'/0/0"}
     ]
 
     private masterWalletId = '';
     private walletName = '';
     private walletAddress = ''
     private addressPathIndex = 0;
+    private type : LeddgerAccountType = null;
 
     public errorMessge = '';
 
@@ -151,17 +154,18 @@ export class LedgerConnectPage implements OnInit {
         return Object.values(this.addresses);
     }
 
-    async selectAddress(address:LedgerAccount) {
-        Logger.log(TAG, 'select address:', address)
-        await this.createLedgerWallet(address.address, address.pathIndex);
+    async selectAddress(account:LedgerAccount) {
+        Logger.log(TAG, 'select address:', account)
+        await this.createLedgerWallet(account);
     }
 
-    async createLedgerWallet(address: string, accountPathIndex: number) {
+    async createLedgerWallet(account:LedgerAccount) {
         this.masterWalletId = this.walletService.createMasterWalletID();
 
         this.getDefaultLedgerWalletName();
-        this.walletAddress = address;
-        this.addressPathIndex = accountPathIndex;
+        this.walletAddress = account.address;
+        this.addressPathIndex = account.pathIndex;
+        this.type = account.type;
 
         try {
             const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
@@ -185,6 +189,7 @@ export class LedgerConnectPage implements OnInit {
             this.device.id,
             this.walletAddress,
             this.addressPathIndex,
+            this.type,
         );
         this.native.setRootRouter("/wallet/wallet-home");
 

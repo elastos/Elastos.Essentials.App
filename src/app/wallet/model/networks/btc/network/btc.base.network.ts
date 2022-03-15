@@ -1,15 +1,18 @@
+import { Logger } from "src/app/logger";
 import { SPVNetworkConfig } from "../../../../services/wallet.service";
 import { CoinID } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
 import { SwapProvider } from "../../../earn/swapprovider";
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../../../masterwallets/wallet.types";
 import { WalletCreateType } from "../../../walletaccount";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
 import { Network } from "../../network";
-import { BTCNetworkWallet } from "../networkwallets/standard/btc.networkwallet";
+import { LedgerBTCNetworkWallet } from "../networkwallets/ledger/ledger.btc.networkwallet";
+import { StandardBTCNetworkWallet } from "../networkwallets/standard/standard.btc.networkwallet";
 
 export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
 
@@ -41,9 +44,13 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
     let wallet: AnyNetworkWallet = null;
     switch (masterWallet.type) {
       case WalletType.STANDARD:
-        wallet = new BTCNetworkWallet(masterWallet as StandardMasterWallet, this);
+        wallet = new StandardBTCNetworkWallet(masterWallet as StandardMasterWallet, this);
+        break;
+      case WalletType.LEDGER:
+        wallet = new LedgerBTCNetworkWallet(masterWallet as LedgerMasterWallet, this);
         break;
       default:
+        Logger.warn('wallet', 'BTC does not support ', masterWallet.type);
         return null;
     }
 

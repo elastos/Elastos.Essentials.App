@@ -66,11 +66,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
     public async createAddress(): Promise<string> {
         if (!this.legacyAddress) {
-            let legacyAddresses = await SPVService.instance.getLegacyAddresses(
-                jsToSpvWalletId(this.masterWallet.id), 0, 1, false);
-            if (legacyAddresses) {
-                this.legacyAddress = legacyAddresses[0];
-            }
+          this.legacyAddress = await this.getCurrentReceiverAddress();
         }
         return this.legacyAddress;
     }
