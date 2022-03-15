@@ -126,7 +126,7 @@ export class CreateSuggestionPage {
 
             await this.suggestionService.postSignSuggestionCommandResponse(signedJWT);
 
-            if ((this.suggestionDetail.type == "changeproposalowner" || this.suggestionDetail.type == "changeproposalowner")
+            if ((this.suggestionDetail.type == "changeproposalowner" || this.suggestionDetail.type == "secretarygeneral")
                     && !this.suggestionDetail.signature) {
                 this.crOperations.handleSuccessReturn("sign");    // First sign
             }
