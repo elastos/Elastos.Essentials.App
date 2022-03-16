@@ -212,9 +212,9 @@ export class CredentialDetailsPage implements OnInit {
     // Prepare the credential for display
     this.credential.onIconReady(iconSrc => {
       Logger.log("identity", "onIconReady");
-      this.zone.run( () => {
-          this.iconSrc = iconSrc;
-          this.iconLoaded = true;
+      this.zone.run(() => {
+        this.iconSrc = iconSrc;
+        this.iconLoaded = true;
       })
     });
     Logger.log("identity", "prepareForDisplay");
@@ -261,6 +261,14 @@ export class CredentialDetailsPage implements OnInit {
 
   public getDisplayableCredentialDescription(): string {
     return this.credential.getDisplayableDescription();
+  }
+
+  public getDisplayableCredentialIssuanceDate(): string {
+    return moment(this.credential.pluginVerifiableCredential.getIssuanceDate()).format("LL");
+  }
+
+  public getDisplayableCredentialExpirationDate(): string {
+    return moment(this.credential.pluginVerifiableCredential.getExpirationDate()).format("LL");
   }
 
   getDisplayableProperties() {
@@ -374,18 +382,6 @@ export class CredentialDetailsPage implements OnInit {
 
   transformDate(date): string {
     return moment(date).format("DD, MMMM YYYY");
-  }
-
-  getIssuanceDate(): string {
-    return this.transformDate(
-      this.credential.pluginVerifiableCredential.getIssuanceDate()
-    );
-  }
-
-  getExpirationDate(): string {
-    return this.transformDate(
-      this.credential.pluginVerifiableCredential.getExpirationDate()
-    );
   }
 
   issuerSegmentChanged(ev: any) {
