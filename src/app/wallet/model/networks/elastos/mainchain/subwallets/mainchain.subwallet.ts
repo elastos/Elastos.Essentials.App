@@ -767,7 +767,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             await this.saveBalanceToCache();
         }
 
-        //Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
+        // Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toFixed());
     }
 
     public async getOwnerAddress(): Promise<string> {
@@ -833,7 +833,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             }
         } while (!this.isSingleAddress());
 
-        //Logger.log("wallet", 'balance:', totalBalance.toString());
+        // Logger.log("wallet", 'balance:', totalBalance.toFixed());
 
         return totalBalance;
     }

@@ -41,7 +41,7 @@ export class IdentityTransactionBuilder extends EVMTransactionBuilder {
     }
     const data = method.encodeABI();
     let nonce = await this.getNonce();
-    Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice.toString(), ' nonce:', nonce, ' ContractAddress:', Config.ETHDID_CONTRACT_ADDRESS);
+    Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice, ' nonce:', nonce, ' ContractAddress:', Config.ETHDID_CONTRACT_ADDRESS);
 
     // IMPORTANT NOTE: FOR NOW WE CONSIDER THAT WE DO HAVE A WALLET AND SUBWALLET IN THE SPV SDK,
     // BASED ON THE SUBWALLET MASTER WALLET ID. THIS IS TRUE AS LONG AS WE USE THE SPV SDK TO MANAGE TRANSACTIONS

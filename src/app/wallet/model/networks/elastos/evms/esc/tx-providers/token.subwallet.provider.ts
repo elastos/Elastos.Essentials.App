@@ -147,9 +147,9 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
 
     let value = '', direction: TransactionDirection = TransactionDirection.SENT;
     if (sendValue.gte(receiveValue)) {
-      value = sendValue.minus(receiveValue).toString();
+      value = sendValue.minus(receiveValue).toFixed();
     } else {
-      value = receiveValue.minus(sendValue).toString();
+      value = receiveValue.minus(sendValue).toFixed();
       direction = TransactionDirection.RECEIVED;
     }
 

@@ -255,19 +255,19 @@ export class EscTransactionPage implements OnInit {
     let fees = gas.multipliedBy(gasPrice).dividedBy(weiToDisplayCurrencyRatio);
     let total = currencyValue.plus(fees);
 
-    // Logger.log('wallet', "gasPrice", gasPrice.toString())
-    // Logger.log('wallet', "gas", gas.toString())
-    // Logger.log('wallet', "currencyValue", currencyValue.toString())
-    // Logger.log('wallet', "fees/gas", fees.toString());
-    // Logger.log('wallet', "total", total.toString());
+    // Logger.log('wallet', "gasPrice", gasPrice.toFixed())
+    // Logger.log('wallet', "gas", gas.toFixed())
+    // Logger.log('wallet', "currencyValue", currencyValue.toFixed())
+    // Logger.log('wallet', "fees/gas", fees.toFixed());
+    // Logger.log('wallet', "total", total.toFixed());
 
     return {
       totalAsBigNumber: total,
-      total: total.toString(),
+      total: total.toFixed(),
       valueAsBigNumber: currencyValue,
-      value: currencyValue.toString(),
+      value: currencyValue.toFixed(),
       feesAsBigNumber: fees,
-      fees: fees.toString()
+      fees: fees.toFixed()
     }
   }
 

@@ -58,11 +58,11 @@ export class UiService {
       } else if (balance.isNaN()) {
         return String('...');
       } else if (balance.isLessThan(100)) {
-        return balance.decimalPlaces(6).toString();
+        return balance.decimalPlaces(6).toFixed();
       } else if (balance.isGreaterThanOrEqualTo(100) && balance.isLessThan(1000)) {
-        return balance.decimalPlaces(4).toString();
+        return balance.decimalPlaces(4).toFixed();
       } else if (balance.isGreaterThanOrEqualTo(1000) && balance.isLessThan(10000)) {
-        return balance.decimalPlaces(2).toString();
+        return balance.decimalPlaces(2).toFixed();
       } else if (balance.isGreaterThanOrEqualTo(10000) && balance.isLessThan(1000000)) {
         return balance.dividedBy(1000).toFixed(2) + 'k';
       } else {

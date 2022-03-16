@@ -191,7 +191,7 @@ export class CRMemberRegisterPage implements OnInit {
         //         this.transfer.did, digest, payPassword);
 
         // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createRegisterCRTransaction(this.masterWallet.id, this.subWalletId,
-        //         '', payload, this.depositAmount.toString(), this.transfer.memo);
+        //         '', payload, this.depositAmount.toFixed(), this.transfer.memo);
         // this.walletManager.openPayModal(this.transfer); // TODO: USE signAndSendRawTransaction
     }
 

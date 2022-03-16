@@ -110,8 +110,8 @@ export class DPoSVotePage implements OnInit {
         this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainChainSubWallet;
         // All balance can be used for voting?
         let voteInEla = this.sourceSubwallet.getRawBalance().minus(this.votingFees());
-        this.voteAmountELA = voteInEla.toString()
-        this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toString();
+        this.voteAmountELA = voteInEla.toFixed()
+        this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toFixed();
         void this.hasPendingVoteTransaction();
     }
 

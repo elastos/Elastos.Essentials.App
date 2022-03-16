@@ -224,17 +224,17 @@ export class SwapTestPage implements OnInit {
         let fees = new BigNumber(this.coinTransferService.payloadParam.gas).multipliedBy(new BigNumber(this.coinTransferService.payloadParam.gasPrice)).dividedBy(weiElaRatio);
         let total = elaEthValue.plus(fees);
 
-        //Logger.log('wallet', "elaEthValue", elaEthValue.toString())
-        //Logger.log('wallet', "fees/gas", fees.toString());
-        //Logger.log('wallet', "total", total.toString());
+        // Logger.log('wallet', "elaEthValue", elaEthValue.toFixed())
+        // Logger.log('wallet', "fees/gas", fees.toFixed());
+        // Logger.log('wallet', "total", total.toFixed());
 
         return {
             totalAsBigNumber: total,
-            total: total.toString(),
+            total: total.toFixed(),
             valueAsBigNumber: elaEthValue,
-            value: elaEthValue.toString(),
+            value: elaEthValue.toFixed(),
             feesAsBigNumber: fees,
-            fees: fees.toString()
+            fees: fees.toFixed()
         }
     }
 }

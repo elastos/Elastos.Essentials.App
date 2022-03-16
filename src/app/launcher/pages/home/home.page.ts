@@ -420,7 +420,7 @@ export class HomePage implements OnInit {
     if (decimalplace == -1) {
       decimalplace = this.currencyService.selectedCurrency.decimalplace;
     }
-    return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toString();
+    return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toFixed();
   }
 
   public getShortRecentAppTitle(app: BrowsedAppInfo): string {

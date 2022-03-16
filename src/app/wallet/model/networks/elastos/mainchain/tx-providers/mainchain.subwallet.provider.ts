@@ -303,7 +303,7 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
     if (isMoveTransaction) {
       value = '0', type = 'moved';
     } else {
-      value = (sentValue - recvValue).toFixed(8).toString();
+      value = (sentValue - recvValue).toFixed(8);
     }
 
     return { value, type, inputs: sentInputs, outputs: sentOutputs }

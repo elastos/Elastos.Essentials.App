@@ -110,7 +110,7 @@ export class CRmembervotePage implements OnInit {
         this.subWalletId = this.coinTransferService.subWalletId;
         this.masterWalletId = this.coinTransferService.masterWalletId;
         this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainChainSubWallet;
-        this.balance = this.sourceSubwallet.getDisplayBalance().toString();
+        this.balance = this.sourceSubwallet.getDisplayBalance().toFixed();
 
         this.parseVotes();
 

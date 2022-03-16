@@ -107,10 +107,10 @@ export class PayPage {
       let totalCost = new BigNumber(nativeTransactionFees).plus(this.packet.costs.nativeToken.total);
       if (evmSubWallet.getBalance().gt(totalCost)) {
         this.nativeTokenBalanceIsEnough = true;
-        Logger.log("redpackets", `All good, balance of native coin is enough. ${evmSubWallet.getBalance().toString()} owned. Cost is ${totalCost.toString()}`)
+        Logger.log("redpackets", `All good, balance of native coin is enough. ${evmSubWallet.getBalance().toFixed()} owned. Cost is ${totalCost.toFixed()}`)
       }
       else {
-        Logger.warn("redpackets", `Balance of native coin is not enough. ${evmSubWallet.getBalance().toString()} owned but cost is ${totalCost.toString()}`)
+        Logger.warn("redpackets", `Balance of native coin is not enough. ${evmSubWallet.getBalance().toFixed()} owned but cost is ${totalCost.toFixed()}`)
       }
     }
     else if (this.packet.tokenType === TokenType.ERC20_TOKEN) {
@@ -127,10 +127,10 @@ export class PayPage {
       this.currentERC20Balance = erc20SubWallet.getBalance().toFixed(4);
       if (erc20SubWallet.getBalance().gte(this.packet.costs.erc20Token.total)) {
         this.erc20TokenBalanceIsEnough = true;
-        Logger.log("redpackets", `All good, balance of ERC20 coin is enough. ${erc20SubWallet.getBalance().toString()} owned. Cost is ${this.packet.costs.erc20Token.total.toString()}`);
+        Logger.log("redpackets", `All good, balance of ERC20 coin is enough. ${erc20SubWallet.getBalance().toFixed()} owned. Cost is ${this.packet.costs.erc20Token.total.toFixed()}`);
       }
       else {
-        Logger.warn("redpackets", `Balance of ERC20 token is not enough. ${erc20SubWallet.getBalance().toString()} owned but cost is ${this.packet.costs.erc20Token.total.toString()}`);
+        Logger.warn("redpackets", `Balance of ERC20 token is not enough. ${erc20SubWallet.getBalance().toFixed()} owned but cost is ${this.packet.costs.erc20Token.total.toFixed()}`);
       }
 
       // Also check the erc20 coin transaction fee cost in native coin
@@ -138,10 +138,10 @@ export class PayPage {
       let erc20TransferCostInNativeCoin = await (await evmSubWallet.estimateERC20TransferTransactionFees(this.packet.erc20ContractAddress)).multipliedBy(2);
       if (evmSubWallet.getBalance().gt(erc20TransferCostInNativeCoin)) {
         this.nativeTokenBalanceIsEnough = true;
-        Logger.log("redpackets", `All good, balance of native coin is enough. ${evmSubWallet.getBalance().toString()} owned. Cost is ${erc20TransferCostInNativeCoin.toString()}`)
+        Logger.log("redpackets", `All good, balance of native coin is enough. ${evmSubWallet.getBalance().toFixed()} owned. Cost is ${erc20TransferCostInNativeCoin.toFixed()}`)
       }
       else {
-        Logger.warn("redpackets", `Balance of native coin is not enough. ${evmSubWallet.getBalance().toString()} owned but cost is ${erc20TransferCostInNativeCoin.toString()}`)
+        Logger.warn("redpackets", `Balance of native coin is not enough. ${evmSubWallet.getBalance().toFixed()} owned but cost is ${erc20TransferCostInNativeCoin.toFixed()}`)
       }
     }
   }
@@ -186,7 +186,7 @@ export class PayPage {
   }
 
   public getERC20RedPacketValue(): string {
-    return this.packet.costs.erc20Token.redPacket.toString();
+    return this.packet.costs.erc20Token.redPacket.toFixed();
   }
 
   public getNativeTokenTotal(): string {
@@ -194,7 +194,7 @@ export class PayPage {
   }
 
   public getNativeRedPacketValue(): string {
-    return this.packet.costs.nativeToken.redPacket.toString();
+    return this.packet.costs.nativeToken.redPacket.toFixed();
   }
 
   public getNativeTokenTxFees(): string {
@@ -202,7 +202,7 @@ export class PayPage {
   }
 
   public getNativeTokenServiceFeesUSD(): string {
-    return this.packet.costs.nativeToken.standardServiceFeesUSD.toString();
+    return this.packet.costs.nativeToken.standardServiceFeesUSD.toFixed();
   }
 
   public getNativeTokenServiceFees(): string {
@@ -210,20 +210,20 @@ export class PayPage {
   }
 
   public getNativeTokenPublicOptionFees(): string {
-    return this.packet.costs.nativeToken.options.publicPacketFees.toString();
+    return this.packet.costs.nativeToken.options.publicPacketFees.toFixed();
   }
 
   public getERC20TokenPublicOptionFees(): string {
-    return this.packet.costs.erc20Token.options.publicPacketFees.toString();
+    return this.packet.costs.erc20Token.options.publicPacketFees.toFixed();
   }
 
   // ie: $5
   public getPublicOptionNativeFeesUSD(): string {
-    return this.packet.costs.nativeToken.options.publicPacketFeesUSD.toString();
+    return this.packet.costs.nativeToken.options.publicPacketFeesUSD.toFixed();
   }
 
   public getPublicOptionFeesPercentage(): string {
-    return this.packet.tokenType === TokenType.NATIVE_TOKEN ? this.packet.costs.nativeToken.options.publicPacketFeesTokenPercent.toString() : this.packet.costs.erc20Token.options.publicPacketFeesTokenPercent.toString();
+    return this.packet.tokenType === TokenType.NATIVE_TOKEN ? this.packet.costs.nativeToken.options.publicPacketFeesTokenPercent.toFixed() : this.packet.costs.erc20Token.options.publicPacketFeesTokenPercent.toFixed();
   }
 
   private async checkRightNetwork(): Promise<boolean> {

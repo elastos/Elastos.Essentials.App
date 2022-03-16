@@ -243,7 +243,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         let decimalPlaces = 3;
         let nativeTokenUSDPrice = CurrencyService.instance.getMainTokenValue(new BigNumber(1), this.network, 'USD');
         if (nativeTokenUSDPrice) {
-            const digit = nativeTokenUSDPrice.dividedToIntegerBy(1).toString().length;
+            const digit = nativeTokenUSDPrice.dividedToIntegerBy(1).toFixed().length;
             decimalPlaces = digit < 3 ? 3 : digit + 1;
         }
         return decimalPlaces;

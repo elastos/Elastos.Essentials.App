@@ -275,7 +275,7 @@ export class WalletAssetPage implements OnDestroy {
         if (CurrencyService.instance.selectedCurrency && CurrencyService.instance.selectedCurrency.decimalplace) {
             decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
         }
-        return amount.decimalPlaces(decimalplace).toString();
+        return amount.decimalPlaces(decimalplace).toFixed();
     }
 
     public usdToCurrencyAmount(balance: string, decimalplace = -1): string {
@@ -288,7 +288,7 @@ export class WalletAssetPage implements OnDestroy {
         }
 
         let curerentAmount = this.currencyService.usdToCurrencyAmount(new BigNumber(balance));
-        return curerentAmount.decimalPlaces(decimalplace).toString();
+        return curerentAmount.decimalPlaces(decimalplace).toFixed();
     }
 
     async doRefresh(event) {

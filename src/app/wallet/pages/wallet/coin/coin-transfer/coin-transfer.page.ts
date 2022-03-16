@@ -207,7 +207,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.fromSubWallet = this.networkWallet.getSubWallet(this.subWalletId);
         this.tokensymbol = this.fromSubWallet.getDisplayTokenName();
 
-        Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance().toString());
+        Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance().toFixed());
 
         if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
             this.isEVMSubwallet = true;

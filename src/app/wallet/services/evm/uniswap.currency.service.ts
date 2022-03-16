@@ -83,7 +83,7 @@ export class UniswapCurrencyService {
 
     // Fictive trade: purchase 10 USD worth of the token
     let readableAmountOut = 10;
-    let currencyAmountOut = CurrencyAmount.fromRawAmount(stableCoinUSDToken, new BigNumber(readableAmountOut).times(new BigNumber(10).pow(stableCoinUSDToken.decimals)).toString());
+    let currencyAmountOut = CurrencyAmount.fromRawAmount(stableCoinUSDToken, new BigNumber(readableAmountOut).times(new BigNumber(10).pow(stableCoinUSDToken.decimals)).toFixed());
     let trades = Trade.bestTradeExactOut(tradingPairs, evaluatedToken, currencyAmountOut, { maxHops: 3, maxNumResults: 1 });
     //Logger.log('walletdebug', "TRADES:", trades);
     if (trades.length > 0) {

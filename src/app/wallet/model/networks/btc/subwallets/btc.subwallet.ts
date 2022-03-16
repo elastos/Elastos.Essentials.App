@@ -95,7 +95,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             confirmStatus: -1, // transaction.confirmations, // To reduce RPC calls, we do not update this value
             datetime,
             direction: direction,
-            fee: (new BigNumber(transaction.fees).dividedBy(this.tokenAmountMulipleTimes)).toString(),
+            fee: (new BigNumber(transaction.fees).dividedBy(this.tokenAmountMulipleTimes)).toFixed(),
             height: transaction.blockHeight,
             memo: '',
             name: await this.getTransactionName(transaction, translate),

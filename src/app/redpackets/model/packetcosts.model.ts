@@ -83,24 +83,24 @@ export const deserializeCosts = (costs: SerializablePacketCosts): PacketCosts =>
 export const serializeCosts = (costs: PacketCosts): SerializablePacketCosts => {
   return {
     erc20Token: costs.erc20Token ? {
-      redPacket: costs.erc20Token.redPacket.toString(),
+      redPacket: costs.erc20Token.redPacket.toFixed(),
       options: {
-        publicPacketFeesTokenPercent: costs.erc20Token.options.publicPacketFeesTokenPercent ? costs.erc20Token.options.publicPacketFeesTokenPercent.toString() : undefined,
-        publicPacketFees: costs.erc20Token.options.publicPacketFees.toString()
+        publicPacketFeesTokenPercent: costs.erc20Token.options.publicPacketFeesTokenPercent ? costs.erc20Token.options.publicPacketFeesTokenPercent.toFixed() : undefined,
+        publicPacketFees: costs.erc20Token.options.publicPacketFees.toFixed()
       },
-      total: costs.erc20Token.total.toString()
+      total: costs.erc20Token.total.toFixed()
     } : undefined,
     nativeToken: {
-      redPacket: costs.nativeToken.redPacket.toString(),
-      transactionFees: costs.nativeToken.transactionFees.toString(),
-      standardServiceFeesUSD: costs.nativeToken.standardServiceFeesUSD.toString(),
-      standardServiceFees: costs.nativeToken.standardServiceFees.toString(),
+      redPacket: costs.nativeToken.redPacket.toFixed(),
+      transactionFees: costs.nativeToken.transactionFees.toFixed(),
+      standardServiceFeesUSD: costs.nativeToken.standardServiceFeesUSD.toFixed(),
+      standardServiceFees: costs.nativeToken.standardServiceFees.toFixed(),
       options: {
-        publicPacketFeesTokenPercent: costs.nativeToken.options.publicPacketFeesTokenPercent ? costs.nativeToken.options.publicPacketFeesTokenPercent.toString() : undefined,
-        publicPacketFeesUSD: costs.nativeToken.options.publicPacketFeesUSD.toString(),
-        publicPacketFees: costs.nativeToken.options.publicPacketFees.toString()
+        publicPacketFeesTokenPercent: costs.nativeToken.options.publicPacketFeesTokenPercent ? costs.nativeToken.options.publicPacketFeesTokenPercent.toFixed() : undefined,
+        publicPacketFeesUSD: costs.nativeToken.options.publicPacketFeesUSD.toFixed(),
+        publicPacketFees: costs.nativeToken.options.publicPacketFees.toFixed()
       },
-      total: costs.nativeToken.total.toString()
+      total: costs.nativeToken.total.toFixed()
     }
   }
 }

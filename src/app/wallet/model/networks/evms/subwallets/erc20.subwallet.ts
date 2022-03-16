@@ -282,7 +282,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
             if (rawBalance) {
                 this.balance = new BigNumber(rawBalance);
                 await this.saveBalanceToCache();
-                //Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.getRawBalance().toString());
+                // Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.getRawBalance().toFixed());
             }
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.coin.getName(), this.id, ') updateBalance error:', error);

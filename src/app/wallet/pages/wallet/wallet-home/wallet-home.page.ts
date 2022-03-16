@@ -290,7 +290,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }
 
         let curerentAmount = this.currencyService.usdToCurrencyAmount(new BigNumber(balance));
-        return curerentAmount.decimalPlaces(decimalplace).toString();
+        return curerentAmount.decimalPlaces(decimalplace).toFixed();
     }
 
     /**

@@ -265,7 +265,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    * @param amount unit is ETHER
    */
   public isAmountValid(amount: BigNumber) {
-    let amountString = amount.toString();
+    let amountString = amount.toFixed();
     if (amountString.indexOf('.') > -1 && amountString.split(".")[1].length > this.tokenDecimals) {
       return false;
     } else {

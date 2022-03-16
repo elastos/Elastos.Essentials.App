@@ -172,7 +172,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     };
 
     transactionInfo.amount = new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes);
-    transactionInfo.fee = new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(this.tokenAmountMulipleTimes).toString();
+    transactionInfo.fee = new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(this.tokenAmountMulipleTimes).toFixed();
 
     if (transactionInfo.confirmStatus !== 0) {
       transactionInfo.status = TransactionStatus.CONFIRMED;
@@ -267,7 +267,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
         let erc20Tansaction: EthTokenTransaction = await erc20Subwallet.getTransactionByHash(transaction.hash) as EthTokenTransaction;
         if (erc20Tansaction) {
           toAddress = erc20Tansaction.to;
-          erc20TokenValue = erc20Subwallet.getDisplayValue(erc20Tansaction.value).toString();
+          erc20TokenValue = erc20Subwallet.getDisplayValue(erc20Tansaction.value).toFixed();
         }
       }
     }
@@ -371,9 +371,9 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     if (nonce === -1) {
       nonce = await this.getNonce();
     }
-    Logger.log('wallet', 'createPaymentTransaction amount:', amount.toString(), ' nonce:', nonce)
+    Logger.log('wallet', 'createPaymentTransaction amount:', amount.toFixed(), ' nonce:', nonce)
 
-    return this.networkWallet.safe.createTransfer(toAddress, amount.toString(), gasPrice, gasLimit, nonce);
+    return this.networkWallet.safe.createTransfer(toAddress, amount.toFixed(), gasPrice, gasLimit, nonce);
   }
 
   public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {

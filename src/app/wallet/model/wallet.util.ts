@@ -42,7 +42,7 @@ export class WalletUtil {
     if (!balance || balance.isNaN()) {
       return '...';
     }
-    return balance.dividedToIntegerBy(1).toString();
+    return balance.dividedToIntegerBy(1).toFixed();
   }
 
   public static getDecimalBalance(balance: BigNumber, decimalplace = -1): string {
@@ -61,7 +61,7 @@ export class WalletUtil {
     if (decimalBalance.gt(minBalanceToShow)) {
       // BigNumber.ROUND_DOWN:  0.9997 => 0.999
       // Default round mode:  0.9997 => 1
-      const fixedDecimalBalance = decimalBalance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toString().substring(2);
+      const fixedDecimalBalance = decimalBalance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toFixed().substring(2);
       return fixedDecimalBalance;
     } else if (decimalBalance.isZero()) {
       return '';
@@ -71,7 +71,7 @@ export class WalletUtil {
   }
 
   public static getAmountWithoutScientificNotation(amount: BigNumber | number, precision: number): string {
-    let amountString = amount.toString();
+    let amountString = amount.toFixed();
     if (amountString.indexOf('e') != -1) {
       return amount.toFixed(precision).replace(/0*$/g, "");
     } else {
