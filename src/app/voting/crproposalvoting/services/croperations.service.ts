@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -49,7 +49,7 @@ export class CROperationsService {
 
     public intentAction: string;
     public intentId: number;
-    public activeCommandReturn = new BehaviorSubject<CRCommandType>(null);
+    public activeCommandReturn = new Subject();
     private sendingSignDigest = false;
 
     constructor(

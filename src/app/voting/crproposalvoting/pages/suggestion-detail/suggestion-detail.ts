@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import marked from 'marked';
@@ -23,7 +23,7 @@ type MergedSuggestionInfo = SuggestionSearchResult & SuggestionDetail;
     templateUrl: 'suggestion-detail.html',
     styleUrls: ['./suggestion-detail.scss']
 })
-export class SuggestionDetailPage {
+export class SuggestionDetailPage implements OnDestroy {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     suggestion: SuggestionDetail;
@@ -61,6 +61,17 @@ export class SuggestionDetailPage {
             this.suggestionId = navigation.extras.state.suggestionId;
             Logger.log('CRSuggestion', 'Suggestion id', this.suggestionId);
         }
+
+        this.commandReturnSub = this.crOperations.activeCommandReturn.subscribe(commandType => {
+            if (commandType == CRCommandType.SuggestionDetailPage) {
+                void this.init();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.commandReturnSub.unsubscribe();
+        this.commandReturnSub = null;
     }
 
     async init() {
@@ -122,18 +133,12 @@ export class SuggestionDetailPage {
         if (!this.suggestionDetailFetched) {
             void this.init();
         }
-        this.commandReturnSub = this.crOperations.activeCommandReturn.subscribe(commandType => {
-            if (commandType == CRCommandType.SuggestionDetailPage) {
-                void this.init();
-            }
-        });
 
         this.changeDetector.detectChanges(); // Force angular to catch changes in complex objects
     }
 
     ionViewWillLeave() {
-        this.commandReturnSub.unsubscribe();
-        this.commandReturnSub = null;
+
     }
 
     ionViewDidLeave() {
