@@ -1,9 +1,9 @@
 import { WalletNetworkOptions } from "src/app/wallet/model/masterwallets/wallet.types";
-import { SPVSDKSafe } from "src/app/wallet/model/safes/spvsdk.safe";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../../../coin";
 import { StandardMasterWallet } from "../../../../masterwallets/masterwallet";
 import { AnyNetwork } from "../../../network";
+import { BTCSPVSDKSafe } from "../../safes/btc.spvsdk.safe";
 import { BTCSubWallet } from "../../subwallets/btc.subwallet";
 import { BTCNetworkWallet } from "../btc.networkwallet";
 
@@ -15,7 +15,7 @@ export class StandardBTCNetworkWallet<WalletNetworkOptionsType extends WalletNet
         super(
             masterWallet,
             network,
-            new SPVSDKSafe(masterWallet, "BTC"),
+            new BTCSPVSDKSafe(masterWallet, "BTC"),
         );
     }
 
