@@ -386,6 +386,8 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     }
 
     /**
+     * Adds a new NFT collection to the network wallet list of NFTs.
+     *
      * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
     public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<void> {
@@ -412,6 +414,24 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     }
 
     /**
+     * From a given NFT object (that can be part of the wallet already, or not),
+     * finds and updates the wallet NFT in memory and on disk.
+     *
+     * TODO: MOVE TO EVM NETWORK WALLETS ONLY
+     */
+    private updateNFT(nft: NFT): Promise<void> {
+        Logger.log("wallet", "Updating wallet NFT", nft);
+        let walletNFT = this.getNFTByAddress(nft.contractAddress);
+        if (walletNFT) {
+            walletNFT.assets = nft.assets;
+            walletNFT.balance = nft.balance;
+            walletNFT.name = nft.name;
+        }
+
+        return this.save();
+    }
+
+    /**
      * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
     public getNFTs(): NFT[] {
@@ -427,10 +447,15 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
     /**
      * Retrieves latest information about assets on chain and update the local cache and model.
+     * This method should not be called often as this is network expensive. So when it's called,
+     * we take the opportunity to refresh the count of assets for the target NFT and save it to disk
+     * so we can show a more up to date "total assets" on NFT lists.
      *
      * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
     public async refreshNFTAssets(nft: NFT): Promise<void> {
+        Logger.log("wallet", "Refreshing NFT assets", nft);
+
         let accountAddress = await this.getMainEvmSubWallet().createAddress();
         if (nft.type == NFTType.ERC721) {
             let assets = await ERC721Service.instance.fetchAllAssets(accountAddress, nft.contractAddress);
@@ -440,6 +465,10 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
             let assets = await ERC1155Service.instance.fetchAllAssets(accountAddress, nft.contractAddress);
             nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
         }
+        nft.balance = nft.assets ? nft.assets.length : -1; // -1 to remember that we can't know the real number of assets
+
+        // Update wallet's NFT with the new data
+        return this.updateNFT(nft);
     }
 
     /**

@@ -28,6 +28,7 @@
             </ion-col>
         </ion-row> -->
 
+            <!-- HEADER -->
             <ion-row class="card-row" [ngStyle]="
                 {
                     'background-image': masterWallet.theme ?
@@ -77,6 +78,7 @@
                 wallet.
             </ion-row>
             <div *ngIf="networkWallet" style="width:100%">
+                <!-- TOKENS -->
                 <ion-row class="list-title-row">
                     <ion-col size="12">
                         <h1>{{ 'wallet.coin-list' | translate }}</h1>
@@ -152,6 +154,7 @@
                     </ion-col>
                 </ion-row>
 
+                <!-- STAKED ASSETS -->
                 <ion-row class="list-title-row staked-assets-row" *ngIf="isEVMNetworkWallet">
                     <ion-col size="6">
                         <h1>{{ 'wallet.staking-assets' | translate }}</h1>
@@ -202,6 +205,7 @@
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-row>
 
+                <!-- NFTS -->
                 <ion-row *ngIf="networkWallet.getNFTs().length" class="list-title-row collectibles-title">
                     <ion-col size="12">
                         <h1>{{ 'wallet.collectibles' | translate }}</h1>
@@ -222,7 +226,7 @@
                         <div class="bottom-col"><span class="synced">ELASTOS {{nft.type}} NFT</span></div>
                     </ion-col>
                     <ion-col size="2" class="right-col">
-                        <h1>{{ nft.balance }}</h1>
+                        <h1>{{ nft.balance >= 0 ? nft.balance : "" }}</h1>
                     </ion-col>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-row>
