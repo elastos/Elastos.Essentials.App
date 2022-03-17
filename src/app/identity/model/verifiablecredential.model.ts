@@ -58,7 +58,8 @@ export class VerifiableCredential {
 
             // From a raw description, find all special ${...} tags and replace them with values from the subject.
             if (rawDescription) {
-                let keywordTags = Array.from(rawDescription.match(/\${([a-zA-Z0-9.]+)}/g))
+                let tagsMatch = rawDescription.match(/\${([a-zA-Z0-9.]+)}/g);
+                let keywordTags = tagsMatch ? Array.from(tagsMatch) : [];
 
                 let description = rawDescription;
                 for (let tag of keywordTags) {
