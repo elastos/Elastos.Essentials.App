@@ -5,6 +5,7 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import BigNumber from 'bignumber.js';
+import { Logger } from 'src/app/logger';
 import { Pair, Trade } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
 import { ERC20Coin } from '../model/coin';
 import { Network } from '../model/networks/network';
@@ -68,15 +69,22 @@ export class UniswapCurrencyService {
     let etherjsProvider = new JsonRpcProvider({ url: network.getMainEvmRpcApiUrl() });
 
     let tradingPairs: Pair[] = [];
-    // Direct pair: Evaluated coin <-> USD stable coin
-    await this.fetchAndAddPair(evaluatedToken, stableCoinUSDToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
-    // Evaluated token against wrapped native token (ex: ADA <-> WBNB).
-    // Note: later we can add more liquidity pairs here, not only including the wrapped native token, in order
-    // to increase the possible routes.
-    await this.fetchAndAddPair(evaluatedToken, wrappedNativeCoinToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
-    // USD stable coin against wrapped native token (ex: USDT <-> WBNB).
-    await this.fetchAndAddPair(stableCoinUSDToken, wrappedNativeCoinToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
-    //Logger.log('walletdebug', "Computed Trading Pairs:", tradingPairs);
+
+    try {
+      // Direct pair: Evaluated coin <-> USD stable coin
+      await this.fetchAndAddPair(evaluatedToken, stableCoinUSDToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
+      // Evaluated token against wrapped native token (ex: ADA <-> WBNB).
+      // Note: later we can add more liquidity pairs here, not only including the wrapped native token, in order
+      // to increase the possible routes.
+      await this.fetchAndAddPair(evaluatedToken, wrappedNativeCoinToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
+      // USD stable coin against wrapped native token (ex: USDT <-> WBNB).
+      await this.fetchAndAddPair(stableCoinUSDToken, wrappedNativeCoinToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
+      //Logger.log('walletdebug', "Computed Trading Pairs:", tradingPairs);
+    }
+    catch (e) {
+      Logger.warn("wallet", "Failed to fetch uniswap pairs to get token pricing:", evaluatedToken, network);
+      return 0;
+    }
 
     if (tradingPairs.length == 0)
       return 0; // No appropriate pairs could be built - should not happen

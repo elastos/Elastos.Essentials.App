@@ -80,6 +80,8 @@ export class GlobalEthereumRPCService {
     }
 
     public async getETHSCNonce(rpcApiUrl: string, address: string): Promise<number> {
+        Logger.test("wallet", "getETHSCNonce", address);
+
         const param = {
             method: 'eth_getTransactionCount',
             params: [

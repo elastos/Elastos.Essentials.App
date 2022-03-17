@@ -86,6 +86,7 @@
     "p-queue": "^7.1.0",
     "path-browserify": "^1.0.1",
     "qr-scanner": "1.2.0",
+    "queue": "^6.0.2",
     "rxjs": "^7.5.2",
     "stream-browserify": "3.0.0",
     "svelte": "3.37.0",
