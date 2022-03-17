@@ -23,7 +23,6 @@
 package org.elastos.essentials.plugins.dappbrowser;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -82,6 +81,7 @@ public class WebViewHandler {
 
     public ValueCallback<Uri[]> mUploadCallback;
     public final static int FILECHOOSER_REQUESTCODE = 1;
+    private static LinearLayout linearLayout = null;
 
     public WebViewHandler(DappBrowserPlugin brwoserPlugin, String url, DappBrowserOptions options) {
         this.brwoserPlugin = brwoserPlugin;
@@ -120,16 +120,30 @@ public class WebViewHandler {
         return px;
     }
 
+    private LinearLayout getLayoutContainer(int titlebarHeight) {
+        if (linearLayout == null) {
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            linearLayout = new LinearLayout(this.activity);
+            linearLayout.setLayoutParams(layoutParams);
+
+            ViewGroup ionicWebView = (ViewGroup)brwoserPlugin.webView.getView();
+            ionicWebView.addView(linearLayout);
+        }
+        linearLayout.setPadding(0, titlebarHeight, 0, 0);
+        return linearLayout;
+    }
+
     public WebView createWebView() {
-        int titlebarHeight = dpToPx(this.options.titlebarheight);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layoutParams.height = brwoserPlugin.viewHeight - titlebarHeight;
-
+        //Add webview to parent view
         webView = new WebView(this.activity);
-        webView.setLayoutParams(layoutParams);
+        webView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         webView.setId(View.generateViewId());
-        webView.setY(titlebarHeight);
 
+        int titlebarHeight = dpToPx(this.options.titlebarheight);
+        LinearLayout layout = getLayoutContainer(titlebarHeight);
+        layout.addView(webView);
+
+        //Add progress bar
         progressBar = new ProgressBar(activity,null, android.R.attr.progressBarStyleHorizontal);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 8);
         params.gravity = Gravity.TOP;
@@ -263,9 +277,6 @@ public class WebViewHandler {
 
         webView.requestFocus();
         webView.requestFocusFromTouch();
-
-        ViewGroup viewGroup = (ViewGroup)brwoserPlugin.webView.getView();
-        viewGroup.addView(webView);
 
         return webView;
     }
