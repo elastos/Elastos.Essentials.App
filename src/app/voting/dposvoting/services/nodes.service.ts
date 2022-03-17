@@ -817,11 +817,11 @@ export class NodesService {
                 node.Location = 'United States';
                 break;
             case 'ElaboxSN1':
-                node.imageUrl = 'https://elanodes.com/logos/ElaboxSN1.png';
+                node.imageUrl = 'assets/dposvoting/supernodes/elabox.png';
                 node.Location = 'France';
                 break;
             case 'ElaboxSN2':
-                node.imageUrl = 'https://elanodes.com/logos/ElaboxSN1.png';
+                node.imageUrl = 'assets/dposvoting/supernodes/elabox.png';
                 node.Location = 'Malta';
                 break;
             case 'elanode.eth':

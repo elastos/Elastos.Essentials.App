@@ -7,11 +7,8 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { DPoSVotingRoutingModule } from './routing';
-
-
-
-
 
 @NgModule({
   declarations: [
@@ -24,7 +21,8 @@ import { DPoSVotingRoutingModule } from './routing';
     DPoSVotingRoutingModule,
     IonicModule,
     IonicStorageModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    GlobalDirectivesModule
   ],
   bootstrap: [],
   entryComponents: [
@@ -35,4 +33,4 @@ import { DPoSVotingRoutingModule } from './routing';
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class DPoSVotingModule {}
+export class DPoSVotingModule { }
