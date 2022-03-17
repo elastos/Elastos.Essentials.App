@@ -141,6 +141,7 @@ export class DIDDocumentsService {
           // Not checked yet, or force remote: fetched for real
           this.onlineDIDDocumentsStatus.set(didString, true, false, null);
           let resolvedDocument = await this.resolveDIDWithoutDIDStore(didString, forceRemote);
+          console.log("resolvedDocument", resolvedDocument)
           this.onlineDIDDocumentsStatus.set(didString, false, true, resolvedDocument);
 
           resolve(cachedDocumentSubject.value);
