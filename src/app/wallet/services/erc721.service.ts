@@ -30,6 +30,13 @@ import { NFTResolvedInfo } from '../model/nfts/resolvedinfo';
 import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
 
+/**
+ * List of popular IPFS gateways that we want to replace with our preferred gateway instead.
+ */
+const IPFSGatewayPrefixesToReplace = [
+    "https://gateway.pinata.cloud/ipfs"
+]
+
 @Injectable({
     providedIn: 'root'
 })
@@ -192,6 +199,8 @@ export class ERC721Service {
             return;
         }
 
+        Logger.log("wallet", "Extracting ERC721 metadata, original token uri:", tokenURI);
+
         // If the url is a IPFS url, replace it with a gateway
         tokenURI = this.replaceIPFSUrl(tokenURI);
 
@@ -232,10 +241,22 @@ export class ERC721Service {
      * Otherwise, returns the given url.
      */
     private replaceIPFSUrl(anyUrl: string): string {
-        if (!anyUrl || !anyUrl.startsWith("ipfs"))
+        if (!anyUrl)
             return anyUrl;
 
-        return `https://ipfs.io/ipfs/${anyUrl.replace("ipfs://", "")}`;
+        if (anyUrl.startsWith("ipfs"))
+            return `https://ipfs.io/ipfs/${anyUrl.replace("ipfs://", "")}`;
+
+        // Replace IPFS gateways potentially harcoded by NFTs, with the ipfs.io gateway, to reduce
+        // rate limiting api call errors (like on pinata).
+        for (let gateway of IPFSGatewayPrefixesToReplace) {
+            if (anyUrl.startsWith(gateway)) {
+                anyUrl = anyUrl.replace(gateway, "https://ipfs.io/ipfs");
+                break; // Don't search further
+            }
+        }
+
+        return anyUrl;
     }
 
     /*public async getERC20Coin(address: string, ethAccountAddress: string) {
