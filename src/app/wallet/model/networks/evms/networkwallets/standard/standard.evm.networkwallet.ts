@@ -1,8 +1,8 @@
-import { SPVSDKSafe } from 'src/app/wallet/model/safes/spvsdk.safe';
 import { jsToSpvWalletId, SPVService } from '../../../../../services/spv.service';
 import { StandardMasterWallet } from '../../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../../masterwallets/wallet.types';
 import type { EVMNetwork } from '../../evm.network';
+import { EVMSPVSDKSafe } from '../../safes/evm.spvsdk.safe';
 import { MainCoinEVMSubWallet } from '../../subwallets/evm.subwallet';
 import { EVMNetworkWallet } from '../evm.networkwallet';
 
@@ -17,7 +17,7 @@ export class StandardEVMNetworkWallet<WalletNetworkOptionsType extends WalletNet
         super(
             masterWallet,
             network,
-            new SPVSDKSafe(masterWallet, network.getEVMSPVConfigName()),
+            new EVMSPVSDKSafe(masterWallet, network.getEVMSPVConfigName()),
             displayToken,
             mainSubWalletFriendlyName,
             averageBlocktime

@@ -15,6 +15,7 @@ import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
 import type { EVMNetwork } from '../evm.network';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction } from '../evm.types';
+import { EVMSafe } from '../safes/evm.safe';
 import type { ERC20SubWallet } from './erc20.subwallet';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var Common = require('ethereumjs-common').default;
@@ -373,7 +374,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     }
     Logger.log('wallet', 'createPaymentTransaction amount:', amount.toFixed(), ' nonce:', nonce)
 
-    return this.networkWallet.safe.createTransfer(toAddress, amount.toFixed(), gasPrice, gasLimit, nonce);
+    return (this.networkWallet.safe as unknown as EVMSafe).createTransferTransaction(toAddress, amount.toFixed(), gasPrice, gasLimit, nonce);
   }
 
   public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {

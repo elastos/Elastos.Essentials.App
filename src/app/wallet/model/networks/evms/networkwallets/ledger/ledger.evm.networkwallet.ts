@@ -2,7 +2,7 @@ import { Logger } from 'src/app/logger';
 import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
 import { WalletNetworkOptions } from '../../../../masterwallets/wallet.types';
 import type { EVMNetwork } from '../../evm.network';
-import { EVMSafe } from '../../safes/evm.safe';
+import { EVMLedgerSafe } from '../../safes/evm.ledger.safe';
 import { MainCoinEVMSubWallet } from '../../subwallets/evm.subwallet';
 import { EVMNetworkWallet } from '../evm.networkwallet';
 
@@ -19,7 +19,7 @@ export class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetwo
         super(
             masterWallet,
             network,
-            new EVMSafe(masterWallet, network.getMainChainID()),
+            new EVMLedgerSafe(masterWallet, network.getMainChainID()),
             displayToken,
             mainSubWalletFriendlyName,
             averageBlocktime

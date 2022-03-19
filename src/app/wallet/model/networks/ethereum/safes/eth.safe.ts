@@ -1,9 +1,9 @@
 import { TxData } from "ethereumjs-tx";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { SignTransactionResult } from "../../../safes/safe.types";
-import { EVMSafe } from "../../evms/safes/evm.safe";
+import { EVMLedgerSafe } from "../../evms/safes/evm.ledger.safe";
 
-export class ETHSafe extends EVMSafe {
+export class ETHSafe extends EVMLedgerSafe {
   public getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
     // TODO: Move this code to each network, because not all EVM networks support ledger,
     // and they use a different ledger app each time (AppEth)

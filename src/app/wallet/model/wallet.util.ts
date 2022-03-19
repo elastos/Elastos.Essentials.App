@@ -106,7 +106,7 @@ export class WalletUtil {
 
   public static isBTCAddress(address : string) {
     let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
-    return validate(address, network as Network)
+    return validate(address, network.toLowerCase() as Network)
   }
 
   public static isEVMAddress(address : string) {

@@ -1,7 +1,7 @@
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
-import { EVMSafe } from "src/app/wallet/model/networks/evms/safes/evm.safe";
+import { EVMLedgerSafe } from "src/app/wallet/model/networks/evms/safes/evm.ledger.safe";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { StandardCoinName } from "../../../../../../coin";
 import { TransactionProvider } from "../../../../../../tx-providers/transaction.provider";
@@ -19,7 +19,7 @@ export class ElastosSmartChainLedgerNetworkWallet extends ElastosLedgerNetworkWa
     super(
       masterWallet,
       network,
-      new EVMSafe(masterWallet, network.getMainChainID()),
+      new EVMLedgerSafe(masterWallet, network.getMainChainID()),
       "ELA"
     );
   }

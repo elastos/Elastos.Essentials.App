@@ -73,6 +73,7 @@
     "angularx-qrcode": "^13.0.2",
     "async-mutex": "^0.3.2",
     "base-58": "^0.0.1",
+    "bigint-buffer": "^1.1.5",
     "bignumber.js": "9.0.1",
     "bip32": "^3.0.1",
     "bip39": "^3.0.4",

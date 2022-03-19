@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { EVMSafe } from '../../model/networks/evms/safes/evm.safe';
+import { EVMLedgerSafe } from '../../model/networks/evms/safes/evm.ledger.safe';
 import { Safe } from '../../model/safes/safe';
 
 export type LedgerSignComponentOptions = {
@@ -57,7 +57,7 @@ export class LedgerSignComponent implements OnInit {
 
   async signEVMTransaction() {
     try {
-        await (this.safe as EVMSafe).signTransactionByLedger(this.transport);
+        await (this.safe as EVMLedgerSafe).signTransactionByLedger(this.transport);
         this.signSucceeded = true;
     } catch (err) {
         Logger.log("wallet", "LedgerSignComponent signTransactionByLedger error: ", err);

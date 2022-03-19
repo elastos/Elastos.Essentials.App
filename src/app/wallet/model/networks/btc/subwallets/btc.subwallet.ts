@@ -2,7 +2,6 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
-import { jsToSpvWalletId, SPVService } from 'src/app/wallet/services/spv.service';
 import { Config } from '../../../../config/Config';
 import { BTCTransaction, BTCUTXO } from '../../../btc.types';
 import { StandardCoinName } from '../../../coin';
@@ -13,6 +12,7 @@ import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionTy
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
+import { BTCSafe } from '../safes/btc.safe';
 
 const TRANSACTION_LIMIT = 50;
 
@@ -170,7 +170,6 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     //satoshi
     public async getAvailableUtxo(amount: number) {
         let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.rpcApiUrl, this.legacyAddress);
-
         let utxoArrayForSDK = [];
         let getEnoughUTXO = false;
         if (utxoArray) {
@@ -224,13 +223,11 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         if (!utxo) return;
 
         Logger.log('wallet', 'createBTCTransaction  toAddress:', toAddress, ' amount:', toAmount)
-
-        return await SPVService.instance.createBTCTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            JSON.stringify(utxo),
-            JSON.stringify(outputs),
-            this.legacyAddress,
-            feerate.toString());
+        return (this.networkWallet.safe as any as BTCSafe).createBTCPaymentTransaction(
+          utxo,
+          outputs,
+          this.legacyAddress,
+          feerate.toString());
     }
 
     public async publishTransaction(transaction: string): Promise<string> {

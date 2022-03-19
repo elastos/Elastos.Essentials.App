@@ -30,7 +30,7 @@
                     <div class="wallet-amount" *ngIf="netWallet">
                         <h4 *ngIf="!currencyService.useCurrency">{{
                             WalletUtil.getWholeBalance(netWallet.getDisplayBalance()) }}<span class="dot"
-                                *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(netWallet.getDisplayBalance())">.</span>
+                                *ngIf="!netWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(netWallet.getDisplayBalance())">.</span>
                             <span>{{ WalletUtil.getDecimalBalance(netWallet.getDisplayBalance(),
                                 netWallet.getDecimalPlaces())
                                 }}</span>

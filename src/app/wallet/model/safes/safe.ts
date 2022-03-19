@@ -30,8 +30,6 @@ export abstract class Safe {
    */
   public abstract getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]>; // TODO
 
-  public abstract createTransfer(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any>; // TODO
-
   // TODO: remove this Transfer object, dirty.
   public abstract signTransaction(rawTx: string | TxData, transfer: Transfer): Promise<SignTransactionResult>;
 }
