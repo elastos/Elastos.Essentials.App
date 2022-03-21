@@ -1,5 +1,6 @@
 import { TxData } from "ethereumjs-tx";
 import { Transfer } from "../../services/cointransfer.service";
+import { BTCTxData } from "../btc.types";
 import { MasterWallet } from "../masterwallets/masterwallet";
 import { SignTransactionResult } from "./safe.types";
 
@@ -31,5 +32,5 @@ export abstract class Safe {
   public abstract getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]>; // TODO
 
   // TODO: remove this Transfer object, dirty.
-  public abstract signTransaction(rawTx: string | TxData, transfer: Transfer): Promise<SignTransactionResult>;
+  public abstract signTransaction(rawTx: string | TxData | BTCTxData, transfer: Transfer): Promise<SignTransactionResult>;
 }

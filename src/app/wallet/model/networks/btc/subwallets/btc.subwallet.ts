@@ -3,11 +3,12 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { Config } from '../../../../config/Config';
-import { BTCTransaction, BTCUTXO } from '../../../btc.types';
+import { BTCTransaction, BTCUTXO, BTCUtxoForLedger } from '../../../btc.types';
 import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
+import { WalletType } from '../../../masterwallets/wallet.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, UtxoForSDK } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
@@ -170,7 +171,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     //satoshi
     public async getAvailableUtxo(amount: number) {
         let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.rpcApiUrl, this.legacyAddress);
-        let utxoArrayForSDK = [];
+        let utxoArrayForSDK : UtxoForSDK[] = [];
         let getEnoughUTXO = false;
         if (utxoArray) {
             let totalAmount = 0;
@@ -219,8 +220,24 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             "Amount": toAmount.toString()
         }]
 
-        let utxo = await this.getAvailableUtxo(toAmount + fee);
+        // let utxo: BTCUtxoForLedger[] = [];
+        let utxo: BTCUtxoForLedger[] = await this.getAvailableUtxo(toAmount + fee);
         if (!utxo) return;
+
+        if (this.masterWallet.type === WalletType.LEDGER) {
+          for (let i = 0; i < utxo.length; i++) {
+            if (!utxo[i].utxoHex) {
+              let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, utxo[i].TxHash);
+              if (rawtransaction) {
+                utxo[i].utxoHex = rawtransaction.hex;
+              } else {
+                // TODO:
+                Logger.log('wallet', 'GlobalBTCRPCService getrawtransaction error');
+                return null;
+              }
+            }
+          }
+        }
 
         Logger.log('wallet', 'createBTCTransaction  toAddress:', toAddress, ' amount:', toAmount)
         return (this.networkWallet.safe as any as BTCSafe).createBTCPaymentTransaction(

@@ -161,10 +161,6 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe 
     return await "XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf"; // Hardcoded - equivalent of SVP getOwnerAddress();
   }
 
-  public createTransfer(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
-    throw new Error("Method not implemented.");
-  }
-
   public signTransaction(rawTx: string, transfer: Transfer): Promise<SignTransactionResult> {
 
     Native.instance.go("/multisig/status");
