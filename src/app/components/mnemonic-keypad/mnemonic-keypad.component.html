@@ -1,0 +1,29 @@
+<ion-content>
+  <ion-grid class="ion-text-center" [class.dark-container]="theme.darkMode">
+    <div class="suggestions">
+      <div *ngFor="let word of suggestedWords" class="word" (click)="onWordSelected(word)">
+        {{word}}
+      </div>
+    </div>
+    <div class="ongoing">
+      {{onGoingInput}}
+      <img class="clear" *ngIf="onGoingInput" src="assets/settings/icon/delete.svg" (click)="clearCurrentInput()" />
+    </div>
+    <div class="keypad">
+      <div *ngFor="let letterLine of inputLetters" class="letter-line">
+        <div *ngFor="let letter of letterLine" class="letter" (click)="onLetterTyped(letter)">
+          {{letter}}
+        </div>
+      </div>
+    </div>
+    <div class="last-row">
+      <div class="languages">
+        <div class="lang" *ngFor="let lang of languages" (click)="selectLanguage(lang)"
+          [class]="{'selected': selectedLanguage == lang.code}">
+          <img [src]="lang.icon" />
+        </div>
+      </div>
+      <ion-icon class="paste" mode="ios" name="clipboard-outline" (click)="pasteClipboard()"></ion-icon>
+    </div>
+  </ion-grid>
+</ion-content>

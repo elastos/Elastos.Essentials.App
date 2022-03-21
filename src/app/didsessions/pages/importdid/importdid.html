@@ -5,18 +5,9 @@
     <p>{{ 'didsessions.import-prompt' | translate }}</p>
 
     <ion-row class="input-row">
-      <ion-textarea
-        *ngIf="!readonly"
-        id='sentenceInput'
-        row=5
-        #addMnemonicWordInput
-        [placeholder]="'didsessions.enter-mnemonic'|translate"
-        [(ngModel)]="mnemonicSentence"
-        (ionChange)="onMnemonicSentenceChanged()"
-        (ionFocus)="onInputFocus()"
-        (ionBlur)="onInputBlur()"
-        mode="ios"
-        >
+      <ion-textarea *ngIf="!readonly" id='sentenceInput' row=5 #addMnemonicWordInput
+        [placeholder]="'didsessions.enter-mnemonic'|translate" [(ngModel)]="mnemonicSentence"
+        (ionChange)="onMnemonicSentenceChanged()" (ionFocus)="onInputFocus()" (ionBlur)="onInputBlur()" mode="ios">
       </ion-textarea>
     </ion-row>
 
@@ -27,11 +18,11 @@
       </ion-col>
       <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i])">
         <div class="mnemonic-index">{{ i + 1 }}</div>
-        <ion-label >{{ mnemonicWords[i] }}</ion-label>
+        <ion-label>{{ mnemonicWords[i] }}</ion-label>
       </ion-col>
       <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i + 1])">
         <div class="mnemonic-index">{{ i + 2 }}</div>
-        <ion-label >{{ mnemonicWords[i + 1] }}</ion-label>
+        <ion-label>{{ mnemonicWords[i + 1] }}</ion-label>
       </ion-col>
     </ion-row>
 

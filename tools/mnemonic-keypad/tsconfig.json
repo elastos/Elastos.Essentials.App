@@ -1,0 +1,25 @@
+{
+  "compileOnSave": false,
+  "include": [
+    "*.ts"
+  ],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "module": "ES2020",
+    "target": "ESNext",
+    "lib": [
+      "esnext",
+      "dom"
+    ]
+  }
+}

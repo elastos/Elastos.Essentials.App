@@ -9,6 +9,7 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
@@ -34,21 +35,22 @@ export class PickIdentityPage {
     private events: Events,
     public popupProvider: PopupProvider,
     private splashScreen: SplashScreen,
+    private mnemonicKeypadService: GlobalMnemonicKeypadService,
     private didSessions: GlobalDIDSessionsService,
   ) {
-      this.events.subscribe("identityadded", newIdentity => {
-        Logger.log('didsessions', "PickIdentiy - Identity added, reloading content");
-        void this.loadIdentities();
-      });
+    this.events.subscribe("identityadded", newIdentity => {
+      Logger.log('didsessions', "PickIdentiy - Identity added, reloading content");
+      void this.loadIdentities();
+    });
 
-      this.events.subscribe("identityremoved", newIdentity => {
-        Logger.log('didsessions', "PickIdentiy - Identity deleted, reloading content");
-        void this.loadIdentities();
-      });
+    this.events.subscribe("identityremoved", newIdentity => {
+      Logger.log('didsessions', "PickIdentiy - Identity deleted, reloading content");
+      void this.loadIdentities();
+    });
   }
 
   ionViewWillEnter() {
-    if(!this.theme.darkMode) {
+    if (!this.theme.darkMode) {
       this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
     } else {
       this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
@@ -98,7 +100,7 @@ export class PickIdentityPage {
   }
 
   async signIn(identityEntry: IdentityEntry) {
-    Logger.log('didsessions', "Trying to sign in with DID "+identityEntry.didString);
+    Logger.log('didsessions', "Trying to sign in with DID " + identityEntry.didString);
     void this.uxService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
     await this.identityService.signIn(identityEntry, true);
     void this.uxService.hideLoading();
@@ -140,5 +142,9 @@ export class PickIdentityPage {
       }
     }
     return count;
+  }
+
+  TEMPSHOWKEYPAD() {
+    void this.mnemonicKeypadService.promptMnemonic(12);
   }
 }
