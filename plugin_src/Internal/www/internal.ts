@@ -62,6 +62,19 @@ class InternalManagerImpl implements InternalPlugin.InternalManager {
           });
     }
 
+    isDeviceRooted(): Promise<boolean> {
+        return new Promise((resolve, reject)=>{
+            exec((ret)=>{
+                resolve(ret);
+            },
+            (err)=>{
+                reject(err);
+            },
+            'InternalManager', 'isDeviceRooted', []);
+          });
+    }
+
+
 }
 
 export = new InternalManagerImpl();

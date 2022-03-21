@@ -15,6 +15,7 @@
         </config-file>
         <config-file parent="/*" target="AndroidManifest.xml" />
         <source-file src="src/android/InternalPlugin.java" target-dir="src/org/elastos/essentials/plugins/internal" />
+        <source-file src="src/android/CheckRooted.java" target-dir="src/org/elastos/essentials/plugins/internal" />
     </platform>
     <platform name="ios">
         <config-file parent="/*" target="config.xml">

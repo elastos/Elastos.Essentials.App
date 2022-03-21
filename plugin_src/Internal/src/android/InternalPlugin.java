@@ -31,6 +31,9 @@ public class InternalPlugin extends CordovaPlugin {
                 case "getDidStoragePath":
                     this.getDidStoragePath(args, callbackContext);
                     break;
+                case "isDeviceRooted":
+                    this.isDeviceRooted(callbackContext);
+                    break;
 
                 default:
                     return false;
@@ -103,5 +106,10 @@ public class InternalPlugin extends CordovaPlugin {
         String newPath = getDidStorageDir(didStoreId, didString);
         moveFolder(oldPath, newPath);
         callbackContext.success();
+    }
+
+    private void isDeviceRooted(CallbackContext callbackContext) {
+        Boolean ret = CheckRooted.isDeviceRooted();
+        callbackContext.success(ret.toString());
     }
 }

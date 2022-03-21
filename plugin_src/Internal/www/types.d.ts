@@ -38,21 +38,26 @@ declare namespace InternalPlugin {
          * @param didStoreId    The didStoreId.
          * @param didString     The didString.
          */
-         changeOldPath(didStoreId: string, didString: string): Promise<any>;
+        changeOldPath(didStoreId: string, didString: string): Promise<any>;
 
-         /**
+        /**
          * Get store data path.
          *
          * @param didStoreId    The didStoreId.
          */
-         getStoreDataPath(didStoreId: string): Promise<string>;
+        getStoreDataPath(didStoreId: string): Promise<string>;
 
-         /**
+        /**
          * Get did storage path.
          *
          * @param didStoreId    The didStoreId.
          * @param didString     The didString.
          */
-         getDidStoragePath(didStoreId: string, didString: string): Promise<string>;
+        getDidStoragePath(didStoreId: string, didString: string): Promise<string>;
+
+        /**
+         * Check system whether rooted.
+         */
+        isDeviceRooted(): Promise<boolean>
     }
 }
