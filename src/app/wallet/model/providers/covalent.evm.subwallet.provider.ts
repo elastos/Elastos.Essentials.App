@@ -8,7 +8,7 @@ import { TransactionDirection } from "./transaction.types";
 
 const MAX_RESULTS_PER_FETCH = 30;
 const covalentApiUrl = 'https://api.covalenthq.com/v1/';
-const API_KEY = 'ckey_d3c2c09cdd9e4c44980aac3b93'; // https://www.covalenthq.com/
+const API_KEY = 'ckey_d3c2c09cdd9e4c44980aac3b934'; // https://www.covalenthq.com/
 
 type CovalentTransfer = {
   block_signed_at : string,
