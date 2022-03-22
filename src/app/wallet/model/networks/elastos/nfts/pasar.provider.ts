@@ -20,7 +20,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
       console.log("uri", uri);
 
       // Pasar URIs have formats such as "feeds:json:QmQcxY1YXNRTETzE4aDPcZpKBtRHJyyAjsBFgXavXtRvRh"
-      if (uri && uri.startsWith("feeds:json:")) {
+      if (uri && (uri.startsWith("feeds:json:") || uri.startsWith("pasar:json:"))) {
         const assetJsonMetadataUri = uri.substr(11);
         // Now fetch the json metadata from IPFS
         // Format:
@@ -50,10 +50,19 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
           if ("description" in jsonMetadata)
             asset.description = jsonMetadata["description"];
 
+          let dataEntry = "data" in jsonMetadata && jsonMetadata.data ? jsonMetadata.data : {};
+
           if ("thumbnail" in jsonMetadata) {
             let thumbnailUri = jsonMetadata["thumbnail"] as string;
             // Expected uri format: "feeds:imgage:QmSZjdUSu8qmgD8sng3TiVTKsTKzAggpaR4dt88Ekd5FuL"
             if (thumbnailUri.startsWith("feeds:imgage") || thumbnailUri.startsWith("feeds:image")) {
+              asset.imageURL = `https://ipfs.trinity-feeds.app/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
+            }
+          }
+          else if ("thumbnail" in dataEntry) {
+            let thumbnailUri = dataEntry["thumbnail"] as string;
+            // Expected uri format: "pasar:imgage:QmSZjdUSu8qmgD8sng3TiVTKsTKzAggpaR4dt88Ekd5FuL"
+            if (thumbnailUri.startsWith("pasar:image")) {
               asset.imageURL = `https://ipfs.trinity-feeds.app/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
             }
           }
