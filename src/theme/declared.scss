@@ -467,14 +467,10 @@
 
   .popover-viewport {
     position: relative !important;
+    margin: 0 auto !important;
     left: auto !important;
     top: auto !important;
     width: 85vw !important;
     max-width: 400px;
-
-    ion-content {
-    --background: transparent;
-    justify-content: center;
-    }
   }
 }
