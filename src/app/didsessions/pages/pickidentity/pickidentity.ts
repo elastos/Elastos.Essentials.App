@@ -36,19 +36,19 @@ export class PickIdentityPage {
     private splashScreen: SplashScreen,
     private didSessions: GlobalDIDSessionsService,
   ) {
-      this.events.subscribe("identityadded", newIdentity => {
-        Logger.log('didsessions', "PickIdentiy - Identity added, reloading content");
-        void this.loadIdentities();
-      });
+    this.events.subscribe("identityadded", newIdentity => {
+      Logger.log('didsessions', "PickIdentiy - Identity added, reloading content");
+      void this.loadIdentities();
+    });
 
-      this.events.subscribe("identityremoved", newIdentity => {
-        Logger.log('didsessions', "PickIdentiy - Identity deleted, reloading content");
-        void this.loadIdentities();
-      });
+    this.events.subscribe("identityremoved", newIdentity => {
+      Logger.log('didsessions', "PickIdentiy - Identity deleted, reloading content");
+      void this.loadIdentities();
+    });
   }
 
   ionViewWillEnter() {
-    if(!this.theme.darkMode) {
+    if (!this.theme.darkMode) {
       this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
     } else {
       this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
@@ -98,7 +98,7 @@ export class PickIdentityPage {
   }
 
   async signIn(identityEntry: IdentityEntry) {
-    Logger.log('didsessions', "Trying to sign in with DID "+identityEntry.didString);
+    Logger.log('didsessions', "Trying to sign in with DID " + identityEntry.didString);
     void this.uxService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
     await this.identityService.signIn(identityEntry, true);
     void this.uxService.hideLoading();

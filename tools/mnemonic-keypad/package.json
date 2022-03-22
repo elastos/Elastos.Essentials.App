@@ -1,0 +1,15 @@
+{
+  "name": "mnemonic-keypad",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hanzi-to-pinyin": "^1.86.0",
+    "pinyin-convert": "^1.11.0"
+  }
+}

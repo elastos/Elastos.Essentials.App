@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationPopupComponent } from './confirmation-popup/confirmation-popup.component';
 import { DIDPublishingComponent } from './did-publishing/did-publishing.component';
+import { MnemonicKeypadComponent } from './mnemonic-keypad/mnemonic-keypad.component';
 import { RestartPromptComponent } from './restart-prompt/restart-prompt.component';
 import { SwitchNetworkComponent } from './switch-network/switch-network.component';
 import { TitleBarComponent } from './titlebar/titlebar.component';
@@ -16,7 +17,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     DIDPublishingComponent,
     SwitchNetworkComponent,
     RestartPromptComponent,
-    ConfirmationPopupComponent
+    ConfirmationPopupComponent,
+    MnemonicKeypadComponent
   ],
   imports: [
     CommonModule,
@@ -29,7 +31,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     DIDPublishingComponent,
     SwitchNetworkComponent,
     RestartPromptComponent,
-    ConfirmationPopupComponent
+    ConfirmationPopupComponent,
+    MnemonicKeypadComponent
   ],
   providers: [
   ],
@@ -39,7 +42,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     DIDPublishingComponent,
     SwitchNetworkComponent,
     RestartPromptComponent,
-    ConfirmationPopupComponent
+    ConfirmationPopupComponent,
+    MnemonicKeypadComponent
   ],
 })
 export class SharedComponentsModule { }

@@ -1,20 +1,22 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.dark-container]="theme.darkMode" [class.blur]="uxService.popover">
-
     <div class="identities">
       <div *ngFor="let group of groupedIdentities">
         <ion-row class="id-row ion-activatable ripple" *ngFor="let identityEntry of group.entries">
           <ion-col class="img-col" size="1.9" (click)="signIn(identityEntry)">
-            <img *ngIf="!identityEntry.avatar" class="noAvatar" [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
-            <img *ngIf="identityEntry.avatar" [src]="'data:'+identityEntry.avatar.contentType+';base64,'+identityEntry.avatar.base64ImageData">
+            <img *ngIf="!identityEntry.avatar" class="noAvatar"
+              [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+            <img *ngIf="identityEntry.avatar"
+              [src]="'data:'+identityEntry.avatar.contentType+';base64,'+identityEntry.avatar.base64ImageData">
           </ion-col>
           <ion-col class="info-col" size="9" (click)="signIn(identityEntry)">
             <h1>{{ identityEntry.name }}</h1>
             <p>{{ identityEntry.didString.slice(4,16) }}...{{ identityEntry.didString.slice(40,46) }}</p>
           </ion-col>
           <ion-col class="info-col" size="1.1" (click)="uxService.showOptions($event, identityEntry)">
-            <img [src]="!theme.darkMode ? 'assets/didsessions/icon/dots.svg' : 'assets/didsessions/icon/dark_mode/dots.svg'">
+            <img
+              [src]="!theme.darkMode ? 'assets/didsessions/icon/dots.svg' : 'assets/didsessions/icon/dark_mode/dots.svg'">
           </ion-col>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-row>

@@ -5,7 +5,6 @@ import { Address } from '../addresses/Address';
 import { IdrissAddress } from "../addresses/IdrissAddress";
 import { Resolver } from "./Resolver";
 
-
 export class IdrissResolver extends Resolver {
     constructor() {
         super();
@@ -38,7 +37,7 @@ export class IdrissResolver extends Resolver {
                 }
             }
         }
-        catch(err) {
+        catch (err) {
             // Logger.warn('wallet', ' IdrissCrypto error:', err)
         }
 

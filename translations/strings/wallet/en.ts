@@ -519,6 +519,7 @@ export const en = {
         "privatekey": "Private Key",
         "privatekey-tap-to-copy": "Tap private key to copy",
         "export-private-key-intro": "Optionally, you can also use the following private key in some wallets. Touch to copy.",
+        "import-paste-from-keypad": "Note: you can paste a whole mnemonic sentence from the keypad",
 
         /***********************
         * Export Keystore Page *

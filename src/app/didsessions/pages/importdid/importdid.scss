@@ -1,4 +1,4 @@
-@import 'src/app/didsessions/root.scss';
+@import "src/app/didsessions/root.scss";
 
 .container {
   padding: 25px;
@@ -7,53 +7,58 @@
   justify-content: center;
   align-items: center;
 
-  .mnemonic-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: space-between;
+  .mnemonic-rows {
+    margin-top: 20px;
     width: 100%;
 
-    ion-col {
-      height: 40px;
-      background: #ffffff;
-      box-shadow: 0 3px 15px 0 #ededf0;
-      border-radius: 8px;
-      margin-bottom: 20px;
+    .mnemonic-row {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      justify-content: space-between;
+      align-items: space-between;
+      width: 100%;
 
-      .mnemonic-index {
-        position: absolute;
-        z-index: 100;
-        top: -11px;
-        left: -11px;
-        width: 22px;
-        height: 22px;
+      ion-col {
+        height: 40px;
         background: #ffffff;
-        border-radius: 100%;
-        border: 2px solid #F5F5FD;
+        box-shadow: 0 3px 15px 0 #ededf0;
+        border-radius: 8px;
+        margin-bottom: 20px;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 9px;
+
+        .mnemonic-index {
+          position: absolute;
+          z-index: 100;
+          top: -11px;
+          left: -11px;
+          width: 22px;
+          height: 22px;
+          background: #ffffff;
+          border-radius: 100%;
+          border: 2px solid #f5f5fd;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 9px;
+        }
       }
-    }
 
-    .selectedCol {
-      background: linear-gradient(to bottom, #732dcf, #640fd4);
-
-      .mnemonic-index {
+      .selectedCol {
         background: linear-gradient(to bottom, #732dcf, #640fd4);
-        color: #f8f8ff;
-      }
 
-      ion-label {
-        font-size: 12px;
-        font-weight: 500;
-        line-height: 1.25;
-        letter-spacing: -0.29px;
-        color: #f8f8ff;
+        .mnemonic-index {
+          background: linear-gradient(to bottom, #732dcf, #640fd4);
+          color: #f8f8ff;
+        }
+
+        ion-label {
+          font-size: 12px;
+          font-weight: 500;
+          line-height: 1.25;
+          letter-spacing: -0.29px;
+          color: #f8f8ff;
+        }
       }
     }
   }
@@ -69,7 +74,7 @@
     width: 100%;
     padding: 30px 15px;
 
-    ion-textarea {
+    /* ion-textarea {
       background: #ffffff;
       box-shadow: 0 3px 15px 0 #ededf0;
       border-radius: 8px;
@@ -79,12 +84,25 @@
       --padding-top: 15px;
       --padding-start: 12px;
       --padding-end: 12px;
+    } */
+
+    .virtual-textarea {
+      width: 100%;
+      background: #ffffff;
+      box-shadow: 0 3px 15px 0 #ededf0;
+      border-radius: 8px;
+      font-size: 13px;
+      text-transform: lowercase;
+      height: 100px;
+      padding-top: 15px;
+      padding-left: 12px;
+      padding-right: 12px;
     }
   }
 
   .btn-row {
     padding: 10px 0;
-    
+
     ion-button {
       height: 50px;
       width: 100%;
@@ -98,28 +116,35 @@
 }
 
 .dark-container {
-  .mnemonic-row {
-    ion-col {
-      background: #212021;
-      box-shadow: none;
-
-      .mnemonic-index {
+  .mnemonic-rows {
+    .mnemonic-row {
+      ion-col {
         background: #212021;
-        border: 2px solid #121212;
+        box-shadow: none;
+
+        .mnemonic-index {
+          background: #212021;
+          border: 2px solid #121212;
+        }
       }
-    }
 
-    .selectedCol {
-      background: linear-gradient(to bottom, #732dcf, #640fd4);
-
-      .mnemonic-index {
+      .selectedCol {
         background: linear-gradient(to bottom, #732dcf, #640fd4);
+
+        .mnemonic-index {
+          background: linear-gradient(to bottom, #732dcf, #640fd4);
+        }
       }
     }
   }
 
   .input-row {
-    ion-textarea {
+    /* ion-textarea {
+      background: #212021;
+      box-shadow: none;
+    } */
+
+    .virtual-textarea {
       background: #212021;
       box-shadow: none;
     }
@@ -135,5 +160,3 @@
     }
   }
 }
-
-

@@ -6,6 +6,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -14,8 +15,8 @@ import { WalletService } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
 
 export enum MnemonicLanguage {
-  CHINESE_SIMPLIFIED,
-  OTHERS
+    CHINESE_SIMPLIFIED,
+    OTHERS
 }
 
 @Component({
@@ -26,7 +27,7 @@ export enum MnemonicLanguage {
 
 export class WalletImportPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    @ViewChild('slider', {static: false}) slider: IonSlides;
+    @ViewChild('slider', { static: false }) slider: IonSlides;
 
     slideOpts = {
         initialSlide: 0,
@@ -36,14 +37,14 @@ export class WalletImportPage implements OnInit {
     };
 
     public slideIndex = 0;
+    public keypadShown = false;
 
     public walletType: string;
     private masterWalletId = "1";
 
     private walletIsCreating = false; // Just in case, Ignore user action when the wallet is creating.
 
-    public inputList: Array<{input:string}> = [];
-    private inputStr = "";
+    public inputList: string[] = [];
 
     constructor(
         public walletManager: WalletService,
@@ -54,17 +55,13 @@ export class WalletImportPage implements OnInit {
         public zone: NgZone,
         private authService: AuthService,
         private translate: TranslateService,
-        private walletCreateService: WalletCreationService
+        private walletCreateService: WalletCreationService,
+        private mnemonicKeypadService: GlobalMnemonicKeypadService
     ) {
         this.masterWalletId = Util.uuid(6, 16);
     }
 
     ngOnInit() {
-        for (let i = 0; i < 12; i ++) {
-            this.inputList.push({
-                input: ''
-            });
-        }
         Logger.log('wallet', 'Input list created', this.inputList);
     }
 
@@ -73,22 +70,6 @@ export class WalletImportPage implements OnInit {
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('wallet.import-wallet'));
     }
-
-
- /*    goToNextInput(event, nextInput?: any) {
-        Logger.log('wallet', 'Input key code', event);
-
-        // Convenient way to paste a full mnemonic (non chinese only): if only the first input has text,
-        // try to split the existing input with spaces and dispatch the words into the other inputs automatically.
-        let allInputFieldsWereFilled = this.tryToSplitFirstInputWords();
-
-        if (nextInput && !allInputFieldsWereFilled) {
-            nextInput === 'input5' || nextInput === 'input9' ? this.slider.slideNext() : () => {};
-            nextInput.setFocus();
-        } else {
-            this.onImport();
-        }
-    } */
 
     slideNext(slider) {
         slider.slideNext();
@@ -101,11 +82,7 @@ export class WalletImportPage implements OnInit {
             return;
         }
 
-        // Convenient way to paste a full mnemonic (non chinese only): if only the first input has text,
-        // try to split the existing input with spaces and dispatch the words into the other inputs automatically.
-        const allInputFieldsWereFilled = this.tryToSplitFirstInputWords();
-
-        if (nextInput && !allInputFieldsWereFilled) {
+        if (nextInput) {
             if (slide) {
                 slide.slideNext();
                 setTimeout(() => {
@@ -119,52 +96,12 @@ export class WalletImportPage implements OnInit {
         }
     }
 
-    /**
-     * If only the first input has text, try to split the existing input with spaces and dispatch
-     * the words into the other inputs automatically.
-     * Returns true if all input box could be filled, false otherwise.
-     */
-    private tryToSplitFirstInputWords(): boolean {
-        let firstInputContent = this.inputList[0].input;
-        let firstInputWords = firstInputContent.toLowerCase().split(" ");
-        if (firstInputWords.length <= 1) {
-            // Just a word, we don't do anything special.
-            return false;
-        }
-
-        // Dispatch all single line mnemonic input into single input fields.
-        let wordCount = 0;
-        for (let wordIndex in firstInputWords) {
-            this.inputList[wordIndex].input = firstInputWords[wordIndex];
-
-            // Don't try to fill more inputs than available, in case user types too many words.
-            wordCount++;
-            if (wordCount == 12)
-                break;
-        }
-
-        if (firstInputWords.length == 12)
-            return true; // All mnemonic words are entered
-        else
-            return false;
-    }
-
     webKeyStore(webKeyStore) {
         Logger.log('wallet', "========webKeyStore" + webKeyStore);
     }
 
     allInputsFilled() {
-        let inputsFilled = true;
-        // return inputsFilled; // for test
-        this.inputStr = '';
-        this.inputList.forEach((word) => {
-            if (word.input === '') {
-                inputsFilled = false;
-            } else {
-                this.inputStr += word.input.replace(/\s+/g, "").toLowerCase() + " "; // Append trimmed word plus a space between each word
-            }
-        });
-        return inputsFilled;
+        return this.inputList.length === 12;
     }
 
     async onImport() {
@@ -190,8 +127,11 @@ export class WalletImportPage implements OnInit {
             this.walletIsCreating = false;
         } else {
             this.native.toast(this.translate.instant("wallet.mnemonic-import-missing-words"));
-            this.inputStr = "";
         }
+    }
+
+    private getMnemonicAsString(): string {
+        return this.inputList.join(" ").toLowerCase();
     }
 
     async importWalletWithMnemonic(payPassword: string) {
@@ -200,7 +140,7 @@ export class WalletImportPage implements OnInit {
         await this.walletManager.importMasterWalletWithMnemonic(
             this.masterWalletId,
             this.walletCreateService.name,
-            this.inputStr.toLowerCase(),
+            this.getMnemonicAsString(),
             this.walletCreateService.mnemonicPassword,
             payPassword,
             this.walletCreateService.singleAddress
@@ -222,5 +162,63 @@ export class WalletImportPage implements OnInit {
         void this.zone.run(async () => {
             this.slideIndex = await this.slider.getActiveIndex();
         });
+    }
+
+    /**
+     * Receives a mnemonic strings and splits it into distinct words.
+     *
+     * @param pastedMnemonicString A string that is theoretically a mnemonic string, with or without spaces between words (eg chinese)
+     */
+    private onMnemonicPaste(pastedMnemonicString: string) {
+        let chineseMnemonic = Util.chinese(pastedMnemonicString[0]);
+        if (chineseMnemonic) {
+            // Chinese mnemonics are possibly entered without spaces.
+            pastedMnemonicString = pastedMnemonicString.replace(/ /g, '');
+            for (let i = 0; i < pastedMnemonicString.length; i++) {
+                this.inputList.push(pastedMnemonicString[i]);
+            }
+        } else {
+            this.inputList = pastedMnemonicString.split(" ").filter(item => item !== '');
+        }
+
+        this.updateSliderPosition();
+    }
+
+    private onMnemonicWordsListUpdate(words: string[]) {
+        this.inputList = words;
+        this.updateSliderPosition();
+    }
+
+    /**
+     * Automatically slide to the right slide page according to the last mnemonoc word entered.
+     */
+    private updateSliderPosition() {
+        if (this.inputList.length < 4)
+            void this.slider.slideTo(0);
+        else if (this.inputList.length < 8)
+            void this.slider.slideTo(1);
+        else
+            void this.slider.slideTo(2);
+    }
+
+    public async showMnemonicInputKeypad() {
+        this.inputList = [];
+        this.updateSliderPosition();
+
+        await this.mnemonicKeypadService.promptMnemonic(12, words => {
+            this.onMnemonicWordsListUpdate(words);
+        }, pasted => {
+            this.onMnemonicPaste(pasted);
+        }, () => {
+            this.keypadShown = true;
+        });
+        this.keypadShown = false;
+    }
+
+    public getMnemonicWord(index: number): string {
+        if (this.inputList.length <= index)
+            return "";
+        else
+            return this.inputList[index];
     }
 }
