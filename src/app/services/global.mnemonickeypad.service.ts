@@ -28,6 +28,7 @@ export class GlobalMnemonicKeypadService {
     fr: new FrenchMnemonicSuggestionProvider(),
     zh: new ChineseMnemonicSuggestionProvider()
   }
+  private activeMnemonicModal: HTMLIonModalElement = null;
 
   /** List of mnemonic words typed by the user during a single keypad session (open/close) */
   public typedMnemonicWords: Subject<string[]> = new Subject();
@@ -59,24 +60,59 @@ export class GlobalMnemonicKeypadService {
    *
    * Subscribe to the typedMnemonicWords subject to get typed words.
    *
+   * Resolves when the popup is closed (input ended, or cancelled)
+   *
    * @param numberOfExpectedWords The keypad auto closes once user chose this number of words.
    */
-  public promptMnemonic(numberOfExpectedWords: number): Promise<string | null> {
+  public promptMnemonic(numberOfExpectedWords: number, wordInputCb: (words: string[]) => void, pasteCb: (pasted: string) => void, modalShownCb?: () => void): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-    return new Promise<string | null>(async resolve => {
-      const modal = await this.modalCtrl.create({
+    return new Promise(async resolve => {
+      await this.dismissMnemonicPrompt();
+
+      this.activeMnemonicModal = await this.modalCtrl.create({
         component: MnemonicKeypadComponent,
         componentProps: {},
         backdropDismiss: true, // Closeable
+        showBackdrop: false,
         cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
       });
 
-      void modal.onDidDismiss().then((params) => {
-        //
+      let backContents = document.getElementsByTagName("ion-content");
+      let justBehindScreenContent = backContents[backContents.length - 1];
+
+      let wordsSub = this.typedMnemonicWords.subscribe(words => {
+        wordInputCb(words);
+        if (words && words.length === numberOfExpectedWords)
+          void this.dismissMnemonicPrompt();
+      });
+      let pasteSub = this.pastedContent.subscribe(pasteCb);
+
+      void this.activeMnemonicModal.onDidDismiss().then((params) => {
+        // Restore background content original size
+        justBehindScreenContent.style.cssText = "";
+
+        wordsSub.unsubscribe();
+        pasteSub.unsubscribe();
+
+        resolve();
       });
 
-      void modal.present();
+      await this.activeMnemonicModal.present();
+
+      // Reduce the main visible content area to go over the keypad and thus be scrollable
+      justBehindScreenContent.style.cssText = "--padding-bottom : " + this.activeMnemonicModal.getElementsByTagName("ion-content")[0].clientHeight + "px !important";
+      // Remove modal backdrop to make the background content user scrollable
+      this.activeMnemonicModal.shadowRoot.children[0].remove();
+
+      modalShownCb?.();
     });
+  }
+
+  public async dismissMnemonicPrompt(): Promise<void> {
+    if (this.activeMnemonicModal)
+      await this.activeMnemonicModal.dismiss();
+
+    this.activeMnemonicModal = null;
   }
 
   /**

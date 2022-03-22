@@ -4,27 +4,34 @@
 
     <p>{{ 'didsessions.import-prompt' | translate }}</p>
 
-    <ion-row class="input-row">
-      <ion-textarea *ngIf="!readonly" id='sentenceInput' row=5 #addMnemonicWordInput
+    <!-- <ion-textarea *ngIf="!readonly" id='sentenceInput' row=5 #addMnemonicWordInput
         [placeholder]="'didsessions.enter-mnemonic'|translate" [(ngModel)]="mnemonicSentence"
         (ionChange)="onMnemonicSentenceChanged()" (ionFocus)="onInputFocus()" (ionBlur)="onInputBlur()" mode="ios">
-      </ion-textarea>
-    </ion-row>
+      </ion-textarea> -->
 
-    <ion-row class="mnemonic-row" *ngFor="let i of [1,4,7,10]">
-      <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i - 1])">
-        <div class="mnemonic-index">{{ i }}</div>
-        <ion-label>{{ mnemonicWords[i - 1] }}</ion-label>
-      </ion-col>
-      <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i])">
-        <div class="mnemonic-index">{{ i + 1 }}</div>
-        <ion-label>{{ mnemonicWords[i] }}</ion-label>
-      </ion-col>
-      <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i + 1])">
-        <div class="mnemonic-index">{{ i + 2 }}</div>
-        <ion-label>{{ mnemonicWords[i + 1] }}</ion-label>
-      </ion-col>
-    </ion-row>
+    <!-- <ion-row class="input-row">
+      <div *ngIf="!readonly" class="virtual-textarea" (click)="startMnemonicInput()">
+        {{mnemonicSentence}}
+        <div *ngIf="!mnemonicSentence">{{'didsessions.enter-mnemonic'|translate}}</div>
+      </div>
+    </ion-row> -->
+
+    <div class="mnemonic-rows">
+      <ion-row class="mnemonic-row" *ngFor="let i of [1,4,7,10]" (click)="startMnemonicInput()">
+        <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i - 1])">
+          <div class="mnemonic-index">{{ i }}</div>
+          <ion-label>{{ mnemonicWords[i - 1] }}</ion-label>
+        </ion-col>
+        <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i])">
+          <div class="mnemonic-index">{{ i + 1 }}</div>
+          <ion-label>{{ mnemonicWords[i] }}</ion-label>
+        </ion-col>
+        <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i + 1])">
+          <div class="mnemonic-index">{{ i + 2 }}</div>
+          <ion-label>{{ mnemonicWords[i + 1] }}</ion-label>
+        </ion-col>
+      </ion-row>
+    </div>
 
     <ion-row *ngIf="inputMnemonicCompleted()" class="btn-row">
       <ion-button (click)="promptStorePassword()">

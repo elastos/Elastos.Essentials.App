@@ -1,5 +1,5 @@
-<ion-content>
-  <ion-grid class="ion-text-center" [class.dark-container]="theme.darkMode">
+<ion-content [class.dark-container]="theme.darkMode">
+  <ion-grid class="ion-text-center">
     <div class="suggestions">
       <div *ngFor="let word of suggestedWords" class="word" (click)="onWordSelected(word)">
         {{word}}
@@ -23,7 +23,10 @@
           <img [src]="lang.icon" />
         </div>
       </div>
-      <ion-icon class="paste" mode="ios" name="clipboard-outline" (click)="pasteClipboard()"></ion-icon>
+      <div class="right">
+        <ion-icon mode="ios" name="clipboard-outline" (click)="pasteClipboard()"></ion-icon>
+        <ion-icon mode="ios" name="close-outline" (click)="closeKeypad()"></ion-icon>
+      </div>
     </div>
   </ion-grid>
 </ion-content>

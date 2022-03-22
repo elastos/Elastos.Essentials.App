@@ -49,7 +49,7 @@ export class MnemonicKeypadComponent implements OnInit {
 
     // Auto-select language based on app language
     let appLanguage = this.languageService.activeLanguage.value;
-    if (appLanguage in this.mnemonicKeypadService.getSupportedLanguageCodes())
+    if (this.mnemonicKeypadService.getSupportedLanguageCodes().indexOf(appLanguage) >= 0)
       this.selectedLanguage = appLanguage;
     else
       this.selectedLanguage = "en"; // Fallback to english
@@ -81,6 +81,12 @@ export class MnemonicKeypadComponent implements OnInit {
 
   public selectLanguage(lang: MnemonicLanguage) {
     this.selectedLanguage = lang.code;
+    this.onGoingInput = "";
+
+    // Reset all words
+    this.selectedWords = [];
+    this.mnemonicKeypadService.typedMnemonicWords.next(this.selectedWords);
+
     this.updateSuggestedWords();
   }
 

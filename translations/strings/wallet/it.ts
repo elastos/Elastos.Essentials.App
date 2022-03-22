@@ -519,6 +519,7 @@ export const it = {
         "privatekey": "Chiave Privata",
         "privatekey-tap-to-copy": "Tocca la Chiave Privata per copiarla",
         "export-private-key-intro": "Puoi anche scegliere di utilizzare la seguente Chiave Privata in alcune applicazioni. Tocca per copiare.",
+        "import-paste-from-keypad": "Note: you can paste a whole mnemonic sentence from the keypad",
 
         /***********************
         * Export Keystore Page *

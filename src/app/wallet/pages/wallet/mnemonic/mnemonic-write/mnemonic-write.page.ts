@@ -8,6 +8,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
 import { AuthService } from '../../../../services/auth.service';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -20,8 +21,8 @@ import { WalletCreationService } from '../../../../services/walletcreation.servi
 })
 export class MnemonicWritePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    @ViewChild('slider', {static: false}) slider: IonSlides;
-    @ViewChild('input', {static: false}) input: IonInput;
+    @ViewChild('slider', { static: false }) slider: IonSlides;
+    @ViewChild('input', { static: false }) input: IonInput;
 
     slideOpts = {
         initialSlide: 0,
@@ -30,11 +31,9 @@ export class MnemonicWritePage implements OnInit {
         slidesPerView: 1
     };
 
-    public inputList: Array<any> = [];
-    private inputStr = "";
-    private mnemonicStr: string;
-
-    private modal: any;
+    public inputList: string[] = [];
+    public keypadShown = false;
+    private mnemonicStrToVerify = "";
 
     constructor(
         public route: ActivatedRoute,
@@ -46,17 +45,13 @@ export class MnemonicWritePage implements OnInit {
         public zone: NgZone,
         private modalCtrl: ModalController,
         private translate: TranslateService,
+        private mnemonicKeypadService: GlobalMnemonicKeypadService,
         public keyboard: Keyboard
     ) {
-        this.mnemonicStr = Util.clone(this.walletCreationService.mnemonicStr);
+        this.mnemonicStrToVerify = Util.clone(this.walletCreationService.mnemonicStr);
     }
 
     ngOnInit() {
-        for (let i = 0; i < 12; i ++) {
-            this.inputList.push({
-                input: ''
-            });
-        }
         Logger.log('wallet', 'Empty input list created', this.inputList);
     }
 
@@ -67,20 +62,7 @@ export class MnemonicWritePage implements OnInit {
     }
 
     ionViewDidEnter() {
-   /*      setTimeout(() => {
-            this.input.setFocus();
-        }, 200); */
     }
-
-/*     goToNextInput(event, nextInput?: any) {
-        if (nextInput) {
-            nextInput === 'input5' || nextInput === 'input9' ?
-                this.slider.slideNext().then(() => { nextInput.setFocus(); }) :
-                nextInput.setFocus();
-        } else {
-            this.onNext();
-        }
-    } */
 
     slideNext(slide) {
         slide.slideNext();
@@ -107,23 +89,17 @@ export class MnemonicWritePage implements OnInit {
     }
 
     allInputsFilled() {
-        let inputsFilled = true;
-        // return inputsFilled; // for test
-        this.inputStr = '';
-        this.inputList.forEach((word) => {
-            if (word.input === '') {
-                inputsFilled = false;
-            } else {
-                this.inputStr += word.input;
-            }
-        });
-        return inputsFilled;
+        return this.inputList.length === 12;
+    }
+
+    private getMnemonicAsString(): string {
+        return this.inputList.join(" ").toLowerCase();
     }
 
     async onCreate() {
         if (this.allInputsFilled()) {
             // if (true) { // for test
-            if (this.inputStr.replace(/\s+/g, "").toLowerCase() === this.mnemonicStr.replace(/\s+/g, "")) {
+            if (this.getMnemonicAsString().replace(/\s+/g, "").toLowerCase() === this.mnemonicStrToVerify.replace(/\s+/g, "")) {
                 if (this.walletCreationService.isMulti) {
                     this.native.go("/wallet/mpublickey");
                 } else {
@@ -136,7 +112,7 @@ export class MnemonicWritePage implements OnInit {
                             await this.walletManager.createNewMasterWallet(
                                 this.walletCreationService.masterId,
                                 this.walletCreationService.name,
-                                this.mnemonicStr,
+                                this.getMnemonicAsString(),
                                 this.walletCreationService.mnemonicPassword,
                                 payPassword,
                                 this.walletCreationService.singleAddress
@@ -155,13 +131,57 @@ export class MnemonicWritePage implements OnInit {
                 }
 
             } else {
-                this.inputStr = "";
+                this.inputList = [];
+                this.updateSliderPosition();
                 this.native.toast_trans('wallet.mnemonic-verify-fail');
             }
         } else {
-            this.inputStr = "";
+            this.inputList = [];
+            this.updateSliderPosition();
             this.native.toast(this.translate.instant("wallet.mnemonic-import-missing-words"));
         }
+    }
+
+    /**
+     * Automatically slide to the right slide page according to the last mnemonoc word entered.
+     */
+    private updateSliderPosition() {
+        if (this.inputList.length < 4)
+            void this.slider.slideTo(0);
+        else if (this.inputList.length < 8)
+            void this.slider.slideTo(1);
+        else
+            void this.slider.slideTo(2);
+    }
+
+    private onMnemonicPaste(pastedMnemonicString: string) {
+        // Paste does nothing - forbidden in verification mode
+    }
+
+    private onMnemonicWordsListUpdate(words: string[]) {
+        this.inputList = words;
+        this.updateSliderPosition();
+    }
+
+    public async showMnemonicInputKeypad() {
+        this.inputList = [];
+        this.updateSliderPosition();
+
+        await this.mnemonicKeypadService.promptMnemonic(12, words => {
+            this.onMnemonicWordsListUpdate(words);
+        }, pasted => {
+            this.onMnemonicPaste(pasted);
+        }, () => {
+            this.keypadShown = true;
+        });
+        this.keypadShown = false;
+    }
+
+    public getMnemonicWord(index: number): string {
+        if (this.inputList.length <= index)
+            return "";
+        else
+            return this.inputList[index];
     }
 }
 

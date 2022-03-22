@@ -6,7 +6,7 @@ export class FrenchMnemonicSuggestionProvider implements MnemonicSuggestionProvi
 
   constructor() {
     void import("src/assets/components/mnemonic-keypad/french.json").then(mapping => {
-      this.mapping = mapping as any as AsciiMapping;
+      this.mapping = mapping.default as any as AsciiMapping;
     });
   }
 

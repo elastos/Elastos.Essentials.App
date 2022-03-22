@@ -40,7 +40,7 @@ export class NameResolvingService {
         NameResolvingService.instance = this;
     }
 
-    public registernameResolver(resolver: Resolver) {
+    public registerNameResolver(resolver: Resolver) {
         this.resolvers.push(resolver);
     }
 
@@ -49,6 +49,6 @@ export class NameResolvingService {
     }
 
     public reset() {
-      this.resolvers = [];
+        this.resolvers = [];
     }
 }

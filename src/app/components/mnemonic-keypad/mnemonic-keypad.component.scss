@@ -1,3 +1,7 @@
+ion-content {
+    --ion-background-color: #f0f0f0;
+}
+
 .suggestions {
     display: flex;
     padding: 10px;
@@ -17,6 +21,7 @@
         padding: 5px;
         font-size: 14px;
         transition: 0.4s all ease;
+        color: white;
     }
 
     .word:active {
@@ -25,7 +30,7 @@
 }
 
 .ongoing {
-    color: #ccc;
+    color: inherit;
     font-size: 11px;
     height: 16px;
     justify-content: center;
@@ -45,7 +50,7 @@
         justify-content: center;
 
         .letter {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.7);
             padding: 5px;
             width: 10vw;
             height: 10vw;
@@ -57,7 +62,7 @@
         }
 
         .letter:active {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(0, 0, 0, 0.2);
         }
     }
 }
@@ -82,15 +87,52 @@
         }
 
         .selected {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.7);
         }
     }
 
-    .paste {
-        width: 30px;
-        height: 20px;
+    .right {
+        display: flex;
+        width: 70px;
+
+        ion-icon {
+            width: 30px;
+            height: 20px;
+            margin-left: 10px;
+        }
     }
 }
 
-.dark-container {
+ion-content.dark-container {
+    --ion-background-color: #222;
+
+    .ongoing {
+        color: #ccc;
+    }
+
+    .suggestions {
+        .word {
+            color: inherit;
+        }
+    }
+
+    .keypad {
+        .letter-line {
+            .letter {
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            .letter:active {
+                background: rgba(255, 255, 255, 0.7);
+            }
+        }
+    }
+
+    .last-row {
+        .languages  {
+            .selected {
+                background: rgba(255, 255, 255, 0.4);
+            }
+        }
+    }
 }

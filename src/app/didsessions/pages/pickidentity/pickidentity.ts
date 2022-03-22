@@ -9,7 +9,6 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
@@ -35,7 +34,6 @@ export class PickIdentityPage {
     private events: Events,
     public popupProvider: PopupProvider,
     private splashScreen: SplashScreen,
-    private mnemonicKeypadService: GlobalMnemonicKeypadService,
     private didSessions: GlobalDIDSessionsService,
   ) {
     this.events.subscribe("identityadded", newIdentity => {
@@ -142,9 +140,5 @@ export class PickIdentityPage {
       }
     }
     return count;
-  }
-
-  TEMPSHOWKEYPAD() {
-    void this.mnemonicKeypadService.promptMnemonic(12);
   }
 }

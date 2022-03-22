@@ -1,20 +1,22 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
+
+ion-content {
+    --background: url("/assets/wallet/background/background.svg");
+}
 
 .container {
     position: relative;
-    min-height: 100%;
     padding: 10px 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background-image: url('/assets/wallet/background/background.svg');
     object-fit: cover;
 
     p {
         margin: 0;
-        padding: 30px 50px 40px;
-        font-size: 18px;
+        padding: 30px 45px 40px;
+        font-size: 19px;
         font-weight: 400;
         line-height: 1.26;
         letter-spacing: -0.46px;
@@ -45,7 +47,8 @@
                     justify-content: center;
                     align-items: center;
 
-                    span, ion-input {
+                    span,
+                    .virtual-input {
                         color: #fdfeff;
                     }
 
@@ -56,25 +59,43 @@
                         text-align: center;
                     }
 
-                    ion-input {
+                    .virtual-input {
                         background: #803fd5;
                         font-weight: 400;
-                        font-size: 14px;
-                        letter-spacing: -0.34px;
+                        font-size: 18px;
                         text-align: left;
                         text-transform: lowercase;
                         --padding-start: 12px;
+                        height: 50px;
+                        display: flex;
+                        align-items: center;
                     }
                 }
 
                 .input-col {
                     justify-content: flex-start;
                 }
-            }        
+            }
 
-            .btn-container {
-                margin-top: 150px;
+            .currentInput {
+                background: rgba(255, 255, 255, 0.3);
             }
         }
+    }
+
+    .btn-container {
+        margin-top: 50px;
+
+        ion-button {
+            margin: 0 15px;
+        }
+    }
+
+    h1 {
+        margin: 15px;
+        padding: 0;
+        font-size: 13px;
+        font-weight: 400;
+        color: #fdfeff;
     }
 }

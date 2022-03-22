@@ -20,3 +20,4 @@ src/assets/generated/
 resources/ios/icon/
 .env
 src/environments/*
+cedict_db/

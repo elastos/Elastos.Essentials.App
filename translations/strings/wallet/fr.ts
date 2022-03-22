@@ -519,6 +519,7 @@ export const fr = {
         "privatekey": "Clé privée",
         "privatekey-tap-to-copy": "Toucher la clé privée pour copier",
         "export-private-key-intro": "Vous pouvez aussi choisir d'utiliser la clé privée suivante dans certaines applications. Touchez pour copier.",
+        "import-paste-from-keypad": "Note: vous pouvez coller une clé papier en entier depuis le clavier",
 
         /***********************
         * Export Keystore Page *

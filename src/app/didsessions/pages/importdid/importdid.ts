@@ -11,6 +11,7 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDMnemonicHelper } from '../../helpers/didmnemonic.helper';
 
@@ -63,7 +64,8 @@ export class ImportDIDPage {
     private popup: PopupProvider,
     public theme: GlobalThemeService,
     private events: Events,
-    public element: ElementRef
+    public element: ElementRef,
+    private mnemonicKeypadService: GlobalMnemonicKeypadService
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
@@ -121,6 +123,8 @@ export class ImportDIDPage {
     }
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     this.loadingIdentity = false;
+
+    void this.mnemonicKeypadService.dismissMnemonicPrompt();
   }
 
   isWord(word): boolean {
@@ -155,7 +159,7 @@ export class ImportDIDPage {
     let standardMnemonicSentence = this.mnemonicSentence.trim().replace(/[\r\n]/g, "");
     let chineseMnemonic = Util.chinese(this.mnemonicSentence[0]);
     if (chineseMnemonic) {
-      // You can input chinese mnemonics without space.
+      // Chinese mnemonics are entered without spaces.
       this.mnemonicWords = [];
       standardMnemonicSentence = standardMnemonicSentence.replace(/ /g, '');
       for (let i = 0; i < standardMnemonicSentence.length; i++) {
@@ -216,6 +220,24 @@ export class ImportDIDPage {
   onInputBlur() {
     this.zone.run(() => {
       this.hideButton = false;
+    });
+  }
+
+  private clearMnemonic() {
+    this.mnemonicSentence = "";
+    this.onMnemonicSentenceChanged();
+  }
+
+  public async startMnemonicInput() {
+    this.clearMnemonic();
+
+    await this.mnemonicKeypadService.promptMnemonic(12, words => {
+      // Update words in the input box when received from the mnemonic keypad
+      this.mnemonicSentence = words.join(" ");
+      this.onMnemonicSentenceChanged();
+    }, pasted => {
+      this.mnemonicSentence = pasted;
+      this.onMnemonicSentenceChanged();
     });
   }
 }

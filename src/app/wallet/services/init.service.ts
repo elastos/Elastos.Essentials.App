@@ -168,9 +168,9 @@ export class WalletInitService extends GlobalService {
   }
 
   private registerNameResolvers() {
-    this.nameResolvingService.registernameResolver(new CryptoNameResolver(this.httpClient));
-    this.nameResolvingService.registernameResolver(new UnstoppableDomainsAddressResolver(this.httpClient));
-    this.nameResolvingService.registernameResolver(new IdrissResolver());
+    this.nameResolvingService.registerNameResolver(new CryptoNameResolver(this.httpClient));
+    this.nameResolvingService.registerNameResolver(new UnstoppableDomainsAddressResolver(this.httpClient));
+    this.nameResolvingService.registerNameResolver(new IdrissResolver());
   }
 
   public async stop(): Promise<void> {

@@ -1,9 +1,6 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.dark-container]="theme.darkMode" [class.blur]="uxService.popover">
-
-    <ion-button (click)="TEMPSHOWKEYPAD()">TMP</ion-button>
-
     <div class="identities">
       <div *ngFor="let group of groupedIdentities">
         <ion-row class="id-row ion-activatable ripple" *ngFor="let identityEntry of group.entries">
