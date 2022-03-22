@@ -553,7 +553,7 @@ export class WalletService {
         walletName: string,
         deviceID: string,
         accountID: string,
-        accountPathIndex = 0,
+        accountPath: string,
         accountType = LeddgerAccountType.EVM
     ): Promise<MasterWallet> {
         Logger.log('wallet', "Importing new legder master wallet");
@@ -562,7 +562,7 @@ export class WalletService {
         let accountOptions: LedgerAccountOptions[] = [{
             type: accountType,
             accountID,
-            accountPathIndex
+            accountPath
         }]
         let masterWalletInfo: SerializedLedgerMasterWallet = {
             type: WalletType.LEDGER,

@@ -56,14 +56,15 @@ export class LedgerConnectPage implements OnInit {
     // public addresses = {};
     // for test
     public addresses: LedgerAccount[] = [
-        {'type':LeddgerAccountType.EVM, 'address': '0xC7Da7De66A8Bc2D84E17D14906128179D015cE3A', 'pathIndex': 0, 'path': "44'/60'/x'/0/0"},
-        {'type':LeddgerAccountType.EVM, 'address': '0x60583B3465D2e886C1C2E4304af7eC784660F95a', 'pathIndex': 1, 'path': "44'/60'/x'/0/1"},
-        {'type':LeddgerAccountType.BTC, 'address': 'tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6', 'pathIndex': 0, 'path': "84'/1'/x'/0/0"}
+        {'type':LeddgerAccountType.EVM, 'address': '0xC7Da7De66A8Bc2D84E17D14906128179D015cE3A', 'pathIndex': 0, 'path': "44'/60'/0'/0/0"},
+        {'type':LeddgerAccountType.EVM, 'address': '0x60583B3465D2e886C1C2E4304af7eC784660F95a', 'pathIndex': 1, 'path': "44'/60'/0'/0/1"},
+        {'type':LeddgerAccountType.BTC, 'address': 'tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6', 'pathIndex': 0, 'path': "84'/1'/0'/0/0"}
     ]
 
     private masterWalletId = '';
     private walletName = '';
-    private walletAddress = ''
+    private walletAddress = '';
+    private addressPath = '';
     private addressPathIndex = 0;
     private type : LeddgerAccountType = null;
 
@@ -165,6 +166,7 @@ export class LedgerConnectPage implements OnInit {
         this.getDefaultLedgerWalletName();
         this.walletAddress = account.address;
         this.addressPathIndex = account.pathIndex;
+        this.addressPath = account.path;
         this.type = account.type;
 
         try {
@@ -188,7 +190,7 @@ export class LedgerConnectPage implements OnInit {
             this.walletName,
             this.device.id,
             this.walletAddress,
-            this.addressPathIndex,
+            this.addressPath,
             this.type,
         );
         this.native.setRootRouter("/wallet/wallet-home");

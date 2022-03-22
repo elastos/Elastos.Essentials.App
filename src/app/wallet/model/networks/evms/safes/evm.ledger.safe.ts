@@ -18,6 +18,7 @@ var Common = require('ethereumjs-common').default;
  */
  export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
     private evmAddress = null;
+    private addressPath = '';
     private evmTx: EthereumTx = null;
 
     constructor(protected masterWallet: LedgerMasterWallet, protected chainId: number) {
@@ -33,6 +34,7 @@ var Common = require('ethereumjs-common').default;
             })
             if (evmOption) {
                 this.evmAddress = evmOption.accountID;
+                this.addressPath = evmOption.accountPath;
             }
         }
     }
@@ -90,7 +92,7 @@ var Common = require('ethereumjs-common').default;
 
         const eth = new AppEth(transport);
         // TODO: use the right HD derivation path.
-        const r = await eth.signTransaction("44'/60'/0'/0/0", unsignedTx);
+        const r = await eth.signTransaction(this.addressPath, unsignedTx);
 
         this.evmTx.v = Buffer.from(r.v, "hex");
         this.evmTx.r = Buffer.from(r.r, "hex");

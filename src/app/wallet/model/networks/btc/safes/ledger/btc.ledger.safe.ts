@@ -3,6 +3,7 @@ import { toBufferLE } from 'bigint-buffer';
 import { getAddressInfo } from "bitcoin-address-validation";
 import * as bitcoinjs from 'bitcoinjs-lib';
 import { toOutputScript } from "bitcoinjs-lib/src/address";
+import { bitcoin, testnet } from "bitcoinjs-lib/src/networks";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
 import { Util } from "src/app/model/util";
@@ -21,6 +22,7 @@ import { BTCSafe } from "../btc.safe";
  */
 export class BTCLedgerSafe extends Safe implements BTCSafe {
     private address = null;
+    private addressPath = ''
     private txData = null;
     private signedTx = null;
 
@@ -37,6 +39,7 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
             })
             if (option) {
                 this.address = option.accountID;
+                this.addressPath = option.accountPath;
             }
         }
     }
@@ -60,7 +63,7 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
       return Promise.resolve(txData);
     }
 
-    private prepareOutputsForLedger(txData: BTCTxData, network) {
+    private prepareOutputsForLedger(txData: BTCTxData, networkStr: string) {
       let totalAmount = 0;
       for (let i = 0; i < txData.inputs.length; i++) {
         totalAmount += parseInt(txData.inputs[i].Amount);
@@ -72,6 +75,10 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
       let changeAmount = totalAmount - parseInt(txData.outputs[0].Amount) - fees;
       Logger.log('wallet', 'BTC transaction:changeAmount:', changeAmount, ' fees:', fees, ' totalAmount:', totalAmount)
 
+      let network = bitcoin;
+      if (networkStr === 'testnet') {
+        network = testnet;
+      }
       const toScript = toOutputScript(txData.outputs[0].Address, network)
       const changeScript = toOutputScript(txData.changeAddress, network)
 
@@ -147,9 +154,8 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
         let hasWitnesses = tx.hasWitnesses();
         const inTx = btc.splitTransaction(this.txData.inputs[i].utxoHex, hasWitnesses, false);
         ledgerInputs.push([inTx, this.txData.inputs[i].Index, undefined, undefined])
-        keysets.push("84'/1'/0'/0/0"); // TODO use the right path
+        keysets.push(this.addressPath);
       }
-      Logger.warn('wallet', ' ledgerInputs:', ledgerInputs, keysets)
 
       const outputScriptHex = btc.serializeTransactionOutputs({
           version: Buffer.from("01000000", 'hex'),
@@ -163,8 +169,8 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
           outputScriptHex,
           // segwit: true, //TODO
           // sigHashType: 1,
-          additionals: ["bech32"],
+          additionals: additionals,
       });
-      Logger.warn('wallet', 'BTCLedgerSafe this.signedTx:', this.signedTx)
+      Logger.log('wallet', 'BTCLedgerSafe this.signedTx:', this.signedTx)
     }
 }

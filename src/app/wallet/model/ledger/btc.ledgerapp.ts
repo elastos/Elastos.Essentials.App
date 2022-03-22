@@ -61,7 +61,8 @@ export class BTCLedgerApp extends LedgerApp {
         type:'BTC',
         address:address.bitcoinAddress,
         pathIndex:i,
-        path
+        path,
+        addressType: type
       })
     }
     Logger.log('wallet', 'BTCLedgerApp getAddresses: ', addresses)
