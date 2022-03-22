@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationPopupComponent } from './confirmation-popup/confirmation-popup.component';
@@ -35,6 +36,7 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     MnemonicKeypadComponent
   ],
   providers: [
+    Clipboard
   ],
   entryComponents: [
     TitleBarComponent,
