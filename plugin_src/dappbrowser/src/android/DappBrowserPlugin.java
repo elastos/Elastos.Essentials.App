@@ -70,7 +70,6 @@ public class DappBrowserPlugin extends CordovaPlugin {
 
     private CallbackContext callbackContext;
     public WebViewHandler webViewHandler = null;
-    public int viewHeight;
     static DappBrowserPlugin instance = null;
 
     static DappBrowserPlugin getInstance() {
@@ -79,7 +78,6 @@ public class DappBrowserPlugin extends CordovaPlugin {
 
     @Override
     public void pluginInitialize() {
-        viewHeight = ((ViewGroup)this.webView.getView()).getHeight();
         instance = this;
 
         //If debuggable, trusting all certificates over HTTPS
