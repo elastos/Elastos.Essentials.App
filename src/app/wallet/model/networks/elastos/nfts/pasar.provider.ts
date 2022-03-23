@@ -36,7 +36,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
               "thumbnail": "feeds:imgage:QmSZjdUSu8qmgD8sng3TiVTKsTKzAggpaR4dt88Ekd5FuL"
           }
         */
-        let jsonMetadataResponse = await fetch(`https://ipfs.trinity-feeds.app/ipfs/${assetJsonMetadataUri}`);
+        let jsonMetadataResponse = await fetch(`https://ipfs.trinity-tech.io/ipfs/${assetJsonMetadataUri}`);
         if (jsonMetadataResponse && jsonMetadataResponse.ok) {
           let jsonMetadata = await jsonMetadataResponse.json();
           console.log("pasar nft json:", jsonMetadata);
@@ -56,14 +56,14 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
             let thumbnailUri = jsonMetadata["thumbnail"] as string;
             // Expected uri format: "feeds:imgage:QmSZjdUSu8qmgD8sng3TiVTKsTKzAggpaR4dt88Ekd5FuL"
             if (thumbnailUri.startsWith("feeds:imgage") || thumbnailUri.startsWith("feeds:image")) {
-              asset.imageURL = `https://ipfs.trinity-feeds.app/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
+              asset.imageURL = `https://ipfs.trinity-tech.io/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
             }
           }
           else if ("thumbnail" in dataEntry) {
             let thumbnailUri = dataEntry["thumbnail"] as string;
             // Expected uri format: "pasar:imgage:QmSZjdUSu8qmgD8sng3TiVTKsTKzAggpaR4dt88Ekd5FuL"
             if (thumbnailUri.startsWith("pasar:image")) {
-              asset.imageURL = `https://ipfs.trinity-feeds.app/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
+              asset.imageURL = `https://ipfs.trinity-tech.io/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
             }
           }
 
@@ -79,7 +79,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
       Logger.warn("wallet", "Failed to retrieve extended info for pasar ERC1155", e);
     }
     // --> feeds:json:QmQcxY1YXNRTETzE4aDPcZpKBtRHJyyAjsBFgXavXtRvRh
-    //      --> https://ipfs.trinity-feeds.app/ipfs/QmQcxY1YXNRTETzE4aDPcZpKBtRHJyyAjsBFgXavXtRvRh
+    //      --> https://ipfs.trinity-tech.io/ipfs/QmQcxY1YXNRTETzE4aDPcZpKBtRHJyyAjsBFgXavXtRvRh
 
 
   }
