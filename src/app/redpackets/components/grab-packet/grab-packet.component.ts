@@ -83,11 +83,11 @@ export class GrabPacketComponent {
                 this.grabEventEmitter.emit(GrabStatus.GRABBED)
                 void this.closeModal();
             } else if (grabResponse.status === GrabStatus.MISSED) {
-                void this.globalNativeServce.genericToast(this.translate.instant("redpackets.missed"), 2000);
+                void this.globalNativeServce.genericToast(this.translate.instant("redpackets.grab-lost"), 2000);
                 this.grabEventEmitter.emit(GrabStatus.MISSED)
                 void this.closeModal();
             } else if (grabResponse.status === GrabStatus.DEPLETED) {
-                void this.globalNativeServce.genericToast(this.translate.instant("redpackets.depleted"), 2000);
+                void this.globalNativeServce.genericToast(this.translate.instant("redpackets.grab-too-late-2"), 2000);
                 this.grabEventEmitter.emit(GrabStatus.DEPLETED)
                 void this.closeModal();
             }
