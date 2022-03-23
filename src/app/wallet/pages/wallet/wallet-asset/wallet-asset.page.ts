@@ -41,6 +41,7 @@ import { WalletService } from '../../../services/wallet.service';
 
 export type NetworkAssetInfo = {
     name: string,
+    logo: string,
     balance: BigNumber, // raw balance
     // stakedBalance: number, // staked balance
     balanceString: string, // display balance
@@ -151,8 +152,9 @@ export class WalletAssetPage implements OnDestroy {
                     if ((subWallets.length > 0) || (stakingData.length > 0)) {
                         // getDisplayBalanceInActiveCurrency including the staked assets.
                         let balanceBigNumber = networkWallet.getDisplayBalanceInActiveCurrency();
-                        let netowrkAssetInfo: NetworkAssetInfo = {
+                        let networkAssetInfo: NetworkAssetInfo = {
                             name: networks[i].name,
+                            logo: networks[i].logo,
                             balance: balanceBigNumber,
                             // stakedBalance: stakedBalance,
                             balanceString: this.getAmountForDisplay(balanceBigNumber),
@@ -164,9 +166,9 @@ export class WalletAssetPage implements OnDestroy {
                             return network.name === networks[i].name;
                         })
                         if (networkIndex === -1) {
-                            this.assetsInfo[networkWalletIndex].networks.push(netowrkAssetInfo);
+                            this.assetsInfo[networkWalletIndex].networks.push(networkAssetInfo);
                         } else {
-                            this.assetsInfo[networkWalletIndex].networks[networkIndex] = netowrkAssetInfo;
+                            this.assetsInfo[networkWalletIndex].networks[networkIndex] = networkAssetInfo;
                         }
                     } else {
                         // Remove old info if the network has no asset.
@@ -218,7 +220,7 @@ export class WalletAssetPage implements OnDestroy {
             this.totalSubwalletCount += showSubwalets.length;
         }
 
-        let subWallets = [];
+        let subWallets: AnySubWallet[] = [];
         for (let index = 0; index < showSubwalets.length; index++) {
             if (updateBalance) {
                 await showSubwalets[index].updateBalance();
@@ -235,8 +237,13 @@ export class WalletAssetPage implements OnDestroy {
 
         if (subWallets.length > 0) {
             subWallets.sort((a, b) => {
-                if (b.getUSDBalance().gte(a.getUSDBalance())) return 1;
-                else return -1;
+                // Sort by descending balance first. For equal balances, sort by ascending name
+                if (b.getUSDBalance().gt(a.getUSDBalance()))
+                    return 1;
+                else if (b.getUSDBalance().lt(a.getUSDBalance()))
+                    return -1;
+                else
+                    return a.getFriendlyName().localeCompare(a.getFriendlyName());
             });
         }
 
@@ -251,8 +258,13 @@ export class WalletAssetPage implements OnDestroy {
         this.totalAmount = this.getAmountForDisplay(totalAmount);
 
         this.assetsInfo.sort((a, b) => {
-            if (b.balance.gt(a.balance)) return 1;
-            else return -1;
+            // Sort by descending balance first. For equal balances, sort by ascending name
+            if (b.balance.gt(a.balance))
+                return 1;
+            else if (b.balance.lt(a.balance))
+                return -1;
+            else
+                return a.name.localeCompare(a.name);
         })
     }
 
@@ -311,5 +323,9 @@ export class WalletAssetPage implements OnDestroy {
      */
     public openStakedAssetsProvider() {
         this.defiService.openStakedAssetsProvider();
+    }
+
+    public getDefaultStakedAssetIcon(networkAssetInfo: NetworkAssetInfo) {
+        return networkAssetInfo.logo;
     }
 }

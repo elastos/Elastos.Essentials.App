@@ -5,12 +5,14 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { WalletAssetPage } from './wallet-asset.page';
 
 @NgModule({
     declarations: [WalletAssetPage],
     imports: [
         SharedComponentsModule,
+        GlobalDirectivesModule,
         CommonModule,
         FormsModule,
         IonicModule,
@@ -20,4 +22,4 @@ import { WalletAssetPage } from './wallet-asset.page';
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class WalletAssetModule {}
+export class WalletAssetModule { }

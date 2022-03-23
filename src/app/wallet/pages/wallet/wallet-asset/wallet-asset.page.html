@@ -79,6 +79,7 @@
                             </ion-col>
                         </ion-row>
 
+                        <!-- Staked assets -->
                         <ion-col [size]="12" class="stake-title" *ngIf="network.stakingData.length">
                             <p>
                                 {{ 'wallet.staking-assets' | translate }}
@@ -89,7 +90,8 @@
                             *ngFor="let stakingAsset of network.stakingData">
                             <ion-col size="2" class="left-col">
                                 <div class="icon-container">
-                                    <img [src]="stakingAsset.farmIconUrl">
+                                    <img [src]="stakingAsset.farmIconUrl"
+                                        [src-fallback]="getDefaultStakedAssetIcon(network)">
                                 </div>
                             </ion-col>
                             <ion-col [size]="5" class="middle-col">
