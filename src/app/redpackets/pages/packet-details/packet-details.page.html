@@ -36,7 +36,7 @@
 
     <!-- Grab me button opening the captcha modal -->
     <div *ngIf="grabStatusChecked && captchaChallengeRequired" class="grab-me ion-activatable">
-      <ion-button (click)="openGrabModal()">{{ 'redpackets.grab-me' | translate }}</ion-button>
+      <ion-button (click)="openGrabModal($event)">{{ 'redpackets.grab-me' | translate }}</ion-button>
       <ion-ripple-effect></ion-ripple-effect>
     </div>
 

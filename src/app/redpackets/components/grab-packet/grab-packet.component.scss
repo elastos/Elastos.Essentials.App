@@ -1,5 +1,8 @@
 @import "../../root.scss";
 
+:host {
+}
+
 .flex-column-container {
   display: flex;
   flex-direction: column;
@@ -32,6 +35,7 @@
       border-radius: 15px;
       width: 50%;
       color: white;
+      overflow: hidden;
       &.button-cancel {
         border: 1px solid #e1d6f7;
         --background: transparent;

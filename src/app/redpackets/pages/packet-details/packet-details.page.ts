@@ -323,7 +323,7 @@ export class PacketDetailsPage implements OnInit {
     });
   }
 
-  async openGrabModal() {
+  async openGrabModal(evt) {
     const eventEmitter = new EventEmitter<GrabStatus>();
     eventEmitter.subscribe(grabStatus => {
       if (grabStatus === GrabStatus.GRABBED) {
@@ -342,6 +342,8 @@ export class PacketDetailsPage implements OnInit {
 
     const modal = await this.popoverController.create({
       component: GrabPacketComponent,
+      event: evt,
+      //side: "top",
       mode: 'ios',
       cssClass: 'grab-packet-popover-component',
       translucent: true,
