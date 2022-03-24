@@ -205,6 +205,21 @@ diff -ruN origin_plugins/cordova-plugin-printer/src/ios/APPPrinter.m plugins/cor
 
  #pragma mark -
 ===================================================================
+diff -ruN origin_plugins/cordova-plugin-printer/src/ios/APPPrinterInfo.m plugins/cordova-plugin-printer/src/ios/APPPrinterInfo.m
+--- origin_plugins/cordova-plugin-printer/src/ios/APPPrinterInfo.m	null
++++ plugins/cordova-plugin-printer/src/ios/APPPrinterInfo.m	null
+@@ -52,7 +52,9 @@
+         }
+         else
+         {
+-            info.outputType = UIPrintInfoOutputGrayscale;
++            dispatch_async(dispatch_get_main_queue(), ^{
++                info.outputType = UIPrintInfoOutputGrayscale;
++            });
+         }
+     }
+     else if ([spec[@"photo"] boolValue])
+===================================================================
 diff -ruN origin_plugins/cordova-plugin-printer/types/index.d.ts plugins/cordova-plugin-printer/types/index.d.ts
 --- origin_plugins/cordova-plugin-printer/types/index.d.ts	null
 +++ plugins/cordova-plugin-printer/types/index.d.ts	null
