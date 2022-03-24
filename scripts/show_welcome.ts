@@ -23,7 +23,7 @@ console.log(colors.gray(`  Eg: export ESSENTIALS_RED_PACKETS_SERVICE_URL=https:/
 
 console.log();
 console.log(colors.green("  ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY"));
-console.log(`  If downloads are slow, you can configure a proxy by configuring ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY.`);
+console.log(`  If downloads are slow, you can configure a proxy by setting ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY.`);
 console.log(colors.gray(`  Eg: export ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY=socks5://127.0.0.1:1080`));
 
 console.log();
