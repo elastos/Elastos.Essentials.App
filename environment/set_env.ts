@@ -1,6 +1,7 @@
 import { green } from "colors";
 import { parse } from "dotenv";
 import { existsSync, mkdirSync, readFileSync, writeFile } from 'fs';
+import { env } from "process";
 
 console.log("Generating dev environment.ts file");
 
@@ -22,8 +23,8 @@ const prodEnv = {
 const devEnv = {
   production: false,
   RedPackets: {
-    webUrl: localEnv.NG_APP_RED_PACKETS_WEB_URL || prodEnv.RedPackets.webUrl,
-    serviceUrl: localEnv.NG_APP_RED_PACKETS_SERVICE_URL || prodEnv.RedPackets.serviceUrl
+    webUrl: env.ESSENTIALS_RED_PACKETS_WEB_URL || prodEnv.RedPackets.webUrl,
+    serviceUrl: env.ESSENTIALS_RED_PACKETS_SERVICE_URL || prodEnv.RedPackets.serviceUrl
   }
 }
 

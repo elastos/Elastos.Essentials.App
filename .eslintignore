@@ -7,3 +7,4 @@ node_modules/
 *.json
 ./translations/
 ./tools/
+scripts/

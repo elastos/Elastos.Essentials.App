@@ -18,8 +18,6 @@ const fs = require('fs'),
   path = require('path');
 const { env } = require('process');
 
-const proxyEnvVarName = "ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY";
-
 function DeleteDirectory(dir) {
   if (fs.existsSync(dir) == true) {
     var files = fs.readdirSync(dir);
@@ -57,12 +55,8 @@ module.exports = function (ctx) {
 
   // Proxy info
   let proxy = undefined;
-  if (!(proxyEnvVarName in env)) {
-    console.log(`NOTE: If downloads are slow, you can configure a proxy by setting ${proxyEnvVarName} in your ENV.`.cyan);
-    console.log(`Eg: export ${proxyEnvVarName}=socks5://127.0.0.1:1080`.cyan);
-  }
-  else {
-    proxy = env[proxyEnvVarName];
+  if ("ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY" in env) {
+    proxy = env["ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY"];
     console.log(`Using download proxy ${proxy}`.green);
   }
 

@@ -3,7 +3,8 @@
   "include": [
     "src/**/*.ts",
     "src/assets/web3providertest.js",
-    "environment/set_env.ts"
+    "environment/set_env.ts",
+    "scripts/*.ts",
   ],
   "exclude": [
     "node_modules",
