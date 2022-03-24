@@ -169,7 +169,7 @@ export class CoinAddERC20Page implements OnInit {
 
                         this.coinSymbol = coinInfo.coinSymbol;
                         Logger.log('wallet', "Coin symbol", this.coinSymbol);
-                        this.coinDecimals = coinInfo.coinDecimals;
+                        this.coinDecimals = parseInt(coinInfo.coinDecimals);
 
                         this.coinInfoFetched = true;
                     } else {
