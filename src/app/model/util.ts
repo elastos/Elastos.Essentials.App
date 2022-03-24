@@ -253,4 +253,7 @@ export class Util {
         return ret;
     }
 
+    public static async setScreenCapture(isEnable: boolean): Promise<void> {
+        await internalManager.setScreenCapture(isEnable);
+    }
 }

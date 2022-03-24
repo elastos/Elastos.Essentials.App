@@ -59,5 +59,12 @@ declare namespace InternalPlugin {
          * Check system whether rooted.
          */
         isDeviceRooted(): Promise<boolean>
+
+        /**
+         * Set screen capture enable or not.
+         *
+         * @param isEnable    enable or not.
+         */
+        setScreenCapture(isEnable: boolean): Promise<void>;
     }
 }

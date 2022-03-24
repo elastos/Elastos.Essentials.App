@@ -1,24 +1,31 @@
 package org.elastos.essentials.plugins.internal;
 
+import android.view.ViewGroup;
+
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 /**
  * This class echoes a string called from JavaScript.
  */
 public class InternalPlugin extends CordovaPlugin {
 
+    static InternalPlugin instance = null;
+    static InternalPlugin getInstance() {
+        return instance;
+    }
+
     @Override
+    public void pluginInitialize() {
+        instance = this;
+    }
+
+        @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
         try {
             switch (action) {
@@ -33,6 +40,8 @@ public class InternalPlugin extends CordovaPlugin {
                     break;
                 case "isDeviceRooted":
                     this.isDeviceRooted(callbackContext);
+                case "setScreenCapture":
+                    this.setScreenCapture(args, callbackContext);
                     break;
 
                 default:
@@ -97,7 +106,7 @@ public class InternalPlugin extends CordovaPlugin {
         }
     }
 
-    private void changeOldPath(JSONArray args, CallbackContext callbackContext) throws Exception {
+    private void changeOldPath(JSONArray args, CallbackContext callbackContext) throws JSONException {
         String didStoreId = args.getString(0);
         String didString = args.getString(1);
 
@@ -111,5 +120,10 @@ public class InternalPlugin extends CordovaPlugin {
     private void isDeviceRooted(CallbackContext callbackContext) {
         Boolean ret = CheckRooted.isDeviceRooted();
         callbackContext.success(ret.toString());
+    }
+
+    private void setScreenCapture(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        boolean isEnable = args.getBoolean(0);
+        Security.setScreenCaptureOnMainThread(isEnable, callbackContext);
     }
 }

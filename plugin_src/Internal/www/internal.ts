@@ -74,6 +74,17 @@ class InternalManagerImpl implements InternalPlugin.InternalManager {
           });
     }
 
+    setScreenCapture(isEnable: boolean): Promise<void> {
+        return new Promise((resolve, reject)=>{
+            exec(()=>{
+                resolve();
+            },
+            (err)=>{
+                reject(err);
+            },
+            'InternalManager', 'setScreenCapture', [isEnable]);
+          });
+    }
 
 }
 
