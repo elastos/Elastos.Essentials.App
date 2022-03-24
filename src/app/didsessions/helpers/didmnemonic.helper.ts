@@ -3,7 +3,7 @@ declare let didManager: DIDPlugin.DIDManager;
 
 export class DIDMnemonicHelper {
     // Languages supported by did plugin.
-    static MNEMONICLANGUAGE = ["CHINESE_SIMPLIFIED", "CHINESE_TRADITIONAL", "ENGLISH", "FRENCH", "SPANISH", "JAPANESE"];
+    static MNEMONICLANGUAGE = ["CHINESE_SIMPLIFIED", "CHINESE_TRADITIONAL", "ENGLISH", "FRENCH", "ITALIAN", "SPANISH", "JAPANESE", "CZECH", "KOREAN"];
 
     constructor() {
     }
