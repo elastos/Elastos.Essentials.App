@@ -6,6 +6,7 @@ import { GlobalThemeService } from './global.theme.service';
 import { ChineseMnemonicSuggestionProvider } from './mnemonickeypad/chinese.provider';
 import { EnglishMnemonicSuggestionProvider } from './mnemonickeypad/english.provider';
 import { FrenchMnemonicSuggestionProvider } from './mnemonickeypad/french.provider';
+import { ItalianMnemonicSuggestionProvider } from './mnemonickeypad/italian.provider';
 
 export type Preference<T> = {
   key: string;
@@ -26,7 +27,8 @@ export class GlobalMnemonicKeypadService {
   private suggestionProviders = {
     en: new EnglishMnemonicSuggestionProvider(),
     fr: new FrenchMnemonicSuggestionProvider(),
-    zh: new ChineseMnemonicSuggestionProvider()
+    zh: new ChineseMnemonicSuggestionProvider(),
+    it: new ItalianMnemonicSuggestionProvider()
   }
   private activeMnemonicModal: HTMLIonModalElement = null;
 
@@ -43,7 +45,8 @@ export class GlobalMnemonicKeypadService {
     return [
       { code: "en", icon: "assets/components/mnemonic-keypad/icons/flags/england_200_120.png" },
       { code: "zh", icon: "assets/components/mnemonic-keypad/icons/flags/china_200_120.png" },
-      { code: "fr", icon: "assets/components/mnemonic-keypad/icons/flags/france_200_120.png" }
+      { code: "fr", icon: "assets/components/mnemonic-keypad/icons/flags/france_200_120.png" },
+      { code: "it", icon: "assets/components/mnemonic-keypad/icons/flags/italy_200_120.png" }
     ];
   }
 
@@ -82,8 +85,9 @@ export class GlobalMnemonicKeypadService {
 
       let wordsSub = this.typedMnemonicWords.subscribe(words => {
         wordInputCb(words);
-        if (words && words.length === numberOfExpectedWords)
+        if (words && words.length === numberOfExpectedWords) {
           void this.dismissMnemonicPrompt();
+        }
       });
       let pasteSub = this.pastedContent.subscribe(pasteCb);
 
@@ -102,7 +106,17 @@ export class GlobalMnemonicKeypadService {
       // Reduce the main visible content area to go over the keypad and thus be scrollable
       justBehindScreenContent.style.cssText = "--padding-bottom : " + this.activeMnemonicModal.getElementsByTagName("ion-content")[0].clientHeight + "px !important";
       // Remove modal backdrop to make the background content user scrollable
-      this.activeMnemonicModal.shadowRoot.children[0].remove();
+      // On android and ios, <ion-backgrop> is at different positions in the shadow root container so
+      // we have to search it.
+      // Also, depending on different angular versions, shadow root is used or not.
+      let children = this.activeMnemonicModal.shadowRoot ? this.activeMnemonicModal.shadowRoot.children : this.activeMnemonicModal.children;
+      for (let i = 0; i < children.length; i++) {
+        let c = children[i];
+        if (c.tagName.toLowerCase() === "ion-backdrop") {
+          c.remove();
+          break;
+        }
+      }
 
       modalShownCb?.();
     });
