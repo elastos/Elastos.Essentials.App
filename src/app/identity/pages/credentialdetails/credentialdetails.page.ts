@@ -1,5 +1,5 @@
-import { HttpClient } from "@angular/common/http";
 import { Component, NgZone, OnInit, ViewChild } from "@angular/core";
+import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ActionSheetController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
@@ -20,11 +20,9 @@ import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { DIDDocument } from "../../model/diddocument.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { BasicCredentialsService } from '../../services/basiccredentials.service';
 import { CredentialsService } from "../../services/credentials.service";
 import { DIDService } from "../../services/did.service";
 import { DIDDocumentsService } from "../../services/diddocuments.service";
-import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
 
 type IssuerDisplayEntry = {
@@ -77,25 +75,23 @@ export class CredentialDetailsPage implements OnInit {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
-    private http: HttpClient,
     public events: Events,
     public route: ActivatedRoute,
     private router: Router,
     public zone: NgZone,
     private translate: TranslateService,
     private didService: DIDService,
-    private didSyncService: DIDSyncService,
     public theme: GlobalThemeService,
     public actionSheetController: ActionSheetController,
     public profileService: ProfileService,
-    private basicCredentialService: BasicCredentialsService,
     private globalIntentService: GlobalIntentService,
     private globalPopupService: GlobalPopupService,
     private globalNavService: GlobalNavService,
     private globalNativeService: GlobalNativeService,
     private didDocumentsService: DIDDocumentsService,
     private authService: AuthService,
-    private credentialsService: CredentialsService
+    private credentialsService: CredentialsService,
+    private sanitizer: DomSanitizer,
   ) {
     this.init();
   }
@@ -181,6 +177,10 @@ export class CredentialDetailsPage implements OnInit {
     Logger.log('Identity',
       "Credential details ionViewDidEnter did: " + this.profileService.didString
     );
+  }
+
+  sanitize(imgPath: string) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(imgPath);
   }
 
   prepareCredential() {
@@ -303,8 +303,8 @@ export class CredentialDetailsPage implements OnInit {
     return this.avatarImg || transparentPixelIconDataUrl(); // Transparent pixel while loading
   }
 
-  getCredIconSrc(): string {
-    return this.iconSrc;
+  getCredIconSrc() {
+    return this.sanitize(this.iconSrc);
 
     /* let fragment = this.credential.pluginVerifiableCredential.getFragment();
 

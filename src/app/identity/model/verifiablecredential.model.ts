@@ -132,7 +132,7 @@ export class VerifiableCredential {
     }
 
     /**
-     * Tries to load the target picture, and in case of error, replaces the ico nsrc with
+     * Tries to load the target picture, and in case of error, replaces the icon src with
      * a placeholder.
      */
     private loadIconWithFallback() {
