@@ -34,27 +34,27 @@ export class EssentialsWeb3Provider implements AbstractProvider {
                             } catch (e) {
                                 Logger.error("global", "Ethereum response: JSON parse error");
                                 reject("Invalid JSON response returned by the JSON RPC: " + e);
-                                rejectQueue(null);
+                                resolveQueue(null);
                             }
                         }
                     };
 
                     request.ontimeout = function () {
                         reject("Timeout");
-                        rejectQueue(null);
+                        resolveQueue(null);
                     };
 
                     request.onerror = function (error) {
                         console.error("RPC call error");
                         reject(error);
-                        rejectQueue(null);
+                        resolveQueue(null);
                     }
 
                     try {
                         request.send(JSON.stringify(payload));
                     } catch (error) {
                         reject("Connection error");
-                        rejectQueue(null);
+                        resolveQueue(null);
                     }
                 });
             });

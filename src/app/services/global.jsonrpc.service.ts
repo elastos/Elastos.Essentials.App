@@ -54,11 +54,11 @@ export class GlobalJsonRPCService {
                                     if (result.error) {
                                         Logger.error("GlobalJsonRPCService", 'httpPost error:', result);
                                         reject(result.error);
-                                        rejectQueue(null);
+                                        resolveQueue(null);
                                     }
                                     else if (result.code && !(result.code == 200 || result.code == 1) && result.message) {
                                         reject(result.message);
-                                        rejectQueue(null);
+                                        resolveQueue(null);
                                     }
                                     else {
                                         resolve(result.result || result.success || '');
@@ -71,7 +71,7 @@ export class GlobalJsonRPCService {
                             } catch (e) {
                                 Logger.error("GlobalJsonRPCService", 'httpPost error:', e);
                                 reject("Invalid JSON response returned by the JSON RPC");
-                                rejectQueue(null);
+                                resolveQueue(null);
                             }
                         }
                     };
@@ -79,20 +79,20 @@ export class GlobalJsonRPCService {
                     request.ontimeout = function () {
                         Logger.error("GlobalJsonRPCService", 'httpPost timeout');
                         reject("Timeout");
-                        rejectQueue(null);
+                        resolveQueue(null);
                     };
 
                     request.onerror = function (error) {
                         Logger.error("GlobalJsonRPCService", 'httpPost error:', error);
                         reject(error);
-                        rejectQueue(null);
+                        resolveQueue(null);
                     }
 
                     try {
                         request.send(JSON.stringify(param));
                     } catch (error) {
                         reject("Connection error");
-                        rejectQueue(null);
+                        resolveQueue(null);
                     }
                 });
 
@@ -139,7 +139,7 @@ export class GlobalJsonRPCService {
                     }, (err) => {
                         Logger.error('GlobalJsonRPCService', 'http get error:', err);
                         reject(err);
-                        rejectQueue(err);
+                        resolveQueue(null);
                     });
                 });
             });
