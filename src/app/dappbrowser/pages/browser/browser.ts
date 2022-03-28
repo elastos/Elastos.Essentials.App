@@ -61,7 +61,7 @@ export class BrowserPage implements DappBrowserClient {
                 case BuiltInIcon.NETWORK:
                     dappBrowser.hide();
                     await this.walletNetworkUIService.chooseActiveNetwork();
-                    void dappBrowser.show();
+                    this.dappbrowserService.showWebView();
                     break;
                 case BuiltInIcon.VERTICAL_MENU:
                     this.onMenu();
@@ -74,7 +74,7 @@ export class BrowserPage implements DappBrowserClient {
         this.backButtonSub = this.platform.backButton.subscribeWithPriority(10000, () => {
             void this.onGoBack();
         });
-        void dappBrowser.show();
+        this.dappbrowserService.showWebView();
     }
 
     ionViewWillLeave() {
@@ -106,6 +106,22 @@ export class BrowserPage implements DappBrowserClient {
         this.zone.run(() => {
             this.titleBar.setUrl(url);
         });
+
+        let domain = this.dappbrowserService.getDomain(url);
+        if (this.dappbrowserService.checkScamDomain(domain)) {
+            void this.zone.run(async () => {
+                this.shot = await dappBrowser.getWebViewShot();
+                await dappBrowser.hide();
+
+                let ret = await this.dappbrowserService.showScamWarning(domain);
+                if (ret) {
+                    void dappBrowser.close();
+                }
+                else {
+                    void dappBrowser.show();
+                }
+            });
+        }
     }
 
     public onUrlInput(url: string) {

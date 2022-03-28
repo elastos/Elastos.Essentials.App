@@ -97,9 +97,11 @@ export class DappBrowserService implements GlobalService {
 
     private networkSubscription: Subscription = null;
     private walletSubscription: Subscription = null;
+    public confirming = false;
 
     //Can add items on phishingConfig
-    public detector = new PhishingDetector(phishingConfig);
+    public detector: PhishingDetector = null;
+    public askedDomains = [];
 
     constructor(
         public translate: TranslateService,
@@ -116,6 +118,9 @@ export class DappBrowserService implements GlobalService {
         public globalPopupService: GlobalPopupService,
     ) {
         void this.init();
+
+        //Can add some items on phishingConfig
+        this.detector = new PhishingDetector(phishingConfig);
     }
 
     public init() {
@@ -159,7 +164,7 @@ export class DappBrowserService implements GlobalService {
         }
     }
 
-    public getDomain(url, subdomain = false): string {
+    public getDomain(url, subdomain = true): string {
         url = url.replace(/(https?:\/\/)?/i, '');
 
         if (!subdomain) {
@@ -174,11 +179,31 @@ export class DappBrowserService implements GlobalService {
         return url;
     }
 
-    public checkDomain(url): boolean {
-        let domain = this.getDomain(url, true); //have subdomain
-        const value = this.detector.check(domain).result;
-        Logger.log("dappbrowser", "detector return", url, domain, value);
-        return value ;
+    public checkScamDomain(domain: string): boolean {
+        if (this.askedDomains.includes(domain)) {
+            return false;
+        }
+        var ret = this.detector.check(domain).result;
+        Logger.log("dappbrowser", "detector return", domain, ret);
+        return ret;
+    }
+
+    public async showScamWarning(domain: string) : Promise<boolean> {
+        this.confirming = true;
+        let ret = await this.globalPopupService.ionicConfirm("dappbrowser.scam-warning-title", "dappbrowser.scam-warning-message",
+            'common.leave', 'common.continue');
+        this.confirming = false;
+        if (!ret) {
+            this.askedDomains.push(domain);
+        }
+        return ret;
+    }
+
+    private async checkDomain(url: string): Promise<boolean> {
+        let domain = this.getDomain(url);
+        if (this.checkScamDomain(domain)) {
+            return await this.showScamWarning(domain);
+        }
     }
 
     /**
@@ -214,12 +239,8 @@ export class DappBrowserService implements GlobalService {
     public async open(url: string, title?: string, target?: string) {
         this.url = url;
 
-        if (this.checkDomain(url)) {
-            let ret = await this.globalPopupService.ionicConfirm("dappbrowser.scam-warning-title", "dappbrowser.scam-warning-message",
-                'common.leave', 'common.continue');
-            if (ret) {
-                return;
-            }
+        if (await this.checkDomain(url)) {
+            return;
         }
 
         if (!target || target == null) {
@@ -526,7 +547,7 @@ export class DappBrowserService implements GlobalService {
             case "eth_sendTransaction":
                 dappBrowser.hide();
                 await this.handleSendTransaction(message);
-                void dappBrowser.show();
+                this.showWebView();
                 break;
             case "eth_requestAccounts":
                 // NOTE: for now, directly return user accounts without asking for permission
@@ -535,12 +556,12 @@ export class DappBrowserService implements GlobalService {
             case "eth_signTypedData":
                 dappBrowser.hide();
                 await this.handleSignTypedData(message);
-                void dappBrowser.show();
+                this.showWebView();
                 break;
             case "personal_sign":
                 dappBrowser.hide();
                 await this.handlePersonalSign(message);
-                void dappBrowser.show();
+                this.showWebView();
                 break;
             case "signInsecureMessage":
                 dappBrowser.hide();
@@ -551,35 +572,35 @@ export class DappBrowserService implements GlobalService {
                 Logger.log("dappbrowser", "Received switch ethereum chain request");
                 dappBrowser.hide();
                 await this.handleSwitchEthereumChain(message);
-                void dappBrowser.show();
+                this.showWebView();
                 break;
             case "wallet_addEthereumChain":
                 Logger.log("dappbrowser", "Received add ethereum chain request");
                 dappBrowser.hide();
                 await this.handleAddEthereumChain(message);
-                void dappBrowser.show();
+                this.showWebView();
                 break;
 
             // ELASTOS CONNECTOR
             case "elastos_getCredentials":
                 dappBrowser.hide();
                 await this.handleElastosGetCredentials(message);
-                void dappBrowser.show();
+                this.showWebView();
                 break;
             case "elastos_requestCredentials":
                 dappBrowser.hide();
                 await this.handleElastosRequestCredentials(message);
-                void dappBrowser.show();
+                this.showWebView();
                 break;
             case "elastos_importCredentials":
                 dappBrowser.hide();
                 await this.handleElastosImportCredentials(message);
-                void dappBrowser.show();
+                this.showWebView();
                 break;
             case "elastos_signData":
                 dappBrowser.hide();
                 await this.handleElastosSignData(message);
-                void dappBrowser.show();
+                this.showWebView();
                 break;
 
             default:
@@ -1028,5 +1049,11 @@ export class DappBrowserService implements GlobalService {
     public async clearRecentApps(): Promise<void> {
         this.recentApps.next([]);
         await this.saveRecentApps();
+    }
+
+    public showWebView() {
+        if (!this.confirming) {
+            void dappBrowser.show();
+        }
     }
 }
