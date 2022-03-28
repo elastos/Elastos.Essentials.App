@@ -60,6 +60,10 @@ class MnemonicKeypadSuggestionsGenerator {
                 chineseList[asciiWord].push(w);
             }
 
+            // Hack a few things - improvements from the hanzi-to-pinyin library
+            // 1. add "骑" in the list of "qi"
+            chineseList["qi"].push("骑");
+
             writeFileSync(`${keypadAssetsFolder}/simplified_chinese.json`, JSON.stringify(chineseList, null, "  "));
 
             resolve();

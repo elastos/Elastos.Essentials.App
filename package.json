@@ -153,6 +153,7 @@
     "eslint": "^8.5.0",
     "eslint-plugin-no-async-foreach": "^0.1.1",
     "eslint-plugin-node": "^11.1.0",
+    "hanzi-to-pinyin": "^1.86.0",
     "moment-locales-webpack-plugin": "1.2.0",
     "prettier": "^2.5.1",
     "request": "^2.88.2",
