@@ -130,6 +130,15 @@ export class DID {
     }
 
     public async upsertRawCredential(vc: VerifiableCredential, notifyChange: boolean) {
+        // Security check: make sure we don't try to add a credential that doesn't belong
+        // to this DID. Happened in the past with some backup/restore issues from hive.
+        if (vc.getSubject()) {
+            if (!("id" in vc.getSubject()) || !((vc.getSubject()["id"] as string).startsWith(this.pluginDid.getDIDString()))) {
+                Logger.error("identity", "State error! Trying to add a credential that belongs to another DID. Skipping.");
+                return;
+            }
+        }
+
         let existingCredential = this.getCredentialById(new DIDURL(vc.pluginVerifiableCredential.getId()));
         if (existingCredential) {
             // Existing: delete then add again (update)
