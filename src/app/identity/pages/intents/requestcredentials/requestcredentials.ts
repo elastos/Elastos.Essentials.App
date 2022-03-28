@@ -14,6 +14,7 @@ import { DIDDocumentsService } from 'src/app/identity/services/diddocuments.serv
 import { PopupProvider } from 'src/app/identity/services/popup';
 import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
+import { GlobalCredentialToolboxService } from 'src/app/services/credential-toolbox/global.credential-toolbox.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
@@ -143,7 +144,8 @@ export class RequestCredentialsPage {
     private globalIntentService: GlobalIntentService,
     private didDocumentsService: DIDDocumentsService,
     private intentService: IntentReceiverService,
-    private dappbrowserService: DappBrowserService
+    private dappbrowserService: DappBrowserService,
+    private credentialsToolboxService: GlobalCredentialToolboxService
   ) {
   }
 
@@ -204,7 +206,7 @@ export class RequestCredentialsPage {
 
   ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
+      void this.rejectRequest(false);
     }
   }
 
@@ -525,12 +527,12 @@ export class RequestCredentialsPage {
    * Build a list of credentials ready to be packaged into a presentation, according to selections
    * done by the user.
    */
-  buildDeliverableCredentialsList(): DIDPlugin.VerifiableCredential[] {
-    let selectedCredentials: DIDPlugin.VerifiableCredential[] = [];
+  buildDeliverableCredentialsList(): VerifiableCredential[] {
+    let selectedCredentials: VerifiableCredential[] = [];
     for (let organizedClaim of this.organizedClaims) {
       for (let displayCredential of organizedClaim.matchingCredentials) {
         if (displayCredential.selected)
-          selectedCredentials.push(displayCredential.credential.pluginVerifiableCredential);
+          selectedCredentials.push(displayCredential.credential);
       }
     }
 
@@ -549,7 +551,7 @@ export class RequestCredentialsPage {
       void AuthService.instance.checkPasswordThenExecute(async () => {
         let presentation: DIDPlugin.VerifiablePresentation = null;
         let currentDidString: string = this.didService.getActiveDid().getDIDString();
-        presentation = await this.didService.getActiveDid().createVerifiablePresentationFromCredentials(selectedCredentials, this.authService.getCurrentUserPassword(), this.receivedIntent.params.request.nonce, this.receivedIntent.params.request.realm);
+        presentation = await this.didService.getActiveDid().createVerifiablePresentationFromCredentials(selectedCredentials.map(c => c.pluginVerifiableCredential), this.authService.getCurrentUserPassword(), this.receivedIntent.params.request.nonce, this.receivedIntent.params.request.realm);
         Logger.log('Identity', "Created presentation:", presentation);
 
         let payload = {
@@ -573,6 +575,10 @@ export class RequestCredentialsPage {
             }
           }
         }
+
+        // Let the credentials stats service know about this usage
+        // TODO let appDid = this.receivedIntent.params.appdid;
+        await this.credentialsToolboxService.recordCredentialUsage("request", selectedCredentials, "TODO-APPID");
 
         const jwtToken = await this.didService.getActiveDid().getLocalDIDDocument().createJWT(
           payload,

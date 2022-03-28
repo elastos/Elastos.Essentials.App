@@ -24,8 +24,8 @@ export const fr = {
         'identity-published-on-blockchain': 'Identité Publiée',
         'credentials-published-on-blockchain': 'Crédentiels Publiés',
         'credentials-verified': 'Crédentiels Verifiés',
-        'current-actions': 'Actions Actuelles',
-        'current-options': 'Options actuelles',
+        'current-actions': 'Actions',
+        'current-options': 'Options',
         'identity-not-published': 'Identité Non Publiée',
         'identity-on-blockchain': 'Rendez Votre Identité Visible',
         'add-more-information': 'Ajoutez plus d\'Informations',
@@ -52,7 +52,7 @@ export const fr = {
 
 
         // page: credential-details
-        'credentialdetails-title': 'Des détails Crédentiel ',
+        'credentialdetails-title': 'Détails du crédentiel',
         'credentialdetails-show-on-profile': 'Montrer dans le profil public',
         'credentialdetails-self-proclaimed-credential': 'Crédentiel Auto-Proclamé',
         'credential-published-on-blockchain': 'Crédentiel Publié sur la chaîne de blocs',
