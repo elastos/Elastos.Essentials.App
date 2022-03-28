@@ -53,6 +53,9 @@ export class ChooseImportedDIDPage implements OnInit {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
     this.titleBar.setNavigationMode(null);
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      if (icon.key === 'back') {
+        void this.identityService.runNextStep(this.nextStepId, null);
+      }
       this.uxService.onTitleBarItemClicked(icon);
     });
   }

@@ -179,9 +179,11 @@ export class IdentityService {
         Logger.log('didsessions', "Navigating to profile edition");
         this.navigateWithCompletion("/didsessions/editprofile", async (name)=>{
             this.identityBeingCreated.name = name;
-            //this.uxService.go('/didsessions/backupdid', { state: { create: true } });
-            //this.uxService.go('/didsessions/preparedid');
-            await this.createNewDIDWithNewMnemonic();
+            if (this.identityBeingCreated.name) {
+              await this.createNewDIDWithNewMnemonic();
+            } else {
+              Logger.warn('didsessions', "startCreatingNewDIDWithNewMnemonic user cancel");
+            }
         });
     }
 
@@ -208,11 +210,11 @@ export class IdentityService {
         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
         let createdDID = await didStore.addDID(this.identityBeingCreated, this.identityBeingCreated.storePass);
         await this.nativeService.hideLoading();
-        await this.finalizeIdentityCreation(didStore, this.identityBeingCreated.storePass, createdDID, this.identityBeingCreated.name, false);
+        await this.finalizeIdentityCreation(didStore, this.identityBeingCreated.storePass, createdDID, this.identityBeingCreated.name, false, true);
     }
 
-    private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string, isImportOperation: boolean): Promise<boolean> {
-        try {
+    private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string, isImportOperation: boolean, deleteDIDStoreOnError : boolean): Promise<boolean> {
+      try {
             // Save the did store password with a master password
             let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
                 type: PasswordManagerPlugin.PasswordType.GENERIC_PASSWORD,
@@ -264,8 +266,10 @@ export class IdentityService {
                 // Nothing to do, just stop the flow here.
                 Logger.log('didsessions', "Master password input cancelled. Stopping identity creation.");
 
-                // Delete the did store
-                await this.deleteDIDStore(didStore.getId());
+                if (deleteDIDStoreOnError) {
+                  // Delete the did store
+                  await this.deleteDIDStore(didStore.getId());
+                }
                 return false;
             }
             else {
@@ -376,7 +380,7 @@ export class IdentityService {
 
                 // Exactly one DID was synced, so we directly use this one
                 let createdDID = didStore.dids[0];
-                void this.continueImportAfterCreatedDID(didStore, storePassword, createdDID);
+                void this.continueImportAfterCreatedDID(didStore, storePassword, createdDID, true);
               }
               else {
                 Logger.log('didsessions', "More than one DID was synced, asking user to pick one");
@@ -384,7 +388,11 @@ export class IdentityService {
                 // More than one did was synced. Ask user which one he wants to keep during this import,
                 // as for now we only allow one import at a time.
                 this.navigateWithCompletion("/didsessions/chooseimporteddid", (createdDID)=>{
-                    void this.continueImportAfterCreatedDID(didStore, storePassword, createdDID);
+                  if (createdDID) {
+                    void this.continueImportAfterCreatedDID(didStore, storePassword, createdDID, false);
+                  } else {
+                    void this.deleteDIDStore(didStore.getId());
+                  }
                 }, {
                     dids: didStore.dids
                 });
@@ -401,7 +409,9 @@ export class IdentityService {
                     if (this.identityBeingCreated.name) {
                         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
                         let createdDID = await didStore.addDID(this.identityBeingCreated, storePassword);
-                        await this.finalizeIdentityCreation(didStore, storePassword, createdDID, this.identityBeingCreated.name, true);
+                        await this.finalizeIdentityCreation(didStore, storePassword, createdDID, this.identityBeingCreated.name, true, true);
+                    } else {
+                      void this.deleteDIDStore(didStore.getId());
                     }
                 });
             }
@@ -414,7 +424,7 @@ export class IdentityService {
         }
     }
 
-    private async continueImportAfterCreatedDID(didStore: DIDStore, storePassword: string, createdDID: DID) {
+    private async continueImportAfterCreatedDID(didStore: DIDStore, storePassword: string, createdDID: DID, deleteDIDStoreOnError: boolean) {
         let identityEntries = await this.didSessions.getIdentityEntries();
         let duplicate = identityEntries.find((identityEntry) => identityEntry.didString === createdDID.getDIDString());
         Logger.log('didsessions', 'Checking all identities if import is already added', identityEntries, duplicate);
@@ -423,17 +433,20 @@ export class IdentityService {
           let profileName = createdDID.getNameCredentialValue();
           if (profileName) {
             Logger.log('didsessions', "Name credential found in the DID. Using it.");
-            await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName, true);
+            await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName, true, deleteDIDStoreOnError);
           }
           else {
               // No existing name credential found in the DID, so we need to ask user to give us one
               Logger.log('didsessions', "No name credential found in the DID. Asking user to provide one.");
               this.navigateWithCompletion("/didsessions/editprofile", async (profileName)=>{
-                // Add the name credential in the DID
-                await createdDID.addNameCredential(profileName, storePassword);
-
-                // Finalize
-                await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName, true);
+                if (profileName) {
+                  // Add the name credential in the DID
+                  await createdDID.addNameCredential(profileName, storePassword);
+                  // Finalize
+                  await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName, true, deleteDIDStoreOnError);
+                } else if (deleteDIDStoreOnError) {
+                  void this.deleteDIDStore(didStore.getId());
+                }
               });
           }
         } else {
@@ -680,7 +693,7 @@ export class IdentityService {
     public async runNextStep(nextStepId: number, data?: any) {
         let nextStep = this.nextSteps.find((step)=> step.id === nextStepId);
         if (nextStep) {
-            Logger.log("didsessions", "Running next step, route:", nextStep.route);
+            Logger.log("didsessions", "Running next step, route:", nextStep.route, " data:", data);
             await nextStep.completionCb(data);
         }
         else {

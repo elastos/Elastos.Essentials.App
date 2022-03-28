@@ -1,13 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonInput } from '@ionic/angular';
-import { UXService } from 'src/app/didsessions/services/ux.service';
 import { TranslateService } from '@ngx-translate/core';
-import { IdentityService } from 'src/app/didsessions/services/identity.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { IdentityService } from 'src/app/didsessions/services/identity.service';
+import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 export type EditProfileStateParams = {
   onCompletion: Promise<string>;
@@ -23,8 +23,8 @@ export class EditProfilePage {
   @ViewChild('input', {static: false}) input: IonInput;
 
   private nextStepId: number = null;
-  public isEdit: boolean = false;
-  public name: string = ""; // Name being edited
+  public isEdit = false;
+  public name = ""; // Name being edited
   public creatingDid = false;
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -52,13 +52,16 @@ export class EditProfilePage {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
     this.titleBar.setNavigationMode(null);
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      if (icon.key === 'back') {
+        void this.identityService.runNextStep(this.nextStepId, null);
+      }
       this.uxService.onTitleBarItemClicked(icon);
     });
   }
 
   ionViewDidEnter() {
     setTimeout(() => {
-      this.input.setFocus();
+      void this.input.setFocus();
     }, 200);
   }
 

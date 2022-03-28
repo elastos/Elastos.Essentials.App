@@ -1,7 +1,7 @@
-import { DIDURL } from './didurl.model';
-import { DIDHelper } from '../helpers/did.helper';
-import { VerifiableCredential } from './verifiablecredential.model';
 import { Logger } from 'src/app/logger';
+import { DIDHelper } from '../helpers/did.helper';
+import { DIDURL } from './didurl.model';
+import { VerifiableCredential } from './verifiablecredential.model';
 
 export type CredentialAvatar = {
     "content-type": string,
@@ -57,7 +57,7 @@ export class DID {
 
     /**
      */
-    async addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: string[]): Promise<DIDPlugin.VerifiableCredential> {
+    addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: string[]): Promise<DIDPlugin.VerifiableCredential> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         return new Promise(async (resolve, reject)=>{
             Logger.log('didsessions', "Adding credential with id:", credentialId, props, userTypes);
@@ -95,7 +95,7 @@ export class DID {
     }
 
     private createPluginCredential(credentialId: DIDURL, type, validityDays, properties, passphrase): Promise<DIDPlugin.VerifiableCredential> {
-        return new Promise(async (resolve, reject)=>{
+        return new Promise((resolve, reject)=>{
             this.pluginDid.issueCredential(
                 this.getDIDString(), credentialId.toString(), type, validityDays, properties, passphrase,
                 (ret) => {resolve(ret)},
@@ -106,7 +106,7 @@ export class DID {
 
     private addPluginCredential(credential: DIDPlugin.VerifiableCredential): Promise<void> {
         Logger.log('didsessions', "DIDService - storeCredential", this.getDIDString(), JSON.parse(JSON.stringify(credential)));
-        return new Promise(async (resolve, reject)=>{
+        return new Promise((resolve, reject)=>{
             Logger.log('didsessions', "DIDService - Calling real storeCredential");
             this.pluginDid.addCredential(
                 credential,
