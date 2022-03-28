@@ -56,6 +56,8 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
         this.internalTXProvider = new EVMSubWalletInternalTransactionProvider(this, this.escSubWallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
         await this.internalTXProvider.initialize();
 
+        this.isRunning = true;
+
         // Discover new transactions globally for all tokens at once, in order to notify user
         // of NEW tokens received, and NEW payments received for existing tokens.
         this.refreshEvery(() => this.tokenProvider.discoverTokens(), 30000);

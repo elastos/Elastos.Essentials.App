@@ -14,6 +14,8 @@ export class BTCTransactionProvider extends TransactionProvider<BTCTransaction> 
     this.mainProvider = this.createBTCSubWalletProvider();
     await this.mainProvider.initialize();
 
+    this.isRunning = true;
+
     // this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
     // await this.tokenProvider.initialize();
 

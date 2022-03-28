@@ -49,6 +49,8 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
   public fetchTransactionTimestamp = 0;
 
+  protected isRunning = false;
+
   constructor(protected networkWallet: NetworkWallet) {
     this._transactionsListChanged = new Map();
     this._transactionFetchStatusChanged = new Map();
@@ -69,6 +71,8 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    * May be overriden by child classes
    */
   public stop(): Promise<void> {
+    this.isRunning = false;
+
     // Stop all timers / refresh tasks
     for (let tasksTimeoutHandles of Array.from(this.runningTasks.keys())) {
       this.runningTasks.delete(tasksTimeoutHandles);
@@ -188,6 +192,9 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
   private async callAndRearmTask(repeatingTask: () => Promise<void>, repeatMs: number): Promise<void> {
     await repeatingTask();
+
+    // Don't rearm task after call stop. (Sometimes it takes a long time to execute the repeatingTask.)
+    if (!this.isRunning) return;
 
     // Only restart a timer after all current operations are complete. We don't want to use an internal
     // that would create many slow updates in parrallel.

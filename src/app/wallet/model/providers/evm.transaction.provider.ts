@@ -31,6 +31,8 @@ export class EVMTransactionProvider extends TransactionProvider<EthTransaction> 
     this.internalTXProvider = this.createEVMSubWalletInternalTransactionProvider();
     await this.internalTXProvider.initialize();
 
+    this.isRunning = true;
+
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
     this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);
