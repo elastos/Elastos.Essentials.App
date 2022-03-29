@@ -191,26 +191,31 @@ export class IdentityService {
         Logger.log('didsessions', "Creating new did with new mnemonic");
         await this.nativeService.showLoading(this.translate.instant('common.please-wait'));
 
-        // Automatically find and use the best elastos API provider
-        await this.globalElastosAPIService.autoDetectTheBestProvider();
+        try {
+          // Automatically find and use the best elastos API provider
+          await this.globalElastosAPIService.autoDetectTheBestProvider();
 
-        this.identityBeingCreated.mnemonic = await this.generateMnemonic();
+          this.identityBeingCreated.mnemonic = await this.generateMnemonic();
 
-        let didStore = await DIDStore.create();
+          let didStore = await DIDStore.create();
 
-        // Generate a random password
-        this.identityBeingCreated.storePass = await passwordManager.generateRandomPassword();
-        let mnemonicLanguage = this.getMnemonicLang();
-        let mnemonic = this.identityBeingCreated.mnemonic;
+          // Generate a random password
+          this.identityBeingCreated.storePass = await passwordManager.generateRandomPassword();
+          let mnemonicLanguage = this.getMnemonicLang();
+          let mnemonic = this.identityBeingCreated.mnemonic;
 
-        // Initialize the new DID store with a mnemonic and store password
-        await didStore.createPrivateIdentity(null, this.identityBeingCreated.storePass, mnemonicLanguage, mnemonic);
+          // Initialize the new DID store with a mnemonic and store password
+          await didStore.createPrivateIdentity(null, this.identityBeingCreated.storePass, mnemonicLanguage, mnemonic);
 
-        // Add a first (and only) identity to the store.
-        Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
-        let createdDID = await didStore.addDID(this.identityBeingCreated, this.identityBeingCreated.storePass);
+          // Add a first (and only) identity to the store.
+          Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
+          let createdDID = await didStore.addDID(this.identityBeingCreated, this.identityBeingCreated.storePass);
+          await this.finalizeIdentityCreation(didStore, this.identityBeingCreated.storePass, createdDID, this.identityBeingCreated.name, false, true);
+        }
+        catch (err) {
+          Logger.warn('didsessions', 'createNewDIDWithNewMnemonic error:', err)
+        }
         await this.nativeService.hideLoading();
-        await this.finalizeIdentityCreation(didStore, this.identityBeingCreated.storePass, createdDID, this.identityBeingCreated.name, false, true);
     }
 
     private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string, isImportOperation: boolean, deleteDIDStoreOnError : boolean): Promise<boolean> {
@@ -693,7 +698,7 @@ export class IdentityService {
     public async runNextStep(nextStepId: number, data?: any) {
         let nextStep = this.nextSteps.find((step)=> step.id === nextStepId);
         if (nextStep) {
-            Logger.log("didsessions", "Running next step, route:", nextStep.route, " data:", data);
+            Logger.log("didsessions", "Running next step, route:", nextStep.route);
             await nextStep.completionCb(data);
         }
         else {
