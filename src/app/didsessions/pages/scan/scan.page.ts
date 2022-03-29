@@ -6,6 +6,7 @@ import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-scan',
@@ -24,6 +25,7 @@ export class ScanPage implements OnInit {
     private events: Events,
     private identityService: IdentityService,
     private zone: NgZone,
+    private globalNav: GlobalNavService,
   ) { }
 
   ngOnInit() {
@@ -70,20 +72,27 @@ export class ScanPage implements OnInit {
           // Stop scanning
           scanSub.unsubscribe();
 
-          await this.identityService.startImportingMnemonic(null);
+          await this.gotoImportingScreen();
           this.events.publish('qrScanner', { mnemonic: text });
         });
 
       } else if (status.denied) {
-        await this.identityService.startImportingMnemonic(null);
+        await this.gotoImportingScreen();
       } else {
-        await this.identityService.startImportingMnemonic(null);
+        await this.gotoImportingScreen();
       }
     })
     .catch(async (err: any) => {
       Logger.warn('didsessions', 'QRScanner error', err);
-      await this.identityService.startImportingMnemonic(null);
+      await this.gotoImportingScreen();
     });
+  }
+
+  async gotoImportingScreen() {
+    // pop scanner from navigation history, so the nav will not navigate to scanner.
+    await this.globalNav.clearIntermediateRoutes(['/didsessions/scan'])
+
+    await this.identityService.startImportingMnemonic(null);
   }
 
   async ionViewWillLeave() {

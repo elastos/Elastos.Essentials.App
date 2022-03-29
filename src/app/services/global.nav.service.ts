@@ -118,7 +118,7 @@ export class GlobalNavService {
     }
 
     /**
-     * Removes the given routes from the history, without navigating anywhere. 
+     * Removes the given routes from the history, without navigating anywhere.
      * This is used to clear some routes where we don't want to go back in order to go back to the
      * "screen before the previous screen" in some cases.
      */
@@ -166,7 +166,11 @@ export class GlobalNavService {
     public navigateTo(context: string, route: string, routerOptions?: NavigationOptions): Promise<boolean> {
         Logger.log("Nav", "Navigating to", route);
 
-        this.navigationHistory.push({ context, route, routerOptions });
+        let lastStep = this.navigationHistory[this.navigationHistory.length - 1];
+        if (!lastStep || (lastStep.route !== route)) {
+          this.navigationHistory.push({ context, route, routerOptions });
+        }
+
         return this.navCtrl.navigateForward(route, routerOptions);
     }
 
