@@ -1,11 +1,11 @@
 /* eslint-disable prefer-template */
 import type { DeviceModel } from "@ledgerhq/devices";
 import {
-    getBluetoothServiceUuids,
-    getInfosForServiceUuid
+  getBluetoothServiceUuids,
+  getInfosForServiceUuid
 } from "@ledgerhq/devices";
 import {
-    CantOpenDevice, DisconnectedDeviceDuringOperation, TransportError
+  CantOpenDevice, DisconnectedDeviceDuringOperation, TransportError
 } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
 import { defer, from, merge, Observable } from "rxjs";
@@ -78,11 +78,11 @@ var base64ToArrayBuffer = function (b64) {
 
 async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   let device = null;
-
+  Logger.log(TAG, "Transport open:", deviceOrId);
   if (typeof deviceOrId === "string") {
     if (transportsCache[deviceOrId]) {
-      Logger.log(TAG, "Transport in cache, using that.");
-      return transportsCache[deviceOrId];
+      transportsCache[deviceOrId].close();
+      delete transportsCache[deviceOrId]
     }
 
     await awaitsBleOn();
@@ -112,19 +112,11 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
 
     if (!device) {
       try {
-        // device = await bleManager.connectToDevice(deviceOrId, connectOptions);
-        device = await bleManager.connect(deviceOrId);
+        let deviceData = await bleManager.connect(deviceOrId);
+        device = new Device(deviceData);
       } catch (e: any) {
-        // TODO: "MTU request failed"?
         Logger.error(TAG, 'connect error ', e)
-        // if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
-        //   // eslint-disable-next-line require-atomic-updates
-        //   connectOptions = {};
-        // //   device = await bleManager.connectToDevice(deviceOrId);
-        //   device = await bleManager.connect(deviceOrId);
-        // } else {
-          throw e;
-        // }
+        throw e;
       }
     }
 
@@ -136,27 +128,19 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   }
 
 // TODO: We need to get the PeripheralDataExtended, so call connect.
-//   if (!(await device.isConnected())) {
-    // Logger.log(TAG, "not connected. connecting...");
-
+  if ((await device.isConnected())) {
+      Logger.warn(TAG, 'already connected ')
+      await device.disconnect();
+  }
+  if (!(await device.isConnected())) {
     try {
-    // TODO: connectOptions?: requestMtu is not supported on iOS.
-    //   await device.connect(connectOptions);
       await device.connect();
     } catch (e: any) {
-        // TODO: "MTU request failed"?
-        Logger.error(TAG, 'connect error ', e)
-    //   if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
-    //     // eslint-disable-next-line require-atomic-updates
-    //     connectOptions = {};
-    //     await device.connect();
-    //   } else {
-        throw e;
-    //   }
+      Logger.error(TAG, 'connect error ', e)
+      throw e;
     }
-//   }
+  }
 
-//   await device.discoverAllServicesAndCharacteristics();
   let res = retrieveInfos(device);
   let characteristics;
   if (!res) {
@@ -514,6 +498,7 @@ export default class BluetoothTransport extends Transport {
         await bleManager.write(this.id, this.writeCharacteristic.service,
             this.writeCharacteristic.characteristic, base64ToArrayBuffer(buffer.toString("base64")))
       } catch (e: any) {
+        Logger.warn(TAG, 'write error:', e)
         throw new DisconnectedDeviceDuringOperation(e.message);
       }
     } else {
@@ -521,6 +506,7 @@ export default class BluetoothTransport extends Transport {
         await bleManager.writeWithoutResponse(this.id, this.writeCmdCharacteristic.service,
                 this.writeCmdCharacteristic.characteristic, base64ToArrayBuffer(buffer.toString("base64")))
       } catch (e: any) {
+        Logger.warn(TAG, 'writeWithoutResponse error:', e)
         throw new DisconnectedDeviceDuringOperation(e.message);
       }
     }

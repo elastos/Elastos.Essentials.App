@@ -1,3 +1,4 @@
+import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
 
 declare let ble: BLECentralPlugin.BLECentralPluginStatic;
@@ -14,6 +15,8 @@ export class Device {
 
     // public mtu = 156;
     public mtu = 64;
+
+    public disConnectEvent: Subject<string> = new Subject();
 
     constructor(data:BLECentralPlugin.PeripheralDataExtended) {
         this.copyData(data);
@@ -48,6 +51,7 @@ export class Device {
     }
 
     public connect(): Promise<BLECentralPlugin.PeripheralDataExtended> {
+        Logger.warn(TAG, ' device connect', this.id)
         return new Promise((resolve, reject) => {
             ble.connect(this.id,
                 (data: BLECentralPlugin.PeripheralDataExtended) => {
@@ -55,6 +59,13 @@ export class Device {
                     this.copyData(data);resolve(data); },
                 (error: string | BLECentralPlugin.BLEError) => { reject(error); });
             });
+    }
+
+    public async disconnect(): Promise<void> {
+        Logger.log(TAG, ' disconnect ', this.id)
+        await ble.withPromises.disconnect(this.id);
+        this.disConnectEvent.next(this.id);
+        return;
     }
 
     // Delete it, we get all services and characteristics when connect.
@@ -86,7 +97,11 @@ export class Device {
 
     // TODO:
     public onDisconnected(fun:any) {
-        Logger.error(TAG, 'device onDisconnected not implement', this.id)
+        Logger.warn(TAG, 'device onDisconnected ', this.id)
+        return this.disConnectEvent.subscribe( (id)=> {
+          Logger.warn(TAG, 'device onDisconnected event id', id, fun)
+          if (fun) fun(id);
+        })
     }
 
 }
