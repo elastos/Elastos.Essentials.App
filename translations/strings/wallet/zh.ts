@@ -519,7 +519,7 @@ export const zh = {
                 "privatekey": "私钥",
                 "privatekey-tap-to-copy": "点击私钥即可复制",
                 "export-private-key-intro": "或者，您也可以在某些钱包中使用以下私钥。点击私钥即可复制。",
-                "import-paste-from-keypad": "Note: you can paste a whole mnemonic sentence from the keypad",
+                "import-paste-from-keypad": "备注：您可以从键盘上粘贴完整的助记词",
 
                 /***********************
                 * Export Keystore Page *
