@@ -346,11 +346,11 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
   }
 
   public transactionsListChanged(): Subject<void> {
-    return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.id);
+    return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.getUniqueIdentifierOnNetwork());
   }
 
   public transactionsFetchStatusChanged(): Subject<boolean> {
-    return this.networkWallet.getTransactionDiscoveryProvider().transactionsFetchStatusChanged(this.id);
+    return this.networkWallet.getTransactionDiscoveryProvider().transactionsFetchStatusChanged(this.getUniqueIdentifierOnNetwork());
   }
 
   // public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;

@@ -398,7 +398,7 @@ export class CoinHomePage implements OnInit {
         // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
         setTimeout(() => {
             event.target.complete();
-        }, 1000);
+        }, 500);
     }
 
     getIndexByTxId(txid: string) {

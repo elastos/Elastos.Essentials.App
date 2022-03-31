@@ -150,7 +150,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     public transactionsListChanged(): Subject<void> {
-        return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.coin.getContractAddress().toLowerCase());
+        return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.getUniqueIdentifierOnNetwork());
     }
 
     /**

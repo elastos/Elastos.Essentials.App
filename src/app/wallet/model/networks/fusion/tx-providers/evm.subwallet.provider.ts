@@ -48,7 +48,10 @@ export class FusionEvmSubWalletProvider extends EVMSubWalletProvider<AnyMainCoin
       Logger.log("wallet", "DEBUG EVM GET TX FUSION", result);
 
       let transactions = result.result as FusionTransaction[];
-
+      if (!(transactions instanceof Array)) {
+        Logger.warn('wallet', 'fetchTransactions invalid transactions:', transactions)
+        return null;
+      }
       if (!transactions || transactions.length == 0) {
         return;
       }

@@ -76,6 +76,10 @@ export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<AnyMainCoinE
 
       let transactions: EthTransaction[] = [];
       let telosTransactions = result.transactions;
+      if (!(telosTransactions instanceof Array)) {
+        Logger.warn('wallet', 'fetchTransactions invalid transactions:', telosTransactions)
+        return null;
+      }
       for (let telosTransaction of telosTransactions) {
         let transaction: EthTransaction = {
           blockHash: telosTransaction.block_hash,
