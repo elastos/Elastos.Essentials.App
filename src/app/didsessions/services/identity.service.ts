@@ -182,7 +182,7 @@ export class IdentityService {
             if (this.identityBeingCreated.name) {
               await this.createNewDIDWithNewMnemonic();
             } else {
-              Logger.warn('didsessions', "startCreatingNewDIDWithNewMnemonic user cancel");
+              Logger.log('didsessions', "startCreatingNewDIDWithNewMnemonic user cancel");
             }
         });
     }
@@ -414,7 +414,7 @@ export class IdentityService {
                     if (this.identityBeingCreated.name) {
                         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
                         let createdDID = await didStore.addDID(this.identityBeingCreated, storePassword);
-                        await this.finalizeIdentityCreation(didStore, storePassword, createdDID, this.identityBeingCreated.name, true, true);
+                        await this.finalizeIdentityCreation(didStore, storePassword, createdDID, this.identityBeingCreated.name, true, false);
                     } else {
                       void this.deleteDIDStore(didStore.getId());
                     }
@@ -520,7 +520,7 @@ export class IdentityService {
 
     deleteDIDStore(didStoreId: string) : Promise<void> {
         return new Promise((resolve, reject)=>{
-            Logger.log('didsessions', "didManager", didManager)
+            Logger.log('didsessions', "deleteDIDStore didStoreId", didStoreId)
             didManager.deleteDidStore(didStoreId, ()=>{
                 resolve();
             }, (err)=>{
