@@ -802,7 +802,13 @@
             }
 
             let vc = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
-            self.viewController!.present(vc, animated: true, completion: nil)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                vc.popoverPresentationController?.sourceView = self.viewController?.launchView
+            }
+
+            DispatchQueue.main.async {
+                self.viewController!.present(vc, animated: true, completion: nil)
+            }
         }
     }
 
