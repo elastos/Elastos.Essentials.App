@@ -22,6 +22,11 @@ console.log(`  Define those variables if you want to run a local red packets ser
 console.log(colors.gray(`  Eg: export ESSENTIALS_RED_PACKETS_SERVICE_URL=https://192.168.1.4:5080/api/v1`));
 
 console.log();
+console.log(colors.green("  ESSENTIALS_CREDENTIALS_TOOLBOX_SERVICE_URL"));
+console.log(`  Define this variable if you want to run a local credentials toolbox service instead of using the prod apis.`);
+console.log(colors.gray(`  Eg: export ESSENTIALS_CREDENTIALS_TOOLBOX_SERVICE_URL=http://192.168.1.4:3020/api/v1`));
+
+console.log();
 console.log(colors.green("  ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY"));
 console.log(`  If downloads are slow, you can configure a proxy by setting ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY.`);
 console.log(colors.gray(`  Eg: export ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY=socks5://127.0.0.1:1080`));

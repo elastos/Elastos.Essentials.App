@@ -7,6 +7,7 @@ import { BasicCredentialsService } from '../services/basiccredentials.service';
 import { DIDEvents } from '../services/events';
 import { AvatarCredentialSubject } from './avatarcredentialsubject';
 import { DIDDocument } from './diddocument.model';
+import { DIDFeatures } from './didfeatures';
 import { DIDURL } from './didurl.model';
 import { ApiNoAuthorityException } from "./exceptions/apinoauthorityexception.exception";
 import { Profile } from './profile.model';
@@ -71,7 +72,7 @@ export class DID {
             Logger.log('Identity', "Adding credential with id:", credentialId, props, userTypes);
 
             let types: string[] = [
-                "SelfProclaimedCredential"
+                "https://ns.elastos.org/credentials/v1#SelfProclaimedCredential"
             ];
             // types[0] = "BasicProfileCredential";
 
@@ -223,7 +224,7 @@ export class DID {
                     Logger.log('Identity', "Upserting credential for profile key " + entry.key);
                     // eslint-disable-next-line no-useless-catch
                     try {
-                        let credential = await this.upsertCredential(credentialId, props, password, true, ["BasicProfileCredential"]);
+                        let credential = await this.upsertCredential(credentialId, props, password, true, []);
                         Logger.log('Identity', "Credential added/updated:", credential);
 
                         // Update the DID Document in case it contains the credential. Then we will have to
@@ -347,11 +348,23 @@ export class DID {
     }
 
     private createPluginCredential(credentialId: DIDURL, type, validityDays, properties, passphrase): Promise<DIDPlugin.VerifiableCredential> {
-        return new Promise((resolve, reject) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise(async (resolve, reject) => {
+
+            await DIDFeatures.enableJsonLdContext(true);
+
             this.pluginDid.issueCredential(
                 this.getDIDString(), credentialId.toString(), type, validityDays, properties, passphrase,
-                (ret) => { resolve(ret) },
-                (err) => { reject(DIDHelper.reworkedPluginException(err)) },
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+                async (ret) => {
+                    await DIDFeatures.enableJsonLdContext(false);
+                    resolve(ret)
+                },
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+                async (err) => {
+                    await DIDFeatures.enableJsonLdContext(false);
+                    reject(DIDHelper.reworkedPluginException(err))
+                },
             );
         });
     }
@@ -395,13 +408,22 @@ export class DID {
 
     private addPluginCredential(credential: DIDPlugin.VerifiableCredential): Promise<void> {
         Logger.log('Identity', "DIDService - storeCredential", this.getDIDString(), JSON.parse(JSON.stringify(credential)));
-        return new Promise((resolve, reject) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise(async (resolve, reject) => {
             Logger.log('Identity', "DIDService - Calling real storeCredential");
+
+            await DIDFeatures.enableJsonLdContext(true);
+
             this.pluginDid.addCredential(
                 credential,
-                () => {
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+                async () => {
+                    await DIDFeatures.enableJsonLdContext(false);
                     resolve()
-                }, (err) => {
+                },
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+                async (err) => {
+                    await DIDFeatures.enableJsonLdContext(false);
                     Logger.error('identity', "Add credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
                 },

@@ -15,6 +15,7 @@ import { PopupProvider } from 'src/app/identity/services/popup';
 import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
 import { GlobalCredentialToolboxService } from 'src/app/services/credential-toolbox/global.credential-toolbox.service';
+import { GlobalCredentialTypesService } from 'src/app/services/credential-types/global.credential.types.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
@@ -143,6 +144,7 @@ export class RequestCredentialsPage {
     private popoverCtrl: PopoverController,
     private globalIntentService: GlobalIntentService,
     private didDocumentsService: DIDDocumentsService,
+    private credentialTypesService: GlobalCredentialTypesService,
     private intentService: IntentReceiverService,
     private dappbrowserService: DappBrowserService,
     private credentialsToolboxService: GlobalCredentialToolboxService
@@ -269,6 +271,12 @@ export class RequestCredentialsPage {
       let searcheableCredentials: JSONObject[] = [];
       for (let vc of this.credentials) {
         let credentialJson = JSON.parse(await vc.pluginVerifiableCredential.toString());
+
+        // Virtually append more "types" to the credential, to make json path resolve more queries
+        // including full type like:
+        // "$[?(@.type.indexOf('did://elastos/xxx/MyCred123#MyCred') >= 0)]"
+        await this.appendTypesWithContextsToJsonCredential(vc, credentialJson);
+
         searcheableCredentials.push(credentialJson);
       }
       let matchingCredentialJsons = jsonpath.query(searcheableCredentials, claim.query) as JSONObject[];
@@ -397,6 +405,25 @@ export class RequestCredentialsPage {
     }
 
     Logger.log("identity", "Organized claims", this.organizedClaims);
+  }
+
+  /**
+   * Expands the credential using JSONLD in order to get a list of matching contexts + short types.
+   * Based on this info, builds the corresponding elastos-queryable full types in the form of
+   * context#shortType (this is a elastos format, not a real type in JSONLD) and appens
+   * this "full type" to the current list of types in the credential json payload.
+   *
+   * This allows jsonpath / connectivity sdk to query full types easily.
+   */
+  private async appendTypesWithContextsToJsonCredential(vc: VerifiableCredential, credentialJson: JSONObject): Promise<void> {
+    let typesWithContext = await this.credentialTypesService.resolveTypesWithContexts(vc.pluginVerifiableCredential);
+
+    for (let twc of typesWithContext) {
+      let fullQueryType = `${twc.context}#${twc.shortType}`;
+      let jsonTypes = credentialJson.type as string[];
+      if (jsonTypes.indexOf(fullQueryType) < 0)
+        jsonTypes.push(fullQueryType);
+    }
   }
 
   /**
@@ -578,7 +605,7 @@ export class RequestCredentialsPage {
 
         // Let the credentials stats service know about this usage
         // TODO let appDid = this.receivedIntent.params.appdid;
-        await this.credentialsToolboxService.recordCredentialUsage("request", selectedCredentials, "TODO-APPID");
+        await this.credentialsToolboxService.recordCredentialUsage("request", selectedCredentials, this.receivedIntent.params.caller);
 
         const jwtToken = await this.didService.getActiveDid().getLocalDIDDocument().createJWT(
           payload,

@@ -5,6 +5,7 @@ import { DID as ConnSDKDID } from "@elastosfoundation/elastos-connectivity-sdk-j
  */
 export type IdentityIntentParams = {
     appPackageId?: string;
+    caller?: string; // App DID calling us. Could be undefined, and could be a fake one (has not been verified)
 }
 export type IdentityIntent<T> = {
     action: string;
