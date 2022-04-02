@@ -36,6 +36,13 @@
 
         self.commandDelegate?.send(result, callbackId: command.callbackId)
     }
+     
+     func success(_ command: CDVInvokedUrlCommand, _ retAsBool: Bool) {
+         let result = CDVPluginResult(status: CDVCommandStatus_OK,
+                                      messageAs: retAsBool);
+
+         self.commandDelegate?.send(result, callbackId: command.callbackId)
+     }
 
     func error(_ command: CDVInvokedUrlCommand, _ retAsString: String) {
         let result = CDVPluginResult(status: CDVCommandStatus_ERROR,
@@ -117,4 +124,14 @@
             self.error(command, error.localizedDescription);
         }
     }
+    
+     @objc func isDeviceRooted(_ command: CDVInvokedUrlCommand) {
+         let ret = CheckJailBreak.isJailBreak();
+         self.success(command, ret);
+     }
+     
+     @objc func setScreenCapture(_ command: CDVInvokedUrlCommand) {
+         //Maybe the ios can't do it, so direct return;
+         self.success(command);
+     }
  }

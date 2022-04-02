@@ -26,8 +26,12 @@
             </feature>
         </config-file>
         <source-file src="src/ios/InternalPlugin.swift" />
-        <!-- <source-file src="src/ios/CheckJailBreak.swift" /> -->
-        <!-- <source-file src="src/ios/Security.swift" /> -->
+        <source-file src="src/ios/CheckJailBreak.swift" />
+        <header-file src="src/ios/CheckJailBreakC.h" />
+        <source-file src="src/ios/CheckJailBreakC.m" />
+        <source-file src="src/ios/Security.swift" />
+
+        <header-file src="src/ios/Internal-Bridging-Header.h" type="BridgingHeader" />
     </platform>
 
     <hook src="hooks/before_plugin_install/build_ts.js" type="before_plugin_install" />
