@@ -1,20 +1,20 @@
-import { Component, ViewChild, NgZone } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { TranslateService } from '@ngx-translate/core';
-import { IdentityService } from '../../services/identity.service';
 import { IonSlides, Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { sleep } from 'src/app/helpers/sleep.helper';
-import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
-import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletCreationService } from 'src/app/wallet/services/walletcreation.service';
+import { IdentityService } from '../../services/identity.service';
+
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -37,6 +37,7 @@ export class PrepareDIDPage {
   public ALL_DONE_SLIDE_INDEX = 4;
 
   private nextStepId: number;
+  private backButtonSub: Subscription;
 
   // PROCESS
   public mnemonic: string;
@@ -92,6 +93,10 @@ export class PrepareDIDPage {
     this.titleBar.setTitle(' ');
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
+
+    // Do not nav back.
+    this.backButtonSub = this.platform.backButton.subscribeWithPriority(100, () => {
+    });
 
     // Dirty hack because on iOS we are currently unable to understand why the
     // ion-slides width is sometimes wrong when an app starts. Waiting a few
@@ -149,6 +154,7 @@ export class PrepareDIDPage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    this.backButtonSub.unsubscribe();
   }
 
   showSlider() {
