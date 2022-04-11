@@ -92,7 +92,7 @@
         </ion-col>
       </ion-row>
 
-      <ion-row *ngIf="entry.key === 'nation'" class="ion-align-items-center main-row">
+      <ion-row *ngIf="entry.key === 'nationality'" class="ion-align-items-center main-row">
         <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
           <img src="/assets/identity/svg/circle-with-minus.svg" />
         </ion-col>
@@ -166,15 +166,10 @@
                 <ion-modal class="datetime-modal" trigger="open-datetime">
                   <ng-template>
                     <ion-content>
-                      <ion-datetime
-                        [locale]="datetime_locale"
-                        [cancelText]="'common.cancel'|translate"
-                        [doneText]="'common.confirm'|translate"
-                        [(ngModel)]="entry.value"
-                        (ionChange)="formatBirthDay(entry)"
-                        [presentation]="month-year"
-                        [showDefaultButtons]="true"
-                      ></ion-datetime>
+                      <ion-datetime [locale]="datetime_locale" [cancelText]="'common.cancel'|translate"
+                        [doneText]="'common.confirm'|translate" [(ngModel)]="entry.value"
+                        (ionChange)="formatBirthDay(entry)" [presentation]="month-year" [showDefaultButtons]="true">
+                      </ion-datetime>
                     </ion-content>
                   </ng-template>
                 </ion-modal>

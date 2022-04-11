@@ -110,6 +110,10 @@ export const zh = {
           'elastos-io-des': '亦来云基金会的亦来云联合子团队（也称为产品团队）部署和维护的 Elastos API 集。',
           'trinity-tech-io-des': '亦来云基金会的 Trinity Tech 团队部署和维护的一组 Elastos API，负责亦来云 SDK 的开发。',
 
+          'privacy-toolbox-stats': 'Credentials statistics',
+          'privacy-send-credential-toolbox-stats': 'Send anonymous information about DID usage to the credential toolbox (a developer tool). The DID itself is never sent.',
+          'privacy-dont-send-credential-toolbox-stats': 'Don\'t send anonymous information about DID usage to the credential toolbox (a developer tool).',
+
           /*********** Elastos API provider page ***********/
           'elastosapiprovider': 'Elastos API'
      }

@@ -28,6 +28,7 @@ export class GlobalPreferencesService {
       "developer.install.verifyDigest": false,
       "developer.backgroundservices.startonboot": true,
       "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
+      "privacy.credentialtoolbox.stats": true, // Publish anonymous stats about credentials usage, to the external credential toolbox service, or not
       "ui.darkmode": true,
       "ui.startupscreen": "home",
       "network.template": "MainNet",
@@ -130,5 +131,13 @@ export class GlobalPreferencesService {
 
   public setPublishIdentityMedium(did: string, medium: 'assist' | 'wallet'): Promise<void> {
     return this.setPreference(did, "privacy.identity.publication.medium", medium);
+  }
+
+  public getSendStatsToCredentialToolbox(did: string): Promise<boolean> {
+    return this.getPreference<boolean>(did, "privacy.credentialtoolbox.stats");
+  }
+
+  public setSendStatsToCredentialToolbox(did: string, sendStats: boolean): Promise<void> {
+    return this.setPreference(did, "privacy.credentialtoolbox.stats", sendStats);
   }
 }

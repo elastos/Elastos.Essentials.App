@@ -74,7 +74,6 @@ export class DID {
             let types: string[] = [
                 "https://ns.elastos.org/credentials/v1#SelfProclaimedCredential"
             ];
-            // types[0] = "BasicProfileCredential";
 
             // If caller provides custom types, we add them to the list
             // TODO: This is way too simple for now. We need to deal with types schemas in the future.
@@ -224,7 +223,11 @@ export class DID {
                     Logger.log('Identity', "Upserting credential for profile key " + entry.key);
                     // eslint-disable-next-line no-useless-catch
                     try {
-                        let credential = await this.upsertCredential(credentialId, props, password, true, []);
+                        let entryCustomTypes: string[] = [];
+                        if (entry.context && entry.shortType)
+                            entryCustomTypes.push(`${entry.context}#${entry.shortType}`);
+
+                        let credential = await this.upsertCredential(credentialId, props, password, true, entryCustomTypes);
                         Logger.log('Identity', "Credential added/updated:", credential);
 
                         // Update the DID Document in case it contains the credential. Then we will have to

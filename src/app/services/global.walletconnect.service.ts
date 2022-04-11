@@ -759,7 +759,7 @@ export class GlobalWalletConnectService extends GlobalService {
     try {
       Logger.log("walletconnect", "Sending custom essentials intent request", intentUrl);
       let response = await this.globalIntentService.sendUrlIntent(intentUrl);
-      Logger.log("walletconnect", "Got custom request intent response", response);
+      Logger.log("walletconnect", "Got custom request intent response. Approving WC request", response);
 
       // Approve Call Request
       connector.approveRequest({

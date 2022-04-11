@@ -9,6 +9,7 @@ import { Logger } from 'src/app/logger';
 import { environment } from 'src/environments/environment';
 import { GlobalCredentialTypesService } from '../credential-types/global.credential.types.service';
 import { GlobalDIDSessionsService, IdentityEntry } from '../global.didsessions.service';
+import { GlobalPreferencesService } from '../global.preferences.service';
 import { GlobalService, GlobalServiceManager } from '../global.service.manager';
 import { GlobalStorageService } from '../global.storage.service';
 
@@ -17,8 +18,12 @@ const DID_CHALLENGE = "essentials-credential-toolbox"; // Arbitrary string signe
 export const CRED_TOOLBOX_STORAGE_CTX = "credtoolbox";
 export const CRED_TOOLBOX_LOG_TAG = "credtoolbox";
 
+// PROD
 const SEND_STATS_DELAY_SEC = (24 * 60 * 60); // Min 1 day between each stats upload, min
-const CHECK_SEND_STATS_INTERVAL_MS = 5000; // TMP (5 * 60 * 1000); // Check if it's a right time to send stats every 5 minutes
+const CHECK_SEND_STATS_INTERVAL_MS = (5 * 60 * 1000); // Check if it's a right time to send stats every 5 minutes
+// DEV
+//const SEND_STATS_DELAY_SEC = 0;
+//const CHECK_SEND_STATS_INTERVAL_MS = (20 * 1000);
 
 type CredentialTypeWithContext = {
   context: string; // Context url: 'https://ns.elastos.org/credentials/v1'
@@ -61,6 +66,7 @@ export class GlobalCredentialToolboxService implements GlobalService {
     private didService: DIDService,
     private storage: GlobalStorageService,
     private didAuthService: AuthService,
+    private prefs: GlobalPreferencesService,
     private credentialTypesService: GlobalCredentialTypesService
   ) { }
 
@@ -81,11 +87,17 @@ export class GlobalCredentialToolboxService implements GlobalService {
   }
 
   private async checkIfRightTimeToSendStats() {
-    let lastUploadedTimestamp = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "lastuploaded", 0);
-    if (moment(lastUploadedTimestamp).add(SEND_STATS_DELAY_SEC, "seconds").isBefore(moment())) {
-      Logger.log(CRED_TOOLBOX_LOG_TAG, "It's a good time to send stats");
+    // Only send stats if allowed in privacy settings
+    if (await this.prefs.getSendStatsToCredentialToolbox(GlobalDIDSessionsService.signedInDIDString)) {
+      let lastUploadedTimestamp = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "lastuploaded", 0);
+      if (moment.unix(lastUploadedTimestamp).add(SEND_STATS_DELAY_SEC, "seconds").isBefore(moment())) {
+        Logger.log(CRED_TOOLBOX_LOG_TAG, "It's a good time to send stats");
 
-      await this.sendStatsToService();
+        await this.sendStatsToService();
+      }
+    }
+    else {
+      Logger.log(CRED_TOOLBOX_LOG_TAG, "Not sending credential toolbox stats - disabled by the user");
     }
 
     this.checkSendTimer = setTimeout(() => {
@@ -154,21 +166,22 @@ export class GlobalCredentialToolboxService implements GlobalService {
     for (let credential of credentials) {
       // Resolve pairs of associated context/types
       let credentialTypesWithContexts = await this.credentialTypesService.resolveTypesWithContexts(credential.pluginVerifiableCredential);
+      if (credentialTypesWithContexts && credentialTypesWithContexts.length > 0) {
+        // Send the issuer information only for non self-proclaimed credentials, to preserve
+        // user's anonimity. "Real" issuers of credentials for others are for now considered
+        // as "public apps" for which we don't need to preserve anonimity (at least for now).
+        let credentialIssuer = credential.pluginVerifiableCredential.getIssuer();
+        let issuer: string = null;
+        if (this.didService.getActiveDid().getDIDString() !== credentialIssuer)
+          issuer = credentialIssuer;
 
-      // Send the issuer information only for non self-proclaimed credentials, to preserve
-      // user's anonimity. "Real" issuers of credentials for others are for now considered
-      // as "public apps" for which we don't need to preserve anonimity (at least for now).
-      let credentialIssuer = credential.pluginVerifiableCredential.getIssuer();
-      let issuer: string = null;
-      if (this.didService.getActiveDid().getDIDString() !== credentialIssuer)
-        issuer = credentialIssuer;
-
-      let ownedStat: OwnedCredential = {
-        issuanceDate: moment(credential.pluginVerifiableCredential.getIssuanceDate()).unix(),
-        issuer,
-        types: credentialTypesWithContexts
+        let ownedStat: OwnedCredential = {
+          issuanceDate: moment(credential.pluginVerifiableCredential.getIssuanceDate()).unix(),
+          issuer,
+          types: credentialTypesWithContexts
+        }
+        stats.ownedCredentials.push(ownedStat);
       }
-      stats.ownedCredentials.push(ownedStat);
     }
 
     return stats;

@@ -250,7 +250,7 @@ export const it = {
         'credential-info-type-birthDate': 'Data di nascita',
         'credential-info-type-education': 'Formazione',
         'credential-info-type-gender': 'Genere',
-        'credential-info-type-nation': 'Nazione',
+        'credential-info-type-nationality': 'Nationality',
         'credential-info-type-telephone': 'Telefono',
         'credential-info-type-nickname': 'Soprannome',
         'credential-info-type-birthPlace': 'Luogo di nascita',

@@ -9,6 +9,7 @@ import { ElastosSDKHelper } from './helpers/elastossdk.helper';
 import { Logger } from './logger';
 import { InternalElastosConnector } from './model/internalelastosconnector';
 import { GlobalCredentialToolboxService } from './services/credential-toolbox/global.credential-toolbox.service';
+import { GlobalCredentialTypesService } from './services/credential-types/global.credential.types.service';
 import { GlobalAppBackgroundService } from './services/global.appbackground.service';
 import { GlobalBTCRPCService } from './services/global.btc.service';
 import { GlobalDIDSessionsService } from './services/global.didsessions.service';
@@ -63,6 +64,7 @@ export class AppComponent {
     private globalStartupService: GlobalStartupService,
     public globalEthereumService: GlobalEthereumRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     public globalBTCService: GlobalBTCRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
+    private credentialTypesService: GlobalCredentialTypesService,
     private credentialToolboxService: GlobalCredentialToolboxService,
     private firebase: FirebaseX
   ) {
@@ -107,6 +109,7 @@ export class AppComponent {
       await this.publicationService.init();
       await this.walletConnect.init();
       await this.globalHiveService.init();
+      await this.credentialTypesService.init();
       await this.credentialToolboxService.init();
       void this.globalFirebaseService.init();
 

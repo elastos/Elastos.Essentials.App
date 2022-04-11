@@ -360,7 +360,7 @@ export class ProfilePage {
         return "mail";
       case "birthDate":
         return "calendar";
-      case "nation":
+      case "nationality":
         return "flag";
       case "gender":
         return "transgender";

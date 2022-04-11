@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DeveloperService } from '../../services/developer.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SettingsService } from '../../services/settings.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { App } from "src/app/model/app.enum";
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DeveloperService } from '../../services/developer.service';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-privacy',
@@ -18,6 +18,7 @@ export class PrivacyPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public publishIdentityMedium = 'assist'; // assist or wallet
+  public sendCredentialToolboxStats = true;
 
   constructor(
     public settings: SettingsService,
@@ -28,11 +29,12 @@ export class PrivacyPage implements OnInit {
     private prefs: GlobalPreferencesService
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   async ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.privacy'));
     await this.fetchPublishIdentityMedium();
+    await this.fetchCredentialToolboxStats();
   }
 
   ionViewWillLeave() {
@@ -43,7 +45,7 @@ export class PrivacyPage implements OnInit {
   }
 
   public getPublishIdentityTitle(): string {
-    if(this.publishIdentityMedium === 'assist') {
+    if (this.publishIdentityMedium === 'assist') {
       return this.translate.instant('settings.publish-identity-medium-assist');
     } else {
       return this.translate.instant('settings.publish-identity-medium-wallet');
@@ -60,7 +62,24 @@ export class PrivacyPage implements OnInit {
     await this.prefs.setPublishIdentityMedium(GlobalDIDSessionsService.signedInDIDString, this.publishIdentityMedium as any);
   }
 
-  open(router: string){
+  private async fetchCredentialToolboxStats(): Promise<void> {
+    this.sendCredentialToolboxStats = await this.prefs.getSendStatsToCredentialToolbox(GlobalDIDSessionsService.signedInDIDString);
+  }
+
+  public getCredentialToolboxTitle(): string {
+    if (this.sendCredentialToolboxStats) {
+      return this.translate.instant('settings.privacy-send-credential-toolbox-stats');
+    } else {
+      return this.translate.instant('settings.privacy-dont-send-credential-toolbox-stats');
+    }
+  }
+
+  async toggleCredentialToolboxStats(): Promise<void> {
+    this.sendCredentialToolboxStats = !this.sendCredentialToolboxStats;
+    await this.prefs.setSendStatsToCredentialToolbox(GlobalDIDSessionsService.signedInDIDString, this.sendCredentialToolboxStats);
+  }
+
+  open(router: string) {
     void this.nav.navigateTo(App.SETTINGS, router);
   }
 }

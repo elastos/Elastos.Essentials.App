@@ -1,14 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
-
-import { BasicCredentialInfo } from '../../model/basiccredentialinfo.model';
-import { BasicCredentialsService } from '../../services/basiccredentials.service';
-import { BasicCredentialEntry } from '../../model/basiccredentialentry.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { BasicCredentialEntry } from '../../model/basiccredentialentry.model';
+import { BasicCredentialInfo } from '../../model/basiccredentialinfo.model';
+import { BasicCredentialsService } from '../../services/basiccredentials.service';
+
 
 @Component({
   selector: 'page-profileentrypicker',
@@ -33,7 +33,7 @@ export class ProfileEntryPickerPage {
     // List of keys we don't want to show (probably already existing in the profile)
     let filterOutKeys: string[] = navParams.get("filterOut");
 
-    this.availableItems = this.basicCredentialService.getBasicCredentialEntryList().filter((item)=>{
+    this.availableItems = this.basicCredentialService.getBasicCredentialEntryList().filter((item) => {
       return !filterOutKeys.includes(item.key) && item.key !== 'avatar';
     });
   }
@@ -42,7 +42,7 @@ export class ProfileEntryPickerPage {
     this.titleBar.setNavigationMode(null); // Modals are not part of page stack, therefore we dont use navigation mode
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.modalCtrl.dismiss();
+      void this.modalCtrl.dismiss();
     });
   }
 
@@ -55,12 +55,12 @@ export class ProfileEntryPickerPage {
 
   selectItem(item: BasicCredentialInfo) {
     Logger.log('Identity', "Picker profile info entry:", item);
-    this.modalCtrl.dismiss({
+    void this.modalCtrl.dismiss({
       pickedItem: item
     })
   }
 
   close() {
-    this.modalCtrl.dismiss(null);
+    void this.modalCtrl.dismiss(null);
   }
 }

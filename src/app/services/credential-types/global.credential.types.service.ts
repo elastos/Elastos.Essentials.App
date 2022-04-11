@@ -3,12 +3,15 @@ import { Injectable, NgZone } from "@angular/core";
 import { ToastController } from "@ionic/angular";
 import * as jsonld from "jsonld";
 import { Url } from 'jsonld/jsonld-spec';
+import moment from "moment";
 import { firstValueFrom } from "rxjs";
 import { DIDDocument } from "src/app/identity/model/diddocument.model";
 import { DIDURL } from "src/app/identity/model/didurl.model";
 import { DIDDocumentsService } from "src/app/identity/services/diddocuments.service";
 import { Logger } from "src/app/logger";
+import { JSONObject } from "src/app/model/json";
 import { Events } from "src/app/services/events.service";
+import { TimeBasedPersistentCache } from "src/app/wallet/model/timebasedpersistentcache";
 import { DIDService } from "../../identity/services/did.service";
 import { LocalStorage } from "../../identity/services/localstorage";
 import { Native } from "../../identity/services/native";
@@ -18,7 +21,7 @@ export type CredentialTypeWithContext = {
   shortType: string;
 }
 
-type ContextPayload = {
+type ContextPayload = JSONObject & {
   "@context": unknown;
 }
 
@@ -42,10 +45,9 @@ type ContextPayload = {
 })
 export class GlobalCredentialTypesService {
   // Cache for fetched context JSON (from http urls or from the eid chain)
-  // TODO: MAKE IT PERSISTENT WITH EXPIRATION DATE
-  private contextsCache: {
-    [contextUrl: string]: ContextPayload
-  } = {};
+  // This cache is NOT persistent, it is populated again at every app start (for instance,
+  // to make sure we get the latest types from DID document, if the service endpoint is updated).
+  private contextsCache: TimeBasedPersistentCache<ContextPayload>;
 
   constructor(
     public zone: NgZone,
@@ -56,7 +58,13 @@ export class GlobalCredentialTypesService {
     private didService: DIDService,
     private didDocumentsService: DIDDocumentsService,
     private http: HttpClient
-  ) { }
+  ) {
+  }
+
+  // Called at boot, not related to the active user
+  public async init(): Promise<void> {
+    this.contextsCache = await TimeBasedPersistentCache.loadOrCreate("credentialcontextpayloads", true);
+  }
 
   /**
    * From a given credential that contains types and contexts, returns the list of
@@ -84,8 +92,6 @@ export class GlobalCredentialTypesService {
       return [];
     }
 
-    console.log("credentialJson", credentialJson)
-
     // Make sure we have "https://www.w3.org/2018/credentials/v1" has first entry in the context,
     // this is a W3C spec requirement
     if (!("@context" in credentialJson) || credentialJson["@context"].indexOf("https://www.w3.org/2018/credentials/v1") !== 0) {
@@ -110,8 +116,6 @@ export class GlobalCredentialTypesService {
     if (expanded && expanded.length > 0) {
       // Use only the first output entry. There is normally only one.
       let resultJsonLDNode = expanded[0];
-
-      console.log("expanded", expanded);
 
       // Expanded types identifiers can be a string or an array of string. We make this become an array, always.
       return Array.isArray(resultJsonLDNode["@type"]) ? resultJsonLDNode["@type"] : [resultJsonLDNode["@type"]];
@@ -141,7 +145,7 @@ export class GlobalCredentialTypesService {
       return [];
     }
 
-    console.log("credentialJson", credentialJson)
+    //console.log("credentialJson", credentialJson)
 
     // Make sure we have "https://www.w3.org/2018/credentials/v1" has first entry in the context,
     // this is a W3C spec requirement
@@ -158,6 +162,8 @@ export class GlobalCredentialTypesService {
         Logger.warn("credentialtypes", "Failed to fetch credential type context for", context);
         continue;
       }
+
+      //console.log("context payload", context, contextPayload)
 
       if ("@context" in contextPayload) {
         contextPayloadsWithUrls.push({
@@ -183,8 +189,10 @@ export class GlobalCredentialTypesService {
   }
 
   private async fetchContext(contextUrl: string): Promise<ContextPayload> {
-    if (contextUrl in this.contextsCache)
-      return this.contextsCache[contextUrl];
+    let cacheEntry = this.contextsCache.get(contextUrl);
+    if (cacheEntry) {
+      return cacheEntry.data;
+    }
 
     if (contextUrl.startsWith("http")) {
       let payload = await firstValueFrom(this.http.get(contextUrl, {
@@ -193,33 +201,42 @@ export class GlobalCredentialTypesService {
         }
       }));
 
-      this.contextsCache[contextUrl] = payload as ContextPayload;
+      this.contextsCache.set(contextUrl, payload as ContextPayload, moment().unix());
+      // NOTE - don't ssve the cache = not persistent on disk - await this.contextsCache.save();
 
       // TODO: catch network errors
 
-      return this.contextsCache[contextUrl]
+      return payload as ContextPayload;
     }
     else if (contextUrl.startsWith("did:")) { // EID url
       // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-      return new Promise(async resolve => {
-        // Compute publisher's DID string based on context url
-        let { publisher, shortCredentialId } = this.extractEIDContext(contextUrl);
-        if (!publisher) {
-          resolve(null);
-          return;
+      return new Promise(async (resolve, reject) => {
+        try {
+          console.log("fetchContext in promise", contextUrl)
+          // Compute publisher's DID string based on context url
+          let { publisher, shortType } = this.extractEIDContext(contextUrl);
+          if (!publisher) {
+            Logger.warn("credentialtypes", "Failed to extract publisher from context", contextUrl);
+            resolve(null);
+            return;
+          }
+
+          let docStatus = await this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(publisher);
+          if (docStatus.document) {
+            let serviceId = `${publisher}#${shortType}`;
+            let contextPayload = this.getContextPayloadFromDIDDocument(docStatus.document, serviceId);
+
+            this.contextsCache.set(contextUrl, contextPayload, moment().unix());
+            // NOTE - don't save the cache = not persistent on disk - await this.contextsCache.save();
+
+            resolve(contextPayload);
+          }
+          else {
+            resolve(null);
+          }
         }
-
-        let docStatus = await this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(publisher);
-        if (docStatus.document) {
-          let credentialId = `${publisher}#${shortCredentialId}`;
-          let contextPayload = this.getContextPayloadFromDIDDocument(docStatus.document, credentialId);
-
-          this.contextsCache[contextUrl] = contextPayload;
-
-          resolve(this.contextsCache[contextUrl]);
-        }
-        else {
-          resolve(null);
+        catch (e) {
+          reject(e);
         }
       });
     }
@@ -230,9 +247,9 @@ export class GlobalCredentialTypesService {
     }
   }
 
-  // From: did://elastos/insTmxdDDuS9wHHfeYD1h5C2onEHh3D8Vq/BenCredential9733350
-  // To: did:elastos:insTmxdDDuS9wHHfeYD1h5C2onEHh3D8Vq + BenCredential9733350
-  private extractEIDContext(context: string): { publisher: string, shortCredentialId: string } {
+  // From: did://elastos/insTmxdDDuS9wHHfeYD1h5C2onEHh3D8Vq/BenCredential
+  // To: did:elastos:insTmxdDDuS9wHHfeYD1h5C2onEHh3D8Vq + BenCredential
+  private extractEIDContext(context: string): { publisher: string, shortType: string } {
     let regex = new RegExp(/^did:\/\/elastos\/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/);
     let parts = regex.exec(context);
 
@@ -243,22 +260,44 @@ export class GlobalCredentialTypesService {
 
     return {
       publisher: `did:elastos:${parts[1]}`,
-      shortCredentialId: parts[2]
+      shortType: parts[2]
     }
   }
 
-  public getContextPayloadFromDIDDocument(document: DIDDocument, credentialId: string): ContextPayload {
-    let credential = document.getCredentialById(new DIDURL(credentialId));
-    if (!credential)
-      return null;
-
-    let subject = credential.getSubject();
-    if (!("@context" in subject)) {
-      Logger.warn("credentialtypes", `Credential ${credentialId} found but no @context in the subject. Invalid format.`);
+  /**
+   * Searches the given service in the DID document. If found, uses the service endpoint to
+   * get the right target credential id in the same document, and gets the context payload out of it.
+   */
+  public getContextPayloadFromDIDDocument(document: DIDDocument, serviceId: string): ContextPayload {
+    let service = document.getService(serviceId);
+    if (!service) {
+      Logger.warn("credentialtypes", "The DID document has no service with ID: " + serviceId);
       return null;
     }
 
-    return credential.getSubject();
+    let targetCredentialId = service.getEndpoint();
+
+    let credential = document.getCredentialById(new DIDURL(targetCredentialId));
+    if (!credential) {
+      Logger.warn("credentialtypes", "The DID document has no credential context credential that matches (service id, credential id): ", serviceId, targetCredentialId);
+      return null;
+    }
+
+    /**
+     * Format: https://ns.elastos.org/credentials/context/v1
+     * credentialSubject: {
+     *   definition: {
+     *      @context: {}
+     *   }
+     * }
+     */
+    let subject = credential.getSubject();
+    if (!("@definition" in subject) || !("@context" in subject["definition"])) {
+      Logger.warn("credentialtypes", `Credential ${targetCredentialId} found but no definition/@context in the subject. Invalid format.`);
+      return null;
+    }
+
+    return subject["definition"];
   }
 
   /**
