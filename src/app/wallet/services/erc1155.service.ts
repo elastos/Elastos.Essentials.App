@@ -37,11 +37,11 @@ type ERC1155Transfer = {
     event: "TransferSingle";
     // raw: {data: '0x57919fe4ec94a175881ded015092d6cc6ec106e84ac15d0e…0000000000000000000000000000000000000000000000001', topics: Array(4)}
     returnValues: { // Matches the TransferSIngle event signature
-        _operator: string; // "0x02E8AD0687D583e2F6A7e5b82144025f30e26aA0"
-        _from: string; // sender - "0x02E8AD0687D583e2F6A7e5b82144025f30e26aA0"
-        _to: string; // receiver - "0xbA1ddcB94B3F8FE5d1C0b2623cF221e099f485d1"
-        _id: string; // token ID - "39608514200588865283440841425600775513887709291921581824093434814539493127892"
-        _value: string; // number of NFTs transfered "1"
+        [0]: string; // operator - "0x02E8AD0687D583e2F6A7e5b82144025f30e26aA0"
+        [1]: string; // sender - "0x02E8AD0687D583e2F6A7e5b82144025f30e26aA0"
+        [2]: string; // receiver - "0xbA1ddcB94B3F8FE5d1C0b2623cF221e099f485d1"
+        [3]: string; // token ID - "39608514200588865283440841425600775513887709291921581824093434814539493127892"
+        [4]: string; // number of NFTs transfered "1"
     }
 }
 
@@ -146,12 +146,12 @@ export class ERC1155Service {
             let ownedTokenIds: { [tokenId: string]: boolean } = {};
             allTransferEvents.forEach(transferEvent => {
                 // User account as sender? Remove the token from the list
-                if (transferEvent.returnValues._from.toLowerCase() === accountAddress.toLowerCase())
-                    delete ownedTokenIds[transferEvent.returnValues._id];
+                if (transferEvent.returnValues[1].toLowerCase() === accountAddress.toLowerCase())
+                    delete ownedTokenIds[transferEvent.returnValues[3]];
 
                 // User account as received? Add the token to the list
-                if (transferEvent.returnValues._to.toLowerCase() === accountAddress.toLowerCase())
-                    ownedTokenIds[transferEvent.returnValues._id] = true;
+                if (transferEvent.returnValues[2].toLowerCase() === accountAddress.toLowerCase())
+                    ownedTokenIds[transferEvent.returnValues[3]] = true;
             });
 
             // Check if we have a NFT provider available to provide more info about this
