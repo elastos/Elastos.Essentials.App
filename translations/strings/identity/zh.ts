@@ -269,6 +269,7 @@ export const zh = {
         'credential-info-type-tiktok': '抖音',
         'credential-info-type-paypal': 'Paypal',
         'credential-info-type-venmo': 'Venmo',
+        'credential-info-type-linkedin': 'LinkedIn',
 
         /******************** Messages ********************/
         // errors

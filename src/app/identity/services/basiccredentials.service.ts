@@ -38,6 +38,7 @@ export class BasicCredentialsService {
       new BasicCredentialEntry("url", "", "https://ns.elastos.org/credentials/profile/url/v1", "URLCredential"),
 
       // Social credentials
+      new BasicCredentialEntry("linkedin", "", "https://ns.elastos.org/credentials/social/linkedin/v1", "LinkedinCredential"),
       new BasicCredentialEntry("facebook", "", "https://ns.elastos.org/credentials/social/facebook/v1", "FacebookCredential"),
       new BasicCredentialEntry("instagram", "", "https://ns.elastos.org/credentials/social/instagram/v1", "InstagramCredential"),
       new BasicCredentialEntry("twitter", "", "https://ns.elastos.org/credentials/social/twitter/v1", "TwitterCredential"),

@@ -270,6 +270,7 @@ export const fr = {
         'credential-info-type-tiktok': 'TikTok',
         'credential-info-type-paypal': 'Paypal',
         'credential-info-type-venmo': 'Venmo',
+        'credential-info-type-linkedin': 'LinkedIn',
 
         /******************** Messages ********************/
         // errors
