@@ -1,11 +1,11 @@
 import { Logger } from "src/app/logger";
 import { Util } from "src/app/model/util";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
-import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../coin";
 import { ElastosMainChainWalletNetworkOptions } from "../../masterwallets/wallet.types";
 import { ElastosTransaction, PaginatedTransactions } from "../../tx-providers/transaction.types";
 import { AnySubWallet, SubWallet } from "../base/subwallets/subwallet";
+import { MainChainSPVSDKSafe } from "./mainchain/safes/mainchain.spvsdk.safe";
 
 export class WalletHelper {
     /**
@@ -16,8 +16,7 @@ export class WalletHelper {
     }
 
     public static async getOwnerAddress(subWallet: AnySubWallet): Promise<string> {
-        return await SPVService.instance.getOwnerAddress(
-            jsToSpvWalletId(subWallet.masterWallet.id), subWallet.id);
+        return await (subWallet.networkWallet.safe as MainChainSPVSDKSafe).getOwnerAddress();
     }
 
     public static async getTransactionByAddress(subWallet: SubWallet<any, ElastosMainChainWalletNetworkOptions>, internalAddress: boolean, transactionLimit: number, timestamp = 0): Promise<PaginatedTransactions<ElastosTransaction>[]> {
@@ -35,8 +34,8 @@ export class WalletHelper {
                     break;
                 }
             }
-            addressArray = await SPVService.instance.getAddresses(
-                jsToSpvWalletId(subWallet.masterWallet.id), subWallet.id, startIndex, count, internalAddress);
+            addressArray = await subWallet.networkWallet.safe.getAddresses(
+                startIndex, count, internalAddress);
             if ((startIndex === 0) && !internalAddress && (subWallet.id === StandardCoinName.ELA)) {
                 // OwnerAddress: for register dpos node, CRC.
                 const ownerAddress = await WalletHelper.getOwnerAddress(subWallet);

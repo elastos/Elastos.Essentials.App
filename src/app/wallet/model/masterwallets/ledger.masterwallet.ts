@@ -1,7 +1,7 @@
 import { Logger } from "src/app/logger";
 import { AnyNetwork } from "../networks/network";
 import { MasterWallet } from "./masterwallet";
-import { LedgerAccountOptions, SerializedLedgerMasterWallet } from "./wallet.types";
+import { ElastosMainChainWalletNetworkOptions, LedgerAccountOptions, SerializedLedgerMasterWallet } from "./wallet.types";
 
 export class LedgerMasterWallet extends MasterWallet {
   public deviceID = '';
@@ -9,6 +9,13 @@ export class LedgerMasterWallet extends MasterWallet {
 
   public static newFromSerializedWallet(serialized: SerializedLedgerMasterWallet): LedgerMasterWallet {
     let masterWallet = new LedgerMasterWallet();
+
+    let elastosNetworkOptions: ElastosMainChainWalletNetworkOptions = {
+      network: "elastos", // mainchain
+      singleAddress: true
+    };
+
+    serialized.networkOptions = [elastosNetworkOptions]
 
     // Base type deserialization
     masterWallet.deserialize(serialized);
@@ -42,7 +49,7 @@ export class LedgerMasterWallet extends MasterWallet {
   }
 
   public supportsNetwork(network: AnyNetwork): boolean {
-    console.log("Ledger masterwallet supportsNetwork not implemented");
+    // console.log("Ledger masterwallet supportsNetwork not implemented");
     return true; // TODO: implement
   }
 

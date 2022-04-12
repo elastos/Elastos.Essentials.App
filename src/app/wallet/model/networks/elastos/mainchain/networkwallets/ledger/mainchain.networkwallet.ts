@@ -34,10 +34,15 @@ export class ElastosMainChainLedgerNetworkWallet extends ElastosLedgerNetworkWal
     }
   }
 
-  public getAddresses(): Promise<WalletAddressInfo[]> {
-    let addresses = Promise.resolve([]);
+  public async getAddresses(): Promise<WalletAddressInfo[]> {
+    let addresses = [];
 
-    // TODO: get addresses from ledger
+    if (this.subWallets[StandardCoinName.ELA]) {
+      addresses.push({
+        title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
+        address: await this.subWallets[StandardCoinName.ELA].getCurrentReceiverAddress()
+      });
+    }
 
     return addresses;
   }

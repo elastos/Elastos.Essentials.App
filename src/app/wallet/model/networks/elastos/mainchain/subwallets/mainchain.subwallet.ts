@@ -868,7 +868,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             try {
                 const resultArray = await GlobalJsonRPCService.instance.httpPost(rpcApiUrl, paramArray);
                 for (const result of resultArray) {
-                    balanceOfSELA = balanceOfSELA.plus(new BigNumber(result.result).multipliedBy(this.tokenAmountMulipleTimes));
+                    if (result.result) {
+                      balanceOfSELA = balanceOfSELA.plus(new BigNumber(result.result).multipliedBy(this.tokenAmountMulipleTimes));
+                    }
                 }
                 alreadyGetBalance = true;
                 break;
