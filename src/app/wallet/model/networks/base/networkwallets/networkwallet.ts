@@ -494,33 +494,38 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         void (async () => {
             let accountAddress = await this.getMainEvmSubWallet().getCurrentReceiverAddress();
             if (nft.type == NFTType.ERC721) {
-                ERC721Service.instance.fetchAllAssets(accountAddress, nft.contractAddress).subscribe(event => {
-                    console.log("fetchAllAssets callback")
-                    nft.assets = event.assets; // can be null (couldn't fetch assets) or empty (0 assets)
-                    subject.next(nft.assets);
-                }, null, () => {
-                    // Complete
-                    nft.balance = nft.assets ? nft.assets.length : -1; // -1 to remember that we can't know the real number of assets
+                ERC721Service.instance.fetchAllAssets(accountAddress, nft.contractAddress).subscribe({
+                    next: event => {
+                        nft.assets = event.assets; // can be null (couldn't fetch assets) or empty (0 assets)
+                        subject.next(nft.assets);
+                    },
+                    complete: () => {
+                        // Complete
+                        nft.balance = nft.assets ? nft.assets.length : -1; // -1 to remember that we can't know the real number of assets
 
-                    // Update wallet's NFT with the new data
-                    void this.updateNFT(nft);
+                        // Update wallet's NFT with the new data
+                        void this.updateNFT(nft);
 
-                    subject.complete();
+                        subject.complete();
+                    }
                 });
             }
             else if (nft.type == NFTType.ERC1155) {
-                let assets = await ERC1155Service.instance.fetchAllAssets(accountAddress, nft.contractAddress);
-                nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
+                ERC1155Service.instance.fetchAllAssets(accountAddress, nft.contractAddress).subscribe({
+                    next: event => {
+                        nft.assets = event.assets; // can be null (couldn't fetch assets) or empty (0 assets)
+                        subject.next(nft.assets);
+                    },
+                    complete: () => {
+                        // Complete
+                        nft.balance = nft.assets ? nft.assets.length : -1; // -1 to remember that we can't know the real number of assets
 
-                // Complete
-                nft.balance = nft.assets ? nft.assets.length : -1; // -1 to remember that we can't know the real number of assets
+                        // Update wallet's NFT with the new data
+                        void this.updateNFT(nft);
 
-                // Update wallet's NFT with the new data
-                void this.updateNFT(nft);
-
-                // TODO: improve like for ERC721 - useless now
-                subject.next(nft.assets || []);
-                subject.complete();
+                        subject.complete();
+                    }
+                });
             }
         })();
 

@@ -32,10 +32,30 @@ import { WalletNetworkService } from '../network.service';
 import { WalletPrefsService } from '../pref.service';
 
 
-type FetchAssetsEvent = {
+export type FetchAssetsEvent = {
     //fetchComplete: boolean; // Whether this is the last event of a fetch operation or not.
     assets: NFTAsset[]; // On going list of assets. Populated as more and more NFTs are discovered.
 }
+
+type ERC721Transfer = {
+    address: string; // NFT contract address - "0x020c7303664bc88ae92cE3D380BF361E03B78B81"
+    blockHash: string; // "0xf11791e3662ac314eee6f57eafcb3448754aa7198f2a93a505ddc5679b933894"
+    blockNumber: number; // 9635607
+    event: "Transfer";
+    // raw: {data: '0x57919fe4ec94a175881ded015092d6cc6ec106e84ac15d0e…0000000000000000000000000000000000000000000000001', topics: Array(4)}
+    returnValues: { // Matches the Transfer event signature
+        [0]: string; // sender - "0x02E8AD0687D583e2F6A7e5b82144025f30e26aA0"
+        [1]: string; // receiver - "0xbA1ddcB94B3F8FE5d1C0b2623cF221e099f485d1"
+        [2]: string; // token ID - "39608514200588865283440841425600775513887709291921581824093434814539493127892"
+    }
+}
+
+/**
+ * List of popular IPFS gateways that we want to replace with our preferred gateway instead.
+ */
+const IPFSGatewayPrefixesToReplace = [
+    "https://gateway.pinata.cloud/ipfs"
+]
 
 @Injectable({
     providedIn: 'root'
@@ -126,11 +146,20 @@ export class ERC721Service {
                     assetsCouldBeRetrieved = true;
                 }
                 catch (e) {
-                    // Method not implemented. Try the standard enumeration (ERC721Enumerable)
-                    for (let i = 0; i < assetsNumber; i++) {
-                        const tokenID = await erc721Contract.methods.tokenOfOwnerByIndex(accountAddress, i).call();
+                    // Still no such method? Try the transfer event discovery way
+                    tokenIDs = await this.fetchTokenIDsFromTransferEvents(accountAddress, contractAddress);
+                    if (tokenIDs)
                         assetsCouldBeRetrieved = true;
-                        tokenIDs.push(tokenID);
+                    else {
+                        // Try the standard enumeration (ERC721Enumerable)
+                        tokenIDs = [];
+                        for (let i = 0; i < assetsNumber; i++) {
+                            const tokenID = await erc721Contract.methods.tokenOfOwnerByIndex(accountAddress, i).call();
+                            assetsCouldBeRetrieved = true;
+
+                            if (tokenID != null && tokenID != undefined)
+                                tokenIDs.push(tokenID);
+                        }
                     }
                 }
                 Logger.log("wallet", "ERC721 token IDs:", tokenIDs);
@@ -139,13 +168,10 @@ export class ERC721Service {
                     let tokenID = tokenIDs[i];
                     void this.fetchTokenID(erc721Contract, tokenID).then(asset => {
                         assets.push(asset);
-                        console.log("OBS NEXT", assets);
                         subject.next({ assets });
 
-                        if (assets.length === tokenIDs.length) {
-                            console.log("OBS COMPLETE", assets);
+                        if (assets.length === tokenIDs.length)
                             subject.complete();
-                        }
                     });
                 }
             }
@@ -156,8 +182,9 @@ export class ERC721Service {
 
             // If assets list couldn't be fetched, return null so that the caller knows this
             // doesn't mean we have "0" asset.
-            if (!assetsCouldBeRetrieved)
-                return null;
+            if (!assetsCouldBeRetrieved) {
+                subject.complete();
+            }
         })();
 
         return observable;
@@ -190,6 +217,67 @@ export class ERC721Service {
         }
 
         return asset;
+    }
+
+    /**
+     * Method to discover ERC721 tokens owned by a user based on Transfer logs.
+     */
+    public async fetchTokenIDsFromTransferEvents(accountAddress: string, contractAddress: string): Promise<any[]> {
+        // User's wallet address on 32 bytes
+        let paddedAccountAddress = '0x' + accountAddress.substr(2).padStart(64, "0"); // 64 = 32 bytes * 2 chars per byte // 20 bytes to 32 bytes
+
+        try {
+            // Get transfer logs from the EVM node
+            // More info at: https://docs.alchemy.com/alchemy/guides/eth_getlogs#what-are-event-signatures
+            const erc721Contract = new (this.getWeb3()).eth.Contract(this.erc721ABI, contractAddress, { from: accountAddress });
+            let transferEventTopic = this.web3.utils.sha3("Transfer(address,address,uint256)");
+            let transferInEvents = await erc721Contract.getPastEvents('Transfer', {
+                // All blocks
+                fromBlock: 0, toBlock: 'latest',
+                // transfer event signature + 2nd parameter should be the account address. (meaning "received the NFT")
+                topics: [
+                    transferEventTopic,
+                    null,
+                    paddedAccountAddress // Received by us
+                ]
+            }) as any as ERC721Transfer[];
+
+            // Also get transfer out events, so we can know which tokens are still in our possession
+            let transferOutEvents = await erc721Contract.getPastEvents('Transfer', {
+                // All blocks
+                fromBlock: 0, toBlock: 'latest',
+                // transfer event signature + 1st parameter should be the account address. (meaning "sent the NFT")
+                topics: [
+                    transferEventTopic,
+                    paddedAccountAddress // Sent by us
+                ]
+            }) as any as ERC721Transfer[];
+
+            // Based on all transfers (in/out), rebuild the history of NFT ownerships until we can get
+            // The list of tokens that we still own
+            let allTransferEvents = [...transferInEvents, ...transferOutEvents];
+
+            // Sort by date ASC
+            allTransferEvents = allTransferEvents.sort((a, b) => a.blockNumber - b.blockNumber);
+
+            // Retrace history from old blocks to recent blocks
+            let ownedTokenIds: { [tokenId: string]: boolean } = {};
+            allTransferEvents.forEach(transferEvent => {
+                // User account as sender? Remove the token from the list
+                if (transferEvent.returnValues[0].toLowerCase() === accountAddress.toLowerCase())
+                    delete ownedTokenIds[transferEvent.returnValues[2]];
+
+                // User account as received? Add the token to the list
+                if (transferEvent.returnValues[1].toLowerCase() === accountAddress.toLowerCase())
+                    ownedTokenIds[transferEvent.returnValues[2]] = true;
+            });
+
+            return Object.keys(ownedTokenIds);
+        }
+        catch (e) {
+            Logger.warn("wallet", "Failed to get ERC1155 events", e);
+            return null;
+        }
     }
 
     /**
