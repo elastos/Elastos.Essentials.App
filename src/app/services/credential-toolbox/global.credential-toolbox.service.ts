@@ -19,11 +19,11 @@ export const CRED_TOOLBOX_STORAGE_CTX = "credtoolbox";
 export const CRED_TOOLBOX_LOG_TAG = "credtoolbox";
 
 // PROD
-const SEND_STATS_DELAY_SEC = (24 * 60 * 60); // Min 1 day between each stats upload, min
-const CHECK_SEND_STATS_INTERVAL_MS = (5 * 60 * 1000); // Check if it's a right time to send stats every 5 minutes
+//const SEND_STATS_DELAY_SEC = (24 * 60 * 60); // Min 1 day between each stats upload, min
+//const CHECK_SEND_STATS_INTERVAL_MS = (5 * 60 * 1000); // Check if it's a right time to send stats every 5 minutes
 // DEV
-//const SEND_STATS_DELAY_SEC = 0;
-//const CHECK_SEND_STATS_INTERVAL_MS = (20 * 1000);
+const SEND_STATS_DELAY_SEC = 0;
+const CHECK_SEND_STATS_INTERVAL_MS = (20 * 1000);
 
 type CredentialTypeWithContext = {
   context: string; // Context url: 'https://ns.elastos.org/credentials/v1'

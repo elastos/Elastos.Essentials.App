@@ -292,8 +292,8 @@ export class GlobalCredentialTypesService {
      * }
      */
     let subject = credential.getSubject();
-    if (!("@definition" in subject) || !("@context" in subject["definition"])) {
-      Logger.warn("credentialtypes", `Credential ${targetCredentialId} found but no definition/@context in the subject. Invalid format.`);
+    if (!("definition" in subject) || !("@context" in subject["definition"])) {
+      Logger.warn("credentialtypes", `Credential ${targetCredentialId} found but no definition/@context in the subject. Invalid format.`, subject);
       return null;
     }
 

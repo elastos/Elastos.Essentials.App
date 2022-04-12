@@ -62,3 +62,6 @@ writeFile('./src/environments/environment.prod.ts', prodEnvironmentFile, functio
     console.log(`environment.prod.ts file generated`);
   }
 });
+
+console.log("DEV environment is going to run with the following configuration:");
+console.log(devEnv);
