@@ -250,7 +250,7 @@ export const en = {
         'credential-info-type-birthDate': 'Birth date',
         'credential-info-type-education': 'Education',
         'credential-info-type-gender': 'Gender',
-        'credential-info-type-nation': 'Country',
+        'credential-info-type-nationality': 'Nationality',
         'credential-info-type-telephone': 'Telephone',
         'credential-info-type-nickname': 'Nickname',
         'credential-info-type-birthPlace': 'Place of birth',
@@ -269,6 +269,7 @@ export const en = {
         'credential-info-type-tiktok': 'TikTok',
         'credential-info-type-paypal': 'Paypal',
         'credential-info-type-venmo': 'Venmo',
+        'credential-info-type-linkedin': 'LinkedIn',
 
         /******************** Messages ********************/
         // errors

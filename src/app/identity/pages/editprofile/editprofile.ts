@@ -112,18 +112,18 @@ export class EditProfilePage {
 
     let language = GlobalLanguageService.instance.activeLanguage.value;
     switch (language) {
-        case 'zh':
-            this.datetime_locale = 'zh';
-            break;
-        case 'fr':
-            this.datetime_locale = 'fr-FR';
-            break;
-        case 'it':
-            this.datetime_locale = 'it';
-            break;
-        default:
-            this.datetime_locale = 'en-US';
-            break;
+      case 'zh':
+        this.datetime_locale = 'zh';
+        break;
+      case 'fr':
+        this.datetime_locale = 'fr-FR';
+        break;
+      case 'it':
+        this.datetime_locale = 'it';
+        break;
+      default:
+        this.datetime_locale = 'en-US';
+        break;
     }
 
     this.showMenu();
@@ -180,7 +180,7 @@ export class EditProfilePage {
   entryIsStandardText(entry: BasicCredentialEntry): boolean {
     let specialEntries = [
       "avatar",
-      "nation",
+      "nationality",
       "birthDate",
       "email",
       "gender",
@@ -198,7 +198,7 @@ export class EditProfilePage {
     entry.value = entry.value.split("T")[0];
   }
 
-  /********** For 'nation' entry **********/
+  /********** For 'nationality' entry **********/
   async selectCountry(countryEntry: BasicCredentialEntry) {
     Logger.log('Identity', "CountryEntry: " + countryEntry.key);
     this.selectCountrySubscription = this.events.subscribe("selectarea", (params: CountryCodeInfo) => {
@@ -283,7 +283,7 @@ export class EditProfilePage {
           let entry: BasicCredentialEntry = this.profile.getEntryByKey('avatar');
           let avatar = this.profileService.buildAvatar("image/png", "elastoshive", avatarHiveURL);
           if (entry == null) {
-            entry = new BasicCredentialEntry("avatar", null, true);
+            entry = new BasicCredentialEntry("avatar", null, null, null, true);
             entry.value = avatar;
             this.profile.setValue(entry, entry.value, true);
           } else {

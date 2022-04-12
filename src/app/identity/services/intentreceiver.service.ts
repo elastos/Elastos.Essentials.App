@@ -124,6 +124,19 @@ export class IntentReceiverService {
                     void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
+            case "credcontextimport":
+                Logger.log('identity', "Received credential context import intent request");
+                if (this.checkCredContextImportIntentParams(intent)) {
+                    await this.uxService.loadIdentityAndShow(false);
+
+                    this.setOnGoingIntentId(intent.intentId); // Save globally in case the launched screen needs to send a child intent
+                    void this.native.setRootRouter("/identity/intents/credcontextimportrequest");
+                }
+                else {
+                    // Something wrong happened while trying to handle the intent: send intent response with error
+                    void this.showErrorAndExitFromIntent(intent);
+                }
+                break;
             case "credissue":
                 Logger.log('identity', "Received credential issue intent request");
                 if (this.checkCredIssueIntentParams(intent)) {
@@ -375,6 +388,18 @@ export class IntentReceiverService {
         Logger.log('identity', "Checking credimport intent parameters", intent);
         if (Util.isEmptyObject(intent.params) || Util.isEmptyObject(intent.params.credentials)) {
             Logger.error('identity', "Invalid credimport parameters received. No params or empty credentials list.", intent.params);
+            return false;
+        }
+
+        this.receivedIntent = intent;
+
+        return true;
+    }
+
+    private checkCredContextImportIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        Logger.log('identity', "Checking credcontextimport intent parameters", intent);
+        if (Util.isEmptyObject(intent.params) || Util.isEmptyObject(intent.params.credential) || !intent.params.serviceName) {
+            Logger.error('identity', "Invalid credcontextimport parameters received. No params or missing serviceName / credential.", intent.params);
             return false;
         }
 

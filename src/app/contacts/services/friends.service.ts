@@ -70,7 +70,7 @@ export class FriendsService extends GlobalService {
   } = null;
 
   getContact(id: string) {
-    return {...this.contacts.find(contact => contact.id === id)};
+    return { ...this.contacts.find(contact => contact.id === id) };
   }
 
   constructor(
@@ -108,9 +108,9 @@ export class FriendsService extends GlobalService {
   }
 
   async init() {
-      await this.getStoredContacts();
-      void this.checkFirstVisitOperations(); // Non blocking add of default contacts in background
-      this.getContactNotifierContacts();
+    await this.getStoredContacts();
+    void this.checkFirstVisitOperations(); // Non blocking add of default contacts in background
+    this.getContactNotifierContacts();
   }
 
   /******************************************************
@@ -149,7 +149,7 @@ export class FriendsService extends GlobalService {
     Logger.log("Contacts", 'Stored contacts fetched', contacts);
     this.contactsFetched = true;
 
-    if(contacts) {
+    if (contacts) {
       this.contacts = contacts;
       await this.sortContacts();
       void this.checkContacts();
@@ -161,7 +161,7 @@ export class FriendsService extends GlobalService {
   }
 
   private async checkContacts(): Promise<void> {
-    if(!this.contactsChecked) {
+    if (!this.contactsChecked) {
       this.contactsChecked = true;
       for (let contact of this.contacts) {
         Logger.log("Contacts", 'Checking stored contact for updates', contact);
@@ -178,7 +178,7 @@ export class FriendsService extends GlobalService {
       Logger.log("Contacts", 'Found all Notifier Contacts', notifierContacts);
       notifierContacts.forEach((notifierContact) => {
         const alreadyAddedContact = this.contacts.find((contact) => contact.id === notifierContact.getDID());
-        if(!alreadyAddedContact) {
+        if (!alreadyAddedContact) {
           const contactAvatar = notifierContact.getAvatar();
           const newContact: Contact = {
             id: notifierContact.getDID(),
@@ -291,23 +291,23 @@ export class FriendsService extends GlobalService {
   async addContactByIntent(did: string, carrierAddress?: string) {
     Logger.log('contacts', 'Received contact by intent', did, carrierAddress);
 
-    if(this.didService.getUserDID() === did) {
+    if (this.didService.getUserDID() === did) {
       void this.native.genericToast('contacts.please-dont-add-self');
       void this.globalNav.navigateRoot('contacts', '/contacts/friends');
     } else {
       const targetContact: Contact = this.contacts.find(contact => contact.id === did);
-      if(targetContact) {
+      if (targetContact) {
         const promptName = this.getPromptName(targetContact);
 
-        if(carrierAddress) {
+        if (carrierAddress) {
           this.contacts[this.contacts.indexOf(targetContact)].notificationsCarrierAddress = carrierAddress;
           await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "contacts", "contacts", this.contacts);
-          void this.globalNav.navigateRoot('contacts', '/contacts/friends/'+targetContact.id);
+          void this.globalNav.navigateRoot('contacts', '/contacts/friends/' + targetContact.id);
           void this.native.genericToast(promptName + this.translate.instant('contacts.did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.indexOf(targetContact)]);
         } else {
           void this.native.genericToast(promptName + this.translate.instant('contacts.is-already-added'));
-          void this.globalNav.navigateRoot('contacts', '/contacts/friends/'+targetContact.id);
+          void this.globalNav.navigateRoot('contacts', '/contacts/friends/' + targetContact.id);
           Logger.log('contacts', 'Contact is already added');
         }
       } else {
@@ -366,78 +366,78 @@ export class FriendsService extends GlobalService {
   *************************************************/
   async updateContact(newDoc): Promise<void> {
     for (let contact of this.contacts) {
-      if(contact.id === newDoc.id.didString) {
+      if (contact.id === newDoc.id.didString) {
         Logger.log("Contacts", 'Updating contact', contact);
 
         contact.didDocument = newDoc;
         for (let key of newDoc.verifiableCredential) {
-          if('name' in key.credentialSubject) {
+          if ('name' in key.credentialSubject) {
             contact.credentials.name = key.credentialSubject.name;
           }
-          if('gender' in key.credentialSubject) {
+          if ('gender' in key.credentialSubject) {
             contact.credentials.gender = key.credentialSubject.gender;
           }
-          if('avatar' in key.credentialSubject) {
+          if ('avatar' in key.credentialSubject) {
             contact.credentials.avatar = await Avatar.fromAvatarCredential(key.credentialSubject.avatar);
           }
-          if('nickname' in key.credentialSubject) {
+          if ('nickname' in key.credentialSubject) {
             contact.credentials.nickname = key.credentialSubject.nickname;
           }
-          if('nation' in key.credentialSubject) {
+          if ('nationality' in key.credentialSubject) {
             contact.credentials.nation = key.credentialSubject.nation;
           }
-          if('birthDate' in key.credentialSubject) {
+          if ('birthDate' in key.credentialSubject) {
             contact.credentials.birthDate = key.credentialSubject.birthDate;
           }
-          if('birthPlace' in key.credentialSubject) {
+          if ('birthPlace' in key.credentialSubject) {
             contact.credentials.birthPlace = key.credentialSubject.birthPlace;
           }
-          if('occupation' in key.credentialSubject) {
+          if ('occupation' in key.credentialSubject) {
             contact.credentials.occupation = key.credentialSubject.occupation;
           }
-          if('education' in key.credentialSubject) {
+          if ('education' in key.credentialSubject) {
             contact.credentials.education = key.credentialSubject.education;
           }
-          if('telephone' in key.credentialSubject) {
+          if ('telephone' in key.credentialSubject) {
             contact.credentials.telephone = key.credentialSubject.telephone;
           }
-          if('email' in key.credentialSubject) {
+          if ('email' in key.credentialSubject) {
             contact.credentials.email = key.credentialSubject.email;
           }
-          if('interests' in key.credentialSubject) {
+          if ('interests' in key.credentialSubject) {
             contact.credentials.interests = key.credentialSubject.interests;
           }
-          if('description' in key.credentialSubject) {
+          if ('description' in key.credentialSubject) {
             contact.credentials.description = key.credentialSubject.description;
           }
-          if('url' in key.credentialSubject) {
+          if ('url' in key.credentialSubject) {
             contact.credentials.url = key.credentialSubject.url;
           }
-          if('twitter' in key.credentialSubject) {
+          if ('twitter' in key.credentialSubject) {
             contact.credentials.twitter = key.credentialSubject.twitter;
           }
-          if('facebook' in key.credentialSubject) {
+          if ('facebook' in key.credentialSubject) {
             contact.credentials.facebook = key.credentialSubject.facebook;
           }
-          if('instagram' in key.credentialSubject) {
+          if ('instagram' in key.credentialSubject) {
             contact.credentials.instagram = key.credentialSubject.instagram;
           }
-          if('snapchat' in key.credentialSubject) {
+          if ('snapchat' in key.credentialSubject) {
             contact.credentials.snapchat = key.credentialSubject.snapchat;
           }
-          if('telegram' in key.credentialSubject) {
+          if ('telegram' in key.credentialSubject) {
             contact.credentials.telegram = key.credentialSubject.telegram;
           }
-          if('wechat' in key.credentialSubject) {
+          if ('wechat' in key.credentialSubject) {
             contact.credentials.wechat = key.credentialSubject.wechat;
           }
-          if('weibo' in key.credentialSubject) {
+          if ('weibo' in key.credentialSubject) {
             contact.credentials.weibo = key.credentialSubject.weibo;
           }
-          if('twitch' in key.credentialSubject) {
+          if ('twitch' in key.credentialSubject) {
             contact.credentials.twitch = key.credentialSubject.twitch;
           }
-          if('elaAddress' in key.credentialSubject) {
+          if ('elaAddress' in key.credentialSubject) {
             contact.credentials.elaAddress = key.credentialSubject.elaAddress;
           }
         }
@@ -512,7 +512,7 @@ export class FriendsService extends GlobalService {
     Logger.log('contacts', 'Building contact using unresolved DID for confirm-prompt', didString);
     this.resetPendingContact(didString, carrierString);
 
-    if(requiresConfirmation === false) {
+    if (requiresConfirmation === false) {
       this.safeAddContact(this.pendingContact);
       await this.saveContactsState();
     } else {
@@ -532,101 +532,101 @@ export class FriendsService extends GlobalService {
     this.pendingContact.id = resolvedDidString;
 
     for (let key of resolvedDidDocument.verifiableCredential) {
-      if('name' in key.credentialSubject) {
+      if ('name' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has name');
         this.pendingContact.credentials.name = key.credentialSubject.name;
       }
-      if('avatar' in key.credentialSubject) {
+      if ('avatar' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has avatar');
         this.pendingContact.credentials.avatar = await Avatar.fromAvatarCredential(key.credentialSubject.avatar);
       }
-      if('nickname' in key.credentialSubject) {
+      if ('nickname' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has nickname');
         this.pendingContact.credentials.nickname = key.credentialSubject.nickname;
       }
-      if('gender' in key.credentialSubject) {
+      if ('gender' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has gender');
         this.pendingContact.credentials.gender = key.credentialSubject.gender;
       }
-      if('nation' in key.credentialSubject) {
+      if ('nationality' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has nation');
         this.pendingContact.credentials.nation = key.credentialSubject.nation;
       }
-      if('birthDate' in key.credentialSubject) {
+      if ('birthDate' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has birth date');
         this.pendingContact.credentials.birthDate = key.credentialSubject.birthDate;
       }
-      if('birthPlace' in key.credentialSubject) {
+      if ('birthPlace' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has birth place');
         this.pendingContact.credentials.birthPlace = key.credentialSubject.birthPlace;
       }
-      if('occupation' in key.credentialSubject) {
+      if ('occupation' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has occupation');
         this.pendingContact.credentials.occupation = key.credentialSubject.occupation;
       }
-      if('education' in key.credentialSubject) {
+      if ('education' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has education');
         this.pendingContact.credentials.education = key.credentialSubject.education;
       }
-      if('telephone' in key.credentialSubject) {
+      if ('telephone' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has telephone');
         this.pendingContact.credentials.telephone = key.credentialSubject.telephone;
       }
-      if('email' in key.credentialSubject) {
+      if ('email' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has email');
         this.pendingContact.credentials.email = key.credentialSubject.email;
       }
-      if('interests' in key.credentialSubject) {
+      if ('interests' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has interests');
         this.pendingContact.credentials.interests = key.credentialSubject.interests;
       }
-      if('description' in key.credentialSubject) {
+      if ('description' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has description');
         this.pendingContact.credentials.description = key.credentialSubject.description;
       }
-      if('url' in key.credentialSubject) {
+      if ('url' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has website');
         this.pendingContact.credentials.url = key.credentialSubject.url;
       }
-      if('twitter' in key.credentialSubject) {
+      if ('twitter' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has twitter');
         this.pendingContact.credentials.twitter = key.credentialSubject.twitter;
       }
-      if('facebook' in key.credentialSubject) {
+      if ('facebook' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has facebook');
         this.pendingContact.credentials.facebook = key.credentialSubject.facebook;
       }
-      if('instagram' in key.credentialSubject) {
+      if ('instagram' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has instagram');
         this.pendingContact.credentials.instagram = key.credentialSubject.instagram;
       }
-      if('snapchat' in key.credentialSubject) {
+      if ('snapchat' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has snapchat');
         this.pendingContact.credentials.snapchat = key.credentialSubject.snapchat;
       }
-      if('telegram' in key.credentialSubject) {
+      if ('telegram' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has telegram');
         this.pendingContact.credentials.telegram = key.credentialSubject.telegram;
       }
-      if('wechat' in key.credentialSubject) {
+      if ('wechat' in key.credentialSubject) {
         Logger.log('contacts', 'Resolved DID has wechat');
         this.pendingContact.credentials.wechat = key.credentialSubject.wechat;
       }
-      if('weibo' in key.credentialSubject) {
+      if ('weibo' in key.credentialSubject) {
         Logger.log('contacts', 'Contact has weibo');
         this.pendingContact.credentials.weibo = key.credentialSubject.weibo;
       }
-      if('twitch' in key.credentialSubject) {
+      if ('twitch' in key.credentialSubject) {
         Logger.log('contacts', 'Contact has twitch');
         this.pendingContact.credentials.twitch = key.credentialSubject.twitch;
       }
-      if('elaAddress' in key.credentialSubject) {
+      if ('elaAddress' in key.credentialSubject) {
         Logger.log('contacts', 'Contact has ela wallet');
         this.pendingContact.credentials.elaAddress = key.credentialSubject.elaAddress;
       }
     }
 
-    if(requiresConfirmation === false) {
+    if (requiresConfirmation === false) {
       this.safeAddContact(this.pendingContact);
       await this.saveContactsState();
     } else {
@@ -659,8 +659,8 @@ export class FriendsService extends GlobalService {
       const promptName = this.getPromptName(this.pendingContact);
       const targetContact: Contact = this.contacts.find(contact => contact.id === this.pendingContact.id);
 
-      if(targetContact) {
-        if(this.pendingContact.carrierAddress) {
+      if (targetContact) {
+        if (this.pendingContact.carrierAddress) {
           this.contacts[this.contacts.indexOf(targetContact)].carrierAddress = this.pendingContact.carrierAddress;
 
           // Modify contact in backup
@@ -677,7 +677,7 @@ export class FriendsService extends GlobalService {
         // If a carrier address was provided with a addfriend intent, we use this friend's carrier address
         // To try to reach him also through contact notifier plugin's global carrier address.
         // After he accepts this invitation, it becomes possible to send him remote notifications.
-        if(this.pendingContact.notificationsCarrierAddress) {
+        if (this.pendingContact.notificationsCarrierAddress) {
           Logger.log('contacts', "Sending friend invitation through contact notifier");
           void this.contactNotifier.sendInvitation(
             this.pendingContact.id,
@@ -687,7 +687,7 @@ export class FriendsService extends GlobalService {
           Logger.log('contacts', "Added friend has no associated contact notifier carrier address");
         }
 
-        if(this.contactNotifierInviationId) {
+        if (this.contactNotifierInviationId) {
           Logger.log('contacts', 'Accepting contact notifier invitation', this.contactNotifierInviationId);
           void this.contactNotifier.acceptInvitation(this.contactNotifierInviationId);
           this.contactNotifierInviationId = null;
@@ -728,34 +728,34 @@ export class FriendsService extends GlobalService {
   updateNotifierContact(contact: Contact) {
     void this.contactNotifier.resolveContact(contact.id).then(
       (notifierContact: ContactNotifierContact) => {
-        if(notifierContact) {
+        if (notifierContact) {
           let targetAvatar: Avatar = null;
           let targetName: string = null;
 
-          if(contact.avatarLocal) {
+          if (contact.avatarLocal) {
             targetAvatar = contact.avatarLocal;
-          } else if(contact.credentials.avatar) {
+          } else if (contact.credentials.avatar) {
             targetAvatar = contact.credentials.avatar;
           }
-          if(contact.customName) {
+          if (contact.customName) {
             targetName = contact.customName;
-          } else if(contact.credentials.name) {
+          } else if (contact.credentials.name) {
             targetName = contact.credentials.name;
           }
 
-          if(targetAvatar) {
+          if (targetAvatar) {
             Logger.log('contacts', 'Updating notifier contact avatar' + contact.id);
             void notifierContact.setAvatar({
               contentType: targetAvatar.contentType,
               base64ImageData: targetAvatar.data
             });
           }
-          if(targetName) {
+          if (targetName) {
             Logger.log('contacts', 'Updating notifier contact name' + contact.id);
             void notifierContact.setName(targetName);
           }
         }
-    });
+      });
   }
 
   /********************************************************
@@ -789,7 +789,7 @@ export class FriendsService extends GlobalService {
   **/
   updateContactsSlide(contact: Contact) {
     const replacedSlide = this.contacts[this.contacts.indexOf(contact) + 1];
-    if(replacedSlide) {
+    if (replacedSlide) {
       this.activeSlide = replacedSlide
     } else {
       this.activeSlide = this.contacts[this.contacts.indexOf(contact) - 1];
@@ -802,7 +802,7 @@ export class FriendsService extends GlobalService {
   *********************************************************/
   async customizeContact(id: string, customName: string, customNote: string, customAvatar: Avatar) {
     for (let contact of this.contacts) {
-      if(contact.id === id) {
+      if (contact.id === id) {
         Logger.log("Contacts", 'Updating contact\'s custom values' + customName + customNote + customAvatar);
 
         contact.customName = customName;
@@ -823,8 +823,8 @@ export class FriendsService extends GlobalService {
   viewContact(didString: string) {
     void this.getStoredContacts().then(async (contacts: Contact[]) => {
       const targetContact = contacts.find((contact) => contact.id === didString);
-      if(targetContact) {
-        void this.globalNav.navigateTo('contacts', '/contacts/friends/'+didString);
+      if (targetContact) {
+        void this.globalNav.navigateTo('contacts', '/contacts/friends/' + didString);
       } else {
         await this.resolveDIDDocument(didString, false);
       }
@@ -864,17 +864,17 @@ export class FriendsService extends GlobalService {
     void this.getStoredContacts().then((contacts: Contact[]) => {
       Logger.log('contacts', 'Fetched stored contacts for pickfriend intent', contacts);
       const realContacts = contacts.filter((contact) => contact.id !== 'did:elastos');
-      if(realContacts.length > 0) {
+      if (realContacts.length > 0) {
         this.filteredContacts = [];
 
         Logger.log('contacts', 'Intent requesting friends with credential', ret.params.filter.credentialType);
         realContacts.map((contact) => {
-          if(contact.credentials[ret.params.filter.credentialType]) {
+          if (contact.credentials[ret.params.filter.credentialType]) {
             this.filteredContacts.push(contact);
           }
         });
 
-        if(this.filteredContacts.length > 0) {
+        if (this.filteredContacts.length > 0) {
           let props: NavigationExtras = {
             queryParams: {
               singleInvite: isSingleInvite,
@@ -906,7 +906,7 @@ export class FriendsService extends GlobalService {
   async sendRemoteNotificationToContact(contactId: string, title: string, url: string) {
     let contactNotifierContact = await this.contactNotifier.resolveContact(contactId);
     if (contactNotifierContact) {
-      Logger.log('contacts', "Sending shared content to friend with DID "+ contactId);
+      Logger.log('contacts', "Sending shared content to friend with DID " + contactId);
       await contactNotifierContact.sendRemoteNotification({
         title: "Shared content from a contact",
         message: title,
@@ -932,7 +932,7 @@ export class FriendsService extends GlobalService {
       }));
     } else {
       await Promise.all(this.filteredContacts.map(async (contact) => {
-        if(contact.isPicked) {
+        if (contact.isPicked) {
           await this.sendRemoteNotificationToContact(contact.id, this.shareIntentData.title, this.shareIntentData.url);
           contact.isPicked = false;
           sentNotificationsCount++;
@@ -963,7 +963,7 @@ export class FriendsService extends GlobalService {
   }
 
   sendIntentRes(contacts: Contact[], intent: string) {
-    if(contacts.length > 0) {
+    if (contacts.length > 0) {
       void this.globalIntentService.sendIntentResponse(
         { friends: contacts },
         this.managerService.handledIntentId
@@ -1022,20 +1022,20 @@ export class FriendsService extends GlobalService {
     this.letters = [];
     this.contacts.map((contact) => {
       // Add letter: 'anonymous'
-      if(
+      if (
         !contact.credentials.name && contact.customName && contact.customName === 'Anonymous Contact' && !this.letters.includes('Anonymous') ||
         !contact.credentials.name && !contact.customName && !this.letters.includes('Anonymous')
       ) {
         this.letters.push('Anonymous');
       }
       // Add first letter: contact name credential
-      if(
+      if (
         contact.credentials.name && !contact.customName && !this.letters.includes(contact.credentials.name[0].toUpperCase())
       ) {
         this.letters.push(contact.credentials.name[0].toUpperCase());
       }
       // Add first letter: contact custom name
-      if(
+      if (
         !contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase()) ||
         contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase())
       ) {
@@ -1048,9 +1048,9 @@ export class FriendsService extends GlobalService {
   }
 
   getPromptName(contact: Contact): string {
-    if(contact.customName) {
+    if (contact.customName) {
       return contact.customName
-    } else if(contact.credentials.name) {
+    } else if (contact.credentials.name) {
       return contact.credentials.name;
     } else {
       return this.translate.instant('contacts.anonymous-contact');

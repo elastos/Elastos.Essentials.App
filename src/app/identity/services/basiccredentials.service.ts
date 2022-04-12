@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Logger } from 'src/app/logger';
 import { BasicCredentialEntry } from '../model/basiccredentialentry.model';
 
 @Injectable({
@@ -18,36 +17,48 @@ export class BasicCredentialsService {
 
   private createBasicCredentialInfoList() {
     this.basicCredentialEntryList = [
-      new BasicCredentialEntry("name", ""),
-      new BasicCredentialEntry("avatar", {
+      // Profile credentials
+      new BasicCredentialEntry("name", "", "https://ns.elastos.org/credentials/profile/name/v1", "NameCredential"),
+      new BasicCredentialEntry("avatar", { // TODO: user https://ns.elastos.org/credentials/profile/avatar/v1 with schema:avatar  - keep old fields for compatibility
         "content-type": "",
         "type": "",
         "data": ""
       }),
-      new BasicCredentialEntry("email", ""),
-      new BasicCredentialEntry("birthDate", ""),
-      new BasicCredentialEntry("nation", ""),
-      new BasicCredentialEntry("gender", ""),
-      new BasicCredentialEntry("telephone", ""),
-      new BasicCredentialEntry("nickname", ""),
-      new BasicCredentialEntry("birthPlace", ""),
-      new BasicCredentialEntry("occupation", ""),
-      new BasicCredentialEntry("education", ""),
-      new BasicCredentialEntry("interests", ""),
-      new BasicCredentialEntry("description", ""),
-      new BasicCredentialEntry("url", ""),
-      new BasicCredentialEntry("facebook", ""),
-      new BasicCredentialEntry("instagram", ""),
-      new BasicCredentialEntry("twitter", ""),
-      new BasicCredentialEntry("snapchat", ""),
-      new BasicCredentialEntry("telegram", ""),
-      new BasicCredentialEntry("wechat", ""),
-      new BasicCredentialEntry("weibo", ""),
+      new BasicCredentialEntry("email", "", "https://ns.elastos.org/credentials/profile/email/v1", "EmailCredential"),
+      new BasicCredentialEntry("birthDate", ""), // TODO jingyu
+      new BasicCredentialEntry("nationality", "", "did://elastos/iUq76mi2inkZfqqbHkovbcDkzEkAh2dKrb/ISONationalityCredential", "ISONationalityCredential"),
+      new BasicCredentialEntry("gender", "", "https://ns.elastos.org/credentials/profile/gender/v1", "GenderCredential"),
+      new BasicCredentialEntry("telephone", ""), // TODO jingyu
+      new BasicCredentialEntry("nickname", ""), // TODO jingyu
+      new BasicCredentialEntry("birthPlace", ""), // TODO jingyu
+      new BasicCredentialEntry("occupation", ""), // TODO jingyu
+      new BasicCredentialEntry("education", ""), // TODO jingyu
+      new BasicCredentialEntry("interests", ""), // TODO jingyu
+      new BasicCredentialEntry("description", "", "https://ns.elastos.org/credentials/profile/description/v1", "DescriptionCredential"),
+      new BasicCredentialEntry("url", "", "https://ns.elastos.org/credentials/profile/url/v1", "URLCredential"),
+
+      // Social credentials
+      new BasicCredentialEntry("linkedin", "", "https://ns.elastos.org/credentials/social/linkedin/v1", "LinkedinCredential"),
+      new BasicCredentialEntry("facebook", "", "https://ns.elastos.org/credentials/social/facebook/v1", "FacebookCredential"),
+      new BasicCredentialEntry("instagram", "", "https://ns.elastos.org/credentials/social/instagram/v1", "InstagramCredential"),
+      new BasicCredentialEntry("twitter", "", "https://ns.elastos.org/credentials/social/twitter/v1", "TwitterCredential"),
+      new BasicCredentialEntry("snapchat", "", "https://ns.elastos.org/credentials/social/snapchat/v1", "SnapchatCredential"),
+      new BasicCredentialEntry("telegram", "", "https://ns.elastos.org/credentials/social/telegram/v1", "TelegramCredential"),
+      new BasicCredentialEntry("wechat", "", "https://ns.elastos.org/credentials/social/wechat/v1", "WechatCredential"),
+      new BasicCredentialEntry("weibo", "", "https://ns.elastos.org/credentials/social/weibo/v1", "WeiboCredential"),
       new BasicCredentialEntry("twitch", ""),
-      new BasicCredentialEntry("elaAddress", ""),
-      // new BasicCredentialEntry("tiktok", ""),
-      // new BasicCredentialEntry("paypal", ""),
-      // new BasicCredentialEntry("venmo", ""),
+
+      // Wallet credentials
+      // TODO ben:
+      // - use the new wallet type
+      // - Edit UI to allow choosing the address type
+      // - Don't support older addresses (strings) but don't crash if receiving a string instead of an object
+      new BasicCredentialEntry("elaAddress", ""/* {
+        chain: "elastossmartchain",
+        network:"mainnet",
+        addressType:"elastosmainchain",
+        address: ""
+      }, "https://ns.elastos.org/credentials/wallet/v1", "WalletCredential" */),
     ];
   }
 

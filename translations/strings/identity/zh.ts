@@ -249,7 +249,7 @@ export const zh = {
         'credential-info-type-birthDate': '出生日期',
         'credential-info-type-education': '学历',
         'credential-info-type-gender': '性别',
-        'credential-info-type-nation': '国家/地区',
+        'credential-info-type-nation': 'Nationality',
         'credential-info-type-telephone': '电话号码',
         'credential-info-type-nickname': '昵称',
         'credential-info-type-birthPlace': '出生地',
@@ -269,6 +269,7 @@ export const zh = {
         'credential-info-type-tiktok': '抖音',
         'credential-info-type-paypal': 'Paypal',
         'credential-info-type-venmo': 'Venmo',
+        'credential-info-type-linkedin': 'LinkedIn',
 
         /******************** Messages ********************/
         // errors

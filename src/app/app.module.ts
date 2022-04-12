@@ -16,6 +16,7 @@ import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLo
 import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { TranslationsLoader } from 'src/translationsloader';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -37,18 +38,16 @@ import { DPoSRegistrationInitModule } from './voting/dposregistration/init.modul
 import { DPoSVotingInitModule } from './voting/dposvoting/init.module';
 import { WalletInitModule } from './wallet/init.module';
 
-
-
-
-
-Sentry.init({
-  dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
-  release: "default",
-  integrations: [
-    new Integrations.BrowserTracing(),
-  ],
-  tracesSampleRate: 1.0,
-});
+if (environment.production) {
+  Sentry.init({
+    dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
+    release: "default",
+    integrations: [
+      new Integrations.BrowserTracing(),
+    ],
+    tracesSampleRate: 1.0,
+  });
+}
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {

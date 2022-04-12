@@ -129,7 +129,9 @@ export class DIDDocumentsService {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise(async resolve => {
       if (cachedDocumentSubject.value.checking) {
+        console.log("555555", didString, cachedDocumentSubject.value)
         let subscription = cachedDocumentSubject.subscribe(status => {
+          console.log("11111", didString, status)
           if (status.checked) {
             subscription.unsubscribe();
             resolve(status);
@@ -137,16 +139,21 @@ export class DIDDocumentsService {
         });
       }
       else {
+        console.log("22222", didString, cachedDocumentSubject.value)
         if (!cachedDocumentSubject.value.checked || forceRemote) {
+          console.log("3333", didString, cachedDocumentSubject.value)
           // Not checked yet, or force remote: fetched for real
           this.onlineDIDDocumentsStatus.set(didString, true, false, null);
           let resolvedDocument = await this.resolveDIDWithoutDIDStore(didString, forceRemote);
+
+          console.log("3333-bis", didString, cachedDocumentSubject.value)
 
           this.onlineDIDDocumentsStatus.set(didString, false, true, resolvedDocument);
 
           resolve(cachedDocumentSubject.value);
         }
         else {
+          console.log("44444", didString, cachedDocumentSubject.value)
           // checked and not forcing remote: return cached
           resolve(cachedDocumentSubject.value);
         }

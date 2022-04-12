@@ -20,7 +20,7 @@ export class Profile {
     // If the entry already exists, we just update it. Otherwise we add it first.
     let entry = this.getEntryByKey(basiccredentialentry.key);
     if (!entry) {
-      entry = new BasicCredentialEntry(basiccredentialentry.key, value, isVisible);
+      entry = new BasicCredentialEntry(basiccredentialentry.key, value, basiccredentialentry.context, basiccredentialentry.shortType, isVisible);
       this.entries.push(entry);
     } else {
       entry.value = value;
@@ -59,7 +59,7 @@ export class Profile {
     profile.entries.push(new BasicCredentialEntry("description", ""));
     // Other Essential Entries
     profile.entries.push(new BasicCredentialEntry("birthDate", ""));
-    profile.entries.push(new BasicCredentialEntry("nation", ""));
+    profile.entries.push(new BasicCredentialEntry("nationality", ""));
     profile.entries.push(new BasicCredentialEntry("email", ""));
     profile.entries.push(new BasicCredentialEntry("gender", ""));
     profile.entries.push(new BasicCredentialEntry("telephone", ""));

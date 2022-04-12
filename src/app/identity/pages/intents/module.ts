@@ -8,6 +8,7 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
 import { ComponentsModule } from '../../components/components.module';
 import { AppIdCredentialIssueRequestPage } from './appidcredentialissuerequest/appidcredentialissuerequest';
 import { CredentialAccessRequestPage } from './credentialaccessrequest/credentialaccessrequest';
+import { CredentialContextImportRequestPage } from './credentialcontextimportrequest/credentialcontextimportrequest';
 import { CredentialDeleteRequestPage } from './credentialdeleterequest/credentialdeleterequest';
 import { CredentialImportRequestPage } from './credentialimportrequest/credentialimportrequest';
 import { CredentialIssueRequestPage } from './credentialissuerequest/credentialissuerequest';
@@ -23,6 +24,7 @@ import { SignRequestPage } from './signrequest/signrequest';
         RequestCredentialsPage,
         CredentialAccessRequestPage,
         CredentialImportRequestPage,
+        CredentialContextImportRequestPage,
         CredentialIssueRequestPage,
         RegisterApplicationProfileRequestPage,
         SetHiveProviderRequestPage,
@@ -43,6 +45,7 @@ import { SignRequestPage } from './signrequest/signrequest';
             { path: 'requestcredentials', component: RequestCredentialsPage },
             { path: 'credissuerequest', component: CredentialIssueRequestPage },
             { path: 'credimportrequest', component: CredentialImportRequestPage },
+            { path: 'credcontextimportrequest', component: CredentialContextImportRequestPage },
             { path: 'creddeleterequest', component: CredentialDeleteRequestPage },
             { path: 'regappprofilerequest', component: RegisterApplicationProfileRequestPage },
             { path: 'sethiveproviderrequest', component: SetHiveProviderRequestPage },

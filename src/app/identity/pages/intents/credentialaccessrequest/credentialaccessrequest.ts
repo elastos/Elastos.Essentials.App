@@ -81,7 +81,7 @@ type ClaimRequest = {
           required: false
         },
         "birthDate": true,
-        "nation": true,
+        "nationality": true,
         "otherInexistingField":false,
         "diploma": {
           "required": false,
@@ -212,7 +212,7 @@ export class CredentialAccessRequestPage {
 
   ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
+      void this.rejectRequest(false);
     }
   }
 

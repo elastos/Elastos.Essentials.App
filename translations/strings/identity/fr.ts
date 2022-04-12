@@ -24,8 +24,8 @@ export const fr = {
         'identity-published-on-blockchain': 'Identité Publiée',
         'credentials-published-on-blockchain': 'Crédentiels Publiés',
         'credentials-verified': 'Crédentiels Verifiés',
-        'current-actions': 'Actions Actuelles',
-        'current-options': 'Options actuelles',
+        'current-actions': 'Actions',
+        'current-options': 'Options',
         'identity-not-published': 'Identité Non Publiée',
         'identity-on-blockchain': 'Rendez Votre Identité Visible',
         'add-more-information': 'Ajoutez plus d\'Informations',
@@ -52,7 +52,7 @@ export const fr = {
 
 
         // page: credential-details
-        'credentialdetails-title': 'Des détails Crédentiel ',
+        'credentialdetails-title': 'Détails du crédentiel',
         'credentialdetails-show-on-profile': 'Montrer dans le profil public',
         'credentialdetails-self-proclaimed-credential': 'Crédentiel Auto-Proclamé',
         'credential-published-on-blockchain': 'Crédentiel Publié sur la chaîne de blocs',
@@ -250,7 +250,7 @@ export const fr = {
         'credential-info-type-birthDate': 'Date de naissance',
         'credential-info-type-education': 'Education',
         'credential-info-type-gender': 'Sexe',
-        'credential-info-type-nation': 'Pays',
+        'credential-info-type-nationality': 'Nationalité',
         'credential-info-type-telephone': 'Téléphone',
         'credential-info-type-nickname': 'Pseudonyme',
         'credential-info-type-birthPlace': 'Lieu de naissance',
@@ -270,6 +270,7 @@ export const fr = {
         'credential-info-type-tiktok': 'TikTok',
         'credential-info-type-paypal': 'Paypal',
         'credential-info-type-venmo': 'Venmo',
+        'credential-info-type-linkedin': 'LinkedIn',
 
         /******************** Messages ********************/
         // errors

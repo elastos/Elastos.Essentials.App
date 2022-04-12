@@ -110,6 +110,10 @@ export const it = {
         'elastos-io-des': 'Set di APIs implementati e gestiti dal team Elastos Fusion della Elastos Foundation, noto anche come team del prodotto.',
         'trinity-tech-io-des': 'Set di APIs implementati e mantenuti dal team Trinity Tech della Elastos Foundation, responsabile dello sviluppo degli SDK Elastos.',
 
+        'privacy-toolbox-stats': 'Credentials statistics',
+        'privacy-send-credential-toolbox-stats': 'Send anonymous information about DID usage to the credential toolbox (a developer tool). The DID itself is never sent.',
+        'privacy-dont-send-credential-toolbox-stats': 'Don\'t send anonymous information about DID usage to the credential toolbox (a developer tool).',
+
         /*********** Elastos API provider page ***********/
         'elastosapiprovider': 'APIs di Elastos'
     }

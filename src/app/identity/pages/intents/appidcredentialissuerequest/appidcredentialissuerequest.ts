@@ -32,8 +32,6 @@ export class AppIdCredentialIssueRequestPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
-    public requestDapp;
-
     private appDid: string = null;
     private publishedAppInfo: ApplicationDIDInfo = null;
     public receivedIntent: AppIdCredIssueIdentityIntent = null;

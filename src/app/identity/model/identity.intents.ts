@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { DID as ConnSDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 
 /**
@@ -5,6 +6,7 @@ import { DID as ConnSDKDID } from "@elastosfoundation/elastos-connectivity-sdk-j
  */
 export type IdentityIntentParams = {
     appPackageId?: string;
+    caller?: string; // App DID calling us. Could be undefined, and could be a fake one (has not been verified)
 }
 export type IdentityIntent<T> = {
     action: string;
@@ -86,6 +88,16 @@ export type CredImportIdentityIntentParams = IdentityIntentParams & {
     customization: IdentityIntentCustomization;
 }
 export type CredImportIdentityIntent = IdentityIntent<CredImportIdentityIntentParams> & {
+}
+
+/**
+ * Cred context import
+ */
+export type CredContextImportIdentityIntentParams = IdentityIntentParams & {
+    serviceName: string,
+    credential: any, // Verifiable Credentials as JSON object
+}
+export type CredContextImportIdentityIntent = IdentityIntent<CredContextImportIdentityIntentParams> & {
 }
 
 /**

@@ -17,6 +17,9 @@ const prodEnv = {
   RedPackets: {
     webUrl: 'https://packet.fun',
     serviceUrl: 'https://api.packet.fun/api/v1'
+  },
+  CredentialsToolbox: {
+    serviceUrl: 'https://credentials-toolbox.elastos.net/api/v1'
   }
 }
 
@@ -25,6 +28,9 @@ const devEnv = {
   RedPackets: {
     webUrl: env.ESSENTIALS_RED_PACKETS_WEB_URL || prodEnv.RedPackets.webUrl,
     serviceUrl: env.ESSENTIALS_RED_PACKETS_SERVICE_URL || prodEnv.RedPackets.serviceUrl
+  },
+  CredentialsToolbox: {
+    serviceUrl: env.ESSENTIALS_CREDENTIALS_TOOLBOX_SERVICE_URL || prodEnv.CredentialsToolbox.serviceUrl
   }
 }
 
