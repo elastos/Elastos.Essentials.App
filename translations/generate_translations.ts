@@ -18,7 +18,8 @@ class TranslationsLoader {
         "scanner",
         "settings",
         "wallet",
-        "redpackets"
+        "redpackets",
+        "security"
     ];
     static languagesToLoad = [
         "en",

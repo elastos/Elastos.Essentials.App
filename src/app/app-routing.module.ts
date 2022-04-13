@@ -22,6 +22,7 @@ const routes: Routes = [
   { path: 'developertools', loadChildren: () => import('./developertools/module').then(x => x.DeveloperToolsModule), canActivate: [AuthGuardService] },
   { path: 'dappbrowser', loadChildren: () => import('./dappbrowser/module').then(x => x.DAppBrowserModule), canActivate: [AuthGuardService] },
   { path: 'redpackets', loadChildren: () => import('./redpackets/module').then(x => x.RedPacketsModule), canActivate: [AuthGuardService] },
+  { path: 'security', loadChildren: () => import('./security/module').then(x => x.SecurityModule) },
 
   // Prevent angular from calling a random default route sometimes when starting,
   // leading to crashes if platform is not ready yet

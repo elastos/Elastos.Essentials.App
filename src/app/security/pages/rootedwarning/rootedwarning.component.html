@@ -1,0 +1,23 @@
+<div class="container" [class.darkContainer]="theme.darkMode">
+  <div class="innerContainer">
+    <ion-row class="header">
+      <img src="/assets/identity/default/deleteWarning.svg">
+      <h1 class="ion-padding-horizontal ion-text-center">{{ 'security.modified-device' | translate }}</h1>
+    </ion-row>
+    <ion-row>
+      <ion-col class="message ion-padding">
+        <b>{{ 'security.modified-device-subtitle' | translate }}</b>
+        <br /><br />
+        {{ 'security.modified-device-intro1' | translate }}<br />
+        <br />
+        {{ 'security.modified-device-intro2' | translate }}
+      </ion-col>
+    </ion-row>
+    <ion-row class="btn-row">
+      <ion-col class="btn ion-activatable ripple" size="10" (click)="confirm()">
+        <ion-label>{{ 'security.modified-device-accept' | translate }}</ion-label>
+        <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+    </ion-row>
+  </div>
+</div>

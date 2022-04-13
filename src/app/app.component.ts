@@ -23,6 +23,7 @@ import { GlobalNavService } from './services/global.nav.service';
 import { GlobalNetworksService } from './services/global.networks.service';
 import { GlobalNotificationsService } from './services/global.notifications.service';
 import { GlobalPublicationService } from './services/global.publication.service';
+import { GlobalSecurityService } from './services/global.security.service';
 import { GlobalStartupService } from './services/global.startup.service';
 import { GlobalStorageService } from './services/global.storage.service';
 import { GlobalThemeService } from './services/global.theme.service';
@@ -66,9 +67,9 @@ export class AppComponent {
     public globalBTCService: GlobalBTCRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     private credentialTypesService: GlobalCredentialTypesService,
     private credentialToolboxService: GlobalCredentialToolboxService,
+    private globalSecurityService: GlobalSecurityService,
     private firebase: FirebaseX
-  ) {
-  }
+  ) { }
 
   ngOnInit() {
     this.initializeApp();
@@ -121,24 +122,7 @@ export class AppComponent {
       // This method will sign in, so it must come last.
       await this.didSessions.init();
 
-      // Navigate to the right startup screen
-      Logger.log("Global", "Navigating to start screen");
-      let entry = await this.didSessions.getSignedInIdentity();
-      if (entry != null) {
-        Logger.log("Global", "An active DID exists, navigating to startup screen");
-
-        // Make sure to load the active user theme preference before entering the home screen
-        // to avoid blinking from light to dark modes while theme is fetched from preferences
-        await this.theme.fetchThemeFromPreferences();
-
-        await this.globalStartupService.navigateToStartupScreen();
-      } else {
-        Logger.log("Global", "No active DID, navigating to DID sessions");
-
-        // Navigate to DID creation
-        await this.globalNav.navigateTo("didsessions", '/didsessions/pickidentity');
-        // await this.globalNav.navigateTo("didsessions", '/didsessions/chooseimporteddid');
-      }
+      await this.globalStartupService.navigateToFirstScreen();
 
       // Now that all services are initialized and the initial screen is shown,
       // we can start listening to external intents.

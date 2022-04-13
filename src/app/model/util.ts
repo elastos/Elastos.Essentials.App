@@ -6,8 +6,6 @@ import moment from 'moment';
 import { DIDService } from '../identity/services/did.service';
 import { GlobalDIDSessionsService } from '../services/global.didsessions.service';
 
-declare let internalManager: InternalPlugin.InternalManager;
-
 @Injectable()
 export class Util {
     public static uuid(len, radix): string {
@@ -246,14 +244,5 @@ export class Util {
         let buf = new Buffer(Base58.decode(base58Key));
         let ret = buf.toString('hex');
         return ret;
-    }
-
-    public static async isDeviceRooted(): Promise<boolean> {
-        let ret = await internalManager.isDeviceRooted();
-        return ret;
-    }
-
-    public static async setScreenCapture(isEnable: boolean): Promise<void> {
-        await internalManager.setScreenCapture(isEnable);
     }
 }
