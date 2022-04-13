@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
+import { GlobalPreferencesService } from './global.preferences.service';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
@@ -7,13 +10,24 @@ declare let internalManager: InternalPlugin.InternalManager;
 @Injectable({
   providedIn: 'root'
 })
-export class GlobalSecurityService {
+export class GlobalSecurityService implements GlobalService {
   public static instance: GlobalSecurityService;  // Convenient way to get this service from non-injected classes
 
   constructor(
-    private storage: GlobalStorageService
+    private storage: GlobalStorageService,
+    private prefs: GlobalPreferencesService
   ) {
     GlobalSecurityService.instance = this;
+    GlobalServiceManager.getInstance().registerService(this);
+  }
+
+  async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    await this.restoreScreenCapture();
+  }
+
+  async onUserSignOut(): Promise<void> {
+    // Signing out, block screen capture
+    await internalManager.setScreenCapture(false);
   }
 
   /**
@@ -37,7 +51,22 @@ export class GlobalSecurityService {
     return internalManager.isDeviceRooted();
   }
 
-  public async setScreenCapture(isEnable: boolean): Promise<void> {
-    await internalManager.setScreenCapture(isEnable);
+  /**
+   * Enables or disables screenshots/video capture for the current user DID session.
+   */
+  public async setScreenCaptureAllowed(allowScreenCapture: boolean): Promise<void> {
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "developer.screencapture", allowScreenCapture);
+    return internalManager.setScreenCapture(allowScreenCapture);
+  }
+
+  /**
+   * Tells if the current user has allowed screenshots/video capture.
+   */
+  public getScreenCaptureAllowed(): Promise<boolean> {
+    return this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "developer.screencapture");
+  }
+
+  private async restoreScreenCapture(): Promise<void> {
+    await internalManager.setScreenCapture(await this.getScreenCaptureAllowed());
   }
 }

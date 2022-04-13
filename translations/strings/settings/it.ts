@@ -53,6 +53,7 @@ export const it = {
         'on': 'ON',
         'off': 'OFF',
         'developer-tools': 'Strumenti per sviluppatori',
+        'developer-screen-capture': 'Allow screen capture',
 
         /********** Select-net Page **********/
         'choose-network': 'Scegli rete',

@@ -5,6 +5,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { GlobalSecurityService } from 'src/app/services/global.security.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 
 // TODO: config rpc for private net?
@@ -23,6 +24,7 @@ export class DeveloperService extends GlobalService {
     private zone: NgZone,
     private prefs: GlobalPreferencesService,
     private globalNetworksService: GlobalNetworksService,
+    private globalSecurityService: GlobalSecurityService,
     private globalNavService: GlobalNavService
   ) {
     super();

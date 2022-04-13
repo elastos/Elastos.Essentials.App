@@ -53,6 +53,7 @@ export const zh = {
           'on': '开',
           'off': '关',
           'developer-tools': '开发者工具',
+          'developer-screen-capture': 'Allow screen capture',
 
           /********** Select-net Page **********/
           'choose-network': '选择网络',

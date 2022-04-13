@@ -27,6 +27,7 @@ export class GlobalPreferencesService {
       "developer.mode": false,
       "developer.install.verifyDigest": false,
       "developer.backgroundservices.startonboot": true,
+      "developer.screencapture": false,
       "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
       "privacy.credentialtoolbox.stats": true, // Publish anonymous stats about credentials usage, to the external credential toolbox service, or not
       "ui.darkmode": true,

@@ -19,8 +19,18 @@
         <img src="assets/settings/default/right-arrow.svg">
       </ion-col>
     </ion-row>
+    <!-- Screen recording -->
+    <ion-row class="section-row">
+      <ion-col size="9" class="left-col">
+        <h1>{{ 'settings.developer-screen-capture' | translate }}</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <ion-toggle [(ngModel)]="allowScreenCapture" (ionChange)="onAllowScreenCaptureChanged()" mode="ios">
+        </ion-toggle>
+      </ion-col>
+    </ion-row>
     <!-- Essentials development tests -->
-<!--     <ion-row class="section-row" (click)="go('/settings/devtests')">
+    <!--     <ion-row class="section-row" (click)="go('/settings/devtests')">
       <ion-col size="9" class="left-col">
         <h1>Essentials Tests</h1>
       </ion-col>

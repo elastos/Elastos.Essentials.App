@@ -55,7 +55,7 @@ export class GlobalAppBackgroundService {
    * Stop all app background services, this api Should be called before sign out.
    */
   public async stop(): Promise<void> {
-    // We should add service.stop here if we need to wait for the serivce.stop.
+    // We should add service.stop here if we need to wait for the service.stop.
     // Otherwise we can stop the service in itself onUserSignOut.
   }
 }
