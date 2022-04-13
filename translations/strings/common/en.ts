@@ -31,6 +31,7 @@ export const en = {
         'vote-success': 'Votes successfully casted!',
         'save-changes': 'Save changes',
         'max': 'MAX',
+        'leave': 'Leave',
 
         // Navigation
         'settings': 'Settings',

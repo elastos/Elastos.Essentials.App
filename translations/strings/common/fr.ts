@@ -31,6 +31,7 @@ export const fr = {
         'vote-success': 'Votes sauvegardés!',
         'save-changes': 'Enregistrer',
         'max': 'MAX',
+        'leave': 'Leave',
 
         // Navigation
         'settings': 'Paramètres',

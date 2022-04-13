@@ -3,6 +3,8 @@ import { Injectable, NgZone } from '@angular/core';
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import phishingConfig from 'eth-phishing-detect/src/config.json';
+import PhishingDetector from 'eth-phishing-detect/src/detector';
 import moment from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { urlDomain } from 'src/app/helpers/url.helpers';
@@ -13,6 +15,7 @@ import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
@@ -27,8 +30,10 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { BrowsedAppInfo } from '../model/browsedappinfo';
 
+
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 declare let didManager: DIDPlugin.DIDManager;
+
 
 const MAX_RECENT_APPS = 10;
 
@@ -93,6 +98,9 @@ export class DappBrowserService implements GlobalService {
     private networkSubscription: Subscription = null;
     private walletSubscription: Subscription = null;
 
+    //Can add items on phishingConfig
+    public detector = new PhishingDetector(phishingConfig);
+
     constructor(
         public translate: TranslateService,
         private nav: GlobalNavService,
@@ -104,7 +112,8 @@ export class DappBrowserService implements GlobalService {
         private walletNetworkService: WalletNetworkService,
         private walletService: WalletService,
         private g: GlobalDIDSessionsService,
-        private globalIntentService: GlobalIntentService
+        private globalIntentService: GlobalIntentService,
+        public globalPopupService: GlobalPopupService,
     ) {
         void this.init();
     }
@@ -150,6 +159,28 @@ export class DappBrowserService implements GlobalService {
         }
     }
 
+    public getDomain(url, subdomain = false): string {
+        url = url.replace(/(https?:\/\/)?/i, '');
+
+        if (!subdomain) {
+            url = url.split('.');
+            url = url.slice(url.length - 2).join('.');
+        }
+
+        if (url.indexOf('/') !== -1) {
+            return url.split('/')[0];
+        }
+
+        return url;
+    }
+
+    public checkDomain(url): boolean {
+        let domain = this.getDomain(url, true); //have subdomain
+        const value = this.detector.check(domain).result;
+        Logger.log("dappbrowser", "detector return", url, domain, value);
+        return value ;
+    }
+
     /**
      * Opens a url either in the in-app browser, or in the external browser, depending on the current
      * "browse mode". This allows opening apps inside essentials on android, and in the external browser
@@ -182,6 +213,14 @@ export class DappBrowserService implements GlobalService {
      */
     public async open(url: string, title?: string, target?: string) {
         this.url = url;
+
+        if (this.checkDomain(url)) {
+            let ret = await this.globalPopupService.ionicConfirm("dappbrowser.scam-warning-title", "dappbrowser.scam-warning-message",
+                'common.leave', 'common.continue');
+            if (ret) {
+                return;
+            }
+        }
 
         if (!target || target == null) {
             target = "_webview";

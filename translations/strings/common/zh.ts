@@ -32,6 +32,7 @@ export const zh = {
         'vote-success': '投票成功！',
         'save-changes': '保存',
         'max': '全部',
+        'leave': '离开',
 
         // Navigation
         'settings': '设置',

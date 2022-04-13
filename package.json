@@ -77,6 +77,7 @@
     "crypto-browserify": "3.12.0",
     "dirty-json": "^0.9.2",
     "easyqrcodejs": "4.4.10",
+    "eth-phishing-detect": "^1.1.16",
     "eth-sig-util": "^3.0.1",
     "ethereumjs-tx": "2.1.2",
     "fast-average-color": "^7.0.1",
