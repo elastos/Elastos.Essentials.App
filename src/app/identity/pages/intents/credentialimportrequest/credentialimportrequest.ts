@@ -1,10 +1,13 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { CredImportIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VerifiableCredential } from '../../../model/verifiablecredential.model';
@@ -69,8 +72,8 @@ export class CredentialImportRequestPage {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   public receivedIntent: CredImportIdentityIntent = null;
-  public requestDappIcon: string = null;
-  public requestDappName: string = null;
+  public requestingAppIconUrl: string = null;
+  public requestingAppName: string = null;
   public requestDappColor = '#565bdb';
 
   private alreadySentIntentResponce = false;
@@ -92,6 +95,9 @@ export class CredentialImportRequestPage {
     private translate: TranslateService,
     public theme: GlobalThemeService,
     private intentService: IntentReceiverService,
+    private sanitizer: DomSanitizer,
+    private globalHiveService: GlobalHiveService,
+    private globalApplicationDidService: GlobalApplicationDidService,
     private globalPublicationService: GlobalPublicationService
   ) {
   }
@@ -109,6 +115,8 @@ export class CredentialImportRequestPage {
 
     void this.zone.run(async () => {
       this.receivedIntent = this.intentService.getReceivedIntent();
+
+      void this.fetchApplicationDidInfo(); // Don't wait, just show app info when ready, if ready
 
       await this.runPreliminaryChecks();
       await this.organizeImportedCredentials();
@@ -197,6 +205,29 @@ export class CredentialImportRequestPage {
       };
 
       this.displayableCredentials.push(displayableCredential);
+    }
+  }
+
+  private async fetchApplicationDidInfo(): Promise<void> {
+    let callingAppDID = this.receivedIntent.params.caller;
+
+    // Fetch the application from chain and extract info.
+    let publishedAppInfo = await this.globalApplicationDidService.fetchPublishedAppInfo(callingAppDID);
+    if (publishedAppInfo.didDocument) {
+      Logger.log("identity", "Published application info:", publishedAppInfo);
+
+      this.requestingAppName = publishedAppInfo.name;
+
+      void this.fetchAppIcon(publishedAppInfo.iconUrl);
+    }
+  }
+
+  private async fetchAppIcon(hiveIconUrl: string) {
+    try {
+      this.requestingAppIconUrl = await this.globalHiveService.fetchHiveScriptPictureToDataUrl(hiveIconUrl);
+    }
+    catch (e) {
+      Logger.error("identity", `Failed to fetch application icon at ${hiveIconUrl}`);
     }
   }
 
@@ -293,7 +324,19 @@ export class CredentialImportRequestPage {
     await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 
+  sanitize(url: string) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
   getDappIcon() {
-    return 'assets/identity/icon/elastos-icon.svg';
+    if (this.requestingAppIconUrl) {
+      return this.sanitize(this.requestingAppIconUrl);
+    } else {
+      return 'assets/identity/icon/elastos-icon.svg'
+    }
+  }
+
+  getDappName() {
+    return this.requestingAppName;
   }
 }

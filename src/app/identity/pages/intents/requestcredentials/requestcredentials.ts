@@ -16,6 +16,8 @@ import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
 import { GlobalCredentialToolboxService } from 'src/app/services/credential-toolbox/global.credential-toolbox.service';
 import { GlobalCredentialTypesService } from 'src/app/services/credential-types/global.credential.types.service';
+import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
@@ -103,9 +105,8 @@ export class RequestCredentialsPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public receivedIntent: RequestCredentialsIntent = null;
-  // TODO public requestDappInfo: EssentialsIntentPlugin.AppInfo = null;
-  public requestDappIcon: string = null;
-  public requestDappName: string = null;
+  public requestingAppIconUrl: string = null;
+  public requestingAppName: string = null;
   public requestDappColor = '#565bdb';
 
   public credentials: VerifiableCredential[] = [];
@@ -147,6 +148,8 @@ export class RequestCredentialsPage {
     private credentialTypesService: GlobalCredentialTypesService,
     private intentService: IntentReceiverService,
     private dappbrowserService: DappBrowserService,
+    private globalHiveService: GlobalHiveService,
+    private globalApplicationDidService: GlobalApplicationDidService,
     private credentialsToolboxService: GlobalCredentialToolboxService
   ) {
   }
@@ -188,6 +191,8 @@ export class RequestCredentialsPage {
     });
 
     void this.zone.run(async () => {
+      void this.fetchApplicationDidInfo(); // Don't wait, just show app info when ready, if ready
+
       await this.getRequestedTheme();
       await this.organizeRequestedClaims();
 
@@ -405,6 +410,29 @@ export class RequestCredentialsPage {
     }
 
     Logger.log("identity", "Organized claims", this.organizedClaims);
+  }
+
+  private async fetchApplicationDidInfo(): Promise<void> {
+    let callingAppDID = this.receivedIntent.params.caller;
+
+    // Fetch the application from chain and extract info.
+    let publishedAppInfo = await this.globalApplicationDidService.fetchPublishedAppInfo(callingAppDID);
+    if (publishedAppInfo.didDocument) {
+      Logger.log("identity", "Published application info:", publishedAppInfo);
+
+      this.requestingAppName = publishedAppInfo.name;
+
+      void this.fetchAppIcon(publishedAppInfo.iconUrl);
+    }
+  }
+
+  private async fetchAppIcon(hiveIconUrl: string) {
+    try {
+      this.requestingAppIconUrl = await this.globalHiveService.fetchHiveScriptPictureToDataUrl(hiveIconUrl);
+    }
+    catch (e) {
+      Logger.error("identity", `Failed to fetch application icon at ${hiveIconUrl}`);
+    }
   }
 
   /**
@@ -665,16 +693,16 @@ export class RequestCredentialsPage {
   }
 
   getDappIcon() {
-    if (this.requestDappIcon) {
-      return this.sanitize(this.requestDappIcon);
+    if (this.requestingAppIconUrl) {
+      return this.sanitize(this.requestingAppIconUrl);
     } else {
       return 'assets/identity/icon/elastos-icon.svg'
     }
   }
 
   getDappName() {
-    if (this.requestDappName) {
-      return this.requestDappName;
+    if (this.requestingAppName) {
+      return this.requestingAppName;
     } else {
       return this.receivedIntent.params.appPackageId;
     }
