@@ -166,6 +166,14 @@ export const zh = {
         'app-instancedid': '应用实例DID',
         'app-did': '应用DID',
 
+        // page: hivebackupcredissue
+        'hivebackup-title': 'Hive backup auth.',
+        'hivebackup-subtitle': 'Hive backup authentication',
+        'hivebackup-intro': 'This application is requesting an access to backup and restore your hive vault storage space to or from another hive service.',
+        'hivebackup-sourcenodedid': 'Source Hive node',
+        'hivebackup-targetnodedid': 'Target Hive node',
+        'hivebackup-targetnodeurl': 'Target hive url',
+
         // page: signrequest
         'sign-data': '数据签名',
 

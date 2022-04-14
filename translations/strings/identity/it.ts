@@ -165,6 +165,14 @@ export const it = {
         'app-instancedid': 'DID temporanea dell\'Applicazione',
         'app-did': 'DID dell\'Applicazione',
 
+        // page: hivebackupcredissue
+        'hivebackup-title': 'Hive backup auth.',
+        'hivebackup-subtitle': 'Hive backup authentication',
+        'hivebackup-intro': 'This application is requesting an access to backup and restore your hive vault storage space to or from another hive service.',
+        'hivebackup-sourcenodedid': 'Source Hive node',
+        'hivebackup-targetnodedid': 'Target Hive node',
+        'hivebackup-targetnodeurl': 'Target hive url',
+
         // page: signrequest
         'sign-data': 'Firma i dati',
 

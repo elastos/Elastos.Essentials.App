@@ -166,6 +166,14 @@ export const fr = {
         'app-instancedid': 'DID temporaire de l\'application',
         'app-did': 'DID de l\'application',
 
+        // page: hivebackupcredissue
+        'hivebackup-title': 'Sauvegarde Hive',
+        'hivebackup-subtitle': 'Authentification pour sauvegarde du stockage Hive',
+        'hivebackup-intro': 'Cette application demande un accès pour sauvegarder ou restorer votre espace de stockage Hive vers, ou depuis un autre service Hive.',
+        'hivebackup-sourcenodedid': 'Service Hive d\'origine',
+        'hivebackup-targetnodedid': 'Service Hive cible',
+        'hivebackup-targetnodeurl': 'Adresse du service Hive cible',
+
         // page: signrequest
         'sign-data': 'Signer des données',
 

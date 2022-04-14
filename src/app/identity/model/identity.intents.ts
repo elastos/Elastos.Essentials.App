@@ -31,6 +31,17 @@ export type AppIdCredIssueIdentityIntent = IdentityIntent<AppIdCredIssueIdentity
 }
 
 /**
+ * Hive backup credential issue
+ */
+export type HiveBackupCredIssueIdentityIntentParams = IdentityIntentParams & {
+    sourceHiveNodeDID: string;
+    targetHiveNodeDID: string;
+    targetNodeURL: string;
+}
+export type HiveBackupCredIssueIdentityIntent = IdentityIntent<HiveBackupCredIssueIdentityIntentParams> & {
+}
+
+/**
  * Credential access
  * @deprecated
  */

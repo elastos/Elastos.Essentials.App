@@ -12,6 +12,7 @@ import { CredentialContextImportRequestPage } from './credentialcontextimportreq
 import { CredentialDeleteRequestPage } from './credentialdeleterequest/credentialdeleterequest';
 import { CredentialImportRequestPage } from './credentialimportrequest/credentialimportrequest';
 import { CredentialIssueRequestPage } from './credentialissuerequest/credentialissuerequest';
+import { HiveBackupCredentialIssueRequestPage } from './hivebackupcredentialissuerequest/hivebackupcredentialissuerequest';
 import { RegisterApplicationProfileRequestPage } from './regappprofilerequest/regappprofilerequest';
 import { RequestCredentialsPage } from './requestcredentials/requestcredentials';
 import { SetHiveProviderRequestPage } from './sethiveproviderrequest/sethiveproviderrequest';
@@ -21,6 +22,7 @@ import { SignRequestPage } from './signrequest/signrequest';
 @NgModule({
     declarations: [
         AppIdCredentialIssueRequestPage,
+        HiveBackupCredentialIssueRequestPage,
         RequestCredentialsPage,
         CredentialAccessRequestPage,
         CredentialImportRequestPage,
@@ -40,13 +42,14 @@ import { SignRequestPage } from './signrequest/signrequest';
         IonicModule,
         TranslateModule,
         RouterModule.forChild([
-            { path: 'appidcredissuerequest', component: AppIdCredentialIssueRequestPage },
             { path: 'credaccessrequest', component: CredentialAccessRequestPage },
             { path: 'requestcredentials', component: RequestCredentialsPage },
             { path: 'credissuerequest', component: CredentialIssueRequestPage },
             { path: 'credimportrequest', component: CredentialImportRequestPage },
             { path: 'credcontextimportrequest', component: CredentialContextImportRequestPage },
             { path: 'creddeleterequest', component: CredentialDeleteRequestPage },
+            { path: 'appidcredissuerequest', component: AppIdCredentialIssueRequestPage },
+            { path: 'hivebackupcredissuerequest', component: HiveBackupCredentialIssueRequestPage },
             { path: 'regappprofilerequest', component: RegisterApplicationProfileRequestPage },
             { path: 'sethiveproviderrequest', component: SetHiveProviderRequestPage },
             { path: 'signrequest', component: SignRequestPage },

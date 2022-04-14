@@ -58,37 +58,6 @@ export class IntentReceiverService {
 
     private async onReceiveIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         switch (this.getShortAction(intent.action)) {
-            case "appidcredissue":
-                Logger.log('identity', "Received appid credential issue intent request");
-                if (this.checkAppIdCredIssueIntentParams(intent)) {
-                    if (!GlobalDIDSessionsService.signedInDIDString) {
-                        Logger.log("identity", "No signed in identity. Returning no app id credential");
-                        await this.uxService.sendIntentResponse({}, intent.intentId);
-                    }
-                    else {
-                        await this.uxService.loadIdentityAndShow(false);
-
-                        //let appIdIssueIntent = intent as AppIdCredIssueIdentityIntent;
-
-                        // Check if we can directly fullfil the request or not (silent intent).
-                        // From inside trinity, as the runtime can ensure the app did, we can directly
-                        // issue the credential most of the times. Native apps though require a UI
-                        // confirmation.
-                        //this.appIDService.prepareNextRequest(appIdIssueIntent.intentId, appIdIssueIntent.params.appPackageId, appIdIssueIntent.params.appinstancedid, appIdIssueIntent.params.appdid);
-                        //if (await this.appIDService.applicationIDCredentialCanBeIssuedWithoutUI(appIdIssueIntent.params)) {
-                        //    void this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent.params);
-                        //}
-                        //else {
-                        // We have to show a UI confirmation so let's do it.
-                        void this.native.setRootRouter("/identity/intents/appidcredissuerequest");
-                        //}
-                    }
-                }
-                else {
-                    // Something wrong happened while trying to handle the intent: send intent response with error
-                    void this.showErrorAndExitFromIntent(intent);
-                }
-                break;
             case "credaccess":
                 Logger.log('identity', "Received credential access intent request");
                 if (this.checkCredAccessIntentParams(intent)) {
@@ -183,6 +152,55 @@ export class IntentReceiverService {
                 else {
                     Logger.error('identity', "Missing or wrong intent parameters for " + intent.action);
 
+                    // Something wrong happened while trying to handle the intent: send intent response with error
+                    void this.showErrorAndExitFromIntent(intent);
+                }
+                break;
+            case "appidcredissue":
+                Logger.log('identity', "Received appid credential issue intent request");
+                if (this.checkAppIdCredIssueIntentParams(intent)) {
+                    if (!GlobalDIDSessionsService.signedInDIDString) {
+                        Logger.log("identity", "No signed in identity. Returning no app id credential");
+                        await this.uxService.sendIntentResponse({}, intent.intentId);
+                    }
+                    else {
+                        await this.uxService.loadIdentityAndShow(false);
+
+                        //let appIdIssueIntent = intent as AppIdCredIssueIdentityIntent;
+
+                        // Check if we can directly fullfil the request or not (silent intent).
+                        // From inside trinity, as the runtime can ensure the app did, we can directly
+                        // issue the credential most of the times. Native apps though require a UI
+                        // confirmation.
+                        //this.appIDService.prepareNextRequest(appIdIssueIntent.intentId, appIdIssueIntent.params.appPackageId, appIdIssueIntent.params.appinstancedid, appIdIssueIntent.params.appdid);
+                        //if (await this.appIDService.applicationIDCredentialCanBeIssuedWithoutUI(appIdIssueIntent.params)) {
+                        //    void this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent.params);
+                        //}
+                        //else {
+                        // We have to show a UI confirmation so let's do it.
+                        void this.native.setRootRouter("/identity/intents/appidcredissuerequest");
+                        //}
+                    }
+                }
+                else {
+                    // Something wrong happened while trying to handle the intent: send intent response with error
+                    void this.showErrorAndExitFromIntent(intent);
+                }
+                break;
+            case "hivebackupcredissue":
+                Logger.log('identity', "Received hive backup credential issue intent request");
+                if (this.checkHiveBackupCredIssueIntentParams(intent)) {
+                    if (!GlobalDIDSessionsService.signedInDIDString) {
+                        Logger.log("identity", "No signed in identity. Returning no hive backup credential");
+                        await this.uxService.sendIntentResponse({}, intent.intentId);
+                    }
+                    else {
+                        await this.uxService.loadIdentityAndShow(false);
+
+                        void this.native.setRootRouter("/identity/intents/hivebackupcredissuerequest");
+                    }
+                }
+                else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
                     void this.showErrorAndExitFromIntent(intent);
                 }
@@ -359,6 +377,25 @@ export class IntentReceiverService {
 
         if (Util.isEmptyObject(intent.params.appinstancedid)) {
             Logger.error('identity', "Invalid appidcredissue parameters received. Empty appinstancedid.", intent.params);
+            return false;
+        }
+
+        this.receivedIntent = intent;
+
+        return true;
+    }
+
+    private checkHiveBackupCredIssueIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        Logger.log('identity', "Checking hivebackupcredissue intent parameters");
+        if (Util.isEmptyObject(intent.params)) {
+            Logger.error('identity', "Invalid hivebackupcredissue parameters received. Empty parameters.", intent.params);
+            return false;
+        }
+
+        if (Util.isEmptyObject(intent.params.sourceHiveNodeDID) ||
+            Util.isEmptyObject(intent.params.targetHiveNodeDID) ||
+            Util.isEmptyObject(intent.params.targetNodeURL)) {
+            Logger.error('identity', "Invalid hivebackupcredissue parameters received. Empty sourceHiveNodeDID, targetHiveNodeDID or targetNodeURL.", intent.params);
             return false;
         }
 
