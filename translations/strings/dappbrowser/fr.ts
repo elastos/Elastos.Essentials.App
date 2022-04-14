@@ -39,7 +39,7 @@ export const fr = {
         'network-availability-intro': 'Sélectionnez ci-dessous les réseaux qui sont supportés par cette dApp, afin de n\'afficher le favori que lorsque ces réseaux sont actifs. Si aucun réseau n\'est sélectionné, le favori est affiché pour tous les réseaux',
 
         //Service
-        'scam-warning-title': 'Scam Warning',
-        'scam-warning-message': 'Scam url is detected. Do you continue or leave?',
+        'scam-warning-title': 'Adresse dangereuse',
+        'scam-warning-message': 'Cette url est connue pour être dangereuse, nous vous recommandons fortement ne ne pas poursuivre.',
     }
 };

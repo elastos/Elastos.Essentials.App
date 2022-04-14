@@ -39,7 +39,7 @@ export const zh = {
         'network-availability-intro': '在下方选择此 dApp 支持哪些网络，仅当这些网络之一处于活动状态时才显示它。如果未选择任何网络，则会显示所有网络的收藏夹。',
 
         //Service
-        'scam-warning-title': '咋骗警告',
-        'scam-warning-message': '检测到咋骗网址。 请选择继续或离开?',
+        'scam-warning-title': 'Unsafe Url',
+        'scam-warning-message': 'This url is known to be malicious, we highly recommend you to not continue.',
     }
 };
