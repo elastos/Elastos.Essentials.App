@@ -53,7 +53,7 @@ export const zh = {
           'on': '开',
           'off': '关',
           'developer-tools': '开发者工具',
-          'developer-screen-capture': 'Allow screen capture',
+          'developer-screen-capture': '允许屏幕截图',
 
           /********** Select-net Page **********/
           'choose-network': '选择网络',
@@ -111,9 +111,9 @@ export const zh = {
           'elastos-io-des': '亦来云基金会的亦来云联合子团队（也称为产品团队）部署和维护的 Elastos API 集。',
           'trinity-tech-io-des': '亦来云基金会的 Trinity Tech 团队部署和维护的一组 Elastos API，负责亦来云 SDK 的开发。',
 
-          'privacy-toolbox-stats': 'Credentials statistics',
-          'privacy-send-credential-toolbox-stats': 'Send anonymous information about DID usage to the credential toolbox (a developer tool). The DID itself is never sent.',
-          'privacy-dont-send-credential-toolbox-stats': 'Don\'t send anonymous information about DID usage to the credential toolbox (a developer tool).',
+          'privacy-toolbox-stats': '凭证统计信息',
+          'privacy-send-credential-toolbox-stats': '将有关DID使用情况的匿名信息发送到凭证工具箱(开发人员工具)。DID本身永远不会发送。',
+          'privacy-dont-send-credential-toolbox-stats': '不要将有关DID使用情况的匿名信息发送到凭证工具箱(开发人员工具)。',
 
           /*********** Elastos API provider page ***********/
           'elastosapiprovider': 'Elastos API'

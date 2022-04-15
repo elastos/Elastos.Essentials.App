@@ -167,12 +167,12 @@ export const zh = {
         'app-did': '应用DID',
 
         // page: hivebackupcredissue
-        'hivebackup-title': 'Hive backup auth.',
-        'hivebackup-subtitle': 'Hive backup authentication',
-        'hivebackup-intro': 'This application is requesting an access to backup and restore your hive vault storage space to or from another hive service.',
-        'hivebackup-sourcenodedid': 'Source Hive node',
-        'hivebackup-targetnodedid': 'Target Hive node',
-        'hivebackup-targetnodeurl': 'Target hive url',
+        'hivebackup-title': 'Hive 备份身份验证',
+        'hivebackup-subtitle': 'Hive 备份身份验证',
+        'hivebackup-intro': '此应用程序正在请求访问权限，以便将您的 hive vault 存储空间备份到另一个 hive vault 或从 hive vault 服务恢复。',
+        'hivebackup-sourcenodedid': '源 Hive 节点',
+        'hivebackup-targetnodedid': '目标 Hive 节点',
+        'hivebackup-targetnodeurl': '目标 hive url',
 
         // page: signrequest
         'sign-data': '数据签名',

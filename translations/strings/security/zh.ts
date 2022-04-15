@@ -3,10 +3,10 @@ export const zh = {
           /**
            * Rooted device warning screen
            */
-          'modified-device': 'Modified Device',
-          'modified-device-subtitle': 'You are using a rooted or jailbroken device.',
-          'modified-device-intro1': 'This is a security risk for your mnemonic words and passwords, and could jeopardize your funds.',
-          'modified-device-intro2': 'You can either uninstall this application, or continue to use it but you are now aware of the potential risks.',
-          'modified-device-accept': 'I understand the risks, continue'
+          'modified-device': '设备已改良',
+          'modified-device-subtitle': '您正在使用的是已ROOT过的设备或越狱设备。',
+          'modified-device-intro1': '这对您的助记词和密码存在安全风险，并可能危及您的资金。',
+          'modified-device-intro2': '您可以卸载此应用程序，也可以继续使用它，但您现在已经意识到潜在的风险。',
+          'modified-device-accept': '我已了解风险，继续'
      }
 };
