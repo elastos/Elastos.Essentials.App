@@ -116,6 +116,10 @@ export const zh = {
         'mycredentials-segment-notconform': 'Not conform',
         'mycredentials-segment-conform': 'Conform',
         'mycredentials-segment-conform-intro': 'Credentials that have a standardized type shareable by all apps, which is increasing DID adoption.',
+        'mycredentials-segment-issuedbyuser': 'Created by me',
+        'mycredentials-segment-issuedbyuser-intro': 'Credentials created by myself using my identity wallet.',
+        'mycredentials-segment-issuedbyothers': 'Created by others',
+        'mycredentials-segment-issuedbyothers-intro': 'Credentials created by third party applications.',
 
         // page: publish
         'showing-all-visible-credentials': '显示所有可见凭证',

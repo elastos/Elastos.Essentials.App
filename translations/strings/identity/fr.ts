@@ -116,6 +116,10 @@ export const fr = {
         'mycredentials-segment-notconform': 'Non conformes',
         'mycredentials-segment-conform': 'Conformes',
         'mycredentials-segment-conform-intro': 'Crédentiels qui possèdent un type standard, partageable par plusieurs applications, ce qui améliore l\'adoption des identités DID.',
+        'mycredentials-segment-issuedbyuser': 'Créés par moi',
+        'mycredentials-segment-issuedbyuser-intro': 'Crédentiels créés par moi-même via un portefeuille d\'identité.',
+        'mycredentials-segment-issuedbyothers': 'Créés par d\'autres"',
+        'mycredentials-segment-issuedbyothers-intro': 'Crédentiels créés par d\'autres applications.',
 
         // page: publish
         'showing-all-visible-credentials': 'Montrez Tous les Crédentiels Visibles',

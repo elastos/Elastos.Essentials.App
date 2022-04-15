@@ -16,12 +16,13 @@ import { DIDDocumentsService } from "../../services/diddocuments.service";
 import { Native } from "../../services/native";
 import { ProfileService } from "../../services/profile.service";
 
-type SegmentType = "all" | "private" | "public" | "notconform" | "conform";
+type SegmentType = "all" | "private" | "public" | "issuedbyuser" | "issuedbyothers" | "notconform" | "conform";
 
 type DisplayableCredential = {
   credential: VerifiableCredential; // The credential itself
   isInRemoteDIDDocument: boolean; // The credential is in the DID document, meaning that it's visible by everyone
   isConform: boolean; // The credential format can be fully verified and all of its properties match the implemented credential types
+  isIssuedByThirdParty: boolean;
 }
 
 @Component({
@@ -98,6 +99,7 @@ export class CredentialsPage {
 
   ngOnDestroy() {
     this.unsubscribe(this.didchangedSubscription);
+    this.unsubscribe(this.onlineDIDDocumentStatusSub);
     this.unsubscribe(this.publicationstatusSubscription);
     this.unsubscribe(this.documentChangedSubscription);
     this.unsubscribe(this.credentialaddedSubscription);
@@ -126,7 +128,8 @@ export class CredentialsPage {
         let displayableCredential: DisplayableCredential = {
           credential,
           isInRemoteDIDDocument: this.profileService.credentialIsInPublishedDIDDocument(credential.pluginVerifiableCredential),
-          isConform: false // false, while getting the real value asynchronously
+          isConform: false, // false, while getting the real value asynchronously
+          isIssuedByThirdParty: credential.pluginVerifiableCredential.getIssuer() !== this.didService.getActiveDid().getDIDString()
         };
 
         void this.globalCredentialTypesService.verifyCredential(credential.pluginVerifiableCredential).then((isFullyConform) => {
@@ -184,6 +187,10 @@ export class CredentialsPage {
         return this.displayableCredentials.filter(c => !c.isInRemoteDIDDocument);
       case "public":
         return this.displayableCredentials.filter(c => c.isInRemoteDIDDocument);
+      case "issuedbyuser":
+        return this.displayableCredentials.filter(c => !c.isIssuedByThirdParty);
+      case "issuedbyothers":
+        return this.displayableCredentials.filter(c => c.isIssuedByThirdParty);
       case "notconform":
         return this.displayableCredentials.filter(c => !c.isConform);
       case "conform":
