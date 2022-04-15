@@ -78,6 +78,8 @@ export const fr = {
         'delete-credential': 'Supprimer',
         'delete-credential-info': 'This credential will be removed from your identity. This action cannot be reverted.',
         'issuer-not-found-info': "La personne ou le service qui a créé ce crédentiel n'a pas été trouvé dans le registre public. Son DID n'a probablement pas été publié.",
+        'credential-details-conform': 'Ce crédentiel est conforme à un format connu et peut être partagé facilement avec plusieurs applications.',
+        'credential-details-not-conform': 'Ce crédentiel n\'est pas conforme à un format connu et ne pourra pas facilement être utilisé avec les applications.',
 
         // Credentiallist
         'publish-changes': 'Publier les Changements',
@@ -107,11 +109,13 @@ export const fr = {
         // page: credentials
         'mycredentials-header': 'Crédentiels',
         'mycredentials-segment-all': 'Tous',
-        'mycredentials-segment-hidden': 'Invisible',
-        'mycredentials-segment-visible': 'Visible',
-        'mycredentials-segment-verified': 'Verifiés',
-        'mycredentials-segment-unverified': 'Non Verifiés',
-        'mycredentials-verifiedby': 'Verifiés par:',
+        'mycredentials-segment-private': 'Privés',
+        'mycredentials-segment-private-intro': 'Crédentiels uniquement dans l\'application, non visible par d\'autres personnes.',
+        'mycredentials-segment-public': 'Publics',
+        'mycredentials-segment-public-intro': 'Crédentiels publiés en ligne, visibles par tous.',
+        'mycredentials-segment-notconform': 'Non conformes',
+        'mycredentials-segment-conform': 'Conformes',
+        'mycredentials-segment-conform-intro': 'Crédentiels qui possèdent un type standard, partageable par plusieurs applications, ce qui améliore l\'adoption des identités DID.',
 
         // page: publish
         'showing-all-visible-credentials': 'Montrez Tous les Crédentiels Visibles',

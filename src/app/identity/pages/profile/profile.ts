@@ -11,7 +11,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { DIDDocument } from "../../model/diddocument.model";
-import { DIDURL } from "../../model/didurl.model";
 import { Profile } from "../../model/profile.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { DIDService } from "../../services/did.service";
@@ -155,7 +154,6 @@ export class ProfilePage {
   }
 
   ionViewWillEnter() {
-    this.buildAppAndAvatarCreds(false);
     this.titleBar.setTitle(this.translate.instant("identity.my-identity"));
   }
 
@@ -165,7 +163,7 @@ export class ProfilePage {
   }
 
   /***** Find and build app and avatar creds *****/
-  buildAppAndAvatarCreds(publishAvatar?: boolean) {
+  /* buildAppAndAvatarCreds(publishAvatar?: boolean) {
     //this.profileService.appCreds = [];
     let hasAvatar = false;
 
@@ -191,7 +189,7 @@ export class ProfilePage {
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
-  }
+  } */
 
   /**
    * The name credential can not be deleted.
@@ -225,62 +223,10 @@ export class ProfilePage {
     void this.profileService.showWarning("publishVisibility", null);
   }
 
-  /********** Prompt warning before deleting if creds are selected **********/
-  deleteSelectedCredentials() {
-    let selectedCreds = 0;
-    this.profileService.credsNotInLocalDoc.map((cred) => {
-      if (cred.willingToDelete) {
-        selectedCreds++;
-      }
-    });
-    this.profileService.credsInLocalDoc.map((cred) => {
-      if (cred.willingToDelete) {
-        selectedCreds++;
-      }
-    });
-
-    if (selectedCreds > 0) {
-      void this.profileService.showWarning("delete", null);
-    } else {
-      this.native.toast("You did not select any credentials to delete", 2000);
-    }
-  }
-
   /******************** Display Helpers  ********************/
   getCredentialKey(entry: CredentialDisplayEntry): string {
     let fragment = entry.credential.getFragment();
     return fragment;
-  }
-
-  getChainSyncStatusMessage(entry: CredentialDisplayEntry): string {
-    if (!this.currentOnChainDIDDocument) return "";
-
-    let fragment = entry.credential.getFragment();
-
-    let localValue = entry.credential.getSubject()[fragment];
-    let chainValue = this.currentOnChainDIDDocument.getCredentialById(
-      new DIDURL("#" + fragment)
-    );
-
-    if (!chainValue)
-      return "This credential is not published on the blockchain";
-
-    chainValue = chainValue.getSubject()[fragment];
-
-    return localValue != chainValue
-      ? "This credential is different than the one on the blockchain"
-      : "";
-  }
-
-  getDisplayableCredentialTitle(entry: CredentialDisplayEntry): string {
-    let fragment = entry.credential.getFragment();
-    let translationKey = "identity.credential-info-type-" + fragment;
-    let translated = this.translate.instant(translationKey);
-
-    if (!translated || translated == "" || translated == translationKey)
-      return fragment;
-
-    return translated;
   }
 
   displayableProperties(credential: DIDPlugin.VerifiableCredential) {

@@ -23,7 +23,6 @@ const assistAPIEndpoints = {
     TestNet: "https://assist-restapi-testnet.tuum.tech/v2"
 }; // Assist DID 2.0
 
-//const assistAPIEndpoint = "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod/v1"; // Assist V1 DID 1.0
 const assistAPIKey = "IdSFtQosmCwCB9NOLltkZrFy5VqtQn8QbxBKQoHPw7zp3w0hDOyOYjgL53DO3MDH";
 
 export type PersistentInfo = {

@@ -172,13 +172,13 @@ export class MyProfilePage {
     this.profileService.didString = this.didService.getActiveDid().getDIDString();
     void this.didDocumentsService
       .fetchOrAwaitDIDDocumentWithStatus(this.profileService.didString)
-      .then(async (status) => {
+      .then((status) => {
         let didDoc = status.document;
         this.currentOnChainDIDDocument = didDoc;
         if (this.currentOnChainDIDDocument) {
-          Logger.log("identity", "MyProfile: Published DID Document", await this.currentOnChainDIDDocument.pluginDidDocument.toJson());
+          Logger.log("identity", "MyProfile: personal DID document is published");
         } else {
-          Logger.log("identity", "MyProfile: DIDDocument is not published.");
+          Logger.log("identity", "MyProfile: personal DID document is not published.");
         }
       });
 

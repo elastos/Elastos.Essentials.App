@@ -447,7 +447,7 @@ export class ProfileService extends GlobalService {
     return addFriendUrl;
   }
 
-  get allCreds(): CredentialDisplayEntry[] {
+  private get allCreds(): CredentialDisplayEntry[] {
     return this.credentials;
   }
 
@@ -463,13 +463,13 @@ export class ProfileService extends GlobalService {
     });
   }
 
-  get credsInPublishedDoc(): CredentialDisplayEntry[] {
+  private get credsInPublishedDoc(): CredentialDisplayEntry[] {
     return this.allCreds.filter((item) => {
       return item.isInPublishedDocument == true;
     });
   }
 
-  get credsNotInPublishedDoc(): CredentialDisplayEntry[] {
+  private get credsNotInPublishedDoc(): CredentialDisplayEntry[] {
     return this.allCreds.filter((item) => {
       return item.isInPublishedDocument == false;
     });

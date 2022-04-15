@@ -35,6 +35,9 @@ export class CredentialComponent {
     private issuerName: string = null;
     public issuerIcon = transparentPixelIconDataUrl();
 
+    // Whether this credential can be "verified", meaning that its fields implement published credential types
+    public conformsToCredentialtypes = true;
+
     @Input("selectable") public selectable = false; // Whether to show the selection checkbox or not
     @Input("selected") public selected = false; // On/off checkbox model - defined by the parent
     @Input("showPubStatus") public showPubStatus = true; // Show the "published" icon or not

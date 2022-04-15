@@ -77,6 +77,8 @@ export const en = {
         'delete-credential': 'Delete Credential',
         'delete-credential-info': 'This credential will be removed from your identity. This action cannot be reverted.',
         'issuer-not-found-info': "The person or service who created this credential cannot be found on the public registry. His DID is probably not published.",
+        'credential-details-conform': 'This credential is conform to a known type that can be shared by any application.',
+        'credential-details-not-conform': ' This credential doesn\'t conform to known credential formats and can hardly be reused by many applications.',
 
         // Credentiallist
         'publish-changes': 'Publish Changes',
@@ -106,11 +108,13 @@ export const en = {
         // page: credentials
         'mycredentials-header': 'Credentials',
         'mycredentials-segment-all': 'All',
-        'mycredentials-segment-hidden': 'Hidden',
-        'mycredentials-segment-visible': 'Visible',
-        'mycredentials-segment-verified': 'Verified',
-        'mycredentials-segment-unverified': 'Unverified',
-        'mycredentials-verifiedby': 'Verified By:',
+        'mycredentials-segment-private': 'Private',
+        'mycredentials-segment-private-intro': 'Credentials only in your identity wallet, not visible by others.',
+        'mycredentials-segment-public': 'Public',
+        'mycredentials-segment-public-intro': 'Credentials published online, visible by everyone.',
+        'mycredentials-segment-notconform': 'Not conform',
+        'mycredentials-segment-conform': 'Conform',
+        'mycredentials-segment-conform-intro': 'Credentials that have a standardized type shareable by all apps, which is increasing DID adoption.',
 
         // page: publish
         'showing-all-visible-credentials': 'Show All Visible Credentials',

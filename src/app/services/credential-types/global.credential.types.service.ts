@@ -4,6 +4,7 @@ import { ToastController } from "@ionic/angular";
 import * as jsonld from "jsonld";
 import { Url } from 'jsonld/jsonld-spec';
 import moment from "moment";
+import Queue from "queue";
 import { firstValueFrom } from "rxjs";
 import { DIDDocument } from "src/app/identity/model/diddocument.model";
 import { DIDURL } from "src/app/identity/model/didurl.model";
@@ -48,6 +49,9 @@ export class GlobalCredentialTypesService {
   // This cache is NOT persistent, it is populated again at every app start (for instance,
   // to make sure we get the latest types from DID document, if the service endpoint is updated).
   private contextsCache: TimeBasedPersistentCache<ContextPayload>;
+
+  // Queue to make sure we fetch only one context at a time to avoid fetching the same url multiple times.
+  private fetchContextQueue = new Queue({ autostart: true, concurrency: 1 });
 
   constructor(
     public zone: NgZone,
@@ -188,63 +192,68 @@ export class GlobalCredentialTypesService {
     return pairs;
   }
 
+  // eslint-disable-next-line require-await
   private async fetchContext(contextUrl: string): Promise<ContextPayload> {
     let cacheEntry = this.contextsCache.get(contextUrl);
     if (cacheEntry) {
       return cacheEntry.data;
     }
 
-    if (contextUrl.startsWith("http")) {
-      let payload = await firstValueFrom(this.http.get(contextUrl, {
-        headers: {
-          'Accept': 'application/json'
-        }
-      }));
+    return new Promise((resolve, reject) => {
+      this.fetchContextQueue.push(() => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise(async (resolveQueue, rejectQueue) => {
+          if (contextUrl.startsWith("http")) {
+            let payload = await firstValueFrom(this.http.get(contextUrl, {
+              headers: {
+                'Accept': 'application/json'
+              }
+            }));
 
-      this.contextsCache.set(contextUrl, payload as ContextPayload, moment().unix());
-      // NOTE - don't ssve the cache = not persistent on disk - await this.contextsCache.save();
+            this.contextsCache.set(contextUrl, payload as ContextPayload, moment().unix());
+            // NOTE - don't ssve the cache = not persistent on disk - await this.contextsCache.save();
 
-      // TODO: catch network errors
+            // TODO: catch network errors
 
-      return payload as ContextPayload;
-    }
-    else if (contextUrl.startsWith("did:")) { // EID url
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-      return new Promise(async (resolve, reject) => {
-        try {
-          console.log("fetchContext in promise", contextUrl)
-          // Compute publisher's DID string based on context url
-          let { publisher, shortType } = this.extractEIDContext(contextUrl);
-          if (!publisher) {
-            Logger.warn("credentialtypes", "Failed to extract publisher from context", contextUrl);
-            resolve(null);
-            return;
+            resolve(payload as ContextPayload); resolveQueue(null);
           }
+          else if (contextUrl.startsWith("did:")) { // EID url
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+            try {
+              // Compute publisher's DID string based on context url
+              let { publisher, shortType } = this.extractEIDContext(contextUrl);
+              if (!publisher) {
+                Logger.warn("credentialtypes", "Failed to extract publisher from context", contextUrl);
+                resolve(null); resolveQueue(null);
+                return;
+              }
 
-          let docStatus = await this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(publisher);
-          if (docStatus.document) {
-            let serviceId = `${publisher}#${shortType}`;
-            let contextPayload = this.getContextPayloadFromDIDDocument(docStatus.document, serviceId);
+              let docStatus = await this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(publisher);
+              if (docStatus.document) {
+                let serviceId = `${publisher}#${shortType}`;
+                let contextPayload = this.getContextPayloadFromDIDDocument(docStatus.document, serviceId);
 
-            this.contextsCache.set(contextUrl, contextPayload, moment().unix());
-            // NOTE - don't save the cache = not persistent on disk - await this.contextsCache.save();
+                this.contextsCache.set(contextUrl, contextPayload, moment().unix());
+                // NOTE - don't save the cache = not persistent on disk - await this.contextsCache.save();
 
-            resolve(contextPayload);
+                resolve(contextPayload); resolveQueue(null);
+              }
+              else {
+                resolve(null); resolveQueue(null);
+              }
+            }
+            catch (e) {
+              reject(e); resolveQueue(null);
+            }
           }
           else {
-            resolve(null);
+            // Unsupported
+            Logger.log("credentialtypes", "Unsupported credential context url", contextUrl);
+            resolve(null); resolveQueue(null);
           }
-        }
-        catch (e) {
-          reject(e);
-        }
+        });
       });
-    }
-    else {
-      // Unsupported
-      Logger.log("credentialtypes", "Unsupported credential context url", contextUrl);
-      return null;
-    }
+    });
   }
 
   // From: did://elastos/insTmxdDDuS9wHHfeYD1h5C2onEHh3D8Vq/BenCredential
@@ -309,9 +318,16 @@ export class GlobalCredentialTypesService {
       return new Promise(async (resolve, reject) => {
         try {
           if (url.startsWith("did")) {
-            console.log("Loader is resolving url using our DID loader", url);
-
-            console.log("resolve custom url TODO", url);
+            // NOTE: normally fetchcontext could be used to resolve "http" urls as well but for now
+            // we use the json ld's "defaultLoader" as it also deals wit hmore advanced cases like
+            // following header redirection for special types, etc (more things than our fetcher).
+            // For instance, our fetcher works with ns.elastos.org urls, but not with schema.org ones.
+            let context = await this.fetchContext(url);
+            resolve({
+              contextUrl: null,
+              documentUrl: url,
+              document: context
+            });
           }
           else {
             let defaultLoader = (jsonld as any).documentLoaders.xhr();
@@ -324,5 +340,90 @@ export class GlobalCredentialTypesService {
         }
       });
     }
+  }
+
+  /**
+   * Queues a credential verification and tells if the credential fully conforms to its types, meaning
+   * that all fields in the credential subject have a definition in one of the credential types used
+   * by the credential.
+   */
+  public async verifyCredential(credential: DIDPlugin.VerifiableCredential): Promise<boolean> {
+    let credentialContent = JSON.parse(await credential.toJson());
+
+    try {
+      let credentialContentJson = credentialContent;
+      if (typeof credentialContentJson !== "object") {
+        return false;
+      }
+
+      // Make sure we have "https://www.w3.org/2018/credentials/v1" has first entry in the context,
+      // this is a W3C spec requirement
+      if (!("@context" in credentialContentJson) || credentialContentJson["@context"].indexOf("https://www.w3.org/2018/credentials/v1") !== 0) {
+        return false;
+      }
+
+      // Make sure there is a credentialSubject
+      if (!("credentialSubject" in credentialContentJson)) {
+        return false;
+      }
+
+      // Make sure there is a proof
+      if (!("proof" in credentialContentJson)) {
+        return false;
+      }
+
+      let compacted = await jsonld.compact(credentialContentJson, credentialContentJson["@context"], {
+        documentLoader: this.buildElastosJsonLdDocLoader()
+      });
+
+      if (compacted) {
+        // If the credential subject is empty (only id), JsonLD returns credentialSubject: "theid".
+        // We turn this back to an object for our display to work better right after.
+        if (!("credentialSubject" in compacted) || typeof compacted["credentialSubject"] === "string") {
+          compacted.credentialSubject = {
+            id: compacted.credentialSubject
+          }
+        }
+
+        // Check what original fields are missing after compacting. Is some warnings are generated,
+        // this means the document is not conform
+        let { modifiedDoc, warningsGenerated } = this.addMissingFieldsToCompactHtmlResult(credentialContentJson, compacted);
+
+        if (!warningsGenerated)
+          return true;
+      }
+    }
+    catch (e) {
+      return false;
+    }
+
+    return false;
+  }
+
+  // TODO: RECURSIVE
+  private addMissingFieldsToCompactHtmlResult(originalUserDoc: any, compactedDoc: any): { modifiedDoc: any, warningsGenerated: boolean } {
+    let warningsGenerated = false;
+    let modifiedCompactedDoc = Object.assign({}, compactedDoc);
+
+    // Credential subject
+    for (let key of Object.keys(originalUserDoc.credentialSubject)) {
+      if (!(key in compactedDoc.credentialSubject)) {
+        modifiedCompactedDoc.credentialSubject["MISSING_KEY_" + key] = "This field is missing in credential types";
+        warningsGenerated = true;
+      }
+    }
+
+    // Proof
+    for (let key of Object.keys(originalUserDoc.proof)) {
+      if (!(key in compactedDoc.proof)) {
+        modifiedCompactedDoc.proof["MISSING_KEY_" + key] = "This field is missing in credential types";
+        warningsGenerated = true;
+      }
+    }
+
+    return {
+      modifiedDoc: modifiedCompactedDoc,
+      warningsGenerated
+    };
   }
 }

@@ -12,6 +12,7 @@ import { reducedDidString } from "src/app/helpers/did.helper";
 import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
 import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
+import { GlobalCredentialTypesService } from "src/app/services/credential-types/global.credential.types.service";
 import { Events } from "src/app/services/events.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNativeService } from "src/app/services/global.native.service";
@@ -51,6 +52,8 @@ export class CredentialDetailsPage implements OnInit {
   public isCredentialInLocalDIDDocument = false;
   public isCredentialInPublishedDIDDocument = false;
   public hasCheckedCredential = false;
+  public conformityChecked = false;
+  public isConform = false;
   public updatingVisibility = false; // The local document is being updated to add or remove this credential
 
   public segment = "validator";
@@ -92,6 +95,7 @@ export class CredentialDetailsPage implements OnInit {
     private authService: AuthService,
     private credentialsService: CredentialsService,
     private sanitizer: DomSanitizer,
+    private globalCredentialTypesService: GlobalCredentialTypesService
   ) {
     this.init();
   }
@@ -173,10 +177,6 @@ export class CredentialDetailsPage implements OnInit {
   ionViewDidEnter() {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
-
-    Logger.log('Identity',
-      "Credential details ionViewDidEnter did: " + this.profileService.didString
-    );
   }
 
   sanitize(imgPath: string) {
@@ -209,15 +209,18 @@ export class CredentialDetailsPage implements OnInit {
     this.checkIsCredentialInPublishedDIDDocument();
     this.checkIsCredentialInLocalDIDDocument();
 
+    void this.globalCredentialTypesService.verifyCredential(this.credential.pluginVerifiableCredential).then(isFullyConform => {
+      this.conformityChecked = true;
+      this.isConform = isFullyConform;
+    });
+
     // Prepare the credential for display
     this.credential.onIconReady(iconSrc => {
-      Logger.log("identity", "onIconReady");
       this.zone.run(() => {
         this.iconSrc = iconSrc;
         this.iconLoaded = true;
       })
     });
-    Logger.log("identity", "prepareForDisplay");
     this.credential.prepareForDisplay();
 
     void this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(this.credential.pluginVerifiableCredential.getIssuer()).then(issuerDocumentStatus => {

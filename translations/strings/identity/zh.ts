@@ -78,6 +78,8 @@ export const zh = {
         'delete-credential': '删除凭证',
         'delete-credential-info': '此凭证将从您的身份中删除。此操作无法撤消。',
         'issuer-not-found-info': "在公共注册表上找不到创建此凭证的人员或服务。他的 DID 很可能没有发布。",
+        'credential-details-conform': 'This credential is conform to a known type that can be shared by any application.',
+        'credential-details-not-conform': ' This credential doesn\'t conform to known credential formats and can hardly be reused by many applications.',
 
         // Credentiallist
         'publish-changes': '发布更新',
@@ -106,12 +108,14 @@ export const zh = {
 
         // page: credentials
         'mycredentials-header': '我的凭证',
-        'mycredentials-segment-all': '全部',
-        'mycredentials-segment-hidden': '隐藏',
-        'mycredentials-segment-visible': '可见',
-        'mycredentials-segment-verified': '已验证',
-        'mycredentials-segment-unverified': '未验证',
-        'mycredentials-verifiedby': '验证方:',
+        'mycredentials-segment-all': 'All',
+        'mycredentials-segment-private': 'Private',
+        'mycredentials-segment-private-intro': 'Credentials only in your identity wallet, not visible by others.',
+        'mycredentials-segment-public': 'Public',
+        'mycredentials-segment-public-intro': 'Credentials published online, visible by everyone.',
+        'mycredentials-segment-notconform': 'Not conform',
+        'mycredentials-segment-conform': 'Conform',
+        'mycredentials-segment-conform-intro': 'Credentials that have a standardized type shareable by all apps, which is increasing DID adoption.',
 
         // page: publish
         'showing-all-visible-credentials': '显示所有可见凭证',
