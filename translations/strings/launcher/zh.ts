@@ -65,6 +65,8 @@ export const zh = {
         'app-dpos-description': '参与亦来云生态体系建设',
         'app-cr-council': 'CR 委员会',
         'app-crcouncil-description': 'CR 委员会成员',
+        'app-cr-council-election': 'CR 委员选举',
+        'app-crcouncil-election-description': 'CR 委员选举',
         'app-cr-proposal': 'CR 提案',
         'app-crproposal-description': '参与社区运营共治',
         'app-cr-suggestion': 'CR 建议',

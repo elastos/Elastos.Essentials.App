@@ -64,6 +64,54 @@ export const en = {
         'impeach-council-member': 'Impeach Council Member',
         'member-name': 'Council Member Name',
 
+        /********** Candidate **********/
+        'candidate-profile': 'Candidate Profile',
+        'voting-progress': 'Voting progress',
+        'total-votes': 'Total votes',
+        'about-candidate': 'About Candidate',
+        'candidate-did': 'Candidate DID',
+        'candidate-url': 'Candidate URL',
+        'social-media': 'Social Media',
+
+        /********** Registration **********/
+        'registration': 'Registration',
+        'register-header': 'Registration candidate',
+        'update-header': 'Update your Info',
+        'register': 'Register',
+        'unregister': 'Unregister',
+        'retrieve': 'Retrieve',
+        'return': 'Unregister Success',
+        'name': 'Name',
+        'required-placeholder': 'Required',
+        'location': 'Location',
+        'location-placeholder': 'Select your location',
+        'url': 'URL',
+        'registration-confirm': 'Confirm',
+        'candidate-info': 'Candidate Info',
+        'back': 'back',
+        'state': 'State:',
+        'Pending': 'Pending',
+        'Canceled': 'Canceled',
+
+        'transaction-details': 'Transaction Details',
+        'transaction-id': 'Transaction ID',
+        'time-published': 'Time Published',
+        'block-id': 'Block ID',
+        'confirm-count-6': 'Manage node after 6 confirmations.',
+        'confirm-count-prefix': 'Current ',
+        'confirm-count-postfix': ' confirmations',
+
+        'reg-candidate-balance-not-enough': '5000 ELA deposit and a minor transaction fee are required for candidate registration',
+        'candidate-deposit-warning': 'Do you want to register candidate? 5000 ELA deposit and a minor transaction fee are paid for candidate registration',
+        'text-candidate-name-already-used': 'This candidate name is already in use',
+        'candidate-unregister-warning': 'Do you want to unregister your candidate?',
+        'text-candidate-info-dont-modify': 'This candidate info do not modify.',
+        'text-registration-no-confirm': "Last time registration don't confirm, please wait.",
+        'text-update-no-confirm': "Last time update don't confirm, please wait.",
+
+        /********** UnRegistration **********/
+        'candidate-details': 'Candidate Details',
+
         /********** Location code **********
         * Location code - list of international phone number country code / country name.
         * NOTE: keys are NOT country codes, they are telephone codes, and this list may be used only in the CR council voting app.

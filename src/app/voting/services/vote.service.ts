@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
+import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -10,6 +11,7 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
+import { Config } from 'src/app/wallet/config/Config';
 import { RawTransactionPublishResult } from 'src/app/wallet/model/providers/transaction.types';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
@@ -51,7 +53,8 @@ export class VoteService {
         private globalIntentService: GlobalIntentService,
         public jsonRPCService: GlobalJsonRPCService,
         private globalSwitchNetworkService: GlobalSwitchNetworkService,
-        private globalElastosAPIService: GlobalElastosAPIService
+        private globalElastosAPIService: GlobalElastosAPIService,
+        public translate: TranslateService,
     ) {
         this.elastosChainCode = StandardCoinName.ELA;
     }
@@ -116,7 +119,7 @@ export class VoteService {
 
         //If multi sign will be rejected
         if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
-            await this.globalPopupService.ionicAlert('wallet.text-warning', 'crproposalvoting.multi-sign-reject-voting');
+            await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
             return;
         }
 
@@ -157,7 +160,7 @@ export class VoteService {
 
         let utxo = await this.sourceSubwallet.getAvailableUtxo(20000);
         if (!utxo) {
-            await this.globalPopupService.ionicAlert('wallet.text-warning', 'crproposalvoting.ela-not-enough');
+            await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.ela-not-enough');
             return false;
         }
 
@@ -278,4 +281,102 @@ export class VoteService {
     canVote() {
         return this.sourceSubwallet ? true : false;
     }
+
+    async getCurrentHeight(): Promise<number> {
+        Logger.log(App.CRPROPOSAL_VOTING, 'Get Current Height...');
+
+        const param = {
+            method: 'getcurrentheight',
+            params: {
+            },
+        };
+
+        try {
+            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+            Logger.log(App.CRPROPOSAL_VOTING, 'getCurrentHeight', result);
+            if (result) {
+                return result;
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRCOUNCIL_VOTING, 'getCurrentHeight error', err);
+        }
+
+        return 0;
+    }
+
+    async getConfirmCount(txid: string): Promise<number> {
+        //Get ower info
+        const param = {
+            method: 'getrawtransaction',
+            params: {
+                txid: txid,
+                verbose: true
+            },
+        };
+
+        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
+        if (result && result.confirmations) {
+            return result.confirmations;
+        }
+
+        return -1;
+    }
+
+    /**
+     * Fees needed to pay for the vote transaction. They have to be deduced from the total amount otherwise
+     * funds won't be enough to vote.
+     */
+    votingFees(): number {
+        return 100000; // SELA: 0.001ELA
+    }
+
+    getMaxVotes() {
+        const stakeAmount = this.sourceSubwallet.getRawBalance().minus(this.votingFees());
+        if (!stakeAmount.isNegative()) {
+            return Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
+        }
+        else {
+            return 0;
+        }
+    }
+
+    checkBalanceForRegistration(): boolean {
+        let depositAmount = 50000000000; // 5000 ELA
+        let fee = 10000;
+        let amount = depositAmount + fee;
+        if (this.sourceSubwallet.getRawBalance().lt(amount)) {
+            return false;
+        }
+        return true;
+    }
+
+    getRemainingTimeString(remainingTime: number): Promise<string> {
+        var ret;
+        if (remainingTime >= (1440 * 2)) { //more 2 days
+            ret = Math.floor(remainingTime / 1440) + " " + this.translate.instant('voting.days');
+        }
+        else if (remainingTime > 1440) {
+            ret = "1 " + this.translate.instant('voting.day') + " " + Math.floor((remainingTime % 1440) / 60) + " " + this.translate.instant('voting.hours');
+        }
+        else if (remainingTime == 1440) {
+            ret = "1 " + this.translate.instant('voting.day');
+        }
+        else if (remainingTime > 120) {
+            ret = Math.floor(remainingTime / 60) + " " + this.translate.instant('voting.hours');
+        }
+        else if (remainingTime > 60) {
+            ret = Math.floor(remainingTime / 60) + " " + this.translate.instant('voting.hours') + " "
+                + Math.floor(remainingTime % 60) + " " + this.translate.instant('voting.minutes');
+        }
+        else if (remainingTime == 60) {
+            ret = "1 " + this.translate.instant('voting.hours');
+        }
+        else {
+            ret = remainingTime + " " + this.translate.instant('voting.minutes');
+        }
+        return ret;
+    }
+
 }

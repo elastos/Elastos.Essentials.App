@@ -4,19 +4,24 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { CandidatesService } from './candidates.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class CRCouncilVotingInitService {
-  constructor(
-    public voteService: VoteService,
-    public candidatesService: CandidatesService,
-  ) {}
+    constructor(
+        public voteService: VoteService,
+        public candidatesService: CandidatesService,
+    ) {
+    }
 
-  public async init(): Promise<void> {
-  }
+    public init() {
 
-  public async start() {
-    await this.candidatesService.init();
-    await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
-  }
+    }
+
+    public async startCouncil() {
+        await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmembers');
+    }
+
+    public async startCouncilElection() {
+        await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+    }
 }

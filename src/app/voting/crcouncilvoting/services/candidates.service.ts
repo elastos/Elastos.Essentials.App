@@ -8,11 +8,14 @@ import { App } from 'src/app/model/app.enum';
 import { DIDDocument } from 'src/app/model/did/diddocument.model';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { Candidate } from '../model/candidates.model';
+import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/providers/transaction.types';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { VoteService } from '../../services/vote.service';
+import { Candidate, CandidateBaseInfo } from '../model/candidates.model';
 import { Selected } from '../model/selected.model';
 
 export type CRMemberInfo = {
@@ -37,8 +40,8 @@ export type CRMemberInfo = {
 })
 export class CandidatesService {
 
-    private elaRpcApi: string;
-    private crRpcApi: string;
+    public isVoting = false;
+    private getCRVotingStageTimeout: NodeJS.Timeout = null;
 
     constructor(
         private globalNav: GlobalNavService,
@@ -47,7 +50,9 @@ export class CandidatesService {
         private storage: GlobalStorageService,
         public translate: TranslateService,
         public jsonRPCService: GlobalJsonRPCService,
-        private globalElastosAPIService: GlobalElastosAPIService
+        public voteService: VoteService,
+        private walletManager: WalletService,
+        private globalIntentService: GlobalIntentService,
     ) {
 
     }
@@ -58,6 +63,7 @@ export class CandidatesService {
     public selectedCandidates: Selected[] = [];
     public crmembers: any[] = [];
     public selectedMember: CRMemberInfo;
+    public candidateInfo: CandidateBaseInfo;
 
     /** Election Results **/
     public councilTerm: any[] = [];
@@ -96,9 +102,6 @@ export class CandidatesService {
     }
 
     async initData() {
-        this.elaRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        this.crRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
-
         this.candidates = [];
         this.crmembers = [];
         this.selectedCandidates = [];
@@ -128,7 +131,7 @@ export class CandidatesService {
         };
 
         try {
-            const result = await this.jsonRPCService.httpPost(this.elaRpcApi, param);
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
             if (!result || Util.isEmptyObject(result.crmembersinfo)) {
                 return;
             }
@@ -158,48 +161,74 @@ export class CandidatesService {
     }
 
     async fetchCandidates() {
+
+        this.candidateInfo = {
+            nickname: "test",
+            location: 86,
+            url: 'http://test.com',
+            state: "Unregistered",
+        };
+
         Logger.log('crcouncil', 'Fetching Candidates..');
         const param = {
             method: 'listcrcandidates',
             params: {
-                state: "active"
+                state: "all"
             },
         };
 
         this.candidates = [];
         try {
-            const result = await this.jsonRPCService.httpPost(this.elaRpcApi, param);
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
             Logger.log('crcouncil', 'Candidates fetched', result);
             if (result && result.crcandidatesinfo) {
-                this.candidates = result.crcandidatesinfo;
+                for (let candidate of result.crcandidatesinfo) {
+                    if (candidate.state == "Active") {
+                        this.candidates.push(candidate);
+                        candidate.imageUrl = await this.getAvatar(candidate.did);
+                    }
+                    if (Util.isSelfDid(candidate.did)) {
+                        this.candidateInfo = candidate;
+                        Logger.log('crcouncil', 'my candidate info', this.candidateInfo);
+                    }
+                }
                 Logger.log('crcouncil', 'Candidates added', this.candidates);
                 this.totalVotes = parseFloat(result.totalvotes);
-                for (let candidate of this.candidates) {
-                    candidate.imageUrl = await this.getAvatar(candidate.did);
-                }
             }
         }
         catch (err) {
             Logger.error('crcouncil', 'fetchCandidates error', err);
         }
 
-        if (this.candidates.length < 1) {
-            await this.fetchElectionResults();
+        this.candidateInfo.txConfirm = true;
+        if (this.voteService.sourceSubwallet) {
+            // TODO await this.voteService.sourceSubwallet.getTransactionsByRpc();
+            let txhistory = await this.voteService.sourceSubwallet.getTransactions();
+            for (let i in txhistory) {
+                if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
+                    if (this.candidateInfo.state == 'Unregistered') {
+                        if (txhistory[i].txtype == RawTransactionType.RegisterCR) {
+                            this.candidateInfo.txConfirm = false;
+                            break;
+                        }
+                    }
+                    else if (txhistory[i].txtype == RawTransactionType.UpdateCR) {
+                        this.candidateInfo.txConfirm = false;
+                        break;
+                    }
+                }
+            }
         }
-    }
 
-    async fetchElectionResults() {
-        await this.fetchCouncilTerm();
-        this.fetchCRMembers();
     }
 
     async fetchCouncilTerm() {
         try {
-            let result = await this.jsonRPCService.httpGet(this.crRpcApi + "/api/council/term");
+            let result = await this.jsonRPCService.httpGet(this.voteService.getCrRpcApi() + "/api/council/term");
             Logger.log('crcouncil', 'Council terms fetched', result);
             if (result && result.data) {
                 this.councilTerm = result.data;
-                for (var i = 0; i < this.councilTerm.length; i ++) {
+                for (var i = 0; i < this.councilTerm.length; i++) {
                     if (this.councilTerm[i]) {
                         if (this.councilTerm[i].status == "CURRENT") {
                             this.currentTermIndex = i;
@@ -219,32 +248,12 @@ export class CandidatesService {
         }
     }
 
-    // async fetchCurrentCRMembers() {
-    //     this.crmembers = [];
-
-    //     try {
-    //         let result = await this.jsonRPCService.httpGet(this.crRpcApi + "/api/council/list/" + this.currentTermIndex);
-    //         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching Current CRMembers:', result);
-    //         if (result && result.data && result.data.council) {
-    //             this.crmembers = result.data.council;
-    //             for (let member of this.crmembers) {
-    //                 if (!member.avatar) {
-    //                     member.avatar = await this.getAvatar(member.did);
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     catch (err) {
-    //         Logger.error(App.CRCOUNCIL_VOTING, 'fetchCouncilTerm error:', err);
-    //     }
-    // }
-
     public async getAvatar(didString: string): Promise<string> {
         if (this.avatarList[didString]) {
             return this.avatarList[didString];
         }
 
-        let ret = this.getAvatarFromDIDDocument(didString);
+        let ret = await this.getAvatarFromDIDDocument(didString);
         if (ret != null) {
             return ret;
         }
@@ -298,7 +307,7 @@ export class CandidatesService {
     async getCRMemeberInfo(did: string): Promise<CRMemberInfo> {
         try {
             this.selectedMember = null;
-            let url = this.getCrRpcApi() + '/api/council/information/' + did;
+            let url = this.voteService.getCrRpcApi() + '/api/council/information/' + did;
             let result = await this.jsonRPCService.httpGet(url);
             if (result && result.data) {
                 let member = result.data;
@@ -315,8 +324,97 @@ export class CandidatesService {
         return this.selectedMember;
     }
 
-    private getCrRpcApi(): string {
-        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
+    async getCRRelatedStage(): Promise<any> {
+        Logger.log(App.CRCOUNCIL_VOTING, 'Get CR Related Stage...');
+
+        const param = {
+            method: 'getcrrelatedstage',
+            params: {
+            },
+        };
+
+        try {
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
+            Logger.log(App.CRCOUNCIL_VOTING, 'getCRRelatedStage', result);
+            return result;
+        }
+        catch (err) {
+            Logger.error(App.CRCOUNCIL_VOTING, 'getCRRelatedStage error', err);
+        }
+
+        return null;
     }
+
+    async getCRVotingStage() {
+        let result = await this.getCRRelatedStage();
+        if (result) {
+            if (result.invoting) {
+                this.isVoting = result.invoting;
+            }
+            else {
+                this.isVoting = false;
+            }
+
+            // this.isVoting = !this.isVoting ;
+
+            // let currentHeight = await this.voteService.getCurrentHeight();
+            // var block_remain = 0;
+            // if (this.isVoting && result.votingendheight > currentHeight) {
+            //     block_remain = result.votingendheight - currentHeight;
+            // }
+            // else if (result.votingstartheight > currentHeight) {
+            //     block_remain = result.votingstartheight - currentHeight;
+            // }
+
+            // if (block_remain < 1) {
+            //     block_remain = 15; //30min
+            // }
+
+            // let time = block_remain * 2 * 60 * 1000; //ms
+            // this.getCRVotingStageTimeout = setTimeout(() => {
+            //     void this.getCRVotingStage();
+            // }, time);
+        }
+    }
+
+    stopTimeout() {
+        if (this.getCRVotingStageTimeout) {
+            clearTimeout(this.getCRVotingStageTimeout);
+            this.getCRVotingStageTimeout = null;
+        }
+    }
+
+    async getSignature(digest: string): Promise<string> {
+        let reDigest = Util.reverseHexToBE(digest)
+        let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {data: reDigest});
+        Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", reDigest, ret);
+        if (ret && ret.result && ret.result.signature) {
+            return ret.result.signature;
+        }
+
+        return null;
+    }
+
+    async getRemainingTime(): Promise<string> {
+        var ret;
+        var remainingTime = -1;
+
+        let result = await this.getCRRelatedStage();
+        if (result && result.invoting) {
+            let currentHeight = await this.voteService.getCurrentHeight();
+
+            if (result.votingendheight > currentHeight) {
+                let block_remain = result.votingendheight - currentHeight;
+                remainingTime = block_remain * 2;
+            }
+        }
+
+        if (remainingTime > 0) {
+            ret = this.voteService.getRemainingTimeString(remainingTime);
+        }
+        return ret;
+    }
+
+
 
 }

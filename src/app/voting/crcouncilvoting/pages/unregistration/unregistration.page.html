@@ -1,0 +1,104 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <div class="header">
+    </div>
+
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+        <div *ngIf="candidatesService.candidateInfo.state == 'Pending'" class="pending-msg">
+            <p>
+                <span>{{ 'crcouncilvoting.confirm-count-prefix' | translate }}</span>
+                <span>{{ confirmCount }}</span>
+                <span>{{ 'crcouncilvoting.confirm-count-postfix' | translate }}</span>
+            </p>
+            <p>{{ 'crcouncilvoting.confirm-count-6' | translate }}</p>
+        </div>
+
+        <ion-list-header>
+            <h4>{{ 'crcouncilvoting.candidate-details' | translate }}</h4>
+        </ion-list-header>
+
+        <ion-list>
+            <ion-row class="profile-data" *ngIf="candidatesService.candidateInfo.nickname">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.name' | translate }}</h5>
+                    <h4>{{ candidatesService.candidateInfo.nickname }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="candidatesService.candidateInfo.state">
+                <div>
+                    <h5>{{ 'crcouncilvoting.status' | translate }}</h5>
+                    <h4 class="align-center status_mark" [id]="candidatesService.candidateInfo.state">
+                        {{ 'crcouncilvoting.' + candidatesService.candidateInfo.state | translate }}
+                    </h4>
+                </div>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="candidatesService.candidateInfo.votes">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.current-votes' | translate }}</h5>
+                    <h4>{{ candidatesService.candidateInfo.votes }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="candidatesService.candidateInfo.url">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.url' | translate }}</h5>
+                    <h4>{{ candidatesService.candidateInfo.url }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="candidatesService.candidateInfo.location">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.location' | translate }}</h5>
+                    <h4>{{'crcouncilvoting.' + candidatesService.candidateInfo.location | translate }}</h4>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <br />
+        <ion-list-header>
+            <h4>{{ 'crcouncilvoting.transaction-details' | translate }}</h4>
+        </ion-list-header>
+
+        <ion-list>
+            <ion-row class="profile-data" *ngIf="transactionInfo.txid">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.transaction-id' | translate }}</h5>
+                    <h4>{{ transactionInfo.txid }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="transactionInfo.time">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.time-published' | translate }}</h5>
+                    <h4>{{ publishedTime }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="candidatesService.candidateInfo.votes">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.block-id' | translate }}</h5>
+                    <h4>{{ transactionInfo.height }}</h4>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <ion-row class="btn-container">
+            <ion-button *ngIf="candidatesService.candidateInfo.state == 'Active'" color="success" (click)="unregister()">
+                {{ 'crcouncilvoting.unregister' | translate }}
+            </ion-button>
+            <ng-container *ngIf="candidatesService.candidateInfo.state == 'Canceled'">
+                <!-- <ion-row>
+                    <ion-label>BlockHeight - CancelHeight: {{ blockHeight - cancelHeight }}</ion-label>
+                </ion-row> -->
+                <ion-button color="success" [attr.disabled]="available == 0" (click)="retrieve()">
+                    {{ 'crcouncilvoting.retrieve' | translate }}
+                </ion-button>
+            </ng-container>
+            <!-- <ion-button  *ngIf="state == 'ReturnDeposit'" color="success" (click)="">
+                        {{ 'crcouncilvoting.back' | translate }}
+                    </ion-button> -->
+        </ion-row>
+    </ion-grid>
+</ion-content>

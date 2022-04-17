@@ -3,14 +3,17 @@ import { ToastController } from "@ionic/angular";
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
+import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
+import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from "src/app/voting/services/vote.service";
+import { CandidateOptionsComponent } from "../../components/candidate-options/options.component";
 import { Candidate } from "../../model/candidates.model";
 import { CandidatesService } from "../../services/candidates.service";
 
@@ -28,6 +31,8 @@ export class CandidatesPage implements OnInit {
     public showCandidate = false;
     public candidateIndex: number;
     public addingCandidates = false;
+    public candidatesFetched = false;
+    public remainingTime: string;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -35,10 +40,12 @@ export class CandidatesPage implements OnInit {
         public candidatesService: CandidatesService,
         private storage: GlobalStorageService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
         public theme: GlobalThemeService,
         private toastCtrl: ToastController,
         private voteService: VoteService,
-        public translate: TranslateService
+        public translate: TranslateService,
+        public popupProvider: GlobalPopupService,
     ) { }
 
 
@@ -48,14 +55,29 @@ export class CandidatesPage implements OnInit {
     }
 
     async ionViewWillEnter() {
-
-        if (this.candidatesService.votingTermIndex != -1) {
-            this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
-        } else if (this.candidatesService.currentTermIndex != -1) {
-            this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
-        } else {
-            this.titleBar.setTitle(this.translate.instant('launcher.app-cr-council'));
+        this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
+        if (!this.candidatesFetched) {
+            await this.candidatesService.fetchCandidates();
+            this.candidatesFetched = true;
+            this.remainingTime = await this.candidatesService.getRemainingTime();
         }
+
+        switch (this.candidatesService.candidateInfo.state) {
+            case 'Unregistered':
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                    void this.goToRegistration();
+                });
+                break;
+            case 'Pending':
+            case 'Active':
+            case 'Canceled':
+            case 'Returned':
+                this.titleBar.setMenuVisibility(true);
+                this.titleBar.setMenuComponent(CandidateOptionsComponent);
+                break;
+        }
+
     }
 
     ionViewWillLeave() {
@@ -63,9 +85,29 @@ export class CandidatesPage implements OnInit {
     }
 
     doRefresh(event) {
+        void this.candidatesService.fetchCandidates();
+
         setTimeout(() => {
             event.target.complete();
         }, 1000);
+    }
+
+    async goToRegistration() {
+        if (!this.candidatesService.candidateInfo.txConfirm) {
+            this.globalNative.genericToast('dposregistration.text-registration-no-confirm');
+            return;
+        }
+
+        if (!this.voteService.checkBalanceForRegistration()) {
+            await this.popupProvider.ionicAlert('wallet.insufficient-balance', 'crcouncilvoting.reg-candidate-balance-not-enough');
+            return;
+        }
+
+        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-deposit-warning', 'common.ok', 'common.cancel')) {
+            return;
+        }
+
+        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
     }
 
     /****************** Select Candidate *******************/
@@ -145,6 +187,10 @@ export class CandidatesPage implements OnInit {
     }
 
     async onShowMemberInfo(did: string) {
-        this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember/' + did);
+        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember/' + did);
+    }
+
+    async onShowCandidateInfo(did: string) {
+        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidate/' + did);
     }
 }

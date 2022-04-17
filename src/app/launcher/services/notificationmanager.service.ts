@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
+import { App } from "src/app/model/app.enum";
 import { ContactAvatar } from 'src/app/services/contactnotifier.service';
 import { GlobalNotificationsService, Notification } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { App } from "src/app/model/app.enum"
 
 export const enum LauncherNotificationType {
   SYSTEM,
@@ -140,8 +140,6 @@ export class NotificationManagerService {
         return 'launcher.app-contacts';
       case App.CRCOUNCIL_VOTING:
         return 'launcher.app-cr-council';
-      case App.CRCOUNCIL_MANAGER:
-        return 'launcher.app-cr-registration';
       case App.CRPROPOSAL_VOTING:
         return 'launcher.app-cr-proposal';
       case App.SCANNER:
@@ -171,8 +169,6 @@ export class NotificationManagerService {
         return 'assets/contacts/images/logo.png';
       case App.CRCOUNCIL_VOTING:
         return 'assets/crcouncilvoting/images/logo.png';
-      case App.CRCOUNCIL_MANAGER:
-        return 'assets/crcouncilmanager/images/logo.png';
       case App.CRPROPOSAL_VOTING:
         return 'assets/crproposalvoting/images/logo.png';
       case App.SCANNER:

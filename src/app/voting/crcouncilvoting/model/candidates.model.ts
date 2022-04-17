@@ -14,3 +14,15 @@ export class Candidate {
     public imageUrl: any,
   ) {}
 }
+
+export type CandidateBaseInfo = {
+    cid?: string,
+    did?: string,
+    nickname: string,
+    url: string,
+    location: number,
+    ownerpublickey?: string,
+    state: string,
+    txConfirm?: boolean,
+    votes?: number,
+}

@@ -36,7 +36,7 @@ type RunnableApp = {
     iconDark?: string;
     hasWidget: boolean;
     routerPath?: string;
-    startCall?: () => void;
+    startCall?: () => Promise<void>;
 }
 
 type RunnableAppCategory = {
@@ -84,7 +84,7 @@ export class AppmanagerService {
         private hiveManagerInitService: HiveManagerInitService,
         private dposVotingInitService: DPoSVotingInitService,
         private walletInitService: WalletInitService,
-        private crcouncilVotingInitService: CRCouncilVotingInitService,
+        private crCouncilVotingInitService: CRCouncilVotingInitService,
         private contactsInitService: ContactsInitService,
         private walletNetworkService: WalletNetworkService
     ) { }
@@ -188,10 +188,17 @@ export class AppmanagerService {
                         description: this.translate.instant('launcher.app-crcouncil-description'),
                         icon: '/assets/launcher/apps/app-icons/council.svg',
                         hasWidget: false,
-                        startCall: () => this.crcouncilVotingInitService.start()
-                        // routerPath: '/crcouncilvoting/candidates'
-                        // routerPath: '/crcouncilvoting/vote'
+                        startCall: () => this.crCouncilVotingInitService.startCouncil()
                     },
+                    // {
+                    //     id: 'crcouncil-election',
+                    //     routerContext: App.CRCOUNCIL_VOTING,
+                    //     name: this.translate.instant('launcher.app-cr-council-election'),
+                    //     description: this.translate.instant('launcher.app-crcouncil-election-description'),
+                    //     icon: '/assets/launcher/apps/app-icons/council.svg',
+                    //     hasWidget: false,
+                    //     startCall: () => this.crCouncilVotingInitService.startCouncilElection(),
+                    // },
                     {
                         id: 'crproposal',
                         routerContext: App.CRPROPOSAL_VOTING,

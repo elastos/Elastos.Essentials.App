@@ -1,39 +1,34 @@
 <ion-content>
     <app-titlebar></app-titlebar>
 
-    <div *ngIf="member != null" [class.darkContainer]="theme.darkMode">
+    <div *ngIf="candidate != null" [class.darkContainer]="theme.darkMode">
         <ion-list class="container">
             <ion-row class="id-row">
                 <ion-col size="2.75" class="left-col">
                     <ion-avatar class="avatar">
-                        <img [src]="member.avatar ? member.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
+                        <img [src]="candidate.avatar ? candidate.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
                     </ion-avatar>
                 </ion-col>
 
                 <ion-col size="6.5" class="name-col mid-col align-center">
                     <ion-label class="align-left">
-                        <h2 class="name">{{ member.didName }}</h2>
+                        <h2 class="name">{{ candidate.nickname }}</h2>
                         <p class="location">
                             <ion-icon src="/assets/crcouncilvoting/icon/location.svg"></ion-icon>
-                            {{ 'crcouncilvoting.' + member.location | translate }}
+                            {{ 'crcouncilvoting.' + candidate.location | translate }}
                         </p>
                     </ion-label>
                 </ion-col>
                 <ion-col size="2.75" class="right-col align-center align-right">
-                    <p class="status" [class.elected]="member.status === 'Elected'"
-                        [class.impeached]="member.status === 'Impeached'"
-                        [class.returned]="member.status === 'Returned'"
-                        [class.terminated]="member.status === 'Terminated'"
-                        [class.inactive]="member.status === 'Inactive'" [class.active]="member.status === 'Active'"
-                        [class.illegal]="member.status === 'Illegal'" [class.expired]="member.status === 'Expired'">
-                        {{'crcouncilvoting.'+ member.status | translate }}</p>
+                    <p id="status">
+                        No.{{ candidate.index + 1}}</p>
                 </ion-col>
             </ion-row>
 
-            <ion-row class="impeachment-row">
+            <ion-row class="candidate-row">
                 <ion-col size="4" class="progress-container left-col">
                     <div class="progress-wrapper  align-center">
-                        <div class="ratio">{{ member.impeachmentRatio }}%</div>
+                        <div class="ratio">{{ candidate.ratio }}%</div>
                         <round-progress [current]="current" [max]="max" [rounded]="true"
                             [color]="gradient ? 'url(#gradient)' : color" [background]="background">
                         </round-progress>
@@ -42,7 +37,7 @@
                 <ion-col size="8" class="right-col">
                     <ion-row class="top-row">
                         <ion-col size="12">
-                            <h3 id="impeachment-title">{{'crcouncilvoting.voting-progress' | translate}}</h3>
+                            <h3 id="candidate-title">{{'crcouncilvoting.voting-progress' | translate}}</h3>
                         </ion-col>
                     </ion-row>
                     <ion-row>
@@ -50,16 +45,16 @@
                             <ion-label>
                                 <h5>{{'crcouncilvoting.current' | translate}}</h5>
                                 <h4>
-                                    <span>{{ member.impeachmentVotes }}</span><span>{{'crcouncilvoting.votes' |
+                                    <span>{{ candidate.votes }}</span><span>{{'crcouncilvoting.votes' |
                                         translate }}</span>
                                 </h4>
                             </ion-label>
                         </ion-col>
                         <ion-col size="6" class="mid-col">
                             <ion-label>
-                                <h5>{{'crcouncilvoting.impeachment' | translate}}</h5>
+                                <h5>{{'crcouncilvoting.total-votes' | translate}}</h5>
                                 <h4>
-                                    <span>{{ member.impeachmentThroughVotes }}</span><span>{{'crcouncilvoting.votes'
+                                    <span>1000</span><span>{{'crcouncilvoting.votes'
                                         | translate }}</span>
                                 </h4>
                             </ion-label>
@@ -71,10 +66,7 @@
             <ion-row>
                 <ion-segment (ionChange)="segmentChanged($event)" value="about">
                     <ion-segment-button value="about">
-                        <ion-label>{{'crcouncilvoting.about-member' | translate}}</ion-label>
-                    </ion-segment-button>
-                    <ion-segment-button value="record">
-                        <ion-label>{{'crcouncilvoting.performance-record' | translate}}</ion-label>
+                        <ion-label>{{'crcouncilvoting.about-candidate' | translate}}</ion-label>
                     </ion-segment-button>
                 </ion-segment>
             </ion-row>
@@ -83,47 +75,30 @@
         <ion-list *ngIf="segmentValue=='about'">
             <ion-row class="profile-data">
                 <ion-col>
-                    <h5>{{'crcouncilvoting.member-did' | translate}}</h5>
-                    <h4>{{ member.did }}</h4>
+                    <h5>{{'crcouncilvoting.candidate-did' | translate}}</h5>
+                    <h4>{{ candidate.did }}</h4>
                 </ion-col>
             </ion-row>
 
             <ion-row class="profile-data">
                 <div>
-                    <h5>{{'crcouncilvoting.member-url' | translate}}</h5>
-                    <h4>{{ member.address }}</h4>
+                    <h5>{{'crcouncilvoting.candidate-url' | translate}}</h5>
+                    <h4>{{ candidate.url }}</h4>
                 </div>
             </ion-row>
-            <ion-row class="profile-data" *ngIf="member.introduction">
+            <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{'crcouncilvoting.member-profile' | translate}}</h5>
-                    <h4>{{ member.introduction }}</h4>
+                    <!-- <h4>{{ candidate.introduction }}</h4> -->
+                </ion-col>
+            </ion-row>
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{'crcouncilvoting.social-media' | translate}}</h5>
+                    <!-- <h4>{{ candidate. }}</h4> -->
                 </ion-col>
             </ion-row>
         </ion-list>
-
-        <div *ngIf="segmentValue=='record'">
-            <ion-list *ngFor="let item of member.term">
-                <ion-row class="profile-data">
-                    <ion-col size="9.5">
-                        <ion-label>
-                            <h4>{{ item.title }}</h4>
-                            <p>
-                                {{ getItemDescription(item) }}
-                            </p>
-                        </ion-label>
-                    </ion-col>
-                    <ion-col class="label-col" size="2.5">
-                        <div class="voteResult align-center" [class.support]="item.voteResult === 'support'"
-                            [class.reject]="item.voteResult === 'reject'"
-                            [class.abstention]="item.voteResult === 'abstention'"
-                            [class.undecided]="item.voteResult === 'undecided'">
-                            {{'crcouncilvoting.' + item.voteResult | translate}}
-                        </div>
-                    </ion-col>
-                </ion-row>
-            </ion-list>
-        </div>
 
         <!-- <div class="footer-space"></div> -->
 
@@ -134,7 +109,7 @@
             </linearGradient>
         </svg>
 
-        <ion-footer *ngIf="member.isSelf">
+        <ion-footer *ngIf="candidate.isSelf">
             <ion-row>
                 <ion-col class="left-col">
                     <div class="btn-container align-center" id="cancel" (click)="update()">
@@ -152,7 +127,7 @@
         </ion-footer>
     </div>
 
-    <div *ngIf="member == null" class="spinner align-center">
+    <div *ngIf="candidate == null" class="spinner align-center">
         <ion-spinner name="crescent"></ion-spinner>
     </div>
 

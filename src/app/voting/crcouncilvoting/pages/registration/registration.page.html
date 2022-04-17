@@ -1,0 +1,74 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <div class="header">
+    </div>
+
+    <div class="align-center title">
+        <h3 *ngIf="candidateInfo.state == 'Unregistered'">{{ 'crcouncilvoting.register-header' | translate }}</h3>
+        <h3 *ngIf="candidateInfo.state == 'Active'">{{ 'crcouncilvoting.update-header' | translate }}</h3>
+    </div>
+
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+
+        <ion-list *ngIf="state != 'ReturnDeposit'">
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.name' | translate }}</h5>
+                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || candidateInfo.state == 'Active'" ngDefaultControl
+                        placeholder="{{'crcouncilvoting.required-placeholder' | translate}}"
+                        [(ngModel)]="candidateInfo.nickname">
+                    </ion-input>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.url' | translate }}</h5>
+                    <ion-input type="text" name="url" [attr.disabled]="needConfirm" ngDefaultControl
+                        placeholder="e.g. https…" [(ngModel)]="candidateInfo.url">
+                    </ion-input>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.location' | translate }}</h5>
+                    <ion-select [(ngModel)]="candidateInfo.location" [attr.disabled]="needConfirm"
+                        placeholder="{{'crcouncilvoting.location-placeholder' | translate}}"
+                        [attr.ok-text]="'common.confirm' | translate" [attr.cancel-text]="'common.cancel' | translate">
+                        <ion-select-option *ngFor="let code of areaList" [value]="code">
+                            {{ 'crcouncilvoting.' + code | translate }}
+                        </ion-select-option>
+                    </ion-select>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <ion-row class="btn-container">
+            <ng-container *ngIf="!needConfirm">
+                <ion-button *ngIf="candidateInfo.state == 'Unregistered'" color="success" (click)="checkValues()">
+                    {{ 'crcouncilvoting.register' | translate }}
+                </ion-button>
+                <ion-button *ngIf="candidateInfo.state == 'Active'" color="success" (click)="checkValues()">
+                    {{ 'crcouncilvoting.update' | translate }}
+                </ion-button>
+            </ng-container>
+
+            <ion-row class="btn-row" *ngIf="needConfirm">
+                <ion-col class="left-col">
+                    <ion-button color="light" (click)="needConfirm = false;">
+                        {{ 'common.cancel' | translate }}
+                    </ion-button>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+                <ion-col class="right-col" color="success">
+                    <ion-button color="success" (click)="confirm()">
+                        {{ 'common.confirm' | translate }}
+                    </ion-button>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+            </ion-row>
+
+        </ion-row>
+    </ion-grid>
+</ion-content>

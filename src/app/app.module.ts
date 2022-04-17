@@ -31,7 +31,6 @@ import { Logger } from './logger';
 import { ScannerInitModule } from './scanner/init.module';
 import { GlobalNativeService } from './services/global.native.service';
 import { SettingsInitModule } from './settings/init.module';
-import { CRCouncilManagerInitModule } from './voting/crcouncilmanager/init.module';
 import { CRCouncilVotingInitModule } from './voting/crcouncilvoting/init.module';
 import { CRProposalVotingInitModule } from './voting/crproposalvoting/init.module';
 import { DPoSRegistrationInitModule } from './voting/dposregistration/init.module';
@@ -198,7 +197,6 @@ export function TranslateLoaderFactory() {
     DIDSessionsInitModule,
     ScannerInitModule,
     CRCouncilVotingInitModule,
-    CRCouncilManagerInitModule,
     CRProposalVotingInitModule,
     SettingsInitModule,
     DPoSVotingInitModule,

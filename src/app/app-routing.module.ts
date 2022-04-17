@@ -17,7 +17,6 @@ const routes: Routes = [
   { path: 'dposvoting', loadChildren: () => import('./voting/dposvoting/module').then(x => x.DPoSVotingModule), canActivate: [AuthGuardService] },
   { path: 'dposregistration', loadChildren: () => import('./voting/dposregistration/module').then(x => x.DPoSRegistrationModule), canActivate: [AuthGuardService] },
   { path: 'crcouncilvoting', loadChildren: () => import('./voting/crcouncilvoting/module').then(x => x.CRCouncilVotingModule), canActivate: [AuthGuardService] },
-  { path: 'crcouncilmanager', loadChildren: () => import('./voting/crcouncilmanager/module').then(x => x.CRCouncilManagerModule), canActivate: [AuthGuardService] },
   { path: 'crproposalvoting', loadChildren: () => import('./voting/crproposalvoting/module').then(x => x.CRProposalVotingModule), canActivate: [AuthGuardService] },
   { path: 'developertools', loadChildren: () => import('./developertools/module').then(x => x.DeveloperToolsModule), canActivate: [AuthGuardService] },
   { path: 'dappbrowser', loadChildren: () => import('./dappbrowser/module').then(x => x.DAppBrowserModule), canActivate: [AuthGuardService] },

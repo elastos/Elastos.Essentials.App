@@ -1,17 +1,17 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
+import { Config } from 'src/app/wallet/config/Config';
+import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
 import { CandidatesService } from '../../services/candidates.service';
 
 @Component({
@@ -25,14 +25,11 @@ export class VotePage implements OnInit, OnDestroy {
     constructor(
         public candidatesService: CandidatesService,
         private storage: GlobalStorageService,
-        private toastCtrl: ToastController,
-        private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
-        private globalIntentService: GlobalIntentService,
         public theme: GlobalThemeService,
-        private route: ActivatedRoute,
         private voteService: VoteService,
-        public translate: TranslateService
+        public translate: TranslateService,
+        public popupProvider: GlobalPopupService,
     ) { }
 
     public castingVote = false;
@@ -40,12 +37,11 @@ export class VotePage implements OnInit, OnDestroy {
     public totalEla = 0;
     private votedEla = 0;
     private toast: any;
+    public signingAndTransacting = false;
 
     ngOnInit() {
         Logger.log('crcouncil', 'My Candidates', this.candidatesService.selectedCandidates);
-        let elaamount = this.voteService.networkWallet.subWallets.ELA.getRawBalance();
-        const fees = 0.001;// it is enough.
-        this.totalEla = Math.floor(elaamount.toNumber() / 100000000 - fees);
+        this.totalEla =this.voteService.getMaxVotes();
         Logger.log('crcouncil', 'ELA Balance', this.totalEla);
     }
 
@@ -81,7 +77,8 @@ export class VotePage implements OnInit, OnDestroy {
         let votedCandidates = {};
         this.candidatesService.selectedCandidates.map((candidate) => {
             if (candidate.userVotes && candidate.userVotes > 0) {
-                let userVotes = candidate.userVotes * 100000000;
+                // let userVotes = candidate.userVotes * 100000000;
+                let userVotes = Util.accMul(candidate.userVotes, Config.SELA)
                 let _candidate = { [candidate.cid]: userVotes.toFixed(0) } //SELA, can't with fractions
                 votedCandidates = { ...votedCandidates, ..._candidate }
             } else {
@@ -90,38 +87,17 @@ export class VotePage implements OnInit, OnDestroy {
         });
 
         if (Object.keys(votedCandidates).length === 0) {
-            void this.toastErr(this.translate.instant('crcouncilvoting.pledge-some-ELA-to-candidates'));
-        } else if (this.votedEla > this.totalEla) {
-            void this.toastErr(this.translate.instant('crcouncilvoting.not-allow-pledge-more-than-own'));
-        } else {
+            void this.globalNative.genericToast('crcouncilvoting.pledge-some-ELA-to-candidates');
+        }
+        else if (this.votedEla > this.totalEla) {
+            void this.globalNative.genericToast('crcouncilvoting.not-allow-pledge-more-than-own');
+        }
+        else {
             Logger.log('crcouncil', votedCandidates);
             await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', this.candidatesService.selectedCandidates);
             this.castingVote = true;
             this.votesCasted = false;
-
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            setTimeout(async () => {
-                try {
-                    let res = await this.globalIntentService.sendIntent(
-                        'https://wallet.elastos.net/crmembervote',
-                        { votes: votedCandidates });
-
-                    if (res.result.txid === null) {
-                        this.castingVote = false;
-                        void this.voteFailedToast(this.translate.instant('crcouncilvoting.vote-incomplete'));
-                    } else {
-                        Logger.log('crcouncil', 'Intent sent sucessfully', res);
-                        this.castingVote = false;
-                        this.votesCasted = true;
-                        void this.voteSuccessToast(res.result.txid);
-                    }
-                }
-                catch (err) {
-                    Logger.log('crcouncil', 'Intent sent failed', err);
-                    this.castingVote = false;
-                    void this.voteFailedToast(err);
-                }
-            }, 1000);
+            await this.createVoteCRTransaction(votedCandidates);
         }
     }
 
@@ -139,72 +115,29 @@ export class VotePage implements OnInit, OnDestroy {
         return remainder.toFixed(2);
     }
 
-    /****************** Toasts/Alerts *******************/
-    async toastErr(msg: string) {
-        this.toast = await this.toastCtrl.create({
-            header: msg,
-            position: 'bottom',
-            color: 'primary',
-            mode: 'ios',
-            duration: 2000
-        });
-        this.toast.onWillDismiss(() => {
-            this.toast = null;
-        })
-        this.toast.present();
-    }
+    async createVoteCRTransaction(votes: any) {
+        this.signingAndTransacting = true;
+        Logger.log('wallet', 'Creating vote transaction with votes', votes);
 
-    async voteSuccessToast(txid = 'adwfw3r3wdwagyfgw3dfwdg83addwefwsfssg5g4fwdwsdqdgyywqdqw') {
-        this.toast = await this.toastCtrl.create({
-            mode: 'ios',
-            position: 'bottom',
-            color: 'primary',
-            header: this.translate.instant('common.vote-success'),
-            message: `${txid.slice(0, 16) + '<br>' + txid.slice(16, 32) + '<br>' + txid.slice(32, 48)}`,
-            buttons: [
-                {
-                    text: this.translate.instant('common.copy'),
-                    handler: () => {
-                        this.toast.dismiss();
-                        this.globalNative.genericToast('common.tx-copied-to-clipboard');
-                        void this.globalNative.copyClipboard(txid);
-                        void this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
-                    }
-                },
-                {
-                    text: this.translate.instant('common.dismiss'),
-                    handler: () => {
-                        this.toast.dismiss();
-                        void this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
-                    }
-                }
-            ]
-        });
-        this.toast.onWillDismiss(() => {
-            this.toast = null;
-        })
-        this.toast.present();
-    }
+        let crVoteContent: VoteContent = {
+            Type: VoteType.CRC,
+            Candidates: votes
+        }
 
-    async voteFailedToast(err: string) {
-        this.toast = await this.toastCtrl.create({
-            mode: 'ios',
-            position: 'bottom',
-            color: 'primary',
-            message: err,
-            buttons: [
-                {
-                    text: this.translate.instant('common.ok'),
-                    handler: () => {
-                        this.toast.dismiss();
-                        void this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
-                    }
-                }
-            ]
-        });
-        this.toast.onWillDismiss(() => {
-            this.toast = null;
-        })
-        this.toast.present();
+        try {
+            const voteContent = [crVoteContent];
+            const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
+                voteContent,
+                '', //memo
+            );
+            Logger.log('wallet', "rawTx:", rawTx);
+
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
+        }
+        catch (e) {
+            await this.popupProvider.ionicAlert('crcouncilvoting.impeach-council-member', "Sorry, unable to vote. Your crproposal can't be vote for now. ");
+        }
+
+        this.signingAndTransacting = false;
     }
 }

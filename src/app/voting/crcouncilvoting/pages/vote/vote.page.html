@@ -1,369 +1,47 @@
 <ion-content>
-  <app-titlebar></app-titlebar>
-  
-  <ion-grid class="container ion-no-padding" [class.dark-container]="theme.darkMode">
+    <app-titlebar></app-titlebar>
 
-    <div class="votes-header">
-      <ion-label><span>{{ getElaRemainder() }}</span>/{{ totalEla }} {{ 'crcouncilvoting.votes-remaining' | translate }}</ion-label>
-    </div>
+    <ion-grid class="container ion-no-padding" [class.dark-container]="theme.darkMode">
 
-    <ion-list lines="none" class="candidate-list" [class.blur]="castingVote">
-      <ion-item *ngFor="let candidate of candidatesService.selectedCandidates" class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
-              <ion-label>
-                <h4>{{ candidate.nickname }}</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                [(ngModel)]="candidate.userVotes"
-              >
-              </ion-input>
-              <ion-label>{{ 'crcouncilvoting.pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-    </ion-list>
+        <div class="votes-header">
+            <ion-label><span>{{ getElaRemainder() }}</span>/{{ totalEla }} {{ 'crcouncilvoting.votes-remaining' |
+                translate }}</ion-label>
+        </div>
 
-    <div class="spinner" *ngIf="castingVote">
-      <ion-spinner name="bubbles"></ion-spinner>
-    </div>
+        <ion-list lines="none" class="candidate-list" [class.blur]="castingVote">
+            <ion-item *ngFor="let candidate of candidatesService.selectedCandidates" class="candidate" lines="none">
+                <ion-grid>
+                    <ion-row class="ion-no-padding">
+                        <ion-col size="6.5" class="candidate-title">
+                            <img
+                                [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
+                            <ion-label>
+                                <h4>{{ candidate.nickname }}</h4>
+                            </ion-label>
+                        </ion-col>
+                        <ion-col offset="0.5" size="5" class="candidate-input">
+                            <ion-input class="ion-text-center" (ionBlur)="setInputDefault($event.target.value)"
+                                type="number" name="userVotes" ngDefaultControl [(ngModel)]="candidate.userVotes">
+                            </ion-input>
+                            <ion-label>{{ 'crcouncilvoting.pledge-ela' | translate }}</ion-label>
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
+            </ion-item>
+        </ion-list>
 
-    <div class="btn cancel ion-activatable ripple" (click)="distribute()">
-      <ion-label>{{ 'crcouncilvoting.dist-equally' | translate }}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
-    <div class="btn confirm ion-activatable ripple" (click)="cast()">
-      <ion-label *ngIf="!votesCasted">{{ 'crcouncilvoting.cast-votes' | translate }}</ion-label>
-      <ion-label *ngIf="votesCasted">{{ 'crcouncilvoting.votes-casted' | translate }}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
-  </ion-grid>
+        <div class="spinner" *ngIf="castingVote">
+            <ion-spinner name="bubbles"></ion-spinner>
+        </div>
+
+        <div class="btn cancel ion-activatable ripple" (click)="distribute()">
+            <ion-label>{{ 'crcouncilvoting.dist-equally' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+        </div>
+        <div class="btn confirm ion-activatable ripple" (click)="cast()">
+            <ion-label *ngIf="!votesCasted">{{ 'crcouncilvoting.cast-votes' | translate }}</ion-label>
+            <ion-label *ngIf="votesCasted">{{ 'crcouncilvoting.votes-casted' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+        </div>
+    </ion-grid>
 </ion-content>
-  
-
-<!-- DUMMY DATA -->
-<!-- <ion-content>
-  <app-titlebar></app-titlebar>
-  <ion-grid class="container ion-no-padding" [class.dark-container]="theme.darkMode">
-    <div class="votes-header">
-      <ion-label><span>40</span>/100 votes remaining</ion-label>
-    </div>
-    <ion-list lines="none" class="candidate-list" [class.blur]="castingVote">
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Houston Mike</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="12"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>John Locke</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="0"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Snoop Doge</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="286"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Satoshi Nakamoto</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="1"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Vitalik Buterin</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="1000000"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Miya Bebe</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="640"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Cheech and Chong</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="420"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Rong Chen</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="1401"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Zhming</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="85"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Chad Racelis</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="99"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Lemon</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="20"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="candidate" lines="none">
-        <ion-grid>
-          <ion-row class="ion-no-padding">
-            <ion-col size="6.5" class="candidate-title">
-              <img src="/assets/crcouncilvoting/icon/avatar.png">
-              <ion-label>
-                <h4>Benjamin Piette</h4>
-              </ion-label>
-            </ion-col>
-            <ion-col offset="0.5" size="5" class="candidate-input">
-              <ion-input
-                class="ion-text-center"
-                (ionBlur)="setInputDefault($event.target.value)"
-                type="number"
-                name="userVotes"
-                ngDefaultControl
-                value="100"
-              >
-              </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-    </ion-list>
-
-    <div class="spinner" *ngIf="castingVote">
-      <ion-spinner name="bubbles"></ion-spinner>
-    </div>
-
-    <div class="btn cancel ion-activatable ripple" (click)="voteFailedToast()">
-      <ion-label>{{ 'dist-equally' | translate }}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
-    <div class="btn confirm ion-activatable ripple" (click)="voteSuccessToast()">
-      <ion-label *ngIf="!votesCasted">{{ 'cast-votes' | translate }}</ion-label>
-      <ion-label *ngIf="votesCasted">{{ 'votes-casted' | translate }}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
-
-  </ion-grid>
-
-</ion-content>
- -->

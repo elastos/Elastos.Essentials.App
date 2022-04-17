@@ -10,17 +10,25 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
 import { CandidateSliderComponent } from './components/candidate-slider/candidate-slider.component';
 import { ComponentsModule } from './components/components.module';
 import { RoundProgressModule } from './components/round-progress/round-progress.module';
+import { CandidatePage } from './pages/candidate/candidate.page';
 import { CandidatesPage } from './pages/candidates/candidates.page';
 import { CRMemberPage } from './pages/crmember/crmember.page';
+import { CRMembersPage } from './pages/crmembers/crmembers.page';
 import { CRNodePage } from './pages/crnode/crnode.page';
 import { HistoryPage } from './pages/history/history.page';
 import { ImpeachCRMemberPage } from './pages/impeach/impeach.page';
+import { CandidateRegistrationPage } from './pages/registration/registration.page';
+import { CandidateUnRegistrationPage } from './pages/unregistration/unregistration.page';
 import { VotePage } from './pages/vote/vote.page';
 import { CRCouncilVotingRoutingModule } from './routing';
 @NgModule({
   declarations: [
     VotePage,
+    CRMembersPage,
     CandidatesPage,
+    CandidatePage,
+    CandidateRegistrationPage,
+    CandidateUnRegistrationPage,
     HistoryPage,
     CRNodePage,
     CRMemberPage,

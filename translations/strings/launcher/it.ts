@@ -65,6 +65,8 @@ export const it = {
         'app-dpos-description': 'DPoS Supernodes',
         'app-cr-council': 'Consiglio CR',
         'app-crcouncil-description': 'Membri del consiglio della Cyber Republic',
+        'app-cr-council-election': 'CR Council Election',
+        'app-crcouncil-election-description': 'Cyber Republic Council Election',
         'app-cr-proposal': 'Proposte CR',
         'app-crproposal-description': 'Proposte Cyber Republic',
         'app-cr-suggestion': 'Suggerimenti CR',

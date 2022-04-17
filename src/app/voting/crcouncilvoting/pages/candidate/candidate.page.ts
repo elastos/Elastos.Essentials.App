@@ -9,17 +9,17 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { CRMemberOptionsComponent } from '../../components/options/options.component';
+import { CandidateOptionsComponent } from '../../components/candidate-options/options.component';
 import { CandidatesService } from '../../services/candidates.service';
 
 @Component({
-    selector: 'app-crmember',
-    templateUrl: './crmember.page.html',
-    styleUrls: ['./crmember.page.scss'],
+    selector: 'app-candidate',
+    templateUrl: './candidate.page.html',
+    styleUrls: ['./candidate.page.scss'],
 })
-export class CRMemberPage {
+export class CandidatePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     current: number = 10;
@@ -30,7 +30,7 @@ export class CRMemberPage {
     radius: number = 125;
     percentage: number = 0;
 
-    public member: any = null;
+    public candidate: any = null;
     public segmentValue = "about";
 
     private popover: any = null;
@@ -51,39 +51,21 @@ export class CRMemberPage {
     }
 
     async init(did: string) {
-        this.member = await this.candidatesService.getCRMemeberInfo(did);
-        Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.member);
-        this.member.impeachmentThroughVotes = Math.ceil(this.candidatesService.selectedMember.impeachmentThroughVotes);
-        this.current = this.member.impeachmentVotes;
-        this.max = this.member.impeachmentThroughVotes;
+        this.candidate = await this.candidatesService.candidates.find(candidate => candidate.did === did);
+        Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.candidate);
+        // this.candidate.impeachmentThroughVotes = Math.ceil(this.candidatesService.selectedMember.impeachmentThroughVotes);
+        this.current = 1000;
+        this.max = 100000;
         this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
 
-        if (this.voteService.canVote()) {
+        if (Util.isSelfDid(this.candidate.did)) {
             this.titleBar.setMenuVisibility(true);
-            this.titleBar.setMenuComponent(CRMemberOptionsComponent)
+            this.titleBar.setMenuComponent(CandidateOptionsComponent)
         }
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('crcouncilvoting.crmember-profile'));
-    }
-
-    async showOptions(ev) {
-        Logger.log('Launcher', 'Opening options');
-
-        this.popover = await this.popoverCtrl.create({
-            mode: 'ios',
-            component: CRMemberOptionsComponent,
-            componentProps: {
-            },
-            cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'launcher-options-component' : 'launcher-options-component-dark',
-            translucent: false,
-            event: ev,
-        });
-        this.popover.onWillDismiss().then(() => {
-            this.popover = null;
-        });
-        return await this.popover.present();
+        this.titleBar.setTitle(this.translate.instant('crcouncilvoting.candidate-profile'));
     }
 
     ionViewWillLeave() {

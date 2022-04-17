@@ -10,7 +10,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
     templateUrl: './options.component.html',
     styleUrls: ['./options.component.scss'],
 })
-export class OptionsComponent implements OnInit {
+export class CRMemberOptionsComponent implements OnInit {
 
     constructor(
         public theme: GlobalThemeService,

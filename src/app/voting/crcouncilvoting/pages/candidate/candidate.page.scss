@@ -31,7 +31,7 @@ ion-col {
         color: #acacac;
     }
 
-    .status {
+    #status {
         min-width: 68px;
         text-align: center;
         padding: 5px 10px;
@@ -39,7 +39,7 @@ ion-col {
         height: 22;
         font-size: 10px;
         font-weight: 600;
-
+        background-color: #74ffde;
     }
 
     .elected {
@@ -83,7 +83,7 @@ ion-col {
     }
 }
 
-.impeachment-row {
+.candidate-row {
     margin-top: 24px;
     height: 153px;
     border-radius: 21px;
@@ -122,7 +122,7 @@ ion-col {
         background-color: #f5f7fe;
     }
 
-    #impeachment-title {
+    #candidate-title {
         margin-top: 0px;
         font-weight: 600;
         font-size: 18px;
@@ -213,7 +213,7 @@ ion-segment {
         }
     }
 
-    .impeachment-row {
+    .candidate-row {
         background-color: #212021;
         ion-row {
             background-color: #212021;
