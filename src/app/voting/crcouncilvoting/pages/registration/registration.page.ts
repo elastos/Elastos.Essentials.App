@@ -77,7 +77,7 @@ export class CandidateRegistrationPage implements OnInit {
         Logger.log("CandidateRegistrationPage", this.voteService.masterWalletId);
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
-        this.candidateInfo = Util.clone(this.candidatesService.candidateInfo);
+        //this.candidateInfo = Util.clone(this.candidatesService.candidateInfo);
 
         switch (this.candidateInfo.state) {
             case 'Unregistered':
@@ -122,7 +122,7 @@ export class CandidateRegistrationPage implements OnInit {
             return;
         }
 
-        if (!this.candidateInfo.url.match("((http|https)://)(([a-zA-Z0-9\._-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\&%_\./-~-]*)?")) {
+        if (!this.candidateInfo.url.match("((http|https)://)(([a-zA-Z0-9._-]+.[a-zA-Z]{2,6})|([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9&%_./-~-]*)?")) {
             formatWrong = this.translate.instant('dposregistration.node-url') + formatWrong;
             this.globalNative.genericToast(formatWrong);
             return;

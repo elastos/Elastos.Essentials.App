@@ -37,7 +37,7 @@ export const it = {
         'no': 'No',
         'abstain': 'Astenuto',
         'by': 'Di',
-        'voting-ends-in': 'Voting Ends In',
+        'voting-ends-in': 'Voting ends in',
         'days': ' Days',
         'day': 'Day',
         'hours': 'Hours',

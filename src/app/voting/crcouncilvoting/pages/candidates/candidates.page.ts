@@ -3,7 +3,7 @@ import { ToastController } from "@ionic/angular";
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
@@ -13,7 +13,6 @@ import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from "src/app/voting/services/vote.service";
-import { CandidateOptionsComponent } from "../../components/candidate-options/options.component";
 import { Candidate } from "../../model/candidates.model";
 import { CandidatesService } from "../../services/candidates.service";
 
@@ -55,7 +54,10 @@ export class CandidatesPage implements OnInit {
     }
 
     async ionViewWillEnter() {
+        this.titleBar.setBackgroundColor("#732CCE");
+        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
+
         if (!this.candidatesFetched) {
             await this.candidatesService.fetchCandidates();
             this.candidatesFetched = true;
@@ -64,24 +66,22 @@ export class CandidatesPage implements OnInit {
 
         switch (this.candidatesService.candidateInfo.state) {
             case 'Unregistered':
-                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
+                /* this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
                     void this.goToRegistration();
-                });
+                }); */
                 break;
             case 'Pending':
             case 'Active':
             case 'Canceled':
             case 'Returned':
-                this.titleBar.setMenuVisibility(true);
-                this.titleBar.setMenuComponent(CandidateOptionsComponent);
                 break;
         }
 
     }
 
     ionViewWillLeave() {
-      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     doRefresh(event) {

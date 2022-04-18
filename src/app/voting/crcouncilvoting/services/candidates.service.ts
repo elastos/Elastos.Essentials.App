@@ -63,7 +63,12 @@ export class CandidatesService {
     public selectedCandidates: Selected[] = [];
     public crmembers: any[] = [];
     public selectedMember: CRMemberInfo;
-    public candidateInfo: CandidateBaseInfo;
+    public candidateInfo: CandidateBaseInfo = {
+        nickname: "test",
+        location: 86,
+        url: 'http://test.com',
+        state: "Unregistered",
+    };
 
     /** Election Results **/
     public councilTerm: any[] = [];
@@ -97,8 +102,8 @@ export class CandidatesService {
         "iTN9V9kaBewdNE9aw7DfqHgRn6NcDj8HCf": "https://elanodes.com/wp-content/uploads/custom/images/Orchard1.png",
     }
 
-    async init() {
-        this.initData();
+    init() {
+        return this.initData();
     }
 
     async initData() {
@@ -107,8 +112,8 @@ export class CandidatesService {
         this.selectedCandidates = [];
         this.selectedMember = null;
 
-        this.fetchCandidates();
-        this.getSelectedCandidates();
+        await this.fetchCandidates();
+        await this.getSelectedCandidates();
     }
 
     public stop() {
@@ -161,13 +166,6 @@ export class CandidatesService {
     }
 
     async fetchCandidates() {
-
-        this.candidateInfo = {
-            nickname: "test",
-            location: 86,
-            url: 'http://test.com',
-            state: "Unregistered",
-        };
 
         Logger.log('crcouncil', 'Fetching Candidates..');
         const param = {
@@ -386,7 +384,7 @@ export class CandidatesService {
 
     async getSignature(digest: string): Promise<string> {
         let reDigest = Util.reverseHexToBE(digest)
-        let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {data: reDigest});
+        let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", { data: reDigest });
         Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", reDigest, ret);
         if (ret && ret.result && ret.result.signature) {
             return ret.result.signature;

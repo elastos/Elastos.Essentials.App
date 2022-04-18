@@ -11,7 +11,6 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { CandidateOptionsComponent } from '../../components/candidate-options/options.component';
 import { CandidatesService } from '../../services/candidates.service';
 
 @Component({
@@ -59,8 +58,8 @@ export class CandidatePage {
         this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
 
         if (Util.isSelfDid(this.candidate.did)) {
-            this.titleBar.setMenuVisibility(true);
-            this.titleBar.setMenuComponent(CandidateOptionsComponent)
+            //this.titleBar.setMenuVisibility(true);
+            // this.titleBar.setMenuComponent(CandidateOptionsComponent)
         }
     }
 

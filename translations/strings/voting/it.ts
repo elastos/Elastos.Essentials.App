@@ -12,7 +12,7 @@ export const it = {
         'minutes': 'Minutes',
 
         'vote': 'Vote',
-        'voting-ends-in': 'Voting Ends In',
+        'voting-ends-in': 'Voting ends in',
     }
 
 };

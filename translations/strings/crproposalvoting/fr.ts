@@ -36,7 +36,7 @@ export const fr = {
         'no': 'Non',
         'abstain': 'Abstention',
         'by': 'Par',
-        'voting-ends-in': 'Voting Ends In',
+        'voting-ends-in': 'Voting ends in',
         'days': ' Days',
         'day': 'Day',
         'hours': 'Hours',

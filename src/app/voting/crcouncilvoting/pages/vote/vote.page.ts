@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -41,7 +42,7 @@ export class VotePage implements OnInit, OnDestroy {
 
     ngOnInit() {
         Logger.log('crcouncil', 'My Candidates', this.candidatesService.selectedCandidates);
-        this.totalEla =this.voteService.getMaxVotes();
+        this.totalEla = this.voteService.getMaxVotes();
         Logger.log('crcouncil', 'ELA Balance', this.totalEla);
     }
 
@@ -49,6 +50,8 @@ export class VotePage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
+        this.titleBar.setBackgroundColor("#732CCE");
+        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.my-candidates'));
     }
 

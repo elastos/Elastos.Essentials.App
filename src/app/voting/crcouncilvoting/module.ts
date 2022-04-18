@@ -17,6 +17,7 @@ import { CRMembersPage } from './pages/crmembers/crmembers.page';
 import { CRNodePage } from './pages/crnode/crnode.page';
 import { HistoryPage } from './pages/history/history.page';
 import { ImpeachCRMemberPage } from './pages/impeach/impeach.page';
+import { CandidateRegistrationTermsPage } from './pages/registration-terms/registration-terms.page';
 import { CandidateRegistrationPage } from './pages/registration/registration.page';
 import { CandidateUnRegistrationPage } from './pages/unregistration/unregistration.page';
 import { VotePage } from './pages/vote/vote.page';
@@ -28,6 +29,7 @@ import { CRCouncilVotingRoutingModule } from './routing';
     CandidatesPage,
     CandidatePage,
     CandidateRegistrationPage,
+    CandidateRegistrationTermsPage,
     CandidateUnRegistrationPage,
     HistoryPage,
     CRNodePage,
@@ -56,4 +58,4 @@ import { CRCouncilVotingRoutingModule } from './routing';
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class CRCouncilVotingModule {}
+export class CRCouncilVotingModule { }

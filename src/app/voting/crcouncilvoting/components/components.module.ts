@@ -2,13 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { CandidateOptionsComponent } from './candidate-options/options.component';
 import { CRMemberOptionsComponent } from './options/options.component';
 
 @NgModule({
     declarations: [
-        CRMemberOptionsComponent,
-        CandidateOptionsComponent
+        CRMemberOptionsComponent
     ],
     imports: [
         CommonModule,
@@ -16,14 +14,12 @@ import { CRMemberOptionsComponent } from './options/options.component';
         TranslateModule
     ],
     exports: [
-        CRMemberOptionsComponent,
-        CandidateOptionsComponent
+        CRMemberOptionsComponent
     ],
     providers: [
     ],
     entryComponents: [
-        CRMemberOptionsComponent,
-        CandidateOptionsComponent
+        CRMemberOptionsComponent
     ],
 })
 export class ComponentsModule { }
