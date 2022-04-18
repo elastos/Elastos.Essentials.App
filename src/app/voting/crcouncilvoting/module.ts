@@ -7,6 +7,7 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { CandidateSliderComponent } from './components/candidate-slider/candidate-slider.component';
 import { ComponentsModule } from './components/components.module';
 import { RoundProgressModule } from './components/round-progress/round-progress.module';
@@ -47,7 +48,8 @@ import { CRCouncilVotingRoutingModule } from './routing';
     IonicModule,
     IonicStorageModule,
     TranslateModule,
-    ComponentsModule
+    ComponentsModule,
+    GlobalDirectivesModule
   ],
   bootstrap: [],
   entryComponents: [

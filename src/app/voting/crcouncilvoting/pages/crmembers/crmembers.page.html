@@ -32,8 +32,8 @@
                                     {{ candidatesService.crmembers.indexOf(member) + 1 }}
                                 </ion-col>
                                 <ion-col size="1.5" class="img-col">
-                                    <img
-                                        [src]="member.avatar ? member.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
+                                    <img [src]="member.avatar ? member.avatar : '/assets/crcouncilvoting/icon/avatar.png'"
+                                        src-fallback="/assets/crcouncilvoting/icon/avatar.png">
                                 </ion-col>
                                 <ion-col class="label-col" size="7">
                                     <ion-label>
