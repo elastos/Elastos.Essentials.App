@@ -73,6 +73,11 @@ export const it = {
         'candidate-url': 'Candidate URL',
         'social-media': 'Social Media',
 
+        'manage-candidate': 'Manage candidation',
+        'edit-candidate': 'Edit candidate details',
+        'unregistration-candidate': 'Exit election',
+        'withdraw': 'Withdraw',
+
         /********** Registration **********/
         'registration': 'Registration',
         'register-header': 'Registration candidate',

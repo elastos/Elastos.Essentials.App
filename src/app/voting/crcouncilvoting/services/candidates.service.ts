@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { DIDDocument } from 'src/app/model/did/diddocument.model';
@@ -11,7 +13,9 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/providers/transaction.types';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from '../../services/vote.service';
@@ -53,6 +57,7 @@ export class CandidatesService {
         public voteService: VoteService,
         private walletManager: WalletService,
         private globalIntentService: GlobalIntentService,
+        public popupProvider: GlobalPopupService,
     ) {
 
     }
@@ -413,6 +418,71 @@ export class CandidatesService {
         return ret;
     }
 
+    addCandidateOperationIcon(darkMode: boolean, titleBar: TitleBarComponent, titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void) {
+        if (this.candidateInfo.state == 'Active') {
+            titleBar.setMenuVisibility(true);
+            titleBar.setupMenuItems([
+                {
+                    key: "edit-candidate",
+                    iconPath: !darkMode ? '/assets/crcouncilvoting/icon/edit-candidate.svg' : '/assets/crcouncilvoting/icon/darkmode/edit-candidate.svg',
+                    title: "crcouncilvoting.edit-candidate"
+                },
+                {
+                    key: "cancel-registration",
+                    iconPath: !darkMode ? '/assets/crcouncilvoting/icon/unregister-candidate.svg' : '/assets/crcouncilvoting/icon/darkmode/unregister-candidate.svg',
+                    title: "crcouncilvoting.unregistration-candidate"
+                }
+            ], "crcouncilvoting.manage-candidate");
 
+            titleBar.addOnItemClickedListener(titleBarIconClickedListener = item => {
+                switch (item.key) {
+                    case "edit-candidate":
+                        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
+                        break;
+
+                    case "cancel-registration":
+                        void this.unregisterCandidate();
+                        break;
+                }
+            });
+        }
+        else if (this.candidateInfo.state == 'Canceled') {
+            //TODO:: the icon should be modify
+            titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.DELETE });
+            titleBar.addOnItemClickedListener(titleBarIconClickedListener = (icon) => {
+                void this.withdrawCandidate();
+            });
+        }
+    }
+
+    async unregisterCandidate() {
+        Logger.log(App.CRCOUNCIL_VOTING, 'Calling unregister()');
+
+        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-unregister-warning', 'common.confirm', 'common.cancel')) {
+            return;
+        }
+
+        try {
+            let payloadString = await this.walletManager.spvBridge.generateUnregisterCRPayload(
+                this.voteService.masterWalletId, StandardCoinName.ELA, this.candidateInfo.cid);
+            if (payloadString) {
+                let payload = JSON.parse(payloadString);
+                let signature = await this.getSignature(payload.Digest);
+                if (signature) {
+                    payload.Signature = signature;
+                    Logger.log('CandidateRegistrationPage', 'generateUnregisterCRPayload', payload);
+                    const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(payload, "");
+                    await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
+                }
+            }
+        }
+        catch (e) {
+
+        }
+    }
+
+    withdrawCandidate() {
+
+    }
 
 }

@@ -1,9 +1,9 @@
 <ion-grid [class.darkContainer]="theme.darkMode">
-    <div class="menu-title" *ngIf="menuTitle">{{ menuTitle }}</div>
+    <div class="menu-title" *ngIf="menuTitle">{{ menuTitle | translate  }}</div>
     <ion-row *ngFor="let item of menuItems" class="ripple ion-activatable" (click)="onTitlebarMenuItemClicked(item)">
         <ion-col size="12">
             <img [src]="getIconPath(item.iconPath)">
-            <ion-label>{{ item.title }}</ion-label>
+            <ion-label>{{ item.title | translate }}</ion-label>
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
     </ion-row>

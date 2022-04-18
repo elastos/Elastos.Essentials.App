@@ -16,7 +16,7 @@ export class TitlebarmenuitemComponent implements OnInit {
   constructor(
     private navParams: NavParams,
     public theme: GlobalThemeService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
   ) { }
 
   ngOnInit() {

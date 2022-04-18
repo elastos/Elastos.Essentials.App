@@ -2,7 +2,7 @@
     <app-titlebar></app-titlebar>
     <div class="header">
         <div *ngIf="remainingTime" >
-            <p>{{ ("voting.voting-ends-in" | translate) + " " + remainingTime }} </p>
+            <p id="remaining-time">{{ ("voting.voting-ends-in" | translate) + " " + remainingTime }} </p>
         </div>
     </div>
     <div class="header-space"></div>

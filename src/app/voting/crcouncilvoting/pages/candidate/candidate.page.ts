@@ -69,6 +69,7 @@ export class CandidatePage {
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        this.candidatesService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
     }
 
     segmentChanged(ev: any) {

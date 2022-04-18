@@ -3,7 +3,7 @@ import { ToastController } from "@ionic/angular";
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
@@ -66,15 +66,16 @@ export class CandidatesPage implements OnInit {
 
         switch (this.candidatesService.candidateInfo.state) {
             case 'Unregistered':
-                /* this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                    void this.goToRegistration();
-                }); */
+                    void this.goToCandidateRegistration();
+                });
                 break;
-            case 'Pending':
+            // case 'Pending':
             case 'Active':
             case 'Canceled':
-            case 'Returned':
+            // case 'Returned':
+                this.candidatesService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
                 break;
         }
 
@@ -92,7 +93,7 @@ export class CandidatesPage implements OnInit {
         }, 1000);
     }
 
-    async goToRegistration() {
+    async goToCandidateRegistration() {
         if (!this.candidatesService.candidateInfo.txConfirm) {
             this.globalNative.genericToast('dposregistration.text-registration-no-confirm');
             return;

@@ -73,6 +73,11 @@ export const zh = {
         'candidate-url': '候选人URL',
         'social-media': '社交媒体',
 
+        'manage-candidate': '管理候选人',
+        'edit-candidate': '编辑候选人',
+        'unregistration-candidate': '退出选举',
+        'withdraw': '取回押金',
+
         /********** Registration **********/
         'registration': '报名参选',
         'register-header': '注册CR候选人',
