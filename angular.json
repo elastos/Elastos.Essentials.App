@@ -79,7 +79,7 @@
               "optimization": false,
               "namedChunks": true,
               "buildOptimizer": false,
-              "aot": false,
+              "aot": true,
               "sourceMap": true
             },
             "production": {
