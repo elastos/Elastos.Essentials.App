@@ -447,7 +447,7 @@ export class ProfileService extends GlobalService {
     return addFriendUrl;
   }
 
-  private get allCreds(): CredentialDisplayEntry[] {
+  public get allCreds(): CredentialDisplayEntry[] {
     return this.credentials;
   }
 
