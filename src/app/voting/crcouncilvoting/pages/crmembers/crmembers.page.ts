@@ -63,13 +63,13 @@ export class CRMembersPage implements OnInit {
                 iconPath: !this.theme.darkMode ? '/assets/crcouncilvoting/icon/unregister-candidate.svg' : '/assets/crcouncilvoting/icon/darkmode/unregister-candidate.svg',
                 title: "Exit election"
             }
-        ]);
+        ], "Manage candidation");
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = item => {
             switch (item.key) {
                 case "edit-candidate":
                     break;
                 case "register-candidate":
-                    void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
+                    void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration-terms');
                     break;
                 case "cancel-registration":
                     void this.unregister();

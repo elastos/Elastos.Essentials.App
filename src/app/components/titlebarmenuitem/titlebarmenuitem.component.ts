@@ -11,6 +11,7 @@ import { BuiltInIcon, TitleBarMenuItem } from '../titlebar/titlebar.types';
 export class TitlebarmenuitemComponent implements OnInit {
 
   public menuItems: TitleBarMenuItem[] = [];
+  public menuTitle: string = null;
 
   constructor(
     private navParams: NavParams,
@@ -20,6 +21,7 @@ export class TitlebarmenuitemComponent implements OnInit {
 
   ngOnInit() {
     this.menuItems = this.navParams.get('items');
+    this.menuTitle = this.navParams.get('title');
   }
 
   onTitlebarMenuItemClicked(item: TitleBarMenuItem) {

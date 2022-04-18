@@ -107,7 +107,7 @@ export class CandidatesPage implements OnInit {
             return;
         }
 
-        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
+        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration-terms');
     }
 
     /****************** Select Candidate *******************/

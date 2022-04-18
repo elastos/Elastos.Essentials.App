@@ -5,6 +5,7 @@ export const it = {
         // Generic actions
         'delete': 'Elimina',
         'cancel': 'Annulla',
+        'accept': 'Accept',
         'begin': 'Inizia',
         'continue': 'Continua',
         'go-back': 'Torna Indietro',

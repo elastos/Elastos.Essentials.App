@@ -1,46 +1,82 @@
+
 @import "src/app/voting/dposregistration/root.scss";
 
+.main-container {
+    display:flex;
+    height:100%;
+    align-items: center;
 
-.title {
-    height: 100px;
-    h3 {
-        font-size: 18px;
-        font-weight: 500;
+    .terms-container {
+        margin: 20px;
+        max-height: 85vh;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        background:#FFFFFF;
+        border: solid 1px #EEE;
+
+        img {
+            height: 40px;
+            margin: 15px;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .scrolling-content {
+            margin-top: 10px;
+            overflow-y: scroll;
+            padding: 10px;
+
+            p {
+                font-size:14px;
+
+                .index {
+                    font-weight: 800;
+                    font-size: 1.2em;
+                    margin-right: 5px;
+                }
+            }
+        }
+
+        .btn-row {
+            ion-button {
+                width: 100%;
+            }
+
+            .left-col {
+                ion-button{
+                    --ion-color-base: #EEEEEE !important;
+                }
+            }
+        }
     }
-}
 
-ion-content {
-    position: relative;
-}
+    &.dark-container {
+        color: white;
 
-ion-input {
-    background: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    height: 48px;
-    border-radius: 8px;
-    font-size: 13px;
-    --padding-start: 12px;
-}
+        .terms-container {
+            background: #212021;
+            border: none;
 
-ion-col {
-    ion-button {
-        padding:0 5px;
-    }
-}
+            .scrolling-content {
 
-ion-list {
-    .profile-data {
-        border-bottom: none;
-    }
-}
+            }
 
-p {
-    font-size: 13px;
-}
-
-.darkContainer {
-    ion-input {
-        background-color: #212021;
-        box-shadow: none;
+            .btn-row {
+                .left-col {
+                    ion-button{
+                        --ion-color-base: #2C2C2C !important;
+                        --ion-color-shade: #4C4C4C !important;
+                        --ion-color-contrast: white !important;
+                    }
+                }
+            }
+        }
     }
 }

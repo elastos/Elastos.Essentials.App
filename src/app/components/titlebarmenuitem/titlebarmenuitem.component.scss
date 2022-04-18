@@ -1,6 +1,13 @@
 ion-grid {
+    background: #F9FAFF;
     padding: 10px;
     border-radius: 15px;
+
+    .menu-title {
+        margin: 15px 10px;
+        font-weight: 800;
+        font-size: 13px;
+    }
 
     ion-row {
         ion-col {
@@ -14,6 +21,7 @@ ion-grid {
             }
 
             img {
+                background: #EDF0F8;
                 font-size: 15px;
                 padding: 8px;
                 height: 40px;

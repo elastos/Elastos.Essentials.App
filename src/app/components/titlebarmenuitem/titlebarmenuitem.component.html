@@ -1,4 +1,5 @@
 <ion-grid [class.darkContainer]="theme.darkMode">
+    <div class="menu-title" *ngIf="menuTitle">{{ menuTitle }}</div>
     <ion-row *ngFor="let item of menuItems" class="ripple ion-activatable" (click)="onTitlebarMenuItemClicked(item)">
         <ion-col size="12">
             <img [src]="getIconPath(item.iconPath)">

@@ -38,6 +38,7 @@ export class TitleBarComponent {
 
     protected itemClickedListeners: ((icon: TitleBarSlotItem | TitleBarMenuItem) => void)[] = [];
 
+    public menuTitle: string = null;
     public menuItems: TitleBarMenuItem[] = [];
     public menuComponent: any = TitlebarmenuitemComponent;
 
@@ -200,9 +201,11 @@ export class TitleBarComponent {
      * slot.
      *
      * @param menuItems List of app-specific menu entries @TitleBarMenuItem . Pass null to remove the existing menu.
+     * @param title Optional title that shows above the list items
      */
-    public setupMenuItems(menuItems: TitleBarMenuItem[]) {
+    public setupMenuItems(menuItems: TitleBarMenuItem[], title?: string) {
         this.menuItems = menuItems;
+        this.menuTitle = title;
     }
 
     /**
@@ -306,7 +309,8 @@ export class TitleBarComponent {
             mode: 'ios',
             component: this.menuComponent,
             componentProps: {
-                items: this.menuItems
+                items: this.menuItems,
+                title: this.menuTitle
             },
             cssClass: !this.themeService.darkMode ? 'titlebarmenu-component' : 'titlebarmenu-component',
             backdropDismiss: true,

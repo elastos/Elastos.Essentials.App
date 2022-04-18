@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { AuthService } from 'src/app/wallet/services/auth.service';
@@ -18,8 +18,6 @@ import { CandidatesService } from '../../services/candidates.service';
     styleUrls: ['./registration-terms.page.scss'],
 })
 export class CandidateRegistrationTermsPage implements OnInit {
-    @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
-
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
@@ -30,6 +28,7 @@ export class CandidateRegistrationTermsPage implements OnInit {
         public jsonRPCService: GlobalJsonRPCService,
         private globalNative: GlobalNativeService,
         private globalIntentService: GlobalIntentService,
+        private globalNav: GlobalNavService,
         public candidatesService: CandidatesService,
     ) {
 
@@ -39,6 +38,16 @@ export class CandidateRegistrationTermsPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+    }
+
+    public accept() {
+        // Make sure to not come back here later
+        this.globalNav.clearIntermediateRoutes(["/crcouncilvoting/registration-terms"]);
+        // Go to registration
+        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
+    }
+
+    public cancel() {
+        void this.globalNav.navigateBack();
     }
 }
