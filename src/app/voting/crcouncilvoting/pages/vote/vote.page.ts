@@ -13,6 +13,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
+import { Selected } from "../../model/selected.model";
 import { CandidatesService } from '../../services/candidates.service';
 
 @Component({
@@ -39,11 +40,19 @@ export class VotePage implements OnInit, OnDestroy {
     private votedEla = 0;
     private toast: any;
     public signingAndTransacting = false;
+    public candidatesPercentages: { [cid: string]: number } = {}; // Map of CID -> percentage (0-10000) for 2 decimals precision - for ion-range items
+
+    public testValue = 0;
 
     ngOnInit() {
         Logger.log('crcouncil', 'My Candidates', this.candidatesService.selectedCandidates);
         this.totalEla = this.voteService.getMaxVotes();
         Logger.log('crcouncil', 'ELA Balance', this.totalEla);
+
+        // Initialize candidate percentages with default values
+        this.candidatesService.candidates.forEach(c => {
+            this.candidatesPercentages[c.cid] = 0;
+        })
     }
 
     ngOnDestroy() {
@@ -73,6 +82,10 @@ export class VotePage implements OnInit, OnDestroy {
         this.candidatesService.selectedCandidates.forEach((candidate) => {
             candidate.userVotes = votes;
         });
+    }
+
+    fixVotes(votes: string) {
+        return parseInt(votes);
     }
 
     /****************** Cast Votes *******************/
@@ -116,6 +129,17 @@ export class VotePage implements OnInit, OnDestroy {
         });
         let remainder = this.totalEla - this.votedEla;
         return remainder.toFixed(2);
+    }
+
+    /**
+     * Returns the number of ELA currently distributed to candidates for voting
+     */
+    public getDistributedEla(): number {
+        return this.candidatesService.selectedCandidates.reduce((prev, c) => prev + parseInt(c.userVotes as any), 0) || 0;
+    }
+
+    public onSliderChanged(event: { detail: { value: number } }, candidate: Selected) {
+        console.log("onSliderChanged", event.detail.value, this.candidatesPercentages, candidate)
     }
 
     async createVoteCRTransaction(votes: any) {

@@ -23,6 +23,7 @@ import { CandidateRegistrationPage } from './pages/registration/registration.pag
 import { CandidateUnRegistrationPage } from './pages/unregistration/unregistration.page';
 import { VotePage } from './pages/vote/vote.page';
 import { CRCouncilVotingRoutingModule } from './routing';
+
 @NgModule({
   declarations: [
     VotePage,

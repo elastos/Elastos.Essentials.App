@@ -4,44 +4,41 @@
     <ion-grid class="container ion-no-padding" [class.dark-container]="theme.darkMode">
 
         <div class="votes-header">
-            <ion-label><span>{{ getElaRemainder() }}</span>/{{ totalEla }} {{ 'crcouncilvoting.votes-remaining' |
-                translate }}</ion-label>
+            <div class="count">{{ getDistributedEla() }} / {{ totalEla }}</div>
+            votes
         </div>
 
         <ion-list lines="none" class="candidate-list" [class.blur]="castingVote">
-            <ion-item *ngFor="let candidate of candidatesService.selectedCandidates" class="candidate" lines="none">
-                <ion-grid>
-                    <ion-row class="ion-no-padding">
-                        <ion-col size="6.5" class="candidate-title">
-                            <img
-                                [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
-                            <ion-label>
-                                <h4>{{ candidate.nickname }}</h4>
-                            </ion-label>
-                        </ion-col>
-                        <ion-col offset="0.5" size="5" class="candidate-input">
-                            <ion-input class="ion-text-center" (ionBlur)="setInputDefault($event.target.value)"
-                                type="number" name="userVotes" ngDefaultControl [(ngModel)]="candidate.userVotes">
-                            </ion-input>
-                            <ion-label>{{ 'crcouncilvoting.pledge-ela' | translate }}</ion-label>
-                        </ion-col>
-                    </ion-row>
-                </ion-grid>
-            </ion-item>
+            <div *ngFor="let candidate of candidatesService.selectedCandidates" class="candidate" lines="none">
+                <div class="index-col">1</div>
+                <div class="icon-col">
+                    <img [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
+                </div>
+                <div class="candidate-col">
+                    <div class="name">{{ candidate.nickname }}</div>
+                    <p>
+                        <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
+                        candidate.location | translate }} • <span class="votes">3.50%</span> of Votes
+                    </p>
+                    <ion-input type="tel" [(ngModel)]="candidate.userVotes"></ion-input>
+                    <ion-range min="0" max="10000" [(ngModel)]="candidatesPercentages[candidate.cid]"
+                        (ionChange)="onSliderChanged($event, candidate)"></ion-range>
+                </div>
+            </div>
         </ion-list>
 
         <div class="spinner" *ngIf="castingVote">
             <ion-spinner name="bubbles"></ion-spinner>
         </div>
-
-        <div class="btn cancel ion-activatable ripple" (click)="distribute()">
-            <ion-label>{{ 'crcouncilvoting.dist-equally' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
-        <div class="btn confirm ion-activatable ripple" (click)="cast()">
-            <ion-label *ngIf="!votesCasted">{{ 'crcouncilvoting.cast-votes' | translate }}</ion-label>
-            <ion-label *ngIf="votesCasted">{{ 'crcouncilvoting.votes-casted' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
     </ion-grid>
 </ion-content>
+
+<ion-footer [class.dark-container]="theme.darkMode">
+    <ion-button class="std-secondary-button" (click)="distribute()">
+        {{ 'crcouncilvoting.dist-equally' | translate }}
+    </ion-button>
+    <ion-button class="std-action-button" (click)="cast()">
+        <ion-label *ngIf="!votesCasted">{{ 'crcouncilvoting.cast-votes' | translate }}</ion-label>
+        <ion-label *ngIf="votesCasted">{{ 'crcouncilvoting.votes-casted' | translate }}</ion-label>
+    </ion-button>
+</ion-footer>

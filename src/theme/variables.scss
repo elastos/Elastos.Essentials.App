@@ -398,3 +398,21 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   font-weight: 500;
   letter-spacing: 0.1px;
 }
+
+.footer .std-secondary-button, .std-secondary-button {
+  --background: #EEEEEE;
+  --background-activated: #CCC;
+  --color: #222;
+  --ion-color-primary: #EEEEEE;
+  height: 50px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.dark-container .std-secondary-button, .std-secondary-button.dark-container {
+    --background: #2C2C2C;
+    --color: #DDD;
+    --ion-color-primary: #2C2C2C;
+    --color-activated: #EEE;
+    --background-activated: linear-gradient(to bottom, #3C3C3C, #2C2C2C);
+}

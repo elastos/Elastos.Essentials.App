@@ -43,7 +43,6 @@ export type CRMemberInfo = {
     providedIn: 'root'
 })
 export class CandidatesService {
-
     public isVoting = false;
     private getCRVotingStageTimeout: NodeJS.Timeout = null;
 
