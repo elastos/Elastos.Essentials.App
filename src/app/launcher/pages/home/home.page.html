@@ -3,6 +3,8 @@
 
   <ion-grid class="container" [class.light-container]="!theme.darkMode" [class.dark-container]="theme.darkMode">
 
+    <ion-button (click)="testRamp()">Ramp test</ion-button>
+
     <!-- Identity -->
     <ion-row *ngIf="getSignedInIdentity()" class="id-row">
       <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">

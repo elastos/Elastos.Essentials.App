@@ -2,6 +2,7 @@ import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { IonSlides, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk";
 import WalletConnect from '@walletconnect/client';
 import BigNumber from 'bignumber.js';
 import * as moment from 'moment';
@@ -39,7 +40,6 @@ import { WalletAddressChooserComponent } from '../../components/wallet-address-c
 import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
 import { NotificationsPage } from '../notifications/notifications.page';
-
 
 
 @Component({
@@ -495,5 +495,14 @@ export class HomePage implements OnInit {
       this.popover = null;
     });
     return await this.popover.present();
+  }
+
+  public testRamp() {
+    new RampInstantSDK({
+      url: 'https://ri-widget-staging.firebaseapp.com',
+      hostApiKey: 'ycauqnhzjfgrsr8szpz74jqwah8xy7csmuchb3ex', 
+      hostAppName: 'Your App',
+      hostLogoUrl: 'https://rampnetwork.github.io/assets/misc/test-logo.png',
+    }).show();
   }
 }
