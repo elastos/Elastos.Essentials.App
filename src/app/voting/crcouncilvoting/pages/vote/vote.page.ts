@@ -82,7 +82,7 @@ export class VotePage implements OnInit, OnDestroy {
     }
 
     distributeEqually() {
-        let votes = this.totalEla / this.candidatesService.selectedCandidates.length;
+        let votes = Math.floor(this.totalEla / this.candidatesService.selectedCandidates.length);
         Logger.log('crcouncil', 'Equally distributed votes', votes);
         this.candidatesService.selectedCandidates.forEach((candidate) => {
             candidate.userVotes = votes;
@@ -165,7 +165,8 @@ export class VotePage implements OnInit, OnDestroy {
     public onInputBlur(event, candidate: SelectedCandidate) {
         //console.log("onInputBlur", candidate)
 
-        let targetValue = this.candidatesVotes[candidate.cid] || 0;
+        // For a parseInt() to fix keypad mistakes (eg: 123.45)
+        let targetValue = parseInt(this.candidatesVotes[candidate.cid] as any) || 0;
         this.recomputeVotes(candidate, targetValue, false);
     }
 
@@ -216,18 +217,41 @@ export class VotePage implements OnInit, OnDestroy {
                 this.updateCandidatePercentVotesMap(modifiedCandidate, modifiedCandidate.userVotes);
 
             // Take out overflowELA from each other candidate
-            let splitInto = this.candidatesService.selectedCandidates.length - 1; // Distribute among all selected candidates minus the currently modified candidate
-            let removedAmount = overflowELA / splitInto; // Remove the same number of votes from each other candidate
-            //console.log("data", splitInto, overflowELA, removedAmount);
-            for (let c of this.candidatesService.selectedCandidates) {
-                if (c.cid === modifiedCandidate.cid)
-                    continue;
+            // Process in several loop because some candidates can't remove the equally distributed "removedAmount"
+            // and their is a rest to continue to deduce from non 0 candidates in several steps.
+            let reallyRemovedAmount = 0;
+            do {
+                let splitInto = this.numberOfNonZeroVotesCandidates(modifiedCandidate); // Distribute among all selected candidates minus the currently modified candidate
+                let removedAmount = Math.ceil(overflowELA / splitInto); // Remove the same number of votes from each other candidate
+                //console.log("split into", splitInto, "overflowELA", overflowELA, "removedAmount", removedAmount, "reallyRemovedAmount", reallyRemovedAmount);
+                for (let c of this.candidatesService.selectedCandidates) {
+                    if (c.cid === modifiedCandidate.cid || c.userVotes == 0)
+                        continue;
 
-                c.userVotes -= removedAmount;
-                this.candidatesVotes[c.cid] = c.userVotes;
-                this.updateCandidatePercentVotesMap(c, c.userVotes);
+                    //console.log("distrib", c.cid, "votes before", c.userVotes, "removedAmount", removedAmount)
+
+                    let removedVotes = Math.min(c.userVotes, removedAmount);
+                    c.userVotes -= removedVotes;
+                    this.candidatesVotes[c.cid] = c.userVotes;
+                    this.updateCandidatePercentVotesMap(c, c.userVotes);
+
+                    reallyRemovedAmount += removedVotes;
+                }
             }
+            while (reallyRemovedAmount < overflowELA);
         }
+    }
+
+    /**
+     * Number of candidates with at least 1 vote.
+     */
+    private numberOfNonZeroVotesCandidates(excludedCandidate: SelectedCandidate): number {
+        let count = 0;
+        this.candidatesService.selectedCandidates.map(c => {
+            if (c.cid !== excludedCandidate.cid && c.userVotes > 0)
+                count++;
+        });
+        return count;
     }
 
     async createVoteCRTransaction(votes: any) {

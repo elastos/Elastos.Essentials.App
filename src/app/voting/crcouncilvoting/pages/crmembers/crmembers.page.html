@@ -13,7 +13,7 @@
         </ion-row>
     </div>
 
-    <ion-content class="content" [class.dark-container]="theme.darkMode">
+    <ion-content class="content" [class.dark-container]="theme.darkMode" [class.vote-open]="candidatesService.isVoting">
         <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
             <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
             </ion-refresher-content>

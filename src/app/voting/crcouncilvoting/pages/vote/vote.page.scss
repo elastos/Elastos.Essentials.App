@@ -1,5 +1,14 @@
 @import "../../root.scss";
 
+ion-content {
+    --padding-bottom: 80px;
+
+    .footer {
+        background: #FFF;
+        z-index: 10;
+    }
+}
+
 .container {
     min-height: 100%;
     padding-top: 10px;
@@ -104,6 +113,10 @@
 }
 
 .dark-container {
+    .footer {
+        background: #000;
+    }
+
     .votes-header {
     }
 

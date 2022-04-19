@@ -12,6 +12,10 @@ ion-content.dark-container {
     --background: #000;
 }
 
+.footer {
+    background: #FFF;
+}
+
 .council-header {
     height: 55px;
     display:flex;
@@ -199,5 +203,11 @@ ion-content.dark-container {
                 }
             }
         }
+    }
+}
+
+.dark-container {
+    .footer {
+        background: #000;
     }
 }
