@@ -19,8 +19,8 @@ import { GlobalThemeService } from './global.theme.service';
 declare let didManager: DIDPlugin.DIDManager;
 
 const assistAPIEndpoints = {
-    MainNet: "https://assist-restapi.tuum.tech/v2",
-    TestNet: "https://assist-restapi-testnet.tuum.tech/v2"
+    MainNet: "https://assist.trinity-tech.io/v2", //"https://assist-restapi.tuum.tech/v2",
+    TestNet: "https://assist-testnet.trinity-tech.io/v2" // "https://assist-restapi-testnet.tuum.tech/v2"
 }; // Assist DID 2.0
 
 const assistAPIKey = "IdSFtQosmCwCB9NOLltkZrFy5VqtQn8QbxBKQoHPw7zp3w0hDOyOYjgL53DO3MDH";
