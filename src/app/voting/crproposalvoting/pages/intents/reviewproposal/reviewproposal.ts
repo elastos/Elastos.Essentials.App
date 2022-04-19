@@ -5,7 +5,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -172,7 +171,7 @@ export class ReviewProposalPage {
             ProposalHash: command.data.proposalHash,
             OpinionHash: command.data.opinionHash,
             OpinionData: command.data.opinionData,
-            DID: GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", ""),
+            DID: Util.getShortDidString(),
         };
 
         return proposalPayload;

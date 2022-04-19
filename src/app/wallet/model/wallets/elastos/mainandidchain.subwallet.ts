@@ -596,15 +596,12 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         );
     }
 
-    public async createRetrieveCRDepositTransaction(amount: string, memo = ""): Promise<string> {
-        let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
-
+    public createRetrieveCRDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<string> {
         return this.masterWallet.walletManager.spvBridge.createRetrieveCRDepositTransaction(
             this.masterWallet.id,
             this.id,
-            JSON.stringify(au.utxo),
-            amount,
+            JSON.stringify(utxo),
+            this.accMul(amount, Config.SELA).toString(),
             '10000',
             memo
         );

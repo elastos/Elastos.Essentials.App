@@ -4,7 +4,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -103,7 +102,7 @@ export class CreateProposalPage {
     private getPayload(): any {
         let payload = this.suggestionService.getPayload(this.suggestionDetail.type, this.onGoingCommand.data, this.suggestionDetail);
         payload.Signature = this.onGoingCommand.data.signature;
-        payload.CRCouncilMemberDID = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
+        payload.CRCouncilMemberDID = Util.getShortDidString();
         return payload;
     }
 

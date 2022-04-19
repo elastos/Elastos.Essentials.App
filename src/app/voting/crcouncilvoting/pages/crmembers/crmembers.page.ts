@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { App } from "src/app/model/app.enum";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
@@ -49,6 +49,15 @@ export class CRMembersPage implements OnInit {
         if (!this.crmembersFetched) {
             await this.candidatesService.fetchCRMembers();
             this.crmembersFetched = true;
+        }
+
+        let available = await this.candidatesService.getCRDepositcoinAvailable();
+        if (available > 0) {
+            //TODO:: the icon should be changed
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png' });
+            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                void this.candidatesService.withdrawCandidate(available);
+            });
         }
     }
 

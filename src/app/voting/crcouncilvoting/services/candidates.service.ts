@@ -4,19 +4,20 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { DIDDocument } from 'src/app/model/did/diddocument.model';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
-import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/providers/transaction.types';
+import { RawTransactionType, TransactionStatus, Utxo, UtxoType } from 'src/app/wallet/model/providers/transaction.types';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from '../../services/vote.service';
 import { Candidate, CandidateBaseInfo } from '../model/candidates.model';
@@ -417,7 +418,7 @@ export class CandidatesService {
         return ret;
     }
 
-    addCandidateOperationIcon(darkMode: boolean, titleBar: TitleBarComponent, titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void) {
+    async addCandidateOperationIcon(darkMode: boolean, titleBar: TitleBarComponent, titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void) {
         if (this.candidateInfo.state == 'Active') {
             titleBar.setMenuVisibility(true);
             titleBar.setupMenuItems([
@@ -446,11 +447,14 @@ export class CandidatesService {
             });
         }
         else if (this.candidateInfo.state == 'Canceled') {
-            //TODO:: the icon should be modify
-            titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.DELETE });
-            titleBar.addOnItemClickedListener(titleBarIconClickedListener = (icon) => {
-                void this.withdrawCandidate();
-            });
+            let available = await this.getCRDepositcoinAvailable();
+            if (available > 0) {
+                //TODO:: the icon should be modify
+                titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png' });
+                titleBar.addOnItemClickedListener(titleBarIconClickedListener = (icon) => {
+                    void this.withdrawCandidate(available);
+                });
+            }
         }
     }
 
@@ -480,8 +484,49 @@ export class CandidatesService {
         }
     }
 
-    withdrawCandidate() {
+    async withdrawCandidate(available: number) {
+            Logger.log(App.CRCOUNCIL_VOTING, 'withdrawCandidate', available);
+            let depositAddress = await this.walletManager.spvBridge.getCRDepositAddress(this.voteService.masterWalletId, StandardCoinName.ELA);
+            let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
+            Logger.log(App.CRCOUNCIL_VOTING, "utxoArray:", utxoArray);
 
+            let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);
+
+            const rawTx = await this.voteService.sourceSubwallet.createRetrieveCRDepositTransaction(utxo, available, "");
+            Logger.log(App.CRCOUNCIL_VOTING, 'rawTx', rawTx);
+
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
     }
 
+    async getCRDepositcoin(): Promise<any> {
+        Logger.log(App.CRCOUNCIL_VOTING, 'Get CR Depositcoin...');
+
+        const param = {
+            method: 'getcrdepositcoin',
+            params: {
+                id: Util.getShortDidString(),
+            },
+        };
+
+        try {
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
+            Logger.log(App.CRCOUNCIL_VOTING, 'getCRDepositcoin', result);
+            return result;
+        }
+        catch (err) {
+            Logger.error(App.CRCOUNCIL_VOTING, 'getCRDepositcoin error', err);
+        }
+
+        return null;
+    }
+
+    async getCRDepositcoinAvailable(): Promise<number> {
+        let result = await this.getCRDepositcoin();
+        if (result && result.available) {
+            return result.available;
+        }
+        else {
+            return 0;
+        }
+    }
 }

@@ -239,6 +239,10 @@ export class Util {
         return false;
     }
 
+    public static getShortDidString() {
+        return GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "")
+    }
+
     public static async getSelfPublicKey(): Promise<string> {
         let base58Key = await DIDService.instance.getActiveDid().getLocalDIDDocument().getDefaultPublicKey();
         let buf = new Buffer(Base58.decode(base58Key));

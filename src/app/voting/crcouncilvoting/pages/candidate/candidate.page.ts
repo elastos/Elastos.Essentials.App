@@ -56,20 +56,17 @@ export class CandidatePage {
         this.current = 1000;
         this.max = 100000;
         this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
-
-        if (Util.isSelfDid(this.candidate.did)) {
-            //this.titleBar.setMenuVisibility(true);
-            // this.titleBar.setMenuComponent(CandidateOptionsComponent)
-        }
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.candidate-profile'));
+        if (Util.isSelfDid(this.candidate.did)) {
+            void this.candidatesService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
+        }
     }
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-        this.candidatesService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
     }
 
     segmentChanged(ev: any) {

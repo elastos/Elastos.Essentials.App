@@ -6,7 +6,6 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { areaList } from 'src/app/model/area.list';
 import { Util } from 'src/app/model/util';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -180,7 +179,7 @@ export class CandidateRegistrationPage implements OnInit {
         }
 
         if (!this.candidateInfo.did) {
-            this.candidateInfo.did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
+            this.candidateInfo.did = Util.getShortDidString();
         }
 
         Logger.log('CandidateRegistrationPage', 'candidateInfo', this.candidateInfo);
