@@ -1,12 +1,9 @@
-@import "src/app/voting/root.scss";
+@import "../../root.scss";
 
 /** Header **/
-.vote-header {
-    width: 100%;
-    display: flex;
+.council-header {
     justify-content: center;
     align-items: center;
-    background: #732dcf;
     padding:10px;
 
     ion-col {
@@ -46,6 +43,10 @@
 
 #add-padding-bottom {
     padding-bottom: 20%;
+}
+
+.content {
+    --padding-top:55px;
 }
 
 .container {

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { App } from "src/app/model/app.enum";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
@@ -41,6 +41,8 @@ export class CRMembersPage implements OnInit {
     }
 
     async ionViewWillEnter() {
+        this.titleBar.setBackgroundColor("#732CCE");
+        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
 
         await this.candidatesService.getCRVotingStage();
@@ -67,5 +69,4 @@ export class CRMembersPage implements OnInit {
     async onShowMemberInfo(did: string) {
         await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember/' + did);
     }
-
 }

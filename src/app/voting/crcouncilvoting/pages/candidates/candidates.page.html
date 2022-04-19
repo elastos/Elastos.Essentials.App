@@ -1,59 +1,56 @@
-<ion-content>
+<ion-content [class.dark-container]="theme.darkMode">
     <app-titlebar></app-titlebar>
-    <div class="header">
-        <div *ngIf="remainingTime" >
+    <div class="council-header">
+        <div *ngIf="remainingTime">
             <p id="remaining-time">{{ ("voting.voting-ends-in" | translate) + " " + remainingTime }} </p>
         </div>
     </div>
-    <div class="header-space"></div>
 
-    <ion-content>
+    <ion-content [class.dark-container]="theme.darkMode">
         <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
             <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
             </ion-refresher-content>
         </ion-refresher>
 
         <ion-grid *ngIf="candidatesService.candidates.length > 0" id="add-padding-bottom"
-            class="container ion-no-padding" [class.dark-container]="theme.darkMode">
+            class="container ion-no-padding">
             <app-candidate-slider *ngIf="showCandidate" [candidate]="candidate" [candidateIndex]="candidateIndex">
             </app-candidate-slider>
             <ion-list lines="none" class="candidate-list" [class.blur]="showCandidate">
                 <!-- <ion-virtual-scroll [items]="candidatesService.candidates" approxItemHeight="240px">
                     <ion-item class="candidate" [class.selected]="!candidateIsSelected(candidate)"
                         *virtualItem="let candidate"> -->
-                        <ion-item *ngFor="let candidate of candidatesService.candidates">
-                        <ion-grid class="ion-no-padding">
-                            <ion-row>
-                                <ion-col size="1.25" class="rank-col"
-                                    (click)="onShowCandidateInfo(candidate.did)">
-                                    {{ candidatesService.candidates.indexOf(candidate) + 1 }}
-                                </ion-col>
-                                <ion-col size="1.5" class="img-col"
-                                    (click)="onShowCandidateInfo(candidate.did)">
-                                    <img
-                                        [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
-                                </ion-col>
-                                <ion-col size="7.75" class="label-col"
-                                    (click)="onShowCandidateInfo(candidate.did)">
-                                    <ion-label>
-                                        <h4 [class.selected]="candidateIsSelected(candidate)">{{ candidate.nickname }}
-                                        </h4>
-                                        <p>
-                                            <ion-icon name="navigate"></ion-icon> {{ 'crcouncilvoting.' + candidate.location | translate }}
-                                            &nbsp;
-                                            <span class="votes">{{ fixVotes(candidate.votes) }}</span>
-                                            {{'crcouncilvoting.votes' | translate }}
-                                        </p>
-                                    </ion-label>
-                                </ion-col>
-                                <ion-col size="1.5" class="checkbox-col" (click)="addCandidate(candidate)">
-                                    <!--  TODO checked="candidateIsSelected(candidate)" can't work, why?-->
-                                    <ion-checkbox checked="true" *ngIf="candidateIsSelected(candidate)"></ion-checkbox>
-                                    <ion-checkbox checked="false" *ngIf="!candidateIsSelected(candidate)"></ion-checkbox>
-                                </ion-col>
-                            </ion-row>
-                        </ion-grid>
-                     </ion-item>
+                <ion-item *ngFor="let candidate of candidatesService.candidates">
+                    <ion-grid class="ion-no-padding">
+                        <ion-row>
+                            <ion-col size="1.25" class="rank-col" (click)="onShowCandidateInfo(candidate.did)">
+                                {{ candidatesService.candidates.indexOf(candidate) + 1 }}
+                            </ion-col>
+                            <ion-col size="1.5" class="img-col" (click)="onShowCandidateInfo(candidate.did)">
+                                <img
+                                    [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
+                            </ion-col>
+                            <ion-col size="7.75" class="label-col" (click)="onShowCandidateInfo(candidate.did)">
+                                <ion-label>
+                                    <h4 [class.selected]="candidateIsSelected(candidate)">{{ candidate.nickname }}
+                                    </h4>
+                                    <p>
+                                        <ion-icon name="navigate"></ion-icon> {{ 'crcouncilvoting.' + candidate.location
+                                        | translate }}
+                                        &nbsp;
+                                        <span class="votes">{{ fixVotes(candidate.votes) }}</span>
+                                        {{'crcouncilvoting.votes' | translate }}
+                                    </p>
+                                </ion-label>
+                            </ion-col>
+                            <ion-col size="1.5" class="checkbox-col" (click)="addCandidate(candidate)">
+                                <!--  TODO checked="candidateIsSelected(candidate)" can't work, why?-->
+                                <ion-checkbox checked="true" *ngIf="candidateIsSelected(candidate)"></ion-checkbox>
+                                <ion-checkbox checked="false" *ngIf="!candidateIsSelected(candidate)"></ion-checkbox>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-item>
                 <!-- </ion-virtual-scroll> -->
             </ion-list>
         </ion-grid>

@@ -1,8 +1,9 @@
-// @import "src/app/voting/crcouncilvoting/root.scss";
+@import "../../root.scss";
 
 .container {
     min-height: 100%;
     padding-top: 10px;
+    margin-top: 55px;
 
     .votes-header {
         border-radius: 17px;
@@ -30,7 +31,11 @@
             display: flex;
             align-items: flex-start;
             padding-top:20px;
-            margin-bottom: 5px;
+            border-bottom: solid 3px #F5F4F8;
+
+            &:first-child {
+                border-top: solid 3px #F5F4F8;
+            }
 
             .index-col {
                 height: 50px;
@@ -52,6 +57,7 @@
 
             .candidate-col {
                 margin-left: 10px;
+                flex: 0.9;
 
                 .name {
                     font-size: 16px;
@@ -69,16 +75,19 @@
                     --padding-top:6px;
                     --padding-bottom:6px;
                     font-weight:bold;
+                    background: #FFF;
+                    border: solid 1px #C9BFD6;
                 }
 
                 ion-range {
                     --bar-background:#C4C4C4;
                     --bar-background-active:#732CCE;
                     --bar-height:6px;
-                    --knob-background:#C4C4C4;
+                    --knob-background:#FFF;
                     --knob-border-radius:50%;
                     --knob-size:20px;
                     padding: 0;
+                    width:80%;
                 }
             }
         }
@@ -88,10 +97,10 @@
         display: flex;
         flex-direction: row;
     }
-}
 
-ion-footer {
-    flex-direction: row;
+    .footer {
+        flex-direction: row;
+    }
 }
 
 .dark-container {
@@ -101,12 +110,21 @@ ion-footer {
     .candidate-list {
         .candidate {
             background: #212021;
+            border-bottom: solid 3px #000;
+
+            &:first-child {
+                border-top: solid 3px transparent;
+            }
 
             .candidate-col {
                 ion-input {
                     background: #3B3B3B;
                     border: solid 1px #626262;
                     color: #ffffff;
+                }
+
+                ion-range {
+                    --knob-background:#C4C4C4;
                 }
             }
         }

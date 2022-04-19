@@ -1,44 +1,53 @@
-<ion-content>
+<ion-content [class.dark-container]="theme.darkMode">
     <app-titlebar></app-titlebar>
+    <div class="council-header">
+        <p>Vote ends in xxxx</p>
+    </div>
 
-    <ion-grid class="container ion-no-padding" [class.dark-container]="theme.darkMode">
+    <ion-grid class="container ion-no-padding">
 
         <div class="votes-header">
             <div class="count">{{ getDistributedEla() }} / {{ totalEla }}</div>
             votes
         </div>
 
-        <ion-list lines="none" class="candidate-list" [class.blur]="castingVote">
-            <div *ngFor="let candidate of candidatesService.selectedCandidates" class="candidate" lines="none">
-                <div class="index-col">1</div>
+        <div class="candidate-list" [class.blur]="castingVote">
+            <div *ngFor="let candidate of candidatesService.selectedCandidates; index as i" class="candidate"
+                lines="none">
+                <div class="index-col">{{ i+1 }}</div>
                 <div class="icon-col">
-                    <img [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
+                    <img [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'"
+                        src-fallback="/assets/crcouncilvoting/icon/avatar.png">
                 </div>
                 <div class="candidate-col">
                     <div class="name">{{ candidate.nickname }}</div>
                     <p>
                         <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
-                        candidate.location | translate }} • <span class="votes">3.50%</span> of Votes
+                        candidate.location | translate }} • <span class="votes">{{
+                            getDisplayableVotePercentage(candidate) }}%</span> of Votes
                     </p>
-                    <ion-input type="tel" [(ngModel)]="candidate.userVotes"></ion-input>
+                    <ion-input type="tel" [(ngModel)]="candidatesVotes[candidate.cid]"
+                        (ionBlur)="onInputBlur($event, candidate)" (ionFocus)="onInputFocus($event, candidate)">
+                    </ion-input>
                     <ion-range min="0" max="10000" [(ngModel)]="candidatesPercentages[candidate.cid]"
-                        (ionChange)="onSliderChanged($event, candidate)"></ion-range>
+                        (ngModelChange)="onSliderChanged($event, candidate)">
+                    </ion-range>
                 </div>
             </div>
-        </ion-list>
+        </div>
 
         <div class="spinner" *ngIf="castingVote">
             <ion-spinner name="bubbles"></ion-spinner>
         </div>
     </ion-grid>
-</ion-content>
 
-<ion-footer [class.dark-container]="theme.darkMode">
-    <ion-button class="std-secondary-button" (click)="distribute()">
-        {{ 'crcouncilvoting.dist-equally' | translate }}
-    </ion-button>
-    <ion-button class="std-action-button" (click)="cast()">
-        <ion-label *ngIf="!votesCasted">{{ 'crcouncilvoting.cast-votes' | translate }}</ion-label>
-        <ion-label *ngIf="votesCasted">{{ 'crcouncilvoting.votes-casted' | translate }}</ion-label>
-    </ion-button>
-</ion-footer>
+    <div class="footer">
+        <ion-button class="std-secondary-button" (click)="distributeEqually()">
+            {{ 'crcouncilvoting.dist-equally' | translate }}
+        </ion-button>
+        <ion-button class="std-action-button" (click)="cast()">
+            <ion-label *ngIf="!votesCasted">{{ 'crcouncilvoting.cast-votes' | translate }}</ion-label>
+            <ion-label *ngIf="votesCasted">{{ 'crcouncilvoting.votes-casted' | translate }}</ion-label>
+        </ion-button>
+    </div>
+</ion-content>

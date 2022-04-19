@@ -20,7 +20,7 @@ import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/prov
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from '../../services/vote.service';
 import { Candidate, CandidateBaseInfo } from '../model/candidates.model';
-import { Selected } from '../model/selected.model';
+import { SelectedCandidate } from '../model/selected.model';
 
 export type CRMemberInfo = {
     address: string,
@@ -64,7 +64,7 @@ export class CandidatesService {
     /** Election **/
     public candidates: Candidate[] = [];
     public totalVotes = 0;
-    public selectedCandidates: Selected[] = [];
+    public selectedCandidates: SelectedCandidate[] = [];
     public crmembers: any[] = [];
     public selectedMember: CRMemberInfo;
     public candidateInfo: CandidateBaseInfo = {

@@ -74,7 +74,7 @@ export class CandidatesPage implements OnInit {
             // case 'Pending':
             case 'Active':
             case 'Canceled':
-            // case 'Returned':
+                // case 'Returned':
                 this.candidatesService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
                 break;
         }
@@ -121,6 +121,7 @@ export class CandidatesPage implements OnInit {
                 cid: candidate.cid,
                 nickname: candidate.nickname,
                 imageUrl: candidate.imageUrl,
+                location: candidate.location,
                 userVotes: 0
             });
         } else {

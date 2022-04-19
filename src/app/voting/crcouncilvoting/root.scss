@@ -4,6 +4,31 @@
     font-family: 'Raleway' !important;
 }
 
+ion-content {
+    --background: #FFF;
+}
+
+ion-content.dark-container {
+    --background: #000;
+}
+
+.council-header {
+    height: 55px;
+    display:flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    align-items: center;
+    background: #732dcf;
+    z-index: 10;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 14px;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+
 .spinner {
     position: fixed;
     z-index: 2;

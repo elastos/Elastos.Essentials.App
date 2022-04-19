@@ -1,4 +1,4 @@
-@import "src/app/voting/root.scss";
+@import "../../root.scss";
 
 #add-padding-bottom {
     padding-bottom: 20%;
@@ -6,10 +6,12 @@
 
 #remaining-time {
     color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .container {
-    // padding-top: 15%;
+    margin-top: 55px;
 
     .candidate-list {
         padding: 0px 0px 1px;

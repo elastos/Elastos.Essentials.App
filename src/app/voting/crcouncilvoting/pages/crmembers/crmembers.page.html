@@ -1,28 +1,25 @@
-<ion-content>
+<ion-content [class.dark-container]="theme.darkMode">
     <app-titlebar></app-titlebar>
-    <div *ngIf="candidatesService.isVoting">
-        <div class="vote-header">
-            <ion-row>
-                <ion-col class="left-col">
-                    <div id="vote-label">Vote is on going!</div>
-                </ion-col>
-                <ion-col class="right-col">
-                    <div class="btn-container align-center" id="vote-button" (click)="gotoCandidate()">
-                        {{ 'voting.vote' | translate }}
-                    </div>
-                </ion-col>
-            </ion-row>
-        </div>
+    <div class="council-header" *ngIf="candidatesService.isVoting">
+        <ion-row>
+            <ion-col class="left-col">
+                <div id="vote-label">Vote is on going!</div>
+            </ion-col>
+            <ion-col class="right-col">
+                <div class="btn-container align-center" id="vote-button" (click)="gotoCandidate()">
+                    {{ 'voting.vote' | translate }}
+                </div>
+            </ion-col>
+        </ion-row>
     </div>
 
-    <ion-content>
+    <ion-content class="content" [class.dark-container]="theme.darkMode">
         <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
             <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
             </ion-refresher-content>
         </ion-refresher>
 
-        <ion-grid *ngIf="candidatesService.crmembers.length > 0" class="container ion-no-padding"
-            [class.dark-container]="theme.darkMode">
+        <ion-grid *ngIf="candidatesService.crmembers.length > 0" class="container ion-no-padding">
             <ion-list lines="none" class="candidate-list">
                 <ion-virtual-scroll [items]="candidatesService.crmembers" approxItemHeight="240px">
                     <ion-item class="candidate" *virtualItem="let member">
