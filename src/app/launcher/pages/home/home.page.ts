@@ -500,9 +500,12 @@ export class HomePage implements OnInit {
   public testRamp() {
     new RampInstantSDK({
       url: 'https://ri-widget-staging.firebaseapp.com',
-      hostApiKey: 'ycauqnhzjfgrsr8szpz74jqwah8xy7csmuchb3ex', 
+      hostApiKey: 'ycauqnhzjfgrsr8szpz74jqwah8xy7csmuchb3ex',
       hostAppName: 'Your App',
       hostLogoUrl: 'https://rampnetwork.github.io/assets/misc/test-logo.png',
+      variant: "mobile",
+      userAddress: "0xABCDEF", // CHANGE THIS
+      webhookStatusUrl: "https://webhook.site/xxxxxx" // CHANGE THIS
     }).show();
   }
 }
