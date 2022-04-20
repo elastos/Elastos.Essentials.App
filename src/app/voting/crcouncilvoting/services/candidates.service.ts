@@ -196,7 +196,7 @@ export class CandidatesService {
                     }
                 }
                 Logger.log('crcouncil', 'Candidates added', this.candidates);
-                this.totalVotes = parseFloat(result.totalvotes);
+                this.totalVotes = parseInt(result.totalvotes);
             }
         }
         catch (err) {
@@ -449,8 +449,7 @@ export class CandidatesService {
         else if (this.candidateInfo.state == 'Canceled') {
             let available = await this.getCRDepositcoinAvailable();
             if (available > 0) {
-                //TODO:: the icon should be modify
-                titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png' });
+                titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: '/assets/crcouncilvoting/icon/withdraw_dark.svg' });
                 titleBar.addOnItemClickedListener(titleBarIconClickedListener = (icon) => {
                     void this.withdrawCandidate(available);
                 });

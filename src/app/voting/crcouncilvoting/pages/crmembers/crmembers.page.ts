@@ -45,19 +45,18 @@ export class CRMembersPage implements OnInit {
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
 
+        let available = await this.candidatesService.getCRDepositcoinAvailable();
+        if (available > 0) {
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: '/assets/crcouncilvoting/icon/withdraw_dark.svg' });
+            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                void this.candidatesService.withdrawCandidate(available);
+            });
+        }
+
         await this.candidatesService.getCRVotingStage();
         if (!this.crMembersFetched) {
             await this.candidatesService.fetchCRMembers();
             this.crMembersFetched = true;
-        }
-
-        let available = await this.candidatesService.getCRDepositcoinAvailable();
-        if (available > 0) {
-            //TODO:: the icon should be changed
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png' });
-            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                void this.candidatesService.withdrawCandidate(available);
-            });
         }
     }
 

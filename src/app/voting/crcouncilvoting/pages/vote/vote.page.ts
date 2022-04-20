@@ -42,6 +42,7 @@ export class VotePage implements OnInit, OnDestroy {
     private votedEla = 0;
     private toast: any;
     public signingAndTransacting = false;
+    public remainingTime: string;
 
     public candidatesVotes: { [cid: string]: number } = {}; // Map of CID -> votes - for ion-input items temporary model (before applying to candidatesService.selectedCandidates.userVotes)
     public candidatesPercentages: { [cid: string]: number } = {}; // Map of CID -> percentage (0-10000) for 2 decimals precision - for ion-range items
@@ -63,10 +64,12 @@ export class VotePage implements OnInit, OnDestroy {
     ngOnDestroy() {
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.titleBar.setBackgroundColor("#732CCE");
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.my-candidates'));
+
+        this.remainingTime = await this.candidatesService.getRemainingTime();
     }
 
     ionViewDidEnter() {

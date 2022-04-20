@@ -1,7 +1,9 @@
 <ion-content [class.dark-container]="theme.darkMode">
     <app-titlebar></app-titlebar>
     <div class="council-header">
-        <p>Vote ends in xxxx</p>
+        <div *ngIf="remainingTime">
+            <p id="remaining-time">{{ ("voting.voting-ends-in" | translate) + " " + remainingTime }} </p>
+        </div>
     </div>
 
     <ion-grid class="container ion-no-padding">
