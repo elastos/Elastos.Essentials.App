@@ -21,8 +21,9 @@ import { CandidatesService } from '../../services/candidates.service';
 export class CandidatePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    current = 10;
-    max = 100;
+    current = 0;
+    max = 0;
+    ratio = "0.0";
     color = '#52B6FF';
     background = '#eaeaea';
     gradient = false;
@@ -64,6 +65,10 @@ export class CandidatePage {
         Logger.log(App.CRCOUNCIL_VOTING, 'candidate info', this.candidate);
         this.current = this.candidate.votes;
         this.max = this.candidatesService.totalVotes;
+        if (this.max > 0) {
+            this.ratio = (this.current * 100 / this.max).toFixed(1);
+        }
+
         this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
     }
 

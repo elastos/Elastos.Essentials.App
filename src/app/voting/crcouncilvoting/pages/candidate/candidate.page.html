@@ -29,7 +29,7 @@
             <ion-row class="candidate-row">
                 <ion-col size="4" class="progress-container left-col">
                     <div class="progress-wrapper  align-center">
-                        <div class="ratio">{{ candidate.ratio }}%</div>
+                        <div class="ratio">{{ ratio }}%</div>
                         <round-progress [current]="current" [max]="max" [rounded]="true"
                             [color]="gradient ? 'url(#gradient)' : color" [background]="background">
                         </round-progress>
@@ -46,8 +46,8 @@
                             <ion-label>
                                 <h5>{{'crcouncilvoting.current' | translate}}</h5>
                                 <h4>
-                                    <span>{{ candidate.votes }}</span><span>{{'crcouncilvoting.votes' |
-                                        translate }}</span>
+                                    <span>{{ current }}</span><span>{{' ' + ('crcouncilvoting.votes' |
+                                        translate) }}</span>
                                 </h4>
                             </ion-label>
                         </ion-col>
@@ -55,8 +55,8 @@
                             <ion-label>
                                 <h5>{{'crcouncilvoting.total-votes' | translate}}</h5>
                                 <h4>
-                                    <span>{{ max }}</span><span>{{'crcouncilvoting.votes'
-                                        | translate }}</span>
+                                    <span>{{ max }}</span><span>{{' ' + ('crcouncilvoting.votes'
+                                        | translate) }}</span>
                                 </h4>
                             </ion-label>
                         </ion-col>
