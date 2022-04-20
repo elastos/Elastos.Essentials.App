@@ -56,6 +56,12 @@ export class CandidatesPage implements OnInit {
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
 
+        this.remainingTime = await this.candidatesService.getRemainingTime();
+        if (!this.candidatesFetched) {
+            await this.candidatesService.fetchCandidates();
+            this.candidatesFetched = true;
+        }
+
         switch (this.candidatesService.candidateInfo.state) {
             case 'Unregistered':
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
@@ -69,12 +75,6 @@ export class CandidatesPage implements OnInit {
             // case 'Returned':
                 void this.candidatesService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
                 break;
-        }
-
-        this.remainingTime = await this.candidatesService.getRemainingTime();
-        if (!this.candidatesFetched) {
-            await this.candidatesService.fetchCandidates();
-            this.candidatesFetched = true;
         }
 
     }
