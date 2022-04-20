@@ -175,6 +175,7 @@ ion-content {
             display: flex;
             flex-wrap: wrap;
             height: 66px;
+            max-height:66px; // For webviews on ios ~~ 15.4.1+ that just don't care about "height".
             flex-direction: column;
             align-content: flex-start;
             overflow-x: scroll;
