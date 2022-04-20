@@ -449,7 +449,7 @@ export class CandidatesService {
         else if (this.candidateInfo.state == 'Canceled') {
             let available = await this.getCRDepositcoinAvailable();
             if (available > 0) {
-                titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: '/assets/crcouncilvoting/icon/withdraw_dark.svg' });
+                titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: '/assets/crcouncilvoting/icon/darkmode/withdraw.svg' });
                 titleBar.addOnItemClickedListener(titleBarIconClickedListener = (icon) => {
                     void this.withdrawCandidate(available);
                 });

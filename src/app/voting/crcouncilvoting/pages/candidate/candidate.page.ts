@@ -21,18 +21,28 @@ import { CandidatesService } from '../../services/candidates.service';
 export class CandidatePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    current: number = 10;
-    max: number = 100;
-    color: string = '#45ccce';
-    background: string = '#eaeaea';
-    gradient: boolean = true;
-    radius: number = 125;
-    percentage: number = 0;
+    current = 10;
+    max = 100;
+    color = '#52B6FF';
+    background = '#eaeaea';
+    gradient = false;
+    radius = 125;
+    percentage = 0;
 
     public candidate: any = null;
     public segmentValue = "about";
 
     private popover: any = null;
+    socialMedias = [
+        // {
+        //     url: "http://twitter.com/",
+        //     type: "twitter"
+        // },
+        // {
+        //     url: "http://telegram.com/",
+        //     type: "telegram"
+        // },
+    ];
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -51,10 +61,9 @@ export class CandidatePage {
 
     async init(did: string) {
         this.candidate = await this.candidatesService.candidates.find(candidate => candidate.did === did);
-        Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.candidate);
-        // this.candidate.impeachmentThroughVotes = Math.ceil(this.candidatesService.selectedMember.impeachmentThroughVotes);
-        this.current = 1000;
-        this.max = 100000;
+        Logger.log(App.CRCOUNCIL_VOTING, 'candidate info', this.candidate);
+        this.current = this.candidate.votes;
+        this.max = this.candidatesService.totalVotes;
         this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
     }
 

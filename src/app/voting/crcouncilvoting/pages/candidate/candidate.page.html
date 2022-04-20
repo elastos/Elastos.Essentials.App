@@ -38,7 +38,7 @@
                 <ion-col size="8" class="right-col">
                     <ion-row class="top-row">
                         <ion-col size="12">
-                            <h3 id="candidate-title">{{'crcouncilvoting.voting-progress' | translate}}</h3>
+                            <h3 id="candidate-title">{{'crcouncilvoting.current-vote-count' | translate}}</h3>
                         </ion-col>
                     </ion-row>
                     <ion-row>
@@ -55,7 +55,7 @@
                             <ion-label>
                                 <h5>{{'crcouncilvoting.total-votes' | translate}}</h5>
                                 <h4>
-                                    <span>1000</span><span>{{'crcouncilvoting.votes'
+                                    <span>{{ max }}</span><span>{{'crcouncilvoting.votes'
                                         | translate }}</span>
                                 </h4>
                             </ion-label>
@@ -65,15 +65,9 @@
             </ion-row>
 
             <ion-row>
-                <ion-segment (ionChange)="segmentChanged($event)" value="about">
-                    <ion-segment-button value="about">
-                        <ion-label>{{'crcouncilvoting.about-candidate' | translate}}</ion-label>
-                    </ion-segment-button>
-                </ion-segment>
+                <div class="about align-center">{{'crcouncilvoting.about-candidate' | translate}}</div>
             </ion-row>
-        </ion-list>
 
-        <ion-list *ngIf="segmentValue=='about'">
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{'crcouncilvoting.candidate-did' | translate}}</h5>
@@ -87,45 +81,29 @@
                     <h4>{{ candidate.url }}</h4>
                 </div>
             </ion-row>
-            <ion-row class="profile-data">
+            <ion-row class="profile-data" *ngIf="candidate.introduction">
                 <ion-col>
                     <h5>{{'crcouncilvoting.member-profile' | translate}}</h5>
-                    <!-- <h4>{{ candidate.introduction }}</h4> -->
+                    <h4>{{ candidate.introduction }}</h4>
                 </ion-col>
             </ion-row>
-            <ion-row class="profile-data">
+            <ion-row class="profile-data" *ngIf="socialMedias.length > 0">
                 <ion-col>
                     <h5>{{'crcouncilvoting.social-media' | translate}}</h5>
-                    <!-- <h4>{{ candidate. }}</h4> -->
+                    <ul id="social-media">
+                        <li *ngFor="let item of socialMedias">
+                            <div id="item">
+                                <img *ngIf="item.type == 'telegram'"
+                                    [src]="!theme.darkMode ? '/assets/crcouncilvoting/icon/telegram.svg' : '/assets/crcouncilvoting/icon/darkmode/telegram.svg'" />
+                                <img *ngIf="item.type == 'twitter'"
+                                    [src]="!theme.darkMode ? '/assets/crcouncilvoting/icon/twitter.svg' : '/assets/crcouncilvoting/icon/darkmode/twitter.svg'" />
+                            </div>
+                            <div class="space"></div>
+                        </li>
+                    </ul>
                 </ion-col>
             </ion-row>
         </ion-list>
-
-        <!-- <div class="footer-space"></div> -->
-
-        <svg class="footer-space">
-            <linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="5%" stop-color="#0F47DA" />
-                <stop offset="95%" stop-color="#9E3EFF" />
-            </linearGradient>
-        </svg>
-
-        <ion-footer *ngIf="candidate.isSelf">
-            <ion-row>
-                <ion-col class="left-col">
-                    <div class="btn-container align-center" id="cancel" (click)="update()">
-                        {{ 'crcouncilvoting.update' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-                <ion-col class="right-col">
-                    <div class="btn-container align-center" id="confirm" (click)="claimDposNode()">
-                        {{ 'crcouncilvoting.claim-dpos-node' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </ion-col>
-            </ion-row>
-        </ion-footer>
     </div>
 
     <div *ngIf="candidate == null" class="spinner align-center">

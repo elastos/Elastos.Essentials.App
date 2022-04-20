@@ -66,7 +66,7 @@ export const en = {
 
         /********** Candidate **********/
         'candidate-profile': 'Candidate Profile',
-        'voting-progress': 'Voting progress',
+        'current-vote-count': 'Current vote count',
         'total-votes': 'Total votes',
         'about-candidate': 'About Candidate',
         'candidate-did': 'Candidate DID',

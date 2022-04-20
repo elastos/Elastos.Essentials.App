@@ -32,54 +32,15 @@ ion-col {
     }
 
     #status {
-        min-width: 68px;
         text-align: center;
         padding: 5px 10px;
         border-radius: 10px;
-        height: 22;
+        width: 46px;
+        height: 22px;
         font-size: 10px;
         font-weight: 600;
-        background-color: #74ffde;
-    }
-
-    .elected {
+        background-color: #74FFDE;
         color: #000000;
-        background-color: #74ffde;
-    }
-
-    .impeached {
-        color: #FFFFFF;
-        background-color: #7B6700;
-    }
-
-    .returned {
-        color: #FFFFFF;
-        background-color: #7774FF;
-    }
-
-    .terminated {
-        color: #FFFFFF;
-        background-color: #BC1212;
-    }
-
-    .inactive {
-        color: #808080;
-        background-color: #ECECEC;
-    }
-
-    .active {
-        color: #000000;
-        background-color: #74ffde;
-    }
-
-    .illegal {
-        color: #BC1212;
-        border: 1px solid #BC1212;
-    }
-
-    .expired {
-        color: #000000;
-        border: 1px solid #C4C4C4;
     }
 }
 
@@ -134,53 +95,40 @@ ion-col {
     }
 }
 
-ion-segment {
+.about{
     margin-top: 24px;
     padding: 7px 5px;
-    height: 47px;
-    color: #ffffff;
-    background-color: #f5f7fe;
-
-    ion-segment-button {
-        color: #732cce;
-
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 142%;
-    }
-}
-
-.voteResult {
-    padding: 5px 10px;
-    border-radius: 6px;
-    height: 22;
-    font-size: 10px;
-}
-
-.support {
-    color: #00B978;
-    background-color: rgba(96, 206, 180, 0.15);
-}
-
-.reject {
-    color: #FF3838;
-    background-color: #FFEAEA;
-}
-
-.abstention {
-    color: #FFFFFF;
-    background-color: #282828;
-}
-
-.undecided {
-    color: #CCCCCC;
-    background-color: rgba(96, 206, 180, 0.15);
-}
-
-.footer-space {
-    background-color: #ffffff;
-    height: 113px;
     width: 100%;
+    height: 47px;
+    color: #909090;
+    background-color: #F5F7FE;
+    border-radius: 8px;
+
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 142%;
+}
+
+#social-media {
+    padding: 0 0;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    flex-direction: column;
+    list-style: none;
+
+    #item {
+        width: 30px;
+        height: 30px;
+
+        img {
+            min-height: 18px;
+        }
+    }
 }
 
 .darkContainer {
@@ -192,27 +140,6 @@ ion-segment {
         background-color: #121212;
     }
 
-    .id-row {
-        .impeached {
-            background-color: #7B6800;
-        }
-
-        .inactive {
-            color: #545454;
-            background-color: #ECECEC;
-        }
-
-        .illegal {
-            color: #FF4A4A;
-            border: 1px solid #FF4A4A;
-        }
-
-        .expired {
-            color: #FFFFFF;
-            border: 1px solid #FFFFFF;
-        }
-    }
-
     .candidate-row {
         background-color: #212021;
         ion-row {
@@ -220,33 +147,10 @@ ion-segment {
         }
     }
 
-    ion-segment {
-        color: #474747;
+    .about{
+        color: #9D9D9D;
         background-color: #252525;
 
-        ion-segment-button {
-            color: #ffffff;
-        }
     }
-
-    .support {
-        color: #27D89A;
-        background-color: rgba(116, 255, 222, 0.15);
-    }
-
-    .reject {
-        color: #FF7474;
-        background-color: #4E1616;
-    }
-
-    .undecided {
-        color: #F8F8F8;
-        background-color: #545454;
-    }
-
-    .footer-space {
-        background-color: #121212;
-    }
-
 
 }

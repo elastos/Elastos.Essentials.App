@@ -66,7 +66,7 @@ export const zh = {
 
         /********** Candidate **********/
         'candidate-profile': '候选人信息',
-        'voting-progress': '投票进度',
+        'current-vote-count': '当前票数',
         'total-votes': '总票数',
         'about-candidate': '关于候选人',
         'candidate-did': '候选人DID',
