@@ -21,7 +21,7 @@ export class CRMembersPage implements OnInit {
     public showCandidate = false;
     public candidateIndex: number;
     public addingCandidates = false;
-    public crmembersFetched = false;
+    public crMembersFetched = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -46,9 +46,9 @@ export class CRMembersPage implements OnInit {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
 
         await this.candidatesService.getCRVotingStage();
-        if (!this.crmembersFetched) {
+        if (!this.crMembersFetched) {
             await this.candidatesService.fetchCRMembers();
-            this.crmembersFetched = true;
+            this.crMembersFetched = true;
         }
 
         let available = await this.candidatesService.getCRDepositcoinAvailable();
@@ -63,12 +63,6 @@ export class CRMembersPage implements OnInit {
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-    }
-
-    doRefresh(event) {
-        setTimeout(() => {
-            event.target.complete();
-        }, 1000);
     }
 
     gotoCandidate() {

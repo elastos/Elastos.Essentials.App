@@ -13,11 +13,8 @@
         </ion-row>
     </div>
 
-    <ion-content class="content" [class.dark-container]="theme.darkMode" [class.vote-open]="candidatesService.isVoting">
-        <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-            <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
-            </ion-refresher-content>
-        </ion-refresher>
+    <div class="content" [class.vote-open]="candidatesService.isVoting">
+        <ion-spinner *ngIf="!crMembersFetched"></ion-spinner>
 
         <ion-grid *ngIf="candidatesService.crmembers.length > 0" class="container ion-no-padding">
             <ion-list lines="none" class="candidate-list">
@@ -57,5 +54,5 @@
             <ion-spinner name="crescent"></ion-spinner>
         </div>
 
-    </ion-content>
+    </div>
 </ion-content>

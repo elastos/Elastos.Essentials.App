@@ -6,11 +6,8 @@
         </div>
     </div>
 
-    <ion-content [class.dark-container]="theme.darkMode">
-        <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-            <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
-            </ion-refresher-content>
-        </ion-refresher>
+    <div class="content">
+        <ion-spinner *ngIf="!candidatesFetched"></ion-spinner>
 
         <ion-grid *ngIf="candidatesService.candidates.length > 0" id="add-padding-bottom"
             class="container ion-no-padding">
@@ -64,5 +61,5 @@
                 {{ 'crcouncilvoting.dist-votes' | translate }}
             </ion-button>
         </div>
-    </ion-content>
+    </div>
 </ion-content>

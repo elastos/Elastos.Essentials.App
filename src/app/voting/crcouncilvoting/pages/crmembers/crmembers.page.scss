@@ -47,8 +47,8 @@
 
 .content {
     &.vote-open {
-        --padding-top:55px;
-        --padding-bottom:55px; // Attempt to fix secondary ion-content (because of ion-refresher) cutting the bottom of the screen
+        padding-top:55px;
+        //--padding-bottom:55px; // Attempt to fix secondary ion-content (because of ion-refresher) cutting the bottom of the screen
     }
 }
 

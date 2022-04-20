@@ -79,7 +79,7 @@ export const fr = {
 
         /********** Registration **********/
         'registration': 'Registration',
-        'register-header': 'Registration candidate',
+        'register-header': 'Candidate registration',
         'update-header': 'Update your Info',
         'register': 'Register',
         'unregister': 'Unregister',

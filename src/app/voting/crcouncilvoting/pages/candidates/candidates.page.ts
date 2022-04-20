@@ -47,8 +47,6 @@ export class CandidatesPage implements OnInit {
         public popupProvider: GlobalPopupService,
     ) { }
 
-
-
     ngOnInit() {
         this.showCandidate = false;
     }
@@ -75,7 +73,7 @@ export class CandidatesPage implements OnInit {
             case 'Active':
             case 'Canceled':
                 // case 'Returned':
-                this.candidatesService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
+                void this.candidatesService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
                 break;
         }
 
@@ -83,14 +81,6 @@ export class CandidatesPage implements OnInit {
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-    }
-
-    doRefresh(event) {
-        void this.candidatesService.fetchCandidates();
-
-        setTimeout(() => {
-            event.target.complete();
-        }, 1000);
     }
 
     async goToCandidateRegistration() {
