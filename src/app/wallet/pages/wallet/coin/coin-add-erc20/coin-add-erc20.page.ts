@@ -192,7 +192,7 @@ export class CoinAddERC20Page implements OnInit {
     }
 
     /* private async getEthAccountAddress(): Promise<string> {
-        return this.masterWallet.getSubWallet(StandardCoinName.ETHSC).createAddress();
+        return this.masterWallet.getSubWallet(StandardCoinName.ETHSC).getCurrentReceiverAddress();
     } */
 
     async addCoin() {

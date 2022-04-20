@@ -267,7 +267,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 // Setup params for recharge transaction
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createRechargeTransaction;
-                this.toAddress = await this.toSubWallet.createAddress();
+                this.toAddress = await this.toSubWallet.getCurrentReceiverAddress();
 
                 Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
                 Logger.log('wallet', 'Transferring To..', this.toSubWallet);
@@ -282,7 +282,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 // Setup params for withdraw transaction
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createWithdrawTransaction;
-                this.toAddress = await this.toSubWallet.createAddress();
+                this.toAddress = await this.toSubWallet.getCurrentReceiverAddress();
 
                 Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
                 Logger.log('wallet', 'Transferring To..', this.toSubWallet);
@@ -898,7 +898,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     selectedSubwallet = selectedWallet.getSubWallet(this.subWalletId);
                 }
 
-                this.toAddress = await selectedSubwallet.createAddress();
+                this.toAddress = await selectedSubwallet.getCurrentReceiverAddress();
             }
 
             this.modal = null;

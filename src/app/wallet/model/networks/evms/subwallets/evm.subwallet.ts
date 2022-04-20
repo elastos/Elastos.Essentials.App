@@ -87,7 +87,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   public async getTokenAddress(): Promise<string> {
     if (!this.ethscAddress) {
-      this.ethscAddress = (await this.createAddress()).toLowerCase();
+      this.ethscAddress = (await this.getCurrentReceiverAddress()).toLowerCase();
     }
     return this.ethscAddress;
   }
@@ -433,7 +433,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
    * Estimated cost in native coin readable amount, of a ERC20 transfer cost.
    */
   public async estimateERC20TransferTransactionFees(tokenAddress: string): Promise<BigNumber> {
-    let senderAddress = await this.createAddress();
+    let senderAddress = await this.getCurrentReceiverAddress();
     return ERC20CoinService.instance.estimateERC20TransferTransactionFees(tokenAddress, senderAddress, this.getNetwork());
   }
 

@@ -21,8 +21,11 @@
  */
 
 import { SmartBuffer } from "smart-buffer";
-import { Base58 } from "./crypto/base58";
-import { SHA256 } from "./crypto/sha256";
+import { Base58 } from "./../crypto/base58";
+import { SHA256 } from "./../crypto/sha256";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const EC = require('elliptic').ec;
+const curve = new EC('p256');
 
 enum ELAAddressSignType {
   SignTypeInvalid    = 0,
@@ -45,14 +48,18 @@ enum ELAAddressPrefix {
 
 export class ELAAddressHelper {
 
-  static getAddressFronPublicKey(publicKey: string) {
+  static getAddressFromPublicKey(publicKey: string) {
     let publicKeyBuffer = Buffer.from(publicKey, 'hex');
     let programHash = this.getSingleSignProgramHash(publicKeyBuffer)
     let address = this.getAddressFromProgramHash(programHash)
     return address;
   }
 
-  private static getAddressFromProgramHash(programHash: Buffer) {
+  static getProgramHashFromAddress(address) {
+    return Base58.decode(address).slice(0, 21);
+  }
+
+  static getAddressFromProgramHash(programHash: Buffer) {
     const f = SmartBuffer.fromBuffer(SHA256.hashTwice(programHash));
     const g = new SmartBuffer();
     g.writeBuffer(programHash);
@@ -60,6 +67,32 @@ export class ELAAddressHelper {
     const gBuffer = g.toBuffer();
     const address = Base58.encode(gBuffer);
     return address;
+  }
+
+  static getPublic(privateKey) {
+    const rawPrivateKey = Buffer.from(privateKey, 'hex');
+    const keypair = curve.keyFromPrivate(rawPrivateKey);
+    const publicKey = this.getPublicEncoded(keypair, true);
+    return publicKey.toString('hex');
+  }
+
+  static getPublicEncoded = (keypair, encode) => {
+    const unencodedPubKey = Buffer.from(keypair.getPublic().encode());
+    if (!Buffer.isBuffer(unencodedPubKey)) {
+      throw Error('unencodedPubKey must be a Buffer ' + unencodedPubKey);
+    }
+    if (encode) {
+      return this.getPublicKeyEncoded(unencodedPubKey);
+    } else {
+      return unencodedPubKey;
+    }
+  }
+
+  static getSingleSignatureRedeemScript(pubkey, signType: ELAAddressSignType) {
+    const script = this.createSingleSignatureRedeemScript(pubkey, signType);
+    const scriptBuffer = Buffer.from(script);
+    const scriptBufferHex = scriptBuffer.toString('hex').toUpperCase();
+    return scriptBufferHex;
   }
 
   private static getSingleSignProgramHash(publicKeyBuffer: Buffer) {
@@ -74,12 +107,12 @@ export class ELAAddressHelper {
     return Buffer.from(g);
   }
 
-  private static createSingleSignatureRedeemScript(publicKey: Buffer) {
+  private static createSingleSignatureRedeemScript(publicKey: Buffer, signType: ELAAddressSignType = ELAAddressSignType.SignTypeStandard) {
     const pubkey = this.getPublicKeyEncoded(publicKey);
     const script = new Uint8Array(35);
     script[0] = ELAAddressPrefix.PrefixStandard;
     this.arraycopy(pubkey, 0, script, 1, 33);
-    script[34] = ELAAddressSignType.SignTypeStandard;
+    script[34] = signType;
     return script;
   }
 

@@ -33,7 +33,7 @@ export class EVMSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
   }
 
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    const accountAddress = await this.subWallet.createAddress();
+    const accountAddress = await this.subWallet.getCurrentReceiverAddress();
 
     let page = 1;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list

@@ -1,6 +1,7 @@
 import AppEth from "@ledgerhq/hw-app-eth";
 import Transport from "@ledgerhq/hw-transport";
 import { Logger } from "src/app/logger";
+import { LeddgerAccountType } from "../ledger.types";
 import { LedgerAccount, LedgerApp } from "./ledgerapp";
 
 export class EVMLedgerApp extends LedgerApp {
@@ -23,7 +24,7 @@ export class EVMLedgerApp extends LedgerApp {
       const address = await this.ethApp.getAddress(path, false, false);
 
       addresses.push({
-          type:'EVM',
+          type: LeddgerAccountType.EVM,
           address:address.address,
           pathIndex:i,
           path
@@ -32,10 +33,5 @@ export class EVMLedgerApp extends LedgerApp {
 
     Logger.warn('wallet', "EVMLedgerApp Addresses :", addresses);
     return addresses;
-  }
-
-  public signTransaction(unsignedTx: string): Promise<any> {
-    // TODO: use the right HD derivation path.
-    return this.ethApp.signTransaction("44'/60'/0'/0/0", unsignedTx);
   }
 }

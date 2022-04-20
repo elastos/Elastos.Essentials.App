@@ -50,7 +50,7 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
             }
             Logger.log('wallet', 'fetchTransactions page:', page);
 
-            let tokenAddress = await subWallet.createAddress();
+            let tokenAddress = await subWallet.getCurrentReceiverAddress();
             let btcInfo = await GlobalBTCRPCService.instance.address(this.rpcApiUrl, tokenAddress, MAX_RESULTS_PER_FETCH, page);
             if (btcInfo) {
                 if (btcInfo.txids.length < MAX_RESULTS_PER_FETCH) {
@@ -93,7 +93,7 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
     }
 
     private async updateTransactionInfo(subWallet: BTCSubWallet, transaction: BTCTransaction) {
-        let tokenAddress = await subWallet.createAddress();
+        let tokenAddress = await subWallet.getCurrentReceiverAddress();
         let index = transaction.vin.findIndex(btcinobj => btcinobj.addresses.indexOf(tokenAddress) !== -1);
         let btcoutobjArray: BTCOutObj[] = [];
         if (index !== -1) {

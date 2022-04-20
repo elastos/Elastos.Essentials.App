@@ -42,7 +42,7 @@ export class ElastosMainChainStandardMultiSigNetworkWallet extends StandardMulti
      if (this.subWallets[StandardCoinName.ELA]) {
        addresses.push({
          title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
-         address: await this.subWallets[StandardCoinName.ELA].createAddress()
+         address: await this.subWallets[StandardCoinName.ELA].getCurrentReceiverAddress()
        });
      } */
 

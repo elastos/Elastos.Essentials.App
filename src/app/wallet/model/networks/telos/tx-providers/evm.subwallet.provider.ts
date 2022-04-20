@@ -55,7 +55,7 @@ export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<AnyMainCoinE
   // https://rpc1.us.telos.net/evm_explorer/get_transactions?address=0x123
   // TODO: No parameters in get_transactions for now.
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    const accountAddress = await this.subWallet.createAddress();
+    const accountAddress = await this.subWallet.getCurrentReceiverAddress();
 
     let page = 1;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list

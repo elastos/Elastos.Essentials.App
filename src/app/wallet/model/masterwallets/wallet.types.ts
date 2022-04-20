@@ -89,7 +89,8 @@ export type SerializedStandardMasterWallet = SerializedMasterWallet & {
 export type LedgerAccountOptions = {
     type: LeddgerAccountType;
     accountID: string;
-    accountPath: string
+    accountPath: string;
+    publicKey?: string;
 }
 
 // TODO: move to another file

@@ -64,7 +64,7 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
     const accountApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
 
     const contractAddress = erc20SubWallet.coin.getContractAddress().toLowerCase();
-    const accountAddress = (await this.subWallet.createAddress()).toLowerCase();
+    const accountAddress = (await this.subWallet.getCurrentReceiverAddress()).toLowerCase();
     let txListUrl = accountApiUrl + '?module=account';
     txListUrl += '&action=tokentx';
     txListUrl += '&page=' + page;

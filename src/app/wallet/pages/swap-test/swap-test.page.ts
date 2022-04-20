@@ -209,7 +209,7 @@ export class SwapTestPage implements OnInit {
     }
 
     private getEthAddress(): Promise<string> {
-        return this.networkWallet.getSubWallet(StandardCoinName.ETHSC).createAddress();
+        return this.networkWallet.getSubWallet(StandardCoinName.ETHSC).getCurrentReceiverAddress();
     }
 
     /**

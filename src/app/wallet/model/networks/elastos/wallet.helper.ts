@@ -39,7 +39,7 @@ export class WalletHelper {
             if ((startIndex === 0) && !internalAddress && (subWallet.id === StandardCoinName.ELA)) {
                 // OwnerAddress: for register dpos node, CRC.
                 const ownerAddress = await WalletHelper.getOwnerAddress(subWallet);
-                addressArray.push(ownerAddress);
+                if (ownerAddress) addressArray.push(ownerAddress);
             }
 
             startIndex += addressArray.length;

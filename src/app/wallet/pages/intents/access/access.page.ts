@@ -129,14 +129,14 @@ export class AccessPage implements OnInit {
         let value = '';
         switch (key) {
             case 'elaaddress':
-                value = await this.createAddress(StandardCoinName.ELA);
+                value = await this.getAddress(StandardCoinName.ELA);
                 break;
             case 'elaamount':
                 // for now just return the amount of ELA Chain, not include IDChain
                 value = this.networkWallet.subWallets.ELA.getRawBalance().toFixed();
                 break;
             case 'ethaddress':
-                value = await this.createAddress(StandardCoinName.ETHSC);
+                value = await this.getAddress(StandardCoinName.ETHSC);
                 break;
             default:
                 Logger.log('wallet', 'Not support ', key);
@@ -164,8 +164,8 @@ export class AccessPage implements OnInit {
         return value;
     }
 
-    createAddress(subWalletId: string) {
-        return this.networkWallet.getSubWallet(subWalletId).createAddress();
+    getAddress(subWalletId: string) {
+        return this.networkWallet.getSubWallet(subWalletId).getCurrentReceiverAddress();
     }
 
     reduceArrayToDict(keyProperty: string) {

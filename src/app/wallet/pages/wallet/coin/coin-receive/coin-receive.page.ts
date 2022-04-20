@@ -81,7 +81,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     async getAddress() {
-        this.qrcode = await this.networkWallet.getSubWallet(this.subWalletId).createAddress();
+        this.qrcode = await this.networkWallet.getSubWallet(this.subWalletId).getCurrentReceiverAddress();
         Logger.log('wallet', 'qrcode', this.qrcode);
     }
 

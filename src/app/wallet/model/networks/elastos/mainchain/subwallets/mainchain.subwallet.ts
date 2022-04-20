@@ -301,14 +301,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             "Amount": toAmount.toString()
         }]
 
-        return SPVService.instance.createTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id, // From subwallet id
-            JSON.stringify(au.utxo),
-            JSON.stringify(outputs),
-            '10000',
-            memo // User input memo
-        );
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createPaymentTransaction(
+                JSON.stringify(au.utxo),
+                JSON.stringify(outputs),
+                '10000',
+                memo);
     }
 
     public async createVoteTransaction(voteContents: VoteContent[], memo = ""): Promise<string> {
@@ -318,6 +315,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let newVoteContents = await this.mergeVoteContents(voteContents);
         Logger.log('wallet', 'createVoteTransaction:', JSON.stringify(newVoteContents));
 
+        // TODO: use safe
         return SPVService.instance.createVoteTransaction(
             jsToSpvWalletId(this.masterWallet.id),
             this.id, // From subwallet id
@@ -357,6 +355,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 return null;
         }
 
+        // TODO: use safe
         return SPVService.instance.createDepositTransaction(
             jsToSpvWalletId(this.masterWallet.id),
             this.id,
@@ -388,6 +387,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         Logger.log('wallet', 'createWithdrawTransaction toAmount:', toAmount);
 
+        // TODO: use safe
         return SPVService.instance.createWithdrawTransaction(
             jsToSpvWalletId(this.masterWallet.id),
             this.id, // From subwallet id
@@ -403,6 +403,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
+        // TODO: use safe
         return SPVService.instance.createIdTransaction(
             jsToSpvWalletId(this.masterWallet.id),
             this.id,
@@ -434,6 +435,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         if (rpcApiUrl === null) {
             return await '';
         }
+        // Logger.warn('wallet', 'rpcApiUrl:', rpcApiUrl, ' param:', param)
         // The caller need catch the execption.
         return GlobalJsonRPCService.instance.httpPost(rpcApiUrl, param);
     }
@@ -733,7 +735,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         // The Single Address Wallet should use the external address.
         if (!this.isSingleAddress()) {
             balance = await this.getBalanceByAddress(true, spendable);
-            if (balance == null) {
+            if (balance !== null) {
                 return null;
             }
             totalBalance = totalBalance.plus(balance);
@@ -748,10 +750,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         if (this.id == StandardCoinName.ELA) {
             // Coinbase reward, eg. dpos
             balance = await this.getBalanceByOwnerAddress(spendable);
-            if (balance == null) {
-                return null;
+            if (balance !== null) {
+                totalBalance = totalBalance.plus(balance);
             }
-            totalBalance = totalBalance.plus(balance);
         }
 
         return totalBalance;
@@ -767,7 +768,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             await this.saveBalanceToCache();
         }
 
-        // Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toFixed());
+        // Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
     }
 
     public async getOwnerAddress(): Promise<string> {
@@ -782,6 +783,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         if (this.id != StandardCoinName.ELA) return;
 
         let ownerAddress = await this.getOwnerAddress();
+        if (!ownerAddress) return null;
+
         let addressArray = [ownerAddress];
         try {
             const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
@@ -987,7 +990,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             if ((startIndex === 0) && !internalAddress && (this.id === StandardCoinName.ELA)) {
                 // OwnerAddress: for register dpos node, CRC.
                 const ownerAddress = await this.getOwnerAddress();
-                addressArray.push(ownerAddress);
+                if (ownerAddress) addressArray.push(ownerAddress);
             }
 
             startIndex += addressArray.length;

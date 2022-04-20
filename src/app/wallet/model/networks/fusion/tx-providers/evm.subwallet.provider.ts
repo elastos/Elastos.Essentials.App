@@ -20,7 +20,7 @@ export class FusionEvmSubWalletProvider extends EVMSubWalletProvider<AnyMainCoin
   // NOTE: Currently fusion explorer api is quite weak our outdated. We are not able to easily get transactions
   // or maybe only the "FROM" transactions. To be tested more.
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    const accountAddress = await this.subWallet.createAddress();
+    const accountAddress = await this.subWallet.getCurrentReceiverAddress();
 
     if (afterTransaction)
       throw new Error("Fusion EVM provider: afterTransaction not yet supported");

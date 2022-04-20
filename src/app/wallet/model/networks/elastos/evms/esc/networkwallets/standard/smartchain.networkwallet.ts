@@ -58,7 +58,7 @@ export class ElastosSmartChainStandardNetworkWallet extends ElastosStandardNetwo
     if (this.subWallets[StandardCoinName.ETHSC]) {
       addresses.push({
         title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
-        address: await this.subWallets[StandardCoinName.ETHSC].createAddress()
+        address: await this.subWallets[StandardCoinName.ETHSC].getCurrentReceiverAddress()
       });
     }
 

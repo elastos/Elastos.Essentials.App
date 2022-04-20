@@ -1,8 +1,8 @@
 import Btc, { AddressFormat } from "@ledgerhq/hw-app-btc";
 import Transport from "@ledgerhq/hw-transport";
-import { TxData } from "ethereumjs-tx";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { LeddgerAccountType } from "../ledger.types";
 import { LedgerAccount, LedgerApp } from "./ledgerapp";
 
 export enum BTCAddressType {
@@ -58,11 +58,12 @@ export class BTCLedgerApp extends LedgerApp {
       const realPath = path.replace("x", String(i));
       let address = await this.btcApp.getWalletPublicKey(realPath, { format: addressFormat });
       addresses.push({
-        type:'BTC',
+        type: LeddgerAccountType.BTC,
         address:address.bitcoinAddress,
         pathIndex:i,
         path,
-        addressType: type
+        addressType: type,
+        publicKey: address.publicKey
       })
     }
     Logger.log('wallet', 'BTCLedgerApp getAddresses: ', addresses)
@@ -71,9 +72,5 @@ export class BTCLedgerApp extends LedgerApp {
 
   public async getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<LedgerAccount[]> {
     return await this.getAddressesByType(startIndex, count, BTCAddressType.SEGWIT)
-  }
-
-  public signTransaction(rawTx: string | TxData): Promise<any> {
-    throw new Error("Method not implemented.");
   }
 }

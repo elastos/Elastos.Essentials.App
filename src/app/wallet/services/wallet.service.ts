@@ -418,7 +418,7 @@ export class WalletService {
         for (let networkWallet of this.getNetworkWalletsList()) {
             let mainEVMSubWallet = networkWallet.getMainEvmSubWallet();
             if (mainEVMSubWallet) {
-                let walletAddress = await mainEVMSubWallet.createAddress();
+                let walletAddress = await mainEVMSubWallet.getCurrentReceiverAddress();
                 if (walletAddress === address)
                     return mainEVMSubWallet;
             }
@@ -434,7 +434,7 @@ export class WalletService {
         for (let networkWallet of this.getNetworkWalletsList()) {
             let mainEVMSubWallet = networkWallet.getMainEvmSubWallet();
             if (mainEVMSubWallet) {
-                let walletAddress = await mainEVMSubWallet.createAddress();
+                let walletAddress = await mainEVMSubWallet.getCurrentReceiverAddress();
                 if (walletAddress === evmAddress) {
                     // Found the right network wallet. Now check its subwallets
                     let erc20SubWallets = networkWallet.getSubWalletsByType(CoinType.ERC20);
@@ -554,7 +554,8 @@ export class WalletService {
         deviceID: string,
         accountID: string,
         accountPath: string,
-        accountType = LeddgerAccountType.EVM
+        accountType = LeddgerAccountType.EVM,
+        publicKey = ''
     ): Promise<MasterWallet> {
         Logger.log('wallet', "Importing new legder master wallet");
 
@@ -562,7 +563,8 @@ export class WalletService {
         let accountOptions: LedgerAccountOptions[] = [{
             type: accountType,
             accountID,
-            accountPath
+            accountPath,
+            publicKey
         }]
         let masterWalletInfo: SerializedLedgerMasterWallet = {
             type: WalletType.LEDGER,

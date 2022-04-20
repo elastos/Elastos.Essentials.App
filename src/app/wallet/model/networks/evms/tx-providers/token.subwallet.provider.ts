@@ -50,7 +50,7 @@ export class EVMSubWalletTokenProvider<SubWalletType extends MainCoinEVMSubWalle
     }
 
     const contractAddress = erc20SubWallet.coin.getContractAddress().toLowerCase();
-    const accountAddress = (await this.subWallet.createAddress()).toLowerCase();
+    const accountAddress = (await this.subWallet.getCurrentReceiverAddress()).toLowerCase();
     let txListUrl = this.accountApiUrl + '?module=account';
     txListUrl += '&action=tokentx';
     txListUrl += '&page=' + page;

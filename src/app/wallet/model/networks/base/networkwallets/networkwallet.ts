@@ -456,7 +456,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     public async refreshNFTAssets(nft: NFT): Promise<void> {
         Logger.log("wallet", "Refreshing NFT assets", nft);
 
-        let accountAddress = await this.getMainEvmSubWallet().createAddress();
+        let accountAddress = await this.getMainEvmSubWallet().getCurrentReceiverAddress();
         if (nft.type == NFTType.ERC721) {
             let assets = await ERC721Service.instance.fetchAllAssets(accountAddress, nft.contractAddress);
             nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)

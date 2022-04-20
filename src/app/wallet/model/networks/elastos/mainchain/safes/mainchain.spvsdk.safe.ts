@@ -5,6 +5,17 @@ import { SPVSDKSafe } from "../../../../safes/spvsdk.safe";
 import { ElastosMainChainSafe } from "./mainchain.safe";
 
 export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainSafe {
+  public createPaymentTransaction(inputs: string, outputs: string, fee: string, memo: string) {
+    return SPVService.instance.createTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId, // From subwallet id
+      inputs,
+      outputs,
+      fee,
+      memo
+    );
+  }
+
   public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
     let txResult = await super.signTransaction(rawTransaction, transfer);
 

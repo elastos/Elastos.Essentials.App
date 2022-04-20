@@ -59,7 +59,7 @@ export class ElastosSmartChainLedgerNetworkWallet extends ElastosLedgerNetworkWa
     if (this.subWallets[StandardCoinName.ETHSC]) {
       addresses.push({
         title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
-        address: await this.subWallets[StandardCoinName.ETHSC].createAddress()
+        address: await this.subWallets[StandardCoinName.ETHSC].getCurrentReceiverAddress()
       });
     }
     Logger.warn("wallet", "ElastosSmartChainLedgerNetworkWallet getAddresses ", addresses);

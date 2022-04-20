@@ -42,7 +42,7 @@ export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardNe
     if (this.subWallets[StandardCoinName.ETHDID]) {
       addresses.push({
         title: this.subWallets[StandardCoinName.ETHDID].getFriendlyName(),
-        address: await this.subWallets[StandardCoinName.ETHDID].createAddress()
+        address: await this.subWallets[StandardCoinName.ETHDID].getCurrentReceiverAddress()
       });
     }
 
