@@ -224,7 +224,7 @@ export class CoinHomePage implements OnInit {
             let transactions = await this.subWallet.getTransactions(TransactionListType.INTERNAL);
             if (transactions && transactions.length > 0) {
                 Logger.log('wallet', 'find internal transactions.')
-                this.zone.run( () => {
+                this.zone.run(() => {
                     this.hasInternalTransactions = true;
                 })
             }
