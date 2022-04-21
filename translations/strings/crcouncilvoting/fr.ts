@@ -109,6 +109,8 @@ export const fr = {
         'candidate-deposit-warning': 'Do you want to register candidate? 5000 ELA deposit and a minor transaction fee are paid for candidate registration',
         'text-candidate-name-already-used': 'This candidate name is already in use',
         'candidate-unregister-warning': 'Do you want to unregister your candidate?',
+        'candidate-withdraw-warning-pre': 'Do you want to withdraw your deposite: ',
+        'candidate-withdraw-warning-suf': ' ELA?',
         'text-candidate-info-dont-modify': 'This candidate info do not modify.',
         'text-registration-no-confirm': "Last time registration don't confirm, please wait.",
         'text-update-no-confirm': "Last time update don't confirm, please wait.",
