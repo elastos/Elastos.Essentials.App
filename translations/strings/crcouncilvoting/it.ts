@@ -81,7 +81,7 @@ export const it = {
         /********** Registration **********/
         'registration': 'Registration',
         'register-header': 'Candidate registration',
-        'update-header': 'Update your Info',
+        'update-header': 'Update Candidate Info',
         'register': 'Register',
         'unregister': 'Unregister',
         'retrieve': 'Retrieve',

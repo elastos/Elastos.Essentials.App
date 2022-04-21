@@ -80,13 +80,13 @@ export class CandidateRegistrationPage implements OnInit {
 
         switch (this.candidateInfo.state) {
             case 'Unregistered':
-                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.registration'));
+                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.register-header'));
                 break;
             // Active indicates the producer is registered and confirmed by more than
             // 6 blocks.
             case 'Active':
                 this.originInfo = Util.clone(this.candidateInfo);
-                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.candidate-info'));
+                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-header'));
                 break;
         }
     }
