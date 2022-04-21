@@ -170,6 +170,16 @@
   }
 }
 
+.identity-mnemonickeypad-component {
+  --height: 280px;
+  align-items: flex-end;
+}
+
+.identity-mnemonickeypad-component-dark {
+  --height: 280px;
+  align-items: flex-end;
+}
+
 .identity-publishmode-component-base {
   --height: 35%;
   --width: 100%;

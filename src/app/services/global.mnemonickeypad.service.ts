@@ -77,7 +77,7 @@ export class GlobalMnemonicKeypadService {
         componentProps: {},
         backdropDismiss: true, // Closeable
         showBackdrop: false,
-        cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
+        cssClass: !this.theme.darkMode ? "identity-mnemonickeypad-component" : 'identity-mnemonickeypad-component-dark'
       });
 
       let backContents = document.getElementsByTagName("ion-content");
