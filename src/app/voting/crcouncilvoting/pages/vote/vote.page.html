@@ -1,4 +1,4 @@
-<ion-content [class.dark-container]="theme.darkMode">
+<ion-content [class.dark-container]="theme.darkMode" ngxDetectHideOnScroll scrollEvents>
     <app-titlebar></app-titlebar>
     <div class="council-header">
         <div *ngIf="remainingTime">
@@ -43,7 +43,7 @@
         </div>
     </ion-grid>
 
-    <div class="footer">
+    <div class="footer" ngxHideOnScroll>
         <ion-button class="std-secondary-button" (click)="distributeEqually()">
             {{ 'crcouncilvoting.dist-equally' | translate }}
         </ion-button>
