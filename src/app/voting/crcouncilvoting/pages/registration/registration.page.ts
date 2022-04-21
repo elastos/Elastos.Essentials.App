@@ -76,7 +76,7 @@ export class CandidateRegistrationPage implements OnInit {
         Logger.log("CandidateRegistrationPage", this.voteService.masterWalletId);
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
-        //this.candidateInfo = Util.clone(this.candidatesService.candidateInfo);
+        this.candidateInfo = Util.clone(this.candidatesService.candidateInfo);
 
         switch (this.candidateInfo.state) {
             case 'Unregistered':
@@ -101,19 +101,6 @@ export class CandidateRegistrationPage implements OnInit {
             this.globalNative.genericToast(blankMsg);
             return;
         }
-
-        // if (!this.candidateInfo.nodepublickey || this.candidateInfo.nodepublickey == "") {
-        //     blankMsg = this.translate.instant('dposregistration.node-publickey') + blankMsg;
-        //     this.globalNative.genericToast(blankMsg);
-        //     return;
-        // }
-
-        // if (!this.candidateInfo.nodepublickey.match("^[A-Fa-f0-9]+$") || this.candidateInfo.nodepublickey.length != 66
-        //     || !(this.candidateInfo.nodepublickey.startsWith("02") || this.candidateInfo.nodepublickey.startsWith("03"))) {
-        //     formatWrong = this.translate.instant('dposregistration.node-publickey') + formatWrong;
-        //     this.globalNative.genericToast(formatWrong);
-        //     return;
-        // }
 
         if (!this.candidateInfo.url || this.candidateInfo.url == "") {
             blankMsg = this.translate.instant('dposregistration.node-url') + blankMsg;
@@ -211,7 +198,7 @@ export class CandidateRegistrationPage implements OnInit {
         let payload = await this.getCRInfoPayload();
         if (payload) {
             const rawTx = await this.voteService.sourceSubwallet.createRegisterCRTransaction(payload, this.depositAmount, "");
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
         }
     }
 
@@ -220,7 +207,7 @@ export class CandidateRegistrationPage implements OnInit {
         let payload = await this.getCRInfoPayload();
         if (payload) {
             const rawTx = this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
         }
     }
 }
