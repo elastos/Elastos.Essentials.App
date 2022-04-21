@@ -241,6 +241,11 @@ export type UtxoForSDK = {
   TxHash: string;
 }
 
+export type Outputs = {
+  Address: string,
+  Amount: string
+}
+
 /**
  * Result of calls to signAndSendRawTransaction().
  */

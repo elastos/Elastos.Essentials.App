@@ -8,6 +8,7 @@ import { LeddgerAccountType } from "src/app/wallet/model/ledger.types";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { LedgerSafe } from "src/app/wallet/model/safes/ledger.safe";
 import { SignTransactionResult } from "src/app/wallet/model/safes/safe.types";
+import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { ElastosMainChainSafe } from "../mainchain.safe";
 
@@ -51,11 +52,10 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return Promise.resolve(null);
   }
 
-  public createPaymentTransaction(inputs: string, outputs: string, fee: string, memo: string) {
+  public createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string) {
     Logger.warn('wallet', 'MainChainLedgerSafe createPaymentTransaction inputs:', inputs, ' outputs:', outputs, ' fee:', fee, ' memo:', memo)
 
-    let outputObj = JSON.parse(outputs);
-    let tx = ELATransactionFactory.createUnsignedSendToTx(JSON.parse(inputs), outputObj[0].Address, outputObj[0].Amount,
+    let tx = ELATransactionFactory.createUnsignedSendToTx(inputs, outputs[0].Address, outputs[0].Amount,
           this.publicKey, fee, '', memo);
     Logger.warn('wallet', 'createPaymentTransaction:', JSON.stringify(tx))
     return tx;
@@ -90,3 +90,4 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     throw new Error("Method not implemented.");
   }
 }
+

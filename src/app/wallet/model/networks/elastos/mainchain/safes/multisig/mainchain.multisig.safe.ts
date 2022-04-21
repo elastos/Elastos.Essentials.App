@@ -1,6 +1,7 @@
 import BIP32Factory from 'bip32';
 import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
 import { SignTransactionResult } from 'src/app/wallet/model/safes/safe.types';
+import { Outputs, UtxoForSDK } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import * as ecc from 'tiny-secp256k1';
 import { Native } from "../../../../../../services/native.service";
@@ -161,7 +162,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe 
     return await "XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf"; // Hardcoded - equivalent of SVP getOwnerAddress();
   }
 
-  public createPaymentTransaction(inputs: string, outputs: string, fee: string, memo: string) {
+  public createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string) {
     throw new Error("Method not implemented.");
   }
 

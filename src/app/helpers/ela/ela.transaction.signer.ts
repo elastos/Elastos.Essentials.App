@@ -23,7 +23,7 @@
 import { SmartBuffer } from "smart-buffer";
 import { Logger } from "../../logger";
 import { SHA256 } from "./../crypto/sha256";
-import { ELAAddressHelper } from "./ela.address";
+import { ELAAddressHelper, ELAAddressSignType } from "./ela.address";
 import { ELATransactionCoder } from "./ela.transaction.coder";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const EC = require('elliptic').ec;
@@ -51,7 +51,7 @@ export class ELATransactionSigner {
 
     const publicKeyRaw = Buffer.from(publicKey, 'hex');
 
-    const code = ELAAddressHelper.getSingleSignatureRedeemScript(publicKeyRaw, 1);
+    const code = ELAAddressHelper.getSingleSignatureRedeemScript(publicKeyRaw, ELAAddressSignType.SignTypeStandard);
 
     const Program = {
       Code : code,

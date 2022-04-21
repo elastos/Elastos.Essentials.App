@@ -57,4 +57,8 @@ export class StdTransactionComponent implements OnInit {
   exitComponent() {
     void this.modalCtrl.dismiss();
   }
+
+  cancel() {
+    this.exitComponent();
+  }
 }

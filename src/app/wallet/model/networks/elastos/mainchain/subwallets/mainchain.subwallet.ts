@@ -17,7 +17,7 @@ import { StandardCoinName } from '../../../../coin';
 import { BridgeProvider } from '../../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../../earn/earnprovider';
 import { SwapProvider } from '../../../../earn/swapprovider';
-import { ElastosTransaction, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../../../tx-providers/transaction.types';
+import { ElastosTransaction, Outputs, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../../../tx-providers/transaction.types';
 import { AnyNetworkWallet } from '../../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../../base/subwallets/maincoin.subwallet';
 import { ElastosTransactionsHelper } from '../../transactions.helper';
@@ -29,7 +29,7 @@ const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, Vote
 
 export type AvalaibleUtxos = {
     value: number;
-    utxo: Utxo[];
+    utxo: UtxoForSDK[];
 }
 
 export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, ElastosMainChainWalletNetworkOptions> {
@@ -296,14 +296,14 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         Logger.log('wallet', 'createPaymentTransaction toAmount:', toAmount);
 
-        let outputs = [{
+        let outputs : Outputs[] = [{
             "Address": toAddress,
             "Amount": toAmount.toString()
         }]
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createPaymentTransaction(
-                JSON.stringify(au.utxo),
-                JSON.stringify(outputs),
+                au.utxo,
+                outputs,
                 '10000',
                 memo);
     }
@@ -623,7 +623,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             }
         }
 
-        let utxoArrayForSDK = [];
+        let utxoArrayForSDK: UtxoForSDK[] = [];
         let getEnoughUTXO = false;
         let totalAmount = 0;
         if (utxoArray) {

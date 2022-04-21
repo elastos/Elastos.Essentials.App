@@ -25,6 +25,16 @@ import { Logger } from "../../logger";
 import { ELAAddressHelper } from "./ela.address";
 import { ELATransactionSigner } from "./ela.transaction.signer";
 
+// TxAttributes:
+// enum Usage {
+//   Nonce = 0x00,
+//   Script = 0x20,
+//   DescriptionUrl = 0x91,
+//   Description = 0x90,
+//   Memo = 0x81,
+//   Confirmations = 0x92
+// };
+
 export type TX_Content = {
   TxType : number,
   LockTime : number,

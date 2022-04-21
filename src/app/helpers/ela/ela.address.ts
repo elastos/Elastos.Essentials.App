@@ -27,7 +27,7 @@ import { SHA256 } from "./../crypto/sha256";
 const EC = require('elliptic').ec;
 const curve = new EC('p256');
 
-enum ELAAddressSignType {
+export enum ELAAddressSignType {
   SignTypeInvalid    = 0,
   SignTypeStandard   = 0xAC,
   SignTypeDID        = 0xAD,

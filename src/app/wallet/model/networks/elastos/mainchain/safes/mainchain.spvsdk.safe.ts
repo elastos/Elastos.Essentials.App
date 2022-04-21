@@ -1,3 +1,4 @@
+import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { SignTransactionResult } from "../../../../safes/safe.types";
@@ -5,12 +6,12 @@ import { SPVSDKSafe } from "../../../../safes/spvsdk.safe";
 import { ElastosMainChainSafe } from "./mainchain.safe";
 
 export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainSafe {
-  public createPaymentTransaction(inputs: string, outputs: string, fee: string, memo: string) {
+  public createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string) {
     return SPVService.instance.createTransaction(
       jsToSpvWalletId(this.masterWallet.id),
       this.chainId, // From subwallet id
-      inputs,
-      outputs,
+      JSON.stringify(inputs),
+      JSON.stringify(outputs),
       fee,
       memo
     );
