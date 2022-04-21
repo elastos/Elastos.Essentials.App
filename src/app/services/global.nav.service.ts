@@ -76,7 +76,7 @@ export class GlobalNavService {
                     route = '/settings/menu';
                     break;
                 case App.CRCOUNCIL_VOTING:
-                    route = '/crcouncilvoting/candidates';
+                    route = '/crcouncilvoting/crmembers';
                     break;
                 case App.CRPROPOSAL_VOTING:
                     route = '/crproposalvoting/proposals/all';

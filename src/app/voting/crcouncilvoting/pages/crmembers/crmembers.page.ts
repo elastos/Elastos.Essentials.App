@@ -49,7 +49,7 @@ export class CRMembersPage implements OnInit {
         if (available > 0) {
             this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: '/assets/crcouncilvoting/icon/darkmode/withdraw.svg' });
             this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                void this.candidatesService.withdrawCandidate(available);
+                void this.candidatesService.withdrawCandidate(available, '/crcouncilvoting/crmembers');
             });
         }
 

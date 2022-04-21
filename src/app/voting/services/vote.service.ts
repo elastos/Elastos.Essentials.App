@@ -146,9 +146,9 @@ export class VoteService {
         if (context) {
             void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
         }
-        // else {
-        //     void this.nav.goToLauncher();
-        // }
+        else {
+            void this.nav.navigateBack();
+        }
         return result;
     }
 

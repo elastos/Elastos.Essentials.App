@@ -451,7 +451,7 @@ export class CandidatesService {
             if (available > 0) {
                 titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: '/assets/crcouncilvoting/icon/darkmode/withdraw.svg' });
                 titleBar.addOnItemClickedListener(titleBarIconClickedListener = (icon) => {
-                    void this.withdrawCandidate(available);
+                    void this.withdrawCandidate(available, '/crcouncilvoting/candidates');
                 });
             }
         }
@@ -474,7 +474,7 @@ export class CandidatesService {
                     payload.Signature = signature;
                     Logger.log('CandidateRegistrationPage', 'generateUnregisterCRPayload', payload);
                     const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(payload, "");
-                    await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
+                    await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
                 }
             }
         }
@@ -483,7 +483,7 @@ export class CandidatesService {
         }
     }
 
-    async withdrawCandidate(available: number) {
+    async withdrawCandidate(available: number, customRoute?: string) {
             Logger.log(App.CRCOUNCIL_VOTING, 'withdrawCandidate', available);
             let depositAddress = await this.walletManager.spvBridge.getCRDepositAddress(this.voteService.masterWalletId, StandardCoinName.ELA);
             let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
@@ -494,7 +494,7 @@ export class CandidatesService {
             const rawTx = await this.voteService.sourceSubwallet.createRetrieveCRDepositTransaction(utxo, available, "");
             Logger.log(App.CRCOUNCIL_VOTING, 'rawTx', rawTx);
 
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, customRoute);
     }
 
     async getCRDepositcoin(): Promise<any> {

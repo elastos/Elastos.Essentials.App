@@ -207,7 +207,7 @@ export class CandidateRegistrationPage implements OnInit {
         let payload = await this.getCRInfoPayload();
         if (payload) {
             const rawTx = this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+            await this.voteService.signAndSendRawTransaction(rawTx);
         }
     }
 }
