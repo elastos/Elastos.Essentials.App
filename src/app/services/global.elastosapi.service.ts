@@ -190,9 +190,9 @@ export class GlobalElastosAPIService extends GlobalService {
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "LRW": {
-                        mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
-                        idChainRPC: 'http://did1rpc.longrunweather.com:18080',
-                        eidChainRPC: 'http://eid02.longrunweather.com:18080',
+                        mainChainRPC: 'https://crc1rpc.longrunweather.com:18443',
+                        idChainRPC: 'https://did1rpc.longrunweather.com:18443',
+                        eidChainRPC: 'https://eid02.longrunweather.com:18443',
                         eidMiscRPC: '',
                         eidBrowserRPC: '',
                         eidOracleRPC: '',
@@ -200,7 +200,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escOracleRPC: '',
                         escMiscRPC: '',
                         escBrowserRPC: '',
-                        crRPC: 'http://crapi.longrunweather.com:18080'
+                        crRPC: 'https://crapi.longrunweather.com:18443'
                     },
                 }
                 /*
