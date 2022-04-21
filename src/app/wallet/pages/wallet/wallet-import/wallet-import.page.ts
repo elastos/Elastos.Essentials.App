@@ -71,6 +71,10 @@ export class WalletImportPage implements OnInit {
         this.titleBar.setTitle(this.translate.instant('wallet.import-wallet'));
     }
 
+    ionViewWillLeave() {
+        void this.mnemonicKeypadService.dismissMnemonicPrompt();
+    }
+
     slideNext(slider) {
         slider.slideNext();
     }
