@@ -211,7 +211,8 @@
       "elastos-essentials-plugin-dappbrowser": {}
     },
     "platforms": [
-      "android"
-    ]
-  }
+        "android",
+        "ios"
+      ]
+    }
 }
