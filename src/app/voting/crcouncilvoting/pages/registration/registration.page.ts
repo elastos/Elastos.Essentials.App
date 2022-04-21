@@ -206,7 +206,7 @@ export class CandidateRegistrationPage implements OnInit {
         Logger.log('CandidateRegistrationPage', 'Calling update()', this.candidateInfo);
         let payload = await this.getCRInfoPayload();
         if (payload) {
-            const rawTx = this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
+            const rawTx = await this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
             await this.voteService.signAndSendRawTransaction(rawTx);
         }
     }
