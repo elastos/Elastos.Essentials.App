@@ -34,6 +34,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { TransactionListType } from 'src/app/wallet/model/evm.types';
@@ -86,6 +87,7 @@ export class CoinHomePage implements OnInit {
 
     public canFetchMore = true;
     public shouldShowLoadingSpinner = false;
+    public shouldShowAllActions = true;
     // Observer that detects when the "fetch more trigger" UI item crosses the ion-content, which means we
     // are at the bottom of the list.
     private fetchMoreTriggerObserver: IntersectionObserver;
@@ -112,6 +114,7 @@ export class CoinHomePage implements OnInit {
         public currencyService: CurrencyService,
         public uiService: UiService,
         private storage: LocalStorage,
+        private globalStorage: GlobalStorageService,
         private globalNav: GlobalNavService,
         private didSessions: GlobalDIDSessionsService
     ) {
@@ -565,5 +568,25 @@ export class CoinHomePage implements OnInit {
 
     public canBridge(): boolean {
         return this.subWallet.getAvailableBridgeProviders().length > 0;
+    }
+
+    /**
+     * Toggles and saves whether we should show more or less actions for the user in the footer.
+     */
+    public async toggleShowAllActions(): Promise<void> {
+        this.shouldShowAllActions = !this.shouldShowAllActions;
+        await await this.globalStorage.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "coinhome-show-all-actions", this.shouldShowAllActions);
+    }
+
+    public async loadShowLessActions(): Promise<void> {
+        this.shouldShowAllActions = await this.globalStorage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "coinhome-show-all-actions", true);
+    }
+
+    /**
+     * Whether the arrow to toggle show/hide all actions should be shown or 
+     * hidden (in case there is nothing to toggle).
+     */
+    public shouldShowAllActionsToggle(): boolean {
+        return this.canEarnSwapOrBridge();
     }
 }

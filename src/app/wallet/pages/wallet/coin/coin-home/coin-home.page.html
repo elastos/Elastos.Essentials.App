@@ -100,6 +100,8 @@
     </ion-content>
 
     <div class="footer" ngxHideOnScroll *ngIf="subWallet">
+        <img class="action-toggle" (click)="toggleShowAllActions()" *ngIf="shouldShowAllActionsToggle()"
+            [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/down-arrow-large.svg' : 'assets/wallet/icons/down-arrow-large.svg'">
         <ion-row class="card-btn-row">
             <ion-col [size]="transfersColumnSize()" *ngIf="coinCanBeTransferred()">
                 <div class="ion-activatable btn-box" (click)="transferFunds()">
@@ -127,7 +129,7 @@
                 </div>
             </ion-col>
         </ion-row>
-        <ion-row class="card-btn-row" *ngIf="canEarnSwapOrBridge()">
+        <ion-row class="card-btn-row" *ngIf="shouldShowAllActions && canEarnSwapOrBridge()">
             <ion-col size="4" *ngIf="canEarn()">
                 <div class="ion-activatable btn-box" (click)="earn($event, subWallet)">
                     <img
