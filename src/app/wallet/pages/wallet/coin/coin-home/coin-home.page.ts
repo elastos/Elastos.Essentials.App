@@ -503,4 +503,67 @@ export class CoinHomePage implements OnInit {
         this.transactionListType = transactionlistType;
         void this.initData(false);
     }
+
+
+    public earn(event, subWallet: AnySubWallet) {
+        // Prevent from subwallet main div to get the click (do not open transactions list)
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.native.go("/wallet/coin-earn", {
+            masterWalletId: subWallet.networkWallet.masterWallet.id,
+            subWalletId: subWallet.id
+        });
+    }
+
+    public swap(event, subWallet: AnySubWallet) {
+        // Prevent from subwallet main div to get the click (do not open transactions list)
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.native.go("/wallet/coin-swap", {
+            masterWalletId: subWallet.networkWallet.masterWallet.id,
+            subWalletId: subWallet.id
+        });
+    }
+
+    public bridge(event, subWallet: AnySubWallet) {
+        // Prevent from subwallet main div to get the click (do not open transactions list)
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.native.go("/wallet/coin-bridge", {
+            masterWalletId: subWallet.networkWallet.masterWallet.id,
+            subWalletId: subWallet.id
+        });
+    }
+
+    /**
+     * Returns the ion-col size for the transfer/send/receive row, based on the available features.
+     */
+    public transfersColumnSize(): number {
+        if (this.coinCanBeTransferred())
+            return 4; // 3 columns - 3x4 = 12
+        else
+            return 6; // 2 columns - 2x6 = 12
+    }
+
+    /**
+     * Tells if this subwallet can do one of earn, swap or bridge operations
+     */
+    public canEarnSwapOrBridge(): boolean {
+        return this.canEarn() || this.canSwap() || this.canBridge();
+    }
+
+    public canEarn(): boolean {
+        return this.subWallet.getAvailableEarnProviders().length > 0;
+    }
+
+    public canSwap(): boolean {
+        return this.subWallet.getAvailableSwapProviders().length > 0;
+    }
+
+    public canBridge(): boolean {
+        return this.subWallet.getAvailableBridgeProviders().length > 0;
+    }
 }

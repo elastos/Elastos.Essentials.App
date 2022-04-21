@@ -111,7 +111,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private globalStartupService: GlobalStartupService,
         private events: Events,
         private zone: NgZone,
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.showRefresher();
@@ -217,7 +217,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     private refreshStakingAssetsList() {
-        this.zone.run( ()=> {
+        this.zone.run(() => {
             this.stakingAssets = this.networkWallet.getStakingAssets();
         })
     }
@@ -372,37 +372,22 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.walletNetworkUIService.chooseActiveNetwork();
     }
 
-    public onSubWalletClicked(subWallet: AnySubWallet) {
-        // If there is not specific details to show for this wallet, directly show the transactions
-        // list. Otherwise, show details.
-        if (this.shouldShowSubWalletDetails(subWallet)) { // Currently shown --> hide details
-            this.shownSubWalletDetails = null;
-        }
-        else {
-            this.shownSubWalletDetails = subWallet;
-        }
-    }
-
     public onStakingAssetClicked(stakingAsset: StakingData) {
         this.defiService.openStakeApp(stakingAsset);
     }
 
     public async onRefreshStakingAssetClicked() {
-        this.zone.run( ()=> {
+        this.zone.run(() => {
             this.refreshingStakedAssets = true;
         })
 
         await this.networkWallet.fetchStakingAssets();
 
         setTimeout(() => {
-            this.zone.run( ()=> {
+            this.zone.run(() => {
                 this.refreshingStakedAssets = false;
             })
         }, 1000);
-    }
-
-    public shouldShowSubWalletDetails(subWallet: AnySubWallet): boolean {
-        return this.shownSubWalletDetails && this.shownSubWalletDetails.id === subWallet.id;
     }
 
     /**
@@ -415,39 +400,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public getDefaultStakedAssetIcon(): string {
         return this.networkWallet.network.logo;
-    }
-
-    public earn(event, subWallet: AnySubWallet) {
-        // Prevent from subwallet main div to get the click (do not open transactions list)
-        event.preventDefault();
-        event.stopPropagation();
-
-        this.native.go("/wallet/coin-earn", {
-            masterWalletId: subWallet.networkWallet.masterWallet.id,
-            subWalletId: subWallet.id
-        });
-    }
-
-    public swap(event, subWallet: AnySubWallet) {
-        // Prevent from subwallet main div to get the click (do not open transactions list)
-        event.preventDefault();
-        event.stopPropagation();
-
-        this.native.go("/wallet/coin-swap", {
-            masterWalletId: subWallet.networkWallet.masterWallet.id,
-            subWalletId: subWallet.id
-        });
-    }
-
-    public bridge(event, subWallet: AnySubWallet) {
-        // Prevent from subwallet main div to get the click (do not open transactions list)
-        event.preventDefault();
-        event.stopPropagation();
-
-        this.native.go("/wallet/coin-bridge", {
-            masterWalletId: subWallet.networkWallet.masterWallet.id,
-            subWalletId: subWallet.id
-        });
     }
 
     public async setSortMode() {

@@ -7,7 +7,7 @@
             </ion-refresher-content>
         </ion-refresher>
 
-        <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <ion-grid class="container">
             <ion-row class="main-title-row">
                 <ion-col size="12">
                     <h1>{{ getSubwalletTitle() }}</h1>
@@ -41,31 +41,6 @@
                             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
                         </h4>
                     </div>
-                </ion-row>
-                <ion-row class="card-btn-row">
-                    <ion-col size="3" *ngIf="!coinCanBeTransferred()"></ion-col>
-                    <ion-col size="3" *ngIf="coinCanBeTransferred()">
-                        <div class="ion-activatable btn-box" (click)="transferFunds()">
-                            <img class="transfer" src="assets/wallet/buttons/transfer.png">
-                            <ion-ripple-effect></ion-ripple-effect>
-                        </div>
-                        <p *ngIf="chainIsELA()" class="btn-label">{{ 'wallet.coin-action-recharge' | translate }}</p>
-                        <p *ngIf="!chainIsELA()" class="btn-label">{{ 'wallet.coin-action-withdraw' | translate }}</p>
-                    </ion-col>
-                    <ion-col offset="0.25" size="3" (click)="sendFunds()">
-                        <div class="ion-activatable btn-box">
-                            <img class="send" src="assets/wallet/buttons/send.png">
-                            <ion-ripple-effect></ion-ripple-effect>
-                        </div>
-                        <p class="btn-label">{{ 'wallet.coin-action-send' | translate }}</p>
-                    </ion-col>
-                    <ion-col offset="0.25" size="3">
-                        <div class="ion-activatable btn-box" (click)="receiveFunds()">
-                            <img class="receive" src="assets/wallet/buttons/receive.png">
-                            <ion-ripple-effect></ion-ripple-effect>
-                        </div>
-                        <p class="btn-label">{{ 'wallet.coin-action-receive' | translate }}</p>
-                    </ion-col>
                 </ion-row>
                 <div class="arrow-down"></div>
             </ion-row>
@@ -124,7 +99,59 @@
         </ion-grid>
     </ion-content>
 
-    <!-- <div class="footer" ngxHideOnScroll>
-        test footer
-    </div> -->
+    <div class="footer" ngxHideOnScroll *ngIf="subWallet">
+        <ion-row class="card-btn-row">
+            <ion-col [size]="transfersColumnSize()" *ngIf="coinCanBeTransferred()">
+                <div class="ion-activatable btn-box" (click)="transferFunds()">
+                    <img class="transfer"
+                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/transfer.svg' : 'assets/wallet/buttons/transfer.svg'">
+                    <p *ngIf="chainIsELA()" class="btn-label">{{ 'wallet.coin-action-recharge' | translate }}</p>
+                    <p *ngIf="!chainIsELA()" class="btn-label">{{ 'wallet.coin-action-withdraw' | translate }}</p>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
+            <ion-col [size]="transfersColumnSize()" (click)="sendFunds()">
+                <div class="ion-activatable btn-box">
+                    <img class="send"
+                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/send.svg' : 'assets/wallet/buttons/sned.svg'">
+                    <p class="btn-label">{{ 'wallet.coin-action-send' | translate }}</p>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
+            <ion-col [size]="transfersColumnSize()">
+                <div class="ion-activatable btn-box" (click)="receiveFunds()">
+                    <img class="receive"
+                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/receive.svg' : 'assets/wallet/buttons/receive.svg'">
+                    <p class="btn-label">{{ 'wallet.coin-action-receive' | translate }}</p>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
+        </ion-row>
+        <ion-row class="card-btn-row" *ngIf="canEarnSwapOrBridge()">
+            <ion-col size="4" *ngIf="canEarn()">
+                <div class="ion-activatable btn-box" (click)="earn($event, subWallet)">
+                    <img
+                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/earn.svg' : 'assets/wallet/buttons/earn.svg'">
+                    <p class="btn-label">{{ 'wallet.earn' | translate }}</p>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
+            <ion-col size="4" *ngIf="canSwap()">
+                <div class="ion-activatable btn-box" (click)="swap($event, subWallet)">
+                    <img
+                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/swap.svg' : 'assets/wallet/buttons/swap.svg'">
+                    <p class="btn-label">{{ 'wallet.swap' | translate }}</p>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
+            <ion-col size="4" *ngIf="canBridge()">
+                <div class="ion-activatable btn-box" (click)="bridge($event, subWallet)">
+                    <img
+                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/bridge.svg' : 'assets/wallet/buttons/bridge.svg'">
+                    <p class="btn-label">{{ 'wallet.bridge' | translate }}</p>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
+        </ion-row>
+    </div>
 </ion-content>
