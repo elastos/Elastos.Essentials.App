@@ -119,7 +119,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
     public async createAddress(): Promise<string> {
         // Create on ETH always returns the same unique address.
-        return await SPVService.instance.createAddress(jsToSpvWalletId(this.masterWallet.id), this.spvConfigEVMCode);
+        let addresses = await this.networkWallet.safe.getAddresses(0, 1, false);
+        return (addresses && addresses[0]) ? addresses[0] : null;
     }
 
     public async getTokenAccountAddress(): Promise<string> {

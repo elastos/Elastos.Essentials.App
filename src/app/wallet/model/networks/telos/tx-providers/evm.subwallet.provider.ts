@@ -112,7 +112,7 @@ export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<AnyMainCoinE
 
       await this.saveTransactions(transactions);
     } catch (e) {
-      Logger.error('wallet', 'ElastosEvmSubWalletProvider fetchTransactions error:', e)
+      Logger.error('wallet', 'TelosEvmSubWalletProvider fetchTransactions error:', e)
     }
     return null;
   }

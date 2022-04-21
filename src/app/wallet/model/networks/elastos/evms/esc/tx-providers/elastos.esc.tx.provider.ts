@@ -2,8 +2,10 @@ import { StandardCoinName } from "../../../../../coin";
 import { AnySubWalletTransactionProvider } from "../../../../../tx-providers/subwallet.provider";
 import { TransactionProvider } from "../../../../../tx-providers/transaction.provider";
 import { ElastosTransaction } from "../../../../../tx-providers/transaction.types";
+import { AnySubWallet } from "../../../../base/subwallets/subwallet";
 import { AnyMainCoinEVMSubWallet } from "../../../../evms/subwallets/evm.subwallet";
 import { EVMSubWalletInternalTransactionProvider } from "../../../../evms/tx-providers/evm.subwallet.internalTransaction.provider";
+import { ElastosERC20SubWallet } from "../subwallets/elastos.erc20.subwallet";
 import { EscSubWallet } from "../subwallets/esc.evm.subwallet";
 import { ElastosEscSubWalletProvider } from "./esc.subwallet.provider";
 import { ElastosTokenSubWalletProvider } from "./token.subwallet.provider";
@@ -37,8 +39,13 @@ export class ElastosSmartChainTransactionProvider extends TransactionProvider<El
     }
   }
 
-  protected getSubWalletTransactionProvider(subWallet: EscSubWallet): AnySubWalletTransactionProvider {
-    return this.escProvider;
+  protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
+    if (subWallet instanceof EscSubWallet)
+      return this.escProvider;
+    else if (subWallet instanceof ElastosERC20SubWallet)
+      return this.tokenProvider;
+    else
+      throw new Error("Transactions provider: getSubWalletTransactionProvider() is called with an unknown subwallet!");
   }
 
   protected getSubWalletInternalTransactionProvider(subWallet: EscSubWallet): AnySubWalletTransactionProvider {

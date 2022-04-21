@@ -44,4 +44,8 @@ export class MultiSigCreatePage implements OnInit {
     createStandardMultiSigWallet() {
         this.native.go("/wallet/multisig/standard/create");
     }
+
+    createGnosisMultiSigWallet() {
+
+    }
 }
