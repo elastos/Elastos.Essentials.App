@@ -39,9 +39,9 @@ export class DPosUnRegistrationPage implements OnInit {
     public masterWalletId: string;
     public areaList = areaList;
     public dposInfo: DPoSRegistrationInfo = {
-        nickname: "test",
-        location: 86,
-        url: 'http://test.com',
+        nickname: "",
+        location: 0,
+        url: '',
         state: "Unregistered",
     };
     public state = "";
