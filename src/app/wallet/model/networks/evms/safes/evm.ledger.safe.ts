@@ -61,6 +61,20 @@ var Common = require('ethereumjs-common').default;
         return Promise.resolve(txData);
     }
 
+    public createContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
+      let web3 = new Web3();
+        const txData: TxData = {
+            nonce: web3.utils.toHex(nonce),
+            gasLimit: web3.utils.toHex(gasLimit),
+            gasPrice: web3.utils.toHex(gasPrice),
+            to: contractAddress,
+            data: data,
+            value: web3.utils.toHex(web3.utils.toWei('0', 'ether'))
+        }
+        Logger.log('wallet', 'EVMSafe::createContractTransaction:', txData);
+        return Promise.resolve(txData);
+    }
+
     public personalSign(): string {
         throw new Error("Method not implemented.");
     }
@@ -88,6 +102,7 @@ var Common = require('ethereumjs-common').default;
     }
 
     public async signTransactionByLedger(transport: BluetoothTransport) {
+        Logger.log('ledger', "EVMSafe::signTransactionByLedger");
         let unsignedTx = this.evmTx.serialize().toString('hex')
 
         const eth = new AppEth(transport);

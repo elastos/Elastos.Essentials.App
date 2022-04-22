@@ -24,6 +24,7 @@ export class LedgerSignComponent implements OnInit {
   public safe: Safe = null;
   public transport : BluetoothTransport = null;
   public connecting = true;
+  public signing = false;
   private signSucceeded = false;
 
   constructor(
@@ -55,7 +56,7 @@ export class LedgerSignComponent implements OnInit {
       }
   }
 
-  async signEVMTransaction() {
+  async signTransaction() {
     try {
         await (this.safe as LedgerSafe).signTransactionByLedger(this.transport);
         this.signSucceeded = true;
@@ -67,7 +68,10 @@ export class LedgerSignComponent implements OnInit {
 
   async confirm() {
     try {
-        await this.signEVMTransaction();
+        Logger.log('wallet', 'LedgerSignComponent signing')
+        this.signing = true;
+        await this.signTransaction();
+        this.signing = false;
         void this.disconnect();
         void this.modalCtrl.dismiss({
             signed: this.signSucceeded

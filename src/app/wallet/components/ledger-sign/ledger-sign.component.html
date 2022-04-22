@@ -44,7 +44,7 @@
   <ion-button (click)="cancelOperation()">
     <ion-label>{{ 'common.cancel' | translate }}</ion-label>
   </ion-button>
-  <ion-button [disabled]="!transport" (click)="confirm()">
+  <ion-button [disabled]="!transport || signing" (click)="confirm()">
     <ion-label>{{ 'common.continue' | translate }}</ion-label>
   </ion-button>
 </ion-footer>

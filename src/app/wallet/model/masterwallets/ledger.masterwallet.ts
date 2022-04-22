@@ -44,8 +44,7 @@ export class LedgerMasterWallet extends MasterWallet {
   }
 
   public hasMnemonicSupport(): boolean {
-    console.log("Ledger masterwallet hasMnemonicSupport not implemented");
-    return true; // TODO - this hasMnemonicSupport() doesn't make enough sense, what does this mean?
+    return false; // TODO - this hasMnemonicSupport() doesn't make enough sense, what does this mean?
   }
 
   public supportsNetwork(network: AnyNetwork): boolean {

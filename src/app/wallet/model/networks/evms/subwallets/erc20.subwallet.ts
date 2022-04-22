@@ -13,7 +13,6 @@ import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import Web3 from 'web3';
 import { Config } from '../../../../config/Config';
 import { CurrencyService } from '../../../../services/currency.service';
-import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
 import { Coin, CoinID, CoinType, ERC20Coin } from '../../../coin';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
@@ -23,6 +22,7 @@ import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { SerializedSubWallet, SubWallet } from '../../base/subwallets/subwallet';
 import type { EthTransaction } from '../evm.types';
 import type { AnyEVMNetworkWallet, EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
+import { EVMSafe } from '../safes/evm.safe';
 
 export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     /** Coin related to this wallet */
@@ -467,20 +467,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         }
 
         let nonce = await this.getNonce();
-        const rawTx =
-            await SPVService.instance.createTransferGeneric(
-                jsToSpvWalletId(this.masterWallet.id),
-                this.spvConfigEVMCode,
-                contractAddress,
-                '0',
-                0, // WEI
-                gasPrice,
-                0, // WEI
-                gasLimit.toString(),
-                method.encodeABI(),
-                nonce
-            );
-        return rawTx;
+        return (this.networkWallet.safe as unknown as EVMSafe).createContractTransaction(contractAddress, gasPrice, gasLimit, nonce, method.encodeABI());
     }
 
     public publishTransaction(transaction: string): Promise<string> {

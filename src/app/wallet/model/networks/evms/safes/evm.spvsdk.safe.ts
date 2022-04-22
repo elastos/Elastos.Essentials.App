@@ -19,4 +19,19 @@ export class EVMSPVSDKSafe extends SPVSDKSafe implements EVMSafe {
         nonce
       );
   }
+
+  public createContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
+    return SPVService.instance.createTransferGeneric(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      contractAddress,
+      '0',
+      0, // WEI
+      gasPrice,
+      0, // WEI
+      gasLimit,
+      data,
+      nonce
+    );
+  }
 }
