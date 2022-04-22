@@ -69,9 +69,9 @@ export class CandidatesService {
     public crmembers: any[] = [];
     public selectedMember: CRMemberInfo;
     public candidateInfo: CandidateBaseInfo = {
-        nickname: "test",
-        location: 86,
-        url: 'http://test.com',
+        nickname: "",
+        location: 0,
+        url: '',
         state: "Unregistered",
     };
 

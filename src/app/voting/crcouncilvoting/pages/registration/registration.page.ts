@@ -29,9 +29,9 @@ export class CandidateRegistrationPage implements OnInit {
     // public masterWalletId: string;
     public areaList = areaList;
     public candidateInfo: CandidateBaseInfo = {
-        nickname: "test",
-        location: 86,
-        url: 'http://test.com',
+        nickname: "",
+        location: 0,
+        url: '',
         state: "Unregistered",
     };
     public originInfo: CandidateBaseInfo;
