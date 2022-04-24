@@ -3,7 +3,7 @@
     <div class="council-header" *ngIf="candidatesService.isVoting">
         <ion-row>
             <ion-col class="left-col">
-                <div id="vote-label">Vote is on going!</div>
+                <div id="vote-label">{{ 'voting.vote-going' | translate }}</div>
             </ion-col>
             <ion-col class="right-col">
                 <div class="btn-container align-center" id="vote-button" (click)="gotoCandidate()">

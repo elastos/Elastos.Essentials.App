@@ -114,7 +114,7 @@ export class ImpeachCRMemberPage {
             await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/crmember");
         }
         catch (e) {
-            await this.popupProvider.ionicAlert('crcouncilvoting.impeach-council-member', "Sorry, unable to vote. Your crproposal can't be vote for now. ");
+            await this.voteService.popupErrorMessage(e);
         }
 
         this.signingAndTransacting = false;

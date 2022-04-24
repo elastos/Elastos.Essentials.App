@@ -85,7 +85,7 @@ export class CRNodePage implements OnInit {
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.popup.alert("Error", "Sorry, unable to sign your crproposal. Your crproposal can't be review for now. " + e, "Ok");
+            await this.voteService.popupErrorMessage(e);
         }
     }
 }

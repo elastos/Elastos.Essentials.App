@@ -10,8 +10,21 @@ export const zh = {
         'hours': '小时',
         'minutes': '分钟',
 
-        'vote': 'Vote',
+        'vote': '投票',
         'voting-ends-in': '投票剩余时间',
+        'vote-going': '正在进行委员选举投票!',
+
+        //Proposal Status
+        'status': '状态',
+        'registered': '委员评议',
+        'cragreed': '公示中',
+        'voteragreed': '执行中',
+        'finished': '已完成',
+        'crcanceled': '已否决',
+        'votercanceled': '已否决',
+        'terminated': '已终止',
+        'aborted': '已终止',
+
     }
 
 };

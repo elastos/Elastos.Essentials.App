@@ -195,19 +195,29 @@ export class CandidateRegistrationPage implements OnInit {
         //     return;
         // }
 
-        let payload = await this.getCRInfoPayload();
-        if (payload) {
-            const rawTx = await this.voteService.sourceSubwallet.createRegisterCRTransaction(payload, this.depositAmount, "");
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+        try {
+            let payload = await this.getCRInfoPayload();
+            if (payload) {
+                const rawTx = await this.voteService.sourceSubwallet.createRegisterCRTransaction(payload, this.depositAmount, "");
+                await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+            }
+        }
+        catch (e) {
+            await this.voteService.popupErrorMessage(e);
         }
     }
 
     async update() {
         Logger.log('CandidateRegistrationPage', 'Calling update()', this.candidateInfo);
-        let payload = await this.getCRInfoPayload();
-        if (payload) {
-            const rawTx = await this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
-            await this.voteService.signAndSendRawTransaction(rawTx);
+        try {
+            let payload = await this.getCRInfoPayload();
+            if (payload) {
+                const rawTx = await this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
+                await this.voteService.signAndSendRawTransaction(rawTx);
+            }
+        }
+        catch (e) {
+            await this.voteService.popupErrorMessage(e);
         }
     }
 }

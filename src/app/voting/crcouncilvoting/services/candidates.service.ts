@@ -479,19 +479,20 @@ export class CandidatesService {
             }
         }
         catch (e) {
-
+            await this.voteService.popupErrorMessage(e);
         }
     }
 
     async withdrawCandidate(available: number, customRoute?: string) {
-            Logger.log(App.CRCOUNCIL_VOTING, 'withdrawCandidate', available);
+        Logger.log(App.CRCOUNCIL_VOTING, 'withdrawCandidate', available);
 
-            let msg = this.translate.instant('crcouncilvoting.candidate-withdraw-warning-pre') + available +
-                this.translate.instant('crcouncilvoting.candidate-withdraw-warning-suf');
-            if (!await this.popupProvider.ionicConfirm('wallet.text-warning', msg, 'common.confirm', 'common.cancel')) {
-                return;
-            }
+        let msg = this.translate.instant('crcouncilvoting.candidate-withdraw-warning-pre') + available +
+            this.translate.instant('crcouncilvoting.candidate-withdraw-warning-suf');
+        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', msg, 'common.confirm', 'common.cancel')) {
+            return;
+        }
 
+        try {
             let depositAddress = await this.walletManager.spvBridge.getCRDepositAddress(this.voteService.masterWalletId, StandardCoinName.ELA);
             let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
             Logger.log(App.CRCOUNCIL_VOTING, "utxoArray:", utxoArray);
@@ -502,6 +503,10 @@ export class CandidatesService {
             Logger.log(App.CRCOUNCIL_VOTING, 'rawTx', rawTx);
 
             await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, customRoute);
+        }
+        catch (e) {
+            await this.voteService.popupErrorMessage(e);
+        }
     }
 
     async getCRDepositcoin(): Promise<any> {

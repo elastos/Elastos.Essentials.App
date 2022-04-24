@@ -152,6 +152,33 @@ export class VoteService {
         return result;
     }
 
+    public async popupErrorMessage(error: any, context?: string) {
+        if (!error) {
+            return;
+        }
+
+        var message = "";
+        if (typeof error == 'string') {
+            message = error as string;
+        }
+        else if (error instanceof String) {
+            message = error.toString();
+        }
+        else if ((error instanceof Object) && error.message) {
+            message = error.message;
+        }
+
+        if (message == "") {
+            return;
+        }
+
+        if (!context) {
+            context = App.VOTING;
+        }
+        await this.globalPopupService.ionicAlert("common.error", message);
+        Logger.error(context, 'error:', message);
+    }
+
     public async checkWalletAvailableForVote():  Promise<boolean> {
         // if (await this.sourceSubwallet.hasPendingBalance()) {
         //     await this.globalPopupService.ionicAlert("common.please-wait", 'wallet.transaction-pending');
@@ -378,5 +405,6 @@ export class VoteService {
         }
         return ret;
     }
+
 
 }
