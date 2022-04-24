@@ -1,11 +1,9 @@
 import { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { Safe } from '../../../safes/safe';
-import type { TransactionProvider } from '../../../tx-providers/transaction.provider';
 import { NetworkWallet, WalletAddressInfo } from '../../base/networkwallets/networkwallet';
 import type { EVMNetwork } from '../evm.network';
 import { MainCoinEVMSubWallet } from '../subwallets/evm.subwallet';
-import { EVMTransactionProvider } from '../tx-providers/evm.transaction.provider';
 
 /**
  * Network wallet type for standard EVM networks
@@ -29,9 +27,9 @@ export abstract class EVMNetworkWallet<MasterWalletType extends MasterWallet, Wa
         );
     }
 
-    protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
+    /* protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
         return new EVMTransactionProvider(this);
-    }
+    } */
 
     public async getAddresses(): Promise<WalletAddressInfo[]> {
         return [

@@ -16,7 +16,7 @@ var Common = require('ethereumjs-common').default;
 /**
  * Safe specialized for EVM networks, with additional methods.
  */
- export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
+export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
     private evmAddress = null;
     private addressPath = '';
     private evmTx: EthereumTx = null;
@@ -29,8 +29,8 @@ var Common = require('ethereumjs-common').default;
 
     initEVMAddress() {
         if (this.masterWallet.accountOptions) {
-            let evmOption = this.masterWallet.accountOptions.find( (option)=> {
-                return option.type ===  LeddgerAccountType.EVM
+            let evmOption = this.masterWallet.accountOptions.find((option) => {
+                return option.type === LeddgerAccountType.EVM
             })
             if (evmOption) {
                 this.evmAddress = evmOption.accountID;
@@ -82,7 +82,7 @@ var Common = require('ethereumjs-common').default;
     public async signTransaction(txData: TxData, transfer: Transfer): Promise<SignTransactionResult> {
         Logger.log('ledger', "EVMSafe::signTransaction chainId:", this.chainId);
         let signTransactionResult: SignTransactionResult = {
-            signedTransaction : null
+            signedTransaction: null
         }
 
         this.createEthereumTx(txData)
@@ -94,10 +94,7 @@ var Common = require('ethereumjs-common').default;
             return signTransactionResult;
         }
 
-        let signedTx = {
-            TxSigned: this.evmTx.serialize().toString('hex')
-        }
-        signTransactionResult.signedTransaction  = JSON.stringify(signedTx)
+        signTransactionResult.signedTransaction = this.evmTx.serialize().toString('hex');
         return signTransactionResult;
     }
 
@@ -117,10 +114,10 @@ var Common = require('ethereumjs-common').default;
     private createEthereumTx(txData: TxData) {
         let common = Common.forCustomChain(
             'mainnet',
-            {chainId: this.chainId},
+            { chainId: this.chainId },
             'petersburg'
         );
-        this.evmTx = new EthereumTx(txData, {'common': common});
+        this.evmTx = new EthereumTx(txData, { 'common': common });
 
         // Set the EIP155 bits
         this.evmTx.raw[6] = Buffer.from([this.chainId]); // v

@@ -3,6 +3,7 @@ import { Transfer } from "../../services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "../../services/spv.service";
 import { WalletService } from "../../services/wallet.service";
 import { StandardMasterWallet } from "../masterwallets/masterwallet";
+import { SignedETHSCTransaction } from "../networks/evms/evm.types";
 import { Safe } from "./safe";
 import { SignTransactionErrorType, SignTransactionResult } from "./safe.types";
 
@@ -55,6 +56,8 @@ export class SPVSDKSafe extends Safe {
       password
     );
 
-    return { signedTransaction };
+    let parsedSignedTransaction = <SignedETHSCTransaction>JSON.parse(signedTransaction);
+
+    return { signedTransaction: parsedSignedTransaction.TxSigned };
   }
 }

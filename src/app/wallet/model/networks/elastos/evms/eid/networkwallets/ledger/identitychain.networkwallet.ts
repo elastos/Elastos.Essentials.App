@@ -2,8 +2,8 @@ import { Logger } from "src/app/logger";
 import { StandardCoinName } from "src/app/wallet/model/coin";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { WalletAddressInfo } from "src/app/wallet/model/networks/base/networkwallets/networkwallet";
+import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { EVMLedgerSafe } from "src/app/wallet/model/networks/evms/safes/evm.ledger.safe";
-import { AnyNetwork } from "src/app/wallet/model/networks/network";
 import { TransactionProvider } from "src/app/wallet/model/tx-providers/transaction.provider";
 import { ElastosLedgerNetworkWallet } from "../../../../networkwallets/ledger/elastos.networkwallet";
 import { ElastosEVMSubWallet } from "../../../subwallets/standard/elastos.evm.subwallet";
@@ -11,7 +11,7 @@ import { EidSubWallet } from "../../subwallets/standard/eid.evm.subwallet";
 import { ElastosIdentityTransactionProvider } from "../../tx-providers/elastos.eid.tx.provider";
 
 export class ElastosIdentityChainLedgerNetworkWallet extends ElastosLedgerNetworkWallet {
-  constructor(masterWallet: LedgerMasterWallet, network: AnyNetwork) {
+  constructor(masterWallet: LedgerMasterWallet, network: EVMNetwork) {
     super(
       masterWallet,
       network,

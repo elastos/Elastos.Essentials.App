@@ -1,12 +1,11 @@
-import { GlobalNetworksService, MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 
 export enum FusionApiType {
   RPC,
 }
 
 export class FusionAPI {
-  public static getApiUrl(type: FusionApiType): string {
-    let networkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
+  public static getApiUrl(type: FusionApiType, networkTemplate: string): string {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {

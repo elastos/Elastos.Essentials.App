@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ERC20Coin } from '../model/coin';
+import { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { AnyNetwork } from '../model/networks/network';
 import { TimeBasedPersistentCache } from '../model/timebasedpersistentcache';
 import { UniswapCurrencyService } from './evm/uniswap.currency.service';
@@ -300,9 +301,9 @@ export class CurrencyService {
     }
     else {
       Logger.log("wallet", "No currency in trinity API for", network.getMainTokenSymbol(), ". Trying other methods");
-      if (network.getMainEvmRpcApiUrl() && network.getUniswapCurrencyProvider()) {
+      if (network.getUniswapCurrencyProvider()) {
         // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
-        let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(network, network.getUniswapCurrencyProvider().getWrappedNativeCoin());
+        let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(<EVMNetwork>network, network.getUniswapCurrencyProvider().getWrappedNativeCoin());
         if (usdValue) {
           this.pricesCache.set(cacheKey, {
             usdValue
@@ -345,7 +346,7 @@ export class CurrencyService {
     }
   }
 
-  public fetchERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
+  public fetchERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: EVMNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
     let cacheKey = network.key + coin.getContractAddress();
     this.queueUniswapTokenFetch(cacheKey, network, coin);
     return;
@@ -357,12 +358,12 @@ export class CurrencyService {
    */
   private uniswapTokenFetchQueue: {
     [cacheKey: string]: {
-      network: AnyNetwork;
+      network: EVMNetwork;
       coin: ERC20Coin;
     }
   } = {};
   private onGoingUniswapTokenFetch: string = null; // Cache key of the token being fetched, if any.
-  private queueUniswapTokenFetch(cacheKey: string, network: AnyNetwork, coin: ERC20Coin) {
+  private queueUniswapTokenFetch(cacheKey: string, network: EVMNetwork, coin: ERC20Coin) {
     if (cacheKey in this.uniswapCurrencyService || cacheKey === this.onGoingUniswapTokenFetch) {
       this.checkFetchNextUniswapToken();
       return; // Token fetch is already queued, don't queue again.

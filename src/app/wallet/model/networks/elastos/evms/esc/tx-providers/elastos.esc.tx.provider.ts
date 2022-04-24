@@ -4,7 +4,7 @@ import { TransactionProvider } from "../../../../../tx-providers/transaction.pro
 import { ElastosTransaction } from "../../../../../tx-providers/transaction.types";
 import { AnySubWallet } from "../../../../base/subwallets/subwallet";
 import { AnyMainCoinEVMSubWallet } from "../../../../evms/subwallets/evm.subwallet";
-import { EVMSubWalletInternalTransactionProvider } from "../../../../evms/tx-providers/evm.subwallet.internalTransaction.provider";
+import { EtherscanEVMSubWalletInternalTransactionProvider } from "../../../../evms/tx-providers/etherscan.evm.subwallet.internaltx.provider";
 import { ElastosERC20SubWallet } from "../subwallets/elastos.erc20.subwallet";
 import { EscSubWallet } from "../subwallets/esc.evm.subwallet";
 import { ElastosEscSubWalletProvider } from "./esc.subwallet.provider";
@@ -17,7 +17,7 @@ export class ElastosSmartChainTransactionProvider extends TransactionProvider<El
   private tokenProvider: ElastosTokenSubWalletProvider;
 
   // Only for ESC
-  private internalTXProvider: EVMSubWalletInternalTransactionProvider<AnyMainCoinEVMSubWallet> = null;
+  private internalTXProvider: EtherscanEVMSubWalletInternalTransactionProvider<AnyMainCoinEVMSubWallet> = null;
 
   public async start(): Promise<void> {
     this.escSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as EscSubWallet;
@@ -30,7 +30,7 @@ export class ElastosSmartChainTransactionProvider extends TransactionProvider<El
       this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
       await this.tokenProvider.initialize();
 
-      this.internalTXProvider = new EVMSubWalletInternalTransactionProvider(this, this.escSubWallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
+      this.internalTXProvider = new EtherscanEVMSubWalletInternalTransactionProvider(this, this.escSubWallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
       await this.internalTXProvider.initialize();
 
       // Discover new transactions globally for all tokens at once, in order to notify user

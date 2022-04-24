@@ -3,7 +3,7 @@ import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EthTransaction } from "../../evms/evm.types";
 import { AnyMainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
-import { EVMSubWalletProvider } from "../../evms/tx-providers/evm.subwallet.provider";
+import { EtherscanEVMSubWalletProvider } from "../../evms/tx-providers/etherscan.evm.subwallet.provider";
 
 const MAX_RESULTS_PER_FETCH = 30;
 
@@ -11,7 +11,7 @@ type FusionTransaction = {
   // TODO
 }
 
-export class FusionEvmSubWalletProvider extends EVMSubWalletProvider<AnyMainCoinEVMSubWallet> {
+export class FusionEvmSubWalletProvider extends EtherscanEVMSubWalletProvider<AnyMainCoinEVMSubWallet> {
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
     return false; // TODO
   }

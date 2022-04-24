@@ -3,6 +3,7 @@ import { Util } from "src/app/model/util";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardCoinName } from "../../coin";
 import { ElastosMainChainWalletNetworkOptions } from "../../masterwallets/wallet.types";
+import { AddressUsage } from "../../safes/safe";
 import { ElastosTransaction, PaginatedTransactions } from "../../tx-providers/transaction.types";
 import { AnySubWallet, SubWallet } from "../base/subwallets/subwallet";
 import { MainChainSPVSDKSafe } from "./mainchain/safes/mainchain.spvsdk.safe";
@@ -35,7 +36,7 @@ export class WalletHelper {
                 }
             }
             addressArray = await subWallet.networkWallet.safe.getAddresses(
-                startIndex, count, internalAddress);
+                startIndex, count, internalAddress, AddressUsage.DEFAULT);
             if ((startIndex === 0) && !internalAddress && (subWallet.id === StandardCoinName.ELA)) {
                 // OwnerAddress: for register dpos node, CRC.
                 const ownerAddress = await WalletHelper.getOwnerAddress(subWallet);

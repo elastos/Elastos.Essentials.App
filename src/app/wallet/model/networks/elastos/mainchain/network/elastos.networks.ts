@@ -11,23 +11,17 @@ import { ElastosMainChainStandardNetworkWallet } from "../networkwallets/standar
 import { ElastosMainChainStandardMultiSigNetworkWallet } from "../networkwallets/standardmultisig/mainchain.networkwallet";
 
 export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<ElastosMainChainWalletNetworkOptions> {
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
-    let wallet: AnyNetworkWallet = null;
+  public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
-        wallet = new ElastosMainChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
-        break;
+        return new ElastosMainChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
       case WalletType.LEDGER:
-        wallet = new ElastosMainChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
-        break;
+        return new ElastosMainChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
       case WalletType.MULTI_SIG_STANDARD:
-        wallet = new ElastosMainChainStandardMultiSigNetworkWallet(masterWallet as StandardMultiSigMasterWallet, this);
-        break;
+        return new ElastosMainChainStandardMultiSigNetworkWallet(masterWallet as StandardMultiSigMasterWallet, this);
       default:
         return null;
     }
-
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public getDefaultWalletNetworkOptions(): ElastosMainChainWalletNetworkOptions {

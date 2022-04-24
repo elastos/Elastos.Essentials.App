@@ -9,6 +9,7 @@ import { EarnProvider } from "../earn/earnprovider";
 import type { SwapProvider } from "../earn/swapprovider";
 import type { MasterWallet } from "../masterwallets/masterwallet";
 import type { PrivateKeyType, WalletNetworkOptions } from "../masterwallets/wallet.types";
+import { NetworkAPIURLType } from "./base/networkapiurltype";
 import type { AnyNetworkWallet } from "./base/networkwallets/networkwallet";
 import type { ERC1155Provider } from "./evms/nfts/erc1155.provider";
 import type { UniswapCurrencyProvider } from "./evms/uniswap.currencyprovider";
@@ -59,23 +60,38 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    * If startBackgroundUpdates is true some initializations such as getting balance or transactions are launched in background.
    * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
    */
-  public abstract createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates?: boolean): Promise<AnyNetworkWallet>;
+  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates?: boolean): Promise<AnyNetworkWallet> {
+    let wallet = this.newNetworkWallet(masterWallet);
 
-  // TODO: MOVE TO EVMNetwork
-  public abstract getMainEvmRpcApiUrl(): string;
+    if (wallet) {
+      await wallet.initialize();
 
-  // TODO: MOVE TO EVMNetwork
-  public abstract getMainEvmAccountApiUrl(): string;
+      if (startBackgroundUpdates)
+        void wallet.startBackgroundUpdates();
+    }
 
-  public abstract getMainTokenSymbol(): string;
+    return wallet;
+  }
 
   /**
-   * Returns the EVM chain ID for this network (i.e. 128 for heco) according to the active network template.
-   * For elastos, as there are multiple EVM chains, the ETHSC is the "main" one.
-   *
-   * TODO: MOVE TO EVMNetwork
+   * Method called by createNetworkWallet() and that must be implemented by each network to create
+   * wallet instances.
    */
-  public abstract getMainChainID(networkTemplate?: string): number;
+  protected abstract newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet;
+
+  /**
+   * Returns the url of a target api type. This method must be overriden by networks to define
+   * one or several available API endpoints such as the main RPC node, covalent, etherscan, etc.
+   * 
+   * Throws an exception if the requested url type is missing.
+   */
+  public abstract getAPIUrlOfType(type: NetworkAPIURLType): string;
+
+  public getRPCUrl(): string {
+    return this.getAPIUrlOfType(NetworkAPIURLType.RPC);
+  }
+
+  public abstract getMainTokenSymbol(): string;
 
   /* public supportedWalletCreateTypes(): WalletCreateType[] {
     return [WalletCreateType.MNEMONIC, WalletCreateType.PRIVATE_KEY_EVM, WalletCreateType.KEYSTORE];

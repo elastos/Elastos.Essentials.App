@@ -10,21 +10,16 @@ import { ElastosIdentityChainLedgerNetworkWallet } from "../networkwallets/ledge
 import { ElastosIdentityChainStandardNetworkWallet } from "../networkwallets/standard/identitychain.networkwallet";
 
 export abstract class ElastosIdentityChainNetworkBase extends ElastosNetworkBase<WalletNetworkOptions> {
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
-    let wallet: AnyNetworkWallet = null;
+  public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
-        wallet = new ElastosIdentityChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
-        break;
+        return new ElastosIdentityChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
       case WalletType.LEDGER:
-        wallet = new ElastosIdentityChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
-        break;
+        return new ElastosIdentityChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
       default:
         Logger.warn('wallet', 'Elastos Identity Chain does not support ', masterWallet.type);
         return null;
     }
-
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public supportsERC20Coins() {

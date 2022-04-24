@@ -19,7 +19,7 @@ export class LedgerBTCNetworkWallet<WalletNetworkOptionsType extends WalletNetwo
     }
 
     protected async prepareStandardSubWallets(): Promise<void> {
-        this.subWallets[StandardCoinName.BTC] = new BTCSubWallet(this, this.network.getMainEvmRpcApiUrl());
+        this.subWallets[StandardCoinName.BTC] = new BTCSubWallet(this, this.network.getRPCUrl());
         await this.subWallets[StandardCoinName.BTC].initialize();
     }
 }

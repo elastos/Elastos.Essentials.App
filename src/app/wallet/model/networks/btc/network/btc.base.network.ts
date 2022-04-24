@@ -15,11 +15,8 @@ import { LedgerBTCNetworkWallet } from "../networkwallets/ledger/ledger.btc.netw
 import { StandardBTCNetworkWallet } from "../networkwallets/standard/standard.btc.networkwallet";
 
 export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
-
   constructor(
     displayName: string,
-    public nodeUrlApi: string,
-    explorerUrlApi: string,
     networkTemplate: string,
     earnProviders?: EarnProvider[],
     swapProviders?: SwapProvider[],
@@ -40,34 +37,20 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
     }
   }
 
-  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
-    let wallet: AnyNetworkWallet = null;
+  public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
-        wallet = new StandardBTCNetworkWallet(masterWallet as StandardMasterWallet, this);
-        break;
+        return new StandardBTCNetworkWallet(masterWallet as StandardMasterWallet, this);
       case WalletType.LEDGER:
-        wallet = new LedgerBTCNetworkWallet(masterWallet as LedgerMasterWallet, this);
-        break;
+        return new LedgerBTCNetworkWallet(masterWallet as LedgerMasterWallet, this);
       default:
         Logger.warn('wallet', 'BTC does not support ', masterWallet.type);
         return null;
     }
-
-    await wallet.initialize();
-
-    if (startBackgroundUpdates)
-      void wallet.startBackgroundUpdates();
-
-    return wallet;
   }
 
   public async createERC20SubWallet(networkWallet: AnyNetworkWallet, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
     return await null;
-  }
-
-  public getMainEvmRpcApiUrl(): string {
-    return this.nodeUrlApi;
   }
 
   public getMainEvmAccountApiUrl(): string {

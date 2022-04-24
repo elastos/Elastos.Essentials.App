@@ -1,35 +1,38 @@
-import { AnySubWalletTransactionProvider } from "../../../tx-providers/subwallet.provider";
+import { AnySubWalletTransactionProvider, SubWalletTransactionProvider } from "../../../tx-providers/subwallet.provider";
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EthTransaction } from "../evm.types";
 import { EVMNetworkWallet } from "../networkwallets/evm.networkwallet";
 import { ERC20SubWallet } from "../subwallets/erc20.subwallet";
-import { MainCoinEVMSubWallet } from "../subwallets/evm.subwallet";
-import { EVMSubWalletInternalTransactionProvider } from "./evm.subwallet.internalTransaction.provider";
-import { EVMSubWalletProvider } from "./evm.subwallet.provider";
-import { EVMSubWalletTokenProvider } from "./token.subwallet.provider";
+import { AnyMainCoinEVMSubWallet, MainCoinEVMSubWallet } from "../subwallets/evm.subwallet";
+import { EtherscanEVMSubWalletTokenProvider } from "./etherscan.token.subwallet.provider";
 
 /**
- * STandard transaction provider for regular EVM networks.
+ * Base transaction provider for regular EVM networks.
  */
-export class EVMTransactionProvider extends TransactionProvider<EthTransaction> {
-  private mainProvider: EVMSubWalletProvider<MainCoinEVMSubWallet<any>> = null;
-  private tokenProvider: EVMSubWalletTokenProvider<MainCoinEVMSubWallet<any>> = null;
-  private internalTXProvider: EVMSubWalletInternalTransactionProvider<MainCoinEVMSubWallet<any>> = null;
+export abstract class EVMTransactionProvider extends TransactionProvider<EthTransaction> {
+  protected mainProvider: SubWalletTransactionProvider<MainCoinEVMSubWallet<any>, EthTransaction> = null;
+  protected tokenProvider: EtherscanEVMSubWalletTokenProvider<MainCoinEVMSubWallet<any>> = null;
+  protected internalTXProvider: SubWalletTransactionProvider<MainCoinEVMSubWallet<any>, EthTransaction> = null;
 
   constructor(protected networkWallet: EVMNetworkWallet<any, any>) {
     super(networkWallet);
   }
 
   public async start() {
-    this.mainProvider = this.createEVMSubWalletProvider();
-    await this.mainProvider.initialize();
+    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as AnyMainCoinEVMSubWallet;
 
-    this.tokenProvider = this.createEVMTokenSubWalletProvider();
-    await this.tokenProvider.initialize();
+    this.createEVMSubWalletProvider(subwallet);
+    if (this.mainProvider)
+      await this.mainProvider.initialize();
 
-    this.internalTXProvider = this.createEVMSubWalletInternalTransactionProvider();
-    await this.internalTXProvider.initialize();
+    this.createEVMTokenSubWalletProvider(subwallet);
+    if (this.tokenProvider)
+      await this.tokenProvider.initialize();
+
+    this.createEVMSubWalletInternalTransactionProvider(subwallet);
+    if (this.internalTXProvider)
+      await this.internalTXProvider.initialize();
 
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
@@ -37,27 +40,37 @@ export class EVMTransactionProvider extends TransactionProvider<EthTransaction> 
   }
 
   /**
-   * Creates the EVM subwallet provider (main token) - can be overriden if needed, but usually the
-   * standard EVM subwallet provider is enough.
+   * Creates the EVM subwallet provider (main token). 
+   * this.mainProvider must be initialized after that.
    */
-  protected createEVMSubWalletProvider(): EVMSubWalletProvider<MainCoinEVMSubWallet<any>> {
+  protected abstract createEVMSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet);
+  /* protected createEVMSubWalletProvider(): EtherscanEVMSubWalletProvider<MainCoinEVMSubWallet<any>> {
     let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as MainCoinEVMSubWallet<any>;
-    return new EVMSubWalletProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
-  }
+    return new EtherscanEVMSubWalletProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
+  } */
 
   /**
-   * Creates the token subwallet provider - can be overriden if needed, but usually the
-   * standard token subwallet provider is enough.
+   * Creates the token subwallet provider.
+   * this.tokenProvider must be initialized after that.
    */
-  protected createEVMTokenSubWalletProvider(): EVMSubWalletTokenProvider<MainCoinEVMSubWallet<any>> {
+  protected abstract createEVMTokenSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet);
+  /* protected createEVMTokenSubWalletProvider(): EVMSubWalletTokenProvider<MainCoinEVMSubWallet<any>> {
     let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as MainCoinEVMSubWallet<any>;
     return new EVMSubWalletTokenProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
-  }
+  } */
 
-  protected createEVMSubWalletInternalTransactionProvider(): EVMSubWalletInternalTransactionProvider<MainCoinEVMSubWallet<any>> {
-    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as MainCoinEVMSubWallet<any>;
-    return new EVMSubWalletInternalTransactionProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
+  /**
+   * Creates the EVM subwallet provider internal transaction.
+   * TODO: REWORK THIS ! 
+   * this.internalTXProvider must be initialized after that.
+   */
+  protected createEVMSubWalletInternalTransactionProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
+    this.internalTXProvider = null;
   }
+  /* protected createEVMSubWalletInternalTransactionProvider(): EtherscanEVMSubWalletInternalTransactionProvider<MainCoinEVMSubWallet<any>> {
+    let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as MainCoinEVMSubWallet<any>;
+    return new EtherscanEVMSubWalletInternalTransactionProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
+  } */
 
   protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
     if (subWallet instanceof MainCoinEVMSubWallet)

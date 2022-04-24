@@ -43,7 +43,7 @@ import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainch
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
-import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { AddressUsage } from 'src/app/wallet/model/safes/safe';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
@@ -511,8 +511,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async pasteFromClipboard() {
         this.toAddress = await this.native.pasteFromClipboard();
 
-        const toSubWalletId = this.toSubWallet ? this.toSubWallet.id : this.subWalletId;
-        const isAddressValid = WalletUtil.isAddress(this.toAddress, toSubWalletId);
+        const isAddressValid = this.fromSubWallet.isAddressValid(this.toAddress);
         if (!isAddressValid) {
             this.native.toast_trans('wallet.not-a-valid-address');
             return;
@@ -620,8 +619,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.toAddress = this.toAddress.substring(index + 1);
             }
 
-            const toSubWalletId = this.toSubWallet ? this.toSubWallet.id : this.subWalletId;
-            const isAddressValid = WalletUtil.isAddress(this.toAddress, toSubWalletId);
+            const isAddressValid = this.fromSubWallet.isAddressValid(this.toAddress);
             if (!isAddressValid) {
                 this.native.toast_trans('wallet.not-a-valid-address');
                 return;
@@ -633,6 +631,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 void this.showConfirm();
             }
         } catch (error) {
+            Logger.error("wallet", "Can't start transaction in coin transfer page:", error);
             this.native.toast_trans('wallet.not-a-valid-address');
         }
     }
@@ -898,7 +897,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     selectedSubwallet = selectedWallet.getSubWallet(this.subWalletId);
                 }
 
-                this.toAddress = await selectedSubwallet.getCurrentReceiverAddress();
+                this.toAddress = await selectedSubwallet.getCurrentReceiverAddress(AddressUsage.SEND_FUNDS);
             }
 
             this.modal = null;
@@ -908,20 +907,20 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // for cross chain transaction.
     async getELASubwalletByID(id: StandardCoinName) {
-      let networkKey = 'elastos';
-      switch (id) {
-        case StandardCoinName.ETHDID:
-          networkKey = 'elastosidchain';
-        break;
-        case StandardCoinName.ETHSC:
-          networkKey = 'elastossmartchain';
-        break;
-        default:
-        break;
-      }
+        let networkKey = 'elastos';
+        switch (id) {
+            case StandardCoinName.ETHDID:
+                networkKey = 'elastosidchain';
+                break;
+            case StandardCoinName.ETHSC:
+                networkKey = 'elastossmartchain';
+                break;
+            default:
+                break;
+        }
 
-      let network = WalletNetworkService.instance.getNetworkByKey(networkKey);
-      let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
-      return networkWallet.getSubWallet(id);
+        let network = WalletNetworkService.instance.getNetworkByKey(networkKey);
+        let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
+        return networkWallet.getSubWallet(id);
     }
 }

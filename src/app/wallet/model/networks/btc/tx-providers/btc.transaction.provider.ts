@@ -28,7 +28,7 @@ export class BTCTransactionProvider extends TransactionProvider<BTCTransaction> 
    */
   protected createBTCSubWalletProvider(): BTCSubWalletProvider<BTCSubWallet> {
     let subwallet = this.networkWallet.getSubWallet(StandardCoinName.BTC) as BTCSubWallet;
-    return new BTCSubWalletProvider(this, subwallet, this.networkWallet.network.getMainEvmRpcApiUrl());
+    return new BTCSubWalletProvider(this, subwallet, this.networkWallet.network.getRPCUrl());
   }
 
   protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {

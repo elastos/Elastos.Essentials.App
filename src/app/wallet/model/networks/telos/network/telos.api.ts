@@ -1,8 +1,8 @@
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 
 export enum TelosAPIType {
-  ACCOUNT_RPC,
-  RPC
+  RPC,
+  TELOS_EXPLORER_API
 }
 
 // Block explorer: https://rpc1.us.telos.net/v2/explore
@@ -16,14 +16,14 @@ export class TelosAPI {
       case MAINNET_TEMPLATE:
         switch (type) {
           case TelosAPIType.RPC: return 'https://mainnet.telos.net/evm';
-          case TelosAPIType.ACCOUNT_RPC: return 'https://rpc1.us.telos.net';
+          case TelosAPIType.TELOS_EXPLORER_API: return 'https://rpc1.us.telos.net';
           default:
             throw new Error("Telos API - Unknown api type " + type);
         }
       case TESTNET_TEMPLATE:
         switch (type) {
           case TelosAPIType.RPC: return 'https://testnet.telos.net/evm';
-          case TelosAPIType.ACCOUNT_RPC: return 'NOT_SUPPORTED_YET';
+          //case TelosAPIType.ACCOUNT_RPC: return 'NOT_SUPPORTED_YET';
           default:
             throw new Error("Telos API - Unknown api type " + type);
         }

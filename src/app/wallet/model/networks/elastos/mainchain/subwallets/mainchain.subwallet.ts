@@ -8,6 +8,7 @@ import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.serv
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { ElastosMainChainWalletNetworkOptions } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { AddressUsage } from 'src/app/wallet/model/safes/safe';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
@@ -178,7 +179,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
      * for a given mnemonic.
      */
     public async getRootPaymentAddress(): Promise<string> {
-        let allAddresses = await this.networkWallet.safe.getAddresses(0, 1, false);
+        let allAddresses = await this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.DEFAULT);
         //let allAddresses = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, 0, 1, false);
         if (!allAddresses || allAddresses.length == 0)
             return null;
@@ -296,16 +297,16 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         Logger.log('wallet', 'createPaymentTransaction toAmount:', toAmount);
 
-        let outputs : Outputs[] = [{
+        let outputs: Outputs[] = [{
             "Address": toAddress,
             "Amount": toAmount.toString()
         }]
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createPaymentTransaction(
-                au.utxo,
-                outputs,
-                '10000',
-                memo);
+            au.utxo,
+            outputs,
+            '10000',
+            memo);
     }
 
     public async createVoteTransaction(voteContents: VoteContent[], memo = ""): Promise<string> {
@@ -458,7 +459,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             do {
                 console.log("mainchain subwallet checkAddresses ", startIndex);
                 findTx = false;
-                let addressArray = await this.networkWallet.safe.getAddresses(startIndex, checkCount, internal);
+                let addressArray = await this.networkWallet.safe.getAddresses(startIndex, checkCount, internal, AddressUsage.DEFAULT);
                 //let addressArray = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, checkCount, internal);
                 const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
                 if (txRawList && txRawList.length > 0) {
@@ -815,7 +816,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 }
             }
 
-            addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress);
+            addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress, AddressUsage.DEFAULT);
 
             /* addressArray = await SPVService.instance.getAddresses(
                 jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, count, internalAddress);
@@ -872,7 +873,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 const resultArray = await GlobalJsonRPCService.instance.httpPost(rpcApiUrl, paramArray);
                 for (const result of resultArray) {
                     if (result.result) {
-                      balanceOfSELA = balanceOfSELA.plus(new BigNumber(result.result).multipliedBy(this.tokenAmountMulipleTimes));
+                        balanceOfSELA = balanceOfSELA.plus(new BigNumber(result.result).multipliedBy(this.tokenAmountMulipleTimes));
                     }
                 }
                 alreadyGetBalance = true;
@@ -983,7 +984,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 }
             }
 
-            addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress);
+            addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress, AddressUsage.DEFAULT);
             //addressArray = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, count, internalAddress);
 
             // The ownerAddress is different with the external address even in single address wallet.

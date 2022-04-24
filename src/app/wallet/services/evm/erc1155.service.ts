@@ -70,7 +70,7 @@ export class ERC1155Service {
         if (this.web3)
             return this.web3;
 
-        const trinityWeb3Provider = new EssentialsWeb3Provider(this.networkService.activeNetwork.value.getMainEvmRpcApiUrl());
+        const trinityWeb3Provider = new EssentialsWeb3Provider(this.networkService.activeNetwork.value.getRPCUrl());
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI

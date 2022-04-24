@@ -16,6 +16,7 @@ import { CurrencyService } from '../../../../services/currency.service';
 import { Coin, CoinID, CoinType, ERC20Coin } from '../../../coin';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import { AddressUsage } from '../../../safes/safe';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
@@ -119,7 +120,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
     public async createAddress(): Promise<string> {
         // Create on ETH always returns the same unique address.
-        let addresses = await this.networkWallet.safe.getAddresses(0, 1, false);
+        let addresses = await this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.EVM_CALL);
         return (addresses && addresses[0]) ? addresses[0] : null;
     }
 
@@ -144,6 +145,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
             return ''; // Just in case
         }
         return coin.getName();
+    }
+
+    public getWeb3(): Web3 {
+        return this.web3;
     }
 
     public isAddressValid(address: string) {
@@ -432,6 +437,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<any> {
+        toAddress = this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
+
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });

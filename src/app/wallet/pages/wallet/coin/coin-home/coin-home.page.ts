@@ -139,9 +139,11 @@ export class CoinHomePage implements OnInit {
 
     ngAfterViewInit() {
         const options: IntersectionObserverInit = {
-            root: this.fetchMoreTrigger.nativeElement.closest('ion-content')
+            root: this.fetchMoreTrigger.nativeElement.closest('.intersection-container')
         };
+        console.log("options", options)
         this.fetchMoreTriggerObserver = new IntersectionObserver((data: IntersectionObserverEntry[]): IntersectionObserverCallback => {
+            console.log("fetchMoreTriggerObserver data", data)
             if (data[0].isIntersecting) {
                 this.fetchMoreTransactions();
                 //this.observer.disconnect();

@@ -9,12 +9,13 @@ import { ERC20CoinService } from '../../../../services/evm/erc20coin.service';
 import { EVMService } from '../../../../services/evm/evm.service';
 import { StandardCoinName } from '../../../coin';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import { AddressUsage } from '../../../safes/safe';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
-import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
 import type { EVMNetwork } from '../evm.network';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction } from '../evm.types';
+import { EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
 import { EVMSafe } from '../safes/evm.safe';
 import type { ERC20SubWallet } from './erc20.subwallet';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -31,9 +32,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   private redPacketServerAddress = null;
 
   constructor(
-    networkWallet: AnyNetworkWallet,
+    public networkWallet: EVMNetworkWallet<any, WalletNetworkOptionsType>,
     id: string,
-    public rpcApiUrl: string,
     protected friendlyName: string
   ) {
     super(networkWallet, id);
@@ -81,18 +81,18 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return true;
   }
 
-  public isAddressValid(address: string) {
+  public isAddressValid(address: string): boolean {
     return WalletUtil.isEVMAddress(address);
   }
 
-  public async getTokenAddress(): Promise<string> {
+  public async getTokenAddress(usage: (AddressUsage | string) = AddressUsage.EVM_CALL): Promise<string> {
     if (!this.ethscAddress) {
-      this.ethscAddress = (await this.getCurrentReceiverAddress()).toLowerCase();
+      this.ethscAddress = (await this.getCurrentReceiverAddress(usage)).toLowerCase();
     }
     return this.ethscAddress;
   }
 
-  protected getWeb3(): Web3 {
+  public getWeb3(): Web3 {
     return EVMService.instance.getWeb3(this.networkWallet.network as EVMNetwork);
   }
 
@@ -102,12 +102,12 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   public async createAddress(): Promise<string> {
     // Create on EVM networks always returns the same unique address.
-    let addresses = await this.networkWallet.safe.getAddresses(0, 1, false);
+    let addresses = await this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.EVM_CALL);
     return (addresses && addresses[0]) ? addresses[0] : null;
   }
 
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-    let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid);
+    let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.getNetwork().getRPCUrl(), txid);
     if (!result) {
       // Remove error transaction.
       // TODO await this.removeInvalidTransaction(txid);
@@ -322,7 +322,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   public async updateBalance(): Promise<void> {
     // this.balance = await this.getBalanceByWeb3();
     const address = await this.getTokenAddress();
-    const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.rpcApiUrl, address);
+    const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.getNetwork().getRPCUrl(), address);
     if (balance) {
       this.balance = balance;
       await this.saveBalanceToCache();
@@ -338,6 +338,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<string> {
+    toAddress = this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
+
     let gasPrice = gasPriceArg;
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
@@ -397,7 +399,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   public async getNonce() {
     const address = await this.getTokenAddress();
     try {
-      return GlobalEthereumRPCService.instance.getETHSCNonce(this.rpcApiUrl, address);
+      return GlobalEthereumRPCService.instance.getETHSCNonce(this.getNetwork().getRPCUrl(), address);
     }
     catch (err) {
       Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
@@ -414,7 +416,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   private async estimateGasForPaymentTransaction(to: string, value: string) {
     try {
       const address = await this.getTokenAddress();
-      return await GlobalEthereumRPCService.instance.eth_estimateGas(this.rpcApiUrl, address, to, value);
+      return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, to, value);
     }
     catch (err) {
       Logger.error('wallet', 'estimateGasForPaymentTransaction failed, ', this.id, ' error:', err);

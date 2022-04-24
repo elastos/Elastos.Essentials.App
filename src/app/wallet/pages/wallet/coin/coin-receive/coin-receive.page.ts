@@ -8,6 +8,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
+import { AddressUsage } from 'src/app/wallet/model/safes/safe';
 import { StandardCoinName } from '../../../../model/coin';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
@@ -81,7 +82,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     async getAddress() {
-        this.qrcode = await this.networkWallet.getSubWallet(this.subWalletId).getCurrentReceiverAddress();
+        this.qrcode = await this.networkWallet.getSubWallet(this.subWalletId).getCurrentReceiverAddress(AddressUsage.RECEIVE_FUNDS);
         Logger.log('wallet', 'qrcode', this.qrcode);
     }
 

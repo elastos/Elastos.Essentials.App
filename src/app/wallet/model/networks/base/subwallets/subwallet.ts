@@ -16,6 +16,7 @@ import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import type { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import { AddressUsage } from '../../../safes/safe';
 import { SignTransactionErrorType } from '../../../safes/safe.types';
 import { TimeBasedPersistentCache } from '../../../timebasedpersistentcache';
 import type { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../../../tx-providers/transaction.types';
@@ -178,10 +179,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
   /**
    * Address to use to receive a payment. For single address wallets this is always the first address.
    */
-  public async getCurrentReceiverAddress(): Promise<string> {
+  public async getCurrentReceiverAddress(usage: AddressUsage | string = AddressUsage.DEFAULT): Promise<string> {
     // Default implementation (for single address wallets): always return the first address.
     // Multi address wallets override this to return the real "current" receiving address.
-    let addresses = await this.networkWallet.safe.getAddresses(0, 1, false);
+    let addresses = await this.networkWallet.safe.getAddresses(0, 1, false, usage);
     return (addresses && addresses[0]) ? addresses[0] : null;
   }
 

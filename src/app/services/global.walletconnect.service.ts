@@ -7,6 +7,7 @@ import { Logger } from '../logger';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { AnyNetworkWallet } from '../wallet/model/networks/base/networkwallets/networkwallet';
+import { EVMNetwork } from '../wallet/model/networks/evms/evm.network';
 import { EthSignIntentResult } from '../wallet/pages/intents/ethsign/ethsign.page';
 import { PersonalSignIntentResult } from '../wallet/pages/intents/personalsign/personalsign.page';
 import { SignTypedDataIntentResult } from '../wallet/pages/intents/signtypeddata/signtypeddata.page';
@@ -135,7 +136,7 @@ export class GlobalWalletConnectService extends GlobalService {
         for (let c of Array.from(this.connectors.values())) {
           if (c.connected) {
             try {
-              let chainId = activeWallet.network.getMainChainID();
+              let chainId = activeWallet.network instanceof EVMNetwork ? activeWallet.network.getMainChainID() : 0;
               let account = await this.getAccountFromNetworkWallet(activeWallet);
               Logger.log("walletconnect", `Updating connected session`, c, chainId, account);
 
@@ -560,7 +561,8 @@ export class GlobalWalletConnectService extends GlobalService {
     }
     else {
       // Do nothing if already on the right network
-      if (this.walletNetworkService.activeNetwork.value.getMainChainID() === chainId) {
+      let activeNetwork = this.walletNetworkService.activeNetwork.value;
+      if ((activeNetwork instanceof EVMNetwork) && activeNetwork.getMainChainID() === chainId) {
         Logger.log("walletconnect", "Already on the right network");
         connector.approveRequest({
           id: request.id,
@@ -616,7 +618,8 @@ export class GlobalWalletConnectService extends GlobalService {
     }
 
     // Not on this network, ask user to switch
-    if (this.walletNetworkService.activeNetwork.value.getMainChainID() !== chainId) {
+    let activeNetwork = this.walletNetworkService.activeNetwork.value;
+    if (!(activeNetwork instanceof EVMNetwork) || activeNetwork.getMainChainID() !== chainId) {
       let targetNetwork = existingNetwork;
       if (!targetNetwork)
         targetNetwork = this.walletNetworkService.getNetworkByKey(addedNetworkKey);
@@ -790,7 +793,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let activeNetwork = await this.walletNetworkService.activeNetwork.value;
     let chainId: number;
 
-    chainId = activeNetwork.getMainChainID();
+    chainId = activeNetwork instanceof EVMNetwork ? activeNetwork.getMainChainID() : 0;
 
     Logger.log("walletconnect", "Accepting session request with params:", connectorKey, ethAccountAddresses, chainId);
 

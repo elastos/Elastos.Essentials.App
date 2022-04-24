@@ -27,7 +27,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { CustomNetwork } from '../../model/networks/evms/customnetwork';
+import { CustomNetwork } from '../../model/networks/custom/network/custom.network';
 import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { Native } from '../native.service';
 import { WalletNetworkService } from '../network.service';
@@ -92,9 +92,8 @@ export class CustomNetworkService {
             "assets/wallet/networks/custom.png",
             entry.mainCurrencySymbol || "ETH",
             entry.mainCurrencySymbol || "ETH",
-            entry.rpcUrl,
-            entry.accountRpcUrl,
             entry.networkTemplate,
+            entry.rpcUrl,
             parseInt(entry.chainId)
         );
     }
@@ -125,7 +124,6 @@ export class CustomNetworkService {
                 networkDiskEntry.name,
                 parseInt(networkDiskEntry.chainId),
                 networkDiskEntry.rpcUrl,
-                networkDiskEntry.accountRpcUrl,
                 networkDiskEntry.mainCurrencySymbol || "ETH"
             )
         }

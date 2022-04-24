@@ -97,7 +97,6 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     }
   }
 
-
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
     return this.getSubWalletTransactionProvider(subWallet).canFetchMoreTransactions(subWallet);
   }

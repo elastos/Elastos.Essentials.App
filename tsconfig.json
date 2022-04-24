@@ -26,6 +26,7 @@
     "resolveJsonModule": true,
     "module": "esnext",
     "target": "es2015",
+    "skipLibCheck": true,
     "typeRoots": [
       "node_modules/@types",
     ],

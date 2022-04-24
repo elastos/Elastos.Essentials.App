@@ -28,7 +28,7 @@ export class StandardBTCNetworkWallet<WalletNetworkOptionsType extends WalletNet
 
     protected async prepareStandardSubWallets(): Promise<void> {
         await SPVService.instance.createSubWallet(jsToSpvWalletId(this.masterWallet.id), StandardCoinName.BTC);
-        this.subWallets[StandardCoinName.BTC] = new BTCSubWallet(this, this.network.getMainEvmRpcApiUrl());
+        this.subWallets[StandardCoinName.BTC] = new BTCSubWallet(this, this.network.getRPCUrl());
         await this.subWallets[StandardCoinName.BTC].initialize();
     }
 }

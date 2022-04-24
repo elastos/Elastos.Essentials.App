@@ -7,7 +7,7 @@ import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import Web3 from 'web3';
-import { ETHTransactionStatus, SignedETHSCTransaction } from '../../model/networks/evms/evm.types';
+import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
 import type { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../model/networks/network';
@@ -68,13 +68,13 @@ class ETHTransactionManager {
 
       let result: RawTransactionPublishResult;
       try {
-        let obj = JSON.parse(signedTransaction) as SignedETHSCTransaction;
+        /* let obj = JSON.parse(signedTransaction) as SignedETHSCTransaction;
         if (!obj.TxSigned) {
           Logger.error("wallet", "Unsigned transaction received in EVM's publishTransaction() !");
           return null;
-        }
+        } */
 
-        let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(subwallet.networkWallet.network.getMainEvmRpcApiUrl(), obj.TxSigned);
+        let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(subwallet.networkWallet.network.getRPCUrl(), signedTransaction/* obj.TxSigned */);
         console.log("POST eth_sendRawTransaction");
 
         let published = true;
@@ -320,7 +320,7 @@ export class EVMService {
       return this.web3s[network.name];
     }
     else {
-      let web3 = new Web3(new EssentialsWeb3Provider(network.getMainEvmRpcApiUrl()));
+      let web3 = new Web3(new EssentialsWeb3Provider(network.getRPCUrl()));
       this.web3s[network.name] = web3;
       return web3;
     }
@@ -340,7 +340,7 @@ export class EVMService {
    */
   public async getNonce(network: AnyNetwork, accountAddress: string): Promise<number> {
     try {
-      let nonce = await GlobalEthereumRPCService.instance.getETHSCNonce(network.getMainEvmRpcApiUrl(), accountAddress);
+      let nonce = await GlobalEthereumRPCService.instance.getETHSCNonce(network.getRPCUrl(), accountAddress);
       return nonce;
     }
     catch (err) {

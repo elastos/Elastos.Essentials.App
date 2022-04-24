@@ -27,6 +27,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import type { MasterWallet } from '../model/masterwallets/masterwallet';
+import { EVMNetwork } from '../model/networks/evms/evm.network';
 import { AnyNetwork } from '../model/networks/network';
 import { Native } from './native.service';
 import { PopupProvider } from './popup.service';
@@ -168,7 +169,7 @@ export class WalletNetworkService {
     }
 
     public getNetworkByChainId(chainId: number): AnyNetwork {
-        return this.networks.find(n => n.getMainChainID() == chainId);
+        return this.networks.find(n => n instanceof EVMNetwork && n.getMainChainID() == chainId);
     }
 
     public getActiveNetworkIndex(): number {
@@ -189,11 +190,12 @@ export class WalletNetworkService {
      * Tells if the currently active network is the EVM network.
      */
     public isActiveNetworkEVM(): boolean {
-        if (this.activeNetwork.value) {
+        /* if (this.activeNetwork.value) {
             let network = this.getNetworkByKey(this.activeNetwork.value.key);
             if (network.getMainChainID() !== -1) return true;
         }
-        return false;
+        return false; */
+        return this.activeNetwork.value instanceof EVMNetwork;
     }
 
     public async loadNetworkVisibilities(): Promise<void> {

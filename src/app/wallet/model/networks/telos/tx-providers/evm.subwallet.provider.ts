@@ -5,7 +5,8 @@ import { TransactionDirection } from "../../../tx-providers/transaction.types";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EthTransaction } from "../../evms/evm.types";
 import { AnyMainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
-import { EVMSubWalletProvider } from "../../evms/tx-providers/evm.subwallet.provider";
+import { EtherscanEVMSubWalletProvider } from "../../evms/tx-providers/etherscan.evm.subwallet.provider";
+import { TelosAPI, TelosAPIType } from "../network/telos.api";
 
 const MAX_RESULTS_PER_FETCH = 200;
 
@@ -47,7 +48,7 @@ type TelosTransaction = {
   "@timestamp": string; // ie "2021-11-02T02:48:20.000"
 }
 
-export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<AnyMainCoinEVMSubWallet> {
+export class TelosEvmSubWalletProvider extends EtherscanEVMSubWalletProvider<AnyMainCoinEVMSubWallet> {
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
     return false; // TODO
   }
@@ -65,7 +66,7 @@ export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<AnyMainCoinE
       return;
     }
 
-    let txListUrl = `${this.accountApiUrl}/evm_explorer/get_transactions`;
+    let txListUrl = `${TelosAPI.getApiUrl(TelosAPIType.TELOS_EXPLORER_API, this.subWallet.networkWallet.network.networkTemplate)}/evm_explorer/get_transactions`;
     txListUrl += '?page=' + page;
     txListUrl += '&offset=' + MAX_RESULTS_PER_FETCH;
     txListUrl += '&sort=desc';

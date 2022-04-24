@@ -6,7 +6,7 @@ import { EVMSPVSDKSafe } from '../../safes/evm.spvsdk.safe';
 import { MainCoinEVMSubWallet } from '../../subwallets/evm.subwallet';
 import { EVMNetworkWallet } from '../evm.networkwallet';
 
-export class StandardEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends EVMNetworkWallet<StandardMasterWallet, WalletNetworkOptionsType> {
+export abstract class StandardEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends EVMNetworkWallet<StandardMasterWallet, WalletNetworkOptionsType> {
     constructor(
         masterWallet: StandardMasterWallet,
         network: EVMNetwork,
@@ -35,7 +35,6 @@ export class StandardEVMNetworkWallet<WalletNetworkOptionsType extends WalletNet
         this.mainTokenSubWallet = new MainCoinEVMSubWallet(
             this,
             this.network.getEVMSPVConfigName(),
-            this.network.getMainEvmRpcApiUrl(),
             this.mainSubWalletFriendlyName
         );
         await this.mainTokenSubWallet.initialize();

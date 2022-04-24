@@ -17,21 +17,16 @@ import { ElastosSmartChainStandardNetworkWallet } from "../networkwallets/standa
 import { ElastosPasarERC1155Provider } from "../nfts/pasar.provider";
 
 export abstract class ElastosSmartChainNetworkBase extends ElastosNetworkBase<WalletNetworkOptions> {
-  public createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
-    let wallet: AnyNetworkWallet = null;
+  public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
-        wallet = new ElastosSmartChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
-        break;
+        return new ElastosSmartChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
       case WalletType.LEDGER:
-        wallet = new ElastosSmartChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
-        break;
+        return new ElastosSmartChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
       default:
         Logger.warn('wallet', 'Elastos Smart Chain does not support ', masterWallet.type);
         return null;
     }
-
-    return this.initCreatedNetworkWallet(wallet, startBackgroundUpdates);
   }
 
   public supportsERC20Coins() {

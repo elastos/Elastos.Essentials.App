@@ -9,6 +9,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
@@ -228,8 +229,8 @@ export class PayPage {
 
   private async checkRightNetwork(): Promise<boolean> {
     // Force switch to the right network if we are on the wrong one
-    let currentNetwork = this.walletNetworkService.activeNetwork.value;
-    let packetNetwork = this.walletNetworkService.getNetworkByChainId(this.packet.chainId);
+    let currentNetwork = <EVMNetwork>this.walletNetworkService.activeNetwork.value;
+    let packetNetwork = <EVMNetwork>this.walletNetworkService.getNetworkByChainId(this.packet.chainId);
     if (packetNetwork.getMainChainID() !== currentNetwork.getMainChainID()) {
       let switched = await this.globalSwitchNetworkService.promptSwitchToNetwork(packetNetwork);
       if (!switched) {

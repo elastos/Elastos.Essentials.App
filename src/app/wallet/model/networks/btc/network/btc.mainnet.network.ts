@@ -1,5 +1,6 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../coin";
+import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
 import { BTCAPI, BTCApiType } from "./btc.api";
 import { BTCNetworkBase } from "./btc.base.network";
@@ -7,8 +8,6 @@ import { BTCNetworkBase } from "./btc.base.network";
 export class BTCMainNetNetwork extends BTCNetworkBase {
   constructor() {
     super("BTC",
-      BTCAPI.getApiUrl(BTCApiType.NODE, MAINNET_TEMPLATE),
-      BTCAPI.getApiUrl(BTCApiType.EXPLORER, MAINNET_TEMPLATE),
       MAINNET_TEMPLATE,
       [
       ],
@@ -17,6 +16,13 @@ export class BTCMainNetNetwork extends BTCNetworkBase {
       [
       ]
     );
+  }
+
+  public getAPIUrlOfType(type: NetworkAPIURLType): string {
+    if (type === NetworkAPIURLType.RPC)
+      return BTCAPI.getApiUrl(BTCApiType.NODE, MAINNET_TEMPLATE);
+    else
+      throw new Error(`BTCNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
 
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {

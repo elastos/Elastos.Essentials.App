@@ -13,9 +13,10 @@ import { LocalStorage } from '../../../../services/storage.service';
 import { Coin, CoinID, CoinType } from '../../../coin';
 import { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
-import { Safe } from '../../../safes/safe';
+import { AddressUsage, Safe } from '../../../safes/safe';
 import { TransactionProvider } from '../../../tx-providers/transaction.provider';
 import { WalletSortType } from '../../../walletaccount';
+import { EVMNetwork } from '../../evms/evm.network';
 import { NFT, NFTType, SerializedNFT } from '../../evms/nfts/nft';
 import { MainCoinEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../network';
@@ -302,6 +303,17 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     public abstract getAddresses(): Promise<WalletAddressInfo[]>;
 
     /**
+     * Converts a given address to the target usage format. Most of the time, this method does nothing
+     * and should not be overriden (same address format used everywhere). Though for some networks such as
+     * IoTeX who can deal with 2 different formats, addresses have to be converted from one format to another,
+     * for example when sending coins, users use ioXX formats, but internal implementations require EVM native
+     * address formats with 0x.
+     */
+    public convertAddressForUsage(address: string, usage: AddressUsage): string {
+        return address;
+    }
+
+    /**
      * Returns the main subwallet inside this network wallet, responsible for refreshing the list of
      * ERC20 tokens, NFTs, etc. For elastos, this is the ESC sidechain (no EID support for now).
      *
@@ -566,7 +578,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     // Stake assets
     private async getUniqueIdentifierOnStake() {
         let tokenAddress = await this.getMainEvmSubWallet().getTokenAddress();
-        let chainId = this.network.getMainChainID();
+        let chainId = (<EVMNetwork>this.network).getMainChainID();
         return 'stakingassets-' + tokenAddress + '-' + chainId + '-' + this.masterWallet.id;
     }
 
@@ -584,7 +596,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         const tenMinutesago = moment().add(-10, 'minutes').valueOf();
         if (!this.stakingInfo || (this.stakingInfo.timestamp < tenMinutesago)) {
             let tokenAddress = await this.getMainEvmSubWallet().getTokenAddress();
-            let chainId = this.network.getMainChainID();
+            let chainId = (<EVMNetwork>this.network).getMainChainID();
             let stakingData = await DefiService.instance.getStakingAssets(tokenAddress, chainId);
             if (stakingData) {
                 stakingData.sort((a, b) => {

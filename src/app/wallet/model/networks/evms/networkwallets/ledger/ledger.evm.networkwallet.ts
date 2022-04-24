@@ -32,7 +32,6 @@ export class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetwo
         this.mainTokenSubWallet = new MainCoinEVMSubWallet(
             this,
             this.network.getEVMSPVConfigName(),
-            this.network.getMainEvmRpcApiUrl(),
             this.mainSubWalletFriendlyName
         );
         await this.mainTokenSubWallet.initialize();

@@ -1,7 +1,7 @@
 <ion-content class="lightmode" [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
 
-    <ion-content>
+    <ion-content class="intersection-container">
         <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
             <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
             </ion-refresher-content>
@@ -33,16 +33,19 @@
                 <ion-row class="card-label-row">
                     <h3>{{ 'wallet.coin-balance' | translate }}</h3>
                     <div (click)="!chainIsERC20() ? currencyService.toggleCurrencyDisplay() : null">
-                        <h4 *ngIf="!currencyService.useCurrency || chainIsERC20()" class="bigFont" [class.smallFont]="useSmallFont()">{{
+                        <h4 *ngIf="!currencyService.useCurrency || chainIsERC20()" class="bigFont"
+                            [class.smallFont]="useSmallFont()">{{
                             WalletUtil.getWholeBalance(networkWallet.subWallets[subWalletId].getDisplayBalance())
                             }}<span class="dot"
                                 *ngIf="!networkWallet.subWallets[subWalletId].getDisplayBalance().isZero() && !networkWallet.subWallets[subWalletId].getDisplayBalance().isNaN() && WalletUtil.getDecimalBalance(networkWallet.subWallets[subWalletId].getDisplayBalance())">.</span>
                             <span class="decimals">{{
-                                WalletUtil.getDecimalBalance(networkWallet.subWallets[subWalletId].getDisplayBalance(), networkWallet.getDecimalPlaces())
+                                WalletUtil.getDecimalBalance(networkWallet.subWallets[subWalletId].getDisplayBalance(),
+                                networkWallet.getDecimalPlaces())
                                 }}</span>
                             <span class="ela"> {{ getCoinBalanceCurrency() }}</span>
                         </h4>
-                        <h4 *ngIf="currencyService.useCurrency && !chainIsERC20()" class="bigFont"  [class.smallFont]="useSmallFont()">{{
+                        <h4 *ngIf="currencyService.useCurrency && !chainIsERC20()" class="bigFont"
+                            [class.smallFont]="useSmallFont()">{{
                             WalletUtil.getWholeBalance(currencyService.getMainTokenValue(networkWallet.subWallets[subWalletId].getDisplayBalance()))
                             }}<span class="dot"
                                 *ngIf="!networkWallet.subWallets[subWalletId].getDisplayBalance().isZero() && !networkWallet.subWallets[subWalletId].getDisplayBalance().isNaN() && WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.subWallets[subWalletId].getDisplayBalance()))">.</span>
@@ -81,11 +84,13 @@
                 <div class="arrow-down"></div>
             </ion-row>
             <ion-row class="list-title-row">
-                <ion-col class="title-col" [size]="hasInternalTransactions ? 6 : 12" [class.active]="transactionListType == 0" (click)="setTransactionListType(0)">
+                <ion-col class="title-col" [size]="hasInternalTransactions ? 6 : 12"
+                    [class.active]="transactionListType == 0" (click)="setTransactionListType(0)">
                     <h1>{{ 'wallet.coin-transactions' | translate }}</h1>
                 </ion-col>
 
-                <ion-col *ngIf="hasInternalTransactions" class="title-col" size="6" [class.active]="transactionListType == 1" (click)="setTransactionListType(1)">
+                <ion-col *ngIf="hasInternalTransactions" class="title-col" size="6"
+                    [class.active]="transactionListType == 1" (click)="setTransactionListType(1)">
                     <h1>{{ 'wallet.coin-internal-transactions' | translate }}</h1>
                 </ion-col>
                 <!-- <ion-col *ngIf="shouldShowLoadingSpinner" class="spinner-col" size="12">
@@ -97,8 +102,9 @@
                 <ion-row class="item-row ripple ion-activatable" *ngFor="let item of transferList"
                     (click)="onItem(item)">
                     <ion-col size="2" class="left-col">
-                        <div class="icon-container" [class.purple]="(item.type === 1) && !item.isRedPacket" [class.redpacket]="(item.type === 1) && item.isRedPacket"
-                            [class.black]="item.type === 2" [class.orange]="item.type === 3">
+                        <div class="icon-container" [class.purple]="(item.type === 1) && !item.isRedPacket"
+                            [class.redpacket]="(item.type === 1) && item.isRedPacket" [class.black]="item.type === 2"
+                            [class.orange]="item.type === 3">
                             <img [src]="item.payStatusIcon">
                         </div>
                     </ion-col>

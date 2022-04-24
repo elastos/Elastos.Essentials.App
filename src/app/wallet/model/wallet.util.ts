@@ -26,7 +26,6 @@ import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import Web3 from 'web3';
 import { CurrencyService } from '../services/currency.service';
-import { CoinID } from './coin';
 
 export class WalletUtil {
   static isInvalidWalletName(text): boolean {
@@ -51,10 +50,10 @@ export class WalletUtil {
     }
 
     if (decimalplace == -1) {
-        decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
-        if (!decimalplace) {
-            decimalplace = 3;
-        }
+      decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
+      if (!decimalplace) {
+        decimalplace = 3;
+      }
     }
     let minBalanceToShow = 1 / Math.pow(10, decimalplace);
     const decimalBalance = balance.modulo(1);
@@ -88,28 +87,17 @@ export class WalletUtil {
     return timestamp < today ? moment(timestamp).format("YYYY-MM-DD HH:mm") : moment(timestamp).startOf('minutes').fromNow();
   }
 
-  public static isAddress(address: string, chainId: CoinID) {
-    switch (chainId) {
-        case "ELA":
-            return WalletUtil.isELAAddress(address)
-        case "BTC":
-            return WalletUtil.isBTCAddress(address)
-        default:
-            return WalletUtil.isEVMAddress(address)
-    }
-  }
-
-  public static isELAAddress(address : string) {
+  public static isELAAddress(address: string) {
     Logger.warn('wallet', 'The implementation is missing. Later we will replace with elastos JS wallet sdk api!');
     return true;
   }
 
-  public static isBTCAddress(address : string) {
+  public static isBTCAddress(address: string) {
     let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
     return validate(address, network.toLowerCase() as Network)
   }
 
-  public static isEVMAddress(address : string) {
+  public static isEVMAddress(address: string) {
     return Web3.utils.isAddress(address);
   }
 }

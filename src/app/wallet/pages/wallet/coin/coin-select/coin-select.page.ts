@@ -72,19 +72,19 @@ export class CoinSelectPage implements OnInit {
 
     // for cross chain transaction.
     async getELASideChainSubwallets() {
-      let subwallets: AnySubWallet[] = [];
+        let subwallets: AnySubWallet[] = [];
 
-      let idchian = WalletNetworkService.instance.getNetworkByKey('elastosidchain');
-      let idNetworkWallet = await idchian.createNetworkWallet(this.networkWallet.masterWallet, false);
-      let idsubwallet = idNetworkWallet.getSubWallet(StandardCoinName.ETHDID);
+        let idChain = WalletNetworkService.instance.getNetworkByKey('elastosidchain');
+        let idNetworkWallet = await idChain.createNetworkWallet(this.networkWallet.masterWallet, false);
+        let idsubwallet = idNetworkWallet.getSubWallet(StandardCoinName.ETHDID);
 
-      subwallets.push(idsubwallet);
+        subwallets.push(idsubwallet);
 
-      let escchian = WalletNetworkService.instance.getNetworkByKey('elastossmartchain');
-      let escNetworkWallet = await escchian.createNetworkWallet(this.networkWallet.masterWallet, false);
-      let escsubwallet = escNetworkWallet.getSubWallet(StandardCoinName.ETHSC);
+        let escChain = WalletNetworkService.instance.getNetworkByKey('elastossmartchain');
+        let escNetworkWallet = await escChain.createNetworkWallet(this.networkWallet.masterWallet, false);
+        let escsubwallet = escNetworkWallet.getSubWallet(StandardCoinName.ETHSC);
 
-      subwallets.push(escsubwallet);
-      return subwallets;
+        subwallets.push(escsubwallet);
+        return subwallets;
     }
 }
