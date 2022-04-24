@@ -1,6 +1,6 @@
 <ion-content [class.dark-container]="theme.darkMode">
     <app-titlebar></app-titlebar>
-    <div class="council-header" *ngIf="candidatesService.isVoting">
+    <div class="council-header" *ngIf="crCouncilService.isVoting">
         <ion-row>
             <ion-col class="left-col">
                 <div id="vote-label">{{ 'voting.vote-going' | translate }}</div>
@@ -13,17 +13,17 @@
         </ion-row>
     </div>
 
-    <div class="content" [class.vote-open]="candidatesService.isVoting">
+    <div class="content" [class.vote-open]="crCouncilService.isVoting">
         <ion-spinner *ngIf="!crMembersFetched"></ion-spinner>
 
-        <ion-grid *ngIf="candidatesService.crmembers.length > 0" class="container ion-no-padding">
+        <ion-grid *ngIf="crCouncilService.crmembers.length > 0" class="container ion-no-padding">
             <ion-list lines="none" class="candidate-list">
-                <ion-virtual-scroll [items]="candidatesService.crmembers" approxItemHeight="240px">
+                <ion-virtual-scroll [items]="crCouncilService.crmembers" approxItemHeight="240px">
                     <ion-item class="candidate" *virtualItem="let member">
                         <ion-grid>
                             <ion-row (click)=onShowMemberInfo(member.did)>
                                 <ion-col size="1.25" class="rank-col">
-                                    {{ candidatesService.crmembers.indexOf(member) + 1 }}
+                                    {{ crCouncilService.crmembers.indexOf(member) + 1 }}
                                 </ion-col>
                                 <ion-col size="1.5" class="img-col">
                                     <img [src]="member.avatar ? member.avatar : '/assets/crcouncilvoting/icon/avatar.png'"
@@ -50,7 +50,7 @@
             </ion-list>
         </ion-grid>
 
-        <div *ngIf="candidatesService.crmembers.length === 0" class="spinner align-center">
+        <div *ngIf="crCouncilService.crmembers.length === 0" class="spinner align-center">
             <ion-spinner name="crescent"></ion-spinner>
         </div>
 

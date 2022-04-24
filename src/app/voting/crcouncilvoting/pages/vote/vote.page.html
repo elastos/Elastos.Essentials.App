@@ -14,7 +14,7 @@
         </div>
 
         <div class="candidate-list" [class.blur]="castingVote">
-            <div *ngFor="let candidate of candidatesService.selectedCandidates; index as i" class="candidate"
+            <div *ngFor="let candidate of crCouncilService.selectedCandidates; index as i" class="candidate"
                 lines="none">
                 <div class="index-col">{{ i+1 }}</div>
                 <div class="icon-col">

@@ -8,7 +8,7 @@ import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from "src/app/voting/services/vote.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
-import { CandidatesService } from "../../services/candidates.service";
+import { CRCouncilService } from "../../services/crcouncil.service";
 
 @Component({
     selector: "app-crmembers",
@@ -26,7 +26,7 @@ export class CRMembersPage implements OnInit {
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
-        public candidatesService: CandidatesService,
+        public crCouncilService: CRCouncilService,
         private globalNav: GlobalNavService,
         public theme: GlobalThemeService,
         public popupProvider: GlobalPopupService,
@@ -45,17 +45,17 @@ export class CRMembersPage implements OnInit {
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
 
-        let available = await this.candidatesService.getCRDepositcoinAvailable();
+        let available = await this.crCouncilService.getCRDepositcoinAvailable();
         if (available > 0) {
             this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: '/assets/crcouncilvoting/icon/darkmode/withdraw.svg' });
             this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                void this.candidatesService.withdrawCandidate(available, '/crcouncilvoting/crmembers');
+                void this.crCouncilService.withdrawCandidate(available, '/crcouncilvoting/crmembers');
             });
         }
 
-        await this.candidatesService.getCRVotingStage();
+        await this.crCouncilService.getCRVotingStage();
         if (!this.crMembersFetched) {
-            await this.candidatesService.fetchCRMembers();
+            await this.crCouncilService.fetchCRMembers();
             this.crMembersFetched = true;
         }
     }

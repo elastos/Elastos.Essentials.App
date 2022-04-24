@@ -13,7 +13,7 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
 import { WalletAccountType } from 'src/app/wallet/model/walletaccount';
-import { CandidatesService } from '../../services/candidates.service';
+import { CRCouncilService } from '../../services/crcouncil.service';
 
 @Component({
     selector: 'app-impeach',
@@ -34,7 +34,7 @@ export class ImpeachCRMemberPage {
         private popoverCtrl: PopoverController,
         private route: ActivatedRoute,
         private globalNav: GlobalNavService,
-        public candidatesService: CandidatesService,
+        public crCouncilService: CRCouncilService,
         private voteService: VoteService,
         public popupProvider: GlobalPopupService,
     ) { }
@@ -42,7 +42,7 @@ export class ImpeachCRMemberPage {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.impeachment'));
-        this.member = this.candidatesService.selectedMember;
+        this.member = this.crCouncilService.selectedMember;
 
         const stakeAmount = this.voteService.sourceSubwallet.getRawBalance().minus(this.votingFees());
         if (!stakeAmount.isNegative()) {

@@ -12,7 +12,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { CRMemberOptionsComponent } from '../../components/options/options.component';
-import { CandidatesService } from '../../services/candidates.service';
+import { CRCouncilService } from '../../services/crcouncil.service';
 
 @Component({
     selector: 'app-crmember',
@@ -43,7 +43,7 @@ export class CRMemberPage {
         private popoverCtrl: PopoverController,
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
-        public candidatesService: CandidatesService,
+        public crCouncilService: CRCouncilService,
         public voteService: VoteService,
         private route: ActivatedRoute,
     ) {
@@ -51,9 +51,9 @@ export class CRMemberPage {
     }
 
     async init(did: string) {
-        this.member = await this.candidatesService.getCRMemeberInfo(did);
+        this.member = await this.crCouncilService.getCRMemeberInfo(did);
         Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.member);
-        this.member.impeachmentThroughVotes = Math.ceil(this.candidatesService.selectedMember.impeachmentThroughVotes);
+        this.member.impeachmentThroughVotes = Math.ceil(this.crCouncilService.selectedMember.impeachmentThroughVotes);
         this.current = this.member.impeachmentVotes;
         this.max = this.member.impeachmentThroughVotes;
         this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
@@ -97,7 +97,8 @@ export class CRMemberPage {
 
     getItemDescription(item: any): string {
         let creationDate = Util.timestampToDateTime(item.createdAt * 1000);
-        return item.id + " " + creationDate + " " + item.status;
+        let status = item.status ? this.translate.instant("voting." + item.status.toLowerCase()) : "";
+        return item.id + " " + creationDate + " " + status;
     }
 
     update() {

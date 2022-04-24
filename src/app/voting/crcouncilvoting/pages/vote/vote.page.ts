@@ -16,7 +16,7 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
 import { SelectedCandidate } from "../../model/selected.model";
-import { CandidatesService } from '../../services/candidates.service';
+import { CRCouncilService } from '../../services/crcouncil.service';
 
 @Component({
     selector: 'app-vote',
@@ -27,7 +27,7 @@ export class VotePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     constructor(
-        public candidatesService: CandidatesService,
+        public crCouncilService: CRCouncilService,
         private storage: GlobalStorageService,
         private globalNative: GlobalNativeService,
         public theme: GlobalThemeService,
@@ -44,18 +44,18 @@ export class VotePage implements OnInit, OnDestroy {
     public signingAndTransacting = false;
     public remainingTime: string;
 
-    public candidatesVotes: { [cid: string]: number } = {}; // Map of CID -> votes - for ion-input items temporary model (before applying to candidatesService.selectedCandidates.userVotes)
+    public candidatesVotes: { [cid: string]: number } = {}; // Map of CID -> votes - for ion-input items temporary model (before applying to crCouncilService.selectedCandidates.userVotes)
     public candidatesPercentages: { [cid: string]: number } = {}; // Map of CID -> percentage (0-10000) for 2 decimals precision - for ion-range items
 
     public testValue = 0;
 
     ngOnInit() {
-        Logger.log('crcouncil', 'My Candidates', this.candidatesService.selectedCandidates);
+        Logger.log('crcouncil', 'My Candidates', this.crCouncilService.selectedCandidates);
         this.totalEla = this.voteService.getMaxVotes();
         Logger.log('crcouncil', 'ELA Balance', this.totalEla);
 
         // Initialize candidate percentages with default values
-        this.candidatesService.candidates.forEach(c => {
+        this.crCouncilService.candidates.forEach(c => {
             this.candidatesVotes[c.cid] = 0;
             this.candidatesPercentages[c.cid] = 0;
         })
@@ -69,7 +69,7 @@ export class VotePage implements OnInit, OnDestroy {
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.my-candidates'));
 
-        this.remainingTime = await this.candidatesService.getRemainingTime();
+        this.remainingTime = await this.crCouncilService.getRemainingTime();
     }
 
     ionViewDidEnter() {
@@ -85,9 +85,9 @@ export class VotePage implements OnInit, OnDestroy {
     }
 
     distributeEqually() {
-        let votes = Math.floor(this.totalEla / this.candidatesService.selectedCandidates.length);
+        let votes = Math.floor(this.totalEla / this.crCouncilService.selectedCandidates.length);
         Logger.log('crcouncil', 'Equally distributed votes', votes);
-        this.candidatesService.selectedCandidates.forEach((candidate) => {
+        this.crCouncilService.selectedCandidates.forEach((candidate) => {
             candidate.userVotes = votes;
             this.candidatesVotes[candidate.cid] = votes;
             this.updateCandidatePercentVotesMap(candidate, votes);
@@ -101,7 +101,7 @@ export class VotePage implements OnInit, OnDestroy {
     /****************** Cast Votes *******************/
     async cast() {
         let votedCandidates = {};
-        this.candidatesService.selectedCandidates.map((candidate) => {
+        this.crCouncilService.selectedCandidates.map((candidate) => {
             if (candidate.userVotes && candidate.userVotes > 0) {
                 // let userVotes = candidate.userVotes * 100000000;
                 let userVotes = Util.accMul(candidate.userVotes, Config.SELA)
@@ -120,7 +120,7 @@ export class VotePage implements OnInit, OnDestroy {
         }
         else {
             Logger.log('crcouncil', votedCandidates);
-            await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', this.candidatesService.selectedCandidates);
+            await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', this.crCouncilService.selectedCandidates);
             this.castingVote = true;
             this.votesCasted = false;
             await this.createVoteCRTransaction(votedCandidates);
@@ -134,7 +134,7 @@ export class VotePage implements OnInit, OnDestroy {
 
     getElaRemainder() {
         this.votedEla = 0;
-        this.candidatesService.selectedCandidates.map((can) => {
+        this.crCouncilService.selectedCandidates.map((can) => {
             this.votedEla += can.userVotes;
         });
         let remainder = this.totalEla - this.votedEla;
@@ -156,7 +156,7 @@ export class VotePage implements OnInit, OnDestroy {
      * Returns the number of ELA currently distributed to candidates for voting
      */
     public getDistributedEla(): number {
-        return this.candidatesService.selectedCandidates.reduce((prev, c) => prev + parseInt(c.userVotes as any), 0) || 0;
+        return this.crCouncilService.selectedCandidates.reduce((prev, c) => prev + parseInt(c.userVotes as any), 0) || 0;
     }
 
     public onInputFocus(event, candidate: SelectedCandidate) {
@@ -227,7 +227,7 @@ export class VotePage implements OnInit, OnDestroy {
                 let splitInto = this.numberOfNonZeroVotesCandidates(modifiedCandidate); // Distribute among all selected candidates minus the currently modified candidate
                 let removedAmount = Math.ceil(overflowELA / splitInto); // Remove the same number of votes from each other candidate
                 //console.log("split into", splitInto, "overflowELA", overflowELA, "removedAmount", removedAmount, "reallyRemovedAmount", reallyRemovedAmount);
-                for (let c of this.candidatesService.selectedCandidates) {
+                for (let c of this.crCouncilService.selectedCandidates) {
                     if (c.cid === modifiedCandidate.cid || c.userVotes == 0)
                         continue;
 
@@ -250,7 +250,7 @@ export class VotePage implements OnInit, OnDestroy {
      */
     private numberOfNonZeroVotesCandidates(excludedCandidate: SelectedCandidate): number {
         let count = 0;
-        this.candidatesService.selectedCandidates.map(c => {
+        this.crCouncilService.selectedCandidates.map(c => {
             if (c.cid !== excludedCandidate.cid && c.userVotes > 0)
                 count++;
         });

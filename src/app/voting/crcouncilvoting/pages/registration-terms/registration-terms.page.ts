@@ -10,7 +10,7 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CandidatesService } from '../../services/candidates.service';
+import { CRCouncilService } from '../../services/crcouncil.service';
 
 @Component({
     selector: 'app-registration-terms',
@@ -29,7 +29,7 @@ export class CandidateRegistrationTermsPage implements OnInit {
         private globalNative: GlobalNativeService,
         private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService,
-        public candidatesService: CandidatesService,
+        public crCouncilService: CRCouncilService,
     ) {
 
     }

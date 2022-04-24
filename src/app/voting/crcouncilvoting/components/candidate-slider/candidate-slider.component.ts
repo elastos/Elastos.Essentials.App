@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
-import { Candidate } from '../../model/candidates.model';
-import { CandidatesService } from '../../services/candidates.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Candidate } from '../../model/candidates.model';
+import { CRCouncilService } from '../../services/crcouncil.service';
 
 @Component({
   selector: 'app-candidate-slider',
@@ -26,10 +26,10 @@ export class CandidateSliderComponent implements OnInit {
     slidesPerView: 1.2
   };
 
-  constructor(public candidatesService: CandidatesService, public theme: GlobalThemeService) { }
+  constructor(public crCouncilService: CRCouncilService, public theme: GlobalThemeService) { }
 
   ngOnInit() {
-    this.displayedCandidates = this.candidatesService.candidates.slice(0, this.candidateIndex + 2);
+    this.displayedCandidates = this.crCouncilService.candidates.slice(0, this.candidateIndex + 2);
     this.slideOpts.initialSlide = this.displayedCandidates.indexOf(this.candidate);
   }
 
@@ -38,19 +38,19 @@ export class CandidateSliderComponent implements OnInit {
     // Find last candidate in displayed slides
     let lastCandidate: Candidate = this.displayedCandidates.slice(-1)[0];
     // Use last candidate to find next candidate
-    let nextCandidateIndex: number = this.candidatesService.candidates.indexOf(lastCandidate) + 1;
+    let nextCandidateIndex: number = this.crCouncilService.candidates.indexOf(lastCandidate) + 1;
     // If next candidate exists, push it to slide array
-    if(this.candidatesService.candidates[nextCandidateIndex]) {
-      this.displayedCandidates.push(this.candidatesService.candidates[nextCandidateIndex]);
+    if(this.crCouncilService.candidates[nextCandidateIndex]) {
+      this.displayedCandidates.push(this.crCouncilService.candidates[nextCandidateIndex]);
     } else {
       return;
     }
     Logger.log('crcouncil', 'last Candidate', lastCandidate);
-    Logger.log('crcouncil', 'next Candidate', this.candidatesService.candidates[nextCandidateIndex]);
+    Logger.log('crcouncil', 'next Candidate', this.crCouncilService.candidates[nextCandidateIndex]);
   }
 
   getVotePercent(votes: string): string {
-    const votePercent: number = parseFloat(votes) / this.candidatesService.totalVotes * 100;
+    const votePercent: number = parseFloat(votes) / this.crCouncilService.totalVotes * 100;
     return votePercent.toFixed(2);
   }
 }

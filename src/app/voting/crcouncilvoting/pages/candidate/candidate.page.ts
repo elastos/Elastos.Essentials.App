@@ -11,7 +11,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { CandidatesService } from '../../services/candidates.service';
+import { CRCouncilService } from '../../services/crcouncil.service';
 
 @Component({
     selector: 'app-candidate',
@@ -53,7 +53,7 @@ export class CandidatePage {
         private popoverCtrl: PopoverController,
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
-        public candidatesService: CandidatesService,
+        public crCouncilService: CRCouncilService,
         public voteService: VoteService,
         private route: ActivatedRoute,
     ) {
@@ -61,10 +61,10 @@ export class CandidatePage {
     }
 
     async init(did: string) {
-        this.candidate = await this.candidatesService.candidates.find(candidate => candidate.did === did);
+        this.candidate = await this.crCouncilService.candidates.find(candidate => candidate.did === did);
         Logger.log(App.CRCOUNCIL_VOTING, 'candidate info', this.candidate);
         this.current = this.candidate.votes;
-        this.max = this.candidatesService.totalVotes;
+        this.max = this.crCouncilService.totalVotes;
         if (this.max > 0) {
             this.ratio = (this.current * 100 / this.max).toFixed(1);
         }
@@ -75,7 +75,7 @@ export class CandidatePage {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.candidate-profile'));
         if (Util.isSelfDid(this.candidate.did)) {
-            void this.candidatesService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
+            void this.crCouncilService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
         }
     }
 

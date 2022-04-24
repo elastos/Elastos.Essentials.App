@@ -16,7 +16,7 @@ import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CandidateBaseInfo } from '../../model/candidates.model';
-import { CandidatesService } from '../../services/candidates.service';
+import { CRCouncilService } from '../../services/crcouncil.service';
 
 @Component({
     selector: 'app-registration',
@@ -63,7 +63,7 @@ export class CandidateRegistrationPage implements OnInit {
         public jsonRPCService: GlobalJsonRPCService,
         private globalNative: GlobalNativeService,
         private globalIntentService: GlobalIntentService,
-        public candidatesService: CandidatesService,
+        public crCouncilService: CRCouncilService,
     ) {
 
     }
@@ -76,7 +76,7 @@ export class CandidateRegistrationPage implements OnInit {
         Logger.log("CandidateRegistrationPage", this.voteService.masterWalletId);
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
-        this.candidateInfo = Util.clone(this.candidatesService.candidateInfo);
+        this.candidateInfo = Util.clone(this.crCouncilService.candidateInfo);
 
         switch (this.candidateInfo.state) {
             case 'Unregistered':
@@ -175,7 +175,7 @@ export class CandidateRegistrationPage implements OnInit {
                 this.candidateInfo.ownerpublickey, this.candidateInfo.did, this.candidateInfo.nickname, this.candidateInfo.url, this.candidateInfo.location);
 
             if (payload) {
-                let signature = await this.candidatesService.getSignature(payload.Digest);
+                let signature = await this.crCouncilService.getSignature(payload.Digest);
                 if (signature) {
                     payload.Signature = signature;
                     Logger.log('CandidateRegistrationPage', 'generateCRInfoPayload', payload);

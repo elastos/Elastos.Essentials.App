@@ -13,7 +13,7 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CandidatesService } from '../../services/candidates.service';
+import { CRCouncilService } from '../../services/crcouncil.service';
 
 
 @Component({
@@ -38,7 +38,7 @@ export class CRNodePage implements OnInit {
         private route: ActivatedRoute,
         private zone: NgZone,
         private popup: PopupService,
-        public candidatesService: CandidatesService,
+        public crCouncilService: CRCouncilService,
     ) {
 
     }
@@ -50,7 +50,7 @@ export class CRNodePage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.claim-dpos-node'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-        this.crmemberInfo = this.candidatesService.selectedMember;
+        this.crmemberInfo = this.crCouncilService.selectedMember;
         this.nodePublicKey = this.crmemberInfo.dpospublickey;
     }
 

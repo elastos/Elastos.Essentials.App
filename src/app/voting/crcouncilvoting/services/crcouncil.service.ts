@@ -43,7 +43,7 @@ export type CRMemberInfo = {
 @Injectable({
     providedIn: 'root'
 })
-export class CandidatesService {
+export class CRCouncilService {
     public isVoting = false;
     private getCRVotingStageTimeout: NodeJS.Timeout = null;
 
