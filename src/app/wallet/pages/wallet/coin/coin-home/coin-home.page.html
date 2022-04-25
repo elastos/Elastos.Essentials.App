@@ -101,7 +101,7 @@
 
     <div class="footer" ngxHideOnScroll *ngIf="subWallet">
         <img class="action-toggle" (click)="toggleShowAllActions()" *ngIf="shouldShowAllActionsToggle()"
-            [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/down-arrow-large.svg' : 'assets/wallet/icons/down-arrow-large.svg'">
+            [src]="shouldShowAllActions ? 'assets/wallet/icons/down-arrow-large.svg' : 'assets/wallet/icons/up-arrow-large.svg'">
         <ion-row class="card-btn-row">
             <ion-col [size]="transfersColumnSize()" *ngIf="coinCanBeTransferred()">
                 <div class="ion-activatable btn-box" (click)="transferFunds()">
@@ -115,7 +115,7 @@
             <ion-col [size]="transfersColumnSize()" (click)="sendFunds()">
                 <div class="ion-activatable btn-box">
                     <img class="send"
-                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/send.svg' : 'assets/wallet/buttons/sned.svg'">
+                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/send.svg' : 'assets/wallet/buttons/send.svg'">
                     <p class="btn-label">{{ 'wallet.coin-action-send' | translate }}</p>
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>

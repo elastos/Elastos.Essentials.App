@@ -385,6 +385,7 @@
     bottom:0;
     width: 100%;
     color: white;
+    background: #FFF;
     transition: transform 0.3s ease-in-out; // Transition on hide/show.
 
     .card-btn-row {
@@ -406,6 +407,7 @@
                 justify-content: center;
                 padding: 10px 5px;
                 flex-direction: column;
+                background: #F5F7FE;
 
                 img {
                     width:24px;
@@ -427,7 +429,7 @@
                     line-height: 1.25;
                     letter-spacing: 0.8px;
                     text-align: center;
-                    color: #fdfeff;
+                    color: #3C3C3C;
                     text-transform: uppercase;
                 }
             }
@@ -470,6 +472,10 @@
             ion-col {
                 .btn-box {
                     background: #3C3C3C;
+
+                    .btn-label {
+                        color: #fdfeff;
+                    }
                 }
             }
         }

@@ -87,7 +87,7 @@ export class CoinHomePage implements OnInit {
 
     public canFetchMore = true;
     public shouldShowLoadingSpinner = false;
-    public shouldShowAllActions = true;
+    public shouldShowAllActions: boolean = null;
     // Observer that detects when the "fetch more trigger" UI item crosses the ion-content, which means we
     // are at the bottom of the list.
     private fetchMoreTriggerObserver: IntersectionObserver;
@@ -118,7 +118,7 @@ export class CoinHomePage implements OnInit {
         private globalNav: GlobalNavService,
         private didSessions: GlobalDIDSessionsService
     ) {
-        this.init();
+        void this.init();
     }
 
     ngOnDestroy() {
@@ -157,8 +157,11 @@ export class CoinHomePage implements OnInit {
     ionViewWillEnter() {
         this.coinTransferService.subWalletId = this.subWalletId;
         this.titleBar.setTitle(this.translate.instant('wallet.coin-transactions'));
+
+        void this.loadShowAllActions();
     }
 
+    // Cannot be async
     init() {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
@@ -578,15 +581,16 @@ export class CoinHomePage implements OnInit {
         await await this.globalStorage.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "coinhome-show-all-actions", this.shouldShowAllActions);
     }
 
-    public async loadShowLessActions(): Promise<void> {
+    public async loadShowAllActions(): Promise<void> {
         this.shouldShowAllActions = await this.globalStorage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "coinhome-show-all-actions", true);
     }
 
     /**
-     * Whether the arrow to toggle show/hide all actions should be shown or 
+     * Whether the arrow to toggle show/hide all actions should be shown or
      * hidden (in case there is nothing to toggle).
      */
     public shouldShowAllActionsToggle(): boolean {
-        return this.canEarnSwapOrBridge();
+        // Wait for shouldShowAllActions to be loaded (not null)
+        return this.canEarnSwapOrBridge() && this.shouldShowAllActions !== null;
     }
 }
