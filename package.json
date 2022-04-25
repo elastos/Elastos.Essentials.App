@@ -83,7 +83,7 @@
     "fast-average-color": "^7.0.1",
     "globalthis": "^1.0.2",
     "hammerjs": "2.0.8",
-    "idriss-crypto": "^1.3.3",
+    "idriss-crypto": "^1.4.1",
     "ion-bottom-drawer": "2.0.0",
     "isutf8": "^4.0.0",
     "jsonld": "^5.2.0",
@@ -211,8 +211,8 @@
       "elastos-essentials-plugin-dappbrowser": {}
     },
     "platforms": [
-        "android",
-        "ios"
-      ]
-    }
+      "android",
+      "ios"
+    ]
+  }
 }
