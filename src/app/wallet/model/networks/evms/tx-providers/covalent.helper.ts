@@ -6,26 +6,6 @@ import { EthTransaction } from "../evm.types";
 const covalentApiUrl = 'https://api.covalenthq.com/v1/';
 const API_KEY = 'ckey_d3c2c09cdd9e4c44980aac3b934'; // https://www.covalenthq.com/
 
-export type CovalentTransfer = {
-  block_signed_at: string,
-  tx_hash: string,
-  from_address: string,
-  from_address_label: string,
-  to_address: string,
-  contract_decimals: number,
-  contract_name: string,
-  contract_ticker_symbol: string,
-  contract_address: string,
-  logo_url: string,
-  transfer_type: string, //'OUT'
-  delta: string,
-  balance: string,
-  quote_rate: string,
-  delta_quote: string,
-  balance_quote: string,
-  method_calls: string,
-}
-
 export type CovalentTransaction = {
   block_signed_at: string,
   block_height: number,
@@ -87,6 +67,48 @@ export type CovalentResult<T> = {
   error: string,
   error_message: string,
   error_code: string
+}
+
+export type CovalentTransfer = {
+  block_signed_at: string; // The signed time of the block.
+  tx_hash: string; // The transaction hash.
+  from_address: string; // The address where the transfer is from.
+  from_address_label: string; // The label of from address.
+  to_address: string; // The address where the transfer is to.
+  to_address_label: string; // The label of to address.
+  contract_decimals: number; // Smart contract decimals.
+  contract_name: string; // Smart contract name.
+  contract_ticker_symbol: string; // Smart contract ticker symbol.
+  contract_address: string; //Smart contract address.
+  logo_url: string; // Smart contract URL.
+  transfer_type: string; // IN/OUT.
+  delta: string; // The delta attached to this transfer.
+  balance: number; // The transfer balance. Use contract_decimals to scale this balance for display purposes.
+  quote_rate: number; // The current spot exchange rate in quote-currency.
+  delta_quote: number; // The current delta converted to fiat in quote-currency.
+  balance_quote: number; // The current balance converted to fiat in quote-currency.
+  method_calls: any[]; // Additional details on which transfer events were invoked. Defaults to true.
+};
+
+export type BlockTransactionWithContractTransfers = {
+  block_signed_at: string; // The signed time of the block.
+  block_height: number; // The height of the block.
+  tx_hash: string; // The transaction hash.
+  tx_offset: number; // The transaction offset.
+  successful: boolean; // The transaction status.
+  from_address: string; // The address where the transaction is from.
+  from_address_label: string; // The label of from address.
+  to_address: string; // The address where the transaction is to.
+  to_address_label: string; // The label of to address.
+  value: number; // The value attached to this tx.
+  value_quote: number; // The value attached in quote-currency to this tx.
+  gas_offered: number; // The gas offered for this tx.
+  gas_spent: number; // The gas spent for this tx.
+  gas_price: number; // The gas price at the time of this tx.
+  fees_paid: number; // The total transaction fees paid for this tx.
+  gas_quote: number; // The gas spent in quote-currency denomination.
+  gas_quote_rate: number; // The gas exchange rate at the time of Tx in quote_currency.
+  transfers: CovalentTransfer[]; // Transfer items.
 }
 
 export class CovalentHelper {
@@ -177,5 +199,68 @@ export class CovalentHelper {
       Logger.error('wallet', 'CovalentHelper fetchTokenBalances error:', e)
     }
     return null;
+  }
+
+  public static async fetchERC20Transfers(chainId: number, accountAddress: string, contractAddress: string, page: number, pageSize: number): Promise<{ transactions: EthTransaction[], canFetchMore?: boolean }> {
+    let transferListUrl = covalentApiUrl;
+    transferListUrl += chainId;
+    transferListUrl += '/address/' + accountAddress;
+    transferListUrl += '/transfers_v2/?page-number=' + page;
+    transferListUrl += '&page-size=' + pageSize;
+    transferListUrl += '&contract-address=' + contractAddress;
+    transferListUrl += '&key=' + API_KEY;
+
+    try {
+      let result: CovalentResult<BlockTransactionWithContractTransfers> = await GlobalJsonRPCService.instance.httpGet(transferListUrl);
+
+      if (!result || !result.data || !result.data.items || result.data.items.length == 0) {
+        return { transactions: [] };
+      }
+
+      let originTransactions = result.data.items as BlockTransactionWithContractTransfers[];
+      let canFetchMore = result.data.pagination.has_more;
+
+      return {
+        transactions: <EthTransaction[]>this.convertCovalentTransfer2EthTransaction(originTransactions, accountAddress),
+        canFetchMore
+      };
+    } catch (e) {
+      Logger.error('wallet', 'CovalentHelper.fetchERC20Transfers() error:', e);
+      return { transactions: [] };
+    }
+  }
+
+  private static convertCovalentTransfer2EthTransaction(blockTransactions: BlockTransactionWithContractTransfers[], accountAddress: string) {
+    let transactions: EthTransaction[] = [];
+    for (let blockTransaction of blockTransactions) {
+
+      for (let transfer of blockTransaction.transfers) {
+        let ethTransaction: EthTransaction = {
+          blockHash: '--', //TODO
+          blockNumber: blockTransaction.block_height.toString(),
+          confirmations: '', //TODO
+          contractAddress: transfer.contract_address.toLowerCase(),
+          cumulativeGasUsed: '',
+          from: transfer.from_address,
+          to: transfer.to_address,
+          gas: blockTransaction.gas_offered.toString(),
+          gasPrice: blockTransaction.gas_price.toString(),
+          gasUsed: blockTransaction.gas_spent.toString(),
+          hash: blockTransaction.tx_hash,
+          isError: blockTransaction.successful ? '0' : '1',
+          nonce: '',
+          timeStamp: (new Date(blockTransaction.block_signed_at).getTime() / 1000).toString(),
+          transactionIndex: '',
+          value: transfer.delta,
+          Direction: (transfer.to_address === accountAddress) ? TransactionDirection.RECEIVED : TransactionDirection.SENT,
+          isERC20TokenTransfer: true,
+          txreceipt_status: '',
+          input: '',
+        }
+
+        transactions.push(ethTransaction);
+      }
+    }
+    return transactions;
   }
 }

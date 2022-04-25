@@ -8,6 +8,7 @@ import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwor
 import { StandardCoinName } from '../model/coin';
 import { MasterWallet } from '../model/masterwallets/masterwallet';
 import { AddERCTokenRequestParams } from '../model/networks/evms/adderctokenrequest';
+import { EVMNetwork } from '../model/networks/evms/evm.network';
 import { EditCustomNetworkRoutingParams } from '../pages/settings/edit-custom-network/edit-custom-network.page';
 import { CoinTransferService, TransferType } from './cointransfer.service';
 import { Native } from './native.service';
@@ -386,7 +387,7 @@ export class IntentService {
                 break;
             default:
                 if (currency.startsWith('ELA/ETHSC:')) {
-                    let elastosNetwork = this.walletNetworkService.getNetworkByKey("elastos");
+                    let elastosNetwork = <EVMNetwork>this.walletNetworkService.getNetworkByKey("elastossmartchain");
                     subWalletId = currency.substring(10) as StandardCoinName;
                     const coin = elastosNetwork.getCoinByID(subWalletId);
                     if (!coin) {

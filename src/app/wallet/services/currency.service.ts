@@ -301,7 +301,7 @@ export class CurrencyService {
     }
     else {
       Logger.log("wallet", "No currency in trinity API for", network.getMainTokenSymbol(), ". Trying other methods");
-      if (network.getUniswapCurrencyProvider()) {
+      if (network instanceof EVMNetwork && network.getUniswapCurrencyProvider()) {
         // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
         let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(<EVMNetwork>network, network.getUniswapCurrencyProvider().getWrappedNativeCoin());
         if (usdValue) {

@@ -1,10 +1,10 @@
 import { Config } from "src/app/wallet/config/Config";
-import { AnyNetworkWallet } from "src/app/wallet/model/networks/base/networkwallets/networkwallet";
+import { AnyEVMNetworkWallet } from "src/app/wallet/model/networks/evms/networkwallets/evm.networkwallet";
 import { StandardCoinName } from "../../../../../../coin";
 import { ElastosEVMSubWallet } from "../../../subwallets/standard/elastos.evm.subwallet";
 
 export class EidSubWallet extends ElastosEVMSubWallet {
-  constructor(networkWallet: AnyNetworkWallet) {
+  constructor(networkWallet: AnyEVMNetworkWallet) {
     super(networkWallet, StandardCoinName.ETHDID, "Identity Chain");
   }
 
@@ -65,8 +65,4 @@ export class EidSubWallet extends ElastosEVMSubWallet {
       nonce
     );
   } */
-
-  public supportInternalTransactions() {
-    return false;
-  }
 }

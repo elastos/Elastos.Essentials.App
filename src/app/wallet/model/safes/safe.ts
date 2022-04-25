@@ -2,19 +2,10 @@ import { TxData } from "ethereumjs-tx";
 import { Transfer } from "../../services/cointransfer.service";
 import { BTCTxData } from "../btc.types";
 import { MasterWallet } from "../masterwallets/masterwallet";
+import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
+import { AddressUsage } from "./addressusage";
 import { SignTransactionResult } from "./safe.types";
 
-/**
- * Used to specify the expected address format for specific operations.
- */
-export enum AddressUsage {
-  DEFAULT = "default",
-  RECEIVE_FUNDS = "receive_funds",
-  SEND_FUNDS = "send_funds",
-  EVM_CALL = "evm_call", // Address will be used to call native evm functions. Expected 0x format.
-  COVALENT_FETCH_TRANSACTIONS = "covalent_fetch_transactions", // 0x for EVMs, ioXXXX for iotex network
-  IOTEX = "iotex" // ioXXXX
-}
 
 /**
  * Hosts and manipulates sensitive wallet information such as mnemonic, seed, private keys.
@@ -30,7 +21,7 @@ export abstract class Safe {
   /**
    * Initialization method that can be overriden by subclasses.
    */
-  public initialize(): Promise<void> {
+  public initialize(networkWallet: AnyNetworkWallet): Promise<void> {
     return;
   }
 

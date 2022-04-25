@@ -1,26 +1,23 @@
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
-import { EVMLedgerSafe } from "src/app/wallet/model/networks/evms/safes/evm.ledger.safe";
+import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { StandardCoinName } from "../../../../../../coin";
 import { TransactionProvider } from "../../../../../../tx-providers/transaction.provider";
 import { WalletAddressInfo } from "../../../../../base/networkwallets/networkwallet";
-import { AnyNetwork } from "../../../../../network";
-import { ElastosLedgerNetworkWallet } from "../../../../networkwallets/ledger/elastos.networkwallet";
+import { ElastosLedgerEVMNetworkWallet } from "../../../networkwallets/ledger/ledger.evm.networkwallet";
 import { ElastosEVMSubWallet } from "../../../subwallets/standard/elastos.evm.subwallet";
 import { EscSubWallet } from "../../subwallets/esc.evm.subwallet";
 import { ElastosSmartChainTransactionProvider } from "../../tx-providers/elastos.esc.tx.provider";
 
-export class ElastosSmartChainLedgerNetworkWallet extends ElastosLedgerNetworkWallet {
-  private mainTokenSubWallet: ElastosEVMSubWallet = null;
-
-  constructor(masterWallet: LedgerMasterWallet, network: AnyNetwork) {
+export class ElastosSmartChainLedgerNetworkWallet extends ElastosLedgerEVMNetworkWallet {
+  constructor(masterWallet: LedgerMasterWallet, network: EVMNetwork) {
     super(
       masterWallet,
       network,
-      new EVMLedgerSafe(masterWallet, network.getMainChainID()),
-      "ELA"
+      "ELA",
+      "Elastos Smart Chain"
     );
   }
 

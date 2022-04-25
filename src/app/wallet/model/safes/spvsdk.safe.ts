@@ -3,6 +3,7 @@ import { Transfer } from "../../services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "../../services/spv.service";
 import { WalletService } from "../../services/wallet.service";
 import { StandardMasterWallet } from "../masterwallets/masterwallet";
+import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
 import { SignedETHSCTransaction } from "../networks/evms/evm.types";
 import { Safe } from "./safe";
 import { SignTransactionErrorType, SignTransactionResult } from "./safe.types";
@@ -20,12 +21,12 @@ export class SPVSDKSafe extends Safe {
     this.spvWalletId = jsToSpvWalletId(masterWallet.id);
   }
 
-  public async initialize(): Promise<void> {
+  public async initialize(networkWallet: AnyNetworkWallet): Promise<void> {
     // TODO: Stop using the SPVSDK for EVM network wallets
     if (!await SPVService.instance.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
       return;
 
-    await super.initialize();
+    await super.initialize(networkWallet);
   }
 
   public getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {

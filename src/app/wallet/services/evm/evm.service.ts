@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
+import { TxData } from 'ethereumjs-tx';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
@@ -377,4 +378,17 @@ export class EVMService {
     return contractCode === '0x' ? false : true;
   }
 
+  public createUnsignedContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<TxData> {
+    let web3 = new Web3();
+    const txData: TxData = {
+      nonce: web3.utils.toHex(nonce),
+      gasLimit: web3.utils.toHex(gasLimit),
+      gasPrice: web3.utils.toHex(gasPrice),
+      to: contractAddress,
+      data: data,
+      value: web3.utils.toHex(web3.utils.toWei('0', 'ether'))
+    }
+    Logger.log('wallet', 'EVMService::createUnsignedContractTransaction:', txData);
+    return Promise.resolve(txData);
+  }
 }

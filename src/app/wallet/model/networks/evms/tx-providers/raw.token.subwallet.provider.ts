@@ -1,4 +1,4 @@
-import { AddressUsage } from "../../../safes/safe";
+import { AddressUsage } from '../../../safes/addressusage';
 import { ProviderTransactionInfo } from "../../../tx-providers/providertransactioninfo";
 import { SubWalletTransactionProvider } from "../../../tx-providers/subwallet.provider";
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
@@ -18,6 +18,10 @@ export class RawEVMSubWalletTokenProvider<SubWalletType extends MainCoinEVMSubWa
 
   constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, protected rpcApiUrl: string, protected accountApiUrl: string) {
     super(provider, subWallet);
+
+    // Discover new transactions globally for all tokens at once, in order to notify user
+    // of NEW tokens received, and NEW payments received for existing tokens.
+    //provider.refreshEvery(() => this.fetchAllTokensTransactions(), 30000);
   }
 
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
@@ -33,9 +37,9 @@ export class RawEVMSubWalletTokenProvider<SubWalletType extends MainCoinEVMSubWa
     return this.latestFromBlockChecked === -1 || this.latestFromBlockChecked >= 0;
   }
 
-  // TODO UNFINISHED
+  // TODO UNFINISHED - this works but a bit painful...
   public async fetchTransactions(erc20SubWallet: ERC20SubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    for (let i = 0; i < 50; i++) { // TODO: NON BLOCKCING FETCH
+    for (let i = 0; i < 50; i++) { // TODO: NON BLOCKING FETCH
       console.log("fetchTransactions", erc20SubWallet, afterTransaction)
 
       // afterTransaction is not used, we maintain our own logic here for block numbers

@@ -1,15 +1,15 @@
 import { from } from "@iotexproject/iotex-address-ts";
 import { TxData } from "ethereumjs-tx";
 import { Wallet } from "ethers";
-import Antenna from "iotex-antenna";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
-import { AddressUsage } from "../../../safes/safe";
+import { AddressUsage } from "../../../safes/addressusage";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { StandardSafe } from "../../../safes/standard.safe";
+import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMSafe } from "../../evms/safes/evm.safe";
 import { AnyNetwork } from "../../network";
 
@@ -21,39 +21,36 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
     super(masterWallet);
   }
 
-  public async initialize(): Promise<void> {
-    let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id);
-    if (!payPassword)
-      return; // Can't continue without the wallet password - cancel the initialization
+  public async initialize(networkWallet: AnyNetworkWallet): Promise<void> {
+    // Check if the address is already computed or not  (first time). If not, request the
+    // master password to compute it
+    this.evmAddress = await networkWallet.loadContextInfo("evmAddress");
+    if (!this.evmAddress) {
+      // No data - need to compute
+      let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id);
+      if (!payPassword)
+        return; // Can't continue without the wallet password - cancel the initialization
 
-    const antenna = new Antenna(this.gRPCUrl);
+      let mnemonic = (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
+      if (mnemonic) {
+        let mnemonicWallet = Wallet.fromMnemonic(mnemonic);
+        this.evmAddress = mnemonicWallet.address;
+      }
+      else {
+        // No mnemonic - check if we have a private key instead
+        let privateKey = (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+        if (privateKey) {
+          let account = EVMService.instance.getWeb3(networkWallet.network).eth.accounts.privateKeyToAccount(privateKey);
+          this.evmAddress = account.address;
+        }
+      }
 
-    let mnemonic = (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
+      if (this.evmAddress)
+        await networkWallet.saveContextInfo("evmAddress", this.evmAddress);
+    }
 
-    let mnemonicWallet = Wallet.fromMnemonic(mnemonic);
-
-    this.evmAddress = mnemonicWallet.address;
     const addr = from(this.evmAddress);
     this.iotexAddress = addr.string();
-
-    // recover the whole wallet from a single private key
-    try {
-      /* const unlockedWallet = antenna.iotx.accounts.privateKeyToAccount(
-        mnemonicWallet.privateKey
-      ); */
-
-      //console.log("unlockedWallet", unlockedWallet)
-
-      //let account = antenna.iotx.accounts.addressToAccount(addr.string())
-      //console.log("account", account)
-
-      /* const account = await antenna.iotx.getAccount({
-        address: "io1cl6rl2ev5dfa988qmgzg2x4hfazmp9vn2g66ng"
-      }); */
-    }
-    catch (e) {
-      Logger.error("IoTeXStandardSafe initialization error", e);
-    }
   }
 
   public async getAddresses(startIndex: number, count: number, internalAddresses: boolean, usage: AddressUsage | string): Promise<string[]> {
@@ -63,7 +60,12 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
       return await [this.evmAddress];
   }
 
+  createContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
+    return EVMService.instance.createUnsignedContractTransaction(contractAddress, gasPrice, gasLimit, nonce, data);
+  }
+
   createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
+    // TODO: Make this code shareable, in the EVMService
     let web3 = EVMService.instance.getWeb3(this.network);
     const txData: TxData = {
       nonce: web3.utils.toHex(nonce),

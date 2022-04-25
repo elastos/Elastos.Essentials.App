@@ -27,4 +27,8 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
   public getDisplayableERC20TokenInfo(): string {
     return GlobalLanguageService.instance.translate('wallet.ela-erc20');
   }
+
+  public supportInternalTransactions() {
+    return false;
+  }
 }

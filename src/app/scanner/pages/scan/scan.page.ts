@@ -68,7 +68,7 @@ export class ScanPage {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-scanner'));
         this.showGalleryTitlebarKey(true);
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (clickedItem)=>{
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (clickedItem) => {
             if (clickedItem.key == "gallery") {
                 void this.scanFromLibrary();
             }
@@ -123,7 +123,7 @@ export class ScanPage {
         await this.qrScanner.destroy();
 
         this.zone.run(() => {
-          this.isCameraShown = false;
+            this.isCameraShown = false;
         });
     }
 
@@ -178,14 +178,14 @@ export class ScanPage {
     }
 
     showGalleryTitlebarKey(show: boolean) {
-      if (show) {
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-            key: "gallery",
-            iconPath: !this.theme.darkMode ? "assets/scanner/imgs/gallery.svg" : "assets/scanner/imgs/darkmode/gallery.svg"
-        });
-      } else {
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-      }
+        if (show) {
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+                key: "gallery",
+                iconPath: !this.theme.darkMode ? "assets/scanner/imgs/gallery.svg" : "assets/scanner/imgs/darkmode/gallery.svg"
+            });
+        } else {
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
+        }
     }
 
     /**
@@ -193,8 +193,8 @@ export class ScanPage {
      */
     async scanFromLibrary() {
         if (this.alert) {
-          await this.alertController.dismiss();
-          this.alert = null;
+            await this.alertController.dismiss();
+            this.alert = null;
         }
 
         Logger.log("Scanner", "Stopping camera, getting ready to pick a picture from the gallery.");
@@ -205,13 +205,13 @@ export class ScanPage {
         setTimeout(() => {
             Logger.log("Scanner", "Opening gallery to pick a picture");
             // Ask user to pick a picture from the library
-            navigator.camera.getPicture((data)=>{
+            navigator.camera.getPicture((data) => {
                 Logger.log("Scanner", "Got gallery data");
                 if (data) {
                     this.zone.run(() => {
                         try {
                             const image = new Image();
-                            image.onload = async() => {
+                            image.onload = async () => {
                                 Logger.log("Scanner", "Loaded image size:", image.width, image.height);
 
                                 let code: string;
@@ -223,7 +223,6 @@ export class ScanPage {
                                     code = await QrScanner.scanImage(image, null, worker);
                                 }
                                 catch (err) {
-                                    //debugger;
                                     Logger.error("Scanner", err);
                                     code = null;
                                 }
@@ -242,10 +241,10 @@ export class ScanPage {
                                 }
                             }
 
-                            image.src = "data:image/png;base64,"+data; // base64 string
+                            image.src = "data:image/png;base64," + data; // base64 string
 
                             // Free the memory
-                            navigator.camera.cleanup(()=>{}, (err)=>{});
+                            navigator.camera.cleanup(() => { }, (err) => { });
                         }
                         catch (e) {
                             void this.alertNoScannedContent('common.sorry', 'scanner.scan-err');
@@ -254,18 +253,18 @@ export class ScanPage {
                     });
                 }
             }
-            , (err)=>{
-                // 'No Image Selected': User canceled.
-                if (err === 'No Image Selected') {
-                    this.showGalleryTitlebarKey(true);
-                    this.zone.run(() => {
-                        this.startScanningProcess();
-                    });
-                } else {
-                    Logger.error("Scanner", err);
-                    void this.alertNoScannedContent('sorry', 'scanner.gallery-err');
-                }
-            }, {
+                , (err) => {
+                    // 'No Image Selected': User canceled.
+                    if (err === 'No Image Selected') {
+                        this.showGalleryTitlebarKey(true);
+                        this.zone.run(() => {
+                            this.startScanningProcess();
+                        });
+                    } else {
+                        Logger.error("Scanner", err);
+                        void this.alertNoScannedContent('sorry', 'scanner.gallery-err');
+                    }
+                }, {
                 targetWidth: 1200, // Reduce picture size to avoid memory problems - keep it large enough for QR code readabilitiy
                 targetHeight: 1200,
                 destinationType: 0, // Return as base64 data string
@@ -344,11 +343,11 @@ export class ScanPage {
         }
 
         try {
-            Logger.log("Scanner", "Sending scanned content as raw content to an "+scanIntentAction+" intent action");
-            await this.globalIntentService.sendIntent(scanIntentAction, {data: scannedContent});
+            Logger.log("Scanner", "Sending scanned content as raw content to an " + scanIntentAction + " intent action");
+            await this.globalIntentService.sendIntent(scanIntentAction, { data: scannedContent });
 
             // Raw intent sent
-            Logger.log("Scanner", "Intent sent successfully as action '"+scanIntentAction+"'")
+            Logger.log("Scanner", "Intent sent successfully as action '" + scanIntentAction + "'")
             await this.exitApp();
         }
         catch (err) {
@@ -372,16 +371,16 @@ export class ScanPage {
             message: this.translate.instant('scanner.no-app-err'),
             backdropDismiss: false,
             buttons: [
-            {
-                text: this.translate.instant('common.ok'),
-                handler: () => {
-                  this.startScanningProcess();
+                {
+                    text: this.translate.instant('common.ok'),
+                    handler: () => {
+                        this.startScanningProcess();
+                    }
                 }
-              }
             ]
         });
         this.alert.onWillDismiss().then(() => {
-          this.alert = null;
+            this.alert = null;
         });
         this.alert.present()
     }
@@ -390,21 +389,21 @@ export class ScanPage {
         this.showGalleryTitlebarKey(true);
 
         this.alert = await this.alertController.create({
-          mode: 'ios',
-          header: this.translate.instant(title),
-          message: this.translate.instant(msg),
-          backdropDismiss: false,
-          buttons: [
-           {
-              text: this.translate.instant(btnText),
-              handler: () => {
-                this.startScanningProcess();
-              }
-            }
-          ]
+            mode: 'ios',
+            header: this.translate.instant(title),
+            message: this.translate.instant(msg),
+            backdropDismiss: false,
+            buttons: [
+                {
+                    text: this.translate.instant(btnText),
+                    handler: () => {
+                        this.startScanningProcess();
+                    }
+                }
+            ]
         });
         this.alert.onWillDismiss().then(() => {
-          this.alert = null;
+            this.alert = null;
         });
         this.alert.present()
     }

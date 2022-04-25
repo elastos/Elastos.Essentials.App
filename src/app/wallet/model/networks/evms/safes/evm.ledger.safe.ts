@@ -3,6 +3,7 @@ import { Transaction as EthereumTx, TxData } from "ethereumjs-tx";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
+import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
 import Web3 from "web3";
 import { LeddgerAccountType } from "../../../ledger.types";
@@ -62,17 +63,7 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
     }
 
     public createContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
-      let web3 = new Web3();
-        const txData: TxData = {
-            nonce: web3.utils.toHex(nonce),
-            gasLimit: web3.utils.toHex(gasLimit),
-            gasPrice: web3.utils.toHex(gasPrice),
-            to: contractAddress,
-            data: data,
-            value: web3.utils.toHex(web3.utils.toWei('0', 'ether'))
-        }
-        Logger.log('wallet', 'EVMSafe::createContractTransaction:', txData);
-        return Promise.resolve(txData);
+        return EVMService.instance.createUnsignedContractTransaction(contractAddress, gasPrice, gasLimit, nonce, data);
     }
 
     public personalSign(): string {

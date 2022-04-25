@@ -3,7 +3,7 @@ import { Util } from "src/app/model/util";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardCoinName } from "../../coin";
 import { ElastosMainChainWalletNetworkOptions } from "../../masterwallets/wallet.types";
-import { AddressUsage } from "../../safes/safe";
+import { AddressUsage } from "../../safes/addressusage";
 import { ElastosTransaction, PaginatedTransactions } from "../../tx-providers/transaction.types";
 import { AnySubWallet, SubWallet } from "../base/subwallets/subwallet";
 import { MainChainSPVSDKSafe } from "./mainchain/safes/mainchain.spvsdk.safe";

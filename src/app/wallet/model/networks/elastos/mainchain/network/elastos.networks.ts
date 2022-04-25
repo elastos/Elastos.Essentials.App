@@ -1,9 +1,12 @@
+import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { StandardCoinName } from "src/app/wallet/model/coin";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
 import { ElastosMainChainWalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
 import { SPVNetworkConfig } from "../../../../../services/wallet.service";
+import { NetworkAPIURLType } from "../../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../../base/networkwallets/networkwallet";
 import { ElastosNetworkBase } from "../../network/elastos.base.network";
 import { ElastosMainChainLedgerNetworkWallet } from "../networkwallets/ledger/mainchain.networkwallet";
@@ -45,6 +48,13 @@ export class ElastosMainChainMainNetNetwork extends ElastosMainChainNetworkBase 
     );
   }
 
+  public getAPIUrlOfType(type: NetworkAPIURLType): string {
+    if (type === NetworkAPIURLType.RPC)
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ELA), MAINNET_TEMPLATE);
+    else
+      return null;
+  }
+
   public getMainChainID(): number {
     return -1;
   }
@@ -72,6 +82,13 @@ export class ElastosMainChainTestNetNetwork extends ElastosMainChainNetworkBase 
       "assets/wallet/networks/elastos.svg",
       TESTNET_TEMPLATE
     );
+  }
+
+  public getAPIUrlOfType(type: NetworkAPIURLType): string {
+    if (type === NetworkAPIURLType.RPC)
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ELA), TESTNET_TEMPLATE);
+    else
+      return null;
   }
 
   public getMainChainID(): number {

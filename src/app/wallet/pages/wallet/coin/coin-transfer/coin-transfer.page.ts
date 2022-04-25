@@ -40,10 +40,11 @@ import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
-import { AddressUsage } from 'src/app/wallet/model/safes/safe';
+import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
@@ -892,7 +893,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 let selectedSubwallet = selectedWallet.getSubWallet(this.subWalletId);
                 if (!selectedSubwallet) {
                     // Subwallet doesn't exist on target master wallet. So we activate it.
-                    let coin = this.networkWallet.network.getCoinByID(this.subWalletId);
+                    let coin = (<EVMNetwork>this.networkWallet.network).getCoinByID(this.subWalletId);
                     await selectedWallet.createNonStandardSubWallet(coin);
                     selectedSubwallet = selectedWallet.getSubWallet(this.subWalletId);
                 }

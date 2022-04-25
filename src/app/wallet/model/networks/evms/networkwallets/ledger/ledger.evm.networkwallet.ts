@@ -6,7 +6,7 @@ import { EVMLedgerSafe } from '../../safes/evm.ledger.safe';
 import { MainCoinEVMSubWallet } from '../../subwallets/evm.subwallet';
 import { EVMNetworkWallet } from '../evm.networkwallet';
 
-export class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends EVMNetworkWallet<LedgerMasterWallet, WalletNetworkOptionsType> {
+export abstract class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends EVMNetworkWallet<LedgerMasterWallet, WalletNetworkOptionsType> {
     public accountID = '';
 
     constructor(

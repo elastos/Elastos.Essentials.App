@@ -9,23 +9,31 @@ import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { BridgeService } from 'src/app/wallet/services/evm/bridge.service';
+import { EarnService } from 'src/app/wallet/services/evm/earn.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
+import { SwapService } from 'src/app/wallet/services/evm/swap.service';
 import Web3 from 'web3';
 import { Config } from '../../../../config/Config';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Coin, CoinID, CoinType, ERC20Coin } from '../../../coin';
+import { BridgeProvider } from '../../../earn/bridgeprovider';
+import { EarnProvider } from '../../../earn/earnprovider';
+import { SwapProvider } from '../../../earn/swapprovider';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
-import { AddressUsage } from '../../../safes/safe';
+import { AddressUsage } from '../../../safes/addressusage';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { SerializedSubWallet, SubWallet } from '../../base/subwallets/subwallet';
+import { EVMNetwork } from '../evm.network';
 import type { EthTransaction } from '../evm.types';
 import type { AnyEVMNetworkWallet, EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
 import { EVMSafe } from '../safes/evm.safe';
 
 export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
+    private network: EVMNetwork;
     /** Coin related to this wallet */
     public coin: ERC20Coin;
     /** Web3 variables to call smart contracts */
@@ -68,11 +76,12 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     ) {
         super(networkWallet, id, CoinType.ERC20);
 
+        this.network = <EVMNetwork>networkWallet.network;
         this.spvConfigEVMCode = this.networkWallet.network.getEVMSPVConfigName();
     }
 
     public async initialize(): Promise<void> {
-        this.coin = this.networkWallet.network.getCoinByID(this.id) as ERC20Coin;
+        this.coin = this.network.getCoinByID(this.id) as ERC20Coin;
         this.tokenDecimals = this.coin.decimals;
         this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals);
 
@@ -102,6 +111,18 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return;
     }
 
+    public getAvailableEarnProviders(): EarnProvider[] {
+        return EarnService.instance.getAvailableEarnProviders(this);
+    }
+
+    public getAvailableSwapProviders(): SwapProvider[] {
+        return SwapService.instance.getAvailableSwapProviders(this);
+    }
+
+    public getAvailableBridgeProviders(): BridgeProvider[] {
+        return BridgeService.instance.getAvailableBridgeProviders(this);
+    }
+
     private async fetchAndRearmTokenValue(): Promise<void> {
         await this.fetchTokenValue();
 
@@ -111,7 +132,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     private async fetchTokenValue(): Promise<void> {
-        await CurrencyService.instance.fetchERC20TokenValue(this.getDisplayBalance(), this.coin, this.networkWallet.network, 'USD');
+        await CurrencyService.instance.fetchERC20TokenValue(this.getDisplayBalance(), this.coin, this.network, 'USD');
     }
 
     public getUniqueIdentifierOnNetwork(): string {
@@ -132,7 +153,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     public getFriendlyName(): string {
-        const coin = this.networkWallet.network.getCoinByID(this.id);
+        const coin = this.network.getCoinByID(this.id);
         if (!coin) {
             return ''; // Just in case
         }
@@ -140,7 +161,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     public getDisplayTokenName(): string {
-        const coin = this.networkWallet.network.getCoinByID(this.id);
+        const coin = this.network.getCoinByID(this.id);
         if (!coin) {
             return ''; // Just in case
         }

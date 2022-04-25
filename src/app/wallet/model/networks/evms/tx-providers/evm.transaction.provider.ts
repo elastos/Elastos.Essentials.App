@@ -5,14 +5,13 @@ import { EthTransaction } from "../evm.types";
 import { EVMNetworkWallet } from "../networkwallets/evm.networkwallet";
 import { ERC20SubWallet } from "../subwallets/erc20.subwallet";
 import { AnyMainCoinEVMSubWallet, MainCoinEVMSubWallet } from "../subwallets/evm.subwallet";
-import { EtherscanEVMSubWalletTokenProvider } from "./etherscan.token.subwallet.provider";
 
 /**
  * Base transaction provider for regular EVM networks.
  */
 export abstract class EVMTransactionProvider extends TransactionProvider<EthTransaction> {
   protected mainProvider: SubWalletTransactionProvider<MainCoinEVMSubWallet<any>, EthTransaction> = null;
-  protected tokenProvider: EtherscanEVMSubWalletTokenProvider<MainCoinEVMSubWallet<any>> = null;
+  protected tokenProvider: SubWalletTransactionProvider<MainCoinEVMSubWallet<any>, EthTransaction> = null;
   protected internalTXProvider: SubWalletTransactionProvider<MainCoinEVMSubWallet<any>, EthTransaction> = null;
 
   constructor(protected networkWallet: EVMNetworkWallet<any, any>) {
@@ -33,14 +32,10 @@ export abstract class EVMTransactionProvider extends TransactionProvider<EthTran
     this.createEVMSubWalletInternalTransactionProvider(subwallet);
     if (this.internalTXProvider)
       await this.internalTXProvider.initialize();
-
-    // Discover new transactions globally for all tokens at once, in order to notify user
-    // of NEW tokens received, and NEW payments received for existing tokens.
-    this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);
   }
 
   /**
-   * Creates the EVM subwallet provider (main token). 
+   * Creates the EVM subwallet provider (main token).
    * this.mainProvider must be initialized after that.
    */
   protected abstract createEVMSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet);
@@ -61,7 +56,7 @@ export abstract class EVMTransactionProvider extends TransactionProvider<EthTran
 
   /**
    * Creates the EVM subwallet provider internal transaction.
-   * TODO: REWORK THIS ! 
+   * TODO: REWORK THIS !
    * this.internalTXProvider must be initialized after that.
    */
   protected createEVMSubWalletInternalTransactionProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {

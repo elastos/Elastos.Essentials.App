@@ -1,5 +1,5 @@
 import { from } from '@iotexproject/iotex-address-ts';
-import { AddressUsage } from 'src/app/wallet/model/safes/safe';
+import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { TransactionProvider } from 'src/app/wallet/model/tx-providers/transaction.provider';
 import { StandardMasterWallet } from '../../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../../masterwallets/wallet.types';
@@ -36,6 +36,7 @@ export class StandardIoTeXNetworkWallet<WalletNetworkOptionsType extends WalletN
             this.mainSubWalletFriendlyName
         );
         await this.mainTokenSubWallet.initialize();
+        // TODO: don't need to use getEVMSPVConfigName() (we don't use SPV SDK), use any other identifier
         this.subWallets[this.network.getEVMSPVConfigName()] = this.mainTokenSubWallet;
     }
 
@@ -61,6 +62,10 @@ export class StandardIoTeXNetworkWallet<WalletNetworkOptionsType extends WalletN
         if (usage === AddressUsage.EVM_CALL) {
             const addr = from(address);
             return addr.stringEth();
+        }
+        else if (usage === AddressUsage.DISPLAY_TRANSACTIONS) {
+            const addr = from(address);
+            return addr.string();
         }
         else
             return address;

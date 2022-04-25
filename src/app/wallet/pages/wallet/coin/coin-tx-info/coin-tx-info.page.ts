@@ -12,6 +12,7 @@ import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwall
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { EthTransaction } from 'src/app/wallet/model/networks/evms/evm.types';
+import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
@@ -242,7 +243,7 @@ export class CoinTxInfoPage implements OnInit {
                         {
                             type: 'contractAddress',
                             title: 'wallet.tx-info-token-address',
-                            value: this.transactionInfo.erc20TokenContractAddress,
+                            value: this.networkWallet.convertAddressForUsage(this.transactionInfo.erc20TokenContractAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                             show: true,
                         },
                     );
@@ -253,7 +254,7 @@ export class CoinTxInfoPage implements OnInit {
                 {
                     type: 'address',
                     title: 'wallet.tx-info-receiver-address',
-                    value: this.targetAddress,
+                    value: this.networkWallet.convertAddressForUsage(this.targetAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                     show: true,
                 },
                 {
@@ -273,7 +274,7 @@ export class CoinTxInfoPage implements OnInit {
                     {
                         type: 'address',
                         title: 'wallet.tx-info-sender-address',
-                        value: this.fromAddress,
+                        value: this.networkWallet.convertAddressForUsage(this.fromAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                         show: true,
                     })
             }

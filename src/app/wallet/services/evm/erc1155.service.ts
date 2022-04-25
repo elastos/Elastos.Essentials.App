@@ -25,6 +25,8 @@ import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import Web3 from 'web3';
+import { EVMNetwork } from '../../model/networks/evms/evm.network';
+import { ERC1155Provider } from '../../model/networks/evms/nfts/erc1155.provider';
 import { NFTAsset } from '../../model/networks/evms/nfts/nftasset';
 import { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
 import { WalletNetworkService } from '../network.service';
@@ -159,7 +161,10 @@ export class ERC1155Service {
             });
 
             // Check if we have a NFT provider available to provide more info about this
-            let erc1155Provider = this.networkService.activeNetwork.value.getERC1155Provider(contractAddress);
+            let activeNetwork = this.networkService.activeNetwork.value;
+            let erc1155Provider: ERC1155Provider;
+            if (activeNetwork instanceof EVMNetwork)
+                erc1155Provider = activeNetwork.getERC1155Provider(contractAddress);
 
             // Iterate over transferEvents() to get more info.
             try {

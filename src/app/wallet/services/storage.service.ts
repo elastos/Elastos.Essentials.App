@@ -105,7 +105,6 @@ export class LocalStorage {
         if (!rawWallets)
             return [];
         else {
-            console.log("getWalletsList", key, JSON.parse(rawWallets));
             return JSON.parse(rawWallets);
         }
     }

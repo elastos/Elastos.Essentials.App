@@ -30,7 +30,7 @@ export class ElastosSmartChainTransactionProvider extends TransactionProvider<El
       this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
       await this.tokenProvider.initialize();
 
-      this.internalTXProvider = new EtherscanEVMSubWalletInternalTransactionProvider(this, this.escSubWallet, this.networkWallet.network.getMainEvmRpcApiUrl(), this.networkWallet.network.getMainEvmAccountApiUrl());
+      this.internalTXProvider = new EtherscanEVMSubWalletInternalTransactionProvider(this, this.escSubWallet);
       await this.internalTXProvider.initialize();
 
       // Discover new transactions globally for all tokens at once, in order to notify user

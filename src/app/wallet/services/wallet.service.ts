@@ -39,6 +39,7 @@ import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterw
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
 import { ElastosMainChainWalletNetworkOptions, LedgerAccountOptions, PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
 import type { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
+import { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
 import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../model/networks/network';
@@ -208,8 +209,8 @@ export class WalletService {
 
                 let serializedMasterWallet = await this.localStorage.loadMasterWallet(masterId);
                 if (serializedMasterWallet) {
-                  // Create a model instance from the persistent object.
-                  this.masterWallets[masterId] = MasterWalletBuilder.newFromSerializedWallet(serializedMasterWallet);
+                    // Create a model instance from the persistent object.
+                    this.masterWallets[masterId] = MasterWalletBuilder.newFromSerializedWallet(serializedMasterWallet);
                 }
             }
 
@@ -252,7 +253,7 @@ export class WalletService {
                     if (err.code == 20006) {
                         Logger.log("wallet", "Need to call IMasterWallet::VerifyPayPassword():", masterWallet, err);
                         // We don't call verifyPayPassword for the wallet imported by private key on BTC network.
-                        if ((activatedNetwork.getMainChainID() !== -1) || (masterWallet.hasMnemonicSupport())) {
+                        if ((activatedNetwork instanceof EVMNetwork) || (masterWallet.hasMnemonicSupport())) {
                             // 20006: Need to call IMasterWallet::VerifyPayPassword() or re-import wallet first.
                             // A password is required to generate a public key in spvsdk.
                             // Usually occurs when a new network is first supported, eg. EVM, BTC.

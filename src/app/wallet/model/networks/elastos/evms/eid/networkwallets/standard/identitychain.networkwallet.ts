@@ -2,22 +2,21 @@ import { Logger } from "src/app/logger";
 import { StandardCoinName } from "src/app/wallet/model/coin";
 import { StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { WalletAddressInfo } from "src/app/wallet/model/networks/base/networkwallets/networkwallet";
-import { AnyNetwork } from "src/app/wallet/model/networks/network";
-import { SPVSDKSafe } from "src/app/wallet/model/safes/spvsdk.safe";
+import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { TransactionProvider } from "src/app/wallet/model/tx-providers/transaction.provider";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
-import { ElastosStandardNetworkWallet } from "../../../../networkwallets/standard/elastos.networkwallet";
+import { ElastosStandardEVMNetworkWallet } from "../../../networkwallets/standard/standard.evm.networkwallet";
 import { ElastosEVMSubWallet } from "../../../subwallets/standard/elastos.evm.subwallet";
 import { EidSubWallet } from "../../subwallets/standard/eid.evm.subwallet";
 import { ElastosIdentityTransactionProvider } from "../../tx-providers/elastos.eid.tx.provider";
 
-export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardNetworkWallet {
-  constructor(masterWallet: StandardMasterWallet, network: AnyNetwork) {
+export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardEVMNetworkWallet {
+  constructor(masterWallet: StandardMasterWallet, network: EVMNetwork) {
     super(
       masterWallet,
       network,
-      new SPVSDKSafe(masterWallet, StandardCoinName.ETHDID),
-      "ELA"
+      "ELA",
+      "Elastos ID Chain"
     );
   }
 

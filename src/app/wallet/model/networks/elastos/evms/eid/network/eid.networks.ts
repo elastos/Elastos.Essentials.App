@@ -1,15 +1,18 @@
 import { Logger } from "src/app/logger";
+import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { StandardCoinName } from "src/app/wallet/model/coin";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { WalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
+import { NetworkAPIURLType } from "../../../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../../../base/networkwallets/networkwallet";
-import { ElastosNetworkBase } from "../../../network/elastos.base.network";
+import { ElastosEVMNetwork } from "../../../network/elastos.evm.network";
 import { ElastosIdentityChainLedgerNetworkWallet } from "../networkwallets/ledger/identitychain.networkwallet";
 import { ElastosIdentityChainStandardNetworkWallet } from "../networkwallets/standard/identitychain.networkwallet";
 
-export abstract class ElastosIdentityChainNetworkBase extends ElastosNetworkBase<WalletNetworkOptions> {
+export abstract class ElastosIdentityChainNetworkBase extends ElastosEVMNetwork<WalletNetworkOptions> {
   public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
@@ -20,6 +23,10 @@ export abstract class ElastosIdentityChainNetworkBase extends ElastosNetworkBase
         Logger.warn('wallet', 'Elastos Identity Chain does not support ', masterWallet.type);
         return null;
     }
+  }
+
+  public getEVMSPVConfigName(): string {
+    return StandardCoinName.ETHDID;
   }
 
   public supportsERC20Coins() {
@@ -37,7 +44,6 @@ export abstract class ElastosIdentityChainNetworkBase extends ElastosNetworkBase
   }
 }
 
-
 /**
  * Elastos EID chain (EVM based)
  */
@@ -47,19 +53,22 @@ export class ElastosIdentityChainMainNetNetwork extends ElastosIdentityChainNetw
       "elastosidchain",
       "Elastos identity chain",
       "assets/wallet/coins/ela-turquoise.svg",
-      MAINNET_TEMPLATE
+      MAINNET_TEMPLATE,
+      22
     );
   }
 
-  public getMainChainID(): number {
-    return 22; // ETHDID
+  public getAPIUrlOfType(type: NetworkAPIURLType): string {
+    if (type === NetworkAPIURLType.RPC)
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHDID), MAINNET_TEMPLATE);
+    else
+      return null;
   }
 
   public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
     onGoingConfig['ETHDID'] = { ChainID: 22, NetworkID: 22 };
   }
 }
-
 
 /**
  * Elastos identity chain
@@ -70,12 +79,16 @@ export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetw
       "elastosidchain",
       "Elastos identity chain",
       "assets/wallet/coins/ela-turquoise.svg",
-      TESTNET_TEMPLATE
+      TESTNET_TEMPLATE,
+      23
     );
   }
 
-  public getMainChainID(): number {
-    return 23;
+  public getAPIUrlOfType(type: NetworkAPIURLType): string {
+    if (type === NetworkAPIURLType.RPC)
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHDID), TESTNET_TEMPLATE);
+    else
+      return null;
   }
 
   public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {

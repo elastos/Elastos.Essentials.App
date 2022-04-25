@@ -141,9 +141,7 @@ export class CoinHomePage implements OnInit {
         const options: IntersectionObserverInit = {
             root: this.fetchMoreTrigger.nativeElement.closest('.intersection-container')
         };
-        console.log("options", options)
         this.fetchMoreTriggerObserver = new IntersectionObserver((data: IntersectionObserverEntry[]): IntersectionObserverCallback => {
-            console.log("fetchMoreTriggerObserver data", data)
             if (data[0].isIntersecting) {
                 this.fetchMoreTransactions();
                 //this.observer.disconnect();
@@ -287,7 +285,7 @@ export class CoinHomePage implements OnInit {
         for (let transaction of transactions) {
             const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
             if (!transactionInfo) {
-                // Logger.warn('wallet', 'Invalid transaction ', transaction);
+                Logger.warn('wallet', 'Invalid transaction ', transaction);
                 continue;
             }
 

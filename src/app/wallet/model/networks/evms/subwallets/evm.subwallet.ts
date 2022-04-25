@@ -4,12 +4,18 @@ import { GlobalRedPacketServiceAddresses } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { BridgeService } from 'src/app/wallet/services/evm/bridge.service';
+import { EarnService } from 'src/app/wallet/services/evm/earn.service';
+import { SwapService } from 'src/app/wallet/services/evm/swap.service';
 import Web3 from 'web3';
 import { ERC20CoinService } from '../../../../services/evm/erc20coin.service';
 import { EVMService } from '../../../../services/evm/evm.service';
 import { StandardCoinName } from '../../../coin';
+import { BridgeProvider } from '../../../earn/bridgeprovider';
+import { EarnProvider } from '../../../earn/earnprovider';
+import { SwapProvider } from '../../../earn/swapprovider';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
-import { AddressUsage } from '../../../safes/safe';
+import { AddressUsage } from '../../../safes/addressusage';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
@@ -61,6 +67,18 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return;
   }
 
+  public getAvailableEarnProviders(): EarnProvider[] {
+    return EarnService.instance.getAvailableEarnProviders(this);
+  }
+
+  public getAvailableSwapProviders(): SwapProvider[] {
+    return SwapService.instance.getAvailableSwapProviders(this);
+  }
+
+  public getAvailableBridgeProviders(): BridgeProvider[] {
+    return BridgeService.instance.getAvailableBridgeProviders(this);
+  }
+
   public getMainIcon(): string {
     return this.networkWallet.network.logo;
   }
@@ -75,10 +93,6 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   public getDisplayTokenName(): string {
     return this.networkWallet.network.getMainTokenSymbol();
-  }
-
-  public supportInternalTransactions() {
-    return true;
   }
 
   public isAddressValid(address: string): boolean {

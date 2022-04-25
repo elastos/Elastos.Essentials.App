@@ -7,6 +7,7 @@ import { GlobalNotificationsService } from "src/app/services/global.notification
 import { ERC20Coin, StandardCoinName, TokenAddress } from "../coin";
 import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../networks/base/subwallets/subwallet";
+import { EVMNetwork } from "../networks/evms/evm.network";
 import { ERCTokenInfo, TransactionListType } from "../networks/evms/evm.types";
 import { NFTType } from "../networks/evms/nfts/nft";
 import { AnySubWalletTransactionProvider } from "./subwallet.provider";
@@ -116,10 +117,20 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
     // Fetch
     if (transactionListType === TransactionListType.NORMAL) {
-      await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet);
+      let provider = await this.getSubWalletTransactionProvider(subWallet);
+      if (!provider) {
+        Logger.warn("wallet", "fetchNewestTransactions(): no transaction provider");
+      }
+      else
+        provider.fetchTransactions(subWallet);
     } else {
       if (subWallet.supportInternalTransactions()) {
-        await this.getSubWalletInternalTransactionProvider(subWallet).fetchTransactions(subWallet);
+        let provider = this.getSubWalletInternalTransactionProvider(subWallet);
+        if (!provider) {
+          Logger.warn("wallet", "fetchNewestTransactions(): no internal transaction provider");
+        }
+        else
+          await provider.fetchTransactions(subWallet);
       }
     }
 
@@ -181,7 +192,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   /**
    * Starts a task right now and repeats it X milliseconds after its completion.
    */
-  protected refreshEvery(repeatingTask: () => Promise<void>, repeatMs: number) {
+  public refreshEvery(repeatingTask: () => Promise<void>, repeatMs: number) {
     void this.callAndRearmTask(repeatingTask, repeatMs);
   }
 
@@ -209,21 +220,22 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     let newERC20CoinsList: string[] = [];
     const timestamp = (new Date()).valueOf();
 
+    let network = <EVMNetwork>this.networkWallet.network;
     let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
     // For each ERC token discovered by the wallet SDK, we check its type and handle it.
     for (let index = 0; index < tokens.length; index++) {
       const token = tokens[index];
       if (token.type === "ERC-20") {
         if (token.symbol && token.name) {
-          if (!this.networkWallet.getSubWallet(token.symbol) && !this.networkWallet.network.isCoinDeleted(token.contractAddress)) {
+          if (!this.networkWallet.getSubWallet(token.symbol) && !network.isCoinDeleted(token.contractAddress)) {
             try {
               // Check if we already know this token globally. If so, we add it as a new subwallet
               // to this master wallet. Otherwise we add the new token to the global list first then
               // add a subwallet as well.
-              const erc20Coin = this.networkWallet.network.getERC20CoinByContractAddress(token.contractAddress);
+              const erc20Coin = network.getERC20CoinByContractAddress(token.contractAddress);
               if (!erc20Coin) {
                 const newCoin = new ERC20Coin(token.symbol, token.name, token.contractAddress, parseInt(token.decimals), activeNetworkTemplate, true, false, timestamp);
-                if (await this.networkWallet.network.addCustomERC20Coin(newCoin)) {
+                if (await network.addCustomERC20Coin(newCoin)) {
                   // Find new coin.
                   newERC20CoinsList.push(token.symbol);
                   newAllCoinsList.push(token);

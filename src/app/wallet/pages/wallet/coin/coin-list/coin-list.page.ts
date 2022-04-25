@@ -8,6 +8,7 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { Config } from '../../../../config/Config';
 import { Coin, CoinType } from '../../../../model/coin';
@@ -35,6 +36,7 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     masterWallet: MasterWallet = null;
     networkWallet: AnyNetworkWallet = null;
+    private network: EVMNetwork;
     coinList: EditableCoinInfo[] = null;
     newCoinList: EditableCoinInfo[] = null;
     coinListCache = {};
@@ -134,6 +136,7 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     async init() {
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletManager.activeMasterWalletId);
+        this.network = (<EVMNetwork>this.networkWallet.network);
         this.masterWallet = this.networkWallet.masterWallet;
 
         this.updateSubscription = this.events.subscribe("error:update", () => {
@@ -142,10 +145,10 @@ export class CoinListPage implements OnInit, OnDestroy {
         this.destroySubscription = this.events.subscribe("error:destroySubWallet", () => {
             this.currentCoin["open"] = true;
         });
-        this.coinAddSubscription = this.networkWallet.network.onCoinAdded.subscribe(() => {
+        this.coinAddSubscription = this.network.onCoinAdded.subscribe(() => {
             void this.refreshCoinList();
         });
-        this.coinDeleteSubscription = this.networkWallet.network.onCoinDeleted.subscribe(() => {
+        this.coinDeleteSubscription = this.network.onCoinDeleted.subscribe(() => {
             void this.refreshCoinList();
         });
 
@@ -156,7 +159,7 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     private async refreshCoinList() {
         this.coinList = [];
-        for (let availableCoin of await this.networkWallet.network.getAvailableCoins()) {
+        for (let availableCoin of await this.network.getAvailableCoins()) {
             const coinID = availableCoin.getID();
             let isOpen = (coinID in this.networkWallet.subWallets);
             //Logger.log('wallet', availableCoin, "isOpen?", isOpen);
@@ -165,13 +168,13 @@ export class CoinListPage implements OnInit, OnDestroy {
 
         this.sortCoinList();
 
-        const lastAccessTime = this.networkWallet.network.getLastAccessTime();
+        const lastAccessTime = this.network.getLastAccessTime();
         this.newCoinList = this.coinList.filter((coin) => {
             return (coin.coin.getCreatedTime() > lastAccessTime)
         })
 
         const timestamp = (new Date()).valueOf();
-        this.networkWallet.network.updateAccessTime(timestamp);
+        this.network.updateAccessTime(timestamp);
         Logger.log('wallet', 'coin list', this.coinList, this.newCoinList);
     }
 
@@ -237,11 +240,11 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     getCoinTitle(item: EditableCoinInfo) {
-        return this.networkWallet.network.getCoinByID(item.coin.getID()).getDescription();
+        return this.network.getCoinByID(item.coin.getID()).getDescription();
     }
 
     getCoinSubtitle(item: EditableCoinInfo) {
-        return this.networkWallet.network.getCoinByID(item.coin.getID()).getName();
+        return this.network.getCoinByID(item.coin.getID()).getName();
     }
 
     getCoinIcon(item: EditableCoinInfo) {

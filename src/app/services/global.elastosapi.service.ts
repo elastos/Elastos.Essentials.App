@@ -301,9 +301,8 @@ export class GlobalElastosAPIService extends GlobalService {
      *
      * Ex: "MainNet" network template + "elastos.io" provider + "ETHSC_RPC" api type ==> https://api.elastos.io/eth
      */
-    public getApiUrl(type: ElastosApiUrlType): string {
+    public getApiUrl(type: ElastosApiUrlType, activeNetworkTemplate = this.globalNetworksService.activeNetworkTemplate.value): string {
         let activeProvider = this.activeProvider.value;
-        let activeNetworkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
 
         // Make sure the currently active network template is supported by our elastos api providers
         if (!(activeNetworkTemplate in activeProvider.endpoints)) {

@@ -13,7 +13,8 @@ import { LocalStorage } from '../../../../services/storage.service';
 import { Coin, CoinID, CoinType } from '../../../coin';
 import { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
-import { AddressUsage, Safe } from '../../../safes/safe';
+import { AddressUsage } from '../../../safes/addressusage';
+import { Safe } from '../../../safes/safe';
 import { TransactionProvider } from '../../../tx-providers/transaction.provider';
 import { WalletSortType } from '../../../walletaccount';
 import { EVMNetwork } from '../../evms/evm.network';
@@ -77,7 +78,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
     public async initialize(): Promise<void> {
         // Initialize the safe
-        await this.safe.initialize();
+        await this.safe.initialize(this);
 
         await this.prepareStandardSubWallets();
 
@@ -175,11 +176,13 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         if (existingExtendedInfo)
             return; // Not the first time, don't re-add coins that user may have disabled.
 
-        let builtInCoins = this.network.getBuiltInERC20Coins();
-        for (let i = 0; i < builtInCoins.length; i++) {
-            let coin = builtInCoins[i];
-            if (coin.initiallyShowInWallet) {
-                await this.createNonStandardSubWallet(coin);
+        if (this.network instanceof EVMNetwork) {
+            let builtInCoins = this.network.getBuiltInERC20Coins();
+            for (let i = 0; i < builtInCoins.length; i++) {
+                let coin = builtInCoins[i];
+                if (coin.initiallyShowInWallet) {
+                    await this.createNonStandardSubWallet(coin);
+                }
             }
         }
     }

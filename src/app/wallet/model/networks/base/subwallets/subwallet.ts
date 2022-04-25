@@ -7,21 +7,17 @@ import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { OutgoingTransactionState, TransactionService } from 'src/app/wallet/services/transaction.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import type { Transfer } from '../../../../services/cointransfer.service';
-import { BridgeService } from '../../../../services/evm/bridge.service';
-import { EarnService } from '../../../../services/evm/earn.service';
-import { SwapService } from '../../../../services/evm/swap.service';
 import { CoinID, CoinType, StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import type { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
-import { AddressUsage } from '../../../safes/safe';
+import { AddressUsage } from '../../../safes/addressusage';
 import { SignTransactionErrorType } from '../../../safes/safe.types';
 import { TimeBasedPersistentCache } from '../../../timebasedpersistentcache';
 import type { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../../../tx-providers/transaction.types';
 import { TransactionListType } from '../../evms/evm.types';
-import { MainCoinEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
 import type { NetworkWallet } from '../networkwallets/networkwallet';
 
 export abstract class SubWallet<TransactionType extends GenericTransaction, WalletNetworkOptionsType extends WalletNetworkOptions> {
@@ -156,9 +152,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
     return await "";
   }
 
-  public async getTransactionInfo(transaction: TransactionType, translate: TranslateService): Promise<TransactionInfo> {
-    return await null;
-  }
+  public abstract getTransactionInfo(transaction: TransactionType, translate: TranslateService): Promise<TransactionInfo>;
 
   /**
    * Inheritable method to do some cleanup when a subwallet is removed/destroyed from a master wallet
@@ -174,7 +168,6 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    * @deprecated
    */
   public abstract createAddress(): Promise<string>;
-
 
   /**
    * Address to use to receive a payment. For single address wallets this is always the first address.
@@ -445,9 +438,9 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
 
       // ETHTransactionManager handle this error if the subwallet is StandardEVMSubWallet.
       // Maybe need to speed up.
-      if (!(this instanceof MainCoinEVMSubWallet)) {
-        await PopupProvider.instance.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
-      }
+      //if (!(this instanceof MainCoinEVMSubWallet)) { // BPI: Removed because of circular dependency - should move to safe, maybe. To be checked
+      await PopupProvider.instance.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
+      //}
 
       return {
         published: false,
@@ -458,16 +451,17 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
       };
     }
   }
+
   public getAvailableEarnProviders(): EarnProvider[] {
-    return EarnService.instance.getAvailableEarnProviders(this);
+    return [];
   }
 
   public getAvailableSwapProviders(): SwapProvider[] {
-    return SwapService.instance.getAvailableSwapProviders(this);
+    return [];
   }
 
   public getAvailableBridgeProviders(): BridgeProvider[] {
-    return BridgeService.instance.getAvailableBridgeProviders(this);
+    return [];
   }
 
   /**

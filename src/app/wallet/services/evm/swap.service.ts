@@ -152,7 +152,6 @@ export class SwapService {
                         }
                     }
                     catch (e) {
-                        // debugger;
                         Logger.warn("wallet", "Token list fetch failed:", e);
                     }
                 }

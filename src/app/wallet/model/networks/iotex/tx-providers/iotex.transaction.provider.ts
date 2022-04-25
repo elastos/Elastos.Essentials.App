@@ -1,7 +1,7 @@
 import { AnyMainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
 import { CovalentEvmSubWalletProvider } from "../../evms/tx-providers/covalent.evm.subwallet.provider";
+import { CovalentSubWalletTokenProvider } from "../../evms/tx-providers/covalent.token.subwallet.provider";
 import { EVMTransactionProvider } from "../../evms/tx-providers/evm.transaction.provider";
-import { IoTeXChainTokenSubWalletProvider } from "./token.subwallet.provider";
 
 export class IoTeXChainTransactionProvider extends EVMTransactionProvider {
   protected createEVMSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
@@ -9,6 +9,6 @@ export class IoTeXChainTransactionProvider extends EVMTransactionProvider {
   }
 
   protected createEVMTokenSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.tokenProvider = new IoTeXChainTokenSubWalletProvider(this, mainCoinSubWallet);
+    this.tokenProvider = new CovalentSubWalletTokenProvider(this, mainCoinSubWallet);
   }
 }
