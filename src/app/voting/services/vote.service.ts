@@ -131,6 +131,11 @@ export class VoteService {
     public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<RawTransactionPublishResult> {
         Logger.log(App.VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
 
+        if (!rawTx) {
+            // throw new Error("rawTx is null");
+            return null;
+        }
+
         const transfer = new Transfer();
         Object.assign(transfer, {
             masterWalletId: this.masterWalletId,
