@@ -170,22 +170,18 @@ export class CandidateRegistrationPage implements OnInit {
         }
 
         Logger.log('CandidateRegistrationPage', 'candidateInfo', this.candidateInfo);
-        try {
-            const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.voteService.masterWalletId, StandardCoinName.ELA,
-                this.candidateInfo.ownerpublickey, this.candidateInfo.did, this.candidateInfo.nickname, this.candidateInfo.url, this.candidateInfo.location);
+        const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.voteService.masterWalletId, StandardCoinName.ELA,
+            this.candidateInfo.ownerpublickey, this.candidateInfo.did, this.candidateInfo.nickname, this.candidateInfo.url, this.candidateInfo.location);
 
-            if (payload) {
-                let signature = await this.crCouncilService.getSignature(payload.Digest);
-                if (signature) {
-                    payload.Signature = signature;
-                    Logger.log('CandidateRegistrationPage', 'generateCRInfoPayload', payload);
-                    return payload;
-                }
+        if (payload) {
+            let signature = await this.crCouncilService.getSignature(payload.Digest);
+            if (signature) {
+                payload.Signature = signature;
+                Logger.log('CandidateRegistrationPage', 'generateCRInfoPayload', payload);
+                return JSON.stringify(payload);
             }
         }
-        catch (e) {
 
-        }
         return null;
     }
 

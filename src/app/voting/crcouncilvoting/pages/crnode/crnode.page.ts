@@ -80,7 +80,7 @@ export class CRNodePage implements OnInit {
 
             //Create transaction and send
             payload.CRCouncilMemberSignature = ret.result.signature;
-            const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(payload, '');
+            const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(JSON.stringify(payload), '');
             await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
         }
         catch (e) {

@@ -358,8 +358,6 @@ export class CRCouncilService {
                 this.isVoting = false;
             }
 
-            // this.isVoting = !this.isVoting ;
-
             // let currentHeight = await this.voteService.getCurrentHeight();
             // var block_remain = 0;
             // if (this.isVoting && result.votingendheight > currentHeight) {
@@ -473,7 +471,7 @@ export class CRCouncilService {
                 if (signature) {
                     payload.Signature = signature;
                     Logger.log('CandidateRegistrationPage', 'generateUnregisterCRPayload', payload);
-                    const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(payload, "");
+                    const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(JSON.stringify(payload), "");
                     await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
                 }
             }
