@@ -69,12 +69,7 @@ export class CRCouncilService {
     public selectedCandidates: SelectedCandidate[] = [];
     public crmembers: any[] = [];
     public selectedMember: CRMemberInfo;
-    public candidateInfo: CandidateBaseInfo = {
-        nickname: "",
-        location: 0,
-        url: '',
-        state: "Unregistered",
-    };
+    public candidateInfo: CandidateBaseInfo;
 
     /** Election Results **/
     public councilTerm: any[] = [];
@@ -179,6 +174,13 @@ export class CRCouncilService {
             params: {
                 state: "all"
             },
+        };
+
+        this.candidateInfo = {
+            nickname: "",
+            location: 0,
+            url: '',
+            state: "Unregistered",
         };
 
         this.candidates = [];

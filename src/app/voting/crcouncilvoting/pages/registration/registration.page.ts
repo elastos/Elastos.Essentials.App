@@ -76,16 +76,17 @@ export class CandidateRegistrationPage implements OnInit {
         Logger.log("CandidateRegistrationPage", this.voteService.masterWalletId);
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
-        this.candidateInfo = Util.clone(this.crCouncilService.candidateInfo);
-
-        switch (this.candidateInfo.state) {
+        switch (this.crCouncilService.candidateInfo.state) {
             case 'Unregistered':
                 this.titleBar.setTitle(this.translate.instant('crcouncilvoting.register-header'));
                 break;
             // Active indicates the producer is registered and confirmed by more than
             // 6 blocks.
             case 'Active':
-                this.originInfo = Util.clone(this.candidateInfo);
+                this.originInfo = Util.clone(this.crCouncilService.candidateInfo);
+                if (this.candidateInfo.state != "Active") {
+                    this.candidateInfo = Util.clone(this.originInfo);
+                }
                 this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-header'));
                 break;
         }
