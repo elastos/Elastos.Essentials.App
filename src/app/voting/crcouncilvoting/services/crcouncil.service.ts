@@ -64,6 +64,7 @@ export class CRCouncilService {
 
     /** Election **/
     public candidates: Candidate[] = [];
+    public originCandidates: Candidate[] = [];
     public totalVotes = 0;
     public selectedCandidates: SelectedCandidate[] = [];
     public crmembers: any[] = [];
@@ -181,6 +182,7 @@ export class CRCouncilService {
         };
 
         this.candidates = [];
+        this.originCandidates = [];
         try {
             const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
             Logger.log('crcouncil', 'Candidates fetched', result);
@@ -196,6 +198,7 @@ export class CRCouncilService {
                     }
                 }
                 Logger.log('crcouncil', 'Candidates added', this.candidates);
+                this.originCandidates = result.crcandidatesinfo;
                 this.totalVotes = parseInt(result.totalvotes);
             }
         }

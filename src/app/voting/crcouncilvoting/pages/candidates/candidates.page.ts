@@ -85,7 +85,7 @@ export class CandidatesPage implements OnInit {
 
     async goToCandidateRegistration() {
         if (!this.crCouncilService.candidateInfo.txConfirm) {
-            this.globalNative.genericToast('dposregistration.text-registration-no-confirm');
+            this.globalNative.genericToast('crcouncilvoting.text-registration-no-confirm');
             return;
         }
 

@@ -34,7 +34,7 @@ export class CandidateRegistrationPage implements OnInit {
         url: '',
         state: "Unregistered",
     };
-    public originInfo: CandidateBaseInfo;
+    public originInfo: CandidateBaseInfo = null;
     public state = "";
     public elastosChainCode = StandardCoinName.ELA;
 
@@ -97,56 +97,46 @@ export class CandidateRegistrationPage implements OnInit {
         var blankMsg = this.translate.instant('common.text-input-is-blank');
         var formatWrong = this.translate.instant('common.text-input-format-wrong');
         if (!this.candidateInfo.nickname || this.candidateInfo.nickname == "") {
-            blankMsg = this.translate.instant('dposregistration.node-name') + blankMsg;
+            blankMsg = this.translate.instant('crcouncilvoting.name') + blankMsg;
             this.globalNative.genericToast(blankMsg);
             return;
         }
 
         if (!this.candidateInfo.url || this.candidateInfo.url == "") {
-            blankMsg = this.translate.instant('dposregistration.node-url') + blankMsg;
+            blankMsg = this.translate.instant('crcouncilvoting.url') + blankMsg;
             this.globalNative.genericToast(blankMsg);
             return;
         }
 
         if (!this.candidateInfo.url.match("((http|https)://)(([a-zA-Z0-9._-]+.[a-zA-Z]{2,6})|([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9&%_./-~-]*)?")) {
-            formatWrong = this.translate.instant('dposregistration.node-url') + formatWrong;
+            formatWrong = this.translate.instant('crcouncilvoting.url') + formatWrong;
             this.globalNative.genericToast(formatWrong);
             return;
         }
 
         if (!this.candidateInfo.location) {
-            blankMsg = this.translate.instant('dposregistration.node-location') + blankMsg;
+            blankMsg = this.translate.instant('crcouncilvoting.location') + blankMsg;
             this.globalNative.genericToast(blankMsg);
             return;
         }
 
-        // if (this.originInfo == null) { // Create
-        //     // Check the nickname whether used
-        //     for (const dpos of this.nodesService.dposList) {
-        //         if (dpos.nickname == this.candidateInfo.nickname) {
-        //             this.globalNative.genericToast('dposregistration.text-dpos-name-already-used');
-        //             return;
-        //         }
-        //     }
-        // }
-        // else { // Update
-        //     // Check don't modify
-        //     if (this.candidateInfo.nickname == this.originInfo.nickname
-        //         && this.candidateInfo.location == this.originInfo.location
-        //         && this.candidateInfo.url == this.originInfo.url
-        //         && this.candidateInfo.nodepublickey == this.originInfo.nodepublickey) {
-        //         this.globalNative.genericToast('dposregistration.text-dpos-info-dont-modify');
-        //         return;
-        //     }
-
-        //     // Check the nickname whether used
-        //     for (const dpos of this.nodesService.dposList) {
-        //         if (dpos.nickname == this.candidateInfo.nickname && dpos.nickname != this.originInfo.nickname) {
-        //             this.globalNative.genericToast('dposregistration.text-dpos-name-already-used');
-        //             return;
-        //         }
-        //     }
-        // }
+        if (this.originInfo == null) { // Create
+            // Check the nickname whether used
+            for (let candidate of this.crCouncilService.originCandidates) {
+                if (candidate.nickname == this.candidateInfo.nickname) {
+                    this.globalNative.genericToast('crcouncilvoting.text-candidate-name-already-used');
+                    return;
+                }
+            }
+        }
+        else { // Update
+            // Check don't modify
+            if (this.candidateInfo.location == this.originInfo.location
+                && this.candidateInfo.url == this.originInfo.url) {
+                this.globalNative.genericToast('crcouncilvoting.text-candidate-info-dont-modify');
+                return;
+            }
+        }
 
         this.needConfirm = true;
     }
