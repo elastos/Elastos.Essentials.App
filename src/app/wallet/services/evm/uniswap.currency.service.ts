@@ -85,7 +85,7 @@ export class UniswapCurrencyService {
     let readableAmountOut = 10;
     let currencyAmountOut = CurrencyAmount.fromRawAmount(stableCoinUSDToken, new BigNumber(readableAmountOut).times(new BigNumber(10).pow(stableCoinUSDToken.decimals)).toFixed());
     let trades = Trade.bestTradeExactOut(tradingPairs, evaluatedToken, currencyAmountOut, { maxHops: 3, maxNumResults: 1 });
-    //Logger.log('walletdebug', "TRADES:", trades);
+    //Logger.log('walletdebug', "TOKENS:", evaluatedToken.name, stableCoinUSDToken.name, wrappedNativeCoinToken.name);
     if (trades.length > 0) {
       /* trades.forEach(trade => {
         Logger.log('walletdebug', "------");
@@ -97,7 +97,16 @@ export class UniswapCurrencyService {
         Logger.log('walletdebug', "TRADE PRICE IMPACT:", trade.priceImpact.toSignificant(6), "%") // 201.306
       }); */
 
+      let tradeImpactDecimal = parseFloat(trades[0].priceImpact.toSignificant(2));
+      if (tradeImpactDecimal > 10) { // Slippage more than 10%? There is a problem...
+        //Logger.warn("walletdebug", `Trade impact of ${tradeImpactDecimal}% is too high, skipping this valuation. Worthless token, or not enough liquidity`);
+        return 0;
+      }
+
       return parseFloat(trades[0].executionPrice.toSignificant(6)); // NOTE: For display only! Not accurate
+    }
+    else {
+      //Logger.log("walletdebug", "No trade found using pairs", tradingPairs);
     }
 
     return 0; // No info found
@@ -114,8 +123,9 @@ export class UniswapCurrencyService {
      */
   private async fetchPairData(tokenA: Token, tokenB: Token, provider: JsonRpcProvider, factoryAddress: string, initCodeHash: string): Promise<Pair> {
     // Can't fetch a pair made of a single token...
-    if (tokenA.address === tokenB.address)
+    if (tokenA.address === tokenB.address) {
       return null;
+    }
 
     try {
       var address = Pair.getAddress(tokenA, tokenB, factoryAddress, initCodeHash);
