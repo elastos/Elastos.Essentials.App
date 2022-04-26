@@ -13,6 +13,7 @@ export const fr = {
         'vote': 'Vote',
         'voting-ends-in': 'Voting ends in',
         'vote-going': 'Vote is on going!',
+        'vote-invalid': "Votes is invalid",
 
         // Proposal Status
         'status': 'Status',

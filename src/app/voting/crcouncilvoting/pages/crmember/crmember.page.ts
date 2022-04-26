@@ -57,10 +57,6 @@ export class CRMemberPage {
         this.current = this.member.impeachmentVotes;
         this.max = this.member.impeachmentThroughVotes;
         this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
-    }
-
-    ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('crcouncilvoting.crmember-profile'));
 
         if (this.voteService.canVote()) {
             this.titleBar.setMenuVisibility(true);
@@ -79,6 +75,10 @@ export class CRMemberPage {
                 }
             });
         }
+    }
+
+    ionViewWillEnter() {
+        this.titleBar.setTitle(this.translate.instant('crcouncilvoting.crmember-profile'));
     }
 
     async showOptions(ev) {

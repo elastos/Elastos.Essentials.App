@@ -68,6 +68,10 @@ export class ImpeachCRMemberPage {
             await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
             return false;
         }
+        if (!this.amount) {
+            await this.popupProvider.ionicAlert("common.error", 'voting.vote-invalid');
+            return false;
+        }
         else if (this.amount > this.maxVotes) {
             await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.greater-than-max-votes');
             return false;

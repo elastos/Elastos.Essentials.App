@@ -13,6 +13,7 @@ export const zh = {
         'vote': '投票',
         'voting-ends-in': '投票剩余时间',
         'vote-going': '正在进行委员选举投票!',
+        'vote-invalid': "票数不正确",
 
         //Proposal Status
         'status': '状态',
