@@ -113,6 +113,10 @@ export class UniswapCurrencyService {
      * Fetches information about a liquidity pair and constructs a pair from the given two tokens.
      */
   private async fetchPairData(tokenA: Token, tokenB: Token, provider: JsonRpcProvider, factoryAddress: string, initCodeHash: string): Promise<Pair> {
+    // Can't fetch a pair made of a single token...
+    if (tokenA.address === tokenB.address)
+      return null;
+
     try {
       var address = Pair.getAddress(tokenA, tokenB, factoryAddress, initCodeHash);
       let _ref = await new Contract(address, IUniswapV2Pair.abi, provider).getReserves();
@@ -124,6 +128,7 @@ export class UniswapCurrencyService {
 
       return new Pair(currencyAmount0, currencyAmount1, factoryAddress, initCodeHash);
     } catch (e) {
+      //Logger.log('walletdebug', 'fetchPairData error', tokenA, tokenB, e);
       return null;
     }
   }
