@@ -26,7 +26,7 @@ export class ImpeachCRMemberPage {
     public member: any = {};
     public signingAndTransacting = false;
     public maxVotes = 0;
-    public amount = 0;
+    public amount: number;
 
     constructor(
         public theme: GlobalThemeService,
@@ -112,13 +112,21 @@ export class ImpeachCRMemberPage {
 
 
         try {
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/crmember");
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/crmember/" + this.member.did);
         }
         catch (e) {
             await this.voteService.popupErrorMessage(e);
         }
 
         this.signingAndTransacting = false;
+    }
+
+    click0() {
+        this.amount = 0;
+    }
+
+    clickMax() {
+        this.amount = this.maxVotes;
     }
 
 }

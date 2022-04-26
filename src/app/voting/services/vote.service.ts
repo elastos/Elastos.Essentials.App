@@ -147,12 +147,13 @@ export class VoteService {
         });
 
         const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer, false);
-
-        if (context) {
-            void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
-        }
-        else {
-            void this.nav.navigateBack();
+        if (result && result.published) {
+            if (context) {
+                void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
+            }
+            else {
+                void this.nav.navigateBack();
+            }
         }
         return result;
     }

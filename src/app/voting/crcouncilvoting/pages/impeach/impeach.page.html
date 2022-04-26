@@ -12,7 +12,7 @@
 
             <ion-row class="profile-data" *ngIf="member.did">
                 <ion-col>
-                    <h5>{{ 'crcouncilvoting.member-did'  | translate }}</h5>
+                    <h5>{{ 'crcouncilvoting.member-did' | translate }}</h5>
                     <h4>{{ member.did }}</h4>
                 </ion-col>
             </ion-row>
@@ -27,8 +27,16 @@
                     </h5>
                 </ion-col>
                 <ion-col class="right-col">
-                    <ion-input id="max-votes" type="number" name="amount" ngDefaultControl [(ngModel)]="amount">
-                    </ion-input>
+                    <ion-row>
+                        <ion-input id="max-votes" type="number" name="amount" ngDefaultControl [(ngModel)]="amount">
+                        </ion-input>
+                    </ion-row>
+                    <ion-row>
+                        <div id="votes-buttons">
+                            <div (click)="click0()">0</div>
+                            <div id="max-button" (click)="clickMax()">{{ 'common.max' | translate}}</div>
+                        </div>
+                    </ion-row>
                 </ion-col>
             </ion-row>
         </ion-list>
