@@ -2,6 +2,7 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
+import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../config/Config';
 import { BTCTransaction, BTCUTXO, BTCUtxoForLedger } from '../../../btc.types';
 import { StandardCoinName } from '../../../coin';
@@ -248,8 +249,8 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     public async publishTransaction(transaction: string): Promise<string> {
-        let obj = JSON.parse(transaction);
-        return await this.sendRawTransaction(obj.Data);
+        await TransactionService.instance.displayGenericPublicationLoader();
+        return await this.sendRawTransaction(transaction);
     }
 
     protected async sendRawTransaction(payload: string) {

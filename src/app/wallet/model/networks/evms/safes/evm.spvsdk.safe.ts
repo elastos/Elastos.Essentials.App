@@ -1,5 +1,8 @@
+import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
+import { SignTransactionResult } from "../../../safes/safe.types";
 import { SPVSDKSafe } from "../../../safes/spvsdk.safe";
+import { SignedETHSCTransaction } from "../evm.types";
 import { EVMSafe } from "./evm.safe";
 
 /**
@@ -33,5 +36,13 @@ export class EVMSPVSDKSafe extends SPVSDKSafe implements EVMSafe {
       data,
       nonce
     );
+  }
+
+  public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
+    let txResult = await super.signTransaction(rawTransaction, transfer);
+
+    let parsedSignedTransaction = <SignedETHSCTransaction>JSON.parse(txResult.signedTransaction);
+
+    return { signedTransaction: parsedSignedTransaction.TxSigned };
   }
 }
