@@ -27,6 +27,8 @@ import { FantomTestNetNetwork } from '../model/networks/fantom/network/fantom.te
 import { FusionMainNetNetwork } from '../model/networks/fusion/network/fusion.mainnet.network';
 import { HECOMainNetNetwork } from '../model/networks/heco/network/heco.mainnet.network';
 import { HECOTestNetNetwork } from '../model/networks/heco/network/heco.testnet.network';
+import { HooMainNetNetwork } from '../model/networks/hoo/network/hoo.mainnet.network';
+import { HooTestNetNetwork } from '../model/networks/hoo/network/hoo.testnet.network';
 import { IoTeXMainNetNetwork } from '../model/networks/iotex/network/iotex.mainnet.network';
 import { IoTeXTestNetNetwork } from '../model/networks/iotex/network/iotex.testnet.network';
 import { AnyNetwork } from '../model/networks/network';
@@ -144,6 +146,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new AvalancheCChainMainNetNetwork());
         await this.createAndRegisterNetwork(new TelosMainNetNetwork());
         await this.createAndRegisterNetwork(new IoTeXMainNetNetwork());
+        await this.createAndRegisterNetwork(new HooMainNetNetwork());
         return;
       case TESTNET_TEMPLATE:
         await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork(), true);
@@ -159,6 +162,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new AvalancheCChainTestNetNetwork());
         await this.createAndRegisterNetwork(new TelosTestNetNetwork());
         await this.createAndRegisterNetwork(new IoTeXTestNetNetwork());
+        await this.createAndRegisterNetwork(new HooTestNetNetwork());
         return;
       case "LRW":
         await this.createAndRegisterNetwork(new ElastosLRWNetwork(), true);
@@ -171,9 +175,9 @@ export class WalletInitService extends GlobalService {
   }
 
   private registerNameResolvers() {
-    this.nameResolvingService.registernameResolver(new CryptoNameResolver(this.httpClient));
-    this.nameResolvingService.registernameResolver(new UnstoppableDomainsAddressResolver(this.httpClient));
-    this.nameResolvingService.registernameResolver(new IdrissResolver());
+    this.nameResolvingService.registerNameResolver(new CryptoNameResolver(this.httpClient));
+    this.nameResolvingService.registerNameResolver(new UnstoppableDomainsAddressResolver(this.httpClient));
+    this.nameResolvingService.registerNameResolver(new IdrissResolver());
   }
 
   public async stop(): Promise<void> {

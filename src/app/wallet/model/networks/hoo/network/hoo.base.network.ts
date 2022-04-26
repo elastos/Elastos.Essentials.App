@@ -3,14 +3,14 @@ import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { ArbitrumNetworkWallet } from "../networkwallets/standard/arbitrum.network.wallet";
-import { ArbitrumAPI, ArbitrumApiType } from "./arbitrum.api";
+import { HooNetworkWallet } from "../networkwallets/standard/hoo.network.wallet";
+import { HooAPI, HooApiType } from "./hoo.api";
 
-export class ArbitrumBaseNetwork extends EVMNetwork {
+export class HooBaseNetwork extends EVMNetwork {
   protected newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
-        return new ArbitrumNetworkWallet(
+        return new HooNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,
           this.getMainTokenSymbol(),
@@ -23,10 +23,10 @@ export class ArbitrumBaseNetwork extends EVMNetwork {
 
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
-      return ArbitrumAPI.getApiUrl(ArbitrumApiType.RPC, this.networkTemplate);
+      return HooAPI.getApiUrl(HooApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
-      return ArbitrumAPI.getApiUrl(ArbitrumApiType.ETHERSCAN_API, this.networkTemplate);
+      return HooAPI.getApiUrl(HooApiType.ETHERSCAN_API, this.networkTemplate);
     else
-      throw new Error(`BSCNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
+      throw new Error(`HooBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
 }
