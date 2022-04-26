@@ -60,7 +60,7 @@ export class ImpeachCRMemberPage {
 
     async goTransaction(): Promise<boolean> {
         if (this.voteService.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
-            await this.popupProvider.ionicAlert('crcouncilvoting.impeach-council-member', 'crproposalvoting.multi-sign-reject-voting');
+            await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.multi-sign-reject-voting');
             return false;
         }
         // Request the wallet to publish our vote.
@@ -69,10 +69,11 @@ export class ImpeachCRMemberPage {
             return false;
         }
         else if (this.amount > this.maxVotes) {
-            await this.popupProvider.ionicAlert('crcouncilvoting.impeach-council-member', 'crproposalvoting.greater-than-max-votes');
+            await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.greater-than-max-votes');
             return false;
         }
-        else if (this.amount == 0) {
+        else if (this.amount <= 0) {
+            await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.less-than-equal-zero-votes');
             return false;
         }
 
