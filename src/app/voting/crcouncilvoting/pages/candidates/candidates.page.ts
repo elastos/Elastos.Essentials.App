@@ -69,7 +69,7 @@ export class CandidatesPage implements OnInit {
                     void this.goToCandidateRegistration();
                 });
                 break;
-            // case 'Pending':
+            case 'Pending':
             case 'Active':
             case 'Canceled':
             // case 'Returned':

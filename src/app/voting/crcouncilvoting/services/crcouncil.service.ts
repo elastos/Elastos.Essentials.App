@@ -422,7 +422,7 @@ export class CRCouncilService {
     }
 
     async addCandidateOperationIcon(darkMode: boolean, titleBar: TitleBarComponent, titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void) {
-        if (this.candidateInfo.state == 'Active') {
+        if (this.candidateInfo.state == 'Active' || this.candidateInfo.state == 'Pending') {
             titleBar.setMenuVisibility(true);
             titleBar.setupMenuItems([
                 {

@@ -4,8 +4,6 @@
     </div>
 
     <div class="align-center title">
-        <!-- <h3 *ngIf="candidateInfo.state == 'Unregistered'">{{ 'crcouncilvoting.register-header' | translate }}</h3>
-        <h3 *ngIf="candidateInfo.state == 'Active'">{{ 'crcouncilvoting.update-header' | translate }}</h3> -->
     </div>
 
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
@@ -14,7 +12,7 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'crcouncilvoting.name' | translate }}</h5>
-                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || candidateInfo.state == 'Active'" ngDefaultControl
+                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || candidateInfo.state != 'Unregistered'" ngDefaultControl
                         placeholder="{{'crcouncilvoting.required-placeholder' | translate}}"
                         [(ngModel)]="candidateInfo.nickname">
                     </ion-input>
@@ -49,7 +47,7 @@
                 <ion-button *ngIf="candidateInfo.state == 'Unregistered'" color="success" (click)="checkValues()">
                     {{ 'crcouncilvoting.register' | translate }}
                 </ion-button>
-                <ion-button *ngIf="candidateInfo.state == 'Active'" color="success" (click)="checkValues()">
+                <ion-button *ngIf="candidateInfo.state != 'Unregistered'" color="success" (click)="checkValues()">
                     {{ 'crcouncilvoting.update' | translate }}
                 </ion-button>
             </ng-container>

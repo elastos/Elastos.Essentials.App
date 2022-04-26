@@ -83,8 +83,9 @@ export class CandidateRegistrationPage implements OnInit {
             // Active indicates the producer is registered and confirmed by more than
             // 6 blocks.
             case 'Active':
+            case 'Pending':
                 this.originInfo = Util.clone(this.crCouncilService.candidateInfo);
-                if (this.candidateInfo.state != "Active") {
+                if (this.candidateInfo.state == "Unregistered") {
                     this.candidateInfo = Util.clone(this.originInfo);
                 }
                 this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-header'));
@@ -115,7 +116,7 @@ export class CandidateRegistrationPage implements OnInit {
             return;
         }
 
-        if (!this.candidateInfo.location) {
+        if (!this.candidateInfo.location || this.areaList.indexOf(this.candidateInfo.location) == -1) {
             blankMsg = this.translate.instant('crcouncilvoting.location') + blankMsg;
             this.globalNative.genericToast(blankMsg);
             return;
@@ -146,7 +147,7 @@ export class CandidateRegistrationPage implements OnInit {
         if (this.candidateInfo.state == 'Unregistered') {
             await this.register();
         }
-        else if (this.candidateInfo.state == 'Active') {
+        else {
             await this.update();
         }
     }
