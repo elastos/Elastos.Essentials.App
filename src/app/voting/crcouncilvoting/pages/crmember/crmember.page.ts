@@ -51,21 +51,34 @@ export class CRMemberPage {
     }
 
     async init(did: string) {
-        this.member = await this.crCouncilService.getCRMemeberInfo(did);
+        this.member = await this.crCouncilService.getCRMemberInfo(did);
         Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.member);
         this.member.impeachmentThroughVotes = Math.ceil(this.crCouncilService.selectedMember.impeachmentThroughVotes);
         this.current = this.member.impeachmentVotes;
         this.max = this.member.impeachmentThroughVotes;
         this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
-
-        if (this.voteService.canVote()) {
-            this.titleBar.setMenuVisibility(true);
-            this.titleBar.setMenuComponent(CRMemberOptionsComponent)
-        }
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.crmember-profile'));
+
+        if (this.voteService.canVote()) {
+            this.titleBar.setMenuVisibility(true);
+            this.titleBar.setupMenuItems([
+                {
+                    key: "impeach-council-member",
+                    title: this.translate.instant('crcouncilvoting.impeach-council-member'),
+                    iconPath: !this.theme.darkMode ? '/assets/crcouncilvoting/icon/impeach.svg' : '/assets/crcouncilvoting/icon/impeach_dark.svg'
+                }
+            ]);
+            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = item => {
+                switch (item.key) {
+                    case "impeach-council-member":
+                        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/impeach');
+                        return;
+                }
+            });
+        }
     }
 
     async showOptions(ev) {

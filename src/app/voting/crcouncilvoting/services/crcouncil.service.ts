@@ -307,7 +307,7 @@ export class CRCouncilService {
         await toast.present();
     }
 
-    async getCRMemeberInfo(did: string): Promise<CRMemberInfo> {
+    async getCRMemberInfo(did: string): Promise<CRMemberInfo> {
         try {
             this.selectedMember = null;
             let url = this.voteService.getCrRpcApi() + '/api/council/information/' + did;
