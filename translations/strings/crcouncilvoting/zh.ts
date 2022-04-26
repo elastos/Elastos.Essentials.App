@@ -112,7 +112,7 @@ export const zh = {
         'candidate-unregister-warning': '您要注销CR候选人吗?',
         'candidate-withdraw-warning-pre': '您要取回押金: ',
         'candidate-withdraw-warning-suf': ' ELA吗?',
-        'text-candidate-info-dont-modify': 'DPoS节点信息没有修改。',
+        'text-candidate-info-dont-modify': '候选人信息没有修改。',
         'text-registration-no-confirm': "上次注册还没确认，请等待。",
         'text-update-no-confirm': "上次更新还没确认，请等待。",
 
