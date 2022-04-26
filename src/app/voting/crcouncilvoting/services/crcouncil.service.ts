@@ -310,7 +310,7 @@ export class CRCouncilService {
     async getCRMemberInfo(did: string): Promise<CRMemberInfo> {
         try {
             this.selectedMember = null;
-            let url = this.voteService.getCrRpcApi() + '/api/council/information/' + did;
+            let url = this.voteService.getCrRpcApi() + '/api/v2/council/information/' + did;
             let result = await this.jsonRPCService.httpGet(url);
             if (result && result.data) {
                 let member = result.data;
