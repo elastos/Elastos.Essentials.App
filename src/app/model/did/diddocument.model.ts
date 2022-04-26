@@ -1,7 +1,7 @@
-import { DIDURL } from './didurl.model';
-import { Logger } from 'src/app/logger';
 import { DIDHelper } from 'src/app/helpers/did.helper';
+import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DIDURL } from './didurl.model';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -37,13 +37,13 @@ export class DIDDocument {
         this.didString = this.pluginDidDocument.getSubject().getDIDString();
     }
 
-    public async getAvatar(): Promise<string> {
+    public getAvatar(): string {
         let credentials = this.pluginDidDocument.getCredentials();
         for (let credential of credentials) {
             let subject = credential.getSubject();
             if ("avatar" in subject) {
                 let avatar = subject.avatar;
-                if (avatar.hasOwnProperty("data")) {
+                if (Object.prototype.hasOwnProperty.call(avatar, "data")) {
                     return "data:image/png;base64," + avatar.data;
                 }
                 else {
@@ -62,9 +62,8 @@ export class DIDDocument {
             this.pluginDidDocument.addCredential(
                 credential,
                 storePass,
-                async () => {
-                    await this.markUpdated();
-                    resolve()
+                () => {
+                    void this.markUpdated().then(() => resolve());
                 }, (err) => {
                     Logger.error('identity', "Add credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
@@ -79,9 +78,8 @@ export class DIDDocument {
             this.pluginDidDocument.deleteCredential(
                 credential,
                 storePass,
-                async () => {
-                    await this.markUpdated();
-                    resolve()
+                () => {
+                    void this.markUpdated().then(() => resolve());
                 }, (err) => {
                     Logger.error('identity', "Delete credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
@@ -92,7 +90,7 @@ export class DIDDocument {
 
     public createJWT(properties: any, validityDays: number, storePass: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.pluginDidDocument.createJWT(properties, validityDays, storePass, async (jwtToken) => {
+            this.pluginDidDocument.createJWT(properties, validityDays, storePass, (jwtToken) => {
                 resolve(jwtToken);
             }, (err) => {
                 Logger.error('identity', "Delete credential exception", err);
@@ -196,7 +194,7 @@ export class DIDDocument {
 
     public addService(service: DIDPlugin.Service, storePass: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.pluginDidDocument.addService(service, storePass, async () => {
+            this.pluginDidDocument.addService(service, storePass, () => {
                 resolve();
             }, (err) => {
                 Logger.error('identity', "AddService exception", err);
@@ -215,7 +213,7 @@ export class DIDDocument {
 
     public removeService(didUrl: DIDPlugin.DIDURL, storePass: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.pluginDidDocument.removeService(didUrl, storePass, async () => {
+            this.pluginDidDocument.removeService(didUrl, storePass, () => {
                 resolve();
             }, (err) => {
                 Logger.error('identity', "RemoveService exception", err);
