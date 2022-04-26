@@ -20,8 +20,6 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
   public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
     let txResult = await super.signTransaction(rawTransaction, transfer);
 
-    console.log("MAINCHAIN signTransaction txResult", txResult)
-
     if (!txResult.signedTransaction)
       return txResult; // Forward the error
 
@@ -32,9 +30,6 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
       jsToSpvWalletId(this.masterWallet.id),
       this.chainId,
       txResult.signedTransaction);
-
-
-    console.log("MAINCHAIN signTransaction rawSignedTransaction", rawSignedTransaction)
 
     return {
       signedTransaction: rawSignedTransaction

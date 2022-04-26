@@ -512,7 +512,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async pasteFromClipboard() {
         this.toAddress = await this.native.pasteFromClipboard();
 
-        const isAddressValid = this.fromSubWallet.isAddressValid(this.toAddress);
+        const isAddressValid = this.isAddressValid(this.toAddress);
         if (!isAddressValid) {
             this.native.toast_trans('wallet.not-a-valid-address');
             return;
@@ -602,6 +602,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         return valuesValid;
     }
 
+    private isAddressValid(toAddress: string) {
+      let targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
+      return targetSubwallet.isAddressValid(this.toAddress);
+    }
+
     async startTransaction() {
         if (this.subWalletId === StandardCoinName.ELA) {
             const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.subWalletId] as MainChainSubWallet;
@@ -620,7 +625,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.toAddress = this.toAddress.substring(index + 1);
             }
 
-            const isAddressValid = this.fromSubWallet.isAddressValid(this.toAddress);
+            const isAddressValid = this.isAddressValid(this.toAddress);
             if (!isAddressValid) {
                 this.native.toast_trans('wallet.not-a-valid-address');
                 return;
