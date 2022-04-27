@@ -63,8 +63,7 @@ export class ImpeachCRMemberPage {
             return false;
         }
         // Request the wallet to publish our vote.
-        else if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
-            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
+        else if (!await this.voteService.checkPendingBalance()) {
             return false;
         }
         if (!this.amount) {

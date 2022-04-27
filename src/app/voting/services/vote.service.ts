@@ -412,5 +412,11 @@ export class VoteService {
         return ret;
     }
 
-
+    async checkPendingBalance(): Promise<boolean> {
+        if (await this.sourceSubwallet.hasPendingBalance()) {
+            await this.globalPopupService.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
+            return false;
+        }
+        return true;
+    }
 }

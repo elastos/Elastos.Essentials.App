@@ -464,6 +464,10 @@ export class CRCouncilService {
     async unregisterCandidate() {
         Logger.log(App.CRCOUNCIL_VOTING, 'Calling unregister()');
 
+        if (!await this.voteService.checkPendingBalance()) {
+            return;
+        }
+
         if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-unregister-warning', 'common.confirm', 'common.cancel')) {
             return;
         }
