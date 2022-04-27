@@ -69,6 +69,7 @@ export class CRMembersPage implements OnInit {
     }
 
     async onShowMemberInfo(did: string) {
-        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember/' + did);
+        this.crCouncilService.selectedMemberDid = did;
+        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
     }
 }

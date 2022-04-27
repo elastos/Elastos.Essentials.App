@@ -69,6 +69,7 @@ export class CRCouncilService {
     public selectedCandidates: SelectedCandidate[] = [];
     public crmembers: any[] = [];
     public selectedMember: CRMemberInfo;
+    public selectedMemberDid: string;
     public candidateInfo: CandidateBaseInfo;
 
     /** Election Results **/

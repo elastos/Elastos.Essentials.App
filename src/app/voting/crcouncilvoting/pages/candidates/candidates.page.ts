@@ -178,10 +178,6 @@ export class CandidatesPage implements OnInit {
         await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []);
     }
 
-    async onShowMemberInfo(did: string) {
-        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember/' + did);
-    }
-
     async onShowCandidateInfo(did: string) {
         await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidate/' + did);
     }

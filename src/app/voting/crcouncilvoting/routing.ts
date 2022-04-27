@@ -15,7 +15,7 @@ const routes: Routes = [
     { path: 'candidates', component: CandidatesPage },
     { path: 'candidate/:did', component: CandidatePage },
     { path: 'crmembers', component: CRMembersPage },
-    { path: 'crmember/:did', component: CRMemberPage },
+    { path: 'crmember', component: CRMemberPage },
     { path: 'impeach', component: ImpeachCRMemberPage },
     { path: 'vote', component: VotePage },
     { path: 'history', component: HistoryPage },

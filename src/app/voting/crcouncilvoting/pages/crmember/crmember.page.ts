@@ -47,16 +47,18 @@ export class CRMemberPage {
         public voteService: VoteService,
         private route: ActivatedRoute,
     ) {
-        void this.init(this.route.snapshot.params.did);
+        // void this.init(this.route.snapshot.params.did);
     }
 
-    async init(did: string) {
-        this.member = await this.crCouncilService.getCRMemberInfo(did);
-        Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.member);
-        this.member.impeachmentThroughVotes = Math.ceil(this.crCouncilService.selectedMember.impeachmentThroughVotes);
-        this.current = this.member.impeachmentVotes;
-        this.max = this.member.impeachmentThroughVotes;
-        this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
+    async init() {
+        if (!this.member) {
+            this.member = await this.crCouncilService.getCRMemberInfo(this.crCouncilService.selectedMemberDid);
+            Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.member);
+            this.member.impeachmentThroughVotes = Math.ceil(this.crCouncilService.selectedMember.impeachmentThroughVotes);
+            this.current = this.member.impeachmentVotes;
+            this.max = this.member.impeachmentThroughVotes;
+            this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
+        }
 
         if (this.voteService.canVote()) {
             this.titleBar.setMenuVisibility(true);
@@ -79,6 +81,7 @@ export class CRMemberPage {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.crmember-profile'));
+        void this.init();
     }
 
     async showOptions(ev) {

@@ -4,7 +4,6 @@ import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
@@ -116,7 +115,7 @@ export class ImpeachCRMemberPage {
 
 
         try {
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/crmember/" + this.member.did);
+            await this.voteService.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             await this.voteService.popupErrorMessage(e);
