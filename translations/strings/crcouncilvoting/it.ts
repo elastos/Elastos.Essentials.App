@@ -64,6 +64,10 @@ export const it = {
         'impeach-council-member': 'Incrimina un Membro del Consiglio',
         'member-name': 'Nome del Membro del Consiglio',
 
+        /********** CRNode **********/
+        'enter-node-publickey': 'Inserisci la chiave pubblica del nodo',
+        'edit-node-publickey': 'Modifica la chiave pubblica del nodo',
+
         /********** Candidate **********/
         'candidate-profile': 'Candidate Profile',
         'current-vote-count': 'Current vote count',
@@ -118,6 +122,68 @@ export const it = {
 
         /********** UnRegistration **********/
         'candidate-details': 'Candidate Details',
+
+        /********** Registration-terms **********/
+        'registration-terms': `<p>
+                The CR Council Member Election is open to the entire Elastos community, and all community members can
+                participate in the construction of the Elastos Smartweb. By participating in the election, candidate
+                nodes (run by either individuals or teams) effectively demonstrate a complete understanding of and
+                take on a commitment to comply with all contents of the following agreement:
+            </p>
+
+            <p>
+                <span class="index">1.</span> Before participating in the election, the participants have read and
+                fully understand and agree with the content of the CRC white paper and the election rules pertaining to CR
+                council members.
+            </p>
+
+            <p>
+                <span class="index">2.</span> While participating in CR Consensus, all candidate nodes should: abide
+                by the laws and regulations of
+                the country or region in which they are located; ensure the content they publish, forward, or
+                provide conforms to relevant legislation, regulations, and social morality of the country or region in which
+                they are located; and respect the relevant legislation, regulations, and social morality of the country
+                or region in which other members are located.
+            </p>
+
+            <p>
+                <span class="index">3.</span> While participating in CR Consensus, the content published by
+                candidate nodes in any channel only
+                represents the positions and opinions of its owners. All candidate nodes shall be responsible for
+                the content and topics that they publish, and the candidate nodes shall bear all legal responsibility
+                and related joint liability for all disputes arising from such published content. Additionally, the
+                candidate nodes shall not damage or infringe upon the rights and interests of the Elastos community, team, or
+                community members.
+            </p>
+
+            <p>
+                <span class="index">4.</span> All candidate nodes fully understand and recognize that Elastos is an
+                open source project, and shall
+                also comply with the following provisions: CR partners (at present, the Gelaxy Team, but remaining
+                subject to CR entrustment) has the right to update or optimize code according to the CRC white paper when
+                loopholes, hacking-related exploits, or other sub-optimal conditions that impair CRC operations, are exposed. ,
+                For any impact caused by the corresponding adjustment, update, or optimization of the open source code, all
+                candidate nodes unconditionally waive any legal responsibility for CR partners or commissioned
+                teams.
+            </p>
+
+            <p>
+                <span class="index">5.</span> All candidate nodes shall comply with the conditions of CR member
+                elections, CR operations, and related
+                penalty mechanisms. The consequences of triggering the penalty mechanism shall be borne by all
+                candidate nodes.
+            </p>
+
+            <p>
+                <span class="index">6.</span> All candidate nodes shall fully understand and recognize that the
+                private key of their respective
+                wallets during the election is the only certificate for the candidate nodes to exercise their rights
+                and obligations. The candidate nodes shall not share their private keys with others for use in any way,
+                including but not limited to not providing the private key to others for use in any way by
+                transferring, renting, or borrowing. Otherwise, any consequences and joint liabilities arising from these actions
+                shall be borne by the candidate nodes themselves.
+            </p>`,
+
 
         /********** Location code **********
         * Location code - list of international phone number country code / country name.

@@ -5,7 +5,6 @@ class TranslationsLoader {
         "common",       // Shared strings for generic keywords such as cancel, open, add, etc.
         "contacts",
         'crcouncilvoting',
-        'crcouncilmanager',
         'crproposalvoting',
         "dappbrowser",
         "developertools",

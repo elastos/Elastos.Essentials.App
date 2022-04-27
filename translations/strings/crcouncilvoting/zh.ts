@@ -64,6 +64,10 @@ export const zh = {
         'impeach-council-member': '弹劾委员会成员',
         'member-name': '委员会成员昵称',
 
+        /********** CRNode **********/
+        'enter-node-publickey': '输入节点公钥',
+        'edit-node-publickey': '修改节点公钥',
+
         /********** Candidate **********/
         'candidate-profile': '候选人信息',
         'current-vote-count': '当前票数',
@@ -118,6 +122,45 @@ export const zh = {
 
         /********** UnRegistration **********/
         'candidate-details': '候选人详情',
+
+        /********** Registration-terms **********/
+        'registration-terms': `<p>
+                CR委员选举面向亦来云社区成员开放，任何社区成员均可共同参与亦来云Smartweb网络的建设，参选节点（自然人或团队，下同）一
+                经参选，均视为充分理解并同意承诺遵守本协议所有内容，请您务必认真阅读：
+             </p>
+
+             <p>
+                 <span class="index">1.</span> 参选者在正式参选前已阅读、充分理解并认同CRC白皮书及CR委员参选规则内容。
+             </p>
+
+             <p>
+                 <span class="index">2.</span> 参选节点承诺在参与CR的过程中：遵守所在国家或地区的各项法律规定；发布、
+                 转载或提供的内容符合所在国家或地区法律法规、社会公德；尊重社区其他成员所在国家或地区的法律法规及社会公德。
+             </p>
+
+             <p>
+                 <span class="index">3.</span> 参选节点承诺在参与CR的过程中，在任何渠道发表的内容仅代表本人的立场和
+                 观点。参选节点对所发表的内容和发布主题负责，因所发表内容引发的一切纠纷，由参选节点承担全部法律责任及相关
+                 连带责任。同时，参选节点承诺其不会损害和侵犯亦来云社区团队及成员的权益。
+             </p>
+
+             <p>
+                 <span class="index">4.</span> 参选节点充分理解并认可Elastos是一个开源项目，亦理解和认同：CR合作的团队
+                 （目前为Gelaxy Team，后续以CR委托为准）有权根据CRC白皮书、以及CRC实际运行中出现漏洞、黑客攻击等状态可能影
+                 响到CRC运转等情形时，对代码进行更新或优化。对开源代码做出相应调整、更新或优化时造成的任何影响，参选节点无条件
+                 放弃追究CR合作或委托团队的任何法律责任。
+             </p>
+
+             <p>
+                 <span class="index">5.</span> 参选节点承诺遵守CR委员参选、CR运行以及相关惩罚机制等规则，由于触发惩罚机制
+                 而产生的后果由参选节点自行承担。
+             </p>
+
+             <p>
+                 <span class="index">6.</span> 参选节点深刻理解并认可参选时所对应钱包的私钥代表参选节点行使权利和义务的唯一
+                 凭证。参选节点承诺不将该私钥以任何方式提供给他人使用，包括但不限于不将以转让、出租、借用等方式提供给他人作任何方
+                 式使用。否则，由此产生的任何后果及连带责任均由参选节点自行承担。
+             </p>`,
 
         /********** Location code **********
         * Location code - list of international phone number country code / country name.
