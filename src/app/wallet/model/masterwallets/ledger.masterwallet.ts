@@ -1,4 +1,5 @@
 import { Logger } from "src/app/logger";
+import { LeddgerAccountType } from "../ledger.types";
 import { AnyNetwork } from "../networks/network";
 import { MasterWallet } from "./masterwallet";
 import { ElastosMainChainWalletNetworkOptions, LedgerAccountOptions, SerializedLedgerMasterWallet } from "./wallet.types";
@@ -43,13 +44,36 @@ export class LedgerMasterWallet extends MasterWallet {
     return serialized;
   }
 
+  public addAccountOptions(accountOptions: LedgerAccountOptions) {
+    if (this.accountOptions.findIndex(n => n.type === accountOptions.type) >= 0) {
+      Logger.warn('wallet', 'LedgerMasterWallet: This account already exists!');
+      return;
+    }
+    this.accountOptions.push(accountOptions);
+  }
+
   public hasMnemonicSupport(): boolean {
     return false; // TODO - this hasMnemonicSupport() doesn't make enough sense, what does this mean?
   }
 
   public supportsNetwork(network: AnyNetwork): boolean {
-    // console.log("Ledger masterwallet supportsNetwork not implemented");
-    return true; // TODO: implement
+    let accountType: LeddgerAccountType;
+    switch (network.key.toLowerCase()) {
+      case 'elastos':
+        accountType = LeddgerAccountType.ELA
+        break;
+      case 'btc':
+        accountType = LeddgerAccountType.BTC
+        break;
+      default:
+        accountType = LeddgerAccountType.EVM
+        break;
+    }
+
+    if (this.accountOptions.findIndex(n => n.type === accountType) >= 0) {
+      return true;
+    }
+    return false;
   }
 
   public async destroy() {

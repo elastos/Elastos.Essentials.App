@@ -332,7 +332,7 @@ namespace WalletPublishing {
         public async publishDID(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
             Logger.log("publicationservice", "Publishing DID with wallet:", payloadObject);
 
-            // Make sure the active network is elastos, otherwise, ask user to change
+            // Make sure the active network is elastosidchain, otherwise, ask user to change
             if (WalletNetworkService.instance.activeNetwork.value.key !== "elastosidchain") {
               let didNetwork = WalletNetworkService.instance.getNetworkByKey("elastosidchain");
               const switched = await this.globalSwitchNetworkService.promptSwitchToNetwork(didNetwork);

@@ -67,6 +67,7 @@ export const zh = {
                 "change-wallet": "切换钱包",
                 "wallets": "您的钱包",
                 "explore-your-wallets": "探索您的钱包",
+                "wallet-unsupported-on-network": '此钱包不支持 {{ network }} 网络。请选择其它网络或钱包。',
 
                 /********************************************** General Settings Screen ***********************************************/
 
@@ -83,8 +84,8 @@ export const zh = {
                 "settings-currency-subtitle": "选择默认的货币",
                 "settings-custom-networks": "自定义网络",
                 "settings-custom-networks-subtitle": "在此添加或编辑自定义网络",
-                "settings-manage-networks": "Manage Networks",
-                "settings-manage-networks-subtitle": "Show and hide networks, add custom ones",
+                "settings-manage-networks": "管理网络",
+                "settings-manage-networks-subtitle": "显示和隐藏网络，添加自定义网络",
 
                 /***********************
                 * Select-Currency Page *
@@ -266,6 +267,12 @@ export const zh = {
                 'select-a-token': '选择代币',
                 'select-token-intro': '您下一步要使用哪个代币?',
 
+                /**************************
+                * Wallet chooser component *
+                ***************************/
+
+                'unsupported-on-network': '不支持 {{network}} 网络.',
+
                 /********************************************** Wallet Settings Screens ***********************************************/
 
                 /***********************
@@ -343,10 +350,10 @@ export const zh = {
                 'coin-adderc20-not-found': '此币种地址未注册，请检查您输入的币种地址',
 
                 /***********************
-        * Manage networks Page *
-        ************************/
-                'manage-networks-title': 'Manage networks',
-                'manage-networks-intro': 'Select networks that you want to see in networks list. Hide networks that you don\'t use. You can also add custom ethereum-compatible networks from the plus icon above.',
+                * Manage networks Page *
+                ************************/
+                'manage-networks-title': '管理网络',
+                'manage-networks-intro': '在“网络”列表中选择要查看的网络。隐藏您不使用的网络。您还可以点击上面的“+”图标来添加与以太坊兼容的自定义网络。',
 
                 /***********************
                 * Custom networks Page *
@@ -462,7 +469,7 @@ export const zh = {
                 "signtypeddata-title": "数据签名",
                 "signtypeddata-subtitle": "数据签名",
                 "signtypeddata-intro": "调用应用程序需要您使用钱包签署一些数据才能继续。请确认",
-                "signtypeddata-danger": "Signing this message can be dangerous. This signature could potentially perform any operation on your account's behalf, including granting complete control of your account and all of its assets to the requesting site. Only sign this message if you know what you're doing or completely trust the requesting site.",
+                "signtypeddata-danger": "对此数据签名可能会很危险。此签名可能代表您的帐户执行任何操作，包括将您的帐户及其所有资产的完全控制权授予请求站点。只有在你知道自己在做什么或完全信任请求网站的情况下，才能签署此消息。",
 
                 /***********************
                 * No Wallet *
@@ -480,6 +487,10 @@ export const zh = {
                 'get-started': '开始',
                 'import-wallet-msg': '已经有钱包? 点击这里导入钱包',
                 'launcher-create-wallet': '创建钱包',
+                'new-standard-wallet': '新建标准钱包',
+                'import-standard-wallet': '导入标准钱包',
+                'multi-sig-wallet': '多签钱包',
+                'ledger-hardware-wallet': 'Ledger 硬件钱包',
 
                 /*********************
                 * Wallet Create Page *

@@ -73,9 +73,11 @@
                 }">
                 </div>
             </ion-row>
-            <ion-row *ngIf="!networkWallet">
-                This wallet is unsupported on the {{ currentNetwork.name }} network. Please select another network or
-                wallet.
+            <ion-row *ngIf="!networkWallet && noAddressForLedgerWallet" (click)="getAddressFromLedger()">
+                {{ 'wallet.wallet-connect-to-ledger' }}
+            </ion-row>
+            <ion-row *ngIf="!networkWallet && !noAddressForLedgerWallet">
+                {{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetwork.name} }}
             </ion-row>
             <div *ngIf="networkWallet" style="width:100%">
                 <!-- TOKENS -->

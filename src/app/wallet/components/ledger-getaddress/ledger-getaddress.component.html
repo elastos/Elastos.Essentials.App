@@ -1,0 +1,57 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <div class="ledger-container" [class.dark-ledger-container]="theme.darkMode">
+      <ion-row class="ledger-row">
+          <ion-col>
+              <ion-label>
+                  <h1>{{ 'wallet.ledger-account-select' | translate }}</h1>
+              </ion-label>
+          </ion-col>
+      </ion-row>
+      <ion-row class="ledger-row" *ngIf="connecting">
+        <ion-col>
+          <ion-label>
+              <h1> {{ 'wallet.ledger-connecting' | translate }}</h1>
+          </ion-label>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ledger-row">
+        <ion-col>
+          <ion-label>
+              <h1>  {{ 'wallet.ledger-prompt' | translate }}</h1>
+          </ion-label>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="ledger-row" *ngIf="transport">
+        <ion-col>
+          <ion-label>
+              <p>  {{ 'wallet.ledger-connected-device' | translate }}</p>
+          </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>
+              <p> {{ transport.device.name }} </p>
+          </ion-label>
+        </ion-col>
+      </ion-row>
+
+      <ion-spinner *ngIf="connecting" class="spinner"></ion-spinner>
+
+      <ion-row class="ledger-row" *ngIf="hasGotAddress()">
+        <ion-label> Addresses </ion-label>
+      </ion-row>
+      <ion-row class="ledger-row" *ngFor="let item of addresses" (click)="selectAddress(item)">
+        <p> {{ item.address }} </p>
+      </ion-row>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border" [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
+  <ion-button (click)="cancelOperation()">
+    <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+  </ion-button>
+  <ion-button [disabled]="!transport || taskInProgress" (click)="getAddresses()">
+    <ion-label>{{ 'common.continue' | translate }}</ion-label>
+  </ion-button>
+</ion-footer>

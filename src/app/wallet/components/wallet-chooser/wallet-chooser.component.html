@@ -47,7 +47,7 @@
                         </h4>
                     </div>
                     <div class="wallet-amount" *ngIf="!netWallet">
-                        Unsupported on the {{networkService.activeNetwork.value.name}} network.
+                        {{ 'wallet.unsupported-on-network' | translate:{network: networkService.activeNetwork.value.name} }}
                     </div>
                 </ion-col>
                 <ion-col size="2" class="right-col">

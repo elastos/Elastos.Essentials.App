@@ -68,6 +68,7 @@ export const fr = {
         "change-wallet": "Changer de portefeuille",
         "wallets": "Portefeuilles",
         "explore-your-wallets": "Explorez vos autres portefeuilles",
+        "wallet-unsupported-on-network": 'This wallet is unsupported on the {{ network }} network. Please select another network or wallet.',
 
         /********************************************** General Settings Screen ***********************************************/
 
@@ -266,6 +267,12 @@ export const fr = {
 
         'select-a-token': 'Choix du jeton',
         'select-token-intro': 'Quel jeton souhaitez-vous utiliser?',
+
+        /**************************
+        * Wallet chooser component *
+        ***************************/
+
+        'unsupported-on-network': 'Unsupported on the {{network}} network.',
 
         /********************************************** Wallet Settings Screens ***********************************************/
 
@@ -480,6 +487,10 @@ export const fr = {
         'get-started': 'Commencer',
         'import-wallet-msg': 'Vous avez déjà un portefeuille? Importez-le.',
         'launcher-create-wallet': 'Créer le portefeuille',
+        'new-standard-wallet': 'New standard wallet',
+        'import-standard-wallet': 'Import standard wallet',
+        'multi-sig-wallet': 'Multi-sig wallet',
+        'ledger-hardware-wallet': 'Ledger hardware wallet',
 
         /*********************
         * Wallet Create Page *

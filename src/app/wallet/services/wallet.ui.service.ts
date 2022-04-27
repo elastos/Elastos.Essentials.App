@@ -22,12 +22,14 @@
 
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { LedgerGetAddressComponent, LedgerGetAddressComponentOptions } from '../components/ledger-getaddress/ledger-getaddress.component';
 import { LedgerSignComponent, LedgerSignComponentOptions } from '../components/ledger-sign/ledger-sign.component';
 import { WalletChooserComponent, WalletChooserComponentOptions } from '../components/wallet-chooser/wallet-chooser.component';
+import { LeddgerAccountType } from '../model/ledger.types';
 import { MasterWallet } from '../model/masterwallets/masterwallet';
+import { LedgerAccountOptions } from '../model/masterwallets/wallet.types';
 import { Safe } from '../model/safes/safe';
 import { WalletService } from './wallet.service';
 
@@ -84,7 +86,7 @@ export class WalletUIService {
     /**
      *
      */
-    async connectLedger(deviceId: string, safe: Safe): Promise<BluetoothTransport> {
+    async connectLedgerAndSignTransaction(deviceId: string, safe: Safe): Promise<boolean> {
         let options: LedgerSignComponentOptions = {
             deviceId: deviceId,
             safe: safe,
@@ -106,6 +108,30 @@ export class WalletUIService {
             });
             void modal.present();
         });
+    }
+
+    async connectLedgerAndGetAddress(deviceId: string, accounType: LeddgerAccountType): Promise<LedgerAccountOptions> {
+      let options: LedgerGetAddressComponentOptions = {
+          deviceId: deviceId,
+          accounType: accounType
+      };
+
+      let modal = await this.modalCtrl.create({
+          component: LedgerGetAddressComponent,
+          componentProps: options,
+          backdropDismiss: false,
+      });
+
+      return new Promise(resolve => {
+          void modal.onWillDismiss().then((params) => {
+              if (params.data) {
+                  resolve(params.data);
+              }
+              else
+                  resolve(null);
+          });
+          void modal.present();
+      });
     }
 }
 

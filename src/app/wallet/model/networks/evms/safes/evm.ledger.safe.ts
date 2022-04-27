@@ -79,7 +79,7 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
         this.createEthereumTx(txData)
 
         // Wait for the ledger sign the transaction.
-        let signed = await WalletUIService.instance.connectLedger(this.masterWallet.deviceID, this)
+        let signed = await WalletUIService.instance.connectLedgerAndSignTransaction(this.masterWallet.deviceID, this)
         if (!signed) {
             Logger.log('ledger', "EVMSafe::signTransaction can't connect to ledger or user canceled");
             return signTransactionResult;
