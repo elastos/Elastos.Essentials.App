@@ -24,6 +24,7 @@ import { EthereumMainNetNetwork } from '../model/networks/ethereum/network/ether
 import { EthereumRopstenNetwork } from '../model/networks/ethereum/network/ethereum.ropsten.network';
 import { FantomMainNetNetwork } from '../model/networks/fantom/network/fantom.mainnet.network';
 import { FantomTestNetNetwork } from '../model/networks/fantom/network/fantom.testnet.network';
+import { FuseMainNetNetwork } from '../model/networks/fuse/network/fuse.mainnet.network';
 import { FusionMainNetNetwork } from '../model/networks/fusion/network/fusion.mainnet.network';
 import { GnosisMainNetNetwork } from '../model/networks/gnosis/network/gnosis.mainnet.network';
 import { HECOMainNetNetwork } from '../model/networks/heco/network/heco.mainnet.network';
@@ -149,6 +150,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new IoTeXMainNetNetwork());
         await this.createAndRegisterNetwork(new HooMainNetNetwork());
         await this.createAndRegisterNetwork(new GnosisMainNetNetwork());
+        await this.createAndRegisterNetwork(new FuseMainNetNetwork());
         return;
       case TESTNET_TEMPLATE:
         await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork(), true);
