@@ -10,7 +10,7 @@ export class FuseAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case FuseApiType.RPC: return 'https://rpc.fuse.io	';
+          case FuseApiType.RPC: return 'https://rpc.fuse.io';
           case FuseApiType.ETHERSCAN_API: return 'https://explorer.fuse.io/api';
           default:
             throw new Error("Fuse API - Unknown api type " + type);
