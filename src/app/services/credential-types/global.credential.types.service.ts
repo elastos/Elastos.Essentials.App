@@ -348,9 +348,9 @@ export class GlobalCredentialTypesService {
    * by the credential.
    */
   public async verifyCredential(credential: DIDPlugin.VerifiableCredential): Promise<boolean> {
-    let credentialContent = JSON.parse(await credential.toJson());
-
     try {
+      let credentialContent = JSON.parse(await credential.toJson());
+
       let credentialContentJson = credentialContent;
       if (typeof credentialContentJson !== "object") {
         return false;
