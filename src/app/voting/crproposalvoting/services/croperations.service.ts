@@ -397,8 +397,8 @@ export class CROperationsService {
             throw new Error("rawTx is null");
         }
 
-        const result = await this.voteService.signAndSendRawTransaction(rawTx);
-        if (result.published) {
+        const ret = await this.voteService.signAndSendRawTransaction(rawTx);
+        if (ret) {
             this.handleSuccessReturn();
         }
         else {

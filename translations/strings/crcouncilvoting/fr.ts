@@ -121,6 +121,7 @@ export const fr = {
 
         /********** UnRegistration **********/
         'candidate-details': 'Candidate Details',
+        'withdraw-successfully': 'Withdraw deposit successfully, please wait for transaction confirmation.',
 
         /********** Registration-terms **********/
         'registration-terms': `<p>

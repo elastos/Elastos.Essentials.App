@@ -13,6 +13,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -58,6 +59,7 @@ export class CRCouncilService {
         private walletManager: WalletService,
         private globalIntentService: GlobalIntentService,
         public popupProvider: GlobalPopupService,
+        private globalNative: GlobalNativeService,
     ) {
 
     }
@@ -510,7 +512,10 @@ export class CRCouncilService {
             const rawTx = await this.voteService.sourceSubwallet.createRetrieveCRDepositTransaction(utxo, available, "");
             Logger.log(App.CRCOUNCIL_VOTING, 'rawTx', rawTx);
 
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, customRoute);
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, customRoute);
+            if (ret) {
+                this.globalNative.genericToast('crcouncilvoting.withdraw-successfully', 2000, "success");
+            }
         }
         catch (e) {
             await this.voteService.popupErrorMessage(e);

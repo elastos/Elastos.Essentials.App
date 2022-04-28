@@ -122,6 +122,7 @@ export const zh = {
 
         /********** UnRegistration **********/
         'candidate-details': '候选人详情',
+        'withdraw-successfully': '取回押金成功，请等待交易确认。',
 
         /********** Registration-terms **********/
         'registration-terms': `<p>

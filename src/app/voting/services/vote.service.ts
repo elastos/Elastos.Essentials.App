@@ -12,7 +12,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { RawTransactionPublishResult } from 'src/app/wallet/model/providers/transaction.types';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
@@ -128,7 +127,7 @@ export class VoteService {
         this.clearRoute();
     }
 
-    public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<RawTransactionPublishResult> {
+    public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<boolean> {
         Logger.log(App.VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
 
         if (!rawTx) {
@@ -154,8 +153,9 @@ export class VoteService {
             else {
                 void this.nav.navigateBack();
             }
+            return true;
         }
-        return result;
+        return false;
     }
 
     public async popupErrorMessage(error: any, context?: string) {
