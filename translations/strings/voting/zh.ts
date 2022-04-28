@@ -11,6 +11,8 @@ export const zh = {
         'minutes': '分钟',
 
         'vote': '投票',
+        'votes': '选票',
+        'of-votes': '选票',
         'voting-ends-in': '投票剩余时间',
         'vote-going': '正在进行委员选举投票!',
         'vote-invalid': "票数不正确",
