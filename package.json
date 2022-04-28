@@ -122,7 +122,7 @@
     "@angular/language-service": "13.1.1",
     "@elastosfoundation/elastos-connectivity-sdk-js": "1.0.15",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.5",
-    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.45",
+    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.48",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.23",
     "@ionic/angular-toolkit": "^4.0.0",
     "@types/colors": "^1.2.1",
