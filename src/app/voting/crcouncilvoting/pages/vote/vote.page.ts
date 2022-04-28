@@ -104,7 +104,7 @@ export class VotePage implements OnInit, OnDestroy {
         this.crCouncilService.selectedCandidates.map((candidate) => {
             if (candidate.userVotes && candidate.userVotes > 0) {
                 // let userVotes = candidate.userVotes * 100000000;
-                let userVotes = Util.accMul(candidate.userVotes, Config.SELA)
+                let userVotes = Util.accMul(candidate.userVotes, Config.SELA);
                 let _candidate = { [candidate.cid]: userVotes.toFixed(0) } //SELA, can't with fractions
                 votedCandidates = { ...votedCandidates, ..._candidate }
             } else {

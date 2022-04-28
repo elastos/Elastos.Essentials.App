@@ -2,7 +2,6 @@ import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -76,13 +75,10 @@ export class CRCouncilService {
 
     /** Election Results **/
     public councilTerm: any[] = [];
-    public currentTermIndex: number = -1;
-    public votingTermIndex: number = -1;
+    public currentTermIndex  = -1;
+    public votingTermIndex = -1;
 
     // public council: CouncilMember[] = [];
-
-    private subscription: Subscription = null;
-
     public isCRMember = false;
 
     public httpOptions = {
@@ -110,22 +106,13 @@ export class CRCouncilService {
         return this.initData();
     }
 
-    async initData() {
+    initData() {
         this.candidates = [];
         this.crmembers = [];
         this.selectedCandidates = [];
         this.selectedMember = null;
-
-        await this.fetchCandidates();
-        await this.getSelectedCandidates();
     }
 
-    public stop() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-            this.subscription = null;
-        }
-    }
 
     async fetchCRMembers() {
         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching CRMembers..');
@@ -161,6 +148,7 @@ export class CRCouncilService {
     }
 
     async getSelectedCandidates() {
+        this.selectedCandidates = [];
         await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []).then(data => {
             Logger.log('crcouncil', 'Selected Candidates', data);
             if (data) {
