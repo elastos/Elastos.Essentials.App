@@ -68,7 +68,8 @@ export const fr = {
         "change-wallet": "Changer de portefeuille",
         "wallets": "Portefeuilles",
         "explore-your-wallets": "Explorez vos autres portefeuilles",
-        "wallet-unsupported-on-network": 'This wallet is unsupported on the {{ network }} network. Please select another network or wallet.',
+        "wallet-unsupported-on-network": "This wallet is unsupported on the {{ network }} network. Please select another network or wallet.",
+        "wallet-connect-to-ledger": "Connect to ledger Wallet",
 
         /********************************************** General Settings Screen ***********************************************/
 
@@ -273,6 +274,14 @@ export const fr = {
         ***************************/
 
         'unsupported-on-network': 'Unsupported on the {{network}} network.',
+
+        /*********************
+        * Ledger Get Address Component *
+        **********************/
+        "ledger-account-select": "Please select a account from ledger",
+        "ledger-connecting": "Searching Ledger Wallet",
+        "ledger-prompt": "Please open Ledger Nanox, keep it unlocked, and open the {{appName}} application",
+        "ledger-addresses": "Addresses",
 
         /********************************************** Wallet Settings Screens ***********************************************/
 

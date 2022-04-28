@@ -5,22 +5,22 @@
         <h1>{{ 'wallet.wallet-prompt1' | translate }}<br>{{ 'wallet.wallet-prompt2' | translate }}</h1>
         <ion-row class="btn-container">
             <ion-button color="secondary" (click)="createStandardWallet()">
-                <ion-label>New standard wallet</ion-label>
+                <ion-label>{{ 'wallet.new-standard-wallet' | translate }}</ion-label>
             </ion-button>
         </ion-row>
         <ion-row class="btn-container">
             <ion-button color="secondary" (click)="importStandardWallet()">
-                <ion-label>Import standard wallet</ion-label>
+                <ion-label>{{ 'wallet.import-standard-wallet' | translate }}</ion-label>
             </ion-button>
         </ion-row>
         <ion-row class="btn-container">
             <ion-button color="secondary" (click)="createMultiSigWallet()">
-                <ion-label>Multi-sig wallet</ion-label>
+                <ion-label>{{ 'wallet.multi-sig-wallet' | translate }}</ion-label>
             </ion-button>
         </ion-row>
         <ion-row class="btn-container">
             <ion-button color="secondary" (click)="createLedgerWallet()">
-                <ion-label>Ledger hardware wallet</ion-label>
+                <ion-label>{{ 'wallet.ledger-hardware-wallet' | translate }}</ion-label>
             </ion-button>
         </ion-row>
     </ion-grid>

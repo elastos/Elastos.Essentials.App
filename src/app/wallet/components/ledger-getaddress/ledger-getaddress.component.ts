@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
+import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { LeddgerAccountType } from '../../model/ledger.types';
 import { BTCLedgerApp } from '../../model/ledger/btc.ledgerapp';
@@ -35,6 +36,8 @@ export class LedgerGetAddressComponent implements OnInit {
 
   public addresses: LedgerAccount[] = [];
 
+  public ledgerNanoAppname = '';
+
   constructor(
     private navParams: NavParams,
     public translate: TranslateService,
@@ -46,6 +49,7 @@ export class LedgerGetAddressComponent implements OnInit {
   ngOnInit() {
     this.ledgerDeviceId = this.navParams.data.deviceId;
     this.accounType = this.navParams.data.accounType;
+    this.initLedgerAppName();
     void this.connect();
   }
 
@@ -61,6 +65,27 @@ export class LedgerGetAddressComponent implements OnInit {
     if (this.transport) {
       await this.transport.close();
       this.transport = null;
+    }
+  }
+
+  initLedgerAppName() {
+    switch (this.accounType) {
+      case LeddgerAccountType.BTC:
+        let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
+        if (network === MAINNET_TEMPLATE) {
+          this.ledgerNanoAppname = "Bitcoin"
+        } else {
+          this.ledgerNanoAppname = "Bitcoin Test"
+        }
+        break;
+      case LeddgerAccountType.ELA:
+        this.ledgerNanoAppname = "Elastos"
+        break;
+      case LeddgerAccountType.EVM:
+        this.ledgerNanoAppname = "Ethereum"
+        break;
+      default:
+        break;
     }
   }
 

@@ -74,7 +74,7 @@
                 </div>
             </ion-row>
             <ion-row *ngIf="!networkWallet && noAddressForLedgerWallet" (click)="getAddressFromLedger()">
-                {{ 'wallet.wallet-connect-to-ledger' }}
+                {{ 'wallet.wallet-connect-to-ledger' | translate }}
             </ion-row>
             <ion-row *ngIf="!networkWallet && !noAddressForLedgerWallet">
                 {{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetwork.name} }}

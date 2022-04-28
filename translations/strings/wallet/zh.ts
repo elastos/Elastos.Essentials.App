@@ -67,7 +67,8 @@ export const zh = {
                 "change-wallet": "切换钱包",
                 "wallets": "您的钱包",
                 "explore-your-wallets": "探索您的钱包",
-                "wallet-unsupported-on-network": '此钱包不支持 {{ network }} 网络。请选择其它网络或钱包。',
+                "wallet-unsupported-on-network": "此钱包不支持 {{ network }} 网络。请选择其它网络或钱包。",
+                "wallet-connect-to-ledger": '连接 Ledger 硬件钱包',
 
                 /********************************************** General Settings Screen ***********************************************/
 
@@ -272,6 +273,14 @@ export const zh = {
                 ***************************/
 
                 'unsupported-on-network': '不支持 {{network}} 网络.',
+
+                /*********************
+                * Ledger Get Address Component *
+                **********************/
+                "ledger-account-select": "请选择 Ledger 账号",
+                "ledger-connecting": "正在搜索 Ledger 钱包",
+                "ledger-prompt": "请开启 Ledger nanox，保持解锁，并打开 {{appname}} 应用程序",
+                "ledger-addresses": "地址",
 
                 /********************************************** Wallet Settings Screens ***********************************************/
 
