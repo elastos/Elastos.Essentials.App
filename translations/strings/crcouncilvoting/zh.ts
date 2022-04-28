@@ -82,6 +82,8 @@ export const zh = {
         'unregistration-candidate': '退出选举',
         'withdraw': '取回押金',
 
+        'no-candidates': '目前没有候选人',
+
         /********** Registration **********/
         'registration': '报名参选',
         'register-header': '注册CR候选人',
@@ -125,6 +127,7 @@ export const zh = {
         'withdraw-successfully': '取回押金成功，请等待交易确认。',
 
         /********** Registration-terms **********/
+        'terms-title': 'CR委员参选协议',
         'registration-terms': `<p>
                 CR委员选举面向亦来云社区成员开放，任何社区成员均可共同参与亦来云Smartweb网络的建设，参选节点（自然人或团队，下同）一
                 经参选，均视为充分理解并同意承诺遵守本协议所有内容，请您务必认真阅读：

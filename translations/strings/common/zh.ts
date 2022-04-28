@@ -6,7 +6,7 @@ export const zh = {
         // Generic actions
         'delete': '删除',
         'cancel': '取消',
-        'accept': 'Accept',
+        'accept': '接受',
         'begin': '开始',
         'continue': '继续',
         'go-back': '返回',

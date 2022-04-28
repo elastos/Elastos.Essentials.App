@@ -81,6 +81,8 @@ export const fr = {
         'unregistration-candidate': 'Exit election',
         'withdraw': 'Withdraw',
 
+        'no-candidates': 'There are no candidates at present',
+
         /********** Registration **********/
         'registration': 'Registration',
         'register-header': 'Candidate registration',
@@ -124,6 +126,7 @@ export const fr = {
         'withdraw-successfully': 'Withdraw deposit successfully, please wait for transaction confirmation.',
 
         /********** Registration-terms **********/
+        'terms-title': 'CR Council Member Election Agreement',
         'registration-terms': `<p>
                 The CR Council Member Election is open to the entire Elastos community, and all community members can
                 participate in the construction of the Elastos Smartweb. By participating in the election, candidate
