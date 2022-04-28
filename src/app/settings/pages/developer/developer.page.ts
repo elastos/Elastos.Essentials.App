@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { App } from "src/app/model/app.enum";
@@ -20,6 +21,7 @@ export class DeveloperPage implements OnInit {
   public allowScreenCapture = false;
 
   constructor(
+    private platform: Platform,
     public settings: SettingsService,
     public theme: GlobalThemeService,
     public developer: DeveloperService,
@@ -53,5 +55,9 @@ export class DeveloperPage implements OnInit {
 
   public onAllowScreenCaptureChanged() {
     void this.globalSecurityService.setScreenCaptureAllowed(this.allowScreenCapture);
+  }
+
+  public isAndroid(): boolean {
+    return this.platform.platforms().indexOf('android') >= 0;
   }
 }

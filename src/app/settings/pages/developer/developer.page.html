@@ -20,7 +20,7 @@
       </ion-col>
     </ion-row>
     <!-- Screen recording -->
-    <ion-row class="section-row">
+    <ion-row class="section-row" *ngIf="isAndroid()">
       <ion-col size="9" class="left-col">
         <h1>{{ 'settings.developer-screen-capture' | translate }}</h1>
       </ion-col>
