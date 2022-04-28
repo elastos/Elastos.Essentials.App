@@ -55,10 +55,10 @@ export class VotePage implements OnInit, OnDestroy {
         Logger.log('crcouncil', 'ELA Balance', this.totalEla);
 
         // Initialize candidate percentages with default values
-        this.crCouncilService.candidates.forEach(c => {
-            this.candidatesVotes[c.cid] = 0;
-            this.candidatesPercentages[c.cid] = 0;
-        })
+        this.crCouncilService.selectedCandidates.forEach((candidate) => {
+            this.candidatesVotes[candidate.cid] = candidate.userVotes;
+            this.updateCandidatePercentVotesMap(candidate, candidate.userVotes);
+        });
     }
 
     ngOnDestroy() {
