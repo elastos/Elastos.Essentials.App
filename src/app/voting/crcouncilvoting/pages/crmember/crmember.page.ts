@@ -22,8 +22,9 @@ import { CRCouncilService } from '../../services/crcouncil.service';
 export class CRMemberPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    current: number = 10;
-    max: number = 100;
+    current = 10;
+    max = 100;
+    ratio = "0.0";
     color: string = '#45ccce';
     background: string = '#eaeaea';
     gradient: boolean = true;
@@ -57,6 +58,12 @@ export class CRMemberPage {
             this.member.impeachmentThroughVotes = Math.ceil(this.crCouncilService.selectedMember.impeachmentThroughVotes);
             this.current = this.member.impeachmentVotes;
             this.max = this.member.impeachmentThroughVotes;
+            if (this.current >= this.max) {
+                this.ratio = "100";
+            }
+            else {
+                this.ratio = (this.current * 100 / this.max).toFixed(1);
+            }
             this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
         }
 
