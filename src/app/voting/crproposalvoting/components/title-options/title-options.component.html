@@ -1,16 +1,9 @@
+
 <ion-grid [class.darkContainer]="theme.darkMode">
-
-    <div class="row ion-activatable">
-        <ion-row (click)="voteforproposal()">
-            <!-- <ion-col size="3">
-                <img
-                    [src]="!theme.darkMode ? '/assets/crcouncilvoting/icon/impeach.svg' : '/assets/crcouncilvoting/icon/impeach_dark.svg'">
-            </ion-col> -->
-            <ion-col size="9">
-                <ion-label>{{ 'crproposalvoting.vote-proposal' | translate }}</ion-label>
-            </ion-col>
-        </ion-row>
-        <ion-ripple-effect></ion-ripple-effect>
-    </div>
-
+    <ion-row class="ripple ion-activatable" (click)="voteforproposal()">
+        <ion-col size="12">
+            <ion-label>{{ 'crproposalvoting.vote-proposal' | translate }}</ion-label>
+        </ion-col>
+    </ion-row>
+    <ion-ripple-effect></ion-ripple-effect>
 </ion-grid>
