@@ -60,6 +60,8 @@ export const en = {
         'update': 'Update',
         'claim-dpos-node': 'Claim DPos Node',
 
+        'no-member-info': 'Can not get the member info',
+
         /********** Impeach **********/
         'impeach-council-member': 'Impeach Council Member',
         'member-name': 'Council Member Name',

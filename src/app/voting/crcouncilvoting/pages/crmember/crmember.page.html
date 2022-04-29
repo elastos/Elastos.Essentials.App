@@ -152,7 +152,11 @@
         </ion-footer>
     </div>
 
-    <div *ngIf="member == null" class="spinner align-center">
+    <div *ngIf="memberFetched && member == null" class="no-data">
+        {{ 'crcouncilvoting.no-member-info' | translate }}
+    </div>
+
+    <div *ngIf="!memberFetched" class="spinner align-center">
         <ion-spinner name="crescent"></ion-spinner>
     </div>
 

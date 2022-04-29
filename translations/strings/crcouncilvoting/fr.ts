@@ -59,6 +59,8 @@ export const fr = {
         'update': 'MàJ',
         'claim-dpos-node': 'Demander le noeud DPos',
 
+        'no-member-info': 'Can not get the member info',
+
         /********** Impeach **********/
         'impeach-council-member': 'Destituer membre du conseil',
         'member-name': 'Nom du membre',

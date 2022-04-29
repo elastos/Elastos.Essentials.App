@@ -60,6 +60,8 @@ export const zh = {
         'update': '更新',
         'claim-dpos-node': '绑定DPoS节点',
 
+        'no-member-info': '获取委员信息失败',
+
         /********** Impeach **********/
         'impeach-council-member': '弹劾委员会成员',
         'member-name': '委员会成员昵称',

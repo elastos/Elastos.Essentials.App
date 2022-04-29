@@ -35,6 +35,7 @@ export class CRMemberPage {
     public segmentValue = "about";
 
     private popover: any = null;
+    public memberFetched = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -52,37 +53,43 @@ export class CRMemberPage {
     }
 
     async init() {
-        if (!this.member) {
+        if (!this.memberFetched) {
             this.member = await this.crCouncilService.getCRMemberInfo(this.crCouncilService.selectedMemberDid);
             Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.member);
-            this.member.impeachmentThroughVotes = Math.ceil(this.crCouncilService.selectedMember.impeachmentThroughVotes);
-            this.current = this.member.impeachmentVotes;
-            this.max = this.member.impeachmentThroughVotes;
-            if (this.current >= this.max) {
-                this.ratio = "100";
+            if (this.member) {
+                this.member.impeachmentThroughVotes = Math.ceil(this.crCouncilService.selectedMember.impeachmentThroughVotes);
+                this.current = this.member.impeachmentVotes;
+                this.max = this.member.impeachmentThroughVotes;
+                if (this.current >= this.max) {
+                    this.ratio = "100";
+                }
+                else {
+                    this.ratio = (this.current * 100 / this.max).toFixed(1);
+                }
+                this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
             }
-            else {
-                this.ratio = (this.current * 100 / this.max).toFixed(1);
-            }
-            this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
+
+            this.memberFetched = true;
         }
 
-        if (this.voteService.canVote()) {
-            this.titleBar.setMenuVisibility(true);
-            this.titleBar.setupMenuItems([
-                {
-                    key: "impeach-council-member",
-                    title: this.translate.instant('crcouncilvoting.impeach-council-member'),
-                    iconPath: !this.theme.darkMode ? '/assets/crcouncilvoting/icon/impeach.svg' : '/assets/crcouncilvoting/icon/impeach_dark.svg'
-                }
-            ]);
-            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = item => {
-                switch (item.key) {
-                    case "impeach-council-member":
-                        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/impeach');
-                        return;
-                }
-            });
+        if (this.member) {
+            if (this.voteService.canVote()) {
+                this.titleBar.setMenuVisibility(true);
+                this.titleBar.setupMenuItems([
+                    {
+                        key: "impeach-council-member",
+                        title: this.translate.instant('crcouncilvoting.impeach-council-member'),
+                        iconPath: !this.theme.darkMode ? '/assets/crcouncilvoting/icon/impeach.svg' : '/assets/crcouncilvoting/icon/impeach_dark.svg'
+                    }
+                ]);
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = item => {
+                    switch (item.key) {
+                        case "impeach-council-member":
+                            void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/impeach');
+                            return;
+                    }
+                });
+            }
         }
     }
 
