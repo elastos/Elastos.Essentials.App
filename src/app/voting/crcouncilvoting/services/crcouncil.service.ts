@@ -308,10 +308,10 @@ export class CRCouncilService {
             this.selectedMember = null;
             let url = this.voteService.getCrRpcApi() + '/api/v2/council/information/' + did;
             let result = await this.jsonRPCService.httpGet(url);
-            if (result && result.data) {
+            if (result && result.data && result.data.did) {
                 let member = result.data;
                 member.avatar = await this.getAvatar(member.did);
-                member.isSelf = member.did == GlobalDIDSessionsService.signedInDIDString;
+                member.isSelf = Util.isSelfDid(member.did);
                 this.selectedMember = member as CRMemberInfo;
                 Logger.log(App.CRCOUNCIL_VOTING, 'Selected CRMembers:', member);
             }
