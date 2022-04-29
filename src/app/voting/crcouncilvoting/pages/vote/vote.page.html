@@ -1,4 +1,4 @@
-<ion-content [class.dark-container]="theme.darkMode" ngxDetectHideOnScroll scrollEvents>
+<ion-content [class.dark-container]="theme.darkMode" ngxDetectHideOnScroll scrollEvents [class.blur]="castingVote">
     <app-titlebar></app-titlebar>
     <div class="council-header">
         <div *ngIf="remainingTime">
@@ -10,10 +10,10 @@
 
         <div class="votes-header">
             <div class="count">{{ getDistributedEla() }} / {{ totalEla }}</div>
-            {{ 'voting.votes'  | translate }}
+            {{ 'voting.votes' | translate }}
         </div>
 
-        <div class="candidate-list" [class.blur]="castingVote">
+        <div class="candidate-list">
             <div *ngFor="let candidate of crCouncilService.selectedCandidates; index as i" class="candidate"
                 lines="none">
                 <div class="index-col">{{ i+1 }}</div>
@@ -26,7 +26,7 @@
                     <p>
                         <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
                         candidate.location | translate }} • <span class="votes">{{
-                            getDisplayableVotePercentage(candidate) }}%</span> {{ 'voting.of-votes'  | translate }}
+                            getDisplayableVotePercentage(candidate) }}%</span> {{ 'voting.of-votes' | translate }}
                     </p>
                     <ion-input type="tel" [(ngModel)]="candidatesVotes[candidate.cid]"
                         (ionBlur)="onInputBlur($event, candidate)" (ionFocus)="onInputFocus($event, candidate)">
