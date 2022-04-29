@@ -69,14 +69,14 @@ export const fr = {
         'issuance-date': 'Date d\'émission',
         'expiration-date': 'Date d\'expiration',
         'no-history-display': 'Pas d\'historique',
-        'change-visibility': 'Change visibility',
-        'change-visibility-info': 'Choose to make this information visible by everyone or not',
-        'change-visible': 'This credential will become visible to everyone next time your publish your identity',
-        'change-unpublished': 'This credential will be unpublished next time your publish your identity',
-        'change-not-published': 'This credential will be not be published next time your publish your identity',
+        'change-visibility': 'Modifier la visibilité',
+        'change-visibility-info': 'CHoisissez de rendre cette information visible de tous ou non',
+        'change-visible': 'Ce crédentiel deviendra visible par tous la prochaine fois que vous publierez votre identité',
+        'change-unpublished': 'Ce crédentiel sera dépublié la prochaine fois que vous publierez votre identité',
+        'change-not-published': 'Ce crédentiel ne sera pas publié la prochaine fois que vous publierez votre identité',
         'who-made-this': 'Qui l\'a créé?',
         'delete-credential': 'Supprimer',
-        'delete-credential-info': 'This credential will be removed from your identity. This action cannot be reverted.',
+        'delete-credential-info': 'Ce crédentiel sera supprimé de votre identité. Cette action ne peut pas être annulée par la suite.',
         'issuer-not-found-info': "La personne ou le service qui a créé ce crédentiel n'a pas été trouvé dans le registre public. Son DID n'a probablement pas été publié.",
         'credential-details-conform': 'Ce crédentiel est conforme à un format connu et peut être partagé facilement avec plusieurs applications.',
         'credential-details-not-conform': 'Ce crédentiel n\'est pas conforme à un format connu et ne pourra pas facilement être utilisé avec les applications.',
@@ -96,8 +96,8 @@ export const fr = {
         'enter-here': 'Saisir ici',
         'select-gender': 'Sélectionnez un genre',
         'saving-picture-to-hive': 'Sauvegarde de l\'image dans votre espace de stockage Elastos Hive',
-        'save-avatar-error-title': "Saving avatar error",
-        'save-avatar-error-insufficient-space': "Hive Insufficient Space",
+        'save-avatar-error-title': "Erreur lors de l\'enregistrement de l\'avatar",
+        'save-avatar-error-insufficient-space': "Espace de stockage hive insuffisant",
 
         // tabnav
         'home': 'Accueil',
@@ -170,7 +170,7 @@ export const fr = {
         // page: appidcredissue
         'appidcredential-issue': 'Identification de l\'Application',
         'appidcredential-package-id': 'ID du paquet:',
-        'appidcredissue-intro': 'Do you confirm that the requesting application matches with the above information? Be careful, this will grant access to this application\'s hive vault storage.',
+        'appidcredissue-intro': 'Confirmez-vous que l\'application que vous utilisez correspond bien à ce qui est affiché? Ceci donnera accès à l\'espace de stockage hive de cette application.',
         'app-instancedid': 'DID temporaire de l\'application',
         'app-did': 'DID de l\'application',
 
@@ -229,10 +229,10 @@ export const fr = {
         'credimport-success-title': 'Informations importées',
         'credimport-success': 'Les informations ont été ajoutées à votre profil DID.',
         'credimport-success-done': 'Terminer',
-        'credimport-note': 'NOTE: The application is requesting to publish the credentials. They will become part of your public DID profile.',
-        'credimport-wrong-did': 'Sorry, the credential you are trying to import is not for this identity.',
-        'credimport-show-details': 'Show details',
-        'credimport-hide-details': 'Hide details',
+        'credimport-note': 'NOTE: l\'application requiert que votre DID soit re-publié dès maintenant. Ces nouvelles informations feront partie de votre profil public',
+        'credimport-wrong-did': 'Le crédentiel ue vous essayez d\'importer n\'est pas déstiné à cette identité.',
+        'credimport-show-details': 'Plus de détails',
+        'credimport-hide-details': 'Moins de détails',
 
         // page: creddelete
         'credential-delete': 'Suppression d\'informations',
@@ -249,9 +249,9 @@ export const fr = {
         'sethiveprovider-address': 'Adresse:',
 
         // page: requestcredentials
-        'request-credentials-match-not-enough': "You are requested to provide at least {{min}} item(s) but you only have {{match}}. You should be able to get more information from the following external apps:",
-        'request-credentials-no-match': "You are requested to provide at least {{count}} item(s) but you don't have any. You should be able to get more information from the following external apps:",
-        'request-credentials-no-recommendation': 'Please ask the dApp team how to solve this problem.',
+        'request-credentials-match-not-enough': "Il est demandé de fournir au moins {{min}} élément(s) mais vous en avez {{match}}. Vous pouvez obtenir plus de crédentiels via par exemple les applications suivantes:",
+        'request-credentials-no-match': "Il est demandé de fournir au moins {{count}} éléments mais vous n\en avez aucun. Vous pouvez obtenir plus de crédentiels via par exemple les applications suivantes:",
+        'request-credentials-no-recommendation': 'Veuillez demander aux membres de cette application comment procéder.',
 
         // Global component: assist publishing
         'publishing': {
@@ -305,11 +305,11 @@ export const fr = {
         'publish-wait': 'Veuillez attendre quelques minutes avant de publier à nouveau.',
         'publish-error2': 'Erreur de publication',
         'publish-wait2': 'Votre profil public est en train d\'être mis à jour, veuillez patienter quelques secondes.',
-        'publish-error-call-sync-did': "Need to synchronize identity, Settings->Advanced Settings->Synchronize Identity",
+        'publish-error-call-sync-did': "Synchronisation d\'identité requise, Paramères->Paramètres avancés->Synchroniser l\'identité",
 
         // Sensitive popup
-        'sensitive-title': 'Sensitive information',
-        'sensitive-prompt': 'This information is marked as sensitive. Please double check that you really want to publish this',
+        'sensitive-title': 'Information sensible',
+        'sensitive-prompt': 'Cette information est notée comme sensible. Vérifiez bien que vous souhaitez réellement la rendre publique.',
     },
 };
 

@@ -117,7 +117,7 @@ export const fr = {
         "coin-action-send": "ENVOYER",
         "coin-action-receive": "RECEVOIR",
         "coin-transactions": "Transactions",
-        "coin-internal-transactions": "Internal Transactions",
+        "coin-internal-transactions": "Transactions internes",
         "coin-no-transactions": "Aucune transaction",
         "coin-op-received-token": "Reçu",
         "coin-op-sent-token": "Envoyé",
@@ -273,8 +273,8 @@ export const fr = {
         "wallet-settings-title": "Paramètres Portefeuille",
         "wallet-settings-backup-wallet": "Sauvegarde",
         "wallet-settings-backup-wallet-subtitle": "Visualisez votre mnémonique pour le sauvegarder en lieu sûr.",
-        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
-        "wallet-settings-backup-wallet-keystore": "Export Keystore",
+        "wallet-settings-backup-wallet-export": "Exporter clé papier et clé privée",
+        "wallet-settings-backup-wallet-keystore": "Exporter le keystore",
         "wallet-settings-change-name": "Renommer",
         "wallet-settings-change-name-subtitle": "Organisez vos portefeuilles en leur donnant un nom personnalisé.",
         "wallet-settings-change-theme": "Modifier le thème",
@@ -387,8 +387,8 @@ export const fr = {
         /************************
         * Select Subwallet Page *
         *************************/
-        'select-subwallet': 'Selectionner le portefeuille',
-        'select-wallet': 'Selectionner le portefeuille',
+        'select-subwallet': 'Sélectionner le portefeuille',
+        'select-wallet': 'Sélectionner le portefeuille',
 
         /**************
         * Access Page *
@@ -524,13 +524,13 @@ export const fr = {
         /***********************
         * Export Keystore Page *
         ************************/
-        "keystore-title": "Export Keystore",
-        "keystore-export-intro": "Touch to copy",
-        "keystore-input-password": "Set Keystore password",
-        "keystore-reinput-password": "Repeat Keystore password",
-        "keystore-export": "Export",
-        "keystore-password-validator-repeat": "The two input passwords are inconsistent",
-        "keystore-password-validator-min-length": "The password must be at least 8 characters",
+        "keystore-title": "Exporter le keystore",
+        "keystore-export-intro": "Toucher pour copier",
+        "keystore-input-password": "Définir le mot de passe du keystore",
+        "keystore-reinput-password": "Répétrer le mote de passe du keystore",
+        "keystore-export": "Exporter",
+        "keystore-password-validator-repeat": "Les deux mots de passe sont différents",
+        "keystore-password-validator-min-length": "Le mot de passe doit être d\'au moins 8 caractères",
 
         /********************************
         * Advanced Mnemonic Import Page *
@@ -544,12 +544,12 @@ export const fr = {
         * Import Wallet by private key Page *
         *********************************/
         'import-wallet-by-privatekey-info': 'Clé privée: Seules les clés privées des portefeuilles EVM (type Ethereum) sont supportées.',
-        'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
+        'import-wallet-by-keystore-info': 'Keystore: seul les keystore elastos sont supportés',
         'paste-privatekey': 'Coller ou saisir la clé privée ou un keystore',
         'wrong-privatekey-msg': 'Veuillez saisir une clé privée valide',
-        'import-private-key-sucess': 'Wallet imported from Private key',
-        'import-keystore-sucess': 'Wallet imported from keystore',
-        'keystore-backup-password': 'Please enter the keystore password',
+        'import-private-key-sucess': 'Portefeuille importé depuis une clé privée',
+        'import-keystore-sucess': 'Portefeuille importé depuis un keystore',
+        'keystore-backup-password': 'Veuillez saisir le mot de passe du keystore',
 
         /***************************
         * Earn, Swap, Bridge pages *

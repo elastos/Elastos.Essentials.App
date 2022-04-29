@@ -195,7 +195,7 @@ export const en = {
         'receiver-did': 'Receiver DID',
 
         //Error
-        'no-draft-data': 'Can not get the drafe data for now.',
+        'no-draft-data': 'Can not get the draft data for now.',
         'no-message-data': 'Can not get the message data for now.',
         'no-opinion-data': 'Can not get the opinion data for now.',
         'no-command-type': 'This CR commond type is currently not supported.',
