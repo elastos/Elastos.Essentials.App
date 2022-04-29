@@ -69,7 +69,7 @@ export class DPoSVotePage implements OnInit {
         private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService,
     ) {
-        this.init();
+        void this.init();
     }
 
     ngOnInit() {
@@ -102,15 +102,15 @@ export class DPoSVotePage implements OnInit {
         }
     }
 
-    init() {
+    async init() {
         this.subWalletId = this.coinTransferService.subWalletId;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWalletId = this.coinTransferService.masterWalletId;
 
         this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainchainSubWallet;
-        // All balance can be used for voting?
-        let voteInEla = this.sourceSubwallet.getRawBalance().minus(this.votingFees());
+        await this.sourceSubwallet.updateBalanceSpendable();
+        let voteInEla = this.sourceSubwallet.getRawBalanceSpendable().minus(this.votingFees());
         this.voteAmountELA = voteInEla.toString()
         this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toString();
         void this.hasPendingVoteTransaction();
