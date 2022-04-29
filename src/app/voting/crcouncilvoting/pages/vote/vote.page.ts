@@ -277,10 +277,10 @@ export class VotePage implements OnInit, OnDestroy {
             await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
         }
         catch (e) {
-            this.castingVote = false;
             await this.voteService.popupErrorMessage(e);
         }
 
+        this.castingVote = false;
         this.signingAndTransacting = false;
     }
 }
