@@ -60,10 +60,10 @@ export class VoteService {
 
     public init() {
         Logger.log(App.VOTING, "VoteService init");
-        //Get cr members
-        if (this.crmembers.length > 0) {
-            void this.getCRMembers();
-        }
+        // //Get cr members
+        // if (this.crmembers.length > 0) {
+        //     void this.getCRMembers();
+        // }
     }
 
     public async selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
@@ -366,7 +366,7 @@ export class VoteService {
     }
 
     getMaxVotes() {
-        const stakeAmount = this.sourceSubwallet.getRawBalance().minus(this.votingFees());
+        const stakeAmount = this.sourceSubwallet.getRawBalanceSpendable().minus(this.votingFees());
         if (!stakeAmount.isNegative()) {
             return Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
         }
@@ -379,7 +379,7 @@ export class VoteService {
         let depositAmount = 50000000000; // 5000 ELA
         let fee = 10000;
         let amount = depositAmount + fee;
-        if (this.sourceSubwallet.getRawBalance().lt(amount)) {
+        if (this.sourceSubwallet.getRawBalanceSpendable().lt(amount)) {
             return false;
         }
         return true;

@@ -50,7 +50,7 @@ export class VoteForProposalPage {
         public keyboard: Keyboard,
         public zone: NgZone,
     ) {
-
+        void this.voteService.sourceSubwallet.updateBalanceSpendable();
     }
 
     async ionViewWillEnter() {
@@ -79,10 +79,7 @@ export class VoteForProposalPage {
                 });
             });
 
-            const stakeAmount = this.voteService.sourceSubwallet.getRawBalance().minus(this.votingFees());
-            if (!stakeAmount.isNegative()) {
-                this.maxVotes = Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
-            }
+            this.maxVotes = this.voteService.getMaxVotes();
         }
     }
 

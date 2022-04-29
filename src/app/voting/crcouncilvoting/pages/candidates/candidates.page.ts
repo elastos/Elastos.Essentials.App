@@ -45,7 +45,9 @@ export class CandidatesPage implements OnInit {
         private voteService: VoteService,
         public translate: TranslateService,
         public popupProvider: GlobalPopupService,
-    ) { }
+    ) {
+        void this.voteService.sourceSubwallet.updateBalanceSpendable();
+    }
 
     ngOnInit() {
         this.showCandidate = false;

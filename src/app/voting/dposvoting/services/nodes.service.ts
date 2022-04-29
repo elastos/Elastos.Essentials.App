@@ -117,7 +117,7 @@ export class NodesService {
         public events: Events,
         public zone: NgZone,
     ) {
-
+        void this.voteService.sourceSubwallet.updateBalanceSpendable();
     }
 
     get nodes(): DPosNode[] {
@@ -214,10 +214,7 @@ export class NodesService {
     // }
 
     async checkBalanceForRegDposNode(): Promise<boolean> {
-        let depositAmount = 50000000000; // 5000 ELA
-        let fee = 10000;
-        let amount = depositAmount + fee;
-        if (this.voteService.sourceSubwallet.getRawBalance().lt(amount)) {
+        if (!this.voteService.checkBalanceForRegistration()) {
             await this.popupProvider.ionicAlert('wallet.insufficient-balance', 'dposregistration.reg-dpos-balance-not-enough');
             return false;
         }

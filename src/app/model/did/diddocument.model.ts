@@ -12,12 +12,17 @@ export class DIDDocument {
 
 
     public static getDIDDocumentFromDIDString(didString: string): Promise<DIDDocument> {
+        Logger.log("DIDDocument", "getDIDDocumentFromDIDString from:" + didString);
+        if (!didString) {
+            return null;
+        }
+
         if (didString.indexOf(':') == -1) {
             didString = "did:elastos:" + didString;
         }
         return new Promise((resolve, reject)=>{
             didManager.resolveDidDocument(didString, true, (document)=>{
-                Logger.log("DIDDocument", "DIDDocument resolved from did string " + didString, document);
+                Logger.log("DIDDocument", "DIDDocument resolved:", document);
                 if (document != null) {
                     let doc = new DIDDocument(document);
                     resolve(doc);

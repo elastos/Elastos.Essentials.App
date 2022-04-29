@@ -36,17 +36,15 @@ export class ImpeachCRMemberPage {
         public crCouncilService: CRCouncilService,
         private voteService: VoteService,
         public popupProvider: GlobalPopupService,
-    ) { }
+    ) {
+        void this.voteService.sourceSubwallet.updateBalanceSpendable();
+    }
 
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.impeachment'));
         this.member = this.crCouncilService.selectedMember;
-
-        const stakeAmount = this.voteService.sourceSubwallet.getRawBalance().minus(this.votingFees());
-        if (!stakeAmount.isNegative()) {
-            this.maxVotes = Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
-        }
+        this.maxVotes = this.voteService.getMaxVotes();
     }
 
     cancel() {
