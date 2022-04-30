@@ -274,7 +274,10 @@ export class VotePage implements OnInit, OnDestroy {
             );
             Logger.log('wallet', "rawTx:", rawTx);
 
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
+            if (ret) {
+                this.voteService.toastSuccessfully('voting.vote');
+            }
         }
         catch (e) {
             await this.voteService.popupErrorMessage(e);

@@ -472,7 +472,10 @@ export class CRCouncilService {
                     payload.Signature = signature;
                     Logger.log('CandidateRegistrationPage', 'generateUnregisterCRPayload', payload);
                     const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(JSON.stringify(payload), "");
-                    await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
+                    let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
+                    if (ret) {
+                        this.voteService.toastSuccessfully('crcouncilvoting.unregistration-candidate');
+                    }
                 }
             }
         }
@@ -502,7 +505,7 @@ export class CRCouncilService {
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, customRoute);
             if (ret) {
-                this.globalNative.genericToast('crcouncilvoting.withdraw-successfully', 2000, "success");
+                this.voteService.toastSuccessfully('crcouncilvoting.withdraw');
             }
         }
         catch (e) {

@@ -17,6 +17,8 @@ export const en = {
         'vote-going': 'Vote is on going!',
         'vote-invalid': "Votes is invalid",
 
+        'successfully': ' successfully, please wait for transaction confirmation.',
+
         //Proposal Status
         'status': 'Status',
         'registered': 'Under Council Review',

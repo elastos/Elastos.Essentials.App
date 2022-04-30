@@ -8,6 +8,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
@@ -54,6 +55,7 @@ export class VoteService {
         private globalSwitchNetworkService: GlobalSwitchNetworkService,
         private globalElastosAPIService: GlobalElastosAPIService,
         public translate: TranslateService,
+        private globalNative: GlobalNativeService,
     ) {
         this.elastosChainCode = StandardCoinName.ELA;
     }
@@ -157,6 +159,12 @@ export class VoteService {
         }
         return false;
     }
+
+    public toastSuccessfully(subject: string) {
+        let msg = this.translate.instant(subject) + this.translate.instant('voting.successfully');
+        this.globalNative.genericToast(msg, 2000, "success");
+    }
+
 
     public async popupErrorMessage(error: any, context?: string) {
         if (!error) {

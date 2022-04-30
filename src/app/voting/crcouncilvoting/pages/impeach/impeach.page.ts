@@ -116,7 +116,10 @@ export class ImpeachCRMemberPage {
 
 
         try {
-            await this.voteService.signAndSendRawTransaction(rawTx);
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+            if (ret) {
+                this.voteService.toastSuccessfully('crcouncilvoting.impeachment');
+            }
         }
         catch (e) {
             await this.voteService.popupErrorMessage(e);

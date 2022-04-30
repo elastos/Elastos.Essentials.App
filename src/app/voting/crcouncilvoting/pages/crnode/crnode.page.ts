@@ -91,7 +91,10 @@ export class CRNodePage implements OnInit {
 
                 //Create transaction and send
                 const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(JSON.stringify(payload), '');
-                await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
+                let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
+                if (ret) {
+                    this.voteService.toastSuccessfully('crcouncilvoting.claim-dpos-node');
+                }
             }
         }
         catch (e) {

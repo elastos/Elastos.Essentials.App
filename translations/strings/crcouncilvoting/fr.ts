@@ -87,8 +87,9 @@ export const fr = {
 
         /********** Registration **********/
         'registration': 'Enregistrement',
-        'register-header': 'Enregistrement candidat',
-        'update-header': 'MàJ Infos Candidat',
+        'register-candidate': 'Enregistrement candidat',
+        'update-candidate':  'MàJ Infos Candidat',
+        'update-member': 'Update Member Info',
         'register': 'Enregistrer',
         'unregister': 'Désenregistrer',
         'retrieve': 'Récupérer',

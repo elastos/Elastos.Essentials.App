@@ -88,8 +88,9 @@ export const zh = {
 
         /********** Registration **********/
         'registration': '报名参选',
-        'register-header': '注册CR候选人',
-        'update-header': '更新候选人信息',
+        'register-candidate': '注册CR候选人',
+        'update-candidate':  '更新候选人信息',
+        'update-member': '更新委员信息',
         'register': '注册',
         'unregister': '注销',
         'retrieve': '取款',

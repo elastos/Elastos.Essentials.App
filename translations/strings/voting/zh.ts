@@ -17,6 +17,8 @@ export const zh = {
         'vote-going': '正在进行委员选举投票!',
         'vote-invalid': "票数不正确",
 
+        'successfully': '成功，请等待交易确认。',
+
         //Proposal Status
         'status': '状态',
         'registered': '委员评议',

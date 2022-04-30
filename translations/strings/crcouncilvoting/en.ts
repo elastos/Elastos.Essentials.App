@@ -82,14 +82,15 @@ export const en = {
         'manage-candidate': 'Manage candidation',
         'edit-candidate': 'Update candidate details',
         'unregistration-candidate': 'Exit election',
-        'withdraw': 'Withdraw',
+        'withdraw': 'Withdraw deposit',
 
         'no-candidates': 'There are no candidates at present',
 
         /********** Registration **********/
         'registration': 'Registration',
-        'register-header': 'Candidate registration',
-        'update-header': 'Update Candidate Info',
+        'register-candidate': 'Candidate Registration',
+        'update-candidate': 'Update Candidate Info',
+        'update-member': 'Update Member Info',
         'register': 'Register',
         'unregister': 'Unregister',
         'retrieve': 'Retrieve',

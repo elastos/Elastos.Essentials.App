@@ -78,7 +78,7 @@ export class CandidateRegistrationPage implements OnInit {
 
         switch (this.crCouncilService.candidateInfo.state) {
             case 'Unregistered':
-                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.register-header'));
+                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.register-candidate'));
                 break;
             // Active indicates the producer is registered and confirmed by more than
             // 6 blocks.
@@ -88,7 +88,7 @@ export class CandidateRegistrationPage implements OnInit {
                 if (this.candidateInfo.state == "Unregistered") {
                     this.candidateInfo = Util.clone(this.originInfo);
                 }
-                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-header'));
+                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-candidate'));
                 break;
         }
     }
@@ -178,16 +178,14 @@ export class CandidateRegistrationPage implements OnInit {
     }
 
     async register() {
-        // //Check value
-        // if (!await this.nodesService.checkBalanceForRegDposNode()) {
-        //     return;
-        // }
-
         try {
             let payload = await this.getCRInfoPayload();
             if (payload) {
                 const rawTx = await this.voteService.sourceSubwallet.createRegisterCRTransaction(payload, this.depositAmount, "");
-                await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+                let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+                if (ret) {
+                    this.voteService.toastSuccessfully('crcouncilvoting.register-candidate');
+                }
             }
         }
         catch (e) {
@@ -201,7 +199,10 @@ export class CandidateRegistrationPage implements OnInit {
             let payload = await this.getCRInfoPayload();
             if (payload) {
                 const rawTx = await this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
-                await this.voteService.signAndSendRawTransaction(rawTx);
+                let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+                if (ret) {
+                    this.voteService.toastSuccessfully('crcouncilvoting.update-candidate');
+                }
             }
         }
         catch (e) {
