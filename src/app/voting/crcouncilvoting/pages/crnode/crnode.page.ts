@@ -4,7 +4,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
-import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -86,23 +85,16 @@ export class CRNodePage implements OnInit {
 
             //Get digest
             var digest = await this.walletManager.spvBridge.CRCouncilMemberClaimNodeDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
-            digest = Util.reverseHexToBE(digest);
             Logger.log('crproposal', "Got review proposal digest.", digest);
 
-            //Get did sign digest
-            let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {
-                data: digest,
-            });
-            Logger.log('crproposal', "Got signed digest.", ret);
-            if (!ret.result) {
-                // Operation cancelled by user
-                return null;
-            }
+            let signature = await this.crCouncilService.getSignature(digest);
+            if (signature) {
+                payload.CRCouncilMemberSignature = signature;
 
-            //Create transaction and send
-            payload.CRCouncilMemberSignature = ret.result.signature;
-            const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(JSON.stringify(payload), '');
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
+                //Create transaction and send
+                const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(JSON.stringify(payload), '');
+                await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
+            }
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
