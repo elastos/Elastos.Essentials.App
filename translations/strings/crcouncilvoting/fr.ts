@@ -57,7 +57,7 @@ export const fr = {
         'member-url': 'URL du membre',
         'member-profile': 'Profil du membre',
         'update': 'MàJ',
-        'claim-dpos-node': 'Demander le noeud DPos',
+        'claim-dpos-node': 'Demander le noeud DPoS',
 
         'no-member-info': 'Can not get the member info',
 

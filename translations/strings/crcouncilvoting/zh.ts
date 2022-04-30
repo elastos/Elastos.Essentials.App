@@ -80,7 +80,7 @@ export const zh = {
         'social-media': '社交媒体',
 
         'manage-candidate': '管理候选人',
-        'edit-candidate': '编辑候选人',
+        'edit-candidate': '更新候选人',
         'unregistration-candidate': '退出选举',
         'withdraw': '取回押金',
 

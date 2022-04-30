@@ -58,7 +58,7 @@ export const en = {
         'member-url': 'Council Member URL',
         'member-profile': 'Council Member Profile',
         'update': 'Update',
-        'claim-dpos-node': 'Claim DPos Node',
+        'claim-dpos-node': 'Claim DPoS Node',
 
         'no-member-info': 'Can not get the member info',
 
@@ -80,7 +80,7 @@ export const en = {
         'social-media': 'Social Media',
 
         'manage-candidate': 'Manage candidation',
-        'edit-candidate': 'Edit candidate details',
+        'edit-candidate': 'Update candidate details',
         'unregistration-candidate': 'Exit election',
         'withdraw': 'Withdraw',
 

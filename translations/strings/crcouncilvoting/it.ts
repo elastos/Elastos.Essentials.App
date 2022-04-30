@@ -58,7 +58,7 @@ export const it = {
         'member-url': 'URL del Membro del Consiglio',
         'member-profile': 'Profilo del Membro del CRC',
         'update': 'Aggiorna',
-        'claim-dpos-node': 'Richiedi Nodo DPos',
+        'claim-dpos-node': 'Richiedi Nodo DPoS',
 
         'no-member-info': 'Can not get the member info',
 
@@ -80,7 +80,7 @@ export const it = {
         'social-media': 'Social Media',
 
         'manage-candidate': 'Manage candidation',
-        'edit-candidate': 'Edit candidate details',
+        'edit-candidate': 'Update candidate details',
         'unregistration-candidate': 'Exit election',
         'withdraw': 'Withdraw',
 
