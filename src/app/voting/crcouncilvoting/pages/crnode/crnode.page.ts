@@ -1,5 +1,4 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
@@ -7,8 +6,8 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { PopupService } from 'src/app/voting/crproposalvoting/services/popup.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
@@ -35,10 +34,8 @@ export class CRNodePage implements OnInit {
         public voteService: VoteService,
         private globalIntentService: GlobalIntentService,
         public popupProvider: PopupProvider,
-        private route: ActivatedRoute,
-        private zone: NgZone,
-        private popup: PopupService,
         public crCouncilService: CRCouncilService,
+        private globalNative: GlobalNativeService,
     ) {
 
     }
@@ -54,7 +51,31 @@ export class CRNodePage implements OnInit {
         this.nodePublicKey = this.crmemberInfo.dpospublickey;
     }
 
+    checkValues(): boolean {
+        var blankMsg = this.translate.instant('common.text-input-is-blank');
+        var formatWrong = this.translate.instant('common.text-input-format-wrong');
+
+        if (!this.nodePublicKey || this.nodePublicKey == "") {
+            blankMsg = this.translate.instant('dposregistration.node-publickey') + blankMsg;
+            this.globalNative.genericToast(blankMsg);
+            return false;
+        }
+
+        if (!this.nodePublicKey.match("^[A-Fa-f0-9]+$") || this.nodePublicKey.length != 66
+            || !(this.nodePublicKey.startsWith("02") || this.nodePublicKey.startsWith("03"))) {
+            formatWrong = this.translate.instant('dposregistration.node-publickey') + formatWrong;
+            this.globalNative.genericToast(formatWrong);
+            return false;
+        }
+
+        return true;
+    }
+
     async goTransaction() {
+        if (!this.checkValues()) {
+            return;
+        }
+
         try {
             //Get payload
             var payload = {
