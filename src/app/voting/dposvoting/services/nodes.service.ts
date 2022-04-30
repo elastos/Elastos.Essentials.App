@@ -19,8 +19,6 @@ import { Vote } from '../model/history.model';
 import { DPosNode } from '../model/nodes.model';
 import { Block, Mainchain, Price, Voters } from '../model/stats.model';
 
-
-
 export type DPoSRegistrationInfo = {
     active?: boolean;
     cancelheight?: number;
@@ -117,7 +115,7 @@ export class NodesService {
         public events: Events,
         public zone: NgZone,
     ) {
-        void this.voteService.sourceSubwallet.updateBalanceSpendable();
+
     }
 
     get nodes(): DPosNode[] {

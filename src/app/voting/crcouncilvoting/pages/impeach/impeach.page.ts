@@ -26,6 +26,7 @@ export class ImpeachCRMemberPage {
     public signingAndTransacting = false;
     public maxVotes = 0;
     public amount: number;
+    private updatedBalance = false;
 
     constructor(
         public theme: GlobalThemeService,
@@ -37,14 +38,17 @@ export class ImpeachCRMemberPage {
         private voteService: VoteService,
         public popupProvider: GlobalPopupService,
     ) {
-        void this.voteService.sourceSubwallet.updateBalanceSpendable();
+
     }
 
-
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
+        if (!this.updatedBalance) {
+            await this.voteService.sourceSubwallet.updateBalanceSpendable();
+            this.maxVotes = this.voteService.getMaxVotes();
+            this.updatedBalance = true;
+        }
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.impeachment'));
         this.member = this.crCouncilService.selectedMember;
-        this.maxVotes = this.voteService.getMaxVotes();
     }
 
     cancel() {

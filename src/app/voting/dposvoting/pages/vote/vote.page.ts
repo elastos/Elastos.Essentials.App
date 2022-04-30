@@ -44,6 +44,8 @@ export class VotePage implements OnInit {
     // Toast for voteFailed/voteSuccess
     private toast: any = null;
 
+    private updatedBalance = false;
+
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
@@ -102,6 +104,11 @@ export class VotePage implements OnInit {
         if (!this.nodesService.dposInfo.txConfirm) {
             this.globalNative.genericToast('dposregistration.text-registration-no-confirm');
             return;
+        }
+
+        if (!this.updatedBalance) {
+            await this.voteService.sourceSubwallet.updateBalanceSpendable();
+            this.updatedBalance = true;
         }
 
         if (!await this.nodesService.checkBalanceForRegDposNode()) {

@@ -4,7 +4,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -31,7 +30,6 @@ export class CRNodePage implements OnInit {
         public theme: GlobalThemeService,
         private walletManager: WalletService,
         public voteService: VoteService,
-        private globalIntentService: GlobalIntentService,
         public popupProvider: PopupProvider,
         public crCouncilService: CRCouncilService,
         private globalNative: GlobalNativeService,

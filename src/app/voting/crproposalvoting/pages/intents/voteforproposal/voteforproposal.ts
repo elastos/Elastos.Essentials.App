@@ -50,7 +50,7 @@ export class VoteForProposalPage {
         public keyboard: Keyboard,
         public zone: NgZone,
     ) {
-        void this.voteService.sourceSubwallet.updateBalanceSpendable();
+
     }
 
     async ionViewWillEnter() {
@@ -79,6 +79,7 @@ export class VoteForProposalPage {
                 });
             });
 
+            await this.voteService.sourceSubwallet.updateBalanceSpendable();
             this.maxVotes = this.voteService.getMaxVotes();
         }
     }
