@@ -69,6 +69,7 @@ export const zh = {
         /********** CRNode **********/
         'enter-node-publickey': '输入节点公钥',
         'edit-node-publickey': '修改节点公钥',
+        'text-public-key-dont-modify': '节点公钥没有修改。',
 
         /********** Candidate **********/
         'candidate-profile': '候选人信息',

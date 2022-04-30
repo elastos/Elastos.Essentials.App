@@ -65,6 +65,11 @@ export class CRNodePage implements OnInit {
             return false;
         }
 
+        if (this.nodePublicKey == this.crmemberInfo.dpospublickey) {
+            this.globalNative.genericToast('crcouncilvoting.text-public-key-dont-modify');
+            return false;
+        }
+
         return true;
     }
 

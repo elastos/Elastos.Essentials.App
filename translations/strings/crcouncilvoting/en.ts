@@ -69,6 +69,7 @@ export const en = {
         /********** CRNode **********/
         'enter-node-publickey': 'Enter public key of your node',
         'edit-node-publickey': 'Edit public key of your node',
+        'text-public-key-dont-modify': 'The DPoS Public Key do not modify.',
 
         /********** Candidate **********/
         'candidate-profile': 'Candidate Profile',
