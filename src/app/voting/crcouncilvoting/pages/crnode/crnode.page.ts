@@ -22,7 +22,7 @@ export class CRNodePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     public masterWalletId: string;
-    public nodePublicKey: string;
+    public nodePublicKey: string = null;
     public crmemberInfo: any = {};
 
     constructor(
@@ -45,7 +45,9 @@ export class CRNodePage implements OnInit {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.claim-dpos-node'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
         this.crmemberInfo = this.crCouncilService.selectedMember;
-        this.nodePublicKey = this.crmemberInfo.dpospublickey;
+        if (!this.nodePublicKey) {
+            this.nodePublicKey = this.crmemberInfo.dpospublickey;
+        }
     }
 
     checkValues(): boolean {
