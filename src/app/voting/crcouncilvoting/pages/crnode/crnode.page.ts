@@ -82,7 +82,7 @@ export class CRNodePage implements OnInit {
             Logger.log('crproposal', "Got review proposal payload.", payload);
 
             //Get digest
-            var digest = await this.walletManager.spvBridge.CRCouncilMemberClaimNodeDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+            var digest = await this.walletManager.spvBridge.CRCouncilMemberClaimNodeDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
             Logger.log('crproposal', "Got review proposal digest.", digest);
 
             let signature = await this.crCouncilService.getSignature(digest);
