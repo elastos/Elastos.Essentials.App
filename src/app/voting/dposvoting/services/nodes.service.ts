@@ -142,7 +142,6 @@ export class NodesService {
         try {
             // await this.getVisit();
             await this.getStoredVotes();
-            await this.fetchStats();
             await this.fetchNodes();
         }
         catch (err) {

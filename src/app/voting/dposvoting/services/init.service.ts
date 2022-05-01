@@ -7,7 +7,6 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 export class DPoSVotingInitService {
     constructor(
         public voteService: VoteService,
-
     ) { }
 
     public async init(): Promise<void> {
