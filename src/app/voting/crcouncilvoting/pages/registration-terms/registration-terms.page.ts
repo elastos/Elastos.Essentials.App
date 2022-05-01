@@ -44,6 +44,7 @@ export class CandidateRegistrationTermsPage implements OnInit {
         // Make sure to not come back here later
         this.globalNav.clearIntermediateRoutes(["/crcouncilvoting/registration-terms"]);
         // Go to registration
+        this.crCouncilService.updateInfo = null;
         void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
     }
 

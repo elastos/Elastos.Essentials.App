@@ -55,11 +55,6 @@ export class CandidatesPage implements OnInit {
     }
 
     async ionViewWillEnter() {
-        if (!this.updatedBalance) {
-            await this.voteService.sourceSubwallet.updateBalanceSpendable();
-            this.updatedBalance = true;
-        }
-
         this.titleBar.setBackgroundColor("#732CCE");
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
@@ -95,6 +90,11 @@ export class CandidatesPage implements OnInit {
         if (!this.crCouncilService.candidateInfo.txConfirm) {
             this.globalNative.genericToast('crcouncilvoting.text-registration-no-confirm');
             return;
+        }
+
+        if (!this.updatedBalance) {
+            await this.voteService.sourceSubwallet.updateBalanceSpendable();
+            this.updatedBalance = true;
         }
 
         if (!this.voteService.checkBalanceForRegistration()) {

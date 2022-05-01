@@ -71,7 +71,11 @@ export class RegisterUpdatePage implements OnInit {
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
         this.originInfo = Util.clone(this.crCouncilService.updateInfo);
-        if (this.crCouncilService.updateInfo.isSelf) {
+        if (!this.crCouncilService.updateInfo) {
+            this.infoOpration = InfoOperation.Registration;
+            this.titleBar.setTitle(this.translate.instant('crcouncilvoting.register-candidate'));
+        }
+        else if (this.crCouncilService.updateInfo.isSelf) {
             this.infoOpration = InfoOperation.UpdateMember;
             this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-member'));
         }
@@ -79,10 +83,7 @@ export class RegisterUpdatePage implements OnInit {
             this.infoOpration = InfoOperation.UpdateCandidate;
             this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-candidate'));
         }
-        else {
-            this.infoOpration = InfoOperation.Registration;
-            this.titleBar.setTitle(this.translate.instant('crcouncilvoting.register-candidate'));
-        }
+
 
         if (this.infoOpration != InfoOperation.Registration) {
             this.originInfo = Util.clone(this.crCouncilService.updateInfo);
