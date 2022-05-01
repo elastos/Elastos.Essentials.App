@@ -190,7 +190,10 @@ export class DPosRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.depositAmount, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING);
+        let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+        if (ret) {
+            this.voteService.toastSuccessfully('dposregistration.registration');
+        }
     }
 
     async update() {
