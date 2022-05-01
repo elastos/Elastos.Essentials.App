@@ -25,11 +25,11 @@ enum InfoOperation {
 }
 
 @Component({
-    selector: 'app-registration',
-    templateUrl: './registration.page.html',
-    styleUrls: ['./registration.page.scss'],
+    selector: 'app-register-update',
+    templateUrl: './register-update.page.html',
+    styleUrls: ['./register-update.page.scss'],
 })
-export class CandidateRegistrationPage implements OnInit {
+export class RegisterUpdatePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     // public masterWalletId: string;
@@ -63,11 +63,11 @@ export class CandidateRegistrationPage implements OnInit {
     }
 
     ngOnInit() {
-        Logger.log("CandidateRegistrationPage", "ngOnInit")
+        Logger.log("RegisterUpdatePage", "ngOnInit")
     }
 
     ionViewWillEnter() {
-        Logger.log("CandidateRegistrationPage", this.voteService.masterWalletId);
+        Logger.log("RegisterUpdatePage", this.voteService.masterWalletId);
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
         this.originInfo = Util.clone(this.crCouncilService.updateInfo);
@@ -95,7 +95,7 @@ export class CandidateRegistrationPage implements OnInit {
     }
 
     checkValues() {
-        Logger.log("CandidateRegistrationPage", "Candidate Info", this.info);
+        Logger.log("RegisterUpdatePage", "Candidate Info", this.info);
 
         var blankMsg = this.translate.instant('common.text-input-is-blank');
         var formatWrong = this.translate.instant('common.text-input-format-wrong');
@@ -162,7 +162,7 @@ export class CandidateRegistrationPage implements OnInit {
             this.info.did = Util.getShortDidString();
         }
 
-        Logger.log('CandidateRegistrationPage', 'Info', this.info);
+        Logger.log('RegisterUpdatePage', 'Info', this.info);
         const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.voteService.masterWalletId, StandardCoinName.ELA,
             this.info.ownerpublickey, this.info.did, this.info.nickname, this.info.url, this.info.location);
 
@@ -170,7 +170,7 @@ export class CandidateRegistrationPage implements OnInit {
             let signature = await this.crCouncilService.getSignature(payload.Digest);
             if (signature) {
                 payload.Signature = signature;
-                Logger.log('CandidateRegistrationPage', 'generateCRInfoPayload', payload);
+                Logger.log('RegisterUpdatePage', 'generateCRInfoPayload', payload);
                 return JSON.stringify(payload);
             }
         }
@@ -195,7 +195,7 @@ export class CandidateRegistrationPage implements OnInit {
     }
 
     async update() {
-        Logger.log('CandidateRegistrationPage', 'Calling update()', this.info);
+        Logger.log('RegisterUpdatePage', 'Calling update()', this.info);
         try {
             let payload = await this.getCRInfoPayload();
             if (payload) {

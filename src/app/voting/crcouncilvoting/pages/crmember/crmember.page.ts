@@ -135,7 +135,7 @@ export class CRMemberPage {
 
     update() {
         this.crCouncilService.updateInfo = this.crCouncilService.selectedMember;
-        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
+        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/update');
     }
 
     claimDposNode() {

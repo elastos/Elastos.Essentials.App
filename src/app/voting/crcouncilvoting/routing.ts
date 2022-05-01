@@ -7,8 +7,8 @@ import { CRMembersPage } from './pages/crmembers/crmembers.page';
 import { CRNodePage } from './pages/crnode/crnode.page';
 import { HistoryPage } from './pages/history/history.page';
 import { ImpeachCRMemberPage } from './pages/impeach/impeach.page';
+import { RegisterUpdatePage } from './pages/register-update/register-update.page';
 import { CandidateRegistrationTermsPage } from './pages/registration-terms/registration-terms.page';
-import { CandidateRegistrationPage } from './pages/registration/registration.page';
 import { VotePage } from './pages/vote/vote.page';
 
 const routes: Routes = [
@@ -20,7 +20,8 @@ const routes: Routes = [
     { path: 'vote', component: VotePage },
     { path: 'history', component: HistoryPage },
     { path: 'crnode', component: CRNodePage },
-    { path: 'registration', component: CandidateRegistrationPage },
+    { path: 'registration', component: RegisterUpdatePage },
+    { path: 'update', component: RegisterUpdatePage },
     { path: 'registration-terms', component: CandidateRegistrationTermsPage },
 ];
 

@@ -433,7 +433,7 @@ export class CRCouncilService {
                 switch (item.key) {
                     case "edit-candidate":
                         this.updateInfo = this.candidateInfo;
-                        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
+                        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/update');
                         break;
 
                     case "cancel-registration":
@@ -472,7 +472,7 @@ export class CRCouncilService {
                 let signature = await this.getSignature(payload.Digest);
                 if (signature) {
                     payload.Signature = signature;
-                    Logger.log('CandidateRegistrationPage', 'generateUnregisterCRPayload', payload);
+                    Logger.log('RegisterUpdatePage', 'generateUnregisterCRPayload', payload);
                     const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(JSON.stringify(payload), "");
                     let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
                     if (ret) {
