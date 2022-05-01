@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
-
-import { NodesService } from '../../services/nodes.service';
-import { Vote } from '../../model/history.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { App } from 'src/app/model/app.enum';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Vote } from '../../model/history.model';
+import { NodesService } from '../../services/nodes.service';
+
 
 @Component({
     selector: 'app-history',
@@ -36,7 +36,7 @@ export class HistoryPage implements OnInit {
     }
 
     showVoteDetail(vote: Vote) {
-        this.globalNav.navigateTo(App.DPOS_VOTING, '/dposvoting/menu/history/' + vote.tx);
+        void this.globalNav.navigateTo(App.DPOS_VOTING, '/dposvoting/menu/history/' + vote.tx);
     }
 
     modDate(date) {

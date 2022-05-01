@@ -1,18 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
-
-import { Vote } from '../../model/history.model';
-import { NodesService } from '../../services/nodes.service';
-import { DPosNode } from '../../model/nodes.model';
-import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
-import { TranslateService } from '@ngx-translate/core';
 import { App } from 'src/app/model/app.enum';
-import { NavController } from '@ionic/angular';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Vote } from '../../model/history.model';
+import { DPosNode } from '../../model/nodes.model';
+import { NodesService } from '../../services/nodes.service';
+
 
 @Component({
     selector: 'app-tx',
@@ -38,14 +36,13 @@ export class TxPage implements OnInit {
         private route: ActivatedRoute,
         public translate: TranslateService,
         private globalNav: GlobalNavService,
-        private navCtrl: NavController,
         public theme: GlobalThemeService
     ) { }
 
     ngOnInit() {
         this.route.paramMap.subscribe(paramMap => {
             if (!paramMap.has('txid')) {
-                this.globalNav.navigateBack();
+                void this.globalNav.navigateBack();
                 return;
             }
             this.vote = this.nodesService.getVote(paramMap.get('txid'));
@@ -56,9 +53,10 @@ export class TxPage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+        this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
         this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, { key: null, iconPath: BuiltInIcon.BACK });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-            this.navCtrl.navigateBack('/dposvoting/menu/history');
+            void this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposvoting/menu/history');
         });
     }
 
@@ -69,7 +67,7 @@ export class TxPage implements OnInit {
     getNodes() {
         this._nodes = [];
         this.nodesService._nodes.map(node => {
-            if (this.vote.keys.includes(node.ownerpublickey)) {
+            if (this.vote.keys.indexOf(node.ownerpublickey) != -1) {
                 this._nodes = this._nodes.concat(node)
             }
         });

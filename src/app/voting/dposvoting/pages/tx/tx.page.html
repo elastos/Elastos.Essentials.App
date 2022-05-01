@@ -10,12 +10,12 @@
 
         <ion-list lines="none" [class.blur]="showNode" class="node-list">
             <ion-virtual-scroll [items]="_nodes" approxItemHeight="240px">
-                <ion-item *virtualItem="let node">
+                <ion-item *virtualItem="let node; let i = index">
                     <ion-grid class="ion-no-padding">
                         <ion-row class="ion-no-padding">
                             <ion-col size="1" class="rank-container ion-no-padding"
                                 (click)="_showNode(_nodes.indexOf(node), node)">
-                                {{ node.index }}
+                                {{ i + 1 }}
                             </ion-col>
                             <ion-col size="2" class="img-container" (click)="_showNode(_nodes.indexOf(node), node)">
                                 <img
@@ -32,9 +32,9 @@
                                     </p>
                                 </ion-label>
                             </ion-col>
-                            <ion-col size="1.5" class="checkbox-container" *ngIf="node.state === 'Active'">
+                            <!-- <ion-col size="1.5" class="checkbox-container" *ngIf="node.state === 'Active'">
                                 <ion-checkbox value="node" [(ngModel)]="node.isChecked" mode="ios"></ion-checkbox>
-                            </ion-col>
+                            </ion-col> -->
                         </ion-row>
                     </ion-grid>
                 </ion-item>
