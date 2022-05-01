@@ -36,6 +36,7 @@ export class CRMemberPage {
 
     private popover: any = null;
     public memberFetched = false;
+    public canUpdate = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -67,6 +68,7 @@ export class CRMemberPage {
                     this.ratio = (this.current * 100 / this.max).toFixed(1);
                 }
                 this.background = this.theme.darkMode ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.1)";
+                this.canUpdate = this.member.isSelf && (this.member.status == "Elected" || this.member.status == "Inactive");
             }
 
             this.memberFetched = true;
@@ -132,7 +134,8 @@ export class CRMemberPage {
     }
 
     update() {
-        this.globalNative.genericToast("don't implement!");
+        this.crCouncilService.updateInfo = this.crCouncilService.selectedMember;
+        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
     }
 
     claimDposNode() {

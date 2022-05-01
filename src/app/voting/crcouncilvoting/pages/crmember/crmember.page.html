@@ -134,7 +134,7 @@
             </linearGradient>
         </svg>
 
-        <ion-footer *ngIf="member.isSelf">
+        <ion-footer *ngIf="canUpdate">
             <ion-row>
                 <ion-col class="left-col">
                     <div class="btn-container align-center" id="cancel" (click)="update()">

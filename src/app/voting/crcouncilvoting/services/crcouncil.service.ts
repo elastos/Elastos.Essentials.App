@@ -72,6 +72,7 @@ export class CRCouncilService {
     public selectedMember: CRMemberInfo;
     public selectedMemberDid: string;
     public candidateInfo: CandidateBaseInfo;
+    public updateInfo: any;
 
     /** Election Results **/
     public councilTerm: any[] = [];
@@ -431,6 +432,7 @@ export class CRCouncilService {
             titleBar.addOnItemClickedListener(titleBarIconClickedListener = item => {
                 switch (item.key) {
                     case "edit-candidate":
+                        this.updateInfo = this.candidateInfo;
                         void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/registration');
                         break;
 

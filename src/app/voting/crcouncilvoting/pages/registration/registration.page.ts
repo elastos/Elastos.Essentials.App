@@ -15,8 +15,14 @@ import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { CandidateBaseInfo } from '../../model/candidates.model';
 import { CRCouncilService } from '../../services/crcouncil.service';
+
+
+enum InfoOperation {
+    Registration = "registration",
+    UpdateCandidate = "updateCandidate",
+    UpdateMember = "updateMember",
+}
 
 @Component({
     selector: 'app-registration',
@@ -28,30 +34,18 @@ export class CandidateRegistrationPage implements OnInit {
 
     // public masterWalletId: string;
     public areaList = areaList;
-    public candidateInfo: CandidateBaseInfo = {
+    public info: any = {
         nickname: "",
         location: 0,
         url: '',
         state: "Unregistered",
     };
-    public originInfo: CandidateBaseInfo = null;
-    public state = "";
-    public elastosChainCode = StandardCoinName.ELA;
-
-    public ownerPublicKey: string;
-
-    public blockHeight = 0;
-    public cancelHeight = 0;
-    public available = 0;
-
-    transFunction: any;
-    title = '';
-    info = '';
-
-    needConfirm = false;
+    public originInfo: any = null;
+    public needConfirm = false;
 
     private depositAmount = 500000000000; // 5000 ELA
-    private fee = 10000;
+
+    public infoOpration = InfoOperation.Registration;
 
     constructor(
         public translate: TranslateService,
@@ -76,47 +70,54 @@ export class CandidateRegistrationPage implements OnInit {
         Logger.log("CandidateRegistrationPage", this.voteService.masterWalletId);
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
-        switch (this.crCouncilService.candidateInfo.state) {
-            case 'Unregistered':
-                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.register-candidate'));
-                break;
-            // Active indicates the producer is registered and confirmed by more than
-            // 6 blocks.
-            case 'Active':
-            case 'Pending':
-                this.originInfo = Util.clone(this.crCouncilService.candidateInfo);
-                if (this.candidateInfo.state == "Unregistered") {
-                    this.candidateInfo = Util.clone(this.originInfo);
-                }
-                this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-candidate'));
-                break;
+        this.originInfo = Util.clone(this.crCouncilService.updateInfo);
+        if (this.crCouncilService.updateInfo.isSelf) {
+            this.infoOpration = InfoOperation.UpdateMember;
+            this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-member'));
+        }
+        else if (this.crCouncilService.updateInfo.state != 'Unregistered') {
+            this.infoOpration = InfoOperation.UpdateCandidate;
+            this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-candidate'));
+        }
+        else {
+            this.infoOpration = InfoOperation.Registration;
+            this.titleBar.setTitle(this.translate.instant('crcouncilvoting.register-candidate'));
+        }
+
+        if (this.infoOpration != InfoOperation.Registration) {
+            this.originInfo = Util.clone(this.crCouncilService.updateInfo);
+            if (this.info.state == "Unregistered") {
+                this.info = Util.clone(this.originInfo);
+            }
+            this.info.nickname = this.info.nickname || this.info.didName;
+            this.info.url = this.info.url || this.info.address;
         }
     }
 
     checkValues() {
-        Logger.log("CandidateRegistrationPage", "Candidate Info", this.candidateInfo);
+        Logger.log("CandidateRegistrationPage", "Candidate Info", this.info);
 
         var blankMsg = this.translate.instant('common.text-input-is-blank');
         var formatWrong = this.translate.instant('common.text-input-format-wrong');
-        if (!this.candidateInfo.nickname || this.candidateInfo.nickname == "") {
+        if (!this.info.nickname || this.info.nickname == "") {
             blankMsg = this.translate.instant('crcouncilvoting.name') + blankMsg;
             this.globalNative.genericToast(blankMsg);
             return;
         }
 
-        if (!this.candidateInfo.url || this.candidateInfo.url == "") {
+        if (!this.info.url || this.info.url == "") {
             blankMsg = this.translate.instant('crcouncilvoting.url') + blankMsg;
             this.globalNative.genericToast(blankMsg);
             return;
         }
 
-        if (!this.candidateInfo.url.match("((http|https)://)(([a-zA-Z0-9._-]+.[a-zA-Z]{2,6})|([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9&%_./-~-]*)?")) {
+        if (!this.info.url.match("((http|https)://)(([a-zA-Z0-9._-]+.[a-zA-Z]{2,6})|([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9&%_./-~-]*)?")) {
             formatWrong = this.translate.instant('crcouncilvoting.url') + formatWrong;
             this.globalNative.genericToast(formatWrong);
             return;
         }
 
-        if (!this.candidateInfo.location || this.areaList.indexOf(this.candidateInfo.location) == -1) {
+        if (!this.info.location || this.areaList.indexOf(this.info.location) == -1) {
             blankMsg = this.translate.instant('crcouncilvoting.location') + blankMsg;
             this.globalNative.genericToast(blankMsg);
             return;
@@ -125,7 +126,7 @@ export class CandidateRegistrationPage implements OnInit {
         if (this.originInfo == null) { // Create
             // Check the nickname whether used
             for (let candidate of this.crCouncilService.originCandidates) {
-                if (candidate.nickname == this.candidateInfo.nickname) {
+                if (candidate.nickname == this.info.nickname) {
                     this.globalNative.genericToast('crcouncilvoting.text-candidate-name-already-used');
                     return;
                 }
@@ -133,8 +134,8 @@ export class CandidateRegistrationPage implements OnInit {
         }
         else { // Update
             // Check don't modify
-            if (this.candidateInfo.location == this.originInfo.location
-                && this.candidateInfo.url == this.originInfo.url) {
+            if (this.info.location == this.originInfo.location
+                && this.info.url == this.originInfo.url) {
                 this.globalNative.genericToast('crcouncilvoting.text-candidate-info-dont-modify');
                 return;
             }
@@ -144,7 +145,7 @@ export class CandidateRegistrationPage implements OnInit {
     }
 
     async confirm() {
-        if (this.candidateInfo.state == 'Unregistered') {
+        if (this.infoOpration == InfoOperation.Registration) {
             await this.register();
         }
         else {
@@ -153,17 +154,17 @@ export class CandidateRegistrationPage implements OnInit {
     }
 
     async getCRInfoPayload(): Promise<string> {
-        if (!this.candidateInfo.ownerpublickey) {
-            this.candidateInfo.ownerpublickey = await Util.getSelfPublicKey();
+        if (!this.info.ownerpublickey) {
+            this.info.ownerpublickey = await Util.getSelfPublicKey();
         }
 
-        if (!this.candidateInfo.did) {
-            this.candidateInfo.did = Util.getShortDidString();
+        if (!this.info.did) {
+            this.info.did = Util.getShortDidString();
         }
 
-        Logger.log('CandidateRegistrationPage', 'candidateInfo', this.candidateInfo);
+        Logger.log('CandidateRegistrationPage', 'Info', this.info);
         const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.voteService.masterWalletId, StandardCoinName.ELA,
-            this.candidateInfo.ownerpublickey, this.candidateInfo.did, this.candidateInfo.nickname, this.candidateInfo.url, this.candidateInfo.location);
+            this.info.ownerpublickey, this.info.did, this.info.nickname, this.info.url, this.info.location);
 
         if (payload) {
             let signature = await this.crCouncilService.getSignature(payload.Digest);
@@ -194,14 +195,19 @@ export class CandidateRegistrationPage implements OnInit {
     }
 
     async update() {
-        Logger.log('CandidateRegistrationPage', 'Calling update()', this.candidateInfo);
+        Logger.log('CandidateRegistrationPage', 'Calling update()', this.info);
         try {
             let payload = await this.getCRInfoPayload();
             if (payload) {
                 const rawTx = await this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
                 let ret = await this.voteService.signAndSendRawTransaction(rawTx);
                 if (ret) {
-                    this.voteService.toastSuccessfully('crcouncilvoting.update-candidate');
+                    if (this.infoOpration == InfoOperation.UpdateCandidate) {
+                        this.voteService.toastSuccessfully('crcouncilvoting.update-candidate');
+                    }
+                    else {
+                        this.voteService.toastSuccessfully('crcouncilvoting.update-member');
+                    }
                 }
             }
         }

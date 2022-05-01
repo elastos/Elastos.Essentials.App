@@ -8,13 +8,13 @@
 
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
 
-        <ion-list *ngIf="state != 'ReturnDeposit'">
+        <ion-list>
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'crcouncilvoting.name' | translate }}</h5>
-                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || candidateInfo.state != 'Unregistered'" ngDefaultControl
+                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || info.state != 'Unregistered'" ngDefaultControl
                         placeholder="{{'crcouncilvoting.required-placeholder' | translate}}"
-                        [(ngModel)]="candidateInfo.nickname">
+                        [(ngModel)]="info.nickname">
                     </ion-input>
                 </ion-col>
             </ion-row>
@@ -23,7 +23,7 @@
                 <ion-col>
                     <h5>{{ 'crcouncilvoting.url' | translate }}</h5>
                     <ion-input type="text" name="url" [attr.disabled]="needConfirm" ngDefaultControl
-                        placeholder="e.g. https…" [(ngModel)]="candidateInfo.url">
+                        placeholder="e.g. https…" [(ngModel)]="info.url">
                     </ion-input>
                 </ion-col>
             </ion-row>
@@ -31,7 +31,7 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'crcouncilvoting.location' | translate }}</h5>
-                    <ion-select [(ngModel)]="candidateInfo.location" [attr.disabled]="needConfirm"
+                    <ion-select [(ngModel)]="info.location" [attr.disabled]="needConfirm"
                         placeholder="{{'crcouncilvoting.location-placeholder' | translate}}"
                         [attr.ok-text]="'common.confirm' | translate" [attr.cancel-text]="'common.cancel' | translate">
                         <ion-select-option *ngFor="let code of areaList" [value]="code">
@@ -44,10 +44,10 @@
 
         <ion-row class="btn-container">
             <ng-container *ngIf="!needConfirm">
-                <ion-button *ngIf="candidateInfo.state == 'Unregistered'" color="success" (click)="checkValues()">
+                <ion-button *ngIf="info.state == 'Unregistered'" color="success" (click)="checkValues()">
                     {{ 'crcouncilvoting.register' | translate }}
                 </ion-button>
-                <ion-button *ngIf="candidateInfo.state != 'Unregistered'" color="success" (click)="checkValues()">
+                <ion-button *ngIf="info.state != 'Unregistered'" color="success" (click)="checkValues()">
                     {{ 'crcouncilvoting.update' | translate }}
                 </ion-button>
             </ng-container>
