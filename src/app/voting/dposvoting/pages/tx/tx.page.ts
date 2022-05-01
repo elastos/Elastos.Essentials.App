@@ -56,7 +56,7 @@ export class TxPage implements OnInit {
         this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
         this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, { key: null, iconPath: BuiltInIcon.BACK });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-            void this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposvoting/menu/history');
+            void this.globalNav.navigateRoot(App.DPOS_VOTING, '/dposvoting/menu/history');
         });
     }
 
