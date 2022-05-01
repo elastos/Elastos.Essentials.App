@@ -497,7 +497,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     //dpos registration transaction functions
     //
     public async createRegisterProducerTransaction(payload: string, amount: number, memo = ""): Promise<string> {
-        let au = await this.getAvailableUtxo(amount);
+        let au = await this.getAvailableUtxo(amount + 20000);
         if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createRegisterProducerTransaction(
@@ -554,7 +554,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     //CR registration transaction functions
     //
     public async createRegisterCRTransaction(payload: string, amount: number, memo = ""): Promise<string> {
-        let au = await this.getAvailableUtxo(amount);
+        let au = await this.getAvailableUtxo(amount + 20000);
         if (!au.utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createRegisterCRTransaction(
