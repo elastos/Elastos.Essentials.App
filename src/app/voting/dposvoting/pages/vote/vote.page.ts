@@ -45,6 +45,7 @@ export class VotePage implements OnInit {
     private toast: any = null;
 
     private updatedBalance = false;
+    private inited = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -68,15 +69,15 @@ export class VotePage implements OnInit {
         }
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+
     }
 
-    private async setRegistrationIcon() {
-        await this.nodesService.init();
-        this.getSelectedNodes();
-
-        if (!this.voteService.canVote()) {
-            return;
+    private  async setRegistrationIcon() {
+        if (!this.inited) {
+            await this.nodesService.init();
+            await this.getSelectedNodes();
+            this.inited = true;
         }
 
         switch (this.nodesService.dposInfo.state) {
@@ -100,6 +101,19 @@ export class VotePage implements OnInit {
         }
     }
 
+    ionViewWillEnter() {
+        this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
+        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+        void this.setRegistrationIcon();
+    }
+
+    ionViewWillLeave() {
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        if (this.toast) {
+            this.toast.dismiss();
+        }
+    }
+
     async goToRegistration() {
         if (!this.nodesService.dposInfo.txConfirm) {
             this.globalNative.genericToast('dposregistration.text-registration-no-confirm');
@@ -120,19 +134,6 @@ export class VotePage implements OnInit {
         }
 
         await this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/registration');
-    }
-
-    ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
-        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-        void this.setRegistrationIcon();
-    }
-
-    ionViewWillLeave() {
-        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-        if (this.toast) {
-            this.toast.dismiss();
-        }
     }
 
     //// Vote intent ////
