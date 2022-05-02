@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Logger } from '../logger';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
@@ -47,8 +48,10 @@ export class GlobalSecurityService implements GlobalService {
    * The detection is not 100% guaranteed but tries to warn most users with rooted devices
    * that they are taking risks by doing so.
    */
-  public isDeviceRooted(): Promise<boolean> {
-    return internalManager.isDeviceRooted();
+  public async isDeviceRooted(): Promise<boolean> {
+    let ret = await internalManager.isDeviceRooted();
+    Logger.log("security", "isDeviceRooted:", ret);
+    return ret;
   }
 
   /**
