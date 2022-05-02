@@ -373,7 +373,8 @@ export class VoteService {
         return 100000; // SELA: 0.001ELA
     }
 
-    getMaxVotes() {
+    async getMaxVotes(): Promise<number> {
+        await this.sourceSubwallet.updateBalanceSpendable();
         const stakeAmount = this.sourceSubwallet.getRawBalanceSpendable().minus(this.votingFees());
         if (!stakeAmount.isNegative()) {
             return Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
@@ -383,10 +384,11 @@ export class VoteService {
         }
     }
 
-    checkBalanceForRegistration(): boolean {
+    async checkBalanceForRegistration(): Promise<boolean> {
         let depositAmount = 50000000000; // 5000 ELA
         let fee = 10000;
         let amount = depositAmount + fee;
+        await this.sourceSubwallet.updateBalanceSpendable();
         if (this.sourceSubwallet.getRawBalanceSpendable().lt(amount)) {
             return false;
         }

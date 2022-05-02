@@ -79,8 +79,7 @@ export class VoteForProposalPage {
                 });
             });
 
-            await this.voteService.sourceSubwallet.updateBalanceSpendable();
-            this.maxVotes = this.voteService.getMaxVotes();
+            this.maxVotes = await this.voteService.getMaxVotes();
         }
     }
 

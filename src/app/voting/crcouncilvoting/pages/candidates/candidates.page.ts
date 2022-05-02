@@ -32,7 +32,6 @@ export class CandidatesPage implements OnInit {
     public addingCandidates = false;
     public candidatesFetched = false;
     public remainingTime: string;
-    private updatedBalance = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -92,12 +91,7 @@ export class CandidatesPage implements OnInit {
             return;
         }
 
-        if (!this.updatedBalance) {
-            await this.voteService.sourceSubwallet.updateBalanceSpendable();
-            this.updatedBalance = true;
-        }
-
-        if (!this.voteService.checkBalanceForRegistration()) {
+        if (!await this.voteService.checkBalanceForRegistration()) {
             await this.popupProvider.ionicAlert('wallet.insufficient-balance', 'crcouncilvoting.reg-candidate-balance-not-enough');
             return;
         }

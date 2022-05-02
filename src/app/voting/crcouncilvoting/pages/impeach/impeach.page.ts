@@ -45,8 +45,7 @@ export class ImpeachCRMemberPage {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.impeachment'));
         this.member = this.crCouncilService.selectedMember;
         if (!this.updatedBalance) {
-            await this.voteService.sourceSubwallet.updateBalanceSpendable();
-            this.maxVotes = this.voteService.getMaxVotes();
+            this.maxVotes = await this.voteService.getMaxVotes();
             this.updatedBalance = true;
         }
     }
