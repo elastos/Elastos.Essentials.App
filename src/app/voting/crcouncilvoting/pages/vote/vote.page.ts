@@ -43,6 +43,7 @@ export class VotePage implements OnInit, OnDestroy {
     private toast: any;
     public signingAndTransacting = false;
     public remainingTime: string;
+    public initialComputationDone = false;
 
     public candidatesVotes: { [cid: string]: number } = {}; // Map of CID -> votes - for ion-input items temporary model (before applying to crCouncilService.selectedCandidates.userVotes)
     public candidatesPercentages: { [cid: string]: number } = {}; // Map of CID -> percentage (0-10000) for 2 decimals precision - for ion-range items
@@ -50,26 +51,34 @@ export class VotePage implements OnInit, OnDestroy {
     public testValue = 0;
 
     async ngOnInit() {
-        Logger.log('crcouncil', 'My Candidates', this.crCouncilService.selectedCandidates);
-        // Initialize candidate percentages with default values
-        this.crCouncilService.selectedCandidates.forEach((candidate) => {
-            this.candidatesVotes[candidate.cid] = candidate.userVotes;
-            this.updateCandidatePercentVotesMap(candidate, candidate.userVotes);
-        });
-
-        this.totalEla = await this.voteService.getMaxVotes();
-        Logger.log('crcouncil', 'ELA Balance', this.totalEla);
     }
 
     ngOnDestroy() {
     }
 
     async ionViewWillEnter() {
+        this.initialComputationDone = false;
+
         this.titleBar.setBackgroundColor("#732CCE");
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.my-candidates'));
 
+        this.totalEla = await this.voteService.getMaxVotes();
+
+        Logger.log('crcouncil', 'My Candidates', this.crCouncilService.selectedCandidates);
+        // Initialize candidate percentages with default values
+        this.crCouncilService.selectedCandidates.forEach((candidate) => {
+            //console.log("candidate.userVotes", candidate.userVotes, Number.isInteger(candidate.userVotes))
+            this.candidatesVotes[candidate.cid] = Number.isInteger(candidate.userVotes) ? candidate.userVotes : 0;
+            this.updateCandidatePercentVotesMap(candidate, candidate.userVotes);
+        });
+
+        //console.log("this.candidatesVotes", this.candidatesVotes)
+
         this.remainingTime = await this.crCouncilService.getRemainingTime();
+        Logger.log('crcouncil', 'ELA Balance', this.totalEla);
+
+        this.initialComputationDone = true;
     }
 
     ionViewDidEnter() {
@@ -170,6 +179,10 @@ export class VotePage implements OnInit, OnDestroy {
 
         // For a parseInt() to fix keypad mistakes (eg: 123.45)
         let targetValue = parseInt(this.candidatesVotes[candidate.cid] as any) || 0;
+
+        // Can't spend more than what we have
+        targetValue = Math.min(targetValue, this.totalEla);
+
         this.recomputeVotes(candidate, targetValue, false);
     }
 
@@ -189,7 +202,7 @@ export class VotePage implements OnInit, OnDestroy {
      */
     private updateCandidatePercentVotesMap(candidate: SelectedCandidate, votes: number) {
         this.candidatesPercentages[candidate.cid] = new BigNumber(votes).multipliedBy(10000).dividedBy(this.totalEla).toNumber();
-        //console.log("Updating progress percentage", candidate.cid, this.candidatesPercentages[candidate.cid])
+        //console.log("Updating progress percentage", votes, candidate.cid, this.candidatesPercentages[candidate.cid])
     }
 
     private recomputeVotes(modifiedCandidate: SelectedCandidate, targetVoteValue: number, triggeredByIonRangeChange: boolean) {
