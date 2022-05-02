@@ -211,7 +211,7 @@ export class NodesService {
     // }
 
     async checkBalanceForRegDposNode(): Promise<boolean> {
-        if (!this.voteService.checkBalanceForRegistration()) {
+        if (!await this.voteService.checkBalanceForRegistration()) {
             await this.popupProvider.ionicAlert('wallet.insufficient-balance', 'dposregistration.reg-dpos-balance-not-enough');
             return false;
         }

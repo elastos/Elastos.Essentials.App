@@ -64,8 +64,7 @@ export class CRMembersPage implements OnInit {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
-    async gotoCandidate() {
-        await this.crCouncilService.getSelectedCandidates();
+    gotoCandidate() {
         void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
     }
 

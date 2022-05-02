@@ -143,22 +143,23 @@ export class CRCouncilService {
             }
         }
         catch (err) {
-            Logger.error('crcouncil', 'fetchCandidates error', err);
+            Logger.error('crcouncil', 'fetchCRMembers error', err);
             await this.alertErr('crcouncilvoting.cr-member-info-no-available');
         }
     }
 
     async getSelectedCandidates() {
-        this.selectedCandidates = [];
         await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []).then(data => {
             Logger.log('crcouncil', 'Selected Candidates', data);
             if (data) {
-                this.selectedCandidates = data;
+                return data;
             }
         });
+        return null;
     }
 
     async fetchCandidates() {
+        let selectedCandidates = await this.getSelectedCandidates();
 
         Logger.log('crcouncil', 'Fetching Candidates..');
         const param = {
@@ -177,6 +178,7 @@ export class CRCouncilService {
 
         this.candidates = [];
         this.originCandidates = [];
+        this.selectedCandidates = []
         try {
             const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
             Logger.log('crcouncil', 'Candidates fetched', result);
@@ -185,6 +187,14 @@ export class CRCouncilService {
                     if (candidate.state == "Active") {
                         this.candidates.push(candidate);
                         candidate.imageUrl = await this.getAvatar(candidate.did);
+
+                        if (selectedCandidates) {
+                            for (let selected of selectedCandidates) {
+                                if (selected.cid === candidate.cid) {
+                                    this.selectedCandidates.push(selected);
+                                }
+                            }
+                        }
                     }
                     if (Util.isSelfDid(candidate.did)) {
                         this.candidateInfo = candidate;
