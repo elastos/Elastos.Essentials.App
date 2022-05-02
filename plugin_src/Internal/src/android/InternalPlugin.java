@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -119,7 +120,7 @@ public class InternalPlugin extends CordovaPlugin {
 
     private void isDeviceRooted(CallbackContext callbackContext) {
         Boolean ret = CheckRooted.isDeviceRooted();
-        callbackContext.success(ret.toString());
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, ret));
     }
 
     private void setScreenCapture(JSONArray args, CallbackContext callbackContext) throws JSONException {
