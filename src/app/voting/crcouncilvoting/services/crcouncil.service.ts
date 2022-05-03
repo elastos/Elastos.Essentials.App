@@ -148,14 +148,10 @@ export class CRCouncilService {
         }
     }
 
-    async getSelectedCandidates() {
-        await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []).then(data => {
-            Logger.log('crcouncil', 'Selected Candidates', data);
-            if (data) {
-                return data;
-            }
-        });
-        return null;
+    async getSelectedCandidates(): Promise<any>  {
+        let data = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []);
+        Logger.log('crcouncil', 'Selected Candidates', data);
+        return data;
     }
 
     async fetchCandidates() {
