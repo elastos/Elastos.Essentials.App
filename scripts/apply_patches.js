@@ -16,7 +16,7 @@ const patch_dirs = [
   },
   {
     "hook": "before_plugin_install",
-    "platform": "android",
+    "platform": "all",
     "plugin_id": "cordova-plugin-printer",
     "patch_dir": "patches/before_plugin_install_printer"
   },
@@ -53,11 +53,11 @@ module.exports = function(ctx) {
     if (obj.hook !== ctx.hook) {
       return;
     }
-    if (ctx.opts.platforms && obj.platform &&
+    if (ctx.opts.platforms && obj.platform && (obj.platform != "all") &&
         !ctx.opts.platforms.some((val) => val.startsWith(obj.platform))) {
       return;
     }
-    if (obj.plugin_id && ctx.opts.cordova && ctx.opts.cordova.platforms && obj.platform &&
+    if (obj.plugin_id && ctx.opts.cordova && ctx.opts.cordova.platforms && obj.platform && (obj.platform != "all") &&
         !ctx.opts.cordova.platforms.includes(obj.platform)) {
       return;
     }
