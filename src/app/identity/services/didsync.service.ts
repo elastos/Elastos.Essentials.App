@@ -4,6 +4,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { BehaviorSubject } from "rxjs";
 import { runDelayed } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
+import { NetworkException } from "src/app/model/exceptions/network.exception";
 import { Events } from "src/app/services/events.service";
 import { IdentityEntry } from "src/app/services/global.didsessions.service";
 import { DIDPublicationStatus, GlobalPublicationService } from "src/app/services/global.publication.service";
@@ -119,6 +120,8 @@ export class DIDSyncService implements GlobalService {
       let reworkedEx = DIDHelper.reworkedPluginException(err);
       if (reworkedEx instanceof DIDNotUpToDateException) {
         await this.popupProvider.ionicAlert("identity.publish-error-title", "identity.publish-error-call-sync-did");
+      } else if (reworkedEx instanceof NetworkException) {
+        await this.popupProvider.ionicAlert("identity.publish-error-title", "common.network-or-server-error");
       } else {
         await this.popupProvider.ionicAlert("identity.publish-error-title", err.message);
       }
