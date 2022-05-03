@@ -235,7 +235,7 @@ export class CredentialAccessRequestPage {
     return new Promise<void>((resolve) => {
       // Intent service marks value as true if intent does not specify 'publisheddid' params
       const publisheddidParams = this.receivedIntent.params.publisheddid;
-      Logger.log('publisheddid params', this.receivedIntent.params.publisheddid);
+      Logger.log('publisheddid params', this.receivedIntent.params.publisheddid, this.publishStatusFetched, this.didNeedsToBePublished);
 
       if (publisheddidParams) {
         if (this.publishStatusFetched && !this.didNeedsToBePublished) {

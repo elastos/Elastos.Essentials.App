@@ -188,7 +188,7 @@ export class DappBrowserService implements GlobalService {
         return ret;
     }
 
-    public async showScamWarning(domain: string) : Promise<boolean> {
+    public async showScamWarning(domain: string): Promise<boolean> {
         this.confirming = true;
         let ret = await this.globalPopupService.ionicConfirm("dappbrowser.scam-warning-title", "dappbrowser.scam-warning-message",
             'common.leave', 'common.continue');

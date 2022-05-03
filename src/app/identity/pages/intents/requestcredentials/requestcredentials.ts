@@ -1,7 +1,6 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DID as ConnSDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { NoMatchRecommendation } from '@elastosfoundation/elastos-connectivity-sdk-js/typings/did';
 import { AlertController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import jsonpath from "jsonpath";
@@ -32,6 +31,7 @@ import { ExpirationService } from '../../../services/expiration.service';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 import { ProfileService } from '../../../services/profile.service';
 import { UXService } from '../../../services/ux.service';
+import { V1Claim } from './model/v1claim';
 
 /**
  * TODO BPI:
@@ -84,7 +84,7 @@ type CredentialDisplayEntry = {
 }
 
 type ClaimDisplayEntry = {
-  claim: ConnSDKDID.Claim; // Original claim request from the intent
+  claimDescription: ConnSDKDID.ClaimDescription; // Original claim request from the intent
   matchingCredentials: CredentialDisplayEntry[]; // Credentials matching the requested claim
 }
 
@@ -105,6 +105,7 @@ export class RequestCredentialsPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public receivedIntent: RequestCredentialsIntent = null;
+  private rawClaims: ConnSDKDID.ClaimDescription[] = [];
   public requestingAppIconUrl: string = null;
   public requestingAppName: string = null;
   public requestDappColor = '#565bdb';
@@ -221,12 +222,50 @@ export class RequestCredentialsPage {
    * Runs through all claims in the incoming request and set default value whenever needed.
    */
   private prepareRawClaims() {
-    this.receivedIntent.params.request.claims.forEach(claim => {
+    // Copy claims received as input as a new object that we can manipulate.
+    this.rawClaims = JSON.parse(JSON.stringify((this.receivedIntent.params.request.claims)));
+
+    // Convert old claim formats if needed
+    this.convertRawClaimsIfNeeded();
+
+    this.rawClaims.forEach(claim => {
       if (claim.min === undefined)
         claim.min = 1;
       if (claim.max === undefined)
         claim.max = 1;
+
+      return claim;
     });
+  }
+
+  /**
+   * Method for backward compatibility to convert v1 claim formats (before May 2022) to vs claim
+   * format (after May 2022).
+   */
+  private convertRawClaimsIfNeeded() {
+    if (!("_version" in this.receivedIntent.params.request)) {
+      // Version 1 - convert old claims to new format (with claim descriptions)
+      let newClaims: ConnSDKDID.ClaimDescription[] = [];
+      let oldClaims = this.receivedIntent.params.request.claims as any as V1Claim[];
+
+      for (let oldClaim of oldClaims) {
+        let newClaimDescription = ConnSDKDID.claimDescription(oldClaim.reason)
+          .withMin(oldClaim.min)
+          .withMax(oldClaim.max)
+          .withNoMatchRecommendations(oldClaim.noMatchRecommendations)
+          .withClaim(new ConnSDKDID.Claim()
+            .withQuery(oldClaim.query)
+            .withIssuers(oldClaim.issuers)
+          );
+
+        newClaims.push(newClaimDescription);
+      }
+
+      this.rawClaims = newClaims;
+    }
+    else {
+      // Nothing to change - good format
+    }
   }
 
   getRequestedTheme(): Promise<void> {
@@ -269,8 +308,8 @@ export class RequestCredentialsPage {
    */
   async organizeRequestedClaims() {
     // Split into mandatory and optional items
-    for (let claim of this.receivedIntent.params.request.claims) {
-      Logger.log("identity", "Organizing claim", claim);
+    for (let claimDescription of this.rawClaims) {
+      Logger.log("identity", "Organizing claim", claimDescription);
 
       // Convert our DID store credentials list into a searcheable array of JSON data for jsonpath
       let searcheableCredentials: JSONObject[] = [];
@@ -284,129 +323,57 @@ export class RequestCredentialsPage {
 
         searcheableCredentials.push(credentialJson);
       }
-      let matchingCredentialJsons = jsonpath.query(searcheableCredentials, claim.query) as JSONObject[];
-      Logger.log("identity", "Matching credentials (json)", matchingCredentialJsons);
+      let matchingCredentialJsons: JSONObject[] = [];
 
-      // Rebuild a list of real credential objects from json results
-      let matchingCredentials: CredentialDisplayEntry[] = matchingCredentialJsons.map(jsonCred => {
-        let credential = this.credentials.find(c => c.pluginVerifiableCredential.getId() === jsonCred.id);
-
-        // Check if the credential is expired
-        let expirationInfo = this.expirationService.verifyCredentialExpiration(this.did.pluginDid.getDIDString(), credential.pluginVerifiableCredential, 0);
-        let isExpired = false;
-        if (expirationInfo) // hacky case, but null expirationInfo means we should not check the expiration... (legacy)
-          isExpired = expirationInfo.daysToExpire <= 0;
-
-        // Check if the issuers can match (credential issuer must be in claim's issuers list, if provided)
-        if (claim.issuers) {
-          let matchingIssuer = claim.issuers.find(i => i === credential.pluginVerifiableCredential.getIssuer());
-          if (!matchingIssuer)
-            return null;
+      let matchingCredentials: CredentialDisplayEntry[] = [];
+      for (let claim of claimDescription.claims) {
+        try {
+          matchingCredentialJsons = matchingCredentialJsons.concat(jsonpath.query(searcheableCredentials, claim.query));
+          Logger.log("identity", "Matching credentials (json)", matchingCredentialJsons);
+        }
+        catch (e) {
+          // jsonpath error
+          Logger.warn("identity", "JSON Path exception", e);
         }
 
-        return {
-          credential: credential,
-          selected: false, // Don't select anything yet, we'll update this just after
-          expired: isExpired
-        };
-      }).filter(c => c !== null);
+        // Rebuild a list of real credential objects from json results
+        matchingCredentials = matchingCredentials.concat(matchingCredentialJsons.map(jsonCred => {
+          let credential = this.credentials.find(c => c.pluginVerifiableCredential.getId() === jsonCred.id);
+
+          // Check if the credential is expired
+          let expirationInfo = this.expirationService.verifyCredentialExpiration(this.did.pluginDid.getDIDString(), credential.pluginVerifiableCredential, 0);
+          let isExpired = false;
+          if (expirationInfo) // hacky case, but null expirationInfo means we should not check the expiration... (legacy)
+            isExpired = expirationInfo.daysToExpire <= 0;
+
+          // Check if the issuers can match (credential issuer must be in claim's issuers list, if provided)
+          if (claim.issuers) {
+            let matchingIssuer = claim.issuers.find(i => i === credential.pluginVerifiableCredential.getIssuer());
+            if (!matchingIssuer)
+              return null;
+          }
+
+          return {
+            credential: credential,
+            selected: false, // Don't select anything yet, we'll update this just after
+            expired: isExpired
+          };
+        }).filter(c => c !== null));
+      }
 
       // Decide which credentials should be selected by default or not. Strategy:
       // - min = max = number of matching creds = 1 -> select the only cred
       // - all other cases: don't select anything
-      if (claim.min == 1 && claim.max === claim.min && matchingCredentials.length === 1) {
+      if (claimDescription.min == 1 && claimDescription.max === claimDescription.min && matchingCredentials.length === 1) {
         matchingCredentials[0].selected = true;
       }
 
       let organizedClaim: ClaimDisplayEntry = {
-        claim,
+        claimDescription: claimDescription,
         matchingCredentials
       }
 
       this.organizedClaims.push(organizedClaim);
-
-      // Retrieve current value from active store credentials
-      /* let relatedCredential = this.findCredential(key);
-      if (!relatedCredential) {
-        Logger.warn('identity', "No credential found for requested claim:", key);
-      }
-
-      let credentialValue: string = null;
-      if (relatedCredential)
-        credentialValue = this.getBasicProfileCredentialValue(relatedCredential.pluginVerifiableCredential);
-
-      // Don't display optional items that user doesn't have.
-      if (!relatedCredential && !claimIsRequired)
-        continue;
-
-      let claimValue = this.credentialValueAsString(credentialValue);
-
-      let hasRelatedCredential: boolean = (relatedCredential != null);
-
-      let issuerInfo: IssuerInfo = {
-        canBeDelivered: hasRelatedCredential,
-        isExpired: false,
-        displayItem: null,
-        errorMessage: ""
-      };
-
-      let isExpired = false;
-
-      if (hasRelatedCredential) {
-        let credentialTypes: string[] = relatedCredential.pluginVerifiableCredential.getTypes();
-
-        //Check if this credential is expired when validated
-        if (!credentialTypes.includes("SelfProclaimedCredential")) {
-          let expirationInfo: ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
-          isExpired = expirationInfo.daysToExpire <= 0;
-        }
-
-        // Check if accepts self proclaimed credentials are accepted or
-        // In case of validated credential, if credential issuer match with claim request
-        if (!this.acceptsSelfProclaimedCredentials(claim.iss)) {
-          if (credentialTypes.includes("SelfProclaimedCredential")) {
-            issuerInfo.canBeDelivered = false;
-            issuerInfo.errorMessage = "Credential issuer is required";
-          } else {
-            let issuerDid: string = relatedCredential.pluginVerifiableCredential.getIssuer()
-            let issuerExpirationInfo: ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
-            let issuerisExpired: boolean = issuerExpirationInfo.daysToExpire <= 0;
-            let issuerIsAccepted: boolean = this.acceptsIssuer(claim.iss, issuerDid);
-            issuerInfo.displayItem = await this.profileService.getIssuerDisplayEntryFromID(issuerDid)
-            issuerInfo.isExpired = issuerisExpired
-            issuerInfo.canBeDelivered = issuerIsAccepted && !issuerisExpired
-
-            if (issuerisExpired) {
-              issuerInfo.errorMessage = "Credential issuer DID is expired"
-            }
-
-            if (!issuerIsAccepted) {
-              issuerInfo.errorMessage = "Credential issuer is not the same requested"
-            }
-          }
-        }
-      }
-
-      let claimRequest: ClaimRequest = {
-        name: key,
-        value: claimValue,
-        credential: (relatedCredential ? relatedCredential.pluginVerifiableCredential : null),
-        canBeDelivered: hasRelatedCredential,
-        issuer: issuerInfo,
-        selected: true,
-        isExpired: isExpired,
-        reason: ""
-      };
-
-      if (claimIsRequired) {
-        this.mandatoryItems.push(claimRequest);
-
-        // If at least one mandatory item is missing, we cannot complete the intent request.
-        if (!hasRelatedCredential || !issuerInfo.canBeDelivered)
-          this.canDeliver = false;
-      } else {
-        this.optionalItems.push(claimRequest);
-      } */
     }
 
     Logger.log("identity", "Organized claims", this.organizedClaims);
@@ -469,7 +436,7 @@ export class RequestCredentialsPage {
 
     if (expectingToUnselect) {
       // Expecting to unselect
-      if (claim.claim.min === 1 && claim.claim.max === 1) {
+      if (claim.claimDescription.min === 1 && claim.claimDescription.max === 1) {
         // Do nothing, cannot unselect. Need to select another one
       }
       else {
@@ -478,7 +445,7 @@ export class RequestCredentialsPage {
     }
     else {
       // Expecting to select
-      if (claim.claim.min === 1 && claim.claim.max === 1) {
+      if (claim.claimDescription.min === 1 && claim.claimDescription.max === 1) {
         // We can select yes, but we also need to unselect the currently selected one
         let selectedCredentialEntry = this.getFirstSelectedCredentialInClaim(claim);
         if (selectedCredentialEntry)
@@ -739,13 +706,13 @@ export class RequestCredentialsPage {
   public claimSelectionSummary(claim: ClaimDisplayEntry): string {
     let selectedNb = this.numberOfSelectedCredentialsInClaim(claim);
 
-    if (claim.claim.min === claim.claim.max)
-      return `${selectedNb} / ${claim.claim.min}`;
+    if (claim.claimDescription.min === claim.claimDescription.max)
+      return `${selectedNb} / ${claim.claimDescription.min}`;
     else {
-      if (claim.claim.min === 0)
-        return `${selectedNb} / max ${claim.claim.max}`;
+      if (claim.claimDescription.min === 0)
+        return `${selectedNb} / max ${claim.claimDescription.max}`;
       else
-        return `${selectedNb} / min ${claim.claim.max}, max ${claim.claim.max}`;
+        return `${selectedNb} / min ${claim.claimDescription.min}, max ${claim.claimDescription.max}`;
     }
   }
 
@@ -764,7 +731,7 @@ export class RequestCredentialsPage {
     // Make sure that we got the right number of credentials we expected for each claim.
     for (let organizedClaim of this.organizedClaims) {
       let nbOfSelectedCredentials = this.numberOfSelectedCredentialsInClaim(organizedClaim);
-      if (nbOfSelectedCredentials < organizedClaim.claim.min || nbOfSelectedCredentials > organizedClaim.claim.max)
+      if (nbOfSelectedCredentials < organizedClaim.claimDescription.min || nbOfSelectedCredentials > organizedClaim.claimDescription.max)
         return false;
     }
 
@@ -793,10 +760,10 @@ export class RequestCredentialsPage {
    * or not.
    */
   public claimHasNoMatchRecommendations(claim: ClaimDisplayEntry): boolean {
-    return claim.claim.noMatchRecommendations && claim.claim.noMatchRecommendations.length > 0;
+    return claim.claimDescription.noMatchRecommendations && claim.claimDescription.noMatchRecommendations.length > 0;
   }
 
-  public openRecommendation(recommendation: NoMatchRecommendation) {
+  public openRecommendation(recommendation: ConnSDKDID.NoMatchRecommendation) {
     void this.dappbrowserService.open(recommendation.url, recommendation.title);
   }
 }
