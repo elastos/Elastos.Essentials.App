@@ -236,15 +236,16 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 walletConnectSupported: false,
                 networks: ["elastossmartchain"]
             },
-            {
-                icon: '/assets/browser/dapps/tin.jpg',
-                title: 'Tin.network',
-                description: 'Manage your DeFi assets and liabilities in one simple interface',
-                url: 'https://tin.network/',
-                useExternalBrowser: false,
-                walletConnectSupported: true, // Not really, but not needed
-                networks: []
-            },
+            // The server is not reliable.
+            // {
+            //     icon: '/assets/browser/dapps/tin.jpg',
+            //     title: 'Tin.network',
+            //     description: 'Manage your DeFi assets and liabilities in one simple interface',
+            //     url: 'https://tin.network/',
+            //     useExternalBrowser: false,
+            //     walletConnectSupported: true, // Not really, but not needed
+            //     networks: []
+            // },
             {
                 icon: '/assets/browser/dapps/cryptoname.png',
                 title: 'Cryptoname',

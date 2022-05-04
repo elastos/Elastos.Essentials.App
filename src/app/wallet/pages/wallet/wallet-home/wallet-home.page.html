@@ -157,7 +157,8 @@
                 </ion-row>
 
                 <!-- STAKED ASSETS -->
-                <ion-row class="list-title-row staked-assets-row" *ngIf="isEVMNetworkWallet">
+                <!-- Hide the assets overview for now. the server is not reliable. -->
+                <!-- <ion-row class="list-title-row staked-assets-row" *ngIf="isEVMNetworkWallet">
                     <ion-col size="6">
                         <h1>{{ 'wallet.staking-assets' | translate }}</h1>
                     </ion-col>
@@ -205,7 +206,7 @@
                         </p>
                     </ion-col>
                     <ion-ripple-effect></ion-ripple-effect>
-                </ion-row>
+                </ion-row> -->
 
                 <!-- NFTS -->
                 <ion-row *ngIf="networkWallet.getNFTs().length" class="list-title-row collectibles-title">
