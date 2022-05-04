@@ -750,11 +750,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         // Cryptoname
         if (enteredText.length >= 3) {
-            const lowerCaseText = enteredText.toLowerCase();
             // eslint-disable-next-line no-async-foreach/no-async-foreach, @typescript-eslint/no-misused-promises
             this.nameResolvingService.getResolvers().forEach(async resolver => {
                 // resolvers can answer at any time, asynchronously
-                const results = await resolver.resolve(lowerCaseText, this.fromSubWallet); // Use fromSubWallet just to know the network (toSubWallet is not always set)
+                const results = await resolver.resolve(enteredText, this.fromSubWallet); // Use fromSubWallet just to know the network (toSubWallet is not always set)
                 Logger.log('wallet', "Name resolver got results from", resolver.getName(), results);
                 this.suggestedAddresses = this.suggestedAddresses.concat(results);
 

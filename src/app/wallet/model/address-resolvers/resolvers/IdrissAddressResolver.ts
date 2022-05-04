@@ -14,6 +14,7 @@ export class IdrissResolver extends Resolver {
         return "Idriss";
     }
 
+    // name: Case sensitive
     public async resolve(name: string, subWallet: AnySubWallet): Promise<Address[]> {
         let addresses: Address[] = [];
 
