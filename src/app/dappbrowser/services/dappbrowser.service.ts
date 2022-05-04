@@ -602,6 +602,11 @@ export class DappBrowserService implements GlobalService {
                 await this.handleElastosSignData(message);
                 this.showWebView();
                 break;
+            case "elastos_essentials_url_intent":
+                dappBrowser.hide();
+                await this.handleEssentialsUrlIntent(message);
+                this.showWebView();
+                break;
 
             default:
                 Logger.warn("dappbrowser", "Unhandled message command", message.data.name);
@@ -857,6 +862,33 @@ export class DappBrowserService implements GlobalService {
             if (!res || !res.result) {
                 console.warn("Missing signature data. The operation was maybe cancelled.");
                 this.sendElastosConnectorIABError(message.data.id, "Missing signature data. The operation was maybe cancelled.");
+                return;
+            }
+
+            this.sendElastosConnectorIABResponse(
+                message.data.id,
+                res.result
+            );
+        }
+        catch (e) {
+            this.sendElastosConnectorIABError(message.data.id, e);
+        }
+    }
+
+    /**
+     * Generic way to receive all kind of intents as if that came from native intents (eg: android).
+     * TODO: This should replace other elastos_methods that don't require specific handling one by one.
+     */
+    private async handleEssentialsUrlIntent(message: DABMessage): Promise<void> {
+        try {
+            let query = message.data.object as { url: string, params: any };
+
+            let res: { result: DID.SignedData };
+            res = await GlobalIntentService.instance.sendIntent(query.url, query.params);
+
+            if (!res || !res.result) {
+                console.warn("Missing response data. The operation was maybe cancelled.");
+                this.sendElastosConnectorIABError(message.data.id, "Missing response data. The operation was maybe cancelled.");
                 return;
             }
 

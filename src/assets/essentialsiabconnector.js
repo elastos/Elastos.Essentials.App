@@ -77545,6 +77545,18 @@
           console.log("signData response received", response);
           return response;
       }
+      static async generateAppIdCredential(appInstanceDID, appDID) {
+          console.log("generateAppIdCredential request received", appInstanceDID, appDID);
+          let response = await essentialsBridge.postMessage("elastos_essentials_url_intent", {
+              url: "https://did.elastos.net/appidcredissue",
+              params: {
+                  appinstancedid: appInstanceDID,
+                  appdid: appDID
+              }
+          });
+          console.log("generateAppIdCredential response received", response);
+          return response;
+      }
   }
 
   /**
@@ -77589,7 +77601,7 @@
           throw new Error("Method not implemented.");
       }
       generateAppIdCredential(appInstanceDID, appDID) {
-          throw new Error("Method not implemented.");
+          return DIDOperations.generateAppIdCredential(appInstanceDID, appDID);
       }
       pay(query) {
           throw new Error("Method not implemented.");
@@ -77616,5 +77628,5 @@
   // Expose this class globally to be able to create instances from the browser dApp.
   window["EssentialsDABConnector"] = EssentialsDABConnector;
 
-}());
+})();
 //# sourceMappingURL=essentialsiabconnector.js.map
