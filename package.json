@@ -120,7 +120,7 @@
     "@angular/compiler": "13.1.1",
     "@angular/compiler-cli": "13.1.1",
     "@angular/language-service": "13.1.1",
-    "@elastosfoundation/elastos-connectivity-sdk-js": "1.0.15",
+    "@elastosfoundation/elastos-connectivity-sdk-js": "^1.1.0-next",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.5",
     "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.49",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.23",
