@@ -8,7 +8,6 @@ import PhishingDetector from 'eth-phishing-detect/src/detector';
 import moment from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { urlDomain } from 'src/app/helpers/url.helpers';
-import { CredImportIdentityIntentParams } from 'src/app/identity/model/identity.intents';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
@@ -587,16 +586,16 @@ export class DappBrowserService implements GlobalService {
                 await this.handleElastosGetCredentials(message);
                 this.showWebView();
                 break;
-            case "elastos_requestCredentials":
+            /* case "elastos_requestCredentials":
                 dappBrowser.hide();
                 await this.handleElastosRequestCredentials(message);
                 this.showWebView();
-                break;
-            case "elastos_importCredentials":
+                break; */
+            /* case "elastos_importCredentials":
                 dappBrowser.hide();
                 await this.handleElastosImportCredentials(message);
                 this.showWebView();
-                break;
+                break; */
             case "elastos_signData":
                 dappBrowser.hide();
                 await this.handleElastosSignData(message);
@@ -794,7 +793,7 @@ export class DappBrowserService implements GlobalService {
         }
     }
 
-    private async handleElastosRequestCredentials(message: DABMessage): Promise<void> {
+    /* private async handleElastosRequestCredentials(message: DABMessage): Promise<void> {
         try {
             let request = message.data.object as DID.CredentialDisclosureRequest;
 
@@ -815,9 +814,9 @@ export class DappBrowserService implements GlobalService {
         catch (e) {
             this.sendElastosConnectorIABError(message.data.id, e);
         }
-    }
+    } */
 
-    private async handleElastosImportCredentials(message: DABMessage): Promise<void> {
+    /* private async handleElastosImportCredentials(message: DABMessage): Promise<void> {
         try {
             let request: { credentials: string[], options?: DID.ImportCredentialOptions } = message.data.object;
 
@@ -850,7 +849,7 @@ export class DappBrowserService implements GlobalService {
         catch (e) {
             this.sendElastosConnectorIABError(message.data.id, e);
         }
-    }
+    } */
 
     private async handleElastosSignData(message: DABMessage): Promise<void> {
         try {

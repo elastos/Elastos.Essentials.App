@@ -118,6 +118,7 @@ export class RequestCredentialsPage {
   public publishStatusFetched = false;
   public didNeedsToBePublished = false;
   public publishingDidRequired = false;
+  public claimsHaveBeenOrganized = false;
 
   public organizedClaims: ClaimDisplayEntry[] = [];
 
@@ -375,6 +376,8 @@ export class RequestCredentialsPage {
 
       this.organizedClaims.push(organizedClaim);
     }
+
+    this.claimsHaveBeenOrganized = true;
 
     Logger.log("identity", "Organized claims", this.organizedClaims);
   }
@@ -752,7 +755,7 @@ export class RequestCredentialsPage {
    * Whether the confirmation button should display a spinner icon or not.
    */
   public shouldShowValidationButtonSpinner(): boolean {
-    return this.sendingResponse || !this.publishStatusFetched;
+    return this.sendingResponse || !this.publishStatusFetched || !this.claimsHaveBeenOrganized;
   }
 
   /**
