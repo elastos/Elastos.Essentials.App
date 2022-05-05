@@ -3,7 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { App } from 'src/app/model/app.enum';
 import { areaList } from 'src/app/model/area.list';
 import { Util } from 'src/app/model/util';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
@@ -209,7 +208,10 @@ export class DPosRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createUpdateProducerTransaction(payload, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING);
+        let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+        if (ret) {
+            this.voteService.toastSuccessfully('dposregistration.update-header');
+        }
     }
 
 }

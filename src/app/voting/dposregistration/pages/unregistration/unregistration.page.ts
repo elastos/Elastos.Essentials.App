@@ -203,7 +203,10 @@ export class DPosUnRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createCancelProducerTransaction(payload, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING);
+        let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+        if (ret) {
+            this.voteService.toastSuccessfully('dposregistration.unregister');
+        }
     }
 
     async retrieve() {
@@ -217,7 +220,10 @@ export class DPosUnRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction(utxo, this.available, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING);
+        let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+        if (ret) {
+            this.voteService.toastSuccessfully('dposregistration.retrieve');
+        }
     }
 
 }
