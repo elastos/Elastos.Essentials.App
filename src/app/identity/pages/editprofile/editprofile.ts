@@ -148,7 +148,7 @@ export class EditProfilePage {
           // Willing to make visible
           // If the credential is sensitive, make sure to let user confirm his choice first
           let relatedCredential = this.profileService.findCredentialByKey(entry.key);
-          if (relatedCredential.isSensitiveCredential()) {
+          if (relatedCredential && relatedCredential.isSensitiveCredential()) {
             let confirmed = await this.globalPopupService.showConfirmationPopup(this.translate.instant('identity.sensitive-title'), this.translate.instant('identity.sensitive-prompt'));
             if (!confirmed) {
               entry.isVisible = !visible; // Cancelled - revert user's UI toggle ot its previous state

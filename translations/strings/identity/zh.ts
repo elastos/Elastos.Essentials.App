@@ -265,7 +265,7 @@ export const zh = {
         'credential-info-type-birthDate': '出生日期',
         'credential-info-type-education': '学历',
         'credential-info-type-gender': '性别',
-        'credential-info-type-nation': '国籍',
+        'credential-info-type-nationality': '国籍',
         'credential-info-type-telephone': '电话号码',
         'credential-info-type-nickname': '昵称',
         'credential-info-type-birthPlace': '出生地',
