@@ -84,7 +84,7 @@ export class WalletCreationService {
     if (payPassword) {
       try {
         // First create multi address wallet.
-        await this.walletService.newStandardWalletWithMnemonic(
+        let masterWallet = await this.walletService.newStandardWalletWithMnemonic(
           masterWalletId,
           walletName,
           mnemonic,
@@ -93,14 +93,15 @@ export class WalletCreationService {
           [
             { network: "elastos", singleAddress: false } as ElastosMainChainWalletNetworkOptions
           ],
-          WalletCreator.WALLET_APP
+          WalletCreator.WALLET_APP,
+          false
         );
 
         // Get the elastos network wallet instance to know if this wallet is single or multi address, as
         // we want to return this information.
-        let elastosNetworkWallet = await this.networkService.getNetworkByKey("elastos").createNetworkWallet(this.walletService.getMasterWallet(masterWalletId), false) as ElastosMainChainStandardNetworkWallet;
+        let elastosNetworkWallet = await this.networkService.getNetworkByKey("elastos").createNetworkWallet(masterWallet, false) as ElastosMainChainStandardNetworkWallet;
         if (await elastosNetworkWallet.multipleAddressesInUse()) {
-          await elastosNetworkWallet.startBackgroundUpdates();
+          void this.walletService.activateMasterWallet(masterWallet)
           Logger.log('wallet', 'Multi address wallet!')
           return;
         }
@@ -117,11 +118,9 @@ export class WalletCreationService {
           [
             { network: "elastos", singleAddress: true } as ElastosMainChainWalletNetworkOptions
           ],
-          WalletCreator.WALLET_APP
+          WalletCreator.WALLET_APP,
+          true
         );
-
-        // Re-create the wallet again in order to initialize the subwallets again.
-        elastosNetworkWallet = await this.networkService.getNetworkByKey("elastos").createNetworkWallet(this.walletService.getMasterWallet(masterWalletId), true) as ElastosMainChainStandardNetworkWallet;
       }
       catch (err) {
         Logger.error('wallet', 'Wallet import error:', err);

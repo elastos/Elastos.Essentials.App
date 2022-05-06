@@ -489,7 +489,8 @@ export class WalletService {
         mnemonicPassphrase: string,
         payPassword: string,
         networkOptions: WalletNetworkOptions[], // elastos -> single address
-        walletCreator: WalletCreator
+        walletCreator: WalletCreator,
+        activateAfterCreation = true
     ): Promise<MasterWallet> {
         Logger.log('wallet', "Importing new master wallet with mnemonic");
 
@@ -514,7 +515,7 @@ export class WalletService {
             creator: walletCreator
         }
 
-        return this.createMasterWalletFromSerializedInfo(masterWalletInfo);
+        return this.createMasterWalletFromSerializedInfo(masterWalletInfo, activateAfterCreation);
     }
 
     /**
@@ -640,7 +641,7 @@ export class WalletService {
      * Loads wallet in memory a master wallet in memory and create the associated network wallet
      * as well for the currently active network.
      */
-    private async activateMasterWallet(wallet: MasterWallet) {
+    public async activateMasterWallet(wallet: MasterWallet) {
         Logger.log('wallet', "Adding master wallet to local model", wallet.id, name);
 
         // Build the associated network Wallet

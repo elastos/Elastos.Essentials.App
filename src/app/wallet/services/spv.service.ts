@@ -1261,11 +1261,11 @@ export class SPVService {
             return;
         }
 
-        Logger.error('wallet', 'SPVWalletPluginBridge::handleError:', err);
+        Logger.error('wallet', 'SPVService::handleError:', err);
 
         // Do not show alert for 10003 and 20001.
         if (err["code"] === 10003) {
-            Logger.warn('wallet', 'SPVWalletPluginBridge Can\'t get the subwallet :', err);
+            Logger.warn('wallet', 'SPVService Can\'t get the subwallet :', err);
             if (promiseRejectHandler) promiseRejectHandler(err);
             return;
         }
