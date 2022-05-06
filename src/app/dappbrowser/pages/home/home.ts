@@ -245,7 +245,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 walletConnectSupported: false,
                 networks: ["elastos"]
             },
-            {
+            /* {
                 icon: '/assets/browser/dapps/tin.jpg',
                 title: 'Tin.network',
                 description: 'Manage your DeFi assets and liabilities in one simple interface',
@@ -253,7 +253,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 useExternalBrowser: false,
                 walletConnectSupported: true, // Not really, but not needed
                 networks: []
-            },
+            }, */
             {
                 icon: '/assets/browser/dapps/cryptoname.png',
                 title: 'Cryptoname',
