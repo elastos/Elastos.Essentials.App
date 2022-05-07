@@ -38,34 +38,33 @@ class MnemonicKeypadSuggestionsGenerator {
             let mnemonicWords = Array.from(words) as string[];
 
             for (let w of mnemonicWords) {
-                let convertResult = await hanziConvert(w) as string;
-                let asciiWord: string;
+                let convertResult = await hanziConvert(w);
+                let pinyinArray = [];
                 // Can return arrays of strings, or arrays of arrays os strings (in case of multiple pinyin for the same hanzi word)
                 if (typeof convertResult[0] === "string")
-                    asciiWord = convertResult[0]
+                    pinyinArray = convertResult
                 else
-                    asciiWord = convertResult[0][0];
+                    pinyinArray = convertResult[0];
 
-                asciiWord = asciiWord.normalize("NFC")
-                    .replaceAll(/ā/g, "a").replaceAll(/à/g, "a").replaceAll(/ǎ/g, "a").replaceAll(/á/g, "a")
-                    .replaceAll(/ē/g, "e").replaceAll(/é/g, "e").replaceAll(/è/g, "e").replaceAll(/ě/g, "e")
-                    .replaceAll(/ú/g, "u").replaceAll(/ū/g, "u").replaceAll(/ǔ/g, "u").replaceAll(/ù/g, "u").replaceAll(/ǚ/g, "u")
-                    .replaceAll(/ō/g, "o").replaceAll(/ó/g, "o").replaceAll(/ò/g, "o").replaceAll(/ǒ/g, "o")
-                    .replaceAll(/ì/g, "i").replaceAll(/ī/g, "i").replaceAll(/ǐ/g, "i").replaceAll(/í/g, "i")
+                for (let asciiWord of pinyinArray) {
+                  asciiWord = asciiWord.normalize("NFC")
+                      .replaceAll(/ā/g, "a").replaceAll(/à/g, "a").replaceAll(/ǎ/g, "a").replaceAll(/á/g, "a")
+                      .replaceAll(/ē/g, "e").replaceAll(/é/g, "e").replaceAll(/è/g, "e").replaceAll(/ě/g, "e")
+                      .replaceAll(/ú/g, "u").replaceAll(/ū/g, "u").replaceAll(/ǔ/g, "u").replaceAll(/ù/g, "u")
+                      .replaceAll(/ǖ/g, "v").replaceAll(/ǘ/g, "v").replaceAll(/ǚ/g, "v").replaceAll(/ǜ/g, "v").replaceAll(/ü/g, "v")
+                      .replaceAll(/ō/g, "o").replaceAll(/ó/g, "o").replaceAll(/ò/g, "o").replaceAll(/ǒ/g, "o")
+                      .replaceAll(/ì/g, "i").replaceAll(/ī/g, "i").replaceAll(/ǐ/g, "i").replaceAll(/í/g, "i")
 
-                // Fill the mapping
-                if (!(asciiWord in chineseList))
-                    chineseList[asciiWord] = [];
+                  // Fill the mapping
+                  if (!(asciiWord in chineseList))
+                      chineseList[asciiWord] = [];
 
-                chineseList[asciiWord].push(w);
+                  if (chineseList[asciiWord].indexOf(w) == -1)
+                      chineseList[asciiWord].push(w);
+                }
             }
 
-            // Hack a few things - improvements from the hanzi-to-pinyin library
-            // 1. add "骑" in the list of "qi"
-            chineseList["qi"].push("骑");
-
             writeFileSync(`${keypadAssetsFolder}/simplified_chinese.json`, JSON.stringify(chineseList, null, "  "));
-
             resolve();
         });
     }
