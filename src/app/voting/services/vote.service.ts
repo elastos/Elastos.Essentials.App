@@ -429,4 +429,16 @@ export class VoteService {
         }
         return true;
     }
+
+    async getWalletFirstPublicKey() {
+        let ret = await this.walletManager.spvBridge.getPublicKeys(this.masterWalletId, StandardCoinName.ELA, 0, 1, false);
+        if (ret && ret.length == 1) {
+            return ret[0]
+        }
+    }
+
+    async getDidPublicKey() {
+        return await Util.getSelfPublicKey();
+    }
+
 }

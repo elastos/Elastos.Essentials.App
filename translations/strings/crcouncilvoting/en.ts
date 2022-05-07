@@ -84,8 +84,10 @@ export const en = {
         'edit-candidate': 'Update candidate details',
         'unregistration-candidate': 'Exit election',
         'withdraw': 'Withdraw deposit',
+        'use-registered-wallet': 'Please use the wallet for registered candidate',
 
         'no-candidates': 'There are no candidates at present',
+
 
         /********** Registration **********/
         'registration': 'Registration',

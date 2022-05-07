@@ -12,7 +12,6 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -57,8 +56,7 @@ export class CRCouncilService {
         public voteService: VoteService,
         private walletManager: WalletService,
         private globalIntentService: GlobalIntentService,
-        public popupProvider: GlobalPopupService,
-        private globalNative: GlobalNativeService,
+        public globalPopupService: GlobalPopupService,
     ) {
 
     }
@@ -113,7 +111,6 @@ export class CRCouncilService {
         this.selectedCandidates = [];
         this.selectedMember = null;
     }
-
 
     async fetchCRMembers() {
         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching CRMembers..');
@@ -466,7 +463,7 @@ export class CRCouncilService {
             return;
         }
 
-        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-unregister-warning', 'common.confirm', 'common.cancel')) {
+        if (!await this.globalPopupService.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-unregister-warning', 'common.confirm', 'common.cancel')) {
             return;
         }
 
@@ -495,9 +492,16 @@ export class CRCouncilService {
     async withdrawCandidate(available: number, customRoute?: string) {
         Logger.log(App.CRCOUNCIL_VOTING, 'withdrawCandidate', available);
 
+        let ret1 = await this.voteService.getDidPublicKey();
+        let ret2 = await this.voteService.getWalletFirstPublicKey();
+        if (ret1 == ret2) {
+            void this.globalPopupService.ionicAlert('wallet.text-warning', 'crcouncilvoting.use-registered-wallet');
+            return;
+        }
+
         let msg = this.translate.instant('crcouncilvoting.candidate-withdraw-warning-pre') + available +
             this.translate.instant('crcouncilvoting.candidate-withdraw-warning-suf');
-        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', msg, 'common.confirm', 'common.cancel')) {
+        if (!await this.globalPopupService.ionicConfirm('wallet.text-warning', msg, 'common.confirm', 'common.cancel')) {
             return;
         }
 

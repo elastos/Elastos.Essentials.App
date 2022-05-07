@@ -83,6 +83,7 @@ export const fr = {
         'edit-candidate': 'Modif. détails candidat',
         'unregistration-candidate': 'Quitter l\'élection',
         'withdraw': 'Retirer',
+        'use-registered-wallet': 'Please use the wallet for registered candidate',
 
         'no-candidates': 'Aucun candidat pour le moment',
 

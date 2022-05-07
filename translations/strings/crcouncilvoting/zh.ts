@@ -84,6 +84,7 @@ export const zh = {
         'edit-candidate': '更新候选人',
         'unregistration-candidate': '退出选举',
         'withdraw': '取回质押金',
+        'use-registered-wallet': '请使用注册候选人的钱包',
 
         'no-candidates': '目前没有候选人',
 
