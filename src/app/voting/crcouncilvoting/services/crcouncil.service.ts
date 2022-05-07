@@ -494,7 +494,7 @@ export class CRCouncilService {
 
         let ret1 = await this.voteService.getDidPublicKey();
         let ret2 = await this.voteService.getWalletFirstPublicKey();
-        if (ret1 == ret2) {
+        if (ret1 != ret2) {
             void this.globalPopupService.ionicAlert('wallet.text-warning', 'crcouncilvoting.use-registered-wallet');
             return;
         }
