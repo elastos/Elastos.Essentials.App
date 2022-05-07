@@ -44,7 +44,7 @@ export class CandidatesPage implements OnInit {
         private toastCtrl: ToastController,
         private voteService: VoteService,
         public translate: TranslateService,
-        public popupProvider: GlobalPopupService,
+        public globalPopupService: GlobalPopupService,
     ) {
 
     }
@@ -86,17 +86,22 @@ export class CandidatesPage implements OnInit {
     }
 
     async goToCandidateRegistration() {
+        if (!await this.voteService.isSamePublicKey()) {
+            void this.globalPopupService.ionicAlert('wallet.text-warning', 'crcouncilvoting.reg-use-the-same-did-wallet');
+            return;
+        }
+
         if (!this.crCouncilService.candidateInfo.txConfirm) {
             this.globalNative.genericToast('crcouncilvoting.text-registration-no-confirm');
             return;
         }
 
         if (!await this.voteService.checkBalanceForRegistration()) {
-            await this.popupProvider.ionicAlert('wallet.insufficient-balance', 'crcouncilvoting.reg-candidate-balance-not-enough');
+            await this.globalPopupService.ionicAlert('wallet.insufficient-balance', 'crcouncilvoting.reg-candidate-balance-not-enough');
             return;
         }
 
-        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-deposit-warning', 'common.ok', 'common.cancel')) {
+        if (!await this.globalPopupService.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-deposit-warning', 'common.ok', 'common.cancel')) {
             return;
         }
 

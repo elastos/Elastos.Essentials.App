@@ -441,4 +441,10 @@ export class VoteService {
         return await Util.getSelfPublicKey();
     }
 
+    async isSamePublicKey(): Promise<boolean> {
+        let ret1 = await this.getDidPublicKey();
+        let ret2 = await this.getWalletFirstPublicKey();
+        return ret1 == ret2;
+    }
+
 }

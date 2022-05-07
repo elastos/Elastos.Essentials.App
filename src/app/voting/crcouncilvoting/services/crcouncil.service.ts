@@ -492,9 +492,7 @@ export class CRCouncilService {
     async withdrawCandidate(available: number, customRoute?: string) {
         Logger.log(App.CRCOUNCIL_VOTING, 'withdrawCandidate', available);
 
-        let ret1 = await this.voteService.getDidPublicKey();
-        let ret2 = await this.voteService.getWalletFirstPublicKey();
-        if (ret1 != ret2) {
+        if (!await this.voteService.isSamePublicKey()) {
             void this.globalPopupService.ionicAlert('wallet.text-warning', 'crcouncilvoting.use-registered-wallet');
             return;
         }
