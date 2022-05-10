@@ -3,6 +3,7 @@ import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { SignTransactionResult } from "../../../../safes/safe.types";
 import { SPVSDKSafe } from "../../../../safes/spvsdk.safe";
+import { AnySubWallet } from "../../../base/subwallets/subwallet";
 import { ElastosMainChainSafe } from "./mainchain.safe";
 
 export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainSafe {
@@ -17,8 +18,8 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     );
   }
 
-  public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
-    let txResult = await super.signTransaction(rawTransaction, transfer);
+  public async signTransaction(subWallet: AnySubWallet, rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
+    let txResult = await super.signTransaction(subWallet, rawTransaction, transfer);
 
     if (!txResult.signedTransaction)
       return txResult; // Forward the error
@@ -38,5 +39,13 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
 
   public getOwnerAddress(): Promise<string> {
     return SPVService.instance.getOwnerAddress(jsToSpvWalletId(this.masterWallet.id), this.chainId);
+  }
+
+  public async getExtendedPublicKey(): Promise<string> {
+    let pubKeyInfo = await SPVService.instance.getPubKeyInfo(jsToSpvWalletId(this.masterWallet.id));
+    if (!pubKeyInfo)
+      return null;
+
+    return pubKeyInfo.xPubKeyHDPM;
   }
 }

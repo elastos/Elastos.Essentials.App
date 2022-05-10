@@ -16,7 +16,7 @@ import type { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { AddressUsage } from '../../../safes/addressusage';
 import { SignTransactionErrorType } from '../../../safes/safe.types';
 import { TimeBasedPersistentCache } from '../../../timebasedpersistentcache';
-import type { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../../../tx-providers/transaction.types';
+import type { AnyOfflineTransaction, GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../../../tx-providers/transaction.types';
 import { TransactionListType } from '../../evms/evm.types';
 import type { NetworkWallet } from '../networkwallets/networkwallet';
 
@@ -152,7 +152,14 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
     return await "";
   }
 
-  public abstract getTransactionInfo(transaction: TransactionType, translate: TranslateService): Promise<TransactionInfo>;
+  public abstract getTransactionInfo(transaction: TransactionType): Promise<TransactionInfo>;
+
+  /**
+   * Extract data from an offline transaction to build a transaction info object (displayable on UI).
+   */
+  public getTransactionInfoForOfflineTransaction(transaction: AnyOfflineTransaction): TransactionInfo {
+    return null;
+  }
 
   /**
    * Inheritable method to do some cleanup when a subwallet is removed/destroyed from a master wallet
@@ -276,6 +283,13 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
   }
 
   /**
+   * Get the list of offline transactions, not published on chain (eg: multisig temporarily unsigned).
+   */
+  public getOfflineTransactions(): Promise<AnyOfflineTransaction[]> {
+    return this.networkWallet.getTransactionDiscoveryProvider().getOfflineTransactions(this);
+  }
+
+  /**
    * Immediatelly fetch the newest transactions, and repeatingly fetch the newest transactions
    * again until this is stopped.
    */
@@ -390,12 +404,22 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
   public async signAndSendRawTransaction(rawTransaction: any, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
     // Ask the safe to sign the transaction. This includes potential password prompt or other UI operations
     // depending on the safe requirements.
-    let signedTxResult = await this.networkWallet.safe.signTransaction(rawTransaction, transfer);
+    let signedTxResult = await this.networkWallet.safe.signTransaction(this, rawTransaction, transfer);
     if (!signedTxResult.signedTransaction) {
-      return {
-        published: false,
-        txid: null,
-        status: (signedTxResult.errorType === SignTransactionErrorType.CANCELLED) ? 'cancelled' : 'error'
+      if (signedTxResult.errorType === SignTransactionErrorType.DELEGATED) {
+        Logger.log("wallet", "Transaction signature has been delegated to another flow.");
+        return {
+          published: false,
+          txid: null,
+          status: 'delegated'
+        }
+      }
+      else {
+        return {
+          published: false,
+          txid: null,
+          status: (signedTxResult.errorType === SignTransactionErrorType.CANCELLED) ? 'cancelled' : 'error'
+        }
       }
     }
 

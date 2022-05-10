@@ -11,7 +11,7 @@ import { EVMNetwork } from "../networks/evms/evm.network";
 import { ERCTokenInfo, TransactionListType } from "../networks/evms/evm.types";
 import { NFTType } from "../networks/evms/nfts/nft";
 import { AnySubWalletTransactionProvider } from "./subwallet.provider";
-import { GenericTransaction } from "./transaction.types";
+import { AnyOfflineTransaction, GenericTransaction } from "./transaction.types";
 
 /**
  * Class that allows networks to fetch and refresh transactions in background, or when the UI needs more.
@@ -96,6 +96,10 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
         return null;
       }
     }
+  }
+
+  public getOfflineTransactions(subWallet: SubWallet<GenericTransaction, any>): Promise<AnyOfflineTransaction[]> {
+    return this.getSubWalletTransactionProvider(subWallet).getOfflineTransactions();
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {

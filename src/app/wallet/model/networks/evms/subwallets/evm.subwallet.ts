@@ -1,6 +1,6 @@
-import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { GlobalRedPacketServiceAddresses } from 'src/app/config/globalconfig';
+import { TranslationService } from 'src/app/identity/services/translation.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
@@ -136,7 +136,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return this.withdrawContractAddress;
   }
 
-  public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
+  public async getTransactionInfo(transaction: EthTransaction): Promise<TransactionInfo> {
     // There is no blockHash in the internal transactions.
     if (transaction.hide || (transaction.blockHash === null) || (transaction.isError && transaction.isError != '0')) {
       return null;
@@ -145,7 +145,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     transaction.to = transaction.to.toLowerCase();
 
     const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
-    const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+    const datetime = timestamp === 0 ? TranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
     const direction = await this.getTransactionDirection(transaction.to);
     transaction.Direction = direction;
@@ -169,7 +169,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       fee: '0',
       height: parseInt(transaction.blockNumber),
       memo: '',
-      name: await this.getTransactionName(transaction, translate),
+      name: await this.getTransactionName(transaction),
       payStatusIcon: await this.getTransactionIconPath(transaction),
       status: TransactionStatus.UNCONFIRMED, // TODO @zhiming: was: transaction.Status,
       statusName: "TODO", // TODO @zhiming: was: this.getTransactionStatusName(transaction.Status, translate),
@@ -191,10 +191,10 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
     if (transactionInfo.confirmStatus !== 0) {
       transactionInfo.status = TransactionStatus.CONFIRMED;
-      transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-confirmed");
+      transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
     } else {
       transactionInfo.status = TransactionStatus.PENDING;
-      transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-pending");
+      transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
     }
 
     // MESSY again - No "Direction" field in ETH transactions (contrary to other chains). Calling a private method to determine this.
@@ -217,13 +217,13 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return transactionInfo;
   }
 
-  protected async getTransactionName(transaction: EthTransaction, translate: TranslateService): Promise<string> {
+  protected async getTransactionName(transaction: EthTransaction): Promise<string> {
     const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction.to);
     switch (direction) {
       case TransactionDirection.RECEIVED:
         return "wallet.coin-op-received-token";
       case TransactionDirection.SENT:
-        return this.getETHSCTransactionContractType(transaction, translate);
+        return this.getETHSCTransactionContractType(transaction);
     }
     return null;
   }
@@ -295,7 +295,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return { to: toAddress, tokenContractAddress: contractAddress, tokenSymbol: erc20TokenSymbol, tokenValue: erc20TokenValue }
   }
 
-  protected getETHSCTransactionContractType(transaction: EthTransaction, translate: TranslateService): string {
+  protected getETHSCTransactionContractType(transaction: EthTransaction): string {
     let toAddressLowerCase = transaction.to.toLowerCase();
 
     if (transaction.isERC20TokenTransfer) {

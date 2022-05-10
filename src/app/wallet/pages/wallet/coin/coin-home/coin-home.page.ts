@@ -43,7 +43,7 @@ import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { Config } from '../../../../config/Config';
 import { CoinType, StandardCoinName } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
-import { GenericTransaction, TransactionInfo } from '../../../../model/tx-providers/transaction.types';
+import { AnyOfflineTransaction, GenericTransaction, OfflineTransactionType, TransactionInfo } from '../../../../model/tx-providers/transaction.types';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -51,6 +51,7 @@ import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
+import { CoinTxInfoParams } from '../coin-tx-info/coin-tx-info.page';
 
 @Component({
     selector: 'app-coin-home',
@@ -66,6 +67,7 @@ export class CoinHomePage implements OnInit {
     public subWallet: AnySubWallet = null;
     public subWalletId: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
+    public offlineTransactions: AnyOfflineTransaction[] = [];
     public transactionsLoaded = false;
     private transactions: GenericTransaction[] = []; // raw transactions received from the providers / cache
 
@@ -208,7 +210,9 @@ export class CoinHomePage implements OnInit {
     async updateTransactions() {
         this.start = 0;
         this.transferList = [];
+        this.offlineTransactions = [];
         this.todaysTransactions = 0;
+        await this.getOfflineTransactions();
         await this.getAllTx();
         await this.checkInternalTransactions();
     }
@@ -256,6 +260,10 @@ export class CoinHomePage implements OnInit {
         return this.subWallet instanceof ERC20SubWallet;
     }
 
+    private async getOfflineTransactions() {
+        this.offlineTransactions = await this.subWallet.getOfflineTransactions() || [];
+    }
+
     async getAllTx() {
         let transactions = await this.subWallet.getTransactions(this.transactionListType);
         if (!transactions) {
@@ -263,8 +271,7 @@ export class CoinHomePage implements OnInit {
             this.canFetchMore = false;
             return;
         }
-        this.transactionsLoaded = true;
-        Logger.log('wallet', "Got all transactions: ", transactions.length);
+        Logger.log('wallet', "Got all transactions: ", transactions.length, transactions);
 
         if (this.subWallet.canFetchMoreTransactions()) {
             this.canFetchMore = true;
@@ -283,7 +290,7 @@ export class CoinHomePage implements OnInit {
 
         const today = moment(new Date()).startOf('day');
         for (let transaction of transactions) {
-            const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
+            const transactionInfo = await this.subWallet.getTransactionInfo(transaction);
             if (!transactionInfo) {
                 Logger.warn('wallet', 'Invalid transaction ', transaction);
                 continue;
@@ -299,6 +306,8 @@ export class CoinHomePage implements OnInit {
             this.transferList.push(transactionInfo);
         }
 
+        this.transactionsLoaded = true;
+
         //At least all transactions of today must be loaded.
         if ((this.todaysTransactions == transactions.length) && (this.prevTransactionCount != transactions.length)) {
             this.fetchMoreTransactions();
@@ -307,15 +316,31 @@ export class CoinHomePage implements OnInit {
         this.prevTransactionCount = transactions.length;
     }
 
-    onItem(item) {
-        this.native.go(
-            '/wallet/coin-tx-info',
-            {
-                masterWalletId: this.networkWallet.id,
-                subWalletId: this.subWalletId,
-                transactionInfo: item
-            }
-        );
+    public onItem(item) {
+        let params: CoinTxInfoParams = {
+            masterWalletId: this.networkWallet.id,
+            subWalletId: this.subWalletId,
+            transactionInfo: item
+        };
+        this.native.go('/wallet/coin-tx-info', params);
+    }
+
+    /**
+     * Offline transaction item was clicked
+     */
+    public onOfflineTransactionItem(item: AnyOfflineTransaction) {
+        switch (item.type) {
+            case OfflineTransactionType.MULTI_SIG_STANDARD:
+                let params: CoinTxInfoParams = {
+                    masterWalletId: this.networkWallet.id,
+                    subWalletId: this.subWalletId,
+                    offlineTransaction: item
+                };
+                this.native.go("/wallet/coin-tx-info", params);
+                break;
+            default:
+            // Nothing
+        }
     }
 
     async receiveFunds() {
@@ -497,5 +522,19 @@ export class CoinHomePage implements OnInit {
     public setTransactionListType(transactionlistType: TransactionListType) {
         this.transactionListType = transactionlistType;
         void this.initData(false);
+    }
+
+    /**
+     * Displayable list item title for offline transactions
+     */
+    public getOfflineTransactionTitle(offlineTx: AnyOfflineTransaction): string {
+        switch (offlineTx.type) {
+            case OfflineTransactionType.MULTI_SIG_STANDARD: return "Pending multi-signature";
+            default: "Unknown transaction";
+        }
+    }
+
+    public getOfflineTransactionDate(offlineTx: AnyOfflineTransaction): string {
+        return WalletUtil.getDisplayDate(offlineTx.updated);
     }
 }

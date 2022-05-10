@@ -2,6 +2,7 @@ import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { SPVSDKSafe } from "../../../safes/spvsdk.safe";
+import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { SignedETHSCTransaction } from "../evm.types";
 import { EVMSafe } from "./evm.safe";
 
@@ -11,16 +12,16 @@ import { EVMSafe } from "./evm.safe";
 export class EVMSPVSDKSafe extends SPVSDKSafe implements EVMSafe {
   public createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
     return SPVService.instance.createTransfer(
-        jsToSpvWalletId(this.masterWallet.id),
-        this.chainId,
-        toAddress,
-        amount,
-        6, // ETHER_ETHER
-        gasPrice,
-        0,
-        gasLimit,
-        nonce
-      );
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      toAddress,
+      amount,
+      6, // ETHER_ETHER
+      gasPrice,
+      0,
+      gasLimit,
+      nonce
+    );
   }
 
   public createContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
@@ -38,8 +39,8 @@ export class EVMSPVSDKSafe extends SPVSDKSafe implements EVMSafe {
     );
   }
 
-  public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
-    let txResult = await super.signTransaction(rawTransaction, transfer);
+  public async signTransaction(subWallet: AnySubWallet, rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
+    let txResult = await super.signTransaction(subWallet, rawTransaction, transfer);
 
     let parsedSignedTransaction = <SignedETHSCTransaction>JSON.parse(txResult.signedTransaction);
 

@@ -1,0 +1,14 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <img [src]="!theme.darkMode ? 'assets/wallet/coins/ela-black.svg' : 'assets/wallet/coins/ela-white.svg'" />
+        <div *ngIf="displayedKey" class="qrcode-container">
+            <qrcode [qrdata]="displayedKey" [width]="200"></qrcode>
+        </div>
+        <h1>Here is your extended public. You can use this key as a co-signer key for multi-signature wallets.</h1>
+        <h2 *ngIf="displayedKey" (click)="copyAddress()">
+            {{ displayedKey }}
+        </h2>
+        <p>Tap the key to copy</p>
+    </ion-grid>
+</ion-content>

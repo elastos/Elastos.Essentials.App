@@ -45,7 +45,7 @@ export class StandardMultiSigMasterWallet extends MasterWallet {
     // Hardcoded for now - improve
     return [
       "elastos", // elastos mainchain
-      "btc" // BTC
-    ].indexOf(network.key) >= 0;
+      //"btc" // BTC
+    ].includes(network.key);
   }
 }

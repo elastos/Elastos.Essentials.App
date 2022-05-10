@@ -4,22 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { QRCodeModule } from 'angularx-qrcode';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
-import { ComponentsModule } from 'src/app/wallet/components/components.module';
-import { CoinTxInfoPage } from './coin-tx-info.page';
+import { MultiSigPubKeysPage } from './wallet-multisig-pub-keys.page';
 
 @NgModule({
-    declarations: [CoinTxInfoPage],
+    declarations: [MultiSigPubKeysPage],
     imports: [
         SharedComponentsModule,
         CommonModule,
-        ComponentsModule,
         FormsModule,
         IonicModule,
         TranslateModule,
-        RouterModule.forChild([{ path: '', component: CoinTxInfoPage }])
+        QRCodeModule,
+        RouterModule.forChild([{ path: '', component: MultiSigPubKeysPage }])
     ],
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class CoinTxInfoModule { }
+export class MultiSigPubKeysModule { }

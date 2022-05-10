@@ -2,6 +2,7 @@ import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { SPVSDKSafe } from "../../../safes/spvsdk.safe";
+import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { BTCSafe } from "./btc.safe";
 
 export class BTCSPVSDKSafe extends SPVSDKSafe implements BTCSafe {
@@ -15,8 +16,8 @@ export class BTCSPVSDKSafe extends SPVSDKSafe implements BTCSafe {
       jsToSpvWalletId(this.masterWallet.id), JSON.stringify(inputs), JSON.stringify(outputs), changeAddress, feePerKB);
   }
 
-  public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
-    let txResult = await super.signTransaction(rawTransaction, transfer);
+  public async signTransaction(subWallet: AnySubWallet, rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
+    let txResult = await super.signTransaction(subWallet, rawTransaction, transfer);
 
     let obj = JSON.parse(txResult.signedTransaction);
     return { signedTransaction: obj.Data };

@@ -42,6 +42,7 @@ const routes: Routes = [
 
     // Settings
     { path: 'wallet-color', loadChildren: () => import('./pages/wallet/wallet-color/module').then(m => m.WalletColorModule) },
+    { path: 'wallet-ext-pub-keys', loadChildren: () => import('./pages/wallet/wallet-multisig-pub-keys/module').then(m => m.MultiSigPubKeysModule) },
 
     // Coin
     { path: 'coin', loadChildren: () => import('./pages/wallet/coin/coin-home/module').then(m => m.CoinHomeModule) },

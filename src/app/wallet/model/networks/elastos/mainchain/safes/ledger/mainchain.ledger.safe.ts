@@ -10,6 +10,7 @@ import { LedgerSafe } from "src/app/wallet/model/safes/ledger.safe";
 import { SignTransactionResult } from "src/app/wallet/model/safes/safe.types";
 import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
+import { AnySubWallet } from "../../../../base/subwallets/subwallet";
 import { ElastosMainChainSafe } from "../mainchain.safe";
 
 const LEDGER_UTXO_CONSOLIDATE_COUNT = 20; // Ledger: Starting UTXOs count to get TX size from
@@ -27,8 +28,8 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
 
   initELAAddress() {
     if (this.masterWallet.accountOptions) {
-      let elaOption = this.masterWallet.accountOptions.find( (option)=> {
-        return option.type ===  LeddgerAccountType.ELA
+      let elaOption = this.masterWallet.accountOptions.find((option) => {
+        return option.type === LeddgerAccountType.ELA
       })
       if (elaOption) {
         this.elaAddress = elaOption.accountID;
@@ -52,25 +53,25 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return Promise.resolve(null);
   }
 
-  public createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string) {
+  public async createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
     Logger.warn('wallet', 'MainChainLedgerSafe createPaymentTransaction inputs:', inputs, ' outputs:', outputs, ' fee:', fee, ' memo:', memo)
 
     let tx = ELATransactionFactory.createUnsignedSendToTx(inputs, outputs[0].Address, outputs[0].Amount,
-          this.publicKey, fee, '', memo);
+      this.publicKey, fee, '', memo);
     Logger.warn('wallet', 'createPaymentTransaction:', JSON.stringify(tx))
-    return tx;
+    return await tx;
   }
 
-  public async signTransaction(tx: any, transfer: Transfer): Promise<SignTransactionResult> {
+  public async signTransaction(subWallet: AnySubWallet, tx: any, transfer: Transfer): Promise<SignTransactionResult> {
     // TODO: use the elastos-mainchain-app ledger 'app' to talk to the ELA ledger app to sign
     const rawTx = ELATransactionCoder.encodeTx(tx, false);
-    if (Math.ceil(rawTx.length/2) > MAX_TX_SIZE) {
+    if (Math.ceil(rawTx.length / 2) > MAX_TX_SIZE) {
       Logger.warn('wallet', 'MainChainLedgerSafe createPaymentTransaction: TX size too big') // if TX size too big, try less UTXOs
     }
     Logger.warn('wallet', 'MainChainLedgerSafe signTransaction:', rawTx);
 
     let signTransactionResult: SignTransactionResult = {
-      signedTransaction : null
+      signedTransaction: null
     }
 
     const ela = new Ela(null);
@@ -82,7 +83,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     const signature = Buffer.from(response.signature, 'hex');
     const encodedTx = ELATransactionSigner.addSignatureToTx(tx, this.publicKey, signature);
     Logger.warn('wallet', 'MainChainLedgerSafe encodedTx:', encodedTx);
-    signTransactionResult.signedTransaction  = encodedTx
+    signTransactionResult.signedTransaction = encodedTx
     return signTransactionResult;
   }
 

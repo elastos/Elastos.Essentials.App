@@ -1,6 +1,7 @@
 import { TxData } from "ethereumjs-tx";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { SignTransactionResult } from "../../../safes/safe.types";
+import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EVMLedgerSafe } from "../../evms/safes/evm.ledger.safe";
 
 export class ETHSafe extends EVMLedgerSafe {
@@ -22,7 +23,7 @@ export class ETHSafe extends EVMLedgerSafe {
     throw new Error("Method not implemented.");
   }
 
-  public signTransaction(rawTx: TxData, transfer: Transfer): Promise<SignTransactionResult> {
+  public signTransaction(subWallet: AnySubWallet, rawTx: TxData, transfer: Transfer): Promise<SignTransactionResult> {
 
     // TODO: @zhiming call hw-app-eth from ledger here
 

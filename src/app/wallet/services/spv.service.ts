@@ -37,6 +37,15 @@ export type MasterWalletBasicInfo = {
     Type: WalletAccountType,
 };
 
+export type PubKeyInfo = {
+    derivationStrategy: "BIP44" | "BIP45";
+    m: number; // number of total co-signers - 1 for standard wallets (unused)
+    n: number; // number of required signers - 1 for standard wallets (unused)
+    publicKeyRing: string[]; // Array of xPubKeyHDPM
+    xPubKey: string; // eg: "xpub6D7Q8"
+    xPubKeyHDPM: string; // eg: "xpub68VWD"
+}
+
 /** details:
 *  [{
 *      "Type": "Delegate",
@@ -501,7 +510,6 @@ export class SPVService {
         });
     }
 
-
     destroySubWallet(masterWalletId: string, subWalletId: string): Promise<any> {
         return new Promise((resolve, reject) => {
             walletManager.destroySubWallet([masterWalletId, subWalletId],
@@ -510,7 +518,7 @@ export class SPVService {
         });
     }
 
-    getPubKeyInfo(masterWalletId: string): Promise<void> {
+    getPubKeyInfo(masterWalletId: string): Promise<PubKeyInfo> {
         return new Promise((resolve, reject) => {
             walletManager.getPubKeyInfo([masterWalletId],
                 (ret) => { resolve(ret); },

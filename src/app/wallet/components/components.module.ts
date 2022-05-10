@@ -15,6 +15,7 @@ import { StdTransactionComponent } from './std-transaction/std-transaction.compo
 import { TokenChooserComponent } from './token-chooser/token-chooser.component';
 import { TransferWalletChooserComponent } from './transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { TxConfirmComponent } from './tx-confirm/tx-confirm.component';
+import { TxDetailsMultiSigComponent } from './tx-details-multisig/tx-details-multisig.component';
 import { TxSuccessComponent } from './tx-success/tx-success.component';
 import { WalletChooserComponent } from './wallet-chooser/wallet-chooser.component';
 import { WarningComponent } from './warning/warning.component';
@@ -34,7 +35,8 @@ import { WarningComponent } from './warning/warning.component';
     NetworkChooserComponent,
     WalletChooserComponent,
     TokenChooserComponent,
-    StdTransactionComponent
+    StdTransactionComponent,
+    TxDetailsMultiSigComponent
   ],
   imports: [
     CommonModule,
@@ -44,6 +46,7 @@ import { WarningComponent } from './warning/warning.component';
     TranslateModule,
   ],
   exports: [
+    TxDetailsMultiSigComponent
   ],
   providers: [
   ],
@@ -62,6 +65,7 @@ import { WarningComponent } from './warning/warning.component';
     TxSuccessComponent,
     WalletChooserComponent,
     WarningComponent,
+    TxDetailsMultiSigComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

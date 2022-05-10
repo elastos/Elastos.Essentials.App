@@ -1,6 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
+import { ELATransactionCoder } from 'src/app/helpers/ela/ela.transaction.coder';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
@@ -18,7 +19,7 @@ import { StandardCoinName } from '../../../../coin';
 import { BridgeProvider } from '../../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../../earn/earnprovider';
 import { SwapProvider } from '../../../../earn/swapprovider';
-import { ElastosTransaction, Outputs, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../../../tx-providers/transaction.types';
+import { AnyOfflineTransaction, ElastosTransaction, Outputs, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../../../tx-providers/transaction.types';
 import { AnyNetworkWallet } from '../../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../../base/subwallets/maincoin.subwallet';
 import { ElastosTransactionsHelper } from '../../transactions.helper';
@@ -160,7 +161,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             }
         }
 
-        return ElastosTransactionsHelper.getTransactionName(transaction, translate);
+        return ElastosTransactionsHelper.getTransactionName(transaction);
     }
 
     protected isSingleAddress(): boolean {
@@ -193,8 +194,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         }
     }
 
-    public async getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): Promise<TransactionInfo> {
-        let transactionInfo = ElastosTransactionsHelper.getTransactionInfo(transaction, translate);
+    public async getTransactionInfo(transaction: ElastosTransaction): Promise<TransactionInfo> {
+        let transactionInfo = ElastosTransactionsHelper.getTransactionInfo(transaction);
         transactionInfo.amount = new BigNumber(transaction.value, 10);
         transactionInfo.symbol = '';
         transactionInfo.isCrossChain = false;
@@ -226,6 +227,44 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         }
 
         return await transactionInfo;
+    }
+
+    public getTransactionInfoForOfflineTransaction(transaction: AnyOfflineTransaction): TransactionInfo {
+        let receiverAddress: string = null;
+        let amount: BigNumber = null;
+        try {
+            let buffer = Buffer.from(transaction.rawTx.Data, "base64");
+            let decoded = ELATransactionCoder.decodeTx(buffer, false);
+            if (decoded && decoded.Outputs && decoded.Outputs.length > 0) {
+                receiverAddress = decoded.Outputs[0].Address;
+                amount = new BigNumber(decoded.Outputs[0].Value).dividedBy(Config.SELA);
+            }
+        }
+        catch (e) {
+            Logger.warn("Failed to decode elastos mainchain raw transaction from offline transaction", e);
+        }
+
+        let txInfo: TransactionInfo = {
+            amount: amount,
+            confirmStatus: 0,
+            datetime: moment.unix(transaction.updated),
+            direction: TransactionDirection.SENT,
+            fee: null, // unknown, not published yet
+            height: 1, // unknown, not published yet
+            memo: null, // TODO: extract from raw tx
+            name: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.NOT_PUBLISHED),
+            payStatusIcon: "./assets/wallet/buttons/send.png",
+            status: TransactionStatus.NOT_PUBLISHED,
+            statusName: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.NOT_PUBLISHED),
+            symbol: this.networkWallet.displayToken,
+            to: receiverAddress,
+            from: null,
+            timestamp: 0,
+            txid: null,
+            type: TransactionType.SENT,
+            isCrossChain: false // TODO: that's elastos specific
+        }
+        return txInfo;
     }
 
     private getSenderAddress(transaction: ElastosTransaction): string[] {

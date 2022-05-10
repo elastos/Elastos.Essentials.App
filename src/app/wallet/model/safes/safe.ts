@@ -3,6 +3,7 @@ import { Transfer } from "../../services/cointransfer.service";
 import { BTCTxData } from "../btc.types";
 import { MasterWallet } from "../masterwallets/masterwallet";
 import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
+import { AnySubWallet } from "../networks/base/subwallets/subwallet";
 import { AddressUsage } from "./addressusage";
 import { SignTransactionResult } from "./safe.types";
 
@@ -16,12 +17,15 @@ import { SignTransactionResult } from "./safe.types";
  * on wallet private keys.
  */
 export abstract class Safe {
+  protected networkWallet: AnyNetworkWallet = null;;
+
   constructor(protected masterWallet: MasterWallet) { }
 
   /**
    * Initialization method that can be overriden by subclasses.
    */
   public initialize(networkWallet: AnyNetworkWallet): Promise<void> {
+    this.networkWallet = networkWallet;
     return;
   }
 
@@ -31,11 +35,18 @@ export abstract class Safe {
    *
    * If multiple addresses are requested on wallets that can't get them (eg single address
    * wallets), an exception is thrown.
-   * 
+   *
    * @param usage Most of the time, networks have only one kind of address so they don't need to handle this. But some networks (eg: iotex) use several address formats and need to return different address styles depending on situations.
    */
   public abstract getAddresses(startIndex: number, count: number, internalAddresses: boolean, usage: AddressUsage | string): Promise<string[]>; // TODO
 
+  /**
+   * Returns wallet's extended public key (xpub...) string.
+   */
+  public getExtendedPublicKey(): Promise<string> {
+    return null; // Default implementation: ext pub key not provided for now.
+  }
+
   // TODO: remove this Transfer object, dirty.
-  public abstract signTransaction(rawTx: string | TxData | BTCTxData, transfer: Transfer): Promise<SignTransactionResult>;
+  public abstract signTransaction(subWallet: AnySubWallet, rawTx: string | TxData | BTCTxData, transfer: Transfer): Promise<SignTransactionResult>;
 }

@@ -4,6 +4,7 @@ import { jsToSpvWalletId, SPVService } from "../../services/spv.service";
 import { WalletService } from "../../services/wallet.service";
 import { StandardMasterWallet } from "../masterwallets/masterwallet";
 import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
+import { AnySubWallet } from "../networks/base/subwallets/subwallet";
 import { Safe } from "./safe";
 import { SignTransactionErrorType, SignTransactionResult } from "./safe.types";
 
@@ -38,7 +39,7 @@ export class SPVSDKSafe extends Safe {
     );
   }
 
-  public async signTransaction(rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
+  public async signTransaction(subWallet: AnySubWallet, rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
     const password = await WalletService.instance.openPayModal(transfer);
     if (!password) {
       Logger.log("wallet", "No password received. Cancelling");

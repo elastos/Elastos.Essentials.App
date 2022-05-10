@@ -44,6 +44,7 @@
     "@awesome-cordova-plugins/status-bar": "5.37.3",
     "@elastosfoundation/did-js-sdk": "^2.2.3",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "^2.0.2",
+    "@elastosfoundation/wallet-js-sdk": "^0.0.2-alpha",
     "@ethersproject/address": "^5.0.0",
     "@ethersproject/experimental": "5.5.0",
     "@ethersproject/solidity": "^5.0.0",
@@ -223,13 +224,13 @@
         "ANDROID_FIREBASE_PERFORMANCE_MONITORING": "false"
       },
       "elastos-essentials-plugin-dappbrowser": {},
-      "elastos-essentials-plugin-wallet": {},
       "cordova-plugin-ble-central": {
         "BLUETOOTH_RESTORE_STATE": "true",
         "ACCESS_BACKGROUND_LOCATION": "false",
         "IOS_INIT_ON_LOAD": "true",
         "BLUETOOTH_USAGE_DESCRIPTION": " "
-      }
+      },
+      "elastos-essentials-plugin-wallet": {}
     },
     "platforms": [
       "android"

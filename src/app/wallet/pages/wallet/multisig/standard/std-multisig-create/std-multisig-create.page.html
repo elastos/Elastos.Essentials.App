@@ -9,17 +9,43 @@
             </ion-input>
         </ion-row>
 
-        <h2>TODO</h2>
-        <ul>
-            <li>Pick signing wallet (will be the first of N signers)</li>
-            <li>Configure others public keys (except us)</li>
-            <li>Show stats: "N signers rquired of M total"</li>
-            <li>Network options (elastos and btc multi address)</li>
-        </ul>
+        <ion-button color="secondary" (click)="pickSigningWallet()">
+            <ion-label>Select signing wallet</ion-label>
+        </ion-button>
+
+        <div *ngIf="signingWallet">
+            Signing wallet: {{ signingWallet.name }}
+        </div>
+
+        <h1>Co-signers</h1>
+        <p>
+            Please input all co-signers keys except yours
+        </p>
+        <ion-row class="cosigner-row" *ngFor="let cosigner of cosigners; let i = index; trackBy: trackCosigners">
+            <ion-col size="11">
+                <ion-input type="text" [name]="'cosigner'+i" placeholder="Input xpub key" autocomplete="off"
+                    autocorrect="off" [(ngModel)]="cosigners[i]" ngDefaultControl (blur)="onCosignerBlur(i)">
+                </ion-input>
+            </ion-col>
+            <ion-col size="1" class="right-col" (click)="pasteCosigner($event, i)">
+                <ion-icon mode="ios" name="clipboard-outline"></ion-icon>
+            </ion-col>
+        </ion-row>
+
+        <ion-button color="secondary" (click)="addCosignerEntry()">
+            <ion-label>Add a cosigner</ion-label>
+        </ion-button>
+
+        <h1>Summary</h1>
+        <p>{{requiredSigners}} signatures will be required from the {{getUsableCosigners().length + 1}} co-signers.</p>
+
+        <!--  <ul>
+            <li>Todo: Network options (elastos and btc multi address)</li>
+        </ul> -->
 
         <!-- Button -->
         <ion-row class="btn-row">
-            <ion-button color="secondary" [disabled]='!wallet.name' (click)="onCreate()">
+            <ion-button color="secondary" [disabled]='!allInputsValid()' (click)="onCreate()">
                 <ion-label>{{ 'common.continue' | translate }}</ion-label>
             </ion-button>
         </ion-row>

@@ -306,6 +306,13 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     public abstract getAddresses(): Promise<WalletAddressInfo[]>;
 
     /**
+     * Returns wallet's extended public key (xpub...) string.
+     */
+    public getExtendedPublicKey(): Promise<string> {
+        return this.safe.getExtendedPublicKey();
+    }
+
+    /**
      * Converts a given address to the target usage format. Most of the time, this method does nothing
      * and should not be overriden (same address format used everywhere). Though for some networks such as
      * IoTeX who can deal with 2 different formats, addresses have to be converted from one format to another,

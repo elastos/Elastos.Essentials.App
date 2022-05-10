@@ -19,6 +19,16 @@ import { LocalStorage } from '../../../services/storage.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
 
+type SettingsMenuEntry = {
+    type: string;
+    route?: string;
+    navCallback?: () => void;
+    title: string;
+    subtitle: string;
+    icon: string;
+    iconDarkmode: string;
+}
+
 @Component({
     selector: 'app-wallet-settings',
     templateUrl: './wallet-settings.page.html',
@@ -47,10 +57,16 @@ export class WalletSettingsPage implements OnInit {
     public canExportKeystore = true;
     public showExportMenu = false;
 
-    public settings = [
+    public settings: SettingsMenuEntry[] = [
         {
             type: 'wallet-export',
-            route: null,
+            navCallback: () => {
+                if (this.canExportKeystore) {
+                    this.showExportMenu = !this.showExportMenu;
+                } else {
+                    void this.export();
+                }
+            },
             title: this.translate.instant("wallet.wallet-settings-backup-wallet"),
             subtitle: this.translate.instant("wallet.wallet-settings-backup-wallet-subtitle"),
             icon: '/assets/wallet/settings/key.svg',
@@ -99,7 +115,7 @@ export class WalletSettingsPage implements OnInit {
     ) {
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
         this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
@@ -117,9 +133,26 @@ export class WalletSettingsPage implements OnInit {
             });
         }
 
+        if (this.networkWallet && await this.networkWallet.getExtendedPublicKey()) {
+            this.settings.push({
+                type: 'wallet-ext-pub-keys',
+                navCallback: () => {
+                    this.native.go("/wallet/wallet-ext-pub-keys", {
+                        masterWalletId: this.masterWalletId
+                    });
+                },
+                title: "Extended public keys",
+                subtitle: "Special keys required to create multi-signature wallets",
+                icon: '/assets/wallet/settings/picture.svg',
+                iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
+            });
+        }
+
         this.settings.push({
             type: 'wallet-delete',
-            route: null,
+            navCallback: () => {
+                void this.onDelete();
+            },
             title: this.translate.instant("wallet.wallet-settings-delete-wallet"),
             subtitle: this.translate.instant("wallet.wallet-settings-delete-wallet-subtitle"),
             icon: '/assets/wallet/settings/trash.svg',
@@ -181,18 +214,11 @@ export class WalletSettingsPage implements OnInit {
           item.route !== null ? this.native.go(item.route) : this.onDelete();
       } */
 
-    public goToSetting(item) {
-        if (item.type === 'wallet-export') {
-            if (this.canExportKeystore) {
-                this.showExportMenu = !this.showExportMenu;
-            } else {
-                void this.export();
-            }
-        } else if (item.type === 'wallet-delete') {
-            void this.onDelete();
-        } else {
+    public goToSetting(item: SettingsMenuEntry) {
+        if (item.navCallback)
+            item.navCallback();
+        else
             this.native.go(item.route);
-        }
     }
 
     public async export() {

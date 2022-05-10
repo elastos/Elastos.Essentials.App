@@ -38,6 +38,8 @@
                 [ngStyle]="{ 'background-color': masterWallet.theme ? masterWallet.theme.color : '#752fcf' }">
             </div>
         </ion-row>
+
+        <!-- Settings menu -->
         <ion-row class="setting-row ripple ion-activatable" [class.dark-setting-row]="theme.darkMode"
             *ngFor="let item of settings" (click)="goToSetting(item)">
             <ion-col size="1.25" class="left-col">

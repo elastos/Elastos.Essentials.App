@@ -82,9 +82,15 @@ export class WalletUtil {
     }
   }
 
+  /**
+   * @param timestamp Timestamp ins seconds or milliseconds
+   */
   public static getDisplayDate(timestamp: number) {
+    if (timestamp > 2147483647)
+      timestamp = timestamp / 1000; // Convert MS to seconds
+
     const today = moment(new Date()).startOf('day').valueOf();
-    return timestamp < today ? moment(timestamp).format("YYYY-MM-DD HH:mm") : moment(timestamp).startOf('minutes').fromNow();
+    return timestamp < today ? moment.unix(timestamp).format("YYYY-MM-DD HH:mm") : moment.unix(timestamp).startOf('minutes').fromNow();
   }
 
   public static isELAAddress(address: string) {

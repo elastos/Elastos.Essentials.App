@@ -3,7 +3,8 @@ import BigNumber from 'bignumber.js';
 export enum TransactionStatus {
   CONFIRMED = 'confirmed',
   PENDING = 'pending',
-  UNCONFIRMED = 'unconfirmed'
+  UNCONFIRMED = 'unconfirmed',
+  NOT_PUBLISHED = 'not_published' // Used by offline transactions, before publishing
 }
 
 export enum TransactionDirection {
@@ -170,6 +171,24 @@ export type ElastosPaginatedTransactions = {
   txhistory: ElastosTransaction[]
 };
 
+export enum OfflineTransactionType {
+  MULTI_SIG_STANDARD = "multi_sig_standard" // Multi-signature wallet transaction waiting to be signed by all parties before publishing
+}
+
+/**
+ * Generic type for offline transactions. Offline transactions are unpublished transactions
+ * such as multisig transactions waiting for signature.
+ */
+export type OfflineTransaction<CustomDataType> = {
+  id: string; // Unique ID to easily reference this item in the app.
+  type: OfflineTransactionType;
+  updated: number; // Timestamp - last update time
+  rawTx: any; // Chain specific raw transaction, not yet published
+  customData: CustomDataType; // Custom data used to store offline transaction logic
+}
+
+export type AnyOfflineTransaction = OfflineTransaction<any>;
+
 export type attribute = {
   usage: number;
   data: string;
@@ -252,7 +271,7 @@ export type Outputs = {
 export type RawTransactionPublishResult = {
   published: boolean; // Whether the transaction was successfully published to the node/spvsdk or not
   txid?: string; // In case of successful publication, ID of the published transaction.
-  status?: string; // published, cancelled, error
+  status?: string; // published, cancelled, error, delegated
   code?: number;  // Error code.
   message?: string; // Errror message.
 }

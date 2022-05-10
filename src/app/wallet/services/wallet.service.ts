@@ -49,6 +49,7 @@ import { ERC1155Service } from './evm/erc1155.service';
 import { ERC721Service } from './evm/erc721.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
+import { OfflineTransactionsService } from './offlinetransactions.service';
 import { PopupProvider } from './popup.service';
 import { SafeService } from './safe.service';
 import { jsToSpvWalletId, SPVService } from './spv.service';
@@ -130,7 +131,8 @@ export class WalletService {
         private safeService: SafeService, // Keep this - init
         private networkService: WalletNetworkService,
         private globalNetworksService: GlobalNetworksService,
-        private didSessions: GlobalDIDSessionsService,
+        private offlineTransactionsService: OfflineTransactionsService, // Keep for init
+        private didSessions: GlobalDIDSessionsService
     ) {
         WalletService.instance = this;
     }
@@ -681,17 +683,17 @@ export class WalletService {
     }
 
     /**
-     * Destroy a master wallet, active or not, base on its id.
+     * Destroy a master wallet, active or not, based on its id.
      *
      * triggerEvent: If the wallet is deleted by the system, no related event need be triggered
      */
     async destroyMasterWallet(id: string, triggerEvent = true) {
         if (!this.masterWallets[id]) {
-            Logger.warn('wallet', 'destroyMasterWallet: the master wallet is not exist!')
+            Logger.warn('wallet', `destroyMasterWallet(): master wallet with ID ${id} does not exist!`);
             return;
         }
 
-        await this.masterWallets[id].destroy()
+        await this.masterWallets[id].destroy();
 
         // Save this modification to our permanent local storage
         await this.localStorage.deleteMasterWallet(this.masterWallets[id].id);

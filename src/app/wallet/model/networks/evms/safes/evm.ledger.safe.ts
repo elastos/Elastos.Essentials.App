@@ -10,6 +10,7 @@ import { LeddgerAccountType } from "../../../ledger.types";
 import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import { LedgerSafe } from "../../../safes/ledger.safe";
 import { SignTransactionResult } from "../../../safes/safe.types";
+import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EVMSafe } from "./evm.safe";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var Common = require('ethereumjs-common').default;
@@ -70,7 +71,7 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
         throw new Error("Method not implemented.");
     }
 
-    public async signTransaction(txData: TxData, transfer: Transfer): Promise<SignTransactionResult> {
+    public async signTransaction(subWallet: AnySubWallet, txData: TxData, transfer: Transfer): Promise<SignTransactionResult> {
         Logger.log('ledger', "EVMSafe::signTransaction chainId:", this.chainId);
         let signTransactionResult: SignTransactionResult = {
             signedTransaction: null

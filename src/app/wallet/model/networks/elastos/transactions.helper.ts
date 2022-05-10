@@ -1,12 +1,12 @@
-import { TranslateService } from "@ngx-translate/core";
 import BigNumber from "bignumber.js";
+import { TranslationService } from "src/app/identity/services/translation.service";
 import { Config } from "src/app/wallet/config/Config";
 import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo, TransactionStatus } from "../../tx-providers/transaction.types";
 import { WalletUtil } from "../../wallet.util";
 
 export class ElastosTransactionsHelper {
   public static getMemoString(memo: string) {
-    if (memo.startsWith('type:text,msg:')) {
+    if (memo && memo.startsWith('type:text,msg:')) {
       return memo.substring(14);
     } else {
       return memo;
@@ -45,9 +45,9 @@ export class ElastosTransactionsHelper {
     return null;
   }
 
-  public static getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): TransactionInfo {
+  public static getTransactionInfo(transaction: ElastosTransaction): TransactionInfo {
     const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
-    const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+    const datetime = timestamp === 0 ? TranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
     const transactionInfo: TransactionInfo = {
       amount: new BigNumber(-1), // Defined by inherited classes
@@ -57,10 +57,10 @@ export class ElastosTransactionsHelper {
       fee: transaction.fee,
       height: transaction.height,
       memo: ElastosTransactionsHelper.getMemoString(transaction.memo),
-      name: ElastosTransactionsHelper.getTransactionName(transaction, translate),
+      name: ElastosTransactionsHelper.getTransactionName(transaction),
       payStatusIcon: ElastosTransactionsHelper.getTransactionIconPath(transaction),
       status: transaction.Status,
-      statusName: ElastosTransactionsHelper.getTransactionStatusName(transaction.Status, translate),
+      statusName: ElastosTransactionsHelper.getTransactionStatusName(transaction.Status),
       symbol: '', // Defined by inherited classes
       from: null,
       to: transaction.address,
@@ -76,23 +76,26 @@ export class ElastosTransactionsHelper {
   /**
 * From a raw status, returns a UI readable string status.
 */
-  public static getTransactionStatusName(status: TransactionStatus, translate: TranslateService): string {
+  public static getTransactionStatusName(status: TransactionStatus): string {
     let statusName = null;
     switch (status) {
       case TransactionStatus.CONFIRMED:
-        statusName = translate.instant("wallet.coin-transaction-status-confirmed");
+        statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
         break;
       case TransactionStatus.PENDING:
-        statusName = translate.instant("wallet.coin-transaction-status-pending");
+        statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
         break;
       case TransactionStatus.UNCONFIRMED:
-        statusName = translate.instant("wallet.coin-transaction-status-unconfirmed");
+        statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-unconfirmed");
+        break;
+      case TransactionStatus.NOT_PUBLISHED:
+        statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-not-published");
         break;
     }
     return statusName;
   }
 
-  public static getTransactionName(transaction: ElastosTransaction, translate: TranslateService): string {
+  public static getTransactionName(transaction: ElastosTransaction): string {
     let transactionName = '';
     // Logger.log("wallet", "getTransactionName std subwallet", transaction);
 

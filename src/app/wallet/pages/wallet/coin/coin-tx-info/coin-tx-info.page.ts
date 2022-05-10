@@ -19,9 +19,16 @@ import { Config } from '../../../../config/Config';
 import { StandardCoinName } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
 import { ElastosEVMSubWallet } from '../../../../model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
-import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../../model/tx-providers/transaction.types';
+import { AnyOfflineTransaction, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../../model/tx-providers/transaction.types';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
+
+export type CoinTxInfoParams = {
+    masterWalletId: string;
+    subWalletId: string;
+    offlineTransaction?: AnyOfflineTransaction; // If unpublished
+    transactionInfo?: TransactionInfo;  // If published
+}
 
 class TransactionDetail {
     type: string;
@@ -40,10 +47,11 @@ export class CoinTxInfoPage implements OnInit {
 
     // General Values
     private networkWallet: AnyNetworkWallet = null;
-    private mainTokenSymbol = '';
-    public subWalletId = '';
     public subWallet: AnySubWallet = null;
-    public transactionInfo: TransactionInfo;
+    public transactionInfo: TransactionInfo = null;
+    public offlineTransaction: AnyOfflineTransaction = null;
+
+    private mainTokenSymbol = '';
     private blockchain_url = Config.BLOCKCHAIN_URL;
 
     // Header Display Values
@@ -60,11 +68,9 @@ export class CoinTxInfoPage implements OnInit {
 
     // Other Values
     public payFee: number = null;
-    // public payType: string = '';
     public targetAddress = null;
     public fromAddress = null;
     public isRedPacket = false;
-
 
     // Show the ERC20 Token detail in ETHSC transaction.
     public isERC20TokenTransactionInETHSC = false;
@@ -83,26 +89,37 @@ export class CoinTxInfoPage implements OnInit {
         private translate: TranslateService,
         public theme: GlobalThemeService
     ) {
-        this.init();
     }
 
     ngOnInit() {
+        void this.init();
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.tx-info-title"));
     }
 
-    init() {
+    private async init() {
         this.mainTokenSymbol = WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
 
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             // General Values
-            this.transactionInfo = navigation.extras.state.transactionInfo;
-            this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(navigation.extras.state.masterWalletId);
-            this.subWalletId = navigation.extras.state.subWalletId;
-            this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
+            let state = navigation.extras.state;
+
+            this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(state.masterWalletId);
+
+            let subWalletId = state.subWalletId;
+            this.subWallet = this.networkWallet.getSubWallet(subWalletId);
+
+            console.log("txinfo state", state);
+
+            // We may receive either one or the other
+            this.offlineTransaction = state.offlineTransaction;
+            if (this.offlineTransaction)
+                this.transactionInfo = await this.subWallet.getTransactionInfoForOfflineTransaction(this.offlineTransaction);
+            else
+                this.transactionInfo = state.transactionInfo;
 
             Logger.log('wallet', 'Tx info', this.transactionInfo);
 
@@ -119,7 +136,7 @@ export class CoinTxInfoPage implements OnInit {
             this.targetAddress = this.transactionInfo.to;
             this.fromAddress = this.transactionInfo.from;
             this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
-            this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.amount, this.subWallet.tokenDecimals);
+            this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.amount, this.subWallet.tokenDecimals) || "0";
             this.isRedPacket = this.transactionInfo.isRedPacket;
 
             void this.getTransactionDetails();
@@ -128,7 +145,7 @@ export class CoinTxInfoPage implements OnInit {
 
     async getTransactionDetails() {
         // TODO: To Improve
-        if ((this.networkWallet instanceof ElastosMainChainStandardNetworkWallet) && (this.subWalletId === StandardCoinName.ELA)) {
+        if ((this.networkWallet instanceof ElastosMainChainStandardNetworkWallet) && (this.subWallet.id === StandardCoinName.ELA)) {
             const transaction = await (this.subWallet as MainChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             if (transaction) {
                 this.transactionInfo.confirmStatus = transaction.confirmations;
@@ -150,7 +167,7 @@ export class CoinTxInfoPage implements OnInit {
             // TODO: There is no txid in internal transaction, use transactionHash and get more info?
             if (this.transactionInfo.txid) {
                 // Address
-                if ((this.subWalletId === StandardCoinName.ETHSC) || (this.subWalletId === StandardCoinName.ETHDID)) {
+                if ((this.subWallet.id === StandardCoinName.ETHSC) || (this.subWallet.id === StandardCoinName.ETHDID)) {
                     const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
                     if (this.direction === TransactionDirection.SENT) {
                         this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
@@ -176,46 +193,50 @@ export class CoinTxInfoPage implements OnInit {
 
         // Create array of displayable details for txs
         this.txDetails = [];
-        this.txDetails.push(
-            {
-                type: 'time',
-                title: 'wallet.tx-info-transaction-time',
-                value:
-                    this.transactionInfo.timestamp === 0 ?
-                        this.translate.instant('wallet.coin-transaction-status-pending') :
-                        Util.dateFormat(new Date(this.transactionInfo.timestamp), 'YYYY-MM-DD HH:mm:ss'),
-                show: true,
-            },
-            {
-                type: 'memo',
-                title: 'wallet.tx-info-memo',
-                value: this.memo,
-                show: true,
-            },
-            {
-                type: 'confirmations',
-                title: 'wallet.tx-info-confirmations',
-                value: this.transactionInfo.confirmStatus === -1 ? '' : this.transactionInfo.confirmStatus,
-                show: false,
-            },
-            {
-                type: 'blockId',
-                title: 'wallet.tx-info-block-id',
-                value: this.height <= 0 ? 0 : this.height,
-                show: false,
-            },
-            {
-                type: 'txid',
-                title: 'wallet.tx-info-transaction-id',
-                value: this.transactionInfo.txid,
-                show: false,
-            },
-        );
+
+        // Tx details valid only for published transactions
+        if (!this.offlineTransaction) {
+            this.txDetails.push(
+                {
+                    type: 'time',
+                    title: 'wallet.tx-info-transaction-time',
+                    value:
+                        this.transactionInfo.timestamp === 0 ?
+                            this.translate.instant('wallet.coin-transaction-status-pending') :
+                            Util.dateFormat(new Date(this.transactionInfo.timestamp), 'YYYY-MM-DD HH:mm:ss'),
+                    show: true,
+                },
+                {
+                    type: 'memo',
+                    title: 'wallet.tx-info-memo',
+                    value: this.memo,
+                    show: true,
+                },
+                {
+                    type: 'confirmations',
+                    title: 'wallet.tx-info-confirmations',
+                    value: this.transactionInfo.confirmStatus === -1 ? '' : this.transactionInfo.confirmStatus,
+                    show: false,
+                },
+                {
+                    type: 'blockId',
+                    title: 'wallet.tx-info-block-id',
+                    value: this.height <= 0 ? 0 : this.height,
+                    show: false,
+                },
+                {
+                    type: 'txid',
+                    title: 'wallet.tx-info-transaction-id',
+                    value: this.transactionInfo.txid,
+                    show: false,
+                },
+            );
+        }
 
         // Only show receiving address, total cost and fees if tx was not received
         if (this.direction !== TransactionDirection.RECEIVED) {
             // For ERC20 Token Transfer
-            if ((this.subWalletId === StandardCoinName.ETHSC) && (this.transactionInfo.erc20TokenSymbol)) {
+            if ((this.subWallet.id === StandardCoinName.ETHSC) && (this.transactionInfo.erc20TokenSymbol)) {
                 if (this.transactionInfo.erc20TokenValue) {
                     this.txDetails.unshift(
                         {
@@ -282,7 +303,7 @@ export class CoinTxInfoPage implements OnInit {
             if (this.targetAddress) {
                 // Only show the receiving address for multiable address wallet.
                 let elastosMainChainStandardNetworkWallet = this.networkWallet as ElastosMainChainStandardNetworkWallet;
-                if (this.subWalletId === StandardCoinName.ELA && !elastosMainChainStandardNetworkWallet.getNetworkOptions().singleAddress) {
+                if (this.subWallet.id === StandardCoinName.ELA && !elastosMainChainStandardNetworkWallet.getNetworkOptions().singleAddress) {
                     this.txDetails.unshift(
                         {
                             type: 'address',
@@ -294,33 +315,6 @@ export class CoinTxInfoPage implements OnInit {
             }
         }
     }
-
-    goWebSite(subWalletId, txid) {
-        this.native.openUrl(this.blockchain_url + 'tx/' + txid);
-    }
-
-    doRefresh(event) {
-        this.init();
-        setTimeout(() => {
-            event.target.complete();
-        }, 1000);
-    }
-
-    // /**
-    //  * Get target address
-    //  */
-    // getTargetAddressFromTransaction(transaction: Transaction): string {
-    //     let targetAddress = '';
-    //     if (transaction.Outputs) {
-    //         for (const key in transaction.Outputs) {
-    //             if (transaction.Amount === transaction.Outputs[key]) {
-    //                 targetAddress = key;
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     return targetAddress;
-    // }
 
     /**
      * Get the real targeAddress by rpc

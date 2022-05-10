@@ -1,5 +1,5 @@
-import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
+import { TranslationService } from 'src/app/identity/services/translation.service';
 import { Logger } from 'src/app/logger';
 import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
@@ -68,7 +68,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
     public async createAddress(): Promise<string> {
         if (!this.legacyAddress) {
-          this.legacyAddress = await this.getCurrentReceiverAddress();
+            this.legacyAddress = await this.getCurrentReceiverAddress();
         }
         return this.legacyAddress;
     }
@@ -77,7 +77,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return Promise.resolve([]);
     }
 
-    protected async getTransactionName(transaction: BTCTransaction, translate: TranslateService): Promise<string> {
+    protected async getTransactionName(transaction: BTCTransaction): Promise<string> {
         return await '';
     }
 
@@ -86,9 +86,9 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         else return 1;
     }
 
-    public async getTransactionInfo(transaction: BTCTransaction, translate: TranslateService): Promise<TransactionInfo> {
+    public async getTransactionInfo(transaction: BTCTransaction): Promise<TransactionInfo> {
         const timestamp = transaction.blockTime * 1000; // Convert seconds to use milliseconds
-        const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+        const datetime = timestamp === 0 ? TranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
         const direction = transaction.direction;
 
@@ -100,7 +100,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             fee: (new BigNumber(transaction.fees).dividedBy(this.tokenAmountMulipleTimes)).toFixed(),
             height: transaction.blockHeight,
             memo: '',
-            name: await this.getTransactionName(transaction, translate),
+            name: await this.getTransactionName(transaction),
             payStatusIcon: await this.getTransactionIconPath(transaction),
             status: '',
             statusName: "",
@@ -116,10 +116,10 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
         if (transaction.confirmations > 0) {
             transactionInfo.status = TransactionStatus.CONFIRMED;
-            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-confirmed");
+            transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
         } else {
             transactionInfo.status = TransactionStatus.PENDING;
-            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-pending");
+            transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
         }
 
         if (direction === TransactionDirection.RECEIVED) {
@@ -172,7 +172,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     //satoshi
     public async getAvailableUtxo(amount: number) {
         let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.rpcApiUrl, this.legacyAddress);
-        let utxoArrayForSDK : UtxoForSDK[] = [];
+        let utxoArrayForSDK: UtxoForSDK[] = [];
         let getEnoughUTXO = false;
         if (utxoArray) {
             let totalAmount = 0;
@@ -226,26 +226,26 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         if (!utxo) return;
 
         if (this.masterWallet.type === WalletType.LEDGER) {
-          for (let i = 0; i < utxo.length; i++) {
-            if (!utxo[i].utxoHex) {
-              let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, utxo[i].TxHash);
-              if (rawtransaction) {
-                utxo[i].utxoHex = rawtransaction.hex;
-              } else {
-                // TODO:
-                Logger.log('wallet', 'GlobalBTCRPCService getrawtransaction error');
-                return null;
-              }
+            for (let i = 0; i < utxo.length; i++) {
+                if (!utxo[i].utxoHex) {
+                    let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, utxo[i].TxHash);
+                    if (rawtransaction) {
+                        utxo[i].utxoHex = rawtransaction.hex;
+                    } else {
+                        // TODO:
+                        Logger.log('wallet', 'GlobalBTCRPCService getrawtransaction error');
+                        return null;
+                    }
+                }
             }
-          }
         }
 
         Logger.log('wallet', 'createBTCTransaction  toAddress:', toAddress, ' amount:', toAmount)
         return (this.networkWallet.safe as any as BTCSafe).createBTCPaymentTransaction(
-          utxo,
-          outputs,
-          this.legacyAddress,
-          feerate.toString());
+            utxo,
+            outputs,
+            this.legacyAddress,
+            feerate.toString());
     }
 
     public async publishTransaction(transaction: string): Promise<string> {

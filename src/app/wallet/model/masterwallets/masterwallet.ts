@@ -32,6 +32,13 @@ export abstract class MasterWallet {
         this.theme = defaultWalletTheme();
     }
 
+    /**
+     * Destroy internal content of the wallet. To be overriden.
+     */
+    public async destroy() {
+        // TODO: Delete all subwallets
+    }
+
     public abstract serialize(): SerializedMasterWallet;
 
     /**
@@ -95,13 +102,6 @@ export abstract class MasterWallet {
         return Object.assign({}, defaultNetworkOptions, networkOptions);
     }
 
-    public async destroy() {
-        // TODO: Delete all subwallet
-
-        // Destroy the wallet in the wallet plugin
-        await SPVService.instance.destroyWallet(jsToSpvWalletId(this.id));
-    }
-
     /**
      * Removes a subwallet (coin - ex: ela, idchain) from the given wallet.
      */
@@ -138,6 +138,14 @@ export class StandardMasterWallet extends MasterWallet {
         masterWallet.deserialize(serialized);
 
         return masterWallet;
+    }
+
+    public async destroy() {
+        // Destroy the wallet in the wallet plugin - A bit dirty, should be in sub-classes that use SPV,
+        // for for convenience for now as most wallets are "native SPV", we keep it here.
+        let spvWalletId = jsToSpvWalletId(this.id);
+        if (spvWalletId !== null)
+            await SPVService.instance.destroyWallet(spvWalletId);
     }
 
     protected deserialize(serialized: SerializedStandardMasterWallet) {

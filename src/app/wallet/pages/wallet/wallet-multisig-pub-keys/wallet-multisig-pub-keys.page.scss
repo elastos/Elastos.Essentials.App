@@ -1,0 +1,66 @@
+@import 'src/app/wallet/root.scss';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100%;
+    margin: 0;
+    padding: 30px 20px;
+
+    img {
+        width: 75px;
+        height: 75px;
+        padding: 5px;
+    }
+
+    .qrcode-container {
+        border-radius: 21px;
+        background-color: #ffffff;
+        padding: 20px;
+        margin: 20px;
+        zoom: 1.2;
+    }
+
+    h1, h2, h3, p {
+        margin: 0;
+        font-weight: 400;
+    }
+
+    h1 {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        width: 100%;
+        margin-bottom: 25px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        border-radius: 17px;
+        background-color: #ffffff;
+        box-shadow: 0 3px 15px 0 #ededf0;
+        padding: 20px;
+    }
+
+    h3, p {
+        font-size: 12px;
+        font-weight: 300;
+        letter-spacing: 0.6px;
+        margin-bottom: 25px;
+    }
+
+    h3 {
+        padding-bottom: 5px;
+        text-decoration: underline
+    }
+}
+
+.dark-container {
+    h2 {
+        background-color: #212021;
+        box-shadow: none;
+    }
+}

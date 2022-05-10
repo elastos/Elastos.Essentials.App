@@ -10,6 +10,7 @@ import { AddressUsage } from "../../../safes/addressusage";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { StandardSafe } from "../../../safes/standard.safe";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
+import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EVMSafe } from "../../evms/safes/evm.safe";
 import { AnyNetwork } from "../../network";
 
@@ -78,7 +79,7 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
     return Promise.resolve(txData);
   }
 
-  public async signTransaction(rawTx: any, transfer: Transfer): Promise<SignTransactionResult> {
+  public async signTransaction(subWallet: AnySubWallet, rawTx: any, transfer: Transfer): Promise<SignTransactionResult> {
     let web3 = EVMService.instance.getWeb3(this.network);
 
     let mnemonic = (this.masterWallet as StandardMasterWallet).getMnemonic(await AuthService.instance.getWalletPassword(this.masterWallet.id));

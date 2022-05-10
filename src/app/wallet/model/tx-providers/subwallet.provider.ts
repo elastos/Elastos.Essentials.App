@@ -1,9 +1,10 @@
+import { OfflineTransactionsService } from "../../services/offlinetransactions.service";
 import { AnySubWallet } from "../networks/base/subwallets/subwallet";
 import { TransactionListType } from "../networks/evms/evm.types";
 import { TimeBasedPersistentCache } from "../timebasedpersistentcache";
 import { ProviderTransactionInfo } from "./providertransactioninfo";
 import { TransactionProvider } from "./transaction.provider";
-import { GenericTransaction } from "./transaction.types";
+import { AnyOfflineTransaction, GenericTransaction } from "./transaction.types";
 
 export type AnySubWalletTransactionProvider = SubWalletTransactionProvider<any, any>;
 
@@ -40,6 +41,12 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends AnySubW
       throw new Error("prepareTransactions() must be called before accessing getTransactions()");
 
     return this.transactionsCache.get(cacheKey).values().map(cacheEntry => cacheEntry.data);
+  }
+
+  public getOfflineTransactions(): Promise<AnyOfflineTransaction[]> {
+    // TMP TEST
+    let offlineTxs = OfflineTransactionsService.instance.getTransactions(this.subWallet);
+    return offlineTxs;
   }
 
   protected abstract getProviderTransactionInfo(transaction: TransactionType): ProviderTransactionInfo;

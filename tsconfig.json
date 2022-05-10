@@ -56,6 +56,12 @@
       ],
       "path": [
         "./node_modules/path-browserify"
+      ],
+      "elliptic": [
+        "./node_modules/elliptic"
+      ],
+      "bn.js": [
+        "./node_modules/bn.js"
       ]
     }
   }

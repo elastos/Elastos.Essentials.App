@@ -9,9 +9,10 @@ import { LedgerSafe } from '../../model/safes/ledger.safe';
 import { Safe } from '../../model/safes/safe';
 
 export type LedgerSignComponentOptions = {
-    deviceId: string,
-    safe: Safe;
-  }
+  deviceId: string,
+  safe: Safe;
+}
+
 @Component({
   selector: 'app-ledger-sign',
   templateUrl: './ledger-sign.component.html',
@@ -22,7 +23,7 @@ export class LedgerSignComponent implements OnInit {
 
   public ledgerDeviceId = null;
   public safe: Safe = null;
-  public transport : BluetoothTransport = null;
+  public transport: BluetoothTransport = null;
   public connecting = true;
   public signing = false;
   private signSucceeded = false;
@@ -50,34 +51,34 @@ export class LedgerSignComponent implements OnInit {
   }
 
   async disconnect() {
-      if (this.transport) {
-        await this.transport.close();
-        this.transport = null;
-      }
+    if (this.transport) {
+      await this.transport.close();
+      this.transport = null;
+    }
   }
 
   async signTransaction() {
     try {
-        await (this.safe as LedgerSafe).signTransactionByLedger(this.transport);
-        this.signSucceeded = true;
+      await (this.safe as LedgerSafe).signTransactionByLedger(this.transport);
+      this.signSucceeded = true;
     } catch (err) {
-        Logger.log("wallet", "LedgerSignComponent signTransactionByLedger error: ", err);
-        // TODO : if the ledger is disconnected, we need connect ledger again.
+      Logger.log("wallet", "LedgerSignComponent signTransactionByLedger error: ", err);
+      // TODO : if the ledger is disconnected, we need connect ledger again.
     }
   }
 
   async confirm() {
     try {
-        Logger.log('wallet', 'LedgerSignComponent signing')
-        this.signing = true;
-        await this.signTransaction();
-        this.signing = false;
-        void this.disconnect();
-        void this.modalCtrl.dismiss({
-            signed: this.signSucceeded
-        });
+      Logger.log('wallet', 'LedgerSignComponent signing')
+      this.signing = true;
+      await this.signTransaction();
+      this.signing = false;
+      void this.disconnect();
+      void this.modalCtrl.dismiss({
+        signed: this.signSucceeded
+      });
     } catch (err) {
-        Logger.warn("wallet", "LedgerSignComponent sign failed:", err)
+      Logger.warn("wallet", "LedgerSignComponent sign failed:", err)
     }
   }
 

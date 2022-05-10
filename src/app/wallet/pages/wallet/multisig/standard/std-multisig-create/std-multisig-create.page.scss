@@ -36,65 +36,13 @@
         }
     }
 
-    .toggle-row {
-        flex-direction: row;
-        justify-content: center;
+    .cosigner-row {
         align-items: center;
-        margin-top: 30px;
-        padding: 0 15px;
-
-        ion-col {
-            margin-bottom: 15px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-
-            p {
-                padding: 0;
-                color: #ffffff;
-                font-size: 13px;
-                font-weight: 400;
-            }
-        }
-
-        .left-col {
-            justify-content: flex-start;
-
-            h1 {
-                margin: 0;
-                font-size: 16px;
-                font-weight: 500;
-                letter-spacing: 0.9px;
-                text-align: left;
-                color: #ffffff;
-            }
-        }
 
         .right-col {
-            justify-content: flex-end;
-
-            ion-toggle {
-                zoom: 0.8;
-            }
-        }
-    }
-
-    .password-row {
-        margin-top: 15px;
-        padding: 0;
-        background: #803fd5;
-        border-radius: 8px;
-
-        ion-col {
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
             ion-icon {
-                width: 25px;
-                height: 25px;
-                color: #ffffff;
+                width:20px;
+                height:20px;
             }
         }
     }

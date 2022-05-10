@@ -14,8 +14,18 @@ import { WalletNetworkService } from '../../services/network.service';
 import { UiService } from '../../services/ui.service';
 import { WalletService } from '../../services/wallet.service';
 
+/**
+ * Filter method to return only some master wallets to show in the chooser.
+ */
+export type ChooserWalletFilter = (wallets: AnyNetworkWallet) => boolean;
+
 export type WalletChooserComponentOptions = {
   currentNetworkWallet: AnyNetworkWallet;
+  /**
+   * Optional filter. Only returned wallets will show in the list.
+   * Return true to keep the walelt in the list, false to hide it.
+   */
+  filter?: ChooserWalletFilter;
 }
 
 /**
@@ -59,15 +69,19 @@ export class WalletChooserComponent implements OnInit {
     this.options = this.navParams.data as WalletChooserComponentOptions;
 
     this.selectedMasterWallet = this.options.currentNetworkWallet ? this.options.currentNetworkWallet.masterWallet : this.walletService.getActiveMasterWallet();
-    this.masterWalletsToShowInList = this.walletService.getMasterWalletsList();
+    let masterWallets = this.walletService.getMasterWalletsList();
 
     // Build the list of available network wallets from the master wallets
     this.networkWalletsToShowInList = {};
-    this.masterWalletsToShowInList.forEach(mw => {
+    masterWallets.forEach(mw => {
       let networkWallet = this.walletService.getNetworkWalletFromMasterWalletId(mw.id);
-      if (networkWallet)
-        this.networkWalletsToShowInList[mw.id] = networkWallet;
+      if (networkWallet) {
+        if (!this.options.filter || this.options.filter(networkWallet))
+          this.networkWalletsToShowInList[mw.id] = networkWallet;
+      }
     });
+
+    this.masterWalletsToShowInList = Object.values(this.networkWalletsToShowInList).map(nw => nw.masterWallet);
   }
 
   public getNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {

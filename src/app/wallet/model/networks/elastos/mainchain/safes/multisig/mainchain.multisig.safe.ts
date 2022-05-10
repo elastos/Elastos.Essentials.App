@@ -1,177 +1,116 @@
+import { MainchainSubWallet as SDKMainchainSubWallet, MasterWallet as SDKMasterWallet } from "@elastosfoundation/wallet-js-sdk";
 import BIP32Factory from 'bip32';
+import moment from "moment";
 import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
-import { SignTransactionResult } from 'src/app/wallet/model/safes/safe.types';
-import { Outputs, UtxoForSDK } from 'src/app/wallet/model/tx-providers/transaction.types';
+import { MultiSigSafe } from "src/app/wallet/model/safes/multisig.safe";
+import { SignTransactionErrorType, SignTransactionResult } from 'src/app/wallet/model/safes/safe.types';
+import { OfflineTransaction, OfflineTransactionType, Outputs, UtxoForSDK } from 'src/app/wallet/model/tx-providers/transaction.types';
+import { CoinTxInfoParams } from "src/app/wallet/pages/wallet/coin/coin-tx-info/coin-tx-info.page";
+import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
+import { OfflineTransactionsService } from "src/app/wallet/services/offlinetransactions.service";
 import * as ecc from 'tiny-secp256k1';
 import { Native } from "../../../../../../services/native.service";
 import { Safe } from "../../../../../safes/safe";
+import { AnyNetworkWallet } from '../../../../base/networkwallets/networkwallet';
+import { AnySubWallet } from "../../../../base/subwallets/subwallet";
+import { WalletJSSDKHelper } from '../../../wallet.jssdk.helper';
 import { ElastosMainChainSafe } from '../mainchain.safe';
 
 const bip32 = BIP32Factory(ecc);
 
-export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe {
+export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe, MultiSigSafe {
+  private sdkMasterWallet: SDKMasterWallet = null;
+  private elaSubWallet: SDKMainchainSubWallet = null;
+
   constructor(protected masterWallet: StandardMultiSigMasterWallet) {
     super(masterWallet);
   }
 
+  public async initialize(networkWallet: AnyNetworkWallet): Promise<void> {
+    if (!await WalletJSSDKHelper.maybeCreateStandardMultiSigWalletFromJSWallet(this.masterWallet))
+      return;
+
+    this.sdkMasterWallet = WalletJSSDKHelper.loadMasterWalletFromJSWallet(this.masterWallet);
+    this.elaSubWallet = <SDKMainchainSubWallet>this.sdkMasterWallet.getSubWallet("ELA");
+
+    return super.initialize(networkWallet);
+  }
+
   public async getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
-    /* let elastosMainChainNetwork: networks.Network = {
-      messagePrefix: "", // Unused for now?
-      bech32: "", // Unused for now?
-      bip32: {
-        public: 0x0488b21e,
-        private: 0x0488ade4
-      },
-      pubKeyHash: 0x21, // the prefix of public key hash of elastos
-      scriptHash: 0x12, // the prefix of script hash key of elastos
-      wif: 0 // Unused if not importing by WIF?
-    } */
-
-    /* addNetwork({
-      name: 'livenet',
-      alias: 'mainnet',
-      pubkeyhash: 0x21, // the prefix of public key hash of elastos
-      privatekey: 0x80,
-      scripthash: 0x12, // the prefix of script hash key of elastos
-      //scripthash: 0x21, // TODO: when onchain support is ready, change it.
-      xpubkey: 0x0488b21e,
-      xprivkey: 0x0488ade4,
-      networkMagic: 0xf9beb4d9,
-      port: 8333, // TODO: Change the mainnet port of elastos
-      dnsSeeds: [
-        'seed.elastos.org' // TODO: Add the seed node for elastos mainnet
-      ]
-    }); */
-
-    /* let hd = bip32.fromSeed(
-      seed,
-      //Buffer.from("000102030405060708090a0b0c0d0e0f"),
-      //Buffer.from("74348e40d34ba356b5909d5db6a62b92155a9a6b40ba540771d463f93ce609efbe22fd9a0a86f7b4b8246653a33c4f92e25eaebc5d66b2b43dc007e4893656e8", "hex"),
-      //networks.bitcoin
-      elastosMainChainNetwork
-    );
-
-    console.log("hd bip32 xpub", hd.neutered().toBase58());
-
-    let account = hd.derivePath("m/44'/0");
-    console.log("account bip32 xpub", account.neutered().toBase58());
-    let account2 = hd.derivePath("m/44'/0'");
-    console.log("account2 bip32 xpub", account2.neutered().toBase58()); */
-
-    /* let derived = hd.derivePath("m/44'/0'/0'/0/0"); // elastos mainchain
-
-    console.log("HD", hd, hd.toBase58(), hd.publicKey.toString("hex"), hd.privateKey.toString("hex"));
-    console.log("DERIVED", derived, derived.toBase58(), derived.publicKey.toString("hex"), derived.privateKey.toString("hex"));
- */
-
-    /* To generate a segwit address:
-     const { address } = bitcoin.payments.p2wsh({
-      redeem: bitcoin.payments.p2ms({ m: 3, pubkeys }),
-    }); */
-
-
-    //let testXpubKey = HDKey.newWithSeed(Buffer.from("000102030405060708090a0b0c0d0e0f"), 'secp256k1');
-    //console.log("testXpubKey", testXpubKey.getPublicKeyBase58(), testXpubKey.getPublicKeyString());
-
-    //let mnemonic = "zero zero zero zero zero zero zero zero zero zero zero zero";
-    /*let mnemonic = "plug air wave link situate width turtle devote hidden ticket method company";
-    let seed = mnemonicToSeedSync(mnemonic);
-    //console.log("zeroSeed", zeroSeed.toString("hex"))
-
-    let key = HDKey.newWithMnemonic(mnemonic, "", 'p256', ELASTOS_MAINCHAIN_VERSIONS);
-
-    // "m/45'" (BIP45) is the path to get the multisig wallet (ela mainchain) - OK HERE - same as ELA wallet
-    // ela wallet / spv sdk use BIP45 multisig format for xpub
-    console.log("m/45' xpub", key.deriveWithPath("m/45'").serializePublicKeyBase58());
-
-    // OK here - same as zuohuahua
-    let derived = key.deriveWithPath("m/44'/0'/0'/0/0");
-    console.log("derived ELA ADDRESS", derived.getElastosAddress());
-    console.log("derived DID", derived.getDID());
-    console.log("derived Public key", derived.getPublicKeyString());
-    console.log("derived Private key", derived.getPrivateKeyString());
-
-    // TEST FOR NOW
-    // let pubKeys = this.masterWallet.signersExtPubKeys.map(hex => Buffer.from(hex, 'hex'));
-    //const { address } = payments.p2sh({
-    //  redeem: payments.p2ms({
-    //    m: 2, pubkeys: pubKeys // TODO: what is m: 2 ? number of mandatory signers?
-    //  }),
-    //});
-
-    // TMP FORCE KEYS FOR TESTS - TODO: get them from multisig master wallet
-    this.masterWallet.signersExtPubKeys = [
-      "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz", // found on internet
-      "xpub69bNupQzCmTWQ4JW83hkpG6cSSf8mtSBDFkE7Xy8AEt4acjFe97FxKygBF2aSJydEL26GjaG3oXit2HsvYDWAkqcM2CZH1QCR42U5HiD1cE" // plug air wave
-    ];
-    let numberOfCosigners = this.masterWallet.signersExtPubKeys.length;
-
-    // Convert extended "purpose" public keys (m/45' stored in the wallet model) into public keys
-    // https://bips.xyz/45
-    let cosignersPublicKeys = Multisig.extendedToPublicKeys(this.masterWallet.signersExtPubKeys, 'p256', ELASTOS_MAINCHAIN_VERSIONS);
-
-    // Find user's extended public key (xpub) and convert it to public key
-    //let userPurposeXpub =  // TODO: find signing wallet by ID -> .getMultisigExtendedPublicKey();
-    let userPurposeXpub = "xpub69bNupQzCmTWQ4JW83hkpG6cSSf8mtSBDFkE7Xy8AEt4acjFe97FxKygBF2aSJydEL26GjaG3oXit2HsvYDWAkqcM2CZH1QCR42U5HiD1cE";
-    let userPurposeHDKey = HDKey.fromExtendedKey(userPurposeXpub, 'p256', ELASTOS_MAINCHAIN_VERSIONS);
-    let userPurposePublicKey = userPurposeHDKey.getPublicKeyBytes();
-    console.log("purpose key string", userPurposeHDKey.getPublicKeyString());
-
-    // Get signing wallet (current user's) cosigner index
-    let userCosignerIndex = Multisig.getCosignerIndex(cosignersPublicKeys, userPurposePublicKey);
-    console.log("userCosignerIndex", userCosignerIndex);
-
-    // For each cosigner, use his purpose key to derive a public key to generate the address
-    let changeIndex = 0; // 0 for an external address, 1 for a change/internal address
-    let addressIndex = 0; // Multi address index. For now, always use 0. Later, find the next unused address.
-    let cosignersKeysForAddress: Buffer[] = [];
-    for (let i = 0; i < numberOfCosigners; i++) {
-      let key = HDKey.fromExtendedKey(this.masterWallet.signersExtPubKeys[i], 'p256', ELASTOS_MAINCHAIN_VERSIONS);
-      let publicKey = userPurposeHDKey.getPublicKeyBytes();
-      let cosignerIndex = Multisig.getCosignerIndex(cosignersPublicKeys, publicKey);
-
-      let derivedPublicKey = key.deriveChild(cosignerIndex).deriveChild(changeIndex).deriveChild(addressIndex);
-      cosignersKeysForAddress.push(derivedPublicKey.getPublicKeyBytes());
-    }
-    console.log("cosignersKeysForAddress", cosignersKeysForAddress);
-
-    let multiSigAddress = HDKey.getElastosMainChainMultiSigAddress(this.masterWallet.requiredSigners, cosignersKeysForAddress);
-    console.log("multiSigAddress", multiSigAddress);*/
-
-    /*  1. Get the cosigner_index by sorting the public key "m/45'/*" by lexicographically sorting
- 2. Store the cosigner_index and public key together, and derive the corresponding public key according to the required address.The rules are the same as BIP44.
-     3. After collecting all the public keys, convert the public keys to the multi - sig address.
-  */
-    /* TODO:
-    - compute multisig ELA address at given index from N signer xpub
-      - sort xpub and
-      - custom redeem script based on
-    - create multisig ela payment transaction
-    - sign multi transaction in multiple steps
-    - add screen to export multisig xpub
-    */
-
-    if (startIndex === 0)
-      return await ["XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf"]; // TODO - hardcoded tests for now - single address
-    else
-      return [];
+    return await <string[]>this.elaSubWallet.getAddresses(startIndex, count, internalAddresses);
   }
 
   public async getOwnerAddress(): Promise<string> {
-    return await "XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf"; // Hardcoded - equivalent of SVP getOwnerAddress();
+    return await null; // Not supported by multisig wallets.
   }
 
-  public createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string) {
-    throw new Error("Method not implemented.");
+  public async createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
+    const tx = this.elaSubWallet.createTransaction(inputs, outputs, fee, memo);
+    console.log("multisig tx", tx);
+
+    /**
+        * TODO:
+        * - offline tx service -> one cache per wallet id/subwallet id -> any kind of typed TX
+           tx providers can choose to merge those txs
+           safe saves to this service
+
+           -> who can delete ? the tx provider itself, finds existing real txs, if matches an offline tx, it deletes it
+        */
+
+    return await tx;
   }
 
-  public signTransaction(rawTx: string, transfer: Transfer): Promise<SignTransactionResult> {
+  public async signTransaction(subWallet: AnySubWallet, rawTx: string, transfer: Transfer): Promise<SignTransactionResult> {
 
-    Native.instance.go("/multisig/status");
+    // DEBUG
+    await OfflineTransactionsService.instance.debugRemoveTransactions(subWallet);
 
-    return null;
+    let offlineTransaction: OfflineTransaction<any> = {
+      id: `${Math.random()}`,
+      type: OfflineTransactionType.MULTI_SIG_STANDARD,
+      updated: moment().unix(),
+      rawTx,
+      customData: {}
+    };
+    await OfflineTransactionsService.instance.storeTransaction(subWallet, offlineTransaction);
+
+    let params: CoinTxInfoParams = {
+      masterWalletId: this.networkWallet.id,
+      subWalletId: subWallet.id,
+      offlineTransaction
+    };
+    Native.instance.go("/wallet/coin-tx-info", params);
+
+    return {
+      errorType: SignTransactionErrorType.DELEGATED
+    };
 
     //throw new Error("Method not implemented.");
+  }
+
+  public async signTransactionReal(subWallet: AnySubWallet, rawTx: any): Promise<SignTransactionResult> {
+    let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id);
+    if (!payPassword) {
+      return {
+        errorType: SignTransactionErrorType.CANCELLED
+      }; // Can't continue without the wallet password
+    }
+
+    let signedTx = await this.elaSubWallet.signTransaction(rawTx, payPassword);
+    console.log("multisig signTransactionReal signedTx", signedTx);
+
+    let signedInfo = this.elaSubWallet.getTransactionSignedInfo(rawTx);
+    console.log("signedInfo RAW", signedInfo);
+
+    let signedInfo2 = this.elaSubWallet.getTransactionSignedInfo(signedTx as any);
+    console.log("signedInfo SIGNED", signedInfo2);
+
+    let backToRaw = this.elaSubWallet.convertToRawTransaction(signedInfo[0] as any);
+    console.log("backToRaw", backToRaw)
+
+    return {
+      signedTransaction: JSON.stringify(signedTx)
+    }
   }
 }

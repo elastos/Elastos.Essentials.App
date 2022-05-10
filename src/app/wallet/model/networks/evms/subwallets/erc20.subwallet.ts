@@ -1,8 +1,8 @@
-import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
 import { GlobalRedPacketServiceAddresses } from 'src/app/config/globalconfig';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { TranslationService } from 'src/app/identity/services/translation.service';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
@@ -360,11 +360,11 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return result;
     }
 
-    public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
+    public async getTransactionInfo(transaction: EthTransaction): Promise<TransactionInfo> {
         if (transaction.hide) return null;
 
         const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
-        const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+        const datetime = timestamp === 0 ? TranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
         const direction = await this.getERC20TransactionDirection(transaction.to);
         transaction.Direction = direction;
@@ -381,7 +381,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
             fee: transaction.gas,
             height: parseInt(transaction.blockNumber),
             memo: '',
-            name: await this.getTransactionName(transaction, translate),
+            name: await this.getTransactionName(transaction),
             payStatusIcon: await this.getTransactionIconPath(transaction),
             status: TransactionStatus.UNCONFIRMED, // TODO @zhiming: was: transaction.Status,
             statusName: "TODO", // TODO @zhiming: was: this.getTransactionStatusName(transaction.Status, translate),
@@ -400,10 +400,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = TransactionStatus.CONFIRMED;
-            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-confirmed");
+            transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
         } else {
             transactionInfo.status = TransactionStatus.PENDING;
-            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-pending");
+            transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
         }
 
         // MESSY again - No "Direction" field in ETH transactions (contrary to other chains). Calling a private method to determine this.
@@ -422,7 +422,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     // TODO: Refine / translate with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
-    protected async getTransactionName(transaction: EthTransaction, translate: TranslateService): Promise<string> {
+    protected async getTransactionName(transaction: EthTransaction): Promise<string> {
         const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.to);
         switch (direction) {
             case TransactionDirection.RECEIVED:
