@@ -85,6 +85,7 @@ export const it = {
         'unregistration-candidate': 'Exit election',
         'withdraw': 'Withdraw deposit',
         'use-registered-wallet': 'Please use the wallet for registered candidate',
+        'reg-use-the-same-did-wallet': 'Please register as a CR candidate using a wallet that matches your DID',
 
         'no-candidates': 'There are no candidates at present',
 
