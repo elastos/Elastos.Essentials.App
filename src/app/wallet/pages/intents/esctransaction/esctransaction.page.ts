@@ -282,7 +282,7 @@ export class EscTransactionPage implements OnInit {
       await this.walletManager.spvBridge.createTransferGeneric(
         this.networkWallet.id,
         this.evmSubWallet.id,
-        this.coinTransferService.payloadParam.to,
+        this.coinTransferService.payloadParam.to || '',
         this.coinTransferService.payloadParam.value || "0",
         0, // WEI
         this.gasPrice,
