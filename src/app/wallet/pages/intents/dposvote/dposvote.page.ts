@@ -147,7 +147,7 @@ export class DPoSVotePage implements OnInit {
      * Balance needs to be greater than 0.0002ELA (or 0.1?).
      */
     votingFees(): number {
-        return 20000; // SELA: 0.0002ELA
+        return 20000; // The unit is SELA, 20000 SELA = 0.0002ELA
     }
 
     /**

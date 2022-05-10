@@ -370,7 +370,7 @@ export class VoteService {
      * funds won't be enough to vote.
      */
     votingFees(): number {
-        return 100000; // SELA: 0.001ELA
+        return 20000; // The unit is SELA, 20000 SELA = 0.0002ELA
     }
 
     async getMaxVotes(): Promise<number> {
