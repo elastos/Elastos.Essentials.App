@@ -128,14 +128,6 @@ export class VoteForProposalPage {
         return true;
     }
 
-    /**
-     * Fees needed to pay for the vote transaction. They have to be deduced from the total amount otherwise
-     * funds won't be enough to vote.
-     */
-    votingFees(): number {
-        return 100000; // SELA: 0.001ELA
-    }
-
     async createVoteCRProposalTransaction(voteAmount) {
         if (!await this.voteService.checkWalletAvailableForVote()) {
             return;

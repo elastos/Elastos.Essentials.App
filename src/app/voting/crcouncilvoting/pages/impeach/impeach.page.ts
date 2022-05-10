@@ -85,14 +85,6 @@ export class ImpeachCRMemberPage {
         return true;
     }
 
-    /**
-     * Fees needed to pay for the vote transaction. They have to be deduced from the total amount otherwise
-     * funds won't be enough to vote.
-     */
-    votingFees(): number {
-        return 100000; // SELA: 0.001ELA
-    }
-
     async createVoteImpeachTransaction(voteAmount) {
         this.signingAndTransacting = true;
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
