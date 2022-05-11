@@ -41,7 +41,7 @@ export class ProposalListPage implements OnInit {
         private proposalService: ProposalService,
         private route: ActivatedRoute,
         private globalNav: GlobalNavService,
-        public translate: TranslateService
+        public translate: TranslateService,
     ) {
         this.proposalType = this.route.snapshot.params.proposalType as ProposalStatus;
         Logger.log('CRProposal', this.proposalType, 'Proposal type');
@@ -96,9 +96,10 @@ export class ProposalListPage implements OnInit {
             this.proposalsFetched = false;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.searching-proposals'));
             try {
-                this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage++, this.proposalType, this.searchInput);
+                this.proposals = await this.proposalService.fetchSearchedProposal(1, this.proposalType, this.searchInput);
                 this.proposalsFetched = true;
                 this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposals'));
+                this.searchPage = 2;
             }
             catch (err) {
                 Logger.error(App.CRPROPOSAL_VOTING, 'searchProposal error:', err);
@@ -111,7 +112,7 @@ export class ProposalListPage implements OnInit {
     async doRefresh(event) {
         this.searchInput = '';
         this.proposalService.reset();
-        await this.fetchProposals(this.proposals.length);
+        await this.fetchProposals(this.proposalService.allResults.length);
 
         setTimeout(() => {
             event.target.complete();

@@ -128,13 +128,19 @@ export class SuggestionService {
             Logger.log(App.CRSUGGESTION, 'fetchSearchedSuggestion:', url, result);
             if (result && result.data && result.data.suggestions) {
                 await this.adjustSuggectionResultStatus(result.data.suggestions);
-		        this.allSearchResults = this.allSearchResults.concat(result.data.suggestions);
+                if (page == 1) {
+                    this.allSearchResults = result.data.suggestions;
+                }
+                else {
+                    this.allSearchResults = this.allSearchResults.concat(result.data.suggestions);
+                }
             }
-            return this.allSearchResults;
         }
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'fetchSearchedSuggestion error:', err);
         }
+
+        return this.allSearchResults;
     }
 
     /**

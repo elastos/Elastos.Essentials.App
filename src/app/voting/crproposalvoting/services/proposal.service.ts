@@ -140,13 +140,18 @@ export class ProposalService {
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log(App.CRPROPOSAL_VOTING, 'fetchSearchedProposal:', url, result);
             if (result && result.data) {
-                this.allSearchResults = this.allSearchResults.concat(result.data.proposals);
+                if (page == 1) {
+                    this.allSearchResults = result.data.proposals;
+                }
+                else {
+                    this.allSearchResults = this.allSearchResults.concat(result.data.proposals);
+                }
             }
-            return this.allSearchResults;
         }
         catch (err) {
             Logger.error(App.CRPROPOSAL_VOTING, 'fetchSearchedProposal error:', err);
         }
+        return this.allSearchResults;
     }
 
     /**

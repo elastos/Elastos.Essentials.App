@@ -100,9 +100,10 @@ export class SuggestionListPage implements OnInit {
             this.suggestionsFetched = false;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.searching-suggestions'));
             try {
-                this.suggestions = await this.suggestionService.fetchSearchedSuggestion(this.searchPage++, this.suggestionStatus, this.searchInput);
+                this.suggestions = await this.suggestionService.fetchSearchedSuggestion(1, this.suggestionStatus, this.searchInput);
                 this.suggestionsFetched = true;
                 this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestions'));
+                this.searchPage = 2;
             }
             catch (err) {
                 Logger.error(App.CRSUGGESTION, 'searchSuggestion error:', err);
@@ -115,7 +116,7 @@ export class SuggestionListPage implements OnInit {
     async doRefresh(event) {
         this.searchInput = '';
         this.suggestionService.reset();
-        await this.fetchSuggestions(this.suggestions.length);
+        await this.fetchSuggestions(this.suggestionService.allResults.length);
 
         setTimeout(() => {
             event.target.complete();
