@@ -288,6 +288,9 @@ export const fr = {
         "wallet-settings-migrate-did1-intro": "Ceci est une opération unique. Vos fonds restants sur la chaîne DID 1.0 seront transférés vers la chaîne principale. Après cela, la chaîne DID 1.0 disparaîtra de votre portefeuille.",
         "delete-wallet-confirm-title": "Supprimer le Portefeuille",
         "delete-wallet-confirm-subtitle": "Votre portefeuille sera supprimé de cet appareil. Vous pourrez le réimporter plus tard mais veillez à enregistrer votre mnémonique avant la suppression.",
+        "wallet-settings-consolidate-utxos": "Consolider",
+        "wallet-settings-consolidate-utxos-subtitle": "Trop d'utxo augmente le temps de création de la transaction",
+        "wallet-settings-consolidate-no-need": "Pas besoin de consolidation",
 
         /************************
         * Wallet Edit Name Page *

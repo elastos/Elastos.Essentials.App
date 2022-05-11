@@ -287,6 +287,9 @@ export const en = {
         "wallet-settings-migrate-did1-intro": "This is a one time operation. This transfer will migrate all your remaining funds from the now deprecated DID 1.0 Elastos sidechain to the Elastos mainchain. After that, the DID 1.0 subwallet will disappear from your wallet.",
         "delete-wallet-confirm-title": "Delete Wallet",
         "delete-wallet-confirm-subtitle": "Your wallet will be deleted from this device. You can re-import it later but make sure to backup your mnemonics first.",
+        "wallet-settings-consolidate-utxos": "Consolidate",
+        "wallet-settings-consolidate-utxos-subtitle": "Too many utxos will increase the time to create transactions.",
+        "wallet-settings-consolidate-no-need": "No need to Consolidate",
 
         /************************
         * Wallet Edit Name Page *

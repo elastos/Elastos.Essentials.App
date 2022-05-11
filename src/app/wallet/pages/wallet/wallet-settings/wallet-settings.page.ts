@@ -5,12 +5,18 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TxSuccessComponent } from 'src/app/wallet/components/tx-success/tx-success.component';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { Utxo } from 'src/app/wallet/model/providers/transaction.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { WalletCreateType } from 'src/app/wallet/model/walletaccount';
+import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { Transfer } from 'src/app/wallet/services/cointransfer.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../config/Config';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { AuthService } from '../../../services/auth.service';
@@ -94,10 +100,12 @@ export class WalletSettingsPage implements OnInit {
         public native: Native,
         private translate: TranslateService,
         private walletEditionService: WalletEditionService,
+        private walletNetworkService: WalletNetworkService,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
         private authService: AuthService,
-        private popoverCtrl: PopoverController
+        private popoverCtrl: PopoverController,
+        private globalNative: GlobalNativeService,
     ) {
     }
 
@@ -145,6 +153,17 @@ export class WalletSettingsPage implements OnInit {
             icon: '/assets/wallet/settings/trash.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
         });
+
+        if (this.walletNetworkService.isActiveNetworkElastos()) {
+            this.settings.push({
+                type: 'wallet-consolidate-utxos',
+                route: null,
+                title: this.translate.instant("wallet.wallet-settings-consolidate-utxos"),
+                subtitle: this.translate.instant("wallet.wallet-settings-consolidate-utxos-subtitle"),
+                icon: '/assets/wallet/settings/consolidate.svg',
+                iconDarkmode: '/assets/wallet/settings/darkmode/consolidate.svg'
+            });
+        }
     }
 
     ionViewWillEnter() {
@@ -169,6 +188,58 @@ export class WalletSettingsPage implements OnInit {
         this.native.go('/wallet/wallet-did1-transfer', {
             masterWalletId: this.networkWallet.id
         });
+    }
+
+    private async checkUtxosCount() {
+        let normalUxtos: Utxo[] = null;
+        let utxosCount = -1;
+        let mainChainSubwallet = this.networkWallet.getSubWallet(StandardCoinName.ELA) as MainAndIDChainSubWallet
+
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
+        try {
+            normalUxtos = await mainChainSubwallet.getNormalUtxos();
+            utxosCount = normalUxtos.length;
+        } catch (err) {
+            Logger.warn('wallet', ' getNormalUtxos error', err)
+        }
+        await this.native.hideLoading();
+
+        if (utxosCount > 100) {
+            const UTXOsCountString = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: utxosCount});
+            let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt',
+                UTXOsCountString, 'wallet.text-consolidate-note')
+            if (ret) {
+                let rawTx = await mainChainSubwallet.createConsolidateTransaction(normalUxtos);
+                if (rawTx) {
+                    const transfer = new Transfer();
+                    Object.assign(transfer, {
+                        masterWalletId: this.networkWallet.id,
+                        subWalletId: StandardCoinName.ELA,
+                        rawTransaction: rawTx,
+                        action: null,
+                        intentId: null
+                    });
+
+                    const result = await mainChainSubwallet.signAndSendRawTransaction(rawTx, transfer);
+                    if (result.published)
+                        void this.showSuccess();
+                }
+            }
+        } else {
+            this.globalNative.genericToast('wallet.wallet-settings-consolidate-no-need')
+        }
+    }
+
+    async showSuccess() {
+        this.native.popup = await this.native.popoverCtrl.create({
+            mode: 'ios',
+            cssClass: 'wallet-tx-component',
+            component: TxSuccessComponent,
+        });
+        this.native.popup.onWillDismiss().then(() => {
+            this.native.popup = null;
+        });
+        return await this.native.popup.present();
     }
 
     async showDeletePrompt() {
@@ -224,8 +295,9 @@ export class WalletSettingsPage implements OnInit {
             }
         } else if (item.type === 'wallet-delete') {
             void this.onDelete();
-        }
-        else if (item.type === 'wallet-did1-transfer') {
+        } else if (item.type === 'wallet-consolidate-utxos') {
+            void this.checkUtxosCount();
+        } else if (item.type === 'wallet-did1-transfer') {
             this.goToDID1Transfer();
         } else {
             this.native.go(item.route);

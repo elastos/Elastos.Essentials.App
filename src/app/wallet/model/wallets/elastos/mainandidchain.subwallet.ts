@@ -307,6 +307,54 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         );
     }
 
+    public async createConsolidateTransaction(utxoArray: Utxo[]): Promise<string> {
+        if (!utxoArray || utxoArray.length == 0) return null;
+
+        // Remove the utxo that used in pending transactions.
+        let usedUTXOs = await this.getUTXOUsedInPendingTransaction();
+        if (usedUTXOs.length > 0) {
+            for (let i = utxoArray.length - 1; i >= 0; i--) {
+                if (usedUTXOs.indexOf(utxoArray[i].txid) >= 0) {
+                    utxoArray.splice(i, 1);
+                }
+            }
+        }
+
+        let utxoArrayForSDK = [];
+        let totalAmount = 0;
+        for (let i = 0, len = utxoArray.length; i < len; i++) {
+            let utxoAmountSELA = this.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
+            let utxoForSDK: UtxoForSDK = {
+                Address: utxoArray[i].address,
+                Amount: utxoAmountSELA.toString(),
+                Index: utxoArray[i].vout,
+                TxHash: utxoArray[i].txid
+            }
+            utxoArrayForSDK.push(utxoForSDK);
+            totalAmount += utxoAmountSELA;
+        }
+
+        let toAmount = totalAmount - 10000;// 10000: fee
+
+        let toAddress = await this.createAddress();
+
+        Logger.log('wallet', 'createConsolidateTransaction toAmount:', toAmount);
+
+        let outputs = [{
+            "Address": toAddress,
+            "Amount": toAmount.toString()
+        }]
+
+        return this.masterWallet.walletManager.spvBridge.createTransaction(
+            this.masterWallet.id,
+            this.id, // From subwallet id
+            JSON.stringify(utxoArrayForSDK),
+            JSON.stringify(outputs),
+            '10000',
+            'Consolidate Utxos'
+        );
+    }
+
     public async publishTransaction(transaction: string): Promise<string> {
         let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
             this.masterWallet.id,
@@ -795,9 +843,11 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
         // Remove the utxo that used in pending transactions.
         let usedUTXOs = await this.getUTXOUsedInPendingTransaction();
-        for (let i = utxoArray.length - 1; i >= 0; i--) {
-            if (usedUTXOs.indexOf(utxoArray[i].txid) >= 0) {
-                utxoArray.splice(i, 1);
+        if (usedUTXOs.length > 0) {
+            for (let i = utxoArray.length - 1; i >= 0; i--) {
+                if (usedUTXOs.indexOf(utxoArray[i].txid) >= 0) {
+                    utxoArray.splice(i, 1);
+                }
             }
         }
 
@@ -1122,7 +1172,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
      * If the balance is sufficient, we will not use the voting ELA.
      * If not, we will use the voting ELA, and the voting was cancelled.
      */
-    async getVotingUtxoByRPC() {
+    async getVotingUtxoByRPC(): Promise<Utxo[]> {
         this.votingUtxoArray = await this.getAllUtxoByType(UtxoType.Vote);
         let votingAmountEla = 0;
         if (this.votingUtxoArray) {
@@ -1135,6 +1185,12 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         } else {
             this.votingAmountSELA = 0;
         }
+        return this.votingUtxoArray;
+    }
+
+    public async getNormalUtxos(): Promise<Utxo[]> {
+        let normalUtxoArray = await this.getAllUtxoByType(UtxoType.Normal);
+        return normalUtxoArray;
     }
 
     async getAllUtxoByAddress(internalAddress: boolean, type: UtxoType): Promise<Utxo[]> {

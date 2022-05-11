@@ -111,8 +111,10 @@ export class DPoSVotePage implements OnInit {
         this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainchainSubWallet;
         await this.sourceSubwallet.updateBalanceSpendable();
         let voteInEla = this.sourceSubwallet.getRawBalanceSpendable().minus(this.votingFees());
-        this.voteAmountELA = voteInEla.toString()
-        this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toString();
+        if (voteInEla.isPositive) {
+            this.voteAmountELA = voteInEla.toString()
+            this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toString();
+        }
         void this.hasPendingVoteTransaction();
     }
 
@@ -144,10 +146,10 @@ export class DPoSVotePage implements OnInit {
     }
 
     /**
-     * Balance needs to be greater than 0.0002ELA (or 0.1?).
+     * Balance needs to be greater than 0.0001ELA.
      */
     votingFees(): number {
-        return 20000; // The unit is SELA, 20000 SELA = 0.0002ELA
+        return 10000; // The unit is SELA, 10000 SELA =  0.0001ELA
     }
 
     /**
@@ -161,6 +163,8 @@ export class DPoSVotePage implements OnInit {
             this.native.toast_trans('wallet.insufficient-balance');
             return false;
         }
+
+        if (!this.voteAmount) return;
 
         let candidates: Candidates = {};
 

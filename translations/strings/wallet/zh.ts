@@ -287,6 +287,9 @@ export const zh = {
                 "wallet-settings-migrate-did1-intro": "这是一次性操作。 此次转账会将您所有剩余的资金从现已弃用的 DID 1.0 亦来云侧链迁移到亦来云主链。 之后，DID 1.0 子钱包将从您的钱包中消失。",
                 "delete-wallet-confirm-title": "删除钱包",
                 "delete-wallet-confirm-subtitle": "您的钱包将从此设备上删除。 您可以重新导入此钱包，请确保已经备份好钱包助记词。",
+                "wallet-settings-consolidate-utxos": "零钱换整",
+                "wallet-settings-consolidate-utxos-subtitle": "Utxo 数量过多会增加创建交易的时间",
+                "wallet-settings-consolidate-no-need": "无需执行零钱换整",
 
                 /************************
                 * Wallet Edit Name Page *
