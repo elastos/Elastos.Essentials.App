@@ -61,7 +61,6 @@ export class DPosUnRegistrationPage implements OnInit {
 
     needConfirm = false;
 
-    private depositAmount = 500000000000; // 5000 ELA
     private TRANSACTION_LIMIT = 50;// for rpc
     public transactionInfo: DPoSTransactionInfo = {
         time: 0,

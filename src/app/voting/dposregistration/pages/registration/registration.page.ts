@@ -47,9 +47,6 @@ export class DPosRegistrationPage implements OnInit {
 
     needConfirm = false;
 
-    private depositAmount = 500000000000; // 5000 ELA
-    private fee = 10000;
-
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
@@ -187,7 +184,7 @@ export class DPosRegistrationPage implements OnInit {
         const payload = await this.walletManager.spvBridge.generateProducerPayload(this.masterWalletId, StandardCoinName.ELA,
             this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
 
-        const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.depositAmount, "");
+        const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.depositAmount, "");
 
         let ret = await this.voteService.signAndSendRawTransaction(rawTx);
         if (ret) {

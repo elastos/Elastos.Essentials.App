@@ -45,6 +45,8 @@ export class VoteService {
     public secretaryGeneralDid: string = null;
     public secretaryGeneralPublicKey: string = null;
 
+    public depositAmount = 500000000000; // 5000 ELA
+
     constructor(
         public native: Native,
         private walletManager: WalletService,
@@ -208,6 +210,7 @@ export class VoteService {
         return true;
     }
 
+    //Note:: now don't use this function to get data
     async getCRMembers() {
         Logger.log(App.VOTING, 'Get CRMembers..');
 
@@ -286,7 +289,7 @@ export class VoteService {
 
     async getSecretaryGeneralDid() {
         if (this.secretaryGeneralDid == null) {
-            await this.getCRMembers();
+            await this.getCurrentCRMembers();
         }
 
         return this.secretaryGeneralDid;
@@ -370,7 +373,7 @@ export class VoteService {
      * funds won't be enough to vote.
      */
     votingFees(): number {
-        return 20000; // The unit is SELA, 20000 SELA = 0.0002ELA
+        return 20000; // The unit is SELA, 20000 SELA = 0.0002ELA. The real fee is 10000 SELA
     }
 
     async getMaxVotes(): Promise<number> {
@@ -385,9 +388,7 @@ export class VoteService {
     }
 
     async checkBalanceForRegistration(): Promise<boolean> {
-        let depositAmount = 50000000000; // 5000 ELA
-        let fee = 10000;
-        let amount = depositAmount + fee;
+        let amount = this.depositAmount + this.votingFees();
         await this.sourceSubwallet.updateBalanceSpendable();
         if (this.sourceSubwallet.getRawBalanceSpendable().lt(amount)) {
             return false;

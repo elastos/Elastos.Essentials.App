@@ -43,8 +43,6 @@ export class RegisterUpdatePage implements OnInit {
     public originInfo: any = null;
     public needConfirm = false;
 
-    private depositAmount = 500000000000; // 5000 ELA
-
     public infoOpration = InfoOperation.Registration;
 
     constructor(
@@ -183,7 +181,7 @@ export class RegisterUpdatePage implements OnInit {
         try {
             let payload = await this.getCRInfoPayload();
             if (payload) {
-                const rawTx = await this.voteService.sourceSubwallet.createRegisterCRTransaction(payload, this.depositAmount, "");
+                const rawTx = await this.voteService.sourceSubwallet.createRegisterCRTransaction(payload, this.voteService.depositAmount, "");
                 let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
                 if (ret) {
                     this.voteService.toastSuccessfully('crcouncilvoting.register-candidate');
