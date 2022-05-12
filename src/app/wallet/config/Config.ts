@@ -27,7 +27,8 @@ import BigNumber from 'bignumber.js';
 export class Config {
     public static DEBUG_LOGS_ENABLED = true;
 
-    public static UTXO_CONSOLIDATE_PROMPT_THRESHOLD = 500; // Number of UTXOs after which the app will ask user to consolidate.
+    public static UTXO_CONSOLIDATE_PROMPT_THRESHOLD = 500; // Number of UTXOs after which the app will send notification to user.
+    public static UTXO_CONSOLIDATE_MIN_THRESHOLD = 100; // We don't recommend consolidating utxos if the number of UTXOs less than 100.
 
     public static SELA = 100000000; // Number of SELA per ELA.
     public static SELAAsBigNumber = new BigNumber(Config.SELA);

@@ -111,6 +111,9 @@ export class WalletSettingsPage implements OnInit {
 
     async ngOnInit() {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
+        if (!this.masterWalletId) {
+            this.masterWalletId = this.walletManager.getActiveMasterWallet().id;
+        }
         this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
         this.canExportKeystore = this.masterWallet.createType === WalletCreateType.MNEMONIC
@@ -204,12 +207,13 @@ export class WalletSettingsPage implements OnInit {
         }
         await this.native.hideLoading();
 
-        if (utxosCount > 100) {
+        if (utxosCount > Config.UTXO_CONSOLIDATE_MIN_THRESHOLD) {
             const UTXOsCountString = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: utxosCount});
             let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt',
                 UTXOsCountString, 'wallet.text-consolidate-note')
             if (ret) {
-                let rawTx = await mainChainSubwallet.createConsolidateTransaction(normalUxtos);
+                let rawTx = await mainChainSubwallet.createConsolidateTransaction(normalUxtos,
+                        this.translate.instant('wallet-settings-consolidate-utxos'));
                 if (rawTx) {
                     const transfer = new Transfer();
                     Object.assign(transfer, {

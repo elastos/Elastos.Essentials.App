@@ -85,7 +85,7 @@ export class SwapService {
 
     public init() {
         this.networkService.activeNetwork.subscribe(activeNetwork => {
-            this.onActiveNetworkChanged(activeNetwork);
+            if (activeNetwork) this.onActiveNetworkChanged(activeNetwork);
         });
     }
 

@@ -585,6 +585,7 @@ export const en = {
         'text-consolidate-UTXO-counts': 'Number of UTXOs: {{ count }}',
         'text-consolidate-note': 'Too many UTXOs may cause some transactions to fail, and the consolidation will not affect existing supernodes voting',
         'reasons-failure': 'Reason for failure',
+        "notification-too-many-utxos": "The number of UTXOs in ELA mainchain of wallet {{ walletname }} has reached {{ count }}. It is recommended that you re execute dpos voting or consolidate UTXOs!",
 
         // Error codes
         'Error-10000': 'JSON parse error of action parameters',

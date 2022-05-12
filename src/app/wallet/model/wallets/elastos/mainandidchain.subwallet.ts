@@ -307,18 +307,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         );
     }
 
-    public async createConsolidateTransaction(utxoArray: Utxo[]): Promise<string> {
+    public async createConsolidateTransaction(utxoArray: Utxo[], memo = ''): Promise<string> {
         if (!utxoArray || utxoArray.length == 0) return null;
-
-        // Remove the utxo that used in pending transactions.
-        let usedUTXOs = await this.getUTXOUsedInPendingTransaction();
-        if (usedUTXOs.length > 0) {
-            for (let i = utxoArray.length - 1; i >= 0; i--) {
-                if (usedUTXOs.indexOf(utxoArray[i].txid) >= 0) {
-                    utxoArray.splice(i, 1);
-                }
-            }
-        }
 
         let utxoArrayForSDK = [];
         let totalAmount = 0;
@@ -351,7 +341,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             JSON.stringify(utxoArrayForSDK),
             JSON.stringify(outputs),
             '10000',
-            'Consolidate Utxos'
+            memo
         );
     }
 
@@ -1188,8 +1178,20 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         return this.votingUtxoArray;
     }
 
+    // For consolidate utxos
     public async getNormalUtxos(): Promise<Utxo[]> {
         let normalUtxoArray = await this.getAllUtxoByType(UtxoType.Normal);
+
+        // Remove the utxo that used in pending transactions.
+        let usedUTXOs = await this.getUTXOUsedInPendingTransaction();
+        if (usedUTXOs.length > 0) {
+            for (let i = normalUtxoArray.length - 1; i >= 0; i--) {
+                if (usedUTXOs.indexOf(normalUtxoArray[i].txid) >= 0) {
+                    normalUtxoArray.splice(i, 1);
+                }
+            }
+        }
+
         return normalUtxoArray;
     }
 

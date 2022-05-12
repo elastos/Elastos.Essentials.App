@@ -13,6 +13,7 @@ import { GlobalCredentialTypesService } from './services/credential-types/global
 import { GlobalAppBackgroundService } from './services/global.appbackground.service';
 import { GlobalBTCRPCService } from './services/global.btc.service';
 import { GlobalDIDSessionsService } from './services/global.didsessions.service';
+import { GlobalELAUtxoService } from './services/global.ela.utxo.service';
 import { GlobalElastosAPIService } from './services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from './services/global.ethereum.service';
 import { GlobalFirebaseService } from './services/global.firebase.service';
@@ -68,6 +69,7 @@ export class AppComponent {
     private credentialTypesService: GlobalCredentialTypesService,
     private credentialToolboxService: GlobalCredentialToolboxService,
     private globalSecurityService: GlobalSecurityService,
+    private globalELAUtxoService: GlobalELAUtxoService,
     private firebase: FirebaseX
   ) { }
 
@@ -113,6 +115,7 @@ export class AppComponent {
       await this.credentialTypesService.init();
       await this.credentialToolboxService.init();
       void this.globalFirebaseService.init();
+      void this.globalELAUtxoService.init();
 
       // "DApps" initializations
       await this.globalAppBackgroundService.init();
