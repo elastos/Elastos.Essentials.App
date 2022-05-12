@@ -6,7 +6,8 @@
             <ion-row class="id-row">
                 <ion-col size="2.75" class="left-col">
                     <ion-avatar class="avatar">
-                        <img [src]="member.avatar ? member.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
+                        <img [src]="member.avatar ? member.avatar : '/assets/crcouncilvoting/icon/avatar.png'"
+                            src-fallback="/assets/crcouncilvoting/icon/avatar.png">
                     </ion-avatar>
                 </ion-col>
 

@@ -211,31 +211,31 @@ export class VoteService {
     }
 
     //Note:: now don't use this function to get data
-    async getCRMembers() {
-        Logger.log(App.VOTING, 'Get CRMembers..');
+    // async getCRMembers() {
+    //     Logger.log(App.VOTING, 'Get CRMembers..');
 
-        this.crmembers = []
+    //     this.crmembers = []
 
-        const param = {
-            method: 'listcurrentcrs',
-            params: {
-                state: "all"
-            },
-        };
+    //     const param = {
+    //         method: 'listcurrentcrs',
+    //         params: {
+    //             state: "all"
+    //         },
+    //     };
 
-        try {
-            const elaRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-            const result = await this.jsonRPCService.httpPost(elaRpcApi, param);
-            if (!result || !result.crmembersinfo) {
-                return;
-            }
-            Logger.log(App.VOTING, "crmembers:", result.crmembersinfo);
-            this.crmembers = result.crmembersinfo;
-        }
-        catch (err) {
-            Logger.error(App.VOTING, 'getCRMembers error', err);
-        }
-    }
+    //     try {
+    //         const elaRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+    //         const result = await this.jsonRPCService.httpPost(elaRpcApi, param);
+    //         if (!result || !result.crmembersinfo) {
+    //             return;
+    //         }
+    //         Logger.log(App.VOTING, "crmembers:", result.crmembersinfo);
+    //         this.crmembers = result.crmembersinfo;
+    //     }
+    //     catch (err) {
+    //         Logger.error(App.VOTING, 'getCRMembers error', err);
+    //     }
+    // }
 
     async getCurrentCRMembers() {
         this.crmembers = [];

@@ -62,6 +62,11 @@ export const zh = {
 
         'no-member-info': '获取委员信息失败',
 
+        /********** Secretary General **********/
+        'secretary-profile': '秘书长信息',
+        'about-secretary': '关于秘书长',
+        'secretary-did': '秘书长DID',
+
         /********** Impeach **********/
         'impeach-council-member': '弹劾委员会成员',
         'member-name': '委员会成员昵称',

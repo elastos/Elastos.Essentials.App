@@ -20,6 +20,7 @@ import { HistoryPage } from './pages/history/history.page';
 import { ImpeachCRMemberPage } from './pages/impeach/impeach.page';
 import { RegisterUpdatePage } from './pages/register-update/register-update.page';
 import { CandidateRegistrationTermsPage } from './pages/registration-terms/registration-terms.page';
+import { CRSecretaryPage } from './pages/secretary/secretary.page';
 import { VotePage } from './pages/vote/vote.page';
 import { CRCouncilVotingRoutingModule } from './routing';
 
@@ -35,6 +36,7 @@ import { CRCouncilVotingRoutingModule } from './routing';
     CRNodePage,
     CRMemberPage,
     ImpeachCRMemberPage,
+    CRSecretaryPage,
     CandidateSliderComponent
   ],
   imports: [

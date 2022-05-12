@@ -62,6 +62,11 @@ export const en = {
 
         'no-member-info': 'Can not get the member info',
 
+        /********** Secretary General **********/
+        'secretary-profile': 'Secretary General Profile',
+        'about-secretary': 'About Secretary General',
+        'secretary-did': 'Secretary General DID',
+
         /********** Impeach **********/
         'impeach-council-member': 'Impeach Council Member',
         'member-name': 'Council Member Name',
@@ -88,7 +93,6 @@ export const en = {
         'reg-use-the-same-did-wallet': 'Please register as a CR candidate using a wallet that matches your DID',
 
         'no-candidates': 'There are no candidates at present',
-
 
         /********** Registration **********/
         'registration': 'Registration',

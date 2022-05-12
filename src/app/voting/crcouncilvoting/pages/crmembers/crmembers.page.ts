@@ -22,6 +22,7 @@ export class CRMembersPage implements OnInit {
     public candidateIndex: number;
     public addingCandidates = false;
     public crMembersFetched = false;
+    public secretary: any = null;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -56,6 +57,7 @@ export class CRMembersPage implements OnInit {
         await this.crCouncilService.getCRVotingStage();
         if (!this.crMembersFetched) {
             await this.crCouncilService.fetchCRMembers();
+            this.secretary = await this.crCouncilService.getSecretary();
             this.crMembersFetched = true;
         }
     }
@@ -71,5 +73,9 @@ export class CRMembersPage implements OnInit {
     async onShowMemberInfo(did: string) {
         this.crCouncilService.selectedMemberDid = did;
         await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
+    }
+
+    async onShowSecretaryInfo() {
+        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/secretary');
     }
 }

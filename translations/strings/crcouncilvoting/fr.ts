@@ -61,6 +61,11 @@ export const fr = {
 
         'no-member-info': 'Can not get the member info',
 
+        /********** Secretary General **********/
+        'secretary-profile': 'Secretary General Profile',
+        'about-secretary': 'About Secretary General',
+        'secretary-did': 'Secretary General DID',
+
         /********** Impeach **********/
         'impeach-council-member': 'Destituer membre du conseil',
         'member-name': 'Nom du membre',

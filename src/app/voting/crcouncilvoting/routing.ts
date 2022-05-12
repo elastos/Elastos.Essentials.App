@@ -9,6 +9,7 @@ import { HistoryPage } from './pages/history/history.page';
 import { ImpeachCRMemberPage } from './pages/impeach/impeach.page';
 import { RegisterUpdatePage } from './pages/register-update/register-update.page';
 import { CandidateRegistrationTermsPage } from './pages/registration-terms/registration-terms.page';
+import { CRSecretaryPage } from './pages/secretary/secretary.page';
 import { VotePage } from './pages/vote/vote.page';
 
 const routes: Routes = [
@@ -17,6 +18,7 @@ const routes: Routes = [
     { path: 'crmembers', component: CRMembersPage },
     { path: 'crmember', component: CRMemberPage },
     { path: 'impeach', component: ImpeachCRMemberPage },
+    { path: 'secretary', component: CRSecretaryPage },
     { path: 'vote', component: VotePage },
     { path: 'history', component: HistoryPage },
     { path: 'crnode', component: CRNodePage },

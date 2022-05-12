@@ -71,6 +71,7 @@ export class CRCouncilService {
     public selectedMemberDid: string;
     public candidateInfo: CandidateBaseInfo;
     public updateInfo: any;
+    public secretaryGeneralInfo: any = null;
 
     /** Election Results **/
     public councilTerm: any[] = [];
@@ -115,7 +116,8 @@ export class CRCouncilService {
     async fetchCRMembers() {
         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching CRMembers..');
 
-        this.crmembers = []
+        this.crmembers = [];
+        this.isCRMember = false;
 
         const param = {
             method: 'listcurrentcrs',
@@ -143,6 +145,54 @@ export class CRCouncilService {
             Logger.error('crcouncil', 'fetchCRMembers error', err);
             await this.alertErr('crcouncilvoting.cr-member-info-no-available');
         }
+    }
+
+    async getCRMemberInfo(did: string): Promise<CRMemberInfo> {
+        try {
+            this.selectedMember = null;
+            let url = this.voteService.getCrRpcApi() + '/api/v2/council/information/' + did;
+            let result = await this.jsonRPCService.httpGet(url);
+            if (result && result.data && result.data.did) {
+                let member = result.data;
+                member.avatar = await this.getAvatar(member.did);
+                member.isSelf = Util.isSelfDid(member.did);
+                this.selectedMember = member as CRMemberInfo;
+                Logger.log(App.CRCOUNCIL_VOTING, 'Selected CRMembers:', member);
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRCOUNCIL_VOTING, 'Get council information error:', err);
+        }
+
+        return this.selectedMember;
+    }
+
+    async getSecretary(): Promise<any>  {
+        this.secretaryGeneralInfo = null;
+        try {
+            let result = await this.jsonRPCService.httpGet(this.voteService.getCrRpcApi() + "/api/council/list");
+            Logger.log(App.VOTING, 'Get Current CRMembers:', result);
+            if (result && result.data && result.data.secretariat) {
+                for (let item of result.data.secretariat) {
+                    if (item.status == 'CURRENT') {
+                        // if (!item.avatar) {
+                        //     item.avatar = await this.getAvatar(item.did);
+                        // }
+                        if (item.startDate) {
+                            item.startDate = Util.timestampToDateTime(item.startDate * 1000);
+                        }
+
+                        this.secretaryGeneralInfo = item;
+                        Logger.log(App.VOTING, 'secretaryGeneral:', item);
+                        return item;
+                    }
+                }
+            }
+        }
+        catch (err) {
+            Logger.error(App.VOTING, 'getCurrentCRMembers error:', err);
+        }
+        return null;
     }
 
     async getSelectedCandidates(): Promise<any>  {
@@ -305,26 +355,6 @@ export class CRCouncilService {
         });
 
         await toast.present();
-    }
-
-    async getCRMemberInfo(did: string): Promise<CRMemberInfo> {
-        try {
-            this.selectedMember = null;
-            let url = this.voteService.getCrRpcApi() + '/api/v2/council/information/' + did;
-            let result = await this.jsonRPCService.httpGet(url);
-            if (result && result.data && result.data.did) {
-                let member = result.data;
-                member.avatar = await this.getAvatar(member.did);
-                member.isSelf = Util.isSelfDid(member.did);
-                this.selectedMember = member as CRMemberInfo;
-                Logger.log(App.CRCOUNCIL_VOTING, 'Selected CRMembers:', member);
-            }
-        }
-        catch (err) {
-            Logger.error(App.CRCOUNCIL_VOTING, 'Get council information error:', err);
-        }
-
-        return this.selectedMember;
     }
 
     async getCRRelatedStage(): Promise<any> {
