@@ -546,7 +546,6 @@ export class GlobalElastosAPIService extends GlobalService {
         if (transactionsArray === null) {
             return [];
         } else {
-            // Logger.warn('wallet', 'transactionsArray:',transactionsArray)
             return transactionsArray.filter(c => {
                 return c.result && (c.result.totalcount > 0);
             });
@@ -601,7 +600,33 @@ export class GlobalElastosAPIService extends GlobalService {
             }
         } while (++retryTimes < GlobalElastosAPIService.API_RETRY_TIMES);
 
-        // Logger.log('wallet', 'getAllUtxoByAddress:', utxoArray)
+        return utxoArray;
+    }
+
+    // get the spendable utxos by amount.
+    public async getUtxosByAmount(elastosChainCode: StandardCoinName, address: string, amount: string, utxotype: UtxoType = UtxoType.Mixed): Promise<any> {
+        const param = {
+            method: 'getutxosbyamount',
+            params: {
+                address,
+                amount, // The unit is ELA.
+                utxotype
+            },
+        };
+
+        let apiurltype = this.getApiUrlTypeForRpc(elastosChainCode);
+        const rpcApiUrl = this.getApiUrl(apiurltype);
+        if (rpcApiUrl === null) {
+            return [];
+        }
+
+        let utxoArray = null;
+        try {
+            utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        } catch (e) {
+            Logger.error('wallet', 'getUtxosByAmount error:', e)
+        }
+
         return utxoArray;
     }
 
@@ -672,7 +697,7 @@ export class GlobalElastosAPIService extends GlobalService {
             let result = await this.globalJsonRPCService.httpGet(crfetchCRCurl);
             return result;
         } catch (e) {
-            Logger.error('wallet', 'fetchProposals error:', e)
+            Logger.error('wallet', 'fetchCRcouncil error:', e)
         }
         return null;
     }

@@ -26,6 +26,16 @@ export type AvaliableUtxos = {
     utxo: Utxo[];
 }
 
+type BalanceList = {
+    value: BigNumber;
+    addresses: AdressWithBalance[];
+}
+
+type AdressWithBalance = {
+    address: string;
+    value: BigNumber;
+}
+
 /**
  * Specialized standard sub wallet that shares Mainchain (ELA) and ID chain code.
  * Most code between these 2 chains is common, while ETH is quite different. This is the reason why this
@@ -42,6 +52,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
     private externalAddressCount = 110; // Addresses for user.
     private internalAddressCount = 105;
+
+    private addressWithBalanceArray: AdressWithBalance [] = [];
 
     private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
 
@@ -815,12 +827,23 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     public async getAvailableUtxo(amountSELA: number): Promise<AvaliableUtxos> {
         let utxoArray: Utxo[] = null;
         if (this.id === StandardCoinName.ELA) {
-            await this.getVotingUtxoByRPC();
+            let addressesHasBalance  = [];
+            for (let i = 0; i < this.addressWithBalanceArray.length; i++) {
+                addressesHasBalance.push(this.addressWithBalanceArray[i].address);
+            }
+            let votingUtxoArray = await this.getVotingUtxoByRPC(addressesHasBalance);
             if ((amountSELA === -1) || (!this.balance.gt(amountSELA + this.votingAmountSELA))) {
-                utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
+                // TODO: use getUtxosByAmount
+                utxoArray = await this.getAllUtxoByType(UtxoType.Mixed, addressesHasBalance);
                 // TODO: Notify user to vote?
             } else {
-                utxoArray = await this.getAllUtxoByType(UtxoType.Normal);
+                let addressList = this.getAddressListByAmount(amountSELA.toString(), votingUtxoArray);
+                if (addressList.length == 1) {
+                    let amountELA = amountSELA / Config.SELA
+                    utxoArray = await this.getUtxosByAmount(addressList[0], amountELA.toString(), UtxoType.Normal);
+                } else {
+                    utxoArray = await this.getAllUtxoByType(UtxoType.Normal, addressesHasBalance);
+                }
             }
         } else {
             utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
@@ -948,30 +971,42 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
      */
     public async getTotalBalanceByType(spendable = false) {
         let totalBalance = new BigNumber(0);
-        let balance: BigNumber;
+        let balanceList;
+
+        let addressWithBalanceArrayTemp = [];
+
         // The Single Address Wallet should use the external address.
         if (!this.masterWallet.account.SingleAddress) {
-            balance = await this.getBalanceByAddress(true, spendable);
-            if (balance == null) {
+            balanceList = await this.getBalanceByAddress(true, spendable);
+            if (balanceList.value == null) {
                 return null;
             }
-            totalBalance = totalBalance.plus(balance);
+            totalBalance = totalBalance.plus(balanceList.value);
+            addressWithBalanceArrayTemp = balanceList.addresses;
         }
 
-        balance = await this.getBalanceByAddress(false, spendable);
-        if (balance == null) {
+        balanceList = await this.getBalanceByAddress(false, spendable);
+        if (balanceList.value == null) {
             return null;
         }
-        totalBalance = totalBalance.plus(balance);
+        totalBalance = totalBalance.plus(balanceList.value);
+        addressWithBalanceArrayTemp = [...addressWithBalanceArrayTemp, ...balanceList.addresses];
 
         if (this.id == StandardCoinName.ELA) {
             // Coinbase reward, eg. dpos
-            balance = await this.getBalanceByOwnerAddress(spendable);
-            if (balance == null) {
-                return null;
+            balanceList = await this.getBalanceByOwnerAddress(spendable);
+            if (balanceList.value !== null) {
+                totalBalance = totalBalance.plus(balanceList.value);
+                addressWithBalanceArrayTemp = [...addressWithBalanceArrayTemp, ...balanceList.addresses];
             }
-            totalBalance = totalBalance.plus(balance);
         }
+
+        this.addressWithBalanceArray = addressWithBalanceArrayTemp;
+
+        // Logger.warn('wallet', "totalvalue:", totalBalance.toString());
+        // for (let i = 0; i < this.addressWithBalanceArray.length; i++) {
+        //     Logger.warn('wallet', this.addressWithBalanceArray[i].address, this.addressWithBalanceArray[i].value.toString());
+        // }
 
         return totalBalance;
     }
@@ -1003,13 +1038,9 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         let ownerAddress = await this.getOwnerAddress();
         let addressArray = [ownerAddress];
         try {
-            const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
-            if (balance === null) {
-                Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
-                return null
-            }
+            const balanceList = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
             // Logger.log("wallet", 'getBalanceByOwnerAddress balance:', balance.toString());
-            return balance;
+            return balanceList;
         } catch (e) {
             Logger.error("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
             throw e;
@@ -1018,6 +1049,10 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
     private async getBalanceByAddress(internalAddress: boolean, spendable = false) {
         let startIndex = 0;
+        let totalBalanceList: BalanceList = {
+            value : null,
+            addresses: []
+        }
         let totalBalance = new BigNumber(0);
         let addressArray: string[] = null;
         let maxAddressCount = this.getAddressCount(internalAddress);
@@ -1035,32 +1070,34 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             startIndex += addressArray.length;
 
             try {
-                const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
-                if (balance === null) {
+                const balanceList = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
+                if (balanceList.value === null) {
                     Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
                     return null
                 }
-                totalBalance = totalBalance.plus(balance);
+                totalBalance = totalBalance.plus(balanceList.value);
+                totalBalanceList.addresses = [...totalBalanceList.addresses, ...balanceList.addresses];
             } catch (e) {
                 Logger.error("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
                 throw e;
             }
         } while (!this.masterWallet.account.SingleAddress);
 
+        totalBalanceList.value = totalBalance;
         //Logger.log("wallet", 'balance:', totalBalance.toString());
 
-        return totalBalance;
+        return totalBalanceList;
     }
 
     // return balance in SELA
-    public async callGetBalanceByAddress(subWalletId: StandardCoinName, addressArray: string[], spendable = false): Promise<BigNumber> {
+    public async callGetBalanceByAddress(subWalletId: StandardCoinName, addressArray: string[], spendable = false): Promise<BalanceList> {
         let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(subWalletId);
         const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
         if (rpcApiUrl === null) {
             return null;
         }
 
-        let balanceOfSELA = new BigNumber(0);
+        let totalBalanceOfSELA = new BigNumber(0);
         const paramArray = [];
         let index = 0;
         for (const address of addressArray) {
@@ -1077,20 +1114,28 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         }
 
         let retryTimes = 0;
-        let alreadyGetBalance = false;
+        let balanceList: BalanceList = {
+            value : null,
+            addresses : []
+        }
         do {
             try {
                 const resultArray = await GlobalJsonRPCService.instance.httpPost(rpcApiUrl, paramArray);
                 for (const result of resultArray) {
-                    balanceOfSELA = balanceOfSELA.plus(new BigNumber(result.result).multipliedBy(this.tokenAmountMulipleTimes));
+                    if (result.result != '0') {
+                        let balanceOfSELA = new BigNumber(result.result).multipliedBy(this.tokenAmountMulipleTimes);
+                        totalBalanceOfSELA = totalBalanceOfSELA.plus(balanceOfSELA);
+                        balanceList.addresses.push({address: addressArray[parseInt(result.id)], value: balanceOfSELA});
+                    }
                 }
-                alreadyGetBalance = true;
+                balanceList.value = totalBalanceOfSELA;
                 break;
             } catch (e) {
                 // wait 100ms?
             }
         } while (++retryTimes < GlobalElastosAPIService.API_RETRY_TIMES);
-        return alreadyGetBalance ? balanceOfSELA : null;
+
+        return balanceList;
     }
 
     async getTransactionDetails(txid: string): Promise<TransactionDetail> {
@@ -1142,18 +1187,24 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         return targetAddress;
     }
 
-    async getAllUtxoByType(type: UtxoType) {
-        let utxoArray = await this.getAllUtxoByAddress(false, type);
+    async getAllUtxoByType(type: UtxoType, addressArray: string[] = null) {
+        let utxoArray = null;
+        if (addressArray && addressArray.length > 0) {
+            utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(this.id as StandardCoinName, addressArray, type);
+        } else {
+            utxoArray = await this.getAllUtxoByAddress(false, type);
 
-        if (!this.masterWallet.account.SingleAddress) {
-            let utxos = await this.getAllUtxoByAddress(true, type);
-            if (utxos && utxos.length > 0) {
-                if (utxoArray)
-                    utxoArray = [...utxoArray, ...utxos];
-                else
-                    utxoArray = utxos;
+            if (!this.masterWallet.account.SingleAddress) {
+                let utxos = await this.getAllUtxoByAddress(true, type);
+                if (utxos && utxos.length > 0) {
+                    if (utxoArray)
+                        utxoArray = [...utxoArray, ...utxos];
+                    else
+                        utxoArray = utxos;
+                }
             }
         }
+
         return utxoArray;
     }
 
@@ -1162,8 +1213,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
      * If the balance is sufficient, we will not use the voting ELA.
      * If not, we will use the voting ELA, and the voting was cancelled.
      */
-    async getVotingUtxoByRPC(): Promise<Utxo[]> {
-        this.votingUtxoArray = await this.getAllUtxoByType(UtxoType.Vote);
+    async getVotingUtxoByRPC(addressArray: string[] = null): Promise<Utxo[]> {
+        this.votingUtxoArray = await this.getAllUtxoByType(UtxoType.Vote, addressArray);
         let votingAmountEla = 0;
         if (this.votingUtxoArray) {
             Logger.log('wallet', 'getVotingUtxoByRPC:', this.votingUtxoArray)
@@ -1180,7 +1231,11 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
     // For consolidate utxos
     public async getNormalUtxos(): Promise<Utxo[]> {
-        let normalUtxoArray = await this.getAllUtxoByType(UtxoType.Normal);
+        let addressesHasBalance  = [];
+        for (let i = 0; i < this.addressWithBalanceArray.length; i++) {
+            addressesHasBalance.push(this.addressWithBalanceArray[i].address);
+        }
+        let normalUtxoArray = await this.getAllUtxoByType(UtxoType.Normal, addressesHasBalance);
 
         // Remove the utxo that used in pending transactions.
         let usedUTXOs = await this.getUTXOUsedInPendingTransaction();
@@ -1193,6 +1248,46 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         }
 
         return normalUtxoArray;
+    }
+
+    async getUtxosByAmount(address: string, amountELA: string, utxotype: UtxoType) {
+        let utxoArray: Utxo[] = null;
+        try {
+            utxoArray = await GlobalElastosAPIService.instance.getUtxosByAmount(this.id as StandardCoinName, address, amountELA, utxotype);
+        } catch (e) {
+            Logger.error("wallet", 'GlobalElastosAPIService getUtxosByAmount exception:', e);
+            throw e;
+        }
+
+        Logger.log('wallet', 'getUtxosByAmount utxoArray:', utxoArray)
+        return utxoArray;
+    }
+
+    getAddressListByAmount(amountSELA: string, filterUtxo: Utxo[] = null) : string[] {
+        let amountOfSELA = new BigNumber(amountSELA);
+
+        for (let i = 0; filterUtxo && (i < filterUtxo.length); i++) {
+            let addresses = this.addressWithBalanceArray.find( (a) => {
+                return a.address == filterUtxo[i].address;
+            })
+            if (addresses) {
+                addresses.value = addresses.value.minus(new BigNumber(filterUtxo[i].amount).multipliedBy(this.tokenAmountMulipleTimes));
+            }
+        }
+
+        this.addressWithBalanceArray.sort((a, b) => {
+            if (b.value.isGreaterThan(a.value)) return 1;
+            else return -1;
+          })
+
+        let addressArray = [];
+        let remainAmount = amountOfSELA;
+        for (let i = 0; i < this.addressWithBalanceArray.length; i++) {
+            addressArray.push(this.addressWithBalanceArray[i].address);
+            remainAmount = remainAmount.minus(this.addressWithBalanceArray[i].value);
+            if (remainAmount.isLessThanOrEqualTo(0)) break;
+        }
+        return addressArray;
     }
 
     async getAllUtxoByAddress(internalAddress: boolean, type: UtxoType): Promise<Utxo[]> {

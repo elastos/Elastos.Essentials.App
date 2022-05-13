@@ -31,6 +31,7 @@ export enum UtxoType {
     Normal = 'normal',
     Vote = 'vote',
     Mixed = 'mixed',
+    Unused = 'unused' // only for getutxosbyamount
 }
 
 // Returned by gethistory
