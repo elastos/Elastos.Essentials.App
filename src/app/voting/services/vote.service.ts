@@ -377,9 +377,17 @@ export class VoteService {
         return 20000; // The unit is SELA, 20000 SELA = 0.0002ELA. The real fee is 10000 SELA
     }
 
+    getRawBalanceSpendable(): BigNumber {
+        let ret = this.sourceSubwallet.getRawBalanceSpendable();
+        if (ret == null) {
+            ret = new BigNumber(0);
+        }
+        return ret;
+    }
+
     async getMaxVotes(): Promise<number> {
         await this.sourceSubwallet.updateBalanceSpendable();
-        const stakeAmount = this.sourceSubwallet.getRawBalanceSpendable().minus(this.votingFees());
+        const stakeAmount = this.getRawBalanceSpendable().minus(this.votingFees());
         if (!stakeAmount.isNegative()) {
             return Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
         }
@@ -391,7 +399,7 @@ export class VoteService {
     async checkBalanceForRegistration(): Promise<boolean> {
         let amount = this.depositAmount + this.votingFees();
         await this.sourceSubwallet.updateBalanceSpendable();
-        if (this.sourceSubwallet.getRawBalanceSpendable().lt(amount)) {
+        if (this.getRawBalanceSpendable().lt(amount)) {
             return false;
         }
         return true;
