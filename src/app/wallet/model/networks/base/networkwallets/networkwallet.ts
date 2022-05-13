@@ -332,6 +332,14 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     public abstract getMainEvmSubWallet(): MainCoinEVMSubWallet<WalletNetworkOptionsType>;
 
     /**
+     * For network wallets that support multi-signature operations, this method returns the target
+     * subwallet that handles multisig operations. Usually, this is the native coin subwallet (ELA, BTC...)
+     */
+    public getMultiSigSubWallet(): AnySubWallet {
+        return null;
+    }
+
+    /**
      * Adds a new subwallet to this network wallet, based on a given coin type.
      */
     public async createNonStandardSubWallet(coin: Coin): Promise<void> {

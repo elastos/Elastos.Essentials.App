@@ -5,6 +5,7 @@ import { ElastosMainChainWalletNetworkOptions } from "src/app/wallet/model/maste
 import { TransactionProvider } from "../../../../../tx-providers/transaction.provider";
 import { WalletAddressInfo } from "../../../../base/networkwallets/networkwallet";
 import { StandardMultiSigNetworkWallet } from "../../../../base/networkwallets/standard.multisig.networkwallet";
+import { AnySubWallet } from "../../../../base/subwallets/subwallet";
 import { AnyNetwork } from "../../../../network";
 import { ElastosEVMSubWallet } from "../../../evms/subwallets/standard/elastos.evm.subwallet";
 import { MainChainMultiSigSafe } from "../../safes/multisig/mainchain.multisig.safe";
@@ -51,6 +52,10 @@ export class ElastosMainChainStandardMultiSigNetworkWallet extends StandardMulti
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
     return null;
+  }
+
+  public getMultiSigSubWallet(): AnySubWallet {
+    return this.subWallets[StandardCoinName.ELA];
   }
 
   /**

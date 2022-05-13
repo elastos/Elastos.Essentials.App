@@ -18,7 +18,8 @@
         </ion-card>
 
         <!-- Multi signature specific -->
-        <tx-details-multisig [offlineTransaction]="offlineTransaction" [subWallet]="subWallet"></tx-details-multisig>
+        <tx-details-multisig *ngIf="offlineTransaction" [offlineTransaction]="offlineTransaction"
+            [subWallet]="subWallet"></tx-details-multisig>
 
         <!-- TRANSACTION DETAILS -->
         <div *ngFor="let item of txDetails">

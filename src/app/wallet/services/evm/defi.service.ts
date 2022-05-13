@@ -24,6 +24,7 @@ import { Injectable } from '@angular/core';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { Logger } from 'src/app/logger';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { environment } from 'src/environments/environment';
 
 export type StakingData = {
     farmName: string;
@@ -40,7 +41,7 @@ export type StakingData = {
 export class DefiService {
     public static instance: DefiService = null;
 
-    private stakingAssetsUrl = 'https://essentials-api.trinity-tech.io/api/v1/assets/staking'
+    private stakingAssetsUrl = `${environment.EssentialsAPI.serviceUrl}/assets/staking`;
 
     constructor(
         public dappbrowserService: DappBrowserService,

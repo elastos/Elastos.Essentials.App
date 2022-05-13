@@ -254,8 +254,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             memo: null, // TODO: extract from raw tx
             name: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.NOT_PUBLISHED),
             payStatusIcon: "./assets/wallet/buttons/send.png",
-            status: TransactionStatus.NOT_PUBLISHED,
-            statusName: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.NOT_PUBLISHED),
+            status: TransactionStatus.PENDING,
+            statusName: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.PENDING),
             symbol: this.networkWallet.displayToken,
             to: receiverAddress,
             from: null,

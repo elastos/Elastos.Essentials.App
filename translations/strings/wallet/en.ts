@@ -153,6 +153,7 @@ export const en = {
         "coin-transaction-status-confirmed": "Confirmed",
         "coin-transaction-status-pending": "Pending",
         "coin-transaction-status-unconfirmed": "Unconfirmed",
+        "coin-transaction-status-not-published": "Not published",
         "text-coin-close-warning": "Token will be removed from the list.",
 
         /*******************

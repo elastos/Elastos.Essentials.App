@@ -180,11 +180,11 @@ export enum OfflineTransactionType {
  * such as multisig transactions waiting for signature.
  */
 export type OfflineTransaction<CustomDataType> = {
-  id: string; // Unique ID to easily reference this item in the app.
+  transactionKey: string; // Unique key made of a hash of the raw transaction. Used to reference this on going transaction locally and on the essentials api multisig service
   type: OfflineTransactionType;
   updated: number; // Timestamp - last update time
   rawTx: any; // Chain specific raw transaction, not yet published
-  customData: CustomDataType; // Custom data used to store offline transaction logic
+  customData?: CustomDataType; // Custom data used to store offline transaction logic
 }
 
 export type AnyOfflineTransaction = OfflineTransaction<any>;

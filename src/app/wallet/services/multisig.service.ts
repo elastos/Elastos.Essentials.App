@@ -21,6 +21,15 @@
  */
 
 import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { environment } from 'src/environments/environment';
+import { WalletNetworkService } from './network.service';
+
+export type PendingMultiSigTransaction = {
+    rawTransaction: any; // Partly signed transaction
+    network: string; // network key for which this transaction is for
+}
 
 /**
  * Service that handles communication with the Essentials API in order to facilitates transfers of multi
@@ -35,7 +44,10 @@ import { Injectable } from '@angular/core';
 export class MultiSigService {
     public static instance: MultiSigService = null;
 
-    constructor() {
+    constructor(
+        private networksService: WalletNetworkService,
+        private jsonRPCService: GlobalJsonRPCService
+    ) {
         MultiSigService.instance = this;
     }
 
@@ -46,16 +58,36 @@ export class MultiSigService {
      *
      * The returned transaction is already signed by one or more cosigners.
      */
-    public fetchPendingTransaction(transactionKey: string): Promise<any> {
-        return null;
+    public async fetchPendingTransaction(transactionKey: string): Promise<PendingMultiSigTransaction> {
+        Logger.log("wallet", `Fetching multisig transaction ${transactionKey}`);
+
+        let requestUrl = `${environment.EssentialsAPI.serviceUrl}/multisig/transaction?key=${transactionKey}`;
+        try {
+            let txInfo = await this.jsonRPCService.httpGet(requestUrl);
+            return txInfo;
+        }
+        catch (err) {
+            Logger.error('wallet', 'Multisig: fetchPendingTransaction() error:', err)
+            return null;
+        }
     }
 
     /**
      * Uploads a cosigner's signed transaction to the remote service so that other cosigners
      * can get it and continue to sign.
      */
-    public uploadSignedTransaction(transactionKey, signedTx: any): Promise<any> {
-        return null;
+    public async uploadSignedTransaction(transactionKey: string, signedTx: any): Promise<void> {
+        Logger.log("wallet", `Uploading multisig transaction ${transactionKey}`, signedTx);
 
+        let requestUrl = `${environment.EssentialsAPI.serviceUrl}/multisig/transaction?key=${transactionKey}`;
+        try {
+            await this.jsonRPCService.httpPost(requestUrl, {
+                tx: signedTx,
+                network: this.networksService.activeNetwork.value.key
+            });
+        }
+        catch (err) {
+            Logger.error('wallet', 'Multisig: uploadSignedTransaction() error:', err)
+        }
     }
 }

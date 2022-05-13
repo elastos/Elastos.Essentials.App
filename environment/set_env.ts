@@ -13,6 +13,9 @@ if (existsSync(localEnvPath)) {
 
 const prodEnv = {
   production: true,
+  EssentialsAPI: {
+    serviceUrl: 'https://essentials-api.trinity-tech.io/api/v1'
+  },
   RedPackets: {
     webUrl: 'https://packet.fun',
     serviceUrl: 'https://api.packet.fun/api/v1'
@@ -21,6 +24,9 @@ const prodEnv = {
 
 const devEnv = {
   production: false,
+  EssentialsAPI: {
+    serviceUrl: localEnv.NG_APP_ESSENTIALS_API_SERVICE_URL || prodEnv.EssentialsAPI.serviceUrl
+  },
   RedPackets: {
     webUrl: localEnv.NG_APP_RED_PACKETS_WEB_URL || prodEnv.RedPackets.webUrl,
     serviceUrl: localEnv.NG_APP_RED_PACKETS_SERVICE_URL || prodEnv.RedPackets.serviceUrl

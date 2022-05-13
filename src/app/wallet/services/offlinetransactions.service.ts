@@ -50,10 +50,20 @@ export class OfflineTransactionsService {
         return transactions;
     }
 
+    /**
+     * Inserts or updates an offline transaction, based on its transaction key.
+     */
     public async storeTransaction(subWallet: AnySubWallet, offlineTransaction: AnyOfflineTransaction): Promise<void> {
         Logger.log("wallet", "Storing offline transaction", offlineTransaction);
 
         let transactions = await this.getTransactions(subWallet);
+
+        // Remove existing, if any
+        let existingTxIndex = transactions.findIndex(t => t.transactionKey === offlineTransaction.transactionKey);
+        if (existingTxIndex >= 0) {
+            transactions.splice(existingTxIndex, 1);
+        }
+
         transactions.push(offlineTransaction);
         await subWallet.networkWallet.saveContextInfo<AnyOfflineTransaction[]>(this.getStorageKey(subWallet), transactions);
     }

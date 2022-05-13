@@ -13,6 +13,7 @@ import { DidTransactionPage } from './didtransaction/didtransaction.page';
 import { DPoSVotePage } from './dposvote/dposvote.page';
 import { EscTransactionPage } from './esctransaction/esctransaction.page';
 import { EthSignPage } from './ethsign/ethsign.page';
+import { MultiSigTxPage } from './multisigtx/multisigtx.page';
 import { PersonalSignPage } from './personalsign/personalsign.page';
 import { SelectSubwalletPage } from './select-subwallet/select-subwallet.page';
 import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
@@ -29,7 +30,8 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
         SelectSubwalletPage,
         SignTypedDataPage,
         PersonalSignPage,
-        EthSignPage
+        EthSignPage,
+        MultiSigTxPage
     ],
     imports: [
         SharedComponentsModule,
@@ -51,6 +53,7 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
             { path: 'crproposalvoteagainst', component: CRProposalVoteAgainstPage },
             { path: 'access', component: AccessPage },
             { path: 'select-subwallet', component: SelectSubwalletPage },
+            { path: 'multisigtx', component: MultiSigTxPage },
         ])
     ],
     exports: [RouterModule],

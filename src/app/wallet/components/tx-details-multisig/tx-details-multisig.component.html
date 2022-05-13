@@ -1,6 +1,24 @@
 <div>
-  TODO: cosigners list - get from the master wallet
-  cosigners status: get from the raw tx (signed or not, and by who)
-
-  <ion-button (click)="sign()">Sign</ion-button>
+  <ion-spinner *ngIf="fetchingTxInfo"></ion-spinner>
+  <div *ngIf="!fetchingTxInfo" [class.dark-container]="theme.darkMode">
+    <ion-row class="item-row">
+      <ion-col size="12" class="title-col">
+        <h1>Multi signature status</h1> &nbsp;&nbsp;
+      </ion-col>
+      <div class="cosigners details-container">
+        <div class="details-row">
+          <ion-row>
+            <ion-col class="cosigner-name" size="8">My signature</ion-col>
+            <ion-col size="4">
+              <ion-button class="sign" (click)="sign()">Sign</ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row class="" *ngFor="let cosigner of cosignersWithStatus">
+            <ion-col class="cosigner-name" size="8">{{ cosigner.name }}</ion-col>
+            <ion-col class="cosigner-signed" size="4">{{ getCosignerSignatureStatus(cosigner) }}</ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </ion-row>
+  </div>
 </div>

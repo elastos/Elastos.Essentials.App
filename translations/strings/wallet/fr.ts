@@ -154,6 +154,7 @@ export const fr = {
         "coin-transaction-status-confirmed": "Confirmé",
         "coin-transaction-status-pending": "En attente",
         "coin-transaction-status-unconfirmed": "Non confirmé",
+        "coin-transaction-status-not-published": "Non publié",
         "text-coin-close-warning": "Le jeton sera supprimé de la liste",
 
         /*******************

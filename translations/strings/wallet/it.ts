@@ -153,6 +153,7 @@ export const it = {
         "coin-transaction-status-confirmed": "Confermato",
         "coin-transaction-status-pending": "In attesa",
         "coin-transaction-status-unconfirmed": "Non confermato",
+        "coin-transaction-status-not-published": "Not published",
         "text-coin-close-warning": "Il token verrà rimosso dall'elenco.",
 
         /*******************

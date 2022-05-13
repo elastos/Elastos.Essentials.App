@@ -49,4 +49,15 @@ export abstract class Safe {
 
   // TODO: remove this Transfer object, dirty.
   public abstract signTransaction(subWallet: AnySubWallet, rawTx: string | TxData | BTCTxData, transfer: Transfer): Promise<SignTransactionResult>;
+
+  /**
+   * Gives a last chance to the safe to modify the signed transaction in a payload that can be published.
+   * For instance, elastos mainchain signed tx is a json string, but it has to be converted to a publishable
+   * payload before sending to chain.
+   * 
+   * By default, this returns the original signed transaction.
+   */
+  public async convertSignedTransactionToPublishableTransaction(subWallet: AnySubWallet, signedTx: string): Promise<string> {
+    return await signedTx;
+  }
 }

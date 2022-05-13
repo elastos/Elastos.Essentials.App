@@ -1,6 +1,9 @@
-import { MainchainSubWallet as SDKMainchainSubWallet, MasterWallet as SDKMasterWallet } from "@elastosfoundation/wallet-js-sdk";
+import { MainchainSubWallet as SDKMainchainSubWallet, MasterWallet as SDKMasterWallet, WalletErrorException } from "@elastosfoundation/wallet-js-sdk";
 import BIP32Factory from 'bip32';
 import moment from "moment";
+import { md5 } from "src/app/helpers/crypto/md5";
+import { Logger } from "src/app/logger";
+import { JSONObject } from "src/app/model/json";
 import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
 import { MultiSigSafe } from "src/app/wallet/model/safes/multisig.safe";
 import { SignTransactionErrorType, SignTransactionResult } from 'src/app/wallet/model/safes/safe.types';
@@ -61,19 +64,26 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return await tx;
   }
 
-  public async signTransaction(subWallet: AnySubWallet, rawTx: string, transfer: Transfer): Promise<SignTransactionResult> {
+  public async signTransaction(subWallet: AnySubWallet, rawTx: JSONObject, transfer: Transfer): Promise<SignTransactionResult> {
 
     // DEBUG
     await OfflineTransactionsService.instance.debugRemoveTransactions(subWallet);
 
+    // Transaction key is a md5 of the raw transaction.
+    let transactionKey = md5(Buffer.from(JSON.stringify(rawTx)));
+    console.log("signTransaction transactionKey", transactionKey)
+
+    console.log("signTransaction", rawTx)
+
     let offlineTransaction: OfflineTransaction<any> = {
-      id: `${Math.random()}`,
+      transactionKey,
       type: OfflineTransactionType.MULTI_SIG_STANDARD,
       updated: moment().unix(),
-      rawTx,
-      customData: {}
+      rawTx
     };
     await OfflineTransactionsService.instance.storeTransaction(subWallet, offlineTransaction);
+
+    Logger.log("wallet", "Multisig safe created an initial offline transaction:", offlineTransaction);
 
     let params: CoinTxInfoParams = {
       masterWalletId: this.networkWallet.id,
@@ -85,8 +95,19 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return {
       errorType: SignTransactionErrorType.DELEGATED
     };
+  }
 
-    //throw new Error("Method not implemented.");
+  public async hasCosignerSigned(xpub: string, tx: any): Promise<boolean> {
+    let signers = this.elaSubWallet.getPublicKeysFromxPubKeys(tx, (<StandardMultiSigMasterWallet>this.masterWallet).signersExtPubKeys, false);
+    let matchingCosigner = signers.find(s => s.xPubKey === xpub);
+    if (!matchingCosigner)
+      return false; // Should not happen
+
+    return await matchingCosigner.signed;
+  }
+
+  public async convertSignedTransactionToPublishableTransaction(subWallet: AnySubWallet, signedTx: string): Promise<string> {
+    return await this.elaSubWallet.convertToRawTransaction(JSON.parse(signedTx));
   }
 
   public async signTransactionReal(subWallet: AnySubWallet, rawTx: any): Promise<SignTransactionResult> {
@@ -97,20 +118,37 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
       }; // Can't continue without the wallet password
     }
 
-    let signedTx = await this.elaSubWallet.signTransaction(rawTx, payPassword);
-    console.log("multisig signTransactionReal signedTx", signedTx);
+    try {
+      let signedTx = await this.elaSubWallet.signTransaction(rawTx, payPassword);
+      Logger.log("wallet", "Multisig safe transaction signature result:", signedTx);
+      return {
+        signedTransaction: JSON.stringify(signedTx)
+      }
+    }
+    catch (e) {
+      if (e instanceof WalletErrorException && e.code === 20046) { // AlreadySigned
+        Logger.warn("wallet", "Transaction was already signed, returning the original transaction as 'signed'", rawTx);
+        return {
+          signedTransaction: JSON.stringify(rawTx)
+        }
+      }
+      else {
+        return {
+          errorType: SignTransactionErrorType.FAILURE
+        }
+      }
+    }
+  }
 
-    let signedInfo = this.elaSubWallet.getTransactionSignedInfo(rawTx);
-    console.log("signedInfo RAW", signedInfo);
-
-    let signedInfo2 = this.elaSubWallet.getTransactionSignedInfo(signedTx as any);
-    console.log("signedInfo SIGNED", signedInfo2);
-
-    let backToRaw = this.elaSubWallet.convertToRawTransaction(signedInfo[0] as any);
-    console.log("backToRaw", backToRaw)
-
-    return {
-      signedTransaction: JSON.stringify(signedTx)
+  public async hasEnoughSignaturesToPublish(signedTx: any): Promise<boolean> {
+    try {
+      // TODO: getTransactionSignedInfo() RETURNED ARRAY IS MAYBE NOT THE NB OF SIGNERS!
+      let signers = this.elaSubWallet.getTransactionSignedInfo(signedTx);
+      return signers.length >= (<StandardMultiSigMasterWallet>this.masterWallet).requiredSigners;
+    }
+    catch (e) {
+      Logger.error("wallet", "Multisig safe hasEnoughSignaturesToPublish() error:", e);
+      return await false;
     }
   }
 }

@@ -228,6 +228,11 @@ export class IntentService {
                 this.handleVoteAgainstProposalIntent(intent);
                 break;
 
+            case 'multisigtx':
+                this.nextScreen = '/wallet/intents/multisigtx';
+                this.coinTransferService.intentTransfer = intent;
+                break;
+
             default:
                 Logger.log("wallet", 'IntentService unknown intent:', intent);
                 return;

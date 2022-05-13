@@ -423,14 +423,19 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
       }
     }
 
+    return this.sendSignedTransaction(signedTxResult.signedTransaction, transfer, navigateHomeAfterCompletion);
+  }
+
+  public async sendSignedTransaction(signedTransaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
     try {
       //await Native.instance.showLoading(WalletService.instance.translate.instant('common.please-wait'));
 
-      Logger.log("wallet", "Transaction signed. Now publishing.", signedTxResult.signedTransaction);
+      Logger.log("wallet", "Publishing transaction.", signedTransaction);
 
       await this.markGenericOutgoingTransactionStart();
 
-      let txid = await this.publishTransaction(signedTxResult.signedTransaction);
+      let transactionToPublish = await this.networkWallet.safe.convertSignedTransactionToPublishableTransaction(this, signedTransaction);
+      let txid = await this.publishTransaction(transactionToPublish);
 
       await this.markGenericOutgoingTransactionEnd(txid);
 
