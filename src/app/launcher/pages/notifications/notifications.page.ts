@@ -14,8 +14,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import {
-  LauncherNotification,
-  LauncherNotificationType, NotificationManagerService
+    LauncherNotification,
+    LauncherNotificationType, NotificationManagerService
 } from '../../services/notificationmanager.service';
 import { TipsService } from '../../services/tips.service';
 
@@ -31,6 +31,8 @@ export class NotificationsPage implements OnInit {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   private modalAlreayDismiss = false;
+
+  public initialComputationDone = false;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -49,11 +51,13 @@ export class NotificationsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.notificationService.init();
-    // this.notificationService.resetNewNotifications();
   }
 
   ionViewWillEnter() {
+    this.initialComputationDone = false;
+
+    this.notificationService.init();
+
     this.titleBar.setNavigationMode(null);
     this.titleBar.setTitle(this.translate.instant('launcher.notifications'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
@@ -67,6 +71,8 @@ export class NotificationsPage implements OnInit {
     } else {
       this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
     }
+
+    this.initialComputationDone = true;
   }
 
   ionViewWillLeave() {

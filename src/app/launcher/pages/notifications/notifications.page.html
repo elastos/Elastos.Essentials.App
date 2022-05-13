@@ -1,6 +1,6 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <ion-grid [class.dark-container]="theme.darkMode">
+    <ion-grid [class.dark-container]="theme.darkMode"  *ngIf="initialComputationDone">
         <div *ngIf="notificationService.notifications.length > 0">
             <ion-item-sliding *ngFor="let notification of notificationService.notifications">
                 <ion-item

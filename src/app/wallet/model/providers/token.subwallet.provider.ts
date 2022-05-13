@@ -62,18 +62,19 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
       let transactions = result.result as EthTransaction[];
+      if (transactions instanceof Array) {
+        if (transactions.length < MAX_RESULTS_PER_FETCH) {
+          // Got less results than expected: we are at the end of what we can fetch. remember this
+          // (in memory only)
+          this.canFetchMore = false;
+        } else {
+          this.canFetchMore = true;
+        }
 
-      if (transactions.length < MAX_RESULTS_PER_FETCH) {
-        // Got less results than expected: we are at the end of what we can fetch. remember this
-        // (in memory only)
-        this.canFetchMore = false;
-      } else {
-        this.canFetchMore = true;
+        this.mergeTransactions(transactions, accountAddress);
+
+        await this.saveTransactions(transactions);
       }
-
-      this.mergeTransactions(transactions, accountAddress);
-
-      await this.saveTransactions(transactions);
     } catch (e) {
       Logger.error('wallet', 'EVMSubWalletTokenProvider fetchTransactions error:', e)
     }
