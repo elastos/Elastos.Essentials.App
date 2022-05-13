@@ -52,11 +52,11 @@
             </ion-list>
         </ion-grid>
 
-        <div *ngIf="crCouncilService.candidates.length == 0" class="no-data">
+        <div *ngIf="candidatesFetched && crCouncilService.candidates.length == 0" class="no-data">
             {{ 'crcouncilvoting.no-candidates' | translate }}
         </div>
 
-        <div *ngIf="crCouncilService.candidates.length > 0" class="footer">
+        <div *ngIf="candidatesFetched && crCouncilService.candidates.length > 0" class="footer">
             <ion-button [disabled]="!crCouncilService.selectedCandidates.length" (click)="addCandidates()">
                 {{ 'crcouncilvoting.dist-votes' | translate }}
             </ion-button>

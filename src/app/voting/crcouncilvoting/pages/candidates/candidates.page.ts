@@ -58,11 +58,11 @@ export class CandidatesPage implements OnInit {
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
 
-        this.remainingTime = await this.crCouncilService.getRemainingTime();
         if (!this.candidatesFetched) {
             await this.crCouncilService.fetchCandidates();
             this.candidatesFetched = true;
         }
+        this.remainingTime = await this.crCouncilService.getRemainingTime();
 
         switch (this.crCouncilService.candidateInfo.state) {
             case 'Unregistered':
