@@ -5,10 +5,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
-import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
@@ -44,9 +44,9 @@ export class VoteForProposalPage {
         public popupProvider: PopupProvider,
         public walletManager: WalletService,
         private voteService: VoteService,
-        private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
         public keyboard: Keyboard,
         public zone: NgZone,
     ) {
@@ -146,16 +146,20 @@ export class VoteForProposalPage {
         }
 
         const voteContent = [crVoteContent];
-        const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
-            voteContent,
-            '', //memo
-        );
 
         try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+            const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
+                voteContent,
+                '', //memo
+            );
+            await this.globalNative.hideLoading();
+
             await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;
+            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
             return;
         }

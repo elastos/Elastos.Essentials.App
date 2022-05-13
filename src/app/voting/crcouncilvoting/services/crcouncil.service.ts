@@ -12,6 +12,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -57,6 +58,7 @@ export class CRCouncilService {
         private walletManager: WalletService,
         private globalIntentService: GlobalIntentService,
         public globalPopupService: GlobalPopupService,
+        private globalNative: GlobalNativeService,
     ) {
 
     }
@@ -535,6 +537,8 @@ export class CRCouncilService {
         }
 
         try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+
             let depositAddress = await this.walletManager.spvBridge.getCRDepositAddress(this.voteService.masterWalletId, StandardCoinName.ELA);
             let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
             Logger.log(App.CRCOUNCIL_VOTING, "utxoArray:", utxoArray);
@@ -543,6 +547,7 @@ export class CRCouncilService {
 
             const rawTx = await this.voteService.sourceSubwallet.createRetrieveCRDepositTransaction(utxo, available, "");
             Logger.log(App.CRCOUNCIL_VOTING, 'rawTx', rawTx);
+            await this.globalNative.hideLoading();
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, customRoute);
             if (ret) {
@@ -550,6 +555,7 @@ export class CRCouncilService {
             }
         }
         catch (e) {
+            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
     }

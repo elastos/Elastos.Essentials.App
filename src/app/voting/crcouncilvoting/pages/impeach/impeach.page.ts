@@ -1,10 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -31,12 +30,11 @@ export class ImpeachCRMemberPage {
     constructor(
         public theme: GlobalThemeService,
         public translate: TranslateService,
-        private popoverCtrl: PopoverController,
-        private route: ActivatedRoute,
         private globalNav: GlobalNavService,
         public crCouncilService: CRCouncilService,
         private voteService: VoteService,
         public popupProvider: GlobalPopupService,
+        private globalNative: GlobalNativeService,
     ) {
 
     }
@@ -99,20 +97,22 @@ export class ImpeachCRMemberPage {
         }
 
         const voteContent = [crVoteContent];
-        const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
-            voteContent,
-            '', //memo
-        );
-        Logger.log('wallet', "rawTx:", rawTx);
-
 
         try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+            const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
+                voteContent,
+                '', //memo
+            );
+            await this.globalNative.hideLoading();
+            Logger.log('wallet', "rawTx:", rawTx);
             let ret = await this.voteService.signAndSendRawTransaction(rawTx);
             if (ret) {
                 this.voteService.toastSuccessfully('crcouncilvoting.impeachment');
             }
         }
         catch (e) {
+            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
 

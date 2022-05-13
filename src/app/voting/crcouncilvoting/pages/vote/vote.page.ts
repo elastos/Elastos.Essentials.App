@@ -281,10 +281,12 @@ export class VotePage implements OnInit, OnDestroy {
 
         try {
             const voteContent = [crVoteContent];
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
                 voteContent,
                 '', //memo
             );
+            await this.globalNative.hideLoading();
             Logger.log('wallet', "rawTx:", rawTx);
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
@@ -293,6 +295,7 @@ export class VotePage implements OnInit, OnDestroy {
             }
         }
         catch (e) {
+            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
 

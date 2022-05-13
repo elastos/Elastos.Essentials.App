@@ -181,14 +181,21 @@ export class DPosRegistrationPage implements OnInit {
             return;
         }
 
-        const payload = await this.walletManager.spvBridge.generateProducerPayload(this.masterWalletId, StandardCoinName.ELA,
-            this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
+        try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
-        const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.depositAmount, "");
+            const payload = await this.walletManager.spvBridge.generateProducerPayload(this.masterWalletId, StandardCoinName.ELA,
+                this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
 
-        let ret = await this.voteService.signAndSendRawTransaction(rawTx);
-        if (ret) {
-            this.voteService.toastSuccessfully('dposregistration.registration');
+            const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.depositAmount, "");
+            await this.globalNative.hideLoading();
+
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+            if (ret) {
+                this.voteService.toastSuccessfully('dposregistration.registration');
+            }
+        } catch (e) {
+            await this.globalNative.hideLoading();
         }
     }
 

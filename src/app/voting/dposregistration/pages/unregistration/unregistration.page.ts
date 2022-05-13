@@ -211,17 +211,24 @@ export class DPosUnRegistrationPage implements OnInit {
     async retrieve() {
         Logger.log('wallet', 'Calling retrieve()', this.dposInfo);
 
-        let depositAddress = await this.walletManager.spvBridge.getOwnerDepositAddress(this.masterWalletId, StandardCoinName.ELA);
-        let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
-        Logger.log(App.DPOS_REGISTRATION, "utxoArray:", utxoArray);
+        try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
-        let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);
+            let depositAddress = await this.walletManager.spvBridge.getOwnerDepositAddress(this.masterWalletId, StandardCoinName.ELA);
+            let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
+            Logger.log(App.DPOS_REGISTRATION, "utxoArray:", utxoArray);
 
-        const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction(utxo, this.available, "");
+            let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);
 
-        let ret = await this.voteService.signAndSendRawTransaction(rawTx);
-        if (ret) {
-            this.voteService.toastSuccessfully('dposregistration.retrieve');
+            const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction(utxo, this.available, "");
+            await this.globalNative.hideLoading();
+
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+            if (ret) {
+                this.voteService.toastSuccessfully('dposregistration.retrieve');
+            }
+        } catch (e) {
+            await this.globalNative.hideLoading();
         }
     }
 
