@@ -18,35 +18,33 @@
 
         <ion-grid *ngIf="crCouncilService.crmembers.length > 0" class="container ion-no-padding">
             <ion-list lines="none" class="candidate-list">
-                <ion-virtual-scroll [items]="crCouncilService.crmembers" approxItemHeight="240px">
-                    <ion-item class="candidate" *virtualItem="let member">
-                        <ion-grid>
-                            <ion-row (click)=onShowMemberInfo(member.did)>
-                                <ion-col size="1.25" class="rank-col">
-                                    {{ crCouncilService.crmembers.indexOf(member) + 1 }}
-                                </ion-col>
-                                <ion-col size="1.5" class="img-col">
-                                    <img [src]="member.avatar ? member.avatar : '/assets/crcouncilvoting/icon/avatar.png'"
-                                        src-fallback="/assets/crcouncilvoting/icon/avatar.png">
-                                </ion-col>
-                                <ion-col class="label-col" size="7">
-                                    <ion-label>
-                                        <h4>{{ member.nickname }} </h4>
-                                        <p>
-                                            <ion-icon name="navigate"></ion-icon>
-                                            {{ 'crcouncilvoting.' + member.location | translate }}
-                                        </p>
-                                    </ion-label>
-                                </ion-col>
-                                <ion-col class="label-col" size="2.25">
-                                    <ion-label *ngIf="member.state != 'Elected'">
-                                        <h5 class="state">{{'crcouncilvoting.'+ member.state | translate }}</h5>
-                                    </ion-label>
-                                </ion-col>
-                            </ion-row>
-                        </ion-grid>
-                    </ion-item>
-                </ion-virtual-scroll>
+                <ion-item class="candidate" *ngFor="let member of crCouncilService.crmembers">
+                    <ion-grid>
+                        <ion-row (click)=onShowMemberInfo(member.did)>
+                            <ion-col size="1.25" class="rank-col">
+                                {{ crCouncilService.crmembers.indexOf(member) + 1 }}
+                            </ion-col>
+                            <ion-col size="1.5" class="img-col">
+                                <img [src]="member.avatar ? member.avatar : '/assets/crcouncilvoting/icon/avatar.png'"
+                                    src-fallback="/assets/crcouncilvoting/icon/avatar.png">
+                            </ion-col>
+                            <ion-col class="label-col" size="7">
+                                <ion-label>
+                                    <h4>{{ member.nickname }} </h4>
+                                    <p>
+                                        <ion-icon name="navigate"></ion-icon>
+                                        {{ 'crcouncilvoting.' + member.location | translate }}
+                                    </p>
+                                </ion-label>
+                            </ion-col>
+                            <ion-col class="label-col" size="2.25">
+                                <ion-label *ngIf="member.state != 'Elected'">
+                                    <h5 class="state">{{'crcouncilvoting.'+ member.state | translate }}</h5>
+                                </ion-label>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-item>
 
                 <ion-item>
                     <ion-grid *ngIf="secretary">
