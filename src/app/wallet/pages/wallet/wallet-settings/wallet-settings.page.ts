@@ -213,7 +213,7 @@ export class WalletSettingsPage implements OnInit {
                 UTXOsCountString, 'wallet.text-consolidate-note')
             if (ret) {
                 let rawTx = await mainChainSubwallet.createConsolidateTransaction(normalUxtos,
-                        this.translate.instant('wallet-settings-consolidate-utxos'));
+                        this.translate.instant('wallet.wallet-settings-consolidate-utxos'));
                 if (rawTx) {
                     const transfer = new Transfer();
                     Object.assign(transfer, {
