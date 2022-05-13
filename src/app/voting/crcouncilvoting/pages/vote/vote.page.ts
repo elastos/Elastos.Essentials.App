@@ -103,6 +103,7 @@ export class VotePage implements OnInit, OnDestroy {
             this.candidatesVotes[candidate.cid] = votes;
             this.updateCandidatePercentVotesMap(candidate, votes);
         });
+        this.getVotedCount();
     }
 
     fixVotes(votes: string) {
