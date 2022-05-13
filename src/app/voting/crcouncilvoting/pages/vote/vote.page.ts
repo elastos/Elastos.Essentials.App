@@ -49,6 +49,7 @@ export class VotePage implements OnInit, OnDestroy {
     public candidatesPercentages: { [cid: string]: number } = {}; // Map of CID -> percentage (0-10000) for 2 decimals precision - for ion-range items
 
     public testValue = 0;
+    public overflow = false;
 
     async ngOnInit() {
     }
@@ -72,6 +73,7 @@ export class VotePage implements OnInit, OnDestroy {
             this.candidatesVotes[candidate.cid] = Number.isInteger(candidate.userVotes) ? candidate.userVotes : 0;
             this.updateCandidatePercentVotesMap(candidate, candidate.userVotes);
         });
+        this.getVotedCount();
 
         //console.log("this.candidatesVotes", this.candidatesVotes)
 
@@ -256,6 +258,7 @@ export class VotePage implements OnInit, OnDestroy {
             }
             while (reallyRemovedAmount < overflowELA);
         }
+        this.getVotedCount();
     }
 
     /**
@@ -301,5 +304,14 @@ export class VotePage implements OnInit, OnDestroy {
 
         this.castingVote = false;
         this.signingAndTransacting = false;
+    }
+
+    public getVotedCount() {
+        var count = 0;
+        this.crCouncilService.selectedCandidates.forEach((candidate) => {
+            count += this.candidatesVotes[candidate.cid];
+        });
+        this.overflow = count > this.totalEla;
+        this.votedEla = count;
     }
 }

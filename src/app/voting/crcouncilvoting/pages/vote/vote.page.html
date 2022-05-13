@@ -9,7 +9,7 @@
     <ion-grid class="container ion-no-padding" *ngIf="initialComputationDone">
 
         <div class="votes-header">
-            <div class="count">{{ getDistributedEla() }} / {{ totalEla }}</div>
+            <div class="count"><span [class.overflow]="overflow">{{ votedEla }}</span> / {{ totalEla }}</div>
             {{ 'voting.votes' | translate }}
         </div>
 
@@ -47,7 +47,7 @@
         <ion-button class="std-secondary-button" (click)="distributeEqually()">
             {{ 'crcouncilvoting.dist-equally' | translate }}
         </ion-button>
-        <ion-button class="std-action-button" (click)="cast()">
+        <ion-button class="std-action-button" [attr.disabled]="overflow" (click)="cast()">
             <ion-label *ngIf="!votesCasted">{{ 'crcouncilvoting.cast-votes' | translate }}</ion-label>
             <ion-label *ngIf="votesCasted">{{ 'crcouncilvoting.votes-casted' | translate }}</ion-label>
         </ion-button>
