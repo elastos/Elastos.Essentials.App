@@ -200,8 +200,9 @@ export class DPosUnRegistrationPage implements OnInit {
         const payload = await this.walletManager.spvBridge.generateCancelProducerPayload(this.masterWalletId, StandardCoinName.ELA,
             this.dposInfo.ownerpublickey, payPassword);
 
+        await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
         const rawTx = await this.voteService.sourceSubwallet.createCancelProducerTransaction(payload, "");
-
+        await this.globalNative.hideLoading();
         let ret = await this.voteService.signAndSendRawTransaction(rawTx);
         if (ret) {
             this.voteService.toastSuccessfully('dposregistration.unregister');

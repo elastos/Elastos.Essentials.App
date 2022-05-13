@@ -99,7 +99,7 @@ export class GlobalELAUtxoService extends GlobalService {
         normalUxtos = await this.getNormalUtxos();
         if (normalUxtos) utxosCount = normalUxtos.length;
     } catch (err) {
-        Logger.warn('wallet', ' getNormalUtxos error', err)
+        Logger.warn('GlobalELAUtxoService', ' getNormalUtxos error', err)
     }
 
     if (utxosCount > Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {

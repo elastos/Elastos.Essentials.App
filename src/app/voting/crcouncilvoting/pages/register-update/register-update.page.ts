@@ -201,7 +201,9 @@ export class RegisterUpdatePage implements OnInit {
         try {
             let payload = await this.getCRInfoPayload();
             if (payload) {
+                await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
                 const rawTx = await this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
+                await this.globalNative.hideLoading();
                 let ret = await this.voteService.signAndSendRawTransaction(rawTx);
                 if (ret) {
                     if (this.infoOpration == InfoOperation.UpdateCandidate) {
@@ -214,6 +216,7 @@ export class RegisterUpdatePage implements OnInit {
             }
         }
         catch (e) {
+            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
     }

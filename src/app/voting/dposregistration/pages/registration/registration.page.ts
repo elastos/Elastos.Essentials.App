@@ -210,8 +210,9 @@ export class DPosRegistrationPage implements OnInit {
         const payload = await this.walletManager.spvBridge.generateProducerPayload(this.masterWalletId, StandardCoinName.ELA,
             this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
 
+        await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
         const rawTx = await this.voteService.sourceSubwallet.createUpdateProducerTransaction(payload, "");
-
+        await this.globalNative.hideLoading();
         let ret = await this.voteService.signAndSendRawTransaction(rawTx);
         if (ret) {
             this.voteService.toastSuccessfully('dposregistration.update-header');

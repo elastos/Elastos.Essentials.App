@@ -4,6 +4,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
@@ -46,6 +47,7 @@ export class WithdrawPage {
         private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
     ) {
 
     }
@@ -110,11 +112,14 @@ export class WithdrawPage {
             Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
             //Create transaction and send
             payload.Signature = ret.result.signature;
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(JSON.stringify(payload), '');
+            await this.globalNative.hideLoading();
             await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;
+            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
             return;
         }

@@ -508,8 +508,13 @@ export class CRCouncilService {
                 let signature = await this.getSignature(payload.Digest);
                 if (signature) {
                     payload.Signature = signature;
+
+                    await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+
                     Logger.log('RegisterUpdatePage', 'generateUnregisterCRPayload', payload);
                     const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(JSON.stringify(payload), "");
+                    await this.globalNative.hideLoading();
+
                     let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
                     if (ret) {
                         this.voteService.toastSuccessfully('crcouncilvoting.unregistration-candidate');
@@ -518,6 +523,7 @@ export class CRCouncilService {
             }
         }
         catch (e) {
+            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
     }

@@ -156,13 +156,18 @@ export class ReviewMilestonePage {
             }
 
             Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
+
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+
             //Create transaction and send
             payload.SecretaryGeneralSignature = ret.result.signature;
             const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(JSON.stringify(payload), '');
+            await this.globalNative.hideLoading();
             await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;
+            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
             return;
         }

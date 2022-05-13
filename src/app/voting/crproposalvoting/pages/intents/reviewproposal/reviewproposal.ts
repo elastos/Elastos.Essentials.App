@@ -146,11 +146,14 @@ export class ReviewProposalPage {
             Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
             //Create transaction and send
             payload.Signature = ret.result.signature;
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
+            await this.globalNative.hideLoading();
             await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;
+            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
             return;
         }

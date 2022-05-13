@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -201,8 +202,8 @@ export class VoteService {
         //     return false;
         // }
 
-        let utxo = await this.sourceSubwallet.getAvailableUtxo(20000);
-        if (!utxo) {
+        let enoughBalance = await this.sourceSubwallet.isAvailableBalanceEnough(new BigNumber(20000));
+        if (!enoughBalance) {
             await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.ela-not-enough');
             return false;
         }

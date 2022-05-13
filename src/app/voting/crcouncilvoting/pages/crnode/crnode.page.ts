@@ -96,8 +96,12 @@ export class CRNodePage implements OnInit {
             if (signature) {
                 payload.CRCouncilMemberSignature = signature;
 
+                await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+
                 //Create transaction and send
                 const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(JSON.stringify(payload), '');
+                await this.globalNative.hideLoading();
+
                 let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
                 if (ret) {
                     this.voteService.toastSuccessfully('crcouncilvoting.claim-dpos-node');
@@ -106,6 +110,7 @@ export class CRNodePage implements OnInit {
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
+            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
     }
