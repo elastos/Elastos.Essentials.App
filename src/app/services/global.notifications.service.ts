@@ -1,6 +1,6 @@
-import { Subject } from "rxjs";
 import { Injectable } from "@angular/core";
-import { App } from "src/app/model/app.enum"
+import { Subject } from "rxjs";
+import { App } from "src/app/model/app.enum";
 import { Logger } from "../logger";
 import { GlobalStorageService } from "../services/global.storage.service";
 import { GlobalDIDSessionsService, IdentityEntry } from "./global.didsessions.service";
@@ -89,6 +89,14 @@ export class GlobalNotificationsService extends GlobalService {
             sent_date: Date.now()
         };
         this.notifications.push(notification);
+        this.notifications.sort((a, b) => {
+            if (a.sent_date > b.sent_date)
+                return -1;
+            else if (a.sent_date < b.sent_date)
+                return 1;
+            else
+                return 0;
+            });
         this.saveNotifications();
 
         Logger.log('Notifications', "Sending notification", notification);
