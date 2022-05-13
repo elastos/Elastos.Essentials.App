@@ -49,7 +49,7 @@
                 </ion-virtual-scroll>
 
                 <ion-item>
-                    <ion-grid *ngIf="secretary" >
+                    <ion-grid *ngIf="secretary">
                         <ion-row (click)=onShowSecretaryInfo()>
                             <ion-col size="1.25" class="rank-col">
                                 SG
@@ -74,9 +74,14 @@
             </ion-list>
         </ion-grid>
 
-        <div *ngIf="crCouncilService.crmembers.length === 0" class="spinner align-center">
+        <div *ngIf="crMembersFetched && crCouncilService.crmembers.length == 0" class="no-data">
+            {{ 'crcouncilvoting.no-members' | translate }}
+        </div>
+
+        <div *ngIf="!crMembersFetched" class="spinner align-center">
             <ion-spinner name="crescent"></ion-spinner>
         </div>
 
     </div>
+
 </ion-content>

@@ -60,6 +60,7 @@ export const fr = {
         'claim-dpos-node': 'Demander le noeud DPoS',
 
         'no-member-info': 'Can not get the member info',
+        'no-members': 'Can not get the CR members',
 
         /********** Secretary General **********/
         'secretary-profile': 'Secretary General Profile',

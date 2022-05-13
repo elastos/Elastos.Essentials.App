@@ -111,6 +111,7 @@ export class CRCouncilService {
         this.crmembers = [];
         this.selectedCandidates = [];
         this.selectedMember = null;
+        this.isVoting = false
     }
 
     async fetchCRMembers() {
@@ -554,7 +555,7 @@ export class CRCouncilService {
     }
 
     async getCRDepositcoin(): Promise<any> {
-        Logger.log(App.CRCOUNCIL_VOTING, 'Get CR Depositcoin...');
+        Logger.log(App.CRCOUNCIL_VOTING, 'Get CR Depositcoin...', Util.getShortDidString());
 
         const param = {
             method: 'getcrdepositcoin',

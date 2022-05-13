@@ -61,6 +61,7 @@ export const zh = {
         'claim-dpos-node': '绑定DPoS节点',
 
         'no-member-info': '获取委员信息失败',
+        'no-members': '获取CR委员列表失败',
 
         /********** Secretary General **********/
         'secretary-profile': '秘书长信息',

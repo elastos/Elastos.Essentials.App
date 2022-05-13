@@ -61,6 +61,7 @@ export const it = {
         'claim-dpos-node': 'Richiedi Nodo DPoS',
 
         'no-member-info': 'Can not get the member info',
+        'no-members': 'Can not get the CR members',
 
         /********** Secretary General **********/
         'secretary-profile': 'Secretary General Profile',
