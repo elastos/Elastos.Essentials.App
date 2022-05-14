@@ -117,9 +117,10 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         void this.fetchAndRearmMainTokenValue();
 
         // There is no EVMSubwallet in BTCNetworkWallet.
-        if (this.getMainEvmSubWallet()) {
-            void this.fetchAndRearmStakingAssets();
-        }
+        // Do not fetch staking assets for now, the server is not reliable.
+        // if (this.getMainEvmSubWallet()) {
+        //     void this.fetchAndRearmStakingAssets();
+        // }
 
         this.getTransactionDiscoveryProvider().start();
 
