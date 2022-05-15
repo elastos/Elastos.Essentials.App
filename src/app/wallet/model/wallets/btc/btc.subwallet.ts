@@ -1,6 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { Config } from '../../../config/Config';
 import { BTCTransaction, BTCUTXO } from '../../btc.types';
@@ -207,13 +208,13 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
 
         // TODO: Normally the data less than 1KB.
         // Fees are related to input and output.
-        let fee = this.accMul(feerate, Config.SATOSHI);
+        let fee = Util.accMul(feerate, Config.SATOSHI);
 
         let toAmount = 0;
         if (amount.eq(-1)) {
             toAmount = Math.floor(this.balance.minus(fee).toNumber());
         } else {
-            toAmount = this.accMul(amount.toNumber(), Config.SATOSHI);
+            toAmount = Util.accMul(amount.toNumber(), Config.SATOSHI);
         }
 
         let outputs = [{
@@ -276,14 +277,6 @@ export class BTCSubWallet extends StandardSubWallet<BTCTransaction> {
 
     async getTransactionDetails(txid: string): Promise<any> {
         return await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, txid);
-    }
-
-    accMul(arg1: number, arg2: number): number {
-        let m = 0, s1 = arg1.toString(), s2 = arg2.toString();
-        try { m += s1.split(".")[1].length } catch (e) { }
-        try { m += s2.split(".")[1].length } catch (e) { }
-
-        return Math.floor(Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m))
     }
 
     // BTC chain don't support such "EVM" features for now, so we override the default

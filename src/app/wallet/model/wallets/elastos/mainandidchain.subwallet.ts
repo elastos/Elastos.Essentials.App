@@ -192,7 +192,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             au = await this.getAvailableUtxo(-1);
             toAmount = au.value - 10000;// 10000: fee
         } else {
-            toAmount = this.accMul(amount.toNumber(), Config.SELA);
+            toAmount = Util.accMul(amount.toNumber(), Config.SELA);
             au = await this.getAvailableUtxo(toAmount + 10000);// 10000: fee
         }
         if (!au.utxo) return;
@@ -240,7 +240,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             au = await this.getAvailableUtxo(-1);
             toAmount = au.value - 20000;// 20000: fee, cross transafer need more fee.
         } else {
-            toAmount = this.accMul(amount, Config.SELA);
+            toAmount = Util.accMul(amount, Config.SELA);
             au = await this.getAvailableUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
         }
         if (!au.utxo) return;
@@ -287,7 +287,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             au = await this.getAvailableUtxo(-1);
             toAmount = au.value - 20000;//20000: fee, cross transafer need more fee.
         } else {
-            toAmount = this.accMul(amount, Config.SELA);
+            toAmount = Util.accMul(amount, Config.SELA);
             au = await this.getAvailableUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
         }
         if (!au.utxo) return;
@@ -325,7 +325,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         let utxoArrayForSDK = [];
         let totalAmount = 0;
         for (let i = 0, len = utxoArray.length; i < len; i++) {
-            let utxoAmountSELA = this.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
+            let utxoAmountSELA = Util.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
             let utxoForSDK: UtxoForSDK = {
                 Address: utxoArray[i].address,
                 Amount: utxoAmountSELA.toString(),
@@ -594,7 +594,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             this.masterWallet.id,
             this.id,
             JSON.stringify(utxo),
-            this.accMul(amount, Config.SELA).toString(),
+            Util.accMul(amount, Config.SELA).toString(),
             '10000',
             memo
         );
@@ -651,7 +651,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             this.masterWallet.id,
             this.id,
             JSON.stringify(utxo),
-            this.accMul(amount, Config.SELA).toString(),
+            Util.accMul(amount, Config.SELA).toString(),
             '10000',
             memo
         );
@@ -869,7 +869,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         let totalAmount = 0;
         if (utxoArray) {
             for (let i = 0, len = utxoArray.length; i < len; i++) {
-                let utxoAmountSELA = this.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
+                let utxoAmountSELA = Util.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
                 let utxoForSDK: UtxoForSDK = {
                     Address: utxoArray[i].address,
                     Amount: utxoAmountSELA.toString(),
@@ -905,7 +905,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         let utxoArrayForSDK = [];
         if (utxoArray) {
             for (let i = 0, len = utxoArray.length; i < len; i++) {
-                let utxoAmountSELA = this.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
+                let utxoAmountSELA = Util.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
                 let utxoForSDK: UtxoForSDK = {
                     Address: utxoArray[i].address,
                     Amount: utxoAmountSELA.toString(),
@@ -941,7 +941,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             let candidates: Candidates = {};
 
             for (let j = 0, len = voteContent[i].candidates.length; j < len; j++) {
-                let amountSELA = this.accMul(parseFloat(voteContent[i].candidates[j].votes), Config.SELA)
+                let amountSELA = Util.accMul(parseFloat(voteContent[i].candidates[j].votes), Config.SELA)
                 candidates[voteContent[i].candidates[j].candidate] = amountSELA.toString();
             }
 
@@ -1222,7 +1222,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
                 let amount = parseFloat(this.votingUtxoArray[i].amount);
                 votingAmountEla += amount;
             }
-            this.votingAmountSELA = this.accMul(votingAmountEla, Config.SELA);
+            this.votingAmountSELA = Util.accMul(votingAmountEla, Config.SELA);
         } else {
             this.votingAmountSELA = 0;
         }
@@ -1355,14 +1355,6 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         await this.transactionsCache.save();
       }
     } */
-
-    accMul(arg1: number, arg2: number): number {
-        let m = 0, s1 = arg1.toString(), s2 = arg2.toString();
-        try { m += s1.split(".")[1].length } catch (e) { }
-        try { m += s2.split(".")[1].length } catch (e) { }
-
-        return Math.floor(Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m))
-    }
 
     // Main chain and ID chain don't support such "EVM" features for now, so we override the default
     // implementation to return nothing
