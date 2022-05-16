@@ -978,7 +978,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         // The Single Address Wallet should use the external address.
         if (!this.masterWallet.account.SingleAddress) {
             balanceList = await this.getBalanceByAddress(true, spendable);
-            if (balanceList.value == null) {
+            if (!balanceList || balanceList.value == null) {
                 return null;
             }
             totalBalance = totalBalance.plus(balanceList.value);
@@ -986,7 +986,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         }
 
         balanceList = await this.getBalanceByAddress(false, spendable);
-        if (balanceList.value == null) {
+        if (!balanceList || balanceList.value == null) {
             return null;
         }
         totalBalance = totalBalance.plus(balanceList.value);
@@ -995,7 +995,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         if (this.id == StandardCoinName.ELA) {
             // Coinbase reward, eg. dpos
             balanceList = await this.getBalanceByOwnerAddress(spendable);
-            if (balanceList.value !== null) {
+            if (balanceList && (balanceList.value !== null)) {
                 totalBalance = totalBalance.plus(balanceList.value);
                 addressWithBalanceArrayTemp = [...addressWithBalanceArrayTemp, ...balanceList.addresses];
             }
@@ -1071,7 +1071,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
             try {
                 const balanceList = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray, spendable);
-                if (balanceList.value === null) {
+                if (!balanceList || balanceList.value === null) {
                     Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
                     return null
                 }
