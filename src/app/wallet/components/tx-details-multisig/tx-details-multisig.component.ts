@@ -7,6 +7,7 @@ import { MultiSigSafe } from '../../model/safes/multisig.safe';
 import { AnyOfflineTransaction } from '../../model/tx-providers/transaction.types';
 import { AuthService } from '../../services/auth.service';
 import { MultiSigService } from '../../services/multisig.service';
+import { Native } from '../../services/native.service';
 import { OfflineTransactionsService } from '../../services/offlinetransactions.service';
 
 type CosignerWithStatus = {
@@ -38,10 +39,15 @@ export class TxDetailsMultiSigComponent implements OnInit {
   // UI logic
   public fetchingTxInfo = true;
   public uploadingSignature = false;
+  public isSelfSigned = false;
+  public isSelfSigning = false;
+  public canPublish = false; // Enough cosigners have signed, the transaction can be published
+  public isPublishing = false;
 
   constructor(
     public theme: GlobalThemeService,
     private zone: NgZone,
+    private native: Native,
     private modalCtrl: ModalController,
     private offlineTransactionsService: OfflineTransactionsService,
     private authService: AuthService,
@@ -62,15 +68,23 @@ export class TxDetailsMultiSigComponent implements OnInit {
       await this.offlineTransactionsService.storeTransaction(this.subWallet, this.offlineTransaction);
     }
 
+    await this.updateIsSelfSigned();
     await this.prepareCosigners();
+    await this.updateCanPublishState();
 
     this.fetchingTxInfo = false;
   }
 
   public async sign() {
+    if (this.isSelfSigning)
+      return;
+
+    this.isSelfSigning = true;
+
     // Force password prompt
     let payPassword = await this.authService.getWalletPassword(this.subWallet.masterWallet.id, true, true);
     if (!payPassword) {
+      this.isSelfSigning = false;
       return; // Can't continue without the wallet password
     }
 
@@ -85,33 +99,48 @@ export class TxDetailsMultiSigComponent implements OnInit {
       this.offlineTransaction.rawTx = JSON.parse(signResult.signedTransaction);
       await this.offlineTransactionsService.storeTransaction(this.subWallet, this.offlineTransaction);
 
+      await this.updateIsSelfSigned();
+
       // Upload the signed tx to essentials multisig API.
       await this.multiSigService.uploadSignedTransaction(this.offlineTransaction.transactionKey, this.offlineTransaction.rawTx)
 
-      if (await multisigSafe.hasEnoughSignaturesToPublish(this.offlineTransaction.rawTx)) {
-        // If last to sign: publish
-        await this.subWallet.sendSignedTransaction(signResult.signedTransaction, null, false);
-      }
+      await this.updateCanPublishState();
     }
+
+    this.isSelfSigning = false;
   }
 
-  private getMultiSigMasteWallet(): StandardMultiSigMasterWallet {
+  private getMultiSigMasterWallet(): StandardMultiSigMasterWallet {
     return <StandardMultiSigMasterWallet>this.subWallet.masterWallet;
   }
 
+  private getSafe(): MultiSigSafe {
+    return (<MultiSigSafe><any>this.subWallet.networkWallet.safe);
+  }
+
   private async prepareCosigners() {
-    let masterWallet = this.getMultiSigMasteWallet();
+    let masterWallet = this.getMultiSigMasterWallet();
     let cosigners: CosignerWithStatus[] = [];
 
     for (let signer of masterWallet.signersExtPubKeys) {
       cosigners.push({
         name: this.getShortXPub(signer),
         xpub: signer,
-        signed: await (<MultiSigSafe><any>this.subWallet.networkWallet.safe).hasCosignerSigned(signer, this.offlineTransaction.rawTx)
+        signed: await this.getSafe().hasCosignerSigned(signer, this.offlineTransaction.rawTx)
       });
     }
 
     this.cosignersWithStatus = cosigners;
+  }
+
+  private async updateCanPublishState() {
+    let multisigSafe = <MultiSigSafe>(this.subWallet.networkWallet.safe as any);
+    if (await multisigSafe.hasEnoughSignaturesToPublish(this.offlineTransaction.rawTx))
+      this.canPublish = true;
+  }
+
+  private async updateIsSelfSigned(): Promise<void> {
+    this.isSelfSigned = await this.getSafe().hasSigningWalletSigned(this.offlineTransaction.rawTx);
   }
 
   private getShortXPub(xpub: string): string {
@@ -120,5 +149,21 @@ export class TxDetailsMultiSigComponent implements OnInit {
 
   public getCosignerSignatureStatus(cosigner: CosignerWithStatus): string {
     return cosigner.signed ? "Signed" : "Not signed";
+  }
+
+  public copyTransactionLinkToClipboard() {
+    let transactionLink = `https://wallet.elastos.net/multisigtx?t=${this.offlineTransaction.transactionKey}`;
+    void this.native.copyClipboard(transactionLink);
+    void this.native.toast_trans("Transaction link copied to clipboard");
+  }
+
+  public async publish() {
+    let multisigSafe = <MultiSigSafe>(this.subWallet.networkWallet.safe as any);
+    if (!(await multisigSafe.hasEnoughSignaturesToPublish(this.offlineTransaction.rawTx)))
+      return;
+
+    this.isPublishing = true;
+    await this.subWallet.sendSignedTransaction(JSON.stringify(this.offlineTransaction.rawTx), null, false);
+    this.isPublishing = false;
   }
 }

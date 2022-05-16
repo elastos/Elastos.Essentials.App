@@ -3,10 +3,12 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
@@ -15,6 +17,7 @@ import { EthTransaction } from 'src/app/wallet/model/networks/evms/evm.types';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { OfflineTransactionsService } from 'src/app/wallet/services/offlinetransactions.service';
 import { Config } from '../../../../config/Config';
 import { StandardCoinName } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
@@ -44,6 +47,8 @@ class TransactionDetail {
 })
 export class CoinTxInfoPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     // General Values
     private networkWallet: AnyNetworkWallet = null;
@@ -87,7 +92,9 @@ export class CoinTxInfoPage implements OnInit {
         public walletManager: WalletService,
         public native: Native,
         private translate: TranslateService,
-        public theme: GlobalThemeService
+        public theme: GlobalThemeService,
+        private offlineTransactionsService: OfflineTransactionsService,
+        private nav: GlobalNavService,
     ) {
     }
 
@@ -97,6 +104,24 @@ export class CoinTxInfoPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.tx-info-title"));
+
+        if (this.offlineTransaction) {
+            // If there is an offline transaction, we can show a delete menu
+            this.titleBar.setupMenuItems([
+                { key: "delete", title: this.translate.instant('common.delete'), iconPath: "assets/contacts/images/delete.svg" }
+            ]);
+            this.titleBar.setMenuVisibility(true);
+
+            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                if (icon.key === "delete") {
+                    void this.deleteOfflineTransaction();
+                }
+            });
+        }
+    }
+
+    ionViewWillLeave() {
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     private async init() {
@@ -135,7 +160,7 @@ export class CoinTxInfoPage implements OnInit {
             this.height = this.transactionInfo.height;
             this.targetAddress = this.transactionInfo.to;
             this.fromAddress = this.transactionInfo.from;
-            this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
+            this.payFee = this.transactionInfo.fee !== null ? new BigNumber(this.transactionInfo.fee).toNumber() : null;
             this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.amount, this.subWallet.tokenDecimals) || "0";
             this.isRedPacket = this.transactionInfo.isRedPacket;
 
@@ -271,19 +296,24 @@ export class CoinTxInfoPage implements OnInit {
                 }
             }
 
+            if (this.payFee !== null) {
+                this.txDetails.unshift(
+                    {
+                        type: 'fees',
+                        title: 'wallet.tx-info-transaction-fees',
+                        value: this.payFee + ' ' + this.mainTokenSymbol,
+                        show: true,
+                    }
+                );
+            }
+
             this.txDetails.unshift(
                 {
                     type: 'address',
                     title: 'wallet.tx-info-receiver-address',
                     value: this.networkWallet.convertAddressForUsage(this.targetAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                     show: true,
-                },
-                {
-                    type: 'fees',
-                    title: 'wallet.tx-info-transaction-fees',
-                    value: this.payFee + ' ' + this.mainTokenSymbol,
-                    show: true,
-                },
+                }
             );
         }
         else { // Receving or move transaction
@@ -351,6 +381,15 @@ export class CoinTxInfoPage implements OnInit {
     copy(value) {
         void this.native.copyClipboard(value);
         void this.native.toast_trans('wallet.copied');
+    }
+
+    /**
+     * Deletes this temporary offlien transction and exits the screen.
+     */
+    private async deleteOfflineTransaction() {
+        await this.offlineTransactionsService.removeTransaction(this.subWallet, this.offlineTransaction);
+        this.subWallet.transactionsListChanged();
+        void this.nav.navigateBack();
     }
 }
 

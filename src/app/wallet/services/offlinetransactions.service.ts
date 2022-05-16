@@ -56,6 +56,21 @@ export class OfflineTransactionsService {
     public async storeTransaction(subWallet: AnySubWallet, offlineTransaction: AnyOfflineTransaction): Promise<void> {
         Logger.log("wallet", "Storing offline transaction", offlineTransaction);
 
+        // Remove existing, if any
+        await this.removeTransaction(subWallet, offlineTransaction);
+
+        let transactions = await this.getTransactions(subWallet);
+
+        transactions.push(offlineTransaction);
+
+        await this.saveTransactions(subWallet, transactions);
+    }
+
+    private async saveTransactions(subWallet: AnySubWallet, transactions: AnyOfflineTransaction[]): Promise<void> {
+        await subWallet.networkWallet.saveContextInfo<AnyOfflineTransaction[]>(this.getStorageKey(subWallet), transactions);
+    }
+
+    public async removeTransaction(subWallet: AnySubWallet, offlineTransaction: AnyOfflineTransaction): Promise<void> {
         let transactions = await this.getTransactions(subWallet);
 
         // Remove existing, if any
@@ -64,8 +79,7 @@ export class OfflineTransactionsService {
             transactions.splice(existingTxIndex, 1);
         }
 
-        transactions.push(offlineTransaction);
-        await subWallet.networkWallet.saveContextInfo<AnyOfflineTransaction[]>(this.getStorageKey(subWallet), transactions);
+        await this.saveTransactions(subWallet, transactions);
     }
 
     public debugRemoveTransactions(subWallet: AnySubWallet): Promise<void> {

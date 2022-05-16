@@ -1,4 +1,4 @@
-import { BrowserLocalStorage, MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
+import { MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalNetworksService, MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
@@ -7,13 +7,15 @@ import { WalletService } from "src/app/wallet/services/wallet.service";
 import { MasterWallet, StandardMasterWallet } from "../../masterwallets/masterwallet";
 import { StandardMultiSigMasterWallet } from "../../masterwallets/standard.multisig.masterwallet";
 import { ElastosMainChainWalletNetworkOptions } from "../../masterwallets/wallet.types";
+import { JSSDKLocalStorage } from "./localstorage.jssdk";
+
 /**
  * Helper class to manage interactions with the Elastos Wallet JS SDK (@elastosfoundation/wallet-js-sdk).
  */
 export class WalletJSSDKHelper {
   private static loadMasterWalletManager(): MasterWalletManager {
     const netType = GlobalNetworksService.instance.activeNetworkTemplate.value === MAINNET_TEMPLATE ? "MainNet" : "TestNet";
-    const browserStorage = new BrowserLocalStorage(GlobalDIDSessionsService.signedInDIDString);
+    const browserStorage = new JSSDKLocalStorage(GlobalDIDSessionsService.signedInDIDString);
     const netConfig = { NetType: netType, ELA: {} };
 
     return new MasterWalletManager(
@@ -23,9 +25,9 @@ export class WalletJSSDKHelper {
     );
   }
 
-  public static loadMasterWalletFromJSWallet(masterWallet: MasterWallet): SDKMasterWallet {
+  public static async loadMasterWalletFromJSWallet(masterWallet: MasterWallet): Promise<SDKMasterWallet> {
     let masterWalletManager = this.loadMasterWalletManager();
-    return masterWalletManager.getMasterWallet(masterWallet.id);
+    return await masterWalletManager.getMasterWallet(masterWallet.id);
   }
 
   public static async maybeCreateStandardWalletFromJSWallet(masterWallet: StandardMasterWallet): Promise<boolean> {
@@ -51,7 +53,7 @@ export class WalletJSSDKHelper {
       return false;
     }
 
-    const sdkMasterWallet = masterWalletManager.importWalletWithSeed(
+    const sdkMasterWallet = await masterWalletManager.importWalletWithSeed(
       masterWallet.id,
       masterWallet.getSeed(payPassword),
       payPassword, // Multisig pay password, not signing wallet
@@ -103,7 +105,7 @@ export class WalletJSSDKHelper {
       return false; // Can't continue without the signing wallet password - cancel the initialization
 
     if (signingWallet.getSeed(signingWalletPayPassword)) {
-      const sdkMasterWallet = masterWalletManager.createMultiSignMasterWalletWithSeed(
+      const sdkMasterWallet = await masterWalletManager.createMultiSignMasterWalletWithSeed(
         masterWallet.id,
         signingWallet.getSeed(signingWalletPayPassword),
         payPassword, // Multisig pay password, not signing wallet

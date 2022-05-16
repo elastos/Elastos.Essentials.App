@@ -1,5 +1,8 @@
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
+import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
+import { MultiSigSafe } from "src/app/wallet/model/safes/multisig.safe";
+import { OfflineTransactionsService } from "src/app/wallet/services/offlinetransactions.service";
 import { StandardCoinName } from "../../../../coin";
 import { ElastosMainChainWalletNetworkOptions } from "../../../../masterwallets/wallet.types";
 import { ProviderTransactionInfo } from "../../../../tx-providers/providertransactioninfo";
@@ -232,6 +235,9 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
       }
     } */
 
+    // Cleanup offline transactions that are found on chain
+    await this.cleanupOfflineTransactions(transactions);
+
     await this.saveTransactions(transactions);
   }
 
@@ -307,5 +313,35 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
     }
 
     return { value, type, inputs: sentInputs, outputs: sentOutputs }
+  }
+
+  /**
+   * Checks existing offline transactions and see if a chain transaction matches one of them.
+   * If an offline transaction is found on chain, this means it was published, so we can delete
+   * it from the temporary offline transactions.
+   */
+  private async cleanupOfflineTransactions(transactions: ElastosTransaction[]): Promise<void> {
+    // Offline transactions only supported for standard multisig wallets for now - could be improved
+    if (!(this.subWallet.masterWallet instanceof StandardMultiSigMasterWallet))
+      return;
+
+    let safe = <MultiSigSafe><any>this.subWallet.networkWallet.safe;
+
+    let offlineTransactions = await OfflineTransactionsService.instance.getTransactions(this.subWallet);
+
+    for (let offlineTransaction of offlineTransactions) {
+      let offlineTransactionHash = await safe.getOfflineTransactionHash(offlineTransaction);
+
+      for (let transaction of transactions) {
+        console.log("offlineTransaction hash", offlineTransactionHash, "transaction.txid", transaction.txid);
+
+        if (offlineTransactionHash === transaction.txid) {
+          // A published transaction that matches the offline transaction payload was found. We can now delete the
+          // offline transaction.
+          await OfflineTransactionsService.instance.removeTransaction(this.subWallet, offlineTransaction);
+          continue; // End this for loop, the transaction was matched.
+        }
+      }
+    }
   }
 }

@@ -56,6 +56,14 @@
         padding-bottom: 5px;
         text-decoration: underline
     }
+    .notice {
+        .title {
+            font-weight: bold;
+        }
+        p {
+            opacity: 0.5;
+        }
+    }
 }
 
 .dark-container {
