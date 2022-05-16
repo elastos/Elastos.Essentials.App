@@ -1120,7 +1120,7 @@ export class SPVWalletPluginBridge {
         }
 
         // Unsupport to create elastos based subwallet. eg. create master wallet by evm privatekey.
-        if (err["code"] === 20057) {
+        if (err["code"] === 20029) {
             if (promiseRejectHandler) promiseRejectHandler(err);
             return;
         }
