@@ -95,7 +95,9 @@ export class GlobalIntentService {
       // Already some intents being processed
       let rootIntentBeingProcessed = this.intentsBeingProcessed.find(i => !i.parentIntentId); // There should be always one, and only one root item
       Logger.log("intents", "Root intent being processed:", rootIntentBeingProcessed);
-      let childIntentsForRootIntent = this.intentsQueue.find(i => i.parentIntentId === rootIntentBeingProcessed.intent.intentId);
+      let childIntentsForRootIntent = this.intentsQueue.find(i => {
+        rootIntentBeingProcessed.intent && (i.parentIntentId === rootIntentBeingProcessed.intent.intentId)
+      });
       if (childIntentsForRootIntent) {
         // A child intent from an active parent intent has been found, so we can process it.
         Logger.log("intents", "Next processable intent is a child intent of root intent:", childIntentsForRootIntent.parentIntentId);
