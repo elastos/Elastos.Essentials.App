@@ -38,8 +38,10 @@ export class UXService {
         this.globalNative.genericToast('common.copied-to-clipboard', 2000, "success");
     }
 
-    openLink(url) {
+    openLink(url: string) {
         Logger.log(App.VOTING, "Opening external URL:", url);
+
+        url = url.trim();
         if (url.indexOf("://") == -1) {
             url = "http://" + url;
         }
