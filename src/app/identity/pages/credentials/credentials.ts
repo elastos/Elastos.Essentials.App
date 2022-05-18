@@ -1,4 +1,3 @@
-import { HttpClient } from "@angular/common/http";
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ActionSheetController } from "@ionic/angular";
@@ -48,7 +47,6 @@ export class CredentialsPage {
   private credentialaddedSubscription: Subscription = null;
 
   constructor(
-    private http: HttpClient,
     public events: Events,
     public route: ActivatedRoute,
     public zone: NgZone,
@@ -113,6 +111,7 @@ export class CredentialsPage {
     let identity = this.didService.getActiveDid();
     if (identity) {
       let credentials = identity.credentials;
+      let activeDidString = identity.getDIDString();
 
       // Sort credentials by title
       credentials.sort((c1, c2) => {
@@ -123,13 +122,13 @@ export class CredentialsPage {
 
       // Prepare displayable credential information with pre-computed data
       for (let credential of credentials) {
-        let types = credential.getTypes();
+        let issuer = credential.pluginVerifiableCredential.getIssuer();
 
         let displayableCredential: DisplayableCredential = {
           credential,
           isInRemoteDIDDocument: this.profileService.credentialIsInPublishedDIDDocument(credential.pluginVerifiableCredential),
           isConform: false, // false, while getting the real value asynchronously
-          isIssuedByThirdParty: credential.pluginVerifiableCredential.getIssuer() !== this.didService.getActiveDid().getDIDString()
+          isIssuedByThirdParty: issuer && (issuer !== activeDidString)
         };
 
         void this.globalCredentialTypesService.verifyCredential(credential.pluginVerifiableCredential).then((isFullyConform) => {
@@ -148,7 +147,6 @@ export class CredentialsPage {
   ionViewDidEnter() {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
-    this.init();
   }
 
   /**
