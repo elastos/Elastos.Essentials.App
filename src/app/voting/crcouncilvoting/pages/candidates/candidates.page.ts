@@ -117,7 +117,7 @@ export class CandidatesPage implements OnInit {
             this.crCouncilService.selectedCandidates.push({
                 cid: candidate.cid,
                 nickname: candidate.nickname,
-                imageUrl: candidate.imageUrl,
+                avatar: candidate.avatar,
                 location: candidate.location,
                 userVotes: 0
             });

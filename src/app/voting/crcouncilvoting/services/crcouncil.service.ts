@@ -4,12 +4,15 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { rawImageToBase64DataUrl } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { DIDDocument } from 'src/app/model/did/diddocument.model';
 import { Util } from 'src/app/model/util';
+import { GlobalDIDService } from 'src/app/services/global.did.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -59,6 +62,8 @@ export class CRCouncilService {
         private globalIntentService: GlobalIntentService,
         public globalPopupService: GlobalPopupService,
         private globalNative: GlobalNativeService,
+        private globalDidService: GlobalDIDService,
+        private globalHiveCacheService: GlobalHiveCacheService,
     ) {
 
     }
@@ -141,7 +146,7 @@ export class CRCouncilService {
                 if (!this.isCRMember && member.did == GlobalDIDSessionsService.signedInDIDString) {
                     this.isCRMember = true;
                 }
-                member.avatar = await this.getAvatar(member.did);
+                this.getAvatar(member);
             }
         }
         catch (err) {
@@ -157,7 +162,7 @@ export class CRCouncilService {
             let result = await this.jsonRPCService.httpGet(url);
             if (result && result.data && result.data.did) {
                 let member = result.data;
-                member.avatar = await this.getAvatar(member.did);
+                this.getAvatar(member);
                 member.isSelf = Util.isSelfDid(member.did);
                 this.selectedMember = member as CRMemberInfo;
                 Logger.log(App.CRCOUNCIL_VOTING, 'Selected CRMembers:', member);
@@ -178,9 +183,7 @@ export class CRCouncilService {
             if (result && result.data && result.data.secretariat) {
                 for (let item of result.data.secretariat) {
                     if (item.status == 'CURRENT') {
-                        // if (!item.avatar) {
-                        //     item.avatar = await this.getAvatar(item.did);
-                        // }
+                        this.getAvatar(item);
                         if (item.startDate) {
                             item.startDate = Util.timestampToDateTime(item.startDate * 1000);
                         }
@@ -232,7 +235,7 @@ export class CRCouncilService {
                 for (let candidate of result.crcandidatesinfo) {
                     if (candidate.state == "Active") {
                         this.candidates.push(candidate);
-                        candidate.imageUrl = await this.getAvatar(candidate.did);
+                        this.getAvatar(candidate);
 
                         if (selectedCandidates) {
                             for (let selected of selectedCandidates) {
@@ -304,17 +307,33 @@ export class CRCouncilService {
         }
     }
 
-    public async getAvatar(didString: string): Promise<string> {
-        if (this.avatarList[didString]) {
-            return this.avatarList[didString];
+    public async getAvatarFromHive(item: any) {
+        let doc = await DIDDocument.getDIDDocumentFromDIDString(item.did);
+        let hiveIconUrl = doc.getHiveIconUrl();
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.globalHiveCacheService.getAssetByUrl(hiveIconUrl, hiveIconUrl).subscribe(async iconBuffer => {
+            if (iconBuffer) {
+                item.avatar = await rawImageToBase64DataUrl(iconBuffer);
+            }
+        });
+    }
+
+    public getAvatar(item: any) {
+        if (item.avatar) {
+            return;
         }
 
-        let ret = await this.getAvatarFromDIDDocument(didString);
-        if (ret != null) {
-            return ret;
+        item.avatar =  "/assets/crcouncilvoting/icon/avatar.png";
+        if (this.avatarList[item.did]) {
+            item.avatar = this.avatarList[item.did];
         }
 
-        return "/assets/crcouncilvoting/icon/avatar.png";
+        this.globalDidService.fetchUserInformation(item.did).subscribe(userInfo => {
+            if (userInfo && userInfo.avatarDataUrl) {
+                item.avatar = userInfo.avatarDataUrl;
+            }
+        });
+        // void this.getAvatarFromHive(item);
     }
 
     public async getAvatarFromDIDDocument(didString: string): Promise<string> {

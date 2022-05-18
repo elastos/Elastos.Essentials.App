@@ -20,8 +20,8 @@ export class DIDDocument {
         if (didString.indexOf(':') == -1) {
             didString = "did:elastos:" + didString;
         }
-        return new Promise((resolve, reject)=>{
-            didManager.resolveDidDocument(didString, true, (document)=>{
+        return new Promise((resolve, reject) => {
+            didManager.resolveDidDocument(didString, true, (document) => {
                 Logger.log("DIDDocument", "DIDDocument resolved:", document);
                 if (document != null) {
                     let doc = new DIDDocument(document);
@@ -30,7 +30,7 @@ export class DIDDocument {
                 else {
                     resolve(null);
                 }
-            }, (err)=>{
+            }, (err) => {
                 reject(err);
             });
         });
@@ -59,6 +59,42 @@ export class DIDDocument {
         return null;
     }
 
+    public getHiveIconUrl(): string {
+        var hiveIconUrl: string = null;
+
+        let applicationCredentials = this.getCredentialsByType("ApplicationCredential");
+        if (applicationCredentials && applicationCredentials.length > 0) {
+            let credSubject = applicationCredentials[0].getSubject();
+            if ("iconUrl" in credSubject)
+                hiveIconUrl = credSubject["iconUrl"];
+        }
+
+        // Check the "avatar" standard
+        if (!hiveIconUrl) {
+            let avatarCredentials = this.getCredentialsByType("AvatarCredential");
+            //console.log("getRepresentativeIcon avatarCredentials", avatarCredentials)
+            if (!avatarCredentials || avatarCredentials.length === 0) {
+                // Could not find the more recent avatarcredential type. Try the legacy #avatar name
+                let avatarCredential = this.getCredentialById(new DIDURL("#avatar"));
+                if (avatarCredential)
+                    avatarCredentials.push(avatarCredential);
+            }
+
+            if (avatarCredentials && avatarCredentials.length > 0) {
+                let credSubject = avatarCredentials[0].getSubject();
+                if (("avatar" in credSubject) && (typeof credSubject["avatar"] === "object")) {
+                    let avatar = credSubject["avatar"];
+                    if ("type" in avatar && avatar["type"] === "elastoshive")
+                        hiveIconUrl = avatar["data"];
+                }
+            }
+        }
+
+        if (!hiveIconUrl)
+            return null;
+
+        return hiveIconUrl;
+    }
 
     public addCredential(credential: DIDPlugin.VerifiableCredential, storePass: string): Promise<void> {
         Logger.log('Identity', "Adding credential with key " + credential.getId() + " into DIDDocument", JSON.parse(JSON.stringify(credential)));
@@ -153,6 +189,16 @@ export class DIDDocument {
         });
     }
 
+    /**
+     * Retrieve credentials that match a given credential type
+     */
+    getCredentialsByType(credentialType: string): DIDPlugin.VerifiableCredential[] {
+        let credentials = this.getCredentials();
+        return credentials.filter((c) => {
+            return c.getTypes().indexOf(credentialType) >= 0;
+        });
+    }
+
     getCredentials(): DIDPlugin.VerifiableCredential[] {
         return this.pluginDidDocument.getCredentials();
     }
@@ -226,4 +272,5 @@ export class DIDDocument {
             });
         });
     }
+
 }

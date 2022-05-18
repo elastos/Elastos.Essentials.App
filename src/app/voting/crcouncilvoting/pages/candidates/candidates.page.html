@@ -24,7 +24,7 @@
                                 {{ crCouncilService.candidates.indexOf(candidate) + 1 }}
                             </ion-col>
                             <ion-col size="1.5" class="img-col" (click)="onShowCandidateInfo(candidate.did)">
-                                <img [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'"
+                                <img [src]="candidate.avatar ? candidate.avatar : '/assets/crcouncilvoting/icon/avatar.png'"
                                     src-fallback="/assets/crcouncilvoting/icon/avatar.png">
                             </ion-col>
                             <ion-col size="7.75" class="label-col" (click)="onShowCandidateInfo(candidate.did)">

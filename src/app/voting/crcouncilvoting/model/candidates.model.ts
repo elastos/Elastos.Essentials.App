@@ -11,7 +11,7 @@ export class Candidate {
     public registerheight: number,
     public cancelheight: number,
     public index: number,
-    public imageUrl: any,
+    public avatar: any,
   ) {}
 }
 
