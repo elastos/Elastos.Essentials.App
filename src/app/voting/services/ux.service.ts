@@ -40,6 +40,9 @@ export class UXService {
 
     openLink(url) {
         Logger.log(App.VOTING, "Opening external URL:", url);
+        if (url.indexOf("://") == -1) {
+            url = "http://" + url;
+        }
         void this.globalIntentService.sendIntent('openurl', { url: url })
     }
 
