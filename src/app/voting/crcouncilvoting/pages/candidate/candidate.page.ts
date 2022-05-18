@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
@@ -10,6 +9,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { CRCouncilService } from '../../services/crcouncil.service';
 
@@ -50,12 +50,12 @@ export class CandidatePage {
     constructor(
         public theme: GlobalThemeService,
         public translate: TranslateService,
-        private popoverCtrl: PopoverController,
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
         public crCouncilService: CRCouncilService,
         public voteService: VoteService,
         private route: ActivatedRoute,
+        public uxService: UXService,
     ) {
         void this.init(this.route.snapshot.params.did);
     }

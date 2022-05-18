@@ -8,10 +8,10 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { UXService } from '../../../services/ux.service';
 import { ProposalSearchResult } from '../../model/proposal-search-result';
 import { ProposalStatus } from '../../model/proposal-status';
 import { ProposalService } from '../../services/proposal.service';
-import { UXService } from '../../services/ux.service';
 
 @Component({
     selector: 'page-proposal-list',

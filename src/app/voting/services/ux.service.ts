@@ -7,23 +7,12 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
-type CRCommand = {
-    command: string; // Ex: "voteforproposal"
-}
-
-type VoteForProposalCommand = CRCommand & {
-    data: {
-        proposalHash: string;
-    }
-}
 
 @Injectable({
     providedIn: 'root'
 })
 export class UXService {
     public static instance: UXService = null;
-    private isReceiveIntentReady = false;
-    private appIsLaunchingFromIntent = false; // Is the app starting because of an intent request?
 
     constructor(
         private globalNative: GlobalNativeService,

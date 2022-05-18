@@ -11,13 +11,13 @@ import { Util } from 'src/app/model/util';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
+import { UXService } from '../../../services/ux.service';
 import { MileStoneOptionsComponent } from '../../components/milestone-options/milestone-options.component';
 import { TitleOptionsComponent } from '../../components/title-options/title-options.component';
 import { ProposalDetails, VoteResultType } from '../../model/proposal-details';
 import { ProposalSearchResult } from '../../model/proposal-search-result';
 import { CRCommandType, CROperationsService } from '../../services/croperations.service';
 import { ProposalService } from '../../services/proposal.service';
-import { UXService } from '../../services/ux.service';
 
 type MergedProposalInfo = ProposalSearchResult & ProposalDetails;
 

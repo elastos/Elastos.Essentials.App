@@ -12,8 +12,8 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { UXService } from '../../../../services/ux.service';
 import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
-import { UXService } from '../../../services/ux.service';
 
 
 export type CreateSuggestionCommand = CRCommand & {

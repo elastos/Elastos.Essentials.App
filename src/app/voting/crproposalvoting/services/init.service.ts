@@ -3,19 +3,15 @@ import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
-import { AppService } from './app.service';
 import { CROperationsService } from './croperations.service';
 import { ProposalService } from './proposal.service';
 import { SuggestionService } from './suggestion.service';
-import { UXService } from './ux.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CRProposalVotingInitService extends GlobalService {
     constructor(
-        private appService: AppService,
-        private uxService: UXService,
         private crOperations: CROperationsService,
         private proposalService: ProposalService,
         private suggestionService: SuggestionService,
@@ -31,7 +27,6 @@ export class CRProposalVotingInitService extends GlobalService {
     public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
         runDelayed(() => {
             Logger.log("crproposal", "User signed in, initializing internal services");
-            void this.uxService.init();
             void this.crOperations.init();
             this.suggestionService.init();
             void this.proposalService.init();

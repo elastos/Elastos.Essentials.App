@@ -89,10 +89,10 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data">
+            <ion-row class="profile-data" *ngIf="member.address">
                 <div>
                     <h5>{{'crcouncilvoting.member-url' | translate}}</h5>
-                    <h4>{{ member.address }}</h4>
+                    <h4 (click)="uxService.openLink(member.address)">{{ member.address }}</h4>
                 </div>
             </ion-row>
             <ion-row class="profile-data" *ngIf="member.introduction">

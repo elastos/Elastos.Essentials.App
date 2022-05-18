@@ -10,11 +10,11 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
+import { UXService } from '../../../services/ux.service';
 import { SuggestionDetail, SuggestionSearchResult } from '../../model/suggestion-model';
 import { CRCommandType, CROperationsService } from '../../services/croperations.service';
 // import { DraftService } from '../../services/draft.service';
 import { SuggestionService } from '../../services/suggestion.service';
-import { UXService } from '../../services/ux.service';
 
 type MergedSuggestionInfo = SuggestionSearchResult & SuggestionDetail;
 

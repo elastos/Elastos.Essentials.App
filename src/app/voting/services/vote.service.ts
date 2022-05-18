@@ -306,7 +306,7 @@ export class VoteService {
                 const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
                 Logger.log(App.VOTING, 'getSecretaryGeneralPublicKey', result);
                 if (result && result.secretarygeneral) {
-                    this.secretaryGeneralPublicKey = result && result.secretarygeneral;
+                    this.secretaryGeneralPublicKey = result.secretarygeneral;
                 }
             }
             catch (err) {
