@@ -13,8 +13,8 @@
                     <ion-icon class="add-wallet-icon" name="add-outline"></ion-icon>
                 </ion-col>
             </ion-row>
-            <ion-row *ngFor="let masterWallet of masterWalletsToShowInList" class="wallet-row"
-                [class.selected-wallet]="masterWallet.id === selectedMasterWallet.id"
+            <ion-row *ngFor="let masterWallet of masterWalletsToShowInList" class="wallet-row ion-activatable ripple"
+                [class.selected-wallet]="selectedMasterWallet && masterWallet.id === selectedMasterWallet.id"
                 (click)="selectWallet(masterWallet)">
                 <ion-col size="2" class="color-col">
                     <div class="color-block" [ngStyle]="
@@ -47,12 +47,14 @@
                         </h4>
                     </div>
                     <div class="wallet-amount" *ngIf="!netWallet">
-                        {{ 'wallet.unsupported-on-network' | translate:{network: networkService.activeNetwork.value.name} }}
+                        {{ 'wallet.unsupported-on-network' | translate:{network:
+                        networkService.activeNetwork.value.name} }}
                     </div>
                 </ion-col>
                 <ion-col size="2" class="right-col">
                     <ion-icon name="checkmark"></ion-icon>
                 </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
         </div>
     </div>

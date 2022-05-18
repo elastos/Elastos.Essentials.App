@@ -598,6 +598,38 @@ export const it = {
         'bridge-tokens-intro': 'I seguenti fornitori di servizi di terze parti ti consentono di <b> convertire il tuo {{coinName}} </b> da/a la rete {{networkName}}, a/da altre reti:',
         'to-networks': 'Alle reti:',
 
+        /********************************
+        * Multisig tx details component *
+        *********************************/
+        'multi-signature-status': 'Multi signature status',
+        'multi-signature-my-signature': 'My signature',
+        'multi-signature-sign': 'Sign',
+        'multi-signature-signed': 'Signed',
+        'multi-signature-not-signed': 'Not signed',
+        'multi-signature-publish': 'Publish',
+        'multi-signature-transaction-link': 'Co-signers link',
+        'multi-signature-transaction-link-copy-info': 'Copy this link to let other co-signers find and sign this transaction',
+        'multi-signature-transaction-link-copied': 'Transaction link copied to clipboard',
+
+        /***************************
+        * Multisig tx intent page  *
+        ****************************/
+        'multi-sig-tx-title': 'Multisig transaction',
+        'multi-sig-tx-fetching': 'Fetching transaction information, please wait.',
+        'multi-sig-tx-no-tx-found': 'Sorry, no matching transaction was found.',
+        'multi-sig-tx-unknown-network': 'Sorry, This transaction is for a network that doesn\'t exist in your version of Essentials.',
+        'multi-sig-tx-pick-wallet': 'Pick the right multi-signature wallet to use.',
+        'multi-sig-tx-select-wallet': 'Select multi-sig wallet',
+        'multi-sig-tx-selected-wallet': 'Selected wallet',
+        'multi-sig-tx-switched-to-network': 'Switched to {{ network }}',
+
+        /************************
+        * Offline transactions  *
+        *************************/
+
+        'offline-tx-pending-multisig': 'Pending multi-signature',
+        'offline-tx-unknown-tx': "Unknown transaction",
+
         /***************************
         * Block chain upgrade *
         ****************************/

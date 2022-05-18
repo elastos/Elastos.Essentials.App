@@ -5,18 +5,19 @@
   <div *ngIf="!fetchingTxInfo" [class.dark-container]="theme.darkMode">
     <ion-row class="item-row">
       <ion-col size="12" class="title-col">
-        <h1>Multi signature status</h1>
+        <h1>{{ 'wallet.multi-signature-status' | translate }}</h1>
       </ion-col>
       <div class="cosigners details-container">
         <div class="details-row">
           <ion-row>
-            <ion-col class="cosigner-name" size="8">My signature</ion-col>
+            <ion-col class="cosigner-name" size="8">{{ 'wallet.multi-signature-my-signature' | translate }}</ion-col>
             <ion-col size="4" *ngIf="!isSelfSigned">
-              <ion-button class="sign" (click)="sign()" *ngIf="!isSelfSigning">Sign</ion-button>
+              <ion-button class="sign" (click)="sign()" *ngIf="!isSelfSigning">{{ 'wallet.multi-signature-sign' |
+                translate }}</ion-button>
               <ion-spinner *ngIf="isSelfSigning"></ion-spinner>
             </ion-col>
             <ion-col class="cosigner-signed" size="4" *ngIf="isSelfSigned">
-              Signed
+              {{ 'wallet.multi-signature-signed' | translate }}
             </ion-col>
           </ion-row>
           <ion-row *ngFor="let cosigner of cosignersWithStatus">
@@ -26,7 +27,8 @@
         </div>
       </div>
       <ion-row *ngIf="canPublish">
-        <ion-button (click)="publish()" *ngIf="!isPublishing">Publish</ion-button>
+        <ion-button (click)="publish()" *ngIf="!isPublishing">{{ 'wallet.multi-signature-publish' | translate }}
+        </ion-button>
         <ion-spinner *ngIf="isPublishing"></ion-spinner>
       </ion-row>
     </ion-row>
@@ -34,11 +36,11 @@
     <!-- Sharing link -->
     <ion-row class="item-row link">
       <ion-col size="12" class="title-col">
-        <h1>Transaction link</h1>
+        <h1>{{ 'wallet.multi-signature-transaction-link' | translate }}</h1>
       </ion-col>
       <div class="link">
         <ion-row>
-          <ion-col size="8">Copy this link to let other co-signers find and sign this transaction</ion-col>
+          <ion-col size="8">{{ 'wallet.multi-signature-transaction-link-copy-info' | translate }}</ion-col>
           <ion-col size="4" class="icon-col">
             <ion-icon mode="ios" name="copy" (click)="copyTransactionLinkToClipboard()"></ion-icon>
           </ion-col>

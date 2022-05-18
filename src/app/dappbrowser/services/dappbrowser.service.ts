@@ -620,7 +620,6 @@ export class DappBrowserService implements GlobalService {
      */
     private async handleInsecureEthSign(message: DABMessage): Promise<void> {
         let rawData: { data: unknown } = message.data.object
-        console.log("debug handleInsecureEthSign", rawData)
         let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/insecureethsign", rawData);
 
         this.sendWeb3IABResponse(

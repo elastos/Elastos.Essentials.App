@@ -27,12 +27,12 @@ export class GlobalJsonRPCService {
             var request = new XMLHttpRequest();
 
             request.open('POST', rpcApiUrl, true);
-            request.setRequestHeader('Content-Type','application/json');
+            request.setRequestHeader('Content-Type', 'application/json');
             if (timeout != -1) {
                 request.timeout = timeout;
             }
 
-            request.onreadystatechange = function() {
+            request.onreadystatechange = function () {
                 if (request.readyState === 4 && request.timeout !== 1) {
                     let resultString = request.responseText;
 
@@ -54,26 +54,26 @@ export class GlobalJsonRPCService {
                         }
 
                         resolve(result);
-                    } catch(e) {
+                    } catch (e) {
                         Logger.error("GlobalJsonRPCService", 'httpPost error:', e, ', rpc url:', rpcApiUrl);
                         reject("Invalid JSON response returned by the JSON RPC");
                     }
                 }
             };
 
-            request.ontimeout = function() {
+            request.ontimeout = function () {
                 Logger.error("GlobalJsonRPCService", 'httpPost timeout, rpc url:', rpcApiUrl);
                 reject("Timeout");
             };
 
-            request.onerror = function(error) {
+            request.onerror = function (error) {
                 Logger.error("GlobalJsonRPCService", 'httpPost onerror:', error, ', rpc url:', rpcApiUrl);
                 reject(error);
             }
 
             try {
                 request.send(JSON.stringify(param));
-            } catch(error) {
+            } catch (error) {
                 Logger.error("GlobalJsonRPCService", 'httpPost send exception:', error, ', rpc url:', rpcApiUrl);
                 reject("Connection error");
             }
@@ -110,13 +110,25 @@ export class GlobalJsonRPCService {
         // });
     }
 
-    httpGet(url): Promise<any> {
+    httpGet(url: string): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.get<any>(url).subscribe((res) => {
                 // Logger.log('GlobalJsonRPCService', res);
                 resolve(res);
             }, (err) => {
-                Logger.error('GlobalJsonRPCService', 'http get error:', err, ' url:',url);
+                Logger.error('GlobalJsonRPCService', 'http get error:', err, ' url:', url);
+                reject(err);
+            });
+        });
+    }
+
+    httpDelete(url: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.http.delete<any>(url).subscribe((res) => {
+                // Logger.log('GlobalJsonRPCService', res);
+                resolve(res);
+            }, (err) => {
+                Logger.error('GlobalJsonRPCService', 'http delete error:', err, ' url:', url);
                 reject(err);
             });
         });

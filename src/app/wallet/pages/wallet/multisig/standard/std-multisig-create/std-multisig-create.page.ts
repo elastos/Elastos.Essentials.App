@@ -3,6 +3,7 @@ import { IonInput } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
@@ -24,14 +25,7 @@ export class StandardMultiSigCreatePage implements OnInit {
     @ViewChild('input', { static: false }) input: IonInput;
 
     public signingWallet: MasterWallet = null; // Current user's wallet to sign multisig transactions. One of the cosigners.
-    //public cosigners: string[] = [""]; // Array of xpub cosigners keys - one empty key by default
-    public cosigners = [
-        // TESTNET NET TYPE CREATED BY WALLET JS SDK - moon always junk crash fun exist stumble shift over benefit fun toe
-        'xpub68yaz1bGWJkFwmWwotAyWXrWdMuQLnjzhs2wEAFtWuVcqpRBnXfLttDaEkP4YtwyPFBf2eAjHk7kjpAUnn7gzkcwfeznsN6F9LqRSFdfEKx',
-
-        // TESTNET NET TYPE CREATED BY WALLET JS SDK - cat become when turtle fluid floor various assault praise slice menu long
-        'xpub68DSfmy1BJEbxk98CcfR5Sbf5Sb4zPqJsGzMUo82Snhah8jEM1B3CZqS7pFT9MYCosSqXyV1HuZCyA6KxxXAzfewvpkPrHpcLPbYNPsbXaA'
-    ]
+    public cosigners = ['', '']; // Array of xpub cosigners keys - two empty keys by default
     public requiredSigners = 2; // Default
 
     public wallet = {
@@ -92,6 +86,8 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     async createWallet() {
+        Logger.log("wallet", "Creating multisig wallet with signing wallet", this.signingWallet);
+
         let walletId = this.walletService.createMasterWalletID();
         await this.authService.createAndSaveWalletPassword(walletId);
         let testWallet = await this.walletService.newMultiSigStandardWallet(

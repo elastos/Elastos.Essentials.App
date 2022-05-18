@@ -388,8 +388,6 @@ export class CoinTxInfoPage implements OnInit {
      */
     private async deleteOfflineTransaction() {
         await this.offlineTransactionsService.removeTransaction(this.subWallet, this.offlineTransaction);
-        this.subWallet.transactionsListChanged();
         void this.nav.navigateBack();
     }
 }
-

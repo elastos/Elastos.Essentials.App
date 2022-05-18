@@ -279,10 +279,6 @@ export class CoinHomePage implements OnInit {
         else {
             this.canFetchMore = false;
         }
-        /* } else {
-            console.log("DEBUG coinhome getAllTx() B");
-            this.canShowMore = true;
-        } */
 
         /* TODO - "can fetch more" to be called on the subwalelt -> transactions provider if (this.MaxCount <= 20) {
             this.canShowMore = false;
@@ -529,8 +525,8 @@ export class CoinHomePage implements OnInit {
      */
     public getOfflineTransactionTitle(offlineTx: AnyOfflineTransaction): string {
         switch (offlineTx.type) {
-            case OfflineTransactionType.MULTI_SIG_STANDARD: return "Pending multi-signature";
-            default: "Unknown transaction";
+            case OfflineTransactionType.MULTI_SIG_STANDARD: return this.translate.instant('wallet.offline-tx-pending-multisig');
+            default: this.translate.instant('wallet.offline-tx-unknown-tx');
         }
     }
 

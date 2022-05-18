@@ -88,7 +88,7 @@ export class MultiSigTxPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle("Multisig transaction");
+    this.titleBar.setTitle(this.translate.instant('wallet.multi-sig-tx-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
       key: "close",
@@ -134,7 +134,7 @@ export class MultiSigTxPage implements OnInit {
             // Not the right network, auto switch + informa user
             await this.networksService.setActiveNetwork(network);
 
-            this.globalNativeService.genericToast(`Switched to ${network.name}`);
+            this.globalNativeService.genericToast(this.translate.instant('wallet.multi-sig-tx-switched-to-network', { network: network.name }));
           }
         }
       }

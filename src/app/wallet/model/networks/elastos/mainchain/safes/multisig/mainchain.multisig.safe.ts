@@ -4,6 +4,7 @@ import moment from "moment";
 import { md5 } from "src/app/helpers/crypto/md5";
 import { Logger } from "src/app/logger";
 import { JSONObject } from "src/app/model/json";
+import { GlobalNavService } from "src/app/services/global.nav.service";
 import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
 import { MultiSigSafe } from "src/app/wallet/model/safes/multisig.safe";
 import { SignTransactionErrorType, SignTransactionResult } from 'src/app/wallet/model/safes/safe.types';
@@ -80,6 +81,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
       subWalletId: subWallet.id,
       offlineTransaction
     };
+    GlobalNavService.instance.clearIntermediateRoutes(["/wallet/coin-transfer"]); // Don't allow to come back to the payment screen
     Native.instance.go("/wallet/coin-tx-info", params);
 
     return {
@@ -104,7 +106,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
       ...(<StandardMultiSigMasterWallet>this.masterWallet).signersExtPubKeys
     ]
 
-    let signers = this.elaSubWallet.getPublicKeysFromxPubKeys(tx, allXPubs, false);
+    let signers = this.elaSubWallet.matchSigningPublicKeys(tx, allXPubs, false);
     console.log("signers", signers)
     let matchingCosigner = signers.find(s => s.xPubKey === xpub);
     if (!matchingCosigner)
@@ -126,6 +128,9 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     }
 
     try {
+      let sdkRawTransaction = this.elaSubWallet.convertToRawTransaction(rawTx); // Only for logs
+      Logger.log("wallet", "Multisig safe signTransactionReal() sdkRawTransaction:", sdkRawTransaction);
+
       let signedTx = await this.elaSubWallet.signTransaction(rawTx, payPassword);
       Logger.log("wallet", "Multisig safe transaction signature result:", signedTx);
       return {
@@ -134,7 +139,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     }
     catch (e) {
       if (e instanceof WalletErrorException && e.code === 20046) { // AlreadySigned
-        Logger.warn("wallet", "Transaction was already signed, returning the original transaction as 'signed'", rawTx);
+        Logger.warn("wallet", "Transaction was already signed, returning the original transaction as 'signed'.", rawTx);
         return {
           signedTransaction: JSON.stringify(rawTx)
         }
@@ -148,8 +153,6 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
   }
 
   public async hasEnoughSignaturesToPublish(signedTx: any): Promise<boolean> {
-    return await true;// TMP
-
     try {
       // getTransactionSignedInfo() returns one entry per transaction input address (program)
       // Each entry contains en array of signers.
@@ -174,7 +177,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
    */
   public async getOfflineTransactionHash(offlineTransaction: AnyOfflineTransaction): Promise<string> {
     try {
-      return await this.elaSubWallet.decodeTx(offlineTransaction.rawTx).getHash().toString(16);
+      return await this.elaSubWallet.decodeTx(offlineTransaction.rawTx).getHashString();
     } catch (e) {
       Logger.error("wallet", "Multisig safe: getOfflineTransactionHash() error:", e);
     }

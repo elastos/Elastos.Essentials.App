@@ -90,4 +90,22 @@ export class MultiSigService {
             Logger.error('wallet', 'Multisig: uploadSignedTransaction() error:', err)
         }
     }
+
+    /**
+     * Deletes a pending transaction from the service. Normally called after detecting that an
+     * offline transaction has been successfully published.
+     */
+    public async deletePendingTransaction(transactionKey: string): Promise<void> {
+        Logger.log("wallet", `Deleting multisig transaction ${transactionKey}`);
+
+        let requestUrl = `${environment.EssentialsAPI.serviceUrl}/multisig/transaction?key=${transactionKey}`;
+        try {
+            await this.jsonRPCService.httpDelete(requestUrl);
+            return;
+        }
+        catch (err) {
+            Logger.error('wallet', 'Multisig: fetchPendingTransaction() error:', err)
+            return;
+        }
+    }
 }

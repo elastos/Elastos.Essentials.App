@@ -1,5 +1,7 @@
 import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { StandardMultiSigMasterWallet } from '../../model/masterwallets/standard.multisig.masterwallet';
 import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
@@ -51,6 +53,8 @@ export class TxDetailsMultiSigComponent implements OnInit {
     private modalCtrl: ModalController,
     private offlineTransactionsService: OfflineTransactionsService,
     private authService: AuthService,
+    private translate: TranslateService,
+    private nav: GlobalNavService,
     private multiSigService: MultiSigService
   ) { }
 
@@ -88,12 +92,12 @@ export class TxDetailsMultiSigComponent implements OnInit {
       return; // Can't continue without the wallet password
     }
 
-    console.log("SIGN", this.subWallet, this.offlineTransaction);
+    //console.log("SIGN", this.subWallet, this.offlineTransaction);
 
     let multisigSafe = <MultiSigSafe>(this.subWallet.networkWallet.safe as any);
     let signResult = await multisigSafe.signTransactionReal(this.subWallet, this.offlineTransaction.rawTx);
     if (signResult.signedTransaction) {
-      console.log("signResult", signResult);
+      //console.log("signResult", signResult);
 
       // Update local model with our signature
       this.offlineTransaction.rawTx = JSON.parse(signResult.signedTransaction);
@@ -148,13 +152,13 @@ export class TxDetailsMultiSigComponent implements OnInit {
   }
 
   public getCosignerSignatureStatus(cosigner: CosignerWithStatus): string {
-    return cosigner.signed ? "Signed" : "Not signed";
+    return cosigner.signed ? this.translate.instant('wallet.multi-signature-signed') : this.translate.instant('wallet.multi-signature-not-signed');
   }
 
   public copyTransactionLinkToClipboard() {
     let transactionLink = `https://wallet.elastos.net/multisigtx?t=${this.offlineTransaction.transactionKey}`;
     void this.native.copyClipboard(transactionLink);
-    void this.native.toast_trans("Transaction link copied to clipboard");
+    void this.native.toast_trans('wallet.multi-signature-transaction-link-copied');
   }
 
   public async publish() {
@@ -163,7 +167,15 @@ export class TxDetailsMultiSigComponent implements OnInit {
       return;
 
     this.isPublishing = true;
-    await this.subWallet.sendSignedTransaction(JSON.stringify(this.offlineTransaction.rawTx), null, false);
+    let result = await this.subWallet.sendSignedTransaction(JSON.stringify(this.offlineTransaction.rawTx), null, false);
     this.isPublishing = false;
+
+    if (result.published) {
+      // Publish ok, so we delete the offline transaction and the temporary multisig transaction (remote api)
+      // then we go back to the previous screen.
+      await OfflineTransactionsService.instance.removeTransaction(this.subWallet, this.offlineTransaction);
+      await MultiSigService.instance.deletePendingTransaction(this.offlineTransaction.transactionKey);
+      void this.nav.navigateBack();
+    }
   }
 }

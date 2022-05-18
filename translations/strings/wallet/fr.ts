@@ -598,6 +598,38 @@ export const fr = {
         'bridge-tokens-intro': 'Les fournisseurs de services tiers suivants sont disponibles pour vous permettre de <b>convertir vos {{coinName}}</b> depuis/vers le réseau {{networkName}}, vers/depuis d\'autres réseaux:',
         'to-networks': 'Vers autres réseaux:',
 
+        /********************************
+        * Multisig tx details component *
+        *********************************/
+        'multi-signature-status': 'Statut Multi signature',
+        'multi-signature-my-signature': 'Ma signature',
+        'multi-signature-sign': 'Signer',
+        'multi-signature-signed': 'Signé',
+        'multi-signature-not-signed': 'Non signé',
+        'multi-signature-publish': 'Publier',
+        'multi-signature-transaction-link': 'Lien pour co-signataires',
+        'multi-signature-transaction-link-copy-info': 'Donnez ce lien aux autres co-signataires pour qu\'ils puisse continuer le procesus.',
+        'multi-signature-transaction-link-copied': 'Le lien a été copié dans le press-papier',
+
+        /***************************
+        * Multisig tx intent page  *
+        ****************************/
+        'multi-sig-tx-title': 'Transaction multi-sig',
+        'multi-sig-tx-fetching': 'Récupération des infos sur la transaction.',
+        'multi-sig-tx-no-tx-found': 'Aucune transaction n\'a été trouvée.',
+        'multi-sig-tx-unknown-network': 'Cette transaction est pour un réseau non supporté par votre version d\'Essentials.',
+        'multi-sig-tx-pick-wallet': 'Choisissez le portefeuille multi-signatures à utiliser.',
+        'multi-sig-tx-select-wallet': 'Sélectionner le portefeuille',
+        'multi-sig-tx-selected-wallet': 'Portefeuille sélectionné',
+        'multi-sig-tx-switched-to-network': 'Réseau changé vers {{ network }}',
+
+        /************************
+        * Offline transactions  *
+        *************************/
+
+        'offline-tx-pending-multisig': 'Multi-signature en attente',
+        'offline-tx-unknown-tx': "Transaction inconnue",
+
         /***************************
         * Block chain upgrade *
         ****************************/

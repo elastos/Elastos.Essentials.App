@@ -26,6 +26,11 @@ export type WalletChooserComponentOptions = {
    * Return true to keep the walelt in the list, false to hide it.
    */
   filter?: ChooserWalletFilter;
+  /**
+   * If true, the active wallet is pre-selected in the list. Otherwise, all wallets are displayed
+   * in the same way.
+   */
+  showActiveWallet?: boolean;
 }
 
 /**
@@ -68,7 +73,11 @@ export class WalletChooserComponent implements OnInit {
   ngOnInit() {
     this.options = this.navParams.data as WalletChooserComponentOptions;
 
-    this.selectedMasterWallet = this.options.currentNetworkWallet ? this.options.currentNetworkWallet.masterWallet : this.walletService.getActiveMasterWallet();
+    if (this.options.showActiveWallet)
+      this.selectedMasterWallet = this.options.currentNetworkWallet ? this.options.currentNetworkWallet.masterWallet : this.walletService.getActiveMasterWallet();
+    else
+      this.selectedMasterWallet = null;
+
     let masterWallets = this.walletService.getMasterWalletsList();
 
     // Build the list of available network wallets from the master wallets

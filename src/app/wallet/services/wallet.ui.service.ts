@@ -55,12 +55,13 @@ export class WalletUIService {
      */
     async chooseActiveWallet(): Promise<boolean> {
         let options: WalletChooserComponentOptions = {
-            currentNetworkWallet: this.walletService.activeNetworkWallet.value
+            currentNetworkWallet: this.walletService.activeNetworkWallet.value,
+            showActiveWallet: true
         };
 
         let modal = await this.modalCtrl.create({
             component: WalletChooserComponent,
-            componentProps: options,
+            componentProps: options
         });
 
         return new Promise(resolve => {
@@ -91,7 +92,8 @@ export class WalletUIService {
     async pickWallet(filter?: ChooserWalletFilter): Promise<AnyNetworkWallet> {
         let options: WalletChooserComponentOptions = {
             currentNetworkWallet: this.walletService.activeNetworkWallet.value,
-            filter
+            filter,
+            showActiveWallet: false
         };
 
         let modal = await this.modalCtrl.create({

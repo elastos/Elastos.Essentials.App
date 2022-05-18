@@ -44,7 +44,7 @@
     "@awesome-cordova-plugins/status-bar": "5.37.3",
     "@elastosfoundation/did-js-sdk": "^2.2.3",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "^2.0.2",
-    "@elastosfoundation/wallet-js-sdk": "^0.0.2-alpha",
+    "@elastosfoundation/wallet-js-sdk": "^0.0.6-alpha",
     "@ethersproject/address": "^5.0.0",
     "@ethersproject/experimental": "5.5.0",
     "@ethersproject/solidity": "^5.0.0",

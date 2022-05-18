@@ -2,6 +2,7 @@ import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
 import { MultiSigSafe } from "src/app/wallet/model/safes/multisig.safe";
+import { MultiSigService } from "src/app/wallet/services/multisig.service";
 import { OfflineTransactionsService } from "src/app/wallet/services/offlinetransactions.service";
 import { StandardCoinName } from "../../../../coin";
 import { ElastosMainChainWalletNetworkOptions } from "../../../../masterwallets/wallet.types";
@@ -339,6 +340,7 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
           // A published transaction that matches the offline transaction payload was found. We can now delete the
           // offline transaction.
           await OfflineTransactionsService.instance.removeTransaction(this.subWallet, offlineTransaction);
+          await MultiSigService.instance.deletePendingTransaction(offlineTransaction.transactionKey);
           continue; // End this for loop, the transaction was matched.
         }
       }

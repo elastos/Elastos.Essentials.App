@@ -64,6 +64,8 @@ export class OfflineTransactionsService {
         transactions.push(offlineTransaction);
 
         await this.saveTransactions(subWallet, transactions);
+
+        subWallet.transactionsListChanged().next();
     }
 
     private async saveTransactions(subWallet: AnySubWallet, transactions: AnyOfflineTransaction[]): Promise<void> {
@@ -80,6 +82,8 @@ export class OfflineTransactionsService {
         }
 
         await this.saveTransactions(subWallet, transactions);
+
+        subWallet.transactionsListChanged().next();
     }
 
     public debugRemoveTransactions(subWallet: AnySubWallet): Promise<void> {

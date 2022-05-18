@@ -13,12 +13,13 @@ import { JSSDKLocalStorage } from "./localstorage.jssdk";
  * Helper class to manage interactions with the Elastos Wallet JS SDK (@elastosfoundation/wallet-js-sdk).
  */
 export class WalletJSSDKHelper {
-  private static loadMasterWalletManager(): MasterWalletManager {
+  private static loadMasterWalletManager(): Promise<MasterWalletManager> {
     const netType = GlobalNetworksService.instance.activeNetworkTemplate.value === MAINNET_TEMPLATE ? "MainNet" : "TestNet";
     const browserStorage = new JSSDKLocalStorage(GlobalDIDSessionsService.signedInDIDString);
+    //const browserStorage = new BrowserLocalStorage(GlobalDIDSessionsService.signedInDIDString);
     const netConfig = { NetType: netType, ELA: {} };
 
-    return new MasterWalletManager(
+    return MasterWalletManager.create(
       browserStorage,
       netType,
       netConfig
@@ -26,7 +27,7 @@ export class WalletJSSDKHelper {
   }
 
   public static async loadMasterWalletFromJSWallet(masterWallet: MasterWallet): Promise<SDKMasterWallet> {
-    let masterWalletManager = this.loadMasterWalletManager();
+    let masterWalletManager = await this.loadMasterWalletManager();
     return await masterWalletManager.getMasterWallet(masterWallet.id);
   }
 
@@ -35,9 +36,9 @@ export class WalletJSSDKHelper {
 
     let elastosNetworkOptions = masterWallet.getNetworkOptions("elastos") as ElastosMainChainWalletNetworkOptions;
 
-    let masterWalletManager = this.loadMasterWalletManager();
+    let masterWalletManager = await this.loadMasterWalletManager();
 
-    let walletExists = masterWalletManager.getAllMasterWalletID().indexOf(masterWallet.id) >= 0;
+    let walletExists = await masterWalletManager.getAllMasterWalletID().indexOf(masterWallet.id) >= 0;
     if (walletExists) {
       // Wallet already exists, do nothing
       return true;
@@ -55,14 +56,14 @@ export class WalletJSSDKHelper {
 
     const sdkMasterWallet = await masterWalletManager.importWalletWithSeed(
       masterWallet.id,
-      masterWallet.getSeed(payPassword),
+      seed,
       payPassword, // Multisig pay password, not signing wallet
       elastosNetworkOptions.singleAddress,
       "",
       ""
     );
 
-    sdkMasterWallet.createSubWallet("ELA");
+    await sdkMasterWallet.createSubWallet("ELA");
 
     return true;
   }
@@ -74,7 +75,7 @@ export class WalletJSSDKHelper {
 
     console.log("masterWallet.signersExtPubKeys", masterWallet.signersExtPubKeys)
 
-    let masterWalletManager = this.loadMasterWalletManager();
+    let masterWalletManager = await this.loadMasterWalletManager();
 
     let walletExists = masterWalletManager.getAllMasterWalletID().indexOf(masterWallet.id) >= 0;
     //let existingWallet = masterWalletManager.getMasterWallet(masterWallet.id);
@@ -86,7 +87,6 @@ export class WalletJSSDKHelper {
     let payPassword = await AuthService.instance.getWalletPassword(masterWallet.id);
     if (!payPassword)
       return false; // Can't continue without the wallet password - cancel the initialization
-
     // Get user's signing wallet to add its mnemonic/private key to the multisig wallet for future
     // signatures.
     let signingWallet = WalletService.instance.getMasterWallet(masterWallet.signingWalletId);
@@ -104,17 +104,19 @@ export class WalletJSSDKHelper {
     if (!signingWalletPayPassword)
       return false; // Can't continue without the signing wallet password - cancel the initialization
 
+    let seed = signingWallet.getSeed(signingWalletPayPassword);
+
     if (signingWallet.getSeed(signingWalletPayPassword)) {
       const sdkMasterWallet = await masterWalletManager.createMultiSignMasterWalletWithSeed(
         masterWallet.id,
-        signingWallet.getSeed(signingWalletPayPassword),
+        seed,
         payPassword, // Multisig pay password, not signing wallet
         masterWallet.signersExtPubKeys,
         masterWallet.requiredSigners,
         elastosNetworkOptions.singleAddress
       );
 
-      sdkMasterWallet.createSubWallet("ELA");
+      await sdkMasterWallet.createSubWallet("ELA");
 
       return true;
     }

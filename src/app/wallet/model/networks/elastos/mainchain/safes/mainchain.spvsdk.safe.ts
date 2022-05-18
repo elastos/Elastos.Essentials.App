@@ -1,3 +1,4 @@
+import { Logger } from "src/app/logger";
 import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { jsToSpvWalletId, PubKeyInfo, SPVService } from "src/app/wallet/services/spv.service";
@@ -61,14 +62,19 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
    * not the BIP44 one that the native SPVSDK could return to us.
    */
   public async getExtendedPublicKey(): Promise<string> {
-    await WalletJSSDKHelper.maybeCreateStandardWalletFromJSWallet(this.masterWallet);
+    try {
+      await WalletJSSDKHelper.maybeCreateStandardWalletFromJSWallet(this.masterWallet);
 
-    let sdkMasterWallet = await WalletJSSDKHelper.loadMasterWalletFromJSWallet(this.masterWallet);
-    if (!sdkMasterWallet)
-      return null;
+      let sdkMasterWallet = await WalletJSSDKHelper.loadMasterWalletFromJSWallet(this.masterWallet);
+      if (!sdkMasterWallet)
+        return null;
 
-    let pubKeyInfo = <PubKeyInfo>sdkMasterWallet.getPubKeyInfo();
+      let pubKeyInfo = <PubKeyInfo>sdkMasterWallet.getPubKeyInfo();
 
-    return pubKeyInfo.xPubKeyHDPM; // BIP45 !
+      return pubKeyInfo.xPubKeyHDPM; // BIP45 !
+    }
+    catch (e) {
+      Logger.error("wallet", "SPVSDK safe getExtendedPublicKey() error:", e);
+    }
   }
 }
