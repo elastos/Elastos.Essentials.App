@@ -111,7 +111,7 @@
                             </div>
 
                             <div *ngSwitchCase="'original-url'" class="item">
-                                <ion-row class="original-url" (click)="uxService.openLink(item.value)">
+                                <ion-row class="url-container" (click)="uxService.openLink(item.value)">
                                     <ion-col class="label-col" size="10.75">
                                         <a>{{ item.value }} </a>
                                     </ion-col>

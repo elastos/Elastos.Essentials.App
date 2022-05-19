@@ -90,10 +90,15 @@
             </ion-row>
 
             <ion-row class="profile-data" *ngIf="member.address">
-                <div>
-                    <h5>{{'crcouncilvoting.member-url' | translate}}</h5>
-                    <h4 (click)="uxService.openLink(member.address)">{{ member.address }}</h4>
-                </div>
+                <h5>{{'crcouncilvoting.member-url' | translate}}</h5>
+                <ion-row class="url-container" (click)="uxService.openLink(member.address)">
+                    <ion-col class="label-col" size="10.75">
+                        <a>{{ member.address }} </a>
+                    </ion-col>
+                    <ion-col size="1.25">
+                        <img [src]="'assets/crproposalvoting/icons/link.svg'">
+                    </ion-col>
+                </ion-row>
             </ion-row>
             <ion-row class="profile-data" *ngIf="member.introduction">
                 <ion-col>

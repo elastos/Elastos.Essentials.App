@@ -238,6 +238,28 @@ ion-footer {
     }
 }
 
+//----------------------------------------------
+
+ion-row {
+    width: 100%;
+}
+
+.url-container {
+    a {
+        width: 100%;
+        color: #8052FF;
+    }
+
+    a:active {
+        color: #428cff;
+    }
+
+    img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
 //--------------------------------------------------------
 .darkContainer {
     ion-input {
@@ -282,5 +304,11 @@ ion-footer {
 
     #votes-buttons {
         color: #C5B0FF;
+    }
+
+    .url-container {
+        a {
+            color: #B79DFF;
+        }
     }
 }
