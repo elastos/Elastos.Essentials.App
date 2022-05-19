@@ -7,16 +7,10 @@
     </div>
 
     <div class="content">
-        <ion-spinner *ngIf="!candidatesFetched"></ion-spinner>
 
         <ion-grid *ngIf="crCouncilService.candidates.length > 0" id="add-padding-bottom"
             class="container ion-no-padding">
-            <app-candidate-slider *ngIf="showCandidate" [candidate]="candidate" [candidateIndex]="candidateIndex">
-            </app-candidate-slider>
-            <ion-list lines="none" class="candidate-list" [class.blur]="showCandidate">
-                <!-- <ion-virtual-scroll [items]="crCouncilService.candidates" approxItemHeight="240px">
-                    <ion-item class="candidate" [class.selected]="!candidateIsSelected(candidate)"
-                        *virtualItem="let candidate"> -->
+            <ion-list lines="none" class="candidate-list">
                 <ion-item *ngFor="let candidate of crCouncilService.candidates">
                     <ion-grid class="ion-no-padding">
                         <ion-row>
@@ -48,12 +42,15 @@
                         </ion-row>
                     </ion-grid>
                 </ion-item>
-                <!-- </ion-virtual-scroll> -->
             </ion-list>
         </ion-grid>
 
         <div *ngIf="candidatesFetched && crCouncilService.candidates.length == 0" class="no-data">
             {{ 'crcouncilvoting.no-candidates' | translate }}
+        </div>
+
+        <div *ngIf="!candidatesFetched" class="spinner align-center">
+            <ion-spinner name="crescent"></ion-spinner>
         </div>
 
         <div *ngIf="candidatesFetched && crCouncilService.candidates.length > 0" class="footer">

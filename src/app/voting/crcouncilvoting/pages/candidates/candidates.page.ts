@@ -27,7 +27,6 @@ export class CandidatesPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public candidate: Candidate;
-    public showCandidate = false;
     public candidateIndex: number;
     public addingCandidates = false;
     public candidatesFetched = false;
@@ -50,7 +49,7 @@ export class CandidatesPage implements OnInit {
     }
 
     ngOnInit() {
-        this.showCandidate = false;
+
     }
 
     async ionViewWillEnter() {
@@ -159,13 +158,6 @@ export class CandidatesPage implements OnInit {
 
     getCouncilStartDate() {
         return moment(this.crCouncilService.councilTerm).format("MMM Do YY");
-    }
-
-    /****************** Show Slide *******************/
-    _showCandidate(index: number, can: Candidate) {
-        this.showCandidate = !this.showCandidate;
-        this.candidateIndex = index;
-        this.candidate = can;
     }
 
     /****************** Toasts/Alerts *******************/
