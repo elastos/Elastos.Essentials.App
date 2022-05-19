@@ -45,6 +45,7 @@ export class CredentialsPage {
   private documentChangedSubscription: Subscription = null;
   private onlineDIDDocumentStatusSub: Subscription = null;
   private credentialaddedSubscription: Subscription = null;
+  private credentialdeletedSubscription: Subscription = null;
 
   constructor(
     public events: Events,
@@ -86,6 +87,12 @@ export class CredentialsPage {
         this.init();
       });
     });
+
+    this.credentialdeletedSubscription = this.events.subscribe("did:credentialdeleted", () => {
+        this.zone.run(() => {
+          this.init();
+        });
+      });
   }
 
   unsubscribe(subscription: Subscription) {
@@ -101,6 +108,7 @@ export class CredentialsPage {
     this.unsubscribe(this.publicationstatusSubscription);
     this.unsubscribe(this.documentChangedSubscription);
     this.unsubscribe(this.credentialaddedSubscription);
+    this.unsubscribe(this.credentialdeletedSubscription);
   }
 
   init() {
