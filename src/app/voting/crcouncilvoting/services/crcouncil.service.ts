@@ -155,6 +155,16 @@ export class CRCouncilService {
         }
     }
 
+    getAvatarFromMembers(did: string): string {
+        for (let item of this.crmembers) {
+            if (did == item.did) {
+                return item.avatar;
+            }
+        }
+
+        return null;
+    }
+
     async getCRMemberInfo(did: string): Promise<CRMemberInfo> {
         try {
             this.selectedMember = null;
@@ -162,7 +172,7 @@ export class CRCouncilService {
             let result = await this.jsonRPCService.httpGet(url);
             if (result && result.data && result.data.did) {
                 let member = result.data;
-                this.getAvatar(member);
+                member.avatar = this.getAvatarFromMembers(member.did);
                 member.isSelf = Util.isSelfDid(member.did);
                 this.selectedMember = member as CRMemberInfo;
                 Logger.log(App.CRCOUNCIL_VOTING, 'Selected CRMembers:', member);
