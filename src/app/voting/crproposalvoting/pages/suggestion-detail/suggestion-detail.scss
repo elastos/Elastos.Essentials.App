@@ -336,23 +336,6 @@ ion-grid {
     }
 }
 
-
-.original-url {
-    a {
-        width: 100%;
-        color: #8052FF;
-    }
-
-    a:active {
-        color: #428cff;
-    }
-
-    img {
-        width: 20px;
-        height: 20px;
-    }
-}
-
 .darkContainer {
     ion-card {
         color: white;
@@ -420,11 +403,6 @@ ion-grid {
         }
     }
 
-    .original-url {
-        a {
-            color: #B79DFF;
-        }
-    }
 }
 
 .invisible {

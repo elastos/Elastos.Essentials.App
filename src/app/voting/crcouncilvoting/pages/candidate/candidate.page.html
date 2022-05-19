@@ -76,10 +76,15 @@
             </ion-row>
 
             <ion-row class="profile-data" *ngIf="candidate.url">
-                <div>
-                    <h5>{{'crcouncilvoting.candidate-url' | translate}}</h5>
-                    <h4 (click)="uxService.openLink(candidate.url)">{{ candidate.url }}</h4>
-                </div>
+                <h5>{{'crcouncilvoting.candidate-url' | translate}}</h5>
+                <ion-row class="url-container" (click)="uxService.openLink(candidate.url)">
+                    <ion-col class="label-col" size="10.75">
+                        <a>{{ candidate.url }} </a>
+                    </ion-col>
+                    <ion-col size="1.25">
+                        <img [src]="'assets/crproposalvoting/icons/link.svg'">
+                    </ion-col>
+                </ion-row>
             </ion-row>
             <ion-row class="profile-data" *ngIf="candidate.introduction">
                 <ion-col>
