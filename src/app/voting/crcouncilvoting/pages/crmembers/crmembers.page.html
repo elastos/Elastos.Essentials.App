@@ -14,8 +14,6 @@
     </div>
 
     <div class="content" [class.vote-open]="crCouncilService.isVoting">
-        <ion-spinner *ngIf="!crMembersFetched"></ion-spinner>
-
         <ion-grid *ngIf="crCouncilService.crmembers.length > 0" class="container ion-no-padding">
             <ion-list lines="none" class="candidate-list">
                 <ion-item class="candidate" *ngFor="let member of crCouncilService.crmembers">

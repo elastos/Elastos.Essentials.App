@@ -18,7 +18,6 @@ import { CRCouncilService } from "../../services/crcouncil.service";
 export class CRMembersPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public showCandidate = false;
     public candidateIndex: number;
     public addingCandidates = false;
     public crMembersFetched = false;
@@ -38,7 +37,6 @@ export class CRMembersPage implements OnInit {
 
 
     ngOnInit() {
-        this.showCandidate = false;
     }
 
     async ionViewWillEnter() {
