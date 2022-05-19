@@ -1,18 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DeveloperService } from '../../../services/developer.service';
-import { TranslateService } from '@ngx-translate/core';
-import { SettingsService } from '../../../services/settings.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { ActivatedRoute } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { SessionRequestParams } from 'src/app/model/walletconnect/types';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { Platform } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { DeveloperService } from '../../../services/developer.service';
+import { SettingsService } from '../../../services/settings.service';
 
 @Component({
   selector: 'app-connect',
@@ -64,13 +64,13 @@ export class WalletConnectConnectPage implements OnInit {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
       // Close
-      await this.walletConnect.rejectSession(this.sessionRequest.connectorKey, "Scanning again");
+      await this.walletConnect.rejectSession(this.sessionRequest.connectorKey, "User cancelled");
       void this.titleBar.globalNav.exitCurrentContext();
     });
 
     // Catch android back key to reject the session
     this.backSubscription = this.platform.backButton.subscribeWithPriority(0, async (processNext) => {
-      await this.walletConnect.rejectSession(this.sessionRequest.connectorKey, "Scanning again");
+      await this.walletConnect.rejectSession(this.sessionRequest.connectorKey, "User cancelled");
       processNext();
     });
   }
