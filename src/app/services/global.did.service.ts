@@ -25,6 +25,10 @@ export class GlobalDIDService {
     public fetchUserInformation(did: string, retrieveAvatar = true): BehaviorSubject<UserInfo> {
         Logger.log("GlobalDIDService", "Fetching user information", did);
 
+        if (did.indexOf(':') == -1) {
+            did = "did:elastos:" + did;
+        }
+
         // No info at first
         let subject = new BehaviorSubject<UserInfo>({
             did: did
