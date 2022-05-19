@@ -5,7 +5,6 @@
     flex-direction: column;
     min-height: 100%;
     padding: 20px 10px;
-    background-image: url("/assets/wallet/background/intent.svg");
     object-fit: cover;
     justify-content: center;
 
@@ -214,8 +213,6 @@
 }
 
 .dark-container {
-    background-image: url("/assets/wallet/background/darkmode/intent.svg");
-
     ion-card {
         background: #2e2f4e;
         box-shadow: 0 3px 15px 0 #151626;

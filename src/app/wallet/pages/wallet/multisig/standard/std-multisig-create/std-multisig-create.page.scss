@@ -1,15 +1,24 @@
 @import "src/app/wallet/root.scss";
+@import "src/essentials.scss";
 
 .container {
     position: relative;
     min-height: 100%;
     padding: 10px 15px;
+    padding-bottom: 100px; // Footer space
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
-    background-image: url("/assets/wallet/background/background.svg");
+    align-items: flex-start;
     object-fit: cover;
+
+    ion-col {
+        padding-inline-start: 0;
+    }
+
+    .label {
+        color: #fdfeff;
+    }
 
     p {
         margin: 0;
@@ -24,15 +33,31 @@
 
     ion-row {
         margin-bottom: 15px;
-        width: 95%;
 
         ion-input {
-            background: #803fd5;
+            background: #FFF;
+            border: solid 1px #DDD;
             font-weight: 400;
             letter-spacing: -0.34px;
-            text-align: left;
-            color: #fdfeff;
+            color: #000;
             --padding-start: 12px;
+            --placeholder-color: #000;
+        }
+
+        ion-col {
+        }
+
+        .pick-wallet {
+            display: flex;
+            justify-content: flex-end;
+
+            img {
+                margin-left:5px;
+            }
+
+            .picked-wallet {
+                font-weight: bold;
+            }
         }
     }
 
@@ -45,10 +70,40 @@
                 height:20px;
             }
         }
+
+        ion-input {
+            flex-direction: row-reverse; // Icons on the right
+
+            .icons {
+                height: 100%;
+                display:flex;
+
+                .icon {
+                    margin: auto 5px;
+                    padding: 5px;
+                }
+            }
+        }
     }
 
-    .btn-row {
-        margin-top: 30px;
-        width: 100%;
+    .footer {
+        z-index: 10;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+}
+
+.dark-container {
+    ion-row {
+        ion-input {
+            background: rgba(255,255,255,0.1);
+            border: solid 1px #626262;
+            color: #FFF;
+            --placeholder-color: #FFF;
+        }
+    }
+
+    .footer {
+        background: #212021;
     }
 }

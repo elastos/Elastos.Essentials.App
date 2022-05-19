@@ -170,7 +170,7 @@ export class MultiSigTxPage implements OnInit {
   }
 
   public hasErrors(): boolean {
-    return this.unknownNetworkError;
+    return this.unknownNetworkError || !this.txInfo;
   }
 
   public canContinue(): boolean {

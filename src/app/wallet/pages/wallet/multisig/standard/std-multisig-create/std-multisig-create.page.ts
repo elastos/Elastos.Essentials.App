@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonInput } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
@@ -51,7 +50,7 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTheme('#732cd0', TitleBarForegroundMode.LIGHT)
+        //this.titleBar.setTheme('#732cd0', TitleBarForegroundMode.LIGHT)
         this.titleBar.setTitle('New multi-sig wallet');
     }
 
@@ -205,11 +204,16 @@ export class StandardMultiSigCreatePage implements OnInit {
     public onCosignerBlur(i: number) {
         console.log("onCosignerBlur", i, this.cosigners[i]);
     }
+
     /**
      * Angular hack using 'trackBy' to not re-render the cosigners input list and lose keyboard focus
      * when typing.
      */
     public trackCosigners(index: number, item: any) {
         return index;
+    }
+
+    public onRequiredSignersUpdated() {
+
     }
 }
