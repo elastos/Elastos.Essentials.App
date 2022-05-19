@@ -71,6 +71,9 @@ export class VotePage implements OnInit, OnDestroy {
         this.crCouncilService.selectedCandidates.forEach((candidate) => {
             //console.log("candidate.userVotes", candidate.userVotes, Number.isInteger(candidate.userVotes))
             this.candidatesVotes[candidate.cid] = Number.isInteger(candidate.userVotes) ? candidate.userVotes : 0;
+            if (isNaN(this.candidatesVotes[candidate.cid])) {
+                this.candidatesVotes[candidate.cid] = 0;
+            }
             this.updateCandidatePercentVotesMap(candidate, candidate.userVotes);
         });
         this.getVotedCount();
@@ -310,9 +313,12 @@ export class VotePage implements OnInit, OnDestroy {
     public getVotedCount() {
         var count = 0;
         this.crCouncilService.selectedCandidates.forEach((candidate) => {
+            if (isNaN(this.candidatesVotes[candidate.cid])) {
+                this.candidatesVotes[candidate.cid] = 0;
+            }
             count += this.candidatesVotes[candidate.cid];
         });
-        this.overflow = count > this.totalEla;
+        this.overflow = count > this.totalEla || this.totalEla == 0;
         this.votedEla = count;
     }
 }
