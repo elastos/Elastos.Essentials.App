@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -9,6 +9,7 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
@@ -16,7 +17,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
   templateUrl: 'pickidentity.html',
   styleUrls: ['./pickidentity.scss']
 })
-export class PickIdentityPage {
+export class PickIdentityPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   groupedIdentities: IdentityGroup[] = [];
@@ -34,6 +35,7 @@ export class PickIdentityPage {
     private events: Events,
     public popupProvider: PopupProvider,
     private splashScreen: SplashScreen,
+    private globalNetworksService: GlobalNetworksService,
     private didSessions: GlobalDIDSessionsService,
   ) {
     this.events.subscribe("identityadded", newIdentity => {
@@ -47,6 +49,22 @@ export class PickIdentityPage {
     });
   }
 
+  ngOnInit() {
+    this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
+      switch (template) {
+        case MAINNET_TEMPLATE:
+          this.titleBar.setTitle(this.translate.instant("didsessions.pick-identity"));
+          break;
+        case TESTNET_TEMPLATE:
+          this.titleBar.setTitle('TEST NET Active');
+          break;
+        case 'LRW':
+          this.titleBar.setTitle('CR Private Net Active');
+          break;
+      }
+    });
+  }
+
   ionViewWillEnter() {
     if (!this.theme.darkMode) {
       this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
@@ -54,10 +72,9 @@ export class PickIdentityPage {
       this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
     }
 
-    this.titleBar.setTitle(this.translate.instant("didsessions.pick-identity"));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "settings", iconPath: BuiltInIcon.SETTINGS });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.uxService.onTitleBarItemClicked(icon);
     });

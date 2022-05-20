@@ -207,10 +207,9 @@ export class WalletNetworkService {
     public isActiveNetworkEVM(): boolean {
         if (this.activeNetwork.value) {
             let network = this.getNetworkByKey(this.activeNetwork.value.key);
-            if (network.getMainChainID() !== -1) return true;
+            if (network && network.getMainChainID() !== -1)
+                return true;
         }
         return false;
     }
 }
-
-

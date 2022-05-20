@@ -1,0 +1,144 @@
+@import "src/app/settings/root.scss";
+
+.container {
+  padding: 0px 20px 20px;
+  min-height: 100%;
+
+  .section {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-right: 20px;
+    border-bottom: 1.5px solid #EAEAEA;
+
+    ion-col {
+      padding: 0;
+    }
+
+    .title-col {
+      h1, h2 {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 17px;
+        font-weight: 400;
+        margin-bottom: 7.5px;
+      }
+
+      h2 {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2.4px;
+        text-transform: uppercase;
+        color: #000000;
+        opacity: 0.7;
+      }
+    }
+
+    .arrow-col {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      img {
+        width: 7.7px;
+        height: 13.3px;
+      }
+
+      ion-toggle {
+        zoom: 0.85;
+      }
+
+      .theme-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 85%;
+        width: 100%;
+        border-radius: 17px;
+        background-color: #dddddd;
+
+        div {
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        
+          p {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.09px;
+            color: #222222;
+            margin: 0;
+          }
+        }
+      }
+
+      .light-toggled {
+        .dark-mode {
+          margin-left: 5px;
+          width: 45%
+        }
+
+        .light-mode {
+          width: 55%;
+          border-radius: 17px;
+          box-shadow: 0px 10px 20px 0 #f5e4aa;
+          background-color: #fdd034;
+          
+          p {
+            color: #ffffff !important;
+          }
+        }
+      }
+    }
+
+    .dark-toggled {
+      .dark-mode {
+        width: 55%;
+        border-radius: 17px;
+        box-shadow: 0px 10px 20px 0 #0b0b08;
+        background-color: #212021;
+
+        p {
+          color: #ffffff !important;
+        }
+      }
+
+      .light-mode {
+        width: 45%;
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .theme-mode {
+    margin-right: 5px;
+  }
+
+  .dev-mode {
+    border: none;
+    margin-right: 5px;
+  }
+}
+
+.dark-container {
+  .section {
+    border-bottom: 1.5px solid #464646;
+
+    .title-col {
+      h1 {
+        // font-weight: 500;
+      }
+      
+      h2 {
+        color: #9D9D9D;
+        opacity: 1;
+      }
+    }
+  }
+
+  .dev-mode {
+    border: none;
+  }
+}

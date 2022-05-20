@@ -1,0 +1,28 @@
+<ion-content *ngIf="hasConfigSections">
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <!-- Language selection -->
+        <ion-row class="section" (click)="open('/didsessions/language')">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'common.language-setting' | translate }}</h1>
+                <h2>{{ 'settings.change-lang' | translate }}</h2>
+            </ion-col>
+            <ion-col size="1" class="arrow-col">
+                <img
+                    [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
+            </ion-col>
+        </ion-row>
+
+        <!-- Developer settings -->
+        <ion-row class="section" (click)="open('/didsessions/settings-developer')">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'settings.developer-setting' | translate }}</h1>
+                <h2>{{ 'settings.advanced-setting' | translate }}</h2>
+            </ion-col>
+            <ion-col size="1" class="arrow-col">
+                <img
+                    [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

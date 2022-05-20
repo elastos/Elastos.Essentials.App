@@ -17,7 +17,6 @@ import { SettingsService } from '../../services/settings.service';
 export class DeveloperPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public privatenet = '';
   public allowScreenCapture = false;
 
   constructor(

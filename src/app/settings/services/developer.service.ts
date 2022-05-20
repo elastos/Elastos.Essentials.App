@@ -62,18 +62,6 @@ export class DeveloperService extends GlobalService {
     });
   }
 
-  async selectNetworkTemplate(
-    networkTemplate: string
-  ) {
-    Logger.log('settings', 'Dev preference set to ' + networkTemplate);
-    if (this.selectedNetworkTemplate !== networkTemplate) {
-      this.selectedNetworkTemplate = networkTemplate;
-      await this.globalNetworksService.setActiveNetworkTemplate(networkTemplate);
-
-      void this.globalNavService.showRestartPrompt();
-    }
-  }
-
   // Reset to MainNet
   async resetNet() {
     if (this.selectedNetworkTemplate !== MAINNET_TEMPLATE) {

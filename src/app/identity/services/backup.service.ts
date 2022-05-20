@@ -84,10 +84,17 @@ export class BackupService extends GlobalService {
   }
 
   onUserSignOut(): Promise<void> {
-    this.credAddedSub.unsubscribe();
-    this.credModifiedSub.unsubscribe();
-    this.credDeletedSub.unsubscribe();
-    this.didActivatedSub.unsubscribe();
+    if (this.credAddedSub)
+      this.credAddedSub.unsubscribe();
+
+    if (this.credModifiedSub)
+      this.credModifiedSub.unsubscribe();
+
+    if (this.credDeletedSub)
+      this.credDeletedSub.unsubscribe();
+
+    if (this.didActivatedSub)
+      this.didActivatedSub.unsubscribe();
 
     if (this.backupRestoreHelper) {
       this.backupRestoreHelper.stop();

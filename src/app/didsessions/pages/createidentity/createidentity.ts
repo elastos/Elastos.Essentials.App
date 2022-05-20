@@ -61,8 +61,8 @@ export class CreateIdentityPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("didsessions.create-identity"));
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'backToRoot', iconPath: BuiltInIcon.BACK });
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: 'backToRoot', iconPath: BuiltInIcon.BACK });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "settings", iconPath: BuiltInIcon.SETTINGS });
     this.titleBar.setNavigationMode(null);
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.uxService.onTitleBarItemClicked(icon);

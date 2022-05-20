@@ -41,16 +41,16 @@ export class ChooseImportedDIDPage implements OnInit {
   }
 
   ngOnInit() {
-/*     this.actRoute.queryParams.subscribe((params: {enterEvent:NavigateWithCompletionEnterData})=>{
-      this.nextStepId = params.enterEvent.stepId;
-      this.importedDids = params.enterEvent.data.dids;
-    }) */
+    /*     this.actRoute.queryParams.subscribe((params: {enterEvent:NavigateWithCompletionEnterData})=>{
+          this.nextStepId = params.enterEvent.stepId;
+          this.importedDids = params.enterEvent.data.dids;
+        }) */
   }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('didsessions.select-identity'));
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: 'back', iconPath: BuiltInIcon.BACK });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "settings", iconPath: BuiltInIcon.SETTINGS });
     this.titleBar.setNavigationMode(null);
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if (icon.key === 'back') {

@@ -56,7 +56,9 @@ export class PacketService {
   }
 
   public onUserSignOut() {
-    this.intentSubscription.unsubscribe();
+    if (this.intentSubscription)
+      this.intentSubscription.unsubscribe();
+
     this.publicPackets.next([]);
     this.grabbedPackets.next([]);
   }

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Logger } from '../logger';
-import { GlobalStorageService } from './global.storage.service';
-import { Direction, GlobalNavService } from './global.nav.service';
-import { GlobalServiceManager } from './global.service.manager';
 import { GlobalIntentService } from './global.intent.service';
+import { Direction, GlobalNavService } from './global.nav.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
+import { GlobalServiceManager } from './global.service.manager';
+import { GlobalStorageService } from './global.storage.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 
@@ -46,13 +47,14 @@ export class GlobalDIDSessionsService {
 
   constructor(private storage: GlobalStorageService,
     private globalNavService: GlobalNavService,
+    private globalNetworkService: GlobalNetworksService,
     private globalIntentService: GlobalIntentService) {
   }
 
   public async init(): Promise<void> {
     Logger.log("DIDSessionsService", "Initializating the DID Sessions service");
 
-    this.identities = await this.storage.getSetting<IdentityEntry[]>(null, "didsessions", "identities", []);
+    this.identities = await this.storage.getSetting<IdentityEntry[]>(null, "didsessions", this.storageKeyForNetworkTemplate("identities"), []);
     let lastSignedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
     if (lastSignedInIdentity) {
       let identity = this.identities.find(entry => lastSignedInIdentity.didString == entry.didString);
@@ -63,11 +65,22 @@ export class GlobalDIDSessionsService {
   }
 
   public saveDidSessionsToDisk(): Promise<void> {
-    return this.storage.setSetting(null, "didsessions", "identities", this.identities);
+    return this.storage.setSetting(null, "didsessions", this.storageKeyForNetworkTemplate("identities"), this.identities);
   }
 
   public saveSignedInIdentityToDisk(): Promise<void> {
     return this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
+  }
+
+  /**
+   * Returns the sandboxed storage session for the active network template.
+   * For backward compatibility, mainnet network template uses old style storage keys (no network suffix).
+   */
+  private storageKeyForNetworkTemplate(key: string) {
+    if (this.globalNetworkService.activeNetworkTemplate.value === MAINNET_TEMPLATE)
+      return key;
+    else
+      return key + "_" + this.globalNetworkService.activeNetworkTemplate.value;
   }
 
   private getIdentityIndex(didString: string): number {

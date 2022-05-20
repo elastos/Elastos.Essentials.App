@@ -20,7 +20,7 @@ export type EditProfileStateParams = {
 })
 export class EditProfilePage {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  @ViewChild('input', {static: false}) input: IonInput;
+  @ViewChild('input', { static: false }) input: IonInput;
 
   private nextStepId: number = null;
   public isEdit = false;
@@ -37,7 +37,7 @@ export class EditProfilePage {
     private router: Router,
   ) {
     const navigation = this.router.getCurrentNavigation();
-    if(navigation.extras.state) {
+    if (navigation.extras.state) {
       this.nextStepId = navigation.extras.state.enterEvent.stepId;
       Logger.log('didsessions', 'Editprofile - nextStepId', this.nextStepId);
     }
@@ -48,8 +48,8 @@ export class EditProfilePage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('didsessions.identity-name'));
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: 'back', iconPath: BuiltInIcon.BACK });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "settings", iconPath: BuiltInIcon.SETTINGS });
     this.titleBar.setNavigationMode(null);
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if (icon.key === 'back') {
@@ -71,14 +71,14 @@ export class EditProfilePage {
 
   async next() {
     this.creatingDid = true;
-    if(this.checkParams()){
+    if (this.checkParams()) {
       await this.identityService.runNextStep(this.nextStepId, this.name);
     }
     this.creatingDid = false;
   }
 
-  checkParams(){
-    if(!this.name || this.name == ""){
+  checkParams() {
+    if (!this.name || this.name == "") {
       this.uxService.toast_trans('common.name-is-missing');
       return false;
     }

@@ -121,6 +121,7 @@ export class WalletService {
         private prefs: GlobalPreferencesService,
         private networkService: WalletNetworkService,
         private globalNetworksService: GlobalNetworksService,
+        private walletNetworkService: WalletNetworkService,
         private didSessions: GlobalDIDSessionsService,
     ) {
         WalletService.instance = this;
@@ -158,7 +159,8 @@ export class WalletService {
 
     async stop() {
         Logger.log('wallet', "Wallet service is stopping");
-        await this.spvBridge.destroy();
+        if (this.spvBridge)
+            await this.spvBridge.destroy();
 
         await this.terminateActiveNetworkWallets();
 
@@ -380,7 +382,10 @@ export class WalletService {
             // return all network wallets.
             return Object.values(this.networkWallets);
         } else {
-            let supportedWalletCreateTypes = WalletNetworkService.instance.activeNetwork.value.supportedWalletCreateTypes();
+            if (!this.walletNetworkService.activeNetwork.value)
+                return [];
+
+            let supportedWalletCreateTypes = this.walletNetworkService.activeNetwork.value.supportedWalletCreateTypes();
             return Object.values(this.networkWallets).filter((nw) => {
                 return supportedWalletCreateTypes.indexOf(nw.masterWallet.createType) !== -1;
             });

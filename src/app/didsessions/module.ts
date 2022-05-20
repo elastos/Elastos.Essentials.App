@@ -17,10 +17,11 @@ import { LanguagePage } from './pages/language/language.page';
 import { PickIdentityPage } from './pages/pickidentity/pickidentity';
 import { PrepareDIDPage } from './pages/preparedid/preparedid';
 import { ScanPage } from './pages/scan/scan.page';
+import { SettingsDeveloperPage } from './pages/settings-developer/settings-developer.page';
+import { SettingsSelectNetPage } from './pages/settings-select-net/settings-select-net.page';
+import { SettingsPage } from './pages/settings/settings.page';
 import { DIDSessionsRoutingModule } from './routing';
 import { PopupProvider } from './services/popup';
-
-
 
 @NgModule({
   declarations: [
@@ -33,7 +34,10 @@ import { PopupProvider } from './services/popup';
     PrepareDIDPage,
     ScanPage,
     OptionsComponent,
-    WarningComponent
+    WarningComponent,
+    SettingsPage,
+    SettingsDeveloperPage,
+    SettingsSelectNetPage
   ],
   imports: [
     IonicModule,
@@ -64,4 +68,4 @@ import { PopupProvider } from './services/popup';
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class DIDSessionsModule {}
+export class DIDSessionsModule { }

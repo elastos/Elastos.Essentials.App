@@ -165,7 +165,9 @@ export class GlobalWalletConnectService extends GlobalService {
   public async onUserSignOut(): Promise<void> {
     await this.killAllSessions();
 
-    this.activeWalletSubscription.unsubscribe();
+    if (this.activeWalletSubscription) {
+      this.activeWalletSubscription.unsubscribe();
+    }
   }
 
   public getRequestSource(): WalletConnectSessionRequestSource {
