@@ -150,7 +150,19 @@ export class Util {
         return buf.reverse().toString("hex");
     }
 
+    public static isNumber(val: number) {
+        return typeof val === 'number';
+    }
+
     public static accMul(arg1: number, arg2: number): number {
+        if (!this.isNumber(arg1)) {
+            arg1 = Number(arg1);
+        }
+
+        if (!this.isNumber(arg2)) {
+            arg2 = Number(arg2);
+        }
+
         if (!arg1 || !arg2 || isNaN(arg1) || isNaN(arg2)) {
             return 0;
         }
