@@ -620,7 +620,11 @@ export class CRCouncilService {
     async getCRDepositcoinAvailable(): Promise<number> {
         let result = await this.getCRDepositcoin();
         if (result && result.available) {
-            return result.available;
+            let ret = Number(result.available);
+            if (isNaN(ret)) {
+                ret = 0;
+            }
+            return ret;
         }
         else {
             return 0;
