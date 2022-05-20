@@ -151,6 +151,10 @@ export class Util {
     }
 
     public static accMul(arg1: number, arg2: number): number {
+        if (!arg1 || !arg2 || isNaN(arg1) || isNaN(arg2)) {
+            return 0;
+        }
+
         // If the number is too small, the toString() method will convert it to scientific counting.
         let m = 0, s1 = arg1.toFixed(8).replace(/0*$/g, ""), s2 = arg2.toFixed(8).replace(/0*$/g, "")
         try { m += s1.split(".")[1].length } catch (e) { }
