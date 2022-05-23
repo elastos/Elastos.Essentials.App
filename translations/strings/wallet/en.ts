@@ -975,7 +975,6 @@ export const en = {
     'Wallis And Futuna Islands': 'Wallis And Futuna Islands',
     'Western Sahara': 'Western Sahara',
     'Yemen': 'Yemen',
-    'Yugoslavia': 'Yugoslavia',
     'Zambia': 'Zambia',
     'Zimbabwe': 'Zimbabwe',
     'the Republic of Abkhazia': 'the Republic of Abkhazia',
