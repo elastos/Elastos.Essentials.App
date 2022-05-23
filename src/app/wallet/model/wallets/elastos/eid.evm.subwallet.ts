@@ -1,6 +1,8 @@
 import { Logger } from "src/app/logger";
+import { EssentialsWeb3Provider } from "src/app/model/essentialsweb3provider";
 import { Util } from "src/app/model/util";
 import { Config } from "src/app/wallet/config/Config";
+import Web3 from "web3";
 import { StandardCoinName } from "../../coin";
 import { BridgeProvider } from "../../earn/bridgeprovider";
 import { EarnProvider } from "../../earn/earnprovider";
@@ -9,12 +11,21 @@ import { NetworkWallet } from "../networkwallet";
 import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 
 export class EidSubWallet extends ElastosEVMSubWallet {
+  /** Web3 variables to call smart contracts.
+   * The Eid uses different rpc url, so do not use StandardEVMSubWallet::getWeb3()
+   */
+  protected web3: Web3;
+
   constructor(networkWallet: NetworkWallet) {
     super(networkWallet, StandardCoinName.ETHDID);
   }
 
   public async initialize() {
     await super.initialize();
+
+    // Get Web3 and the ERC20 contract ready
+    const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl);
+    this.web3 = new Web3(trinityWeb3Provider);
 
     this.withdrawContractAddress = Config.ETHDID_WITHDRAW_ADDRESS.toLowerCase();
     this.publishdidContractAddress = Config.ETHDID_CONTRACT_ADDRESS.toLowerCase();
@@ -43,19 +54,15 @@ export class EidSubWallet extends ElastosEVMSubWallet {
       }
     ];
 
-    const publishDIDContract = new (this.getWeb3().eth.Contract)(contractAbi as any, Config.ETHDID_CONTRACT_ADDRESS);
+    const publishDIDContract = new (this.web3.eth.Contract)(contractAbi as any, Config.ETHDID_CONTRACT_ADDRESS);
     const gasPrice = await this.getGasPrice();
     const method = publishDIDContract.methods.publishDidTransaction(payload);
     let gasLimit = 200000;
     try {
       // Estimate gas cost
       let gasLimitTemp = await method.estimateGas();
-      //'* 2.5': Make sure the gaslimit is big enough.
-      // NOTE: we used to use 1.5 like metamask but because the EID chain estimateGas() currently
-      // returns underpriced values, 1.5 makes transactions fails. 2.5 is "ok" for now, waiting for the
-      // blockchain team to fix this. See https://app.clickup.com/t/2fr39u9 to know status updates.
-      // When estimateGas() is fixed, this can be reverted to 1.5 here.
-      gasLimit = Util.ceil(gasLimitTemp * 2.5);
+      //'* 1.5': Make sure the gaslimit is big enough.
+      gasLimit = Util.ceil(gasLimitTemp * 1.5);
     } catch (error) {
       Logger.warn('wallet', 'estimateGas error:', error);
     }
