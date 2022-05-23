@@ -97,7 +97,7 @@ export const fr = {
         /********** Registration **********/
         'registration': 'Enregistrement',
         'register-candidate': 'Enregistrement candidat',
-        'update-candidate':  'MàJ Infos Candidat',
+        'update-candidate': 'MàJ Infos Candidat',
         'update-member': 'Update Member Info',
         'register': 'Enregistrer',
         'unregister': 'Désenregistrer',
@@ -379,7 +379,7 @@ export const fr = {
         "248": "Seychelles",
         "232": "Sierra Leone",
         "65": "Singapore",
-        "421": "Slovakia(Slovak Republic)",
+        "421": "Slovakia",
         "386": "Slovenia",
         "677": "Solomon Islands",
         "252": "Somalia",

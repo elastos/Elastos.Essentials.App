@@ -380,7 +380,7 @@ export const en = {
         "248": "Seychelles",
         "232": "Sierra Leone",
         "65": "Singapore",
-        "421": "Slovakia(Slovak Republic)",
+        "421": "Slovakia",
         "386": "Slovenia",
         "677": "Solomon Islands",
         "252": "Somalia",
