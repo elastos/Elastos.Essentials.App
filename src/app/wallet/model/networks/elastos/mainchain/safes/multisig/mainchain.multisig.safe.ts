@@ -1,5 +1,4 @@
 import { MainchainSubWallet as SDKMainchainSubWallet, MasterWallet as SDKMasterWallet, WalletErrorException } from "@elastosfoundation/wallet-js-sdk";
-import BIP32Factory from 'bip32';
 import moment from "moment";
 import { md5 } from "src/app/helpers/crypto/md5";
 import { Logger } from "src/app/logger";
@@ -14,15 +13,12 @@ import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { OfflineTransactionsService } from "src/app/wallet/services/offlinetransactions.service";
 import { PubKeyInfo } from "src/app/wallet/services/spv.service";
-import * as ecc from 'tiny-secp256k1';
 import { Native } from "../../../../../../services/native.service";
 import { Safe } from "../../../../../safes/safe";
 import { AnyNetworkWallet } from '../../../../base/networkwallets/networkwallet';
 import { AnySubWallet } from "../../../../base/subwallets/subwallet";
 import { WalletJSSDKHelper } from '../../../wallet.jssdk.helper';
 import { ElastosMainChainSafe } from '../mainchain.safe';
-
-const bip32 = BIP32Factory(ecc);
 
 export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe, MultiSigSafe {
   private sdkMasterWallet: SDKMasterWallet = null;

@@ -1,4 +1,5 @@
 import type { WalletStorage } from "@elastosfoundation/wallet-js-sdk";
+import { LocalStoreInfo } from "@elastosfoundation/wallet-js-sdk/typings/persistence/LocalStore";
 import { JSONObject } from "@elastosfoundation/wallet-js-sdk/typings/types";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 
@@ -8,8 +9,12 @@ import { GlobalStorageService } from "src/app/services/global.storage.service";
 export class JSSDKLocalStorage implements WalletStorage {
   constructor(private signedInDID: string) { }
 
-  public loadStore(masterWalletID: string): Promise<JSONObject> {
+  loadStore(masterWalletID: string): Promise<LocalStoreInfo> {
     return GlobalStorageService.instance.getSetting(this.signedInDID, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID, null);
+  }
+
+  removeStore(masterWalletID: string): Promise<void> {
+    return GlobalStorageService.instance.deleteSetting(this.signedInDID, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID);
   }
 
   public async saveStore(masterWalletID: string, j: JSONObject): Promise<void> {
