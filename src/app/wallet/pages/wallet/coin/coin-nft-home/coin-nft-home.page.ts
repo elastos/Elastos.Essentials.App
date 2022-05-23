@@ -55,6 +55,7 @@ export class CoinNFTHomePage implements OnInit {
     //public masterWalletInfo = '';
     public networkWallet: AnyNetworkWallet = null;
     public nft: NFT = null;
+    public assets: NFTAsset[] = [];
     //public subWallet: SubWallet = null;
     //public subWalletId: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
@@ -155,10 +156,16 @@ export class CoinNFTHomePage implements OnInit {
         this.startUpdateInterval();
     }
 
-    async refreshAssets() {
+    refreshAssets() {
         this.refreshingAssets = true;
-        await this.networkWallet.refreshNFTAssets(this.nft);
-        this.refreshingAssets = false;
+        this.networkWallet.refreshNFTAssets(this.nft).subscribe({
+            next: () => {
+                this.assets = this.nft.getAssets();
+            },
+            complete: () => {
+                this.refreshingAssets = false;
+            }
+        });
     }
 
     public getDisplayableAssetName(asset: NFTAsset): string {
@@ -193,61 +200,6 @@ export class CoinNFTHomePage implements OnInit {
             return "assets/wallet/coins/eth-purple.svg";
     }
 
-    /* async getAllTx() {
-        let allTransactions = await this.subWallet.getTransactions(this.start);
-        if (!allTransactions) {
-          Logger.log('wallet', "Can not get transaction");
-          return;
-        }
-        this.transactionsLoaded = true;
-        Logger.log('wallet', "Got all transactions: ", allTransactions);
-
-        const transactions = allTransactions.txhistory;
-        this.MaxCount = allTransactions.totalcount;
-
-        if (this.start >= this.MaxCount) {
-            this.isShowMore = false;
-            return;
-        } else {
-            this.isShowMore = true;
-        }
-        if (!transactions) {
-            this.isShowMore = false;
-            return;
-        }
-
-        if (this.MaxCount <= 20) {
-            this.isShowMore = false;
-        }
-
-        for (let transaction of transactions) {
-            const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
-            if (!transactionInfo) {
-                continue;
-            }
-
-            if (this.chainIsETHSC() || this.chainIsERC20()) {
-                transactionInfo.amount = transactionInfo.amount.isInteger() ? transactionInfo.amount.integerValue() : transactionInfo.amount;
-            }
-
-            // Check if transaction was made today and increment our counter if so.
-            this.countAsDailyTransactionIfNeeded(transactionInfo.timestamp);
-
-            this.transferList.push(transactionInfo);
-        }
-    } */
-
-    /* onItem(item) {
-        this.native.go(
-            '/wallet/coin-tx-info',
-            {
-                masterWalletId: this.masterWallet.id,
-                subWalletId: this.subWalletId,
-                transactionInfo: item
-            }
-        );
-    } */
-
     receiveNFT() {
         this.native.go('/wallet/coin-receive');
     }
@@ -276,18 +228,6 @@ export class CoinNFTHomePage implements OnInit {
         }
     } */
 
-    /* clickMore() {
-        this.restartUpdateInterval();
-        this.pageNo++;
-        this.start = this.pageNo * 20;
-        if (this.start >= this.MaxCount) {
-            this.isShowMore = false;
-            return;
-        }
-        this.isShowMore = true;
-        this.getAllTx();
-    } */
-
     async doRefresh(event): Promise<void> {
         if (!this.uiService.returnedUser) {
             this.uiService.returnedUser = true;
@@ -305,68 +245,12 @@ export class CoinNFTHomePage implements OnInit {
         return this.transferList.findIndex(e => e.txid === txid);
     }
 
-    /*  async checkUTXOCount() {
-         // Check UTXOs only for SPV based coins.
-         if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
-           // TODO
-             // if (this.walletManager.needToCheckUTXOCountForConsolidation) {
-             //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.subWalletId, 0, 1, '');
-             //     Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
-             //     const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
-             //     if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
-             //         let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt', UTXOsCount, 'wallet.text-consolidate-note')
-             //         if (ret) {
-             //             await this.createConsolidateTransaction();
-             //         }
-             //     }
-
-             //     this.walletManager.needToCheckUTXOCountForConsolidation = false;
-             // }
-         }
-     } */
-
     countAsDailyTransactionIfNeeded(timestamp: number) {
         const today = moment(new Date());
         if (today.startOf('day').isSame(moment(timestamp).startOf('day'))) {
             this.todaysTransactions++;
         }
     }
-
-    /* getSubwalletClass() {
-        switch (this.subWallet.id) {
-            case 'ELA':
-                return 'black-card card-row';
-            case 'IDChain':
-                return 'blue-card card-row';
-            case 'ETHSC':
-                return 'gray-card card-row';
-        }
-        if (this.subWallet instanceof ERC20SubWallet) {
-            return 'gray2-card card-row';
-        }
-
-        return 'black-card card-row';
-    }
-
-    getSubwalletTitle() {
-        return this.subWallet.getFriendlyName();
-    }
-
-    coinCanBeTransferred() {
-        // Standard ELA coins can be transferred; ERC20 coins can't
-        if (this.subWallet instanceof StandardSubWallet)
-            return true;
-        else
-            return false;
-    }*/
-
-    /**
-     * Whether the active subwallet can display currency amounts or not. For example for now,
-     * we are not able to display USD value for ERC20 tokens.
-     */
-    /*canDisplayCurrency(): boolean {
-        return !(this.subWallet instanceof ERC20SubWallet);
-    } */
 
     async closeRefreshBox(): Promise<void> {
         this.uiService.returnedUser = true;

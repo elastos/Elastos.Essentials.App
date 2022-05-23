@@ -36,8 +36,8 @@
         <ion-row *ngIf="refreshingAssets" class="refreshing-spinner">
             <ion-spinner></ion-spinner>
         </ion-row>
-        <div *ngIf="!refreshingAssets && nft.getAssets()">
-            <ion-row class="item-row ripple ion-activatable" *ngFor="let asset of nft.getAssets()"
+        <div *ngIf="assets.length > 0">
+            <ion-row class="item-row ripple ion-activatable" *ngFor="let asset of assets"
                 (click)="showAssetDetails(asset)">
                 <ion-col size="3" class="left-col">
                     <div class="asset-icon">
@@ -53,7 +53,7 @@
                 </ion-col>
             </ion-row>
         </div>
-        <div class="empty-list" *ngIf="!refreshingAssets && !nft.getAssets()">
+        <div class="empty-list" *ngIf="!refreshingAssets && assets.length === 0">
             <img src="assets/wallet/icons/warning.svg" />
             <h2>{{ 'wallet.nft-collectibles-cant-be-listed' | translate }}</h2>
         </div>

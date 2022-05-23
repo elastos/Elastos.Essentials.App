@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
@@ -19,6 +19,7 @@ import { TransactionProvider } from '../../../tx-providers/transaction.provider'
 import { WalletSortType } from '../../../walletaccount';
 import { EVMNetwork } from '../../evms/evm.network';
 import { NFT, NFTType, SerializedNFT } from '../../evms/nfts/nft';
+import { NFTAsset } from '../../evms/nfts/nftasset';
 import { MainCoinEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../network';
 import { AnySubWallet, SerializedSubWallet } from '../subwallets/subwallet';
@@ -484,22 +485,46 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      *
      * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
-    public async refreshNFTAssets(nft: NFT): Promise<void> {
+    public refreshNFTAssets(nft: NFT): Observable<NFTAsset[]> {
         Logger.log("wallet", "Refreshing NFT assets", nft);
 
-        let accountAddress = await this.getMainEvmSubWallet().getCurrentReceiverAddress();
-        if (nft.type == NFTType.ERC721) {
-            let assets = await ERC721Service.instance.fetchAllAssets(accountAddress, nft.contractAddress);
-            nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
-        }
-        else if (nft.type == NFTType.ERC1155) {
-            let assets = await ERC1155Service.instance.fetchAllAssets(accountAddress, nft.contractAddress);
-            nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
-        }
-        nft.balance = nft.assets ? nft.assets.length : -1; // -1 to remember that we can't know the real number of assets
+        let subject = new BehaviorSubject<NFTAsset[]>([]);
+        let observable = subject.asObservable();
 
-        // Update wallet's NFT with the new data
-        return this.updateNFT(nft);
+        void (async () => {
+            let accountAddress = await this.getMainEvmSubWallet().getCurrentReceiverAddress();
+            if (nft.type == NFTType.ERC721) {
+                ERC721Service.instance.fetchAllAssets(accountAddress, nft.contractAddress).subscribe(event => {
+                    console.log("fetchAllAssets callback")
+                    nft.assets = event.assets; // can be null (couldn't fetch assets) or empty (0 assets)
+                    subject.next(nft.assets);
+                }, null, () => {
+                    // Complete
+                    nft.balance = nft.assets ? nft.assets.length : -1; // -1 to remember that we can't know the real number of assets
+
+                    // Update wallet's NFT with the new data
+                    void this.updateNFT(nft);
+
+                    subject.complete();
+                });
+            }
+            else if (nft.type == NFTType.ERC1155) {
+                let assets = await ERC1155Service.instance.fetchAllAssets(accountAddress, nft.contractAddress);
+                nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
+
+                // Complete
+                nft.balance = nft.assets ? nft.assets.length : -1; // -1 to remember that we can't know the real number of assets
+
+                // Update wallet's NFT with the new data
+                void this.updateNFT(nft);
+
+                // TODO: improve like for ERC721 - useless now
+                subject.next(nft.assets || []);
+                subject.complete();
+            }
+        })();
+
+        return observable;
     }
 
     /**
