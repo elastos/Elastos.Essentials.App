@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { AddWalletComponent } from './components/add-wallet/add-wallet.component';
 import { CurrencySelectPage } from './currency-select/currency-select.page';
 import { CustomNetworksPage } from './custom-networks/custom-networks.page';
 import { EditCustomNetworkPage } from './edit-custom-network/edit-custom-network.page';
@@ -17,7 +18,9 @@ import { SettingsPage } from './settings.page';
         ManageNetworksPage,
         CurrencySelectPage,
         CustomNetworksPage,
-        EditCustomNetworkPage],
+        EditCustomNetworkPage,
+        AddWalletComponent
+    ],
     imports: [
         SharedComponentsModule,
         CommonModule,

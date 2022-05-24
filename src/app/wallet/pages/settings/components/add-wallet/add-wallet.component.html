@@ -1,0 +1,32 @@
+<ion-content>
+  <ion-grid class="ion-text-center" [class.dark-container]="theme.darkMode">
+    <!-- Header -->
+    <ion-row class="header" *ngIf="canGoBack()" (click)="goBack()">
+      <img class="arrow-icon"
+        [src]="!theme.darkMode ? 'assets/wallet/icons/right-arrow.svg' : 'assets/wallet/icons/darkmode/right-arrow.svg'">
+      <div class="title">{{ selectedMenu.title }}</div>
+    </ion-row>
+
+    <ion-row class="header" *ngIf="!canGoBack()">
+      <div class="title">{{ selectedMenu.title }}</div>
+    </ion-row>
+
+    <!-- Sub-menus -->
+    <ion-row>
+      <ion-col size="12">
+        <ion-row *ngFor="let menuItem of selectedMenu.items" (click)="onMenuItemClicked(menuItem)"
+          class="menu-item ripple ion-activatable" [@enterTrigger]="'fadeIn'">
+          <ion-col size="11" class="label">
+            <img *ngIf="menuItem.icon" [src]="menuItem.icon" />
+            {{ menuItem.title }}
+          </ion-col>
+          <ion-col size="1" class="arrow">
+            <img class="arrow-icon"
+              [src]="!theme.darkMode ? 'assets/wallet/icons/right-arrow.svg' : 'assets/wallet/icons/darkmode/right-arrow.svg'">
+          </ion-col>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

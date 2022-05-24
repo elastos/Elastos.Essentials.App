@@ -50,18 +50,18 @@ export class LedgerConnectPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     // public device = null;
-    public device = {id:'DE:F1:60:10:C6:9D'};
+    public device = { id: 'DE:F1:60:10:C6:9D' };
     public transport: Transport = null;
     public connecting = false;
 
     // public addresses = {};
     // for test
     public addresses: LedgerAccount[] = [
-        {'type':LeddgerAccountType.EVM, 'address': '0xC7Da7De66A8Bc2D84E17D14906128179D015cE3A', 'pathIndex': 0, 'path': "44'/60'/0'/0/0", 'publicKey': ''},
-        {'type':LeddgerAccountType.EVM, 'address': '0x60583B3465D2e886C1C2E4304af7eC784660F95a', 'pathIndex': 1, 'path': "44'/60'/0'/0/1", 'publicKey': ''},
-        {'type':LeddgerAccountType.BTC, 'address': 'tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6', 'pathIndex': 0, 'path': "84'/1'/0'/0/0", 'publicKey': ''},
-        {'type':LeddgerAccountType.ELA, 'address': 'EUhGr6QnPemfWszK2BjtrsFWprHFStpX4x', 'pathIndex': 0, 'path': "44'/0'/0'/0/0", 'publicKey': ''},
-        {'type':LeddgerAccountType.ELA, 'address': 'EdxJmBY1aCuH83nshnErQeKykX2FAWixxu', 'pathIndex': 0, 'path': "44'/2305'/0'/0/0", 'publicKey': '046954ec013d77e4c247964e905d78736c76a4e32a7479eba3f55f1d933b70034d548cd19c93f222118c6a4a80bc2bf4f21099919776e225ed7727e76bc880be86'}
+        { 'type': LeddgerAccountType.EVM, 'address': '0xC7Da7De66A8Bc2D84E17D14906128179D015cE3A', 'pathIndex': 0, 'path': "44'/60'/0'/0/0", 'publicKey': '' },
+        { 'type': LeddgerAccountType.EVM, 'address': '0x60583B3465D2e886C1C2E4304af7eC784660F95a', 'pathIndex': 1, 'path': "44'/60'/0'/0/1", 'publicKey': '' },
+        { 'type': LeddgerAccountType.BTC, 'address': 'tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6', 'pathIndex': 0, 'path': "84'/1'/0'/0/0", 'publicKey': '' },
+        { 'type': LeddgerAccountType.ELA, 'address': 'EUhGr6QnPemfWszK2BjtrsFWprHFStpX4x', 'pathIndex': 0, 'path': "44'/0'/0'/0/0", 'publicKey': '' },
+        { 'type': LeddgerAccountType.ELA, 'address': 'EdxJmBY1aCuH83nshnErQeKykX2FAWixxu', 'pathIndex': 0, 'path': "44'/2305'/0'/0/0", 'publicKey': '046954ec013d77e4c247964e905d78736c76a4e32a7479eba3f55f1d933b70034d548cd19c93f222118c6a4a80bc2bf4f21099919776e225ed7727e76bc880be86' }
     ]
 
     private masterWalletId = '';
@@ -69,7 +69,7 @@ export class LedgerConnectPage implements OnInit {
     private walletAddress = '';
     private addressPath = '';
     private addressPathIndex = 0;
-    private type : LeddgerAccountType = null;
+    private type: LeddgerAccountType = null;
     private publicKey = '';
 
     public errorMessge = '';
@@ -82,7 +82,7 @@ export class LedgerConnectPage implements OnInit {
         private translate: TranslateService,
         public theme: GlobalThemeService,
         public walletService: WalletService,
-    ) {}
+    ) { }
 
     ngOnInit() {
         const navigation = this.router.getCurrentNavigation();
@@ -170,12 +170,12 @@ export class LedgerConnectPage implements OnInit {
         return Object.values(this.addresses);
     }
 
-    async selectAddress(account:LedgerAccount) {
+    async selectAddress(account: LedgerAccount) {
         Logger.log(TAG, 'select address:', account)
         await this.createLedgerWallet(account);
     }
 
-    async createLedgerWallet(account:LedgerAccount) {
+    async createLedgerWallet(account: LedgerAccount) {
         this.masterWalletId = this.walletService.createMasterWalletID();
 
         this.getDefaultLedgerWalletName();
@@ -200,7 +200,7 @@ export class LedgerConnectPage implements OnInit {
         }
     }
     async importWalletWithLedger(payPassword: string) {
-        Logger.log('wallet', 'create ledger wallt');
+        Logger.log('wallet', 'create ledger wallet');
         await this.walletService.newLedgerWallet(
             this.masterWalletId,
             this.walletName,

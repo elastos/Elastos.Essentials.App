@@ -77,7 +77,7 @@ export const zh = {
                 *****************/
                 "settings-title": "设置",
                 "settings-general": "通用",
-                "settings-add-wallet": "添加钱包",
+                "settings-add-wallet": "Add Wallet",
                 "settings-add-wallet-subtitle": "创建或导入新钱包",
                 "settings-my-wallets": "我的钱包",
                 "settings-my-wallets-subtitle": "管理、备份钱包及相关设置",

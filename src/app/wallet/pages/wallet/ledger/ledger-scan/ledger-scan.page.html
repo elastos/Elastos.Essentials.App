@@ -1,31 +1,43 @@
-<ion-content class="lightmode" [class.darkmode]="theme.darkMode">
+<ion-content [class.dark-container]="theme.darkMode">
     <app-titlebar></app-titlebar>
 
-    <ion-content>
+    <ion-grid class="content">
+        <!-- Header -->
         <ion-row class="searching-row">
-            <div class='title'>{{ 'wallet.ledger-searching' | translate }}</div>
+            <ion-col size="7">
+                <div class='title'>{{ 'wallet.available-devices' | translate }}</div>
+            </ion-col>
+            <ion-col size="5" (click)="doScan()" *ngIf="!scanning" class="scan-again">
+                <img
+                    [src]="!theme.darkMode ? 'assets/wallet/icons/reload.svg' : 'assets/wallet/icons/darkmode/reload.svg'" />
+                Scan again
+            </ion-col>
         </ion-row>
-        <ion-row class="note-row">
-            <div class='search-prompt'>{{ 'wallet.ledger-note' | translate }}</div>
-        </ion-row>
-        <ion-row *ngIf="scanning">
+
+        <!-- Scan in progress -->
+        <ion-row *ngIf="scanning" class="scanning">
             <ion-spinner name="crescent"></ion-spinner>
             <ion-label>{{ 'wallet.ledger-scanning' | translate }}</ion-label>
         </ion-row>
+
+        <!-- Error: No bluetooth -->
         <ion-row class="retry-row" *ngIf="!isBluetoothEnable">
             <div> Bluetooth is not enable, pls open it first</div>
             <ion-button color="primary" (click)="showBluetoothSetting()">
                 <ion-label> Open bluetooth setting </ion-label>
             </ion-button>
         </ion-row>
-        <ion-row class="note-row" *ngIf="device" (click)="connectLedger()">
-            <ion-label>{{ device.name }}</ion-label>
-        </ion-row>
-        <ion-row *ngIf="!scanning">
-            <ion-button color="primary" (click)="doScan()">
-                <ion-label> Scan </ion-label>
-            </ion-button>
+
+        <!-- Found device -->
+        <ion-row class="device-row ripple ion-activatable" *ngIf="device" (click)="connectLedger()">
+            <ion-col size="11">
+                <ion-label>{{ device.name }}</ion-label>
+            </ion-col>
+            <ion-col size="1">
+                <img src="assets/wallet/icons/right-arrow-alt.svg" />
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
 
-    </ion-content>
+    </ion-grid>
 </ion-content>

@@ -77,7 +77,7 @@ export const it = {
         *****************/
         'settings-title': 'Impostazioni',
         "settings-general": "Generale",
-        "settings-add-wallet": "Nuovo portafoglio",
+        "settings-add-wallet": "Add Wallet",
         "settings-add-wallet-subtitle": "Crea o importa un nuovo portafoglio",
         "settings-my-wallets": "I miei portafogli",
         "settings-my-wallets-subtitle": "Esegui il backup dei tuoi portafogli e accedi alle loro impostazioni",

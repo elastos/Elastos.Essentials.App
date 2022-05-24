@@ -78,7 +78,7 @@ export const fr = {
         *****************/
         "settings-title": "Paramètres",
         "settings-general": "Général",
-        "settings-add-wallet": "Nouveau portefeuille",
+        "settings-add-wallet": "Ajouter un portefeuille",
         "settings-add-wallet-subtitle": "Créer ou importer un portefeuille",
         "settings-my-wallets": "Mes portefeuilles",
         "settings-my-wallets-subtitle": "Sauvegardez vos portefeuilles et accédez à leurs paramètres",

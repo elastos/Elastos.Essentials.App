@@ -21,10 +21,23 @@
  */
 
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Native } from '../../services/native.service';
+import { AddWalletComponent } from './components/add-wallet/add-wallet.component';
+
+type Action = () => Promise<void>;
+
+type SettingsEntry = {
+    routeOrAction: string | Action;
+    title: string;
+    subtitle: string;
+    icon: string;
+    iconDarkmode: string;
+    type: string
+}
 
 @Component({
     selector: 'app-settings',
@@ -43,9 +56,9 @@ export class SettingsPage implements OnInit {
     public walletInfo = {};
     public password = "";
     public available = 0;
-    public settings = [
+    public settings: SettingsEntry[] = [
         {
-            route: "/wallet/launcher",
+            routeOrAction: () => this.addWallet(),
             title: this.translate.instant("wallet.settings-add-wallet"),
             subtitle: this.translate.instant("wallet.settings-add-wallet-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
@@ -53,7 +66,7 @@ export class SettingsPage implements OnInit {
             type: 'launcher'
         },
         {
-            route: "/wallet/wallet-manager",
+            routeOrAction: "/wallet/wallet-manager",
             title: this.translate.instant("wallet.settings-my-wallets"),
             subtitle: this.translate.instant("wallet.settings-my-wallets-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
@@ -61,7 +74,7 @@ export class SettingsPage implements OnInit {
             type: 'wallet-manager'
         },
         {
-            route: "/wallet/settings/currency-select",
+            routeOrAction: "/wallet/settings/currency-select",
             title: this.translate.instant("wallet.settings-currency"),
             subtitle: this.translate.instant("wallet.settings-currency-subtitle"),
             icon: '/assets/wallet/settings/currency.svg',
@@ -69,7 +82,7 @@ export class SettingsPage implements OnInit {
             type: 'currency-select'
         },
         {
-            route: "/wallet/settings/manage-networks",
+            routeOrAction: "/wallet/settings/manage-networks",
             title: this.translate.instant("wallet.settings-manage-networks"),
             subtitle: this.translate.instant("wallet.settings-manage-networks-subtitle"),
             icon: '/assets/wallet/settings/custom-networks.svg',
@@ -81,7 +94,8 @@ export class SettingsPage implements OnInit {
     constructor(
         public theme: GlobalThemeService,
         private translate: TranslateService,
-        private native: Native
+        private native: Native,
+        private modalCtrl: ModalController
     ) {
     }
 
@@ -92,7 +106,32 @@ export class SettingsPage implements OnInit {
         this.titleBar.setTitle(this.translate.instant("wallet.settings-title"));
     }
 
-    go(item) {
-        item.type === 'launcher' ? this.native.go(item.route, { from: 'settings' }) : this.native.go(item.route);
+    public go(item: SettingsEntry) {
+        if (typeof item.routeOrAction === "string") {
+            if (item.type === 'launcher')
+                this.native.go(item.routeOrAction, { from: 'settings' })
+            else
+                this.native.go(item.routeOrAction);
+        }
+        else {
+            void item.routeOrAction();
+        }
+    }
+
+    private async addWallet(): Promise<void> {
+        const modal = await this.modalCtrl.create({
+            component: AddWalletComponent,
+            componentProps: {
+                networkKey: "elastos"
+            },
+            backdropDismiss: true, // Closeable
+            cssClass: !this.theme.darkMode ? "switch-network-component switch-network-component-base" : 'switch-network-component-dark switch-network-component-base'
+        });
+
+        void modal.onDidDismiss().then((response: { data?: boolean }) => {
+            //resolve(!!response.data); // true or undefined
+        });
+
+        void modal.present();
     }
 }

@@ -55,7 +55,7 @@ export class LedgerScanPage implements OnInit {
         public native: Native,
         private translate: TranslateService,
         public theme: GlobalThemeService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.bleManager = new BLECentralPluginBridge();
@@ -72,7 +72,7 @@ export class LedgerScanPage implements OnInit {
     connectLedger() {
         Logger.log(TAG, "connectLedger:", this.device);
         if (this.device) {
-            this.native.go("/wallet/ledger/connect", {device: this.device});
+            this.native.go("/wallet/ledger/connect", { device: this.device });
         }
     }
 
@@ -82,12 +82,19 @@ export class LedgerScanPage implements OnInit {
 
     async doScan() {
         this.errorMessge = null;
-        this.device = null;
+        //this.device = null;
+        this.device = {
+            name: "Ledger Nano X 123123",
+            id: '',
+            rssi: 0,
+            advertising: undefined,
+            state: 'disconnected'
+        } // TMP
 
         this.isBluetoothEnable = await this.bleManager.isEnabled();
         if (this.isBluetoothEnable) {
             this.scanning = true;
-            let ret = await this.searchLedgerDevice(15000).catch ( (e) => {
+            let ret = await this.searchLedgerDevice(15000).catch((e) => {
                 Logger.warn(TAG, ' searchLedgerDevice exception ', e)
             })
             this.scanning = false;
@@ -102,33 +109,33 @@ export class LedgerScanPage implements OnInit {
 
     searchLedgerDevice(listenTimeout?: number): Promise<BLECentralPlugin.PeripheralData> {
         return new Promise((resolve, reject) => {
-          let found = false;
-          const sub = BluetoothTransport.listen({
-            next: (e) => {
-              found = true;
-              if (sub) sub.unsubscribe();
-              if (listenTimeoutId) clearTimeout(listenTimeoutId);
-              resolve(e.descriptor);
-            },
-            error: (e) => {
-              Logger.warn(TAG, "listen error ", e);
-              if (sub) sub.unsubscribe();
-              if (listenTimeoutId) clearTimeout(listenTimeoutId);
-              reject(e);
-            },
-            complete: () => {
-              if (listenTimeoutId) clearTimeout(listenTimeoutId);
-              if (!found) {
-                reject(new TransportError(this.ErrorMessage_NoDeviceFound, "NoDeviceFound"));
-              }
-            },
-          });
-          const listenTimeoutId = listenTimeout
-            ? setTimeout(() => {
-                sub.unsubscribe();
-                reject(new TransportError(this.ErrorMessage_ListenTimeout, "ListenTimeout"));
-              }, listenTimeout)
-            : null;
+            let found = false;
+            const sub = BluetoothTransport.listen({
+                next: (e) => {
+                    found = true;
+                    if (sub) sub.unsubscribe();
+                    if (listenTimeoutId) clearTimeout(listenTimeoutId);
+                    resolve(e.descriptor);
+                },
+                error: (e) => {
+                    Logger.warn(TAG, "listen error ", e);
+                    if (sub) sub.unsubscribe();
+                    if (listenTimeoutId) clearTimeout(listenTimeoutId);
+                    reject(e);
+                },
+                complete: () => {
+                    if (listenTimeoutId) clearTimeout(listenTimeoutId);
+                    if (!found) {
+                        reject(new TransportError(this.ErrorMessage_NoDeviceFound, "NoDeviceFound"));
+                    }
+                },
+            });
+            const listenTimeoutId = listenTimeout
+                ? setTimeout(() => {
+                    sub.unsubscribe();
+                    reject(new TransportError(this.ErrorMessage_ListenTimeout, "ListenTimeout"));
+                }, listenTimeout)
+                : null;
         });
     }
 }

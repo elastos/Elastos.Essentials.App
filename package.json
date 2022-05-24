@@ -111,6 +111,7 @@
     "random-int": "^3.0.0",
     "rxjs": "^7.5.2",
     "smart-buffer": "^4.2.0",
+    "stack-typescript": "^1.0.4",
     "stream-browserify": "3.0.0",
     "svelte": "3.37.0",
     "tiny-invariant": "^1.1.0",
