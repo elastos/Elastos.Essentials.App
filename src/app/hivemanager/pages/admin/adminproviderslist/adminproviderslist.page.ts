@@ -1,13 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgZone} from '@angular/core';
-
-import { AdminService } from '../../../services/admin.service';
-import { ManagedProvider } from '../../../model/managedprovider';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { App } from "src/app/model/app.enum";
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
+import { ManagedProvider } from '../../../model/managedprovider';
+import { AdminService } from '../../../services/admin.service';
+
 
 type StorageProvider = {
   name: string,
@@ -46,7 +45,7 @@ export class AdminProvidersListPage implements OnInit {
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon: TitleBarIcon) => {
       switch (icon.key) {
         case "adminproviderslist-addprovider":
-          this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/adminprovideredit");
+          void this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/adminprovideredit");
           break;
       }
     });
@@ -58,7 +57,7 @@ export class AdminProvidersListPage implements OnInit {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
-  async editProvider(provider: ManagedProvider) {
-    this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/adminprovideredit", { state: { providerId: provider.id } });
+  editProvider(provider: ManagedProvider) {
+    void this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/adminprovideredit", { state: { providerId: provider.id } });
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, Subject, Subscription } from "rxjs";
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
@@ -8,16 +8,21 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { rawImageToBase64DataUrl } from '../helpers/picture.helpers';
 import { runDelayed } from '../helpers/sleep.helper';
 import { JSONObject } from '../model/json';
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
-const availableHideNodeProviders: string[] = [
-  "https://hive1.trinity-tech.io",
-  "https://hive2.trinity-tech.io",
-  "https://hive3.trinity-tech.io"
-];
+const availableHiveNodeProviders = {
+    MainNet: ["https://hive1.trinity-tech.io",
+              "https://hive2.trinity-tech.io",
+              "https://hive3.trinity-tech.io"
+             ],
+    TestNet: ["https://hive-testnet1.trinity-tech.io",
+              "https://hive-testnet2.trinity-tech.io"
+             ]
+};
 
 export enum VaultLinkStatusCheckState {
   NOT_CHECKED, // Not checked yet
@@ -51,10 +56,14 @@ export class GlobalHiveService extends GlobalService {
   public vaultStatus = new BehaviorSubject<VaultLinkStatus>(null); // Latest known vault status for active user
   private clientCreationSubject: Subject<HivePlugin.Client> = null;
 
+  private subscription: Subscription = null;
+  private availableHiveNodeProviders: string[] = null;
+
   constructor(
     public translate: TranslateService,
     private globalIntentService: GlobalIntentService,
-    private didSessions: GlobalDIDSessionsService
+    private didSessions: GlobalDIDSessionsService,
+    private globalNetworksService: GlobalNetworksService,
   ) {
     super();
 
@@ -63,6 +72,19 @@ export class GlobalHiveService extends GlobalService {
 
   init() {
     GlobalServiceManager.getInstance().registerService(this);
+
+    this.subscription = this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
+        switch (template) {
+            case MAINNET_TEMPLATE:
+                this.availableHiveNodeProviders = availableHiveNodeProviders.MainNet;
+                break;
+            case TESTNET_TEMPLATE:
+                this.availableHiveNodeProviders = availableHiveNodeProviders.TestNet;
+                break;
+            default:
+                this.availableHiveNodeProviders = [];
+        }
+      })
   }
 
   stop() {
@@ -75,6 +97,11 @@ export class GlobalHiveService extends GlobalService {
     }
 
     this.vaultStatus.next(this.vaultLinkStatus);
+
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = null;
+    }
   }
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
@@ -106,7 +133,7 @@ export class GlobalHiveService extends GlobalService {
   }
 
   public async getHiveClient(): Promise<HivePlugin.Client> {
-    Logger.log("GlobalHiveService", "Getting hive client");
+    // Logger.log("GlobalHiveService", "Getting hive client");
 
     // Create only one client instance overall
     if (this.client.value) {
@@ -158,20 +185,20 @@ export class GlobalHiveService extends GlobalService {
    * vault provider for new users.
    */
   private getRandomQuickStartHiveNodeAddress(): string {
-    let randomIndex = Math.floor(Math.random() * availableHideNodeProviders.length);
-    return availableHideNodeProviders[randomIndex];
+    let randomIndex = Math.floor(Math.random() * this.availableHiveNodeProviders.length);
+    return this.availableHiveNodeProviders[randomIndex];
   }
 
   public addRandomHiveToDIDDocument(localDIDDocument: DIDPlugin.DIDDocument, storePassword: string): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise(async (resolve, reject) => {
-      let randomHideNodeAddress = this.getRandomQuickStartHiveNodeAddress();
-      if (randomHideNodeAddress) {
-        let service = didManager.ServiceBuilder.createService('#hivevault', 'HiveVault', randomHideNodeAddress);
+      let randomHiveNodeAddress = this.getRandomQuickStartHiveNodeAddress();
+      if (randomHiveNodeAddress) {
+        let service = didManager.ServiceBuilder.createService('#hivevault', 'HiveVault', randomHiveNodeAddress);
         await this.removeHiveVaultServiceFromDIDDocument(localDIDDocument, storePassword);
         localDIDDocument.addService(service, storePassword, () => {
           // Success
-          resolve(randomHideNodeAddress);
+          resolve(randomHiveNodeAddress);
         }, (err) => {
           reject(err);
         });
@@ -385,7 +412,7 @@ export class GlobalHiveService extends GlobalService {
       return publicationStarted;
     }
     catch (err) {
-      Logger.error('HiveManager', "Failed to create vault on the vault provider for DID " + signedInDID + " at address " + vaultAddress, err);
+      Logger.error('GlobalHiveService', "Failed to create vault on the vault provider for DID " + signedInDID + " at address " + vaultAddress, err);
       return false;
     }
   }

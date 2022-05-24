@@ -254,7 +254,11 @@ export class PrepareDIDPage {
   private async appendHiveInfoToDID(): Promise<string> {
     Logger.log("didsessions", "Adding hive vault information to local DID");
     let didDocument = await this.identityService.getCreatedDIDDocument();
-    this.vaultAddress = await this.globalHiveService.addRandomHiveToDIDDocument(didDocument, this.identityService.identityBeingCreated.storePass);
+    try {
+        this.vaultAddress = await this.globalHiveService.addRandomHiveToDIDDocument(didDocument, this.identityService.identityBeingCreated.storePass);
+    } catch (e) {
+        Logger.warn("didsessions", "Do not support hive");
+    }
     return this.vaultAddress;
   }
 

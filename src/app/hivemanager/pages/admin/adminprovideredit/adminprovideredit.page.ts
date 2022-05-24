@@ -1,16 +1,15 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AlertController } from '@ionic/angular';
-import { NgZone} from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdminService } from '../../../services/admin.service';
-import { ManagedProvider } from '../../../model/managedprovider';
-import { PopupService } from '../../../services/popup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ManagedProvider } from '../../../model/managedprovider';
+import { AdminService } from '../../../services/admin.service';
+import { PopupService } from '../../../services/popup.service';
 
 type StorageProvider = {
   name: string,
@@ -49,7 +48,7 @@ export class AdminProviderEditPage implements OnInit {
     if(navigation.extras.state) {
       const providerId = navigation.extras.state.providerId;
       Logger.log('HiveManager', 'Provider id', providerId);
-      this.init(providerId);
+      void this.init(providerId);
     }
 
 /*     this.providerId = navParams.get('providerId');
@@ -64,7 +63,7 @@ export class AdminProviderEditPage implements OnInit {
     this.managedProvider = await this.adminService.getManagedProviderById(id);
     this.adminDIDMnemonic = await this.adminService.getAdminDIDMnemonic(this.managedProvider);
     this.oldName = this.managedProvider.name;
-    this.retrieveAdminDIDPublicationStatus();
+    await this.retrieveAdminDIDPublicationStatus();
     Logger.log('HiveManager', "Editing provider:", this.managedProvider);
   }
 
@@ -77,7 +76,7 @@ export class AdminProviderEditPage implements OnInit {
 
   ionViewWillLeave() {
     if (this.popup.alert) {
-      this.popup.alertCtrl.dismiss();
+      void this.popup.alertCtrl.dismiss();
       this.popup.alert = null;
     }
   }
@@ -110,15 +109,15 @@ export class AdminProviderEditPage implements OnInit {
     }
   }
 
-  publishAdminDID() {
-    this.adminService.publishAdminDID(this.managedProvider);
+  async publishAdminDID() {
+    await this.adminService.publishAdminDID(this.managedProvider);
   }
 
   async deleteVaultProvider() {
     let confirmed = await this.popup.ionicConfirm("hivemanager.alert.delete-title", "hivemanager.alert.delete-msg", "hivemanager.alert.delete", "hivemanager.alert.cancel");
     if (confirmed) {
       await this.adminService.deleteProvider(this.managedProvider);
-      this.globalNav.navigateBack();
+      void this.globalNav.navigateBack();
     }
   }
 
