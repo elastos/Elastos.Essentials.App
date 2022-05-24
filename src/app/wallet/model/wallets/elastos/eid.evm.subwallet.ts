@@ -55,10 +55,12 @@ export class EidSubWallet extends ElastosEVMSubWallet {
     ];
 
     const publishDIDContract = new (this.web3.eth.Contract)(contractAbi as any, Config.ETHDID_CONTRACT_ADDRESS);
-    const gasPrice = await this.getGasPrice();
     const method = publishDIDContract.methods.publishDidTransaction(payload);
+    let gasPrice = '1000000000'; // 1 GWEI
     let gasLimit = 200000;
     try {
+      gasPrice = await this.web3.eth.getGasPrice();
+
       // Estimate gas cost
       let gasLimitTemp = await method.estimateGas();
       //'* 1.5': Make sure the gaslimit is big enough.
