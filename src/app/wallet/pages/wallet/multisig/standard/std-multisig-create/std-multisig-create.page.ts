@@ -36,7 +36,7 @@ export class StandardMultiSigCreatePage implements OnInit {
 
     constructor(
         public translate: TranslateService,
-        private theme: GlobalThemeService,
+        public theme: GlobalThemeService,
         private native: Native,
         private walletService: WalletService,
         private walletUIService: WalletUIService,
