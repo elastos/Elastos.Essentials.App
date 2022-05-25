@@ -24,7 +24,8 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NetworkChooserComponent, NetworkChooserComponentOptions } from '../components/network-chooser/network-chooser.component';
+import { NetworkChooserComponent, NetworkChooserComponentOptions, NetworkChooserFilter } from '../components/network-chooser/network-chooser.component';
+import { AnyNetwork } from '../model/networks/network';
 import { WalletNetworkService } from './network.service';
 import { WalletService } from './wallet.service';
 
@@ -51,7 +52,7 @@ export class WalletNetworkUIService {
     async chooseActiveNetwork(): Promise<boolean> {
         let options: NetworkChooserComponentOptions = {
             currentNetwork: this.networkService.activeNetwork.value,
-            masterWallet: this.walletService.getActiveMasterWallet()
+            //masterWallet: this.walletService.getActiveMasterWallet()
         };
 
         let modal = await this.modalCtrl.create({
@@ -69,6 +70,37 @@ export class WalletNetworkUIService {
                 }
                 else
                     resolve(false);
+            });
+            void modal.present();
+        });
+    }
+
+    /**
+    * Lets the user choose a network from the list but without further action.
+    * The selected network does not become the active network.
+    */
+    async pickNetwork(filter?: NetworkChooserFilter): Promise<AnyNetwork> {
+        let options: NetworkChooserComponentOptions = {
+            currentNetwork: this.walletService.activeNetworkWallet.value.network,
+            filter,
+            showActiveNetwork: false
+        };
+
+        let modal = await this.modalCtrl.create({
+            component: NetworkChooserComponent,
+            componentProps: options,
+        });
+
+        return new Promise(resolve => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
+            modal.onWillDismiss().then(async (params) => {
+                Logger.log('wallet', 'Network selected:', params);
+                if (params.data && params.data.selectedNetworkKey) {
+                    let network = this.networkService.getNetworkByKey(params.data.selectedNetworkKey);
+                    resolve(network);
+                }
+                else
+                    resolve(null);
             });
             void modal.present();
         });

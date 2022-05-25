@@ -34,7 +34,7 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { AESEncrypt } from '../../helpers/crypto/aes';
 import { CoinType } from '../model/coin';
-import { LeddgerAccountType } from '../model/ledger.types';
+import { LedgerAccountType } from '../model/ledger.types';
 import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
 import { ElastosMainChainWalletNetworkOptions, LedgerAccountOptions, PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
@@ -556,9 +556,10 @@ export class WalletService {
         masterId: string,
         walletName: string,
         deviceID: string,
-        accountID: string,
-        accountPath: string,
-        accountType = LeddgerAccountType.EVM,
+        accountID: string, // Wallet address
+        accountIndex: number, // Derivation index - not used for now, forward compatibility in case we stop using the accountPath directly later
+        accountPath: string, // Derivation path
+        accountType: LedgerAccountType,
         publicKey = ''
     ): Promise<MasterWallet> {
         Logger.log('wallet', "Importing new legder master wallet");

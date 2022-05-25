@@ -4,7 +4,7 @@ import { ELATransactionSigner } from "src/app/helpers/ela/ela.transaction.signer
 import Ela from "src/app/helpers/ledger/hw-app-ela/Ela";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
-import { LeddgerAccountType } from "src/app/wallet/model/ledger.types";
+import { LedgerAccountType } from "src/app/wallet/model/ledger.types";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { LedgerSafe } from "src/app/wallet/model/safes/ledger.safe";
 import { SignTransactionResult } from "src/app/wallet/model/safes/safe.types";
@@ -29,7 +29,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
   initELAAddress() {
     if (this.masterWallet.accountOptions) {
       let elaOption = this.masterWallet.accountOptions.find((option) => {
-        return option.type === LeddgerAccountType.ELA
+        return option.type === LedgerAccountType.ELA
       })
       if (elaOption) {
         this.elaAddress = elaOption.accountID;

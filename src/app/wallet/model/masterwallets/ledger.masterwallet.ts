@@ -1,5 +1,5 @@
 import { Logger } from "src/app/logger";
-import { LeddgerAccountType } from "../ledger.types";
+import { LedgerAccountType } from "../ledger.types";
 import { AnyNetwork } from "../networks/network";
 import { MasterWallet } from "./masterwallet";
 import { ElastosMainChainWalletNetworkOptions, LedgerAccountOptions, SerializedLedgerMasterWallet } from "./wallet.types";
@@ -57,16 +57,16 @@ export class LedgerMasterWallet extends MasterWallet {
   }
 
   public supportsNetwork(network: AnyNetwork): boolean {
-    let accountType: LeddgerAccountType;
+    let accountType: LedgerAccountType;
     switch (network.key.toLowerCase()) {
       case 'elastos':
-        accountType = LeddgerAccountType.ELA
+        accountType = LedgerAccountType.ELA
         break;
       case 'btc':
-        accountType = LeddgerAccountType.BTC
+        accountType = LedgerAccountType.BTC
         break;
       default:
-        accountType = LeddgerAccountType.EVM
+        accountType = LedgerAccountType.EVM
         break;
     }
 
@@ -77,6 +77,6 @@ export class LedgerMasterWallet extends MasterWallet {
   }
 
   public async destroy() {
-      // Do nothing
+    // Do nothing
   }
 }

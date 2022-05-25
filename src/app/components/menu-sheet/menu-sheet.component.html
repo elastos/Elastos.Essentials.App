@@ -1,5 +1,5 @@
 <ion-content>
-  <ion-grid class="ion-text-center" [class.dark-container]="theme.darkMode">
+  <ion-grid class="ion-text-center" [class.dark-container]="theme.darkMode" *ngIf="selectedMenu">
     <!-- Header -->
     <ion-row class="header" *ngIf="canGoBack()" (click)="goBack()">
       <img class="arrow-icon"

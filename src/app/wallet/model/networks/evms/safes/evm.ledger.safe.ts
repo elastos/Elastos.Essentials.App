@@ -6,7 +6,7 @@ import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
 import Web3 from "web3";
-import { LeddgerAccountType } from "../../../ledger.types";
+import { LedgerAccountType } from "../../../ledger.types";
 import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import { LedgerSafe } from "../../../safes/ledger.safe";
 import { SignTransactionResult } from "../../../safes/safe.types";
@@ -32,7 +32,7 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
     initEVMAddress() {
         if (this.masterWallet.accountOptions) {
             let evmOption = this.masterWallet.accountOptions.find((option) => {
-                return option.type === LeddgerAccountType.EVM
+                return option.type === LedgerAccountType.EVM
             })
             if (evmOption) {
                 this.evmAddress = evmOption.accountID;

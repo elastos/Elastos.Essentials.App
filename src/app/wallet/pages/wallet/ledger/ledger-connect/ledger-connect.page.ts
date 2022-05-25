@@ -24,19 +24,25 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import Transport from '@ledgerhq/hw-transport';
 import { TranslateService } from '@ngx-translate/core';
+import { MenuSheetMenu } from 'src/app/components/menu-sheet/menu-sheet.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { LeddgerAccountType } from 'src/app/wallet/model/ledger.types';
-import { BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.ledgerapp';
-import { ELALedgerApp } from 'src/app/wallet/model/ledger/ela.ledgerapp';
-import { EVMLedgerApp } from 'src/app/wallet/model/ledger/evm.ledgerapp';
-import { LedgerAccount } from 'src/app/wallet/model/ledger/ledgerapp';
+import { LedgerAccountType } from 'src/app/wallet/model/ledger.types';
+import { BTCAddressType, BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.ledgerapp';
+import { ELAAddressType, ELALedgerApp } from 'src/app/wallet/model/ledger/ela.ledgerapp';
+import { EVMAddressType, EVMLedgerApp } from 'src/app/wallet/model/ledger/evm.ledgerapp';
+import { AnyLedgerAccount, LedgerAddressType, LedgerApp } from 'src/app/wallet/model/ledger/ledgerapp';
+import { BTCNetworkBase } from 'src/app/wallet/model/networks/btc/network/btc.base.network';
+import { ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elastos/mainchain/network/elastos.networks';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { Native } from 'src/app/wallet/services/native.service';
+import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 
 const TAG = 'ledger';
@@ -49,27 +55,32 @@ const TAG = 'ledger';
 export class LedgerConnectPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    // public device = null;
-    public device = { id: 'DE:F1:60:10:C6:9D' };
+    public device = null;
+    //public device = { id: 'DE:F1:60:10:C6:9D' };
     public transport: Transport = null;
     public connecting = false;
+    public connectError = false;
 
-    // public addresses = {};
+    public addresses: AnyLedgerAccount[] = [];
     // for test
-    public addresses: LedgerAccount[] = [
-        { 'type': LeddgerAccountType.EVM, 'address': '0xC7Da7De66A8Bc2D84E17D14906128179D015cE3A', 'pathIndex': 0, 'path': "44'/60'/0'/0/0", 'publicKey': '' },
-        { 'type': LeddgerAccountType.EVM, 'address': '0x60583B3465D2e886C1C2E4304af7eC784660F95a', 'pathIndex': 1, 'path': "44'/60'/0'/0/1", 'publicKey': '' },
-        { 'type': LeddgerAccountType.BTC, 'address': 'tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6', 'pathIndex': 0, 'path': "84'/1'/0'/0/0", 'publicKey': '' },
-        { 'type': LeddgerAccountType.ELA, 'address': 'EUhGr6QnPemfWszK2BjtrsFWprHFStpX4x', 'pathIndex': 0, 'path': "44'/0'/0'/0/0", 'publicKey': '' },
-        { 'type': LeddgerAccountType.ELA, 'address': 'EdxJmBY1aCuH83nshnErQeKykX2FAWixxu', 'pathIndex': 0, 'path': "44'/2305'/0'/0/0", 'publicKey': '046954ec013d77e4c247964e905d78736c76a4e32a7479eba3f55f1d933b70034d548cd19c93f222118c6a4a80bc2bf4f21099919776e225ed7727e76bc880be86' }
-    ]
+    /* public addresses: AnyLedgerAccount[] = [
+        { 'type': LedgerAccountType.EVM, addressType: null, 'address': '0xC7Da7De66A8Bc2D84E17D14906128179D015cE3A', 'pathIndex': 0, 'path': "44'/60'/0'/0/0", 'publicKey': '' },
+        { 'type': LedgerAccountType.EVM, addressType: null, 'address': '0x60583B3465D2e886C1C2E4304af7eC784660F95a', 'pathIndex': 1, 'path': "44'/60'/0'/0/1", 'publicKey': '' },
+        { 'type': LedgerAccountType.BTC, addressType: "segwit", 'address': 'tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6', 'pathIndex': 0, 'path': "84'/1'/0'/0/0", 'publicKey': '' },
+        { 'type': LedgerAccountType.ELA, addressType: null, 'address': 'EUhGr6QnPemfWszK2BjtrsFWprHFStpX4x', 'pathIndex': 0, 'path': "44'/0'/0'/0/0", 'publicKey': '' },
+        { 'type': LedgerAccountType.ELA, addressType: null, 'address': 'EdxJmBY1aCuH83nshnErQeKykX2FAWixxu', 'pathIndex': 0, 'path': "44'/2305'/0'/0/0", 'publicKey': '046954ec013d77e4c247964e905d78736c76a4e32a7479eba3f55f1d933b70034d548cd19c93f222118c6a4a80bc2bf4f21099919776e225ed7727e76bc880be86' }
+    ]; */
 
     private masterWalletId = '';
+    public selectedNetwork: AnyNetwork = null;
     private walletName = '';
     private walletAddress = '';
+    public shouldPickAddressType = false;
+    private ledgerApp: LedgerApp<any> = null;
+    private addressType: LedgerAddressType = null;
     private addressPath = '';
-    private addressPathIndex = 0;
-    private type: LeddgerAccountType = null;
+    private accountIndex = -1;
+    private type: LedgerAccountType = null;
     private publicKey = '';
 
     public errorMessge = '';
@@ -81,6 +92,8 @@ export class LedgerConnectPage implements OnInit {
         private authService: AuthService,
         private translate: TranslateService,
         public theme: GlobalThemeService,
+        private walletNetworkUIService: WalletNetworkUIService,
+        private globalNativeService: GlobalNativeService,
         public walletService: WalletService,
     ) { }
 
@@ -105,6 +118,8 @@ export class LedgerConnectPage implements OnInit {
         // let publicKey = '0458ccacbd847e326a131f29425b6dd03153baa7b5847bfb4b82c0903f2ca377bd665f044e17b52b37c5caeaadd8491cf6bed7b8baf0a5c74ed60f301cec10fa9b';
         // let address = ELAAddressHelper.getAddressFromPublicKey(publicKey);
         // Logger.warn('wallet', 'address:', address)
+
+        void this.doConnect();
     }
 
     ionViewWillLeave() {
@@ -113,7 +128,7 @@ export class LedgerConnectPage implements OnInit {
         }
     }
 
-    async doConnect() {
+    private async doConnect() {
         try {
             if (this.transport) {
                 await this.transport.close();
@@ -126,25 +141,27 @@ export class LedgerConnectPage implements OnInit {
 
         }
         catch (e) {
-            Logger.error('ledger', ' initLedger error:', e)
+            Logger.error('ledger', ' initLedger error:', e);
+            this.connectError = true;
         }
         this.connecting = false;
     }
 
     async getEVMAddresses(accountsLength = 5, accountsOffset = 0) {
         try {
-            let ethApp = new EVMLedgerApp(this.transport);
-            this.addresses = await ethApp.getAddresses(accountsOffset, accountsLength, false);
+            this.addresses = await this.ledgerApp.getAddresses(this.addressType as EVMAddressType, accountsOffset, accountsLength, false);
             Logger.log(TAG, "EVM Addresses :", this.addresses);
         } catch (e) {
             Logger.warn(TAG, 'getAddresses exception:', e)
         }
     }
 
-    async getBTCAddress(accountsLength = 2, accountsOffset = 0) {
+    async getBTCAddress(accountsLength = 5, accountsOffset = 0) {
         try {
-            let btcApp = new BTCLedgerApp(this.transport);
-            this.addresses = await btcApp.getAddresses(accountsOffset, accountsLength, false);
+            this.addresses = await this.ledgerApp.getAddresses(this.addressType as BTCAddressType, accountsOffset, accountsLength, false);
+            /* this.addresses = [ // DEBUG ONLT
+                { 'type': LedgerAccountType.BTC, addressType: "segwit", 'address': 'tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6', 'pathIndex': 0, 'path': "84'/1'/0'/0/0", 'publicKey': '' }
+            ]; */
 
             Logger.log(TAG, "BTC Addresses :", this.addresses);
         } catch (e) {
@@ -152,35 +169,108 @@ export class LedgerConnectPage implements OnInit {
         }
     }
 
-    async getELAAddress(accountsLength = 2, accountsOffset = 0) {
+    async getELAAddress(accountsLength = 5, accountsOffset = 0) {
         try {
-            const elaApp = new ELALedgerApp(this.transport);
-            this.addresses = await elaApp.getAddresses(accountsOffset, accountsLength, false);
+            this.addresses = await this.ledgerApp.getAddresses(this.addressType as ELAAddressType, accountsOffset, accountsLength, false);
             Logger.warn(TAG, "ELA addresses :", this.addresses);
         } catch (err) {
             Logger.warn('ledger', "getAddress exception :", err);
         }
     }
 
+    private async refreshAddresses() {
+        this.addresses = await this.ledgerApp.getAddresses(this.addressType, 0, 5, false);
+    }
+
     hasGotAddress() {
-        return Object.keys(this.addresses).length > 0;
+        return this.addresses.length > 0;
     }
 
     showAddresses() {
-        return Object.values(this.addresses);
+        return this.addresses;
     }
 
-    async selectAddress(account: LedgerAccount) {
-        Logger.log(TAG, 'select address:', account)
+    public async pickNetwork() {
+        this.selectedNetwork = await this.walletNetworkUIService.pickNetwork();
+
+        // Prepare the address type selection, or auto-select it.
+        switch (this.selectedNetwork.key) {
+            case BTCNetworkBase.networkKey:
+                this.shouldPickAddressType = true;
+                this.addressType = BTCAddressType.SEGWIT;
+                this.ledgerApp = new BTCLedgerApp(this.transport);
+                break;
+            case ElastosMainChainNetworkBase.networkKey:
+                this.shouldPickAddressType = false;
+                this.addressType = ELAAddressType.M2305;
+                this.ledgerApp = new ELALedgerApp(this.transport);
+                break;
+            default: // Consider all other networks as EVMs - auto select the only type
+                this.shouldPickAddressType = false;
+                this.addressType = EVMAddressType.EVM_STANDARD;
+                this.ledgerApp = new EVMLedgerApp(this.transport);
+        }
+
+        void this.refreshAddresses();
+    }
+
+    private buildBTCAddressTypeMenuItems(): MenuSheetMenu[] {
+        return [
+            {
+                title: "Segwit",
+                routeOrAction: () => {
+                    this.addressType = BTCAddressType.SEGWIT;
+                    void this.refreshAddresses();
+                }
+            },
+            {
+                title: "Legacy",
+                routeOrAction: () => {
+                    this.addressType = BTCAddressType.LEGACY;
+                    void this.refreshAddresses();
+                }
+            }
+        ]
+    }
+
+    /**
+     * Choose an address type, according to the selected network
+     */
+    public pickAddressType() {
+        let menuItems: MenuSheetMenu[] = null;
+        switch (this.selectedNetwork.key) {
+            case BTCNetworkBase.networkKey:
+                menuItems = this.buildBTCAddressTypeMenuItems();
+                break;
+            default:  // We should not try to pick anything, addres type should be already set when picking the network
+                return;
+        }
+
+        let menu: MenuSheetMenu = {
+            title: "Choose Address Type",
+            items: menuItems
+        };
+
+        void this.globalNativeService.showGenericBottomSheetMenuChooser(menu);
+    }
+
+    public getDisplayableAddressType(): string {
+        switch (this.addressType) {
+            case BTCAddressType.SEGWIT: return "Segwit"
+        }
+    }
+
+    public async selectAddress(account: AnyLedgerAccount) {
+        Logger.log(TAG, 'Selected account/address:', account)
         await this.createLedgerWallet(account);
     }
 
-    async createLedgerWallet(account: LedgerAccount) {
+    private async createLedgerWallet(account: AnyLedgerAccount) {
         this.masterWalletId = this.walletService.createMasterWalletID();
 
         this.getDefaultLedgerWalletName();
         this.walletAddress = account.address;
-        this.addressPathIndex = account.pathIndex;
+        this.accountIndex = account.pathIndex;
         this.addressPath = account.path;
         this.type = account.type;
         this.publicKey = account.publicKey;
@@ -199,13 +289,15 @@ export class LedgerConnectPage implements OnInit {
             await this.native.hideLoading();
         }
     }
-    async importWalletWithLedger(payPassword: string) {
+
+    private async importWalletWithLedger(payPassword: string) {
         Logger.log('wallet', 'create ledger wallet');
         await this.walletService.newLedgerWallet(
             this.masterWalletId,
             this.walletName,
             this.device.id,
             this.walletAddress,
+            this.accountIndex,
             this.addressPath,
             this.type,
             this.publicKey
@@ -220,7 +312,7 @@ export class LedgerConnectPage implements OnInit {
         this.native.toast_trans('wallet.import-connect-ledger-sucess');
     }
 
-    getDefaultLedgerWalletName() {
+    private getDefaultLedgerWalletName() {
         let index = 1;
         let nameValid = false;
         let walletName = ''

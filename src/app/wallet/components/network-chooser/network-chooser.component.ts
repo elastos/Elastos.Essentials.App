@@ -6,16 +6,30 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from '../../model/coin';
-import { MasterWallet } from '../../model/masterwallets/masterwallet';
 import { AnyNetwork } from '../../model/networks/network';
 import { CurrencyService } from '../../services/currency.service';
 import { Native } from '../../services/native.service';
 import { WalletNetworkService } from '../../services/network.service';
 import { UiService } from '../../services/ui.service';
 
+/**
+ * Filter method to return only some networks to show in the chooser.
+ */
+export type NetworkChooserFilter = (networks: AnyNetwork) => boolean;
+
 export type NetworkChooserComponentOptions = {
   currentNetwork: AnyNetwork;
-  masterWallet: MasterWallet;
+  //masterWallet: MasterWallet;
+  /**
+   * Optional filter. Only returned networks will show in the list.
+   * Return true to keep the network in the list, false to hide it.
+   */
+  filter?: NetworkChooserFilter;
+  /**
+   * If true, the active network is pre-selected in the list. Otherwise, all networks are displayed
+   * in the same way.
+   */
+  showActiveNetwork?: boolean;
 }
 
 @Component({
@@ -48,10 +62,16 @@ export class NetworkChooserComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.options = this.navParams.data as NetworkChooserComponentOptions;
 
-    this.currentNetwork = this.options.currentNetwork;
+    if (this.options.showActiveNetwork)
+      this.currentNetwork = this.options.currentNetwork;
+    else
+      this.currentNetwork = null;
 
     this.netListSubscription = this.networkService.networksList.subscribe(_ => {
-      this.networksToShowInList = this.networkService.getDisplayableNetworks();
+      let networks = this.networkService.getDisplayableNetworks();
+      this.networksToShowInList = networks.filter(n => {
+        return (!this.options.filter || this.options.filter(n));
+      });
     });
   }
 

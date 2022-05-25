@@ -17,7 +17,7 @@ import { WalletService } from '../../services/wallet.service';
 /**
  * Filter method to return only some master wallets to show in the chooser.
  */
-export type ChooserWalletFilter = (wallets: AnyNetworkWallet) => boolean;
+export type WalletChooserFilter = (wallets: AnyNetworkWallet) => boolean;
 
 export type WalletChooserComponentOptions = {
   currentNetworkWallet: AnyNetworkWallet;
@@ -25,7 +25,7 @@ export type WalletChooserComponentOptions = {
    * Optional filter. Only returned wallets will show in the list.
    * Return true to keep the walelt in the list, false to hide it.
    */
-  filter?: ChooserWalletFilter;
+  filter?: WalletChooserFilter;
   /**
    * If true, the active wallet is pre-selected in the list. Otherwise, all wallets are displayed
    * in the same way.

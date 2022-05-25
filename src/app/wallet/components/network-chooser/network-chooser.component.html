@@ -15,7 +15,8 @@
                 </ion-col>
             </ion-row>
             <ion-row *ngFor="let network of networksToShowInList" class="network-row"
-                [class.selected-network]="network.key === currentNetwork.key" (click)="selectNetwork(network)">
+                [class.selected-network]="currentNetwork && network.key === currentNetwork.key"
+                (click)="selectNetwork(network)">
                 <ion-col size="10" class="left-col">
                     <img [src]="network.logo">
                     <h1>{{ network.name }}</h1>

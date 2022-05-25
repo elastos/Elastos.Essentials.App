@@ -281,7 +281,25 @@ export const zh = {
                 "ledger-account-select": "请选择 Ledger 账号",
                 "ledger-connecting": "正在搜索 Ledger 钱包",
                 "ledger-prompt": "请开启 Ledger nanox，保持解锁，并打开 {{appname}} 应用程序",
+
+                /*******************
+                * Ledger scan page *
+                ********************/
+                "ledger-scan": "Ledger Search",
+                "available-devices": "Available devices",
+                "scan-again": "Scan again",
+                "ledger-scanning": "Searching devices",
+
+                /**********************
+                * Ledger connect page *
+                ***********************/
+                "ledger-connect": "Ledger Account",
+                "ledger-device": "Device",
+                "ledger-connect-error": "Failed to connect to the device",
+                "ledger-connecting-to-device": "Connecting to device",
                 "ledger-addresses": "地址",
+                "address-type": "Address type",
+                "pick-network": "Pick network",
 
                 /********************************************** Wallet Settings Screens ***********************************************/
 

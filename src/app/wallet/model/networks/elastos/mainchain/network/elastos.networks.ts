@@ -14,6 +14,8 @@ import { ElastosMainChainStandardNetworkWallet } from "../networkwallets/standar
 import { ElastosMainChainStandardMultiSigNetworkWallet } from "../networkwallets/standardmultisig/mainchain.networkwallet";
 
 export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<ElastosMainChainWalletNetworkOptions> {
+  public static networkKey: "elastos" = "elastos";
+
   public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
@@ -29,7 +31,7 @@ export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<Ela
 
   public getDefaultWalletNetworkOptions(): ElastosMainChainWalletNetworkOptions {
     return {
-      network: "elastos",
+      network: ElastosMainChainNetworkBase.networkKey,
       singleAddress: true
     }
   }
@@ -41,7 +43,7 @@ export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<Ela
 export class ElastosMainChainMainNetNetwork extends ElastosMainChainNetworkBase {
   constructor() {
     super(
-      "elastos",
+      ElastosMainChainNetworkBase.networkKey,
       "Elastos main chain",
       "assets/wallet/networks/elastos.svg",
       MAINNET_TEMPLATE
@@ -77,7 +79,7 @@ export class ElastosMainChainMainNetNetwork extends ElastosMainChainNetworkBase 
 export class ElastosMainChainTestNetNetwork extends ElastosMainChainNetworkBase {
   constructor() {
     super(
-      "elastos",
+      ElastosMainChainNetworkBase.networkKey,
       "Elastos main chain Testnet",
       "assets/wallet/networks/elastos.svg",
       TESTNET_TEMPLATE

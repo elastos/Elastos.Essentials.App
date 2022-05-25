@@ -6,17 +6,23 @@ import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { LeddgerAccountType } from '../../model/ledger.types';
+import { LedgerAccountType } from '../../model/ledger.types';
 import { BTCLedgerApp } from '../../model/ledger/btc.ledgerapp';
 import { ELALedgerApp } from '../../model/ledger/ela.ledgerapp';
 import { EVMLedgerApp } from '../../model/ledger/evm.ledgerapp';
-import { LedgerAccount } from '../../model/ledger/ledgerapp';
+import { AnyLedgerAccount } from '../../model/ledger/ledgerapp';
 import { LedgerAccountOptions } from '../../model/masterwallets/wallet.types';
 
 export type LedgerGetAddressComponentOptions = {
-    deviceId: string,
-    accounType: LeddgerAccountType;
-  }
+  deviceId: string,
+  accounType: LedgerAccountType;
+}
+
+/**
+ * NOTE: This component is UNUSED for now because we restrict a new ledger wallet to use only a specific
+ * network type and address type. In the future, we could allow network switch and we will need this component
+ * to dynamically prompt info to user, when there is no address for the active network.
+ */
 @Component({
   selector: 'app-ledger-getaddress',
   templateUrl: './ledger-getaddress.component.html',
@@ -27,14 +33,14 @@ export class LedgerGetAddressComponent implements OnInit {
 
   public ledgerDeviceId = null;
   public accounType = null;
-  public transport : BluetoothTransport = null;
+  public transport: BluetoothTransport = null;
   public connecting = true;
   public taskInProgress = false;
 
   public accountsLength = 5;
   public accountsOffset = 0;
 
-  public addresses: LedgerAccount[] = [];
+  public addresses: AnyLedgerAccount[] = [];
 
   public ledgerNanoAppname = '';
 
@@ -70,7 +76,7 @@ export class LedgerGetAddressComponent implements OnInit {
 
   initLedgerAppName() {
     switch (this.accounType) {
-      case LeddgerAccountType.BTC:
+      case LedgerAccountType.BTC:
         let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
         if (network === MAINNET_TEMPLATE) {
           this.ledgerNanoAppname = "Bitcoin"
@@ -78,10 +84,10 @@ export class LedgerGetAddressComponent implements OnInit {
           this.ledgerNanoAppname = "Bitcoin Test"
         }
         break;
-      case LeddgerAccountType.ELA:
+      case LedgerAccountType.ELA:
         this.ledgerNanoAppname = "Elastos"
         break;
-      case LeddgerAccountType.EVM:
+      case LedgerAccountType.EVM:
         this.ledgerNanoAppname = "Ethereum"
         break;
       default:
@@ -93,7 +99,7 @@ export class LedgerGetAddressComponent implements OnInit {
     Logger.log('wallet', 'getEVMAddresses')
     try {
       let ethApp = new EVMLedgerApp(this.transport);
-      this.addresses = await ethApp.getAddresses(accountsOffset, accountsLength, false);
+      this.addresses = await ethApp.getAddresses(null, accountsOffset, accountsLength, false);
       Logger.log('wallet', "EVM Addresses :", this.addresses);
     } catch (e) {
       Logger.warn('wallet', 'getAddresses exception:', e)
@@ -104,7 +110,7 @@ export class LedgerGetAddressComponent implements OnInit {
     Logger.log('wallet', 'getBTCAddresses')
     try {
       let btcApp = new BTCLedgerApp(this.transport);
-      this.addresses = await btcApp.getAddresses(accountsOffset, accountsLength, false);
+      this.addresses = await btcApp.getAddresses(null, accountsOffset, accountsLength, false);
 
       Logger.log('wallet', "BTC Addresses :", this.addresses);
     } catch (e) {
@@ -116,7 +122,7 @@ export class LedgerGetAddressComponent implements OnInit {
     Logger.log('wallet', 'getELAAddresses')
     try {
       const elaApp = new ELALedgerApp(this.transport);
-      this.addresses = await elaApp.getAddresses(accountsOffset, accountsLength, false);
+      this.addresses = await elaApp.getAddresses(null, accountsOffset, accountsLength, false);
       Logger.log('wallet', "ELA addresses :", this.addresses);
     } catch (err) {
       Logger.warn('ledger', "getAddress exception :", err);
@@ -133,29 +139,29 @@ export class LedgerGetAddressComponent implements OnInit {
     try {
       this.taskInProgress = true;
       switch (this.accounType) {
-        case LeddgerAccountType.BTC:
+        case LedgerAccountType.BTC:
           await this.getBTCAddresses(this.accountsLength, this.accountsOffset);
           break;
-        case LeddgerAccountType.ELA:
+        case LedgerAccountType.ELA:
           await this.getELAAddresses(this.accountsLength, this.accountsOffset);
           break;
-        case LeddgerAccountType.EVM:
+        case LedgerAccountType.EVM:
           await this.getEVMAddresses(this.accountsLength, this.accountsOffset);
           break;
       }
     } catch (err) {
-        Logger.log("wallet", "LedgerGetAddressComponent getAddresses error: ", err);
+      Logger.log("wallet", "LedgerGetAddressComponent getAddresses error: ", err);
     }
 
     this.taskInProgress = false;
   }
 
-  selectAddress(account:LedgerAccount) {
+  selectAddress(account: AnyLedgerAccount) {
     Logger.log('wallet', 'select address:', account)
-    let accountOpt: LedgerAccountOptions = {type:account.type, accountID: account.address, accountPath: account.path, publicKey: account.publicKey}
+    let accountOpt: LedgerAccountOptions = { type: account.type, accountID: account.address, accountPath: account.path, publicKey: account.publicKey }
     void this.disconnect();
     void this.modalCtrl.dismiss({
-        account: accountOpt
+      account: accountOpt
     });
   }
 

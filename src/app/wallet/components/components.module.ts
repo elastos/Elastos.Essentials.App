@@ -7,7 +7,6 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { ContactsComponent } from './contacts/contacts.component';
 import { ETHTransactionComponent } from './eth-transaction/eth-transaction.component';
 import { HelpComponent } from './help/help.component';
-import { LedgerGetAddressComponent } from './ledger-getaddress/ledger-getaddress.component';
 import { LedgerSignComponent } from './ledger-sign/ledger-sign.component';
 import { NetworkChooserComponent } from './network-chooser/network-chooser.component';
 import { OptionsComponent } from './options/options.component';
@@ -27,7 +26,6 @@ import { WarningComponent } from './warning/warning.component';
     HelpComponent,
     ContactsComponent,
     ETHTransactionComponent,
-    LedgerGetAddressComponent,
     LedgerSignComponent,
     OptionsComponent,
     WarningComponent,
@@ -54,7 +52,6 @@ import { WarningComponent } from './warning/warning.component';
     ContactsComponent,
     ETHTransactionComponent,
     HelpComponent,
-    LedgerGetAddressComponent,
     LedgerSignComponent,
     NetworkChooserComponent,
     OptionsComponent,

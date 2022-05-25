@@ -15,6 +15,8 @@ import { LedgerBTCNetworkWallet } from "../networkwallets/ledger/ledger.btc.netw
 import { StandardBTCNetworkWallet } from "../networkwallets/standard/standard.btc.networkwallet";
 
 export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
+  public static networkKey: "btc" = "btc";
+
   constructor(
     displayName: string,
     networkTemplate: string,
@@ -22,7 +24,7 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
     swapProviders?: SwapProvider[],
     bridgeProviders?: BridgeProvider[]) {
     super(
-      "btc",
+      BTCNetworkBase.networkKey,
       displayName,
       "assets/wallet/networks/btc.svg",
       networkTemplate,

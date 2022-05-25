@@ -31,7 +31,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
-import { LeddgerAccountType } from 'src/app/wallet/model/ledger.types';
+import { LedgerAccountType } from 'src/app/wallet/model/ledger.types';
 import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
@@ -142,12 +142,12 @@ export class WalletHomePage implements OnInit, OnDestroy {
                 })
             }
             else {
-              if (this.masterWallet.type === WalletType.LEDGER) {
-                if (!this.masterWallet.supportsNetwork(this.networkService.activeNetwork.value)) {
-                  this.noAddressForLedgerWallet = true;
+                if (this.masterWallet.type === WalletType.LEDGER) {
+                    if (!this.masterWallet.supportsNetwork(this.networkService.activeNetwork.value)) {
+                        this.noAddressForLedgerWallet = true;
+                    }
                 }
-              }
-              // Nothing to do, unsupported wallet for the active network
+                // Nothing to do, unsupported wallet for the active network
             }
         });
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
@@ -479,30 +479,30 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     public async getAddressFromLedger() {
-      let accountType: LeddgerAccountType;
-      switch (this.currentNetwork.key.toLowerCase()) {
-        case 'elastos':
-          accountType = LeddgerAccountType.ELA
-          break;
-        case 'btc':
-          accountType = LeddgerAccountType.BTC
-          break;
-        default:
-          accountType = LeddgerAccountType.EVM
-          break;
-      }
-
-      let account = await this.walletUIService.connectLedgerAndGetAddress((this.masterWallet as LedgerMasterWallet).deviceID, accountType);
-      if (account) {
-        (this.masterWallet as LedgerMasterWallet).addAccountOptions(account);
-        void this.masterWallet.save();
-        // create networkwallet and active
-        this.networkWallet = await this.currentNetwork.createNetworkWallet(this.masterWallet);
-
-        if (this.networkWallet) {
-          // Notify that this network wallet is the active one
-          await this.walletManager.setActiveNetworkWallet(this.networkWallet);
+        let accountType: LedgerAccountType;
+        switch (this.currentNetwork.key.toLowerCase()) {
+            case 'elastos':
+                accountType = LedgerAccountType.ELA
+                break;
+            case 'btc':
+                accountType = LedgerAccountType.BTC
+                break;
+            default:
+                accountType = LedgerAccountType.EVM
+                break;
         }
-      }
+
+        let account = await this.walletUIService.connectLedgerAndGetAddress((this.masterWallet as LedgerMasterWallet).deviceID, accountType);
+        if (account) {
+            (this.masterWallet as LedgerMasterWallet).addAccountOptions(account);
+            void this.masterWallet.save();
+            // create networkwallet and active
+            this.networkWallet = await this.currentNetwork.createNetworkWallet(this.masterWallet);
+
+            if (this.networkWallet) {
+                // Notify that this network wallet is the active one
+                await this.walletManager.setActiveNetworkWallet(this.networkWallet);
+            }
+        }
     }
 }

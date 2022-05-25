@@ -1,11 +1,15 @@
 import AppEth from "@ledgerhq/hw-app-eth";
 import Transport from "@ledgerhq/hw-transport";
 import { Logger } from "src/app/logger";
-import { LeddgerAccountType } from "../ledger.types";
-import { LedgerAccount, LedgerApp } from "./ledgerapp";
+import { LedgerAccountType } from "../ledger.types";
+import { AnyLedgerAccount, LedgerApp } from "./ledgerapp";
 
-export class EVMLedgerApp extends LedgerApp {
-  private ethApp : AppEth = null;
+export enum EVMAddressType {
+  EVM_STANDARD = "evm_standard"
+}
+
+export class EVMLedgerApp extends LedgerApp<EVMAddressType> {
+  private ethApp: AppEth = null;
   private paths = ["44'/60'/x'/0/0", "44'/60'/0'/0/x'"];
 
   constructor(protected transport: Transport) {
@@ -14,7 +18,7 @@ export class EVMLedgerApp extends LedgerApp {
     this.ethApp = new AppEth(transport);
   }
 
-  public async getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<LedgerAccount[]> {
+  public async getAddresses(addressType: EVMAddressType, startIndex: number, count: number, internalAddresses: boolean): Promise<AnyLedgerAccount[]> {
     let addresses = [];
     for (let i = startIndex; i < startIndex + count; i++) {
       // const x = Math.floor(i / this.paths.length);
@@ -24,10 +28,10 @@ export class EVMLedgerApp extends LedgerApp {
       const address = await this.ethApp.getAddress(path, false, false);
 
       addresses.push({
-          type: LeddgerAccountType.EVM,
-          address:address.address,
-          pathIndex:i,
-          path
+        type: LedgerAccountType.EVM,
+        address: address.address,
+        pathIndex: i,
+        path
       })
     }
 

@@ -26,8 +26,8 @@ import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { LedgerGetAddressComponent, LedgerGetAddressComponentOptions } from '../components/ledger-getaddress/ledger-getaddress.component';
 import { LedgerSignComponent, LedgerSignComponentOptions } from '../components/ledger-sign/ledger-sign.component';
-import { ChooserWalletFilter, WalletChooserComponent, WalletChooserComponentOptions } from '../components/wallet-chooser/wallet-chooser.component';
-import { LeddgerAccountType } from '../model/ledger.types';
+import { WalletChooserComponent, WalletChooserComponentOptions, WalletChooserFilter } from '../components/wallet-chooser/wallet-chooser.component';
+import { LedgerAccountType } from '../model/ledger.types';
 import { MasterWallet } from '../model/masterwallets/masterwallet';
 import { LedgerAccountOptions } from '../model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
@@ -89,7 +89,7 @@ export class WalletUIService {
      * Lets the user choose a wallet from the list but without further action.
      * The selected wallet does not become the active wallet.
      */
-    async pickWallet(filter?: ChooserWalletFilter): Promise<AnyNetworkWallet> {
+    async pickWallet(filter?: WalletChooserFilter): Promise<AnyNetworkWallet> {
         let options: WalletChooserComponentOptions = {
             currentNetworkWallet: this.walletService.activeNetworkWallet.value,
             filter,
@@ -143,7 +143,7 @@ export class WalletUIService {
         });
     }
 
-    async connectLedgerAndGetAddress(deviceId: string, accounType: LeddgerAccountType): Promise<LedgerAccountOptions> {
+    async connectLedgerAndGetAddress(deviceId: string, accounType: LedgerAccountType): Promise<LedgerAccountOptions> {
         let options: LedgerGetAddressComponentOptions = {
             deviceId: deviceId,
             accounType: accounType

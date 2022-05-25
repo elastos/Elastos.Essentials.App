@@ -24,11 +24,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { MenuSheetMenu } from '../../../components/menu-sheet/menu-sheet.component';
 import { Native } from '../../services/native.service';
-import { AddWalletComponent } from './components/add-wallet/add-wallet.component';
+import { WalletCreationService } from '../../services/walletcreation.service';
 
-type Action = () => Promise<void>;
+type Action = () => Promise<void> | void;
 
 type SettingsEntry = {
     routeOrAction: string | Action;
@@ -95,7 +97,9 @@ export class SettingsPage implements OnInit {
         public theme: GlobalThemeService,
         private translate: TranslateService,
         private native: Native,
-        private modalCtrl: ModalController
+        private walletCreationService: WalletCreationService,
+        private modalCtrl: ModalController,
+        private globalNativeService: GlobalNativeService,
     ) {
     }
 
@@ -118,20 +122,80 @@ export class SettingsPage implements OnInit {
         }
     }
 
-    private async addWallet(): Promise<void> {
-        const modal = await this.modalCtrl.create({
-            component: AddWalletComponent,
-            componentProps: {
-                networkKey: "elastos"
-            },
-            backdropDismiss: true, // Closeable
-            cssClass: !this.theme.darkMode ? "switch-network-component switch-network-component-base" : 'switch-network-component-dark switch-network-component-base'
-        });
+    private addWallet() {
+        let menu: MenuSheetMenu = {
+            title: "Add Wallet",
+            items: [
+                {
+                    title: "Standard Wallet",
+                    items: [
+                        {
+                            title: "New Wallet",
+                            routeOrAction: () => {
+                                this.createStandardWallet();
+                            }
+                        },
+                        {
+                            title: "Import Wallet",
+                            items: [
+                                {
+                                    title: "Mnemonic / Paper key",
+                                    routeOrAction: () => {
+                                        this.importStandardWallet();
+                                    }
+                                },
+                                {
+                                    title: "Private key",
+                                    routeOrAction: () => {
+                                        // TODO: differenciate from mnemonic menu item just above
+                                        this.importStandardWallet();
+                                    }
+                                },
+                                /* TODO {
+                                  title: "Keystore file",
+                                  action: () => { console.log("xxx") }
+                                } */
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "Multi Signature Wallet",
+                    items: [
+                        {
+                            title: "Elastos mainchain",
+                            routeOrAction: "/wallet/multisig/standard/create"
+                        }
+                    ]
+                },
+                {
+                    title: "Connect H/W Wallet",
+                    items: [
+                        {
+                            icon: "assets/wallet/icons/ledger.svg",
+                            title: "Ledger Nano X",
+                            routeOrAction: "/wallet/ledger/scan"
+                        }
+                    ]
+                }
+            ]
+        };
 
-        void modal.onDidDismiss().then((response: { data?: boolean }) => {
-            //resolve(!!response.data); // true or undefined
-        });
+        void this.globalNativeService.showGenericBottomSheetMenuChooser(menu);
+    }
 
-        void modal.present();
+
+    createStandardWallet() {
+        this.walletCreationService.reset();
+        this.walletCreationService.isMulti = false;
+        this.walletCreationService.type = 1; // new
+        this.native.go("/wallet/wallet-create");
+    }
+
+    importStandardWallet() {
+        this.walletCreationService.reset();
+        this.walletCreationService.isMulti = false;
+        this.walletCreationService.type = 2; // import
+        this.native.go("/wallet/wallet-create");
     }
 }

@@ -9,7 +9,7 @@ import { Logger } from "src/app/logger";
 import { Util } from "src/app/model/util";
 import { Config } from "src/app/wallet/config/Config";
 import { BTCOutputData, BTCSignedTransactionResult, BTCTxData, BTCUtxoForLedger } from "src/app/wallet/model/btc.types";
-import { LeddgerAccountType } from "src/app/wallet/model/ledger.types";
+import { LedgerAccountType } from "src/app/wallet/model/ledger.types";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { Safe } from "src/app/wallet/model/safes/safe";
 import { SignTransactionResult } from "src/app/wallet/model/safes/safe.types";
@@ -36,7 +36,7 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
   initAddress() {
     if (this.masterWallet.accountOptions) {
       let option = this.masterWallet.accountOptions.find((option) => {
-        return option.type === LeddgerAccountType.BTC
+        return option.type === LedgerAccountType.BTC
       })
       if (option) {
         this.address = option.accountID;

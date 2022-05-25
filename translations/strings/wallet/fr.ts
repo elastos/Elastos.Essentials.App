@@ -282,7 +282,25 @@ export const fr = {
         "ledger-account-select": "Please select a account from ledger",
         "ledger-connecting": "Searching Ledger Wallet",
         "ledger-prompt": "Please open Ledger Nanox, keep it unlocked, and open the {{appName}} application",
-        "ledger-addresses": "Addresses",
+
+        /*******************
+        * Ledger scan page *
+        ********************/
+        "ledger-scan": "Recherche Ledger",
+        "available-devices": "Appareils disponibles",
+        "scan-again": "Re-scanner",
+        "ledger-scanning": "Recherche en cours",
+
+        /**********************
+        * Ledger connect page *
+        ***********************/
+        "ledger-connect": "Compte Ledger",
+        "ledger-device": "Appareil",
+        "ledger-connect-error": "Impossible de se connecter à l'appareil",
+        "ledger-connecting-to-device": "Connexion en cours",
+        "ledger-addresses": "Adresses",
+        "address-type": "Type d'adresse",
+        "pick-network": "Choisir un réseau",
 
         /********************************************** Wallet Settings Screens ***********************************************/
 
