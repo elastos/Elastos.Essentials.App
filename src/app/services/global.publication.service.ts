@@ -184,16 +184,7 @@ namespace AssistPublishing {
          * Computes the right assist api endpoint according to current active network in settings.
          */
         private async getAssistEndpoint(): Promise<string> {
-            let activeNetworkTemplate: string = null;
-
-            if (!GlobalDIDSessionsService.signedInDIDString) {
-                // No active user? Use mainnet
-                activeNetworkTemplate = MAINNET_TEMPLATE;
-            }
-            else {
-                activeNetworkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
-            }
-
+            let activeNetworkTemplate: string = await this.globalNetworksService.getActiveNetworkTemplate();
             switch (activeNetworkTemplate) {
                 case MAINNET_TEMPLATE:
                     return assistAPIEndpoints.MainNet;
