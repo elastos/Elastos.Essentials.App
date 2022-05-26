@@ -44,6 +44,8 @@ export const it = {
         'join': 'Entra',
         'build': 'Sviluppa',
         'contact': 'Contatta',
+        'new-version-available-notif-title': 'New version is available!',
+        'new-version-available-notif-info': 'A new version of Elastos Essentials ({{ latestVersion }}) is available in your app store, update now to get the latest features and fixes!',
 
         /********** Developer Page **********/
         'developer-options': 'Opzioni sviluppatore',

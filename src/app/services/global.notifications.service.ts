@@ -17,7 +17,7 @@ export type NotificationRequest = {
     /** Detailed message for this notification. */
     message: string;
     /** App that sent notification */
-    app?: App;
+    app: App;
 
     /** Process of deprecating **/
     url?: string;
@@ -96,12 +96,12 @@ export class GlobalNotificationsService extends GlobalService {
                 return 1;
             else
                 return 0;
-            });
+        });
         this.saveNotifications();
 
         Logger.log('Notifications', "Sending notification", notification);
 
-        if(this.notifications.length > notificationsLength) {
+        if (this.notifications.length > notificationsLength) {
             this.newNotifications++;
         }
 
@@ -137,7 +137,7 @@ export class GlobalNotificationsService extends GlobalService {
     }
 
     public setNotificationListener(onNotification: (notification: Notification) => void) {
-        this.notificationsListener.subscribe((notification)=>{
+        this.notificationsListener.subscribe((notification) => {
             onNotification(notification);
         });
     }

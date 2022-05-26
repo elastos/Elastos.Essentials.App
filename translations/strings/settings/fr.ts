@@ -44,6 +44,8 @@ export const fr = {
         'join': 'Nous rejoindre',
         'build': 'Développer',
         'contact': 'Contact',
+        'new-version-available-notif-title': 'Nouvelle version disponible!',
+        'new-version-available-notif-info': 'Une nouvelle version d\'Elastos Essentials ({{ latestVersion }}) est disponible dans votre app store. Mettez à jour pour obtenir les correctifs et nouvelles fonctionnalités!',
 
         /********** Developer Page **********/
         'developer-options': 'Options pour développeurs',

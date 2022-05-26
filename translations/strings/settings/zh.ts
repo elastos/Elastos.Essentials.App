@@ -44,6 +44,8 @@ export const zh = {
           'join': '加入',
           'build': '开发',
           'contact': '联系',
+          'new-version-available-notif-title': 'New version is available!',
+          'new-version-available-notif-info': 'A new version of Elastos Essentials ({{ latestVersion }}) is available in your app store, update now to get the latest features and fixes!',
 
           /********** Developer Page **********/
           'developer-options': '开发者选项',
