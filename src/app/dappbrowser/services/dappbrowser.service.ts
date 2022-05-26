@@ -112,7 +112,6 @@ export class DappBrowserService implements GlobalService {
         private globalStorageService: GlobalStorageService,
         private walletNetworkService: WalletNetworkService,
         private walletService: WalletService,
-        private g: GlobalDIDSessionsService,
         private globalIntentService: GlobalIntentService,
         public globalPopupService: GlobalPopupService,
     ) {
@@ -198,7 +197,7 @@ export class DappBrowserService implements GlobalService {
         return ret;
     }
 
-    private async checkDomain(url: string): Promise<boolean> {
+    private async checkScamUrl(url: string): Promise<boolean> {
         let domain = this.getDomain(url);
         if (this.checkScamDomain(domain)) {
             return await this.showScamWarning(domain);
@@ -210,7 +209,11 @@ export class DappBrowserService implements GlobalService {
      * "browse mode". This allows opening apps inside essentials on android, and in the external browser
      * on ios.
      */
-    public openForBrowseMode(url: string, title?: string, target?: string): Promise<void> {
+    public async openForBrowseMode(url: string, title?: string, target?: string): Promise<void> {
+        if (await this.checkScamUrl(url)) {
+            return;
+        }
+
         if (this.getBrowseMode() == DAppsBrowseMode.IN_APP) {
             // We cano use the "standard" way to open dapps in app.
             return this.open(url, title, target);
@@ -238,7 +241,7 @@ export class DappBrowserService implements GlobalService {
     public async open(url: string, title?: string, target?: string) {
         this.url = url;
 
-        if (await this.checkDomain(url)) {
+        if (await this.checkScamUrl(url)) {
             return;
         }
 
