@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
+import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { GlobalNavService } from './global.nav.service';
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
@@ -35,6 +36,14 @@ export class GlobalIntentService {
 
   public init() {
     Logger.log("Intents", "Global intent service is initializing");
+  }
+
+  /**
+   * Used by DID sessions to tell us when everything else is initialized, so we can
+   * checked if some intents were queued and execute them.
+   */
+  public onPostSignIn() {
+    this.processNextIntentRequest();
   }
 
   // Clear the intent when signout.
@@ -163,6 +172,11 @@ export class GlobalIntentService {
   }
 
   private processNextIntentRequest() {
+    if (!GlobalDIDSessionsService.signedInDIDString) {
+      Logger.log("Intents", "Skipping intent processing because there is no user signed in. Pending intents count:", this.intentsQueue.length);
+      return;
+    }
+
     Logger.log("Intents", "Processing next intent with remaining items in queue:", this.intentsQueue.length);
 
     let nextProcessableIntent = this.findProcessableIntent();
