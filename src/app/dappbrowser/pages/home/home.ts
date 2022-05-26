@@ -112,6 +112,24 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 networks: ["elastos"]
             },
             {
+                icon: '/assets/browser/dapps/meteast.png',
+                title: 'MetEast',
+                description: 'Decentralized NFT marketplace on Elastos ESC, with better liquidity, autonomous governance and friendly interactions.',
+                url: 'https://meteast.io/',
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["elastos"]
+            },
+            {
+                icon: '/assets/browser/dapps/elab.png',
+                title: 'E-Lab',
+                description: 'Cyber Republic community-driven grant program that supports developers wanting to build using Elastos Web3 technology',
+                url: 'https://e-lab.io/',
+                useExternalBrowser: false,
+                walletConnectSupported: true,
+                networks: ["elastos"]
+            },
+            {
                 icon: '/assets/browser/dapps/kycme.png',
                 title: 'KYC-me',
                 description: 'Get DID credentials from your real identity here, to get access to more dApps such as ELAB.',
@@ -254,7 +272,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 walletConnectSupported: true, // Not really, but not needed
                 networks: []
             }, */
-            {
+            /* {
                 icon: '/assets/browser/dapps/cryptoname.png',
                 title: 'Cryptoname',
                 description: 'CryptoName is your passport to the crypto world',
@@ -262,7 +280,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 useExternalBrowser: false,
                 walletConnectSupported: false,
                 networks: ["elastos"]
-            },
+            }, */
             {
                 icon: '/assets/browser/dapps/sushiswap.png',
                 title: 'Sushiswap',
