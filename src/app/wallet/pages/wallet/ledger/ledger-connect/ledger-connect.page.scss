@@ -70,7 +70,8 @@
     }
 }
 
-.account-row {
+.account-row,
+.prompt-row {
     margin: 0;
     display: flex;
     flex-direction: row;
@@ -83,6 +84,10 @@
         font-weight: 500;
         font-size: 14px;
     }
+}
+
+.prompt-row {
+    background: darkgray;
 }
 
 .scanning {

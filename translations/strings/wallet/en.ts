@@ -39,6 +39,7 @@ export const en = {
         "not-a-valid-address": "Not a valid address",
         "transaction-pending": "There is already an on going transaction. Please wait for the transaction to be confirmed.",
         "share-erc20-token": "Check out this Elastos ERC20 Token",
+        "privatekey": "Private Key",
 
         /************
         * Home Page *
@@ -87,6 +88,11 @@ export const en = {
         "settings-custom-networks-subtitle": "Add and edit your custom networks here",
         "settings-manage-networks": "Manage Networks",
         "settings-manage-networks-subtitle": "Show and hide networks, add custom ones",
+        "settings-add-wallet-standard-wallet": "Standard Wallet",
+        "settings-add-wallet-multi-sig-wallet": "Multi Signature Wallet",
+        "settings-add-wallet-hardware-wallet": "Connect H/W Wallet",
+        "settings-add-wallet-new-wallet": "New Wallet",
+        "settings-add-wallet-mnemonic": "Mnemonic / Paper key",
 
         /***********************
         * Select-Currency Page *
@@ -280,15 +286,15 @@ export const en = {
         **********************/
         "ledger-account-select": "Please select a account from ledger",
         "ledger-connecting": "Searching Ledger Wallet",
-        "ledger-prompt": "Please open Ledger Nanox, keep it unlocked, and open the {{appName}} application",
+        "ledger-prompt": "Please open Ledger Nano X, keep it unlocked, and open the {{appname}} application",
 
         /*******************
         * Ledger scan page *
         ********************/
         "ledger-scan": "Ledger Search",
-        "available-devices": "Available devices",
-        "scan-again": "Scan again",
-        "ledger-scanning": "Searching devices",
+        "ledger-scan-available-devices": "Available devices",
+        "ledger-scan-scan-again": "Scan again",
+        "ledger-scan-ledger-scanning": "Searching devices",
 
         /**********************
         * Ledger connect page *
@@ -517,7 +523,7 @@ export const en = {
         'new-standard-wallet': 'New standard wallet',
         'import-standard-wallet': 'Import standard wallet',
         'multi-sig-wallet': 'Multi-sig wallet',
-        'ledger-hardware-wallet': 'Ledger hardware wallet',
+        'ledger-hardware-wallet': 'Ledger Nano X hardware wallet',
 
         /*********************
         * Wallet Create Page *
@@ -563,7 +569,6 @@ export const en = {
         "help:create-password": "The mnemonic passphrase is optional but it gives an additional level of security to your wallet. You can consider it as a custom 13th mnemonic word. Please note that this passphrase can never be recovered if you forget it. Entering a wrong passphrase when restoring your wallet in the future will not generate any error, but will result in a wrong wallet address.",
         "help:import-password": "A mnemonic passphrase is a custom password that's bound to your mnemonic words. If you did not create a mnemonic passphrase when you created your wallet, then please disregard.",
         // "help:mnemonic-password": 'This is an optional password bound to your mnemonic words, to give your wallet extra security. Save it carefully, it is NOT recoverable if lost.',
-        "privatekey": "Private Key",
         "privatekey-tap-to-copy": "Tap private key to copy",
         "export-private-key-intro": "Optionally, you can also use the following private key in some wallets. Touch to copy.",
 

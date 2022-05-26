@@ -39,6 +39,7 @@ export const zh = {
                 "not-a-valid-address": "地址无效",
                 "transaction-pending": "前一个交易正在确认中，请等待此交易确认后再执行",
                 "share-erc20-token": "查看这个Elastos ERC20币种",
+                "privatekey": "私钥",
 
                 /************
                 * Home Page *
@@ -77,7 +78,7 @@ export const zh = {
                 *****************/
                 "settings-title": "设置",
                 "settings-general": "通用",
-                "settings-add-wallet": "Add Wallet",
+                "settings-add-wallet": "添加钱包",
                 "settings-add-wallet-subtitle": "创建或导入新钱包",
                 "settings-my-wallets": "我的钱包",
                 "settings-my-wallets-subtitle": "管理、备份钱包及相关设置",
@@ -87,6 +88,11 @@ export const zh = {
                 "settings-custom-networks-subtitle": "在此添加或编辑自定义网络",
                 "settings-manage-networks": "管理网络",
                 "settings-manage-networks-subtitle": "显示和隐藏网络，添加自定义网络",
+                "settings-add-wallet-standard-wallet": "标准钱包",
+                "settings-add-wallet-multi-sig-wallet": "多签钱包",
+                "settings-add-wallet-hardware-wallet": "连接硬件钱包",
+                "settings-add-wallet-new-wallet": "新钱包",
+                "settings-add-wallet-mnemonic": "助记词",
 
                 /***********************
                 * Select-Currency Page *
@@ -280,26 +286,28 @@ export const zh = {
                 **********************/
                 "ledger-account-select": "请选择 Ledger 账号",
                 "ledger-connecting": "正在搜索 Ledger 钱包",
-                "ledger-prompt": "请开启 Ledger nanox，保持解锁，并打开 {{appname}} 应用程序",
+                "ledger-prompt": "请开启 Ledger Nano X，保持解锁，并打开 {{appname}} 应用程序",
 
                 /*******************
                 * Ledger scan page *
                 ********************/
-                "ledger-scan": "Ledger Search",
-                "available-devices": "Available devices",
-                "scan-again": "Scan again",
-                "ledger-scanning": "Searching devices",
+                "ledger-scan": "搜索Ledger设备",
+                "ledger-scan-available-devices": "可用设备",
+                "ledger-scan-scan-again": "重新搜索",
+                "ledger-scan-ledger-scanning": "正在搜索设备",
+                "ledger-scan-bluetooth-not-enable": "蓝牙未开启，请先开启蓝牙",
+                "ledger-scan-open-bluetooth-setting": "打开蓝牙设置",
 
                 /**********************
                 * Ledger connect page *
                 ***********************/
-                "ledger-connect": "Ledger Account",
-                "ledger-device": "Device",
-                "ledger-connect-error": "Failed to connect to the device",
-                "ledger-connecting-to-device": "Connecting to device",
+                "ledger-connect": "Ledger 账号",
+                "ledger-device": "设备",
+                "ledger-connect-error": "连接失败",
+                "ledger-connecting-to-device": "正在连接设备",
                 "ledger-addresses": "地址",
-                "address-type": "Address type",
-                "pick-network": "Pick network",
+                "address-type": "地址类型",
+                "pick-network": "选择网络",
 
                 /********************************************** Wallet Settings Screens ***********************************************/
 
@@ -518,7 +526,7 @@ export const zh = {
                 'new-standard-wallet': '新建标准钱包',
                 'import-standard-wallet': '导入标准钱包',
                 'multi-sig-wallet': '多签钱包',
-                'ledger-hardware-wallet': 'Ledger 硬件钱包',
+                'ledger-hardware-wallet': 'Ledger Nano X 硬件钱包',
 
                 /*********************
                 * Wallet Create Page *
@@ -563,7 +571,6 @@ export const zh = {
                 "mnemonic-reinput-passphrase": "再次输入助记词密码",
                 "help:create-password": "助记词密码是可选的，但它为您的钱包提供了更高的安全性。您可以将其视为自定义的第13个助记词。请注意，如果忘记了该密码，将无法恢复钱包。在恢复您的钱包时输入错误的助记词密码不会产生任何错误，但恢复的将是另一个钱包。",
                 "help:import-password": "助记词密码是与助记词绑定的自定义密码。 如果您在创建钱包时使用了助记词密码，则导入时必须使用相同的助记词密码，反之，则无需助记词密码，否则恢复的将是另一个钱包。",
-                "privatekey": "私钥",
                 "privatekey-tap-to-copy": "点击私钥即可复制",
                 "export-private-key-intro": "或者，您也可以在某些钱包中使用以下私钥。点击私钥即可复制。",
 

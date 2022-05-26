@@ -40,6 +40,7 @@ export const fr = {
         "not-a-valid-address": "Adresse invalide",
         "transaction-pending": "Une transaction est déjà en cours. Veuillez attendre la confirmation de la première transaction.",
         "share-erc20-token": "Adresse de jeton ERC20 partagée",
+        "privatekey": "Clé privée",
 
         /************
         * Home Page *
@@ -88,6 +89,11 @@ export const fr = {
         "settings-custom-networks-subtitle": "Ajoutez et modifiez vos réseaux personnalisés ici",
         "settings-manage-networks": "Gestion les Réseaux",
         "settings-manage-networks-subtitle": "Affichez et cachez certains réseaux, et ajoutez des réseaux personnalisés",
+        "settings-add-wallet-standard-wallet": "Standard Wallet",
+        "settings-add-wallet-multi-sig-wallet": "Multi Signature Wallet",
+        "settings-add-wallet-hardware-wallet": "Connect H/W Wallet",
+        "settings-add-wallet-new-wallet": "New Wallet",
+        "settings-add-wallet-mnemonic": "Mnemonic / Paper key",
 
         /***********************
         * Select-Currency Page *
@@ -281,15 +287,15 @@ export const fr = {
         **********************/
         "ledger-account-select": "Please select a account from ledger",
         "ledger-connecting": "Searching Ledger Wallet",
-        "ledger-prompt": "Please open Ledger Nanox, keep it unlocked, and open the {{appName}} application",
+        "ledger-prompt": "Please open Ledger Nano X, keep it unlocked, and open the {{appname}} application",
 
         /*******************
         * Ledger scan page *
         ********************/
         "ledger-scan": "Recherche Ledger",
-        "available-devices": "Appareils disponibles",
-        "scan-again": "Re-scanner",
-        "ledger-scanning": "Recherche en cours",
+        "ledger-scan-available-devices": "Appareils disponibles",
+        "ledger-scan-scan-again": "Re-scanner",
+        "ledger-scan-ledger-scanning": "Recherche en cours",
 
         /**********************
         * Ledger connect page *
@@ -518,7 +524,7 @@ export const fr = {
         'new-standard-wallet': 'New standard wallet',
         'import-standard-wallet': 'Import standard wallet',
         'multi-sig-wallet': 'Multi-sig wallet',
-        'ledger-hardware-wallet': 'Ledger hardware wallet',
+        'ledger-hardware-wallet': 'Ledger Nano X hardware wallet',
 
         /*********************
         * Wallet Create Page *
@@ -563,7 +569,6 @@ export const fr = {
         "mnemonic-reinput-passphrase": "Saisir le mot de passe à nouveau",
         "help:create-password": "Il s'agit d'un mot de passe optionnel qui augmente la sécurité du mnémonique. Considérez-le comme un 13e mot du mnémonique. Notez bien que ce mot de passe ne pas pas être retrouvé si vous l\'oubliez. Saisir un mauvais mot de passe de mnémonique dans l\'avenir lorsque vous importerez votre portefeuille ne génèrera pas d\'erreur mais créera une adresse de portefeuille différente, et vous ne verrez pas vos fonds.",
         "help:import-password": "Le mot de passe du mnémonique est un mot de votre choix qui est fortement associé à votre mnémonique. Ne tenez pas compte de cette option si vous n\'avez pas utilisé de mot de passe de mnémonique lors de la création de votre portefeuille.",
-        "privatekey": "Clé privée",
         "privatekey-tap-to-copy": "Toucher la clé privée pour copier",
         "export-private-key-intro": "Vous pouvez aussi choisir d'utiliser la clé privée suivante dans certaines applications. Touchez pour copier.",
 

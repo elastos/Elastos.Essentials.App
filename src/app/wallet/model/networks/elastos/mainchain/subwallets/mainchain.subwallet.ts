@@ -495,7 +495,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 console.log("mainchain subwallet checkAddresses ", startIndex);
                 findTx = false;
                 let addressArray = await this.networkWallet.safe.getAddresses(startIndex, checkCount, internal, AddressUsage.DEFAULT);
-                //let addressArray = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, checkCount, internal);
                 const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
                 if (txRawList && txRawList.length > 0) {
                     findTx = true;
@@ -852,11 +851,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             }
 
             addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress, AddressUsage.DEFAULT);
-
-            /* addressArray = await SPVService.instance.getAddresses(
-                jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, count, internalAddress);
-            */
-
             startIndex += addressArray.length;
 
             try {
@@ -1020,7 +1014,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             }
 
             addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress, AddressUsage.DEFAULT);
-            //addressArray = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, startIndex, count, internalAddress);
 
             // The ownerAddress is different with the external address even in single address wallet.
             if ((startIndex === 0) && !internalAddress && (this.id === StandardCoinName.ELA)) {

@@ -82,14 +82,7 @@ export class LedgerScanPage implements OnInit {
 
     async doScan() {
         this.errorMessge = null;
-        //this.device = null;
-        this.device = {
-            name: "Ledger Nano X 123123",
-            id: '',
-            rssi: 0,
-            advertising: undefined,
-            state: 'disconnected'
-        } // TMP
+        this.device = null;
 
         this.isBluetoothEnable = await this.bleManager.isEnabled();
         if (this.isBluetoothEnable) {

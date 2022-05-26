@@ -55,14 +55,6 @@ export default class Ela {
     scrambleKey = "w0w",
   ) {
     this.transport = transport;
-    // transport.decorateAppAPIMethods(
-    //   this,
-    //   [
-    //     "getAddress",
-    //     "signTransaction",
-    //   ],
-    //   scrambleKey
-    // );
   }
 
   //TODO: delete it, just for test
@@ -96,18 +88,10 @@ export default class Ela {
     // eslint-disable-next-line no-useless-catch
     try {
         const messageSend  = Buffer.from('8004000000' + bip44Path, 'hex');
-        Logger.warn(TAG, ' getAddress: messageSend', messageSend.toString('hex').toUpperCase())
-        // TODO: test with nanox
-        //'8004000000 8000002c 80000901 80000000 00000000 00000000'
+        Logger.log(TAG, ' getAddress: messageSend', messageSend.toString('hex').toUpperCase())
         let response = await this.transport.exchange(messageSend);
-        // this.transport.exchange(messageSend).then( (response) => {
-        //     Logger.warn(TAG, ' getAddress: response', response)
-        // }).catch((error) => {
-        //     Logger.warn(TAG, ' getAddress: error', error)
-        // })
-
-        Logger.warn(TAG, ' getAddress: response', response)
         const responseStr = response.toString('hex').toUpperCase();
+        Logger.log(TAG, ' getAddress: response', responseStr)
 
         let success = false;
         let message = '';
@@ -117,7 +101,7 @@ export default class Ela {
             success = true;
             message = responseStr;
             publicKey = responseStr.substring(0, 130);
-            Logger.warn(TAG, ' getAddress: publicKey', publicKey)
+            Logger.log(TAG, ' getAddress: publicKey', publicKey)
         } else {
             if (responseStr == '6E00') {
                 message = 'App Not Open On Ledger Device';
@@ -150,20 +134,15 @@ export default class Ela {
     }
 
     const ledgerMessage = transactionHex + this.encodePath(bipPath);
-
     const messages = this.splitMessageIntoChunks(ledgerMessage);
-    Logger.log(TAG, 'ela app signTransaction:', messages);
 
     try {
       let lastResponse = undefined;
       for (let ix = 0; ix < messages.length; ix++) {
         const message = Buffer.from(messages[ix], 'hex');
         Logger.log(TAG, `STARTED sending message ${ix+1} of ${messages.length}: ${message.toString('hex').toUpperCase()}`);
-        // TODO
-        // const response = await this.transport.exchange(message);
-        // const responseStr = response.toString('hex').toUpperCase();
-        // const responseStr = '3044022069985d01e07831f97a1c3a5f1ab4d9f265a5aac3234a7454e9fcbe52eeac6884022022ca9fbf56c02a21248b95671ba2dc148c543f04c341fe7190de8994c25d01b5ffff968a4a3d4b01a2eeddb3fd93c34cac418101c163fb1ff0bd248b26ee03a147e79000'
-        const responseStr = '3045022100ef1b323040c4dad8d27254bcd94d71d9d01ebaf27ff13a3d484d6c25fe262f290220062669d20c217aab49d30a884cf8877cf838f511e19b76b2a9f5baa80c08623affff27474031e7e7d29df7f07b210d3527013802bc9d2007322211432840e50a614e9000'
+        const response = await this.transport.exchange(message);
+        const responseStr = response.toString('hex').toUpperCase();
         Logger.log(TAG, `SUCCESS sending message ${ix+1} of ${messages.length}: ${responseStr}`);
 
         lastResponse = responseStr;
@@ -249,28 +228,19 @@ export default class Ela {
      */
 
     const rLenHex = response.substring(6, 8);
-    // mainConsole.log(`Ledger Signature rLenHex ${rLenHex}`);
     const rLen = parseInt(rLenHex, 16) * 2;
-    // mainConsole.log(`Ledger Signature rLen ${rLen}`);
     let rStart = 8;
-    // mainConsole.log(`Ledger Signature rStart ${rStart}`);
     const rEnd = rStart + rLen;
-    // mainConsole.log(`Ledger Signature rEnd ${rEnd}`);
 
     while ((response.substring(rStart, rStart + 2) == '00') && ((rEnd - rStart) > 64)) {
       rStart += 2;
     }
 
     const r = response.substring(rStart, rEnd);
-    // mainConsole.log(`Ledger Signature R [${rStart},${rEnd}:${(rEnd - rStart)} ${r}`);
     const sLenHex = response.substring(rEnd + 2, rEnd + 4);
-    // mainConsole.log(`Ledger Signature sLenHex ${sLenHex}`);
     const sLen = parseInt(sLenHex, 16) * 2;
-    // mainConsole.log(`Ledger Signature sLen ${sLen}`);
     let sStart = rEnd + 4;
-    // mainConsole.log(`Ledger Signature sStart ${sStart}`);
     const sEnd = sStart + sLen;
-    // mainConsole.log(`Ledger Signature sEnd ${sEnd}`);
 
     while ((response.substring(sStart, sStart + 2) == '00') && ((sEnd - sStart) > 64)) {
       sStart += 2;

@@ -124,28 +124,28 @@ export class SettingsPage implements OnInit {
 
     private addWallet() {
         let menu: MenuSheetMenu = {
-            title: "Add Wallet",
+            title: this.translate.instant("wallet.settings-add-wallet"),
             items: [
                 {
-                    title: "Standard Wallet",
+                    title: this.translate.instant("wallet.settings-add-wallet-standard-wallet"),
                     items: [
                         {
-                            title: "New Wallet",
+                            title: this.translate.instant("wallet.settings-add-wallet-new-wallet"),
                             routeOrAction: () => {
                                 this.createStandardWallet();
                             }
                         },
                         {
-                            title: "Import Wallet",
+                            title: this.translate.instant("wallet.import-wallet"),
                             items: [
                                 {
-                                    title: "Mnemonic / Paper key",
+                                    title: this.translate.instant("wallet.settings-add-wallet-mnemonic"),
                                     routeOrAction: () => {
                                         this.importStandardWallet();
                                     }
                                 },
                                 {
-                                    title: "Private key",
+                                    title: this.translate.instant("wallet.privatekey"),
                                     routeOrAction: () => {
                                         // TODO: differenciate from mnemonic menu item just above
                                         this.importStandardWallet();
@@ -160,7 +160,7 @@ export class SettingsPage implements OnInit {
                     ]
                 },
                 {
-                    title: "Multi Signature Wallet",
+                    title: this.translate.instant("wallet.settings-add-wallet-multi-sig-wallet"),
                     items: [
                         {
                             title: "Elastos mainchain",
@@ -169,7 +169,7 @@ export class SettingsPage implements OnInit {
                     ]
                 },
                 {
-                    title: "Connect H/W Wallet",
+                    title: this.translate.instant("wallet.settings-add-wallet-hardware-wallet"),
                     items: [
                         {
                             icon: "assets/wallet/icons/ledger.svg",

@@ -5,26 +5,26 @@
         <!-- Header -->
         <ion-row class="searching-row">
             <ion-col size="7">
-                <div class='title'>{{ 'wallet.available-devices' | translate }}</div>
+                <div class='title'>{{ 'wallet.ledger-scan-available-devices' | translate }}</div>
             </ion-col>
             <ion-col size="5" (click)="doScan()" *ngIf="!scanning" class="scan-again">
                 <img
                     [src]="!theme.darkMode ? 'assets/wallet/icons/reload.svg' : 'assets/wallet/icons/darkmode/reload.svg'" />
-                Scan again
+                {{ 'wallet.ledger-scan-scan-again' | translate }}
             </ion-col>
         </ion-row>
 
         <!-- Scan in progress -->
         <ion-row *ngIf="scanning" class="scanning">
             <ion-spinner name="crescent"></ion-spinner>
-            <ion-label>{{ 'wallet.ledger-scanning' | translate }}</ion-label>
+            <ion-label>{{ 'wallet.ledger-scan-ledger-scanning' | translate }}</ion-label>
         </ion-row>
 
         <!-- Error: No bluetooth -->
         <ion-row class="retry-row" *ngIf="!isBluetoothEnable">
-            <div> Bluetooth is not enable, pls open it first</div>
+            <div>{{ 'wallet.ledger-scan-bluetooth-not-enable' | translate }}</div>
             <ion-button color="primary" (click)="showBluetoothSetting()">
-                <ion-label> Open bluetooth setting </ion-label>
+                <ion-label>{{ 'wallet.ledger-scan-open-bluetooth-setting' | translate }}</ion-label>
             </ion-button>
         </ion-row>
 

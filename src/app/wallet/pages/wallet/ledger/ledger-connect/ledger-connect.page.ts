@@ -31,6 +31,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { LedgerAccountType } from 'src/app/wallet/model/ledger.types';
 import { BTCAddressType, BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.ledgerapp';
@@ -56,7 +57,6 @@ export class LedgerConnectPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public device = null;
-    //public device = { id: 'DE:F1:60:10:C6:9D' };
     public transport: Transport = null;
     public connecting = false;
     public connectError = false;
@@ -84,6 +84,7 @@ export class LedgerConnectPage implements OnInit {
     private publicKey = '';
 
     public errorMessge = '';
+    public ledgerNanoAppname = '';
 
     constructor(
         public events: Events,
@@ -107,18 +108,6 @@ export class LedgerConnectPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.ledger-connect"));
-
-        // for test
-        // let elaApp = new Ela(this.transport);
-        // let path = "44'/2305'/0'/0/1"
-        // // let path = "44'/2305'/0'/0/0"
-        // elaApp.showGetAddressApduMessage(path);
-
-        // // let publicKey = '046954ec013d77e4c247964e905d78736c76a4e32a7479eba3f55f1d933b70034d548cd19c93f222118c6a4a80bc2bf4f21099919776e225ed7727e76bc880be86';
-        // let publicKey = '0458ccacbd847e326a131f29425b6dd03153baa7b5847bfb4b82c0903f2ca377bd665f044e17b52b37c5caeaadd8491cf6bed7b8baf0a5c74ed60f301cec10fa9b';
-        // let address = ELAAddressHelper.getAddressFromPublicKey(publicKey);
-        // Logger.warn('wallet', 'address:', address)
-
         void this.doConnect();
     }
 
@@ -135,10 +124,7 @@ export class LedgerConnectPage implements OnInit {
                 this.transport = null;
             }
             this.connecting = true;
-
             this.transport = await BluetoothTransport.open(this.device.id);
-            Logger.log('ledger', ' initLedger this.transport:', this.transport)
-
         }
         catch (e) {
             Logger.error('ledger', ' initLedger error:', e);
@@ -152,7 +138,7 @@ export class LedgerConnectPage implements OnInit {
             this.addresses = await this.ledgerApp.getAddresses(this.addressType as EVMAddressType, accountsOffset, accountsLength, false);
             Logger.log(TAG, "EVM Addresses :", this.addresses);
         } catch (e) {
-            Logger.warn(TAG, 'getAddresses exception:', e)
+            Logger.warn(TAG, 'getEVMAddresses exception:', e)
         }
     }
 
@@ -165,7 +151,7 @@ export class LedgerConnectPage implements OnInit {
 
             Logger.log(TAG, "BTC Addresses :", this.addresses);
         } catch (e) {
-            Logger.warn(TAG, 'getAddresses exception:', e)
+            Logger.warn(TAG, 'getBTCAddress exception:', e)
         }
     }
 
@@ -174,7 +160,7 @@ export class LedgerConnectPage implements OnInit {
             this.addresses = await this.ledgerApp.getAddresses(this.addressType as ELAAddressType, accountsOffset, accountsLength, false);
             Logger.warn(TAG, "ELA addresses :", this.addresses);
         } catch (err) {
-            Logger.warn('ledger', "getAddress exception :", err);
+            Logger.warn('ledger', "getELAAddress exception :", err);
         }
     }
 
@@ -199,16 +185,24 @@ export class LedgerConnectPage implements OnInit {
                 this.shouldPickAddressType = true;
                 this.addressType = BTCAddressType.SEGWIT;
                 this.ledgerApp = new BTCLedgerApp(this.transport);
+                let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
+                if (network === MAINNET_TEMPLATE) {
+                    this.ledgerNanoAppname = "Bitcoin"
+                } else {
+                    this.ledgerNanoAppname = "Bitcoin Test"
+                }
                 break;
             case ElastosMainChainNetworkBase.networkKey:
                 this.shouldPickAddressType = false;
                 this.addressType = ELAAddressType.M2305;
                 this.ledgerApp = new ELALedgerApp(this.transport);
+                this.ledgerNanoAppname = "Elastos"
                 break;
             default: // Consider all other networks as EVMs - auto select the only type
                 this.shouldPickAddressType = false;
                 this.addressType = EVMAddressType.EVM_STANDARD;
                 this.ledgerApp = new EVMLedgerApp(this.transport);
+                this.ledgerNanoAppname = "Ethereum"
         }
 
         void this.refreshAddresses();

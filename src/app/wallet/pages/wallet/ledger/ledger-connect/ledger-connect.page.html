@@ -22,7 +22,7 @@
             <!-- Pick network -->
             <ion-row class="row network-row">
                 <ion-col size="7">
-                    <div class='title'>{{ 'wallet.network' | translate }}</div>
+                    <div class='title'>{{ 'wallet.networks' | translate }}</div>
                 </ion-col>
                 <ion-col size="5" (click)="pickNetwork()" class="pick-network flex flex-justify-content-end">
                     <img *ngIf="selectedNetwork" [src]="selectedNetwork.logo" class="network-logo" />
@@ -41,6 +41,10 @@
                     {{ getDisplayableAddressType() }}
                     <img src="assets/wallet/icons/right-arrow-alt.svg" class="go-arrow" />
                 </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="ledgerNanoAppname" class="prompt-row">
+                <ion-label>{{ 'wallet.ledger-prompt' | translate:{ appname: ledgerNanoAppname } }}</ion-label>
             </ion-row>
 
             <!-- Connection in progress -->
