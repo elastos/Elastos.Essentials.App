@@ -16,9 +16,9 @@ export class TxSuccessComponent implements OnInit {
     public popover: PopoverController
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   continue() {
-    this.popover.dismiss();
+    void this.popover.dismiss();
   }
 }

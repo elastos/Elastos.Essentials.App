@@ -1,29 +1,14 @@
-import { Subject } from "rxjs";
-import { Logger } from "src/app/logger";
-import { GlobalNetworksService } from "src/app/services/global.networks.service";
-import { LocalStorage } from "../../services/storage.service";
-import { SPVNetworkConfig } from "../../services/wallet.service";
-import { Coin, CoinID, CoinType, ERC20Coin } from "../coin";
+import type { SPVNetworkConfig } from "../../services/wallet.service";
 import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
-import { SwapProvider } from "../earn/swapprovider";
-import { ERC1155Provider } from "../nfts/erc1155.provider";
-import { WalletCreateType } from "../walletaccount";
-import { ERC20SubWallet } from "../wallets/erc20.subwallet";
-import { MasterWallet } from "../wallets/masterwallet";
-import { NetworkWallet } from "../wallets/networkwallet";
-import { UniswapCurrencyProvider } from "./uniswap.currencyprovider";
+import type { SwapProvider } from "../earn/swapprovider";
+import type { MasterWallet } from "../masterwallets/masterwallet";
+import type { PrivateKeyType, WalletNetworkOptions } from "../masterwallets/wallet.types";
+import { NetworkAPIURLType } from "./base/networkapiurltype";
+import type { AnyNetworkWallet } from "./base/networkwallets/networkwallet";
+import type { ERC1155Provider } from "./evms/nfts/erc1155.provider";
 
-export abstract class Network {
-  private availableCoins: Coin[] = null;
-  private deletedERC20Coins: ERC20Coin[] = [];
-
-  public onCoinAdded: Subject<string> = new Subject(); // Event - when a coin is added - provides the coin ID
-  public onCoinDeleted: Subject<string> = new Subject(); // Event - when a coin is added - provides the coin ID
-
-  private localStorageKey = ''
-  private lastAccessTimestamp = 0;
-
+export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOptions> {
   constructor(
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
@@ -36,46 +21,66 @@ export abstract class Network {
   ) {
   }
 
-  public async init(): Promise<void> {
-    const activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
-    this.localStorageKey = this.key + '-' + activeNetworkTemplate;
-    await this.refreshCoins();
+  public init(): Promise<void> {
+    return;
   }
 
   /**
-   * Returns a list of available ERC20 coins that we trust for this network, and that user will be able to
-   * display on this wallet or not.
+   * Returns default options to customize the wallet for the network.
+   * For example in the case of the elastos network, this defines if new wallets are instantiated using
+   * single or multi address mode.
    */
-  public abstract getBuiltInERC20Coins(): ERC20Coin[];
+  public abstract getDefaultWalletNetworkOptions(): WalletNetworkOptionsType;
 
   /**
    * Creates a network wallet for the given master wallet.
    * If startBackgroundUpdates is true some initializations such as getting balance or transactions are launched in background.
    * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
    */
-  public abstract createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates?: boolean): Promise<NetworkWallet>;
+  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
+    let wallet = this.newNetworkWallet(masterWallet);
+
+    if (wallet) {
+      await wallet.initialize();
+
+      if (startBackgroundUpdates)
+        void wallet.startBackgroundUpdates();
+    }
+
+    return wallet;
+  }
 
   /**
-   * Creates the right ERC20 sub wallet instance for this network.
-   * If startBackgroundUpdates is true some initializations such as getting balance or transactions are launched in background.
-   * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
+   * Method called by createNetworkWallet() and that must be implemented by each network to create
+   * wallet instances.
    */
-  public abstract createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID, startBackgroundUpdates?: boolean): Promise<ERC20SubWallet>;
+  protected abstract newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet;
 
-  public abstract getMainEvmRpcApiUrl(): string;
+  /**
+   * Returns the url of a target api type. This method must be overriden by networks to define
+   * one or several available API endpoints such as the main RPC node, covalent, etherscan, etc.
+   *
+   * Throws an exception if the requested url type is missing.
+   */
+  public abstract getAPIUrlOfType(type: NetworkAPIURLType): string;
 
-  public abstract getMainEvmAccountApiUrl(): string;
+  public getRPCUrl(): string {
+    return this.getAPIUrlOfType(NetworkAPIURLType.RPC);
+  }
 
   public abstract getMainTokenSymbol(): string;
 
-  /**
-   * Returns the EVM chain ID for this network (i.e. 128 for heco) according to the active network template.
-   * Returns -1 if the network is not an EVM.
-   */
-  public abstract getMainChainID(networkTemplate?: string): number;
-
-  public supportedWalletCreateTypes(): WalletCreateType[] {
+  /* public supportedWalletCreateTypes(): WalletCreateType[] {
     return [WalletCreateType.MNEMONIC, WalletCreateType.PRIVATE_KEY_EVM, WalletCreateType.KEYSTORE];
+  } */
+
+  /**
+   * List of private key types that are supported by this network.
+   */
+  public supportedPrivateKeyTypes(): PrivateKeyType[] {
+    // None by default. If this method is not overriden by the network,
+    // the network can't handle any import by private key
+    return [];
   }
 
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);
@@ -85,175 +90,13 @@ export abstract class Network {
     return "ETH" + this.key.toUpperCase();
   }
 
-  private async refreshCoins() {
-    Logger.log("wallet", "Coin service - refreshing available coins");
-
-    this.availableCoins = [];
-
-    // Add default ERC20 tokens built-in essentials
-    this.availableCoins = this.getBuiltInERC20Coins();
-
-    // Add custom ERC20 tokens, manually added by the user or discovered
-    this.availableCoins = [...this.availableCoins, ...await this.getCustomERC20Coins()];
-
-    await this.initDeletedCustomERC20Coins(this);
-
-    this.lastAccessTimestamp = await LocalStorage.instance.get("custom-erc20-coins-accesstime-" + this.localStorageKey);
-
-    //Logger.log('wallet', "Available coins for network " + this.key + ":", this.availableCoins);
-    //Logger.log('wallet', "Deleted coins for network " + this.key + ":", this.deletedERC20Coins);
-  }
-
-  public getAvailableCoins(): Coin[] {
-    // Return only coins that are usable on the active network.
-    return this.availableCoins || [];
-  }
-
-  public getAvailableERC20Coins(): ERC20Coin[] {
-    // Return only ERC20 coins that are usable on the active network.
-    return this.getAvailableCoins().filter(c => {
-      return (c.getType() === CoinType.ERC20);
-    }) as ERC20Coin[] || [];
-  }
-
-  public getCoinByID(id: CoinID): Coin {
-    return this.getAvailableCoins().find((c) => {
-      return c.getID() === id;
-    });
-  }
-
-  public getERC20CoinByContractAddress(address: string): ERC20Coin | null {
-    return this.getAvailableERC20Coins().find((c) => {
-      return c.getContractAddress().toLowerCase() === address.toLowerCase();
-    }) || null;
-  }
-
-  public coinAlreadyExists(address: string): boolean {
-    return this.getERC20CoinByContractAddress(address) != null;
-  }
-
-  public isCoinDeleted(address: string) {
-    for (let coin of this.deletedERC20Coins) {
-      if (coin.getContractAddress().toLowerCase() === address.toLowerCase()) return true;
-    }
+  public supportsERC20Coins(): boolean {
     return false;
   }
 
-  /**
-   * Adds a custom ERC20 coin to the list of available coins.
-   * The new coin is activated in all the wallets passed as activateInWallets.
-   *
-   * Returns true if the coin was added, false otherwise (already existing or error).
-   */
-  public async addCustomERC20Coin(erc20Coin: ERC20Coin): Promise<boolean> {
-    Logger.log('wallet', "Adding coin to custom ERC20 coins list", erc20Coin);
-
-    const existingCoins = await this.getCustomERC20Coins();
-    if (this.coinAlreadyExists(erc20Coin.getContractAddress())) {
-      Logger.log('wallet', "Not adding coin, it already exists", erc20Coin);
-      return false;
-    }
-
-    existingCoins.push(erc20Coin);
-
-    // Add to the available coins list
-    this.availableCoins.push(erc20Coin);
-
-    // Save to permanent storage
-    await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, existingCoins);
-
-    this.deletedERC20Coins = this.deletedERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== coin.getContractAddress().toLowerCase());
-    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.localStorageKey, this.deletedERC20Coins);
-
-    this.onCoinAdded.next(erc20Coin.getID());
-
-    return true;
-  }
-
-  public async deleteERC20Coin(erc20Coin: ERC20Coin) {
-    this.availableCoins = this.availableCoins.filter((coin) => coin.getID() !== erc20Coin.getID());
-    let allCustomERC20Coins = await this.getCustomERC20Coins();
-    allCustomERC20Coins = allCustomERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== erc20Coin.getContractAddress().toLowerCase());
-    await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, allCustomERC20Coins);
-    Logger.log('wallet', 'availableCoins after deleting', this.availableCoins);
-
-    this.deletedERC20Coins.push(erc20Coin);
-    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.localStorageKey, this.deletedERC20Coins);
-
-    this.onCoinDeleted.next(erc20Coin.getID());
-  }
-
-  public async getCustomERC20Coins(): Promise<ERC20Coin[]> {
-    const rawCoinList = await LocalStorage.instance.get("custom-erc20-coins-" + this.localStorageKey);
-    if (!rawCoinList) {
-      return [];
-    }
-
-    const customCoins: ERC20Coin[] = [];
-    let someCoinsWereRemoved = false;
-    for (let rawCoin of rawCoinList) {
-      // Use the contract address as id.
-      if ((rawCoin.id as string).startsWith('0x')) {
-        let coin = ERC20Coin.fromJson(rawCoin);
-
-        // Legacy support: we didn't save coins decimals earlier. So we delete custom coins from disk if we don't have the info.
-        // Users have to re-add them manually.
-        if (coin.decimals == -1) {
-          someCoinsWereRemoved = true;
-        }
-        else {
-          customCoins.push(coin);
-        }
-      }
-    }
-
-    if (someCoinsWereRemoved) {
-      // Some coins were "repaired", so we save our list.
-      await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, customCoins);
-    }
-
-    return customCoins;
-  }
-
-  private async initDeletedCustomERC20Coins(network: Network): Promise<ERC20Coin[]> {
-    const rawCoinList = await LocalStorage.instance.get("custom-erc20-coins-deleted-" + network.key);
-    if (!rawCoinList) {
-      return [];
-    }
-
-    let deletedERC20Coins: ERC20Coin[] = [];
-    for (let rawCoin of rawCoinList) {
-      deletedERC20Coins.push(ERC20Coin.fromJson(rawCoin));
-    }
-
-    this.deletedERC20Coins = deletedERC20Coins;
-  }
-
-  public updateAccessTime(timestamp: number) {
-    this.lastAccessTimestamp = timestamp;
-    void LocalStorage.instance.set("custom-erc20-coins-accesstime-" + this.localStorageKey, this.lastAccessTimestamp);
-  }
-
-  // The last time that the user viewed the coin list screen.
-  // We decide whether to display newly discovered tokens based on this time.
-  public getLastAccessTime() {
-    return this.lastAccessTimestamp;
-  }
-
-  /**
-   * Returns the first provider able to support the provided erc1155 contract address
-   */
-  public getERC1155Provider(contractAddress: string): ERC1155Provider {
-    let lowerCaseContract = contractAddress.toLowerCase();
-    let provider = this.erc1155Providers.find(p => p.supportedContractAddresses.map(c => c.toLowerCase()).find(p => p.indexOf(lowerCaseContract) >= 0));
-    return provider;
-  }
-
-  /**
-   * To be overriden by each network. By default, no provider is returned, meaning that ERC20 tokens
-   * won't be able to get a USD pricing.
-   */
-  public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
-    return null;
+  public supportsERCNFTs(): boolean {
+    return false;
   }
 }
+
+export abstract class AnyNetwork extends Network<any> { }

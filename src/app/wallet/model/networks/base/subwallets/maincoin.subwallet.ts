@@ -1,0 +1,82 @@
+import BigNumber from 'bignumber.js';
+import { Logger } from 'src/app/logger';
+import { CurrencyService } from '../../../../services/currency.service';
+import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
+import { CoinType } from '../../../coin';
+import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import { GenericTransaction } from '../../../tx-providers/transaction.types';
+import type { AnyNetworkWallet } from '../networkwallets/networkwallet';
+import { SubWallet } from './subwallet';
+
+export abstract class MainCoinSubWallet<TransactionType extends GenericTransaction, WalletNetworkOptionsType extends WalletNetworkOptions> extends SubWallet<TransactionType, WalletNetworkOptionsType> {
+    constructor(networkWallet: AnyNetworkWallet, id: string) {
+        super(networkWallet, id, CoinType.STANDARD);
+    }
+
+    public getUniqueIdentifierOnNetwork(): string {
+        return this.id;
+    }
+
+    public async destroy() {
+        try {
+            await SPVService.instance.destroySubWallet(jsToSpvWalletId(this.masterWallet.id), this.id);
+        }
+        catch (e) {
+            Logger.error('wallet', 'destroySubWallet error:', this.id, e)
+        }
+        await super.destroy();
+    }
+
+    /**
+     * @deprecated TODO: use getAddress(), and use createAddress() only for multi address wallets to really start using a NEW address
+     */
+    // TODO: move to network wallet then to the "safe"
+    public async createAddress(): Promise<string> {
+        Logger.warn("wallet", "createAddress() is deprecated, stop using it!");
+        return await SPVService.instance.createAddress(jsToSpvWalletId(this.masterWallet.id), this.id);
+    }
+
+    public abstract getFriendlyName(): string;
+
+    public abstract getDisplayTokenName(): string;
+
+    public getDisplayBalance(): BigNumber {
+        return this.getDisplayAmount(this.getRawBalance());
+    }
+
+    public getDisplayAmount(amount: BigNumber): BigNumber {
+        return amount.dividedBy(this.tokenAmountMulipleTimes);
+    }
+
+    public getUSDBalance(): BigNumber {
+        return CurrencyService.instance.getMainTokenValue(this.getBalance(), this.networkWallet.network, 'USD') || new BigNumber(0);
+    }
+
+    public getOneCoinUSDValue(): BigNumber {
+        return CurrencyService.instance.getMainTokenValue(new BigNumber(1), this.networkWallet.network, 'USD');
+    }
+
+    public getAmountInExternalCurrency(value: BigNumber): BigNumber {
+        let amount = CurrencyService.instance.getMainTokenValue(value, this.networkWallet.network);
+        if (amount) {
+            let decimalplace = 3;
+            if (CurrencyService.instance.selectedCurrency && CurrencyService.instance.selectedCurrency.decimalplace) {
+                decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
+            }
+            return amount.decimalPlaces(decimalplace);
+        } else {
+            return amount;
+        }
+    }
+
+    // Check whether the balance is enough. amount unit is ELA or WEI
+    public isBalanceEnough(amount: BigNumber) {
+        return this.getRawBalance().gt(amount.multipliedBy(this.tokenAmountMulipleTimes));
+    }
+
+    public isStandardSubWallet(): boolean {
+        return true;
+    }
+
+    public abstract createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string): Promise<string>;
+}

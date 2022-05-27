@@ -1,11 +1,11 @@
-import { GenericTransaction, TransactionDirection } from "./providers/transaction.types";
+import { GenericTransaction, TransactionDirection, UtxoForSDK } from "./tx-providers/transaction.types";
 
 export type BalanceHistory = {
-  received: string;
-  sent: string;
-  sentToSelf: string;
-  time: number;
-  txs: number;
+    received: string;
+    sent: string;
+    sentToSelf: string;
+    time: number;
+    txs: number;
 };
 
 export type AddressResult = {
@@ -44,7 +44,7 @@ export type BTCTransaction = GenericTransaction & {
     txid: string;
     version: string;
     vin: BTCInObj[];
-    vout : BTCOutObj[];
+    vout: BTCOutObj[];
     blockHash: string;
     blockHeight: number;
     confirmations: number;
@@ -66,6 +66,32 @@ export type BTCUTXO = {
     hash: string;
     value: string; //satoshi
     height: number;
-    vout : number;
+    vout: number;
     confirmations: number;
+}
+
+export type BTCUtxoForLedger = UtxoForSDK & {
+  utxoHex?: string
+}
+
+// BTC payment transaction
+
+export type BTCOutputData = {
+  Address: string,
+  Amount : string
+}
+
+export type BTCTxData = {
+  inputs: BTCUtxoForLedger[],
+  outputs: BTCOutputData[],
+  changeAddress: string,
+  feePerKB: string
+}
+
+/**
+ * Result of a btc transaction signing request to a safe
+ */
+ export type BTCSignedTransactionResult = {
+  Data?: string;
+  TxHash?: string;
 }

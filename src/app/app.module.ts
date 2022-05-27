@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, Injectable, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, Injectable, NgModule, Provider } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -36,17 +36,6 @@ import { CRProposalVotingInitModule } from './voting/crproposalvoting/init.modul
 import { DPoSRegistrationInitModule } from './voting/dposregistration/init.module';
 import { DPoSVotingInitModule } from './voting/dposvoting/init.module';
 import { WalletInitModule } from './wallet/init.module';
-
-if (environment.production) {
-  Sentry.init({
-    dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
-    release: "default",
-    integrations: [
-      new Integrations.BrowserTracing(),
-    ],
-    tracesSampleRate: 1.0,
-  });
-}
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -177,6 +166,32 @@ export function TranslateLoaderFactory() {
   }
 }*/
 
+let providers: Provider[] = [
+  AppVersion,
+  Keyboard,
+  ScreenOrientation,
+  SplashScreen,
+  StatusBar,
+  FirebaseX,
+  { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
+  //{ provide: TranslateModule, deps: [TranslationsLoader.loadAllModulesAndMerge("")]}
+]
+
+// Add sentry to prod build only
+if (environment.production) {
+  providers.push({ provide: ErrorHandler, useClass: SentryErrorHandler });
+
+  Sentry.init({
+    dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
+    release: "default",
+    integrations: [
+      new Integrations.BrowserTracing(),
+    ],
+    tracesSampleRate: 1.0,
+  });
+}
+
 @NgModule({
   declarations: [
     AppComponent
@@ -231,18 +246,7 @@ export function TranslateLoaderFactory() {
     }),
     BrowserAnimationsModule,
   ],
-  providers: [
-    AppVersion,
-    Keyboard,
-    ScreenOrientation,
-    SplashScreen,
-    StatusBar,
-    FirebaseX,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
-    { provide: ErrorHandler, useClass: SentryErrorHandler },
-    //{ provide: TranslateModule, deps: [TranslationsLoader.loadAllModulesAndMerge("")]}
-  ],
+  providers,
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -122,7 +122,7 @@ export class AppComponent {
 
       Logger.log("Global", "All awaited init services have been initialized");
 
-      // This method will sign in, so it must come last.
+      // This method WILL SIGN IN (if there is a previously signed in DID), so it must come last.
       await this.didSessions.init();
 
       await this.globalStartupService.navigateToFirstScreen();

@@ -28,10 +28,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { DefiService, StakingData } from 'src/app/wallet/services/defi.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { DefiService, StakingData } from 'src/app/wallet/services/evm/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { AnySubWallet } from '../../../model/wallets/subwallet';
+import { AnySubWallet } from '../../../model/networks/base/subwallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -195,7 +195,7 @@ export class WalletAssetPage implements OnDestroy {
 
     // Find the specified index from assetsInfo array.
     // Create a new NetworkWalletAssetInfo if can not find it.
-    private findWalletIndex(networkWallet: NetworkWallet) {
+    private findWalletIndex(networkWallet: AnyNetworkWallet) {
         let networkWalletIndex = this.assetsInfo.findIndex((wallet) => {
             return wallet.id === networkWallet.masterWallet.id;
         })
@@ -214,7 +214,7 @@ export class WalletAssetPage implements OnDestroy {
     }
 
     // Get all subwallets that the balance is bigger than the threshold.
-    private async getSubwalletsShouldShowOn(networkWallet: NetworkWallet, updateBalance = false) {
+    private async getSubwalletsShouldShowOn(networkWallet: AnyNetworkWallet, updateBalance = false) {
         let showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
         if (!updateBalance) {
             this.totalSubwalletCount += showSubwalets.length;
@@ -287,7 +287,7 @@ export class WalletAssetPage implements OnDestroy {
         if (CurrencyService.instance.selectedCurrency && CurrencyService.instance.selectedCurrency.decimalplace) {
             decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
         }
-        return amount.decimalPlaces(decimalplace).toString();
+        return amount.decimalPlaces(decimalplace).toFixed();
     }
 
     public usdToCurrencyAmount(balance: string, decimalplace = -1): string {
@@ -300,7 +300,7 @@ export class WalletAssetPage implements OnDestroy {
         }
 
         let curerentAmount = this.currencyService.usdToCurrencyAmount(new BigNumber(balance));
-        return curerentAmount.decimalPlaces(decimalplace).toString();
+        return curerentAmount.decimalPlaces(decimalplace).toFixed();
     }
 
     async doRefresh(event) {

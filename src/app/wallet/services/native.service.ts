@@ -30,6 +30,7 @@ import { HelpComponent } from '../components/help/help.component';
 
 @Injectable()
 export class Native {
+    public static instance: Native;
 
     private loader: HTMLIonLoadingElement = null;
     public popup: any = null;
@@ -41,9 +42,11 @@ export class Native {
         private zone: NgZone,
         private globalNative: GlobalNativeService,
         private globalNav: GlobalNavService,
-    ) {}
+    ) {
+        Native.instance = this;
+    }
 
-    public toast(msg = '操作完成', duration = 2000): void {
+    public toast(msg = '', duration = 2000): void {
         this.globalNative.genericToast(msg, duration);
     }
 
@@ -56,7 +59,7 @@ export class Native {
     }
 
     pasteFromClipboard() {
-      return this.globalNative.pasteFromClipboard();
+        return this.globalNative.pasteFromClipboard();
     }
 
     public go(page: string, options: any = {}) {
@@ -72,10 +75,10 @@ export class Native {
     }
 
     public openUrl(url: string) {
-      Logger.warn("wallet", "openUrl(): Not implemented any more");
+        Logger.warn("wallet", "openUrl(): Not implemented any more");
     }
 
-    public setRootRouter(page: any,  options: any = {}) {
+    public setRootRouter(page: any, options: any = {}) {
         Logger.log("wallet", "Setting root router path to:", page);
         this.zone.run(() => {
             void this.hideLoading();
@@ -115,14 +118,14 @@ export class Native {
 
     public async showHelp(ev: any, helpMessage: string) {
         this.popup = await this.popoverCtrl.create({
-          mode: 'ios',
-          component: HelpComponent,
-          cssClass: 'wallet-help-component',
-          event: ev,
-          componentProps: {
-            message: helpMessage
-          },
-          translucent: false
+            mode: 'ios',
+            component: HelpComponent,
+            cssClass: 'wallet-help-component',
+            event: ev,
+            componentProps: {
+                message: helpMessage
+            },
+            translucent: false
         });
         this.popup.onWillDismiss().then(() => {
             this.popup = null;

@@ -1,6 +1,6 @@
 import { IdrissCrypto } from "idriss-crypto/lib/browser";
 import { Util } from "src/app/model/util";
-import { AnySubWallet } from '../../wallets/subwallet';
+import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { Address } from '../addresses/Address';
 import { IdrissAddress } from "../addresses/IdrissAddress";
 import { Resolver } from "./Resolver";
@@ -32,7 +32,7 @@ export class IdrissResolver extends Resolver {
             const result = await idriss.resolve(name);
             if (result) {
                 for (var index in result) {
-                    if (await subWallet.isAddressValid(result[index])) {
+                    if (subWallet.isAddressValid(result[index])) {
                         addresses.push(new IdrissAddress(name + ' ' + index, result[index]));
                     }
                 }

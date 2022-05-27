@@ -9,44 +9,52 @@ import { GlobalService, GlobalServiceManager } from 'src/app/services/global.ser
 import { CryptoNameResolver } from '../model/address-resolvers';
 import { IdrissResolver } from '../model/address-resolvers/resolvers/IdrissAddressResolver';
 import { UnstoppableDomainsAddressResolver } from '../model/address-resolvers/resolvers/UnstoppableDomainsAddressResolver';
-import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/arbitrum.mainnet.network';
-import { AvalancheCChainMainNetNetwork } from '../model/networks/avalanchecchain/avalanchecchain.mainnet.network';
-import { AvalancheCChainTestNetNetwork } from '../model/networks/avalanchecchain/avalanchecchain.testnet.network';
-import { BSCMainNetNetwork } from '../model/networks/bsc/bsc.mainnet.network';
-import { BSCTestNetNetwork } from '../model/networks/bsc/bsc.testnet.network';
-import { BTCMainNetNetwork } from '../model/networks/btc/btc.mainnet.network';
-import { BTCTestNetNetwork } from '../model/networks/btc/btc.testnet.network';
-import { ElastosLRWNetwork } from '../model/networks/elastos/elastos.lrw.network';
-import { ElastosMainNetNetwork } from '../model/networks/elastos/elastos.mainnet.network';
-import { ElastosTestNetNetwork } from '../model/networks/elastos/elastos.testnet.network';
-import { EthereumMainNetNetwork } from '../model/networks/ethereum/ethereum.mainnet.network';
-import { EthereumRopstenNetwork } from '../model/networks/ethereum/ethereum.ropsten.network';
-import { FantomMainNetNetwork } from '../model/networks/fantom/fantom.mainnet.network';
-import { FantomTestNetNetwork } from '../model/networks/fantom/fantom.testnet.network';
-import { FusionMainNetNetwork } from '../model/networks/fusion/fusion.mainnet.network';
-import { HECOMainNetNetwork } from '../model/networks/heco/heco.mainnet.network';
-import { HECOTestNetNetwork } from '../model/networks/heco/heco.testnet.network';
-import { Network } from '../model/networks/network';
-import { PolygonMainNetNetwork } from '../model/networks/polygon/polygon.mainnet.network';
-import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet.network';
-import { TelosMainNetNetwork } from '../model/networks/telos/telos.mainnet.network';
-import { TelosTestNetNetwork } from '../model/networks/telos/telos.testnet.network';
-import { BridgeService } from './bridge.service';
+import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/network/arbitrum.mainnet.network';
+import { AvalancheCChainMainNetNetwork } from '../model/networks/avalanchecchain/network/avalanchecchain.mainnet.network';
+import { AvalancheCChainTestNetNetwork } from '../model/networks/avalanchecchain/network/avalanchecchain.testnet.network';
+import { BSCMainNetNetwork } from '../model/networks/bsc/network/bsc.mainnet.network';
+import { BSCTestNetNetwork } from '../model/networks/bsc/network/bsc.testnet.network';
+import { BTCMainNetNetwork } from '../model/networks/btc/network/btc.mainnet.network';
+import { BTCTestNetNetwork } from '../model/networks/btc/network/btc.testnet.network';
+import { CronosMainNetNetwork } from '../model/networks/cronos/network/cronos.mainnet.network';
+import { ElastosIdentityChainMainNetNetwork, ElastosIdentityChainTestNetNetwork } from '../model/networks/elastos/evms/eid/network/eid.networks';
+import { ElastosSmartChainMainNetNetwork, ElastosSmartChainTestNetNetwork } from '../model/networks/elastos/evms/esc/network/esc.networks';
+import { ElastosLRWNetwork } from '../model/networks/elastos/lrw/network/elastos.lrw.network';
+import { ElastosMainChainMainNetNetwork, ElastosMainChainTestNetNetwork } from '../model/networks/elastos/mainchain/network/elastos.networks';
+import { EthereumMainNetNetwork } from '../model/networks/ethereum/network/ethereum.mainnet.network';
+import { EthereumRopstenNetwork } from '../model/networks/ethereum/network/ethereum.ropsten.network';
+import { FantomMainNetNetwork } from '../model/networks/fantom/network/fantom.mainnet.network';
+import { FantomTestNetNetwork } from '../model/networks/fantom/network/fantom.testnet.network';
+import { FuseMainNetNetwork } from '../model/networks/fuse/network/fuse.mainnet.network';
+import { FusionMainNetNetwork } from '../model/networks/fusion/network/fusion.mainnet.network';
+import { GnosisMainNetNetwork } from '../model/networks/gnosis/network/gnosis.mainnet.network';
+import { HECOMainNetNetwork } from '../model/networks/heco/network/heco.mainnet.network';
+import { HECOTestNetNetwork } from '../model/networks/heco/network/heco.testnet.network';
+import { HooMainNetNetwork } from '../model/networks/hoo/network/hoo.mainnet.network';
+import { HooTestNetNetwork } from '../model/networks/hoo/network/hoo.testnet.network';
+import { IoTeXMainNetNetwork } from '../model/networks/iotex/network/iotex.mainnet.network';
+import { IoTeXTestNetNetwork } from '../model/networks/iotex/network/iotex.testnet.network';
+import { AnyNetwork } from '../model/networks/network';
+import { PolygonMainNetNetwork } from '../model/networks/polygon/network/polygon.mainnet.network';
+import { PolygonTestNetNetwork } from '../model/networks/polygon/network/polygon.testnet.network';
+import { TelosMainNetNetwork } from '../model/networks/telos/network/telos.mainnet.network';
+import { TelosTestNetNetwork } from '../model/networks/telos/network/telos.testnet.network';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
-import { CustomNetworkService } from './customnetwork.service';
-import { DefiService } from './defi.service';
-import { EarnService } from './earn.service';
-import { ERC20CoinService } from './erc20coin.service';
-import { EVMService } from './evm.service';
+import { BridgeService } from './evm/bridge.service';
+import { CustomNetworkService } from './evm/customnetwork.service';
+import { DefiService } from './evm/defi.service';
+import { EarnService } from './evm/earn.service';
+import { ERC20CoinService } from './evm/erc20coin.service';
+import { EVMService } from './evm/evm.service';
+import { SwapService } from './evm/swap.service';
+import { UniswapCurrencyService } from './evm/uniswap.currency.service';
 import { IntentService } from './intent.service';
 import { NameResolvingService } from './nameresolving.service';
 import { NavService } from './nav.service';
 import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
-import { SwapService } from './swap.service';
 import { UiService } from './ui.service';
-import { UniswapCurrencyService } from './uniswap.currency.service';
 import { WalletService } from './wallet.service';
 
 @Injectable({
@@ -117,9 +125,6 @@ export class WalletInitService extends GlobalService {
     await this.walletManager.init();
     await this.intentService.init();
     await this.swapService.init();
-
-    // TMP TEST
-    //await this.currencyV2Service.getTokenUSDValue(null, null);
   }
 
   public async onUserSignOut(): Promise<void> {
@@ -129,7 +134,11 @@ export class WalletInitService extends GlobalService {
   private async registerNetworks(): Promise<void> {
     let networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
 
-    await this.createAndRegisterNetwork(new ElastosMainNetNetwork(), networkTemplate === MAINNET_TEMPLATE);
+    // Register all networks, no matter if they are for the active network template or not,
+    // as they are sometimes needed.
+    await this.createAndRegisterNetwork(new ElastosMainChainMainNetNetwork(), networkTemplate === MAINNET_TEMPLATE);
+    await this.createAndRegisterNetwork(new ElastosSmartChainMainNetNetwork());
+    await this.createAndRegisterNetwork(new ElastosIdentityChainMainNetNetwork());
     await this.createAndRegisterNetwork(new BTCMainNetNetwork());
     await this.createAndRegisterNetwork(new EthereumMainNetNetwork());
     await this.createAndRegisterNetwork(new HECOMainNetNetwork());
@@ -140,8 +149,15 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new FantomMainNetNetwork());
     await this.createAndRegisterNetwork(new AvalancheCChainMainNetNetwork());
     await this.createAndRegisterNetwork(new TelosMainNetNetwork());
+    await this.createAndRegisterNetwork(new IoTeXMainNetNetwork());
+    await this.createAndRegisterNetwork(new HooMainNetNetwork());
+    await this.createAndRegisterNetwork(new GnosisMainNetNetwork());
+    await this.createAndRegisterNetwork(new FuseMainNetNetwork());
+    await this.createAndRegisterNetwork(new CronosMainNetNetwork());
 
-    await this.createAndRegisterNetwork(new ElastosTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
+    await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
+    await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork());
+    await this.createAndRegisterNetwork(new ElastosIdentityChainTestNetNetwork());
     await this.createAndRegisterNetwork(new BTCTestNetNetwork());
     await this.createAndRegisterNetwork(new EthereumRopstenNetwork());
     await this.createAndRegisterNetwork(new HECOTestNetNetwork());
@@ -151,11 +167,13 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new FantomTestNetNetwork());
     await this.createAndRegisterNetwork(new AvalancheCChainTestNetNetwork());
     await this.createAndRegisterNetwork(new TelosTestNetNetwork());
+    await this.createAndRegisterNetwork(new IoTeXTestNetNetwork());
+    await this.createAndRegisterNetwork(new HooTestNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
   }
 
-  private async createAndRegisterNetwork(network: Network, isDefault = false): Promise<void> {
+  private async createAndRegisterNetwork(network: AnyNetwork, isDefault = false): Promise<void> {
     let networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
 
     // Initialize the network, only if the network belongs to the active network template

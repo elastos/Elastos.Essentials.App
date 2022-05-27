@@ -163,12 +163,19 @@ export class GlobalNavService {
             return this.navCtrl.navigateRoot(launcherHome.route);
     }
 
+    /**
+     * Note: if context is null, uses the current context.
+     */
     public navigateTo(context: string, route: string, routerOptions?: NavigationOptions): Promise<boolean> {
         Logger.log("Nav", "Navigating to", route);
 
+        // No context given, assume we stay in the same context.
+        if (!context)
+            context = this.navigationHistory[this.navigationHistory.length - 1].context;
+
         let lastStep = this.navigationHistory[this.navigationHistory.length - 1];
         if (!lastStep || (lastStep.route !== route)) {
-          this.navigationHistory.push({ context, route, routerOptions });
+            this.navigationHistory.push({ context, route, routerOptions });
         }
 
         return this.navCtrl.navigateForward(route, routerOptions);

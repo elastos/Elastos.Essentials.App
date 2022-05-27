@@ -14,7 +14,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
+import { VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
 import { SelectedCandidate } from "../../model/selected.model";
 import { CRCouncilService } from '../../services/crcouncil.service';
 

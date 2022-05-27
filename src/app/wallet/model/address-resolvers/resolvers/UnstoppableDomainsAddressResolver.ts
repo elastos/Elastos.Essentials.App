@@ -1,14 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import Resolution from '@unstoppabledomains/resolution';
 import { Logger } from "src/app/logger";
-import { BSCMainNetNetwork } from '../../networks/bsc/bsc.mainnet.network';
-import { ElastosMainNetNetwork } from '../../networks/elastos/elastos.mainnet.network';
-import { EthereumMainNetNetwork } from '../../networks/ethereum/ethereum.mainnet.network';
-import { FantomMainNetNetwork } from '../../networks/fantom/fantom.mainnet.network';
-import { HECOMainNetNetwork } from '../../networks/heco/heco.mainnet.network';
-import { EscSubWallet } from '../../wallets/elastos/esc.evm.subwallet';
-import { MainchainSubWallet } from '../../wallets/elastos/mainchain.subwallet';
-import { AnySubWallet } from '../../wallets/subwallet';
+import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
+import { BSCMainNetNetwork } from '../../networks/bsc/network/bsc.mainnet.network';
+import { ElastosSmartChainMainNetNetwork } from '../../networks/elastos/evms/esc/network/esc.networks';
+import { EscSubWallet } from '../../networks/elastos/evms/esc/subwallets/esc.evm.subwallet';
+import { ElastosMainChainMainNetNetwork } from '../../networks/elastos/mainchain/network/elastos.networks';
+import { MainChainSubWallet } from '../../networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { EthereumMainNetNetwork } from '../../networks/ethereum/network/ethereum.mainnet.network';
+import { FantomMainNetNetwork } from '../../networks/fantom/network/fantom.mainnet.network';
+import { HECOMainNetNetwork } from '../../networks/heco/network/heco.mainnet.network';
 import { Address } from '../addresses/Address';
 import { UnstoppableDomainsAddress } from '../addresses/UnstoppableDomainsAddress';
 import { Resolver } from "./Resolver";
@@ -26,11 +27,15 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
      * Returns UD's record key to be used for a given Essential's network.
      */
     private resolutionRecordKeyForWallet(subWallet: AnySubWallet): string {
-        if (subWallet.networkWallet.network instanceof ElastosMainNetNetwork) {
+        if (subWallet.networkWallet.network instanceof ElastosMainChainMainNetNetwork) {
+            if (subWallet instanceof MainChainSubWallet)
+                return "crypto.ELA.version.ELA.address";
+            else
+                return null;
+        }
+        else if (subWallet.networkWallet.network instanceof ElastosSmartChainMainNetNetwork) {
             if (subWallet instanceof EscSubWallet)
                 return "crypto.ELA.version.ESC.address";
-            else if (subWallet instanceof MainchainSubWallet)
-                return "crypto.ELA.version.ELA.address";
             else
                 return null;
         }

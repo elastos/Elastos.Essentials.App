@@ -20,7 +20,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
-import { RawTransactionType, TransactionStatus, Utxo, UtxoType } from 'src/app/wallet/model/providers/transaction.types';
+import { RawTransactionType, TransactionStatus, Utxo, UtxoType } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from '../../services/vote.service';
 import { Candidate, CandidateBaseInfo } from '../model/candidates.model';
@@ -82,7 +82,7 @@ export class CRCouncilService {
 
     /** Election Results **/
     public councilTerm: any[] = [];
-    public currentTermIndex  = -1;
+    public currentTermIndex = -1;
     public votingTermIndex = -1;
 
     // public council: CouncilMember[] = [];
@@ -185,7 +185,7 @@ export class CRCouncilService {
         return this.selectedMember;
     }
 
-    async getSecretary(): Promise<any>  {
+    async getSecretary(): Promise<any> {
         this.secretaryGeneralInfo = null;
         try {
             let result = await this.jsonRPCService.httpGet(this.voteService.getCrRpcApi() + "/api/council/list");
@@ -211,7 +211,7 @@ export class CRCouncilService {
         return null;
     }
 
-    async getSelectedCandidates(): Promise<any>  {
+    async getSelectedCandidates(): Promise<any> {
         let data = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []);
         Logger.log('crcouncil', 'Selected Candidates', data);
         return data;
@@ -333,7 +333,7 @@ export class CRCouncilService {
             return;
         }
 
-        item.avatar =  "/assets/crcouncilvoting/icon/avatar.png";
+        item.avatar = "/assets/crcouncilvoting/icon/avatar.png";
         if (this.avatarList[item.did]) {
             item.avatar = this.avatarList[item.did];
         }

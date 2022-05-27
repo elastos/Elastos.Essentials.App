@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/wallet/config/Config';
+import { PrivateKeyType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
@@ -45,11 +46,11 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.privatekeyUpdateSubscription = this.events.subscribe('privatekey:update', (privatekey) => {
-        this.zone.run(() => {
-            this.privatekey = privatekey;
-            this.getContentType();
-            this.adjustTextareaHeight();
-        });
+      this.zone.run(() => {
+        this.privatekey = privatekey;
+        this.getContentType();
+        this.adjustTextareaHeight();
+      });
     });
   }
 
@@ -63,7 +64,7 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
     this.titleBar.setTitle(this.translate.instant('wallet.import-wallet'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-        this.goScan();
+      this.goScan();
     });
   }
 
@@ -74,75 +75,80 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
   // TODO: Find a better way to Fix the height of the textarea.
   private adjustTextareaHeight() {
     setTimeout(() => {
-        // textarea: the element in the ion-textarea.
-        let textarea = this.element.nativeElement.querySelector("textarea");
-        if (textarea) {
-            textarea.style.height = '120px';
-        }
-      }, 100);
+      // textarea: the element in the ion-textarea.
+      let textarea = this.element.nativeElement.querySelector("textarea");
+      if (textarea) {
+        textarea.style.height = '120px';
+      }
+    }, 100);
   }
 
   inputPrivatKeyCompleted() {
-      if (this.contentIsJsonObj) {
-          return this.keystoreBackupPassword.length >= Config.MIN_PASSWORD_LENGTH;
-      } else {
-          return this.privatekey.length > 1;
-      }
+    if (this.contentIsJsonObj) {
+      return this.keystoreBackupPassword.length >= Config.MIN_PASSWORD_LENGTH;
+    } else {
+      return this.privatekey.length > 1;
+    }
   }
 
   async onImport() {
     const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
     if (payPassword) {
-        try {
-            await this.native.showLoading(this.translate.instant('common.please-wait'));
-            if (this.contentIsJsonObj) {
-                await this.importWalletWithKeyStore(payPassword);
-            } else {
-                await this.importWalletWithPrivateKey(payPassword);
-            }
-        } catch (err) {
-            Logger.error('wallet', 'Wallet importWalletWithPrivateKey error:', err);
+      try {
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
+        if (this.contentIsJsonObj) {
+          await this.importWalletWithKeyStore(payPassword);
+        } else {
+          await this.importWalletWithPrivateKey(payPassword);
         }
-        finally {
-            await this.native.hideLoading();
-        }
+      } catch (err) {
+        Logger.error('wallet', 'Wallet importWalletWithPrivateKey error:', err);
+      }
+      finally {
+        await this.native.hideLoading();
+      }
     }
   }
 
   async importWalletWithPrivateKey(payPassword: string) {
     if (this.privatekey.startsWith('0x')) {
-        this.privatekey = this.privatekey.substring(2);
+      this.privatekey = this.privatekey.substring(2);
     }
-    await this.walletManager.importWalletWithPrivateKey(
-        this.masterWalletId,
-        this.walletCreateService.name,
-        this.privatekey,
-        payPassword,
+
+    await this.walletManager.newStandardWalletWithPrivateKey(
+      this.masterWalletId,
+      this.walletCreateService.name,
+      this.privatekey,
+      PrivateKeyType.EVM, // TODO: Support other private key formats later
+      payPassword,
     );
 
+    // Go to wallet's home page.
+    this.native.setRootRouter("/wallet/wallet-home");
+
     this.events.publish("masterwalletcount:changed", {
-        action: 'add',
-        walletId: this.masterWalletId
+      action: 'add',
+      walletId: this.masterWalletId
     });
 
     this.native.toast_trans('wallet.import-private-key-sucess');
   }
 
   async importWalletWithKeyStore(payPassword: string) {
-    await this.walletManager.importWalletWithKeystore(
-        this.masterWalletId,
-        this.walletCreateService.name,
-        this.privatekey,
-        this.keystoreBackupPassword,
-        payPassword,
+    /* await this.walletManager.importWalletWithKeystore(
+      this.masterWalletId,
+      this.walletCreateService.name,
+      this.privatekey,
+      this.keystoreBackupPassword,
+      payPassword,
     );
 
     this.events.publish("masterwalletcount:changed", {
-        action: 'add',
-        walletId: this.masterWalletId
+      action: 'add',
+      walletId: this.masterWalletId
     });
 
-    this.native.toast_trans('wallet.import-keystore-sucess');
+    this.native.toast_trans('wallet.import-keystore-sucess'); */
   }
 
   async pasteFromClipboard() {
@@ -153,11 +159,11 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
 
   getContentType() {
     try {
-        JSON.parse(this.privatekey);
-        this.contentIsJsonObj = true;
+      JSON.parse(this.privatekey);
+      this.contentIsJsonObj = true;
     }
     catch (err) {
-        this.contentIsJsonObj = false;
+      this.contentIsJsonObj = false;
     }
   }
 

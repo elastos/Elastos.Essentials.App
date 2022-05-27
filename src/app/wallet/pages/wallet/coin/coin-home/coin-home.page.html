@@ -1,7 +1,7 @@
 <ion-content class="lightmode" [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
 
-    <ion-content ngxDetectHideOnScroll scrollEvents>
+    <ion-content ngxDetectHideOnScroll scrollEvents class="intersection-container">
         <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
             <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
             </ion-refresher-content>
@@ -44,6 +44,8 @@
                 </ion-row>
                 <div class="arrow-down"></div>
             </ion-row>
+
+            <!-- Transactions list header -->
             <ion-row class="list-title-row">
                 <ion-col class="title-col" [size]="hasInternalTransactions ? 6 : 12"
                     [class.active]="transactionListType == 0" (click)="setTransactionListType(0)">
@@ -59,7 +61,24 @@
                 </ion-col> -->
             </ion-row>
 
-            <div *ngIf="transferList.length > 0">
+            <!-- List of transactions -->
+            <div *ngIf="transactionsLoaded && offlineTransactions.length > 0">
+                <ion-row class="item-row ripple ion-activatable" *ngFor="let offlineTx of offlineTransactions"
+                    (click)="onOfflineTransactionItem(offlineTx)">
+                    <ion-col size="2" class="left-col">
+                        <div class="icon-container orange">
+                            <img src="./assets/wallet/buttons/transfer.png">
+                        </div>
+                    </ion-col>
+                    <ion-col size="10" class="middle-col">
+                        <h1>{{ getOfflineTransactionTitle(offlineTx) }}</h1>
+                        <p>{{ getOfflineTransactionDate(offlineTx) }}</p>
+                    </ion-col>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-row>
+            </div>
+
+            <div *ngIf="transactionsLoaded && transferList.length > 0">
                 <ion-row class="item-row ripple ion-activatable" *ngFor="let item of transferList"
                     (click)="onItem(item)">
                     <ion-col size="2" class="left-col">
@@ -84,7 +103,9 @@
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-row>
             </div>
-            <div class="empty-list" *ngIf="transactionsLoaded && (transferList.length === 0)">
+
+            <!-- Empty transactions list -->
+            <div class="empty-list" *ngIf="transactionsLoaded && transferList.length === 0">
                 <img src="assets/wallet/icons/warning.svg" />
                 <h1>{{ 'wallet.coin-no-transactions' | translate }}</h1>
             </div>

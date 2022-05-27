@@ -76,6 +76,10 @@
           transform: rotate(180deg);
         }
       }
+
+      .settings-col {
+        justify-content: flex-end;
+      }
     }
 
     .network-row {

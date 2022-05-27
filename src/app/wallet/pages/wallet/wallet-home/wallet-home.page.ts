@@ -31,19 +31,22 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
-import { Network } from 'src/app/wallet/model/networks/network';
-import { NFT } from 'src/app/wallet/model/nfts/nft';
+import { LedgerAccountType } from 'src/app/wallet/model/ledger.types';
+import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { NFT } from 'src/app/wallet/model/networks/evms/nfts/nft';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { WalletSortType } from 'src/app/wallet/model/walletaccount';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { DefiService, StakingData } from 'src/app/wallet/services/defi.service';
+import { DefiService, StakingData } from 'src/app/wallet/services/evm/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
 import { Config } from '../../../config/Config';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
-import { StandardSubWallet } from '../../../model/wallets/standard.subwallet';
-import { AnySubWallet } from '../../../model/wallets/subwallet';
+import { MasterWallet } from '../../../model/masterwallets/masterwallet';
+import { MainCoinSubWallet } from '../../../model/networks/base/subwallets/maincoin.subwallet';
+import { AnySubWallet } from '../../../model/networks/base/subwallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -51,7 +54,6 @@ import { LocalStorage } from '../../../services/storage.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
-
 
 @Component({
     selector: 'app-wallet-home',
@@ -62,13 +64,16 @@ export class WalletHomePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', { static: false }) slider: IonSlides;
 
-    public networkWallet: NetworkWallet = null;
+    public masterWallet: MasterWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     private displayableSubWallets: AnySubWallet[] = null;
     public stakingAssets: StakingData[] = null;
 
     public refreshingStakedAssets = false;
 
     public isEVMNetworkWallet = true;
+
+    public noAddressForLedgerWallet = false;
 
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
@@ -87,7 +92,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public shownSubWalletDetails: AnySubWallet = null;
 
     // Dummy Current Network
-    public currentNetwork: Network = null;
+    public currentNetwork: AnyNetwork = null;
 
     private sendTransactionSubscription: Subscription = null;
 
@@ -116,8 +121,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
     ngOnInit() {
         this.showRefresher();
         this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe((activeNetworkWallet) => {
+            this.networkWallet = activeNetworkWallet;
+
+            this.masterWallet = this.walletManager.getActiveMasterWallet();
+
             if (activeNetworkWallet) {
-                this.networkWallet = activeNetworkWallet;
                 this.isEVMNetworkWallet = this.networkWallet.getMainEvmSubWallet() ? true : false;
 
                 this.refreshSubWalletsList();
@@ -131,6 +139,14 @@ export class WalletHomePage implements OnInit, OnDestroy {
                 this.stakedAssetsUpdateSubscription = this.networkWallet.stakedAssetsUpdate.subscribe((data) => {
                     this.refreshStakingAssetsList();
                 })
+            }
+            else {
+                if (this.masterWallet.type === WalletType.LEDGER) {
+                    if (!this.masterWallet.supportsNetwork(this.networkService.activeNetwork.value)) {
+                        this.noAddressForLedgerWallet = true;
+                    }
+                }
+                // Nothing to do, unsupported wallet for the active network
             }
         });
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
@@ -257,7 +273,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.native.go("/wallet/wallet-manager");
     }
 
-    public getPotentialActiveWallets(): NetworkWallet[] {
+    public getPotentialActiveWallets(): AnyNetworkWallet[] {
         return this.walletManager.getNetworkWalletsList();
     }
 
@@ -283,7 +299,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }
 
         let curerentAmount = this.currencyService.usdToCurrencyAmount(new BigNumber(balance));
-        return curerentAmount.decimalPlaces(decimalplace).toString();
+        return curerentAmount.decimalPlaces(decimalplace).toFixed();
     }
 
     /**
@@ -293,11 +309,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.walletUIService.chooseActiveWallet();
     }
 
-    public selectActiveWallet(wallet: NetworkWallet) {
+    public selectActiveWallet(wallet: AnyNetworkWallet) {
         void this.walletManager.setActiveNetworkWallet(wallet);
     }
 
-    public selectActiveNetwork(network: Network) {
+    public selectActiveNetwork(network: AnyNetwork) {
         // TODO: Use network object, not string
         void this.networkService.setActiveNetwork(network);
     }
@@ -345,7 +361,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     isStandardSubwallet(subWallet: AnySubWallet) {
-        return subWallet instanceof StandardSubWallet;
+        return subWallet instanceof MainCoinSubWallet;
     }
 
     closeRefreshBox() {
@@ -353,7 +369,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.storage.setVisit(true);
     }
 
-    public goNFTHome(networkWallet: NetworkWallet, nft: NFT) {
+    public goNFTHome(networkWallet: AnyNetworkWallet, nft: NFT) {
         this.native.go("/wallet/coin-nft-home", {
             masterWalletId: networkWallet.masterWallet.id,
             contractAddress: nft.contractAddress
@@ -411,5 +427,33 @@ export class WalletHomePage implements OnInit, OnDestroy {
         await this.uiService.setWalletSortTtype(newSortType);
 
         this.refreshSubWalletsList();
+    }
+
+    public async getAddressFromLedger() {
+        let accountType: LedgerAccountType;
+        switch (this.currentNetwork.key.toLowerCase()) {
+            case 'elastos':
+                accountType = LedgerAccountType.ELA
+                break;
+            case 'btc':
+                accountType = LedgerAccountType.BTC
+                break;
+            default:
+                accountType = LedgerAccountType.EVM
+                break;
+        }
+
+        let account = await this.walletUIService.connectLedgerAndGetAddress((this.masterWallet as LedgerMasterWallet).deviceID, accountType);
+        if (account) {
+            (this.masterWallet as LedgerMasterWallet).addAccountOptions(account);
+            void this.masterWallet.save();
+            // create networkwallet and active
+            this.networkWallet = await this.currentNetwork.createNetworkWallet(this.masterWallet);
+
+            if (this.networkWallet) {
+                // Notify that this network wallet is the active one
+                await this.walletManager.setActiveNetworkWallet(this.networkWallet);
+            }
+        }
     }
 }

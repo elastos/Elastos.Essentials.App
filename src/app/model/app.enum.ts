@@ -16,5 +16,6 @@ export enum App {
     SCANNER = "scanner",
     DAPP_BROWSER = "dappbrowser",
     RED_PACKETS = "redpackets",
-    SECURITY = "security"
+    SECURITY = "security",
+    MIGRATOR = "migrator"
 }

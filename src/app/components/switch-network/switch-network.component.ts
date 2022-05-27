@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Network } from 'src/app/wallet/model/networks/network';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 
 type SwitchNetworkComponentOptions = {
@@ -14,8 +14,8 @@ type SwitchNetworkComponentOptions = {
   styleUrls: ['./switch-network.component.scss'],
 })
 export class SwitchNetworkComponent implements OnInit {
-  public currentNetwork: Network = null;
-  public targetNetwork: Network = null;
+  public currentNetwork: AnyNetwork = null;
+  public targetNetwork: AnyNetwork = null;
 
   public options: SwitchNetworkComponentOptions = null;
 

@@ -1,6 +1,6 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../coin";
-import { UniswapCurrencyProvider } from "../../uniswap.currencyprovider";
+import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
 
 export class AvalancheMainnetUniswapCurrencyProvider extends UniswapCurrencyProvider {
   private referenceUSDCoin = new ERC20Coin("USDC", "USDC.e", "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664", 6, MAINNET_TEMPLATE, false, true);

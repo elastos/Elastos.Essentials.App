@@ -8,12 +8,13 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { AddERCTokenRequestParams } from 'src/app/wallet/model/adderctokenrequest';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { EVMService } from 'src/app/wallet/services/evm.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AddERCTokenRequestParams } from 'src/app/wallet/model/networks/evms/adderctokenrequest';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { ERC20Coin } from '../../../../model/coin';
-import { ERC20CoinService } from '../../../../services/erc20coin.service';
+import { ERC20CoinService } from '../../../../services/evm/erc20coin.service';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
@@ -28,8 +29,8 @@ import { WalletService } from '../../../../services/wallet.service';
 export class CoinAddERC20Page implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    //public walletname: string = "";
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
+    private network: EVMNetwork = null;
     public allCustomERC20Coins: ERC20Coin[] = [];
 
     // public coinAddress: string = "0xa4e4a46b228f3658e96bf782741c67db9e1ef91c"; // TEST - TTECH ERC20 on mainnet
@@ -61,6 +62,7 @@ export class CoinAddERC20Page implements OnInit {
         private globalIntentService: GlobalIntentService,
     ) {
         this.networkWallet = this.walletManager.getActiveNetworkWallet();
+        this.network = <EVMNetwork>this.networkWallet.network;
         //this.walletname = this.walletManager.masterWallets[this.masterWallet.id].name;
         this.getAllCustomERC20Coins();
 
@@ -100,7 +102,7 @@ export class CoinAddERC20Page implements OnInit {
     }
 
     getAllCustomERC20Coins() {
-        this.allCustomERC20Coins = this.networkWallet.network.getAvailableERC20Coins();
+        this.allCustomERC20Coins = this.network.getAvailableERC20Coins();
         Logger.log('wallet', 'All available erc20tokens', this.allCustomERC20Coins);
     }
 
@@ -192,7 +194,7 @@ export class CoinAddERC20Page implements OnInit {
     }
 
     /* private async getEthAccountAddress(): Promise<string> {
-        return this.masterWallet.getSubWallet(StandardCoinName.ETHSC).createAddress();
+        return this.masterWallet.getSubWallet(StandardCoinName.ETHSC).getCurrentReceiverAddress();
     } */
 
     async addCoin() {
@@ -201,7 +203,7 @@ export class CoinAddERC20Page implements OnInit {
         } else {
             const activeNetworkTemplate = this.prefs.getNetworkTemplate();
             const newCoin = new ERC20Coin(this.coinSymbol, this.coinName, this.coinAddress, this.coinDecimals, activeNetworkTemplate, true);
-            await this.networkWallet.network.addCustomERC20Coin(newCoin);
+            await this.network.addCustomERC20Coin(newCoin);
 
             // Coin added - go back to the previous screen
             if (this.intentMode) {

@@ -27,7 +27,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { WalletAccount, WalletAccountType } from '../../../model/walletaccount';
 import { AuthService } from '../../../services/auth.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
@@ -44,7 +44,7 @@ import { WalletService } from '../../../services/wallet.service';
 export class CRMemberRegisterPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    networkWallet: NetworkWallet = null;
+    networkWallet: AnyNetworkWallet = null;
     intentTransfer: IntentTransfer;
     transfer: Transfer = null;
 
@@ -113,7 +113,6 @@ export class CRMemberRegisterPage implements OnInit {
         this.transfer = this.coinTransferService.transfer;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.subWalletId = this.coinTransferService.subWalletId;
-        this.walletInfo = this.coinTransferService.walletInfo;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
         switch (this.transfer.action) {
@@ -192,7 +191,7 @@ export class CRMemberRegisterPage implements OnInit {
         //         this.transfer.did, digest, payPassword);
 
         // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createRegisterCRTransaction(this.masterWallet.id, this.subWalletId,
-        //         '', payload, this.depositAmount.toString(), this.transfer.memo);
+        //         '', payload, this.depositAmount.toFixed(), this.transfer.memo);
         // this.walletManager.openPayModal(this.transfer); // TODO: USE signAndSendRawTransaction
     }
 

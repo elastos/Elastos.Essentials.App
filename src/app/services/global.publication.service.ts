@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { DIDPublishingComponent } from '../components/did-publishing/did-publishing.component';
 import { Logger } from '../logger';
 import { JSONObject } from '../model/json';
+import { WalletNetworkService } from '../wallet/services/network.service';
 import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from './global.elastosapi.service';
 import { GlobalIntentService } from './global.intent.service';
@@ -321,10 +322,13 @@ namespace WalletPublishing {
         public async publishDID(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
             Logger.log("publicationservice", "Publishing DID with wallet:", payloadObject);
 
-            // Make sure the active network is elastos, otherwise, ask user to change
-            const elastosNetwork = await this.globalSwitchNetworkService.promptSwitchToElastosNetworkIfDifferent();
-            if (!elastosNetwork) {
-                return;// Used has denied to switch network. Can't continue.
+            // Make sure the active network is elastosidchain, otherwise, ask user to change
+            if (WalletNetworkService.instance.activeNetwork.value.key !== "elastosidchain") {
+              let didNetwork = WalletNetworkService.instance.getNetworkByKey("elastosidchain");
+              const switched = await this.globalSwitchNetworkService.promptSwitchToNetwork(didNetwork);
+              if (!switched) {
+                  return;// Used has denied to switch network. Can't continue.
+              }
             }
 
             let params = {

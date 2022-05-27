@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonInput } from '@ionic/angular';
-
-import { NodesService } from '../../services/nodes.service';
-import { DPosNode } from '../../model/nodes.model';
-import { Logger } from 'src/app/logger';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TranslateService } from '@ngx-translate/core';
+import { DPosNode } from '../../model/nodes.model';
+import { NodesService } from '../../services/nodes.service';
+
 
 @Component({
     selector: 'app-search',
@@ -20,10 +20,10 @@ export class SearchPage implements OnInit {
 
     // Search values
     public filteredNodes: DPosNode[] = [];
-    public _node: string = '';
+    public _node = '';
 
     // DPosNode Detail
-    public showNode: boolean = false;
+    public showNode = false;
     public nodeIndex: number;
     public node: DPosNode;
 
@@ -43,7 +43,7 @@ export class SearchPage implements OnInit {
 
     ionViewDidEnter() {
         setTimeout(() => {
-            this.search.setFocus();
+            void this.search.setFocus();
         }, 200);
     }
 

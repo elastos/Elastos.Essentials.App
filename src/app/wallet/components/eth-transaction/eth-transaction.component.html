@@ -5,14 +5,15 @@
         <ion-label>
           <h1 *ngIf="publicationSuccessful">{{ 'wallet.tx-success' | translate }}</h1>
           <h1 *ngIf="publishing">{{ 'wallet.eth-sending-transaction' | translate }}</h1>
-          <br/>
+          <br />
           <h2 *ngIf="publishing">{{ 'wallet.eth-transaction-wait' | translate }}</h2>
         </ion-label>
 
         <ion-spinner *ngIf="publishing" class="spinner"></ion-spinner>
 
         <div class="success-row result" [class.darkContainer]="theme.darkMode" *ngIf="publicationSuccessful">
-          <lottie-player src="../../../assets/wallet/animations/success-1.json" background="transparent" speed="0.5" style="width: 80px; height: 80px;" autoplay></lottie-player>
+          <lottie-player src="../../../../assets/wallet/animations/success-1.json" background="transparent" speed="0.5"
+            style="width: 80px; height: 80px;" autoplay></lottie-player>
         </div>
       </ion-col>
     </ion-row>
@@ -27,24 +28,12 @@
     <ion-row class="item-row ripple ion-activatable" *ngIf="publicationFailed">
       <ion-col size="6">
         <div>{{ 'wallet.eth-gasprice' | translate }}</div>
-        <ion-input
-            autosize
-            clearInput
-            name="gasPrice" ngDefaultControl
-            [(ngModel)]="gasPrice"
-            mode="ios"
-        >
+        <ion-input autosize clearInput name="gasPrice" ngDefaultControl [(ngModel)]="gasPrice" mode="ios">
         </ion-input>
       </ion-col>
       <ion-col size="6">
         <div>{{ 'wallet.eth-gaslimit' | translate }}</div>
-        <ion-input
-            autosize
-            clearInput
-            name="gasLimit" ngDefaultControl
-            [(ngModel)]="gasLimit"
-            mode="ios"
-        >
+        <ion-input autosize clearInput name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
         </ion-input>
       </ion-col>
     </ion-row>
@@ -63,4 +52,3 @@
     </ion-row>
   </ion-grid>
 </ion-content>
-

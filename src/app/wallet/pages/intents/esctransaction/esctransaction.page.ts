@@ -30,12 +30,14 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/ethtransactioninfoparser';
-import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
-import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
-import { EVMService } from 'src/app/wallet/services/evm.service';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
+import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
+import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
+import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -50,10 +52,9 @@ import { WalletService } from '../../../services/wallet.service';
 export class EscTransactionPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private networkWallet: NetworkWallet = null;
-  private evmSubWallet: StandardEVMSubWallet = null;
+  private networkWallet: AnyNetworkWallet = null;
+  private evmSubWallet: AnyMainCoinEVMSubWallet = null;
   private intentTransfer: IntentTransfer;
-  private walletInfo = {};
   public balance: BigNumber; // ELA
   public gasPrice: string;
   public gasPriceGwei: number;
@@ -105,7 +106,7 @@ export class EscTransactionPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    if (this.walletInfo["Type"] === "Multi-Sign") {
+    if (this.networkWallet.masterWallet.type !== WalletType.STANDARD) {
       // TODO: reject esctransaction if multi sign (show error popup)
       void this.cancelOperation();
     }
@@ -124,8 +125,9 @@ export class EscTransactionPage implements OnInit {
 
   async init() {
     this.intentTransfer = this.coinTransferService.intentTransfer;
-    this.walletInfo = this.coinTransferService.walletInfo;
     this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
+
+    Logger.log("wallet", "ESC Transaction params", this.coinTransferService.payloadParam);
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
     await this.evmSubWallet.updateBalance()
@@ -253,19 +255,19 @@ export class EscTransactionPage implements OnInit {
     let fees = gas.multipliedBy(gasPrice).dividedBy(weiToDisplayCurrencyRatio);
     let total = currencyValue.plus(fees);
 
-    // Logger.log('wallet', "gasPrice", gasPrice.toString())
-    // Logger.log('wallet', "gas", gas.toString())
-    // Logger.log('wallet', "currencyValue", currencyValue.toString())
-    // Logger.log('wallet', "fees/gas", fees.toString());
-    // Logger.log('wallet', "total", total.toString());
+    // Logger.log('wallet', "gasPrice", gasPrice.toFixed())
+    // Logger.log('wallet', "gas", gas.toFixed())
+    // Logger.log('wallet', "currencyValue", currencyValue.toFixed())
+    // Logger.log('wallet', "fees/gas", fees.toFixed());
+    // Logger.log('wallet', "total", total.toFixed());
 
     return {
       totalAsBigNumber: total,
-      total: total.toString(),
+      total: total.toFixed(),
       valueAsBigNumber: currencyValue,
-      value: currencyValue.toString(),
+      value: currencyValue.toFixed(),
       feesAsBigNumber: fees,
-      fees: fees.toString()
+      fees: fees.toFixed()
     }
   }
 
@@ -280,7 +282,7 @@ export class EscTransactionPage implements OnInit {
     let nonce = await this.evmSubWallet.getNonce();
     const rawTx =
       await this.walletManager.spvBridge.createTransferGeneric(
-        this.networkWallet.id,
+        jsToSpvWalletId(this.networkWallet.id),
         this.evmSubWallet.id,
         this.coinTransferService.payloadParam.to || '',
         this.coinTransferService.payloadParam.value || "0",
@@ -299,14 +301,15 @@ export class EscTransactionPage implements OnInit {
       Object.assign(transfer, {
         masterWalletId: this.networkWallet.id,
         subWalletId: this.evmSubWallet.id,
-        rawTransaction: rawTx,
+        //rawTransaction: rawTx,
         payPassword: '',
         action: this.intentTransfer.action,
         intentId: this.intentTransfer.intentId,
       });
 
       try {
-        await this.ethTransactionService.publishTransaction(this.evmSubWallet, rawTx, transfer, true)
+        const result = await this.evmSubWallet.signAndSendRawTransaction(rawTx, transfer, false);
+        //await this.ethTransactionService.publishTransaction(this.evmSubWallet, rawTx, transfer)
       }
       catch (err) {
         Logger.error('wallet', 'EscTransactionPage publishTransaction error:', err)

@@ -9,8 +9,8 @@ import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
-import { WalletAccountType } from 'src/app/wallet/model/walletaccount';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
 import { CRCouncilService } from '../../services/crcouncil.service';
 
 @Component({
@@ -57,7 +57,7 @@ export class ImpeachCRMemberPage {
     // }
 
     async goTransaction(): Promise<boolean> {
-        if (this.voteService.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
+        if (this.voteService.sourceSubwallet.masterWallet.type !== WalletType.STANDARD) {
             await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.multi-sign-reject-voting');
             return false;
         }

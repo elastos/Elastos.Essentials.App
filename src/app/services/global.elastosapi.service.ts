@@ -7,8 +7,8 @@ import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProp
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
 import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model';
 import { StandardCoinName } from '../wallet/model/coin';
-import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/evm.types';
-import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/providers/transaction.types';
+import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/networks/evms/evm.types';
+import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/tx-providers/transaction.types';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalLanguageService } from './global.language.service';
@@ -22,8 +22,6 @@ declare let hiveManager: HivePlugin.HiveManager;
 export enum ElastosApiUrlType {
     // Main chain
     ELA_RPC = "mainChainRPC",
-    // DID 1.0 deprecated chain
-    DID_RPC = "idChainRPC",
     // ESC chain
     ETHSC_RPC = "escRPC",
     ETHSC_MISC = "escMiscRPC",
@@ -303,9 +301,8 @@ export class GlobalElastosAPIService extends GlobalService {
      *
      * Ex: "MainNet" network template + "elastos.io" provider + "ETHSC_RPC" api type ==> https://api.elastos.io/eth
      */
-    public getApiUrl(type: ElastosApiUrlType): string {
+    public getApiUrl(type: ElastosApiUrlType, activeNetworkTemplate = this.globalNetworksService.activeNetworkTemplate.value): string {
         let activeProvider = this.activeProvider.value;
-        let activeNetworkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
 
         // Make sure the currently active network template is supported by our elastos api providers
         if (!(activeNetworkTemplate in activeProvider.endpoints)) {
@@ -438,8 +435,6 @@ export class GlobalElastosAPIService extends GlobalService {
         switch (elastosChainCode) {
             case StandardCoinName.ELA:
                 return ElastosApiUrlType.ELA_RPC;
-            case StandardCoinName.IDChain:
-                return ElastosApiUrlType.DID_RPC;
             case StandardCoinName.ETHSC:
                 return ElastosApiUrlType.ETHSC_RPC;
             case StandardCoinName.ETHDID:
@@ -510,6 +505,10 @@ export class GlobalElastosAPIService extends GlobalService {
     public async getTransactionsByAddress(elastosChainCode: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<{ result: ElastosPaginatedTransactions }[]> {
         const paramArray = [];
         let index = 0;
+
+        if (!addressArray || addressArray.length === 0) {
+            throw new Error("Elastos API - getTransactionsByAddress() cannot be called with an empty address array");
+        }
 
         for (const address of addressArray) {
             const param = {

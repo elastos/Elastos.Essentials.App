@@ -39,6 +39,7 @@ export const en = {
         "not-a-valid-address": "Not a valid address",
         "transaction-pending": "There is already an on going transaction. Please wait for the transaction to be confirmed.",
         "share-erc20-token": "Check out this Elastos ERC20 Token",
+        "privatekey": "Private Key",
 
         /************
         * Home Page *
@@ -67,6 +68,8 @@ export const en = {
         "change-wallet": "Change wallet",
         "wallets": "Wallets",
         "explore-your-wallets": "Explore your wallets",
+        "wallet-unsupported-on-network": "This wallet is unsupported on the {{ network }} network. Please select another network or wallet.",
+        "wallet-connect-to-ledger": "Connect to ledger Wallet",
 
         /********************************************** General Settings Screen ***********************************************/
 
@@ -75,7 +78,7 @@ export const en = {
         *****************/
         'settings-title': 'Settings',
         "settings-general": "General",
-        "settings-add-wallet": "New Wallet",
+        "settings-add-wallet": "Add Wallet",
         "settings-add-wallet-subtitle": "Create or import a new wallet",
         "settings-my-wallets": "My Wallets",
         "settings-my-wallets-subtitle": "Backup wallets and access their individual settings",
@@ -83,6 +86,13 @@ export const en = {
         "settings-currency-subtitle": "Select the default currency",
         "settings-custom-networks": "Custom Networks",
         "settings-custom-networks-subtitle": "Add and edit your custom networks here",
+        "settings-manage-networks": "Manage Networks",
+        "settings-manage-networks-subtitle": "Show and hide networks, add custom ones",
+        "settings-add-wallet-standard-wallet": "Standard Wallet",
+        "settings-add-wallet-multi-sig-wallet": "Multi Signature Wallet",
+        "settings-add-wallet-hardware-wallet": "Connect H/W Wallet",
+        "settings-add-wallet-new-wallet": "New Wallet",
+        "settings-add-wallet-mnemonic": "Mnemonic / Paper key",
 
         /***********************
         * Select-Currency Page *
@@ -149,6 +159,7 @@ export const en = {
         "coin-transaction-status-confirmed": "Confirmed",
         "coin-transaction-status-pending": "Pending",
         "coin-transaction-status-unconfirmed": "Unconfirmed",
+        "coin-transaction-status-not-published": "Not published",
         "text-coin-close-warning": "Token will be removed from the list.",
 
         /*******************
@@ -264,6 +275,38 @@ export const en = {
         'select-a-token': 'Select a token',
         'select-token-intro': 'Which token would you like to use next?',
 
+        /**************************
+        * Wallet chooser component *
+        ***************************/
+
+        'unsupported-on-network': 'Unsupported on the {{network}} network.',
+
+        /*********************
+        * Ledger Get Address Component *
+        **********************/
+        "ledger-account-select": "Please select a account from ledger",
+        "ledger-connecting": "Searching Ledger Wallet",
+        "ledger-prompt": "Please open Ledger Nano X, keep it unlocked, and open the {{appname}} application",
+
+        /*******************
+        * Ledger scan page *
+        ********************/
+        "ledger-scan": "Ledger Search",
+        "ledger-scan-available-devices": "Available devices",
+        "ledger-scan-scan-again": "Scan again",
+        "ledger-scan-ledger-scanning": "Searching devices",
+
+        /**********************
+        * Ledger connect page *
+        ***********************/
+        "ledger-connect": "Ledger Account",
+        "ledger-device": "Device",
+        "ledger-connect-error": "Failed to connect to the device",
+        "ledger-connecting-to-device": "Connecting to device",
+        "ledger-addresses": "Addresses",
+        "address-type": "Address type",
+        "pick-network": "Pick network",
+
         /********************************************** Wallet Settings Screens ***********************************************/
 
         /***********************
@@ -342,6 +385,12 @@ export const en = {
         "coin-adderc20-invalid-contract-or-network-error": "The provided ERC20 token address is not valid or there is a network error.",
         'coin-adderc20-alreadyadded': 'Token already added',
         'coin-adderc20-not-found': "The token address can't be found, please check it!",
+
+        /***********************
+        * Manage networks Page *
+        ************************/
+        'manage-networks-title': 'Manage networks',
+        'manage-networks-intro': 'Select networks that you want to see in networks list. Hide networks that you don\'t use. You can also add custom ethereum-compatible networks from the plus icon above.',
 
         /***********************
         * Custom networks Page *
@@ -474,6 +523,10 @@ export const en = {
         'get-started': 'Get Started',
         'import-wallet-msg': 'Already got a Wallet? Import it.',
         'launcher-create-wallet': 'Create Wallet',
+        'new-standard-wallet': 'New standard wallet',
+        'import-standard-wallet': 'Import standard wallet',
+        'multi-sig-wallet': 'Multi-sig wallet',
+        'ledger-hardware-wallet': 'Ledger Nano X hardware wallet',
 
         /*********************
         * Wallet Create Page *
@@ -519,7 +572,6 @@ export const en = {
         "help:create-password": "The mnemonic passphrase is optional but it gives an additional level of security to your wallet. You can consider it as a custom 13th mnemonic word. Please note that this passphrase can never be recovered if you forget it. Entering a wrong passphrase when restoring your wallet in the future will not generate any error, but will result in a wrong wallet address.",
         "help:import-password": "A mnemonic passphrase is a custom password that's bound to your mnemonic words. If you did not create a mnemonic passphrase when you created your wallet, then please disregard.",
         // "help:mnemonic-password": 'This is an optional password bound to your mnemonic words, to give your wallet extra security. Save it carefully, it is NOT recoverable if lost.',
-        "privatekey": "Private Key",
         "privatekey-tap-to-copy": "Tap private key to copy",
         "export-private-key-intro": "Optionally, you can also use the following private key in some wallets. Touch to copy.",
         "import-paste-from-keypad": "Note: you can paste a whole mnemonic sentence from the keypad",
@@ -572,6 +624,38 @@ export const en = {
         'bridge-tokens': 'Bridge your tokens',
         'bridge-tokens-intro': 'The following third party bridge services are available to <b>transfer {{coinName}}</b> tokens from and to {{networkName}}:',
         'to-networks': 'To networks:',
+
+        /********************************
+        * Multisig tx details component *
+        *********************************/
+        'multi-signature-status': 'Multi signature status',
+        'multi-signature-my-signature': 'My signature',
+        'multi-signature-sign': 'Sign',
+        'multi-signature-signed': 'Signed',
+        'multi-signature-not-signed': 'Not signed',
+        'multi-signature-publish': 'Publish',
+        'multi-signature-transaction-link': 'Co-signers link',
+        'multi-signature-transaction-link-copy-info': 'Copy this link to let other co-signers find and sign this transaction',
+        'multi-signature-transaction-link-copied': 'Transaction link copied to clipboard',
+
+        /***************************
+        * Multisig tx intent page  *
+        ****************************/
+        'multi-sig-tx-title': 'Multisig transaction',
+        'multi-sig-tx-fetching': 'Fetching transaction information, please wait.',
+        'multi-sig-tx-no-tx-found': 'Sorry, no matching transaction was found.',
+        'multi-sig-tx-unknown-network': 'Sorry, This transaction is for a network that doesn\'t exist in your version of Essentials.',
+        'multi-sig-tx-pick-wallet': 'Pick the right multi-signature wallet to use.',
+        'multi-sig-tx-select-wallet': 'Select multi-sig wallet',
+        'multi-sig-tx-selected-wallet': 'Selected wallet',
+        'multi-sig-tx-switched-to-network': 'Switched to {{ network }}',
+
+        /************************
+        * Offline transactions  *
+        *************************/
+
+        'offline-tx-pending-multisig': 'Pending multi-signature',
+        'offline-tx-unknown-tx': "Unknown transaction",
 
         /***************************
         * Block chain upgrade *
@@ -925,7 +1009,6 @@ export const en = {
     'Wallis And Futuna Islands': 'Wallis And Futuna Islands',
     'Western Sahara': 'Western Sahara',
     'Yemen': 'Yemen',
-    'Yugoslavia': 'Yugoslavia',
     'Zambia': 'Zambia',
     'Zimbabwe': 'Zimbabwe',
     'the Republic of Abkhazia': 'the Republic of Abkhazia',

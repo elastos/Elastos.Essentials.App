@@ -5,13 +5,13 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from '../../model/coin';
-import { NetworkWallet } from '../../model/wallets/networkwallet';
+import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
 import { CurrencyService } from '../../services/currency.service';
 import { UiService } from '../../services/ui.service';
 import { WalletService } from '../../services/wallet.service';
 
 export type WalletChooserComponentOptions = {
-  sourceWallet: NetworkWallet; // Master wallet from which funds will be transfered
+  sourceWallet: AnyNetworkWallet; // Master wallet from which funds will be transfered
   subWalletId: string; // Target chain ID, used to display available balance for each wallet
   excludeWalletId?: string; // Optional wallet to not show in the list of selectable wallets
 }
@@ -26,7 +26,7 @@ export class TransferWalletChooserComponent implements OnInit {
 
   public CoinType = CoinType;
   public options: WalletChooserComponentOptions = null;
-  public walletsToShowInList: NetworkWallet[];
+  public walletsToShowInList: AnyNetworkWallet[];
 
   constructor(
     private navParams: NavParams,
@@ -51,7 +51,7 @@ export class TransferWalletChooserComponent implements OnInit {
     }
   }
 
-  walletSelected(networkWallet: NetworkWallet) {
+  walletSelected(networkWallet: AnyNetworkWallet) {
     Logger.log("wallet", "Wallet selected", networkWallet);
 
     void this.modalCtrl.dismiss({

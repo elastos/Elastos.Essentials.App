@@ -11,8 +11,9 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
-import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
+import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
+import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
@@ -188,7 +189,7 @@ export class NewPacketPage {
     let packet: PacketToCreate = {
       quantity: this.packets,
       category: this.packetTheme.key,
-      chainId: this.tokenSubwallet.networkWallet.network.getMainChainID(),
+      chainId: (this.tokenSubwallet.networkWallet.network as EVMNetwork).getMainChainID(),
       value: new BigNumber(this.tokenAmount),
       distributionType: this.distributionType,
       message: this.message,

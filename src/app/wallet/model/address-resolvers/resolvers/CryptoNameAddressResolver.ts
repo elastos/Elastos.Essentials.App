@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Logger } from "src/app/logger";
 import { StandardCoinName } from '../../coin';
-import { AnySubWallet } from '../../wallets/subwallet';
+import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { Address } from '../addresses/Address';
 import { CryptoNameAddress } from '../addresses/CryptoNameAddress';
 import { Resolver } from "./Resolver";

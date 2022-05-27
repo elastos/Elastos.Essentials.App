@@ -9,17 +9,17 @@ import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { WalletHomePage } from './wallet-home.page';
 
 @NgModule({
-    declarations: [WalletHomePage],
-    imports: [
-        SharedComponentsModule,
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        TranslateModule,
-        GlobalDirectivesModule,
-        RouterModule.forChild([{ path: '', component: WalletHomePage }])
-    ],
-    exports: [RouterModule],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        declarations: [WalletHomePage],
+        imports: [
+                SharedComponentsModule,
+                CommonModule,
+                FormsModule,
+                IonicModule,
+                TranslateModule,
+                GlobalDirectivesModule,
+                RouterModule.forChild([{ path: '', component: WalletHomePage }])
+        ],
+        exports: [RouterModule],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class WalletHomeModule { }

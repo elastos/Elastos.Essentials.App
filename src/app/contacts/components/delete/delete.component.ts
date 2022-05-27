@@ -1,12 +1,12 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { PopoverController, NavParams } from '@ionic/angular';
-
+import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Contact } from '../../models/contact.model';
 import { FriendsService } from '../../services/friends.service';
 
-import { Contact } from '../../models/contact.model';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Logger } from 'src/app/logger';
+
 
 @Component({
   selector: 'app-delete',
@@ -32,12 +32,12 @@ export class DeleteComponent implements OnInit {
     Logger.log('contacts', 'Delete Prompt for ', this.contact);
   }
 
-  deleteFriend() {
-    this.friendsService.deleteContact(this.contact);
-    this.popover.dismiss();
+  async deleteFriend() {
+    await this.friendsService.deleteContact(this.contact);
+    void this.popover.dismiss();
   }
 
   cancel() {
-    this.popover.dismiss();
+    void this.popover.dismiss();
   }
 }

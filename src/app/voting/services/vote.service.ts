@@ -14,26 +14,24 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { ElastosStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/networkwallets/standard/elastos.networkwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { StandardCoinName } from '../../wallet/model/coin';
-import { WalletAccount, WalletAccountType } from '../../wallet/model/walletaccount';
 import { Native } from '../../wallet/services/native.service';
 import { WalletService } from '../../wallet/services/wallet.service';
-
-
 @Injectable({
     providedIn: 'root'
 })
 export class VoteService {
-    private activeWallet: NetworkWallet = null;
+    private activeWallet: ElastosStandardNetworkWallet = null;
 
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     public masterWalletId: string;
     public elastosChainCode: StandardCoinName = StandardCoinName.ELA;
-    public walletInfo: WalletAccount;
-    public sourceSubwallet: MainchainSubWallet;
+    public sourceSubwallet: MainChainSubWallet;
 
     public intentAction: string;
     public intentId: number;
@@ -85,7 +83,7 @@ export class VoteService {
         this.routerOptions = routerOptions;
 
         this.elastosChainCode = StandardCoinName.ELA;
-        this.activeWallet = this.walletManager.getActiveNetworkWallet();
+        this.activeWallet = this.walletManager.getActiveNetworkWallet() as ElastosStandardNetworkWallet;
 
         if (!this.activeWallet) {
             const toCreateWallet = await this.globalPopupService.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
@@ -104,7 +102,6 @@ export class VoteService {
     private clear() {
         this.networkWallet = null;
         this.masterWalletId = null;
-        this.walletInfo = null;
         this.intentAction = null;
         this.intentId = null;
     }
@@ -116,18 +113,17 @@ export class VoteService {
     }
 
     //For select-wallet page call
-    public async navigateTo(networkWallet: NetworkWallet) {
+    public async navigateTo(networkWallet: ElastosStandardNetworkWallet) {
         this.networkWallet = networkWallet;
         this.masterWalletId = networkWallet.id;
-        this.walletInfo = this.walletManager.getMasterWallet(this.masterWalletId).account;
 
         //If multi sign will be rejected
-        if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
+        if (networkWallet.masterWallet.type !== WalletType.STANDARD) {
             await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
             return;
         }
 
-        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(StandardCoinName.ELA) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
         void this.nav.navigateTo(this.context, this.route, this.routerOptions);
         this.clearRoute();
     }
@@ -196,7 +192,7 @@ export class VoteService {
         Logger.error(context, 'error:', message);
     }
 
-    public async checkWalletAvailableForVote():  Promise<boolean> {
+    public async checkWalletAvailableForVote(): Promise<boolean> {
         // if (await this.sourceSubwallet.hasPendingBalance()) {
         //     await this.globalPopupService.ionicAlert("common.please-wait", 'wallet.transaction-pending');
         //     return false;
@@ -319,7 +315,7 @@ export class VoteService {
 
     async isSecretaryGeneral(): Promise<boolean> {
         let secretaryGeneralDid = await this.getSecretaryGeneralDid();
-        return (secretaryGeneralDid == GlobalDIDSessionsService.signedInDIDString) || (("did:elastos:" + secretaryGeneralDid) ==  GlobalDIDSessionsService.signedInDIDString);
+        return (secretaryGeneralDid == GlobalDIDSessionsService.signedInDIDString) || (("did:elastos:" + secretaryGeneralDid) == GlobalDIDSessionsService.signedInDIDString);
     }
 
     // The wallet that has no ELA subwallet can't vote, eg. the wallet imported by privat key.

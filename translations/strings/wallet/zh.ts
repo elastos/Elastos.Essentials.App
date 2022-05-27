@@ -39,6 +39,7 @@ export const zh = {
                 "not-a-valid-address": "地址无效",
                 "transaction-pending": "前一个交易正在确认中，请等待此交易确认后再执行",
                 "share-erc20-token": "查看这个Elastos ERC20币种",
+                "privatekey": "私钥",
 
                 /************
                 * Home Page *
@@ -67,6 +68,8 @@ export const zh = {
                 "change-wallet": "切换钱包",
                 "wallets": "您的钱包",
                 "explore-your-wallets": "探索您的钱包",
+                "wallet-unsupported-on-network": "此钱包不支持 {{ network }} 网络。请选择其它网络或钱包。",
+                "wallet-connect-to-ledger": '连接 Ledger 硬件钱包',
 
                 /********************************************** General Settings Screen ***********************************************/
 
@@ -83,6 +86,13 @@ export const zh = {
                 "settings-currency-subtitle": "选择默认的货币",
                 "settings-custom-networks": "自定义网络",
                 "settings-custom-networks-subtitle": "在此添加或编辑自定义网络",
+                "settings-manage-networks": "管理网络",
+                "settings-manage-networks-subtitle": "显示和隐藏网络，添加自定义网络",
+                "settings-add-wallet-standard-wallet": "标准钱包",
+                "settings-add-wallet-multi-sig-wallet": "多签钱包",
+                "settings-add-wallet-hardware-wallet": "连接硬件钱包",
+                "settings-add-wallet-new-wallet": "新钱包",
+                "settings-add-wallet-mnemonic": "助记词",
 
                 /***********************
                 * Select-Currency Page *
@@ -149,6 +159,7 @@ export const zh = {
                 "coin-transaction-status-confirmed": "已确认",
                 "coin-transaction-status-pending": "确认中",
                 "coin-transaction-status-unconfirmed": "未确认",
+                "coin-transaction-status-not-published": "Not published",
                 "text-coin-close-warning": "此币种将从列表中删除",
 
                 /*******************
@@ -264,6 +275,40 @@ export const zh = {
                 'select-a-token': '选择代币',
                 'select-token-intro': '您下一步要使用哪个代币?',
 
+                /**************************
+                * Wallet chooser component *
+                ***************************/
+
+                'unsupported-on-network': '不支持 {{network}} 网络.',
+
+                /*********************
+                * Ledger Get Address Component *
+                **********************/
+                "ledger-account-select": "请选择 Ledger 账号",
+                "ledger-connecting": "正在搜索 Ledger 钱包",
+                "ledger-prompt": "请开启 Ledger Nano X，保持解锁，并打开 {{appname}} 应用程序",
+
+                /*******************
+                * Ledger scan page *
+                ********************/
+                "ledger-scan": "搜索Ledger设备",
+                "ledger-scan-available-devices": "可用设备",
+                "ledger-scan-scan-again": "重新搜索",
+                "ledger-scan-ledger-scanning": "正在搜索设备",
+                "ledger-scan-bluetooth-not-enable": "蓝牙未开启，请先开启蓝牙",
+                "ledger-scan-open-bluetooth-setting": "打开蓝牙设置",
+
+                /**********************
+                * Ledger connect page *
+                ***********************/
+                "ledger-connect": "Ledger 账号",
+                "ledger-device": "设备",
+                "ledger-connect-error": "连接失败",
+                "ledger-connecting-to-device": "正在连接设备",
+                "ledger-addresses": "地址",
+                "address-type": "地址类型",
+                "pick-network": "选择网络",
+
                 /********************************************** Wallet Settings Screens ***********************************************/
 
                 /***********************
@@ -342,6 +387,12 @@ export const zh = {
                 "coin-adderc20-invalid-contract-or-network-error": "不是有效的 ERC20 币种地址 或 网络错误",
                 'coin-adderc20-alreadyadded': '币种已经添加',
                 'coin-adderc20-not-found': '此币种地址未注册，请检查您输入的币种地址',
+
+                /***********************
+                * Manage networks Page *
+                ************************/
+                'manage-networks-title': '管理网络',
+                'manage-networks-intro': '在“网络”列表中选择要查看的网络。隐藏您不使用的网络。您还可以点击上面的“+”图标来添加与以太坊兼容的自定义网络。',
 
                 /***********************
                 * Custom networks Page *
@@ -457,7 +508,7 @@ export const zh = {
                 "signtypeddata-title": "数据签名",
                 "signtypeddata-subtitle": "数据签名",
                 "signtypeddata-intro": "调用应用程序需要您使用钱包签署一些数据才能继续。请确认",
-                "signtypeddata-danger": "签名此信息可能很危险。此签名可能会代表您的帐户执行任何操作，包括将您的帐户及其所有资产的完全控制权授予请求站点。只有在您知道自己在做什么或完全信任请求站点的情况下，才能在此信息上签名。",
+                "signtypeddata-danger": "对此数据签名可能会很危险。此签名可能代表您的帐户执行任何操作，包括将您的帐户及其所有资产的完全控制权授予请求站点。只有在你知道自己在做什么或完全信任请求网站的情况下，才能签署此消息。",
 
                 /***********************
                 * No Wallet *
@@ -475,6 +526,10 @@ export const zh = {
                 'get-started': '开始',
                 'import-wallet-msg': '已经有钱包? 点击这里导入钱包',
                 'launcher-create-wallet': '创建钱包',
+                'new-standard-wallet': '新建标准钱包',
+                'import-standard-wallet': '导入标准钱包',
+                'multi-sig-wallet': '多签钱包',
+                'ledger-hardware-wallet': 'Ledger Nano X 硬件钱包',
 
                 /*********************
                 * Wallet Create Page *
@@ -519,7 +574,6 @@ export const zh = {
                 "mnemonic-reinput-passphrase": "再次输入助记词密码",
                 "help:create-password": "助记词密码是可选的，但它为您的钱包提供了更高的安全性。您可以将其视为自定义的第13个助记词。请注意，如果忘记了该密码，将无法恢复钱包。在恢复您的钱包时输入错误的助记词密码不会产生任何错误，但恢复的将是另一个钱包。",
                 "help:import-password": "助记词密码是与助记词绑定的自定义密码。 如果您在创建钱包时使用了助记词密码，则导入时必须使用相同的助记词密码，反之，则无需助记词密码，否则恢复的将是另一个钱包。",
-                "privatekey": "私钥",
                 "privatekey-tap-to-copy": "点击私钥即可复制",
                 "export-private-key-intro": "或者，您也可以在某些钱包中使用以下私钥。点击私钥即可复制。",
                 "import-paste-from-keypad": "备注：您可以从键盘上粘贴完整的助记词",
@@ -572,6 +626,38 @@ export const zh = {
                 'bridge-tokens': '桥接您的代币',
                 'bridge-tokens-intro': '以下第三方桥接服务可用于 {{networkName}} 上<b>交易 {{coinName}}</b> 代币:',
                 'to-networks': '支持的网络:',
+
+                /********************************
+                * Multisig tx details component *
+                *********************************/
+                'multi-signature-status': 'Multi signature status',
+                'multi-signature-my-signature': 'My signature',
+                'multi-signature-sign': 'Sign',
+                'multi-signature-signed': 'Signed',
+                'multi-signature-not-signed': 'Not signed',
+                'multi-signature-publish': 'Publish',
+                'multi-signature-transaction-link': 'Co-signers link',
+                'multi-signature-transaction-link-copy-info': 'Copy this link to let other co-signers find and sign this transaction',
+                'multi-signature-transaction-link-copied': 'Transaction link copied to clipboard',
+
+                /***************************
+                * Multisig tx intent page  *
+                ****************************/
+                'multi-sig-tx-title': 'Multisig transaction',
+                'multi-sig-tx-fetching': 'Fetching transaction information, please wait.',
+                'multi-sig-tx-no-tx-found': 'Sorry, no matching transaction was found.',
+                'multi-sig-tx-unknown-network': 'Sorry, This transaction is for a network that doesn\'t exist in your version of Essentials.',
+                'multi-sig-tx-pick-wallet': 'Pick the right multi-signature wallet to use.',
+                'multi-sig-tx-select-wallet': 'Select multi-sig wallet',
+                'multi-sig-tx-selected-wallet': 'Selected wallet',
+                'multi-sig-tx-switched-to-network': 'Switched to {{ network }}',
+
+                /************************
+                * Offline transactions  *
+                *************************/
+
+                'offline-tx-pending-multisig': 'Pending multi-signature',
+                'offline-tx-unknown-tx': "Unknown transaction",
 
                 /***************************
                 * Block chain upgrade *

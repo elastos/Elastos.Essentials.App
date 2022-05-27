@@ -110,8 +110,8 @@ export const fr = {
 
         'elastos-api-provider': 'Fournisseur d\'API Elastos',
         'elastos-api-provider-des': 'Sélectionnez votre fournisseur pour les services Elastos',
-        'elastos-io-des': 'Ensemble de services déployés et maintenus par l\'équipe Elastos Fusion de la fondation Elastos, aussi connue comme l\'équipe Produit.',
-        'trinity-tech-io-des': 'Ensemble de services déployés et maintenus par l\'équipe Trinity Tech de la fondation Elastos, responsable du développement des SDK d\'Elastos.',
+        'elastos-io-des': 'Ensemble de services déployés et maintenus par l\'équipe Gelaxy, aussi connue en tant qu\'équipe blockchain Elastos.',
+        'trinity-tech-io-des': 'Ensemble de services déployés et maintenus par l\'équipe Trinity Tech, responsable du développement des SDK d\'Elastos et d\'Essentials.',
 
         'privacy-toolbox-stats': 'Stats sur les crédentiels',
         'privacy-send-credential-toolbox-stats': 'Envoyer des stats anonymes d\'utilisation des crédentiels DID vers la boîte à outils pour développeurs. Votre DID lui-même n\'est jamais envoyé.',

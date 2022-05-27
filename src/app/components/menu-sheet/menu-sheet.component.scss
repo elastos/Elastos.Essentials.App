@@ -1,0 +1,46 @@
+ion-grid {
+    padding: 10px 20px;
+
+    .header {
+        margin-top: 15px;
+        margin-bottom: 10px;
+
+        .arrow-icon {
+            width: 10px;
+            transform: scaleX(-1);
+        }
+
+        .title {
+            font-weight: 500;
+            font-size: 20px;
+            margin-left: 20px;
+        }
+    }
+
+    .menu-item {
+        padding: 15px 10px;
+        background: white;
+        border-radius: 13px;
+        text-align: left;
+        margin-bottom: 10px;
+
+        ion-col {
+            display: flex;
+            align-items: center;
+        }
+
+        .label {
+            font-size: 14px;
+
+            img {
+                margin-right: 10px;
+            }
+        }
+    }
+
+    &.dark-container {
+        .menu-item {
+            background: #2C2C2C;
+        }
+    }
+}

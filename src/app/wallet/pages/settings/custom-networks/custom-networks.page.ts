@@ -2,11 +2,16 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { CustomNetworkService } from 'src/app/wallet/services/customnetwork.service';
+import { CustomNetworkDiskEntry, CustomNetworkService } from 'src/app/wallet/services/evm/customnetwork.service';
 import { Native } from 'src/app/wallet/services/native.service';
-import { CustomNetworkDiskEntry, WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { EditCustomNetworkRoutingParams } from '../edit-custom-network/edit-custom-network.page';
 
+/**
+ * @deprecated
+ * 
+ * This screen is not used any more, it was replaced by manage-networks
+ */
 @Component({
   selector: 'app-custom-networks',
   templateUrl: './custom-networks.page.html',

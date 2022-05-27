@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { DPosNode } from '../../../model/nodes.model';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
-import { NodesService } from '../../../services/nodes.service';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DPosNode } from '../../../model/nodes.model';
+import { NodesService } from '../../../services/nodes.service';
 
 @Component({
   selector: 'app-node-slider-vote',
@@ -12,10 +12,10 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 })
 export class NodeSliderComponent implements OnInit {
 
-  @ViewChild('slider', {static: false}) slider: IonSlides;
+  @ViewChild('slider', { static: false }) slider: IonSlides;
 
   @Input() _nodes: DPosNode[] = [];
-  @Input() totalVotes: number = 0;
+  @Input() totalVotes = 0;
   @Input() nodeIndex: number;
   @Input() node: DPosNode;
 
@@ -43,7 +43,7 @@ export class NodeSliderComponent implements OnInit {
   loadNext() {
     let lastNode: DPosNode = this.displayedNodes.slice(-1)[0];
     let nextNodeIndex: number = this._nodes.indexOf(lastNode) + 1;
-    if(this._nodes[nextNodeIndex]) {
+    if (this._nodes[nextNodeIndex]) {
       this.displayedNodes.push(this._nodes[nextNodeIndex]);
     } else {
       return;
@@ -65,7 +65,7 @@ export class NodeSliderComponent implements OnInit {
 
   getRewards(yearlyRewards: string): string {
     if (yearlyRewards) {
-      const dailyRewards: number =  parseFloat(yearlyRewards) / 365;
+      const dailyRewards: number = parseFloat(yearlyRewards) / 365;
       return dailyRewards.toFixed(2);
     } else {
       return '...';

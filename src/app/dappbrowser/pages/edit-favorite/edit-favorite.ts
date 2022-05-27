@@ -7,7 +7,7 @@ import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titl
 import { Util } from 'src/app/model/util';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Network } from 'src/app/wallet/model/networks/network';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { BrowserFavorite } from '../../model/favorite';
 import { FavoritesService } from '../../services/favorites.service';
@@ -21,7 +21,7 @@ export class EditFavoritePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     public favorite: BrowserFavorite = null;
-    public availableNetworks: Network[] = [];
+    public availableNetworks: AnyNetwork[] = [];
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
@@ -79,22 +79,22 @@ export class EditFavoritePage {
         void this.nav.navigateBack();
     }
 
-    onNetworkToggled(event: { detail: { checked: boolean } }, network: Network) {
+    onNetworkToggled(event: { detail: { checked: boolean } }, network: AnyNetwork) {
         if (event.detail.checked)
             this.enableNetworkForFavorite(this.favorite, network);
         else
             this.disableNetworkForFavorite(this.favorite, network);
     }
 
-    public isNetworkEnabled(network: Network): boolean {
+    public isNetworkEnabled(network: AnyNetwork): boolean {
         return this.favorite.networks.findIndex(n => n === network.key) >= 0;
     }
 
-    public enableNetworkForFavorite(favorite: BrowserFavorite, network: Network) {
+    public enableNetworkForFavorite(favorite: BrowserFavorite, network: AnyNetwork) {
         void this.favoritesService.enableNetworkForFavorite(favorite, network);
     }
 
-    public disableNetworkForFavorite(favorite: BrowserFavorite, network: Network) {
+    public disableNetworkForFavorite(favorite: BrowserFavorite, network: AnyNetwork) {
         void this.favoritesService.disableNetworkForFavorite(favorite, network);
     }
 }

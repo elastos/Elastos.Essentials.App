@@ -8,7 +8,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { WalletCreateType } from 'src/app/wallet/model/walletaccount';
+import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { AuthService } from '../../../../services/auth.service';
 import { IntentTransfer } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
@@ -16,6 +16,10 @@ import { WalletService } from '../../../../services/wallet.service';
 import { WalletAccessService } from '../../../../services/walletaccess.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 
+/**
+ * Export wallet mnemonic screens.
+ * Only for StandardMasterWallet wallets.
+ */
 @Component({
     selector: 'app-mnemonic-export',
     templateUrl: './mnemonic-export.page.html',
@@ -27,6 +31,7 @@ export class MnemonicExportPage implements OnInit {
     public title = '';
     public payPassword = '';
     public masterWalletId = "1";
+    private masterWallet: StandardMasterWallet;
     public mnemonicList = [];
     public hideMnemonic = true;
     public isFromIntent = false;
@@ -34,7 +39,6 @@ export class MnemonicExportPage implements OnInit {
     public walletname = "";
     public hasMnemonic = true;
     public evmPrivateKey = '';
-    public account: any = {};
     public intentTransfer: IntentTransfer;
 
     constructor(
@@ -61,6 +65,13 @@ export class MnemonicExportPage implements OnInit {
     }
 
     ionViewWillEnter() {
+        if (this.hasMnemonic) {
+            void this.showMnemonics();
+        } else {
+            this.hideMnemonic = false;
+        }
+
+        void this.showPrivateKey();
     }
 
     init() {
@@ -82,18 +93,9 @@ export class MnemonicExportPage implements OnInit {
                 this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
             }
 
-            const masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
-            this.walletname = masterWallet.name;
-            this.account = masterWallet.account.Type;
-            this.hasMnemonic = masterWallet.createType === WalletCreateType.MNEMONIC
-                || masterWallet.createType === WalletCreateType.KEYSTORE;
-            if (this.hasMnemonic) {
-                void this.showMnemonics();
-            } else {
-                this.hideMnemonic = false;
-            }
-
-            void this.showPrivateKey();
+            this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId) as StandardMasterWallet;
+            this.walletname = this.masterWallet.name;
+            this.hasMnemonic = this.masterWallet.hasMnemonicSupport();
         });
     }
 
@@ -128,15 +130,15 @@ export class MnemonicExportPage implements OnInit {
         }
     }
 
-    async showMnemonics() {
-        const ret = await this.walletManager.spvBridge.exportWalletWithMnemonic(this.masterWalletId, this.payPassword);
+    showMnemonics() {
         this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('common.mnemonic'));
 
-        this.mnemonicStr = ret.toString();
+        this.mnemonicStr = this.masterWallet.getMnemonic(this.payPassword);
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/).filter(str => str.trim().length > 0);
 
+        this.mnemonicList = [];
         for (let i = 0; i < mnemonicArr.length; i++) {
             this.mnemonicList.push(mnemonicArr[i]);
         }
@@ -144,11 +146,12 @@ export class MnemonicExportPage implements OnInit {
         this.hideMnemonic = false;
     }
 
-    async showPrivateKey() {
-        this.evmPrivateKey = await this.walletManager.spvBridge.exportETHSCPrivateKey(this.masterWalletId, "ETHSC", this.payPassword);
+    showPrivateKey() {
+        this.evmPrivateKey = this.masterWallet.getPrivateKey(this.payPassword); // TODO: this returns only EVM private keys for now
         if (this.evmPrivateKey && !this.evmPrivateKey.startsWith('0x')) {
             this.evmPrivateKey = '0x' + this.evmPrivateKey;
         }
+
         if (!this.hasMnemonic) {
             this.titleBar.setBackgroundColor('#732cd0');
             this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);

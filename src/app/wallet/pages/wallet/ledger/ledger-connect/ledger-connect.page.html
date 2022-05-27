@@ -1,0 +1,77 @@
+<ion-content [class.dark-container]="theme.darkMode">
+    <app-titlebar></app-titlebar>
+
+    <ion-grid class="content">
+        <!-- Device -->
+        <ion-row class="row device-row" *ngIf="device">
+            <ion-col size="5">
+                <div class='title'>{{ 'wallet.ledger-device' | translate }}</div>
+            </ion-col>
+            <ion-col size="7" class="device-name flex flex-justify-content-end">
+                {{ device.name }}
+            </ion-col>
+        </ion-row>
+
+        <!-- Error: Connection error-->
+        <ion-row class="error-row" *ngIf="connectError">
+            <div>{{ 'wallet.ledger-connect-error' | translate }}</div>
+        </ion-row>
+
+        <ng-container *ngIf="!connectError">
+
+            <!-- Pick network -->
+            <ion-row class="row network-row">
+                <ion-col size="7">
+                    <div class='title'>{{ 'wallet.networks' | translate }}</div>
+                </ion-col>
+                <ion-col size="5" (click)="pickNetwork()" class="pick-network flex flex-justify-content-end">
+                    <img *ngIf="selectedNetwork" [src]="selectedNetwork.logo" class="network-logo" />
+                    <ion-label *ngIf="selectedNetwork">{{ selectedNetwork.name }}</ion-label>
+                    <ion-label *ngIf="!selectedNetwork">{{ 'wallet.pick-network' | translate }}</ion-label>
+                    <img src="assets/wallet/icons/right-arrow-alt.svg" class="go-arrow" />
+                </ion-col>
+            </ion-row>
+
+            <!-- Pick address type -->
+            <ion-row class="row address-type-row" *ngIf="shouldPickAddressType">
+                <ion-col size="7">
+                    <div class='title'>{{ 'wallet.address-type' | translate }}</div>
+                </ion-col>
+                <ion-col size="5" (click)="pickAddressType()" class="pick-address-type flex flex-justify-content-end">
+                    {{ getDisplayableAddressType() }}
+                    <img src="assets/wallet/icons/right-arrow-alt.svg" class="go-arrow" />
+                </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="ledgerNanoAppname" class="prompt-row">
+                <ion-label>{{ 'wallet.ledger-prompt' | translate:{ appname: ledgerNanoAppname } }}</ion-label>
+            </ion-row>
+
+            <!-- Connection in progress -->
+            <ion-row *ngIf="row connecting" class="scanning">
+                <ion-spinner name="crescent"></ion-spinner>
+                <ion-label>{{ 'wallet.ledger-connecting-to-device' | translate }}</ion-label>
+            </ion-row>
+
+            <!-- Addresses -->
+            <ion-row class="row note-row" *ngIf="hasGotAddress()">
+                <ion-col size="12">
+                    <div class='title'>{{ 'wallet.ledger-addresses' | translate }}</div>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="account-row ripple ion-activatable" *ngFor="let address of addresses"
+                (click)="selectAddress(address)">
+                <ion-col size="11">
+                    <ion-label>{{ address.address }}</ion-label>
+                </ion-col>
+                <ion-col size="1">
+                    <img src="assets/wallet/icons/right-arrow-alt.svg" />
+                </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-row>
+
+        </ng-container>
+
+    </ion-grid>
+</ion-content>

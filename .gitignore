@@ -21,3 +21,4 @@ resources/ios/icon/
 .env
 src/environments/*
 cedict_db/
+circular-dependencies.json

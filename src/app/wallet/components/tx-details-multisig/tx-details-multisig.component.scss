@@ -1,0 +1,54 @@
+@import "../../pages//wallet/coin/coin-tx-info/item-rows.scss";
+
+.root {
+  text-align: center;
+
+  ion-spinner {
+    margin-bottom:20px;
+  }
+}
+
+.cosigners {
+  text-align: left;
+
+  .details-row {
+    flex-direction: column !important;
+
+    ion-row {
+      height: 40px !important;
+    }
+
+    .cosigner-name {
+      align-self: center;
+    }
+
+    .cosigner-signed {
+      align-self: center;
+    }
+
+    ion-button {
+      &.sign {
+        width:100%;
+        height:100%;
+      }
+    }
+  }
+}
+
+.item-row {
+  &.link {
+    ion-col {
+      text-align:start;
+
+      &.icon-col {
+        align-self: center;
+        text-align: center;
+
+        ion-icon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+}

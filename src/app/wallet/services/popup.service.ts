@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 
 @Injectable()
 export class PopupProvider {
+  public static instance: PopupProvider;
 
   public alertPopup: any = null;
 
   constructor(
     public alertCtrl: AlertController,
     private translate: TranslateService,
-  ) {}
+  ) {
+    PopupProvider.instance = this;
+  }
 
   public ionicAlert(title: string, subTitle?: string, okText?: string): Promise<any> {
     return new Promise<void>((resolve, reject) => {
@@ -45,7 +48,7 @@ export class PopupProvider {
     return new Promise<void>((resolve, reject) => {
       this.alertPopup = this.alertCtrl.create({
         header: this.translate.instant(title),
-        subHeader: this.translate.instant(subTitle)+"("+suggestAmount+amount+")",
+        subHeader: this.translate.instant(subTitle) + "(" + suggestAmount + amount + ")",
         backdropDismiss: false,
         cssClass: 'alert',
         mode: 'ios',
@@ -73,7 +76,7 @@ export class PopupProvider {
     return new Promise<void>((resolve, reject) => {
       this.alertPopup = this.alertCtrl.create({
         header: this.translate.instant(title),
-        subHeader: "txHash:"+"("+hash+")"+":"+transactionDeleted,
+        subHeader: "txHash:" + "(" + hash + ")" + ":" + transactionDeleted,
         backdropDismiss: false,
         cssClass: 'alert',
         mode: 'ios',
@@ -131,7 +134,7 @@ export class PopupProvider {
     return new Promise<void>((resolve, reject) => {
       this.alertPopup = this.alertCtrl.create({
         header: this.translate.instant(title),
-        subHeader: sub+"<br/>"+"("+"txHash:"+hash+")",
+        subHeader: sub + "<br/>" + "(" + "txHash:" + hash + ")",
         backdropDismiss: false,
         cssClass: 'alert',
         mode: 'ios',
@@ -153,14 +156,14 @@ export class PopupProvider {
   public ionicConfirm(
     title: string,
     message: string,
-    okText: string = "common.confirm",
-    cancelText: string = "common.cancel"
+    okText = "common.confirm",
+    cancelText = "common.cancel"
   ): Promise<any> {
     return new Promise((resolve, reject) => {
       this.alertPopup = null;
       this.alertPopup = this.alertCtrl.create({
         header: this.translate.instant(title),
-        message  : this.translate.instant(message),
+        message: this.translate.instant(message),
         cssClass: 'alert',
         backdropDismiss: false,
         mode: 'ios',
@@ -191,8 +194,8 @@ export class PopupProvider {
     return new Promise((resolve, reject) => {
       this.alertPopup = this.alertCtrl.create({
         header: this.translate.instant(title),
-        subHeader : subTitle,
-        message  : this.translate.instant(message),
+        subHeader: subTitle,
+        message: this.translate.instant(message),
         cssClass: 'alert',
         mode: 'ios',
         buttons: [

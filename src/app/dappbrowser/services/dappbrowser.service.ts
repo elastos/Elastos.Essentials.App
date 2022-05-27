@@ -19,8 +19,9 @@ import { GlobalService, GlobalServiceManager } from 'src/app/services/global.ser
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Network } from 'src/app/wallet/model/networks/network';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { EthSignIntentResult } from 'src/app/wallet/pages/intents/ethsign/ethsign.page';
 import { PersonalSignIntentResult } from 'src/app/wallet/pages/intents/personalsign/personalsign.page';
 import { SignTypedDataIntentResult } from 'src/app/wallet/pages/intents/signtypeddata/signtypeddata.page';
@@ -83,6 +84,8 @@ export interface DappBrowserClient {
     providedIn: 'root'
 })
 export class DappBrowserService implements GlobalService {
+    public static instance: DappBrowserService = null;
+
     private userAddress: string = null;
     private web3ProviderCode: string = null;
     private elastosConnectorCode: string = null;
@@ -116,6 +119,8 @@ export class DappBrowserService implements GlobalService {
         private globalIntentService: GlobalIntentService,
         public globalPopupService: GlobalPopupService,
     ) {
+        DappBrowserService.instance = this;
+
         void this.init();
 
         //Can add some items on phishingConfig
@@ -248,13 +253,13 @@ export class DappBrowserService implements GlobalService {
 
         let activeNetwork = WalletNetworkService.instance.activeNetwork.value;
 
-        // Get the active network chain ID
-        this.activeChainID = activeNetwork.getMainChainID();
-
         // The main chain ID is -1 if there is no EVM subwallet. eg. BTC.
-        if (this.activeChainID != -1) {
+        if (activeNetwork instanceof EVMNetwork) {
+            // Get the active network chain ID
+            this.activeChainID = activeNetwork.getMainChainID();
+
             // Get the active network RPC URL
-            this.rpcUrl = activeNetwork.getMainEvmRpcApiUrl();
+            this.rpcUrl = activeNetwork.getRPCUrl();
 
             // Get the active wallet address
             if (WalletService.instance.activeNetworkWallet.value) {
@@ -263,6 +268,9 @@ export class DappBrowserService implements GlobalService {
             }
             else
                 this.userAddress = null;
+        }
+        else {
+            this.activeChainID = 0;
         }
 
         // Prepare our web3 provider bridge and elastos connectors for injection
@@ -387,12 +395,17 @@ export class DappBrowserService implements GlobalService {
         }
     }
 
-    private async sendActiveNetworkToDApp(activeNetwork: Network) {
-        // Get the active network chain ID
-        this.activeChainID = activeNetwork.getMainChainID();
-
+    private async sendActiveNetworkToDApp(activeNetwork: AnyNetwork) {
         // Get the active network RPC URL
-        this.rpcUrl = activeNetwork.getMainEvmRpcApiUrl();
+        if (activeNetwork instanceof EVMNetwork) {
+            this.rpcUrl = activeNetwork.getRPCUrl();
+            // Get the active network chain ID
+            this.activeChainID = activeNetwork.getMainChainID();
+        }
+        else {
+            this.rpcUrl = null;
+            this.activeChainID = 0;
+        }
 
         Logger.log("dappbrowser", "Sending active network to dapp", activeNetwork.key, this.activeChainID, this.rpcUrl);
 
@@ -406,7 +419,7 @@ export class DappBrowserService implements GlobalService {
         await this.setActiveBrowsedAppInfoNetwork(activeNetwork.key);
     }
 
-    private async sendActiveWalletToDApp(networkWallet: NetworkWallet) {
+    private async sendActiveWalletToDApp(networkWallet: AnyNetworkWallet) {
         // Get the active wallet address
         if (networkWallet) {
             let subwallet = networkWallet.getMainEvmSubWallet();
@@ -682,7 +695,6 @@ export class DappBrowserService implements GlobalService {
      */
     private async handleInsecureEthSign(message: DABMessage): Promise<void> {
         let rawData: { data: unknown } = message.data.object
-        console.log("debug handleInsecureEthSign", rawData)
         let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/insecureethsign", rawData);
 
         this.sendWeb3IABResponse(
@@ -707,7 +719,7 @@ export class DappBrowserService implements GlobalService {
         }
         else {
             // Do nothing if already on the right network
-            if (WalletNetworkService.instance.activeNetwork.value.getMainChainID() === chainId) {
+            if ((WalletNetworkService.instance.activeNetwork.value as EVMNetwork).getMainChainID() === chainId) {
                 Logger.log("walletconnect", "Already on the right network");
                 this.sendWeb3IABResponse(message.data.id, {}); // Successfully switched
                 return;
@@ -747,7 +759,7 @@ export class DappBrowserService implements GlobalService {
         }
 
         // Not on this network, ask user to switch
-        if (WalletNetworkService.instance.activeNetwork.value.getMainChainID() !== chainId) {
+        if ((WalletNetworkService.instance.activeNetwork.value as EVMNetwork).getMainChainID() !== chainId) {
             let targetNetwork = existingNetwork;
             if (!targetNetwork)
                 targetNetwork = WalletNetworkService.instance.getNetworkByKey(addedNetworkKey);
@@ -987,7 +999,7 @@ export class DappBrowserService implements GlobalService {
     }
 
     /**
-     * Add a browsed url to recently browsed apps. The recents apps array is always sorted by most
+     * Add a browsed url to recently browsed apps. The recent apps array is always sorted by most
      * recent first.
      */
     private async addAppToRecent(url: string) {

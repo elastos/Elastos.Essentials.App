@@ -6,10 +6,10 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../config/Config';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
+import { MasterWallet } from '../../../model/masterwallets/masterwallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -76,7 +76,7 @@ export class WalletManagerPage implements OnInit {
         }
     }
 
-    goWalletSettings(networkWallet: NetworkWallet) {
+    goWalletSettings(networkWallet: AnyNetworkWallet) {
         this.walletEditionService.modifiedMasterWalletId = networkWallet.id;
         this.native.go("/wallet/wallet-settings");
     }

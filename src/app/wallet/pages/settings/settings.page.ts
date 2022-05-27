@@ -21,10 +21,25 @@
  */
 
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { MenuSheetMenu } from '../../../components/menu-sheet/menu-sheet.component';
 import { Native } from '../../services/native.service';
+import { WalletCreationService } from '../../services/walletcreation.service';
+
+type Action = () => Promise<void> | void;
+
+type SettingsEntry = {
+    routeOrAction: string | Action;
+    title: string;
+    subtitle: string;
+    icon: string;
+    iconDarkmode: string;
+    type: string
+}
 
 @Component({
     selector: 'app-settings',
@@ -43,9 +58,9 @@ export class SettingsPage implements OnInit {
     public walletInfo = {};
     public password = "";
     public available = 0;
-    public settings = [
+    public settings: SettingsEntry[] = [
         {
-            route: "/wallet/launcher",
+            routeOrAction: () => this.addWallet(),
             title: this.translate.instant("wallet.settings-add-wallet"),
             subtitle: this.translate.instant("wallet.settings-add-wallet-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
@@ -53,7 +68,7 @@ export class SettingsPage implements OnInit {
             type: 'launcher'
         },
         {
-            route: "/wallet/wallet-manager",
+            routeOrAction: "/wallet/wallet-manager",
             title: this.translate.instant("wallet.settings-my-wallets"),
             subtitle: this.translate.instant("wallet.settings-my-wallets-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
@@ -61,7 +76,7 @@ export class SettingsPage implements OnInit {
             type: 'wallet-manager'
         },
         {
-            route: "/wallet/settings/currency-select",
+            routeOrAction: "/wallet/settings/currency-select",
             title: this.translate.instant("wallet.settings-currency"),
             subtitle: this.translate.instant("wallet.settings-currency-subtitle"),
             icon: '/assets/wallet/settings/currency.svg',
@@ -69,19 +84,22 @@ export class SettingsPage implements OnInit {
             type: 'currency-select'
         },
         {
-            route: "/wallet/settings/custom-networks",
-            title: this.translate.instant("wallet.settings-custom-networks"),
-            subtitle: this.translate.instant("wallet.settings-custom-networks-subtitle"),
+            routeOrAction: "/wallet/settings/manage-networks",
+            title: this.translate.instant("wallet.settings-manage-networks"),
+            subtitle: this.translate.instant("wallet.settings-manage-networks-subtitle"),
             icon: '/assets/wallet/settings/custom-networks.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/custom-networks.svg',
-            type: 'custom-networks'
+            type: 'manage-networks'
         },
     ];
 
     constructor(
         public theme: GlobalThemeService,
         private translate: TranslateService,
-        private native: Native
+        private native: Native,
+        private walletCreationService: WalletCreationService,
+        private modalCtrl: ModalController,
+        private globalNativeService: GlobalNativeService,
     ) {
     }
 
@@ -92,7 +110,92 @@ export class SettingsPage implements OnInit {
         this.titleBar.setTitle(this.translate.instant("wallet.settings-title"));
     }
 
-    go(item) {
-        item.type === 'launcher' ? this.native.go(item.route, { from: 'settings' }) : this.native.go(item.route);
+    public go(item: SettingsEntry) {
+        if (typeof item.routeOrAction === "string") {
+            if (item.type === 'launcher')
+                this.native.go(item.routeOrAction, { from: 'settings' })
+            else
+                this.native.go(item.routeOrAction);
+        }
+        else {
+            void item.routeOrAction();
+        }
+    }
+
+    private addWallet() {
+        let menu: MenuSheetMenu = {
+            title: this.translate.instant("wallet.settings-add-wallet"),
+            items: [
+                {
+                    title: this.translate.instant("wallet.settings-add-wallet-standard-wallet"),
+                    items: [
+                        {
+                            title: this.translate.instant("wallet.settings-add-wallet-new-wallet"),
+                            routeOrAction: () => {
+                                this.createStandardWallet();
+                            }
+                        },
+                        {
+                            title: this.translate.instant("wallet.import-wallet"),
+                            items: [
+                                {
+                                    title: this.translate.instant("wallet.settings-add-wallet-mnemonic"),
+                                    routeOrAction: () => {
+                                        this.importStandardWallet();
+                                    }
+                                },
+                                {
+                                    title: this.translate.instant("wallet.privatekey"),
+                                    routeOrAction: () => {
+                                        // TODO: differenciate from mnemonic menu item just above
+                                        this.importStandardWallet();
+                                    }
+                                },
+                                /* TODO {
+                                  title: "Keystore file",
+                                  action: () => { console.log("xxx") }
+                                } */
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: this.translate.instant("wallet.settings-add-wallet-multi-sig-wallet"),
+                    items: [
+                        {
+                            title: "Elastos mainchain",
+                            routeOrAction: "/wallet/multisig/standard/create"
+                        }
+                    ]
+                },
+                {
+                    title: this.translate.instant("wallet.settings-add-wallet-hardware-wallet"),
+                    items: [
+                        {
+                            icon: "assets/wallet/icons/ledger.svg",
+                            title: "Ledger Nano X",
+                            routeOrAction: "/wallet/ledger/scan"
+                        }
+                    ]
+                }
+            ]
+        };
+
+        void this.globalNativeService.showGenericBottomSheetMenuChooser(menu);
+    }
+
+
+    createStandardWallet() {
+        this.walletCreationService.reset();
+        this.walletCreationService.isMulti = false;
+        this.walletCreationService.type = 1; // new
+        this.native.go("/wallet/wallet-create");
+    }
+
+    importStandardWallet() {
+        this.walletCreationService.reset();
+        this.walletCreationService.isMulti = false;
+        this.walletCreationService.type = 2; // import
+        this.native.go("/wallet/wallet-create");
     }
 }

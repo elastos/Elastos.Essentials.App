@@ -8,6 +8,7 @@ import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.se
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
+import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { environment } from "src/environments/environment";
 import { GrabbedPacket, GrabRequest, GrabResponse, GrabStatus, PacketWinner } from "../model/grab.model";
@@ -167,7 +168,8 @@ export class PacketService {
   private removeUnsupportedPublicPackets(packets: Packet[]): Packet[] {
     let availableNetworks = this.walletNetworkService.getAvailableNetworks();
     let displayableEVMChainIds = availableNetworks
-      .map(n => n.getMainChainID())
+      .filter(n => n instanceof EVMNetwork)
+      .map(n => (<EVMNetwork>n).getMainChainID())
       .filter(chainId => chainId !== -1);
 
     return packets.filter(p => displayableEVMChainIds.indexOf(p.chainId) >= 0);

@@ -1,0 +1,95 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="ion-text-center container" [class.dark-container]="theme.darkMode">
+
+        <!-- Name -->
+        <ion-row class="margin-top-15">
+            <ion-label>Wallet name</ion-label>
+        </ion-row>
+        <ion-row>
+            <ion-input type="text" name="name" ngDefaultControl [placeholder]="'wallet.enter-name' | translate"
+                [(ngModel)]="wallet.name" class="text-left">
+            </ion-input>
+        </ion-row>
+
+        <!-- My signing wallet -->
+        <ion-row class="margin-top-15">
+            <ion-col size="5" class="text-left">
+                <ion-label>My signing wallet</ion-label>
+            </ion-col>
+            <ion-col size="7" (click)="pickSigningWallet()" class="pick-wallet">
+                <!-- No picked wallet yet -->
+                <span *ngIf="!signingWallet">
+                    Pick a wallet
+                </span>
+                <!-- a signing wallet was picked -->
+                <span *ngIf="signingWallet" class="picked-wallet">
+                    {{ signingWallet.name }}
+                </span>
+
+                <img
+                    [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/right-arrow.svg' : 'assets/wallet/icons/right-arrow.svg'" />
+            </ion-col>
+        </ion-row>
+
+        <!-- Co-signers -->
+        <ion-row class="margin-top-15">
+            <ion-label>Other co-signers</ion-label>
+        </ion-row>
+        <ion-row class="cosigner-row" *ngFor="let cosigner of cosigners; let i = index; trackBy: trackCosigners">
+            <ion-col size="12">
+                <ion-input type="text" [name]="'cosigner'+i" placeholder="Input xpub key" autocomplete="off"
+                    autocorrect="off" [(ngModel)]="cosigners[i]" ngDefaultControl (blur)="onCosignerBlur(i)"
+                    class="text-left">
+                    <div class="icons">
+                        <!-- paste -->
+                        <div class="icon" (click)="pasteCosigner($event, i)">
+                            <ion-icon mode="ios" name="clipboard-outline"></ion-icon>
+                        </div>
+                        <!-- scan -->
+                        <!-- <div class="icon" (click)="pasteCosigner($event, i)">
+                            <ion-icon mode="ios" name="scan"></ion-icon>
+                        </div> -->
+                    </div>
+                </ion-input>
+            </ion-col>
+        </ion-row>
+
+        <ion-button color="secondary" (click)="addCosignerEntry()">
+            <ion-label>Add a cosigner</ion-label>
+        </ion-button>
+
+        <ion-row class="margin-top-15">
+            <ion-col size="6" class="text-left align-self-center">
+                Total signers
+            </ion-col>
+            <ion-col size="6">
+                {{getUsableCosigners().length + 1}}
+            </ion-col>
+        </ion-row>
+
+        <ion-row class="margin-top-15">
+            <ion-col size="6" class="text-left align-self-center">
+                Required signers
+            </ion-col>
+            <ion-col size="6">
+                <ion-input type="phone" name="required-signers" autocomplete="off" autocorrect="off"
+                    [(ngModel)]="requiredSigners" ngDefaultControl (blur)="onRequiredSignersUpdated()"
+                    class="text-center">
+                </ion-input>
+            </ion-col>
+        </ion-row>
+
+        <!--  <ul>
+            <li>Todo: Network options (elastos and btc multi address)</li>
+        </ul> -->
+
+        <!-- Button -->
+        <div class="footer">
+            <ion-button color="secondary" [disabled]='!allInputsValid()' (click)="onCreate()">
+                <ion-label>{{ 'common.continue' | translate }}</ion-label>
+            </ion-button>
+        </div>
+
+    </ion-grid>
+</ion-content>

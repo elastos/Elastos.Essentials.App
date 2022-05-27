@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
-import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { MenuSheetComponent, MenuSheetMenu } from '../components/menu-sheet/menu-sheet.component';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 
 export class GlobalNativeService {
@@ -15,12 +16,13 @@ export class GlobalNativeService {
     private loadingCtrlCreating = false;
 
     constructor(
-      private toastCtrl: ToastController,
-      private alertCtrl: AlertController,
-      private loadingCtrl: LoadingController,
-      private translate: TranslateService,
-      private theme: GlobalThemeService,
-      private clipboard: Clipboard,
+        private toastCtrl: ToastController,
+        private alertCtrl: AlertController,
+        private loadingCtrl: LoadingController,
+        private translate: TranslateService,
+        private theme: GlobalThemeService,
+        private modalCtrl: ModalController,
+        private clipboard: Clipboard,
     ) { }
 
     copyClipboard(text) {
@@ -28,7 +30,7 @@ export class GlobalNativeService {
     }
 
     pasteFromClipboard() {
-      return this.clipboard.paste();
+        return this.clipboard.paste();
     }
 
     errToast(msg: string, duration = 3000) {
@@ -43,14 +45,14 @@ export class GlobalNativeService {
     }
 
     genericToast(msg: string, duration = 2000, color = "primary") {
-      const translation = this.translate.instant(msg);
-      void this.toastCtrl.create({
-          mode: 'ios',
-          header: translation,
-          duration: duration,
-          position: 'bottom',
-          color: color
-      }).then(toast => toast.present());
+        const translation = this.translate.instant(msg);
+        void this.toastCtrl.create({
+            mode: 'ios',
+            header: translation,
+            duration: duration,
+            position: 'bottom',
+            color: color
+        }).then(toast => toast.present());
     }
 
     toastWithTitle(header: string, msg: string, duration = 2000, color = "primary") {
@@ -67,7 +69,7 @@ export class GlobalNativeService {
     }
 
     async genericAlert(msg: string, title?: string, skipIfAlreadyPopup = false) {
-      if (skipIfAlreadyPopup && (this.alert || this.alertCtrlCreating)) {
+        if (skipIfAlreadyPopup && (this.alert || this.alertCtrlCreating)) {
             return;
         }
 
@@ -122,5 +124,25 @@ export class GlobalNativeService {
             await this.loader.dismiss();
             this.loader = null;
         }
+    }
+
+    /**
+     * Shows a generic bottom sheet component that can display menus and sub-menus to finally
+     * pick one option in the menus.
+     */
+    public async showGenericBottomSheetMenuChooser(menu: MenuSheetMenu): Promise<void> {
+        const modal = await this.modalCtrl.create({
+            component: MenuSheetComponent,
+            componentProps: {
+                menu
+            },
+            backdropDismiss: true, // Closeable
+            cssClass: !this.theme.darkMode ? "switch-network-component switch-network-component-base" : 'switch-network-component-dark switch-network-component-base'
+        });
+
+        void modal.onDidDismiss().then((response: { data?: boolean }) => {
+        });
+
+        void modal.present();
     }
 }

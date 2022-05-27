@@ -9,6 +9,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
+import { ElastosMainChainWalletNetworkOptions, WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../../services/auth.service';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -108,14 +109,20 @@ export class MnemonicWritePage implements OnInit {
                     const payPassword = await this.authService.createAndSaveWalletPassword(this.walletCreationService.masterId);
                     if (payPassword) {
                         try {
+                            let elastosNetworkOptions: ElastosMainChainWalletNetworkOptions = {
+                                network: "elastos", // mainchain
+                                singleAddress: this.walletCreationService.singleAddress
+                            };
+
                             await this.native.showLoading(this.translate.instant('common.please-wait'));
-                            await this.walletManager.createNewMasterWallet(
+                            await this.walletManager.newStandardWalletWithMnemonic(
                                 this.walletCreationService.masterId,
                                 this.walletCreationService.name,
                                 this.getMnemonicAsString(),
                                 this.walletCreationService.mnemonicPassword,
                                 payPassword,
-                                this.walletCreationService.singleAddress
+                                [elastosNetworkOptions],
+                                WalletCreator.USER
                             );
                             await this.native.hideLoading();
 

@@ -5,16 +5,39 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from '../../model/coin';
+import { MasterWallet } from '../../model/masterwallets/masterwallet';
+import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
 import { WalletUtil } from '../../model/wallet.util';
-import { NetworkWallet } from '../../model/wallets/networkwallet';
 import { CurrencyService } from '../../services/currency.service';
+import { Native } from '../../services/native.service';
+import { WalletNetworkService } from '../../services/network.service';
 import { UiService } from '../../services/ui.service';
 import { WalletService } from '../../services/wallet.service';
 
+/**
+ * Filter method to return only some master wallets to show in the chooser.
+ */
+export type WalletChooserFilter = (wallets: AnyNetworkWallet) => boolean;
+
 export type WalletChooserComponentOptions = {
-  currentNetworkWallet: NetworkWallet;
+  currentNetworkWallet: AnyNetworkWallet;
+  /**
+   * Optional filter. Only returned wallets will show in the list.
+   * Return true to keep the walelt in the list, false to hide it.
+   */
+  filter?: WalletChooserFilter;
+  /**
+   * If true, the active wallet is pre-selected in the list. Otherwise, all wallets are displayed
+   * in the same way.
+   */
+  showActiveWallet?: boolean;
 }
 
+/**
+ * This dialog shows the list of all master wallets so that user can pick one.
+ * For master wallets that are supported on the active network (network wallet exists), we show
+ * more info such as the current native token balance here.
+ */
 @Component({
   selector: 'app-wallet-chooser',
   templateUrl: './wallet-chooser.component.html',
@@ -25,8 +48,11 @@ export class WalletChooserComponent implements OnInit {
 
   public CoinType = CoinType;
   public options: WalletChooserComponentOptions = null;
-  public networkWallet: NetworkWallet;
-  public walletsToShowInList: NetworkWallet[];
+  public selectedMasterWallet: MasterWallet;
+  public masterWalletsToShowInList: MasterWallet[];
+  public networkWalletsToShowInList: {
+    [walletId: string]: AnyNetworkWallet;
+  } = {};
 
   // Helper
   public WalletUtil = WalletUtil;
@@ -38,27 +64,54 @@ export class WalletChooserComponent implements OnInit {
     public translate: TranslateService,
     public theme: GlobalThemeService,
     public currencyService: CurrencyService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    public networkService: WalletNetworkService,
+    private native: Native
   ) {
   }
 
   ngOnInit() {
     this.options = this.navParams.data as WalletChooserComponentOptions;
 
-    this.networkWallet = this.options.currentNetworkWallet;
-    this.walletsToShowInList = this.walletService.getNetworkWalletsList();
+    if (this.options.showActiveWallet)
+      this.selectedMasterWallet = this.options.currentNetworkWallet ? this.options.currentNetworkWallet.masterWallet : this.walletService.getActiveMasterWallet();
+    else
+      this.selectedMasterWallet = null;
+
+    let masterWallets = this.walletService.getMasterWalletsList();
+
+    // Build the list of available network wallets from the master wallets
+    this.networkWalletsToShowInList = {};
+    masterWallets.forEach(mw => {
+      let networkWallet = this.walletService.getNetworkWalletFromMasterWalletId(mw.id);
+      if (networkWallet) {
+        if (!this.options.filter || this.options.filter(networkWallet))
+          this.networkWalletsToShowInList[mw.id] = networkWallet;
+      }
+    });
+
+    this.masterWalletsToShowInList = Object.values(this.networkWalletsToShowInList).map(nw => nw.masterWallet);
   }
 
-  selectWallet(wallet: NetworkWallet) {
+  public getNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+    return this.networkWalletsToShowInList[masterWallet.id];
+  }
+
+  selectWallet(wallet: MasterWallet) {
     Logger.log("wallet", "Wallet selected", wallet);
 
     void this.modalCtrl.dismiss({
-      selectedMasterWalletId: wallet.masterWallet.id
+      selectedMasterWalletId: wallet.id
     });
   }
 
   cancelOperation() {
     Logger.log("wallet", "Wallet selection cancelled");
+    void this.modalCtrl.dismiss();
+  }
+
+  goToCreateWallet() {
+    this.native.go("/wallet/launcher")
     void this.modalCtrl.dismiss();
   }
 }

@@ -38,11 +38,11 @@ const routes: Routes = [
     { path: 'wallet-create-name', loadChildren: () => import('./pages/wallet/wallet-create-name/module').then(m => m.WalletCreateNameModule) },
     { path: 'wallet-edit-name', loadChildren: () => import('./pages/wallet/wallet-edit-name/module').then(m => m.WalletEditNameModule) },
     { path: 'wallet-settings', loadChildren: () => import('./pages/wallet/wallet-settings/module').then(m => m.WalletSettingsModule) },
-    { path: 'wallet-did1-transfer', loadChildren: () => import('./pages/wallet/wallet-did1-transfer/module').then(m => m.WalletDID1TransferModule) },
     { path: 'mnemonic', loadChildren: () => import('./pages/wallet/mnemonic/module').then(m => m.MnemonicModule) },
 
     // Settings
     { path: 'wallet-color', loadChildren: () => import('./pages/wallet/wallet-color/module').then(m => m.WalletColorModule) },
+    { path: 'wallet-ext-pub-keys', loadChildren: () => import('./pages/wallet/wallet-multisig-pub-keys/module').then(m => m.MultiSigPubKeysModule) },
 
     // Coin
     { path: 'coin', loadChildren: () => import('./pages/wallet/coin/coin-home/module').then(m => m.CoinHomeModule) },
@@ -62,6 +62,14 @@ const routes: Routes = [
 
     // Intents
     { path: 'intents', loadChildren: () => import('./pages/intents/module').then(m => m.IntentsModule) },
+
+    // Multisig
+    { path: 'multisig', loadChildren: () => import('./pages/wallet/multisig/module').then(m => m.MultiSigModule) },
+
+    // Ledger
+    { path: 'ledger', loadChildren: () => import('./pages/wallet/ledger/module').then(m => m.LedgerModule) },
+    // { path: 'ledgertest', loadChildren: () => import('./pages/wallet/ledgertest/module').then(m => m.LedgerTestModule) },
+
 
     // TEST
     { path: 'swap-test', loadChildren: () => import('./pages/swap-test/module').then(m => m.SwapTestModule) },

@@ -71,7 +71,14 @@
               "@walletconnect/environment",
               "query-string",
               "js-sha3",
-              "deep-equal"
+              "deep-equal",
+              "ethereumjs-util",
+              "eth-sig-util",
+              "crypto",
+              "@cordobo/qrcode",
+              "crypto-js",
+              "crypto-js/aes",
+              "bip39"
             ]
           },
           "configurations": {

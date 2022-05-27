@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import * as moment from 'moment';
+import { AnySubWallet } from '../model/networks/base/subwallets/subwallet';
 import { WalletSortType } from '../model/walletaccount';
-import { AnySubWallet } from '../model/wallets/subwallet';
 import { LocalStorage } from './storage.service';
 
 @Injectable({
@@ -58,11 +58,11 @@ export class UiService {
       } else if (balance.isNaN()) {
         return String('...');
       } else if (balance.isLessThan(100)) {
-        return balance.decimalPlaces(6).toString();
+        return balance.decimalPlaces(6).toFixed();
       } else if (balance.isGreaterThanOrEqualTo(100) && balance.isLessThan(1000)) {
-        return balance.decimalPlaces(4).toString();
+        return balance.decimalPlaces(4).toFixed();
       } else if (balance.isGreaterThanOrEqualTo(1000) && balance.isLessThan(10000)) {
-        return balance.decimalPlaces(2).toString();
+        return balance.decimalPlaces(2).toFixed();
       } else if (balance.isGreaterThanOrEqualTo(10000) && balance.isLessThan(1000000)) {
         return balance.dividedBy(1000).toFixed(2) + 'k';
       } else {
@@ -95,7 +95,7 @@ export class UiService {
   public async loadSortType() {
     this.walletSortType = await this.storage.get('walletsorttype');
     if (!this.walletSortType) {
-        this.walletSortType = WalletSortType.NAME;
+      this.walletSortType = WalletSortType.NAME;
     }
   }
 
@@ -104,7 +104,7 @@ export class UiService {
   }
 
   public async setWalletSortTtype(sortType: WalletSortType) {
-      await this.storage.set('walletsorttype', sortType);
-      this.walletSortType = sortType;
+    await this.storage.set('walletsorttype', sortType);
+    this.walletSortType = sortType;
   }
 }

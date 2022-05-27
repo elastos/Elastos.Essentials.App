@@ -4,7 +4,7 @@
     "src/**/*.ts",
     "src/assets/web3providertest.js",
     "environment/set_env.ts",
-    "scripts/*.ts",
+    "scripts/*.ts"
   ],
   "exclude": [
     "node_modules",
@@ -26,6 +26,7 @@
     "resolveJsonModule": true,
     "module": "esnext",
     "target": "es2015",
+    "skipLibCheck": true,
     "typeRoots": [
       "node_modules/@types",
     ],
@@ -39,7 +40,8 @@
       "elastos-essentials-plugin-wallet",
       "elastos-essentials-plugin-internal",
       "elastos-essentials-plugin-dappbrowser",
-      "cordova-plugin-camera"
+      "cordova-plugin-camera",
+      "cordova-plugin-ble-central"
     ],
     "lib": [
       "es2015",
@@ -54,6 +56,12 @@
       ],
       "path": [
         "./node_modules/path-browserify"
+      ],
+      "elliptic": [
+        "./node_modules/elliptic"
+      ],
+      "bn.js": [
+        "./node_modules/bn.js"
       ]
     }
   }

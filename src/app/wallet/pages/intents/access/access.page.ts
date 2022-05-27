@@ -7,7 +7,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { Config } from '../../../config/Config';
 import { StandardCoinName } from '../../../model/coin';
 import { IntentTransfer } from '../../../services/cointransfer.service';
@@ -35,7 +35,7 @@ export class AccessPage implements OnInit {
     public Config = Config;
     public intentTransfer: IntentTransfer;
     public requestDapp = '';
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     public exportMnemonic = false;
     public title = '';
     public requestItems: ClaimRequest[] = [];
@@ -129,14 +129,14 @@ export class AccessPage implements OnInit {
         let value = '';
         switch (key) {
             case 'elaaddress':
-                value = await this.createAddress(StandardCoinName.ELA);
+                value = await this.getAddress(StandardCoinName.ELA);
                 break;
             case 'elaamount':
                 // for now just return the amount of ELA Chain, not include IDChain
-                value = this.networkWallet.subWallets.ELA.getRawBalance().toString();
+                value = this.networkWallet.subWallets.ELA.getRawBalance().toFixed();
                 break;
             case 'ethaddress':
-                value = await this.createAddress(StandardCoinName.ETHSC);
+                value = await this.getAddress(StandardCoinName.ETHSC);
                 break;
             default:
                 Logger.log('wallet', 'Not support ', key);
@@ -164,8 +164,8 @@ export class AccessPage implements OnInit {
         return value;
     }
 
-    createAddress(subWalletId: string) {
-        return this.networkWallet.getSubWallet(subWalletId).createAddress();
+    getAddress(subWalletId: string) {
+        return this.networkWallet.getSubWallet(subWalletId).getCurrentReceiverAddress();
     }
 
     reduceArrayToDict(keyProperty: string) {

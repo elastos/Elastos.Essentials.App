@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { environment } from 'src/environments/environment';
 import { PublicNetworkInfo } from '../model/networks.model';
@@ -46,12 +47,12 @@ export class NetworksService {
    */
   public isActiveNetworkSupported(): boolean {
     let activeNetwork = this.walletNetworkService.activeNetwork.value;
-    if (!activeNetwork)
+    if (!activeNetwork || !(activeNetwork instanceof EVMNetwork))
       return false; // Should not happen
 
     if (!activeNetwork.getMainChainID())
       return false; // No EVM in this network
 
-    return !!this.supportedNetworks.find(network => network.chainId === activeNetwork.getMainChainID());
+    return !!this.supportedNetworks.find(network => network.chainId === (<EVMNetwork>activeNetwork).getMainChainID());
   }
 }

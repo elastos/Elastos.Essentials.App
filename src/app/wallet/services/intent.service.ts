@@ -5,14 +5,16 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
-import { AddERCTokenRequestParams } from '../model/adderctokenrequest';
 import { StandardCoinName } from '../model/coin';
-import { MasterWallet } from '../model/wallets/masterwallet';
+import { MasterWallet } from '../model/masterwallets/masterwallet';
+import { AddERCTokenRequestParams } from '../model/networks/evms/adderctokenrequest';
+import { EVMNetwork } from '../model/networks/evms/evm.network';
 import { EditCustomNetworkRoutingParams } from '../pages/settings/edit-custom-network/edit-custom-network.page';
 import { CoinTransferService, TransferType } from './cointransfer.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
 import { PopupProvider } from './popup.service';
+import { jsToSpvWalletId } from './spv.service';
 import { WalletService } from './wallet.service';
 import { WalletAccessService } from './walletaccess.service';
 import { WalletEditionService } from './walletedition.service';
@@ -177,14 +179,6 @@ export class IntentService {
                 this.coinTransferService.transfer.crDID = intent.params.crDID;
                 break;
 
-            case 'crmemberretrieve':
-                Logger.log("wallet", 'CR member retrieve Transaction intent content:', intent.params);
-                this.nextScreen = '/wallet/intents/crmemberregister';
-                this.coinTransferService.subWalletId = StandardCoinName.IDChain;
-                this.coinTransferService.transfer.amount = this.getNumberFromParam(intent.params.amount);
-                this.coinTransferService.transfer.publickey = intent.params.publickey;
-                break;
-
             case 'dposvotetransaction':
                 Logger.log("wallet", 'DPOS Transaction intent content:', intent.params);
                 this.nextScreen = '/wallet/intents/dposvote';
@@ -234,6 +228,11 @@ export class IntentService {
                 this.handleVoteAgainstProposalIntent(intent);
                 break;
 
+            case 'multisigtx':
+                this.nextScreen = '/wallet/intents/multisigtx';
+                this.coinTransferService.intentTransfer = intent;
+                break;
+
             default:
                 Logger.log("wallet", 'IntentService unknown intent:', intent);
                 return;
@@ -241,7 +240,6 @@ export class IntentService {
 
         // if (intentRequiresWalletSelection) {
         this.coinTransferService.masterWalletId = this.activeWallet.id;
-        this.coinTransferService.walletInfo = this.activeWallet.account;
 
         this.native.setRootRouter(this.nextScreen, navigationState);
         // }
@@ -313,7 +311,7 @@ export class IntentService {
 
         if (intent && intent.params && intent.params.proposal) {
             let masterWalletID = await this.walletManager.getCurrentMasterIdFromStorage();
-            let digest = await this.walletManager.spvBridge.proposalOwnerDigest(masterWalletID, StandardCoinName.ELA, intent.params.proposal);
+            let digest = await this.walletManager.spvBridge.proposalOwnerDigest(jsToSpvWalletId(masterWalletID), StandardCoinName.ELA, intent.params.proposal);
 
             // This is a silent intent, app will close right after calling sendIntentresponse()
             await this.globalIntentService.sendIntentResponse({ digest: digest }, intent.intentId);
@@ -384,10 +382,6 @@ export class IntentService {
             case 'ELA':
                 subWalletId = StandardCoinName.ELA;
                 break;
-            case 'IDChain':
-            case 'ELA/ID':
-                subWalletId = StandardCoinName.IDChain;
-                break;
             case 'ETHSC':
             case 'ELA/ETHSC':
                 subWalletId = StandardCoinName.ETHSC;
@@ -398,7 +392,7 @@ export class IntentService {
                 break;
             default:
                 if (currency.startsWith('ELA/ETHSC:')) {
-                    let elastosNetwork = this.walletNetworkService.getNetworkByKey("elastos");
+                    let elastosNetwork = <EVMNetwork>this.walletNetworkService.getNetworkByKey("elastossmartchain");
                     subWalletId = currency.substring(10) as StandardCoinName;
                     const coin = elastosNetwork.getCoinByID(subWalletId);
                     if (!coin) {

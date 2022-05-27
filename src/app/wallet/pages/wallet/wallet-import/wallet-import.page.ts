@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
+import { ElastosMainChainWalletNetworkOptions, WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -45,9 +46,10 @@ export class WalletImportPage implements OnInit {
     private walletIsCreating = false; // Just in case, Ignore user action when the wallet is creating.
 
     public inputList: string[] = [];
+    private inputStr = "";
 
     constructor(
-        public walletManager: WalletService,
+        public walletService: WalletService,
         public native: Native,
         public localStorage: LocalStorage,
         public events: Events,
@@ -55,10 +57,10 @@ export class WalletImportPage implements OnInit {
         public zone: NgZone,
         private authService: AuthService,
         private translate: TranslateService,
-        private walletCreateService: WalletCreationService,
+        private walletCreationService: WalletCreationService,
         private mnemonicKeypadService: GlobalMnemonicKeypadService
     ) {
-        this.masterWalletId = Util.uuid(6, 16);
+        this.masterWalletId = walletService.createMasterWalletID();
     }
 
     ngOnInit() {
@@ -126,6 +128,9 @@ export class WalletImportPage implements OnInit {
             }
             catch (err) {
                 Logger.error('wallet', 'Wallet import error:', err);
+                // Spvsdk throw exception if the master wallet already exists.
+                // So we should delete the wallet info from local storage.
+                await this.localStorage.deleteMasterWallet(this.masterWalletId);
             }
             await this.native.hideLoading();
             this.walletIsCreating = false;
@@ -139,16 +144,23 @@ export class WalletImportPage implements OnInit {
     }
 
     async importWalletWithMnemonic(payPassword: string) {
+        let elastosNetworkOptions: ElastosMainChainWalletNetworkOptions = {
+            network: "elastos", // mainchain
+            singleAddress: this.walletCreationService.singleAddress
+        };
+
         // Trim leading and trailing spaces for each word
         Logger.log('wallet', 'Importing with mnemonic');
-        await this.walletManager.importMasterWalletWithMnemonic(
+        await this.walletService.newStandardWalletWithMnemonic(
             this.masterWalletId,
-            this.walletCreateService.name,
+            this.walletCreationService.name,
             this.getMnemonicAsString(),
-            this.walletCreateService.mnemonicPassword,
+            this.walletCreationService.mnemonicPassword,
             payPassword,
-            this.walletCreateService.singleAddress
+            [elastosNetworkOptions],
+            WalletCreator.USER
         );
+        this.native.setRootRouter("/wallet/wallet-home");
 
         this.events.publish("masterwalletcount:changed", {
             action: 'add',

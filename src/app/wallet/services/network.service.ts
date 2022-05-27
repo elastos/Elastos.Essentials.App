@@ -24,25 +24,17 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
-import { Network } from '../model/networks/network';
-import { WalletCreateType } from '../model/walletaccount';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { MasterWallet } from '../model/masterwallets/masterwallet';
+import { EVMNetwork } from '../model/networks/evms/evm.network';
+import { AnyNetwork } from '../model/networks/network';
 import { Native } from './native.service';
 import { PopupProvider } from './popup.service';
 import { LocalStorage } from './storage.service';
 
 export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
-
-export type CustomNetworkDiskEntry = {
-    key: string; // Ex: "randomKey"
-    name: string; // Ex: "My network"
-    rpcUrl: string; // Ex: "https://my.net.work/rpc"
-    accountRpcUrl: string; // Standard account/scan url to query transactions list, tokens...
-    chainId: string; // Ex: "12345"
-    networkTemplate: string; // Ex: "MainNet"
-    mainCurrencySymbol: string; // Ex: "HT"
-    colorScheme: string; // Ex: #9A67EB
-}
 
 @Injectable({
     providedIn: 'root'
@@ -50,13 +42,15 @@ export type CustomNetworkDiskEntry = {
 export class WalletNetworkService {
     public static instance: WalletNetworkService = null;
 
-    private networks: Network[] = [];
-    private customNetworkDiskEntries: CustomNetworkDiskEntry[] = [];
+    private networks: AnyNetwork[] = [];
+    private networkVisibilities: {
+        [networkKey: string]: boolean // Key value of network key -> visible in network chooser or not.
+    } = {};
 
-    public activeNetwork = new BehaviorSubject<Network>(null);
+    public activeNetwork = new BehaviorSubject<AnyNetwork>(null);
 
-    /** Notifies whenever the networks list changes (custom networks added/removed) */
-    public networksList = new BehaviorSubject<Network[]>([]);
+    /** Notifies whenever the networks list changes (initial registration, custom networks added/removed) */
+    public networksList = new BehaviorSubject<AnyNetwork[]>([]);
 
     private priorityNetworkChangeCallback?: PriorityNetworkChangeCallback = null;
 
@@ -65,14 +59,22 @@ export class WalletNetworkService {
         public native: Native,
         public popupProvider: PopupProvider,
         private globalNetworksService: GlobalNetworksService,
+        private globalStorageService: GlobalStorageService,
         private localStorage: LocalStorage) {
         WalletNetworkService.instance = this;
     }
 
-    public init() {
+    /**
+     * Called every time a user signs in
+     */
+    public async init(): Promise<void> {
         this.networks = [];
+        await this.loadNetworkVisibilities();
     }
 
+    /**
+     * Called every time a user signs out
+     */
     public stop() {
         this.networks = [];
     }
@@ -81,7 +83,7 @@ export class WalletNetworkService {
      * Appends a usable network to the list. We let networks register themselves, we don't
      * use networks in this service, to avoid circular dependencies.
      */
-    public async registerNetwork(network: Network, useAsDefault = false): Promise<void> {
+    public async registerNetwork(network: AnyNetwork, useAsDefault = false): Promise<void> {
         this.networks.push(network);
 
         let savedNetworkKey = await this.localStorage.get('activenetwork') as string;
@@ -98,7 +100,9 @@ export class WalletNetworkService {
         // Order networks list alphabetically
         this.networks.sort((a, b) => {
             return a.name > b.name ? 1 : -1;
-        })
+        });
+
+        this.networksList.next(this.networks);
     }
 
     /**
@@ -110,25 +114,30 @@ export class WalletNetworkService {
     }
 
     /**
-     * Returns the list of available networks, previously registered.
-     * Those networks are the ones of the ones of the given network template (mainnet, testnet...) only
-     * (or if none given, for the active template).
-     *
-     * If walletCreateType is passed, networks are filtered to return only network supported for this
-     * kind of wallet. Eg: We do not support BTC network when the wallet is imported by private key.
-     */
-    public getAvailableNetworks(walletCreateType: WalletCreateType = null, networkTemplate: string = null): Network[] {
+        * Returns the list of all networks.
+        * Possibly filter out some unsupported networks:
+        * eg: do not support the BTC network when the wallet is imported by EVM private key.
+        */
+    public getAvailableNetworks(masterWallet: MasterWallet = null, networkTemplate: string = null): AnyNetwork[] {
         if (!networkTemplate)
             networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
 
         // Keep only networks for the target network template.
         let networks = this.networks.filter(n => n.networkTemplate === networkTemplate);
 
-        if (walletCreateType) {
-            return networks.filter((n) => { return n.supportedWalletCreateTypes().indexOf(walletCreateType) !== -1 });
+        if (masterWallet) {
+            return networks.filter(n => masterWallet.supportsNetwork(n));
         } else {
             return networks;
         }
+    }
+
+    /**
+ * Returns the list of available networks, but only for networks that user has chosen
+ * to make visible in settings.
+ */
+    public getDisplayableNetworks(): AnyNetwork[] {
+        return this.getAvailableNetworks().filter(n => this.getNetworkVisible(n));
     }
 
     /**
@@ -138,7 +147,8 @@ export class WalletNetworkService {
     public getAvailableEVMChainIDs(networkTemplate: string = null): number[] {
         let availableNetworks = this.getAvailableNetworks(null, networkTemplate);
         let displayableEVMChainIds = availableNetworks
-            .map(n => n.getMainChainID())
+            .filter(n => n instanceof EVMNetwork)
+            .map(n => (<EVMNetwork>n).getMainChainID())
             .filter(chainId => chainId !== -1);
 
         return displayableEVMChainIds;
@@ -156,7 +166,7 @@ export class WalletNetworkService {
         this.priorityNetworkChangeCallback = null;
     }
 
-    public async setActiveNetwork(network: Network) {
+    public async setActiveNetwork(network: AnyNetwork) {
         Logger.log("wallet", "Setting active network to", network);
 
         // Save choice to local storage
@@ -165,7 +175,7 @@ export class WalletNetworkService {
         await this.notifyNetworkChange(network);
     }
 
-    private async notifyNetworkChange(network: Network): Promise<void> {
+    private async notifyNetworkChange(network: AnyNetwork): Promise<void> {
         // Inform and await the priority callback (wallet service)
         if (this.priorityNetworkChangeCallback) {
             await this.priorityNetworkChangeCallback(network);
@@ -176,15 +186,15 @@ export class WalletNetworkService {
         this.activeNetwork.next(network);
     }
 
-    public getNetworkByKey(key: string, networkTemplate: string = null): Network {
+    public getNetworkByKey(key: string, networkTemplate: string = null): AnyNetwork {
         if (!networkTemplate)
             networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
 
         return this.networks.find(n => n.key === key && n.networkTemplate === networkTemplate);
     }
 
-    public getNetworkByChainId(chainId: number): Network {
-        return this.networks.find(n => n.getMainChainID() == chainId);
+    public getNetworkByChainId(chainId: number): AnyNetwork {
+        return this.networks.find(n => n instanceof EVMNetwork && n.getMainChainID() == chainId);
     }
 
     public getActiveNetworkIndex(): number {
@@ -205,11 +215,33 @@ export class WalletNetworkService {
      * Tells if the currently active network is the EVM network.
      */
     public isActiveNetworkEVM(): boolean {
-        if (this.activeNetwork.value) {
+        /* if (this.activeNetwork.value) {
             let network = this.getNetworkByKey(this.activeNetwork.value.key);
             if (network && network.getMainChainID() !== -1)
                 return true;
         }
-        return false;
+        return false; */
+        return this.activeNetwork.value instanceof EVMNetwork;
+    }
+
+    public async loadNetworkVisibilities(): Promise<void> {
+        this.networkVisibilities = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "network-visibilities", {});
+    }
+
+    public saveNetworkVisibilities(): Promise<void> {
+        return this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "network-visibilities", this.networkVisibilities);
+    }
+
+    public getNetworkVisible(network: AnyNetwork): boolean {
+        // By default, if no saved info about a network visibility, we consider the network visible
+        if (!(network.key in this.networkVisibilities))
+            return true;
+
+        return this.networkVisibilities[network.key];
+    }
+
+    public setNetworkVisible(network: AnyNetwork, visible: boolean): Promise<void> {
+        this.networkVisibilities[network.key] = visible;
+        return this.saveNetworkVisibilities();
     }
 }

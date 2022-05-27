@@ -28,9 +28,10 @@ import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { Candidates, VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
 import { Config } from '../../../config/Config';
-import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
+import { MainChainSubWallet } from '../../../model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -46,11 +47,10 @@ export class DPoSVotePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private masterWalletId: string;
-    private sourceSubwallet: MainchainSubWallet = null;
+    private sourceSubwallet: MainChainSubWallet = null;
     public voteAmountELA: string;
     public voteAmount: string; // Estimate amount, Balance in SELA
     public subWalletId: string;
-    private walletInfo = {};
     public intentTransfer: IntentTransfer;
 
     private alreadySentIntentResponce = false;
@@ -90,7 +90,7 @@ export class DPoSVotePage implements OnInit {
     }
 
     ionViewDidEnter() {
-        if (this.walletInfo["Type"] === "Multi-Sign") {
+        if (this.sourceSubwallet.masterWallet.type !== WalletType.STANDARD) {
             // TODO: reject voting if multi sign (show error popup), as multi sign wallets cannot vote.
             void this.cancelOperation();
         }
@@ -105,10 +105,9 @@ export class DPoSVotePage implements OnInit {
     async init() {
         this.subWalletId = this.coinTransferService.subWalletId;
         this.intentTransfer = this.coinTransferService.intentTransfer;
-        this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWalletId = this.coinTransferService.masterWalletId;
 
-        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainChainSubWallet;
         await this.sourceSubwallet.updateBalanceSpendable();
         let voteInEla = this.sourceSubwallet.getRawBalanceSpendable().minus(this.votingFees());
         if (voteInEla.isPositive) {
@@ -190,7 +189,7 @@ export class DPoSVotePage implements OnInit {
             Object.assign(transfer, {
                 masterWalletId: this.masterWalletId,
                 subWalletId: this.subWalletId,
-                rawTransaction: rawTx,
+                //rawTransaction: rawTx,
                 payPassword: '',
                 action: this.intentTransfer.action,
                 intentId: this.intentTransfer.intentId,

@@ -6,9 +6,10 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { ERC20Coin } from '../../../../model/coin';
-import { AnySubWallet } from '../../../../model/wallets/subwallet';
+import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -23,7 +24,8 @@ import { WalletEditionService } from '../../../../services/walletedition.service
 export class CoinErc20DetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private networkWallet: NetworkWallet = null;
+  private networkWallet: AnyNetworkWallet = null;
+  private network: EVMNetwork = null;
   private subWallet: AnySubWallet = null;
   public coin: ERC20Coin;
   public contractAddress = '1234';
@@ -45,6 +47,7 @@ export class CoinErc20DetailsPage implements OnInit {
     if (!Util.isEmptyObject(navigation.extras.state)) {
       this.coin = navigation.extras.state.coin;
       this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletEditionService.modifiedMasterWalletId);
+      this.network = <EVMNetwork>this.networkWallet.network;
       this.subWallet = this.networkWallet.getSubWallet(this.coin.getID());
 
       Logger.log('wallet', 'ERC20 Masterwallet', this.networkWallet);
@@ -80,7 +83,7 @@ export class CoinErc20DetailsPage implements OnInit {
     void this.popupProvider.ionicConfirm('wallet.delete-coin-confirm-title', 'wallet.delete-coin-confirm-subtitle')
       .then(async (data) => {
         if (data) {
-          await this.networkWallet.network.deleteERC20Coin(this.coin);
+          await this.network.deleteERC20Coin(this.coin);
           this.native.pop();
         }
       });

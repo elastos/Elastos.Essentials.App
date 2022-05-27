@@ -7,7 +7,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Network } from 'src/app/wallet/model/networks/network';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { BrowsedAppInfo } from '../model/browsedappinfo';
 import { BrowserFavorite } from '../model/favorite';
 
@@ -99,7 +99,7 @@ export class FavoritesService {
      * Adds the given network as enabled for this favorite, meaning that the favorite will show
      * when this network is active only.
      */
-    public async enableNetworkForFavorite(favorite: BrowserFavorite, network: Network): Promise<boolean> {
+    public async enableNetworkForFavorite(favorite: BrowserFavorite, network: AnyNetwork): Promise<boolean> {
         let networkIndex = favorite.networks.findIndex(n => n == network.key);
         console.log("enableNetworkForFavorite", favorite, network, networkIndex)
         if (networkIndex >= 0)
@@ -115,7 +115,7 @@ export class FavoritesService {
     /**
      * Removes the given network from the enabled networks list for this favorite.
      */
-    public async disableNetworkForFavorite(favorite: BrowserFavorite, network: Network): Promise<boolean> {
+    public async disableNetworkForFavorite(favorite: BrowserFavorite, network: AnyNetwork): Promise<boolean> {
         let networkIndex = favorite.networks.findIndex(n => n == network.key);
         if (networkIndex == -1)
             return false; // not found

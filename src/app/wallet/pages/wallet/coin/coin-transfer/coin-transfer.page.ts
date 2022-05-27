@@ -38,29 +38,32 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
-import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
-import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { EVMService } from 'src/app/wallet/services/evm.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
+import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
+import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
+import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
 import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from '../../../../components/tx-success/tx-success.component';
 import { Config } from '../../../../config/Config';
 import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
 import { CoinType, StandardCoinName } from '../../../../model/coin';
-import { MainAndIDChainSubWallet } from '../../../../model/wallets/elastos/mainandidchain.subwallet';
-import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
-import { AnySubWallet } from '../../../../model/wallets/subwallet';
+import { MainCoinSubWallet } from '../../../../model/networks/base/subwallets/maincoin.subwallet';
+import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
 import { CoinTransferService, Transfer, TransferType } from '../../../../services/cointransfer.service';
 import { ContactsService } from '../../../../services/contacts.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
-
 
 @Component({
     selector: 'app-coin-transfer',
@@ -72,7 +75,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild(IonContent) contentArea: IonContent;
 
-    public networkWallet: NetworkWallet;
+    public networkWallet: AnyNetworkWallet;
     public tokensymbol = '';
 
     // Define transfer type
@@ -108,7 +111,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public amountCanBeEditedInPayIntent = true;
 
     // Submit transaction
-    public transaction: any;
+    public transaction: () => void;
 
     // CryptoName and Contacts
     public addressName: string = null;
@@ -205,9 +208,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.fromSubWallet = this.networkWallet.getSubWallet(this.subWalletId);
         this.tokensymbol = this.fromSubWallet.getDisplayTokenName();
 
-        Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance().toString());
+        Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance().toFixed());
 
-        if (this.fromSubWallet instanceof StandardEVMSubWallet) {
+        if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
             this.isEVMSubwallet = true;
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe(async (status) => {
@@ -260,16 +263,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             case TransferType.RECHARGE:
                 // Setup page display
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", { coinName: this.coinTransferService.toSubWalletId }));
-                this.toSubWallet = this.networkWallet.getSubWallet(this.coinTransferService.toSubWalletId);
+                this.toSubWallet = await this.getELASubwalletByID(this.coinTransferService.toSubWalletId as StandardCoinName);
 
                 // Setup params for recharge transaction
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createRechargeTransaction;
-                this.toAddress = await this.toSubWallet.createAddress();
-
-                // Auto suggest a transfer amount of 0.1 ELA (enough) to the ID chain. Otherwise, let user define his own amount.
-                if (this.toSubWallet.id === StandardCoinName.IDChain) {
-                    this.amount = 0.1;
-                }
+                this.toAddress = await this.toSubWallet.getCurrentReceiverAddress();
 
                 Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
                 Logger.log('wallet', 'Transferring To..', this.toSubWallet);
@@ -278,11 +277,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             case TransferType.WITHDRAW:
                 // Setup page display
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title"));
-                this.toSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA);
+
+                this.toSubWallet = await this.getELASubwalletByID(StandardCoinName.ELA);
 
                 // Setup params for withdraw transaction
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createWithdrawTransaction;
-                this.toAddress = await this.toSubWallet.createAddress();
+                this.toAddress = await this.toSubWallet.getCurrentReceiverAddress();
 
                 Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
                 Logger.log('wallet', 'Transferring To..', this.toSubWallet);
@@ -291,6 +292,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             // For Send Transfer
             case TransferType.SEND:
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-send-title"));
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createSendTransaction;
 
                 if (this.subWalletId === StandardCoinName.ELA) {
@@ -309,6 +311,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             // For Pay Intent
             case TransferType.PAY:
                 this.titleBar.setTitle(this.translate.instant("wallet.payment-title"));
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createSendTransaction;
 
                 Logger.log('wallet', 'Pay intent params', this.coinTransferService.payTransfer);
@@ -329,7 +332,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     private async getBalanceSpendable() {
         await this.fromSubWallet.updateBalanceSpendable();
-        this.zone.run( ()=> {
+        this.zone.run(() => {
             let balanceSpendable = this.fromSubWallet.getRawBalanceSpendable();
             let balance = this.fromSubWallet.getRawBalance();
             let margin = balance.minus(balanceSpendable);
@@ -345,47 +348,52 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      */
     async createSendTransaction() {
         await this.native.showLoading(this.translate.instant('common.please-wait'));
+
         // Call dedicated api to the source subwallet to generate the appropriate transaction type.
         // For example, ERC20 token transactions are different from standard coin transactions (for now - as
         // the spv sdk doesn't support ERC20 yet).
         let rawTx = null;
         try {
-            rawTx = await this.fromSubWallet.createPaymentTransaction(
-                this.toAddress, // User input address
-                new BigNumber(this.amount), // User input amount
-                this.memo, // User input memo
-                this.gasPrice,
-                this.gasLimit,
-                this.nonce
-            );
+            if (this.fromSubWallet instanceof ERC20SubWallet) {
+                rawTx = await this.fromSubWallet.createPaymentTransaction(
+                    this.toAddress, // User input address
+                    new BigNumber(this.amount), // User input amount
+                    this.memo, // User input memo
+                    this.gasPrice,
+                    this.gasLimit,
+                    this.nonce
+                );
+            }
+            else if (this.fromSubWallet instanceof MainCoinSubWallet) {
+                rawTx = await this.fromSubWallet.createPaymentTransaction(
+                    this.toAddress, // User input address
+                    new BigNumber(this.amount), // User input amount
+                    this.memo // User input memo
+                );
+            }
+            else {
+                throw new Error("Unknown subwallet type used for payment!");
+            }
         } catch (err) {
             await this.parseException(err);
         }
         await this.native.hideLoading();
+
+        // SIGN AND PUBLISH
         if (rawTx) {
             const transfer = new Transfer();
             Object.assign(transfer, {
                 masterWalletId: this.networkWallet.id,
                 subWalletId: this.subWalletId,
-                rawTransaction: rawTx,
+                //rawTransaction: rawTx,
                 action: this.action,
                 intentId: this.intentId
             });
 
-            if (this.isEVMSubwallet) {
-                try {
-                    await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
-                }
-                catch (err) {
-                    Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
-                }
-            } else {
-                const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-                if (result.published)
-                    void this.showSuccess();
-                if (transfer.intentId) {
-                    await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
-                }
+            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+
+            if (transfer.intentId) {
+                await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
             }
         } else {
             if (this.intentId) {
@@ -405,12 +413,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         let rawTx = null;
         try {
-            rawTx = await (this.fromSubWallet as MainAndIDChainSubWallet).createDepositTransaction(
-                    this.coinTransferService.toSubWalletId as StandardCoinName, // To subwallet id
-                    this.toAddress, // to address
-                    this.amount, // User input amount
-                    this.memo // Memo, not necessary
-                );
+            rawTx = await (this.fromSubWallet as MainChainSubWallet).createDepositTransaction(
+                this.coinTransferService.toSubWalletId as StandardCoinName, // To subwallet id
+                this.toAddress, // to address
+                this.amount, // User input amount
+                this.memo // Memo, not necessary
+            );
         } catch (err) {
             await this.parseException(err);
         }
@@ -422,15 +430,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             Object.assign(transfer, {
                 masterWalletId: this.networkWallet.id,
                 subWalletId: this.subWalletId,
-                rawTransaction: rawTx,
+                //rawTransaction: rawTx,
                 payPassword: '',
                 action: null,
                 intentId: null,
             });
 
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-            if (result.published)
-                void this.showSuccess();
         }
     }
 
@@ -457,24 +463,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             Object.assign(transfer, {
                 masterWalletId: this.networkWallet.id,
                 subWalletId: this.subWalletId,
-                rawTransaction: rawTx,
+                //rawTransaction: rawTx,
                 payPassword: '',
                 action: null,
                 intentId: null,
             });
 
-            if (this.isEVMSubwallet) {
-                try {
-                    await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
-                }
-                catch (err) {
-                    Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
-                }
-            } else {
-                const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-                if (result.published)
-                    void this.showSuccess();
-            }
+            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
         }
     }
 
@@ -517,8 +512,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async pasteFromClipboard() {
         this.toAddress = await this.native.pasteFromClipboard();
 
-        const toSubWalletId = this.toSubWallet ? this.toSubWallet.id : this.subWalletId;
-        const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toSubWalletId, this.toAddress);
+        const isAddressValid = this.isAddressValid(this.toAddress);
         if (!isAddressValid) {
             this.native.toast_trans('wallet.not-a-valid-address');
             return;
@@ -550,8 +544,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (this.sendMax || this.valuesReady()) {
             await this.startTransaction();
         }
-
-        // this.showSuccess();
     }
 
     // For revealing button
@@ -610,9 +602,14 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         return valuesValid;
     }
 
+    private isAddressValid(toAddress: string) {
+      let targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
+      return targetSubwallet.isAddressValid(this.toAddress);
+    }
+
     async startTransaction() {
-        if (this.subWalletId === StandardCoinName.ELA || this.subWalletId === StandardCoinName.IDChain) {
-            const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.subWalletId] as MainAndIDChainSubWallet;
+        if (this.subWalletId === StandardCoinName.ELA) {
+            const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.subWalletId] as MainChainSubWallet;
             const isAvailableBalanceEnough =
                 await mainAndIDChainSubWallet.isAvailableBalanceEnough(new BigNumber(this.amount).multipliedBy(mainAndIDChainSubWallet.tokenAmountMulipleTimes));
 
@@ -628,8 +625,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.toAddress = this.toAddress.substring(index + 1);
             }
 
-            const toSubWalletId = this.toSubWallet ? this.toSubWallet.id : this.subWalletId;
-            const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toSubWalletId, this.toAddress);
+            const isAddressValid = this.isAddressValid(this.toAddress);
             if (!isAddressValid) {
                 this.native.toast_trans('wallet.not-a-valid-address');
                 return;
@@ -641,6 +637,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 void this.showConfirm();
             }
         } catch (error) {
+            Logger.error("wallet", "Can't start transaction in coin transfer page:", error);
             this.native.toast_trans('wallet.not-a-valid-address');
         }
     }
@@ -649,30 +646,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         Logger.error('wallet', "transaction error:", err);
         let reworkedEx = WalletExceptionHelper.reworkedWeb3Exception(err);
         if (reworkedEx instanceof Web3Exception) {
-            await this.walletManager.popupProvider.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
+            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
         } else {
-            await this.walletManager.popupProvider.ionicAlert("wallet.transaction-fail", err.message);
+            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", err.message);
         }
-    }
-
-    private async isSubWalletAddressValid(masterWalletId: string, subWalletId: string, address: string) {
-        let subWalletIdTemp = subWalletId;
-        switch (subWalletIdTemp) {
-            case StandardCoinName.ELA:
-            case StandardCoinName.IDChain:
-            case StandardCoinName.BTC:
-                break;
-            default:
-                subWalletIdTemp = StandardCoinName.ETHSC;
-                break;
-        }
-
-        const isAddressValid = await this.walletManager.spvBridge.isSubWalletAddressValid(
-            masterWalletId,
-            subWalletIdTemp,
-            address
-        );
-        return isAddressValid;
     }
 
     async showConfirm() {
@@ -784,7 +761,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     isStandardSubwallet(subWallet: AnySubWallet) {
-        return subWallet instanceof StandardSubWallet;
+        return subWallet instanceof MainCoinSubWallet;
     }
 
     convertAmountToBigNumber(amount: number) {
@@ -913,16 +890,35 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 let selectedSubwallet = selectedWallet.getSubWallet(this.subWalletId);
                 if (!selectedSubwallet) {
                     // Subwallet doesn't exist on target master wallet. So we activate it.
-                    let coin = this.networkWallet.network.getCoinByID(this.subWalletId);
+                    let coin = (<EVMNetwork>this.networkWallet.network).getCoinByID(this.subWalletId);
                     await selectedWallet.createNonStandardSubWallet(coin);
                     selectedSubwallet = selectedWallet.getSubWallet(this.subWalletId);
                 }
 
-                this.toAddress = await selectedSubwallet.createAddress();
+                this.toAddress = await selectedSubwallet.getCurrentReceiverAddress(AddressUsage.SEND_FUNDS);
             }
 
             this.modal = null;
         });
         this.modal.present();
+    }
+
+    // for cross chain transaction.
+    async getELASubwalletByID(id: StandardCoinName) {
+        let networkKey = 'elastos';
+        switch (id) {
+            case StandardCoinName.ETHDID:
+                networkKey = 'elastosidchain';
+                break;
+            case StandardCoinName.ETHSC:
+                networkKey = 'elastossmartchain';
+                break;
+            default:
+                break;
+        }
+
+        let network = WalletNetworkService.instance.getNetworkByKey(networkKey);
+        let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
+        return networkWallet.getSubWallet(id);
     }
 }

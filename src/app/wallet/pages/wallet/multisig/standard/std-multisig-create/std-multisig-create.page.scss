@@ -1,0 +1,109 @@
+@import "src/app/wallet/root.scss";
+@import "src/essentials.scss";
+
+.container {
+    position: relative;
+    min-height: 100%;
+    padding: 10px 15px;
+    padding-bottom: 100px; // Footer space
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    object-fit: cover;
+
+    ion-col {
+        padding-inline-start: 0;
+    }
+
+    .label {
+        color: #fdfeff;
+    }
+
+    p {
+        margin: 0;
+        padding: 30px;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.26;
+        letter-spacing: -0.46px;
+        text-align: center;
+        color: #fdfeff;
+    }
+
+    ion-row {
+        margin-bottom: 15px;
+
+        ion-input {
+            background: #FFF;
+            border: none;
+            font-weight: 400;
+            letter-spacing: -0.34px;
+            color: #000;
+            --padding-start: 12px;
+            --placeholder-color: #000;
+        }
+
+        ion-col {
+        }
+
+        .pick-wallet {
+            display: flex;
+            justify-content: flex-end;
+
+            img {
+                margin-left:5px;
+            }
+
+            .picked-wallet {
+                font-weight: bold;
+            }
+        }
+    }
+
+    .cosigner-row {
+        align-items: center;
+
+        .right-col {
+            ion-icon {
+                width:20px;
+                height:20px;
+            }
+        }
+
+        ion-input {
+            flex-direction: row-reverse; // Icons on the right
+
+            .icons {
+                height: 100%;
+                display:flex;
+
+                .icon {
+                    margin: auto 5px;
+                    padding: 5px;
+                }
+            }
+        }
+    }
+
+    .footer {
+        z-index: 10;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+}
+
+.dark-container {
+    ion-row {
+        ion-input {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #FFF;
+            --placeholder-color: #FFF;
+        }
+    }
+
+    .footer {
+        background: #212021;
+    }
+}

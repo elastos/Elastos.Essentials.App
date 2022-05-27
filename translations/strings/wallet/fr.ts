@@ -40,6 +40,7 @@ export const fr = {
         "not-a-valid-address": "Adresse invalide",
         "transaction-pending": "Une transaction est déjà en cours. Veuillez attendre la confirmation de la première transaction.",
         "share-erc20-token": "Adresse de jeton ERC20 partagée",
+        "privatekey": "Clé privée",
 
         /************
         * Home Page *
@@ -68,6 +69,8 @@ export const fr = {
         "change-wallet": "Changer de portefeuille",
         "wallets": "Portefeuilles",
         "explore-your-wallets": "Explorez vos autres portefeuilles",
+        "wallet-unsupported-on-network": "This wallet is unsupported on the {{ network }} network. Please select another network or wallet.",
+        "wallet-connect-to-ledger": "Connect to ledger Wallet",
 
         /********************************************** General Settings Screen ***********************************************/
 
@@ -76,7 +79,7 @@ export const fr = {
         *****************/
         "settings-title": "Paramètres",
         "settings-general": "Général",
-        "settings-add-wallet": "Nouveau portefeuille",
+        "settings-add-wallet": "Ajouter un portefeuille",
         "settings-add-wallet-subtitle": "Créer ou importer un portefeuille",
         "settings-my-wallets": "Mes portefeuilles",
         "settings-my-wallets-subtitle": "Sauvegardez vos portefeuilles et accédez à leurs paramètres",
@@ -84,6 +87,13 @@ export const fr = {
         "settings-currency-subtitle": "Selectionnez la devise à afficher",
         "settings-custom-networks": "Réseaux Personnalisés",
         "settings-custom-networks-subtitle": "Ajoutez et modifiez vos réseaux personnalisés ici",
+        "settings-manage-networks": "Gestion les Réseaux",
+        "settings-manage-networks-subtitle": "Affichez et cachez certains réseaux, et ajoutez des réseaux personnalisés",
+        "settings-add-wallet-standard-wallet": "Standard Wallet",
+        "settings-add-wallet-multi-sig-wallet": "Multi Signature Wallet",
+        "settings-add-wallet-hardware-wallet": "Connect H/W Wallet",
+        "settings-add-wallet-new-wallet": "New Wallet",
+        "settings-add-wallet-mnemonic": "Mnemonic / Paper key",
 
         /***********************
         * Select-Currency Page *
@@ -150,6 +160,7 @@ export const fr = {
         "coin-transaction-status-confirmed": "Confirmé",
         "coin-transaction-status-pending": "En attente",
         "coin-transaction-status-unconfirmed": "Non confirmé",
+        "coin-transaction-status-not-published": "Non publié",
         "text-coin-close-warning": "Le jeton sera supprimé de la liste",
 
         /*******************
@@ -265,6 +276,38 @@ export const fr = {
         'select-a-token': 'Choix du jeton',
         'select-token-intro': 'Quel jeton souhaitez-vous utiliser?',
 
+        /**************************
+        * Wallet chooser component *
+        ***************************/
+
+        'unsupported-on-network': 'Unsupported on the {{network}} network.',
+
+        /*********************
+        * Ledger Get Address Component *
+        **********************/
+        "ledger-account-select": "Please select a account from ledger",
+        "ledger-connecting": "Searching Ledger Wallet",
+        "ledger-prompt": "Please open Ledger Nano X, keep it unlocked, and open the {{appname}} application",
+
+        /*******************
+        * Ledger scan page *
+        ********************/
+        "ledger-scan": "Recherche Ledger",
+        "ledger-scan-available-devices": "Appareils disponibles",
+        "ledger-scan-scan-again": "Re-scanner",
+        "ledger-scan-ledger-scanning": "Recherche en cours",
+
+        /**********************
+        * Ledger connect page *
+        ***********************/
+        "ledger-connect": "Compte Ledger",
+        "ledger-device": "Appareil",
+        "ledger-connect-error": "Impossible de se connecter à l'appareil",
+        "ledger-connecting-to-device": "Connexion en cours",
+        "ledger-addresses": "Adresses",
+        "address-type": "Type d'adresse",
+        "pick-network": "Choisir un réseau",
+
         /********************************************** Wallet Settings Screens ***********************************************/
 
         /***********************
@@ -343,6 +386,12 @@ export const fr = {
         "coin-adderc20-invalid-contract-or-network-error": "Le contenu n'est pas une adresse de jeton ERC20 valide, ou erreur réseau.",
         'coin-adderc20-alreadyadded': 'Ce jeton est déjà dans la liste',
         'coin-adderc20-not-found': 'Impossible de trouver l\'adresse du jeton.',
+
+        /***********************
+        * Manage networks Page *
+        ************************/
+        'manage-networks-title': 'Gestion des réseaux',
+        'manage-networks-intro': 'Sélectionnez les réseaux que vous souhaitez voir dans la liste des réseaux courants. Cachez ceux que vous n\'utilisez pas. Vous pouvez aussi ajouter des réseaux personnalisés compatibles Ethereum via l\'icône plus ci-dessus.',
 
         /***********************
         * Custom networks Page *
@@ -475,6 +524,10 @@ export const fr = {
         'get-started': 'Commencer',
         'import-wallet-msg': 'Vous avez déjà un portefeuille? Importez-le.',
         'launcher-create-wallet': 'Créer le portefeuille',
+        'new-standard-wallet': 'New standard wallet',
+        'import-standard-wallet': 'Import standard wallet',
+        'multi-sig-wallet': 'Multi-sig wallet',
+        'ledger-hardware-wallet': 'Ledger Nano X hardware wallet',
 
         /*********************
         * Wallet Create Page *
@@ -519,7 +572,6 @@ export const fr = {
         "mnemonic-reinput-passphrase": "Saisir le mot de passe à nouveau",
         "help:create-password": "Il s'agit d'un mot de passe optionnel qui augmente la sécurité du mnémonique. Considérez-le comme un 13e mot du mnémonique. Notez bien que ce mot de passe ne pas pas être retrouvé si vous l\'oubliez. Saisir un mauvais mot de passe de mnémonique dans l\'avenir lorsque vous importerez votre portefeuille ne génèrera pas d\'erreur mais créera une adresse de portefeuille différente, et vous ne verrez pas vos fonds.",
         "help:import-password": "Le mot de passe du mnémonique est un mot de votre choix qui est fortement associé à votre mnémonique. Ne tenez pas compte de cette option si vous n\'avez pas utilisé de mot de passe de mnémonique lors de la création de votre portefeuille.",
-        "privatekey": "Clé privée",
         "privatekey-tap-to-copy": "Toucher la clé privée pour copier",
         "export-private-key-intro": "Vous pouvez aussi choisir d'utiliser la clé privée suivante dans certaines applications. Touchez pour copier.",
         "import-paste-from-keypad": "Note: vous pouvez coller une clé papier en entier depuis le clavier",
@@ -572,6 +624,38 @@ export const fr = {
         'bridge-tokens': 'Convertir vos Jetons',
         'bridge-tokens-intro': 'Les fournisseurs de services tiers suivants sont disponibles pour vous permettre de <b>convertir vos {{coinName}}</b> depuis/vers le réseau {{networkName}}, vers/depuis d\'autres réseaux:',
         'to-networks': 'Vers autres réseaux:',
+
+        /********************************
+        * Multisig tx details component *
+        *********************************/
+        'multi-signature-status': 'Statut Multi signature',
+        'multi-signature-my-signature': 'Ma signature',
+        'multi-signature-sign': 'Signer',
+        'multi-signature-signed': 'Signé',
+        'multi-signature-not-signed': 'Non signé',
+        'multi-signature-publish': 'Publier',
+        'multi-signature-transaction-link': 'Lien pour co-signataires',
+        'multi-signature-transaction-link-copy-info': 'Donnez ce lien aux autres co-signataires pour qu\'ils puisse continuer le procesus.',
+        'multi-signature-transaction-link-copied': 'Le lien a été copié dans le press-papier',
+
+        /***************************
+        * Multisig tx intent page  *
+        ****************************/
+        'multi-sig-tx-title': 'Transaction multi-sig',
+        'multi-sig-tx-fetching': 'Récupération des infos sur la transaction.',
+        'multi-sig-tx-no-tx-found': 'Aucune transaction n\'a été trouvée.',
+        'multi-sig-tx-unknown-network': 'Cette transaction est pour un réseau non supporté par votre version d\'Essentials.',
+        'multi-sig-tx-pick-wallet': 'Choisissez le portefeuille multi-signatures à utiliser.',
+        'multi-sig-tx-select-wallet': 'Sélectionner le portefeuille',
+        'multi-sig-tx-selected-wallet': 'Portefeuille sélectionné',
+        'multi-sig-tx-switched-to-network': 'Réseau changé vers {{ network }}',
+
+        /************************
+        * Offline transactions  *
+        *************************/
+
+        'offline-tx-pending-multisig': 'Multi-signature en attente',
+        'offline-tx-unknown-tx': "Transaction inconnue",
 
         /***************************
         * Block chain upgrade *

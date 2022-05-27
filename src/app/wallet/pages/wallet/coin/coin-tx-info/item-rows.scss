@@ -1,0 +1,77 @@
+@import 'src/app/wallet/root.scss';
+
+.item-row {
+    box-shadow: 0 3px 15px 0 #ededf0;
+    background-color: #ffffff;
+    border-radius: 17px;
+    padding: 10px 7.5px 10px 22.5px;
+    margin-bottom: 7.5px;
+
+    .title-col {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        h1 {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.46;
+        }
+
+        ion-icon {
+            height: 17px;
+            width: 17px;
+            color: #620ad4;
+        }
+    }
+
+    .arrow-col {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .rotate {
+            transform: rotate(-180deg);
+        }
+    }
+
+    .details-container {
+        margin-bottom: 7.5px;
+        width: 100%;
+
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0px 15px 0px 5px;
+            overflow: hidden;
+
+            h2 {
+                margin: 5px 0 0;
+                font-weight: 400;
+                font-size: 13px;
+                word-break: break-all;
+                color: #000000;
+                opacity: 0.7;
+                font-family: 'Inter' !important;
+            }
+        }
+    }
+}
+
+.dark-container {
+    .item-row {
+        background-color: #212021;
+        box-shadow: none;
+
+        .details-container {
+            .details-row {
+                h2 {
+                    color: #ACACAC;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}

@@ -7,12 +7,12 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
 import { SwapProvider } from 'src/app/wallet/model/earn/swapprovider';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
-import { EarnService } from 'src/app/wallet/services/earn.service';
-import { SwapService } from 'src/app/wallet/services/swap.service';
+import { EarnService } from 'src/app/wallet/services/evm/earn.service';
+import { SwapService } from 'src/app/wallet/services/evm/swap.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
@@ -30,7 +30,7 @@ export class CoinSwapPage implements OnInit {
     public WalletUtil = WalletUtil;
     public CoinType = CoinType;
 
-    public networkWallet: NetworkWallet;
+    public networkWallet: AnyNetworkWallet;
     public subWallet: AnySubWallet;
 
     constructor(

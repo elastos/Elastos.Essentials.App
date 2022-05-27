@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { SwitchNetworkComponent } from '../components/switch-network/switch-network.component';
-import { Network } from '../wallet/model/networks/network';
+import { AnyNetwork } from '../wallet/model/networks/network';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { GlobalThemeService } from './global.theme.service';
 
@@ -34,7 +34,7 @@ export class GlobalSwitchNetworkService {
   /**
    * Asks user to switch to a different network.
    */
-  public promptSwitchToNetwork(network: Network): Promise<boolean> {
+  public promptSwitchToNetwork(network: AnyNetwork): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise(async resolve => {
       const modal = await this.modalCtrl.create({

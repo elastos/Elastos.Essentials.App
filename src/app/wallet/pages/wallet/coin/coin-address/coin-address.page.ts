@@ -6,6 +6,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
 
@@ -54,7 +55,7 @@ export class CoinAddressPage {
     }
 
     async getAddressList(infiniteScroll: any) {
-        const allAddresses = await this.walletManager.spvBridge.getAddresses(this.masterWalletId, this.subWalletId, this.curCount, AddressCount, false);
+        const allAddresses = await this.walletManager.spvBridge.getAddresses(jsToSpvWalletId(this.masterWalletId), this.subWalletId, this.curCount, AddressCount, false);
         let disabled = true;
         if (allAddresses) {
             if (this.curCount !== 0) {

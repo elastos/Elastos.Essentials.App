@@ -1,6 +1,6 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../coin";
-import { UniswapCurrencyProvider } from "../../uniswap.currencyprovider";
+import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
 
 export class FantomMainnetUniswapCurrencyProvider extends UniswapCurrencyProvider {
   private referenceUSDCoin = new ERC20Coin("USDC", "USDC", "0x04068da6c83afcfa0e13ba15a6696662335d5b75", 6, MAINNET_TEMPLATE, false, true);

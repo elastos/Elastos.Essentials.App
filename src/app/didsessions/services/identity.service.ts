@@ -117,7 +117,7 @@ export class IdentityService {
         });
     }
 
-    public async signIn(identityEntry: IdentityEntry, goToLauncher = false) {
+    public async signIn(identityEntry: IdentityEntry, goToLauncher = false, showSignInDialog = false) {
         // Security check: ask user to enter the master password for the target did.
         try {
             let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
@@ -132,7 +132,8 @@ export class IdentityService {
                 // if (this.language.languageWasChangedByUser()) {
                 Logger.log('didsessions', "Language changed by user. Passing session language to be: " + this.language.activeLanguage.value);
                 signInOptions = {
-                    sessionLanguage: this.language.activeLanguage.value
+                    sessionLanguage: this.language.activeLanguage.value,
+                    showBlockingSignInDialog: showSignInDialog
                 }
                 //}
 
@@ -453,6 +454,7 @@ export class IdentityService {
                     if (profileName) {
                         // Add the name credential in the DID
                         await createdDID.addNameCredential(profileName, storePassword);
+
                         // Finalize
                         await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName, true, deleteDIDStoreOnError);
                     } else if (deleteDIDStoreOnError) {

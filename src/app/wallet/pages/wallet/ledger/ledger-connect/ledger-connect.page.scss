@@ -1,0 +1,106 @@
+@import "src/app/wallet/root.scss";
+
+
+.content {
+    padding: 20px;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-justify-content-end {
+    justify-content: flex-end;
+}
+
+.flex-align-self-center {
+    align-self: center;
+}
+
+.flex-align-items-center {
+    align-items: center;
+}
+
+
+.row {
+    align-self: center;
+    align-items: center;
+
+    .title {
+        font-weight: 600;
+    }
+
+    .go-arrow {
+        margin-left: 5px;
+    }
+}
+
+.note-row {
+    margin: 10px 0;
+}
+
+.error-row {
+    justify-content: center;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+.device-row {
+    margin: 5px 0;
+
+    .device-name {
+        font-weight: bold;
+    }
+}
+
+.network-row {
+    margin: 5px 0;
+
+    ion-col {
+        align-items: center;
+    }
+
+    .pick-network {
+        text-align: right;
+
+        .network-logo {
+            height: 20px;
+            margin-right: 10px;
+        }
+    }
+}
+
+.account-row,
+.prompt-row {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 15px 10px;
+    border-radius: 13px;
+
+    ion-label {
+        font-weight: 500;
+        font-size: 14px;
+    }
+}
+
+.prompt-row {
+    background: darkgray;
+}
+
+.scanning {
+    display: flex;
+    align-items: center;
+
+    ion-spinner {
+        margin-right: 10px;
+    }
+}
+
+.dark-container {
+    .account-row {
+        background: #2C2C2C;
+    }
+}

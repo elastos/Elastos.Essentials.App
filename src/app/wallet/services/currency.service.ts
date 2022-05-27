@@ -4,11 +4,12 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ERC20Coin } from '../model/coin';
-import { Network } from '../model/networks/network';
+import { EVMNetwork } from '../model/networks/evms/evm.network';
+import type { AnyNetwork } from '../model/networks/network';
 import { TimeBasedPersistentCache } from '../model/timebasedpersistentcache';
+import { UniswapCurrencyService } from './evm/uniswap.currency.service';
 import { WalletNetworkService } from './network.service';
 import { LocalStorage } from './storage.service';
-import { UniswapCurrencyService } from './uniswap.currency.service';
 
 const TOKEN_VALUE_REFRESH_DELAY = 20;//(60 * 5); // 5 minutes - Number of seconds without refreshing a token price if alerady in cache
 
@@ -122,7 +123,7 @@ export class CurrencyService {
     await this.computeExchangeRatesFromCurrenciesService();
 
     this.updateInterval = setInterval(() => {
-        void this.fetchTokenStatsFromPriceService();
+      void this.fetchTokenStatsFromPriceService();
     }, 120000);// 120s
 
     Logger.log('wallet', "Currency service initialization complete");
@@ -130,8 +131,8 @@ export class CurrencyService {
 
   stop() {
     if (this.updateInterval) {
-        clearInterval(this.updateInterval);
-        this.updateInterval = null;
+      clearInterval(this.updateInterval);
+      this.updateInterval = null;
     }
   }
 
@@ -142,8 +143,8 @@ export class CurrencyService {
   private loadAllTokenSymbol() {
     let networks = this.walletNetworkService.getAvailableNetworks();
     for (let i = 0; i < networks.length; i++) {
-        let tokenSymbol = networks[i].getMainTokenSymbol()
-        this.networkMainTokenPrice[tokenSymbol] = null;
+      let tokenSymbol = networks[i].getMainTokenSymbol()
+      this.networkMainTokenPrice[tokenSymbol] = null;
     }
   }
 
@@ -204,23 +205,23 @@ export class CurrencyService {
     return new Promise(resolve => {
       this.http.get<any>(this.trinityPriceUrl).subscribe((res: TrinityPriceAPITokenStats[]) => {
         if (res) {
-            for (let tokenSymbol in this.networkMainTokenPrice) {
-                let tokenStats = res[tokenSymbol];
-                if (tokenStats) {
-                    this.networkMainTokenPrice[tokenSymbol] = tokenStats;
-                } else {
-                    this.networkMainTokenPrice[tokenSymbol] = null;
-                }
+          for (let tokenSymbol in this.networkMainTokenPrice) {
+            let tokenStats = res[tokenSymbol];
+            if (tokenStats) {
+              this.networkMainTokenPrice[tokenSymbol] = tokenStats;
+            } else {
+              this.networkMainTokenPrice[tokenSymbol] = null;
             }
-            // Set exchange for BTC => USD
-            this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
+          }
+          // Set exchange for BTC => USD
+          this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
 
-            this.pricefetched = true;
-            // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
-            resolve(true);
+          this.pricefetched = true;
+          // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
+          resolve(true);
         }
         else {
-            resolve(false);
+          resolve(false);
         }
       }, (err) => {
         Logger.error('wallet', 'Fetch CMC Stats err', err);
@@ -257,7 +258,7 @@ export class CurrencyService {
    * or in the given currency.
    * Ex: 30 ELA -> 300 USD
    */
-  public getMainTokenValue(quantity: BigNumber, network?: Network, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
+  public getMainTokenValue(quantity: BigNumber, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
     if (!network)
       network = this.walletNetworkService.activeNetwork.value;
 
@@ -281,7 +282,7 @@ export class CurrencyService {
     }
   }
 
-  public async fetchMainTokenValue(quantity: BigNumber, network?: Network, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
+  public async fetchMainTokenValue(quantity: BigNumber, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
     let cacheKey = network.key + network.getMainTokenSymbol();
     let currentTime = Date.now() / 1000;
 
@@ -289,7 +290,7 @@ export class CurrencyService {
     //return;
 
     if (!this.pricefetched) {
-        await this.fetchTokenStatsFromPriceService();
+      await this.fetchTokenStatsFromPriceService();
     }
 
     let tokenStats = this.networkMainTokenPrice[network.getMainTokenSymbol()];
@@ -300,9 +301,9 @@ export class CurrencyService {
     }
     else {
       Logger.log("wallet", "No currency in trinity API for", network.getMainTokenSymbol(), ". Trying other methods");
-      if (network.getMainEvmRpcApiUrl() && network.getUniswapCurrencyProvider()) {
+      if (network instanceof EVMNetwork && network.getUniswapCurrencyProvider()) {
         // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
-        let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(network, network.getUniswapCurrencyProvider().getWrappedNativeCoin());
+        let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(<EVMNetwork>network, network.getUniswapCurrencyProvider().getWrappedNativeCoin());
         if (usdValue) {
           this.pricesCache.set(cacheKey, {
             usdValue
@@ -321,7 +322,7 @@ export class CurrencyService {
   }
 
   // ERC20 tokens
-  public getERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: Network, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
+  public getERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
     if (!network)
       network = this.walletNetworkService.activeNetwork.value;
 
@@ -345,7 +346,7 @@ export class CurrencyService {
     }
   }
 
-  public fetchERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: Network, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
+  public fetchERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: EVMNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
     let cacheKey = network.key + coin.getContractAddress();
     this.queueUniswapTokenFetch(cacheKey, network, coin);
     return;
@@ -357,12 +358,12 @@ export class CurrencyService {
    */
   private uniswapTokenFetchQueue: {
     [cacheKey: string]: {
-      network: Network;
+      network: EVMNetwork;
       coin: ERC20Coin;
     }
   } = {};
   private onGoingUniswapTokenFetch: string = null; // Cache key of the token being fetched, if any.
-  private queueUniswapTokenFetch(cacheKey: string, network: Network, coin: ERC20Coin) {
+  private queueUniswapTokenFetch(cacheKey: string, network: EVMNetwork, coin: ERC20Coin) {
     if (cacheKey in this.uniswapCurrencyService || cacheKey === this.onGoingUniswapTokenFetch) {
       this.checkFetchNextUniswapToken();
       return; // Token fetch is already queued, don't queue again.
@@ -447,5 +448,5 @@ type CurrenciesExchangeRate = {
 }
 
 type TrinityPriceAPITokenStats = {
-    [symbol: string]: string
+  [symbol: string]: string
 }

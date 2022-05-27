@@ -6,7 +6,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
+import { MasterWallet } from '../../../model/masterwallets/masterwallet';
 import { Native } from '../../../services/native.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { WalletService } from '../../../services/wallet.service';

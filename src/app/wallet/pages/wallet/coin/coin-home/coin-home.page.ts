@@ -25,7 +25,6 @@ import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
-import { Moment } from 'moment';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
@@ -37,14 +36,15 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
-import { TransactionListType } from 'src/app/wallet/model/evm.types';
+import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { TransactionListType } from 'src/app/wallet/model/networks/evms/evm.types';
+import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
 import { CoinType, StandardCoinName } from '../../../../model/coin';
-import { GenericTransaction, TransactionInfo } from '../../../../model/providers/transaction.types';
-import { AnySubWallet } from '../../../../model/wallets/subwallet';
+import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
+import { AnyOfflineTransaction, GenericTransaction, OfflineTransactionType, TransactionInfo } from '../../../../model/tx-providers/transaction.types';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -52,6 +52,7 @@ import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
+import { CoinTxInfoParams } from '../coin-tx-info/coin-tx-info.page';
 
 @Component({
     selector: 'app-coin-home',
@@ -63,10 +64,11 @@ export class CoinHomePage implements OnInit {
     @ViewChild('fetchmoretrigger', { static: true }) fetchMoreTrigger: ElementRef;
 
     public masterWalletInfo = '';
-    public networkWallet: NetworkWallet = null;
+    public networkWallet: AnyNetworkWallet = null;
     public subWallet: AnySubWallet = null;
     public subWalletId: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
+    public offlineTransactions: AnyOfflineTransaction[] = [];
     public transactionsLoaded = false;
     private transactions: GenericTransaction[] = []; // raw transactions received from the providers / cache
 
@@ -142,7 +144,7 @@ export class CoinHomePage implements OnInit {
 
     ngAfterViewInit() {
         const options: IntersectionObserverInit = {
-            root: this.fetchMoreTrigger.nativeElement.closest('ion-content')
+            root: this.fetchMoreTrigger.nativeElement.closest('.intersection-container')
         };
         this.fetchMoreTriggerObserver = new IntersectionObserver((data: IntersectionObserverEntry[]): IntersectionObserverCallback => {
             if (data[0].isIntersecting) {
@@ -173,7 +175,6 @@ export class CoinHomePage implements OnInit {
             this.coinTransferService.reset();
             this.coinTransferService.masterWalletId = masterWalletId;
             this.coinTransferService.subWalletId = this.subWalletId;
-            this.coinTransferService.walletInfo = Util.clone(this.networkWallet.masterWallet.account);
 
             this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
 
@@ -215,7 +216,9 @@ export class CoinHomePage implements OnInit {
     async updateTransactions() {
         this.start = 0;
         this.transferList = [];
+        this.offlineTransactions = [];
         this.todaysTransactions = 0;
+        await this.getOfflineTransactions();
         await this.getAllTx();
         await this.checkInternalTransactions();
     }
@@ -255,16 +258,16 @@ export class CoinHomePage implements OnInit {
         return this.subWalletId === StandardCoinName.ELA;
     }
 
-    chainIsDID(): boolean {
-        return this.subWalletId === StandardCoinName.IDChain;
-    }
-
     chainIsETHSC(): boolean {
         return this.subWalletId === StandardCoinName.ETHSC;
     }
 
     chainIsERC20(): boolean {
         return this.subWallet instanceof ERC20SubWallet;
+    }
+
+    private async getOfflineTransactions() {
+        this.offlineTransactions = await this.subWallet.getOfflineTransactions() || [];
     }
 
     async getAllTx() {
@@ -274,8 +277,7 @@ export class CoinHomePage implements OnInit {
             this.canFetchMore = false;
             return;
         }
-        this.transactionsLoaded = true;
-        Logger.log('wallet', "Got all transactions: ", transactions.length);
+        Logger.log('wallet', "Got all transactions: ", transactions.length, transactions);
 
         if (this.subWallet.canFetchMoreTransactions()) {
             this.canFetchMore = true;
@@ -283,10 +285,6 @@ export class CoinHomePage implements OnInit {
         else {
             this.canFetchMore = false;
         }
-        /* } else {
-            console.log("DEBUG coinhome getAllTx() B");
-            this.canShowMore = true;
-        } */
 
         /* TODO - "can fetch more" to be called on the subwalelt -> transactions provider if (this.MaxCount <= 20) {
             this.canShowMore = false;
@@ -294,9 +292,9 @@ export class CoinHomePage implements OnInit {
 
         const today = moment(new Date()).startOf('day');
         for (let transaction of transactions) {
-            const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
+            const transactionInfo = await this.subWallet.getTransactionInfo(transaction);
             if (!transactionInfo) {
-                // Logger.warn('wallet', 'Invalid transaction ', transaction);
+                Logger.warn('wallet', 'Invalid transaction ', transaction);
                 continue;
             }
 
@@ -310,6 +308,8 @@ export class CoinHomePage implements OnInit {
             this.transferList.push(transactionInfo);
         }
 
+        this.transactionsLoaded = true;
+
         //At least all transactions of today must be loaded.
         if ((this.todaysTransactions == transactions.length) && (this.prevTransactionCount != transactions.length)) {
             this.fetchMoreTransactions();
@@ -318,19 +318,35 @@ export class CoinHomePage implements OnInit {
         this.prevTransactionCount = transactions.length;
     }
 
-    onItem(item) {
-        this.native.go(
-            '/wallet/coin-tx-info',
-            {
-                masterWalletId: this.networkWallet.id,
-                subWalletId: this.subWalletId,
-                transactionInfo: item
-            }
-        );
+    public onItem(item) {
+        let params: CoinTxInfoParams = {
+            masterWalletId: this.networkWallet.id,
+            subWalletId: this.subWalletId,
+            transactionInfo: item
+        };
+        this.native.go('/wallet/coin-tx-info', params);
+    }
+
+    /**
+     * Offline transaction item was clicked
+     */
+    public onOfflineTransactionItem(item: AnyOfflineTransaction) {
+        switch (item.type) {
+            case OfflineTransactionType.MULTI_SIG_STANDARD:
+                let params: CoinTxInfoParams = {
+                    masterWalletId: this.networkWallet.id,
+                    subWalletId: this.subWalletId,
+                    offlineTransaction: item
+                };
+                this.native.go("/wallet/coin-tx-info", params);
+                break;
+            default:
+            // Nothing
+        }
     }
 
     async receiveFunds() {
-        if (this.networkWallet.masterWallet.createdBySystem) {
+        if (this.networkWallet.masterWallet.creator === WalletCreator.WALLET_APP) {
             const needsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
             if (needsBackup) {
                 await this.showBackupPrompt()
@@ -409,7 +425,7 @@ export class CoinHomePage implements OnInit {
         // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
         setTimeout(() => {
             event.target.complete();
-        }, 1000);
+        }, 500);
     }
 
     getIndexByTxId(txid: string) {
@@ -453,7 +469,7 @@ export class CoinHomePage implements OnInit {
         // await this.subWallet.signAndSendRawTransaction(rawTx, transfer);
     }
 
-    countAsDailyTransactionIfNeeded(today: Moment, timestamp: number) {
+    countAsDailyTransactionIfNeeded(today: moment.Moment, timestamp: number) {
         if (today.isSame(moment(timestamp).startOf('day'))) {
             this.todaysTransactions++;
         }
@@ -509,7 +525,6 @@ export class CoinHomePage implements OnInit {
         this.transactionListType = transactionlistType;
         void this.initData(false);
     }
-
 
     public earn(event, subWallet: AnySubWallet) {
         // Prevent from subwallet main div to get the click (do not open transactions list)
@@ -592,5 +607,19 @@ export class CoinHomePage implements OnInit {
     public shouldShowAllActionsToggle(): boolean {
         // Wait for shouldShowAllActions to be loaded (not null)
         return this.canEarnSwapOrBridge() && this.shouldShowAllActions !== null;
+    }
+
+    /**
+     * Displayable list item title for offline transactions
+     */
+    public getOfflineTransactionTitle(offlineTx: AnyOfflineTransaction): string {
+        switch (offlineTx.type) {
+            case OfflineTransactionType.MULTI_SIG_STANDARD: return this.translate.instant('wallet.offline-tx-pending-multisig');
+            default: this.translate.instant('wallet.offline-tx-unknown-tx');
+        }
+    }
+
+    public getOfflineTransactionDate(offlineTx: AnyOfflineTransaction): string {
+        return WalletUtil.getDisplayDate(offlineTx.updated);
     }
 }

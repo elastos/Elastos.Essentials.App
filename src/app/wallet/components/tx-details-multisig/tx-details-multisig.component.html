@@ -1,0 +1,51 @@
+<div class="root">
+  <ion-spinner *ngIf="fetchingTxInfo"></ion-spinner>
+
+  <!-- Cosigners / signature status -->
+  <div *ngIf="!fetchingTxInfo" [class.dark-container]="theme.darkMode">
+    <ion-row class="item-row">
+      <ion-col size="12" class="title-col">
+        <h1>{{ 'wallet.multi-signature-status' | translate }}</h1>
+      </ion-col>
+      <div class="cosigners details-container">
+        <div class="details-row">
+          <ion-row>
+            <ion-col class="cosigner-name" size="8">{{ 'wallet.multi-signature-my-signature' | translate }}</ion-col>
+            <ion-col size="4" *ngIf="!isSelfSigned">
+              <ion-button class="sign" (click)="sign()" *ngIf="!isSelfSigning">{{ 'wallet.multi-signature-sign' |
+                translate }}</ion-button>
+              <ion-spinner *ngIf="isSelfSigning"></ion-spinner>
+            </ion-col>
+            <ion-col class="cosigner-signed" size="4" *ngIf="isSelfSigned">
+              {{ 'wallet.multi-signature-signed' | translate }}
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let cosigner of cosignersWithStatus">
+            <ion-col class="cosigner-name" size="8">{{ cosigner.name }}</ion-col>
+            <ion-col class="cosigner-signed" size="4">{{ getCosignerSignatureStatus(cosigner) }}</ion-col>
+          </ion-row>
+        </div>
+      </div>
+      <ion-row *ngIf="canPublish">
+        <ion-button (click)="publish()" *ngIf="!isPublishing">{{ 'wallet.multi-signature-publish' | translate }}
+        </ion-button>
+        <ion-spinner *ngIf="isPublishing"></ion-spinner>
+      </ion-row>
+    </ion-row>
+
+    <!-- Sharing link -->
+    <ion-row class="item-row link">
+      <ion-col size="12" class="title-col">
+        <h1>{{ 'wallet.multi-signature-transaction-link' | translate }}</h1>
+      </ion-col>
+      <div class="link">
+        <ion-row>
+          <ion-col size="8">{{ 'wallet.multi-signature-transaction-link-copy-info' | translate }}</ion-col>
+          <ion-col size="4" class="icon-col">
+            <ion-icon mode="ios" name="copy" (click)="copyTransactionLinkToClipboard()"></ion-icon>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-row>
+  </div>
+</div>

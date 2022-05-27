@@ -8,7 +8,6 @@ export enum CoinType {
 
 export enum StandardCoinName {
     ELA = 'ELA',
-    IDChain = 'IDChain',
     ETHSC = 'ETHSC',
     ETHDID = 'ETHDID',
     ETHHECO = 'ETHHECO',
@@ -68,11 +67,7 @@ export class Coin {
 export class StandardCoin extends Coin {
     constructor(id: CoinID, name: string, description: string) {
         // Null network means that the coin is available on all networks
-        let removable = false;
-        if (id === StandardCoinName.IDChain) {
-            removable = true;
-        }
-        super(CoinType.STANDARD, id, name, description, removable, null);
+        super(CoinType.STANDARD, id, name, description, true, null);
     }
 }
 

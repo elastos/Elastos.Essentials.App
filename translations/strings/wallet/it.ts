@@ -39,6 +39,7 @@ export const it = {
         "not-a-valid-address": "Non è un indirizzo valido",
         "transaction-pending": "C'è già una transazione in corso. Attendi la conferma della transazione.",
         "share-erc20-token": "Dai un'occhiata a questo token ERC20 Elastos",
+        "privatekey": "Chiave Privata",
 
         /************
         * Home Page *
@@ -67,6 +68,8 @@ export const it = {
         "change-wallet": "Cambia portafoglio",
         "wallets": "Portafogli",
         "explore-your-wallets": "Esplora i tuoi portafogli",
+        "wallet-unsupported-on-network": "This wallet is unsupported on the {{ network }} network. Please select another network or wallet.",
+        "wallet-connect-to-ledger": "Connect to ledger Wallet",
 
         /********************************************** General Settings Screen ***********************************************/
 
@@ -75,7 +78,7 @@ export const it = {
         *****************/
         'settings-title': 'Impostazioni',
         "settings-general": "Generale",
-        "settings-add-wallet": "Nuovo portafoglio",
+        "settings-add-wallet": "Add Wallet",
         "settings-add-wallet-subtitle": "Crea o importa un nuovo portafoglio",
         "settings-my-wallets": "I miei portafogli",
         "settings-my-wallets-subtitle": "Esegui il backup dei tuoi portafogli e accedi alle loro impostazioni",
@@ -83,6 +86,13 @@ export const it = {
         "settings-currency-subtitle": "Seleziona la valuta da visualizzare",
         "settings-custom-networks": "Reti personalizzate",
         "settings-custom-networks-subtitle": "Aggiungi e modifica le tue reti personalizzate qui",
+        "settings-manage-networks": "Manage Networks",
+        "settings-manage-networks-subtitle": "Show and hide networks, add custom ones",
+        "settings-add-wallet-standard-wallet": "Standard Wallet",
+        "settings-add-wallet-multi-sig-wallet": "Multi Signature Wallet",
+        "settings-add-wallet-hardware-wallet": "Connect H/W Wallet",
+        "settings-add-wallet-new-wallet": "New Wallet",
+        "settings-add-wallet-mnemonic": "Mnemonic / Paper key",
 
         /***********************
         * Select-Currency Page *
@@ -149,6 +159,7 @@ export const it = {
         "coin-transaction-status-confirmed": "Confermato",
         "coin-transaction-status-pending": "In attesa",
         "coin-transaction-status-unconfirmed": "Non confermato",
+        "coin-transaction-status-not-published": "Not published",
         "text-coin-close-warning": "Il token verrà rimosso dall'elenco.",
 
         /*******************
@@ -264,6 +275,38 @@ export const it = {
         'select-a-token': 'Select a token',
         'select-token-intro': 'Which token would you like to use next?',
 
+        /**************************
+        * Wallet chooser component *
+        ***************************/
+
+        'unsupported-on-network': 'Unsupported on the {{network}} network.',
+
+        /*********************
+        * Ledger Get Address Component *
+        **********************/
+        "ledger-account-select": "Please select a account from ledger",
+        "ledger-connecting": "Searching Ledger Wallet",
+        "ledger-prompt": "Please open Ledger Nano X, keep it unlocked, and open the {{appname}} application",
+
+        /*******************
+        * Ledger scan page *
+        ********************/
+        "ledger-scan": "Ledger Search",
+        "ledger-scan-available-devices": "Available devices",
+        "ledger-scan-scan-again": "Scan again",
+        "ledger-scan-ledger-scanning": "Searching devices",
+
+        /**********************
+        * Ledger connect page *
+        ***********************/
+        "ledger-connect": "Ledger Account",
+        "ledger-device": "Device",
+        "ledger-connect-error": "Failed to connect to the device",
+        "ledger-connecting-to-device": "Connecting to device",
+        "ledger-addresses": "Addresses",
+        "address-type": "Address type",
+        "pick-network": "Pick network",
+
         /********************************************** Wallet Settings Screens ***********************************************/
 
         /***********************
@@ -342,6 +385,12 @@ export const it = {
         "coin-adderc20-invalid-contract-or-network-error": "L'indirizzo del token ERC20 fornito non è valido o si è verificato un errore di rete.",
         'coin-adderc20-alreadyadded': 'Token già aggiunto',
         'coin-adderc20-not-found': "Impossibile trovare l'indirizzo del token",
+
+        /***********************
+        * Manage networks Page *
+        ************************/
+        'manage-networks-title': 'Manage networks',
+        'manage-networks-intro': 'Select networks that you want to see in networks list. Hide networks that you don\'t use. You can also add custom ethereum-compatible networks from the plus icon above.',
 
         /***********************
         * Custom networks Page *
@@ -474,6 +523,10 @@ export const it = {
         'get-started': 'Inizia',
         'import-wallet-msg': 'Hai già un portafoglio? Importalo.',
         'launcher-create-wallet': 'Crea portafoglio',
+        'new-standard-wallet': 'New standard wallet',
+        'import-standard-wallet': 'Import standard wallet',
+        'multi-sig-wallet': 'Multi-sig wallet',
+        'ledger-hardware-wallet': 'Ledger Nano X hardware wallet',
 
         /*********************
         * Wallet Create Page *
@@ -519,7 +572,6 @@ export const it = {
         "help:create-password": "Questa è una password opzionale che aumenta la sicurezza del mnemonico. Pensala come la tredicesima parola del mnemonico. Nota che questa password non può essere recuperata se la dimentichi. Inserendo la Passphrase sbagliata, in futuro quando importi il ​​tuo portafoglio non genererà un errore ma creerà un indirizzo di portafoglio diverso e non vedrai i tuoi fondi.",
         "help:import-password": "La Passphrase è una parola a tua scelta che è fortemente associata al tuo mnemonico. Ignora questa opzione se non hai utilizzato una Passphrase durante la creazione del tuo portafoglio.",
         // "help:mnemonic-password": 'This is an optional password bound to your mnemonic words, to give your wallet extra security. Save it carefully, it is NOT recoverable if lost.',
-        "privatekey": "Chiave Privata",
         "privatekey-tap-to-copy": "Tocca la Chiave Privata per copiarla",
         "export-private-key-intro": "Puoi anche scegliere di utilizzare la seguente Chiave Privata in alcune applicazioni. Tocca per copiare.",
         "import-paste-from-keypad": "Note: you can paste a whole mnemonic sentence from the keypad",
@@ -572,6 +624,38 @@ export const it = {
         'bridge-tokens': 'Scambia i tuoi tokens verso altre reti',
         'bridge-tokens-intro': 'I seguenti fornitori di servizi di terze parti ti consentono di <b> convertire il tuo {{coinName}} </b> da/a la rete {{networkName}}, a/da altre reti:',
         'to-networks': 'Alle reti:',
+
+        /********************************
+        * Multisig tx details component *
+        *********************************/
+        'multi-signature-status': 'Multi signature status',
+        'multi-signature-my-signature': 'My signature',
+        'multi-signature-sign': 'Sign',
+        'multi-signature-signed': 'Signed',
+        'multi-signature-not-signed': 'Not signed',
+        'multi-signature-publish': 'Publish',
+        'multi-signature-transaction-link': 'Co-signers link',
+        'multi-signature-transaction-link-copy-info': 'Copy this link to let other co-signers find and sign this transaction',
+        'multi-signature-transaction-link-copied': 'Transaction link copied to clipboard',
+
+        /***************************
+        * Multisig tx intent page  *
+        ****************************/
+        'multi-sig-tx-title': 'Multisig transaction',
+        'multi-sig-tx-fetching': 'Fetching transaction information, please wait.',
+        'multi-sig-tx-no-tx-found': 'Sorry, no matching transaction was found.',
+        'multi-sig-tx-unknown-network': 'Sorry, This transaction is for a network that doesn\'t exist in your version of Essentials.',
+        'multi-sig-tx-pick-wallet': 'Pick the right multi-signature wallet to use.',
+        'multi-sig-tx-select-wallet': 'Select multi-sig wallet',
+        'multi-sig-tx-selected-wallet': 'Selected wallet',
+        'multi-sig-tx-switched-to-network': 'Switched to {{ network }}',
+
+        /************************
+        * Offline transactions  *
+        *************************/
+
+        'offline-tx-pending-multisig': 'Pending multi-signature',
+        'offline-tx-unknown-tx': "Unknown transaction",
 
         /***************************
         * Block chain upgrade *
@@ -925,7 +1009,6 @@ export const it = {
     'Wallis And Futuna Islands': 'Wallis And Futuna Islands',
     'Western Sahara': 'Western Sahara',
     'Yemen': 'Yemen',
-    'Yugoslavia': 'Yugoslavia',
     'Zambia': 'Zambia',
     'Zimbabwe': 'Zimbabwe',
     'the Republic of Abkhazia': 'the Republic of Abkhazia',

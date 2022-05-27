@@ -1,0 +1,43 @@
+<ion-content class="ion-text-center">
+  <app-titlebar title="text-vote-crcouncil"></app-titlebar>
+
+  <!-- Initial tx info fetch -->
+  <div class="tx-fetch" *ngIf="txInfo">
+    <ion-spinner></ion-spinner>
+    <p>
+      {{ 'wallet.multi-sig-tx-fetching' | translate }}
+    </p>
+  </div>
+
+  <!-- Errors -->
+  <div *ngIf="!initializationComplete && !txInfo">
+    {{ 'wallet.multi-sig-tx-no-tx-found' | translate }}
+  </div>
+  <div *ngIf="!initializationComplete && unknownNetworkError">
+    {{ 'wallet.multi-sig-tx-unknown-network' | translate }}
+  </div>
+
+  <!-- Post fetch content -->
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="!initializationComplete && !hasErrors()">
+    <p *ngIf="!multiSigWallet">
+      {{ 'wallet.multi-sig-tx-pick-wallet' | translate }}
+    </p>
+    <ion-button color="secondary" (click)="pickMultiSigWallet()">
+      <ion-label>{{ 'wallet.multi-sig-tx-select-wallet' | translate }}</ion-label>
+    </ion-button>
+    <p *ngIf="multiSigWallet">
+      <b>{{ 'wallet.multi-sig-tx-selected-wallet' | translate }}:</b> {{ multiSigWallet.name }}
+    </p>
+
+    <!-- BUTTONS FOOTER -->
+    <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
+      <ion-label>{{ 'common.cancel' | translate}}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+    <div class="btn confirm ion-activatable ripple" (click)="continue()" *ngIf="canContinue()">
+      <ion-label>{{ 'common.confirm' | translate}}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+
+  </ion-grid>
+</ion-content>

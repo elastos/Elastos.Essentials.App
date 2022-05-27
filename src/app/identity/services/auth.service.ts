@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { DIDService } from './did.service';
+import { Logger } from 'src/app/logger';
 import { DIDHelper } from '../helpers/did.helper';
 import { PasswordManagerCancelallationException } from '../model/exceptions/passwordmanagercancellationexception';
+import { DIDService } from './did.service';
 import { PopupProvider } from './popup';
-import { Logger } from 'src/app/logger';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -27,12 +27,12 @@ export class AuthService {
 
     /**
      * Gets DID store password then execute the given code.
-     * 
+     *
      * Resolves when the target write action was fully executed, or when cancelled.
      *
      * @param showMasterPromptIfDatabaseLocked If false, this function will silently fail and return a cancellation, in case the master password was locked.
      */
-    public checkPasswordThenExecute(writeActionCb: () => Promise<void>, onCancelled: () => void, showMasterPromptIfDatabaseLocked = true, forceShowMasterPrompt = false): Promise<void> {
+    public checkPasswordThenExecute(writeActionCb: () => Promise<void>, onCancelled: () => void, showMasterPromptIfDatabaseLocked = true, forceShowMasterPrompt = false, did = this.didService.getActiveDidStore().getId()): Promise<void> {
         // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
         return new Promise<void>(async (resolve, reject) => {
             try {
@@ -41,7 +41,7 @@ export class AuthService {
                     forceMasterPasswordPrompt: forceShowMasterPrompt
                 };
 
-                let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+this.didService.getActiveDidStore().getId(), options) as PasswordManagerPlugin.GenericPasswordInfo;
+                let passwordInfo = await passwordManager.getPasswordInfo("didstore-" + did, options) as PasswordManagerPlugin.GenericPasswordInfo;
                 if (!passwordInfo) {
                     // Master password is right, but no data for the requested key...
                     Logger.error('identity', "Master password was right, but no password found for the requested key")

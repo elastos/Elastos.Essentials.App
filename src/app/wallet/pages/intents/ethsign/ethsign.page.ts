@@ -30,11 +30,13 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AuthService } from 'src/app/wallet/services/auth.service';
-import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
-import { EVMService } from 'src/app/wallet/services/evm.service';
+import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
+import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -57,9 +59,8 @@ export type EthSignIntentResult = {
 export class EthSignPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private networkWallet: NetworkWallet = null;
-  private evmSubWallet: StandardEVMSubWallet = null;
-  private walletInfo = {};
+  private networkWallet: AnyNetworkWallet = null;
+  private evmSubWallet: AnyMainCoinEVMSubWallet = null;
   public showEditGasPrice = false;
   public hasOpenETHSCChain = false;
 
@@ -108,7 +109,7 @@ export class EthSignPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    if (this.walletInfo["Type"] === "Multi-Sign") {
+    if (this.networkWallet.masterWallet.type !== WalletType.STANDARD) {
       // TODO: reject esctransaction if multi sign (show error popup)
       void this.cancelOperation();
     }
@@ -121,7 +122,6 @@ export class EthSignPage implements OnInit {
   }
 
   async init() {
-    this.walletInfo = this.coinTransferService.walletInfo;
     this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
 
@@ -161,7 +161,7 @@ export class EthSignPage implements OnInit {
       return;
     }
 
-    let privateKeyHexNoprefix = await this.walletManager.spvBridge.exportETHSCPrivateKey(this.networkWallet.masterWallet.id, this.evmSubWallet.id, payPassword);
+    let privateKeyHexNoprefix = await this.walletManager.spvBridge.exportETHSCPrivateKey(jsToSpvWalletId(this.networkWallet.masterWallet.id), this.evmSubWallet.id, payPassword);
 
     let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");
 

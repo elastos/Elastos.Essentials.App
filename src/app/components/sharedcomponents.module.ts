@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationPopupComponent } from './confirmation-popup/confirmation-popup.component';
 import { DIDPublishingComponent } from './did-publishing/did-publishing.component';
+import { MenuSheetComponent } from './menu-sheet/menu-sheet.component';
 import { MnemonicKeypadComponent } from './mnemonic-keypad/mnemonic-keypad.component';
 import { RestartPromptComponent } from './restart-prompt/restart-prompt.component';
 import { SwitchNetworkComponent } from './switch-network/switch-network.component';
@@ -19,7 +20,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     SwitchNetworkComponent,
     RestartPromptComponent,
     ConfirmationPopupComponent,
-    MnemonicKeypadComponent
+    MnemonicKeypadComponent,
+    MenuSheetComponent
   ],
   imports: [
     CommonModule,
@@ -33,7 +35,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     SwitchNetworkComponent,
     RestartPromptComponent,
     ConfirmationPopupComponent,
-    MnemonicKeypadComponent
+    MnemonicKeypadComponent,
+    MenuSheetComponent
   ],
   providers: [
     Clipboard

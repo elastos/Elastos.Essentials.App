@@ -20,7 +20,11 @@
  * SOFTWARE.
  */
 import BigNumber from 'bignumber.js';
+import { Network, validate } from 'bitcoin-address-validation';
 import moment from 'moment';
+import { Logger } from 'src/app/logger';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import Web3 from 'web3';
 import { CurrencyService } from '../services/currency.service';
 
 export class WalletUtil {
@@ -37,7 +41,7 @@ export class WalletUtil {
     if (!balance || balance.isNaN()) {
       return '...';
     }
-    return balance.dividedToIntegerBy(1).toString();
+    return balance.dividedToIntegerBy(1).toFixed();
   }
 
   public static getDecimalBalance(balance: BigNumber, decimalplace = -1): string {
@@ -46,17 +50,17 @@ export class WalletUtil {
     }
 
     if (decimalplace == -1) {
-        decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
-        if (!decimalplace) {
-            decimalplace = 3;
-        }
+      decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
+      if (!decimalplace) {
+        decimalplace = 3;
+      }
     }
     let minBalanceToShow = 1 / Math.pow(10, decimalplace);
     const decimalBalance = balance.modulo(1);
     if (decimalBalance.gt(minBalanceToShow)) {
       // BigNumber.ROUND_DOWN:  0.9997 => 0.999
       // Default round mode:  0.9997 => 1
-      const fixedDecimalBalance = decimalBalance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toString().substring(2);
+      const fixedDecimalBalance = decimalBalance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toFixed().substring(2);
       return fixedDecimalBalance;
     } else if (decimalBalance.isZero()) {
       return '';
@@ -66,7 +70,7 @@ export class WalletUtil {
   }
 
   public static getAmountWithoutScientificNotation(amount: BigNumber | number, precision: number): string {
-    let amountString = amount.toString();
+    let amountString = amount.toFixed();
     if (amountString.indexOf('e') != -1) {
       return amount.toFixed(precision).replace(/0*$/g, "");
     } else {
@@ -78,8 +82,28 @@ export class WalletUtil {
     }
   }
 
+  /**
+   * @param timestamp Timestamp ins seconds or milliseconds
+   */
   public static getDisplayDate(timestamp: number) {
+    if (timestamp > 2147483647)
+      timestamp = timestamp / 1000; // Convert MS to seconds
+
     const today = moment(new Date()).startOf('day').valueOf();
-    return timestamp < today ? moment(timestamp).format("YYYY-MM-DD HH:mm") : moment(timestamp).startOf('minutes').fromNow();
+    return timestamp < today ? moment.unix(timestamp).format("YYYY-MM-DD HH:mm") : moment.unix(timestamp).startOf('minutes').fromNow();
+  }
+
+  public static isELAAddress(address: string) {
+    Logger.warn('wallet', 'The implementation is missing. Later we will replace with elastos JS wallet sdk api!');
+    return true;
+  }
+
+  public static isBTCAddress(address: string) {
+    let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
+    return validate(address, network.toLowerCase() as Network)
+  }
+
+  public static isEVMAddress(address: string) {
+    return Web3.utils.isAddress(address);
   }
 }

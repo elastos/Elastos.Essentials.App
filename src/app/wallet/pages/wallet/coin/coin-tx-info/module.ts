@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { ComponentsModule } from 'src/app/wallet/components/components.module';
 import { CoinTxInfoPage } from './coin-tx-info.page';
 
 @NgModule({
@@ -12,6 +13,7 @@ import { CoinTxInfoPage } from './coin-tx-info.page';
     imports: [
         SharedComponentsModule,
         CommonModule,
+        ComponentsModule,
         FormsModule,
         IonicModule,
         TranslateModule,
@@ -20,4 +22,4 @@ import { CoinTxInfoPage } from './coin-tx-info.page';
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class CoinTxInfoModule {}
+export class CoinTxInfoModule { }

@@ -10,8 +10,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Vote } from '../../model/history.model';
 import { DPosNode } from '../../model/nodes.model';
 import { NodesService } from '../../services/nodes.service';
-
-
 @Component({
     selector: 'app-tx',
     templateUrl: './tx.page.html',
@@ -25,7 +23,7 @@ export class TxPage implements OnInit {
     public _nodes: DPosNode[] = [];
 
     // DPosNode Detail
-    public showNode: boolean = false;
+    public showNode = false;
     public nodeIndex: number;
     public node: DPosNode;
 

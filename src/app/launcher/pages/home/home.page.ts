@@ -26,8 +26,8 @@ import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
-import { Network } from 'src/app/wallet/model/networks/network';
-import { NetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/wallets/networkwallet';
+import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -66,8 +66,8 @@ export class HomePage implements OnInit {
   private publicRedPacketsSubscription: Subscription = null; // Public red packets that can be grabbed
 
   // Widget data
-  public networkWalletsList: NetworkWallet[] = [];
-  public activeNetwork: Network = null;
+  public networkWalletsList: AnyNetworkWallet[] = [];
+  public activeNetwork: AnyNetwork = null;
   private activeWalletAddresses: { [walletId: string]: WalletAddressInfo[] } = {};
   public hiveVaultLinked = false;
   public hiveVaultStorageStats: {
@@ -420,7 +420,7 @@ export class HomePage implements OnInit {
     if (decimalplace == -1) {
       decimalplace = this.currencyService.selectedCurrency.decimalplace;
     }
-    return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toString();
+    return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toFixed();
   }
 
   public getShortRecentAppTitle(app: BrowsedAppInfo): string {
@@ -468,14 +468,14 @@ export class HomePage implements OnInit {
     void this.globalNative.copyClipboard(address);
   }
 
-  public getWalletAddresses(wallet: NetworkWallet): WalletAddressInfo[] {
+  public getWalletAddresses(wallet: AnyNetworkWallet): WalletAddressInfo[] {
     if (!this.activeWalletAddresses[wallet.id])
       return [];
 
     return Object.values(this.activeWalletAddresses[wallet.id]);
   }
 
-  public async pickWalletAddress(event, networkWallet: NetworkWallet) {
+  public async pickWalletAddress(event, networkWallet: AnyNetworkWallet) {
     event.preventDefault();
     event.stopPropagation();
 

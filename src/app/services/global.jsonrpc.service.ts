@@ -52,7 +52,7 @@ export class GlobalJsonRPCService {
                                     resolveQueue(null);
                                 } else {
                                     if (result.error) {
-                                        Logger.error("GlobalJsonRPCService", 'httpPost error:', result);
+                                        Logger.error("GlobalJsonRPCService", 'httpPost error :', result, ', rpc url:', rpcApiUrl);
                                         reject(result.error);
                                         resolveQueue(null);
                                     }
@@ -77,13 +77,13 @@ export class GlobalJsonRPCService {
                     };
 
                     request.ontimeout = function () {
-                        Logger.error("GlobalJsonRPCService", 'httpPost timeout');
+                        Logger.error("GlobalJsonRPCService", 'httpPost timeout, rpc url:', rpcApiUrl);
                         reject("Timeout");
                         resolveQueue(null);
                     };
 
                     request.onerror = function (error) {
-                        Logger.error("GlobalJsonRPCService", 'httpPost error:', error);
+                        Logger.error("GlobalJsonRPCService", 'httpPost error:', error, ', rpc url:', rpcApiUrl);
                         reject(error);
                         resolveQueue(null);
                     }
@@ -129,7 +129,7 @@ export class GlobalJsonRPCService {
         });
     }
 
-    httpGet(url): Promise<any> {
+    httpGet(url: string): Promise<any> {
         return new Promise((resolve, reject) => {
             this.getQueue.push(() => {
                 return new Promise((resolveQueue, rejectQueue) => {
@@ -137,7 +137,24 @@ export class GlobalJsonRPCService {
                         resolve(res);  // Unblock the calling method
                         resolveQueue(res); // Unblock the concurrency queue
                     }, (err) => {
-                        Logger.error('GlobalJsonRPCService', 'http get error:', err);
+                        Logger.error('GlobalJsonRPCService', 'http get error:', err, ' url:', url);
+                        reject(err);
+                        resolveQueue(null);
+                    });
+                });
+            });
+        });
+    }
+
+    httpDelete(url: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.getQueue.push(() => {
+                return new Promise((resolveQueue, rejectQueue) => {
+                    this.http.delete<any>(url).subscribe((res) => {
+                        resolve(res);  // Unblock the calling method
+                        resolveQueue(res); // Unblock the concurrency queue
+                    }, (err) => {
+                        Logger.error('GlobalJsonRPCService', 'http delete error:', err, ' url:', url);
                         reject(err);
                         resolveQueue(null);
                     });

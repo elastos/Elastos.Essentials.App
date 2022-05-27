@@ -10,15 +10,14 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TxSuccessComponent } from 'src/app/wallet/components/tx-success/tx-success.component';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
-import { Utxo } from 'src/app/wallet/model/providers/transaction.types';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { Utxo } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { WalletCreateType } from 'src/app/wallet/model/walletaccount';
-import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../config/Config';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
+import { MasterWallet } from '../../../model/masterwallets/masterwallet';
 import { AuthService } from '../../../services/auth.service';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
@@ -26,6 +25,16 @@ import { PopupProvider } from "../../../services/popup.service";
 import { LocalStorage } from '../../../services/storage.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
+
+type SettingsMenuEntry = {
+    type: string;
+    route?: string;
+    navCallback?: () => void;
+    title: string;
+    subtitle: string;
+    icon: string;
+    iconDarkmode: string;
+}
 
 @Component({
     selector: 'app-wallet-settings',
@@ -36,7 +45,7 @@ export class WalletSettingsPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public masterWallet: MasterWallet;
-    public networkWallet: NetworkWallet;
+    public networkWallet: AnyNetworkWallet;
 
     public walletName = "";
     private masterWalletId = "1";
@@ -55,10 +64,16 @@ export class WalletSettingsPage implements OnInit {
     public canExportKeystore = true;
     public showExportMenu = false;
 
-    public settings = [
+    public settings: SettingsMenuEntry[] = [
         {
             type: 'wallet-export',
-            route: null,
+            navCallback: () => {
+                if (this.canExportKeystore) {
+                    this.showExportMenu = !this.showExportMenu;
+                } else {
+                    void this.export();
+                }
+            },
             title: this.translate.instant("wallet.wallet-settings-backup-wallet"),
             subtitle: this.translate.instant("wallet.wallet-settings-backup-wallet-subtitle"),
             icon: '/assets/wallet/settings/key.svg',
@@ -116,12 +131,10 @@ export class WalletSettingsPage implements OnInit {
         }
         this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
-        this.canExportKeystore = this.masterWallet.createType === WalletCreateType.MNEMONIC
-                || this.masterWallet.createType === WalletCreateType.KEYSTORE;
+        this.canExportKeystore = false; // TODO - repair - export "private key" keystores, not "elastos keystores" //this.masterWallet.createType === WalletCreateType.MNEMONIC || this.masterWallet.createType === WalletCreateType.KEYSTORE;
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
-        await this.getMasterWalletBasicInfo();
 
-        if (this.networkWallet.supportsERC20Coins()) {
+        if (this.networkWallet && this.networkWallet.network.supportsERC20Coins()) {
             this.settings.push({
                 type: 'coin-list',
                 route: "/wallet/coin-list",
@@ -132,25 +145,26 @@ export class WalletSettingsPage implements OnInit {
             });
         }
 
-        // Legacy support: ability to migrate remaining balances from DID 1 to DID 2 chains
-        // Show this menu entry only if the DID 1.0 subwallet balance is non 0 to not pollute all users
-        // with this later on.
-        let did1SubWallet = this.networkWallet.getSubWallet(StandardCoinName.IDChain);
-        // Cross chain transaction need 20000 for fee.
-        if (did1SubWallet && did1SubWallet.getRawBalance().gt(20000)) {
+        if (this.networkWallet && await this.networkWallet.getExtendedPublicKey()) {
             this.settings.push({
-                type: 'wallet-did1-transfer',
-                route: null,
-                title: this.translate.instant("wallet.wallet-settings-migrate-did1"),
-                subtitle: this.translate.instant("wallet.wallet-settings-migrate-did1-subtitle"),
-                icon: '/assets/wallet/settings/dollar.svg',
-                iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg'
+                type: 'wallet-ext-pub-keys',
+                navCallback: () => {
+                    this.native.go("/wallet/wallet-ext-pub-keys", {
+                        masterWalletId: this.masterWalletId
+                    });
+                },
+                title: "Extended public keys",
+                subtitle: "Special keys required to create multi-signature wallets",
+                icon: '/assets/wallet/settings/picture.svg',
+                iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
             });
         }
 
         this.settings.push({
             type: 'wallet-delete',
-            route: null,
+            navCallback: () => {
+                void this.onDelete();
+            },
             title: this.translate.instant("wallet.wallet-settings-delete-wallet"),
             subtitle: this.translate.instant("wallet.wallet-settings-delete-wallet-subtitle"),
             icon: '/assets/wallet/settings/trash.svg',
@@ -160,7 +174,9 @@ export class WalletSettingsPage implements OnInit {
         if (this.walletNetworkService.isActiveNetworkElastos()) {
             this.settings.push({
                 type: 'wallet-consolidate-utxos',
-                route: null,
+                navCallback: () => {
+                    void this.checkUtxosCount();
+                },
                 title: this.translate.instant("wallet.wallet-settings-consolidate-utxos"),
                 subtitle: this.translate.instant("wallet.wallet-settings-consolidate-utxos-subtitle"),
                 icon: '/assets/wallet/settings/consolidate.svg',
@@ -187,16 +203,10 @@ export class WalletSettingsPage implements OnInit {
         }
     }
 
-    private goToDID1Transfer() {
-        this.native.go('/wallet/wallet-did1-transfer', {
-            masterWalletId: this.networkWallet.id
-        });
-    }
-
     private async checkUtxosCount() {
         let normalUxtos: Utxo[] = null;
         let utxosCount = -1;
-        let mainChainSubwallet = this.networkWallet.getSubWallet(StandardCoinName.ELA) as MainAndIDChainSubWallet
+        let mainChainSubwallet = this.networkWallet.getSubWallet(StandardCoinName.ELA) as any as MainChainSubWallet
 
         await this.native.showLoading(this.translate.instant('common.please-wait'));
         try {
@@ -208,12 +218,12 @@ export class WalletSettingsPage implements OnInit {
         await this.native.hideLoading();
 
         if (utxosCount > Config.UTXO_CONSOLIDATE_MIN_THRESHOLD) {
-            const UTXOsCountString = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: utxosCount});
+            const UTXOsCountString = this.translate.instant('wallet.text-consolidate-UTXO-counts', { count: utxosCount });
             let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt',
                 UTXOsCountString, 'wallet.text-consolidate-note')
             if (ret) {
                 let rawTx = await mainChainSubwallet.createConsolidateTransaction(normalUxtos,
-                        this.translate.instant('wallet.wallet-settings-consolidate-utxos'));
+                    this.translate.instant('wallet.wallet-settings-consolidate-utxos'));
                 if (rawTx) {
                     const transfer = new Transfer();
                     Object.assign(transfer, {
@@ -278,34 +288,15 @@ export class WalletSettingsPage implements OnInit {
         });
     }
 
-    private async getMasterWalletBasicInfo() {
-        let ret = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.masterWalletId);
-
-        this.masterWalletType = ret["Type"];
-        this.singleAddress = ret["SingleAddress"];
-        this.readonly = ret["InnerType"] || "";
-    }
-
     /*   public goToSetting(item) {
           item.route !== null ? this.native.go(item.route) : this.onDelete();
       } */
 
-    public goToSetting(item) {
-        if (item.type === 'wallet-export') {
-            if (this.canExportKeystore) {
-                this.showExportMenu = !this.showExportMenu;
-            } else {
-                void this.export();
-            }
-        } else if (item.type === 'wallet-delete') {
-            void this.onDelete();
-        } else if (item.type === 'wallet-consolidate-utxos') {
-            void this.checkUtxosCount();
-        } else if (item.type === 'wallet-did1-transfer') {
-            this.goToDID1Transfer();
-        } else {
+    public goToSetting(item: SettingsMenuEntry) {
+        if (item.navCallback)
+            item.navCallback();
+        else
             this.native.go(item.route);
-        }
     }
 
     public async export() {

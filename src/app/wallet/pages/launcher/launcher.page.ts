@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Native } from '../../services/native.service';
-import { WalletCreationService } from '../../services/walletcreation.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Native } from '../../services/native.service';
+import { WalletCreationService } from '../../services/walletcreation.service';
 
 @Component({
     selector: 'app-launcher',
@@ -44,10 +44,25 @@ export class LauncherPage implements OnInit {
         });
     }
 
-    onNext(type: number) {
+    createStandardWallet() {
         this.walletCreationService.reset();
         this.walletCreationService.isMulti = false;
-        this.walletCreationService.type = type;
+        this.walletCreationService.type = 1; // new
         this.native.go("/wallet/wallet-create");
+    }
+
+    importStandardWallet() {
+        this.walletCreationService.reset();
+        this.walletCreationService.isMulti = false;
+        this.walletCreationService.type = 2; // import
+        this.native.go("/wallet/wallet-create");
+    }
+
+    createMultiSigWallet() {
+        this.native.go("/wallet/multisig/create");
+    }
+
+    createLedgerWallet() {
+        this.native.go("/wallet/ledger/scan");
     }
 }
