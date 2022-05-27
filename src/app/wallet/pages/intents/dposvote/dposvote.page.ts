@@ -146,10 +146,11 @@ export class DPoSVotePage implements OnInit {
     }
 
     /**
-     * Balance needs to be greater than 0.0001ELA.
+     * Balance needs to be greater than 0.00001ELA.
+     * Reserve some utxos so that other votes can be executed without changing the dpos voting.
      */
     votingFees(): number {
-        return 10000; // The unit is SELA, 10000 SELA =  0.0001ELA
+        return 100000; // The unit is SELA, 100000 SELA =  0.001ELA
     }
 
     /**

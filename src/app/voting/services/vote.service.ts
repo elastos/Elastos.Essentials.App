@@ -372,9 +372,10 @@ export class VoteService {
     /**
      * Fees needed to pay for the vote transaction. They have to be deduced from the total amount otherwise
      * funds won't be enough to vote.
+     * Reserve some utxos so that other votes can be executed without changing the dpos voting.
      */
     votingFees(): number {
-        return 20000; // The unit is SELA, 20000 SELA = 0.0002ELA. The real fee is 10000 SELA
+        return 100000; // The unit is SELA, 100000 SELA = 0.001ELA. The real fee is 10000 SELA
     }
 
     getRawBalanceSpendable(): BigNumber {
