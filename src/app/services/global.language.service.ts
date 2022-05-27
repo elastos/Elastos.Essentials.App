@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
+import "moment/locale/es";
+import "moment/locale/fr";
+import "moment/locale/it";
+import "moment/locale/zh-cn";
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
