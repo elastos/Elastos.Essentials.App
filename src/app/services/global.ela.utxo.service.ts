@@ -43,10 +43,9 @@ export class GlobalELAUtxoService extends GlobalService {
   public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // NOTE: called when the network changes as well, as a new "network wallet" is created.
     this.activeWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(activeWallet => {
-      if (activeWallet) { // null value when essentials starts, while wallets are not yet initialized.
-        this.activeNetworkWallet = activeWallet;
-        this.restartCheckELAUtxosTimeout();
-      }
+      // the activeWallet is null if the wallet is not yet initialized or user delete the wallet.
+      this.activeNetworkWallet = activeWallet;
+      this.restartCheckELAUtxosTimeout();
     });
 
     this.activeNetworkSubscription = this.walletNetworkService.activeNetwork.subscribe(activeNetwork => {
@@ -75,12 +74,12 @@ export class GlobalELAUtxoService extends GlobalService {
   }
 
   private restartCheckELAUtxosTimeout() {
-    if (!this.activeNetworkWallet) return;
-
     if (this.fetchUtxoTimer) {
       clearTimeout(this.fetchUtxoTimer);
       this.fetchUtxoTimer = null;
     }
+
+    if (!this.activeNetworkWallet) return;
 
     if (this.walletNetworkService.isActiveNetworkElastos()) {
       this.mainChainSubwallet = this.activeNetworkWallet.getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
