@@ -140,6 +140,10 @@ export class CoinHomePage implements OnInit {
             this.transactionFetchStatusChangedSubscription.unsubscribe();
             this.transactionFetchStatusChangedSubscription = null;
         }
+        if (this.fetchMoreTriggerObserver) {
+            this.fetchMoreTriggerObserver.disconnect();
+            this.fetchMoreTriggerObserver = null;
+        }
     }
 
     ngAfterViewInit() {
@@ -149,7 +153,6 @@ export class CoinHomePage implements OnInit {
         this.fetchMoreTriggerObserver = new IntersectionObserver((data: IntersectionObserverEntry[]): IntersectionObserverCallback => {
             if (data[0].isIntersecting) {
                 this.fetchMoreTransactions();
-                //this.observer.disconnect();
                 return;
             }
         }, options);
@@ -215,7 +218,6 @@ export class CoinHomePage implements OnInit {
 
     async updateTransactions() {
         this.start = 0;
-        this.transferList = [];
         this.offlineTransactions = [];
         this.todaysTransactions = 0;
         await this.getOfflineTransactions();
@@ -277,7 +279,7 @@ export class CoinHomePage implements OnInit {
             this.canFetchMore = false;
             return;
         }
-        Logger.log('wallet', "Got all transactions: ", transactions.length, transactions);
+        Logger.log('wallet', "Got all transactions: ", transactions.length);
 
         if (this.subWallet.canFetchMoreTransactions()) {
             this.canFetchMore = true;
@@ -291,6 +293,7 @@ export class CoinHomePage implements OnInit {
         } */
 
         const today = moment(new Date()).startOf('day');
+        let transferListTemp: TransactionInfo[] = [];
         for (let transaction of transactions) {
             const transactionInfo = await this.subWallet.getTransactionInfo(transaction);
             if (!transactionInfo) {
@@ -305,9 +308,10 @@ export class CoinHomePage implements OnInit {
             // Check if transaction was made today and increment our counter if so.
             this.countAsDailyTransactionIfNeeded(today, transactionInfo.timestamp);
 
-            this.transferList.push(transactionInfo);
+            transferListTemp.push(transactionInfo);
         }
 
+        this.transferList = transferListTemp;
         this.transactionsLoaded = true;
 
         //At least all transactions of today must be loaded.
