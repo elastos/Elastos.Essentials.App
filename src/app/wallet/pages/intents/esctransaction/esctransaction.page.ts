@@ -32,7 +32,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
+import { ETHTransactionInfo, ETHTransactionInfoParser, ETHTransactionTokenApproveInfo } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
@@ -336,5 +336,12 @@ export class EscTransactionPage implements OnInit {
 
   public updateGasprice(event) {
     this.gasPrice = Math.floor(this.gasPriceGwei * 1000000000).toString();
+  }
+
+  public getApproveTokenNameWithSymbol(transactionInfo: ETHTransactionTokenApproveInfo): string {
+    if (!transactionInfo) // Just in case
+      return "";
+
+    return `${transactionInfo.symbol} (${transactionInfo.tokenName})`;
   }
 }

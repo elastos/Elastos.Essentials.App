@@ -13,8 +13,8 @@ export type ETHTransactionInfo = {
 }
 
 export type ETHTransactionTokenApproveInfo = ETHTransactionInfo & {
-  // Nothing yet
-  tokenName: string
+  tokenName: string;
+  symbol: string;
 }
 
 /**
@@ -52,7 +52,8 @@ export class ETHTransactionInfoParser {
         Logger.log("wallet", "Got ERC20 coin info at address", this.txTo, coinInfo);
         return {
           txType: ETHTransactionType.TOKEN_APPROVE,
-          tokenName: coinInfo.coinName
+          tokenName: coinInfo.coinName,
+          symbol: coinInfo.coinSymbol
         } as ETHTransactionTokenApproveInfo;
       }
       else {
