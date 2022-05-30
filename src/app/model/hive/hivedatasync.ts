@@ -1,4 +1,4 @@
-import PQueue from 'p-queue';
+import Queue from 'promise-queue';
 import { Logger } from "src/app/logger";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 
@@ -71,7 +71,7 @@ export class LocalBackupRestoreEntry extends BackupRestoreEntry {
  */
 export class HiveDataSync {
     private contexts: SyncContext[] = [];
-    private opsQueue: PQueue = null; // Queue of operations such as add, remove or sync to ensure sequencial order and too many syncs
+    private opsQueue: Queue = null; // Queue of operations such as add, remove or sync to ensure sequencial order and too many syncs
     private requestToCancelOnGoingSync = false; // True when we are willing to cancel an on going sync, to make the sync process stop.
     private syncInQueue = false; // Whether a sync request is already in the operations queue or not, so we don't queue more than one at a time.
 
@@ -88,9 +88,7 @@ export class HiveDataSync {
 
         this.userVault = userVault;
         this.showDebugLogs = showDebugLogs;
-        this.opsQueue = new PQueue({
-            concurrency: 1
-        });
+        this.opsQueue = new Queue(1); // Concurrency: 1 at a time
     }
 
     /**
@@ -313,7 +311,7 @@ export class HiveDataSync {
 
     private async createContextCollection(contextName: string): Promise<void> {
         let collectionName = this.getCollectionNameForContext(contextName);
-        this.logDebug("Making sure the collection "+collectionName+" exists");
+        this.logDebug("Making sure the collection " + collectionName + " exists");
         await this.userVault.getDatabase().createCollection(collectionName);
     }
 
@@ -451,7 +449,7 @@ export class HiveDataSync {
                     //this.logDebug("Checking if local entry needs to be synced with vault", localEntry);
                     if (!localEntry) {
                         // Should not happen but just in case...
-                        this.logWarn("Local entry with key "+entryKey+" exists in saved entries list but the entry itself can't be found. This is an abnormal state. Local entry is skipped.");
+                        this.logWarn("Local entry with key " + entryKey + " exists in saved entries list but the entry itself can't be found. This is an abnormal state. Local entry is skipped.");
                     }
                     else {
                         // Do something only if the local entry was modified since last sync to the vault

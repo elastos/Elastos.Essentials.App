@@ -4,7 +4,7 @@ import { ToastController } from "@ionic/angular";
 import * as jsonld from "jsonld";
 import { Url } from 'jsonld/jsonld-spec';
 import moment from "moment";
-import Queue from "queue";
+import Queue from "promise-queue";
 import { firstValueFrom } from "rxjs";
 import { DIDDocument } from "src/app/identity/model/diddocument.model";
 import { DIDURL } from "src/app/identity/model/didurl.model";
@@ -51,7 +51,7 @@ export class GlobalCredentialTypesService {
   private contextsCache: TimeBasedPersistentCache<ContextPayload>;
 
   // Queue to make sure we fetch only one context at a time to avoid fetching the same url multiple times.
-  private fetchContextQueue = new Queue({ autostart: true, concurrency: 1 });
+  private fetchContextQueue = new Queue(1); // Concurrency: 1
 
   constructor(
     public zone: NgZone,
@@ -199,60 +199,50 @@ export class GlobalCredentialTypesService {
       return cacheEntry.data;
     }
 
-    return new Promise((resolve, reject) => {
-      this.fetchContextQueue.push(() => {
+    return this.fetchContextQueue.add(async () => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+      if (contextUrl.startsWith("http")) {
+        let payload = await firstValueFrom(this.http.get(contextUrl, {
+          headers: {
+            'Accept': 'application/json'
+          }
+        }));
+
+        this.contextsCache.set(contextUrl, payload as ContextPayload, moment().unix());
+        // NOTE - don't ssve the cache = not persistent on disk - await this.contextsCache.save();
+
+        // TODO: catch network errors
+
+        return payload as ContextPayload;
+      }
+      else if (contextUrl.startsWith("did:")) { // EID url
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-        return new Promise(async (resolveQueue, rejectQueue) => {
-          if (contextUrl.startsWith("http")) {
-            let payload = await firstValueFrom(this.http.get(contextUrl, {
-              headers: {
-                'Accept': 'application/json'
-              }
-            }));
+        // Compute publisher's DID string based on context url
+        let { publisher, shortType } = this.extractEIDContext(contextUrl);
+        if (!publisher) {
+          Logger.warn("credentialtypes", "Failed to extract publisher from context", contextUrl);
+          return null;
+        }
 
-            this.contextsCache.set(contextUrl, payload as ContextPayload, moment().unix());
-            // NOTE - don't ssve the cache = not persistent on disk - await this.contextsCache.save();
+        let docStatus = await this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(publisher);
+        if (docStatus.document) {
+          let serviceId = `${publisher}#${shortType}`;
+          let contextPayload = this.getContextPayloadFromDIDDocument(docStatus.document, serviceId);
 
-            // TODO: catch network errors
+          this.contextsCache.set(contextUrl, contextPayload, moment().unix());
+          // NOTE - don't save the cache = not persistent on disk - await this.contextsCache.save();
 
-            resolve(payload as ContextPayload); resolveQueue(null);
-          }
-          else if (contextUrl.startsWith("did:")) { // EID url
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-            try {
-              // Compute publisher's DID string based on context url
-              let { publisher, shortType } = this.extractEIDContext(contextUrl);
-              if (!publisher) {
-                Logger.warn("credentialtypes", "Failed to extract publisher from context", contextUrl);
-                resolve(null); resolveQueue(null);
-                return;
-              }
-
-              let docStatus = await this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(publisher);
-              if (docStatus.document) {
-                let serviceId = `${publisher}#${shortType}`;
-                let contextPayload = this.getContextPayloadFromDIDDocument(docStatus.document, serviceId);
-
-                this.contextsCache.set(contextUrl, contextPayload, moment().unix());
-                // NOTE - don't save the cache = not persistent on disk - await this.contextsCache.save();
-
-                resolve(contextPayload); resolveQueue(null);
-              }
-              else {
-                resolve(null); resolveQueue(null);
-              }
-            }
-            catch (e) {
-              reject(e); resolveQueue(null);
-            }
-          }
-          else {
-            // Unsupported
-            Logger.log("credentialtypes", "Unsupported credential context url", contextUrl);
-            resolve(null); resolveQueue(null);
-          }
-        });
-      });
+          return contextPayload;
+        }
+        else {
+          return null;
+        }
+      }
+      else {
+        // Unsupported
+        Logger.log("credentialtypes", "Unsupported credential context url", contextUrl);
+        return null;
+      }
     });
   }
 
