@@ -434,6 +434,7 @@ export const zh = {
                 'nft-properties': '属性',
                 'nft-no-properties-yet': '属性显示尚不支持，即将推出',
                 'nft-assets-owned': '项资产',
+                'nft-attributes': 'Attributes',
 
                 /********************************************** Intent Screens ***********************************************/
 

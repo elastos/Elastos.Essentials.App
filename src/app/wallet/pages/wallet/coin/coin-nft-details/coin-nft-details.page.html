@@ -8,33 +8,37 @@
                 <p>{{ 'wallet.nft-asset-with-type' | translate : {type: nft.type} }}</p>
             </ion-col>
         </ion-row>
-        <ion-row class="gray-card card-row">
+        <ion-row class="card-row">
             <ion-row class="card-label-row">
                 <div class="asset-icon">
                     <img [src]="getAssetIcon()">
                 </div>
-                <div class="asset-name">{{ getDisplayableAssetName() }}</div>
-                <p><b>{{ 'wallet.nft-token-id' | translate }}</b>: {{ getDisplayableAssetID() }}</p>
-                <div size="12" *ngIf="asset.description" class="asset-description">
-                    <p>{{ asset.description }}</p>
+
+                <div class="info-block">
+                    <div class="info-title">Name</div>
+                    <div class="info-value">{{ getDisplayableAssetName() }}</div>
+                </div>
+
+                <div class="info-block">
+                    <div class="info-title">{{ 'wallet.nft-token-id' | translate }}</div>
+                    <div class="info-value">{{ getDisplayableAssetID() }}</div>
+                </div>
+
+                <div class="info-block" *ngIf="asset.description">
+                    <div class="info-title">Description</div>
+                    <div class="info-value asset-description">{{ asset.description }}</div>
                 </div>
             </ion-row>
-            <!-- <ion-row class="card-btn-row">
-                <ion-col offset="0.25" size="3">
-                    <div class="ion-activatable btn-box" (click)="receiveFunds()">
-                        <img class="receive" src="assets/wallet/buttons/receive.png">
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </div>
-                    <p class="btn-label">{{ 'wallet.coin-action-receive' | translate }}</p>
-                </ion-col>
-            </ion-row> -->
-            <div class="arrow-down"></div>
         </ion-row>
-        <ion-row class="list-title-row">
-            <h1>{{ 'wallet.nft-properties' | translate }}</h1>
-        </ion-row>
-        <div class="properties">
-            <p>{{ 'wallet.nft-no-properties-yet' | translate }}</p>
+
+        <!-- Attributes -->
+        <div class="card-row attributes" *ngIf="asset.attributes && asset.attributes.length > 0">
+            <div class="title">{{ 'wallet.nft-attributes' | translate }}</div>
+
+            <div class="attribute info-block" *ngFor="let attribute of asset.attributes">
+                <div class="info-title">{{ attribute.trait_type }}</div>
+                <div class="info-value asset-description">{{ getAttributeValue(attribute)}}</div>
+            </div>
         </div>
     </ion-grid>
 </ion-content>

@@ -1,3 +1,9 @@
+export type NFTAssetAttribute = {
+  trait_type: string; // eg: "Level", "Eyes"
+  value: number | string; // eg: 5, "blue"
+  display_type?: "number" | "date" | "boost_number" | "boost_percentage";
+}
+
 /**
  * Represents one asset minted by a NFT contract.
  */
@@ -12,4 +18,8 @@ export class NFTAsset {
   public description?: string = null;
   /** URL of the image representing the asset, discovered in metadata, if any */
   public imageURL?: string = null;
+  /** Opensea/Rarible attributes standard */
+  public attributes?: NFTAssetAttribute[];
+  /** Opensea/Rarible project url standard */
+  public externalURL?: string;
 }

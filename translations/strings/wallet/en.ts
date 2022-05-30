@@ -432,6 +432,7 @@ export const en = {
         'nft-properties': 'Properties',
         'nft-no-properties-yet': 'Properties display is not available yet. Coming soon.',
         'nft-assets-owned': 'assets owned',
+        'nft-attributes': 'Attributes',
 
         /********************************************** Intent Screens ***********************************************/
 

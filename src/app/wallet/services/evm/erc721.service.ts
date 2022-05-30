@@ -303,6 +303,42 @@ export class ERC721Service {
                 }
             }
         }
+
+        ELIENS OF HEDROM:
+            attributes: Array(7) // OPENSEA STYLE
+                0: {trait_type: 'Background', value: 'Red'}
+                1: {trait_type: 'Body', value: 'Light_Blue'}
+                2: {trait_type: 'Mouth', value: 'Smile'}
+                3: {trait_type: 'Markings', value: 'Blue'}
+                4: {trait_type: 'Eyes', value: 'Purple'}
+                5: {trait_type: 'Light', value: 'Yellow'}
+                6: {trait_type: 'Accessory', value: 'Choker'}
+
+        BUNNY PUNK:
+            attributes: Array(15)
+                0: {trait_type: 'Background', value: 'Olive Background'}
+                1: {trait_type: 'Bunny', value: 'White  Bunny'}
+            external_url: "https://bunnypunk.io/"
+                collection:
+                family: "Bunny Punk NFT"
+                name: "Bunny Punk"
+            properties: // ENJIN STYLE
+                category: "image"
+                creators: Array(1)
+                    0:
+                        address: "0x9A754044FbfA95d15b252453c1BB5401320A8386"
+                        share: 100
+                files: Array(1)
+                    0:
+                        type: "image"
+                        uri: ""
+
+        Special attribute types: (dates, etc):
+        {
+            "display_type": "date",
+            "trait_type": "birthday",
+            "value": 1546360800
+        }
     */
     private async extractAssetMetadata(asset: NFTAsset, tokenURI: string): Promise<any> {
         // Unsupported url format
@@ -334,6 +370,11 @@ export class ERC721Service {
                 asset.imageURL = this.replaceIPFSUrl(metadata.properties.image.description || null);
             else
                 asset.imageURL = this.replaceIPFSUrl(metadata.image || null);
+
+            // OpenSea information
+            asset.attributes = metadata.attributes || [];
+            if ("externa_url" in metadata)
+                asset.externalURL = metadata.externa_url;
 
             // Unset the image if not a valid url
             if (asset.imageURL && !asset.imageURL.startsWith("http"))

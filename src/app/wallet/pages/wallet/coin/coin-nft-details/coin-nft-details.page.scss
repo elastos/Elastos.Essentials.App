@@ -5,6 +5,24 @@
     margin: 0;
     padding: 15px 20px 30px;
 
+    .info-block {
+        display: flex;
+        flex-direction: column;
+        margin-top:15px;
+
+        .info-title {
+            color: #3C3C3C;
+        }
+
+        .info-value {
+            color: #161740;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-top: 5px;
+        }
+    }
+
     .main-title-row {
         margin-bottom: 10px;
         margin-left: 5px;
@@ -39,11 +57,7 @@
         border-radius: 20px;
         padding: 25px 20px 15px;
         margin-bottom: 32px;
-
-        // Default background
-        background-image: url("/assets/wallet/cards/subcards/card-black.svg");
-        background-repeat: no-repeat;
-        background-size: cover;
+        background: #FFF;
 
         .card-label-row {
             display: flex;
@@ -174,8 +188,24 @@
         }
     }
 
-    .properties {
-        padding: 5px;
+    .attributes {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        .title {
+            font-size: 16px;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .attribute {
+            width: 48%;
+            padding: 15px;
+            background: #F5F6F8;
+            border-radius: 13px;
+        }
     }
 
     .black-card {
@@ -191,51 +221,6 @@
 
         .arrow-down {
             background-color: #242424;
-        }
-    }
-    .blue-card {
-        background-image: url("/assets/wallet/cards/subcards/card-lightblue.svg");
-
-        .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color: #7defe5;
-                }
-            }
-        }
-
-        .arrow-down {
-            background-color: #28d3c5;
-        }
-    }
-    .gray-card {
-        background-image: url("/assets/wallet/cards/subcards/card-coolgray.svg");
-
-        .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color: #63657c;
-                }
-            }
-        }
-
-        .arrow-down {
-            background-color: #8487a1;
-        }
-    }
-    .gray2-card {
-        background-image: url("/assets/wallet/cards/subcards/card-warmgray.svg");
-
-        .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color: #dddddd;
-                }
-            }
-        }
-
-        .arrow-down {
-            background-color: #989797;
         }
     }
 
@@ -413,8 +398,28 @@
 }
 
 .dark-container {
+    .info-block {
+        .info-title {
+            color: #C9C9C9;
+        }
+
+        .info-value {
+            color: #FFF;
+        }
+    }
+
     .item-row {
         box-shadow: 0 3px 15px 0 #151626;
         background-color: #2b2c49;
+    }
+
+    .card-row {
+        background: #212121;
+    }
+
+    .attributes {
+        .attribute {
+            background: #2D2C2C;
+        }
     }
 }

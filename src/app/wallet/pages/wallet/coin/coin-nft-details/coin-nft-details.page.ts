@@ -23,6 +23,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
@@ -30,7 +31,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { NFT } from 'src/app/wallet/model/networks/evms/nfts/nft';
-import { NFTAsset } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
+import { NFTAsset, NFTAssetAttribute } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
 import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -117,5 +118,12 @@ export class CoinNFTDetailsPage implements OnInit {
             return this.asset.imageURL;
         else
             return "assets/wallet/coins/eth-purple.svg";
+    }
+
+    public getAttributeValue(attribute: NFTAssetAttribute): string {
+        switch (attribute.display_type) {
+            case "date": return moment.unix(<number>attribute.value).format("YYYY-MM-DD");
+            default: return `${attribute.value}`;
+        }
     }
 }
