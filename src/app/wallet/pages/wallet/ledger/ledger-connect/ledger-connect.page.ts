@@ -43,6 +43,7 @@ import { ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elast
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { Native } from 'src/app/wallet/services/native.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 
@@ -274,6 +275,11 @@ export class LedgerConnectPage implements OnInit {
             if (payPassword) {
                 await this.native.showLoading(this.translate.instant('common.please-wait'));
                 await this.importWalletWithLedger(payPassword);
+
+                // switch network if the picked network isn't the active network.
+                if (this.selectedNetwork != WalletNetworkService.instance.activeNetwork.value) {
+                    void WalletNetworkService.instance.setActiveNetwork(this.selectedNetwork);
+                }
             }
         }
         catch (err) {
@@ -303,7 +309,7 @@ export class LedgerConnectPage implements OnInit {
             walletId: this.masterWalletId
         });
 
-        this.native.toast_trans('wallet.import-connect-ledger-sucess');
+        this.native.toast_trans('wallet.ledger-connect-ledger-sucess');
     }
 
     private getDefaultLedgerWalletName() {

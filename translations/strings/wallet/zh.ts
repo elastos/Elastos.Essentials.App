@@ -301,13 +301,14 @@ export const zh = {
                 /**********************
                 * Ledger connect page *
                 ***********************/
-                "ledger-connect": "Ledger 账号",
-                "ledger-device": "设备",
-                "ledger-connect-error": "连接失败",
-                "ledger-connecting-to-device": "正在连接设备",
-                "ledger-addresses": "地址",
-                "address-type": "地址类型",
-                "pick-network": "选择网络",
+                 "ledger-connect": "Ledger 账号",
+                 "ledger-device": "设备",
+                 "ledger-connect-error": "连接失败",
+                 "ledger-connecting-to-device": "正在连接设备",
+                 "ledger-addresses": "地址",
+                 "ledger-address-type": "地址类型",
+                 "ledger-pick-network": "选择网络",
+                 "ledger-connect-ledger-sucess": "成功连接 Ledger 硬件钱包",
 
                 /********************************************** Wallet Settings Screens ***********************************************/
 

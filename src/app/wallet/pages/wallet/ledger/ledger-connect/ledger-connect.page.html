@@ -27,7 +27,7 @@
                 <ion-col size="5" (click)="pickNetwork()" class="pick-network flex flex-justify-content-end">
                     <img *ngIf="selectedNetwork" [src]="selectedNetwork.logo" class="network-logo" />
                     <ion-label *ngIf="selectedNetwork">{{ selectedNetwork.name }}</ion-label>
-                    <ion-label *ngIf="!selectedNetwork">{{ 'wallet.pick-network' | translate }}</ion-label>
+                    <ion-label *ngIf="!selectedNetwork">{{ 'wallet.ledger-pick-network' | translate }}</ion-label>
                     <img src="assets/wallet/icons/right-arrow-alt.svg" class="go-arrow" />
                 </ion-col>
             </ion-row>
@@ -35,7 +35,7 @@
             <!-- Pick address type -->
             <ion-row class="row address-type-row" *ngIf="shouldPickAddressType">
                 <ion-col size="7">
-                    <div class='title'>{{ 'wallet.address-type' | translate }}</div>
+                    <div class='title'>{{ 'wallet.ledger-address-type' | translate }}</div>
                 </ion-col>
                 <ion-col size="5" (click)="pickAddressType()" class="pick-address-type flex flex-justify-content-end">
                     {{ getDisplayableAddressType() }}

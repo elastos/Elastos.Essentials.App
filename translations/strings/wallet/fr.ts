@@ -305,8 +305,9 @@ export const fr = {
         "ledger-connect-error": "Impossible de se connecter à l'appareil",
         "ledger-connecting-to-device": "Connexion en cours",
         "ledger-addresses": "Adresses",
-        "address-type": "Type d'adresse",
-        "pick-network": "Choisir un réseau",
+        "ledger-address-type": "Type d'adresse",
+        "ledger-pick-network": "Choisir un réseau",
+        "ledger-connect-ledger-sucess": "Connected ledger hardware wallet",
 
         /********************************************** Wallet Settings Screens ***********************************************/
 
