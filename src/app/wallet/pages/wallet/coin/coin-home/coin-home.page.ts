@@ -436,43 +436,6 @@ export class CoinHomePage implements OnInit {
         return this.transferList.findIndex(e => e.txid === txid);
     }
 
-    checkUTXOCount() {
-        // Check UTXOs only for SPV based coins.
-        if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
-            // TODO
-            // if (this.walletManager.needToCheckUTXOCountForConsolidation) {
-            //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.subWalletId, 0, 1, '');
-            //     Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
-            //     const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
-            //     if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
-            //         let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt', UTXOsCount, 'wallet.text-consolidate-note')
-            //         if (ret) {
-            //             await this.createConsolidateTransaction();
-            //         }
-            //     }
-
-            //     this.walletManager.needToCheckUTXOCountForConsolidation = false;
-            // }
-        }
-    }
-
-    async createConsolidateTransaction() {
-        // TODO
-        // let rawTx = await this.walletManager.spvBridge.createConsolidateTransaction(this.masterWallet.id, this.subWalletId, '');
-        // Logger.log('wallet', 'coin-home.page createConsolidateTransaction');
-        // const transfer = new Transfer();
-        // Object.assign(transfer, {
-        //     masterWalletId: this.masterWallet.id,
-        //     subWalletId: this.subWalletId,
-        //     rawTransaction: rawTx,
-        //     payPassword: '',
-        //     action: null,
-        //     intentId: null,
-        // });
-
-        // await this.subWallet.signAndSendRawTransaction(rawTx, transfer);
-    }
-
     countAsDailyTransactionIfNeeded(today: moment.Moment, timestamp: number) {
         if (today.isSame(moment(timestamp).startOf('day'))) {
             this.todaysTransactions++;

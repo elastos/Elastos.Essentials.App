@@ -102,7 +102,6 @@ export class WalletService {
 
     public hasPromptTransfer2IDChain = true;
 
-    public needToCheckUTXOCountForConsolidation = true;
     public needToPromptTransferToIDChain = false; // Whether it's time to ask user to transfer some funds to the ID chain for better user experience or not.
 
     public spvBridge: SPVService = null;

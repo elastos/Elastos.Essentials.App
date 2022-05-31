@@ -1,1 +1,11 @@
 @import "../../root.scss";
+
+p {
+    margin-left: 20px;
+}
+
+ion-button {
+    display: block;
+    margin: 20px auto;
+    width: 90%;
+}

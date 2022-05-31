@@ -43,7 +43,7 @@ export class HomePage {
   ) { }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle("Update required");
+    this.titleBar.setTitle(this.translate.instant('wallet.migrator-title'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
   }

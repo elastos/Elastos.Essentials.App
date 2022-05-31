@@ -660,9 +660,14 @@ export const it = {
         'offline-tx-unknown-tx': "Unknown transaction",
 
         /***************************
-        * Block chain upgrade *
+        * Migrator *
         ****************************/
-        'blockchain-updating-prompt': 'Le Blockchain Elastos sono in fase di aggiornamento. Riprova tra qualche minuto (max 20 minuti)',
+        'migrator-title': 'Update required',
+        'migrator-info': 'We need to update a few things before you can continue.',
+        'migrator-ongoing': 'On going operation: ',
+        'migrator-success': 'All good, please touch to continue!',
+        'migrator-fail': 'Unfortunately the update has failed. Please let the team know about this.',
+        'migrator-start': 'Start',
 
         /********************************************** Error ***********************************************/
 
