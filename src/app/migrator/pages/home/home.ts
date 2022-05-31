@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { MigrationService } from 'src/app/services/migrator/migration.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -39,7 +40,8 @@ export class HomePage {
     private translate: TranslateService,
     private walletService: WalletService,
     private splashScreen: SplashScreen,
-    private migrationService: MigrationService
+    private migrationService: MigrationService,
+    public globalNativeService: GlobalNativeService,
   ) { }
 
   ionViewWillEnter() {
@@ -51,6 +53,9 @@ export class HomePage {
   ionViewDidEnter() {
     // We are ready, we can hide the splash screen
     this.splashScreen.hide();
+
+    // We need to hide loading dialog if the user logs in from the pick did screen.
+    void this.globalNativeService.hideLoading();
   }
 
   ionViewWillLeave() {

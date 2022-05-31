@@ -354,7 +354,7 @@ export class IdentityService {
 
         // Synchronize the store with chain
         Logger.log('didsessions', "Synchronizing identities");
-        await this.uxService.showLoading(this.translate.instant('didsessions.retrieve-prompt'));
+        await this.nativeService.showLoading(this.translate.instant('didsessions.retrieve-prompt'));
 
         try {
             try {
@@ -368,7 +368,7 @@ export class IdentityService {
                     if (message.indexOf("signature mismatch") > 0) {
                         Logger.warn("didsessions", "Corrupted user DID, synchronize() has failed. Need to create a new DID");
 
-                        await this.uxService.hideLoading();
+                        await this.nativeService.hideLoading();
                         void this.popupProvider.ionicAlert(this.translate.instant('didsessions.did-corrupted-title'), this.translate.instant('didsessions.did-corrupted-info'), this.translate.instant('didsessions.got-it')).then(() => {
                             void this.globalNavService.navigateDIDSessionHome();
                         });
@@ -380,7 +380,7 @@ export class IdentityService {
                     throw e;
                 }
             }
-            void this.uxService.hideLoading();
+            void this.nativeService.hideLoading();
 
             // Check if we could retrieve a DID or not.
             if (didStore.dids.length > 0) {
@@ -429,7 +429,7 @@ export class IdentityService {
             }
         }
         catch (e) {
-            void this.uxService.hideLoading();
+            void this.nativeService.hideLoading();
             let reworkedEx = e ? e : "No specific information";
             Logger.error('didsessions', 'createStoreAfterImport error', reworkedEx);
             await this.popupProvider.ionicAlert("Synchronization error", reworkedEx, this.translate.instant("common.close"));

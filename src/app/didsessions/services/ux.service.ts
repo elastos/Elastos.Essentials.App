@@ -120,28 +120,6 @@ export class UXService {
     this.native.genericToast(message, duration);
   }
 
-  public async showLoading(message: string) {
-    await this.hideLoading();
-    this.loader = await this.loadingCtrl.create({
-      mode: 'ios',
-      translucent: false,
-      spinner: 'crescent',
-      cssClass: !this.theme.darkMode ? 'custom-loader' : 'dark-custom-loader',
-      message: message
-    });
-    this.loader.onWillDismiss().then(() => {
-      this.loader = null;
-    });
-    return await this.loader.present();
-  }
-
-  public async hideLoading() {
-    if (this.loader) {
-      await this.loader.dismiss();
-      this.loader = null;
-    }
-  }
-
   async showOptions(ev: any, identityEntry: IdentityEntry) {
     Logger.log('didsessions', 'Opening profile options');
 

@@ -9,6 +9,7 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
@@ -37,6 +38,7 @@ export class PickIdentityPage implements OnInit {
     private splashScreen: SplashScreen,
     private globalNetworksService: GlobalNetworksService,
     private didSessions: GlobalDIDSessionsService,
+    private nativeService: GlobalNativeService,
   ) {
     this.events.subscribe("identityadded", newIdentity => {
       Logger.log('didsessions', "PickIdentiy - Identity added, reloading content");
@@ -116,9 +118,9 @@ export class PickIdentityPage implements OnInit {
 
   async signIn(identityEntry: IdentityEntry) {
     Logger.log('didsessions', "Trying to sign in with DID " + identityEntry.didString);
-    void this.uxService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
+    void this.nativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
     await this.identityService.signIn(identityEntry, true);
-    void this.uxService.hideLoading();
+    void this.nativeService.hideLoading();
   }
 
   /**
