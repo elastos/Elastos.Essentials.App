@@ -109,4 +109,11 @@ export class PacketPreviewComponent implements OnInit, OnDestroy {
                 this.wonSymbol = grabbedPacket.packet.erc20TokenSymbol;
         }
     }
+
+    public getPacketMessage(packet: Packet): string {
+        if (packet.message.length > 60)
+            return packet.message.substring(0, 60) + "...";
+        else
+            return packet.message;
+    }
 }

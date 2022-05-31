@@ -9,7 +9,7 @@
   <!-- Second column - the red packet infos -->
   <ion-col size="6" class="redpacket-inline-second-col">
     <div class="first-line">{{ creator }}</div>
-    <div class="second-line">{{ _packet.message }}</div>
+    <div class="second-line">{{ getPacketMessage(_packet) }}</div>
     <div class="third-line">
       <div class="time-left" [ngClass]="{'expired': _packet.isExpired()}">{{
         _packet.getDisplayableTimeLeft() }}</div>

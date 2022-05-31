@@ -357,6 +357,13 @@ export class PacketDetailsPage implements OnInit {
     return await modal.present()
   }
 
+  public getPacketMessage(packet: Packet): string {
+    if (packet.message.length > 200)
+      return packet.message.substring(0, 200) + "...";
+    else
+      return packet.message;
+  }
+
   public getPacketUrl(): string {
     return `${environment.RedPackets.webUrl}/p?g=${this.packet.hash}`;
   }
