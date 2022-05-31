@@ -144,8 +144,9 @@ export class StandardMasterWallet extends MasterWallet {
         // Destroy the wallet in the wallet plugin - A bit dirty, should be in sub-classes that use SPV,
         // for for convenience for now as most wallets are "native SPV", we keep it here.
         let spvWalletId = jsToSpvWalletId(this.id);
-        if (spvWalletId !== null)
+        if (spvWalletId !== null) {
             await SPVService.instance.destroyWallet(spvWalletId);
+        }
     }
 
     protected deserialize(serialized: SerializedStandardMasterWallet) {

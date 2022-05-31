@@ -332,7 +332,42 @@
             }
         }
 
-        .memo-row {
+        .nft-info {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 10px;
+            margin-bottom: 32px;
+            background: #FFF;
+            width: 100%;
+
+            .asset-icon {
+                align-self: center;
+
+                img {
+                    height: 100px;
+                }
+            }
+
+            .info-block {
+                display: flex;
+                flex-direction: column;
+                margin-top:15px;
+
+                .info-title {
+                    color: #3C3C3C;
+                }
+
+                .info-value {
+                    color: #161740;
+                    font-size: 13px;
+                    font-weight: 600;
+                    line-height: 1.4;
+                    margin-top: 5px;
+                }
+            }
         }
     }
 
@@ -398,6 +433,20 @@
                 p {
                     color: #ACACAC;
                     opacity: 1;
+                }
+            }
+        }
+
+        .nft-info {
+            background: #212121;
+
+            .info-block {
+                .info-title {
+                    color: #C9C9C9;
+                }
+
+                .info-value {
+                    color: #FFF;
                 }
             }
         }

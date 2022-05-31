@@ -1,5 +1,5 @@
+import { TxData } from "@ethereumjs/tx";
 import { from } from "@iotexproject/iotex-address-ts";
-import { TxData } from "ethereumjs-tx";
 import { Wallet } from "ethers";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";

@@ -1,5 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+import Common from '@ethereumjs/common';
+import { Transaction as EthereumTx, TxData } from "@ethereumjs/tx";
 import AppEth from "@ledgerhq/hw-app-eth";
-import { Transaction as EthereumTx, TxData } from "ethereumjs-tx";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -12,8 +14,6 @@ import { LedgerSafe } from "../../../safes/ledger.safe";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EVMSafe } from "./evm.safe";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-var Common = require('ethereumjs-common').default;
 
 /**
  * Safe specialized for EVM networks, with additional methods.
@@ -98,9 +98,11 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
         // TODO: use the right HD derivation path.
         const r = await eth.signTransaction(this.addressPath, unsignedTx);
 
-        this.evmTx.v = Buffer.from(r.v, "hex");
-        this.evmTx.r = Buffer.from(r.r, "hex");
-        this.evmTx.s = Buffer.from(r.s, "hex");
+        this.evmTx = new EthereumTx({
+            v: Buffer.from(r.v, "hex"),
+            r: Buffer.from(r.r, "hex"),
+            s: Buffer.from(r.s, "hex")
+        });
     }
 
     private createEthereumTx(txData: TxData) {

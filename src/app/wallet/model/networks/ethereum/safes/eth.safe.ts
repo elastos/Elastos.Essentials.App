@@ -1,4 +1,4 @@
-import { TxData } from "ethereumjs-tx";
+import { TxData } from "@ethereumjs/tx";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { AnySubWallet } from "../../base/subwallets/subwallet";

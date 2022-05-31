@@ -209,8 +209,11 @@ export class CoinHomePage implements OnInit {
     async initData(updateAll = false) {
         this.shouldShowLoadingSpinner = true;
         if (updateAll) {
-            await this.subWallet.fetchNewestTransactions(TransactionListType.NORMAL);
-            await this.subWallet.fetchNewestTransactions(TransactionListType.INTERNAL);
+            // Parrallel tx fetch to go faster
+            await Promise.all([
+                this.subWallet.fetchNewestTransactions(TransactionListType.NORMAL),
+                this.subWallet.fetchNewestTransactions(TransactionListType.INTERNAL)
+            ]);
         } else {
             await this.subWallet.fetchNewestTransactions(this.transactionListType);
         }

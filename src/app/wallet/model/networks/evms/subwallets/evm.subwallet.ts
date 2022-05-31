@@ -24,8 +24,6 @@ import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransa
 import { EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
 import { EVMSafe } from '../safes/evm.safe';
 import type { ERC20SubWallet } from './erc20.subwallet';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-var Common = require('ethereumjs-common').default;
 
 /**
  * Specialized sub wallet for EVM compatible chains main coins (elastos EID, elastos ESC, heco, etc)

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { TxData } from '@ethereumjs/tx';
 import { ModalController } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
-import { TxData } from 'ethereumjs-tx';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';

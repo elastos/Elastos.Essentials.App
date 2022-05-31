@@ -1,7 +1,7 @@
-<ion-content class="lightmode" [class.darkmode]="theme.darkMode">
+<ion-content ngxDetectHideOnScroll scrollEvents [class.dark-container]="theme.darkMode">
     <app-titlebar></app-titlebar>
 
-    <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="asset">
+    <ion-grid class="container" *ngIf="asset">
         <ion-row class="main-title-row">
             <ion-col size="12">
                 <h1>{{ nft.name }}</h1>
@@ -41,4 +41,25 @@
             </div>
         </div>
     </ion-grid>
+
+    <div class="footer" ngxHideOnScroll *ngIf="nft && canSendReceive()">
+        <ion-row class="card-btn-row">
+            <ion-col [size]="6" (click)="sendNFT()">
+                <div class="ion-activatable btn-box">
+                    <img class="send"
+                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/send.svg' : 'assets/wallet/buttons/send.svg'">
+                    <p class="btn-label">{{ 'wallet.coin-action-send' | translate }}</p>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
+            <ion-col [size]="6">
+                <div class="ion-activatable btn-box" (click)="receiveNFT()">
+                    <img class="receive"
+                        [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/receive.svg' : 'assets/wallet/buttons/receive.svg'">
+                    <p class="btn-label">{{ 'wallet.coin-action-receive' | translate }}</p>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
+        </ion-row>
+    </div>
 </ion-content>

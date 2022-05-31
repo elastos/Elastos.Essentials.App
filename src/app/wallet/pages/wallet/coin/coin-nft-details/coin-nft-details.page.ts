@@ -30,8 +30,9 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { NFT } from 'src/app/wallet/model/networks/evms/nfts/nft';
+import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { NFTAsset, NFTAssetAttribute } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
+import { CoinTransferService, TransferType } from 'src/app/wallet/services/cointransfer.service';
 import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -62,6 +63,7 @@ export class CoinNFTDetailsPage implements OnInit {
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
         private erc721service: ERC721Service,
+        private coinTransferService: CoinTransferService,
         public uiService: UiService,
         private storage: LocalStorage
     ) {
@@ -125,5 +127,35 @@ export class CoinNFTDetailsPage implements OnInit {
             case "date": return moment.unix(<number>attribute.value).format("YYYY-MM-DD");
             default: return `${attribute.value}`;
         }
+    }
+
+    /**
+     * For now, only handle transfers of ERC721 NFTs
+     */
+    public canSendReceive(): boolean {
+        return this.nft && (this.nft.type === NFTType.ERC721 || this.nft.type === NFTType.ERC1155);
+    }
+
+    public sendNFT() {
+        if (!this.nft || !this.asset)
+            return;
+
+        this.coinTransferService.masterWalletId = this.networkWallet.masterWallet.id;
+        this.coinTransferService.subWalletId = this.networkWallet.getMainEvmSubWallet().id;
+        this.coinTransferService.transferType = TransferType.SEND_NFT;
+        this.coinTransferService.nftTransfer = {
+            nft: this.nft,
+            assetID: this.asset.id
+        }
+        this.native.go('/wallet/coin-transfer');
+    }
+
+    /**
+     * Opens the screen that shows user's address and qr code to receive more NFTs.
+     */
+    public receiveNFT() {
+        this.coinTransferService.masterWalletId = this.networkWallet.masterWallet.id;
+        this.coinTransferService.subWalletId = this.networkWallet.getMainEvmSubWallet().id;
+        this.native.go('/wallet/coin-receive');
     }
 }

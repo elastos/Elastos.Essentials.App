@@ -42,9 +42,13 @@ import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwall
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
+import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
+import { NFTAsset } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
+import { ERC1155Service } from 'src/app/wallet/services/evm/erc1155.service';
+import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
@@ -104,6 +108,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     private action = null;
     private intentId = null;
 
+    // NFT
+    public nft: NFT = null;
+    public nftAsset: NFTAsset = null;
+
     // Display memo
     public hideMemo = true;
 
@@ -111,7 +119,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public amountCanBeEditedInPayIntent = true;
 
     // Submit transaction
-    public transaction: () => void;
+    public transaction: () => Promise<void> | void;
 
     // CryptoName and Contacts
     public addressName: string = null;
@@ -159,6 +167,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         private modalCtrl: ModalController,
         private popoverCtrl: PopoverController,
         private nameResolvingService: NameResolvingService,
+        private erc721Service: ERC721Service,
+        private erc1155Service: ERC1155Service,
         private ethTransactionService: EVMService
     ) {
     }
@@ -324,6 +334,22 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.action = this.coinTransferService.intentTransfer.action;
                 this.intentId = this.coinTransferService.intentTransfer.intentId;
                 break;
+            // Send NFT
+            case TransferType.SEND_NFT:
+                this.titleBar.setTitle(this.translate.instant("Send NFT"));
+
+                this.transaction = this.createSendNFTTransaction;
+
+                // Retrieve the NFT
+                let nftContractAddress = this.coinTransferService.nftTransfer.nft.contractAddress;
+                this.nft = this.networkWallet.getNFTByAddress(nftContractAddress);
+
+                // Retrieve the NFT asset
+                let assetID = this.coinTransferService.nftTransfer.assetID;
+                this.nftAsset = this.nft.getAssetById(assetID);
+
+                Logger.log("wallet", "Initialization complete for NFT details", this.networkWallet, this.nft, this.nftAsset);
+                break;
         }
 
         this.displayBalanceString = this.uiService.getFixedBalance(this.networkWallet.subWallets[this.subWalletId].getDisplayBalance());
@@ -380,29 +406,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         await this.native.hideLoading();
 
         // SIGN AND PUBLISH
-        if (rawTx) {
-            const transfer = new Transfer();
-            Object.assign(transfer, {
-                masterWalletId: this.networkWallet.id,
-                subWalletId: this.subWalletId,
-                //rawTransaction: rawTx,
-                action: this.action,
-                intentId: this.intentId
-            });
-
-            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-
-            if (transfer.intentId) {
-                await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
-            }
-        } else {
-            if (this.intentId) {
-                await this.globalIntentService.sendIntentResponse(
-                    { txid: null, status: 'error' },
-                    this.intentId
-                );
-            }
-        }
+        await this.signAndSendRawTransaction(rawTx);
     }
 
     /**
@@ -425,19 +429,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         await this.native.hideLoading();
 
-        if (rawTx) {
-            const transfer = new Transfer();
-            Object.assign(transfer, {
-                masterWalletId: this.networkWallet.id,
-                subWalletId: this.subWalletId,
-                //rawTransaction: rawTx,
-                payPassword: '',
-                action: null,
-                intentId: null,
-            });
-
-            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-        }
+        await this.signAndSendRawTransaction(rawTx);
     }
 
     /**
@@ -458,18 +450,66 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             await this.parseException(err);
         }
 
+        await this.signAndSendRawTransaction(rawTx);
+    }
+
+    async createSendNFTTransaction() {
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
+
+        let rawTx = null;
+        try {
+            let fromAddress = await this.fromSubWallet.getCurrentReceiverAddress(AddressUsage.EVM_CALL);
+
+            if (this.nft.type === NFTType.ERC721) {
+                rawTx = await this.erc721Service.createRawTransferERC721Transaction(
+                    this.networkWallet,
+                    fromAddress,
+                    this.nft.contractAddress,
+                    this.nftAsset.id,
+                    this.toAddress
+                );
+            }
+            else if (this.nft.type === NFTType.ERC1155) {
+                rawTx = await this.erc1155Service.createRawTransferERC1155Transaction(
+                    this.networkWallet,
+                    fromAddress,
+                    this.nft.contractAddress,
+                    this.nftAsset.id,
+                    this.toAddress
+                );
+            }
+        } catch (err) {
+            await this.parseException(err);
+        }
+        await this.native.hideLoading();
+
+        // SIGN AND PUBLISH
+        await this.signAndSendRawTransaction(rawTx);
+    }
+
+    private async signAndSendRawTransaction(rawTx) {
         if (rawTx) {
             const transfer = new Transfer();
             Object.assign(transfer, {
                 masterWalletId: this.networkWallet.id,
                 subWalletId: this.subWalletId,
                 //rawTransaction: rawTx,
-                payPassword: '',
-                action: null,
-                intentId: null,
+                action: this.action,
+                intentId: this.intentId
             });
 
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+
+            if (transfer.intentId) {
+                await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+            }
+        } else {
+            if (this.intentId) {
+                await this.globalIntentService.sendIntentResponse(
+                    { txid: null, status: 'error' },
+                    this.intentId
+                );
+            }
         }
     }
 
@@ -524,7 +564,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     supportsMaxTransfer() {
-        return true;
+        return !this.isTransferTypeSendNFT();
     }
 
     setMaxTransfer() {
@@ -541,73 +581,79 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     async goTransaction() {
-        if (this.sendMax || this.valuesReady()) {
+        if (this.checkValuesReady()) {
             await this.startTransaction();
         }
     }
 
-    // For revealing button
-    valuesValid(): boolean {
-        if (this.sendMax) return true;
+    private conditionalShowToast(message: string, showToast: boolean, duration = 4000) {
+        if (showToast)
+            this.native.toast_trans(message, duration);
+    }
 
-        const amountBignumber = new BigNumber(this.amount)
-        if (Util.isNull(this.amount)) { // if this.amount is not null, then it is number.
-            return false;
-        } else if (this.amount <= 0) {
-            return false;
-        } else if (!this.networkWallet.subWallets[this.subWalletId].isBalanceEnough(amountBignumber)) {
-            return false;
-        } else if (!this.networkWallet.subWallets[this.subWalletId].isAmountValid(amountBignumber)) {
-            return false;
-        } else {
-            if (this.transferType === TransferType.WITHDRAW) {
-                if (this.amount < 0.0002) return false;
+    /**
+     * Make sure all parameters are right before sending a transaction or enabling the send button.
+     */
+    checkValuesReady(showToast = true): boolean {
+        // Check amount only when used (eg: no for NFT transfers)
+        if (!this.isTransferTypeSendNFT()) {
+            if (!this.sendMax) {
+                if (Util.isNull(this.amount) || this.amount <= 0) {
+                    this.conditionalShowToast('wallet.amount-invalid', showToast);
+                    return false;
+                }
 
-                const amountString = this.amount.toString();
-                const dotIndex = amountString.indexOf('.');
-                if ((dotIndex + 9) < amountString.length) {
+                const amountBigNumber = new BigNumber(this.amount || 0);
+                if (!this.networkWallet.subWallets[this.subWalletId].isBalanceEnough(amountBigNumber)) {
+                    this.conditionalShowToast('wallet.insufficient-balance', showToast);
+                    return false;
+                }
+
+                if (!this.networkWallet.subWallets[this.subWalletId].isAmountValid(amountBigNumber)) {
+                    this.conditionalShowToast('wallet.amount-invalid', showToast);
                     return false;
                 }
             }
-            return true;
         }
-    }
 
-    // For starting tx
-    valuesReady(showToast = true): boolean {
-        const amountBignumber = new BigNumber(this.amount)
-        let valuesValid = false;
-        if (Util.isNull(this.amount)) { // if this.amount is not null, then it is number.
-            if (showToast) this.native.toast_trans('wallet.amount-null');
-        } else if (this.amount <= 0) {
-            if (showToast) this.native.toast_trans('wallet.amount-invalid');
-        } else if (!this.networkWallet.subWallets[this.subWalletId].isBalanceEnough(amountBignumber)) {
-            if (showToast) this.native.toast_trans('wallet.insufficient-balance');
-        } else if (!this.networkWallet.subWallets[this.subWalletId].isAmountValid(amountBignumber)) {
-            if (showToast) this.native.toast_trans('wallet.amount-invalid');
-        } else {
-            if (this.fromSubWallet.type === CoinType.ERC20) {
-                if (!this.networkWallet.getMainEvmSubWallet().isBalanceEnough(new BigNumber(0.0001))) {
-                    if (showToast) {
-                        const message = this.translate.instant("wallet.eth-insuff-balance", { coinName: this.networkWallet.getDisplayTokenName() })
-                        this.native.toast_trans(message, 4000);
-                    }
-                } else {
-                    valuesValid = true;
-                }
-            } else {
-                valuesValid = true;
+        // Make sure we have a destination address
+        if (!this.toAddress) {
+            this.conditionalShowToast('Destination address is missing', showToast);
+            return false;
+        }
+
+        if (this.fromSubWallet.type === CoinType.ERC20) {
+            // Balance can cover fees?
+            // TODO: 0.0001 works only for Elastos ESC! Rework this.
+            if (!this.networkWallet.getMainEvmSubWallet().isBalanceEnough(new BigNumber(0.0001))) {
+                const message = this.translate.instant("wallet.eth-insuff-balance", { coinName: this.networkWallet.getDisplayTokenName() })
+                this.conditionalShowToast(message, showToast, 4000);
+                return false;
             }
         }
-        return valuesValid;
+
+        if (this.transferType === TransferType.WITHDRAW) {
+            if (this.amount < 0.0002)
+                return false; // TODO: toast
+
+            // TODO: What the hell is this code supposed to do ? :)
+            const amountString = this.amount.toString();
+            const dotIndex = amountString.indexOf('.');
+            if ((dotIndex + 9) < amountString.length) {
+                return false; // TODO: toast
+            }
+        }
+
+        return true;
     }
 
     private isAddressValid(toAddress: string) {
-      let targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
-      return targetSubwallet.isAddressValid(this.toAddress);
+        let targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
+        return targetSubwallet.isAddressValid(this.toAddress);
     }
 
     async startTransaction() {
+        // Specific case for ELA mainchain. TODO: should move to ela mainchain subwallet?
         if (this.subWalletId === StandardCoinName.ELA) {
             const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.subWalletId] as MainChainSubWallet;
             const isAvailableBalanceEnough =
@@ -632,7 +678,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             }
 
             if (this.transferType === TransferType.PAY) {
-                this.transaction();
+                await this.transaction();
             } else {
                 void this.showConfirm();
             }
@@ -674,7 +720,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.native.popup = null;
             Logger.log('wallet', 'Confirm tx params', params);
             if (params.data && params.data.confirm) {
-                this.transaction();
+                void this.transaction();
             }
         });
         return await this.native.popup.present();
@@ -903,7 +949,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.modal.present();
     }
 
-    // for cross chain transaction.
+    // for elastos cross chain transaction.
     async getELASubwalletByID(id: StandardCoinName) {
         let networkKey = 'elastos';
         switch (id) {
@@ -920,5 +966,28 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         let network = WalletNetworkService.instance.getNetworkByKey(networkKey);
         let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
         return networkWallet.getSubWallet(id);
+    }
+
+    public isTransferTypeSendNFT(): boolean {
+        return this.transferType === TransferType.SEND_NFT;
+    }
+
+    public getDisplayableAssetName(): string {
+        return this.nftAsset.name || this.translate.instant("wallet.nft-unnamed-asset");
+    }
+
+    public getDisplayableAssetID(): string {
+        return this.nftAsset.displayableId;
+    }
+
+    public hasRealAssetIcon(): boolean {
+        return !!(this.nftAsset.imageURL);
+    }
+
+    public getAssetIcon(): string {
+        if (this.hasRealAssetIcon())
+            return this.nftAsset.imageURL;
+        else
+            return "assets/wallet/coins/eth-purple.svg";
     }
 }

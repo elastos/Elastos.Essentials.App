@@ -21,6 +21,7 @@
  */
 
 import { Injectable } from '@angular/core';
+import { NFT } from '../model/networks/evms/nfts/nft';
 
 export class Transfer {
     masterWalletId: string = null;
@@ -66,9 +67,9 @@ export enum TransferType {
     RECHARGE = 1, // Transfer between subwallets
     SEND = 2, // Sending
     PAY = 3, // Pay intent
-    WITHDRAW = 4
+    WITHDRAW = 4,
+    SEND_NFT = 5 // Send a ERC721 or ERC1155 NFT
 }
-
 export class ContractPayloadParam {
     data: string = null;
     from: string = null;
@@ -78,6 +79,10 @@ export class ContractPayloadParam {
     value: string = null;
 }
 
+type NFTTransfer = {
+    nft: NFT; // Mostly, the NFT contract address
+    assetID: string; // Asset ID inside the contract, to be transferred
+}
 @Injectable({
     providedIn: 'root'
 })
@@ -88,14 +93,14 @@ export class CoinTransferService {
      * Dynamic Values *
      ******************/
 
-    // Define transfer type
+    // Send, receive, transfer, send nft...
     public transferType: TransferType;
+    // Main master wallet on which to operate
     public masterWalletId: string;
     // From subwallet
     public subWalletId: string;
     // To subwallet (only for recharging funds)
     public toSubWalletId: string;
-    // DELETEME public walletInfo: WalletAccount;
 
     /******************
     * Intent Values *
@@ -113,7 +118,8 @@ export class CoinTransferService {
     public didrequest: any;
     // intent: esctransaction
     public payloadParam: ContractPayloadParam;
-    // public amount: number;
+    // NFT transfer info
+    public nftTransfer: NFTTransfer;
 
     // In the process of deprecating
     public transfer: Transfer = null;

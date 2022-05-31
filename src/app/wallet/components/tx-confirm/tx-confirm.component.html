@@ -10,8 +10,8 @@
   <h3>{{ 'wallet.to' | translate }}:</h3>
   <h4>{{ txInfo.transferTo }}</h4>
 
-  <h3>{{ 'wallet.amount' | translate }}:</h3>
-  <h4>{{ displayAmount }}</h4>
+  <h3 *ngIf="displayAmount">{{ 'wallet.amount' | translate }}:</h3>
+  <h4 *ngIf="displayAmount">{{ displayAmount }}</h4>
 
   <h3 *ngIf="txInfo.memo">{{ 'wallet.tx-info-memo' | translate }}:</h3>
   <h4 *ngIf="txInfo.memo">{{ txInfo.memo }}</h4>

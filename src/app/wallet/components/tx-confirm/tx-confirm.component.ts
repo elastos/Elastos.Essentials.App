@@ -17,7 +17,7 @@ export class TxConfirmComponent implements OnInit {
 
   public txHeader: string;
   public txIcon: string;
-  public displayAmount = ''
+  public displayAmount: string = null;
 
   constructor(
     private navParams: NavParams,
@@ -29,10 +29,12 @@ export class TxConfirmComponent implements OnInit {
   ngOnInit() {
     this.txInfo = this.navParams.get('txInfo');
     Logger.log('wallet', 'Confirm tx', this.txInfo);
-    if (this.txInfo.amount != -1) {
-      this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.txInfo.amount, this.txInfo.precision);
-    } else {
-      this.displayAmount = this.translate.instant('wallet.transfer-all');
+    if (this.txInfo.amount != undefined) { // Undefined for NFT transfers
+      if (this.txInfo.amount != -1) {
+        this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.txInfo.amount, this.txInfo.precision);
+      } else {
+        this.displayAmount = this.translate.instant('wallet.transfer-all');
+      }
     }
 
     if (this.txInfo.type === 1) {

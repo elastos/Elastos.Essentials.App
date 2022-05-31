@@ -26,13 +26,16 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import Web3 from 'web3';
+import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { ERC1155Provider } from '../../model/networks/evms/nfts/erc1155.provider';
 import { NFTAsset } from '../../model/networks/evms/nfts/nftasset';
 import { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
+import { EVMSafe } from '../../model/networks/evms/safes/evm.safe';
 import { WalletNetworkService } from '../network.service';
 import { WalletPrefsService } from '../pref.service';
 import { FetchAssetsEvent } from './erc721.service';
+import { EVMService } from './evm.service';
 
 type ERC1155Transfer = {
     address: string; // NFT contract address - "0x020c7303664bc88ae92cE3D380BF361E03B78B81"
@@ -59,7 +62,12 @@ export class ERC1155Service {
     private web3: Web3;
     private erc1155ABI: any;
 
-    constructor(private prefs: WalletPrefsService, private http: HttpClient, private networkService: WalletNetworkService) {
+    constructor(
+        private prefs: WalletPrefsService,
+        private http: HttpClient,
+        private evmService: EVMService,
+        private networkService: WalletNetworkService
+    ) {
         ERC1155Service.instance = this;
 
         this.networkService.activeNetwork.subscribe(activeNetwork => {
@@ -218,5 +226,42 @@ export class ERC1155Service {
         })();
 
         return observable;
+    }
+
+    /**
+    * Creates a raw EVM transaction to transfer a ERC1155 NFT.
+    */
+    public async createRawTransferERC1155Transaction(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string): Promise<any> {
+        Logger.log("wallet", "Creating ERC1155 transfer transaction", networkWallet.network.name, senderAddress, nftAddress, nftAssetId, destinationAddress);
+
+        let web3 = this.evmService.getWeb3(networkWallet.network);
+
+        const erc1155Contract = new web3.eth.Contract(this.erc1155ABI, nftAddress, {
+            from: senderAddress
+        });
+        const transferMethod = erc1155Contract.methods.safeTransferFrom(senderAddress, destinationAddress, nftAssetId, 1);
+
+        var gasLimit = 3000000; // Default value
+        try {
+            // Estimate gas cost
+            let gasTemp = await transferMethod.estimateGas();
+            // '* 1.5': Make sure the gaslimit is big enough - add a bit of margin for fluctuating gas price
+            gasLimit = Math.ceil(gasTemp * 1.5);
+        } catch (error) {
+            Logger.error("wallet", 'createRawTransferERC1155Transaction(): estimateGas error:', error);
+        }
+
+        let gasPrice = await this.evmService.getGasPrice(networkWallet.network);
+
+        let rawTransaction = await (networkWallet.safe as unknown as EVMSafe).createContractTransaction(
+            nftAddress,
+            gasPrice,
+            web3.utils.toHex(gasLimit),
+            await this.evmService.getNonce(networkWallet.network, senderAddress),
+            transferMethod.encodeABI());
+
+        Logger.log("wallet", "createRawTransferERC1155Transaction() - raw transaction", rawTransaction);
+
+        return rawTransaction;
     }
 }

@@ -26,11 +26,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import Web3 from 'web3';
+import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
 import { NFTAsset } from '../../model/networks/evms/nfts/nftasset';
 import { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
+import { EVMSafe } from '../../model/networks/evms/safes/evm.safe';
 import { WalletNetworkService } from '../network.service';
-import { WalletPrefsService } from '../pref.service';
-
+import { EVMService } from './evm.service';
 
 export type FetchAssetsEvent = {
     //fetchComplete: boolean; // Whether this is the last event of a fetch operation or not.
@@ -67,7 +68,11 @@ export class ERC721Service {
     private web3: Web3;
     private erc721ABI: any;
 
-    constructor(private prefs: WalletPrefsService, private http: HttpClient, private networkService: WalletNetworkService) {
+    constructor(
+        private http: HttpClient,
+        private evmService: EVMService,
+        private networkService: WalletNetworkService
+    ) {
         ERC721Service.instance = this;
 
         this.networkService.activeNetwork.subscribe(activeNetwork => {
@@ -415,4 +420,41 @@ export class ERC721Service {
         const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinName, address, this.prefs.activeNetwork, false);
         return newCoin;
     } */
+
+    /**
+    * Creates a raw EVM transaction to transfer a ERC721 NFT.
+    */
+    public async createRawTransferERC721Transaction(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string): Promise<any> {
+        Logger.log("wallet", "Creating ERC721 transfer transaction", networkWallet.network.name, senderAddress, nftAddress, nftAssetId, destinationAddress);
+
+        let web3 = this.evmService.getWeb3(networkWallet.network);
+
+        const erc721Contract = new web3.eth.Contract(this.erc721ABI, nftAddress, {
+            from: senderAddress
+        });
+        const transferMethod = erc721Contract.methods.safeTransferFrom(senderAddress, destinationAddress, nftAssetId);
+
+        var gasLimit = 3000000; // Default value
+        try {
+            // Estimate gas cost
+            let gasTemp = await transferMethod.estimateGas();
+            // '* 1.5': Make sure the gaslimit is big enough - add a bit of margin for fluctuating gas price
+            gasLimit = Math.ceil(gasTemp * 1.5);
+        } catch (error) {
+            Logger.error("wallet", 'createRawTransferERC721Transaction(): estimateGas error:', error);
+        }
+
+        let gasPrice = await this.evmService.getGasPrice(networkWallet.network);
+
+        let rawTransaction = await (networkWallet.safe as unknown as EVMSafe).createContractTransaction(
+            nftAddress,
+            gasPrice,
+            web3.utils.toHex(gasLimit),
+            await this.evmService.getNonce(networkWallet.network, senderAddress),
+            transferMethod.encodeABI());
+
+        Logger.log("wallet", "createRawTransferERC721Transaction() - raw transaction", rawTransaction);
+
+        return rawTransaction;
+    }
 }

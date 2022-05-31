@@ -696,7 +696,13 @@ export class WalletService {
             return;
         }
 
-        await this.masterWallets[id].destroy();
+        try {
+            await this.masterWallets[id].destroy();
+        }
+        catch (e) {
+            // Can't destroy? continue anyway, we need to let user remove the wallet and not be stuck with it.
+            Logger.warn("wallet", "Failed to destroy the master wallet in destroy() but continuing", e);
+        }
 
         // Save this modification to our permanent local storage
         await this.localStorage.deleteMasterWallet(this.masterWallets[id].id);

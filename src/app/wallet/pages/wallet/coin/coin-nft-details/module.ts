@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { CoinNFTDetailsPage } from './coin-nft-details.page';
 
 @NgModule({
@@ -15,9 +16,10 @@ import { CoinNFTDetailsPage } from './coin-nft-details.page';
         FormsModule,
         IonicModule,
         TranslateModule,
+        GlobalDirectivesModule,
         RouterModule.forChild([{ path: '', component: CoinNFTDetailsPage }])
     ],
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class CoinNFTDetailsModule {}
+export class CoinNFTDetailsModule { }
