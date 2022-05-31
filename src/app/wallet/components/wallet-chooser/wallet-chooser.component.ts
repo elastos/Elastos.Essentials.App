@@ -111,7 +111,9 @@ export class WalletChooserComponent implements OnInit {
   }
 
   goToCreateWallet() {
-    this.native.go("/wallet/launcher")
+    this.native.go("/wallet/settings", {
+      createWallet: true
+    });
     void this.modalCtrl.dismiss();
   }
 }

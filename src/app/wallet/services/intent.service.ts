@@ -81,7 +81,9 @@ export class IntentService {
 
         this.activeWallet = this.walletManager.getActiveMasterWallet();
         if (!this.activeWallet) {
-            this.native.setRootRouter('/wallet/launcher');
+            this.native.setRootRouter("/wallet/settings", {
+                createWallet: true
+            });
             const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'wallet.exit');
             if (toCreateWallet) {
                 // TODO

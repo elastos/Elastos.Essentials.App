@@ -21,9 +21,11 @@
  */
 
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { MenuSheetMenu } from '../../../components/menu-sheet/menu-sheet.component';
@@ -58,6 +60,7 @@ export class SettingsPage implements OnInit {
     public walletInfo = {};
     public password = "";
     public available = 0;
+    private autoOpenCreateWallet = false;
     public settings: SettingsEntry[] = [
         {
             routeOrAction: () => this.addWallet(),
@@ -97,6 +100,7 @@ export class SettingsPage implements OnInit {
         public theme: GlobalThemeService,
         private translate: TranslateService,
         private native: Native,
+        private router: Router,
         private walletCreationService: WalletCreationService,
         private modalCtrl: ModalController,
         private globalNativeService: GlobalNativeService,
@@ -104,10 +108,20 @@ export class SettingsPage implements OnInit {
     }
 
     ngOnInit() {
+        const navigation = this.router.getCurrentNavigation();
+        if (!Util.isEmptyObject(navigation.extras.state)) {
+            // Are we called in order to create a new wallet? If so, we show the add wallet sheet when entering.
+            this.autoOpenCreateWallet = navigation.extras.state.createWallet;
+        }
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.settings-title"));
+
+        if (this.autoOpenCreateWallet) {
+            this.addWallet();
+            this.autoOpenCreateWallet = false;
+        }
     }
 
     public go(item: SettingsEntry) {
@@ -160,21 +174,21 @@ export class SettingsPage implements OnInit {
                     ]
                 },
                 {
-                    title: this.translate.instant("wallet.settings-add-wallet-multi-sig-wallet"),
-                    items: [
-                        {
-                            title: "Elastos mainchain",
-                            routeOrAction: "/wallet/multisig/standard/create"
-                        }
-                    ]
-                },
-                {
                     title: this.translate.instant("wallet.settings-add-wallet-hardware-wallet"),
                     items: [
                         {
                             icon: "assets/wallet/icons/ledger.svg",
                             title: "Ledger Nano X",
                             routeOrAction: "/wallet/ledger/scan"
+                        }
+                    ]
+                },
+                {
+                    title: this.translate.instant("wallet.settings-add-wallet-multi-sig-wallet"),
+                    items: [
+                        {
+                            title: "Elastos mainchain",
+                            routeOrAction: "/wallet/multisig/standard/create"
                         }
                     ]
                 }

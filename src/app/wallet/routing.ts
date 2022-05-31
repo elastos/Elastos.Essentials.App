@@ -25,7 +25,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
     // Global
-    { path: 'launcher', loadChildren: () => import('./pages/launcher/module').then(m => m.LauncherModule) },
     { path: 'settings', loadChildren: () => import('./pages/settings/module').then(m => m.SettingsModule) },
     { path: 'wallet-asset', loadChildren: () => import('./pages/wallet/wallet-asset/module').then(m => m.WalletAssetModule) },
     { path: 'wallet-home', loadChildren: () => import('./pages/wallet/wallet-home/module').then(m => m.WalletHomeModule) },

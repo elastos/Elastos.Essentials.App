@@ -19,7 +19,9 @@ export class NavService {
             this.native.go("/wallet/wallet-home");
         }
         else {
-            this.native.go("/wallet/launcher");
+            this.native.go("/wallet/settings", {
+                createWallet: true
+            });
         }
     }
 }

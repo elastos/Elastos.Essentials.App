@@ -454,7 +454,9 @@ export class WalletService {
     }
 
     private goToLauncherScreen() {
-        this.native.setRootRouter('/wallet/launcher');
+        this.native.setRootRouter("/wallet/settings", {
+            createWallet: true
+        });
     }
 
     public async getCurrentMasterIdFromStorage(): Promise<string> {

@@ -88,7 +88,9 @@ export class VoteService {
         if (!this.activeWallet) {
             const toCreateWallet = await this.globalPopupService.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
             if (toCreateWallet) {
-                this.native.setRootRouter('/wallet/launcher');
+                this.native.go("/wallet/settings", {
+                    createWallet: true
+                });
             }
             else {
                 return;
