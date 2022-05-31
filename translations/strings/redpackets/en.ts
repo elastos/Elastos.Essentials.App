@@ -75,6 +75,7 @@ export const en = {
     'error-invalid-probability': "Invalid probability. Use a 0-100 value",
     'error-invalid-expiration-time': "Invalid expiration time. Use 1-7 days",
     'error-no-message': "Be kind with your people, send them a nice message!",
+    'error-message-too-long': 'Your message is too long (max 200)',
     'error-packet-creation-failed': "The packet could not be created. Please try again later",
     'technical-preview-title': 'Note: Technical Preview',
     'technical-preview-info': 'The red packet service was recently launched and this is still a technical release. Make sure to create only red packets with small amounts of tokens.',

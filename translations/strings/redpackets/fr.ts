@@ -75,6 +75,7 @@ export const fr = {
     'error-invalid-probability': "Probabilité invalide. Nombre entre 0 et 100",
     'error-invalid-expiration-time': "Durée invalide. Entre 1 et 7 jours",
     'error-no-message': "Soyez sympa, laissez un message...",
+    'error-message-too-long': 'Message trop long (max 200)',
     'error-packet-creation-failed': "Le paquet n\'a pas pu être créé, réessayez plus tard.",
     'technical-preview-title': 'Note: Version de test',
     'technical-preview-info': 'Ce service de paquets rouges a été lancé récemment et est en période de test. Assurez-vous de n\'utiliser que de faibles montants de jetons.',

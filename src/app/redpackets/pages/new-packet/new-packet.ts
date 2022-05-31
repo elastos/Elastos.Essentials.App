@@ -170,6 +170,11 @@ export class NewPacketPage {
       return false;
     }
 
+    if (this.message.length > 200) {
+      void this.formErr(this.translate.instant("redpackets.error-message-too-long"));
+      return false;
+    }
+
     return true;
   }
 

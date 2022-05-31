@@ -75,6 +75,7 @@ export const it = {
     'error-invalid-probability': "Probabilità non valida. Usa un valore da 0 a 100",
     'error-invalid-expiration-time': "Scadenza non valida. Puoi scegliere tra 1 e 7 giorni",
     'error-no-message': "Sii gentile con le persone, manda loro un bel messaggio!",
+    'error-message-too-long': 'Your message is too long (max 200)',
     'error-packet-creation-failed': "Impossibile creare il pacchetto. Si prega di riprovare più tardi",
     'technical-preview-title': 'Nota: Anteprima in fase Beta',
     'technical-preview-info': 'Il servizio Red Packet è stato lanciato di recente e questa è ancora una versione in fase Beta. Assicurati di creare solo pacchetti con piccole quantità di token.',
