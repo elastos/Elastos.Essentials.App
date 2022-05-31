@@ -89,11 +89,12 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         // Prepare ERC20, NFT subwallets and other info
         await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key));
 
+        // Do not fetch staking assets for now, the server is not reliable.
         // There is no EVMSubwallet in BTCNetworkWallet.
-        if (this.getMainEvmSubWallet()) {
-            this.stakingAssetsID = await this.getUniqueIdentifierOnStake();
-            await this.loadStakingAssets();
-        }
+        // if (this.getMainEvmSubWallet()) {
+        //     this.stakingAssetsID = await this.getUniqueIdentifierOnStake();
+        //     await this.loadStakingAssets();
+        // }
 
         this.initializationComplete = true;
     }
