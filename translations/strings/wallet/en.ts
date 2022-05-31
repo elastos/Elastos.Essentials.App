@@ -295,6 +295,8 @@ export const en = {
         "ledger-scan-available-devices": "Available devices",
         "ledger-scan-scan-again": "Scan again",
         "ledger-scan-ledger-scanning": "Searching devices",
+        "ledger-scan-bluetooth-not-enable": "Bluetooth is not turned on, please turn on Bluetooth first",
+        "ledger-scan-open-bluetooth-setting": "Turn on Bluetooth settings",
 
         /**********************
         * Ledger connect page *
