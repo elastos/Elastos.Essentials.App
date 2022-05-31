@@ -150,35 +150,6 @@ export class IntentService {
         // let intentRequiresWalletSelection = true; // User must select a walelt first before doing the real action
         let navigationState = {};
         switch (this.getShortAction(intent.action)) {
-            case 'crmembervote':
-                Logger.log("wallet", 'CR member vote Transaction intent content:', intent.params);
-                this.nextScreen = '/wallet/intents/crmembervote';
-                this.coinTransferService.transfer.votes = intent.params.votes;
-                break;
-
-            case 'crmemberregister':
-                Logger.log("wallet", 'CR member register Transaction intent content:', intent.params);
-                this.nextScreen = '/wallet/intents/crmemberregister';
-                this.coinTransferService.transfer.did = intent.params.did;
-                this.coinTransferService.transfer.nickname = intent.params.nickname;
-                this.coinTransferService.transfer.url = intent.params.url;
-                this.coinTransferService.transfer.location = intent.params.location;
-                break;
-
-            case 'crmemberupdate':
-                Logger.log("wallet", 'CR member update Transaction intent content:', intent.params);
-                this.nextScreen = '/wallet/intents/crmemberregister';
-                this.coinTransferService.transfer.nickname = intent.params.nickname;
-                this.coinTransferService.transfer.url = intent.params.url;
-                this.coinTransferService.transfer.location = intent.params.location;
-                break;
-
-            case 'crmemberunregister':
-                Logger.log("wallet", 'CR member unregister Transaction intent content:', intent.params);
-                this.nextScreen = '/wallet/intents/crmemberregister';
-                this.coinTransferService.transfer.crDID = intent.params.crDID;
-                break;
-
             case 'dposvotetransaction':
                 Logger.log("wallet", 'DPOS Transaction intent content:', intent.params);
                 this.nextScreen = '/wallet/intents/dposvote';
@@ -215,17 +186,6 @@ export class IntentService {
                 this.nextScreen = '/wallet/coin-transfer';
                 let ret = await this.handlePayIntent(intent);
                 if (!ret) return;
-                break;
-
-            case 'crproposalcreatedigest':
-                await this.handleCreateProposalDigestIntent(intent);
-                // TODO
-                Logger.error('wallet', 'crproposalcreatedigest Not implemented');
-                break;
-
-            case 'crproposalvoteagainst':
-                this.nextScreen = '/wallet/intents/crproposalvoteagainst';
-                this.handleVoteAgainstProposalIntent(intent);
                 break;
 
             case 'multisigtx':

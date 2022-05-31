@@ -6,9 +6,6 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { AccessPage } from './access/access.page';
-import { CRMemberRegisterPage } from './crmemberregister/crmemberregister.page';
-import { CRmembervotePage } from './crmembervote/crmembervote.page';
-import { CRProposalVoteAgainstPage } from './crproposalvoteagainst/crproposalvoteagainst.page';
 import { DidTransactionPage } from './didtransaction/didtransaction.page';
 import { DPoSVotePage } from './dposvote/dposvote.page';
 import { EscTransactionPage } from './esctransaction/esctransaction.page';
@@ -21,9 +18,6 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
 @NgModule({
     declarations: [
         AccessPage,
-        CRMemberRegisterPage,
-        CRmembervotePage,
-        CRProposalVoteAgainstPage,
         DidTransactionPage,
         DPoSVotePage,
         EscTransactionPage,
@@ -47,10 +41,7 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
             { path: 'signtypeddata', component: SignTypedDataPage },
             { path: 'personalsign', component: PersonalSignPage },
             { path: 'insecureethsign', component: EthSignPage },
-            { path: 'crmembervote', component: CRmembervotePage },
             { path: 'dposvote', component: DPoSVotePage },
-            { path: 'crmemberregister', component: CRMemberRegisterPage },
-            { path: 'crproposalvoteagainst', component: CRProposalVoteAgainstPage },
             { path: 'access', component: AccessPage },
             { path: 'select-subwallet', component: SelectSubwalletPage },
             { path: 'multisigtx', component: MultiSigTxPage },

@@ -112,8 +112,6 @@ export class CoinTransferService {
     public payTransfer: PayTransfer;
     // intent: dposvotetransaction
     public publickeys: any;
-    // intent: crmembervote
-    public crcvotes: any;
     // intent: didtransaction
     public didrequest: any;
     // intent: esctransaction
@@ -141,7 +139,6 @@ export class CoinTransferService {
         this.intentTransfer = new IntentTransfer();
         this.payTransfer = new PayTransfer();
         this.publickeys = null;
-        this.crcvotes = null;
         this.didrequest = null;
     }
 }
