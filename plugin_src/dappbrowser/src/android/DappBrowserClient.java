@@ -77,7 +77,8 @@ public class DappBrowserClient extends WebViewClient {
         this.brwoserPlugin = brwoserPlugin;
         this.activity = brwoserPlugin.cordova.getActivity();
         this.webView = brwoserPlugin.webView;
-        this.atDocumentStartScript = atdocumentstartscript;
+        this.atDocumentStartScript = atdocumentstartscript + "window.webkit={messageHandlers:{essentialsExtractor:essentialsExtractor}};"
+                                        + "window.essentialsExtractor.processHTML((!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML);";
 
         String filters = brwoserPlugin.getPreferences().getString("CustomSchemeFilters", "");
         customSchemeFilters = filters.split(" ");
@@ -397,11 +398,11 @@ public class DappBrowserClient extends WebViewClient {
         LOG.d(LOG_TAG, "onPageFinished:" + url);
         super.onPageFinished(view, url);
 
-        // Set the namespace for postMessage()
-        brwoserPlugin.injectDeferredObject("window.webkit={messageHandlers:{essentialsExtractor:essentialsExtractor}}", null);
-
-        // Get the head from html
-        brwoserPlugin.injectDeferredObject("window.essentialsExtractor.processHTML((!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML)", null);
+//  Move the script to atDocumentStartScript.
+//        // Set the namespace for postMessage()
+//        brwoserPlugin.injectDeferredObject("window.webkit={messageHandlers:{essentialsExtractor:essentialsExtractor}}", null);
+//        // Get the head from html
+//        brwoserPlugin.injectDeferredObject("window.essentialsExtractor.processHTML((!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML)", null);
 
         //Note: when use serviceWorker to load main html, the shouldInterceptRequest can't intercept
         // the main html, then can't inject the web3 provider js script. so unregister serviceWorker
