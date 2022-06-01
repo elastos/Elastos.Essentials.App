@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="20505" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.5.5.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<widget android-versionCode="20506" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.5.6.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>Essentials</name>
     <description>
         Elastos essentials
@@ -34,6 +34,7 @@
     <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc:" />
     <preference name="CustomSchemeFilters" value="wc:" />
     <preference name="AndroidXEnabled" value="true" />
+    <preference name="LoadUrlTimeoutValue" value="50000" />
     <platform name="android">
         <preference name="android-targetSdkVersion" value="30" />
         <preference name="android-minSdkVersion" value="24" />
@@ -148,6 +149,11 @@
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
         <config-file parent="ITSAppUsesNonExemptEncryption" target="*-Info.plist">
             <false />
+        </config-file>
+        <config-file parent="UIBackgroundModes" target="*-Info.plist">
+            <array>
+                <string>bluetooth-central</string>
+            </array>
         </config-file>
         <preference name="SwiftVersion" value="5.2" />
         <preference name="UseSwiftLanguageVersion" value="5.2" />
