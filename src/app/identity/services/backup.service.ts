@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
+import { sleep } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
 import { Events } from 'src/app/services/events.service';
@@ -76,7 +77,8 @@ export class BackupService extends GlobalService {
     this.didActivatedSub = this.didService.activatedDid.subscribe((activatedDID) => {
       if (activatedDID && activatedDID.getDIDString() === GlobalDIDSessionsService.signedInDIDString) {
         Logger.log("identitybackup", "DID is activated, preparing the backup environment");
-        this.prepare();
+
+        void this.prepare();
       }
     });
 
@@ -106,12 +108,15 @@ export class BackupService extends GlobalService {
     return;
   }
 
-  private prepare() {
+  private async prepare() {
     // Make sure to not initialize things twice by mistake.
     if (this.preparingOrPrepared)
       return;
 
     this.preparingOrPrepared = true;
+
+    // Don't start immediatelly at boot to not overload the boot sequence
+    await sleep(10000);
 
     const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
     if (!hiveAuthHelper) {

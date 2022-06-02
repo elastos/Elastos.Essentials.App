@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
+import { BehaviorSubject } from 'rxjs';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ERC20Coin } from '../model/coin';
@@ -85,7 +87,7 @@ export class CurrencyService {
 
   private networkMainTokenPrice = {};
   private updateInterval = null;
-  private pricefetched = false;
+  private pricesFetchedSubject = new BehaviorSubject<boolean>(false);
 
   private exchangeRates: ExchangeRateCache = {};
   private pricesCache: TimeBasedPersistentCache<CachedTokenPrice>; // Cache that contains latest prices for all tokens (native and ERC)
@@ -109,7 +111,6 @@ export class CurrencyService {
   }
 
   async init() {
-    this.pricefetched = false;
     this.loadAllTokenSymbol();
 
     // Load or create a cache and store this cache globally to share fetched values among several DID users.
@@ -119,8 +120,12 @@ export class CurrencyService {
     await this.getSavedPrices();
     await this.getSavedCurrency();
     await this.getSavedCurrencyDisplayPreference();
-    // Update USD exchange rate.
-    await this.computeExchangeRatesFromCurrenciesService();
+
+    // Don't block the init, run asynchronously
+    runDelayed(async () => {
+      await this.computeExchangeRatesFromCurrenciesService();
+      await this.fetchTokenStatsFromPriceService();
+    }, 10000);
 
     this.updateInterval = setInterval(() => {
       void this.fetchTokenStatsFromPriceService();
@@ -196,6 +201,16 @@ export class CurrencyService {
     }
   }
 
+  private pricesFetched(): Promise<boolean> {
+    return new Promise(resolve => {
+      // Wait until we receive the price fetched completion signal. Could be instant or pending a http call
+      this.pricesFetchedSubject.subscribe(fetched => {
+        if (fetched)
+          resolve(true);
+      });
+    });
+  }
+
   /**
    * Fetches prices from the trinity price api and returns only a target item
    */
@@ -216,7 +231,7 @@ export class CurrencyService {
           // Set exchange for BTC => USD
           this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
 
-          this.pricefetched = true;
+          this.pricesFetchedSubject.next(true);
           // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
           resolve(true);
         }
@@ -289,9 +304,7 @@ export class CurrencyService {
     //void this.pricesCache.delete(); // DEV
     //return;
 
-    if (!this.pricefetched) {
-      await this.fetchTokenStatsFromPriceService();
-    }
+    await this.pricesFetched();
 
     let tokenStats = this.networkMainTokenPrice[network.getMainTokenSymbol()];
     if (tokenStats) {

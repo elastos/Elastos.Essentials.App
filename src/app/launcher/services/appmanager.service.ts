@@ -23,10 +23,6 @@ import { NotificationsPage } from '../pages/notifications/notifications.page';
 import { TipsPage } from '../pages/tips/tips.page';
 import { DIDManagerService } from './didmanager.service';
 
-
-
-
-
 type RunnableApp = {
     id: string;
     name: string;
@@ -300,7 +296,7 @@ export class AppmanagerService {
         if (app.routerPath)
             await this.globalNav.navigateTo(app.routerContext, app.routerPath);
         else if (app.startCall)
-            app.startCall();
+            void app.startCall();
         else
             Logger.error("launcher", "Failed to start app without either routerPath or startCall entry point.", app);
     }

@@ -47,13 +47,14 @@ export class RawEVMSubWalletTokenProvider<SubWalletType extends MainCoinEVMSubWa
       let userAddress = await erc20SubWallet.getCurrentReceiverAddress(AddressUsage.EVM_CALL);
       console.log("userAddress", userAddress);
 
-      let toBlock = this.latestFromBlockChecked !== -1 ? this.latestFromBlockChecked : await this.subWallet.getWeb3().eth.getBlockNumber();
+      let web3 = await this.subWallet.getWeb3();
+      let toBlock = this.latestFromBlockChecked !== -1 ? this.latestFromBlockChecked : await web3.eth.getBlockNumber();
       let fromBlock = toBlock - 5000; // Variable restrictions: max 5000 by heco node - TODO: customize
 
       console.log("fromBlock", fromBlock, "toBlock", toBlock)
 
       let tx = await ERC20TransactionHelper.fetchTokenTransactions(
-        this.subWallet.getWeb3(),
+        web3,
         userAddress,
         erc20SubWallet.coin.getContractAddress().toLowerCase(),
         fromBlock,

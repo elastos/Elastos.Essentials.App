@@ -1,13 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import Common from '@ethereumjs/common';
-import { Transaction as EthereumTx, TxData } from "@ethereumjs/tx";
-import AppEth from "@ledgerhq/hw-app-eth";
+import type { Transaction as EthereumTx, TxData } from "@ethereumjs/tx";
+import { lazyWeb3Import } from "src/app/helpers/import.helper";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
-import Web3 from "web3";
 import { LedgerAccountType } from "../../../ledger.types";
 import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import { LedgerSafe } from "../../../safes/ledger.safe";
@@ -50,7 +48,8 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
         }
     }
 
-    public createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
+    public async createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
+        const Web3 = await lazyWeb3Import();
         let web3 = new Web3();
         const txData: TxData = {
             nonce: web3.utils.toHex(nonce),
@@ -77,7 +76,7 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
             signedTransaction: null
         }
 
-        this.createEthereumTx(txData)
+        await this.createEthereumTx(txData)
 
         // Wait for the ledger sign the transaction.
         let signed = await WalletUIService.instance.connectLedgerAndSignTransaction(this.masterWallet.deviceID, this)
@@ -90,28 +89,33 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
         return signTransactionResult;
     }
 
-    public async signTransactionByLedger(transport: BluetoothTransport) {
+    public async signTransactionByLedger(transport: BluetoothTransport): Promise<void> {
         Logger.log('ledger', "EVMSafe::signTransactionByLedger");
         let unsignedTx = this.evmTx.serialize().toString('hex')
 
+        const AppEth = (await import("@ledgerhq/hw-app-eth")).default;
         const eth = new AppEth(transport);
         // TODO: use the right HD derivation path.
         const r = await eth.signTransaction(this.addressPath, unsignedTx);
 
-        this.evmTx = new EthereumTx({
+        const Transaction = (await import("@ethereumjs/tx")).Transaction;
+        this.evmTx = new Transaction({
             v: Buffer.from(r.v, "hex"),
             r: Buffer.from(r.r, "hex"),
             s: Buffer.from(r.s, "hex")
         });
     }
 
-    private createEthereumTx(txData: TxData) {
+    private async createEthereumTx(txData: TxData): Promise<void> {
+        const Common = (await import('@ethereumjs/common')).default;
         let common = Common.forCustomChain(
             'mainnet',
             { chainId: this.chainId },
             'petersburg'
         );
-        this.evmTx = new EthereumTx(txData, { 'common': common });
+
+        const Transaction = (await import("@ethereumjs/tx")).Transaction;
+        this.evmTx = new Transaction(txData, { 'common': common });
 
         // Set the EIP155 bits
         this.evmTx.raw[6] = Buffer.from([this.chainId]); // v

@@ -4,13 +4,13 @@ import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
 import { CovalentHelper } from "../../evms/tx-providers/covalent.helper";
-import { AvalancheCChainNetworkWallet } from "../networkwallets/standard/avalanchecchain.network.wallet";
 import { AvalancheCChainAPI, AvalancheCChainApiType } from "./avalanchecchain.api";
 
 export abstract class AvalancheCChainBaseNetwork extends EVMNetwork {
-  protected newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  protected async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const AvalancheCChainNetworkWallet = (await import("../networkwallets/standard/avalanchecchain.network.wallet")).AvalancheCChainNetworkWallet;
         return new AvalancheCChainNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,

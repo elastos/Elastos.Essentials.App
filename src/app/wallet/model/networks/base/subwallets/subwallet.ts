@@ -157,7 +157,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
   /**
    * Extract data from an offline transaction to build a transaction info object (displayable on UI).
    */
-  public getTransactionInfoForOfflineTransaction(transaction: AnyOfflineTransaction): TransactionInfo {
+  public getTransactionInfoForOfflineTransaction(transaction: AnyOfflineTransaction): Promise<TransactionInfo> {
     return null;
   }
 
@@ -186,7 +186,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
     return (addresses && addresses[0]) ? addresses[0] : null;
   }
 
-  public abstract isAddressValid(address: string): boolean;
+  public abstract isAddressValid(address: string): Promise<boolean>;
 
   /**
    * Returns the path to the main icon representing the subwallet.

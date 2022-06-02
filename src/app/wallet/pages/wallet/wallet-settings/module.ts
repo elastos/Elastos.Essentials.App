@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { ComponentsModule } from 'src/app/wallet/components/components.module';
 import { WalletSettingsPage } from './wallet-settings.page';
 
 @NgModule({
@@ -15,9 +16,10 @@ import { WalletSettingsPage } from './wallet-settings.page';
         FormsModule,
         IonicModule,
         TranslateModule,
+        ComponentsModule,
         RouterModule.forChild([{ path: '', component: WalletSettingsPage }])
     ],
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class WalletSettingsModule {}
+export class WalletSettingsModule { }

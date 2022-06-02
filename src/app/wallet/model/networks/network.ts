@@ -38,7 +38,8 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
    */
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
-    let wallet = this.newNetworkWallet(masterWallet);
+    let wallet = await this.newNetworkWallet(masterWallet);
+    console.warn("DEBUG createNetworkWallet", wallet)
 
     if (wallet) {
       await wallet.initialize();
@@ -54,7 +55,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    * Method called by createNetworkWallet() and that must be implemented by each network to create
    * wallet instances.
    */
-  protected abstract newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet;
+  protected abstract newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet>;
 
   /**
    * Returns the url of a target api type. This method must be overriden by networks to define

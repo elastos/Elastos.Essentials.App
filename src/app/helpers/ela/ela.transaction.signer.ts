@@ -22,28 +22,27 @@
 
 import { SmartBuffer } from "smart-buffer";
 import { Logger } from "../../logger";
+import { lazyEllipticImport } from "../import.helper";
 import { SHA256 } from "./../crypto/sha256";
 import { ELAAddressHelper, ELAAddressSignType } from "./ela.address";
 import { ELATransactionCoder } from "./ela.transaction.coder";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const EC = require('elliptic').ec;
-const curve = new EC('p256');
 
 const SignerLength = 32;
 const SignatureLength = 64;
 
 export class ELATransactionSigner {
 
-  static getSignature(tx, privateKey) {
-    const encodedTxHex = ELATransactionCoder.encodeTx(tx, false);
+  static async getSignature(tx, privateKey): Promise<Buffer> {
+    const encodedTxHex = await ELATransactionCoder.encodeTx(tx, false);
 
-    const signatureHex = this.buffer_sign(encodedTxHex, privateKey);
+    const signatureHex = await this.buffer_sign(encodedTxHex, privateKey);
 
     const signature = Buffer.from(signatureHex, 'hex');
     return signature;
   }
 
-  static addSignatureToTx(tx, publicKey, signature) {
+  static addSignatureToTx(tx, publicKey, signature): Promise<string> {
     const signatureParameter = new SmartBuffer();
     signatureParameter.writeInt8(signature.length);
     signatureParameter.writeBuffer(signature);
@@ -54,8 +53,8 @@ export class ELATransactionSigner {
     const code = ELAAddressHelper.getSingleSignatureRedeemScript(publicKeyRaw, ELAAddressSignType.SignTypeStandard);
 
     const Program = {
-      Code : code,
-      Parameter : signatureParameterHex
+      Code: code,
+      Parameter: signatureParameterHex
     };
 
     tx.Programs = [];
@@ -65,9 +64,12 @@ export class ELATransactionSigner {
     return ELATransactionCoder.encodeTx(tx, true);
   }
 
-  static buffer_sign(bufferHex, privateKeyHex) {
+  static async buffer_sign(bufferHex, privateKeyHex): Promise<string> {
     const privateKey = Buffer.from(privateKeyHex, 'hex');
     const hash = SHA256.sha256Hash(bufferHex);
+
+    const { ec } = await lazyEllipticImport();
+    let curve = new ec('P256');
 
     const signature = curve.sign(hash, privateKey, null);
 
@@ -89,9 +91,9 @@ export class ELATransactionSigner {
     return signatureHex;
   }
 
-  static signTx(tx, privateKey) {
+  static async signTx(tx, privateKey): Promise<string> {
     const signature = this.getSignature(tx, privateKey);
-    const publicKey = ELAAddressHelper.getPublic(privateKey);
+    const publicKey = await ELAAddressHelper.getPublic(privateKey);
     return this.addSignatureToTx(tx, publicKey, signature);
   }
 }

@@ -78,7 +78,27 @@
               "@cordobo/qrcode",
               "crypto-js",
               "crypto-js/aes",
-              "bip39"
+              "bip39",
+              "semver",
+              "bitcoinjs-lib",
+              "tiny-secp256k1",
+              "bs58",
+              "bs58check",
+              "stack-typescript",
+              "eth-phishing-detect",
+              "smart-buffer",
+              "elliptic",
+              "ripemd160",
+              "sha.js",
+              "promise-queue",
+              "@ethereumjs/common",
+              "@ethereumjs/tx",
+              "web3-bzz",
+              "web3-core",
+              "web3-eth",
+              "web3-eth-personal",
+              "web3-net",
+              "web3-shh"
             ]
           },
           "configurations": {
@@ -86,7 +106,7 @@
               "optimization": false,
               "namedChunks": true,
               "buildOptimizer": false,
-              "aot": true,
+              "aot": false,
               "sourceMap": true
             },
             "production": {

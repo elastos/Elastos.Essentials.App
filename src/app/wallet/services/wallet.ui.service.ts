@@ -117,7 +117,7 @@ export class WalletUIService {
     }
 
     /**
-     *
+     * @dependson Import LedgerSignComponentModule
      */
     async connectLedgerAndSignTransaction(deviceId: string, safe: Safe): Promise<boolean> {
         let options: LedgerSignComponentOptions = {
@@ -143,6 +143,9 @@ export class WalletUIService {
         });
     }
 
+    /**
+     * @dependson Import LedgerGetAddressComponentModule
+     */
     async connectLedgerAndGetAddress(deviceId: string, accounType: LedgerAccountType): Promise<LedgerAccountOptions> {
         let options: LedgerGetAddressComponentOptions = {
             deviceId: deviceId,

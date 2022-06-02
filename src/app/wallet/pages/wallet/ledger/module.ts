@@ -14,7 +14,6 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
         FormsModule,
         IonicModule,
         TranslateModule,
-        RouterModule,
         RouterModule.forChild([
             { path: 'connect', loadChildren: () => import('./ledger-connect/module').then(m => m.LedgerConnectModule) },
             { path: 'scan', loadChildren: () => import('./ledger-scan/module').then(m => m.LedgerScanModule) },
@@ -23,4 +22,4 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class LedgerModule {}
+export class LedgerModule { }

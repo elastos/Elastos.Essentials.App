@@ -1,15 +1,15 @@
-import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
+import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
-import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
+import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { CronosNetworkWallet } from "../networkwallets/standard/cronos.network.wallet";
 import { CronosAPI, CronosApiType } from "./cronos.api";
 
 export class CronosBaseNetwork extends EVMNetwork {
-  protected newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  protected async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const CronosNetworkWallet = (await import("../networkwallets/standard/cronos.network.wallet")).CronosNetworkWallet;
         return new CronosNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,

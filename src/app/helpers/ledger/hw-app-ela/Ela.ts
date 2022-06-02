@@ -38,7 +38,7 @@ const bip44StandardPathBase =
   '00000000' +
   '00000000';
 
- let bip44Path = '';
+let bip44Path = '';
 
 /**
  * Elastos API
@@ -76,7 +76,7 @@ export default class Ela {
    * @return an object with a publicKey and address
    * @example
    */
-  async getAddress(path = ""): Promise<{publicKey: string;address: string;}> {
+  async getAddress(path = ""): Promise<{ publicKey: string; address: string; }> {
     if (path == "") {
       bip44Path = bip44StandardPathBase;
     } else {
@@ -87,46 +87,46 @@ export default class Ela {
 
     // eslint-disable-next-line no-useless-catch
     try {
-        const messageSend  = Buffer.from('8004000000' + bip44Path, 'hex');
-        Logger.log(TAG, ' getAddress: messageSend', messageSend.toString('hex').toUpperCase())
-        let response = await this.transport.exchange(messageSend);
-        const responseStr = response.toString('hex').toUpperCase();
-        Logger.log(TAG, ' getAddress: response', responseStr)
+      const messageSend = Buffer.from('8004000000' + bip44Path, 'hex');
+      Logger.log(TAG, ' getAddress: messageSend', messageSend.toString('hex').toUpperCase())
+      let response = await this.transport.exchange(messageSend);
+      const responseStr = response.toString('hex').toUpperCase();
+      Logger.log(TAG, ' getAddress: response', responseStr)
 
-        let success = false;
-        let message = '';
-        let publicKey = '';
+      let success = false;
+      let message = '';
+      let publicKey = '';
 
-        if (responseStr.endsWith('9000')) {
-            success = true;
-            message = responseStr;
-            publicKey = responseStr.substring(0, 130);
-            Logger.log(TAG, ' getAddress: publicKey', publicKey)
+      if (responseStr.endsWith('9000')) {
+        success = true;
+        message = responseStr;
+        publicKey = responseStr.substring(0, 130);
+        Logger.log(TAG, ' getAddress: publicKey', publicKey)
+      } else {
+        if (responseStr == '6E00') {
+          message = 'App Not Open On Ledger Device';
         } else {
-            if (responseStr == '6E00') {
-                message = 'App Not Open On Ledger Device';
-            } else {
-                message = 'Unknown Error';
-            }
-
-            Logger.warn(TAG, ' getAddress: error message', message)
+          message = 'Unknown Error';
         }
 
-        let address = ELAAddressHelper.getAddressFromPublicKey(publicKey);
-        return Promise.resolve({
-            publicKey: publicKey,
-            address: address,
-            });
+        Logger.warn(TAG, ' getAddress: error message', message)
+      }
+
+      let address = await ELAAddressHelper.getAddressFromPublicKey(publicKey);
+      return Promise.resolve({
+        publicKey: publicKey,
+        address: address,
+      });
     } catch (error) {
-        Logger.error(TAG, ' getAddress: error', error)
-        // TODO
-        throw error;
+      Logger.error(TAG, ' getAddress: error', error)
+      // TODO
+      throw error;
     }
   }
 
   // eslint-disable-next-line require-await
   async signTransaction(transactionHex: string, bipPath: string) {
-    const transactionByteLength = Math.ceil(transactionHex.length/2);
+    const transactionByteLength = Math.ceil(transactionHex.length / 2);
     if (transactionByteLength > MAX_SIGNED_TX_LEN) {
       throw new Error(`Transaction length of ${transactionByteLength} bytes exceeds max length of ${MAX_SIGNED_TX_LEN} bytes.`);
     } else {
@@ -140,10 +140,10 @@ export default class Ela {
       let lastResponse = undefined;
       for (let ix = 0; ix < messages.length; ix++) {
         const message = Buffer.from(messages[ix], 'hex');
-        Logger.log(TAG, `STARTED sending message ${ix+1} of ${messages.length}: ${message.toString('hex').toUpperCase()}`);
+        Logger.log(TAG, `STARTED sending message ${ix + 1} of ${messages.length}: ${message.toString('hex').toUpperCase()}`);
         const response = await this.transport.exchange(message);
         const responseStr = response.toString('hex').toUpperCase();
-        Logger.log(TAG, `SUCCESS sending message ${ix+1} of ${messages.length}: ${responseStr}`);
+        Logger.log(TAG, `SUCCESS sending message ${ix + 1} of ${messages.length}: ${responseStr}`);
 
         lastResponse = responseStr;
       }

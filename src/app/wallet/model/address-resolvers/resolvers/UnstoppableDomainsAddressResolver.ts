@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import Resolution from '@unstoppabledomains/resolution';
 import { Logger } from "src/app/logger";
 import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { BSCMainNetNetwork } from '../../networks/bsc/network/bsc.mainnet.network';
@@ -81,6 +80,7 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
 
             //let results = await resolution/* .records(name, [recordKey]); // */.allRecords(name);
 
+            const Resolution = (await import('@unstoppabledomains/resolution')).Resolution;
             let resolution = new Resolution();
             let results = await resolution.records(name, [recordKey]);
             console.log(`Domain ${name} results:`, results);

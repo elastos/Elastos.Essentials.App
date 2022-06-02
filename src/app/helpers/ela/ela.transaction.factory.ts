@@ -36,13 +36,13 @@ import { ELATransactionSigner } from "./ela.transaction.signer";
 // };
 
 export type TX_Content = {
-  TxType : number,
-  LockTime : number,
-  PayloadVersion : number,
-  TxAttributes : any[],
-  UTXOInputs : any[],
-  Outputs : any[],
-  Programs : any[],
+  TxType: number,
+  LockTime: number,
+  PayloadVersion: number,
+  TxAttributes: any[],
+  UTXOInputs: any[],
+  Outputs: any[],
+  Programs: any[],
   Version?: number
 }
 
@@ -55,16 +55,16 @@ const elaAssetId = 'A3D0EAA466DF74983B5D7C543DE6904F4C9418EAD5FFD6D25814234A96DB
 
 export class ELATransactionFactory {
 
-  static createSignedSendToTx(privateKey, unspentTransactionOutputs, sendToAddress, sendAmount, feeAmountSats, feeAccount, txMemo) {
+  static async createSignedSendToTx(privateKey, unspentTransactionOutputs, sendToAddress, sendAmount, feeAmountSats, feeAccount, txMemo): Promise<string> {
     if (Number.isNaN(sendAmount)) {
       throw new Error(`sendAmount ${sendAmount} is not a number`);
     }
     if (Number.isNaN(feeAmountSats)) {
       throw new Error(`feeAmountSats ${feeAmountSats} is not a number`);
     }
-    const publicKey = ELAAddressHelper.getPublic(privateKey);
+    const publicKey = await ELAAddressHelper.getPublic(privateKey);
     const tx = this.createUnsignedSendToTx(unspentTransactionOutputs, sendToAddress, sendAmount, publicKey, feeAmountSats, feeAccount, txMemo);
-    const signature = ELATransactionSigner.getSignature(tx, privateKey);
+    const signature = await ELATransactionSigner.getSignature(tx, privateKey);
     const encodedSignedTx = ELATransactionSigner.addSignatureToTx(tx, publicKey, signature);
 
     Logger.log('wallet', 'createSignedSendToTx.signedTx ' + JSON.stringify(tx));
@@ -121,13 +121,13 @@ export class ELATransactionFactory {
     const address = ELAAddressHelper.getAddressFromPublicKey(publicKey);
     Logger.warn('wallet', ' createUnsignedSendToTxSats address:', address, ' publicKey:', publicKey)
     const tx: TX_Content = {
-      TxType : 2,
-      LockTime : 0,
-      PayloadVersion : 0,
-      TxAttributes : [],
-      UTXOInputs : [],
-      Outputs : [],
-      Programs : []
+      TxType: 2,
+      LockTime: 0,
+      PayloadVersion: 0,
+      TxAttributes: [],
+      UTXOInputs: [],
+      Outputs: [],
+      Programs: []
     }
 
     {
@@ -140,7 +140,7 @@ export class ELATransactionFactory {
       if (txMemo !== undefined && txMemo !== "") {
         const txAttribute2 = {
           Usage: 0x81,
-          Data: Buffer.from("type:text,msg:"+txMemo, 'utf8').toString('hex')
+          Data: Buffer.from("type:text,msg:" + txMemo, 'utf8').toString('hex')
         };
         tx.TxAttributes.push(txAttribute2);
       }
@@ -160,8 +160,8 @@ export class ELATransactionFactory {
     Logger.warn('wallet', ' createUnsignedSendToTxSats unspentTransactionOutputs:', unspentTransactionOutputs)
     unspentTransactionOutputs.forEach((utxo) => {
       const utxoInput = {
-        TxId : utxo.TxHash.toUpperCase(),
-        ReferTxOutputIndex : utxo.Index,
+        TxId: utxo.TxHash.toUpperCase(),
+        ReferTxOutputIndex: utxo.Index,
         Sequence: undefined
       };
 
@@ -175,20 +175,20 @@ export class ELATransactionFactory {
     });
     Logger.warn('wallet', ' inputValueSats', inputValueSats.toString())
     const changeValueSats = inputValueSats.minus(sendAmountAndFeeAmountSats);
-    Logger.warn('wallet', ' sendAmountAndFeeAmountSats ',sendAmountAndFeeAmountSats.toString(), ' changeValueSats:', changeValueSats.toString())
+    Logger.warn('wallet', ' sendAmountAndFeeAmountSats ', sendAmountAndFeeAmountSats.toString(), ' changeValueSats:', changeValueSats.toString())
     const sendOutput = {
-      AssetID : elaAssetId,
-      Value : sendAmountSats.toString(10),
-      OutputLock : 0,
-      Address : sendToAddress
+      AssetID: elaAssetId,
+      Value: sendAmountSats.toString(10),
+      OutputLock: 0,
+      Address: sendToAddress
     }
     tx.Outputs.push(sendOutput);
 
     const changeOutput = {
-      AssetID : elaAssetId,
-      Value : changeValueSats.toString(10),
-      OutputLock : 0,
-      Address : address
+      AssetID: elaAssetId,
+      Value: changeValueSats.toString(10),
+      OutputLock: 0,
+      Address: address
     }
     tx.Outputs.push(changeOutput);
 
@@ -267,8 +267,8 @@ export class ELATransactionFactory {
     unspentTransactionOutputs.forEach((utxo) => {
       if (utxo.valueSats.isGreaterThan(ZERO)) {
         const utxoInput = {
-          TxId : utxo.Txid.toUpperCase(),
-          ReferTxOutputIndex : utxo.Index
+          TxId: utxo.Txid.toUpperCase(),
+          ReferTxOutputIndex: utxo.Index
         };
         const utxoInputStr = JSON.stringify(utxoInput);
         if (!usedUtxos.has(utxoInputStr)) {
@@ -288,8 +288,8 @@ export class ELATransactionFactory {
     voteOutput.Payload.Contents = [];
 
     const Content = {
-      Votetype : 0,
-      Candidates : []
+      Votetype: 0,
+      Candidates: []
     };
     voteOutput.Payload.Contents.push(Content);
 
@@ -299,10 +299,10 @@ export class ELATransactionFactory {
     return tx;
   }
 
-  static createSignedVoteTx = (privateKey, unspentTransactionOutputs, feeAmountSats, candidates, feeAccount) => {
-    const publicKey = ELAAddressHelper.getPublic(privateKey);
+  static createSignedVoteTx = async (privateKey, unspentTransactionOutputs, feeAmountSats, candidates, feeAccount): Promise<string> => {
+    const publicKey = await ELAAddressHelper.getPublic(privateKey);
     const tx = this.createUnsignedVoteTx(unspentTransactionOutputs, publicKey, feeAmountSats, candidates, feeAccount);
-    const signature = ELATransactionSigner.getSignature(tx, privateKey);
+    const signature = await ELATransactionSigner.getSignature(tx, privateKey);
     const encodedSignedTx = ELATransactionSigner.addSignatureToTx(tx, publicKey, signature);
 
     Logger.log('wallet', 'createSignedSendToTx.signedTx ' + JSON.stringify(tx));

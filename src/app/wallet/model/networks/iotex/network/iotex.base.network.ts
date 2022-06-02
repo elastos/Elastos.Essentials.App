@@ -1,18 +1,17 @@
-import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
+import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
-import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
+import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { EVMNetworkWallet } from "../../evms/networkwallets/evm.networkwallet";
-import { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
-import { StandardIoTeXNetworkWallet } from "../networkwallets/standard/standard.iotex.networkwallet";
-import { IoTeXERC20Subwallet } from "../subwallets/iotex.erc20.subwallet";
+import type { EVMNetworkWallet } from "../../evms/networkwallets/evm.networkwallet";
+import type { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
 import { IoTeXAPI, IoTeXApiType } from "./iotex.api";
 
 export class IoTeXBaseNetwork extends EVMNetwork {
-  public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        let StandardIoTeXNetworkWallet = (await import("../networkwallets/standard/standard.iotex.networkwallet")).StandardIoTeXNetworkWallet;
         return new StandardIoTeXNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,
@@ -25,6 +24,7 @@ export class IoTeXBaseNetwork extends EVMNetwork {
   }
 
   public async createERC20SubWallet(networkWallet: EVMNetworkWallet<any, any>, coinID: string, startBackgroundUpdates?: boolean): Promise<ERC20SubWallet> {
+    let IoTeXERC20Subwallet = (await import("../subwallets/iotex.erc20.subwallet")).IoTeXERC20Subwallet;
     let subWallet = new IoTeXERC20Subwallet(networkWallet, coinID);
     await subWallet.initialize();
     if (startBackgroundUpdates)

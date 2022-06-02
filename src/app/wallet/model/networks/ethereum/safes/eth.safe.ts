@@ -1,7 +1,7 @@
-import { TxData } from "@ethereumjs/tx";
-import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { SignTransactionResult } from "../../../safes/safe.types";
-import { AnySubWallet } from "../../base/subwallets/subwallet";
+import type { TxData } from "@ethereumjs/tx";
+import type { Transfer } from "src/app/wallet/services/cointransfer.service";
+import type { SignTransactionResult } from "../../../safes/safe.types";
+import type { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EVMLedgerSafe } from "../../evms/safes/evm.ledger.safe";
 
 export class ETHSafe extends EVMLedgerSafe {

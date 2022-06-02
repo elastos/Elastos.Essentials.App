@@ -1,6 +1,5 @@
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { GlobalConfig } from "../config/globalconfig";
-import { AppIDService } from "../identity/services/appid.service";
 import { Logger } from "../logger";
 import { GlobalHiveService } from "../services/global.hive.service";
 
@@ -203,6 +202,7 @@ export class InternalHiveAuthHelper {
       Logger.log("hiveauthhelper", "Starting to generate a new App ID credential.");
 
       // Directly generate the credential without user confirmation.
+      let AppIDService = (await import("../identity/services/appid.service")).AppIDService; // Lazy
       let credential = await AppIDService.instance.generateApplicationIDCredential(appInstanceDID.getDIDString(), GlobalConfig.ESSENTIALS_APP_DID);
 
       // Save this issued credential for later use.

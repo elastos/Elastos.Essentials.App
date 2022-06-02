@@ -1,15 +1,15 @@
-import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
+import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
-import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
+import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { BSCNetworkWallet } from "../networkwallets/standard/bsc.network.wallet";
 import { BscAPI, BscApiType } from "./bsc.api";
 
 export class BSCBaseNetwork extends EVMNetwork {
-  protected newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  protected async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const BSCNetworkWallet = (await import("../networkwallets/standard/bsc.network.wallet")).BSCNetworkWallet;
         return new BSCNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,

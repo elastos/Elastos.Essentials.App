@@ -1,11 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, NgZone } from "@angular/core";
 import { ToastController } from "@ionic/angular";
-import * as jsonld from "jsonld";
+//import * as jsonld from "jsonld";
 import { Url } from 'jsonld/jsonld-spec';
 import moment from "moment";
 import Queue from "promise-queue";
 import { firstValueFrom } from "rxjs";
+import { lazyJsonLdImport } from "src/app/helpers/import.helper";
 import { DIDDocument } from "src/app/identity/model/diddocument.model";
 import { DIDURL } from "src/app/identity/model/didurl.model";
 import { DIDDocumentsService } from "src/app/identity/services/diddocuments.service";
@@ -113,6 +114,7 @@ export class GlobalCredentialTypesService {
      *    '@type'?: OrArray<Keyword['@type']> | undefined;
      *    ... Other fields named with the resolved full context+field. Eg: https://www.w3.org/2018/credentials#issuanceDate
      */
+    const jsonld = await lazyJsonLdImport();
     const expanded = await jsonld.expand(credentialJson, {
       documentLoader: this.buildElastosJsonLdDocLoader()
     });
@@ -320,6 +322,7 @@ export class GlobalCredentialTypesService {
             });
           }
           else {
+            const jsonld = await lazyJsonLdImport();
             let defaultLoader = (jsonld as any).documentLoaders.xhr();
             let data = await defaultLoader(url);
             resolve(data);
@@ -362,6 +365,7 @@ export class GlobalCredentialTypesService {
         return false;
       }
 
+      const jsonld = await lazyJsonLdImport();
       let compacted = await jsonld.compact(credentialContentJson, credentialContentJson["@context"], {
         documentLoader: this.buildElastosJsonLdDocLoader()
       });

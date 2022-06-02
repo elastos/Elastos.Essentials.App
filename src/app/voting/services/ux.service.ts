@@ -7,7 +7,6 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
-
 @Injectable({
     providedIn: 'root'
 })
@@ -19,7 +18,7 @@ export class UXService {
         private clipboard: Clipboard,
         private globalIntentService: GlobalIntentService,
         public translate: TranslateService
-    ) {}
+    ) { }
 
     init() {
     }

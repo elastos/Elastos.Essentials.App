@@ -3,10 +3,9 @@ import { Injectable, NgZone } from '@angular/core';
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import phishingConfig from 'eth-phishing-detect/src/config.json';
-import PhishingDetector from 'eth-phishing-detect/src/detector';
 import moment from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { lazyPhishingDetectorImport } from 'src/app/helpers/import.helper';
 import { urlDomain } from 'src/app/helpers/url.helpers';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
@@ -101,8 +100,6 @@ export class DappBrowserService implements GlobalService {
     private walletSubscription: Subscription = null;
     public confirming = false;
 
-    //Can add items on phishingConfig
-    public detector: PhishingDetector = null;
     public askedDomains = [];
 
     constructor(
@@ -121,9 +118,6 @@ export class DappBrowserService implements GlobalService {
         DappBrowserService.instance = this;
 
         void this.init();
-
-        //Can add some items on phishingConfig
-        this.detector = new PhishingDetector(phishingConfig);
     }
 
     public init() {
@@ -182,11 +176,14 @@ export class DappBrowserService implements GlobalService {
         return url;
     }
 
-    public checkScamDomain(domain: string): boolean {
+    public async checkScamDomain(domain: string): Promise<boolean> {
         if (this.askedDomains.includes(domain)) {
             return false;
         }
-        var ret = this.detector.check(domain).result;
+
+        //Can add some items on phishingConfig
+        const checkDomain = await lazyPhishingDetectorImport();
+        var ret = checkDomain(domain).result;
         Logger.log("dappbrowser", "detector return", domain, ret);
         return ret;
     }
@@ -204,7 +201,7 @@ export class DappBrowserService implements GlobalService {
 
     private async checkScamUrl(url: string): Promise<boolean> {
         let domain = this.getDomain(url);
-        if (this.checkScamDomain(domain)) {
+        if (await this.checkScamDomain(domain)) {
             return await this.showScamWarning(domain);
         }
     }

@@ -3,13 +3,13 @@ import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { HooNetworkWallet } from "../networkwallets/standard/hoo.network.wallet";
 import { HooAPI, HooApiType } from "./hoo.api";
 
 export class HooBaseNetwork extends EVMNetwork {
-  protected newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  protected async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        let HooNetworkWallet = (await import("../networkwallets/standard/hoo.network.wallet")).HooNetworkWallet;
         return new HooNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,

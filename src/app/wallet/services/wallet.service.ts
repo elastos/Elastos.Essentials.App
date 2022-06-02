@@ -136,7 +136,7 @@ export class WalletService {
     }
 
     async init() {
-        Logger.log('wallet', "Master manager is initializing");
+        Logger.log('wallet', "Wallet service is initializing");
         this.masterWallets = {};
         this.networkWallets = {};
 
@@ -488,7 +488,7 @@ export class WalletService {
      * Creates a new standard master wallet using a given mnemonic.
      * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    public newStandardWalletWithMnemonic(
+    public async newStandardWalletWithMnemonic(
         masterId: string,
         walletName: string,
         mnemonicStr: string,
@@ -514,8 +514,8 @@ export class WalletService {
             id: masterId,
             name: walletName,
             theme: defaultWalletTheme(),
-            seed: AESEncrypt(seed, payPassword),
-            mnemonic: AESEncrypt(mnemonicStr, payPassword),
+            seed: await AESEncrypt(seed, payPassword),
+            mnemonic: await AESEncrypt(mnemonicStr, payPassword),
             hasPassphrase,
             networkOptions,
             creator: walletCreator
@@ -528,7 +528,7 @@ export class WalletService {
      * Creates a new standard master wallet using a given private key.
      * The new master wallet is saved to storage, and instanciated/added to the local model.
      */
-    public newStandardWalletWithPrivateKey(
+    public async newStandardWalletWithPrivateKey(
         walletId: string,
         walletName: string,
         privateKey: string,
@@ -543,7 +543,7 @@ export class WalletService {
             id: walletId,
             name: walletName,
             theme: defaultWalletTheme(),
-            privateKey: AESEncrypt(privateKey, payPassword),
+            privateKey: await AESEncrypt(privateKey, payPassword),
             privateKeyType,
             networkOptions: [], // TODO: get options from UI params
             creator: WalletCreator.USER

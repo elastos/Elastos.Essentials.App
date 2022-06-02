@@ -3,13 +3,13 @@ import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { PolygonNetworkWallet } from "../networkwallets/standard/polygon.network.wallet";
 import { PolygonAPI, PolygonAPIType } from "./polygon.api";
 
 export class PolygonBaseNetwork extends EVMNetwork {
-  protected newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  protected async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        let PolygonNetworkWallet = (await import("../networkwallets/standard/polygon.network.wallet")).PolygonNetworkWallet;
         return new PolygonNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,

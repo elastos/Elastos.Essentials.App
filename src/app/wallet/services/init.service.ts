@@ -110,10 +110,10 @@ export class WalletInitService extends GlobalService {
 
     // Do not await.
     void this.currencyService.init();
-    await this.uniswapCurrencyService.init();
-    // Do not await.
+    void this.uniswapCurrencyService.init();
     void this.contactsService.init();
     void this.ethTransactionService.init();
+
     await this.uiService.init();
 
     // TODO: dirty, rework this
@@ -122,9 +122,10 @@ export class WalletInitService extends GlobalService {
       this.walletServiceInitialized = true;
     });
 
-    await this.walletManager.init();
-    await this.intentService.init();
-    await this.swapService.init();
+    void this.walletManager.init().then(async () => {
+      await this.intentService.init();
+      await this.swapService.init();
+    });
   }
 
   public async onUserSignOut(): Promise<void> {

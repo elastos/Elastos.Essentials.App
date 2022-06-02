@@ -2,7 +2,7 @@ import { ApplicationRef, enableProdMode } from '@angular/core';
 import { enableDebugTools } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { defineCustomElements } from '@teamhive/lottie-player/loader';
-import 'hammerjs';
+//import 'hammerjs';
 import { AppModule } from './app/app.module';
 import { Logger } from './app/logger';
 import { environment } from './environments/environment';

@@ -1,4 +1,4 @@
-import { TxData } from "@ethereumjs/tx";
+import type { TxData } from "@ethereumjs/tx";
 import { Transfer } from "../../services/cointransfer.service";
 import { BTCTxData } from "../btc.types";
 import { MasterWallet } from "../masterwallets/masterwallet";

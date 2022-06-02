@@ -1,4 +1,4 @@
-import { Url } from "jsonld/jsonld-spec";
+import type { Url } from "jsonld/jsonld-spec";
 
 type JsonLdError = {
   details: {

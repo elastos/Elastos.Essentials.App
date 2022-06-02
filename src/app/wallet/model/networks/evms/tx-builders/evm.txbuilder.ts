@@ -1,10 +1,10 @@
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
-import Web3 from "web3";
+import type Web3 from "web3";
 import { TransactionBuilder } from "../../base/tx-builders/transactionbuilder";
 import { EVMNetwork } from "../evm.network";
 
 export abstract class EVMTransactionBuilder extends TransactionBuilder {
-  protected getWeb3(): Web3 {
+  protected getWeb3(): Promise<Web3> {
     return EVMService.instance.getWeb3(this.networkWallet.network as EVMNetwork);
   }
 
@@ -12,7 +12,7 @@ export abstract class EVMTransactionBuilder extends TransactionBuilder {
    * Returns the current gas price on chain.
    */
   protected async getGasPrice(): Promise<string> {
-    const gasPrice = await this.getWeb3().eth.getGasPrice();
+    const gasPrice = await (await this.getWeb3()).eth.getGasPrice();
     //Logger.log('wallet', "GAS PRICE: ", gasPrice)
     return gasPrice;
   }

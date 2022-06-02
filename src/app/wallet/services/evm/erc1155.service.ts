@@ -23,18 +23,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { lazyWeb3Import } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
-import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
-import Web3 from 'web3';
-import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
+import type Web3 from 'web3';
+import type { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from '../../model/networks/evms/evm.network';
-import { ERC1155Provider } from '../../model/networks/evms/nfts/erc1155.provider';
+import type { ERC1155Provider } from '../../model/networks/evms/nfts/erc1155.provider';
 import { NFTAsset } from '../../model/networks/evms/nfts/nftasset';
-import { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
-import { EVMSafe } from '../../model/networks/evms/safes/evm.safe';
+import type { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
+import type { EVMSafe } from '../../model/networks/evms/safes/evm.safe';
 import { WalletNetworkService } from '../network.service';
 import { WalletPrefsService } from '../pref.service';
-import { FetchAssetsEvent } from './erc721.service';
+import type { FetchAssetsEvent } from './erc721.service';
 import { EVMService } from './evm.service';
 
 type ERC1155Transfer = {
@@ -78,11 +78,14 @@ export class ERC1155Service {
     }
 
     // Lazy web3 init for angular bundle optimization
-    private getWeb3(): Web3 {
+    private async getWeb3(): Promise<Web3> {
         if (this.web3)
             return this.web3;
 
+        const EssentialsWeb3Provider = (await import('src/app/model/essentialsweb3provider')).EssentialsWeb3Provider;
         const trinityWeb3Provider = new EssentialsWeb3Provider(this.networkService.activeNetwork.value.getRPCUrl());
+
+        const Web3 = await lazyWeb3Import();
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI
@@ -95,7 +98,7 @@ export class ERC1155Service {
      */
     public async getCoinInfo(address: string): Promise<NFTResolvedInfo> {
         try {
-            const erc1155Contract = new (this.getWeb3()).eth.Contract(this.erc1155ABI, address);
+            const erc1155Contract = new (await this.getWeb3()).eth.Contract(this.erc1155ABI, address);
             Logger.log('wallet', 'erc1155Contract', erc1155Contract);
 
             const nftName = await erc1155Contract.methods.name().call();
@@ -129,7 +132,7 @@ export class ERC1155Service {
             try {
                 // Get transfer logs from the EVM node
                 // More info at: https://docs.alchemy.com/alchemy/guides/eth_getlogs#what-are-event-signatures
-                const erc1155Contract = new (this.getWeb3()).eth.Contract(this.erc1155ABI, contractAddress, { from: accountAddress });
+                const erc1155Contract = new (await this.getWeb3()).eth.Contract(this.erc1155ABI, contractAddress, { from: accountAddress });
                 let transferSingleEventTopic = this.web3.utils.sha3("TransferSingle(address,address,address,uint256,uint256)");
                 let transferInEvents = await erc1155Contract.getPastEvents('TransferSingle', {
                     // All blocks
@@ -234,7 +237,7 @@ export class ERC1155Service {
     public async createRawTransferERC1155Transaction(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string): Promise<any> {
         Logger.log("wallet", "Creating ERC1155 transfer transaction", networkWallet.network.name, senderAddress, nftAddress, nftAssetId, destinationAddress);
 
-        let web3 = this.evmService.getWeb3(networkWallet.network);
+        let web3 = await this.evmService.getWeb3(networkWallet.network);
 
         const erc1155Contract = new web3.eth.Contract(this.erc1155ABI, nftAddress, {
             from: senderAddress

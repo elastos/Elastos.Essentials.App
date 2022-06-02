@@ -2,28 +2,28 @@ import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin, StandardCoinName } from "src/app/wallet/model/coin";
-import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
-import { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
+import type { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
+import type { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { PrivateKeyType, WalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
-import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
+import type { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { NetworkAPIURLType } from "../../../../base/networkapiurltype";
-import { AnyNetworkWallet } from "../../../../base/networkwallets/networkwallet";
-import { UniswapCurrencyProvider } from "../../../../evms/uniswap.currencyprovider";
+import type { AnyNetworkWallet } from "../../../../base/networkwallets/networkwallet";
+import type { UniswapCurrencyProvider } from "../../../../evms/uniswap.currencyprovider";
 import { ElastosEVMNetwork } from "../../../network/elastos.evm.network";
 import { ElastosMainnetUniswapCurrencyProvider } from "../currency/elastos.uniswap.currency.provider";
 import { elastosMainnetElkBridgeProvider, elastosMainnetGlideBridgeProvider, elastosMainnetShadowTokenBridgeProvider } from "../earn/bridge.providers";
 import { elastosMainnetElkEarnProvider } from "../earn/earn.providers";
 import { elastosMainnetElkSwapProvider, elastosMainnetGlideSwapProvider } from "../earn/swap.providers";
-import { ElastosSmartChainLedgerNetworkWallet } from "../networkwallets/ledger/smartchain.networkwallet";
-import { ElastosSmartChainStandardNetworkWallet } from "../networkwallets/standard/smartchain.networkwallet";
 import { ElastosPasarERC1155Provider } from "../nfts/pasar.provider";
 
 export abstract class ElastosSmartChainNetworkBase extends ElastosEVMNetwork<WalletNetworkOptions> {
-  public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const ElastosSmartChainStandardNetworkWallet = (await import("../networkwallets/standard/smartchain.networkwallet")).ElastosSmartChainStandardNetworkWallet;
         return new ElastosSmartChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
       case WalletType.LEDGER:
+        const ElastosSmartChainLedgerNetworkWallet = (await import("../networkwallets/ledger/smartchain.networkwallet")).ElastosSmartChainLedgerNetworkWallet;
         return new ElastosSmartChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
       default:
         Logger.warn('wallet', 'Elastos Smart Chain does not support ', masterWallet.type);

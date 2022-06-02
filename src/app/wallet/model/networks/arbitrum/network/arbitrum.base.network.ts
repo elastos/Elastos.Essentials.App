@@ -3,13 +3,13 @@ import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { ArbitrumNetworkWallet } from "../networkwallets/standard/arbitrum.network.wallet";
 import { ArbitrumAPI, ArbitrumApiType } from "./arbitrum.api";
 
 export class ArbitrumBaseNetwork extends EVMNetwork {
-  protected newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  protected async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const ArbitrumNetworkWallet = (await import("../networkwallets/standard/arbitrum.network.wallet")).ArbitrumNetworkWallet;
         return new ArbitrumNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,

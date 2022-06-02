@@ -21,7 +21,6 @@ import { FriendsPage } from './pages/friends/friends.page';
 import { InvitePage } from './pages/invite/invite.page';
 import { ContactsRoutingModule } from './routing';
 
-
 @NgModule({
   declarations: [
     OptionsComponent,
@@ -46,7 +45,7 @@ import { ContactsRoutingModule } from './routing';
     FormsModule,
     IonicStorageModule.forRoot(),
     TranslateModule
- ],
+  ],
   bootstrap: [],
   entryComponents: [
     OptionsComponent,
@@ -59,4 +58,4 @@ import { ContactsRoutingModule } from './routing';
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ContactsModule {}
+export class ContactsModule { }

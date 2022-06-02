@@ -7,7 +7,6 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -20,7 +19,6 @@ import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainch
 import { ElastosStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/networkwallets/standard/elastos.networkwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { StandardCoinName } from '../../wallet/model/coin';
-import { Native } from '../../wallet/services/native.service';
 import { WalletService } from '../../wallet/services/wallet.service';
 @Injectable({
     providedIn: 'root'
@@ -47,11 +45,10 @@ export class VoteService {
     public depositAmount = 500000000000; // 5000 ELA
 
     constructor(
-        public native: Native,
         private walletManager: WalletService,
         public globalPopupService: GlobalPopupService,
         private nav: GlobalNavService,
-        private globalIntentService: GlobalIntentService,
+        private globalNavService: GlobalNavService,
         public jsonRPCService: GlobalJsonRPCService,
         private globalSwitchNetworkService: GlobalSwitchNetworkService,
         private globalElastosAPIService: GlobalElastosAPIService,
@@ -88,8 +85,10 @@ export class VoteService {
         if (!this.activeWallet) {
             const toCreateWallet = await this.globalPopupService.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
             if (toCreateWallet) {
-                this.native.go("/wallet/settings", {
-                    createWallet: true
+                void this.globalNavService.navigateTo(App.WALLET, "/wallet/settings", {
+                    state: {
+                        createWallet: true
+                    }
                 });
             }
             else {

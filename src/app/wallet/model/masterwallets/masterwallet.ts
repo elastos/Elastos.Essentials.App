@@ -193,12 +193,12 @@ export class StandardMasterWallet extends MasterWallet {
      * Returns the encrypted seed by default, or the decrypted one if the
      * wallet pay password is provided.
      */
-    public getSeed(decryptedWithPayPassword?: string): string {
+    public async getSeed(decryptedWithPayPassword?: string): Promise<string> {
         if (!this.getSafe().seed)
             return null;
 
         if (!decryptedWithPayPassword)
-            return this.getSafe().seed;
+            return await this.getSafe().seed;
         else
             return AESDecrypt(this.getSafe().seed, decryptedWithPayPassword);
     }
@@ -207,12 +207,12 @@ export class StandardMasterWallet extends MasterWallet {
      * Returns the encrypted mnemonic by default, or the decrypted one if the
      * wallet pay password is provided.
      */
-    public getMnemonic(decryptedWithPayPassword?: string): string {
+    public async getMnemonic(decryptedWithPayPassword?: string): Promise<string> {
         if (!this.getSafe().mnemonic)
             return null;
 
         if (!decryptedWithPayPassword)
-            return this.getSafe().mnemonic;
+            return await this.getSafe().mnemonic;
         else
             return AESDecrypt(this.getSafe().mnemonic, decryptedWithPayPassword);
     }
@@ -221,12 +221,12 @@ export class StandardMasterWallet extends MasterWallet {
      * Returns the encrypted private key by default, or the decrypted one if the
      * wallet pay password is provided.
      */
-    public getPrivateKey(decryptedWithPayPassword?: string): string {
+    public async getPrivateKey(decryptedWithPayPassword?: string): Promise<string> {
         if (!this.getSafe().privateKey)
             return null;
 
         if (!decryptedWithPayPassword)
-            return this.getSafe().privateKey;
+            return await this.getSafe().privateKey;
         else
             return AESDecrypt(this.getSafe().privateKey, decryptedWithPayPassword);
     }

@@ -23,7 +23,7 @@ export class WarningComponent implements OnInit {
   }
 
   public getDisplayableHeader() {
-    if(this.warning === 'delete') {
+    if (this.warning === 'delete') {
       return this.translate.instant('wallet.delete-wallet-confirm-title');
     } else {
       return this.translate.instant('launcher.backup-title');
@@ -31,7 +31,7 @@ export class WarningComponent implements OnInit {
   }
 
   public getDisplayableMessage() {
-    if(this.warning === 'delete') {
+    if (this.warning === 'delete') {
       return this.translate.instant('wallet.delete-wallet-confirm-subtitle');
     } else {
       return this.translate.instant('launcher.backup-message');

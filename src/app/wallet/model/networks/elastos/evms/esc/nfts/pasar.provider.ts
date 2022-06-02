@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Logger } from "src/app/logger";
-import { Contract } from "web3-eth-contract";
+import type { Contract } from "web3-eth-contract";
 import { ERC1155Provider } from "../../../../evms/nfts/erc1155.provider";
 import { NFTAsset } from "../../../../evms/nfts/nftasset";
 

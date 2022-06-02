@@ -1,28 +1,28 @@
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { StandardCoinName } from "src/app/wallet/model/coin";
-import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
-import { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
-import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
+import type { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
+import type { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
+import type { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
 import { ElastosMainChainWalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
-import { SPVNetworkConfig } from "../../../../../services/wallet.service";
+import type { SPVNetworkConfig } from "../../../../../services/wallet.service";
 import { NetworkAPIURLType } from "../../../base/networkapiurltype";
-import { AnyNetworkWallet } from "../../../base/networkwallets/networkwallet";
+import type { AnyNetworkWallet } from "../../../base/networkwallets/networkwallet";
 import { ElastosNetworkBase } from "../../network/elastos.base.network";
-import { ElastosMainChainLedgerNetworkWallet } from "../networkwallets/ledger/mainchain.networkwallet";
-import { ElastosMainChainStandardNetworkWallet } from "../networkwallets/standard/mainchain.networkwallet";
-import { ElastosMainChainStandardMultiSigNetworkWallet } from "../networkwallets/standardmultisig/mainchain.networkwallet";
 
 export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<ElastosMainChainWalletNetworkOptions> {
   public static networkKey: "elastos" = "elastos";
 
-  public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const ElastosMainChainStandardNetworkWallet = (await import("../networkwallets/standard/mainchain.networkwallet")).ElastosMainChainStandardNetworkWallet;
         return new ElastosMainChainStandardNetworkWallet(masterWallet as StandardMasterWallet, this);
       case WalletType.LEDGER:
+        const ElastosMainChainLedgerNetworkWallet = (await import("../networkwallets/ledger/mainchain.networkwallet")).ElastosMainChainLedgerNetworkWallet;
         return new ElastosMainChainLedgerNetworkWallet(masterWallet as LedgerMasterWallet, this);
       case WalletType.MULTI_SIG_STANDARD:
+        const ElastosMainChainStandardMultiSigNetworkWallet = (await import("../networkwallets/standardmultisig/mainchain.networkwallet")).ElastosMainChainStandardMultiSigNetworkWallet;
         return new ElastosMainChainStandardMultiSigNetworkWallet(masterWallet as StandardMultiSigMasterWallet, this);
       default:
         return null;

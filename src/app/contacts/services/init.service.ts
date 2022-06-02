@@ -5,7 +5,6 @@ import { GlobalService, GlobalServiceManager } from 'src/app/services/global.ser
 import { BackupService } from '../services/backup.service';
 import { IntentService } from '../services/intent.service';
 import { FriendsService } from './friends.service';
-
 @Injectable({
   providedIn: 'root'
 })

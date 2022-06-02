@@ -27,9 +27,9 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { MasterWallet } from '../model/masterwallets/masterwallet';
+import type { MasterWallet } from '../model/masterwallets/masterwallet';
 import { EVMNetwork } from '../model/networks/evms/evm.network';
-import { AnyNetwork } from '../model/networks/network';
+import type { AnyNetwork } from '../model/networks/network';
 import { Native } from './native.service';
 import { PopupProvider } from './popup.service';
 import { LocalStorage } from './storage.service';
@@ -88,13 +88,15 @@ export class WalletNetworkService {
 
         let savedNetworkKey = await this.localStorage.get('activenetwork') as string;
         const savedNetwork = await this.getNetworkByKey(savedNetworkKey);
-        if (!savedNetwork && useAsDefault) {
-            Logger.log("wallet", "WalletNetworkService - Using default network:", network);
-            await this.notifyNetworkChange(network); // Normally, elastos
-        }
-        else if (savedNetworkKey && savedNetworkKey === network.key) {
-            Logger.log("wallet", "WalletNetworkService - Reloading network:", savedNetwork);
-            await this.notifyNetworkChange(savedNetwork);
+        if (this.globalNetworksService.activeNetworkTemplate.value === network.networkTemplate) {
+            if (!savedNetwork && useAsDefault) {
+                Logger.log("wallet", "WalletNetworkService - Using default network:", network);
+                await this.notifyNetworkChange(network); // Normally, elastos
+            }
+            else if (savedNetworkKey && savedNetworkKey === network.key) {
+                Logger.log("wallet", "WalletNetworkService - Reloading network:", savedNetwork);
+                await this.notifyNetworkChange(savedNetwork);
+            }
         }
 
         // Order networks list alphabetically

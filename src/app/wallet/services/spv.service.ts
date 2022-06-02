@@ -211,7 +211,7 @@ export class SPVService {
         // was imported
         if (masterWallet.getSeed()) {
             // Decrypt the seed
-            let decryptedSeed = AESDecrypt(masterWallet.getSeed(), payPassword);
+            let decryptedSeed = await AESDecrypt(masterWallet.getSeed(), payPassword);
 
             let elastosNetworkOptions = masterWallet.getNetworkOptions("elastos") as ElastosMainChainWalletNetworkOptions;
 
@@ -230,7 +230,7 @@ export class SPVService {
         }
         else {
             // Decrypt the private key
-            let descryptedPrivateKey = AESDecrypt(masterWallet.getPrivateKey(), payPassword);
+            let descryptedPrivateKey = await AESDecrypt(masterWallet.getPrivateKey(), payPassword);
 
             // Import the seed as new SPV SDK wallet
             let spvWalletId = WalletHelper.createSPVMasterWalletId();

@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ToastController } from "@ionic/angular";
 import { BehaviorSubject, Subscription } from "rxjs";
+import { runDelayed } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
@@ -53,7 +54,7 @@ export class PacketService {
     });
 
     // Load public packets asynchrinously
-    void this.fetchPublicPackets();
+    runDelayed(() => this.fetchPublicPackets(), 5000);
   }
 
   public onUserSignOut() {

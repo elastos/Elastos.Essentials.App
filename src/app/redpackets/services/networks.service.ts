@@ -10,15 +10,16 @@ import { PublicNetworkInfo } from '../model/networks.model';
   providedIn: 'root'
 })
 export class NetworksService {
-  private supportedNetworks: PublicNetworkInfo[];
+  private supportedNetworks: PublicNetworkInfo[] = [];
 
   constructor(
     private http: HttpClient,
     private walletNetworkService: WalletNetworkService
   ) { }
 
-  public async init(): Promise<void> {
-    await this.fetchSupportedNetworks();
+  public init(): Promise<void> {
+    void this.fetchSupportedNetworks();
+    return;
   }
 
   /**

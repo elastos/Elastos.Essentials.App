@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Contract } from "@ethersproject/contracts";
-import { JsonRpcProvider } from "@ethersproject/providers";
-import { CurrencyAmount, Token } from "@uniswap/sdk-core";
+import type { JsonRpcProvider } from "@ethersproject/providers";
+import type { Token } from "@uniswap/sdk-core";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import BigNumber from 'bignumber.js';
+import { lazyCustomUniswapSDKImport, lazyEthersContractImport, lazyEthersJsonRPCProviderImport, lazyUniswapSDKCoreImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
-import { Pair, Trade } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
+import type { Pair } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
 import { ERC20Coin } from '../../model/coin';
 import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { LocalStorage } from '../storage.service';
@@ -62,10 +62,12 @@ export class UniswapCurrencyService {
     let referenceUSDcoin = currencyProvider.getReferenceUSDCoin();
     let wrappedNativeCoin = currencyProvider.getWrappedNativeCoin();
 
+    const { Token } = await lazyUniswapSDKCoreImport();
     let evaluatedToken = new Token(chainId, erc20coin.getContractAddress(), erc20coin.getDecimals(), erc20coin.getID(), erc20coin.getName());
     let stableCoinUSDToken = new Token(chainId, referenceUSDcoin.getContractAddress(), referenceUSDcoin.getDecimals(), referenceUSDcoin.getID(), referenceUSDcoin.getName());
     let wrappedNativeCoinToken = new Token(chainId, wrappedNativeCoin.getContractAddress(), wrappedNativeCoin.getDecimals(), wrappedNativeCoin.getID(), wrappedNativeCoin.getName());
 
+    const JsonRpcProvider = await lazyEthersJsonRPCProviderImport();
     let etherjsProvider = new JsonRpcProvider({ url: network.getRPCUrl() });
 
     let tradingPairs: Pair[] = [];
@@ -91,6 +93,10 @@ export class UniswapCurrencyService {
 
     // Fictive trade: purchase 10 USD worth of the token
     let readableAmountOut = 10;
+
+    const { Trade } = await lazyCustomUniswapSDKImport();
+
+    const { CurrencyAmount } = await lazyUniswapSDKCoreImport();
     let currencyAmountOut = CurrencyAmount.fromRawAmount(stableCoinUSDToken, new BigNumber(readableAmountOut).times(new BigNumber(10).pow(stableCoinUSDToken.decimals)).toFixed());
     let trades = Trade.bestTradeExactOut(tradingPairs, evaluatedToken, currencyAmountOut, { maxHops: 3, maxNumResults: 1 });
     //Logger.log('walletdebug', "TOKENS:", evaluatedToken.name, stableCoinUSDToken.name, wrappedNativeCoinToken.name);
@@ -136,11 +142,18 @@ export class UniswapCurrencyService {
     }
 
     try {
+      const { Pair } = await lazyCustomUniswapSDKImport();
+
       var address = Pair.getAddress(tokenA, tokenB, factoryAddress, initCodeHash);
+
+      const Contract = await lazyEthersContractImport();
       let _ref = await new Contract(address, IUniswapV2Pair.abi, provider).getReserves();
+
       var reserves0 = _ref[0],
         reserves1 = _ref[1];
       var balances = tokenA.sortsBefore(tokenB) ? [reserves0, reserves1] : [reserves1, reserves0];
+
+      const { CurrencyAmount } = await lazyUniswapSDKCoreImport();
       let currencyAmount0 = CurrencyAmount.fromRawAmount(tokenA, balances[0]);
       let currencyAmount1 = CurrencyAmount.fromRawAmount(tokenB, balances[1]);
 

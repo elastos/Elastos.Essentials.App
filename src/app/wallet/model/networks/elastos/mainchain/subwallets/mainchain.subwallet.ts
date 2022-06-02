@@ -103,8 +103,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return "ELA";
     }
 
-    public isAddressValid(address: string) {
-        return WalletUtil.isELAAddress(address);
+    public async isAddressValid(address: string): Promise<boolean> {
+        return await WalletUtil.isELAAddress(address);
     }
 
     public getRawBalanceSpendable(): BigNumber {
@@ -241,12 +241,12 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return await transactionInfo;
     }
 
-    public getTransactionInfoForOfflineTransaction(transaction: AnyOfflineTransaction): TransactionInfo {
+    public async getTransactionInfoForOfflineTransaction(transaction: AnyOfflineTransaction): Promise<TransactionInfo> {
         let receiverAddress: string = null;
         let amount: BigNumber = null;
         try {
             let buffer = Buffer.from(transaction.rawTx.Data, "base64");
-            let decoded = ELATransactionCoder.decodeTx(buffer, false);
+            let decoded = await ELATransactionCoder.decodeTx(buffer, false);
             if (decoded && decoded.Outputs && decoded.Outputs.length > 0) {
                 receiverAddress = decoded.Outputs[0].Address;
                 amount = new BigNumber(decoded.Outputs[0].Value).dividedBy(Config.SELA);

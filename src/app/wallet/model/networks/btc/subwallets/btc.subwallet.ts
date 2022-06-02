@@ -63,8 +63,8 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return 'BTC';
     }
 
-    public isAddressValid(address: string) {
-        return WalletUtil.isBTCAddress(address);
+    public async isAddressValid(address: string): Promise<boolean> {
+        return await WalletUtil.isBTCAddress(address);
     }
 
     public async createAddress(): Promise<string> {

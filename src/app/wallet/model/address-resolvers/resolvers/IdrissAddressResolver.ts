@@ -1,10 +1,8 @@
-import { IdrissCrypto } from "idriss-crypto/lib/browser";
 import { Util } from "src/app/model/util";
 import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { Address } from '../addresses/Address';
 import { IdrissAddress } from "../addresses/IdrissAddress";
 import { Resolver } from "./Resolver";
-
 export class IdrissResolver extends Resolver {
     constructor() {
         super();
@@ -28,6 +26,7 @@ export class IdrissResolver extends Resolver {
         name = name.trim();
 
         try {
+            const IdrissCrypto = (await import("idriss-crypto")).IdrissCrypto;
             const idriss = new IdrissCrypto();
             const result = await idriss.resolve(name);
             if (result) {

@@ -21,7 +21,6 @@
  */
 
 import BigNumber from "bignumber.js";
-import { SmartBuffer } from "smart-buffer";
 import { ELAAddressHelper } from "./ela.address";
 
 type DecodedTx = {
@@ -38,7 +37,7 @@ const VERSION9 = 9;
 
 export class ELATransactionCoder {
 
-  static decodeTx(encodedTx, includePrograms) {
+  static async decodeTx(encodedTx, includePrograms): Promise<any> {
     if (!Buffer.isBuffer(encodedTx)) {
       throw Error('encodedTx must be a Buffer');
     }
@@ -56,6 +55,7 @@ export class ELATransactionCoder {
       Programs: undefined
     };
 
+    const SmartBuffer = (await import("smart-buffer")).SmartBuffer;
     const smartEncodedTx = SmartBuffer.fromBuffer(encodedTx);
 
     const typeOrVersion = smartEncodedTx.readInt8();
@@ -137,7 +137,7 @@ export class ELATransactionCoder {
 
       const programHash = smartEncodedTx.readBuffer(21);
       // console.log('decodeTx.programHash', programHash.toString('hex'));
-      Output.Address = ELAAddressHelper.getAddressFromProgramHash(programHash);
+      Output.Address = await ELAAddressHelper.getAddressFromProgramHash(programHash);
       // console.log('decodeTx.Address', Output.Address);
       if (decodedTx.Version >= VERSION9) {
         Output.Type = smartEncodedTx.readUInt8();
@@ -199,7 +199,7 @@ export class ELATransactionCoder {
     return decodedTx;
   }
 
-  static encodeTx(decodedTx, includePrograms) {
+  static async encodeTx(decodedTx, includePrograms): Promise<string> {
     if (decodedTx === undefined) {
       throw Error('decodedTx is a required parameter.');
     }
@@ -209,6 +209,7 @@ export class ELATransactionCoder {
 
     // console.log('encodeTx.includePrograms', includePrograms);
 
+    const SmartBuffer = (await import("smart-buffer")).SmartBuffer;
     const encodedTx = new SmartBuffer();
 
     // https://github.com/elastos/Elastos.ELA/blob/master/core/types/transaction.go#L151

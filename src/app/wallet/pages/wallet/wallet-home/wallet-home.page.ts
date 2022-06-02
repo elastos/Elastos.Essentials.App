@@ -309,9 +309,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.walletUIService.chooseActiveWallet();
     }
 
-    public selectActiveWallet(wallet: AnyNetworkWallet) {
+    /* public selectActiveWallet(wallet: AnyNetworkWallet) {
         void this.walletManager.setActiveNetworkWallet(wallet);
-    }
+    } */
 
     public selectActiveNetwork(network: AnyNetwork) {
         // TODO: Use network object, not string

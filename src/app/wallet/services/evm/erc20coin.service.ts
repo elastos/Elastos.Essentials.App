@@ -53,9 +53,9 @@ export class ERC20CoinService {
         this.erc20ABI = require('../../../../assets/wallet/ethereum/StandardErc20ABI.json');
     }
 
-    public async getCoinDecimals(network: AnyNetwork, address: string) {
+    public async getCoinDecimals(network: AnyNetwork, address: string): Promise<number> {
         let coinDecimals = 0;
-        const erc20Contract = new (this.evmService.getWeb3(network).eth.Contract)(this.erc20ABI, address);
+        const erc20Contract = new ((await this.evmService.getWeb3(network)).eth.Contract)(this.erc20ABI, address);
         if (erc20Contract) {
             coinDecimals = await erc20Contract.methods.decimals().call();
             Logger.log('wallet', 'Coin decimals:', coinDecimals);
@@ -65,7 +65,7 @@ export class ERC20CoinService {
 
     public async getCoinInfo(network: AnyNetwork, address: string, ethAccountAddress: string) {
         try {
-            const erc20Contract = new (this.evmService.getWeb3(network).eth.Contract)(this.erc20ABI, address, /* { from: ethAccountAddress } */);
+            const erc20Contract = new ((await this.evmService.getWeb3(network)).eth.Contract)(this.erc20ABI, address, /* { from: ethAccountAddress } */);
             Logger.log('wallet', 'erc20Contract', erc20Contract);
 
             const coinName = await erc20Contract.methods.name().call();
@@ -116,7 +116,7 @@ export class ERC20CoinService {
          */
         let fromAddress = senderAddress;
         let toAddress = "0x298163B65453Dcd05418A9a5333E4605eDA6D998"; // Fake address, doesn't impact the transfer cost
-        let web3 = EVMService.instance.getWeb3(network);
+        let web3 = await EVMService.instance.getWeb3(network);
         const erc20Contract = new web3.eth.Contract(this.erc20ABI, tokenAddress, { from: fromAddress });
         const method = erc20Contract.methods.transfer(toAddress, web3.utils.toBN(1));
 

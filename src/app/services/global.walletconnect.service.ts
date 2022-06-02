@@ -1,7 +1,8 @@
 import { Injectable, NgZone } from '@angular/core';
-import WalletConnect from "@walletconnect/client";
+import type WalletConnect from "@walletconnect/client";
 import isUtf8 from "isutf8";
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { lazyWalletConnectImport } from '../helpers/import.helper';
 import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
@@ -236,6 +237,7 @@ export class GlobalWalletConnectService extends GlobalService {
       };
     }
 
+    const WalletConnect = await lazyWalletConnectImport();
     let connector = new WalletConnect(
       {
         uri: uri,
@@ -365,6 +367,8 @@ export class GlobalWalletConnectService extends GlobalService {
 
   public async killAllSessions(): Promise<void> {
     let sessions = await this.loadSessions();
+
+    const WalletConnect = await lazyWalletConnectImport();
 
     Logger.log("walletconnect", "Killing " + sessions.length + " sessions from persistent storage", sessions);
     // Kill stored connections
@@ -867,6 +871,8 @@ export class GlobalWalletConnectService extends GlobalService {
 
   private async restoreSessions() {
     let sessions = await this.loadSessions();
+
+    const WalletConnect = await lazyWalletConnectImport();
 
     Logger.log("walletconnect", "Restoring " + sessions.length + " sessions from persistent storage", sessions);
     for (let session of sessions) {

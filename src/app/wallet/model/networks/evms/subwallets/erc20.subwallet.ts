@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
 import { GlobalRedPacketServiceAddresses } from 'src/app/config/globalconfig';
+import { lazyWeb3Import } from 'src/app/helpers/import.helper';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { TranslationService } from 'src/app/identity/services/translation.service';
 import { Logger } from 'src/app/logger';
-import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
@@ -13,7 +13,7 @@ import { BridgeService } from 'src/app/wallet/services/evm/bridge.service';
 import { EarnService } from 'src/app/wallet/services/evm/earn.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { SwapService } from 'src/app/wallet/services/evm/swap.service';
-import Web3 from 'web3';
+import type Web3 from 'web3';
 import { Config } from '../../../../config/Config';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Coin, CoinID, CoinType, ERC20Coin } from '../../../coin';
@@ -21,16 +21,16 @@ import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
-import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import type { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { AddressUsage } from '../../../safes/addressusage';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { SerializedSubWallet, SubWallet } from '../../base/subwallets/subwallet';
-import { EVMNetwork } from '../evm.network';
+import type { EVMNetwork } from '../evm.network';
 import type { EthTransaction } from '../evm.types';
 import type { AnyEVMNetworkWallet, EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
-import { EVMSafe } from '../safes/evm.safe';
+import type { EVMSafe } from '../safes/evm.safe';
 
 export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     private network: EVMNetwork;
@@ -88,7 +88,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         await super.initialize();
 
         // Get Web3 and the ERC20 contract ready
+        const EssentialsWeb3Provider = (await import('src/app/model/essentialsweb3provider')).EssentialsWeb3Provider;
         const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl);
+
+        const Web3 = await lazyWeb3Import();
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI
@@ -172,7 +175,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return this.web3;
     }
 
-    public isAddressValid(address: string) {
+    public isAddressValid(address: string): Promise<boolean> {
         return WalletUtil.isEVMAddress(address);
     }
 

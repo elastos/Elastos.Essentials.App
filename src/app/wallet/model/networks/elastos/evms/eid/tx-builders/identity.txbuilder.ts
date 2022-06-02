@@ -27,7 +27,7 @@ export class IdentityTransactionBuilder extends EVMTransactionBuilder {
       }
     ];
 
-    const publishDIDContract = new (this.getWeb3().eth.Contract)(contractAbi as any, Config.ETHDID_CONTRACT_ADDRESS);
+    const publishDIDContract = new ((await this.getWeb3()).eth.Contract)(contractAbi as any, Config.ETHDID_CONTRACT_ADDRESS);
     const gasPrice = await this.getGasPrice();
     const method = publishDIDContract.methods.publishDidTransaction(payload);
     let gasLimit = 200000;

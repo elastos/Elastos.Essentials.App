@@ -1,12 +1,11 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
-import { TabnavPage } from "./tabnav.page";
-import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
-import { ComponentsModule } from "src/app/launcher/components/components.module";
 import { CommonModule } from "@angular/common";
-import { TranslateModule } from "@ngx-translate/core";
-import { IonicModule } from "@ionic/angular";
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { RouterModule, Routes } from "@angular/router";
+import { IonicModule } from "@ionic/angular";
+import { TranslateModule } from "@ngx-translate/core";
+import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
+import { TabnavPage } from "./tabnav.page";
 
 const routes: Routes = [
   {
@@ -18,7 +17,7 @@ const routes: Routes = [
         children: [
           {
             path: "",
-            loadChildren: ()=>import('../myprofile/module').then(m => m.MyProfileModule)
+            loadChildren: () => import('../myprofile/module').then(m => m.MyProfileModule)
           },
         ],
       },
@@ -27,7 +26,7 @@ const routes: Routes = [
         children: [
           {
             path: "",
-            loadChildren: ()=>import('../profile/module').then(m => m.ProfileModule)
+            loadChildren: () => import('../profile/module').then(m => m.ProfileModule)
           },
         ],
       },
@@ -36,7 +35,7 @@ const routes: Routes = [
         children: [
           {
             path: "",
-            loadChildren: ()=>import('../credentials/module').then(m => m.CredentialsModule)
+            loadChildren: () => import('../credentials/module').then(m => m.CredentialsModule)
           },
         ],
       },
@@ -48,7 +47,6 @@ const routes: Routes = [
   imports: [
     IonicModule,
     SharedComponentsModule,
-    ComponentsModule,
     FormsModule,
     CommonModule,
     TranslateModule,
@@ -58,4 +56,4 @@ const routes: Routes = [
   declarations: [TabnavPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class TabsnavPageModule {}
+export class TabsnavPageModule { }

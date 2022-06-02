@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { EthTransactionComponentModule } from 'src/app/wallet/components/eth-transaction/module';
 import { PayPage } from './pay';
 
 @NgModule({
@@ -15,10 +16,8 @@ import { PayPage } from './pay';
     FormsModule,
     TranslateModule,
     SharedComponentsModule,
-    RouterModule.forChild([{
-      path: '',
-      component: PayPage,
-    }])
+    EthTransactionComponentModule,
+    RouterModule.forChild([{ path: '', component: PayPage, }])
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

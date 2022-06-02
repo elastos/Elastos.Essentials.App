@@ -50,7 +50,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     const activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
     this.localStorageKey = this.key + '-' + activeNetworkTemplate;
 
-    await this.refreshCoins();
+    await this.initCoins();
   }
 
   public getDefaultWalletNetworkOptions(): WalletNetworkOptions {
@@ -79,10 +79,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     return this.builtInCoins || [];
   }
 
-
-  private async refreshCoins() {
-    Logger.log("wallet", "Coin service - refreshing available coins");
-
+  private async initCoins() {
     this.availableCoins = [];
 
     // Add default ERC20 tokens built-in essentials

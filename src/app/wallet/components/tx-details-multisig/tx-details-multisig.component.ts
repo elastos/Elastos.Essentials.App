@@ -59,12 +59,9 @@ export class TxDetailsMultiSigComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    console.log("TxDetailsMultiSigComponent ionViewWillEnter", this.offlineTransaction)
     // Get the most recent tx info stored in the service, and update our local offline transaction
     this.fetchingTxInfo = true;
     let txInfo = await this.multiSigService.fetchPendingTransaction(this.offlineTransaction.transactionKey);
-
-    console.log("TxDetailsMultiSigComponent got txinfo", txInfo)
 
     // Update our local model
     if (txInfo && txInfo.rawTransaction) {

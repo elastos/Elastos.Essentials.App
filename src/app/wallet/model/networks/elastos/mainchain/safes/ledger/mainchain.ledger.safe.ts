@@ -64,7 +64,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
 
   public async signTransaction(subWallet: AnySubWallet, tx: any, transfer: Transfer): Promise<SignTransactionResult> {
     // TODO: use the elastos-mainchain-app ledger 'app' to talk to the ELA ledger app to sign
-    const rawTx = ELATransactionCoder.encodeTx(tx, false);
+    const rawTx = await ELATransactionCoder.encodeTx(tx, false);
     if (Math.ceil(rawTx.length / 2) > MAX_TX_SIZE) {
       Logger.warn('wallet', 'MainChainLedgerSafe createPaymentTransaction: TX size too big') // if TX size too big, try less UTXOs
     }
@@ -81,7 +81,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     }
 
     const signature = Buffer.from(response.signature, 'hex');
-    const encodedTx = ELATransactionSigner.addSignatureToTx(tx, this.publicKey, signature);
+    const encodedTx = await ELATransactionSigner.addSignatureToTx(tx, this.publicKey, signature);
     Logger.warn('wallet', 'MainChainLedgerSafe encodedTx:', encodedTx);
     signTransactionResult.signedTransaction = encodedTx
     return signTransactionResult;

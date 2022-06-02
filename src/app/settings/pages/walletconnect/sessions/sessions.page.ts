@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DeveloperService } from '../../../services/developer.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SettingsService } from '../../../services/settings.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import type WalletConnect from '@walletconnect/client';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
-import WalletConnect from '@walletconnect/client';
+import { DeveloperService } from '../../../services/developer.service';
+import { SettingsService } from '../../../services/settings.service';
 
 @Component({
   selector: 'app-sessions',

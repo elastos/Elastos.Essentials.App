@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { DIDService } from 'src/app/identity/services/did.service';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -22,19 +23,27 @@ export class SuggestionService {
     public blockWaitingDict = {};
     public currentSuggestion: SuggestionDetail = null;
     public selfPublicKey: string;
+    private activatedDidSub: Subscription = null;
 
     constructor(
         private http: HttpClient,
         private nav: GlobalNavService,
+        private didService: DIDService,
         public jsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) { }
 
     init() {
-        this.selfPublicKey = void Util.getSelfPublicKey();
+        // Wait for the main DID to be loaded before doing anything
+        this.activatedDidSub = this.didService.activatedDid.subscribe(activeDid => {
+            if (activeDid) {
+                this.selfPublicKey = void Util.getSelfPublicKey();
+            }
+        });
     }
 
     public stop() {
+        this.activatedDidSub.unsubscribe();
         this.allResults = [];
         this.allSearchResults = [];
         this.pageNumbersLoaded = 0;
@@ -282,12 +291,12 @@ export class SuggestionService {
     private getRegisterSideChainPayload(data: any, suggestionDetail: SuggestionDetail): any {
         let payload = this.getPayloadCommon(data);
         payload.SidechainInfo = {
-                SideChainName: suggestionDetail.sideChainName,
-                MagicNumber: suggestionDetail.magicNumber,
-                GenesisHash: suggestionDetail.genesisHash,
-                ExchangeRate: Util.accMul(suggestionDetail.exchangeRate, Config.SELA),
-                EffectiveHeight: suggestionDetail.effectiveHeight,
-                ResourcePath: suggestionDetail.resourcePath,
+            SideChainName: suggestionDetail.sideChainName,
+            MagicNumber: suggestionDetail.magicNumber,
+            GenesisHash: suggestionDetail.genesisHash,
+            ExchangeRate: Util.accMul(suggestionDetail.exchangeRate, Config.SELA),
+            EffectiveHeight: suggestionDetail.effectiveHeight,
+            ResourcePath: suggestionDetail.resourcePath,
         }
         return payload;
     }
@@ -321,19 +330,19 @@ export class SuggestionService {
         if (type == "secretarygeneral" && status != 'proposed') {
             if (!suggestionDetail.newSecretarySignature &&
                 (!(Util.isSelfDid(suggestionDetail.did) && !Util.isSelfDid(suggestionDetail.newSecretaryDID))
-                || (suggestionDetail.signature && Util.isSelfDid(suggestionDetail.newSecretaryDID)))) {
-                    suggestionDetail.status = "unsigned";
+                    || (suggestionDetail.signature && Util.isSelfDid(suggestionDetail.newSecretaryDID)))) {
+                suggestionDetail.status = "unsigned";
             }
         }
-        else  if (type == "changeproposalowner" && status != 'proposed') {
+        else if (type == "changeproposalowner" && status != 'proposed') {
             if (!this.selfPublicKey) {
                 this.selfPublicKey = await Util.getSelfPublicKey();
             }
 
             if (!suggestionDetail.newOwnerSignature &&
                 (!(Util.isSelfDid(suggestionDetail.did) && (suggestionDetail.newOwnerPublicKey != this.selfPublicKey))
-                || (suggestionDetail.signature && (suggestionDetail.newOwnerPublicKey == this.selfPublicKey)))) {
-                    suggestionDetail.status = "unsigned";
+                    || (suggestionDetail.signature && (suggestionDetail.newOwnerPublicKey == this.selfPublicKey)))) {
+                suggestionDetail.status = "unsigned";
             }
         }
         return suggestionDetail.status

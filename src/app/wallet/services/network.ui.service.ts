@@ -48,6 +48,8 @@ export class WalletNetworkUIService {
     /**
      * Lets user pick a network in the list of all available networks.
      * Promise resolves when a new network is chosen or when cancelled.
+     * 
+     * @dependson NetworkChooserComponentModule
      */
     async chooseActiveNetwork(): Promise<boolean> {
         let options: NetworkChooserComponentOptions = {

@@ -1,18 +1,16 @@
 import { Logger } from "src/app/logger";
-import { SPVNetworkConfig } from "../../../../services/wallet.service";
-import { CoinID } from "../../../coin";
+import type { SPVNetworkConfig } from "../../../../services/wallet.service";
+import type { CoinID } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
 import { SwapProvider } from "../../../earn/swapprovider";
-import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
-import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
+import type { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
+import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../../../masterwallets/wallet.types";
 import { WalletCreateType } from "../../../walletaccount";
-import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
-import { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
+import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
+import type { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
 import { Network } from "../../network";
-import { LedgerBTCNetworkWallet } from "../networkwallets/ledger/ledger.btc.networkwallet";
-import { StandardBTCNetworkWallet } from "../networkwallets/standard/standard.btc.networkwallet";
 
 export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
   public static networkKey: "btc" = "btc";
@@ -39,11 +37,13 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
     }
   }
 
-  public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const StandardBTCNetworkWallet = (await import("../networkwallets/standard/standard.btc.networkwallet")).StandardBTCNetworkWallet;
         return new StandardBTCNetworkWallet(masterWallet as StandardMasterWallet, this);
       case WalletType.LEDGER:
+        const LedgerBTCNetworkWallet = (await import("../networkwallets/ledger/ledger.btc.networkwallet")).LedgerBTCNetworkWallet;
         return new LedgerBTCNetworkWallet(masterWallet as LedgerMasterWallet, this);
       default:
         Logger.warn('wallet', 'BTC does not support ', masterWallet.type);

@@ -3,6 +3,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -29,8 +30,11 @@ export class FavoritesService {
         private globalStorageService: GlobalStorageService
     ) { }
 
-    public async init(): Promise<void> {
-        await this.loadFavorites();
+    public init(): Promise<void> {
+        // Don't block, we cant wait 1-2 secs at boot before loading this.
+        // User may not add new favorites during this time
+        runDelayed(() => this.loadFavorites(), 2000);
+        return;
     }
 
     private async loadFavorites(): Promise<void> {

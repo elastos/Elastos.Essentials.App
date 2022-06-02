@@ -23,13 +23,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { lazyWeb3Import } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
-import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
-import Web3 from 'web3';
-import { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
+import type Web3 from 'web3';
+import type { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
 import { NFTAsset } from '../../model/networks/evms/nfts/nftasset';
-import { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
-import { EVMSafe } from '../../model/networks/evms/safes/evm.safe';
+import type { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
+import type { EVMSafe } from '../../model/networks/evms/safes/evm.safe';
 import { WalletNetworkService } from '../network.service';
 import { EVMService } from './evm.service';
 
@@ -83,11 +83,14 @@ export class ERC721Service {
     }
 
     // Lazy web3 init for angular bundle optimization
-    private getWeb3(): Web3 {
+    private async getWeb3(): Promise<Web3> {
         if (this.web3)
             return this.web3;
 
+        const EssentialsWeb3Provider = (await import('src/app/model/essentialsweb3provider')).EssentialsWeb3Provider;
         const trinityWeb3Provider = new EssentialsWeb3Provider(this.networkService.activeNetwork.value.getRPCUrl());
+
+        const Web3 = await lazyWeb3Import();
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI
@@ -97,7 +100,7 @@ export class ERC721Service {
 
     public async getCoinInfo(address: string): Promise<NFTResolvedInfo> {
         try {
-            const erc721Contract = new (this.getWeb3()).eth.Contract(this.erc721ABI, address);
+            const erc721Contract = new (await this.getWeb3()).eth.Contract(this.erc721ABI, address);
             Logger.log('wallet', 'erc721Contract', erc721Contract);
 
             const nftName = await erc721Contract.methods.name().call();
@@ -125,7 +128,7 @@ export class ERC721Service {
 
         void (async () => {
             let assetsCouldBeRetrieved = false;
-            const erc721Contract = new (this.getWeb3()).eth.Contract(this.erc721ABI, contractAddress, { from: accountAddress });
+            const erc721Contract = new (await this.getWeb3()).eth.Contract(this.erc721ABI, contractAddress, { from: accountAddress });
 
             // Make sure this is a enumerable NFT - If not, we can't get the assets.
             // Problem: some contracts don't even implement supportsInterface().
@@ -234,7 +237,7 @@ export class ERC721Service {
         try {
             // Get transfer logs from the EVM node
             // More info at: https://docs.alchemy.com/alchemy/guides/eth_getlogs#what-are-event-signatures
-            const erc721Contract = new (this.getWeb3()).eth.Contract(this.erc721ABI, contractAddress, { from: accountAddress });
+            const erc721Contract = new (await this.getWeb3()).eth.Contract(this.erc721ABI, contractAddress, { from: accountAddress });
             let transferEventTopic = this.web3.utils.sha3("Transfer(address,address,uint256)");
             let transferInEvents = await erc721Contract.getPastEvents('Transfer', {
                 // All blocks
@@ -427,7 +430,7 @@ export class ERC721Service {
     public async createRawTransferERC721Transaction(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string): Promise<any> {
         Logger.log("wallet", "Creating ERC721 transfer transaction", networkWallet.network.name, senderAddress, nftAddress, nftAssetId, destinationAddress);
 
-        let web3 = this.evmService.getWeb3(networkWallet.network);
+        let web3 = await this.evmService.getWeb3(networkWallet.network);
 
         const erc721Contract = new web3.eth.Contract(this.erc721ABI, nftAddress, {
             from: senderAddress

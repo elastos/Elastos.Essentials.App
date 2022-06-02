@@ -1,5 +1,4 @@
 import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, Injectable, NgModule, Provider } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy } from '@angular/router';
@@ -20,7 +19,6 @@ import { environment } from 'src/environments/environment';
 import { TranslationsLoader } from 'src/translationsloader';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SharedComponentsModule } from './components/sharedcomponents.module';
 import { ContactsInitModule } from './contacts/init.module';
 import { DeveloperToolsInitModule } from './developertools/init.module';
 import { DIDSessionsInitModule } from './didsessions/init.module';
@@ -224,7 +222,7 @@ if (environment.production) {
     BrowserModule,
     BrowserAnimationsModule,
     //HttpClientModule,
-    SharedComponentsModule,
+    //SharedComponentsModule,
     IonicModule.forRoot({
       mode: 'ios',
       scrollAssist: false,
@@ -232,7 +230,7 @@ if (environment.production) {
       navAnimation: iosTransitionAnimation
     }),
     AppRoutingModule,
-    FormsModule,
+    //FormsModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

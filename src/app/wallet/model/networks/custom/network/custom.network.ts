@@ -1,9 +1,8 @@
-import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
+import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
-import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
+import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { CustomNetworkWallet } from "../networkwallets/standard/custom.network.wallet";
 
 /**
  * Custom EVM compatible network.
@@ -23,9 +22,10 @@ export class CustomNetwork extends EVMNetwork {
     this.mainRpcUrl = rpcUrl;
   }
 
-  public newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const CustomNetworkWallet = (await import("../networkwallets/standard/custom.network.wallet")).CustomNetworkWallet;
         return new CustomNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,

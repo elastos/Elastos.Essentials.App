@@ -1,14 +1,14 @@
 import { Injectable, NgZone } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-
 import * as moment from 'moment';
-import { HiveService } from './hive.service';
 import { Logger } from 'src/app/logger';
-import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { App } from "src/app/model/app.enum"
+import { App } from "src/app/model/app.enum";
 import { Events } from 'src/app/services/events.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { HiveService } from './hive.service';
+
 
 @Injectable({
     providedIn: 'root'
@@ -26,8 +26,8 @@ export class BackgroundService {
     ) {
     }
 
-    public init() {
-        Logger.log("HiveManager", "Background service: initializing");
+    public init() {
+        //Logger.log("HiveManager", "Background service is initializing");
         //void this.getActivePaymentPlan();
     }
 
@@ -48,15 +48,15 @@ export class BackgroundService {
         Logger.log("HiveManager", 'Background service: Time-checked for expiration', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
         const today = new Date();
-        if(lastCheckedTime) {
-            if(!moment(lastCheckedTime).isSame(today, 'd')) {
-                this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
+        if (lastCheckedTime) {
+            if (!moment(lastCheckedTime).isSame(today, 'd')) {
+                await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
                 this.checkPlanExpiration(today);
             } else {
                 Logger.log("hivemanager", 'Background service: Plan expiration already checked today');
             }
         } else {
-            this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
+            await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
             this.checkPlanExpiration(today);
         }
     }
@@ -66,14 +66,14 @@ export class BackgroundService {
         const planExpiration = moment(this.activePaymentPlan.getEndTime() * 1000);
 
         Logger.log("hivemanager", 'Plan expiration', planExpiration.format('MMMM Do YYYY, h:mm'));
-        if(planExpiration.isBetween(today, weekFromNow)) {
+        if (planExpiration.isBetween(today, weekFromNow)) {
             const notification = {
                 key: 'storagePlanExpiring',
                 title: 'Storage Plan Expiring',
                 message: 'You have a storage plan expiring soon. Please renew your plan before the expiration time.',
                 app: App.HIVE_MANAGER
             };
-            this.notificationsManager.sendNotification(notification);
+            void this.notificationsManager.sendNotification(notification);
         }
     }
 }

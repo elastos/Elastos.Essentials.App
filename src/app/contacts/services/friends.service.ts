@@ -175,7 +175,7 @@ export class FriendsService extends GlobalService {
   *************************************************/
   getContactNotifierContacts() {
     void this.contactNotifier.getAllContacts().then(async (notifierContacts) => {
-      Logger.log("Contacts", 'Found all Notifier Contacts', notifierContacts);
+      //Logger.log("Contacts", 'Found all Notifier Contacts', notifierContacts);
       notifierContacts.forEach((notifierContact) => {
         const alreadyAddedContact = this.contacts.find((contact) => contact.id === notifierContact.getDID());
         if (!alreadyAddedContact) {

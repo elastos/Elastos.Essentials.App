@@ -24,7 +24,6 @@ import { Network, validate } from 'bitcoin-address-validation';
 import moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
-import Web3 from 'web3';
 import { CurrencyService } from '../services/currency.service';
 
 export class WalletUtil {
@@ -103,7 +102,8 @@ export class WalletUtil {
     return validate(address, network.toLowerCase() as Network)
   }
 
-  public static isEVMAddress(address: string) {
-    return Web3.utils.isAddress(address);
+  public static async isEVMAddress(address: string): Promise<boolean> {
+    const isAddress = (await import('web3-utils')).isAddress;
+    return isAddress(address);
   }
 }

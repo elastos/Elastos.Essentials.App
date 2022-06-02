@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { ComponentsModule } from 'src/app/wallet/components/components.module';
+import { TxDetailsMultisigComponentModule } from 'src/app/wallet/components/tx-details-multisig/module';
 import { CoinTxInfoPage } from './coin-tx-info.page';
 
 @NgModule({
@@ -17,6 +18,7 @@ import { CoinTxInfoPage } from './coin-tx-info.page';
         FormsModule,
         IonicModule,
         TranslateModule,
+        TxDetailsMultisigComponentModule,
         RouterModule.forChild([{ path: '', component: CoinTxInfoPage }])
     ],
     exports: [RouterModule],

@@ -25,34 +25,26 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
 /****************** Ionic ******************/
 import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
-/****************** Services ******************/
-import { ComponentsModule } from './components/components.module';
 import { WalletRoutingModule } from './routing';
 import { Native } from './services/native.service';
 import { PopupProvider } from './services/popup.service';
 import { LocalStorage } from './services/storage.service';
-
-
 @NgModule({
-    declarations: [
-    ],
-    entryComponents: [
-    ],
+    declarations: [],
+    entryComponents: [],
     imports: [
         CommonModule,
         HttpClientModule,
         IonicModule,
         WalletRoutingModule,
         IonicStorageModule,
-        FormsModule,
-        ComponentsModule,
+        //ComponentsModule,
         HttpClientModule,
         TranslateModule
     ],

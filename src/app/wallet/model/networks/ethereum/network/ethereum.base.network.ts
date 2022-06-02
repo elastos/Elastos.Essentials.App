@@ -1,14 +1,14 @@
 
-import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
+import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
-import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
+import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { EthereumStandardNetworkWallet } from "../networkwallets/standard/ethereum.network.wallet";
 
 export class EthereumBaseNetwork extends EVMNetwork {
-  protected newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  protected async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const EthereumStandardNetworkWallet = (await import("../networkwallets/standard/ethereum.network.wallet")).EthereumStandardNetworkWallet;
         return new EthereumStandardNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,

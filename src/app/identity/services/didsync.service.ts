@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from "@angular/core";
 import { ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
 import { runDelayed } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { NetworkException } from "src/app/model/exceptions/network.exception";
@@ -35,6 +35,8 @@ export class DIDSyncService implements GlobalService {
    */
   public didNeedsToBePublishedStatus = new BehaviorSubject<boolean>(false);
 
+  private activatedDidSub: Subscription = null;
+
   constructor(
     public zone: NgZone,
     private translate: TranslateService,
@@ -56,14 +58,20 @@ export class DIDSyncService implements GlobalService {
   }
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    // Fetch online DID document for this user.
-    // Give some time to release the Essentials startup from too many operations.
-    runDelayed(() => this.didDocumentsService.fetchActiveUserOnlineDIDDocument(), 3000);
+    // Wait for the main DID to be loaded before doing anything
+    this.activatedDidSub = this.didService.activatedDid.subscribe(activeDid => {
+      if (activeDid) {
+        // Fetch online DID document for this user.
+        // Give some time to release the Essentials startup from too many operations.
+        runDelayed(() => this.didDocumentsService.fetchActiveUserOnlineDIDDocument(), 3000);
+      }
+    });
 
     return;
   }
 
   onUserSignOut(): Promise<void> {
+    this.activatedDidSub.unsubscribe();
     return;
   }
 

@@ -1,6 +1,5 @@
-import { TxData } from "@ethereumjs/tx";
+import type { TxData } from "@ethereumjs/tx";
 import { from } from "@iotexproject/iotex-address-ts";
-import { Wallet } from "ethers";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -32,16 +31,17 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
       if (!payPassword)
         return; // Can't continue without the wallet password - cancel the initialization
 
-      let mnemonic = (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
+      let mnemonic = await (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
       if (mnemonic) {
+        const Wallet = (await import("ethers")).Wallet;
         let mnemonicWallet = Wallet.fromMnemonic(mnemonic);
         this.evmAddress = mnemonicWallet.address;
       }
       else {
         // No mnemonic - check if we have a private key instead
-        let privateKey = (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+        let privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
         if (privateKey) {
-          let account = EVMService.instance.getWeb3(networkWallet.network).eth.accounts.privateKeyToAccount(privateKey);
+          let account = (await EVMService.instance.getWeb3(networkWallet.network)).eth.accounts.privateKeyToAccount(privateKey);
           this.evmAddress = account.address;
         }
       }
@@ -65,9 +65,9 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
     return EVMService.instance.createUnsignedContractTransaction(contractAddress, gasPrice, gasLimit, nonce, data);
   }
 
-  createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
+  async createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
     // TODO: Make this code shareable, in the EVMService
-    let web3 = EVMService.instance.getWeb3(this.network);
+    let web3 = await EVMService.instance.getWeb3(this.network);
     const txData: TxData = {
       nonce: web3.utils.toHex(nonce),
       gasLimit: web3.utils.toHex(gasLimit),
@@ -80,11 +80,12 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
   }
 
   public async signTransaction(subWallet: AnySubWallet, rawTx: any, transfer: Transfer): Promise<SignTransactionResult> {
-    let web3 = EVMService.instance.getWeb3(this.network);
+    let web3 = await EVMService.instance.getWeb3(this.network);
 
-    let mnemonic = (this.masterWallet as StandardMasterWallet).getMnemonic(await AuthService.instance.getWalletPassword(this.masterWallet.id));
+    let mnemonic = await (this.masterWallet as StandardMasterWallet).getMnemonic(await AuthService.instance.getWalletPassword(this.masterWallet.id));
 
     // TODO: handle wallets imported by private key
+    const Wallet = (await import("ethers")).Wallet;
     let mnemonicWallet = Wallet.fromMnemonic(mnemonic);
     let signResult = await web3.eth.accounts.signTransaction(rawTx, mnemonicWallet.privateKey);
 

@@ -6,6 +6,8 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
+import { LedgerGetAddressComponentModule } from 'src/app/wallet/components/ledger-getaddress/module';
+import { WalletChooserComponentModule } from 'src/app/wallet/components/wallet-chooser/module';
 import { WalletHomePage } from './wallet-home.page';
 
 @NgModule({
@@ -17,7 +19,9 @@ import { WalletHomePage } from './wallet-home.page';
                 IonicModule,
                 TranslateModule,
                 GlobalDirectivesModule,
-                RouterModule.forChild([{ path: '', component: WalletHomePage }])
+                WalletChooserComponentModule,
+                RouterModule.forChild([{ path: '', component: WalletHomePage }]),
+                LedgerGetAddressComponentModule
         ],
         exports: [RouterModule],
         schemas: [CUSTOM_ELEMENTS_SCHEMA]

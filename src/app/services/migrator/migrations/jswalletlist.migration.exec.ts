@@ -120,13 +120,13 @@ export const migrateSPVNetworkTemplate = async (networkTemplate: string, identit
     };
 
     if (seed)
-      walletInfo.seed = AESEncrypt(seed, payPassword);
+      walletInfo.seed = await AESEncrypt(seed, payPassword);
 
     if (mnemonic)
-      walletInfo.mnemonic = AESEncrypt(mnemonic, payPassword);
+      walletInfo.mnemonic = await AESEncrypt(mnemonic, payPassword);
 
     if (privateKey) {
-      walletInfo.privateKey = AESEncrypt(privateKey, payPassword);
+      walletInfo.privateKey = await AESEncrypt(privateKey, payPassword);
       // All existing wallets imported by private key use EVM private keys.
       walletInfo.privateKeyType = PrivateKeyType.EVM;
     }

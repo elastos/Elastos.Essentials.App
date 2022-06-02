@@ -130,12 +130,12 @@ export class MnemonicExportPage implements OnInit {
         }
     }
 
-    showMnemonics() {
+    async showMnemonics() {
         this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('common.mnemonic'));
 
-        this.mnemonicStr = this.masterWallet.getMnemonic(this.payPassword);
+        this.mnemonicStr = await this.masterWallet.getMnemonic(this.payPassword);
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/).filter(str => str.trim().length > 0);
 
         this.mnemonicList = [];
@@ -146,8 +146,8 @@ export class MnemonicExportPage implements OnInit {
         this.hideMnemonic = false;
     }
 
-    showPrivateKey() {
-        this.evmPrivateKey = this.masterWallet.getPrivateKey(this.payPassword); // TODO: this returns only EVM private keys for now
+    async showPrivateKey() {
+        this.evmPrivateKey = await this.masterWallet.getPrivateKey(this.payPassword); // TODO: this returns only EVM private keys for now
         if (this.evmPrivateKey && !this.evmPrivateKey.startsWith('0x')) {
             this.evmPrivateKey = '0x' + this.evmPrivateKey;
         }

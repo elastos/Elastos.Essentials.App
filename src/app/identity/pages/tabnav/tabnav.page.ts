@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { IonTabs } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { Logger } from "src/app/logger";
+import { GlobalThemeService } from "src/app/services/global.theme.service";
 
 @Component({
   selector: "app-tabnav",
@@ -24,7 +24,7 @@ export class TabnavPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.tabs.select(this.selectedTab);
+    void this.tabs.select(this.selectedTab);
   }
 
   ionViewWillLeave() {

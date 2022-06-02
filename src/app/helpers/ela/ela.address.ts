@@ -20,38 +20,35 @@
  * SOFTWARE.
  */
 
-import { SmartBuffer } from "smart-buffer";
+import { lazyEllipticImport } from "../import.helper";
 import { Base58 } from "./../crypto/base58";
 import { SHA256 } from "./../crypto/sha256";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const EC = require('elliptic').ec;
-const curve = new EC('p256');
 
 export enum ELAAddressSignType {
-  SignTypeInvalid    = 0,
-  SignTypeStandard   = 0xAC,
-  SignTypeDID        = 0xAD,
-  SignTypeMultiSign  = 0xAE,
+  SignTypeInvalid = 0,
+  SignTypeStandard = 0xAC,
+  SignTypeDID = 0xAD,
+  SignTypeMultiSign = 0xAE,
   SignTypeCrossChain = 0xAF,
-  SignTypeDestroy    = 0xAA,
+  SignTypeDestroy = 0xAA,
 }
 
 enum ELAAddressPrefix {
-  PrefixStandard   = 0x21,
-  PrefixMultiSign  = 0x12,
+  PrefixStandard = 0x21,
+  PrefixMultiSign = 0x12,
   PrefixCrossChain = 0x4B,
   PrefixCRExpenses = 0x1C,
-  PrefixDeposit    = 0x1F,
-  PrefixIDChain    = 0x67,
-  PrefixDestroy    = 0,
+  PrefixDeposit = 0x1F,
+  PrefixIDChain = 0x67,
+  PrefixDestroy = 0,
 }
 
 export class ELAAddressHelper {
 
-  static getAddressFromPublicKey(publicKey: string) {
+  static async getAddressFromPublicKey(publicKey: string): Promise<string> {
     let publicKeyBuffer = Buffer.from(publicKey, 'hex');
     let programHash = this.getSingleSignProgramHash(publicKeyBuffer)
-    let address = this.getAddressFromProgramHash(programHash)
+    let address = await this.getAddressFromProgramHash(programHash)
     return address;
   }
 
@@ -59,7 +56,8 @@ export class ELAAddressHelper {
     return Base58.decode(address).slice(0, 21);
   }
 
-  static getAddressFromProgramHash(programHash: Buffer) {
+  static async getAddressFromProgramHash(programHash: Buffer): Promise<string> {
+    const SmartBuffer = (await import("smart-buffer")).SmartBuffer;
     const f = SmartBuffer.fromBuffer(SHA256.hashTwice(programHash));
     const g = new SmartBuffer();
     g.writeBuffer(programHash);
@@ -69,8 +67,12 @@ export class ELAAddressHelper {
     return address;
   }
 
-  static getPublic(privateKey) {
+  static async getPublic(privateKey): Promise<string> {
     const rawPrivateKey = Buffer.from(privateKey, 'hex');
+
+    const { ec } = await lazyEllipticImport();
+    let curve = new ec('P256');
+
     const keypair = curve.keyFromPrivate(rawPrivateKey);
     const publicKey = this.getPublicEncoded(keypair, true);
     return publicKey.toString('hex');

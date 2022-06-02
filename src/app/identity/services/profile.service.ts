@@ -98,6 +98,7 @@ export class ProfileService extends GlobalService {
 
   private avatarDataUrlSubject: BehaviorSubject<string> = null;
   private hiveCacheDataUrlSub: Subscription = null;
+  private activatedDidSub: Subscription = null;
 
   constructor(
     public events: Events,
@@ -143,27 +144,6 @@ export class ProfileService extends GlobalService {
         void this.promptPublishDid();
       });
     });
-  }
-
-  onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    let didString = this.didService.getActiveDid().getDIDString();
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.didDocumentsService.onlineDIDDocumentsStatus.get(didString).subscribe(async (status) => {
-      Logger.log("identity", "Profile service got DID Document status change event for DID " + didString);
-      if (status.checked) {
-        this.publishStatusFetched = true;
-        this.publishedDIDDocument = status.document;
-
-        await this.checkIfLocalDIDDocumentNeedsToBeSynchronizedWithChain();
-
-        this.recomputeDocumentAndCredentials();
-      }
-      else {
-        this.publishStatusFetched = false;
-        this.publishedDIDDocument = null;
-      }
-    });
-
     this.events.subscribe("did:credentialadded", () => {
       this.recomputeDocumentAndCredentials();
     });
@@ -179,6 +159,31 @@ export class ProfileService extends GlobalService {
     this.events.subscribe("did:didchanged", () => {
       this.recomputeDocumentAndCredentials();
     });
+  }
+
+  onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    // Wait for the main DID to be loaded before doing anything
+    this.activatedDidSub = this.didService.activatedDid.subscribe(activeDid => {
+      if (activeDid) {
+        let didString = activeDid.getDIDString();
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.didDocumentsService.onlineDIDDocumentsStatus.get(didString).subscribe(async (status) => {
+          Logger.log("identity", "Profile service got DID Document status change event for DID " + didString);
+          if (status.checked) {
+            this.publishStatusFetched = true;
+            this.publishedDIDDocument = status.document;
+
+            await this.checkIfLocalDIDDocumentNeedsToBeSynchronizedWithChain();
+
+            this.recomputeDocumentAndCredentials();
+          }
+          else {
+            this.publishStatusFetched = false;
+            this.publishedDIDDocument = null;
+          }
+        });
+      }
+    });
 
     return;
   }
@@ -186,6 +191,7 @@ export class ProfileService extends GlobalService {
   onUserSignOut(): Promise<void> {
     Logger.log("identity", "Signing out from profile service");
 
+    this.activatedDidSub.unsubscribe();
     this.resetService();
 
     return;

@@ -5,27 +5,21 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { GlobalDirectivesModule } from '../helpers/directives/module';
-import { ComponentsModule as WalletComponentsModule } from '../wallet/components/components.module';
-import { ComponentsModule } from './components/components.module';
-import { HomePage } from './pages/home/home.page';
+import { VotingModule } from '../voting/voting.module';
 import { NotificationsPage } from './pages/notifications/notifications.page';
 import { OnboardPage } from './pages/onboard/onboard.page';
 import { TipsPage } from './pages/tips/tips.page';
 import { EmptyPage, LauncherRoutingModule } from './routing';
 
-
-
 @NgModule({
   declarations: [
     EmptyPage,
-    HomePage,
     NotificationsPage,
     TipsPage,
     OnboardPage,
     //SafePipe,
   ],
   entryComponents: [
-    HomePage,
     EmptyPage,
     NotificationsPage,
     TipsPage
@@ -35,15 +29,12 @@ import { EmptyPage, LauncherRoutingModule } from './routing';
     IonicModule,
     HttpClientModule,
     SharedComponentsModule,
-    ComponentsModule,
     TranslateModule,
     LauncherRoutingModule,
-    WalletComponentsModule,
-    GlobalDirectivesModule
+    GlobalDirectivesModule,
+    VotingModule // For the vote service
   ],
-  providers: [
-    //LauncherService
-  ],
+  providers: [],
   bootstrap: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

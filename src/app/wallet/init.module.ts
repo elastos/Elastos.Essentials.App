@@ -21,20 +21,16 @@
 */
 
 /****************** Angular ******************/
-import { HttpClientModule } from '@angular/common/http';
+//import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
+/* import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
-/****************** Ionic ******************/
 import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { Native } from './services/native.service';
 import { PopupProvider } from './services/popup.service';
-/****************** Services ******************/
-import { LocalStorage } from './services/storage.service';
-
-
+import { LocalStorage } from './services/storage.service'; */
 
 @NgModule({
     declarations: [
@@ -42,17 +38,17 @@ import { LocalStorage } from './services/storage.service';
     entryComponents: [
     ],
     imports: [
-        IonicModule,
+        /* IonicModule,
         IonicStorageModule,
         HttpClientModule,
-        TranslateModule
+        TranslateModule */
     ],
     providers: [
-        Clipboard,
+        /* Clipboard,
         LocalStorage,
         Native,
         PopupProvider,
-        WebView
+        WebView */
     ],
     bootstrap: [],
     schemas: []

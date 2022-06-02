@@ -20,8 +20,8 @@
     "build": "ng build",
     "test": "ng test",
     "e2e": "ng e2e",
-    "bundle-size-verifier-webpack-json": "ng build --prod --stats-json && webpack-bundle-analyzer www/stats.json",
-    "bundle-size-verifier-source-map": "ng build --prod && source-map-explorer www/*",
+    "bundle-size-verifier-webpack-json": "ng build --stats-json && webpack-bundle-analyzer www/stats.json",
+    "bundle-size-verifier-source-map": "ng build && source-map-explorer www/*",
     "lint": "npm run eslint && npm run prettier -- --check",
     "prettier": "prettier \"**/*.ts\"",
     "eslint": "eslint src/app --ext .ts"

@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { TokenChooserComponentModule } from 'src/app/wallet/components/token-chooser/module';
 import { ComponentsModule as WalletComponentsModule } from '../../../wallet/components/components.module';
 import { ComponentsModule } from '../../components/components.module';
 import { NewPacketPage } from './new-packet';
@@ -19,12 +20,8 @@ import { NewPacketPage } from './new-packet';
     FormsModule,
     TranslateModule,
     SharedComponentsModule,
-    RouterModule.forChild([
-      {
-        path: '',
-        component: NewPacketPage,
-      }
-    ])
+    TokenChooserComponentModule,
+    RouterModule.forChild([{ path: '', component: NewPacketPage }])
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

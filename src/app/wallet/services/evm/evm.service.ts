@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
-import { TxData } from '@ethereumjs/tx';
+import type { TxData } from '@ethereumjs/tx';
 import { ModalController } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
+import { lazyWeb3Import } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
-import Web3 from 'web3';
+import type Web3 from 'web3';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
-import { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
+import type { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
 import type { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
-import { AnyNetwork } from '../../model/networks/network';
-import { RawTransactionPublishResult } from '../../model/tx-providers/transaction.types';
-import { Transfer } from '../cointransfer.service';
+import type { AnyNetwork } from '../../model/networks/network';
+import type { RawTransactionPublishResult } from '../../model/tx-providers/transaction.types';
+import type { Transfer } from '../cointransfer.service';
 import { PopupProvider } from '../popup.service';
 import { TransactionService } from '../transaction.service';
 
@@ -316,11 +317,12 @@ export class EVMService {
   /**
    * Creates a new Web3 instance or return a cached one, for the given network.
    */
-  public getWeb3(network: AnyNetwork): Web3 {
+  public async getWeb3(network: AnyNetwork): Promise<Web3> {
     if (network.name in this.web3s) {
       return this.web3s[network.name];
     }
     else {
+      const Web3 = await lazyWeb3Import();
       let web3 = new Web3(new EssentialsWeb3Provider(network.getRPCUrl()));
       this.web3s[network.name] = web3;
       return web3;
@@ -331,7 +333,7 @@ export class EVMService {
    * Current gas price on given network, in raw token amount
    */
   public async getGasPrice(network: AnyNetwork): Promise<string> {
-    let web3 = this.getWeb3(network);
+    let web3 = await this.getWeb3(network);
     let gasPrice = await web3.eth.getGasPrice();
     return gasPrice;
   }
@@ -365,21 +367,24 @@ export class EVMService {
    */
   public async estimateTransferTransactionFees(network: AnyNetwork): Promise<BigNumber> {
     let gasLimit = "21000"; // All EVM seem to use this amount of gas for native coin transfer
-    let gasPrice = await this.getWeb3(network).eth.getGasPrice();
+    let gasPrice = await (await this.getWeb3(network)).eth.getGasPrice();
     return this.getTransactionFees(gasLimit, gasPrice);
   }
 
-  public isAddress(network: AnyNetwork, address: string) {
-    return this.getWeb3(network).utils.isAddress(address);
+  public async isAddress(network: AnyNetwork, address: string): Promise<boolean> {
+    const isAddress = (await import("web3-utils")).isAddress;
+    return isAddress(address);
   }
 
-  public async isContractAddress(network: AnyNetwork, address: string) {
-    const contractCode = await this.getWeb3(network).eth.getCode(address);
+  public async isContractAddress(network: AnyNetwork, address: string): Promise<boolean> {
+    const contractCode = await (await this.getWeb3(network)).eth.getCode(address);
     return contractCode === '0x' ? false : true;
   }
 
-  public createUnsignedContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<TxData> {
+  public async createUnsignedContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<TxData> {
+    const Web3 = await lazyWeb3Import();
     let web3 = new Web3();
+
     const txData: TxData = {
       nonce: web3.utils.toHex(nonce),
       gasLimit: web3.utils.toHex(gasLimit),

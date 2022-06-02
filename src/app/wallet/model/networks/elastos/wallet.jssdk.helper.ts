@@ -48,7 +48,7 @@ export class WalletJSSDKHelper {
     if (!payPassword)
       return false; // Can't continue without the wallet password - cancel the initialization
 
-    let seed = masterWallet.getSeed(payPassword);
+    let seed = await masterWallet.getSeed(payPassword);
     if (!seed) {
       Logger.error("wallet", "Elastos mainchain standard wallet can only be created from seed for now");
       return false;
@@ -95,7 +95,7 @@ export class WalletJSSDKHelper {
       return false;
     }
 
-    if (!(signingWallet instanceof StandardMasterWallet) || !signingWallet.getSeed()) {
+    if (!(signingWallet instanceof StandardMasterWallet) || !await signingWallet.getSeed()) {
       Logger.error("wallet", "Elastos mainchain multisig wallet can only use standard wallets with mnemonics for now");
       return false;
     }
@@ -104,9 +104,9 @@ export class WalletJSSDKHelper {
     if (!signingWalletPayPassword)
       return false; // Can't continue without the signing wallet password - cancel the initialization
 
-    let seed = signingWallet.getSeed(signingWalletPayPassword);
+    let seed = await signingWallet.getSeed(signingWalletPayPassword);
 
-    if (signingWallet.getSeed(signingWalletPayPassword)) {
+    if (await signingWallet.getSeed(signingWalletPayPassword)) {
       const sdkMasterWallet = await masterWalletManager.createMultiSignMasterWalletWithSeed(
         masterWallet.id,
         seed,

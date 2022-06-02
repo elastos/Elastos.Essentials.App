@@ -1,15 +1,15 @@
-import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
+import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
-import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
+import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { FantomNetworkWallet } from "../networkwallets/standard/bsc.network.wallet";
 import { FantomAPI, FantomApiType } from "./fantom.api";
 
 export class FantomBaseNetwork extends EVMNetwork {
-  protected newNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
+  protected async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        const FantomNetworkWallet = (await import("../networkwallets/standard/bsc.network.wallet")).FantomNetworkWallet;
         return new FantomNetworkWallet(
           masterWallet as StandardMasterWallet,
           this,
