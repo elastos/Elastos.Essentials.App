@@ -112,7 +112,7 @@
     "ion-bottom-drawer": "2.0.0",
     "iotex-antenna": "^0.30.10",
     "isutf8": "^4.0.0",
-    "jsbi": "^4.3.0",
+    "jsbi": "^3.2.5",
     "jsonld": "^5.2.0",
     "jsonpath": "^1.1.1",
     "jszip": "^3.7.1",
