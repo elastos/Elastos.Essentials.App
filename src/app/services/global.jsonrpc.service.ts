@@ -50,7 +50,7 @@ export class GlobalJsonRPCService {
                                 resolve(result);
                             } else {
                                 if (result.error) {
-                                    Logger.error("GlobalJsonRPCService", 'httpPost error :', result, ', rpc url:', rpcApiUrl);
+                                    Logger.error("GlobalJsonRPCService", 'httpPost result.error :', result, ', rpc url:', rpcApiUrl);
                                     reject(result.error);
                                 }
                                 else if (result.code && !(result.code == 200 || result.code == 1) && result.message) {
@@ -63,7 +63,7 @@ export class GlobalJsonRPCService {
 
                             resolve(result);
                         } catch (e) {
-                            Logger.error("GlobalJsonRPCService", 'httpPost error:', e);
+                            Logger.error("GlobalJsonRPCService", 'httpPost exception:', e, resultString);
                             reject("Invalid JSON response returned by the JSON RPC");
                         }
                     }
@@ -75,7 +75,7 @@ export class GlobalJsonRPCService {
                 };
 
                 request.onerror = function (error) {
-                    Logger.error("GlobalJsonRPCService", 'httpPost error:', error, ', rpc url:', rpcApiUrl);
+                    Logger.error("GlobalJsonRPCService", 'httpPost onerror:', error, ', rpc url:', rpcApiUrl);
                     reject(error);
                 }
 

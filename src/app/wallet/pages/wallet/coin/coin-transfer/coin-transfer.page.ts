@@ -633,7 +633,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         }
 
         if (this.transferType === TransferType.WITHDRAW) {
-            if (this.amount < 0.0002)
+            if (!this.sendMax && (this.amount < 0.0002))
                 return false; // TODO: toast
 
             // TODO: What the hell is this code supposed to do ? :)

@@ -413,7 +413,7 @@ export class GlobalElastosAPIService extends GlobalService {
             didManager.setResolverUrl(didResolverUrl, () => {
                 resolve();
             }, (err) => {
-                Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
+                Logger.error('elastosapi', 'didplugin setResolverUrl error:', err);
                 reject(err);
             });
         });
@@ -458,7 +458,7 @@ export class GlobalElastosAPIService extends GlobalService {
                 apiUrlType = ElastosApiUrlType.HECO_ACCOUNT;
                 break;
             default:
-                Logger.log("wallet", 'Elastos API: Misc can not support ' + elastosChainCode);
+                Logger.log("elastosapi", 'Elastos API: Misc can not support ' + elastosChainCode);
                 break;
         }
         return apiUrlType;
@@ -490,13 +490,17 @@ export class GlobalElastosAPIService extends GlobalService {
 
         const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ETHSC_ORACLE);
 
-        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-        for (var i = 0; i < result.length; i++) {
-            if ('0x' + result[i].txid === txHash) {
-                // TODO: crosschainassets has multiple value?
-                // TODO: define the result type
-                return result[i].crosschainassets[0].crosschainaddress;
+        try {
+            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            for (var i = 0; i < result.length; i++) {
+                if ('0x' + result[i].txid === txHash) {
+                    // TODO: crosschainassets has multiple value?
+                    // TODO: define the result type
+                    return result[i].crosschainassets[0].crosschainaddress;
+                }
             }
+        } catch (e) {
+            Logger.warn("elastosapi", "getETHSCWithdrawTargetAddress exception", e);
         }
 
         return '';
@@ -532,15 +536,11 @@ export class GlobalElastosAPIService extends GlobalService {
         }
 
         let transactionsArray = null;
-        let retryTimes = 0;
-        do {
-            try {
-                transactionsArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
-                break;
-            } catch (e) {
-                // wait 100ms?
-            }
-        } while (++retryTimes < GlobalElastosAPIService.API_RETRY_TIMES);
+        try {
+            transactionsArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
+        } catch (e) {
+            Logger.warn("elastosapi", "getTransactionsByAddress exception", e);
+        }
 
         if (transactionsArray === null) {
             return [];
@@ -556,10 +556,15 @@ export class GlobalElastosAPIService extends GlobalService {
         const rpcApiUrl = this.getApiUrl(apiurltype);
         const ethscgetTokenTxsUrl = rpcApiUrl + '?module=account&action=tokentx&address=' + address;
 
-        let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
-        let resultItems = result.result as EthTokenTransaction[];
+        try {
+            let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
+            let resultItems = result.result as EthTokenTransaction[];
 
-        return resultItems;
+            return resultItems;
+        } catch (e) {
+            Logger.warn("elastosapi", "getERC20TokenTransactions exception", e);
+            return [];
+        }
     }
 
     public async getERC20TokenList(elastosChainCode: StandardCoinName, address: string): Promise<ERCTokenInfo[]> {
@@ -567,8 +572,13 @@ export class GlobalElastosAPIService extends GlobalService {
         const rpcApiUrl = this.getApiUrl(apiurltype);
         const ethscgetTokenListUrl = rpcApiUrl + '?module=account&action=tokenlist&address=' + address;
 
-        let result = await this.globalJsonRPCService.httpGet(ethscgetTokenListUrl);
-        return result.result as ERCTokenInfo[];
+        try {
+            let result = await this.globalJsonRPCService.httpGet(ethscgetTokenListUrl);
+            return result.result as ERCTokenInfo[];
+        } catch (e) {
+            Logger.warn("elastosapi", "getERC20TokenList exception", e);
+            return [];
+        }
     }
 
     // return all utxo by address
@@ -589,15 +599,11 @@ export class GlobalElastosAPIService extends GlobalService {
         }
 
         let utxoArray = null;
-        let retryTimes = 0;
-        do {
-            try {
-                utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-                break;
-            } catch (e) {
-                // wait 100ms?
-            }
-        } while (++retryTimes < GlobalElastosAPIService.API_RETRY_TIMES);
+        try {
+            utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        } catch (e) {
+            Logger.warn("elastosapi", "getAllUtxoByAddress exception", e);
+        }
 
         return utxoArray;
     }
@@ -623,7 +629,7 @@ export class GlobalElastosAPIService extends GlobalService {
         try {
             utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
         } catch (e) {
-            Logger.error('wallet', 'getUtxosByAmount error:', e)
+            Logger.error('elastosapi', 'getUtxosByAmount error:', e)
         }
 
         return utxoArray;
@@ -645,13 +651,14 @@ export class GlobalElastosAPIService extends GlobalService {
             const blockHeightStr = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
             blockHeight = parseInt(blockHeightStr, 10);
         } catch (e) {
+            Logger.warn("elastosapi", "getBlockCount exception", e);
         }
         return blockHeight;
     }
 
     // dpos
     public async fetchDposNodes(state): Promise<ProducersSearchResponse> {
-        Logger.log('wallet', 'Fetching Dpos Nodes..');
+        Logger.log('elastosapi', 'Fetching Dpos Nodes..');
         const param = {
             method: 'listproducers',
             params: {
@@ -665,6 +672,7 @@ export class GlobalElastosAPIService extends GlobalService {
             const dposNodes = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
             return dposNodes;
         } catch (e) {
+            Logger.warn("elastosapi", "fetchDposNodes exception", e);
         }
         return null;
     }
@@ -681,6 +689,7 @@ export class GlobalElastosAPIService extends GlobalService {
         try {
             result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
         } catch (e) {
+            Logger.warn("elastosapi", "getCRrelatedStage exception", e);
         }
         return result;
     }
@@ -696,7 +705,7 @@ export class GlobalElastosAPIService extends GlobalService {
             let result = await this.globalJsonRPCService.httpGet(crfetchCRCurl);
             return result;
         } catch (e) {
-            Logger.error('wallet', 'fetchCRcouncil error:', e)
+            Logger.error('elastosapi', 'fetchCRcouncil error:', e)
         }
         return null;
     }
@@ -708,7 +717,7 @@ export class GlobalElastosAPIService extends GlobalService {
             let result = await this.globalJsonRPCService.httpGet(crfetchproposalsurl);
             return result;
         } catch (e) {
-            Logger.error('wallet', 'fetchProposals error:', e)
+            Logger.error('elastosapi', 'fetchProposals error:', e)
         }
         return null;
     }
