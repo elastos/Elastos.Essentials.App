@@ -23,8 +23,7 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { concatSig } from 'eth-sig-util';
-import { ecsign, stripHexPrefix } from 'ethereumjs-util';
+import { ecsign, stripHexPrefix, toRpcSig } from 'ethereumjs-util';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -170,7 +169,7 @@ export class EthSignPage implements OnInit {
     try {
       const message = stripHexPrefix(this.payloadToBeSigned);
       const msgSig = ecsign(Buffer.from(message, 'hex'), privateKey);
-      const rawMsgSig = concatSig(msgSig.v, msgSig.r, msgSig.s);
+      const rawMsgSig = toRpcSig(msgSig.v, msgSig.r, msgSig.s);
 
       void this.sendIntentResponse({
         signedData: rawMsgSig

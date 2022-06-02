@@ -76,7 +76,6 @@ export const lazyWalletConnectImport = async (): Promise<typeof WalletConnect> =
   if (!importsCache["@walletconnect/client"])
     importsCache["@walletconnect/client"] = await import("@walletconnect/client");
 
-
   return importsCache["@walletconnect/client"].default;
 }
 

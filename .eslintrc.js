@@ -56,12 +56,14 @@ module.exports = {
 
     // Import plugin
     "import/no-unresolved": "off",
-    "import/no-cycle": [
+    "import/no-extraneous-dependencies": "error",
+    // TOO SLOW
+    /* "import/no-cycle": [
       "warn",
       {
         "maxDepth": 5,
         "ignoreExternal": true
       }
-    ]
+    ] */
   }
 };
