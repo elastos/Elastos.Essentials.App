@@ -286,6 +286,7 @@ export const en = {
         'credential-info-type-paypal': 'Paypal',
         'credential-info-type-venmo': 'Venmo',
         'credential-info-type-linkedin': 'LinkedIn',
+        'credential-info-type-discord': 'Discord',
 
         /******************** Messages ********************/
         // errors
