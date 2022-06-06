@@ -102,13 +102,13 @@ export class BrowserPage implements DappBrowserClient {
         }
     }
 
-    onUrlChanged(url: string) {
+    async onUrlChanged(url: string) {
         this.zone.run(() => {
             this.titleBar.setUrl(url);
         });
 
         let domain = this.dappbrowserService.getDomain(url);
-        if (this.dappbrowserService.checkScamDomain(domain)) {
+        if (await this.dappbrowserService.checkScamDomain(domain)) {
             void this.zone.run(async () => {
                 this.shot = await dappBrowser.getWebViewShot();
                 await dappBrowser.hide();
@@ -148,7 +148,7 @@ export class BrowserPage implements DappBrowserClient {
 
     onCustomScheme(url: string) {
         if (url.startsWith("wc:")) {
-            void this.globalIntentService.sendIntent("rawurl", {url: url});
+            void this.globalIntentService.sendIntent("rawurl", { url: url });
         }
     }
 }
