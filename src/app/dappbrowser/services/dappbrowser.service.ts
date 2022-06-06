@@ -77,6 +77,7 @@ export interface DappBrowserClient {
     onProgress?: (progress: number) => void;
     onUrlChanged?: (url: string) => void;
     onHtmlHead?: (head: Document) => void;
+    onThemeColor?: (themeColor: string) => void; // Theme color meta found in the page header
     onCustomScheme?: (url: string) => void;
 }
 @Injectable({
@@ -473,6 +474,7 @@ export class DappBrowserService implements GlobalService {
         //console.log("HEADER", event, htmlHeader, event.data);
 
         // Extract all the information we can, but mostly the app title, description and icon
+        let metas = htmlHeader.getElementsByTagName("meta");
 
         // TITLE
         let title: string = null;
@@ -483,7 +485,6 @@ export class DappBrowserService implements GlobalService {
 
         if (!title) {
             // No standard <title> tag found, try to get more info from the metas.
-            let metas = htmlHeader.getElementsByTagName("meta");
             if (metas && metas.length > 0) {
                 let appNameMeta = Array.from(metas).find(m => m.name && m.name.toLowerCase() === "application-name");
                 if (appNameMeta)
@@ -498,7 +499,6 @@ export class DappBrowserService implements GlobalService {
 
         // DESCRIPTION
         let description = ""; // Default description is empty if nothing is found
-        let metas = htmlHeader.getElementsByTagName("meta");
         if (metas && metas.length > 0) {
             let descriptionMeta = Array.from(metas).find(m => m.name && m.name.toLowerCase() === "description");
             if (descriptionMeta)
@@ -521,6 +521,18 @@ export class DappBrowserService implements GlobalService {
                     }
                 }
             }
+        }
+
+        // THEME COLOR
+        let themeColor: string = null;
+        if (metas && metas.length > 0) {
+            let themeColorMeta = Array.from(metas).find(m => m.name && m.name.toLowerCase() === "theme-color");
+            if (themeColorMeta)
+                themeColor = themeColorMeta.content;
+        }
+        if (this.dabClient && themeColor) {
+            this.dabClient.onThemeColor?.(themeColor);
+            Logger.log("dappbrowser", "Extracted website theme color:", themeColor);
         }
 
         Logger.log("dappbrowser", "Extracted website title:", title);

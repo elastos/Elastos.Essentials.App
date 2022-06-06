@@ -3,8 +3,9 @@ import { Component, NgZone, ViewChild } from '@angular/core';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import FastAverageColor from 'fast-average-color';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -149,6 +150,32 @@ export class BrowserPage implements DappBrowserClient {
     onCustomScheme(url: string) {
         if (url.startsWith("wc:")) {
             void this.globalIntentService.sendIntent("rawurl", { url: url });
+        }
+    }
+
+    async onThemeColor?(themeColor: string) {
+        if (themeColor) {
+            // Detect the dapp theme main color to make the title bar text/icons dark or light colors
+            const fac = new FastAverageColor();
+            try {
+                let r = parseInt(themeColor.slice(1, 3), 16);
+                let g = parseInt(themeColor.slice(3, 5), 16);
+                let b = parseInt(themeColor.slice(5, 7), 16);
+
+                let color = await fac.prepareResult([r, g, b, 1]);
+
+                this.zone.run(() => {
+                    if (color.isDark)
+                        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+                    else
+                        this.titleBar.setForegroundMode(TitleBarForegroundMode.DARK);
+
+                    // Set the title bar background color to match the dapp theme
+                    this.titleBar.setBackgroundColor(themeColor);
+                });
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
 }
