@@ -14,7 +14,7 @@
             <h1>{{ identityEntry.name }}</h1>
             <p>{{ identityEntry.didString.slice(4,16) }}...{{ identityEntry.didString.slice(40,46) }}</p>
           </ion-col>
-          <ion-col class="info-col" size="1.1" (click)="uxService.showOptions($event, identityEntry)">
+          <ion-col class="info-col" size="1.1" (click)="showOptions($event, identityEntry)">
             <img
               [src]="!theme.darkMode ? 'assets/didsessions/icon/dots.svg' : 'assets/didsessions/icon/dark_mode/dots.svg'">
           </ion-col>

@@ -1,36 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { MnemonicPassCheckComponent } from './mnemonicpasscheck/mnemonicpasscheck.component';
 import { OptionsComponent } from './options/options.component';
-import { WarningComponent } from './warning/warning.component';
+import { WalletAddressChooserComponent } from './wallet-address-chooser/wallet-address-chooser.component';
 
 @NgModule({
   declarations: [
-    MnemonicPassCheckComponent,
     OptionsComponent,
-    WarningComponent
+    WalletAddressChooserComponent
   ],
   imports: [
     CommonModule,
-    FormsModule,
     IonicModule,
     TranslateModule
   ],
   exports: [
-    MnemonicPassCheckComponent,
     OptionsComponent,
-    WarningComponent
+    WalletAddressChooserComponent
   ],
   providers: [
   ],
   entryComponents: [
-    MnemonicPassCheckComponent,
     OptionsComponent,
-    WarningComponent
+    WalletAddressChooserComponent
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ComponentsModule { }

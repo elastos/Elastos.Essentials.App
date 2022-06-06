@@ -20,6 +20,7 @@ import { GlobalFirebaseService } from './services/global.firebase.service';
 import { GlobalHiveService } from './services/global.hive.service';
 import { GlobalIntentService } from './services/global.intent.service';
 import { GlobalLanguageService } from './services/global.language.service';
+import { GlobalNativeService } from './services/global.native.service';
 import { GlobalNavService } from './services/global.nav.service';
 import { GlobalNetworksService } from './services/global.networks.service';
 import { GlobalNotificationsService } from './services/global.notifications.service';
@@ -70,6 +71,7 @@ export class AppComponent {
     private credentialToolboxService: GlobalCredentialToolboxService,
     private globalSecurityService: GlobalSecurityService,
     private globalELAUtxoService: GlobalELAUtxoService,
+    private globalNativeService: GlobalNativeService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     private firebase: FirebaseX
   ) { }
 

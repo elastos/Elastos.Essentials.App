@@ -9,7 +9,7 @@ import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/n
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
+//import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
 import { IonicStorageModule } from '@ionic/storage';
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import * as Sentry from '@sentry/browser';
@@ -35,11 +35,13 @@ import { DPoSRegistrationInitModule } from './voting/dposregistration/init.modul
 import { DPoSVotingInitModule } from './voting/dposvoting/init.module';
 import { WalletInitModule } from './wallet/init.module';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SentryErrorHandler implements ErrorHandler {
   private version = ''
   constructor(
-    public native: GlobalNativeService,
+    //public native: GlobalNativeService,
     private appVersion: AppVersion,
   ) {
     this.appVersion.getVersionNumber().then(res => {
@@ -83,7 +85,7 @@ export class SentryErrorHandler implements ErrorHandler {
       // Do not popop error dialog, but still send to sentry for debug.
       Logger.error("Sentry", 'This exception has been handled:', error);
     } else {
-      this.native.genericToast('common.sentry-message', 5000);
+      GlobalNativeService.instance.genericToast('common.sentry-message', 5000);
     }
   }
 }
@@ -179,15 +181,6 @@ let providers: Provider[] = [
 // Add sentry to prod build only
 if (environment.production) {
   providers.push({ provide: ErrorHandler, useClass: SentryErrorHandler });
-
-  Sentry.init({
-    dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
-    release: "default",
-    integrations: [
-      new Integrations.BrowserTracing(),
-    ],
-    tracesSampleRate: 1.0,
-  });
 }
 
 @NgModule({
@@ -227,7 +220,7 @@ if (environment.production) {
       mode: 'ios',
       scrollAssist: false,
       scrollPadding: false,
-      navAnimation: iosTransitionAnimation
+      //navAnimation: iosTransitionAnimation
     }),
     AppRoutingModule,
     //FormsModule,
@@ -249,3 +242,15 @@ if (environment.production) {
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }
+
+// Add sentry to prod build only
+if (environment.production) {
+  Sentry.init({
+    dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
+    release: "default",
+    integrations: [
+      new Integrations.BrowserTracing(),
+    ],
+    tracesSampleRate: 1.0,
+  });
+}

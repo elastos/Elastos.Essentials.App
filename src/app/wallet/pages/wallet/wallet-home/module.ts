@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { LedgerGetAddressComponentModule } from 'src/app/wallet/components/ledger-getaddress/module';
+import { NetworkChooserComponentModule } from 'src/app/wallet/components/network-chooser/module';
 import { WalletChooserComponentModule } from 'src/app/wallet/components/wallet-chooser/module';
 import { WalletHomePage } from './wallet-home.page';
 
@@ -20,6 +21,7 @@ import { WalletHomePage } from './wallet-home.page';
                 TranslateModule,
                 GlobalDirectivesModule,
                 WalletChooserComponentModule,
+                NetworkChooserComponentModule,
                 RouterModule.forChild([{ path: '', component: WalletHomePage }]),
                 LedgerGetAddressComponentModule
         ],

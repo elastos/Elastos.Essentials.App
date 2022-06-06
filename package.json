@@ -59,7 +59,6 @@
     "@ionic-native/core": "5.36.0",
     "@ionic-native/qr-scanner": "5.36.0",
     "@ionic/angular": "^6.1.7-nightly.20220519",
-    "@ionic/core": "^6.1.8",
     "@ionic/storage": "2.3.1",
     "@iotexproject/iotex-address-ts": "^1.0.4",
     "@ledgerhq/devices": "^6.24.1",

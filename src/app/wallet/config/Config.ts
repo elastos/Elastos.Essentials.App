@@ -23,7 +23,9 @@
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class Config {
     public static DEBUG_LOGS_ENABLED = true;
 

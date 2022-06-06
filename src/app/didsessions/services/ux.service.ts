@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { LoadingController, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -18,7 +18,6 @@ let selfUxService: UXService = null;
   providedIn: 'root'
 })
 export class UXService {
-
   public static instance: UXService = null;
 
   public popover: any = null; // Generic Popover
@@ -33,8 +32,6 @@ export class UXService {
     private native: GlobalNativeService,
     private popoverCtrl: PopoverController,
     private events: Events,
-    private didSessions: GlobalDIDSessionsService,
-    private loadingCtrl: LoadingController,
     private theme: GlobalThemeService
   ) {
     selfUxService = this;
@@ -89,7 +86,7 @@ export class UXService {
 
   async navigateRoot() {
     // Redirect to the appropriate screen depending on available identities
-    let identities = await this.didSessions.getIdentityEntries();
+    let identities = await GlobalDIDSessionsService.instance.getIdentityEntries();
     if (identities.length == 0) {
       Logger.log("didsessions", "No existing identity. Navigating to language chooser then createidentity");
       await this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/language", { animationDirection: Direction.FORWARD });

@@ -10,7 +10,9 @@ import type { Contact } from './contacts.service';
  * Local storage using app manager settings ot make sure debug (CLI) and no debug app versions share the same
  * data.
  */
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class LocalStorage {
     public static instance: LocalStorage = null;
 

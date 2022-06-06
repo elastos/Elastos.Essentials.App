@@ -45,7 +45,6 @@ import { NotificationsPage } from '../notifications/notifications.page';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-
 export class HomePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('walletsSlider') walletsSlider: IonSlides;

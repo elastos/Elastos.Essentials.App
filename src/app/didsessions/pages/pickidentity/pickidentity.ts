@@ -160,4 +160,8 @@ export class PickIdentityPage implements OnInit {
     }
     return count;
   }
+
+  public showOptions(ev: any, identityEntry: IdentityEntry) {
+    void this.uxService.showOptions(ev, identityEntry);
+  }
 }

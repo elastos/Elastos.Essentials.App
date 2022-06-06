@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { PopoverController, NavParams } from '@ionic/angular';
-import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { NavParams, PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { TranslateService } from '@ngx-translate/core';
+import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-warning',
@@ -28,11 +28,11 @@ export class WarningComponent implements OnInit {
   }
 
   cancel() {
-    this.popoverCtrl.dismiss();
+    void this.popoverCtrl.dismiss();
   }
 
   deleteDID() {
-    this.popoverCtrl.dismiss();
-    this.events.publish( 'deleteIdentity', this.identityEntry);
+    void this.popoverCtrl.dismiss();
+    this.events.publish('deleteIdentity', this.identityEntry);
   }
 }

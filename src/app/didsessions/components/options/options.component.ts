@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { PopoverController, NavParams } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-options',
@@ -28,12 +28,12 @@ export class OptionsComponent implements OnInit {
   }
 
   signIn() {
-    this.popoverCtrl.dismiss();
+    void this.popoverCtrl.dismiss();
     this.events.publish('signIn', this.identityEntry);
   }
 
   showWarning() {
-    this.popoverCtrl.dismiss();
+    void this.popoverCtrl.dismiss();
     this.events.publish('showDeleteIdentityPrompt', this.identityEntry);
   }
 }

@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class PopupService {
 
     public alert = null;
@@ -13,8 +15,7 @@ export class PopupService {
         public alertCtrl: AlertController,
         public translate: TranslateService,
         private globalNative: GlobalNativeService
-    )
-    {}
+    ) { }
 
     public toast(msg: string = '', duration: number = 2000) {
         this.globalNative.genericToast(msg, duration);
@@ -29,7 +30,7 @@ export class PopupService {
             this.alert = null;
             this.alert = this.alertCtrl.create({
                 mode: 'ios',
-                header : this.translate.instant(title),
+                header: this.translate.instant(title),
                 subHeader: subTitle ? this.translate.instant(subTitle) : '',
                 backdropDismiss: false,
                 buttons: [{
@@ -56,7 +57,7 @@ export class PopupService {
             this.alert = this.alertCtrl.create({
                 mode: 'ios',
                 header: this.translate.instant(title),
-                message  : this.translate.instant(message),
+                message: this.translate.instant(message),
                 buttons: [{
                     text: this.translate.instant(cancelText),
                     handler: () => {
@@ -85,40 +86,40 @@ export class PopupService {
         cancelText: string = 'hivemanager.alert.cancel'
     ): Promise<any> {
         return new Promise((resolve, reject) => {
-        let defaultText = opts && opts.defaultText ? opts.defaultText : null;
-        let placeholder = opts && opts.placeholder ? opts.placeholder : null;
-        let inputType = opts && opts.type ? opts.type : 'text';
-        let cssClass = opts.useDanger ? "alertDanger" : null;
-        let backdropDismiss = !!opts.backdropDismiss;
+            let defaultText = opts && opts.defaultText ? opts.defaultText : null;
+            let placeholder = opts && opts.placeholder ? opts.placeholder : null;
+            let inputType = opts && opts.type ? opts.type : 'text';
+            let cssClass = opts.useDanger ? "alertDanger" : null;
+            let backdropDismiss = !!opts.backdropDismiss;
 
-        this.alert = null;
-        this.alert = this.alertCtrl.create({
-            mode: 'ios',
-            header: title,
-            message,
-            cssClass,
-            backdropDismiss,
-            inputs: [{
-                value: defaultText,
-                placeholder,
-                type: inputType
-            }],
-            buttons: [{
-                text: this.translate.instant(cancelText),
-                handler: data => {
-                    Logger.log('HiveManager', 'Cancel clicked');
-                    this.alert = null;
-                    resolve(null);
-                }
-            },
-            {
-                text: this.translate.instant(okText),
-                handler: data => {
-                    Logger.log('HiveManager', 'Saved clicked');
-                    this.alert = null;
-                    resolve(data[0]);
-                }
-            }]
+            this.alert = null;
+            this.alert = this.alertCtrl.create({
+                mode: 'ios',
+                header: title,
+                message,
+                cssClass,
+                backdropDismiss,
+                inputs: [{
+                    value: defaultText,
+                    placeholder,
+                    type: inputType
+                }],
+                buttons: [{
+                    text: this.translate.instant(cancelText),
+                    handler: data => {
+                        Logger.log('HiveManager', 'Cancel clicked');
+                        this.alert = null;
+                        resolve(null);
+                    }
+                },
+                {
+                    text: this.translate.instant(okText),
+                    handler: data => {
+                        Logger.log('HiveManager', 'Saved clicked');
+                        this.alert = null;
+                        resolve(data[0]);
+                    }
+                }]
             }).then(prompt => prompt.present());
         });
     }

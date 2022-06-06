@@ -6,7 +6,9 @@ import moment from 'moment';
 import { DIDService } from '../identity/services/did.service';
 import { GlobalDIDSessionsService } from '../services/global.didsessions.service';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class Util {
     public static uuid(len, radix): string {
         var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');

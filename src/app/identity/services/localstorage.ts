@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Logger } from 'src/app/logger';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class LocalStorage {
     public static instance: LocalStorage = null;
 
@@ -32,8 +34,8 @@ export class LocalStorage {
         return this.storage.get(key);
     }
 
-    private getAsJson<T>(key) : Promise<T> {
-        return new Promise(async (resolve, reject)=>{
+    private getAsJson<T>(key): Promise<T> {
+        return new Promise(async (resolve, reject) => {
             try {
                 let val = await this.storage.get(key)
                 resolve(JSON.parse(val));
@@ -49,16 +51,16 @@ export class LocalStorage {
     }
 
     public setPhoto(value: any) {
-      return this.storage.set("photo", JSON.stringify(value)).then((data) => {
-        Logger.log('Identity', 'Set profile pic', data);
-      });
+        return this.storage.set("photo", JSON.stringify(value)).then((data) => {
+            Logger.log('Identity', 'Set profile pic', data);
+        });
     }
 
     public getPhoto(): Promise<any> {
-      return this.storage.get("photo").then((data) => {
-        Logger.log('Identity', 'Get profile pic', data);
-        return JSON.parse(data);
-      });
+        return this.storage.get("photo").then((data) => {
+            Logger.log('Identity', 'Get profile pic', data);
+            return JSON.parse(data);
+        });
     }
 }
 

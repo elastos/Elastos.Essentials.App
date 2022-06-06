@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
-import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
-import { QRScanner } from '@ionic-native/qr-scanner/ngx';
-import { IonicModule, Platform } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { PopupProvider } from './services/popup';
 
 @NgModule({
   declarations: [
@@ -15,11 +12,11 @@ import { PopupProvider } from './services/popup';
   entryComponents: [
   ],
   providers: [
-    QRScanner,
+    /* QRScanner,
     Platform,
     PopupProvider,
-    WebView
+    WebView */
   ],
   schemas: []
 })
-export class DIDSessionsInitModule {}
+export class DIDSessionsInitModule { }

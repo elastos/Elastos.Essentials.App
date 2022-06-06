@@ -10,6 +10,8 @@ import { MenuSheetComponent, MenuSheetMenu } from '../components/menu-sheet/menu
 })
 
 export class GlobalNativeService {
+    public static instance: GlobalNativeService;
+
     public loader: HTMLIonLoadingElement = null;
     public alert = null;
     private alertCtrlCreating = false;
@@ -23,7 +25,9 @@ export class GlobalNativeService {
         private theme: GlobalThemeService,
         private modalCtrl: ModalController,
         private clipboard: Clipboard,
-    ) { }
+    ) {
+        GlobalNativeService.instance = this;
+    }
 
     copyClipboard(text) {
         return this.clipboard.copy(text);

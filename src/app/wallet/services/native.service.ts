@@ -28,7 +28,9 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { HelpComponent } from '../components/help/help.component';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class Native {
     public static instance: Native;
 

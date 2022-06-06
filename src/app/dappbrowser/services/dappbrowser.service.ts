@@ -183,7 +183,7 @@ export class DappBrowserService implements GlobalService {
 
         //Can add some items on phishingConfig
         const checkDomain = await lazyPhishingDetectorImport();
-        var ret = checkDomain(domain).result;
+        var ret = checkDomain(domain);
         Logger.log("dappbrowser", "detector return", domain, ret);
         return ret;
     }
