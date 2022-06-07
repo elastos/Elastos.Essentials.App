@@ -86,7 +86,7 @@ export default class Ela {
     Logger.log(TAG, ' getAddress: bip44Path', bip44Path)
 
     // eslint-disable-next-line no-useless-catch
-    try {
+    // try {
       const messageSend = Buffer.from('8004000000' + bip44Path, 'hex');
       Logger.log(TAG, ' getAddress: messageSend', messageSend.toString('hex').toUpperCase())
       let response = await this.transport.exchange(messageSend);
@@ -103,13 +103,15 @@ export default class Ela {
         publicKey = responseStr.substring(0, 130);
         Logger.log(TAG, ' getAddress: publicKey', publicKey)
       } else {
-        if (responseStr == '6E00') {
+        // 6E00, 6E01
+        if (responseStr.startsWith('6E')) {
           message = 'App Not Open On Ledger Device';
         } else {
-          message = 'Unknown Error';
+          message = 'Unknown Error ';
         }
 
         Logger.warn(TAG, ' getAddress: error message', message)
+        throw new Error(message);
       }
 
       let address = await ELAAddressHelper.getAddressFromPublicKey(publicKey);
@@ -117,11 +119,11 @@ export default class Ela {
         publicKey: publicKey,
         address: address,
       });
-    } catch (error) {
-      Logger.error(TAG, ' getAddress: error', error)
-      // TODO
-      throw error;
-    }
+    // } catch (error) {
+    //   Logger.error(TAG, ' getAddress: error', error)
+    //   // TODO
+    //   throw error;
+    // }
   }
 
   // eslint-disable-next-line require-await

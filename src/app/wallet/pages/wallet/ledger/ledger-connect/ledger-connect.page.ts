@@ -134,37 +134,6 @@ export class LedgerConnectPage implements OnInit {
         this.connecting = false;
     }
 
-    async getEVMAddresses(accountsLength = 5, accountsOffset = 0) {
-        try {
-            this.addresses = await this.ledgerApp.getAddresses(this.addressType as EVMAddressType, accountsOffset, accountsLength, false);
-            Logger.log(TAG, "EVM Addresses :", this.addresses);
-        } catch (e) {
-            Logger.warn(TAG, 'getEVMAddresses exception:', e)
-        }
-    }
-
-    async getBTCAddress(accountsLength = 5, accountsOffset = 0) {
-        try {
-            this.addresses = await this.ledgerApp.getAddresses(this.addressType as BTCAddressType, accountsOffset, accountsLength, false);
-            /* this.addresses = [ // DEBUG ONLT
-                { 'type': LedgerAccountType.BTC, addressType: "segwit", 'address': 'tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6', 'pathIndex': 0, 'path': "84'/1'/0'/0/0", 'publicKey': '' }
-            ]; */
-
-            Logger.log(TAG, "BTC Addresses :", this.addresses);
-        } catch (e) {
-            Logger.warn(TAG, 'getBTCAddress exception:', e)
-        }
-    }
-
-    async getELAAddress(accountsLength = 5, accountsOffset = 0) {
-        try {
-            this.addresses = await this.ledgerApp.getAddresses(this.addressType as ELAAddressType, accountsOffset, accountsLength, false);
-            Logger.warn(TAG, "ELA addresses :", this.addresses);
-        } catch (err) {
-            Logger.warn('ledger', "getELAAddress exception :", err);
-        }
-    }
-
     private async refreshAddresses() {
         this.addresses = await this.ledgerApp.getAddresses(this.addressType, 0, 5, false);
     }
@@ -179,6 +148,7 @@ export class LedgerConnectPage implements OnInit {
 
     public async pickNetwork() {
         this.selectedNetwork = await this.walletNetworkUIService.pickNetwork();
+        if (!this.selectedNetwork) return;
 
         // Prepare the address type selection, or auto-select it.
         switch (this.selectedNetwork.key) {
@@ -206,6 +176,8 @@ export class LedgerConnectPage implements OnInit {
                 this.ledgerNanoAppname = "Ethereum"
         }
 
+        // Reset addresses
+        this.addresses = [];
         void this.refreshAddresses();
     }
 
