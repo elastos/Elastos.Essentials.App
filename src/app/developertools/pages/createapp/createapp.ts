@@ -76,7 +76,7 @@ export class CreateAppPage {
     } else {
       if (this.mnemonicToImport) {
         this.createdDApp = await this.dAppService.createDAppUsingMnemonic(
-          "Unnamed",
+          null,
           this.mnemonicToImport,
           this.mnemonicToImportPassphrase
         );
