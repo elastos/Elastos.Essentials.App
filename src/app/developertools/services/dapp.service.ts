@@ -2,12 +2,12 @@ import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
+import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { HelpComponent } from '../components/help/help.component';
 import { CreatedDApp } from '../model/customtypes';
 import { StorageDApp } from '../model/storagedapp.model';
-
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -23,6 +23,7 @@ export class DAppService {
         public zone: NgZone,
         private router: Router,
         private storage: GlobalStorageService,
+        private globalApplicationDidService: GlobalApplicationDidService
     ) {
     }
 
@@ -140,10 +141,15 @@ export class DAppService {
                     }
                     else {
                         // Existing DID - we handle only the first one in the list
+                        let appDid = existingDIDs[0].getDIDString();
+
+                        // Fetch the app did document to get its name
+                        let publishedAppInfo = await this.globalApplicationDidService.fetchPublishedAppInfo(appDid);
+
                         let dapp = new StorageDApp();
-                        dapp.name = appName;
+                        dapp.name = publishedAppInfo ? publishedAppInfo.name : "Unnamed";
                         dapp.didStoreId = didStore.getId();
-                        dapp.didString = existingDIDs[0].getDIDString();
+                        dapp.didString = appDid;
 
                         // Store app info to permanent storage
                         await this.storeDApp(dapp);

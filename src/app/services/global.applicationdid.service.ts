@@ -26,29 +26,39 @@ export class GlobalApplicationDidService {
    * Fetches and extracts all info about a published app DID, given its DID string.
    */
   public async fetchPublishedAppInfo(appDid: string): Promise<ApplicationDIDInfo> {
-    let appDidDocument = await this.fetchDidDocument(appDid);
-    if (!appDidDocument) {
+    try {
+      let appDidDocument = await this.fetchDidDocument(appDid);
+      if (!appDidDocument) {
+        return {
+          didDocument: appDidDocument,
+          iconUrl: null,
+          name: null
+        };
+      }
+
+      let appCredential = this.getCredentialByType(appDidDocument, "ApplicationCredential");
+      if (!appCredential) {
+        return {
+          didDocument: appDidDocument,
+          iconUrl: null,
+          name: null
+        };
+      }
+
+      let subject = appCredential.getSubject();
       return {
         didDocument: appDidDocument,
+        iconUrl: subject["iconUrl"],
+        name: subject["name"]
+      }
+    }
+    catch (e) {
+      Logger.error('applicationdid', ' Exception while fetching published app info', e);
+      return {
+        didDocument: null,
         iconUrl: null,
         name: null
       };
-    }
-
-    let appCredential = this.getCredentialByType(appDidDocument, "ApplicationCredential");
-    if (!appCredential) {
-      return {
-        didDocument: appDidDocument,
-        iconUrl: null,
-        name: null
-      };
-    }
-
-    let subject = appCredential.getSubject();
-    return {
-      didDocument: appDidDocument,
-      iconUrl: subject["iconUrl"],
-      name: subject["name"]
     }
   }
 
