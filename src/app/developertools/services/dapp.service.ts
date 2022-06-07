@@ -279,8 +279,6 @@ export class DAppService {
 
     async deleteApp(app: StorageDApp): Promise<void> {
         await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", this.dapps = this.dapps.filter(dapp => dapp.didStoreId !== app.didStoreId));
-        void this.popoverController.dismiss();
-        void this.router.navigate(['/developertools/home']);
     }
 
     public deleteApps(): Promise<void> {

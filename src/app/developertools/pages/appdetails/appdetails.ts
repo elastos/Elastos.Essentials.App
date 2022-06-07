@@ -75,7 +75,8 @@ export class AppDetailsPage {
     private nav: GlobalNavService,
     public translate: TranslateService,
     private globalApplicationDidService: GlobalApplicationDidService,
-    private globalHiveService: GlobalHiveService
+    private globalHiveService: GlobalHiveService,
+    private globalNavService: GlobalNavService
   ) {
     route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -281,6 +282,21 @@ export class AppDetailsPage {
       },
       translucent: false
     });
+
+    // eslint-disable-next-line require-await
+    void popover.onDidDismiss().then(async event => {
+      if (event && event.data && event.data.delete) {
+        // Delete for real
+        await this.dAppService.deleteApp(this.app);
+
+        // Forget current screen to not come back here with back key
+        this.globalNavService.clearIntermediateRoutes(["/developertools/appdetails"]);
+
+        // Go back to dev home
+        void this.router.navigate(['/developertools/home']);
+      }
+    });
+
     return await popover.present();
   }
 

@@ -1,9 +1,9 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { StorageDApp } from '../../model/storagedapp.model';
 import { DAppService } from '../../services/dapp.service';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-delete',
@@ -29,7 +29,10 @@ export class DeleteComponent implements OnInit {
   }
 
   cancel() {
-    this.popover.dismiss();
+    void this.popover.dismiss();
   }
 
+  delete() {
+    void this.popover.dismiss({ delete: true });
+  }
 }

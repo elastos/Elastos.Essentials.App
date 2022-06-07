@@ -168,7 +168,7 @@ export class GlobalNavService {
 
         let lastStep = this.navigationHistory[this.navigationHistory.length - 1];
         if (!lastStep || (lastStep.route !== route)) {
-          this.navigationHistory.push({ context, route, routerOptions });
+            this.navigationHistory.push({ context, route, routerOptions });
         }
 
         return this.navCtrl.navigateForward(route, routerOptions);
