@@ -27,7 +27,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkChooserComponent, NetworkChooserComponentOptions, NetworkChooserFilter } from '../components/network-chooser/network-chooser.component';
 import { AnyNetwork } from '../model/networks/network';
 import { WalletNetworkService } from './network.service';
-import { WalletService } from './wallet.service';
 
 export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
 
@@ -40,7 +39,6 @@ export class WalletNetworkUIService {
     constructor(
         private modalCtrl: ModalController,
         private networkService: WalletNetworkService,
-        private walletService: WalletService,
         private theme: GlobalThemeService) {
         WalletNetworkUIService.instance = this;
     }
@@ -48,13 +46,12 @@ export class WalletNetworkUIService {
     /**
      * Lets user pick a network in the list of all available networks.
      * Promise resolves when a new network is chosen or when cancelled.
-     * 
+     *
      * @dependson NetworkChooserComponentModule
      */
     async chooseActiveNetwork(): Promise<boolean> {
         let options: NetworkChooserComponentOptions = {
             currentNetwork: this.networkService.activeNetwork.value,
-            //masterWallet: this.walletService.getActiveMasterWallet()
         };
 
         let modal = await this.modalCtrl.create({
@@ -83,7 +80,7 @@ export class WalletNetworkUIService {
     */
     async pickNetwork(filter?: NetworkChooserFilter): Promise<AnyNetwork> {
         let options: NetworkChooserComponentOptions = {
-            currentNetwork: this.walletService.activeNetworkWallet.value.network,
+            currentNetwork: this.networkService.activeNetwork.value,
             filter,
             showActiveNetwork: false
         };
