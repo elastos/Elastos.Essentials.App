@@ -30,6 +30,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ETHTransactionInfo, ETHTransactionInfoParser, ETHTransactionTokenApproveInfo } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
@@ -137,7 +138,7 @@ export class EscTransactionPage implements OnInit {
       this.gasPrice = await this.evmSubWallet.getGasPrice();
     }
 
-    this.gasPriceGwei = parseInt(this.gasPrice) / 1000000000;
+    this.gasPriceGwei = parseInt(this.gasPrice) / Config.GWEI;
 
     if (this.coinTransferService.payloadParam.gas) {
       this.gasLimit = Util.getDecimalString(this.coinTransferService.payloadParam.gas);
@@ -335,7 +336,7 @@ export class EscTransactionPage implements OnInit {
   }
 
   public updateGasprice(event) {
-    this.gasPrice = Math.floor(this.gasPriceGwei * 1000000000).toString();
+    this.gasPrice = Math.floor(this.gasPriceGwei * Config.GWEI).toString();
   }
 
   public getApproveTokenNameWithSymbol(transactionInfo: ETHTransactionTokenApproveInfo): string {

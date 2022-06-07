@@ -82,7 +82,7 @@ export class GlobalELAUtxoService extends GlobalService {
     if (!this.activeNetworkWallet) return;
 
     if (this.walletNetworkService.isActiveNetworkElastos()) {
-      this.mainChainSubwallet = this.activeNetworkWallet.getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
+      this.mainChainSubwallet = this.activeNetworkWallet.getSubWallet(StandardCoinName.ELA) as unknown as MainChainSubWallet;
       this.fetchUtxoTimer = setTimeout(() => {
         void this.checkELAUtxos();
       }, 30000);
@@ -105,6 +105,8 @@ export class GlobalELAUtxoService extends GlobalService {
       const message = GlobalLanguageService.instance.translate('wallet.notification-too-many-utxos',
         { walletname: this.activeNetworkWallet.masterWallet.name, count: utxosCount });
       this.sendNotification(message);
+    } else {
+      this.deletePreviousNotification();
     }
   }
 
@@ -133,5 +135,13 @@ export class GlobalELAUtxoService extends GlobalService {
       url: '/wallet/wallet-settings'
     };
     void GlobalNotificationsService.instance.sendNotification(notification);
+  }
+
+  private deletePreviousNotification() {
+    let key = 'consolidateutxo-' + this.activeNetworkWallet.masterWallet.id;
+    let notifications = GlobalNotificationsService.instance.getNotifications();
+    let utxoNotifications = notifications.filter(notification => notification.key === key);
+    if (utxoNotifications.length > 0)
+      void GlobalNotificationsService.instance.clearNotification(utxoNotifications[0].notificationId);
   }
 }

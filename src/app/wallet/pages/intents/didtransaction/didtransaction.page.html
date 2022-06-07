@@ -9,6 +9,31 @@
         <div class="msg-container">
             <p>{{ 'wallet.didtransaction-intro' | translate }}</p>
         </div>
+
+        <ion-row class="item-row ripple ion-activatable" *ngIf="fee">
+          <ion-col size="5">
+            <div>{{ 'wallet.esctransaction-fees' | translate }}</div>
+          </ion-col>
+          <ion-col size="6" class="price">
+            <span> {{ feeDisplay }} </span>
+          </ion-col>
+          <ion-col size="1" class="edit-gas-col">
+            <ion-icon name="create-outline" (click)="editGasPrice()"></ion-icon>
+          </ion-col>
+        </ion-row>
+        <ion-row class="item-row ripple ion-activatable" *ngIf="showEditGasPrice">
+          <ion-col size="6">
+            <div>{{ 'wallet.eth-gasprice' | translate }}</div>
+            <ion-input autosize clearInput name="gasPrice" ngDefaultControl [(ngModel)]="gasPriceGwei"
+              (ionChange)="updateGasprice($event)" mode="ios">
+            </ion-input>
+          </ion-col>
+          <ion-col size="6">
+            <div>{{ 'wallet.eth-gaslimit' | translate }}</div>
+            <ion-input autosize clearInput name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
+            </ion-input>
+          </ion-col>
+        </ion-row>
         <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
             <ion-label>{{ 'common.cancel' | translate}}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>

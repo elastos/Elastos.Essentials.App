@@ -4,41 +4,42 @@ import { Config } from "src/app/wallet/config/Config";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { EVMTransactionBuilder } from "../../../../evms/tx-builders/evm.txbuilder";
 
-export class IdentityTransactionBuilder extends EVMTransactionBuilder {
-  public async createIDTransaction(payload: string): Promise<string> {
-    const contractAbi = [
+const contractAbi = [
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
       {
-        "inputs": [],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "string",
-            "name": "data",
-            "type": "string"
-          }
-        ],
-        "name": "publishDidTransaction",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "internalType": "string",
+        "name": "data",
+        "type": "string"
       }
-    ];
+    ],
+    "name": "publishDidTransaction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
 
+export class IdentityTransactionBuilder extends EVMTransactionBuilder {
+  public async createIDTransaction(payload: string, gasPriceArg: string = null, gasLimitArg: string = null): Promise<string> {
     const publishDIDContract = new ((await this.getWeb3()).eth.Contract)(contractAbi as any, Config.ETHDID_CONTRACT_ADDRESS);
-    const gasPrice = await this.getGasPrice();
     const method = publishDIDContract.methods.publishDidTransaction(payload);
-    let gasLimit = 200000;
-    try {
-      // Estimate gas cost
-      let gasLimitTemp = await method.estimateGas();
-      //'* 1.5': Make sure the gaslimit is big enough.
-      gasLimit = Util.ceil(gasLimitTemp * 1.5);
-    } catch (error) {
-      Logger.warn('wallet', 'estimateGas error:', error);
+
+    let gasPrice = gasPriceArg;
+    if (gasPrice === null) {
+      gasPrice = await this.getGasPrice();
     }
+
+    let gasLimit = gasLimitArg;
+    if (gasLimit === null) {
+      gasLimit = await this.estimateGasByMethod(method);
+    }
+
     const data = method.encodeABI();
     let nonce = await this.getNonce();
     Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice, ' nonce:', nonce, ' ContractAddress:', Config.ETHDID_CONTRACT_ADDRESS);
@@ -55,9 +56,28 @@ export class IdentityTransactionBuilder extends EVMTransactionBuilder {
       0, // WEI
       gasPrice,
       0, // WEI
-      gasLimit.toString(),
+      gasLimit,
       data,
       nonce
     );
+  }
+
+  public async estimateGas(payload: string) {
+    const publishDIDContract = new ((await this.getWeb3()).eth.Contract)(contractAbi as any, Config.ETHDID_CONTRACT_ADDRESS);
+    const method = publishDIDContract.methods.publishDidTransaction(payload);
+    return await this.estimateGasByMethod(method);
+  }
+
+  private async estimateGasByMethod(method) {
+    let gasLimit = 200000;
+    try {
+      // Estimate gas cost
+      let gasLimitTemp = await method.estimateGas();
+      //'* 1.5': Make sure the gaslimit is big enough.
+      gasLimit = Util.ceil(gasLimitTemp * 1.5);
+    } catch (error) {
+      Logger.warn('wallet', 'estimateGas error:', error);
+    }
+    return gasLimit.toString();
   }
 }

@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Config } from '../../config/Config';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import { ETHTransactionSpeedup, ETHTransactionStatusInfo, EVMService } from '../../services/evm/evm.service';
 
@@ -23,8 +24,6 @@ export class ETHTransactionComponent implements OnInit {
   // public gasLimit: string = null;
   public gasLimit = '200000';
   public nonce = -1;
-
-  private GWEI = 1000000000;
 
   constructor(
     public theme: GlobalThemeService,
@@ -58,7 +57,7 @@ export class ETHTransactionComponent implements OnInit {
           break;
         case ETHTransactionStatus.UNPACKED:
           this.zone.run(() => {
-            this.gasPrice = new BigNumber(status.gasPrice).dividedBy(this.GWEI).toFixed(1);
+            this.gasPrice = new BigNumber(status.gasPrice).dividedBy(Config.GWEI).toFixed(1);
             this.gasLimit = status.gasLimit;
             this.nonce = status.nonce;
             this.publishing = false;
@@ -67,7 +66,7 @@ export class ETHTransactionComponent implements OnInit {
           break;
         case ETHTransactionStatus.ERROR:
           this.zone.run(() => {
-            this.gasPrice = new BigNumber(status.gasPrice).dividedBy(this.GWEI).toFixed(1);
+            this.gasPrice = new BigNumber(status.gasPrice).dividedBy(Config.GWEI).toFixed(1);
             this.gasLimit = status.gasLimit;
             this.nonce = status.nonce;
             this.publishing = false;
@@ -80,7 +79,7 @@ export class ETHTransactionComponent implements OnInit {
 
   speedup() {
     let speedup: ETHTransactionSpeedup = {
-      gasPrice: Math.floor(parseFloat(this.gasPrice) * this.GWEI).toString(),
+      gasPrice: Math.floor(parseFloat(this.gasPrice) * Config.GWEI).toString(),
       gasLimit: this.gasLimit,
       nonce: this.nonce,
     }

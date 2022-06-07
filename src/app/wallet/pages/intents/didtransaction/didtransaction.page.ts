@@ -28,6 +28,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { IdentityTransactionBuilder } from 'src/app/wallet/model/networks/elastos/evms/eid/tx-builders/identity.txbuilder';
@@ -48,11 +49,20 @@ export class DidTransactionPage implements OnInit {
 
     private networkWallet: AnyNetworkWallet;
     private sourceSubwallet: ElastosEVMSubWallet;
+    private identityTxBuilder: IdentityTransactionBuilder;
     private intentTransfer: IntentTransfer;
-    private balance: number; // ELA
     private subWalletId: string; // IDChain
 
     private alreadySentIntentResponce = false;
+
+    public gasPrice = '';
+    public gasPriceGwei = '';
+    public gasLimit = '';
+    public fee: BigNumber = null; // WEI
+    public feeDisplay = ''; // ELA
+
+    public showEditGasPrice = false;
+
 
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -106,6 +116,9 @@ export class DidTransactionPage implements OnInit {
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
         this.sourceSubwallet = this.networkWallet.getSubWallet(this.subWalletId) as ElastosEVMSubWallet;
+        this.identityTxBuilder = new IdentityTransactionBuilder(this.sourceSubwallet.networkWallet);
+
+        void this.estimateGas();
     }
 
     /**
@@ -124,16 +137,33 @@ export class DidTransactionPage implements OnInit {
         await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
     }
 
+    public editGasPrice() {
+      this.showEditGasPrice = !this.showEditGasPrice;
+    }
+
+    async estimateGas() {
+      this.gasPrice = await this.identityTxBuilder.getGasPrice();
+      this.gasLimit = await this.identityTxBuilder.estimateGas(JSON.stringify(this.coinTransferService.didrequest));
+      await this.updateGasInfo()
+    }
+
+    public async updateGasprice(event) {
+      this.gasPrice = new BigNumber(this.gasPriceGwei).multipliedBy(Config.GWEI).toString();
+      await this.updateGasInfo()
+    }
+
+    private updateGasInfo() {
+      this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(1);
+      this.fee = new BigNumber(this.gasLimit).multipliedBy(new BigNumber(this.gasPrice));
+      this.feeDisplay = this.fee.dividedBy(this.sourceSubwallet.tokenAmountMulipleTimes).toString();
+    }
+
     goTransaction() {
         void this.checkValue();
     }
 
     async checkValue() {
-        if (this.balance < 0.0002) {
-            void this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
-            return;
-        }
-        const isAvailableBalanceEnough = await this.sourceSubwallet.isAvailableBalanceEnough(new BigNumber(20000));
+        const isAvailableBalanceEnough = await this.sourceSubwallet.isAvailableBalanceEnough(this.fee);
         if (!isAvailableBalanceEnough) {
             await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
             void this.cancelOperation();
@@ -147,8 +177,7 @@ export class DidTransactionPage implements OnInit {
         await this.native.showLoading(this.translate.instant('common.please-wait'));
 
         try {
-            let identityTxBuilder = new IdentityTransactionBuilder(this.sourceSubwallet.networkWallet);
-            const rawTx = await identityTxBuilder.createIDTransaction(JSON.stringify(this.coinTransferService.didrequest));
+            const rawTx = await this.identityTxBuilder.createIDTransaction(JSON.stringify(this.coinTransferService.didrequest), this.gasPrice, this.gasLimit);
             await this.native.hideLoading();
             if (rawTx) {
                 Logger.log('wallet', 'Created raw DID transaction');
@@ -179,6 +208,7 @@ export class DidTransactionPage implements OnInit {
             }
         }
         catch (e) {
+            await this.native.hideLoading();
             await this.popupProvider.ionicAlert('wallet.transaction-fail', 'Unknown error, possibly a network issue');
             await this.sendIntentResponse(
                 { txid: null, status: 'error' },

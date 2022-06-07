@@ -36,6 +36,7 @@ export class Config {
     public static SELAAsBigNumber = new BigNumber(Config.SELA);
 
     public static WEI = 1000000000000000000; // 10 ^ 18
+    public static GWEI = 1000000000; // 10 ^ 9
 
     public static SATOSHI = 100000000; // Number of satoshi per BTC.
 
