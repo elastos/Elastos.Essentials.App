@@ -345,30 +345,36 @@ export class AppDetailsPage {
   private async uploadAppIconToHive(rawBase64ImageOut: string): Promise<void> {
     this.uploadingIcon = true;
 
-    // Upload the the picture and create the script to let others get this picture.
-    let randomPictureID = new Date().getTime();
-    let appIconFileName = "developertools/appicons/" + randomPictureID;
-    let uploader = await this.globalHiveService.getActiveVault().getFiles().upload(appIconFileName);
-    let avatarData = Buffer.from(rawBase64ImageOut, "base64"); // Raw picture data, not base64 encoded
-    await uploader.write(avatarData);
-    await uploader.flush();
-    await uploader.close();
-    Logger.log('developertools', "Completed app icon upload to hive");
+    try {
+      // Upload the the picture and create the script to let others get this picture.
+      let randomPictureID = new Date().getTime();
+      let appIconFileName = "developertools/appicons/" + randomPictureID;
+      let uploader = await this.globalHiveService.getActiveVault().getFiles().upload(appIconFileName);
+      let avatarData = Buffer.from(rawBase64ImageOut, "base64"); // Raw picture data, not base64 encoded
+      await uploader.write(avatarData);
+      await uploader.flush();
+      await uploader.close();
+      Logger.log('developertools', "Completed app icon upload to hive");
 
-    // Create a script to make this picture available to everyone
-    let scriptName = "getAppIcon" + randomPictureID;
-    let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript(scriptName, hiveManager.Scripting.Executables.newAggregatedExecutable(
-      [hiveManager.Scripting.Executables.Files.newDownloadExecutable(appIconFileName)]
-    ), null, true, true);
-    Logger.log('developertools', "Could create avatar script?", couldCreateScript);
+      // Create a script to make this picture available to everyone
+      let scriptName = "getAppIcon" + randomPictureID;
+      let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript(scriptName, hiveManager.Scripting.Executables.newAggregatedExecutable(
+        [hiveManager.Scripting.Executables.Files.newDownloadExecutable(appIconFileName)]
+      ), null, true, true);
+      Logger.log('developertools', "Could create avatar script?", couldCreateScript);
 
-    let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
-    let avatarHiveURL = "hive://" + GlobalDIDSessionsService.signedInDIDString + "@" + essentialsAppDID + "/" + scriptName + "?params={\"empty\":0}"; // Fake params to prevent hive SDK bug crash
-    Logger.log("developertools", "Generated avatar url:", avatarHiveURL);
+      let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
+      let avatarHiveURL = "hive://" + GlobalDIDSessionsService.signedInDIDString + "@" + essentialsAppDID + "/" + scriptName + "?params={\"empty\":0}"; // Fake params to prevent hive SDK bug crash
+      Logger.log("developertools", "Generated avatar url:", avatarHiveURL);
 
-    // Update UI locally without saving to permanent profile yet.
-    this.appIconUrl = avatarHiveURL;
-    this.base64iconPath = await rawImageToBase64DataUrl(avatarData);
+      // Update UI locally without saving to permanent profile yet.
+      this.appIconUrl = avatarHiveURL;
+      this.base64iconPath = await rawImageToBase64DataUrl(avatarData);
+    }
+    catch (e) {
+      Logger.error('developertools', 'Failed to upload app icon to hive', e);
+      this.native.errToast('Failed to upload app picture to hive storage');
+    }
 
     this.uploadingIcon = false;
   }
