@@ -5,7 +5,7 @@ import { Migration } from "../migration";
  * 2022-02-17
  * Elastos network was initially one network containing several "ELA" for mainchain, smart chain,
  * identity chain, and is now split into 3 different networks.
- * Browser favorites and recent apps have to be adjusted (network key).
+ * Browser favorites have to be adjusted (network key).
  */
 export class BrowserFavoritesElastosNetworkSplitMigration extends Migration {
   constructor(uniquelyIncrementedId: number) {

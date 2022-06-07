@@ -89,7 +89,11 @@
                         </div>
                     </ion-col>
                     <ion-col [size]="item.amount.isZero() ? 7 : 5" class="middle-col">
-                        <h1>{{ item.name | translate }}</h1>
+                        <h1>{{ getTransactionTitle(item) }}</h1>
+
+                        <!-- TMP TEST -->
+                        <h1 *ngFor="let event of getContractEvents(item)">* {{ event.description }}</h1>
+
                         <p class="memo" *ngIf="item.memo">{{ item.memo }}</p>
                         <p>{{ item.datetime }}</p>
                     </ion-col>

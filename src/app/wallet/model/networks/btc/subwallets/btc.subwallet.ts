@@ -113,6 +113,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             type: null,
             isCrossChain: false,
             isRedPacket: false,
+            subOperations: []
         };
 
         if (transaction.confirmations > 0) {

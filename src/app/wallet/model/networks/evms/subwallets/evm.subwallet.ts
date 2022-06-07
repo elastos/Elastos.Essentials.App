@@ -19,6 +19,7 @@ import { AddressUsage } from '../../../safes/addressusage';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
+import { ETHTransactionInfoParser } from '../ethtransactioninfoparser';
 import type { EVMNetwork } from '../evm.network';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction } from '../evm.types';
 import { EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
@@ -34,6 +35,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   protected publishdidContractAddress: string = null;
   protected tokenList: ERCTokenInfo[] = null;
   private redPacketServerAddress = null;
+  protected txInfoParser: ETHTransactionInfoParser;
 
   constructor(
     public networkWallet: EVMNetworkWallet<any, WalletNetworkOptionsType>,
@@ -47,6 +49,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   public async initialize(): Promise<void> {
     await super.initialize();
+
+    this.txInfoParser = new ETHTransactionInfoParser(this.networkWallet.network);
 
     this.tokenDecimals = 18;
     this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
@@ -140,6 +144,22 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       return null;
     }
 
+    // Not blocking retrieval of extended transaction information
+    // TOOL: https://www.4byte.directory/signatures/?bytes4_signature=0xddf252ad
+    // erc20 token contract = txreceipt.logs0.address
+    // logs0.topics0:
+    //  0xddf252ad : Transfer(address,address,uint256)
+    //      topics1 = sender, topics2 = receiver, etc
+    void this.networkWallet.getOrFetchExtendedTxInfo(transaction.hash).then(async extInfo => {
+      // Got a partial info, now compute more things (main contract operation type, events...) then save
+      if (extInfo.evm.transactionReceipt) {
+        extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input);
+        await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
+      }
+
+      console.log('extendedTxInfo', extInfo, transaction);
+    });
+
     transaction.to = transaction.to.toLowerCase();
 
     const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
@@ -182,6 +202,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       erc20TokenValue: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenValue : null,
       erc20TokenContractAddress: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenContractAddress : null,
       isRedPacket: transaction.isRedPacket,
+      subOperations: []
     };
 
     transactionInfo.amount = new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes);
@@ -206,11 +227,6 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       transactionInfo.type = TransactionType.TRANSFER;
       transactionInfo.symbol = '';
     }
-
-    // TODO : Move to getTransactionInfo of elastos evm
-    /* TODO @zhiming: was: if ((transaction.transferType === ETHSCTransferType.DEPOSIT) || (transactionInfo.name === "wallet.coin-dir-to-mainchain")) {
-      transactionInfo.isCrossChain = true;
-    } */
 
     return transactionInfo;
   }

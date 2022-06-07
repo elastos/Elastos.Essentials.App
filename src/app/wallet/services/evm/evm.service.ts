@@ -9,6 +9,7 @@ import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import type Web3 from 'web3';
+import type { TransactionReceipt } from 'web3-core';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import type { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
 import type { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
@@ -351,6 +352,12 @@ export class EVMService {
     }
 
     return -1;
+  }
+
+  public async getTransactionReceipt(network: AnyNetwork, txHash: string): Promise<TransactionReceipt> {
+    let web3 = await this.getWeb3(network);
+    let receipt = await web3.eth.getTransactionReceipt(txHash);
+    return receipt;
   }
 
   /**

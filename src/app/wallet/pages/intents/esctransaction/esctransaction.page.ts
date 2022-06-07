@@ -164,12 +164,11 @@ export class EscTransactionPage implements OnInit {
 
     // Extract information about the specific transaction type we are handling
     let transactionInfoParser = new ETHTransactionInfoParser(
-      this.evmSubWallet.networkWallet.network,
-      this.coinTransferService.payloadParam.data,
-      this.coinTransferService.payloadParam.value || "0",
-      this.coinTransferService.payloadParam.to
+      this.evmSubWallet.networkWallet.network
     )
-    this.transactionInfo = await transactionInfoParser.computeInfo();
+    this.transactionInfo = await transactionInfoParser.computeFromTxData(
+      this.coinTransferService.payloadParam.data,
+      this.coinTransferService.payloadParam.to);
     Logger.log("wallet", "ESCTransaction got transaction info:", this.transactionInfo);
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises

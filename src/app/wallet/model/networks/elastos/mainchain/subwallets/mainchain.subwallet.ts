@@ -274,7 +274,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             timestamp: 0,
             txid: null,
             type: TransactionType.SENT,
-            isCrossChain: false // TODO: that's elastos specific
+            isCrossChain: false, // TODO: that's elastos specific
+            subOperations: []
         }
         return txInfo;
     }

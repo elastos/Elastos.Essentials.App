@@ -36,8 +36,10 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
+import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
 import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { EthContractEvent } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { TransactionListType } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
@@ -68,6 +70,7 @@ export class CoinHomePage implements OnInit {
     public subWallet: AnySubWallet = null;
     public subWalletId: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
+    public extendedTxInfo: { [txHash: string]: ExtendedTransactionInfo } = {};
     public offlineTransactions: AnyOfflineTransaction[] = [];
     public transactionsLoaded = false;
     private transactions: GenericTransaction[] = []; // raw transactions received from the providers / cache
@@ -312,6 +315,9 @@ export class CoinHomePage implements OnInit {
             this.countAsDailyTransactionIfNeeded(today, transactionInfo.timestamp);
 
             transferListTemp.push(transactionInfo);
+
+            let extTxInfo = await this.networkWallet.getExtendedTxInfo(transactionInfo.txid);
+            this.extendedTxInfo[transactionInfo.txid] = extTxInfo;
         }
 
         this.transferList = transferListTemp;
@@ -591,5 +597,24 @@ export class CoinHomePage implements OnInit {
 
     public getOfflineTransactionDate(offlineTx: AnyOfflineTransaction): string {
         return WalletUtil.getDisplayDate(offlineTx.updated);
+    }
+
+    public getTransactionTitle(transfer: TransactionInfo): string {
+        // If we have a good extended info, use it. Otherwise, use the base transaction info 'name'
+        let extTxInfo = this.extendedTxInfo[transfer.txid];
+        if (extTxInfo && extTxInfo.evm && extTxInfo.evm.txInfo && extTxInfo.evm.txInfo.operation && extTxInfo.evm.txInfo.operation.description)
+            return extTxInfo.evm.txInfo.operation.description; // TODO: make this i18n
+
+        return this.translate.instant(transfer.name);
+    }
+
+    public getContractEvents(transfer: TransactionInfo): EthContractEvent[] {
+        let extTxInfo = this.extendedTxInfo[transfer.txid];
+        //console.log('exttxinfo', extTxInfo);
+
+        if (!extTxInfo.evm || !extTxInfo.evm.txInfo)
+            return [];
+
+        return extTxInfo.evm.txInfo.events;
     }
 }

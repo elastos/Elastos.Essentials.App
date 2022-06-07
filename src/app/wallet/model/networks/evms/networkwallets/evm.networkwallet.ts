@@ -1,3 +1,5 @@
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
+import { ExtendedTransactionInfo } from '../../../extendedtxinfo';
 import { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { Safe } from '../../../safes/safe';
@@ -50,6 +52,22 @@ export abstract class EVMNetworkWallet<MasterWalletType extends MasterWallet, Wa
 
     public getAverageBlocktime(): number {
         return this.averageBlocktime;
+    }
+
+    protected async fetchExtendedTxInfo(txHash: string): Promise<ExtendedTransactionInfo> {
+        // Fetch transaction receipt
+        let receipt = await EVMService.instance.getTransactionReceipt(this.network, txHash);
+        if (!receipt)
+            return;
+
+        // Save extended info to cache
+        if (receipt) {
+            await this.saveExtendedTxInfo(txHash, {
+                evm: {
+                    transactionReceipt: receipt
+                }
+            });
+        }
     }
 }
 

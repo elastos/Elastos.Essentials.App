@@ -69,6 +69,7 @@ export class ElastosTransactionsHelper {
       type: null, // Defined by inherited classes
       isCrossChain: false, // Defined by inherited classes
       isRedPacket: false,
+      subOperations: []
     };
     return transactionInfo;
   }

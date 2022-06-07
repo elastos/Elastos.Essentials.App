@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
+import Queue from 'promise-queue';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -11,10 +12,12 @@ import { ERC1155Service } from '../../../../services/evm/erc1155.service';
 import { ERC721Service } from '../../../../services/evm/erc721.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { Coin, CoinID, CoinType } from '../../../coin';
+import { ExtendedTransactionInfo } from '../../../extendedtxinfo';
 import { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { AddressUsage } from '../../../safes/addressusage';
 import { Safe } from '../../../safes/safe';
+import { TimeBasedPersistentCache } from '../../../timebasedpersistentcache';
 import { TransactionProvider } from '../../../tx-providers/transaction.provider';
 import { WalletSortType } from '../../../walletaccount';
 import { EVMNetwork } from '../../evms/evm.network';
@@ -66,6 +69,9 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     private stakingAssetsID = '';
     private stakingInfo: StakingInfo = null;
 
+    private extendedTransactionInfoOpsQueue = new Queue(1);
+    private extendedTransactionInfoCache: TimeBasedPersistentCache<ExtendedTransactionInfo> = null;
+
     constructor(
         public masterWallet: MasterWalletType,
         public network: AnyNetwork,
@@ -80,6 +86,9 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     public async initialize(): Promise<void> {
         // Initialize the safe
         await this.safe.initialize(this);
+
+        // Prepare the extended transaction info cache
+        this.extendedTransactionInfoCache = await TimeBasedPersistentCache.loadOrCreate('exttxinfo-' + this.id);
 
         await this.prepareStandardSubWallets();
 
@@ -673,6 +682,44 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
     public getNetworkOptions(): WalletNetworkOptionsType {
         return this.masterWallet.networkOptions.find(no => no.network === this.network.key) as WalletNetworkOptionsType;
+    }
+
+    /**
+     * Gets the extended transaction info from cache, or returns null if we don't have anything.
+     */
+    public async getExtendedTxInfo(txHash: string): Promise<ExtendedTransactionInfo> {
+        let txInfoEntry = await this.extendedTransactionInfoCache.get(txHash);
+        if (!txInfoEntry)
+            return null;
+
+        return txInfoEntry.data;
+    }
+
+    /**
+     * Gets the extended transaction info from cache, or fetches it if we don't have anything.
+     */
+    public getOrFetchExtendedTxInfo(txHash: string): Promise<ExtendedTransactionInfo> {
+        // Don't spam the RPC API, fetch info one at a time
+        return this.extendedTransactionInfoOpsQueue.add(async () => {
+            let txInfoEntry = await this.extendedTransactionInfoCache.get(txHash);
+            //if (!txInfoEntry) {
+            // No cached data, need to fetch
+            await this.fetchExtendedTxInfo(txHash);
+            //}
+
+            txInfoEntry = this.extendedTransactionInfoCache.get(txHash);
+            return txInfoEntry ? txInfoEntry.data : null;
+        });
+    }
+
+    public saveExtendedTxInfo(txHash: string, info: ExtendedTransactionInfo): Promise<void> {
+        this.extendedTransactionInfoCache.set(txHash, info);
+        return this.extendedTransactionInfoCache.save();
+    }
+
+    protected fetchExtendedTxInfo(txHash: string): Promise<ExtendedTransactionInfo> {
+        // Empty by default. Overriden by EVM network wallet mostly
+        return;
     }
 }
 

@@ -44,7 +44,6 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends AnySubW
   }
 
   public getOfflineTransactions(): Promise<AnyOfflineTransaction[]> {
-    // TMP TEST
     let offlineTxs = OfflineTransactionsService.instance.getTransactions(this.subWallet);
     return offlineTxs;
   }

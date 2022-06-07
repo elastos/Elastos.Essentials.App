@@ -396,6 +396,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
             type: null,
             isCrossChain: false,
             isRedPacket: transaction.isRedPacket,
+            subOperations: []
         };
 
         // Use Config.WEI: because the gas is ETHSC.
