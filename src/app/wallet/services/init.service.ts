@@ -84,7 +84,7 @@ export class WalletInitService extends GlobalService {
     private swapService: SwapService, // IMPORTANT: unused, but keep it here for initialization
     private bridgeService: BridgeService, // IMPORTANT: unused, but keep it here for initialization
     private defiService: DefiService, // IMPORTANT: unused, but keep it here for initialization
-    private erc20CoinService: ERC20CoinService, // IMPORTANT: unused, but keep it here for initialization
+    private erc20CoinService: ERC20CoinService,
     private httpClient: HttpClient
   ) {
     super();
@@ -104,6 +104,7 @@ export class WalletInitService extends GlobalService {
     await this.networkService.init();
     await this.customNetworkService.init();
     await this.registerNetworks();
+    await this.erc20CoinService.init();
 
     // Register name resolvers
     this.registerNameResolvers();

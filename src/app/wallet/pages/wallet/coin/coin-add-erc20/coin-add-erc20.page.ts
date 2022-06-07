@@ -119,9 +119,9 @@ export class CoinAddERC20Page implements OnInit {
     }
 
     checkCoinAddress() {
-        this.zone.run(() => {
+        void this.zone.run(async () => {
             // Check if this looks like a valid address. If not, give feedback to user.
-            if (!this.evmService.isAddress(this.networkWallet.network, this.coinAddress)) {
+            if (!(await this.evmService.isAddress(this.networkWallet.network, this.coinAddress))) {
                 void this.popup.ionicAlert("wallet.not-a-valid-address", "wallet.coin-adderc20-not-a-erc20-contract", "common.ok");
                 this.coinAddress = '';
             } else {
@@ -148,7 +148,7 @@ export class CoinAddERC20Page implements OnInit {
     }
 
     private async tryFetchingCoinByAddress(address: string) {
-        if (address !== '' && this.evmService.isAddress(this.networkWallet.network, address)) {
+        if (address !== '' && await this.evmService.isAddress(this.networkWallet.network, address)) {
             // Coin address entered/changed: fetch its info.
             this.fetchingCoinInfo = true;
             this.coinInfoFetched = false;
@@ -163,7 +163,7 @@ export class CoinAddERC20Page implements OnInit {
                     this.native.toast_trans('wallet.coin-adderc20-not-found');
                 } else {
                     Logger.log('wallet', "Found contract at address " + address);
-                    const coinInfo = await this.erc20CoinService.getCoinInfo(this.networkWallet.network, address, null /* ethAccountAddress */);
+                    const coinInfo = await this.erc20CoinService.getCoinInfo(this.networkWallet.network, address);
 
                     if (coinInfo) {
                         this.coinName = coinInfo.coinName;
@@ -171,7 +171,7 @@ export class CoinAddERC20Page implements OnInit {
 
                         this.coinSymbol = coinInfo.coinSymbol;
                         Logger.log('wallet', "Coin symbol", this.coinSymbol);
-                        this.coinDecimals = parseInt(coinInfo.coinDecimals);
+                        this.coinDecimals = coinInfo.coinDecimals;
 
                         this.coinInfoFetched = true;
                     } else {

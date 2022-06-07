@@ -88,7 +88,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         await this.safe.initialize(this);
 
         // Prepare the extended transaction info cache
-        this.extendedTransactionInfoCache = await TimeBasedPersistentCache.loadOrCreate('exttxinfo-' + this.id);
+        this.extendedTransactionInfoCache = await TimeBasedPersistentCache.loadOrCreate('exttxinfo-' + this.id, false, 500);
 
         await this.prepareStandardSubWallets();
 

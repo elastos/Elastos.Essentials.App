@@ -157,7 +157,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
         await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
       }
 
-      console.log('extendedTxInfo', extInfo, transaction);
+      // console.log('extendedTxInfo', extInfo, transaction);
     });
 
     transaction.to = transaction.to.toLowerCase();

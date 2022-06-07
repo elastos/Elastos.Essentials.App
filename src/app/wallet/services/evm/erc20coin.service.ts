@@ -22,14 +22,21 @@
 
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
+import Queue from 'promise-queue';
 import { Logger } from 'src/app/logger';
 import { ERC20Coin } from '../../model/coin';
 import type { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { AnyNetwork } from '../../model/networks/network';
+import { TimeBasedPersistentCache } from '../../model/timebasedpersistentcache';
 import { WalletNetworkService } from '../network.service';
 import { WalletPrefsService } from '../pref.service';
 import { EVMService } from './evm.service';
 
+export type ERC20CoinInfo = {
+    coinName: string;
+    coinSymbol: string;
+    coinDecimals: number;
+}
 @Injectable({
     providedIn: 'root'
 })
@@ -44,13 +51,20 @@ export class ERC20CoinService {
     // 0xdeeddbe67ff585af58622c904b04fca615ffe8aa
     // 0xa438928dbad409fd927029156542aa7b466508d9
 
+    private fetchERC20OpsQueue = new Queue(1);
+    private coinTransactionInfoCache: TimeBasedPersistentCache<ERC20CoinInfo> = null;
+
     constructor(private prefs: WalletPrefsService,
         private evmService: EVMService,
         private networkService: WalletNetworkService) {
         ERC20CoinService.instance = this;
+    }
 
+    public async init(): Promise<void> {
         // Standard ERC20 contract ABI
         this.erc20ABI = require('../../../../assets/wallet/ethereum/StandardErc20ABI.json');
+
+        this.coinTransactionInfoCache = await TimeBasedPersistentCache.loadOrCreate('erc20coinsinfo', false, 500);
     }
 
     public async getCoinDecimals(network: AnyNetwork, address: string): Promise<number> {
@@ -63,29 +77,44 @@ export class ERC20CoinService {
         return coinDecimals;
     }
 
-    public async getCoinInfo(network: AnyNetwork, address: string, ethAccountAddress: string) {
-        try {
-            const erc20Contract = new ((await this.evmService.getWeb3(network)).eth.Contract)(this.erc20ABI, address, /* { from: ethAccountAddress } */);
-            Logger.log('wallet', 'erc20Contract', erc20Contract);
+    public getCoinInfo(network: AnyNetwork, address: string): Promise<ERC20CoinInfo> {
+        // Fetch only one token at a time
+        return this.fetchERC20OpsQueue.add(async () => {
+            // Try to find in cache
+            let cacheKey = `${network.key}_${address}`;
+            let cacheEntry = await this.coinTransactionInfoCache.get(cacheKey);
+            if (cacheEntry)
+                return cacheEntry.data;
 
-            const coinName = await erc20Contract.methods.name().call();
-            Logger.log('wallet', 'Coin name:', coinName);
+            try {
+                const erc20Contract = new ((await this.evmService.getWeb3(network)).eth.Contract)(this.erc20ABI, address, /* { from: ethAccountAddress } */);
+                //Logger.log('wallet', 'erc20Contract', erc20Contract);
 
-            const coinSymbol = await erc20Contract.methods.symbol().call();
-            Logger.log('wallet', 'Coin symbol:', coinSymbol);
+                const coinName = await erc20Contract.methods.name().call();
+                Logger.log('wallet', 'Coin name:', coinName);
 
-            const coinDecimals = await erc20Contract.methods.decimals().call();
-            Logger.log('wallet', 'Coin decimals:', coinDecimals);
+                const coinSymbol = await erc20Contract.methods.symbol().call();
+                Logger.log('wallet', 'Coin symbol:', coinSymbol);
 
-            return { coinName, coinSymbol, coinDecimals };
-        } catch (err) {
-            Logger.warn('wallet', 'getCoinInfo', err);
-            return null;
-        }
+                const coinDecimals = parseInt(await erc20Contract.methods.decimals().call());
+                Logger.log('wallet', 'Coin decimals:', coinDecimals);
+
+                let coinInfo: ERC20CoinInfo = { coinName, coinSymbol, coinDecimals };
+
+                // Save to cache
+                this.coinTransactionInfoCache.set(cacheKey, coinInfo);
+                void this.coinTransactionInfoCache.save();
+
+                return coinInfo;
+            } catch (err) {
+                Logger.warn('wallet', 'getCoinInfo', err);
+                return null;
+            }
+        });
     }
 
-    public async getERC20Coin(network: AnyNetwork, address: string, ethAccountAddress: string): Promise<ERC20Coin> {
-        const coinInfo = await this.getCoinInfo(network, address, ethAccountAddress);
+    public async getERC20Coin(network: AnyNetwork, address: string): Promise<ERC20Coin> {
+        const coinInfo = await this.getCoinInfo(network, address);
         const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinName, address, coinInfo.coinDecimals, this.prefs.getNetworkTemplate(), false);
         return newCoin;
     }

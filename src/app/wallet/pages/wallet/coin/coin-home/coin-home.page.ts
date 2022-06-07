@@ -610,9 +610,8 @@ export class CoinHomePage implements OnInit {
 
     public getContractEvents(transfer: TransactionInfo): EthContractEvent[] {
         let extTxInfo = this.extendedTxInfo[transfer.txid];
-        //console.log('exttxinfo', extTxInfo);
 
-        if (!extTxInfo.evm || !extTxInfo.evm.txInfo)
+        if (!extTxInfo || !extTxInfo.evm || !extTxInfo.evm.txInfo)
             return [];
 
         return extTxInfo.evm.txInfo.events;

@@ -25,14 +25,14 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
    * @param name Name used to uniquely identify this cache on disk.
    * @param maxItemsOnDisk Maximum number of items that are saved to disk. Older items are deleted.
    */
-  private constructor(public name: string, private maxItemsOnDisk, private storeGlobally: boolean) { }
+  private constructor(public name: string, private maxItemsOnDisk: number, private storeGlobally: boolean) { }
 
   /**
    * Returns a cache with data already loaded from disk if any, or an empty cache otherwise.
    * If storeGlobally is true, data on disk is not sandbox for the active DID, it's shared by everyone.
    */
-  public static async loadOrCreate<T extends JSONObject>(name: string, storeGlobally = false): Promise<TimeBasedPersistentCache<T>> {
-    let cache = new TimeBasedPersistentCache<T>(name, 100, storeGlobally);
+  public static async loadOrCreate<T extends JSONObject>(name: string, storeGlobally = false, maxItemsOnDisk = 100): Promise<TimeBasedPersistentCache<T>> {
+    let cache = new TimeBasedPersistentCache<T>(name, maxItemsOnDisk, storeGlobally);
     await cache.load();
     return cache;
   }
