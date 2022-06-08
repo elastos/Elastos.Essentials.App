@@ -661,6 +661,32 @@ export const fr = {
         'offline-tx-pending-multisig': 'Multi-signature en attente',
         'offline-tx-unknown-tx': "Transaction inconnue",
 
+        /*****************************
+        * Extended transaction info  *
+        ******************************/
+        'ext-tx-info-type-send-erc1155-nft': 'Envoi de NFT ERC1155',
+        'ext-tx-info-type-send-erc20': 'Envoi de {{ symbol }}',
+        'ext-tx-info-type-send-tokens': 'Envoi de jetons',
+        'ext-tx-info-type-swap-erc20': '{{ fromSymbol }} → {{ toSymbol }}',
+        'ext-tx-info-type-swap-tokens': 'Echange de jetons',
+        'ext-tx-info-type-approve-token': 'Approbation de jetons',
+        'ext-tx-info-type-approve-erc20': 'Approbation de {{ symbol }}',
+        'ext-tx-info-type-bridge-tokens': 'Transfert cross-chaine',
+        'ext-tx-info-type-bridge-erc20': 'Transfert cross-chaine {{ symbol }}',
+        'ext-tx-info-type-liquidity-deposit': 'Dépôt de liquidités',
+        'ext-tx-info-type-add-liquidity-with-symbols': 'Ajout de {{ symbolA }} + {{ symbolB }} LP',
+        'ext-tx-info-type-remove-liquidity': 'Retrait de liquidités',
+        'ext-tx-info-type-remove-liquidity-with-symbols': 'Retrait de {{ symbolA }} + {{ symbolB }} LP',
+        'ext-tx-info-type-withdraw': 'Retrait',
+        'ext-tx-info-type-get-rewards': 'Récompenses',
+        'ext-tx-info-type-get-booster-rewards': 'Récompenses de booster',
+        'ext-tx-info-type-deposit': 'Depôt',
+        'ext-tx-info-type-stake': 'Stake',
+        'ext-tx-info-type-mint': 'Création de jeton',
+        'ext-tx-info-type-redeem': 'Récupération',
+        'ext-tx-info-type-lock': 'Blocage',
+        'ext-tx-info-type-claim-tokens': 'Retrait de jetons',
+
         /***************************
         * Migrator *
         ****************************/

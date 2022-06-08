@@ -99,6 +99,7 @@ export class CoinHomePage implements OnInit {
 
     private transactionListChangedSubscription: Subscription = null;
     private transactionFetchStatusChangedSubscription: Subscription = null;
+    private extendedInfoChangeSubscription: Subscription = null;
 
     private updateInterval = null;
     private updateTmeout = null;
@@ -142,6 +143,10 @@ export class CoinHomePage implements OnInit {
         if (this.transactionFetchStatusChangedSubscription) {
             this.transactionFetchStatusChangedSubscription.unsubscribe();
             this.transactionFetchStatusChangedSubscription = null;
+        }
+        if (this.extendedInfoChangeSubscription) {
+            this.extendedInfoChangeSubscription.unsubscribe();
+            this.extendedInfoChangeSubscription = null;
         }
         if (this.fetchMoreTriggerObserver) {
             this.fetchMoreTriggerObserver.disconnect();
@@ -191,7 +196,8 @@ export class CoinHomePage implements OnInit {
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe((value) => {
-            if (value === null) return; // null is the initial value.
+            if (value === null)
+                return; // null is the initial value.
 
             void this.zone.run(async () => {
                 await this.updateTransactions();
@@ -202,6 +208,12 @@ export class CoinHomePage implements OnInit {
         this.transactionFetchStatusChangedSubscription = this.subWallet.transactionsFetchStatusChanged().subscribe(isFetching => {
             this.zone.run(() => {
                 this.shouldShowLoadingSpinner = isFetching;
+            });
+        });
+
+        this.extendedInfoChangeSubscription = this.networkWallet.extendedTransactionInfoUpdated.subscribe(info => {
+            void this.zone.run(() => {
+                this.extendedTxInfo[info.txHash] = info.extInfo;
             });
         });
     }
@@ -603,7 +615,7 @@ export class CoinHomePage implements OnInit {
         // If we have a good extended info, use it. Otherwise, use the base transaction info 'name'
         let extTxInfo = this.extendedTxInfo[transfer.txid];
         if (extTxInfo && extTxInfo.evm && extTxInfo.evm.txInfo && extTxInfo.evm.txInfo.operation && extTxInfo.evm.txInfo.operation.description)
-            return extTxInfo.evm.txInfo.operation.description; // TODO: make this i18n
+            return this.translate.instant(extTxInfo.evm.txInfo.operation.description, extTxInfo.evm.txInfo.operation.descriptionTranslationParams);
 
         return this.translate.instant(transfer.name);
     }

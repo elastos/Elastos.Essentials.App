@@ -136,14 +136,15 @@ export class IdentityService {
                     showBlockingSignInDialog: showSignInDialog
                 }
                 //}
-
+                console.log("1")
                 await this.didSessions.signIn(identityEntry, signInOptions);
-
+                console.log("2")
                 if (goToLauncher) {
                     await this.globalStartupService.navigateToStartupScreen();
-
+                    console.log("3")
                     // When everything else is ready, check if there were some intents queued and executed them
                     this.globalIntentService.onPostSignIn();
+                    console.log("4")
                 }
             }
             else {

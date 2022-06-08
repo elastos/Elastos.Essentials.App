@@ -10,6 +10,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
@@ -54,6 +55,7 @@ export class CoinTxInfoPage implements OnInit {
     private networkWallet: AnyNetworkWallet = null;
     public subWallet: AnySubWallet = null;
     public transactionInfo: TransactionInfo = null;
+    private extendedTxInfo: ExtendedTransactionInfo = null;
     public offlineTransaction: AnyOfflineTransaction = null;
 
     private mainTokenSymbol = '';
@@ -165,6 +167,9 @@ export class CoinTxInfoPage implements OnInit {
             this.isRedPacket = this.transactionInfo.isRedPacket;
 
             void this.getTransactionDetails();
+            void this.networkWallet.getExtendedTxInfo(this.transactionInfo.txid).then(extTxInfo => {
+                this.extendedTxInfo = extTxInfo;
+            });
         }
     }
 
@@ -356,6 +361,15 @@ export class CoinTxInfoPage implements OnInit {
             targetAddress = await GlobalElastosAPIService.instance.getETHSCWithdrawTargetAddress(parseInt(transaction.blockNumber) + 6, transaction.hash);
         }
         return targetAddress;
+    }
+
+    public getTransactionTitle(): string {
+        // If we have a good extended info, use it. Otherwise, use the base transaction info 'name'
+        let extTxInfo = this.extendedTxInfo;
+        if (extTxInfo && extTxInfo.evm && extTxInfo.evm.txInfo && extTxInfo.evm.txInfo.operation && extTxInfo.evm.txInfo.operation.description)
+            return this.translate.instant(extTxInfo.evm.txInfo.operation.description, extTxInfo.evm.txInfo.operation.descriptionTranslationParams);
+
+        return this.translate.instant(this.transactionInfo.name);
     }
 
     getTransferClass() {

@@ -120,6 +120,7 @@ export class PickIdentityPage implements OnInit {
     Logger.log('didsessions', "Trying to sign in with DID " + identityEntry.didString);
     void this.nativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
     await this.identityService.signIn(identityEntry, true);
+    Logger.log('didsessions', "Sign in complete");
     void this.nativeService.hideLoading();
   }
 

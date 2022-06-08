@@ -202,7 +202,7 @@ export class GlobalDIDSessionsService {
 
     GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
 
-    void this.globalNativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
+    await this.globalNativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
     void this.globalNativeService.hideLoading();
 

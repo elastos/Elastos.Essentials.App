@@ -661,6 +661,32 @@ export const en = {
         'offline-tx-pending-multisig': 'Pending multi-signature',
         'offline-tx-unknown-tx': "Unknown transaction",
 
+        /*****************************
+        * Extended transaction info  *
+        ******************************/
+        'ext-tx-info-type-send-erc1155-nft': 'Send ERC1155 NFT',
+        'ext-tx-info-type-send-erc20': 'Send {{ symbol }}',
+        'ext-tx-info-type-send-tokens': 'Send tokens',
+        'ext-tx-info-type-swap-erc20': '{{ fromSymbol }} → {{ toSymbol }}',
+        'ext-tx-info-type-swap-tokens': 'Swap tokens',
+        'ext-tx-info-type-approve-token': 'Approve token',
+        'ext-tx-info-type-approve-erc20': 'Approve {{ symbol }}',
+        'ext-tx-info-type-bridge-tokens': 'Bridge tokens',
+        'ext-tx-info-type-bridge-erc20': 'Bridge {{ symbol }} tokens',
+        'ext-tx-info-type-liquidity-deposit': 'Liquidity deposit',
+        'ext-tx-info-type-add-liquidity-with-symbols': 'Add {{ symbolA }} + {{ symbolB }} LP',
+        'ext-tx-info-type-remove-liquidity': 'Remove liquidity',
+        'ext-tx-info-type-remove-liquidity-with-symbols': 'Remove {{ symbolA }} + {{ symbolB }} LP',
+        'ext-tx-info-type-withdraw': 'Withdraw',
+        'ext-tx-info-type-get-rewards': 'Get rewards',
+        'ext-tx-info-type-get-booster-rewards': 'Get booster rewards',
+        'ext-tx-info-type-deposit': 'Deposit',
+        'ext-tx-info-type-stake': 'Stake',
+        'ext-tx-info-type-mint': 'Mint',
+        'ext-tx-info-type-redeem': 'Redeem',
+        'ext-tx-info-type-lock': 'Lock',
+        'ext-tx-info-type-claim-tokens': 'Claim tokens',
+
         /***************************
         * Migrator *
         ****************************/

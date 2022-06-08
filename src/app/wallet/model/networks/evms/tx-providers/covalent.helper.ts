@@ -169,7 +169,7 @@ export class CovalentHelper {
         txreceipt_status: '',
         input: '',
       }
-      console.log("covalent tx", covalenthqTransaction[i]);
+      // console.log("covalent tx", covalenthqTransaction[i]);
 
       transactions.push(ethTransaction);
     }

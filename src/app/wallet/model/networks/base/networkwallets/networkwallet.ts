@@ -62,6 +62,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
     public subWalletsListChange = new Subject<AnySubWallet>(); // Subwallet added or created
     public stakedAssetsUpdate = new Subject<StakingData[]>();
+    public extendedTransactionInfoUpdated = new Subject<{ txHash: string, extInfo: ExtendedTransactionInfo }>();
 
     private fetchMainTokenTimer: any = null;
     private fetchStakingAssetTimer: any = null;
@@ -702,19 +703,27 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         // Don't spam the RPC API, fetch info one at a time
         return this.extendedTransactionInfoOpsQueue.add(async () => {
             let txInfoEntry = await this.extendedTransactionInfoCache.get(txHash);
-            //if (!txInfoEntry) {
-            // No cached data, need to fetch
-            await this.fetchExtendedTxInfo(txHash);
-            //}
+            if (!txInfoEntry) {
+                // No cached data, need to fetch
+                await this.fetchExtendedTxInfo(txHash);
+            }
 
             txInfoEntry = this.extendedTransactionInfoCache.get(txHash);
             return txInfoEntry ? txInfoEntry.data : null;
         });
     }
 
-    public saveExtendedTxInfo(txHash: string, info: ExtendedTransactionInfo): Promise<void> {
+    public async saveExtendedTxInfo(txHash: string, info: ExtendedTransactionInfo): Promise<void> {
         this.extendedTransactionInfoCache.set(txHash, info);
-        return this.extendedTransactionInfoCache.save();
+        await this.extendedTransactionInfoCache.save();
+
+        // console.log('save tx info')
+
+        // Let listeners know about this tx info change
+        this.extendedTransactionInfoUpdated.next({
+            txHash,
+            extInfo: info
+        });
     }
 
     protected fetchExtendedTxInfo(txHash: string): Promise<ExtendedTransactionInfo> {

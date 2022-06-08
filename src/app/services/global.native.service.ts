@@ -8,7 +8,6 @@ import { MenuSheetComponent, MenuSheetMenu } from '../components/menu-sheet/menu
 @Injectable({
     providedIn: 'root'
 })
-
 export class GlobalNativeService {
     public static instance: GlobalNativeService;
 
@@ -106,6 +105,7 @@ export class GlobalNativeService {
             return;
         }
         await this.hideLoading();
+
         this.loadingCtrlCreating = true;
         this.loader = await this.loadingCtrl.create({
             mode: 'ios',

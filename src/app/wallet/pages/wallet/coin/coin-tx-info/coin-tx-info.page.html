@@ -8,7 +8,7 @@
             <div class="icon-container">
                 <img [src]="payStatusIcon">
             </div>
-            <ion-card-title>{{ transactionInfo.name | translate }}</ion-card-title>
+            <ion-card-title>{{ getTransactionTitle() }}</ion-card-title>
             <ion-card-subtitle *ngIf="displayAmount.length < 20">{{ symbol }}{{ displayAmount }}</ion-card-subtitle>
             <ion-card-subtitle class="smallFont" *ngIf="displayAmount.length >= 20">{{ symbol }}{{ displayAmount }}
             </ion-card-subtitle>

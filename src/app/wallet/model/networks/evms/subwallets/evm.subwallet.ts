@@ -145,14 +145,9 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     }
 
     // Not blocking retrieval of extended transaction information
-    // TOOL: https://www.4byte.directory/signatures/?bytes4_signature=0xddf252ad
-    // erc20 token contract = txreceipt.logs0.address
-    // logs0.topics0:
-    //  0xddf252ad : Transfer(address,address,uint256)
-    //      topics1 = sender, topics2 = receiver, etc
     void this.networkWallet.getOrFetchExtendedTxInfo(transaction.hash).then(async extInfo => {
       // Got a partial info, now compute more things (main contract operation type, events...) then save
-      if (extInfo.evm.transactionReceipt) {
+      if (extInfo && extInfo.evm.transactionReceipt && !extInfo.evm.txInfo) {
         extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input);
         await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
       }
