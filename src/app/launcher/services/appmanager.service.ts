@@ -129,41 +129,6 @@ export class AppmanagerService {
 
     private initAppsList() {
         this.runnableApps = [
-            /* {
-                type: 'launcher.main',
-                shouldBeDisplayed: () => true,
-                apps: [
-                    {
-                        id: 'wallet',
-                        name: this.translate.instant('launcher.app-wallet'),
-                        routerContext: App.WALLET,
-                        description: this.translate.instant('launcher.app-wallet-description'),
-                        icon: '/assets/launcher/apps/app-icons/wallet.svg',
-                        hasWidget: true,
-                        // routerPath: '/wallet/wallet-home'
-                        startCall: () => this.walletInitService.start()
-                    },
-                    {
-                        id: 'browser',
-                        routerContext: App.DAPP_BROWSER,
-                        name: this.translate.instant('launcher.app-browser'),
-                        description: this.translate.instant('launcher.app-browser-description'),
-                        icon: '/assets/launcher/apps/app-icons/browser.svg',
-                        hasWidget: false,
-                        routerPath: '/dappbrowser/home'
-                    },
-                    {
-                        id: 'identity',
-                        routerContext: App.IDENTITY,
-                        name: this.translate.instant('launcher.app-identity'),
-                        description: this.translate.instant('launcher.app-identity-description'),
-                        icon: '/assets/launcher/apps/app-icons/identity.svg',
-                        routerPath: '/identity/myprofile/home',
-                        hasWidget: false,
-                        // routerPath: '/identity/credaccessrequest'
-                    },
-                ]
-            }, */
             {
                 type: 'launcher.elastos-voting',
                 shouldBeDisplayed: () => this.walletNetworkService.isActiveNetworkElastos(),
@@ -186,15 +151,6 @@ export class AppmanagerService {
                         hasWidget: false,
                         startCall: () => this.crCouncilVotingInitService.startCouncil()
                     },
-                    // {
-                    //     id: 'crcouncil-election',
-                    //     routerContext: App.CRCOUNCIL_VOTING,
-                    //     name: this.translate.instant('launcher.app-cr-council-election'),
-                    //     description: this.translate.instant('launcher.app-crcouncil-election-description'),
-                    //     icon: '/assets/launcher/apps/app-icons/council.svg',
-                    //     hasWidget: false,
-                    //     startCall: () => this.crCouncilVotingInitService.startCouncilElection(),
-                    // },
                     {
                         id: 'crproposal',
                         routerContext: App.CRPROPOSAL_VOTING,

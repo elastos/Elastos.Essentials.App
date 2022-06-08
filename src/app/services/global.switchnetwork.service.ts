@@ -23,7 +23,7 @@ export class GlobalSwitchNetworkService {
    */
   public async promptSwitchToElastosNetworkIfDifferent(): Promise<boolean> {
     // Make sure the active network is elastos, otherwise, ask user to change
-    if (!this.walletNetworkService.isActiveNetworkElastos()) {
+    if (!this.walletNetworkService.isActiveNetworkElastosMainchain()) {
       let networkHasBeenSwitched = await this.promptSwitchToElastosNetwork();
       if (!networkHasBeenSwitched)
         return false; // User has denied to switch network.

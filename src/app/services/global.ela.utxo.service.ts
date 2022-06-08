@@ -81,7 +81,7 @@ export class GlobalELAUtxoService extends GlobalService {
 
     if (!this.activeNetworkWallet) return;
 
-    if (this.walletNetworkService.isActiveNetworkElastos()) {
+    if (this.walletNetworkService.isActiveNetworkElastosMainchain()) {
       this.mainChainSubwallet = this.activeNetworkWallet.getSubWallet(StandardCoinName.ELA) as unknown as MainChainSubWallet;
       this.fetchUtxoTimer = setTimeout(() => {
         void this.checkELAUtxos();
