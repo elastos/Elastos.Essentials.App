@@ -41,5 +41,8 @@ export const fr = {
         //Service
         'scam-warning-title': 'Adresse dangereuse',
         'scam-warning-message': 'Cette url est connue pour être dangereuse, nous vous recommandons fortement ne ne pas poursuivre.',
+
+        // Intents
+        'open-external-url-title': 'Ouvrir cette URL externe?'
     }
 };
