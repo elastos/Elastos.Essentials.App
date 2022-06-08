@@ -4,6 +4,7 @@ import { PopoverController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { HelpComponent } from '../components/help/help.component';
 import { CreatedDApp } from '../model/customtypes';
@@ -23,6 +24,7 @@ export class DAppService {
         public zone: NgZone,
         private router: Router,
         private storage: GlobalStorageService,
+        private native: GlobalNativeService,
         private globalApplicationDidService: GlobalApplicationDidService
     ) {
     }
@@ -75,12 +77,34 @@ export class DAppService {
         return passwordInfo.password;
     }
 
-    public createDApp(appName: string): Promise<CreatedDApp> {
-        return this.createDAppInternal(appName, null, "");
+    public async createDApp(appName: string): Promise<CreatedDApp> {
+        try {
+            let app = await this.createDAppInternal(appName, null, "");
+            return app;
+        }
+        catch (e) {
+            this.handleCreateDAppError(e);
+            return null;
+        }
     }
 
-    public createDAppUsingMnemonic(appName: string, mnemonic: string, passphrase: string): Promise<CreatedDApp> {
-        return this.createDAppInternal(appName, mnemonic, passphrase);
+    public async createDAppUsingMnemonic(appName: string, mnemonic: string, passphrase: string): Promise<CreatedDApp> {
+        try {
+            let app = await this.createDAppInternal(appName, mnemonic, passphrase);
+            return app;
+        }
+        catch (e) {
+            this.handleCreateDAppError(e);
+            return null;
+        }
+    }
+
+    private handleCreateDAppError(e: Error) {
+        console.log('e', e);
+
+        if (e.message && e.message.includes('Invalid mnemonic')) {
+            this.native.errToast('Invalid mnemonic');
+        }
     }
 
     private createDAppInternal(appName: string, mnemonic: string, passphrase: string): Promise<CreatedDApp> {
