@@ -4,6 +4,7 @@ import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { FavoritesService } from './favorites.service';
+import { IntentReceiverService } from './intentreceiver.service';
 
 /**
  * Manages favorite web dapps.
@@ -15,13 +16,16 @@ export class DAppBrowserInitService extends GlobalService {
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
-        private favoritesService: FavoritesService
+        private favoritesService: FavoritesService,
+        private intentReceiverService: IntentReceiverService
     ) {
         super();
     }
 
     public init() {
         GlobalServiceManager.getInstance().registerService(this);
+
+        this.intentReceiverService.init();
     }
 
     async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {

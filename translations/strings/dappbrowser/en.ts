@@ -38,8 +38,11 @@ export const en = {
         'network-availability': 'Network Availability',
         'network-availability-intro': 'Select which networks are supported by this dApp below to display it only when one of those networks is active. If no network is selected, the favorite is shown for all networks.',
 
-        //Service
+        // Service
         'scam-warning-title': 'Unsafe Url',
         'scam-warning-message': 'This url is known to be malicious, we highly recommend you to not continue.',
+
+        // Intents
+        'open-external-url-title': 'Open external URL?'
     }
 };

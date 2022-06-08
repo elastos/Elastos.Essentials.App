@@ -41,5 +41,8 @@ export const zh = {
         //Service
         'scam-warning-title': '不安全的URL',
         'scam-warning-message': '已知此URL是恶意的，我们强烈建议您不要继续。',
+
+        // Intents
+        'open-external-url-title': 'Open external URL?'
     }
 };

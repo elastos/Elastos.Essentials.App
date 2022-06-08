@@ -41,5 +41,8 @@ export const it = {
         //Service
         'scam-warning-title': 'Unsafe Url',
         'scam-warning-message': 'This url is known to be malicious, we highly recommend you to not continue.',
+
+        // Intents
+        'open-external-url-title': 'Open external URL?'
     }
 };
