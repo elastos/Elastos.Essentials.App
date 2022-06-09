@@ -482,7 +482,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         let toAmount = totalAmount - 10000;// 10000: fee
 
-        let toAddress = await this.createAddress();
+        let toAddress = await this.getCurrentReceiverAddress();
 
         Logger.log('wallet', 'createConsolidateTransaction toAmount:', toAmount);
 
@@ -492,7 +492,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         }]
 
         return SPVService.instance.createTransaction(
-            this.masterWallet.id,
+            jsToSpvWalletId(this.masterWallet.id),
             this.id, // From subwallet id
             JSON.stringify(utxoArrayForSDK),
             JSON.stringify(outputs),
@@ -1098,18 +1098,18 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             addressesHasBalance.push(this.addressWithBalanceArray[i].address);
         }
         let normalUtxoArray = await this.getAllUtxoByType(UtxoType.Normal, addressesHasBalance);
-
-        // Remove the utxo that used in pending transactions.
-        let usedUTXOs = await this.getUTXOUsedInPendingTransaction();
-        if (usedUTXOs.length > 0) {
-            for (let i = normalUtxoArray.length - 1; i >= 0; i--) {
-                if (usedUTXOs.indexOf(normalUtxoArray[i].txid) >= 0) {
-                    normalUtxoArray.splice(i, 1);
+        if (normalUtxoArray) {
+            // Remove the utxo that used in pending transactions.
+            let usedUTXOs = await this.getUTXOUsedInPendingTransaction();
+            if (usedUTXOs.length > 0) {
+                for (let i = normalUtxoArray.length - 1; i >= 0; i--) {
+                    if (usedUTXOs.indexOf(normalUtxoArray[i].txid) >= 0) {
+                        normalUtxoArray.splice(i, 1);
+                    }
                 }
             }
-        }
-
-        return normalUtxoArray;
+            return normalUtxoArray;
+        } else return [];
     }
 
     async getUtxosByAmount(address: string, amountELA: string, utxotype: UtxoType) {
