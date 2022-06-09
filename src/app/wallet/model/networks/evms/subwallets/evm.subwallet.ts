@@ -123,7 +123,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-    let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.getNetwork().getRPCUrl(), txid);
+    let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.getNetwork().getRPCUrl(), txid, this.networkWallet.network.key);
     if (!result) {
       // Remove error transaction.
       // TODO await this.removeInvalidTransaction(txid);
@@ -148,7 +148,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     void this.networkWallet.getOrFetchExtendedTxInfo(transaction.hash).then(async extInfo => {
       // Got a partial info, now compute more things (main contract operation type, events...) then save
       if (extInfo && extInfo.evm.transactionReceipt && !extInfo.evm.txInfo) {
-        extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input);
+        extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input, this);
         await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
       }
 
@@ -345,7 +345,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   public async updateBalance(): Promise<void> {
     // this.balance = await this.getBalanceByWeb3();
     const address = await this.getTokenAddress();
-    const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.getNetwork().getRPCUrl(), address);
+    const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key);
     if (balance) {
       this.balance = balance;
       await this.saveBalanceToCache();
@@ -422,7 +422,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   public async getNonce() {
     const address = await this.getTokenAddress();
     try {
-      return GlobalEthereumRPCService.instance.getETHSCNonce(this.getNetwork().getRPCUrl(), address);
+      return GlobalEthereumRPCService.instance.getETHSCNonce(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key);
     }
     catch (err) {
       Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
@@ -439,7 +439,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   private async estimateGasForPaymentTransaction(to: string, value: string) {
     try {
       const address = await this.getTokenAddress();
-      return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, to, value);
+      return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, to, value, this.networkWallet.network.key);
     }
     catch (err) {
       Logger.error('wallet', 'estimateGasForPaymentTransaction failed, ', this.id, ' error:', err);

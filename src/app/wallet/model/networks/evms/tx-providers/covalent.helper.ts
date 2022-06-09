@@ -1,6 +1,7 @@
 import { Logger } from "src/app/logger";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { TransactionDirection } from "../../../tx-providers/transaction.types";
+import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EthTransaction } from "../evm.types";
 
 const covalentApiUrl = 'https://api.covalenthq.com/v1/';
@@ -116,7 +117,7 @@ export class CovalentHelper {
     return covalentApiUrl;
   }
 
-  public static async fetchTransactions(chainId: number, accountAddress: string, page: number, pageSize: number): Promise<{ transactions: EthTransaction[], canFetchMore?: boolean }> {
+  public static async fetchTransactions(subWallet: AnySubWallet, chainId: number, accountAddress: string, page: number, pageSize: number): Promise<{ transactions: EthTransaction[], canFetchMore?: boolean }> {
     let txListUrl = covalentApiUrl;
     txListUrl += chainId;
     txListUrl += '/address/' + accountAddress;
@@ -125,7 +126,7 @@ export class CovalentHelper {
     txListUrl += '&key=' + API_KEY;
 
     try {
-      let result: CovalentResult<CovalentTransaction> = await GlobalJsonRPCService.instance.httpGet(txListUrl);
+      let result: CovalentResult<CovalentTransaction> = await GlobalJsonRPCService.instance.httpGet(txListUrl, subWallet.networkWallet.network.key);
 
       if (!result || !result.data || !result.data.items || result.data.items.length == 0) {
         return { transactions: [] };
@@ -179,7 +180,7 @@ export class CovalentHelper {
   /**
    * Fetches ERC20/721/1155 token balances for an EVM (0x) address and saves tokens to wallet.
    */
-  public static async fetchTokenBalances(accountAddress: string, chainId: number): Promise<CovalentTokenBalanceItem[]> {
+  public static async fetchTokenBalances(subWallet: AnySubWallet, accountAddress: string, chainId: number): Promise<CovalentTokenBalanceItem[]> {
     let tokenBalancesUrl = covalentApiUrl;
     tokenBalancesUrl += chainId;
     tokenBalancesUrl += '/address/' + accountAddress;
@@ -188,7 +189,7 @@ export class CovalentHelper {
     tokenBalancesUrl += '&format=JSON';
 
     try {
-      let result: CovalentResult<CovalentTokenBalanceItem> = await GlobalJsonRPCService.instance.httpGet(tokenBalancesUrl);
+      let result: CovalentResult<CovalentTokenBalanceItem> = await GlobalJsonRPCService.instance.httpGet(tokenBalancesUrl, subWallet.networkWallet.network.key);
 
       if (!result || !result.data || !result.data.items || result.data.items.length == 0) {
         Logger.log('wallet', 'No tokens from covalent')
@@ -202,7 +203,7 @@ export class CovalentHelper {
     return null;
   }
 
-  public static async fetchERC20Transfers(chainId: number, accountAddress: string, contractAddress: string, page: number, pageSize: number): Promise<{ transactions: EthTransaction[], canFetchMore?: boolean }> {
+  public static async fetchERC20Transfers(subWallet: AnySubWallet, chainId: number, accountAddress: string, contractAddress: string, page: number, pageSize: number): Promise<{ transactions: EthTransaction[], canFetchMore?: boolean }> {
     let transferListUrl = covalentApiUrl;
     transferListUrl += chainId;
     transferListUrl += '/address/' + accountAddress;
@@ -212,7 +213,7 @@ export class CovalentHelper {
     transferListUrl += '&key=' + API_KEY;
 
     try {
-      let result: CovalentResult<BlockTransactionWithContractTransfers> = await GlobalJsonRPCService.instance.httpGet(transferListUrl);
+      let result: CovalentResult<BlockTransactionWithContractTransfers> = await GlobalJsonRPCService.instance.httpGet(transferListUrl, subWallet.networkWallet.network.key);
 
       if (!result || !result.data || !result.data.items || result.data.items.length == 0) {
         return { transactions: [] };

@@ -16,7 +16,7 @@ const MAX_RESULTS_PER_FETCH = 30
 export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEVMSubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
   private canFetchMore = true;
 
-  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType) {
+  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, private apiKey?: string) {
     super(provider, subWallet);
 
     // Discover new transactions globally for all tokens at once, in order to notify user
@@ -53,6 +53,7 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
     const contractAddress = erc20SubWallet.coin.getContractAddress().toLowerCase();
 
     let { transactions, canFetchMore } = await EtherscanHelper.fetchTokenTransactions(
+      this.subWallet,
       this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN),
       accountAddress,
       contractAddress,
@@ -123,8 +124,12 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
     const address = await tokenSubWallet.getTokenAddress();
     let tokensEventUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN) + '?module=account&action=tokentx&address=' + address
       + '&startblock=' + startblock + '&endblock=' + endblock;
+
+    if (this.apiKey)
+      tokensEventUrl += '&apikey=' + this.apiKey;
+
     try {
-      let result = await GlobalJsonRPCService.instance.httpGet(tokensEventUrl);
+      let result = await GlobalJsonRPCService.instance.httpGet(tokensEventUrl, this.subWallet.networkWallet.network.key);
       return result.result as EthTokenTransaction[];
     } catch (e) {
       Logger.error('wallet', 'getERC20TokenTransferEvents error:', e)

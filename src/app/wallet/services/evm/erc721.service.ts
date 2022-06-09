@@ -88,7 +88,7 @@ export class ERC721Service {
             return this.web3;
 
         const EssentialsWeb3Provider = (await import('src/app/model/essentialsweb3provider')).EssentialsWeb3Provider;
-        const trinityWeb3Provider = new EssentialsWeb3Provider(this.networkService.activeNetwork.value.getRPCUrl());
+        const trinityWeb3Provider = new EssentialsWeb3Provider(this.networkService.activeNetwork.value.getRPCUrl(), this.networkService.activeNetwork.value.key);
 
         const Web3 = await lazyWeb3Import();
         this.web3 = new Web3(trinityWeb3Provider);

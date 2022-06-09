@@ -39,6 +39,7 @@ export class CovalentEvmSubWalletProvider<SubWalletType extends MainCoinEVMSubWa
     }
 
     let { transactions, canFetchMore } = await CovalentHelper.fetchTransactions(
+      this.subWallet,
       this.subWallet.networkWallet.network.getMainChainID(),
       accountAddress,
       page,

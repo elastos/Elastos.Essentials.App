@@ -12,16 +12,16 @@ export class GlobalBTCRPCService {
     public static instance: GlobalBTCRPCService = null;
     // Pay for it after evaluation
     private apikeys = ['JCBiDqxUbHK2yjVPndSwYg70aANmzkOF',
-                        'raIkl0N79nXd6jZOF1zyLiBMVwbJqfc2',
-                        '4XZngRNFoTDc7l8GIKx3YmUWvtBSwydb',
-                        '49DAE10rcXPU7LRkKfyiuGtFgvBMIJjQ',
-                        'zvEsonX2uFPTLy7liqWApZhb9Uce8Omk']
+        'raIkl0N79nXd6jZOF1zyLiBMVwbJqfc2',
+        '4XZngRNFoTDc7l8GIKx3YmUWvtBSwydb',
+        '49DAE10rcXPU7LRkKfyiuGtFgvBMIJjQ',
+        'zvEsonX2uFPTLy7liqWApZhb9Uce8Omk']
 
     private apikey = 'JCBiDqxUbHK2yjVPndSwYg70aANmzkOF';
 
     constructor(private http: HttpClient, private globalJsonRPCService: GlobalJsonRPCService) {
         GlobalBTCRPCService.instance = this;
-        this.apikey = this.apikeys[Math.floor(Math.random()*5)];
+        this.apikey = this.apikeys[Math.floor(Math.random() * 5)];
     }
 
     public async balancehistory(rpcApiUrl: string, address: string): Promise<BigNumber> {
@@ -102,7 +102,7 @@ export class GlobalBTCRPCService {
 
         let result = null;
         try {
-            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, "btc");
             if (result) {
                 return result.feerate;
             }
@@ -123,7 +123,7 @@ export class GlobalBTCRPCService {
         };
 
         try {
-            return await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return await this.globalJsonRPCService.httpPost(rpcApiUrl, param, "btc");
         } catch (err) {
             Logger.error('GlobalBTCRPCService', 'sendrawtransaction error:', err);
         }

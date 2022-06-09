@@ -77,7 +77,7 @@ class ETHTransactionManager {
           return null;
         } */
 
-        let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(subwallet.networkWallet.network.getRPCUrl(), signedTransaction/* obj.TxSigned */);
+        let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(subwallet.networkWallet.network.getRPCUrl(), signedTransaction/* obj.TxSigned */, subwallet.networkWallet.network.key);
         console.log("POST eth_sendRawTransaction");
 
         let published = true;
@@ -324,7 +324,7 @@ export class EVMService {
     }
     else {
       const Web3 = await lazyWeb3Import();
-      let web3 = new Web3(new EssentialsWeb3Provider(network.getRPCUrl()));
+      let web3 = new Web3(new EssentialsWeb3Provider(network.getRPCUrl(), network.key));
       this.web3s[network.name] = web3;
       return web3;
     }
@@ -344,7 +344,7 @@ export class EVMService {
    */
   public async getNonce(network: AnyNetwork, accountAddress: string): Promise<number> {
     try {
-      let nonce = await GlobalEthereumRPCService.instance.getETHSCNonce(network.getRPCUrl(), accountAddress);
+      let nonce = await GlobalEthereumRPCService.instance.getETHSCNonce(network.getRPCUrl(), accountAddress, network.key);
       return nonce;
     }
     catch (err) {

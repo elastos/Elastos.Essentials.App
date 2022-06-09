@@ -12,7 +12,7 @@ const MAX_RESULTS_PER_FETCH = 30;
 export class EtherscanEVMSubWalletInternalTransactionProvider<SubWalletType extends AnySubWallet> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
   protected canFetchMore = true;
 
-  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType) {
+  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, private apiKey?: string) {
     super(provider, subWallet);
   }
 
@@ -55,8 +55,11 @@ export class EtherscanEVMSubWalletInternalTransactionProvider<SubWalletType exte
     txListUrl += '&sort=desc';
     txListUrl += '&address=' + accountAddress;
 
+    if (this.apiKey)
+      txListUrl += '&apikey=' + this.apiKey;
+
     try {
-      let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
+      let result = await GlobalJsonRPCService.instance.httpGet(txListUrl, this.subWallet.networkWallet.network.key);
       let transactions = result.result as EthTransaction[];
       if (!(transactions instanceof Array)) {
         Logger.warn('wallet', 'fetchTransactions invalid transactions:', transactions)

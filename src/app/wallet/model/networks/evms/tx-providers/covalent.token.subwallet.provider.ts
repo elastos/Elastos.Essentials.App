@@ -54,6 +54,7 @@ export class CovalentSubWalletTokenProvider<SubWalletType extends MainCoinEVMSub
     }
 
     let { transactions, canFetchMore } = await CovalentHelper.fetchERC20Transfers(
+      this.subWallet,
       this.subWallet.networkWallet.network.getMainChainID(),
       accountAddress,
       erc20SubWallet.coin.getContractAddress(),
@@ -68,7 +69,7 @@ export class CovalentSubWalletTokenProvider<SubWalletType extends MainCoinEVMSub
   public async fetchAllTokensTransactions(): Promise<void> {
     let address = await this.subWallet.getCurrentReceiverAddress(AddressUsage.EVM_CALL);
     let chainId = this.subWallet.networkWallet.network.getMainChainID();
-    let tokenBalances = await CovalentHelper.fetchTokenBalances(address, chainId);
+    let tokenBalances = await CovalentHelper.fetchTokenBalances(this.subWallet, address, chainId);
 
     // Convert covalent token balances to ERCTokenInfo types so we can let user know
     // about new tokens found.

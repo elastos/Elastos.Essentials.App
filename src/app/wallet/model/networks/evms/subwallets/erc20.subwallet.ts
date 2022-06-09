@@ -89,7 +89,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
         // Get Web3 and the ERC20 contract ready
         const EssentialsWeb3Provider = (await import('src/app/model/essentialsweb3provider')).EssentialsWeb3Provider;
-        const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl);
+        const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl, this.network.key);
 
         const Web3 = await lazyWeb3Import();
         this.web3 = new Web3(trinityWeb3Provider);
@@ -355,7 +355,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-        let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid);
+        let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid, this.networkWallet.network.key);
         if (!result) {
             // Remove error transaction.
             // TODO await this.removeInvalidTransaction(txid);
@@ -574,7 +574,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     private async getNonce() {
         const address = await this.getTokenAccountAddress();
         try {
-            return GlobalEthereumRPCService.instance.getETHSCNonce(this.rpcApiUrl, address);
+            return GlobalEthereumRPCService.instance.getETHSCNonce(this.rpcApiUrl, address, this.networkWallet.network.key);
         }
         catch (err) {
             Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);

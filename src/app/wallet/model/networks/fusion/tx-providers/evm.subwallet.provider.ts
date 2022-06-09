@@ -43,7 +43,7 @@ export class FusionEvmSubWalletProvider extends EtherscanEVMSubWalletProvider<An
     //txListUrl += '&size=' + MAX_RESULTS_PER_FETCH;
 
     try {
-      let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
+      let result = await GlobalJsonRPCService.instance.httpGet(txListUrl, subWallet.networkWallet.network.key);
 
       Logger.log("wallet", "DEBUG EVM GET TX FUSION", result);
 

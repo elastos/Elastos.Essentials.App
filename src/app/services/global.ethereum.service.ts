@@ -15,7 +15,7 @@ export class GlobalEthereumRPCService {
     }
 
     // TODO: duplicate of eth_getTransactionByHash ?
-    public getETHSCTransactionByHash(rpcApiUrl: string, txHash: string) {
+    public getETHSCTransactionByHash(rpcApiUrl: string, txHash: string, limitatorName = "default") {
         if (!txHash.startsWith('0x')) {
             txHash = '0x' + txHash;
         }
@@ -29,7 +29,7 @@ export class GlobalEthereumRPCService {
         };
 
         try {
-            return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName);
         }
         catch (err) {
             Logger.error('RPCService', 'getETHSCTransactionByHash: http post error:', err);
@@ -57,7 +57,7 @@ export class GlobalEthereumRPCService {
       return -1;
     } */
 
-    public async eth_getBalance(rpcApiUrl: string, address: string): Promise<BigNumber> {
+    public async eth_getBalance(rpcApiUrl: string, address: string, limitatorName = "default"): Promise<BigNumber> {
         const param = {
             method: 'eth_getBalance',
             params: [
@@ -70,7 +70,7 @@ export class GlobalEthereumRPCService {
 
         try {
             // Normal 10s is enough for get balance.
-            let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 10000);
+            let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName, 10000);
             return new BigNumber(balanceString);
         }
         catch (err) {
@@ -79,7 +79,7 @@ export class GlobalEthereumRPCService {
         }
     }
 
-    public async getETHSCNonce(rpcApiUrl: string, address: string): Promise<number> {
+    public async getETHSCNonce(rpcApiUrl: string, address: string, limitatorName = "default"): Promise<number> {
         const param = {
             method: 'eth_getTransactionCount',
             params: [
@@ -91,7 +91,7 @@ export class GlobalEthereumRPCService {
         };
 
         try {
-            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName);
             return parseInt(result);
         }
         catch (err) {
@@ -100,7 +100,7 @@ export class GlobalEthereumRPCService {
         }
     }
 
-    public eth_getTransactionByHash(rpcApiUrl: string, txHash: string) {
+    public eth_getTransactionByHash(rpcApiUrl: string, txHash: string, limitatorName = "default") {
         const param = {
             method: 'eth_getTransactionByHash',
             params: [
@@ -111,7 +111,7 @@ export class GlobalEthereumRPCService {
         };
 
         try {
-            return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName);
         }
         catch (err) {
             Logger.error('RPCService', 'eth_getTransactionByHash: http post error:', err);
@@ -119,7 +119,7 @@ export class GlobalEthereumRPCService {
         }
     }
 
-    public eth_sendRawTransaction(rpcApiUrl: string, txHash: string) {
+    public eth_sendRawTransaction(rpcApiUrl: string, txHash: string, limitatorName = "default") {
         if (!txHash)
             throw new Error("eth_sendRawTransaction(): transaction hash can't be empty!");
 
@@ -135,10 +135,10 @@ export class GlobalEthereumRPCService {
             id: '1'
         };
 
-        return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        return this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName);
     }
 
-    public eth_getTransactionReceipt(rpcApiUrl: string, txidArray: string[]): Promise<any> {
+    public eth_getTransactionReceipt(rpcApiUrl: string, txidArray: string[], limitatorName = "default"): Promise<any> {
         const paramArray = [];
         for (let i = 0, len = txidArray.length; i < len; i++) {
             const txid = txidArray[i];
@@ -154,7 +154,7 @@ export class GlobalEthereumRPCService {
         }
 
         try {
-            return this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
+            return this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray, limitatorName);
         }
         catch (err) {
             Logger.error('RPCService', 'eth_getTransactionReceipt: http post error:', err);
@@ -162,7 +162,7 @@ export class GlobalEthereumRPCService {
         }
     }
 
-    public async eth_estimateGas(rpcApiUrl: string, from: string, to: string, value: string): Promise<number> {
+    public async eth_estimateGas(rpcApiUrl: string, from: string, to: string, value: string, limitatorName = "default"): Promise<number> {
         const param = {
             method: 'eth_estimateGas',
             params: [{
@@ -175,7 +175,7 @@ export class GlobalEthereumRPCService {
         };
 
         try {
-            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName);
             return parseInt(result);
         }
         catch (err) {

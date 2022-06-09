@@ -73,7 +73,7 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
     txListUrl += '&address=' + accountAddress;
 
     try {
-      let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
+      let result = await GlobalJsonRPCService.instance.httpGet(txListUrl, this.subWallet.networkWallet.network.key);
       let transactions = result.result as EthTransaction[];
       if (!(transactions instanceof Array)) {
         Logger.warn('wallet', 'fetchTransactions invalid transactions:', transactions)

@@ -5,6 +5,7 @@ import { BscMainnetUniswapCurrencyProvider } from "../currency/bsc.uniswap.curre
 import { bscMainnetBinanceBridgeProvider, bscMainnetElkBridgeProvider, bscMainnetShadowTokenBridgeProvider } from "../earn/bridge.providers";
 import { bscMainnetElkEarnProvider } from "../earn/earn.providers";
 import { bscMainnetElkSwapProvider, bscMainnetMdexSwapProvider } from "../earn/swap.providers";
+import { GlobalJsonRPCService } from './../../../../../services/global.jsonrpc.service';
 import { BSCBaseNetwork } from "./bsc.base.network";
 
 export class BSCMainNetNetwork extends BSCBaseNetwork {
@@ -41,6 +42,12 @@ export class BSCMainNetNetwork extends BSCBaseNetwork {
 
     this.uniswapCurrencyProvider = new BscMainnetUniswapCurrencyProvider();
     this.averageBlocktime = 5 // 3;
+
+    // Register a limitator to limit api requests speed on BSC> Mostly because of the free API key
+    // rate limitation of BSCSCAN: max 5 request per IP per second on the free tier.
+    GlobalJsonRPCService.instance.registerLimitator(this.key, {
+      minRequestsInterval: 220 // 5 req per sec max = 1 request / 200 ms + some margin
+    });
   }
 
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {

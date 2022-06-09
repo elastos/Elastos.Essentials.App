@@ -73,7 +73,7 @@ export class TelosEvmSubWalletProvider extends EtherscanEVMSubWalletProvider<Any
     txListUrl += '&address=' + accountAddress;
 
     try {
-      let result = await GlobalJsonRPCService.instance.httpGet(txListUrl) as TelosTransactionsResponse;
+      let result = await GlobalJsonRPCService.instance.httpGet(txListUrl, subWallet.networkWallet.network.key) as TelosTransactionsResponse;
 
       let transactions: EthTransaction[] = [];
       let telosTransactions = result.transactions;

@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import type { JsonRpcProvider } from "@ethersproject/providers";
 import type { Token } from "@uniswap/sdk-core";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import BigNumber from 'bignumber.js';
-import { lazyCustomUniswapSDKImport, lazyEthersContractImport, lazyEthersJsonRPCProviderImport, lazyUniswapSDKCoreImport } from 'src/app/helpers/import.helper';
+import { lazyCustomUniswapSDKImport, lazyUniswapSDKCoreImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import type { Pair } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
 import { ERC20Coin } from '../../model/coin';
 import { EVMNetwork } from '../../model/networks/evms/evm.network';
+import { AnyNetwork } from '../../model/networks/network';
 import { LocalStorage } from '../storage.service';
+import { EVMService } from './evm.service';
 
 @Injectable({
   providedIn: 'root'
@@ -67,20 +68,17 @@ export class UniswapCurrencyService {
     let stableCoinUSDToken = new Token(chainId, referenceUSDcoin.getContractAddress(), referenceUSDcoin.getDecimals(), referenceUSDcoin.getID(), referenceUSDcoin.getName());
     let wrappedNativeCoinToken = new Token(chainId, wrappedNativeCoin.getContractAddress(), wrappedNativeCoin.getDecimals(), wrappedNativeCoin.getID(), wrappedNativeCoin.getName());
 
-    const JsonRpcProvider = await lazyEthersJsonRPCProviderImport();
-    let etherjsProvider = new JsonRpcProvider({ url: network.getRPCUrl() });
-
     let tradingPairs: Pair[] = [];
 
     try {
       // Direct pair: Evaluated coin <-> USD stable coin
-      await this.fetchAndAddPair(evaluatedToken, stableCoinUSDToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
+      await this.fetchAndAddPair(evaluatedToken, stableCoinUSDToken, tradingPairs, network, swapFactoryAddress, swapFactoryInitCodeHash);
       // Evaluated token against wrapped native token (ex: ADA <-> WBNB).
       // Note: later we can add more liquidity pairs here, not only including the wrapped native token, in order
       // to increase the possible routes.
-      await this.fetchAndAddPair(evaluatedToken, wrappedNativeCoinToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
+      await this.fetchAndAddPair(evaluatedToken, wrappedNativeCoinToken, tradingPairs, network, swapFactoryAddress, swapFactoryInitCodeHash);
       // USD stable coin against wrapped native token (ex: USDT <-> WBNB).
-      await this.fetchAndAddPair(stableCoinUSDToken, wrappedNativeCoinToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
+      await this.fetchAndAddPair(stableCoinUSDToken, wrappedNativeCoinToken, tradingPairs, network, swapFactoryAddress, swapFactoryInitCodeHash);
       //Logger.log('walletdebug', "Computed Trading Pairs:", tradingPairs);
     }
     catch (e) {
@@ -126,16 +124,16 @@ export class UniswapCurrencyService {
     return 0; // No info found
   }
 
-  private async fetchAndAddPair(tokenA: Token, tokenB: Token, pairs: Pair[], provider: JsonRpcProvider, factoryAddress: string, initCodeHash: string) {
-    let pair = await this.fetchPairData(tokenA, tokenB, provider, factoryAddress, initCodeHash);
+  private async fetchAndAddPair(tokenA: Token, tokenB: Token, pairs: Pair[], network: AnyNetwork, factoryAddress: string, initCodeHash: string) {
+    let pair = await this.fetchPairData(tokenA, tokenB, network, factoryAddress, initCodeHash);
     if (pair)
       pairs.push(pair);
   }
 
   /**
-     * Fetches information about a liquidity pair and constructs a pair from the given two tokens.
-     */
-  private async fetchPairData(tokenA: Token, tokenB: Token, provider: JsonRpcProvider, factoryAddress: string, initCodeHash: string): Promise<Pair> {
+   * Fetches information about a liquidity pair and constructs a pair from the given two tokens.
+   */
+  private async fetchPairData(tokenA: Token, tokenB: Token, network: AnyNetwork, factoryAddress: string, initCodeHash: string): Promise<Pair> {
     // Can't fetch a pair made of a single token...
     if (tokenA.address === tokenB.address) {
       return null;
@@ -146,8 +144,9 @@ export class UniswapCurrencyService {
 
       var address = Pair.getAddress(tokenA, tokenB, factoryAddress, initCodeHash);
 
-      const Contract = await lazyEthersContractImport();
-      let _ref = await new Contract(address, IUniswapV2Pair.abi, provider).getReserves();
+      let uniswapPairContract = new (await EVMService.instance.getWeb3(network)).eth.Contract(<any>IUniswapV2Pair.abi, address);
+
+      let _ref = await uniswapPairContract.methods.getReserves();
 
       var reserves0 = _ref[0],
         reserves1 = _ref[1];

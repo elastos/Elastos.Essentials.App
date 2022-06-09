@@ -1,6 +1,7 @@
 import { utils } from "ethers";
 import { Logger } from "src/app/logger";
 import { GlobalEthereumRPCService } from "src/app/services/global.ethereum.service";
+import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
 import type { TransactionReceipt } from "web3-core";
 import { ERC20CoinInfo, ERC20CoinService } from "../../../services/evm/erc20coin.service";
 import type { AnyNetwork } from "../network";
@@ -64,11 +65,11 @@ export class ETHTransactionInfoParser {
    * @param receipt Published transaction receipt
    * @param txData Publish transaction input data (when contract was called)
    */
-  public async computeFromTxReceipt(receipt: TransactionReceipt, txData: string): Promise<ETHTransactionInfo> {
+  public async computeFromTxReceipt(receipt: TransactionReceipt, txData: string, subWallet: AnySubWallet): Promise<ETHTransactionInfo> {
     if (!txData || !txData.startsWith("0x")) {
       // Some transaction providers such as covalent don't provide the 'input'. So we try here to fetch that from the get transaction by hash API
       try {
-        let ethTransaction = <EthTransaction>await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.network.getRPCUrl(), receipt.transactionHash);
+        let ethTransaction = <EthTransaction>await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.network.getRPCUrl(), receipt.transactionHash, subWallet.networkWallet.network.key);
         if (ethTransaction)
           txData = ethTransaction.input;
       }
