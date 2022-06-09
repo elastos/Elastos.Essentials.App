@@ -1,4 +1,4 @@
-import type { IdentityEntry } from "../global.didsessions.service";
+import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 
 /**
  * Base interface for each migration that needs to be run.

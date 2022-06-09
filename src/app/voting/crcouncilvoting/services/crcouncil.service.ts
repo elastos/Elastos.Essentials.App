@@ -10,7 +10,6 @@ import { App } from 'src/app/model/app.enum';
 import { DIDDocument } from 'src/app/model/did/diddocument.model';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDService } from 'src/app/services/global.did.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -25,6 +24,7 @@ import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from '../../services/vote.service';
 import { Candidate, CandidateBaseInfo } from '../model/candidates.model';
 import { SelectedCandidate } from '../model/selected.model';
+import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 
 export type CRMemberInfo = {
     address: string,
@@ -143,7 +143,7 @@ export class CRCouncilService {
             this.crmembers = result.crmembersinfo;
 
             for (let member of this.crmembers) {
-                if (!this.isCRMember && member.did == GlobalDIDSessionsService.signedInDIDString) {
+                if (!this.isCRMember && member.did == DIDSessionsStore.signedInDIDString) {
                     this.isCRMember = true;
                 }
                 this.getAvatar(member);
@@ -212,7 +212,7 @@ export class CRCouncilService {
     }
 
     async getSelectedCandidates(): Promise<any> {
-        let data = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []);
+        let data = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'crcouncil', 'votes', []);
         Logger.log('crcouncil', 'Selected Candidates', data);
         return data;
     }

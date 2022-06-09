@@ -6,12 +6,13 @@ import { VerifiableCredential } from 'src/app/identity/model/verifiablecredentia
 import { AuthService } from 'src/app/identity/services/auth.service';
 import { DIDService } from 'src/app/identity/services/did.service';
 import { Logger } from 'src/app/logger';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { environment } from 'src/environments/environment';
 import { GlobalCredentialTypesService } from '../credential-types/global.credential.types.service';
-import { GlobalDIDSessionsService, IdentityEntry } from '../global.didsessions.service';
 import { GlobalPreferencesService } from '../global.preferences.service';
 import { GlobalService, GlobalServiceManager } from '../global.service.manager';
 import { GlobalStorageService } from '../global.storage.service';
+import { DIDSessionsStore } from './../stores/didsessions.store';
 
 const DID_CHALLENGE = "essentials-credential-toolbox"; // Arbitrary string signed by DID to generate recoverable unique identitiers on the stats service
 
@@ -88,8 +89,8 @@ export class GlobalCredentialToolboxService implements GlobalService {
 
   private async checkIfRightTimeToSendStats() {
     // Only send stats if allowed in privacy settings
-    if (await this.prefs.getSendStatsToCredentialToolbox(GlobalDIDSessionsService.signedInDIDString)) {
-      let lastUploadedTimestamp = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "lastuploaded", 0);
+    if (await this.prefs.getSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString)) {
+      let lastUploadedTimestamp = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "lastuploaded", 0);
       if (moment.unix(lastUploadedTimestamp).add(SEND_STATS_DELAY_SEC, "seconds").isBefore(moment())) {
         Logger.log(CRED_TOOLBOX_LOG_TAG, "It's a good time to send stats");
 
@@ -110,7 +111,7 @@ export class GlobalCredentialToolboxService implements GlobalService {
    * Otherwise creates and stores a new one.
    */
   private async getOrCreateStatIdentifier(): Promise<string> {
-    let identifier = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "identifier", null);
+    let identifier = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "identifier", null);
     if (!identifier) {
       identifier = await this.createStatIdentifier();
     }
@@ -140,7 +141,7 @@ export class GlobalCredentialToolboxService implements GlobalService {
   }
 
   private async storeStatIdentifier(identifier: string): Promise<void> {
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "identifier", identifier);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "identifier", identifier);
   }
 
   /**
@@ -210,7 +211,7 @@ export class GlobalCredentialToolboxService implements GlobalService {
   }
 
   private saveLastUploaded(): Promise<void> {
-    return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "lastuploaded", moment().unix());
+    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "lastuploaded", moment().unix());
   }
 
   /**
@@ -249,10 +250,10 @@ export class GlobalCredentialToolboxService implements GlobalService {
    * Loads the list of used credentials stats we have on the local storage so far.
    */
   private loadUsedCredentials(): Promise<UsedCredential[]> {
-    return this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "usedcredentials", []);
+    return this.storage.getSetting(DIDSessionsStore.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "usedcredentials", []);
   }
 
   private saveUsedCredentials(usedCredentials: UsedCredential[]): Promise<void> {
-    return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "usedcredentials", usedCredentials);
+    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, CRED_TOOLBOX_STORAGE_CTX, "usedcredentials", usedCredentials);
   }
 }

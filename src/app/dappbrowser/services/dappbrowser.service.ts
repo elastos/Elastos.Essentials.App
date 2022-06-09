@@ -9,8 +9,8 @@ import { lazyPhishingDetectorImport } from 'src/app/helpers/import.helper';
 import { urlDomain } from 'src/app/helpers/url.helpers';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
@@ -18,21 +18,19 @@ import { GlobalService, GlobalServiceManager } from 'src/app/services/global.ser
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import type { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
-import { EthSignIntentResult } from 'src/app/wallet/pages/intents/ethsign/ethsign.page';
-import { PersonalSignIntentResult } from 'src/app/wallet/pages/intents/personalsign/personalsign.page';
-import { SignTypedDataIntentResult } from 'src/app/wallet/pages/intents/signtypeddata/signtypeddata.page';
-import { EditCustomNetworkIntentResult } from 'src/app/wallet/pages/settings/edit-custom-network/edit-custom-network.page';
+import type { EthSignIntentResult } from 'src/app/wallet/pages/intents/ethsign/intentresult';
+import type { PersonalSignIntentResult } from 'src/app/wallet/pages/intents/personalsign/intentresult';
+import type { SignTypedDataIntentResult } from 'src/app/wallet/pages/intents/signtypeddata/intentresult';
+import type { EditCustomNetworkIntentResult } from 'src/app/wallet/pages/settings/edit-custom-network/intentresult';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { BrowsedAppInfo } from '../model/browsedappinfo';
-
+import type { BrowsedAppInfo } from '../model/browsedappinfo';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
-declare let didManager: DIDPlugin.DIDManager;
-
 
 const MAX_RECENT_APPS = 10;
 
@@ -111,8 +109,6 @@ export class DappBrowserService implements GlobalService {
         public zone: NgZone,
         private platform: Platform,
         private globalStorageService: GlobalStorageService,
-        private walletNetworkService: WalletNetworkService,
-        private walletService: WalletService,
         private globalIntentService: GlobalIntentService,
         public globalPopupService: GlobalPopupService,
     ) {
@@ -301,7 +297,7 @@ export class DappBrowserService implements GlobalService {
             titlebarheight: 50,
             backgroundcolor: "#bfbfbf",
             hidden: (target == "_webview"),
-            did: GlobalDIDSessionsService.signedInDIDString.replace(/:/g, "_"),
+            did: DIDSessionsStore.signedInDIDString.replace(/:/g, "_"),
             atdocumentstartscript: this.web3ProviderCode + this.elastosConnectorCode, // Inject the web3 provider and connector at document start
         }
 
@@ -328,7 +324,7 @@ export class DappBrowserService implements GlobalService {
             title: "",
             description: "",
             iconUrl: "",
-            network: this.walletNetworkService.activeNetwork.value.key,
+            network: WalletNetworkService.instance.activeNetwork.value.key,
             lastBrowsed: moment().unix(),
             useExternalBrowser: false
         }
@@ -454,13 +450,13 @@ export class DappBrowserService implements GlobalService {
 
     private handleLoadStopEvent(event: DABLoadStop): Promise<void> {
         if (!this.networkSubscription) {
-            this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(activeNetwork => {
+            this.networkSubscription = WalletNetworkService.instance.activeNetwork.subscribe(activeNetwork => {
                 void this.sendActiveNetworkToDApp(activeNetwork);
             });
         }
 
         if (!this.walletSubscription) {
-            this.walletSubscription = this.walletService.activeNetworkWallet.subscribe(netWallet => {
+            this.walletSubscription = WalletService.instance.activeNetworkWallet.subscribe(netWallet => {
                 void this.sendActiveWalletToDApp(netWallet);
             });
         }
@@ -971,7 +967,7 @@ export class DappBrowserService implements GlobalService {
     }
 
     private getActiveNetworkKey(): string {
-        return this.walletNetworkService.activeNetwork.value ? this.walletNetworkService.activeNetwork.value.key : null;
+        return WalletNetworkService.instance.activeNetwork.value ? WalletNetworkService.instance.activeNetwork.value.key : null;
     }
 
     /**
@@ -996,7 +992,7 @@ export class DappBrowserService implements GlobalService {
             return appInfo;
 
         let key = "appinfo-" + appInfo.url; // Use the url as access key
-        await this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", key, appInfo);
+        await this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", key, appInfo);
 
         // Add to recently browsed apps list as well
         await this.addAppToRecent(appInfo.url);
@@ -1006,7 +1002,7 @@ export class DappBrowserService implements GlobalService {
 
     public async getBrowsedAppInfo(url: string): Promise<BrowsedAppInfo> {
         let key = "appinfo-" + url; // Use the url as access key
-        let appInfo = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", key, null);
+        let appInfo = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", key, null);
         return appInfo;
     }
 
@@ -1037,11 +1033,11 @@ export class DappBrowserService implements GlobalService {
     }
 
     private async saveRecentApps() {
-        await this.globalStorageService.setSetting<string[]>(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "recentapps", this.recentApps.value);
+        await this.globalStorageService.setSetting<string[]>(DIDSessionsStore.signedInDIDString, "dappbrowser", "recentapps", this.recentApps.value);
     }
 
     private async loadRecentApps() {
-        this.recentApps.next(await this.globalStorageService.getSetting<string[]>(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "recentapps", []));
+        this.recentApps.next(await this.globalStorageService.getSetting<string[]>(DIDSessionsStore.signedInDIDString, "dappbrowser", "recentapps", []));
     }
 
     public async getRecentAppsWithInfo(): Promise<BrowsedAppInfo[]> {
@@ -1086,9 +1082,9 @@ export class DappBrowserService implements GlobalService {
      */
     public async openRecentApp(recentApp: BrowsedAppInfo) {
         if (recentApp.network && recentApp.network != this.getActiveNetworkKey()) {
-            let previousNetwork = this.walletNetworkService.getNetworkByKey(recentApp.network);
+            let previousNetwork = WalletNetworkService.instance.getNetworkByKey(recentApp.network);
             if (previousNetwork)
-                await this.walletNetworkService.setActiveNetwork(previousNetwork);
+                await WalletNetworkService.instance.setActiveNetwork(previousNetwork);
         }
         if (recentApp.useExternalBrowser) {
             void this.globalIntentService.sendIntent('openurl', { url: recentApp.url });

@@ -9,6 +9,7 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalSecurityService } from './global.security.service';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalThemeService } from './global.theme.service';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 /**
  * Service that handles user defined startup screen and related startup flow details.
@@ -63,7 +64,7 @@ export class GlobalStartupService {
    * but this can be customized.
    */
   public async navigateToStartupScreen(): Promise<boolean> {
-    let startupScreen = await this.getStartupScreen(GlobalDIDSessionsService.signedInDIDString);
+    let startupScreen = await this.getStartupScreen(DIDSessionsStore.signedInDIDString);
 
     this.globalNav.clearNavigationHistory();
 

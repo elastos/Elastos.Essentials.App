@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AppmanagerService } from './appmanager.service';
 import { DIDManagerService } from './didmanager.service';

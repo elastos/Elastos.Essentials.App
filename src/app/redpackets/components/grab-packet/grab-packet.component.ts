@@ -2,12 +2,12 @@ import { Component, ElementRef, EventEmitter, Input, ViewChild } from "@angular/
 import { PopoverController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { TitleBarComponent } from "../../../components/titlebar/titlebar.component";
-import { GlobalDIDSessionsService } from "../../../services/global.didsessions.service";
 import { GlobalNativeService } from "../../../services/global.native.service";
 import { GrabResponse, GrabStatus } from "../../model/grab.model";
 import { Packet } from "../../model/packets.model";
 import { DIDService } from "../../services/did.service";
 import { PacketService } from "../../services/packet.service";
+import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 
 @Component({
     selector: 'grab-packet',
@@ -60,7 +60,7 @@ export class GrabPacketComponent {
             this.captchaString,
             this.walletAddress,
             // Send grabber DID only if allowed in settings
-            this.didService.getProfileVisibility() ? GlobalDIDSessionsService.signedInDIDString : undefined
+            this.didService.getProfileVisibility() ? DIDSessionsStore.signedInDIDString : undefined
         );
         this.fetchingGrabData = false;
         await this.handleGrabResponse(this.grabResponse);

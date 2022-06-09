@@ -128,7 +128,6 @@ export class WalletService {
         private safeService: SafeService, // Keep this - init
         private networkService: WalletNetworkService,
         private globalNetworksService: GlobalNetworksService,
-        private walletNetworkService: WalletNetworkService,
         private offlineTransactionsService: OfflineTransactionsService, // Keep for init
         private didSessions: GlobalDIDSessionsService
     ) {
@@ -408,7 +407,7 @@ export class WalletService {
             // return all network wallets.
             return Object.values(this.networkWallets);
         } else {
-            if (!this.walletNetworkService.activeNetwork.value)
+            if (!WalletNetworkService.instance.activeNetwork.value)
                 return [];
 
             return Object.values(this.networkWallets).filter(nw => nw.masterWallet.supportsNetwork(nw.network));

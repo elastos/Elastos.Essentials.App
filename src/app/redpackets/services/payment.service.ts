@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import moment from 'moment';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { environment } from 'src/environments/environment';
 import { TokenType } from '../model/packets.model';
 import { NotifyPaymentStatus } from '../model/payments.model';
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 /**
  * Type of token paid
@@ -57,13 +58,13 @@ export class PaymentService implements GlobalService {
    * Loads on going payments state from disk
    */
   private async loadState(): Promise<void> {
-    this.state = await this.storage.getSetting<PaymentsState>(GlobalDIDSessionsService.signedInDIDString, "redpackets", "paymentstate", {
+    this.state = await this.storage.getSetting<PaymentsState>(DIDSessionsStore.signedInDIDString, "redpackets", "paymentstate", {
       payments: []
     });
   }
 
   private saveState(): Promise<void> {
-    return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "paymentstate", this.state);
+    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "redpackets", "paymentstate", this.state);
   }
 
   /**

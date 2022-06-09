@@ -1,7 +1,7 @@
 import { DID, Hive, Interfaces, logger as connectivityLogger, storage as connectivityStorage } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { Logger } from "../logger";
-import { GlobalDIDSessionsService } from "../services/global.didsessions.service";
 import { GlobalStorageService } from "../services/global.storage.service";
+import { DIDSessionsStore } from './../services/stores/didsessions.store';
 import { InternalHiveAuthHelper } from "./hive.authhelper";
 
 export class EssentialsDIDKeyValueStore implements Interfaces.IKeyValueStorage {
@@ -9,15 +9,15 @@ export class EssentialsDIDKeyValueStore implements Interfaces.IKeyValueStorage {
     }
 
     set<T>(key: string, value: T): Promise<void> {
-        return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "connectivitysdk", key, value);
+        return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "connectivitysdk", key, value);
     }
 
     get<T>(key: string, defaultValue: T): Promise<T> {
-        return this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "connectivitysdk", key, defaultValue);
+        return this.storage.getSetting(DIDSessionsStore.signedInDIDString, "connectivitysdk", key, defaultValue);
     }
 
     unset(key: string): Promise<void> {
-        return this.storage.deleteSetting(GlobalDIDSessionsService.signedInDIDString, "connectivitysdk", key);
+        return this.storage.deleteSetting(DIDSessionsStore.signedInDIDString, "connectivitysdk", key);
     }
 }
 

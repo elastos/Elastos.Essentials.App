@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +10,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 export class HiveService {
     private hiveClient: HivePlugin.Client;
 
-    constructor(private storage: GlobalStorageService) {}
+    constructor(private storage: GlobalStorageService) { }
 
     public async getHiveClient(): Promise<HivePlugin.Client> {
         if (this.hiveClient)
@@ -18,7 +18,7 @@ export class HiveService {
 
         let hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
         if (hiveAuthHelper) {
-            this.hiveClient = await hiveAuthHelper.getClientWithAuth((e)=>{
+            this.hiveClient = await hiveAuthHelper.getClientWithAuth((e) => {
                 // Auth error
                 Logger.error("developertools", "Authentication error", e); // TODO: inform user.
             });
@@ -27,7 +27,7 @@ export class HiveService {
     }
 
     public async getDeveloperVault(): Promise<HivePlugin.Vault> {
-        let signedInUserDID = GlobalDIDSessionsService.signedInDIDString;
+        let signedInUserDID = DIDSessionsStore.signedInDIDString;
         return await (await this.getHiveClient()).getVault(signedInUserDID);
     }
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Logger } from '../logger';
 import { App } from '../model/app.enum';
+import { IdentityEntry } from "../model/didsessions/identityentry";
 import { Config } from '../wallet/config/Config';
 import { StandardCoinName } from '../wallet/model/coin';
 import { AnyNetworkWallet } from '../wallet/model/networks/base/networkwallets/networkwallet';
@@ -9,7 +10,6 @@ import { MainChainSubWallet } from '../wallet/model/networks/elastos/mainchain/s
 import { Utxo } from '../wallet/model/tx-providers/transaction.types';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { WalletService } from '../wallet/services/wallet.service';
-import { IdentityEntry } from './global.didsessions.service';
 import { GlobalLanguageService } from './global.language.service';
 import { GlobalNotificationsService } from './global.notifications.service';
 import { GlobalPopupService } from './global.popup.service';

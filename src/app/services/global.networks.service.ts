@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 // Network templates are dynamic but for convenience, assume we always have mainnet and testnet ones.
 export const MAINNET_TEMPLATE = "MainNet";
@@ -34,7 +34,7 @@ export class GlobalNetworksService {
     }
 
     public async setActiveNetworkTemplate(networkTemplate: string): Promise<void> {
-        if (GlobalDIDSessionsService.signedInDIDString !== null) {
+        if (DIDSessionsStore.signedInDIDString !== null) {
             throw new Error("setActiveNetworkTemplate() is a global preference shared by all users and may be called only from DID sessions, when no user is signed in");
         }
 

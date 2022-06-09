@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ProposalService } from './proposal.service';
-import { ProposalStatus } from '../model/proposal-status';
-
 import * as moment from 'moment';
-import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { Logger } from 'src/app/logger';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { App } from 'src/app/model/app.enum';
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { ProposalStatus } from '../model/proposal-status';
+import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
+import { ProposalService } from './proposal.service';
+
 
 
 @Injectable({
@@ -23,20 +23,20 @@ export class AppService {
   ) { }
 
   public async getTimeCheckedForProposals() {
-    const lastCheckedTime = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "timeCheckedForProposals", null);
+    const lastCheckedTime = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "crproposal", "timeCheckedForProposals", null);
     Logger.log('crproposal', 'Background service: Time-checked for proposals', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
     const today = new Date();
     if (lastCheckedTime) {
       if (!moment(lastCheckedTime).isSame(today, 'd')) {
-        this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
-        this.checkForNewProposals(today);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
+        void this.checkForNewProposals(today);
       } else {
         Logger.log('crproposal', 'Background service: Proposals already checked today');
       }
     } else {
-      this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
-      this.checkForNewProposals(today);
+      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
+      void this.checkForNewProposals(today);
     }
   }
 
@@ -74,11 +74,11 @@ export class AppService {
         message: message,
         url: 'https://launcher.elastos.net/app?id=' + 'org.elastos.trinity.dapp.crproposal'
       };
-      this.notifications.sendNotification(notification);
+      void this.notifications.sendNotification(notification);
     }
 
-    const lastCheckedProposal = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "lastProposalChecked", null);
-    this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "lastProposalChecked", proposals[0].id);
+    const lastCheckedProposal = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "crproposal", "lastProposalChecked", null);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "crproposal", "lastProposalChecked", proposals[0].id);
     Logger.log('crproposal', 'Background service: Last proposal checked by id', lastCheckedProposal);
 
     // Send notification new proposals since user last visited Elastos Essentials
@@ -100,7 +100,7 @@ export class AppService {
           message: message,
           url: 'https://launcher.elastos.net/app?id=' + 'org.elastos.trinity.dapp.crproposal'
         };
-        this.notifications.sendNotification(notification);
+        void this.notifications.sendNotification(notification);
       }
     }
   }

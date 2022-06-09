@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { Events } from 'src/app/services/events.service';
-import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({

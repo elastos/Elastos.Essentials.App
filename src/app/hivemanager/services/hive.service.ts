@@ -1,21 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import * as moment from 'moment';
-import { PopupService } from './popup.service';
-import { Subject } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from "rxjs";
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Events } from 'src/app/services/events.service';
-import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
+import { PopupService } from './popup.service';
 
 export type PaidIncompleteOrder = {
-    transactionId: string;
-    vaultAddress: string;
-    planName: string;
+  transactionId: string;
+  vaultAddress: string;
+  planName: string;
 }
 
 @Injectable({
@@ -36,7 +35,7 @@ export class HiveService {
     private globalIntentService: GlobalIntentService,
     private globalHiveService: GlobalHiveService,
     private didSessions: GlobalDIDSessionsService
-  ) {}
+  ) { }
 
   async init() {
   }
@@ -49,12 +48,12 @@ export class HiveService {
   }
 
   private async getLastPublishedTime(): Promise<Date> {
-    let lastPublishedTime = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "publicationrequesttime", 0);
+    let lastPublishedTime = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "publicationrequesttime", 0);
     return new Date(lastPublishedTime);
   }
 
   private async saveLastPublishedTime(): Promise<void> {
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "publicationrequesttime", Date.now());
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "publicationrequesttime", Date.now());
   }
 
   public async getPricingInfo(): Promise<HivePlugin.Payment.PricingInfo> {
@@ -103,7 +102,7 @@ export class HiveService {
           operationSuccessful = false;
         }
       }
-      catch(e) {
+      catch (e) {
         operationSuccessful = false;
       }
     }
@@ -118,9 +117,9 @@ export class HiveService {
 
   private executePayment(cost: number, elaAddress: string): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-    return new Promise(async (resolve, reject)=>{
+    return new Promise(async (resolve, reject) => {
       try {
-        let data: { result: { txid: string }} = await this.globalIntentService.sendIntent("https://wallet.elastos.net/pay", {
+        let data: { result: { txid: string } } = await this.globalIntentService.sendIntent("https://wallet.elastos.net/pay", {
           amount: cost,
           receiver: elaAddress,
           currency: "ELA"
@@ -200,19 +199,19 @@ export class HiveService {
     let pendingPaidOrders = await this.getPaidIncompleteOrders();
 
     Logger.log("HiveManager", "List of paid incomplete orders: ", pendingPaidOrders);
-    let orderIndex = pendingPaidOrders.findIndex((order)=>{
+    let orderIndex = pendingPaidOrders.findIndex((order) => {
       return order.transactionId == transactionId;
     });
 
     if (orderIndex == -1) {
-      Logger.error('HiveManager', "Incomplete order not found in local storage for transaction ID "+transactionId+"!");
+      Logger.error('HiveManager', "Incomplete order not found in local storage for transaction ID " + transactionId + "!");
       return;
     }
     else {
       // Remove the pending order from our temporary list.
       pendingPaidOrders.splice(orderIndex, 1);
       Logger.log("HiveManager", "Removing the order from pending paid orders list because it's finalized. New pendingPaidOrders: ", pendingPaidOrders);
-      await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
+      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
     }
   }
 
@@ -220,7 +219,7 @@ export class HiveService {
    * List of orders that have been actually paid by the user but not sent to the hive node.
    */
   public async getPaidIncompleteOrders(): Promise<PaidIncompleteOrder[]> {
-    let pendingPaidOrders = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "pendingPaidOrders", []) as PaidIncompleteOrder[];
+    let pendingPaidOrders = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "pendingPaidOrders", []) as PaidIncompleteOrder[];
     if (!pendingPaidOrders) {
       return [];
     }
@@ -236,12 +235,12 @@ export class HiveService {
       vaultAddress: vaultAddress,
       planName: planName
     });
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
   }
 
   private sortOrdersByMostRecentFirst(orders: HivePlugin.Payment.Order[]): HivePlugin.Payment.Order[] {
     // Most recent orders come first in the list.
-    return orders.sort((orderA, orderB)=>{
+    return orders.sort((orderA, orderB) => {
       if (orderA.getCreationTime() < orderB.getCreationTime())
         return -1;
       else if (orderA.getCreationTime() > orderB.getCreationTime())
@@ -259,7 +258,7 @@ export class HiveService {
     let orders = this.sortOrdersByMostRecentFirst(await this.getActiveVault().getPayment().getAllOrders());
     Logger.log("HiveManager", "All orders:", orders);
 
-    let awaitingOrders = orders.filter((o)=>{
+    let awaitingOrders = orders.filter((o) => {
       return o.getState() == "AWAITING_PAYMENT";
     });
 
@@ -276,7 +275,7 @@ export class HiveService {
     let orders = this.sortOrdersByMostRecentFirst(await this.getActiveVault().getPayment().getAllOrders());
     Logger.log("HiveManager", "All orders:", orders);
 
-    let awaitingOrders = orders.filter((o)=>{
+    let awaitingOrders = orders.filter((o) => {
       return o.getState() == "AWAITING_TX_CONFIRMATION";
     });
 
@@ -289,7 +288,7 @@ export class HiveService {
     let orders = this.sortOrdersByMostRecentFirst(await this.getActiveVault().getPayment().getAllOrders());
     Logger.log("HiveManager", "All orders:", orders);
 
-    let activeOrders = orders.filter((o)=>{
+    let activeOrders = orders.filter((o) => {
       // Active orders are orders COMPLETED, and not expired
       return o.getState() == "COMPLETED" /* TODO - NOT EXPIRED */;
     });
@@ -299,22 +298,22 @@ export class HiveService {
     return activeOrders;
   }
 
-  public getFriendlyOrderState(order: HivePlugin.Payment.Order ) {
+  public getFriendlyOrderState(order: HivePlugin.Payment.Order) {
     switch (order.getState()) {
-        case "AWAITING_PAYMENT":
-            return "Waiting for payment";
-        case "AWAITING_TX_CONFIRMATION":
-            return "Waiting for transaction to be validated";
-        case "COMPLETED":
-            return "Completed";
-        case "FAILED_UNSPECIFIED_REASON":
-            return "Failed, unknown reason";
-        case "TIMED_OUT_WHILE_WAITING_FOR_PAYMENT":
-            return "Timed out waiting for payment";
-        case "TIMED_OUT_WHILE_WAITING_FOR_TX_CONFIRMATION":
-            return "Timed out waiting for transaction confirmation";
-        default:
-            return "Unknown state: "+order.getState();
+      case "AWAITING_PAYMENT":
+        return "Waiting for payment";
+      case "AWAITING_TX_CONFIRMATION":
+        return "Waiting for transaction to be validated";
+      case "COMPLETED":
+        return "Completed";
+      case "FAILED_UNSPECIFIED_REASON":
+        return "Failed, unknown reason";
+      case "TIMED_OUT_WHILE_WAITING_FOR_PAYMENT":
+        return "Timed out waiting for payment";
+      case "TIMED_OUT_WHILE_WAITING_FOR_TX_CONFIRMATION":
+        return "Timed out waiting for transaction confirmation";
+      default:
+        return "Unknown state: " + order.getState();
     }
   }
 }

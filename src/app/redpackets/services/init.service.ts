@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { DIDService } from './did.service';
 import { NetworksService } from './networks.service';

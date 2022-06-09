@@ -5,17 +5,17 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { lazyWalletConnectImport } from '../helpers/import.helper';
 import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
+import { IdentityEntry } from "../model/didsessions/identityentry";
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { AnyNetworkWallet } from '../wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from '../wallet/model/networks/evms/evm.network';
-import { EthSignIntentResult } from '../wallet/pages/intents/ethsign/ethsign.page';
-import { PersonalSignIntentResult } from '../wallet/pages/intents/personalsign/personalsign.page';
-import { SignTypedDataIntentResult } from '../wallet/pages/intents/signtypeddata/signtypeddata.page';
-import { EditCustomNetworkIntentResult } from '../wallet/pages/settings/edit-custom-network/edit-custom-network.page';
+import { EthSignIntentResult } from '../wallet/pages/intents/ethsign/intentresult';
+import { PersonalSignIntentResult } from '../wallet/pages/intents/personalsign/intentresult';
+import { SignTypedDataIntentResult } from '../wallet/pages/intents/signtypeddata/intentresult';
+import { EditCustomNetworkIntentResult } from '../wallet/pages/settings/edit-custom-network/intentresult';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { WalletService } from '../wallet/services/wallet.service';
-import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalFirebaseService } from './global.firebase.service';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalNativeService } from './global.native.service';
@@ -25,6 +25,7 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalSwitchNetworkService } from './global.switchnetwork.service';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 /**
  * Indicates from where a request to initiate a new WC session came from
@@ -790,7 +791,7 @@ export class GlobalWalletConnectService extends GlobalService {
       // Let the user know that the request was received but could not be handled
       this.native.genericToast("settings.wallet-connect-error", 2000);
 
-      if (await this.prefs.developerModeEnabled(GlobalDIDSessionsService.signedInDIDString))
+      if (await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString))
         this.native.genericToast("settings.raw-request" + intentUrl, 2000);
     }
   }
@@ -891,8 +892,8 @@ export class GlobalWalletConnectService extends GlobalService {
   }
 
   private async loadSessions(): Promise<WalletConnectSession[]> {
-    Logger.log("walletconnect", "Loading storage sessions for user ", GlobalDIDSessionsService.signedInDIDString);
-    let sessions = await this.storage.getSetting<WalletConnectSession[]>(GlobalDIDSessionsService.signedInDIDString, "walletconnect", "sessions", []);
+    Logger.log("walletconnect", "Loading storage sessions for user ", DIDSessionsStore.signedInDIDString);
+    let sessions = await this.storage.getSetting<WalletConnectSession[]>(DIDSessionsStore.signedInDIDString, "walletconnect", "sessions", []);
     return sessions;
   }
 
@@ -906,7 +907,7 @@ export class GlobalWalletConnectService extends GlobalService {
     else
       sessions[existingSessionIndex] = session; // replace
 
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "walletconnect", "sessions", sessions);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "walletconnect", "sessions", sessions);
   }
 
   private async deleteSession(session: WalletConnectSession) {
@@ -916,7 +917,7 @@ export class GlobalWalletConnectService extends GlobalService {
     if (existingSessionIndex >= 0)
       sessions.splice(existingSessionIndex, 1);
 
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "walletconnect", "sessions", sessions);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "walletconnect", "sessions", sessions);
   }
 
   // message: Bytes | string

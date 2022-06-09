@@ -25,9 +25,9 @@ import { Injectable } from '@angular/core';
 import moment from 'moment';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { SwapProvider } from '../../model/earn/swapprovider';
 import type { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
 import type { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
@@ -75,7 +75,6 @@ export class SwapService {
 
     constructor(
         public theme: GlobalThemeService,
-        public dappbrowserService: DappBrowserService,
         private networkService: WalletNetworkService,
         private storage: GlobalStorageService,
         private http: HttpClient
@@ -116,7 +115,7 @@ export class SwapService {
         targetUrl = targetUrl.replace("${inputCurrency}", inputCurrency);
         targetUrl = targetUrl.replace("${theme}", this.theme.darkMode ? "dark" : "light");
 
-        void this.dappbrowserService.openForBrowseMode(targetUrl, provider.baseProvider.name);
+        void DappBrowserService.instance.openForBrowseMode(targetUrl, provider.baseProvider.name);
     }
 
     /**
@@ -127,7 +126,7 @@ export class SwapService {
     }
 
     private async updateTokenLists(network: AnyNetwork) {
-        let activeUserDID = GlobalDIDSessionsService.signedInDIDString;
+        let activeUserDID = DIDSessionsStore.signedInDIDString;
         let currentTime = moment().unix();
 
         for (let provider of network.swapProviders) {

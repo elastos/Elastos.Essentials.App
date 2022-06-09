@@ -2,9 +2,10 @@ import { Injectable } from "@angular/core";
 import { sleep } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
-import { GlobalDIDSessionsService, IdentityEntry } from "../global.didsessions.service";
+import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { GlobalNavService } from "../global.nav.service";
 import { GlobalStorageService } from "../global.storage.service";
+import { DIDSessionsStore } from './../stores/didsessions.store';
 import { Migration } from "./migration";
 import { BrowserFavoritesElastosNetworkSplitMigration } from "./migrations/browserfavoriteselastosnet.migration";
 import { JSWalletListMigration } from "./migrations/jswalletlist.migration";
@@ -130,7 +131,7 @@ export class MigrationService {
     statsCallback(migrationsToRun.length);
 
     // Simulate the target DID as the "signed in" one because many APIs relied on this field
-    GlobalDIDSessionsService.signedInDIDString = this.identityToMigrate.didString;
+    DIDSessionsStore.signedInDIDString = this.identityToMigrate.didString;
 
     // Run all the migrations that were added at a migration ID higher than current user's most recent check
     let migrationStep = 0;
@@ -161,7 +162,7 @@ export class MigrationService {
     }
 
     // Restore the "signed in identity" to none - DID sessions flow will handle this for real.
-    GlobalDIDSessionsService.signedInDIDString = null;
+    DIDSessionsStore.signedInDIDString = null;
 
     return true;
   }
@@ -171,7 +172,7 @@ export class MigrationService {
    */
   private async debugClearMigrationState(identityEntry: IdentityEntry): Promise<void> {
     // Simulate the target DID as the "signed in" one because many APIs relied on this field
-    GlobalDIDSessionsService.signedInDIDString = identityEntry.didString;
+    DIDSessionsStore.signedInDIDString = identityEntry.didString;
 
     await this.saveLastCheckedMigrationId(identityEntry.didString, 0);
 
@@ -180,6 +181,6 @@ export class MigrationService {
       await migration.debugClearMigrationState(identityEntry);
     }
 
-    GlobalDIDSessionsService.signedInDIDString = null;
+    DIDSessionsStore.signedInDIDString = null;
   }
 }

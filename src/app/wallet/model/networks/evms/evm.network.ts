@@ -332,4 +332,8 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
   public supportsERCNFTs(): boolean {
     return true;
   }
+
+  public isEVMNetwork(): boolean {
+    return true;
+  }
 }

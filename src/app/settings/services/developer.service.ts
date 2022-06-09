@@ -1,12 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalSecurityService } from 'src/app/services/global.security.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 
 // TODO: config rpc for private net?
 type privateConfig = {
@@ -54,7 +55,7 @@ export class DeveloperService extends GlobalService {
 
   async getCurrentConfigurations() {
     let networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
-    let mode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "developer.backgroundservices.startonboot");
+    let mode = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, "developer.backgroundservices.startonboot");
 
     this.zone.run(() => {
       this.selectedNetworkTemplate = networkTemplate;
@@ -112,7 +113,7 @@ export class DeveloperService extends GlobalService {
   } */
 
   private async setPreference(key: string, value: any): Promise<void> {
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, key, value);
+    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, key, value);
   }
 
   async showToast(header: string, msg?: string, duration = 4000) {

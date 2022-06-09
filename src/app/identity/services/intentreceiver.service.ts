@@ -3,10 +3,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, RequestCredentialsIntent, SetHiveProviderIdentityIntent } from '../model/identity.intents';
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 import { AppIDService } from './appid.service';
 import { Native } from './native';
 import { PopupProvider } from './popup';
@@ -159,7 +159,7 @@ export class IntentReceiverService {
             case "appidcredissue":
                 Logger.log('identity', "Received appid credential issue intent request");
                 if (this.checkAppIdCredIssueIntentParams(intent)) {
-                    if (!GlobalDIDSessionsService.signedInDIDString) {
+                    if (!DIDSessionsStore.signedInDIDString) {
                         Logger.log("identity", "No signed in identity. Returning no app id credential");
                         await this.uxService.sendIntentResponse({}, intent.intentId);
                     }
@@ -190,7 +190,7 @@ export class IntentReceiverService {
             case "hivebackupcredissue":
                 Logger.log('identity', "Received hive backup credential issue intent request");
                 if (this.checkHiveBackupCredIssueIntentParams(intent)) {
-                    if (!GlobalDIDSessionsService.signedInDIDString) {
+                    if (!DIDSessionsStore.signedInDIDString) {
                         Logger.log("identity", "No signed in identity. Returning no hive backup credential");
                         await this.uxService.sendIntentResponse({}, intent.intentId);
                     }

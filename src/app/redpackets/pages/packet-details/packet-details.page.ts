@@ -9,7 +9,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -25,6 +24,7 @@ import { Packet, PacketDistributionType, TokenType } from '../../model/packets.m
 import { DIDService } from '../../services/did.service';
 import { PacketService } from '../../services/packet.service';
 import { ThemeService } from '../../services/theme.service';
+import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 
 type WinnerDisplayEntry = {
   winner: PacketWinner;
@@ -125,7 +125,7 @@ export class PacketDetailsPage implements OnInit {
 
             // Only try to grab / get winners if the packet is live
             if (this.packet.isActive) {
-              // TMP DEBUG if (!this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString))
+              // TMP DEBUG if (!this.packet.userIsCreator(DIDSessionsStore.signedInDIDString))
               void this.checkIfNeedToGrab();
               void this.fetchWinners();
             }
@@ -301,7 +301,7 @@ export class PacketDetailsPage implements OnInit {
   }
 
   public userIsCreator(): boolean {
-    return this.packet.userIsCreator(GlobalDIDSessionsService.signedInDIDString);
+    return this.packet.userIsCreator(DIDSessionsStore.signedInDIDString);
   }
 
   public activeWalletIsCreator(): boolean {

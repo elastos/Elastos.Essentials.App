@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 
 type StartupScreen = {
   key: string;
@@ -54,7 +53,7 @@ export class StartupScreenPage implements OnInit {
       }
     ];
 
-    let startupScreenKey = await this.globalStartupService.getStartupScreen(GlobalDIDSessionsService.signedInDIDString);
+    let startupScreenKey = await this.globalStartupService.getStartupScreen(DIDSessionsStore.signedInDIDString);
     this.activeStartupScreen = this.startupScreens.find(s => s.key === startupScreenKey) || this.startupScreens[0];
   }
 
@@ -64,6 +63,6 @@ export class StartupScreenPage implements OnInit {
 
   public useScreen(screen: StartupScreen) {
     this.activeStartupScreen = screen;
-    void this.globalStartupService.setStartupScreen(GlobalDIDSessionsService.signedInDIDString, screen.key);
+    void this.globalStartupService.setStartupScreen(DIDSessionsStore.signedInDIDString, screen.key);
   }
 }

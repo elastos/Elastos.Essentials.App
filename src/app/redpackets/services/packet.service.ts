@@ -5,7 +5,6 @@ import { BehaviorSubject, Subscription } from "rxjs";
 import { runDelayed } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
-import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
@@ -18,6 +17,7 @@ import {
   PacketToCreate,
   SerializedPacket
 } from "../model/packets.model";
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 @Injectable({
   providedIn: 'root'
@@ -66,8 +66,8 @@ export class PacketService {
   }
 
   private async dev_clearLocalStorage(): Promise<void> {
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "grabbedpackets", []);
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "mypackets", []);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "redpackets", "grabbedpackets", []);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "redpackets", "mypackets", []);
   }
 
   /**
@@ -252,13 +252,13 @@ export class PacketService {
       status,
       earnedAmount
     });
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "grabbedpackets", grabbedPackets);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "redpackets", "grabbedpackets", grabbedPackets);
 
     this.grabbedPackets.next(grabbedPackets);
   }
 
   private async loadGrabbedPackets(): Promise<void> {
-    this.grabbedPackets.next(await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "grabbedpackets", []));
+    this.grabbedPackets.next(await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "redpackets", "grabbedpackets", []));
   }
 
   public getGrabbedPacket(hash: string): GrabbedPacket {
@@ -275,13 +275,13 @@ export class PacketService {
   }
 
   private async loadMyPackets(): Promise<void> {
-    let serializedPackets = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "mypackets", []);
+    let serializedPackets = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "redpackets", "mypackets", []);
     this.myPackets = serializedPackets.map(p => Packet.fromSerializedPacket(p));
   }
 
   private async saveMyPackets(): Promise<void> {
     let serializedPackets = this.myPackets.map(p => p.serialize());
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "mypackets", serializedPackets);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "redpackets", "mypackets", serializedPackets);
   }
 
   public getMyPackets(): Packet[] {

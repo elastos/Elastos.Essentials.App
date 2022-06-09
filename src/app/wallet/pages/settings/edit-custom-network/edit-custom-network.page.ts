@@ -12,6 +12,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CustomNetworkDiskEntry, CustomNetworkService } from 'src/app/wallet/services/evm/customnetwork.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { EditCustomNetworkIntentResult } from './intentresult';
 
 export type EditCustomNetworkRoutingParams = {
   forEdition: boolean;
@@ -19,11 +20,6 @@ export type EditCustomNetworkRoutingParams = {
   intentId?: number; // Received intent id - for intent mode only
   customNetworkKey?: string; // Key of the edited network. Edition mode only
   preFilledRequest?: AddEthereumChainParameter; // Request to add a new network by an external api with prefilled information (intent mode)
-}
-
-export type EditCustomNetworkIntentResult = {
-  networkAdded: boolean;
-  networkKey?: string;
 }
 
 @Component({

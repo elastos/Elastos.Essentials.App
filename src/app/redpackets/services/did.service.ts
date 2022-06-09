@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDService } from 'src/app/services/global.did.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { UserInfo } from '../../model/did/user.model';
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +37,7 @@ export class DIDService {
   }
 
   private async loadProfileVisibility(): Promise<void> {
-    this.showProfileToOthers = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "profilevisibility", true);
+    this.showProfileToOthers = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "redpackets", "profilevisibility", true);
   }
 
   /**
@@ -51,6 +51,6 @@ export class DIDService {
     Logger.log("redpackets", "Changing DID profile visibility to", showProfile);
 
     this.showProfileToOthers = showProfile;
-    return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "redpackets", "profilevisibility", showProfile);
+    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "redpackets", "profilevisibility", showProfile);
   }
 }

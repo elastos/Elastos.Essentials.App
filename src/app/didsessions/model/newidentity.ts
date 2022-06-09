@@ -1,4 +1,4 @@
-import { IdentityEntry } from "src/app/services/global.didsessions.service";
+import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { DID } from "./did.model";
 import { DIDStore } from "./didstore.model";
 

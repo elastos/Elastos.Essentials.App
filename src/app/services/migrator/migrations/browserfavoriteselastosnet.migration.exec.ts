@@ -1,8 +1,9 @@
 import { BrowserFavorite } from "src/app/dappbrowser/model/favorite";
 import { DappBrowserService } from "src/app/dappbrowser/services/dappbrowser.service";
 import { Logger } from "src/app/logger";
-import { GlobalDIDSessionsService, IdentityEntry } from "../../global.didsessions.service";
+import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { GlobalStorageService } from "../../global.storage.service";
+import { DIDSessionsStore } from './../../stores/didsessions.store';
 
 export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
   // Simplification: we just clear all recent apps, instead of converting them.
@@ -10,7 +11,7 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
 
   // Convert favorites
   let favorites: BrowserFavorite[] = await GlobalStorageService.instance.getSetting(
-    GlobalDIDSessionsService.signedInDIDString,
+    DIDSessionsStore.signedInDIDString,
     "dappbrowser", "favorites", []);
 
   let changeCount = 0;
@@ -27,5 +28,5 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
 
   Logger.log("migrations", `Migrated ${changeCount} favorites from elastos to elastossmartchain network`);
 
-  await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "favorites", favorites);
+  await GlobalStorageService.instance.setSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", "favorites", favorites);
 }

@@ -3,7 +3,6 @@ import moment from 'moment';
 import Queue from 'promise-queue';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { CurrencyService } from '../../../../services/currency.service';
@@ -27,6 +26,7 @@ import { MainCoinEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../network';
 import { AnySubWallet, SerializedSubWallet } from '../subwallets/subwallet';
 import { SubWalletBuilder } from '../subwallets/subwalletbuilder';
+import { DIDSessionsStore } from './../../../../../services/stores/didsessions.store';
 
 export class ExtendedNetworkWalletInfo {
     /** List of serialized subwallets added earlier to this network wallet */
@@ -620,7 +620,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      */
     public saveContextInfo<T>(key: string, value: T): Promise<void> {
         let fullKey = GlobalNetworksService.instance.activeNetworkTemplate.value + "_" + this.network.key + "_" + this.masterWallet.id + "_" + key;
-        return GlobalStorageService.instance.setSetting<T>(GlobalDIDSessionsService.signedInDIDString, "wallet", fullKey, value);
+        return GlobalStorageService.instance.setSetting<T>(DIDSessionsStore.signedInDIDString, "wallet", fullKey, value);
     }
 
     /**
@@ -628,7 +628,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      */
     public loadContextInfo<T>(key: string): Promise<T> {
         let fullKey = GlobalNetworksService.instance.activeNetworkTemplate.value + "_" + this.network.key + "_" + this.masterWallet.id + "_" + key;
-        return GlobalStorageService.instance.getSetting<T>(GlobalDIDSessionsService.signedInDIDString, "wallet", fullKey, null);
+        return GlobalStorageService.instance.getSetting<T>(DIDSessionsStore.signedInDIDString, "wallet", fullKey, null);
     }
 
     public getTransactionDiscoveryProvider(): TransactionProvider<any> {

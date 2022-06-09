@@ -5,7 +5,6 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
@@ -18,6 +17,7 @@ import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Vote } from '../model/history.model';
 import { DPosNode } from '../model/nodes.model';
 import { Block, Mainchain, Price, Voters } from '../model/stats.model';
+import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 
 export type DPoSRegistrationInfo = {
     active?: boolean;
@@ -165,7 +165,7 @@ export class NodesService {
 
     // Storage
     getVisit() {
-        void this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'visited', false).then(data => {
+        void this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'dposvoting', 'visited', false).then(data => {
             if (data || data === true) {
                 this.firstVisit = false;
             }
@@ -183,7 +183,7 @@ export class NodesService {
 
     async getStoredVotes() {
         this._votes = [];
-        await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', this.voteService.masterWalletId + '-votes', []).then(data => {
+        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'dposvoting', this.voteService.masterWalletId + '-votes', []).then(data => {
             if (data && data.length > 0) {
                 // filter invalid votes.
                 this._votes = data.filter(c => { return c.tx; });
@@ -196,11 +196,11 @@ export class NodesService {
     async setStoredVotes() {
         this.sortVotes();
         Logger.log('dposvoting', 'Vote history updated', this._votes);
-        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", this.voteService.masterWalletId + '-votes', this._votes);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "dposvoting", this.voteService.masterWalletId + '-votes', this._votes);
     }
 
     // getStoredNodes() {
-    //     this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'nodes', []).then(data => {
+    //     this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'dposvoting', 'nodes', []).then(data => {
     //         Logger.log('dposvoting', data);
     //         this._nodes.map(node => {
     //             if (data && data.includes(node.ownerpublickey) && node.state === 'Active') {

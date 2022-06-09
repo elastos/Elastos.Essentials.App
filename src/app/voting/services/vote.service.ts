@@ -5,13 +5,13 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
@@ -267,7 +267,7 @@ export class VoteService {
     async isCRMember() {
         await this.getCurrentCRMembers();
         var ret = false;
-        Logger.log(App.VOTING, 'my did:', GlobalDIDSessionsService.signedInDIDString);
+        Logger.log(App.VOTING, 'my did:', DIDSessionsStore.signedInDIDString);
         for (let member of this.crmembers) {
             if (Util.isSelfDid(member.did)) {
                 ret = true;
@@ -316,7 +316,7 @@ export class VoteService {
 
     async isSecretaryGeneral(): Promise<boolean> {
         let secretaryGeneralDid = await this.getSecretaryGeneralDid();
-        return (secretaryGeneralDid == GlobalDIDSessionsService.signedInDIDString) || (("did:elastos:" + secretaryGeneralDid) == GlobalDIDSessionsService.signedInDIDString);
+        return (secretaryGeneralDid == DIDSessionsStore.signedInDIDString) || (("did:elastos:" + secretaryGeneralDid) == DIDSessionsStore.signedInDIDString);
     }
 
     // The wallet that has no ELA subwallet can't vote, eg. the wallet imported by privat key.

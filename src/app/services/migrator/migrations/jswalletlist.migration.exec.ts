@@ -1,14 +1,14 @@
 import { AESEncrypt } from "src/app/helpers/crypto/aes";
 import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
+import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { defaultWalletName, defaultWalletTheme } from "src/app/wallet/model/masterwallets/masterwallet";
 import { ElastosMainChainWalletNetworkOptions, PrivateKeyType, SerializedStandardMasterWallet, WalletCreator, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
 import { AuthService as WalletAuthService } from "src/app/wallet/services/auth.service";
 import { SPVService } from "src/app/wallet/services/spv.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
-import type { IdentityEntry } from "../../global.didsessions.service";
-import { GlobalDIDSessionsService } from "../../global.didsessions.service";
 import { GlobalStorageService } from "../../global.storage.service";
+import { DIDSessionsStore } from './../../stores/didsessions.store';
 
 /**
  * Find the first possible EVM subwallet in a master wallet, if any.
@@ -82,7 +82,7 @@ export const migrateSPVNetworkTemplate = async (networkTemplate: string, identit
     }
 
     let legacyExtendedWalletInfoKey = "extended-wallet-infos-" + spvWalletId;
-    let rawExtendedInfo = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", legacyExtendedWalletInfoKey, null);
+    let rawExtendedInfo = await GlobalStorageService.instance.getSetting(DIDSessionsStore.signedInDIDString, "wallet", legacyExtendedWalletInfoKey, null);
 
     if (!rawExtendedInfo) {
       Logger.warn("migrations", "No extended info found for wallet, not migrating!", spvWalletId);

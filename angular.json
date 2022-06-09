@@ -102,6 +102,8 @@
               "brorand",
               "lru-cache",
               "ethjs-unit",
+              "moment/locale/fr",
+              "moment/locale/zh-cn",
               "moment/locale/es",
               "moment/locale/it"
             ]

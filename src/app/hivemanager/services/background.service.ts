@@ -4,9 +4,9 @@ import * as moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { Events } from 'src/app/services/events.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 import { HiveService } from './hive.service';
 
 
@@ -44,19 +44,19 @@ export class BackgroundService {
     } */
 
     async getTimeCheck() {
-        const lastCheckedTime = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', 0);
+        const lastCheckedTime = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', 0);
         Logger.log("HiveManager", 'Background service: Time-checked for expiration', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
         const today = new Date();
         if (lastCheckedTime) {
             if (!moment(lastCheckedTime).isSame(today, 'd')) {
-                await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
+                await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
                 this.checkPlanExpiration(today);
             } else {
                 Logger.log("hivemanager", 'Background service: Plan expiration already checked today');
             }
         } else {
-            await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
+            await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
             this.checkPlanExpiration(today);
         }
     }

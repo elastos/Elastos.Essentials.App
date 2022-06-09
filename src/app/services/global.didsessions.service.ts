@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Logger } from '../logger';
+import { IdentityEntry } from '../model/didsessions/identityentry';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalNativeService } from './global.native.service';
 import { Direction, GlobalNavService } from './global.nav.service';
@@ -9,30 +10,9 @@ import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.servi
 import { GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
 import { MigrationService } from './migrator/migration.service';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 declare let internalManager: InternalPlugin.InternalManager;
-
-export type IdentityAvatar = {
-  /** Picture content type: "image/jpeg" or "image/png" */
-  contentType: string;
-  /** Raw picture bytes encoded to a base64 string */
-  base64ImageData: string;
-}
-
-export type IdentityEntry = {
-  /** ID of the DID store that contains this DID entry */
-  didStoreId: string;
-  /** DID string (ex: did:elastos:abcdef) */
-  didString: string;
-  /** Identity entry display name, set by the user */
-  name: string;
-  /** Optional profile picture for this identity */
-  avatar?: IdentityAvatar;
-  /** DID data storage path, for save did data and the other module data, such as spv */
-  didStoragePath: string;
-  /** Date at which this identity entry was created. NOTE: some old sessions don't have this info */
-  creationDate?: number;
-}
 
 /**
 * Option parameters that can be passed during the sign in operation.
@@ -51,8 +31,6 @@ export class GlobalDIDSessionsService {
 
   private identities: IdentityEntry[] = null;
   private signedInIdentity: IdentityEntry | null = null;
-
-  public static signedInDIDString: string | null = null; // Convenient way to get the signed in user's DID, used in many places
 
   constructor(private storage: GlobalStorageService,
     private migrationService: MigrationService,
@@ -200,7 +178,7 @@ export class GlobalDIDSessionsService {
 
     this.signedInIdentity = entry;
 
-    GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
+    DIDSessionsStore.signedInDIDString = this.signedInIdentity.didString;
 
     await this.globalNativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
@@ -231,7 +209,7 @@ export class GlobalDIDSessionsService {
     await GlobalServiceManager.getInstance().emitUserSignOut();
 
     this.signedInIdentity = null;
-    GlobalDIDSessionsService.signedInDIDString = null;
+    DIDSessionsStore.signedInDIDString = null;
 
     await this.saveSignedInIdentityToDisk();
 

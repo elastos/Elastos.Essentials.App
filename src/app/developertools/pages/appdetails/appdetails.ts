@@ -8,11 +8,11 @@ import { GlobalConfig } from 'src/app/config/globalconfig';
 import { pictureMimeType, rawImageToBase64DataUrl } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { ApplicationDIDInfo, GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { DeleteComponent } from '../../components/delete/delete.component';
 import { DIDHelper } from '../../helpers/did.helper';
 import { DIDSession } from '../../model/didsession.model';
@@ -104,7 +104,7 @@ export class AppDetailsPage {
     }
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener);
 
-    this.signedInUserDID = GlobalDIDSessionsService.signedInDIDString;
+    this.signedInUserDID = DIDSessionsStore.signedInDIDString;
 
     // Unlock the DID store and load did data
     await this.checkDIDPassword();
@@ -380,7 +380,7 @@ export class AppDetailsPage {
       Logger.log('developertools', "Could create avatar script?", couldCreateScript);
 
       let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
-      let avatarHiveURL = "hive://" + GlobalDIDSessionsService.signedInDIDString + "@" + essentialsAppDID + "/" + scriptName + "?params={\"empty\":0}"; // Fake params to prevent hive SDK bug crash
+      let avatarHiveURL = "hive://" + DIDSessionsStore.signedInDIDString + "@" + essentialsAppDID + "/" + scriptName + "?params={\"empty\":0}"; // Fake params to prevent hive SDK bug crash
       Logger.log("developertools", "Generated avatar url:", avatarHiveURL);
 
       // Update UI locally without saving to permanent profile yet.

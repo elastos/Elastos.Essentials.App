@@ -7,8 +7,9 @@ import { IdentityGroup, IdentityService } from 'src/app/didsessions/services/ide
 import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { Events } from 'src/app/services/events.service';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';

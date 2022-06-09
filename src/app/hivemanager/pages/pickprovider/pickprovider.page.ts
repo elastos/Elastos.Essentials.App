@@ -9,7 +9,6 @@ import { ProfileService } from 'src/app/identity/services/profile.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { Events } from 'src/app/services/events.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -18,6 +17,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
 import { PopupService } from '../../services/popup.service';
+import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 
 declare let hiveManager: HivePlugin.HiveManager;
 
@@ -112,7 +112,7 @@ export class PickProviderPage implements OnInit {
       }
     ];
 
-    this.developerMode = await this.prefs.developerModeEnabled(GlobalDIDSessionsService.signedInDIDString);
+    this.developerMode = await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString);
 
     if (this.developerMode) {
       // Add a special menu item to be able to switch to another vault without transfer

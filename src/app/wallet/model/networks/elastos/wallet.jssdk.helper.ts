@@ -1,12 +1,12 @@
 import { MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
-import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalNetworksService, MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { MasterWallet, StandardMasterWallet } from "../../masterwallets/masterwallet";
 import { StandardMultiSigMasterWallet } from "../../masterwallets/standard.multisig.masterwallet";
 import { ElastosMainChainWalletNetworkOptions } from "../../masterwallets/wallet.types";
+import { DIDSessionsStore } from './../../../../services/stores/didsessions.store';
 import { JSSDKLocalStorage } from "./localstorage.jssdk";
 
 /**
@@ -15,8 +15,8 @@ import { JSSDKLocalStorage } from "./localstorage.jssdk";
 export class WalletJSSDKHelper {
   private static loadMasterWalletManager(): Promise<MasterWalletManager> {
     const netType = GlobalNetworksService.instance.activeNetworkTemplate.value === MAINNET_TEMPLATE ? "MainNet" : "TestNet";
-    const browserStorage = new JSSDKLocalStorage(GlobalDIDSessionsService.signedInDIDString);
-    //const browserStorage = new BrowserLocalStorage(GlobalDIDSessionsService.signedInDIDString);
+    const browserStorage = new JSSDKLocalStorage(DIDSessionsStore.signedInDIDString);
+    //const browserStorage = new BrowserLocalStorage(DIDSessionsStore.signedInDIDString);
     const netConfig = { NetType: netType, ELA: {} };
 
     return MasterWalletManager.create(

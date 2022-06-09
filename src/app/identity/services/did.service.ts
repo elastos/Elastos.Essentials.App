@@ -3,8 +3,9 @@ import { ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { BehaviorSubject } from "rxjs";
 import { Logger } from "src/app/logger";
+import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { Events } from "src/app/services/events.service";
-import { GlobalDIDSessionsService, IdentityEntry } from "src/app/services/global.didsessions.service";
+import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { DID } from "../model/did.model";
@@ -13,7 +14,6 @@ import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexcep
 import { LocalStorage } from "./localstorage";
 import { Native } from "./native";
 import { PopupProvider } from "./popup";
-
 
 declare let didManager: DIDPlugin.DIDManager;
 

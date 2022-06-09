@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { App } from "src/app/model/app.enum";
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 
@@ -41,7 +41,7 @@ export class PrivacyPage implements OnInit {
   }
 
   private async fetchPublishIdentityMedium(): Promise<void> {
-    this.publishIdentityMedium = await this.prefs.getPublishIdentityMedium(GlobalDIDSessionsService.signedInDIDString);
+    this.publishIdentityMedium = await this.prefs.getPublishIdentityMedium(DIDSessionsStore.signedInDIDString);
   }
 
   public getPublishIdentityTitle(): string {
@@ -59,11 +59,11 @@ export class PrivacyPage implements OnInit {
     else {
       this.publishIdentityMedium = "assist";
     }
-    await this.prefs.setPublishIdentityMedium(GlobalDIDSessionsService.signedInDIDString, this.publishIdentityMedium as any);
+    await this.prefs.setPublishIdentityMedium(DIDSessionsStore.signedInDIDString, this.publishIdentityMedium as any);
   }
 
   private async fetchCredentialToolboxStats(): Promise<void> {
-    this.sendCredentialToolboxStats = await this.prefs.getSendStatsToCredentialToolbox(GlobalDIDSessionsService.signedInDIDString);
+    this.sendCredentialToolboxStats = await this.prefs.getSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString);
   }
 
   public getCredentialToolboxTitle(): string {
@@ -76,7 +76,7 @@ export class PrivacyPage implements OnInit {
 
   async toggleCredentialToolboxStats(): Promise<void> {
     this.sendCredentialToolboxStats = !this.sendCredentialToolboxStats;
-    await this.prefs.setSendStatsToCredentialToolbox(GlobalDIDSessionsService.signedInDIDString, this.sendCredentialToolboxStats);
+    await this.prefs.setSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString, this.sendCredentialToolboxStats);
   }
 
   open(router: string) {

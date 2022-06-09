@@ -7,12 +7,12 @@ import { Subscription } from 'rxjs';
 import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { App } from 'src/app/model/app.enum';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
@@ -546,12 +546,12 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     }
 
     private async checkNoInAppNoticeStatus(): Promise<void> {
-        this.noInAppNoticeDismissed = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "noinappnoticedismissed", false);
+        this.noInAppNoticeDismissed = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", "noinappnoticedismissed", false);
     }
 
     public dismissNoInAppNotice() {
         this.noInAppNoticeDismissed = true;
-        this.noInAppNoticeDismissed = void this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "dappbrowser", "noinappnoticedismissed", true);
+        this.noInAppNoticeDismissed = void this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", "noinappnoticedismissed", true);
     }
 
     public getRecentApps(): BrowsedAppInfo[] {

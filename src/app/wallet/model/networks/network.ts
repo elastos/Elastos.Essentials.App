@@ -98,6 +98,13 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
   public supportsERCNFTs(): boolean {
     return false;
   }
+
+  /**
+   * Tells if this network is EVM compatible or not. Used in replacement to "network instanceof EVMNetwork" to reduce circular dependencies
+   */
+  public isEVMNetwork(): boolean {
+    return false;
+  }
 }
 
 export abstract class AnyNetwork extends Network<any> { }

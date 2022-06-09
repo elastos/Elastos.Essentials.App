@@ -41,10 +41,6 @@ import { PopupProvider } from '../../../services/popup.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
-export type SignTypedDataIntentResult = {
-  signedData: string;
-}
-
 @Component({
   selector: 'app-signtypeddata',
   templateUrl: './signtypeddata.page.html',

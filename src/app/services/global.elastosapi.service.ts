@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Logger } from '../logger';
+import { IdentityEntry } from '../model/didsessions/identityentry';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
@@ -9,12 +10,12 @@ import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model'
 import { StandardCoinName } from '../wallet/model/coin';
 import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/networks/evms/evm.types';
 import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/tx-providers/transaction.types';
-import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalLanguageService } from './global.language.service';
 import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -287,7 +288,7 @@ export class GlobalElastosAPIService extends GlobalService {
      */
     public async useProvider(provider: ElastosAPIProvider): Promise<void> {
         Logger.log("elastosapi", "Setting provider to " + provider.key);
-        await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "elastosapi.provider", provider.name);
+        await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "elastosapi.provider", provider.name);
         this.activeProvider.next(provider);
     }
 

@@ -1,17 +1,12 @@
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { AESDecrypt } from '../../helpers/crypto/aes';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { Config } from '../config/Config';
-import { StandardCoinName } from '../model/coin';
-import { StandardMasterWallet } from '../model/masterwallets/masterwallet';
-import { ElastosMainChainWalletNetworkOptions } from '../model/masterwallets/wallet.types';
-import { WalletHelper } from '../model/networks/elastos/wallet.helper';
-import { WalletAccountType } from '../model/walletaccount';
-import { AuthService } from './auth.service';
+import type { StandardCoinName } from '../model/coin';
+import type { WalletAccountType } from '../model/walletaccount';
 import { Native } from './native.service';
 import { PopupProvider } from './popup.service';
 
@@ -130,7 +125,7 @@ export class SPVService {
     }
 
     private async loadMasterWalletIDMapping(): Promise<void> {
-        this.masterWalletIdMapping = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "jsspvwalletidmapping", []);
+        this.masterWalletIdMapping = await GlobalStorageService.instance.getSetting(DIDSessionsStore.signedInDIDString, "wallet", "jsspvwalletidmapping", []);
     }
 
     /**
@@ -149,7 +144,7 @@ export class SPVService {
     }
 
     private async saveMasterWalletIDMapping(): Promise<void> {
-        await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "jsspvwalletidmapping", this.masterWalletIdMapping);
+        await GlobalStorageService.instance.setSetting(DIDSessionsStore.signedInDIDString, "wallet", "jsspvwalletidmapping", this.masterWalletIdMapping);
     }
 
     public async removeMasterWalletIDMapping(spvWalletId: string) {
@@ -189,62 +184,6 @@ export class SPVService {
     public async debugResetMasterWalletIDMapping(): Promise<void> {
         this.masterWalletIdMapping = [];
         await this.saveMasterWalletIDMapping();
-    }
-
-    /** Some standard wallets depend on the SPVSDK for some operations. We lazily initialize wallets
-     * in the SPVSDK here in case they are not created yet.
-     * We know that a JS wallet has its SPV SDK counterpart if there is a mapping between JS wallet ID
-     * and SPV wallet ID in the SPV service.
-     */
-    public async maybeCreateStandardSPVWalletFromJSWallet(masterWallet: StandardMasterWallet): Promise<boolean> {
-        // If we find an existing mapping in the SPV service, nothing to do
-        let spvMasterId = SPVService.instance.getSPVMasterID(masterWallet.id);
-        if (spvMasterId) return true; // Already initialized
-
-        Logger.log("wallet", "Creating the SPV wallet counterpart for wallet ", masterWallet.id);
-
-        let payPassword = await AuthService.instance.getWalletPassword(masterWallet.id);
-        if (!payPassword)
-            return false; // Can't continue without the wallet password - cancel the initialization
-
-        // No SPV wallet matching this JS wallet yet. Import one, in a different way depending on how the JS wallet
-        // was imported
-        let seed = await masterWallet.getSeed()
-        if (seed) {
-            // Decrypt the seed
-            let decryptedSeed = await AESDecrypt(seed, payPassword);
-
-            let elastosNetworkOptions = masterWallet.getNetworkOptions("elastos") as ElastosMainChainWalletNetworkOptions;
-
-            // Import the seed as new SPV SDK wallet
-            let spvWalletId = WalletHelper.createSPVMasterWalletId();
-            await SPVService.instance.importWalletWithSeed(
-                spvWalletId,
-                decryptedSeed,
-                payPassword,
-                elastosNetworkOptions.singleAddress, // This is an info set in the "elastos" (mainchain) network options
-                "",
-                "");
-
-            // Save the JS<->SPV wallet id mapping
-            await SPVService.instance.setMasterWalletIDMapping(masterWallet.id, spvWalletId);
-        }
-        else {
-            // Decrypt the private key
-            let descryptedPrivateKey = await AESDecrypt(await masterWallet.getPrivateKey(), payPassword);
-
-            // Import the seed as new SPV SDK wallet
-            let spvWalletId = WalletHelper.createSPVMasterWalletId();
-            await SPVService.instance.createMasterWalletWithPrivKey(
-                spvWalletId,
-                descryptedPrivateKey,
-                payPassword);
-
-            // Save the JS<->SPV wallet id mapping
-            await SPVService.instance.setMasterWalletIDMapping(masterWallet.id, spvWalletId);
-        }
-
-        return true;
     }
 
     public setNetwork(netType: string, config: string): Promise<void> {
@@ -1258,7 +1197,7 @@ export class SPVService {
         err.type = 'skipsentry';
         err.description = GlobalLanguageService.instance.translate("wallet.error-" + err["code"]);
 
-        if (GlobalDIDSessionsService.signedInDIDString == null) {
+        if (DIDSessionsStore.signedInDIDString == null) {
             // Sign out
             Logger.warn('wallet', 'did sign out, Filter this error:', err);
             if (promiseRejectHandler) promiseRejectHandler(err);

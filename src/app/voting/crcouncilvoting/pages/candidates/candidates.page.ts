@@ -6,12 +6,12 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
-import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from "src/app/services/stores/didsessions.store";
 import { VoteService } from "src/app/voting/services/vote.service";
 import { Candidate } from "../../model/candidates.model";
 import { CRCouncilService } from "../../services/crcouncil.service";
@@ -73,7 +73,7 @@ export class CandidatesPage implements OnInit {
             case 'Pending':
             case 'Active':
             case 'Canceled':
-            // case 'Returned':
+                // case 'Returned':
                 void this.crCouncilService.addCandidateOperationIcon(this.theme.darkMode, this.titleBar, this.titleBarIconClickedListener);
                 break;
         }
@@ -174,7 +174,7 @@ export class CandidatesPage implements OnInit {
     }
 
     async deleteStorage(): Promise<void> {
-        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'crcouncil', 'votes', []);
     }
 
     async onShowCandidateInfo(did: string) {

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Contact } from '../models/contact.model';
 import { TranslateService } from '@ngx-translate/core';
-import { UxService } from './ux.service';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Contact } from '../models/contact.model';
+import { UxService } from './ux.service';
 
 
 @Injectable({

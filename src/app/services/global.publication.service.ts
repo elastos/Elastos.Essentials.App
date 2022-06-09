@@ -6,7 +6,6 @@ import { DIDPublishingComponent } from '../components/did-publishing/did-publish
 import { Logger } from '../logger';
 import { JSONObject } from '../model/json';
 import { WalletNetworkService } from '../wallet/services/network.service';
-import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from './global.elastosapi.service';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
@@ -16,6 +15,7 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalSwitchNetworkService } from './global.switchnetwork.service';
 import { GlobalThemeService } from './global.theme.service';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -324,11 +324,11 @@ namespace WalletPublishing {
 
             // Make sure the active network is elastosidchain, otherwise, ask user to change
             if (WalletNetworkService.instance.activeNetwork.value.key !== "elastosidchain") {
-              let didNetwork = WalletNetworkService.instance.getNetworkByKey("elastosidchain");
-              const switched = await this.globalSwitchNetworkService.promptSwitchToNetwork(didNetwork);
-              if (!switched) {
-                  return;// Used has denied to switch network. Can't continue.
-              }
+                let didNetwork = WalletNetworkService.instance.getNetworkByKey("elastosidchain");
+                const switched = await this.globalSwitchNetworkService.promptSwitchToNetwork(didNetwork);
+                if (!switched) {
+                    return;// Used has denied to switch network. Can't continue.
+                }
             }
 
             let params = {
@@ -488,7 +488,7 @@ class DIDPublishingManager {
     }
 
     private async loadPersistentInfo(): Promise<PersistentInfo> {
-        let infoAsString = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'publicationservice', "persistentInfo", null);
+        let infoAsString = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'publicationservice', "persistentInfo", null);
         if (!infoAsString)
             return this.createNewPersistentInfo();
 
@@ -510,7 +510,7 @@ class DIDPublishingManager {
 
     public async savePersistentInfo(persistentInfo: PersistentInfo) {
         this.persistentInfo = persistentInfo;
-        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'publicationservice', "persistentInfo", JSON.stringify(persistentInfo));
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'publicationservice', "persistentInfo", JSON.stringify(persistentInfo));
     }
 
     public async savePersistentInfoAndEmitStatus(persistentInfo: PersistentInfo) {
@@ -550,10 +550,10 @@ class DIDPublishingManager {
      * Returns the medium (assist, wallet) that we should use to publish
      */
     private async getPublishingMedium(): Promise<string> {
-        if (!GlobalDIDSessionsService.signedInDIDString)
+        if (!DIDSessionsStore.signedInDIDString)
             return 'assist'; // No signed in user? We may be in a DID creation flow. Anyway, use assist in this case.
 
-        return await this.prefs.getPublishIdentityMedium(GlobalDIDSessionsService.signedInDIDString);
+        return await this.prefs.getPublishIdentityMedium(DIDSessionsStore.signedInDIDString);
     }
 
     public async publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {

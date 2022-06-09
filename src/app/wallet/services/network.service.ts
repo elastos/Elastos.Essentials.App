@@ -24,11 +24,11 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import type { MasterWallet } from '../model/masterwallets/masterwallet';
-import { EVMNetwork } from '../model/networks/evms/evm.network';
+import type { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { AnyNetwork } from '../model/networks/network';
 import { Native } from './native.service';
 import { PopupProvider } from './popup.service';
@@ -149,7 +149,7 @@ export class WalletNetworkService {
     public getAvailableEVMChainIDs(networkTemplate: string = null): number[] {
         let availableNetworks = this.getAvailableNetworks(null, networkTemplate);
         let displayableEVMChainIds = availableNetworks
-            .filter(n => n instanceof EVMNetwork)
+            .filter(n => n.isEVMNetwork())
             .map(n => (<EVMNetwork>n).getMainChainID())
             .filter(chainId => chainId !== -1);
 
@@ -196,7 +196,7 @@ export class WalletNetworkService {
     }
 
     public getNetworkByChainId(chainId: number): AnyNetwork {
-        return this.networks.find(n => n instanceof EVMNetwork && n.getMainChainID() == chainId);
+        return this.networks.find(n => n.isEVMNetwork() && (<EVMNetwork>n).getMainChainID() == chainId);
     }
 
     public getActiveNetworkIndex(): number {
@@ -224,21 +224,15 @@ export class WalletNetworkService {
      * Tells if the currently active network is the EVM network.
      */
     public isActiveNetworkEVM(): boolean {
-        /* if (this.activeNetwork.value) {
-            let network = this.getNetworkByKey(this.activeNetwork.value.key);
-            if (network && network.getMainChainID() !== -1)
-                return true;
-        }
-        return false; */
-        return this.activeNetwork.value instanceof EVMNetwork;
+        return this.activeNetwork.value.isEVMNetwork();
     }
 
     public async loadNetworkVisibilities(): Promise<void> {
-        this.networkVisibilities = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "network-visibilities", {});
+        this.networkVisibilities = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, "wallet", "network-visibilities", {});
     }
 
     public saveNetworkVisibilities(): Promise<void> {
-        return this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", "network-visibilities", this.networkVisibilities);
+        return this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, "wallet", "network-visibilities", this.networkVisibilities);
     }
 
     public getNetworkVisible(network: AnyNetwork): boolean {

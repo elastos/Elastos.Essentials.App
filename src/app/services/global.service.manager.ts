@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Logger } from '../logger';
-import { IdentityEntry } from './global.didsessions.service';
+import { IdentityEntry } from "../model/didsessions/identityentry";
 
 @Injectable({
     providedIn: 'root'

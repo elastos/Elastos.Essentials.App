@@ -1,5 +1,6 @@
 import { Logger } from "src/app/logger";
 import { Transfer } from "../../services/cointransfer.service";
+import { SPVHelperService } from "../../services/spv.helper.service";
 import { jsToSpvWalletId, SPVService } from "../../services/spv.service";
 import { WalletService } from "../../services/wallet.service";
 import { StandardMasterWallet } from "../masterwallets/masterwallet";
@@ -23,7 +24,7 @@ export class SPVSDKSafe extends Safe {
 
   public async initialize(networkWallet: AnyNetworkWallet): Promise<void> {
     // TODO: Stop using the SPVSDK for EVM network wallets
-    if (!await SPVService.instance.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
+    if (!await SPVHelperService.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
       return;
 
     await super.initialize(networkWallet);

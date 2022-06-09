@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
-import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
+import { IdentityEntry } from "../model/didsessions/identityentry";
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 export enum AppTheme {
   LIGHT,
@@ -60,17 +61,17 @@ export class GlobalThemeService extends GlobalService {
     // If no theme preference is set for the user, we use the currently active theme.
     // During identity creation, user may have changed the theme in DID Sessions, so we want to save this
     // info to the newly created DID context.
-    if (!await this.prefs.preferenceIsSet(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode")) {
+    if (!await this.prefs.preferenceIsSet(DIDSessionsStore.signedInDIDString, "ui.darkmode")) {
       useDarkMode = (this.activeTheme.value === AppTheme.DARK);
       // Save the preference
-      await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode", useDarkMode);
+      await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "ui.darkmode", useDarkMode);
     }
     else {
-      useDarkMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode");
+      useDarkMode = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, "ui.darkmode");
     }
 
     void passwordManager.setDarkMode(useDarkMode);
-    Logger.log("theme", "Emitting active theme (fetch prefs) to value:", (useDarkMode?"dark":"light"));
+    Logger.log("theme", "Emitting active theme (fetch prefs) to value:", (useDarkMode ? "dark" : "light"));
     if (useDarkMode)
       this.activeTheme.next(AppTheme.DARK);
     else
@@ -84,9 +85,9 @@ export class GlobalThemeService extends GlobalService {
    * theme directly without saving any preference.
    */
   public async toggleTheme() {
-    if (GlobalDIDSessionsService.signedInDIDString) {
+    if (DIDSessionsStore.signedInDIDString) {
       // A user is signed in, update his preferences
-      await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
+      await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
     }
     else {
       // No signed in user, directly change the theme.
@@ -97,10 +98,10 @@ export class GlobalThemeService extends GlobalService {
   private async updateTheme(darkMode: boolean): Promise<void> {
     await passwordManager.setDarkMode(darkMode);
 
-    Logger.log("theme", "Emitting active theme (update theme) to value:", (darkMode?"dark":"light"));
+    Logger.log("theme", "Emitting active theme (update theme) to value:", (darkMode ? "dark" : "light"));
     if (darkMode)
       this.activeTheme.next(AppTheme.DARK);
-      //this.events.emit('titlebar-foregroundmode', TitleBarForegroundMode.LIGHT);
+    //this.events.emit('titlebar-foregroundmode', TitleBarForegroundMode.LIGHT);
     else
       this.activeTheme.next(AppTheme.LIGHT);
   }

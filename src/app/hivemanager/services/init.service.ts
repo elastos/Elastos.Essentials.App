@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AppService } from './app.service';
 import { BackgroundService } from './background.service';
@@ -18,10 +19,12 @@ export class HiveManagerInitService extends GlobalService {
     super();
   }
 
-  public async init(): Promise<void> {
+  public init(): Promise<void> {
     GlobalServiceManager.getInstance().registerService(this);
 
     this.appService.init();
+
+    return;
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
@@ -29,15 +32,17 @@ export class HiveManagerInitService extends GlobalService {
     this.backgroundService.init();
   }
 
-  public async onUserSignOut(): Promise<void> {
+  public onUserSignOut(): Promise<void> {
     this.hiveService.stop();
+    return;
   }
 
   /**
    * Simulates a regular "app start" (without intents). This method is responsible for deciding the proper
    * route to use, according to current module (sub-app) state.
    */
-  public async start() {
+  public start(): Promise<void> {
     this.appService.startDefaultScreen();
+    return;
   }
 }

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Logger } from '../logger';
-import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
+import { IdentityEntry } from "../model/didsessions/identityentry";
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 declare let internalManager: InternalPlugin.InternalManager;
 
@@ -58,7 +59,7 @@ export class GlobalSecurityService implements GlobalService {
    * Enables or disables screenshots/video capture for the current user DID session.
    */
   public async setScreenCaptureAllowed(allowScreenCapture: boolean): Promise<void> {
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "developer.screencapture", allowScreenCapture);
+    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "developer.screencapture", allowScreenCapture);
     return internalManager.setScreenCapture(allowScreenCapture);
   }
 
@@ -66,7 +67,7 @@ export class GlobalSecurityService implements GlobalService {
    * Tells if the current user has allowed screenshots/video capture.
    */
   public getScreenCaptureAllowed(): Promise<boolean> {
-    return this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "developer.screencapture");
+    return this.prefs.getPreference(DIDSessionsStore.signedInDIDString, "developer.screencapture");
   }
 
   private async restoreScreenCapture(): Promise<void> {

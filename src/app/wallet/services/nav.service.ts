@@ -3,7 +3,6 @@ import { Logger } from 'src/app/logger';
 import { Native } from './native.service';
 import { WalletService } from './wallet.service';
 
-
 @Injectable({
     providedIn: 'root'
 })

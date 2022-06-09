@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
-import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { GlobalNavService } from './global.nav.service';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 
@@ -172,7 +172,7 @@ export class GlobalIntentService {
   }
 
   private processNextIntentRequest() {
-    if (!GlobalDIDSessionsService.signedInDIDString) {
+    if (!DIDSessionsStore.signedInDIDString) {
       Logger.log("Intents", "Skipping intent processing because there is no user signed in. Pending intents count:", this.intentsQueue.length);
       return;
     }

@@ -1,10 +1,10 @@
-
 import { Injectable } from '@angular/core';
 import Base58 from 'base-58/Base58';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { DIDService } from '../identity/services/did.service';
-import { GlobalDIDSessionsService } from '../services/global.didsessions.service';
+import { DIDSessionsStore } from './../services/stores/didsessions.store';
+
 
 @Injectable({
     providedIn: 'root'
@@ -252,14 +252,14 @@ export class Util {
     }
 
     public static isSelfDid(did: string) {
-        if (did == GlobalDIDSessionsService.signedInDIDString || ("did:elastos:" + did) == GlobalDIDSessionsService.signedInDIDString) {
+        if (did == DIDSessionsStore.signedInDIDString || ("did:elastos:" + did) == DIDSessionsStore.signedInDIDString) {
             return true;
         }
         return false;
     }
 
     public static getShortDidString() {
-        return GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "")
+        return DIDSessionsStore.signedInDIDString.replace("did:elastos:", "")
     }
 
     public static async getSelfPublicKey(): Promise<string> {

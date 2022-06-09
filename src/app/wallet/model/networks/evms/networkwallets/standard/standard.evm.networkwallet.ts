@@ -1,3 +1,4 @@
+import { SPVHelperService } from 'src/app/wallet/services/spv.helper.service';
 import { jsToSpvWalletId, SPVService } from '../../../../../services/spv.service';
 import { StandardMasterWallet } from '../../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../../masterwallets/wallet.types';
@@ -25,7 +26,7 @@ export abstract class StandardEVMNetworkWallet<WalletNetworkOptionsType extends 
     }
 
     public async initialize(): Promise<void> {
-        if (!await SPVService.instance.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
+        if (!await SPVHelperService.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
             return;
 
         await super.initialize();

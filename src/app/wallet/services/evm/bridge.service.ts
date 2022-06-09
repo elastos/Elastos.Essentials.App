@@ -54,10 +54,7 @@ export class BridgeService {
         ]
     ] */
 
-    constructor(
-        public networkService: WalletNetworkService,
-        public dappbrowserService: DappBrowserService,
-    ) {
+    constructor() {
         BridgeService.instance = this;
     }
 
@@ -85,7 +82,7 @@ export class BridgeService {
      * are using the same base provider.
      */
     public getDestinationNetworksForProvider(bridgeProvider: BridgeProvider, sourceNetwork: AnyNetwork): AnyNetwork[] {
-        let availableNetworks = this.networkService.getAvailableNetworks();
+        let availableNetworks = WalletNetworkService.instance.getAvailableNetworks();
         let targetNetworks = availableNetworks.filter(n => {
             if (n.key === sourceNetwork.key)
                 return false; // Filter out the source network;
@@ -99,6 +96,6 @@ export class BridgeService {
         // Use the swap url (more accurate), if any, otherwise the default project url
         let targetUrl = provider.bridgeUrl || provider.baseProvider.projectUrl;
 
-        void this.dappbrowserService.openForBrowseMode(targetUrl, provider.baseProvider.name);
+        void DappBrowserService.instance.openForBrowseMode(targetUrl, provider.baseProvider.name);
     }
 }

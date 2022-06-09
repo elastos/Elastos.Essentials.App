@@ -4,7 +4,6 @@ import { Subject, Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -13,6 +12,7 @@ import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { ProposalDetails } from '../model/proposal-details';
 import { SuggestionDetail } from '../model/suggestion-model';
+import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 import { PopupService } from './popup.service';
 import { ProposalService } from './proposal.service';
 import { SuggestionService } from './suggestion.service';
@@ -171,7 +171,7 @@ export class CROperationsService {
         let data = crCommand.data;
 
         if (!Util.isEmptyObject(data.userdid)) {
-            if (crCommand.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
+            if (crCommand.data.userdid != DIDSessionsStore.signedInDIDString) {
                 Logger.warn('crproposal', "The did isn't match");
                 await this.globalPopupService.ionicAlert('wallet.text-warning', 'crproposalvoting.wrong-did');
                 return false;
@@ -270,7 +270,7 @@ export class CROperationsService {
         let data = this.onGoingCommand.data;
         data.categorydata = data.categorydata || "";
         data.ownerPublicKey = data.ownerpublickey || data.ownerPublicKey,
-        data.proposalHash = data.proposalhash || data.proposalHash;
+            data.proposalHash = data.proposalhash || data.proposalHash;
 
         try {
             switch (this.onGoingCommand.command) {
@@ -302,17 +302,17 @@ export class CROperationsService {
                     }
                     break;
                 case "reviewmilestone":
-                        data.messageHash = data.messageHash || data.messagehash;
-                        let ret = await this.getMessageData(data.messageHash);
-                        if (ret != null) {
-                            data.messageData = ret.content;
-                            data.ownerPublicKey = ret.ownerPublicKey;
-                            data.ownerSignature = ret.ownerSignature;
-                        }
-                        if (this.onGoingCommand.type == CRCommandType.Scan) {
-                            data.secretaryOpinionHash = data.secretaryopinionhash || data.secretaryOpinionHash;
-                            data.secretaryOpinionData = await this.getOpinionData(data.secretaryOpinionHash);
-                        }
+                    data.messageHash = data.messageHash || data.messagehash;
+                    let ret = await this.getMessageData(data.messageHash);
+                    if (ret != null) {
+                        data.messageData = ret.content;
+                        data.ownerPublicKey = ret.ownerPublicKey;
+                        data.ownerSignature = ret.ownerSignature;
+                    }
+                    if (this.onGoingCommand.type == CRCommandType.Scan) {
+                        data.secretaryOpinionHash = data.secretaryopinionhash || data.secretaryOpinionHash;
+                        data.secretaryOpinionData = await this.getOpinionData(data.secretaryOpinionHash);
+                    }
                     break;
                 case "voteforproposal":
                 case "withdraw":
@@ -320,7 +320,7 @@ export class CROperationsService {
             }
         }
         catch (errMessage) {
-            Logger.error(App.CRSUGGESTION, this.onGoingCommand.command  + ' getData error:', errMessage);
+            Logger.error(App.CRSUGGESTION, this.onGoingCommand.command + ' getData error:', errMessage);
             await this.globalPopupService.ionicAlert("common.error", errMessage);
             return false;
         }
@@ -346,7 +346,7 @@ export class CROperationsService {
         }
 
         let ret = await this.proposalService.getCurrentProposal(this.onGoingCommand.data.proposalHash,
-                                                this.onGoingCommand.type != CRCommandType.ProposalDetailPage);
+            this.onGoingCommand.type != CRCommandType.ProposalDetailPage);
         if (ret == null) {
             await this.globalPopupService.ionicAlert("common.error", "crproposalvoting.no-proposal-detail");
         }
@@ -382,7 +382,7 @@ export class CROperationsService {
     public goBack() {
         let type = this.onGoingCommand.type;
         this.activeCommandReturn.next(type);
-        switch(type) {
+        switch (type) {
             case CRCommandType.SuggestionDetailPage:
             case CRCommandType.ProposalDetailPage:
                 void this.globalNav.navigateBack();

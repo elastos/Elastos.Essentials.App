@@ -3,12 +3,12 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Tip } from '../model/tip.model';
 import { TipAudience } from '../model/tipaudience.model';
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 const DURATION_MIN_BETWEEN_2_TIPS_HOURS = 12; // 12 hours
 const DURATION_BETWEEN_2_CHECKS_MS = 5 * 60 * 1000; // 5 minutes
@@ -146,7 +146,7 @@ export class TipsService {
 
   private async rightTimeToShowATip(): Promise<boolean> {
     try {
-      let value = await this.storage.getSetting<string>(GlobalDIDSessionsService.signedInDIDString, "launcher", "latest-sent-tip-time", null);
+      let value = await this.storage.getSetting<string>(DIDSessionsStore.signedInDIDString, "launcher", "latest-sent-tip-time", null);
       if (!value)
         return true; // Nothing saved yet: so it's a right time to show a tip.
 
@@ -166,7 +166,7 @@ export class TipsService {
 
   private async saveSentTipTime() {
     try {
-      await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "launcher", "latest-sent-tip-time", new Date().toISOString());
+      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "launcher", "latest-sent-tip-time", new Date().toISOString());
     }
     catch (err) {
       // Kind of blocking issue, but let's resolve anyway...
@@ -193,7 +193,7 @@ export class TipsService {
 
   private async userWantsToSeeTips(): Promise<boolean> {
     try {
-      let value = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "help.dailytips.show");
+      let value = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, "help.dailytips.show");
       return value;
     }
     catch (err) {
@@ -223,12 +223,12 @@ export class TipsService {
   }
 
   private saveViewedTips(tips: Tip[]): Promise<void> {
-    return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "launcher", "viewed-tips", tips);
+    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "launcher", "viewed-tips", tips);
   }
 
   private async loadViewedTips(): Promise<Tip[]> {
     try {
-      let tips = await this.storage.getSetting<Tip[]>(GlobalDIDSessionsService.signedInDIDString, "launcher", "viewed-tips", []);
+      let tips = await this.storage.getSetting<Tip[]>(DIDSessionsStore.signedInDIDString, "launcher", "viewed-tips", []);
       return tips;
     }
     catch (err) {
@@ -238,7 +238,7 @@ export class TipsService {
 
   private async developerModeEnabled(): Promise<boolean> {
     try {
-      let devMode = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "developer.mode");
+      let devMode = await this.prefs.getPreference(DIDSessionsStore.signedInDIDString, "developer.mode");
       if (devMode)
         return true;
       else

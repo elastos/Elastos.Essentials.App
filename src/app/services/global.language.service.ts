@@ -7,9 +7,10 @@ import "moment/locale/it";
 import "moment/locale/zh-cn";
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
-import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
+import { IdentityEntry } from '../model/didsessions/identityentry';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -61,8 +62,8 @@ export class GlobalLanguageService extends GlobalService {
   constructor(
     private translationService: TranslateService,
     private prefs: GlobalPreferencesService) {
-      super();
-      GlobalLanguageService.instance = this;
+    super();
+    GlobalLanguageService.instance = this;
   }
 
   public async init() {
@@ -70,7 +71,7 @@ export class GlobalLanguageService extends GlobalService {
 
     this.setupAvailableLanguages();
 
-    this.prefs.preferenceListener.subscribe((prefChanged)=>{
+    this.prefs.preferenceListener.subscribe((prefChanged) => {
       if (prefChanged.key == "locale.language") {
         let lang = prefChanged.value as string;
         this.activeLanguage.next(lang);
@@ -106,9 +107,9 @@ export class GlobalLanguageService extends GlobalService {
    */
   private setAppLanguage(language: string) {
     if (language === 'zh') {
-        moment.locale('zh-cn');
+      moment.locale('zh-cn');
     } else {
-        moment.locale(language);
+      moment.locale(language);
     }
     // Set language for the ionic translate module that does the actual screen items translations
     this.translationService.setDefaultLang(language);
@@ -124,12 +125,12 @@ export class GlobalLanguageService extends GlobalService {
     Logger.log("LanguageService", "Fetching language information");
 
     this.systemLanguage = this.translationService.getBrowserLang();
-    if (GlobalDIDSessionsService.signedInDIDString) {
-      let languageFromPref: string = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language");
+    if (DIDSessionsStore.signedInDIDString) {
+      let languageFromPref: string = await this.prefs.getPreference(DIDSessionsStore.signedInDIDString, "locale.language");
       if (!languageFromPref || languageFromPref == "native system") {
         // Use the language that the user selected in didsession.
         if (this.selectedLanguage) {
-          await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language", this.selectedLanguage, true);
+          await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "locale.language", this.selectedLanguage, true);
         }
       } else {
         this.selectedLanguage = languageFromPref;
@@ -180,7 +181,7 @@ export class GlobalLanguageService extends GlobalService {
 
     // Save current choice to disk
     Logger.log('LanguageService', "Saving global language code:", code);
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language", code, true);
+    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "locale.language", code, true);
 
     // Notify listeners of language changes
     this.activeLanguage.next(code);

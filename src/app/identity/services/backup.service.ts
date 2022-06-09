@@ -3,16 +3,16 @@ import { Subscription } from 'rxjs';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { sleep } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
 import { Events } from 'src/app/services/events.service';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDURL } from '../model/didurl.model';
 import { VerifiableCredential } from '../model/verifiablecredential.model';
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 import { DIDService } from './did.service';
-
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -75,7 +75,7 @@ export class BackupService extends GlobalService {
     // Wait until the DID activation is complete, before doing any backup or restore operation
     this.preparingOrPrepared = false;
     this.didActivatedSub = this.didService.activatedDid.subscribe((activatedDID) => {
-      if (activatedDID && activatedDID.getDIDString() === GlobalDIDSessionsService.signedInDIDString) {
+      if (activatedDID && activatedDID.getDIDString() === DIDSessionsStore.signedInDIDString) {
         Logger.log("identitybackup", "DID is activated, preparing the backup environment");
 
         void this.prepare();
@@ -126,7 +126,7 @@ export class BackupService extends GlobalService {
 
     void this.globalHiveService.getHiveClient().then(async hiveClient => {
       try {
-        const userDID = GlobalDIDSessionsService.signedInDIDString;
+        const userDID = DIDSessionsStore.signedInDIDString;
 
         // did:elastos:iaMPKSkYLJYmbBTuT3JfF9E8cFtLWky5vk - Test
 

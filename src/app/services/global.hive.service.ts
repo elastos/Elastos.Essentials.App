@@ -3,25 +3,27 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subject, Subscription } from "rxjs";
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { rawImageToBase64DataUrl } from '../helpers/picture.helpers';
 import { runDelayed } from '../helpers/sleep.helper';
+import { IdentityEntry } from '../model/didsessions/identityentry';
 import { JSONObject } from '../model/json';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
+import { DIDSessionsStore } from './stores/didsessions.store';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
 const availableHiveNodeProviders = {
-    MainNet: ["https://hive1.trinity-tech.io",
-              "https://hive2.trinity-tech.io",
-              "https://hive3.trinity-tech.io"
-             ],
-    TestNet: ["https://hive-testnet1.trinity-tech.io",
-              "https://hive-testnet2.trinity-tech.io"
-             ]
+  MainNet: ["https://hive1.trinity-tech.io",
+    "https://hive2.trinity-tech.io",
+    "https://hive3.trinity-tech.io"
+  ],
+  TestNet: ["https://hive-testnet1.trinity-tech.io",
+    "https://hive-testnet2.trinity-tech.io"
+  ]
 };
 
 export enum VaultLinkStatusCheckState {
@@ -74,17 +76,17 @@ export class GlobalHiveService extends GlobalService {
     GlobalServiceManager.getInstance().registerService(this);
 
     this.subscription = this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
-        switch (template) {
-            case MAINNET_TEMPLATE:
-                this.availableHiveNodeProviders = availableHiveNodeProviders.MainNet;
-                break;
-            case TESTNET_TEMPLATE:
-                this.availableHiveNodeProviders = availableHiveNodeProviders.TestNet;
-                break;
-            default:
-                this.availableHiveNodeProviders = [];
-        }
-      })
+      switch (template) {
+        case MAINNET_TEMPLATE:
+          this.availableHiveNodeProviders = availableHiveNodeProviders.MainNet;
+          break;
+        case TESTNET_TEMPLATE:
+          this.availableHiveNodeProviders = availableHiveNodeProviders.TestNet;
+          break;
+        default:
+          this.availableHiveNodeProviders = [];
+      }
+    })
   }
 
   stop() {
@@ -239,7 +241,7 @@ export class GlobalHiveService extends GlobalService {
   public async prepareHiveVault(vaultProviderAddress: string): Promise<boolean> {
     Logger.log("GlobalHiveService", "Preparing hive vault");
 
-    let didString = GlobalDIDSessionsService.signedInDIDString;
+    let didString = DIDSessionsStore.signedInDIDString;
 
     let hiveClient = await this.getHiveClient();
     Logger.log("GlobalHiveService", "Got hive client", hiveClient);

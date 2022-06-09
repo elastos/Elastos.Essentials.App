@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { DeveloperService } from '../../services/developer.service';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { App } from "src/app/model/app.enum";
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 
 type Preferences = {
@@ -45,7 +45,7 @@ export class MenuPage implements OnInit {
     this.hasConfigSections = true;
 
     // Retrieve current settings
-    let prefs = await this.prefsService.getPreferences(GlobalDIDSessionsService.signedInDIDString);
+    let prefs = await this.prefsService.getPreferences(DIDSessionsStore.signedInDIDString);
     this.prefs.developerMode = prefs["developer.mode"];
   }
 
@@ -61,13 +61,13 @@ export class MenuPage implements OnInit {
   }
 
   toggleDeveloperMode() {
-    void this.prefsService.setPreference(GlobalDIDSessionsService.signedInDIDString, "developer.mode", this.prefs.developerMode);
+    void this.prefsService.setPreference(DIDSessionsStore.signedInDIDString, "developer.mode", this.prefs.developerMode);
     if (!this.prefs.developerMode) {
-        this.developer.resetNet();
+      void this.developer.resetNet();
     }
   }
 
-  open(router: string){
+  open(router: string) {
     void this.nav.navigateTo(App.SETTINGS, router);
   }
 }

@@ -24,9 +24,9 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { CustomNetwork } from '../../model/networks/custom/network/custom.network';
 import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { Native } from '../native.service';
@@ -74,7 +74,7 @@ export class CustomNetworkService {
      */
     private async initializeCustomNetworks(): Promise<void> {
         // Load previously saved entries from disk
-        this.customNetworkDiskEntries = await this.globalStorage.getSetting<CustomNetworkDiskEntry[]>(GlobalDIDSessionsService.signedInDIDString, "wallet", "customnetworks", []);
+        this.customNetworkDiskEntries = await this.globalStorage.getSetting<CustomNetworkDiskEntry[]>(DIDSessionsStore.signedInDIDString, "wallet", "customnetworks", []);
 
         // For each disk entry, re-initialize a real network
         for (let entry of this.customNetworkDiskEntries) {
@@ -128,7 +128,7 @@ export class CustomNetworkService {
             )
         }
 
-        await this.globalStorage.setSetting<CustomNetworkDiskEntry[]>(GlobalDIDSessionsService.signedInDIDString, "wallet", "customnetworks", this.customNetworkDiskEntries);
+        await this.globalStorage.setSetting<CustomNetworkDiskEntry[]>(DIDSessionsStore.signedInDIDString, "wallet", "customnetworks", this.customNetworkDiskEntries);
 
         // As we are modifying the network config we have to destroy and configure the spvsdk again
         // NOTE: We should normally destroy the SPVSDK, set the new config, re-created the master wallets
@@ -152,7 +152,7 @@ export class CustomNetworkService {
 
         // Delete from disk entries and save
         this.customNetworkDiskEntries.splice(existingEntryIndex, 1);
-        await this.globalStorage.setSetting<CustomNetworkDiskEntry[]>(GlobalDIDSessionsService.signedInDIDString, "wallet", "customnetworks", this.customNetworkDiskEntries);
+        await this.globalStorage.setSetting<CustomNetworkDiskEntry[]>(DIDSessionsStore.signedInDIDString, "wallet", "customnetworks", this.customNetworkDiskEntries);
     }
 
     /**

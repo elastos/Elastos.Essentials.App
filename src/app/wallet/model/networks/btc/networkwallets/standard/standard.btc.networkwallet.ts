@@ -1,4 +1,5 @@
 import { WalletNetworkOptions } from "src/app/wallet/model/masterwallets/wallet.types";
+import { SPVHelperService } from "src/app/wallet/services/spv.helper.service";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../../../coin";
 import { StandardMasterWallet } from "../../../../masterwallets/masterwallet";
@@ -20,7 +21,7 @@ export class StandardBTCNetworkWallet<WalletNetworkOptionsType extends WalletNet
     }
 
     public async initialize(): Promise<void> {
-        if (!await SPVService.instance.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
+        if (!await SPVHelperService.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
             return;
 
         await super.initialize();

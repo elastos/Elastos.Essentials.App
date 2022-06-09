@@ -5,9 +5,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { BrowsedAppInfo } from '../model/browsedappinfo';
 import { BrowserFavorite } from '../model/favorite';
@@ -39,7 +39,7 @@ export class FavoritesService {
 
     private async loadFavorites(): Promise<void> {
         let favorites = await this.globalStorageService.getSetting(
-            GlobalDIDSessionsService.signedInDIDString,
+            DIDSessionsStore.signedInDIDString,
             "dappbrowser", "favorites", []);
 
         Logger.log("dappbrowser", "Loaded favorites:", favorites);
@@ -87,7 +87,7 @@ export class FavoritesService {
 
     private async saveFavoritesToDisk(): Promise<void> {
         await this.globalStorageService.setSetting(
-            GlobalDIDSessionsService.signedInDIDString,
+            DIDSessionsStore.signedInDIDString,
             "dappbrowser", "favorites", this.favoritesSubject.value);
     }
 

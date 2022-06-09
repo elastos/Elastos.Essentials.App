@@ -4,7 +4,7 @@ import { isNil } from 'lodash-es';
 import * as moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
-import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AuthService } from './auth.service';
@@ -13,9 +13,6 @@ import { ExpirationService } from './expiration.service';
 import { LocalStorage } from './localstorage';
 import { Native } from './native';
 import { PopupProvider } from './popup';
-
-
-
 
 export interface LastExpirationNotification {
   last_check: string

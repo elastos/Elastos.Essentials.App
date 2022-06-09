@@ -42,10 +42,6 @@ import { PopupProvider } from '../../../services/popup.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
-export type EthSignIntentResult = {
-  signedData: string;
-}
-
 /**
  * This operation is dangerous and is deprecated, but we handle it for backward compatibility
  * with some dApps.

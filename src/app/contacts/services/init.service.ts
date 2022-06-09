@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { BackupService } from '../services/backup.service';
 import { IntentService } from '../services/intent.service';
 import { FriendsService } from './friends.service';
+
 @Injectable({
   providedIn: 'root'
 })

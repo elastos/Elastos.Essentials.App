@@ -42,10 +42,6 @@ import { PopupProvider } from '../../../services/popup.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
-export type PersonalSignIntentResult = {
-  signedData: string;
-}
-
 @Component({
   selector: 'app-personalsign',
   templateUrl: './personalsign.page.html',

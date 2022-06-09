@@ -1,6 +1,6 @@
 import { JSONObject } from "src/app/model/json";
-import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 export type CacheEntry<T> = {
   key: string;
@@ -114,20 +114,20 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
   public async save(): Promise<void> {
     // Keep at most maxItemsOnDisk items.
     let itemsToSave = this.items.slice(0, Math.min(this.items.length, this.maxItemsOnDisk));
-    await GlobalStorageService.instance.setSetting(this.storeGlobally ? null : GlobalDIDSessionsService.signedInDIDString, "cache", this.name, itemsToSave);
+    await GlobalStorageService.instance.setSetting(this.storeGlobally ? null : DIDSessionsStore.signedInDIDString, "cache", this.name, itemsToSave);
   }
 
   /**
    * Loads the cache from disk.
    */
   public async load(): Promise<void> {
-    this.items = await GlobalStorageService.instance.getSetting(this.storeGlobally ? null : GlobalDIDSessionsService.signedInDIDString, "cache", this.name, []);
+    this.items = await GlobalStorageService.instance.getSetting(this.storeGlobally ? null : DIDSessionsStore.signedInDIDString, "cache", this.name, []);
   }
 
   /**
    * Delete cache.
    */
   public async delete() {
-    await GlobalStorageService.instance.deleteSetting(this.storeGlobally ? null : GlobalDIDSessionsService.signedInDIDString, "cache", this.name);
+    await GlobalStorageService.instance.deleteSetting(this.storeGlobally ? null : DIDSessionsStore.signedInDIDString, "cache", this.name);
   }
 }

@@ -16,8 +16,7 @@ export class IntentReceiverService {
         public translate: TranslateService,
         private native: GlobalNativeService,
         private globalIntentService: GlobalIntentService,
-        private globalPopupService: GlobalPopupService,
-        private browserService: DappBrowserService
+        private globalPopupService: GlobalPopupService
     ) {
         IntentReceiverService.instance = this;
     }
@@ -62,7 +61,7 @@ export class IntentReceiverService {
         let confirmed = await this.globalPopupService.ionicConfirm("dappbrowser.open-external-url-title", url, 'common.continue', 'common.close');
         if (confirmed) {
             // Confirmed, we can open the url
-            void this.browserService.open(url);
+            void DappBrowserService.instance.open(url);
             await this.globalIntentService.sendIntentResponse({ urlOpened: true }, intent.intentId, false);
         }
         else {

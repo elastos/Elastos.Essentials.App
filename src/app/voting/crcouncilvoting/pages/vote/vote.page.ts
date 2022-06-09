@@ -7,11 +7,11 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
@@ -135,7 +135,7 @@ export class VotePage implements OnInit, OnDestroy {
         }
         else {
             Logger.log('crcouncil', votedCandidates);
-            await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', this.crCouncilService.selectedCandidates);
+            await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'crcouncil', 'votes', this.crCouncilService.selectedCandidates);
             this.castingVote = true;
             this.votesCasted = false;
             await this.createVoteCRTransaction(votedCandidates);

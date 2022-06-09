@@ -6,7 +6,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -16,6 +15,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { DPosNode } from '../../model/nodes.model';
 import { NodesService } from '../../services/nodes.service';
+import { DIDSessionsStore } from './../../../../services/stores/didsessions.store';
 
 
 
@@ -72,7 +72,7 @@ export class VotePage implements OnInit {
 
     }
 
-    private  async setRegistrationIcon() {
+    private async setRegistrationIcon() {
         if (!this.inited) {
             await this.nodesService.init();
             await this.getSelectedNodes();
@@ -142,7 +142,7 @@ export class VotePage implements OnInit {
 
         if (castedNodeKeys.length > 0) {
             Logger.log('dposvoting', 'castedNodeKeys:', castedNodeKeys);
-            void this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "nodes", castedNodeKeys);
+            void this.storage.setSetting(DIDSessionsStore.signedInDIDString, "dposvoting", "nodes", castedNodeKeys);
             let votesSent = false;
 
             try {

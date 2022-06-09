@@ -55,10 +55,7 @@ import type { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.
 export class EarnService {
     public static instance: EarnService = null;
 
-    constructor(
-        public dappbrowserService: DappBrowserService,
-    ) {
-
+    constructor() {
         EarnService.instance = this;
     }
 
@@ -101,6 +98,6 @@ export class EarnService {
         // Use the staking url (more accurate), if any, otherwise the default project url
         let targetUrl = provider.depositUrl || provider.baseProvider.projectUrl;
 
-        void this.dappbrowserService.openForBrowseMode(targetUrl, provider.baseProvider.name);
+        void DappBrowserService.instance.openForBrowseMode(targetUrl, provider.baseProvider.name);
     }
 }

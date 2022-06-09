@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import type { SerializedMasterWallet } from '../model/masterwallets/wallet.types';
 import type { ExtendedNetworkWalletInfo } from '../model/networks/base/networkwallets/networkwallet';
+import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 import type { Contact } from './contacts.service';
 
 /***
@@ -35,12 +35,12 @@ export class LocalStorage {
     }
 
     public set(key: string, value: any): Promise<void> {
-        return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key, value);
+        return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "wallet", key, value);
     }
 
     public async get(key: string): Promise<any> {
         // Logger.log('wallet', 'Fetching for ' + key + ' in app manager settings');
-        let val = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key, null);
+        let val = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "wallet", key, null);
         if (val === null)
             return null; // Key not found in setting
         else {
@@ -103,7 +103,7 @@ export class LocalStorage {
      */
     public async getWalletsList(networkTemplate: string): Promise<string[]> {
         let key = "wallets-list-" + networkTemplate;
-        let rawWallets = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key, null);
+        let rawWallets = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "wallet", key, null);
         if (!rawWallets)
             return [];
         else {
@@ -123,7 +123,7 @@ export class LocalStorage {
 
     public deleteMasterWallet(masterWalletId: string): Promise<void> {
         let key = "master-wallet-info-" + masterWalletId;
-        return this.storage.deleteSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key);
+        return this.storage.deleteSetting(DIDSessionsStore.signedInDIDString, "wallet", key);
     }
 
     /**

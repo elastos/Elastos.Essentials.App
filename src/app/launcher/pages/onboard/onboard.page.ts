@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Router } from '@angular/router';
 import { IonSlides, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 
 @Component({
   selector: 'app-onboard',
@@ -15,7 +16,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 export class OnboardPage implements OnInit {
 
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  @ViewChild('slider', {static: false}) slider: IonSlides;
+  @ViewChild('slider', { static: false }) slider: IonSlides;
 
   hidden = true;
 
@@ -72,7 +73,7 @@ export class OnboardPage implements OnInit {
   }
 
   async exit() {
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "launcher", "visit", true);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "launcher", "visit", true);
     void this.router.navigate(['launcher/home']);
   }
 }
