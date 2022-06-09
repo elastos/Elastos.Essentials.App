@@ -337,6 +337,8 @@ export const fr = {
         "wallet-settings-consolidate-utxos": "Consolider",
         "wallet-settings-consolidate-utxos-subtitle": "Trop d'utxo augmente le temps de création de la transaction",
         "wallet-settings-consolidate-no-need": "Pas besoin de consolidation",
+        "wallet-settings-extended-public-keys-title": "Extended public keys",
+        "wallet-settings-extended-public-keys-subtitle": "Special keys required to create multi-signature wallets",
 
         /************************
         * Wallet Edit Name Page *
@@ -653,6 +655,16 @@ export const fr = {
         'multi-sig-tx-select-wallet': 'Sélectionner le portefeuille',
         'multi-sig-tx-selected-wallet': 'Portefeuille sélectionné',
         'multi-sig-tx-switched-to-network': 'Réseau changé vers {{ network }}',
+
+        /***************************
+        * Multisig extended public key page  *
+        ****************************/
+        'multi-sig-extended-public-key-title': 'Extended public key',
+        'multi-sig-extended-public-key-copied': 'Extended public keys copied to clipboard',
+        'multi-sig-extended-public-key-info': 'Here is your extended public key. You can use this key as a co-signer key for multi-signature wallets.',
+        'multi-sig-extended-public-key-copy': 'Tap the key to copy',
+        'multi-sig-extended-public-key-note': 'Technical note',
+        'multi-sig-extended-public-key-note-info': 'This extended public key is derived using BIP45 in order to be used in a multi-signature wallet, while your elastos mainchain wallet is BIP44 for historical reasons.',
 
         /************************
         * Offline transactions  *

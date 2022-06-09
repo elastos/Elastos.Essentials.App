@@ -336,6 +336,8 @@ export const zh = {
                 "wallet-settings-consolidate-utxos": "零钱换整",
                 "wallet-settings-consolidate-utxos-subtitle": "Utxo 数量过多会增加创建交易的时间",
                 "wallet-settings-consolidate-no-need": "无需执行零钱换整",
+                "wallet-settings-extended-public-keys-title": "扩展公钥",
+                "wallet-settings-extended-public-keys-subtitle": "创建多签钱包所需的特殊密钥",
 
                 /************************
                 * Wallet Edit Name Page *
@@ -632,60 +634,70 @@ export const zh = {
                 /********************************
                 * Multisig tx details component *
                 *********************************/
-                'multi-signature-status': 'Multi signature status',
-                'multi-signature-my-signature': 'My signature',
-                'multi-signature-sign': 'Sign',
-                'multi-signature-signed': 'Signed',
-                'multi-signature-not-signed': 'Not signed',
-                'multi-signature-publish': 'Publish',
-                'multi-signature-transaction-link': 'Co-signers link',
-                'multi-signature-transaction-link-copy-info': 'Copy this link to let other co-signers find and sign this transaction',
-                'multi-signature-transaction-link-copied': 'Transaction link copied to clipboard',
+                'multi-signature-status': '多签状态',
+                'multi-signature-my-signature': '我的签名',
+                'multi-signature-sign': '签名',
+                'multi-signature-signed': '已签名',
+                'multi-signature-not-signed': '未签名',
+                'multi-signature-publish': '发布',
+                'multi-signature-transaction-link': '联合签署人链接',
+                'multi-signature-transaction-link-copy-info': '复制此链接以让其他联合签名者查找并签署此交易',
+                'multi-signature-transaction-link-copied': '交易链接已复制',
 
                 /***************************
                 * Multisig tx intent page  *
                 ****************************/
-                'multi-sig-tx-title': 'Multisig transaction',
-                'multi-sig-tx-fetching': 'Fetching transaction information, please wait.',
-                'multi-sig-tx-no-tx-found': 'Sorry, no matching transaction was found.',
-                'multi-sig-tx-unknown-network': 'Sorry, This transaction is for a network that doesn\'t exist in your version of Essentials.',
-                'multi-sig-tx-pick-wallet': 'Pick the right multi-signature wallet to use.',
-                'multi-sig-tx-select-wallet': 'Select multi-sig wallet',
-                'multi-sig-tx-selected-wallet': 'Selected wallet',
-                'multi-sig-tx-switched-to-network': 'Switched to {{ network }}',
+                'multi-sig-tx-title': '多签交易',
+                'multi-sig-tx-fetching': '正在获取交易信息，请稍候。',
+                'multi-sig-tx-no-tx-found': '抱歉，找不到匹配的交易。',
+                'multi-sig-tx-unknown-network': '抱歉，您的Essentials版本中不存在此交易适用的网络。',
+                'multi-sig-tx-pick-wallet': '请选择正确的多签钱包。',
+                'multi-sig-tx-select-wallet': '选择多签钱包',
+                'multi-sig-tx-selected-wallet': '已选的钱包',
+                'multi-sig-tx-switched-to-network': '切换到 {{ network }}',
+
+                /***************************
+                * Multisig extended public key page  *
+                ****************************/
+                'multi-sig-extended-public-key-title': '扩展公钥',
+                'multi-sig-extended-public-key-copied': '已复制',
+                'multi-sig-extended-public-key-info': '这是您的扩展公钥。您可以将此密钥用作多签钱包的联合签名者密钥。',
+                'multi-sig-extended-public-key-copy': '点击即可复制',
+                'multi-sig-extended-public-key-note': '技术说明',
+                'multi-sig-extended-public-key-note-info': '此扩展公钥是使用BIP45派生的，以便在多签钱包中使用，而由于历史原因，您的elastos主链钱包使用BIP44。',
 
                 /************************
                 * Offline transactions  *
                 *************************/
 
-                'offline-tx-pending-multisig': 'Pending multi-signature',
-                'offline-tx-unknown-tx': "Unknown transaction",
+                'offline-tx-pending-multisig': '未确认的多签交易',
+                'offline-tx-unknown-tx': "未知交易",
 
                 /*****************************
                 * Extended transaction info  *
                 ******************************/
-                'ext-tx-info-type-send-erc1155-nft': 'Send ERC1155 NFT',
-                'ext-tx-info-type-send-erc20': 'Send {{ symbol }}',
-                'ext-tx-info-type-send-tokens': 'Send tokens',
+                'ext-tx-info-type-send-erc1155-nft': '发送 ERC1155 NFT',
+                'ext-tx-info-type-send-erc20': '发送 {{ symbol }}',
+                'ext-tx-info-type-send-tokens': '发送代币',
                 'ext-tx-info-type-swap-erc20': '{{ fromSymbol }} → {{ toSymbol }}',
-                'ext-tx-info-type-swap-tokens': 'Swap tokens',
-                'ext-tx-info-type-approve-token': 'Approve token',
-                'ext-tx-info-type-approve-erc20': 'Approve {{ symbol }}',
-                'ext-tx-info-type-bridge-tokens': 'Bridge tokens',
-                'ext-tx-info-type-bridge-erc20': 'Bridge {{ symbol }} tokens',
-                'ext-tx-info-type-liquidity-deposit': 'Liquidity deposit',
-                'ext-tx-info-type-add-liquidity-with-symbols': 'Add {{ symbolA }} + {{ symbolB }} LP',
-                'ext-tx-info-type-remove-liquidity': 'Remove liquidity',
-                'ext-tx-info-type-remove-liquidity-with-symbols': 'Remove {{ symbolA }} + {{ symbolB }} LP',
-                'ext-tx-info-type-withdraw': 'Withdraw',
-                'ext-tx-info-type-get-rewards': 'Get rewards',
-                'ext-tx-info-type-get-booster-rewards': 'Get booster rewards',
-                'ext-tx-info-type-deposit': 'Deposit',
-                'ext-tx-info-type-stake': 'Stake',
-                'ext-tx-info-type-mint': 'Mint',
-                'ext-tx-info-type-redeem': 'Redeem',
-                'ext-tx-info-type-lock': 'Lock',
-                'ext-tx-info-type-claim-tokens': 'Claim tokens',
+                'ext-tx-info-type-swap-tokens': '交换代币',
+                'ext-tx-info-type-approve-token': '批准代币',
+                'ext-tx-info-type-approve-erc20': '批准 {{ symbol }}',
+                'ext-tx-info-type-bridge-tokens': '桥接代币',
+                'ext-tx-info-type-bridge-erc20': '桥接 {{ symbol }} 代币',
+                'ext-tx-info-type-liquidity-deposit': '流动性存款',
+                'ext-tx-info-type-add-liquidity-with-symbols': '添加 {{ symbolA }} + {{ symbolB }} LP',
+                'ext-tx-info-type-remove-liquidity': '移除流动性',
+                'ext-tx-info-type-remove-liquidity-with-symbols': '移除 {{ symbolA }} + {{ symbolB }} LP',
+                'ext-tx-info-type-withdraw': '提现',
+                'ext-tx-info-type-get-rewards': '获得奖励',
+                'ext-tx-info-type-get-booster-rewards': '获得助推器奖励',
+                'ext-tx-info-type-deposit': '充值',
+                'ext-tx-info-type-stake': '质押',
+                'ext-tx-info-type-mint': '创建',
+                'ext-tx-info-type-redeem': '赎回',
+                'ext-tx-info-type-lock': '锁币',
+                'ext-tx-info-type-claim-tokens': '申请代币',
 
                 /***************************
                 * Migrator *

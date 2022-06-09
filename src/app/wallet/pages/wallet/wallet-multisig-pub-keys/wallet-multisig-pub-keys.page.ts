@@ -44,7 +44,7 @@ export class MultiSigPubKeysPage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle("Extended public key");
+        this.titleBar.setTitle(this.translate.instant("wallet.multi-sig-extended-public-key-title"));
     }
 
     ngOnDestroy() {
@@ -65,7 +65,7 @@ export class MultiSigPubKeysPage implements OnInit, OnDestroy {
 
     copyAddress() {
         void this.native.copyClipboard(this.displayedKey);
-        this.native.toast("Extended public keys copied to clipboard");
+        this.native.toast("wallet.multi-sig-extended-public-key-copied");
     }
 
     async getExtendedPublicKey() {

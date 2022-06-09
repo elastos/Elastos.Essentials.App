@@ -5,19 +5,16 @@
         <div *ngIf="displayedKey" class="qrcode-container">
             <qrcode [qrdata]="displayedKey" [width]="200"></qrcode>
         </div>
-        <h1>Here is your extended public key. You can use this key as a co-signer key for multi-signature wallets.</h1>
+        <h1>{{ 'wallet.multi-sig-extended-public-key-info' | translate }}</h1>
         <h2 *ngIf="displayedKey" (click)="copyAddress()">
             {{ displayedKey }}
         </h2>
-        <p>Tap the key to copy</p>
+        <p>{{ 'wallet.multi-sig-extended-public-key-copy' | translate }}</p>
 
         <!-- Elastos mainchain legacy warning -->
         <div class="notice">
-            <div class="title">Technical note</div>
-            <p>
-                This extended public key is derived using BIP45 in order to be used in a multi-signature wallet,
-                while your elastos mainchain wallet is BIP44 for historical reasons.
-            </p>
+            <div class="title">{{ 'wallet.multi-sig-extended-public-key-note' | translate }}</div>
+            <p>{{ 'wallet.multi-sig-extended-public-key-note-info' | translate }}</p>
         </div>
     </ion-grid>
 </ion-content>

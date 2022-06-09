@@ -153,8 +153,8 @@ export class WalletSettingsPage implements OnInit {
                         masterWalletId: this.masterWalletId
                     });
                 },
-                title: "Extended public keys",
-                subtitle: "Special keys required to create multi-signature wallets",
+                title: this.translate.instant("wallet.wallet-settings-extended-public-keys-title"),
+                subtitle: this.translate.instant("wallet.wallet-settings-extended-public-keys-subtitle"),
                 icon: '/assets/wallet/settings/picture.svg',
                 iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
             });
