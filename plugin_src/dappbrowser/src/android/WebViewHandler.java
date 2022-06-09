@@ -275,8 +275,9 @@ public class WebViewHandler {
 //        //  See: https://bugs.chromium.org/p/chromium/issues/detail?id=1083819
 //        settings.setSupportMultipleWindows(true);
 
-        webView.requestFocus();
-        webView.requestFocusFromTouch();
+        // //For onBackPressed work
+        // webView.requestFocus();
+        // webView.requestFocusFromTouch();
 
         return webView;
     }
@@ -298,8 +299,8 @@ public class WebViewHandler {
 
     public void show() {
         webView.setVisibility(View.VISIBLE);
-        //For onBackPressed work
-        webView.requestFocus();
+        // //For onBackPressed work
+        // webView.requestFocus();
     }
 
     public void hide() {
@@ -430,7 +431,7 @@ public class WebViewHandler {
         } else {
             this.webView.loadUrl(url);
         }
-        this.webView.requestFocus();
+        // this.webView.requestFocus();
     }
 
 

@@ -298,43 +298,38 @@ public class DappBrowserClient extends WebViewClient {
                 Map<String, String> requestHeaders = request.getRequestHeaders();
                 requestHeaders.forEach(connection::setRequestProperty);
 
-                String mimeType = connection.getContentType();
-                if ((mimeType == null)) {
-                    mimeType = "text/html";
+                int responseCode = connection.getResponseCode();
+                redirectUrl = connection.getHeaderField("Location");
+                if (responseCode >= 300 && responseCode <= 399) {
+                    redirectUrl = connection.getHeaderField("Location");
                 }
-                if ((mimeType != null) && mimeType.contains("text/html")) {
-                    String encoding = connection.getHeaderField("encoding");
-                    if (encoding == null) {
-                        //TODO:: maybe try get charset from mimeType.
-                        encoding = "UTF-8";
-                    }
+                else {
+                    InputStream inputStream = connection.getInputStream();
+                    inputStream = injectJSInHeadTag(inputStream);
 
-                    int responseCode = connection.getResponseCode();
-                    if (responseCode >= 300 && responseCode <= 399) {
-                        redirectUrl = connection.getHeaderField("Location");
-                    }
-                    else {
-                        InputStream inputStream = connection.getInputStream();
-                        inputStream = injectJSInHeadTag(inputStream);
+                    if (inputStream != null) {
+                        String encoding = connection.getHeaderField("encoding");
+                        if (encoding == null) {
+                            //TODO:: maybe try get charset from mimeType.
+                            encoding = "UTF-8";
+                        }
 
-                        if (inputStream != null) {
-                            resourceResponse = new WebResourceResponse("text/html", encoding, inputStream);
+                        resourceResponse = new WebResourceResponse("text/html", encoding, inputStream);
 
-                            //set headers
-                            Map<String, String> responseHeaders = new HashMap<String, String>();
-                            Map<String, List<String>> map = connection.getHeaderFields();
-                            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-                                responseHeaders.put(entry.getKey(), connection.getHeaderField(entry.getKey()));
-                            }
-                            resourceResponse.setResponseHeaders(responseHeaders);
+                        //set headers
+                        Map<String, String> responseHeaders = new HashMap<String, String>();
+                        Map<String, List<String>> map = connection.getHeaderFields();
+                        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                            responseHeaders.put(entry.getKey(), connection.getHeaderField(entry.getKey()));
+                        }
+                        resourceResponse.setResponseHeaders(responseHeaders);
 
-                            //set response code
-                            if (responseCode != 200) {
-                                //use reflection to set the actual response code, if don't will crash
-                                Field f = WebResourceResponse.class.getDeclaredField("mStatusCode");
-                                f.setAccessible(true);
-                                f.setInt(resourceResponse, responseCode);
-                            }
+                        //set response code
+                        if (responseCode != 200) {
+                            //use reflection to set the actual response code, if don't will crash
+                            Field f = WebResourceResponse.class.getDeclaredField("mStatusCode");
+                            f.setAccessible(true);
+                            f.setInt(resourceResponse, responseCode);
                         }
                     }
                 }
@@ -422,9 +417,9 @@ public class DappBrowserClient extends WebViewClient {
         // CB-10395 DappBrowser's WebView not storing cookies reliable to local device storage
         CookieManager.getInstance().flush();
 
-        // https://issues.apache.org/jira/browse/CB-11248
-        view.clearFocus();
-        view.requestFocus();
+        // // https://issues.apache.org/jira/browse/CB-11248
+        // view.clearFocus();
+        // view.requestFocus();
 
         if (brwoserPlugin.webViewHandler != null) {
             brwoserPlugin.webViewHandler.progressBar.setVisibility(View.GONE);
