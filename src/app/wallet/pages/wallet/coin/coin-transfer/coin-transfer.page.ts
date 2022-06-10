@@ -147,7 +147,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     private showCryptonamesOption = false;
     private publicationStatusSub: Subscription;
     private ethTransactionSpeedupSub: Subscription;
-    private isEVMSubwallet = false;
 
     constructor(
         public route: ActivatedRoute,
@@ -221,7 +220,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance().toFixed());
 
         if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
-            this.isEVMSubwallet = true;
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe(async (status) => {
                 Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
@@ -552,7 +550,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async pasteFromClipboard() {
         this.toAddress = await this.native.pasteFromClipboard();
 
-        const isAddressValid = this.isAddressValid(this.toAddress);
+        const isAddressValid = await this.isAddressValid(this.toAddress);
         if (!isAddressValid) {
             this.native.toast_trans('wallet.not-a-valid-address');
             return;
@@ -671,7 +669,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.toAddress = this.toAddress.substring(index + 1);
             }
 
-            const isAddressValid = this.isAddressValid(this.toAddress);
+            const isAddressValid = await this.isAddressValid(this.toAddress);
             if (!isAddressValid) {
                 this.native.toast_trans('wallet.not-a-valid-address');
                 return;

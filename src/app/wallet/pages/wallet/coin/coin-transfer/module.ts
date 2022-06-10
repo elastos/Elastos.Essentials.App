@@ -9,6 +9,7 @@ import { ComponentsModule } from 'src/app/wallet/components/components.module';
 import { ContactsComponentModule } from 'src/app/wallet/components/contacts/module';
 import { EthTransactionComponentModule } from 'src/app/wallet/components/eth-transaction/module';
 import { LedgerSignComponentModule } from 'src/app/wallet/components/ledger-sign/module';
+import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
 import { TransferWalletChooserComponentModule } from 'src/app/wallet/components/transfer-wallet-chooser/module';
 import { CoinTransferPage } from './coin-transfer.page';
 
@@ -23,6 +24,7 @@ import { CoinTransferPage } from './coin-transfer.page';
         LedgerSignComponentModule,
         ContactsComponentModule,
         TransferWalletChooserComponentModule,
+        StdTransactionComponentModule,
         ComponentsModule,
         EthTransactionComponentModule,
         RouterModule.forChild([{ path: '', component: CoinTransferPage }])

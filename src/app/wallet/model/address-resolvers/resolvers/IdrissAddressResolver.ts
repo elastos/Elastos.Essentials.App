@@ -31,7 +31,7 @@ export class IdrissResolver extends Resolver {
             const result = await idriss.resolve(name);
             if (result) {
                 for (var index in result) {
-                    if (subWallet.isAddressValid(result[index])) {
+                    if (await subWallet.isAddressValid(result[index])) {
                         addresses.push(new IdrissAddress(name + ' ' + index, result[index]));
                     }
                 }

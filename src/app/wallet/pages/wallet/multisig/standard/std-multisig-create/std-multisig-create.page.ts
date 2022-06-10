@@ -176,7 +176,7 @@ export class StandardMultiSigCreatePage implements OnInit {
         let pastedContent = await this.native.pasteFromClipboard() as string;
 
         /* TODO: ensure valid xpub, or don't paste
-         const isAddressValid = this.isAddressValid(this.toAddress);
+         const isAddressValid = await this.isAddressValid(this.toAddress);
         if (!isAddressValid) {
             this.native.toast_trans('wallet.not-a-valid-address');
             return;
