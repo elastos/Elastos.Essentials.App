@@ -698,6 +698,7 @@ export const it = {
         'ext-tx-info-type-redeem': 'Redeem',
         'ext-tx-info-type-lock': 'Lock',
         'ext-tx-info-type-claim-tokens': 'Claim tokens',
+        'ext-tx-info-type-withdraw-to-mainchain': 'A Main Chain',
 
         /***************************
         * Migrator *

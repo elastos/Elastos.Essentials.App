@@ -261,6 +261,11 @@ export class ETHTransactionInfoParser {
       case '0x4e71d92d': // claim()
         txInfo.operation = { description: "wallet.ext-tx-info-type-claim-tokens" };
         break;
+
+      case '0x67d630fa': // receivePayload(string _addr, uint256 _amount, uint256 _fee), Send ela from side chain to main chain
+        txInfo.operation = { description: "wallet.ext-tx-info-type-withdraw-to-mainchain" };
+        break;
+
       // Known signatures but no clear way to display information about them = consider as generic contract call
       case '0xe9fad8ee': // exit()
       case '0x5b27052e': // upgrade(uint256,bool,bool,bool,bool,bool)

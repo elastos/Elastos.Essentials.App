@@ -698,6 +698,7 @@ export const zh = {
                 'ext-tx-info-type-redeem': '赎回',
                 'ext-tx-info-type-lock': '锁币',
                 'ext-tx-info-type-claim-tokens': '申请代币',
+                'ext-tx-info-type-withdraw-to-mainchain': '主链提现',
 
                 /***************************
                 * Migrator *

@@ -154,7 +154,7 @@ export const fr = {
         "coin-dir-from-mainchain": "Depuis ELA mainchain",
         "coin-dir-from-idchain": "Depuis la chaîne Identité",
         "coin-dir-from-ethsc": "Depuis la chaîne ESC",
-        "coin-dir-to-mainchain": "Vers ELA mainchain",
+        "coin-dir-to-mainchain": "c",
         "coin-dir-to-idchain": "Vers la chaîne ESC",
         "coin-dir-to-ethsc": "Vers la chaîne Identité",
         "coin-transaction-status-confirmed": "Confirmé",
@@ -698,6 +698,7 @@ export const fr = {
         'ext-tx-info-type-redeem': 'Récupération',
         'ext-tx-info-type-lock': 'Blocage',
         'ext-tx-info-type-claim-tokens': 'Retrait de jetons',
+        'ext-tx-info-type-withdraw-to-mainchain': 'Vers ELA mainchain',
 
         /***************************
         * Migrator *
