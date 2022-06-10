@@ -364,11 +364,6 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     public getTransactionTitle(): string {
-        // If we have a good extended info, use it. Otherwise, use the base transaction info 'name'
-        let extTxInfo = this.extendedTxInfo;
-        if (extTxInfo && extTxInfo.evm && extTxInfo.evm.txInfo && extTxInfo.evm.txInfo.operation && extTxInfo.evm.txInfo.operation.description)
-            return this.translate.instant(extTxInfo.evm.txInfo.operation.description, extTxInfo.evm.txInfo.operation.descriptionTranslationParams);
-
         return this.translate.instant(this.transactionInfo.name);
     }
 

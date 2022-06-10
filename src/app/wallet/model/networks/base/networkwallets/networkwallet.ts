@@ -703,10 +703,10 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         // Don't spam the RPC API, fetch info one at a time
         return this.extendedTransactionInfoOpsQueue.add(async () => {
             let txInfoEntry = await this.extendedTransactionInfoCache.get(txHash);
-            if (!txInfoEntry) {
-                // No cached data, need to fetch
-                await this.fetchExtendedTxInfo(txHash);
-            }
+            // TMP if (!txInfoEntry) {
+            // No cached data, need to fetch
+            await this.fetchExtendedTxInfo(txHash);
+            //}
 
             txInfoEntry = this.extendedTransactionInfoCache.get(txHash);
             return txInfoEntry ? txInfoEntry.data : null;

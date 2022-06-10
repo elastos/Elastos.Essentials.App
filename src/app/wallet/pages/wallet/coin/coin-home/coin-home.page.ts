@@ -615,12 +615,16 @@ export class CoinHomePage implements OnInit {
         return WalletUtil.getDisplayDate(offlineTx.updated);
     }
 
+    public getPayStatusIcon(transfer: TransactionInfo): string {
+        return transfer.payStatusIcon;
+    }
+
     public getTransactionTitle(transfer: TransactionInfo): string {
-        // If we have a good extended info, use it. Otherwise, use the base transaction info 'name'
+        /* // If we have a good extended info, use it. Otherwise, use the base transaction info 'name'
         let extTxInfo = this.extendedTxInfo[transfer.txid];
         if (extTxInfo && extTxInfo.evm && extTxInfo.evm.txInfo && extTxInfo.evm.txInfo.operation && extTxInfo.evm.txInfo.operation.description)
             return this.translate.instant(extTxInfo.evm.txInfo.operation.description, extTxInfo.evm.txInfo.operation.descriptionTranslationParams);
-
+ */
         return this.translate.instant(transfer.name);
     }
 

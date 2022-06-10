@@ -6,9 +6,21 @@ import type { TransactionReceipt } from "web3-core";
 import { ERC20CoinInfo, ERC20CoinService } from "../../../services/evm/erc20coin.service";
 import type { AnyNetwork } from "../network";
 import { EthTransaction } from "./evm.types";
+import { ERC20SubWallet } from "./subwallets/erc20.subwallet";
+import { AnyMainCoinEVMSubWallet } from "./subwallets/evm.subwallet";
 
 export enum ETHOperationType {
   ERC20_TOKEN_APPROVE = "erc20_token_approve", // The contract seems to be a request to approve a caller to spend ERC20 tokens on behalf of the user
+  SEND_ERC20 = "send_erc20",
+  SEND_NFT = "send_nft",
+  SWAP = "swap",
+  ADD_LIQUIDITY = "add_liquidity",
+  REMOVE_LIQUIDITY = "remove_liquidity",
+  BRIDGE = "bridge",
+  WITHDRAW = "withdraw",
+  DEPOSIT = "deposit",
+  GET_REWARDS = "get_rewards",
+  STAKE = "stake",
   // TODO: ERC721 and ERC1155 approve methods
   OTHER_CONTRACT_CALL = "other_contract_call", // Generic / undetected transaction type
   NOT_A_CONTRACT_CALL = "not_a_contract_call" // Standard transfer, no contract data payload
@@ -57,7 +69,7 @@ export class ETHTransactionInfoParser {
     }
 
     let txInfo = this.createEmptyTransactionInfo();
-    await this.computeOperation(txInfo, txData, txTo);
+    await this.computeOperation(null, txInfo, txData, txTo);
     return txInfo;
   }
 
@@ -83,13 +95,13 @@ export class ETHTransactionInfoParser {
     }
 
     let txInfo = this.createEmptyTransactionInfo();
-    await this.computeOperation(txInfo, txData, receipt.to);
+    await this.computeOperation(<any>subWallet, txInfo, txData, receipt.to);
     // UNUSED FOR NOW - TOO MUCH INFO IN EVENTS - NEED SOME TIME TO MAKE THIS CLEANLY - UNCOMMENT TO SEE THIS APPEAR ON COIN HOME
     // await this.computeEvents(txInfo, receipt);
     return txInfo;
   }
 
-  private async computeOperation(txInfo: ETHTransactionInfo, txData: string, txTo?: string): Promise<void> {
+  private async computeOperation(subWallet: AnyMainCoinEVMSubWallet | ERC20SubWallet, txInfo: ETHTransactionInfo, txData: string, txTo?: string): Promise<void> {
     txInfo.type = ETHOperationType.OTHER_CONTRACT_CALL; // Default, if we don't find/want more specific
 
     if (txData === "0x") {
@@ -97,22 +109,64 @@ export class ETHTransactionInfoParser {
       return;
     }
 
+    /* let erc20TokenAddress: string =null;
+    if (subWallet && subWallet instanceof ERC20SubWallet)
+    erc20TokenAddress = subWallet.coin.getContractAddress(); */
+
+    /* Notes:
+    erc20
+    transferFrom address address uint256
+    transfer address uint256
+
+    erc721
+    safeTransferFrom address address uint256
+    safeTransferFrom address address uint256 bytes
+    transferFrom address address uint256
+
+    erc1155
+    safeTransferFrom address address uint256 uint256
+    safeTransferFrom address address uint256 uint256 bytes
+    */
+
     let methodAction = txData.substring(0, 10); // 0x + 4 hex bytes
     switch (methodAction) {
       case '0x0febdd49': // ERC1155 safeTransferFrom(address,address,uint256,uint256)
+        txInfo.type = ETHOperationType.SEND_NFT;
         txInfo.operation = { description: "wallet.ext-tx-info-type-send-erc1155-nft" };
         break;
 
-      case '0x23b872dd': // ERC721 transferFrom(address,address,uint256) - TODO: missing - ERC721 safeTransferFrom
-        txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
+      case '0x23b872dd': // ERC20 or ERC721 transferFrom(address,address,uint256) - TODO: missing - ERC721 safeTransferFrom
+        // Try to find if that's a ERC20 or a NFT
+        try {
+          let coinInfo = await this.getERC20TokenInfoOrThrow(txTo);
+          if (coinInfo) {
+            txInfo.type = ETHOperationType.SEND_ERC20;
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-erc20', descriptionTranslationParams: { symbol: coinInfo.coinSymbol } };
+          }
+          else {
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
+          }
+
+          // TODO: Check if ERC721
+        }
+        catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
+        }
         break;
 
-      case '0xa9059cbb': // transfer(address,uint256)
-        let coinInfo = await ERC20CoinService.instance.getCoinInfo(this.network, txTo); // txTo is the contract address
-        if (coinInfo)
-          txInfo.operation = { description: 'wallet.ext-tx-info-type-send-erc20', descriptionTranslationParams: { symbol: coinInfo.coinSymbol } };
-        else
+      case '0xa9059cbb': // ERC20 transfer(address,uint256)
+        try {
+          let coinInfo = await ERC20CoinService.instance.getCoinInfo(this.network, txTo); // txTo is the contract address
+          if (coinInfo) {
+            txInfo.type = ETHOperationType.SEND_ERC20;
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-erc20', descriptionTranslationParams: { symbol: coinInfo.coinSymbol } };
+          }
+          else
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
+        }
+        catch (e) {
           txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
+        }
         break;
 
       case '0x095ea7b3': // approve(address,uint256)
@@ -141,6 +195,7 @@ export class ETHTransactionInfoParser {
         break;
 
       case '0x18cbafe5': // swapExactTokensForETH(uint256,uint256,address[],address,uint256)
+        txInfo.type = ETHOperationType.SWAP;
         try {
           let params = this.extractTransactionParamValues(["function swapExactTokensForETH(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
@@ -154,6 +209,7 @@ export class ETHTransactionInfoParser {
         break;
 
       case '0x7ff36ab5': // swapExactETHForTokens(uint256,address[],address,uint256)
+        txInfo.type = ETHOperationType.SWAP;
         try {
           let params = this.extractTransactionParamValues(["function swapExactETHForTokens(uint256,address[],address,uint256) public returns (bool success)"], txData);
           let tokensPath = this.arrayTransactionParamAt(params, 1, 2);
@@ -167,6 +223,7 @@ export class ETHTransactionInfoParser {
         break;
 
       case '0x38ed1739': // swapExactTokensForTokens(uint256,uint256,address[],address,uint256)
+        txInfo.type = ETHOperationType.SWAP;
         try {
           let params = this.extractTransactionParamValues(["function swapExactTokensForTokens(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
@@ -183,6 +240,7 @@ export class ETHTransactionInfoParser {
         break;
 
       case '0xad58bdd1': // relayTokens(address,address,uint256)
+        txInfo.type = ETHOperationType.BRIDGE;
         try {
           let params = this.extractTransactionParamValues(["function relayTokens(address,address,uint256) public returns (bool success)"], txData);
           let tokenAddress = this.stringTransactionParamAt(params, 0); // From
@@ -195,6 +253,7 @@ export class ETHTransactionInfoParser {
         break;
 
       case '0xe8e33700': // addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)
+        txInfo.type = ETHOperationType.ADD_LIQUIDITY;
         try {
           let params = this.extractTransactionParamValues(["function addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
           let tokenAAddress = this.stringTransactionParamAt(params, 0);
@@ -209,6 +268,7 @@ export class ETHTransactionInfoParser {
         break;
 
       case '0xbaa2abde': // removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)
+        txInfo.type = ETHOperationType.REMOVE_LIQUIDITY;
         try {
           let params = this.extractTransactionParamValues(["function removeLiquidity(address,address,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
           let tokenAAddress = this.stringTransactionParamAt(params, 0);
@@ -224,26 +284,32 @@ export class ETHTransactionInfoParser {
 
       case '0x2195995c': // removeLiquidityWithPermit(address,address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)
       case '0xded9382a': // removeLiquidityETHWithPermit(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)
+        txInfo.type = ETHOperationType.REMOVE_LIQUIDITY;
         txInfo.operation = { description: "wallet.ext-tx-info-type-remove-liquidity" };
         break;
 
       case '0x2e1a7d4d': // withdraw(uint256)
       case '0xf1d5314a': // withdrawApplication(uint256)
       case '0x441a3e70': // withdraw(uint256,uint256)
+        txInfo.type = ETHOperationType.WITHDRAW;
         txInfo.operation = { description: "wallet.ext-tx-info-type-withdraw" }; // TODO: refine - withdraw what?
         break;
       case '0x3d18b912': // getReward()
+        txInfo.type = ETHOperationType.GET_REWARDS;
         txInfo.operation = { description: "wallet.ext-tx-info-type-get-rewards" };
         break;
       case '0x2459a699': // getBoosterReward()
+        txInfo.type = ETHOperationType.GET_REWARDS;
         txInfo.operation = { description: "wallet.ext-tx-info-type-get-booster-rewards" };
         break;
       case '0xe2bbb158': // deposit(uint256,uint256)
       case '0xb6b55f25': // deposit(uint256)
+        txInfo.type = ETHOperationType.DEPOSIT;
         txInfo.operation = { description: "wallet.ext-tx-info-type-deposit" }; // TODO: refine - deposit what?
         break;
       case '0xa694fc3a': // stake(uint256)
       case '0xecd9ba82': // stakeWithPermit(uint256,uint256,uint8,bytes32,bytes32)
+        txInfo.type = ETHOperationType.STAKE;
         txInfo.operation = { description: "wallet.ext-tx-info-type-stake" }; // TODO: refine - stake what?
         break;
       case '0x1249c58b': // mint()

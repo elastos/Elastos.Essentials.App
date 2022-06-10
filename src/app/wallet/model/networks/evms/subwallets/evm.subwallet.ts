@@ -19,7 +19,7 @@ import { AddressUsage } from '../../../safes/addressusage';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
-import { ETHTransactionInfoParser } from '../ethtransactioninfoparser';
+import { ETHOperationType, ETHTransactionInfoParser } from '../ethtransactioninfoparser';
 import type { EVMNetwork } from '../evm.network';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction } from '../evm.types';
 import { EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
@@ -144,23 +144,12 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       return null;
     }
 
-    // Not blocking retrieval of extended transaction information
-    void this.networkWallet.getOrFetchExtendedTxInfo(transaction.hash).then(async extInfo => {
-      // Got a partial info, now compute more things (main contract operation type, events...) then save
-      if (extInfo && extInfo.evm.transactionReceipt && !extInfo.evm.txInfo) {
-        extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input, this);
-        await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
-      }
-
-      // console.log('extendedTxInfo', extInfo, transaction);
-    });
-
     transaction.to = transaction.to.toLowerCase();
 
     const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
     const datetime = timestamp === 0 ? TranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
-    const direction = await this.getTransactionDirection(transaction.to);
+    const direction = await this.getTransactionDirection(transaction, transaction.to);
     transaction.Direction = direction;
 
     if (direction === TransactionDirection.RECEIVED) {
@@ -223,11 +212,31 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       transactionInfo.symbol = '';
     }
 
+    // Not blocking retrieval of extended transaction information
+    void this.networkWallet.getOrFetchExtendedTxInfo(transaction.hash).then(async extInfo => {
+      // Got a partial info, now compute more things (main contract operation type, events...) then save
+      if (extInfo && extInfo.evm.transactionReceipt && !extInfo.evm.txInfo) {
+        extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input, this);
+        await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
+
+        transactionInfo.name = await this.getTransactionName(transaction);
+        transactionInfo.payStatusIcon = await this.getTransactionIconPath(transaction);
+      }
+
+      // console.log('extendedTxInfo', extInfo, transaction);
+    });
+
     return transactionInfo;
   }
 
   protected async getTransactionName(transaction: EthTransaction): Promise<string> {
-    const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction.to);
+    // Use extended info is there is some
+    let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
+    if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation)
+      return TranslationService.instance.translateInstant(extInfo.evm.txInfo.operation.description, extInfo.evm.txInfo.operation.descriptionTranslationParams);
+
+    // Fallback if no extended info: default transaction names
+    const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction, transaction.to);
     switch (direction) {
       case TransactionDirection.RECEIVED:
         return "wallet.coin-op-received-token";
@@ -238,7 +247,24 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   protected async getTransactionIconPath(transaction: EthTransaction): Promise<string> {
-    const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction.to);
+    // Use extended info is there is some
+    let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
+    if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
+      switch (extInfo.evm.txInfo.type) {
+        case ETHOperationType.ERC20_TOKEN_APPROVE: return './assets/wallet/buttons/darkmode/approve-token.svg';
+        case ETHOperationType.SEND_NFT: return './assets/wallet/buttons/darkmode/send-nft.svg';
+        case ETHOperationType.SWAP: return './assets/wallet/buttons/darkmode/swap-tokens.svg';
+        case ETHOperationType.ADD_LIQUIDITY: return './assets/wallet/buttons/darkmode/add-liquidity.svg';
+        case ETHOperationType.REMOVE_LIQUIDITY: return './assets/wallet/buttons/darkmode/remove-liquidity.svg';
+        case ETHOperationType.BRIDGE: return './assets/wallet/buttons/darkmode/bridge.svg';
+        case ETHOperationType.WITHDRAW: return './assets/wallet/buttons/darkmode/withdraw.svg';
+        case ETHOperationType.DEPOSIT: return './assets/wallet/buttons/darkmode/deposit.svg';
+        case ETHOperationType.GET_REWARDS: return './assets/wallet/buttons/darkmode/get-rewards.svg';
+        case ETHOperationType.STAKE: return './assets/wallet/buttons/darkmode/stake.svg';
+      }
+    }
+
+    const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction, transaction.to);
     switch (direction) {
       case TransactionDirection.RECEIVED:
         if (transaction.isRedPacket) {
@@ -251,7 +277,21 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     }
   }
 
-  protected async getTransactionDirection(targetAddress: string): Promise<TransactionDirection> {
+  protected async getTransactionDirection(transaction: EthTransaction, targetAddress: string): Promise<TransactionDirection> {
+    // Use extended info is there is some
+    let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
+    if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
+      switch (extInfo.evm.txInfo.type) {
+        case ETHOperationType.SEND_NFT: return TransactionDirection.SENT;
+        case ETHOperationType.ADD_LIQUIDITY: return TransactionDirection.SENT;
+        case ETHOperationType.REMOVE_LIQUIDITY: return TransactionDirection.RECEIVED;
+        case ETHOperationType.WITHDRAW: return TransactionDirection.RECEIVED;
+        case ETHOperationType.DEPOSIT: return TransactionDirection.SENT;
+        case ETHOperationType.GET_REWARDS: return TransactionDirection.RECEIVED;
+        case ETHOperationType.STAKE: return TransactionDirection.SENT;
+      }
+    }
+
     const address = await this.getTokenAddress();
     if (address === targetAddress) {
       return TransactionDirection.RECEIVED;

@@ -85,7 +85,7 @@
                         <div class="icon-container" [class.purple]="(item.type === 1) && !item.isRedPacket"
                             [class.redpacket]="(item.type === 1) && item.isRedPacket" [class.black]="item.type === 2"
                             [class.orange]="item.type === 3">
-                            <img [src]="item.payStatusIcon">
+                            <img [src]="getPayStatusIcon(item)">
                         </div>
                     </ion-col>
                     <ion-col [size]="item.amount.isZero() ? 7 : 5" class="middle-col">
