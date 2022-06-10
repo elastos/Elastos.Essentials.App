@@ -53,6 +53,11 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return Promise.resolve(null);
   }
 
+  public getOwnerPublicKey(): Promise<string> {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
   public async createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
     Logger.warn('wallet', 'MainChainLedgerSafe createPaymentTransaction inputs:', inputs, ' outputs:', outputs, ' fee:', fee, ' memo:', memo)
 

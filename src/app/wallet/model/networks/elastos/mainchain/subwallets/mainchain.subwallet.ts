@@ -886,9 +886,12 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public async getOwnerAddress(): Promise<string> {
         if (!this.ownerAddress) {
             this.ownerAddress = await (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerAddress();
-            //this.ownerAddress = await SPVService.instance.getOwnerAddress(jsToSpvWalletId(this.masterWallet.id), this.id);
         }
         return this.ownerAddress;
+    }
+
+    public getOwnerPublicKey(): Promise<string> {
+      return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerPublicKey();
     }
 
     private async getBalanceByOwnerAddress(spendable = false) {

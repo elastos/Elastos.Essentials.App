@@ -46,6 +46,10 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return await null; // Not supported by multisig wallets.
   }
 
+  public async getOwnerPublicKey(): Promise<string> {
+    return await null; // Not supported by multisig wallets.
+  }
+
   public async createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
     const tx = this.elaSubWallet.createTransaction(inputs, outputs, fee, memo);
     Logger.log("wallet", "Created multisig transaction", tx);

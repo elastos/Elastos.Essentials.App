@@ -46,6 +46,10 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     return SPVService.instance.getOwnerAddress(jsToSpvWalletId(this.masterWallet.id), this.chainId);
   }
 
+  public getOwnerPublicKey(): Promise<string> {
+    return SPVService.instance.getOwnerPublicKey(jsToSpvWalletId(this.masterWallet.id), this.chainId);
+  }
+
   /**
    * -----
    * BIP45 WARNING
