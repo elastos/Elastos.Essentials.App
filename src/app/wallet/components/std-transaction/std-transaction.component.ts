@@ -51,7 +51,10 @@ export class StdTransactionComponent implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.outgoingTxStateSub.unsubscribe();
+    if (this.outgoingTxStateSub) {
+      this.outgoingTxStateSub.unsubscribe();
+      this.outgoingTxStateSub = null;
+    }
   }
 
   exitComponent() {

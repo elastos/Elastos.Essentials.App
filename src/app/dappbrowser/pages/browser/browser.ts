@@ -85,7 +85,10 @@ export class BrowserPage implements DappBrowserClient {
 
         dappBrowser.hide();
 
-        this.backButtonSub.unsubscribe();
+        if (this.backButtonSub) {
+          this.backButtonSub.unsubscribe();
+          this.backButtonSub = null;
+        }
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 

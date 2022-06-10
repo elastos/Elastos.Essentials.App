@@ -71,7 +71,10 @@ export class DIDSyncService implements GlobalService {
   }
 
   onUserSignOut(): Promise<void> {
-    this.activatedDidSub.unsubscribe();
+    if (this.activatedDidSub) {
+      this.activatedDidSub.unsubscribe();
+      this.activatedDidSub = null;
+    }
     return;
   }
 

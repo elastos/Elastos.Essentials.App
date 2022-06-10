@@ -154,7 +154,10 @@ export class PrepareDIDPage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-    this.backButtonSub.unsubscribe();
+    if (this.backButtonSub) {
+      this.backButtonSub.unsubscribe();
+      this.backButtonSub = null;
+    }
   }
 
   showSlider() {

@@ -68,7 +68,8 @@ export class PacketPreviewComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.grabbedPacketsSubscription.unsubscribe();
+        if (this.grabbedPacketsSubscription)
+          this.grabbedPacketsSubscription.unsubscribe();
     }
 
     private preparePacket(packet: Packet) {

@@ -76,7 +76,10 @@ export class NetworkChooserComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.netListSubscription.unsubscribe();
+    if (this.netListSubscription) {
+      this.netListSubscription.unsubscribe();
+      this.netListSubscription = null;
+    }
   }
 
   selectNetwork(network: AnyNetwork) {

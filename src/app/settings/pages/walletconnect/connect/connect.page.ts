@@ -77,7 +77,10 @@ export class WalletConnectConnectPage implements OnInit {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-    this.backSubscription.unsubscribe();
+    if (this.backSubscription) {
+      this.backSubscription.unsubscribe();
+      this.backSubscription = null;
+    }
   }
 
   async openSession() {

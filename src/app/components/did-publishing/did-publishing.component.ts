@@ -64,7 +64,10 @@ export class DIDPublishingComponent implements OnInit {
   }
 
   exitComponent() {
-    this.publicationStatusSub.unsubscribe();
+    if (this.publicationStatusSub) {
+      this.publicationStatusSub.unsubscribe();
+      this.publicationStatusSub = null;
+    }
     void this.modalCtrl.dismiss();
   }
 }

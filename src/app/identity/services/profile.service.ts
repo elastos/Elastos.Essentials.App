@@ -191,7 +191,10 @@ export class ProfileService extends GlobalService {
   onUserSignOut(): Promise<void> {
     Logger.log("identity", "Signing out from profile service");
 
-    this.activatedDidSub.unsubscribe();
+    if (this.activatedDidSub) {
+      this.activatedDidSub.unsubscribe();
+      this.activatedDidSub = null;
+    }
     this.resetService();
 
     return;

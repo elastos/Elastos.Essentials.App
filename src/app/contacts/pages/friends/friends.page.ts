@@ -1,24 +1,23 @@
-import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
-
-import { FriendsService } from '../../services/friends.service';
-import { DidService } from '../../services/did.service';
-import { UxService } from '../../services/ux.service';
-
-import { Contact } from '../../models/contact.model';
-import { PopupService } from '../../services/popup.service';
-import { AppService } from '../../services/app.service';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { Router } from '@angular/router';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { defaultContacts } from '../../config/config';
+import { Contact } from '../../models/contact.model';
+import { AppService } from '../../services/app.service';
+import { DidService } from '../../services/did.service';
+import { FriendsService } from '../../services/friends.service';
+import { PopupService } from '../../services/popup.service';
+import { UxService } from '../../services/ux.service';
+
+
+
 
 @Component({
   selector: 'app-friends',
@@ -81,7 +80,10 @@ export class FriendsPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = null;
+    }
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 

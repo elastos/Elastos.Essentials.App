@@ -100,8 +100,14 @@ export class HomePage {
   }
 
   ionViewWillLeave() {
-    this.openedPacketsSubscriptions.unsubscribe();
-    this.publicPacketsSubscription.unsubscribe();
+    if(this.openedPacketsSubscriptions) {
+      this.openedPacketsSubscriptions.unsubscribe();
+      this.openedPacketsSubscriptions = null;
+    }
+    if (this.publicPacketsSubscription) {
+      this.publicPacketsSubscription.unsubscribe();
+      this.publicPacketsSubscription = null;
+    }
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 

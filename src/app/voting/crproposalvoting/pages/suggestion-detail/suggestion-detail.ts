@@ -70,8 +70,10 @@ export class SuggestionDetailPage implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this.commandReturnSub.unsubscribe();
-        this.commandReturnSub = null;
+        if (this.commandReturnSub) {
+            this.commandReturnSub.unsubscribe();
+            this.commandReturnSub = null;
+        }
     }
 
     async init() {

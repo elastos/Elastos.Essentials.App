@@ -77,8 +77,10 @@ export class ProposalDetailPage implements OnDestroy {
     }
 
     ngOnDestroy() {
+      if (this.commandReturnSub) {
         this.commandReturnSub.unsubscribe();
         this.commandReturnSub = null;
+      }
     }
 
     async init() {

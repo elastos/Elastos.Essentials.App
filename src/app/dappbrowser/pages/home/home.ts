@@ -322,9 +322,18 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     }
 
     ionViewWillLeave() {
-        this.favoritesSubscription.unsubscribe();
-        this.networkSubscription.unsubscribe();
-        this.recentAppsSubscription.unsubscribe();
+        if (this.favoritesSubscription) {
+          this.favoritesSubscription.unsubscribe();
+          this.favoritesSubscription = null;
+        }
+        if (this.networkSubscription) {
+          this.networkSubscription.unsubscribe();
+          this.networkSubscription = null;
+        }
+        if (this.recentAppsSubscription) {
+          this.recentAppsSubscription.unsubscribe();
+          this.recentAppsSubscription = null;
+        }
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 

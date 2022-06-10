@@ -131,7 +131,10 @@ export class EditProfilePage {
   }
 
   ionViewWillLeave() {
-    this.hwBackKeySubscription.unsubscribe();
+    if (this.hwBackKeySubscription) {
+      this.hwBackKeySubscription.unsubscribe();
+      this.hwBackKeySubscription = null;
+    }
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     /*   // Go to the countrypicker screen will trigger ionViewWillLeave
       if (!this.showSelectCountry) {

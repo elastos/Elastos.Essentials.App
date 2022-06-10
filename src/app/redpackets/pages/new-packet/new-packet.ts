@@ -133,7 +133,10 @@ export class NewPacketPage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-    this.networkSubscription.unsubscribe();
+    if (this.networkSubscription) {
+      this.networkSubscription.unsubscribe();
+      this.networkSubscription = null;
+    }
   }
 
   public getSignedInIdentity(): IdentityEntry {
