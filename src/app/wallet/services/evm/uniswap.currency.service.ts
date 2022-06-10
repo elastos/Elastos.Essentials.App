@@ -145,8 +145,7 @@ export class UniswapCurrencyService {
       var address = Pair.getAddress(tokenA, tokenB, factoryAddress, initCodeHash);
 
       let uniswapPairContract = new (await EVMService.instance.getWeb3(network)).eth.Contract(<any>IUniswapV2Pair.abi, address);
-
-      let _ref = await uniswapPairContract.methods.getReserves();
+      let _ref = await uniswapPairContract.methods.getReserves().call();
 
       var reserves0 = _ref[0],
         reserves1 = _ref[1];

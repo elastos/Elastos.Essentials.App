@@ -11,7 +11,7 @@ export class BscAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case BscApiType.RPC: return 'https://bsc-dataseed.binance.org';
+          case BscApiType.RPC: return 'https://bsc-dataseed1.defibit.io';
           case BscApiType.ETHERSCAN_API: return 'https://api.bscscan.com/api';
           default:
             throw new Error("Bsc API - Unknown api type " + type);
