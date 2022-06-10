@@ -676,7 +676,7 @@ export const zh = {
                 /*****************************
                 * Extended transaction info  *
                 ******************************/
-                'ext-tx-info-type-send-erc1155-nft': '发送 ERC1155 NFT',
+                'ext-tx-info-type-send-erc1155-nft': '发送 NFT',
                 'ext-tx-info-type-send-erc20': '发送 {{ symbol }}',
                 'ext-tx-info-type-send-tokens': '发送代币',
                 'ext-tx-info-type-swap-erc20': '{{ fromSymbol }} → {{ toSymbol }}',
@@ -684,7 +684,7 @@ export const zh = {
                 'ext-tx-info-type-approve-token': '批准代币',
                 'ext-tx-info-type-approve-erc20': '批准 {{ symbol }}',
                 'ext-tx-info-type-bridge-tokens': '桥接代币',
-                'ext-tx-info-type-bridge-erc20': '桥接 {{ symbol }} 代币',
+                'ext-tx-info-type-bridge-erc20': '桥接 {{ symbol }}',
                 'ext-tx-info-type-liquidity-deposit': '流动性存款',
                 'ext-tx-info-type-add-liquidity-with-symbols': '添加 {{ symbolA }} + {{ symbolB }} LP',
                 'ext-tx-info-type-remove-liquidity': '移除流动性',

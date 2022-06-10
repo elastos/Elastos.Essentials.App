@@ -676,7 +676,7 @@ export const it = {
         /*****************************
         * Extended transaction info  *
         ******************************/
-        'ext-tx-info-type-send-erc1155-nft': 'Send ERC1155 NFT',
+        'ext-tx-info-type-send-erc1155-nft': 'Send NFT',
         'ext-tx-info-type-send-erc20': 'Send {{ symbol }}',
         'ext-tx-info-type-send-tokens': 'Send tokens',
         'ext-tx-info-type-swap-erc20': '{{ fromSymbol }} → {{ toSymbol }}',
@@ -684,7 +684,7 @@ export const it = {
         'ext-tx-info-type-approve-token': 'Approve token',
         'ext-tx-info-type-approve-erc20': 'Approve {{ symbol }}',
         'ext-tx-info-type-bridge-tokens': 'Bridge tokens',
-        'ext-tx-info-type-bridge-erc20': 'Bridge {{ symbol }} tokens',
+        'ext-tx-info-type-bridge-erc20': 'Bridge {{ symbol }}',
         'ext-tx-info-type-liquidity-deposit': 'Liquidity deposit',
         'ext-tx-info-type-add-liquidity-with-symbols': 'Add {{ symbolA }} + {{ symbolB }} LP',
         'ext-tx-info-type-remove-liquidity': 'Remove liquidity',
