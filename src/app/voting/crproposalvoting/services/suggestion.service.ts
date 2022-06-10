@@ -43,7 +43,10 @@ export class SuggestionService {
     }
 
     public stop() {
-        this.activatedDidSub.unsubscribe();
+        if (this.activatedDidSub) {
+          this.activatedDidSub.unsubscribe();
+          this.activatedDidSub = null;
+        }
         this.allResults = [];
         this.allSearchResults = [];
         this.pageNumbersLoaded = 0;
