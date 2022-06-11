@@ -19,6 +19,7 @@ export const zh = {
         'if-any': '（如果有的话）',
         'create-app': '创建应用',
         'app-created': '应用已创建！',
+        'app-imported': '应用已导入！',
         'save-mnemonic': '请仔细保存您的助记词：',
         'manage-app': '管理应用',
         'generic-app-info': '通用的应用程序信息',

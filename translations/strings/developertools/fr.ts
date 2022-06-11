@@ -19,6 +19,7 @@ export const fr = {
         'if-any': '(Si relevant)',
         'create-app': 'Créer l\'appli',
         'app-created': 'Appli créée!',
+        'app-imported': 'Appli importée!',
         'save-mnemonic': 'Veuillez enregistrer votre mnémonique avec soin:',
         'manage-app': 'Gérer l\'appli',
         'generic-app-info': 'Infos Générique de l\'Appli',

@@ -19,6 +19,7 @@ export const en = {
         'if-any': '(If any)',
         'create-app': 'Create App',
         'app-created': 'App Created!',
+        'app-imported': 'App imported!',
         'save-mnemonic': 'Please save your mnemonic carefully:',
         'manage-app': 'Manage App',
         'generic-app-info': 'Generic App Info',
