@@ -110,8 +110,8 @@ export const zh = {
 
           'elastos-api-provider': 'Elastos API 提供商',
           'elastos-api-provider-des': '为所有 Elastos 相关服务选择您的首选提供商',
-          'elastos-io-des': 'Set of Elastos APIs deployed and maintained by the Gelaxy team, also known as the Elastos blockchain team.',
-          'trinity-tech-io-des': 'Set of Elastos APIs deployed and maintained by the Trinity Tech team, responsible for Elastos SDKs and Essentials developments.',
+          'elastos-io-des': 'Gelaxy团队（即Elastos区块链团队）部署和维护的一组Elastos API。',
+          'trinity-tech-io-des': '由Trinity技术团队部署和维护的一套Elastos API，Trinity技术团队负责Elastos SDK和Essentials的开发。',
 
           'privacy-toolbox-stats': '凭证统计信息',
           'privacy-send-credential-toolbox-stats': '将有关DID使用情况的匿名信息发送到凭证工具箱(开发人员工具)。DID本身永远不会发送。',
