@@ -103,7 +103,13 @@ export const it = {
         'wallet-intro': 'Un portafoglio predefinito viene creato utilizzando la stessa frase mnemonica della tua Identità. Puoi scegliere di usarlo o eliminarlo in un secondo momento.',
         'done-title': 'Tutto apposto!',
         'done-intro': 'La tua identità ora è pronta. Puoi iniziare a utilizzare Elastos Essentials.'
-      }
+      },
+
+      'error-hive-storage-failed': 'Hive storage setup could not be completed, please try again manually later. Continuing.',
+      'error-hive-storage-setup-failed': 'Failed to setup the hive storage: ',
+      'error-can-not-publish': 'Sorry, your identity could not be published for now',
+      'error-failed-to-publish': 'Failed to publish identity: ',
+      'error-failed-to-sign': 'Failed to sign in: ',
     }
    };
 

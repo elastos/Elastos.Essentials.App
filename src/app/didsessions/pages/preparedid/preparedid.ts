@@ -134,7 +134,7 @@ export class PrepareDIDPage {
           if (!operationSuccessful) {
             // Hive setup has failed? Show a error toast to let user know, but we dont block
             // the on boarding so we just continue to the next step.
-            this.native.errToast("Hive storage setup could not be completed, please try again manually later. Continuing.", 4000);
+            this.native.errToast("didsessions.error-hive-storage-failed", 4000);
             operationSuccessful = true;
           }
           break;
@@ -301,7 +301,7 @@ export class PrepareDIDPage {
       Logger.log("didsessions", "Verifying is the identity is well published", this.publishedDID);
       if (await this.needToPublishIdentity()) {
         Logger.warn("didsessions", "Identity is supposed to be published and ready but cannot be resolved");
-        this.publishError = "Sorry, your identity could not be published for now";
+        this.publishError = this.translate.instant("didsessions.error-can-not-publish");
         return false;
       }
 
@@ -309,7 +309,7 @@ export class PrepareDIDPage {
     }
     catch (e) {
       Logger.warn("didsessions", "Publish identity error in prepare did:", e);
-      this.publishError = "Failed to publish identity: " + e;
+      this.publishError = this.translate.instant("didsessions.error-failed-to-publish") + e;
       return false;
     }
   }
@@ -358,7 +358,7 @@ export class PrepareDIDPage {
     }
     catch (e) {
       Logger.warn("didsessions", "Sign in error in prepare did:", e);
-      this.signInError = "Failed to sign in: " + e;
+      this.signInError = this.translate.instant("didsessions.error-failed-to-sign") + e;
       return false;
     }
   }
@@ -382,7 +382,7 @@ export class PrepareDIDPage {
     }
     catch (e) {
       Logger.warn("didsessions", "Hive storage error in prepare did:", e);
-      this.hiveError = "Failed to setup the hive storage: " + e;
+      this.hiveError = this.translate.instant("didsessions.error-hive-storage-setup-failed") + e;
       return false;
     }
   }

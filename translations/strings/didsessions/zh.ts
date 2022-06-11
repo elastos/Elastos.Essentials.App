@@ -102,7 +102,13 @@ export const zh = {
       'wallet-intro': '使用与您的 DID 相同的助记词来创建默认钱包。您可以选择继续使用或删除此钱包。',
       'done-title': '全部完成！',
       'done-intro': '您的身份现在已经完全准备好了，您可以开始使用 Elastos Essentials。'
-    }
+    },
+
+    'error-hive-storage-failed': '无法完成配置Hive存储，请稍后手动重试。继续',
+    'error-hive-storage-setup-failed': '配置Hive存储失败: ',
+    'error-can-not-publish': '抱歉，您的身份暂时无法发布',
+    'error-failed-to-publish': '发布身份失败: ',
+    'error-failed-to-sign': '登录失败: ',
   }
 };
 

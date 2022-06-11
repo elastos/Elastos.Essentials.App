@@ -100,6 +100,12 @@ export const fr = {
       'wallet-intro': 'Un portefeuille par défaut est créé en utilisant la même clé papier que votre identité. Vous pourrez choisir de l\'utiliser ou de le supprimer plus tard.',
       'done-title': 'C\'est terminé!',
       'done-intro': 'Votre identité est maintenant prête. Vous pouvez commencer à utiliser Elastos Essentials.'
-    }
+    },
+
+    'error-hive-storage-failed': 'Hive storage setup could not be completed, please try again manually later. Continuing.',
+    'error-hive-storage-setup-failed': 'Failed to setup the hive storage: ',
+    'error-can-not-publish': 'Sorry, your identity could not be published for now',
+    'error-failed-to-publish': 'Failed to publish identity: ',
+    'error-failed-to-sign': 'Failed to sign in: ',
   }
 };

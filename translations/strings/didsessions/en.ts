@@ -103,7 +103,13 @@ export const en = {
       'wallet-intro': 'A default wallet is created with the same paper key as your DID. You can choose to use it or to delete it.',
       'done-title': 'You are all set!',
       'done-intro': 'Your identity is now fully ready. You can start using Elastos Essentials.'
-    }
+    },
+
+    'error-hive-storage-failed': 'Hive storage setup could not be completed, please try again manually later. Continuing.',
+    'error-hive-storage-setup-failed': 'Failed to setup the hive storage: ',
+    'error-can-not-publish': 'Sorry, your identity could not be published for now',
+    'error-failed-to-publish': 'Failed to publish identity: ',
+    'error-failed-to-sign': 'Failed to sign in: ',
   }
  };
 
