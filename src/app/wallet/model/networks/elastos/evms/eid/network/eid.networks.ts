@@ -77,7 +77,7 @@ export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetw
   constructor() {
     super(
       "elastosidchain",
-      "Elastos identity chain",
+      "Elastos identity chain Testnet",
       "assets/wallet/coins/ela-turquoise.svg",
       TESTNET_TEMPLATE,
       23

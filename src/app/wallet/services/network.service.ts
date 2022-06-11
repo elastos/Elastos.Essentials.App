@@ -224,7 +224,7 @@ export class WalletNetworkService {
      * Tells if the currently active network is the EVM network.
      */
     public isActiveNetworkEVM(): boolean {
-        return this.activeNetwork.value.isEVMNetwork();
+        return this.activeNetwork.value && this.activeNetwork.value.isEVMNetwork();
     }
 
     public async loadNetworkVisibilities(): Promise<void> {
