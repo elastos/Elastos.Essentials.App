@@ -1,7 +1,7 @@
 import { Logger } from "src/app/logger";
 import { Util } from "src/app/model/util";
 import { Config } from "src/app/wallet/config/Config";
-import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
+import { EVMSafe } from "../../../../evms/safes/evm.safe";
 import { EVMTransactionBuilder } from "../../../../evms/tx-builders/evm.txbuilder";
 
 const contractAbi = [
@@ -40,26 +40,10 @@ export class IdentityTransactionBuilder extends EVMTransactionBuilder {
       gasLimit = await this.estimateGasByMethod(method);
     }
 
-    const data = method.encodeABI();
     let nonce = await this.getNonce();
     Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice, ' nonce:', nonce, ' ContractAddress:', Config.ETHDID_CONTRACT_ADDRESS);
 
-    // IMPORTANT NOTE: FOR NOW WE CONSIDER THAT WE DO HAVE A WALLET AND SUBWALLET IN THE SPV SDK,
-    // BASED ON THE SUBWALLET MASTER WALLET ID. THIS IS TRUE AS LONG AS WE USE THE SPV SDK TO MANAGE TRANSACTIONS
-    // BUT WILL BECOME FALSE LATER, WHEN THE SPV SDK IS USED ONLY TO CREATE TRANSACTIONS.
-    // AT THAT TIME WE WILL NEED TO USE A VIRTUAL SPV WALLET JUST TO CREATE TRANSACTIONS.
-    return SPVService.instance.createTransferGeneric(
-      jsToSpvWalletId(this.networkWallet.masterWallet.id),
-      this.networkWallet.network.getEVMSPVConfigName(), // TODO: check this: was "this.id" (subwallet id)
-      Config.ETHDID_CONTRACT_ADDRESS,
-      '0',
-      0, // WEI
-      gasPrice,
-      0, // WEI
-      gasLimit,
-      data,
-      nonce
-    );
+    return (this.networkWallet.safe as unknown as EVMSafe).createContractTransaction(Config.ETHDID_CONTRACT_ADDRESS, '0', gasPrice, gasLimit, nonce, method.encodeABI());
   }
 
   public async estimateGas(payload: string) {

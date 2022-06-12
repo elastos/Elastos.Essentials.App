@@ -388,7 +388,7 @@ export class EVMService {
     return contractCode === '0x' ? false : true;
   }
 
-  public async createUnsignedContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<TxData> {
+  public async createUnsignedContractTransaction(contractAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<TxData> {
     const Web3 = await lazyWeb3Import();
     let web3 = new Web3();
 
@@ -398,7 +398,7 @@ export class EVMService {
       gasPrice: web3.utils.toHex(gasPrice),
       to: contractAddress,
       data: data,
-      value: web3.utils.toHex(web3.utils.toWei('0', 'ether'))
+      value: web3.utils.toHex(web3.utils.toWei(amount, 'ether'))
     }
     Logger.log('wallet', 'EVMService::createUnsignedContractTransaction:', txData);
     return Promise.resolve(txData);

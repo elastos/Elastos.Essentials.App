@@ -150,7 +150,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
     public async getTokenAccountAddress(): Promise<string> {
         if (!this.tokenAddress) {
-            this.tokenAddress = (await this.createAddress()).toLowerCase();
+            this.tokenAddress = (await this.getCurrentReceiverAddress()).toLowerCase();
         }
         return this.tokenAddress;
     }
@@ -499,7 +499,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         }
 
         let nonce = await this.getNonce();
-        return (this.networkWallet.safe as unknown as EVMSafe).createContractTransaction(contractAddress, gasPrice, gasLimit, nonce, method.encodeABI());
+        return (this.networkWallet.safe as unknown as EVMSafe).createContractTransaction(contractAddress, '0', gasPrice, gasLimit, nonce, method.encodeABI());
     }
 
     public publishTransaction(transaction: string): Promise<string> {

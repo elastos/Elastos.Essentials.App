@@ -261,7 +261,7 @@ export class DappBrowserService implements GlobalService {
             // Get the active wallet address
             if (WalletService.instance.activeNetworkWallet.value) {
                 let subwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
-                this.userAddress = await subwallet.createAddress();
+                this.userAddress = await subwallet.getCurrentReceiverAddress();
             }
             else
                 this.userAddress = null;
@@ -420,7 +420,7 @@ export class DappBrowserService implements GlobalService {
         // Get the active wallet address
         if (networkWallet) {
             let subwallet = networkWallet.getMainEvmSubWallet();
-            this.userAddress = await subwallet.createAddress();
+            this.userAddress = await subwallet.getCurrentReceiverAddress();
 
             Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
 

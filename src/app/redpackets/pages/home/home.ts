@@ -139,6 +139,6 @@ export class HomePage {
     if (!this.walletService.getActiveNetworkWallet() || !this.walletService.getActiveNetworkWallet().getMainEvmSubWallet())
       return null;
 
-    return this.walletService.getActiveNetworkWallet().getMainEvmSubWallet().createAddress();
+    return this.walletService.getActiveNetworkWallet().getMainEvmSubWallet().getCurrentReceiverAddress();
   }
 }

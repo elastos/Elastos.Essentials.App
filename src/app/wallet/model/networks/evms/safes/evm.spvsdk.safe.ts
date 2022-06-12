@@ -24,12 +24,12 @@ export class EVMSPVSDKSafe extends SPVSDKSafe implements EVMSafe {
     );
   }
 
-  public createContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
+  public createContractTransaction(contractAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
     return SPVService.instance.createTransferGeneric(
       jsToSpvWalletId(this.masterWallet.id),
       this.chainId,
       contractAddress,
-      '0',
+      amount,
       0, // WEI
       gasPrice,
       0, // WEI

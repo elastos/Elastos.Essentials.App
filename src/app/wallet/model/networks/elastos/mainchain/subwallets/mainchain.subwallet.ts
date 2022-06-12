@@ -14,7 +14,7 @@ import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../../config/Config';
-import { Candidates, jsToSpvWalletId, SPVService, VoteContent, VoteType } from '../../../../../services/spv.service';
+import { Candidates, VoteContent, VoteType } from '../../../../../services/spv.service';
 import { StandardCoinName } from '../../../../coin';
 import { BridgeProvider } from '../../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../../earn/earnprovider';
@@ -189,7 +189,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
      */
     public async getRootPaymentAddress(): Promise<string> {
         let allAddresses = await this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.DEFAULT);
-        //let allAddresses = await SPVService.instance.getAddresses(jsToSpvWalletId(this.masterWallet.id), this.id, 0, 1, false);
         if (!allAddresses || allAddresses.length == 0)
             return null;
 
@@ -364,15 +363,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let newVoteContents = await this.mergeVoteContents(voteContents);
         Logger.log('wallet', 'createVoteTransaction:', JSON.stringify(newVoteContents));
 
-        // TODO: use safe
-        return SPVService.instance.createVoteTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id, // From subwallet id
-            JSON.stringify(au.utxo),
-            JSON.stringify(newVoteContents),
-            '10000',
-            memo // User input memo
-        );
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createVoteTransaction(
+          au.utxo,
+          newVoteContents,
+          '10000',
+          memo);
     }
 
     public async createDepositTransaction(toSubWalletId: StandardCoinName, toAddress: string, amount: number, memo = ""): Promise<string> {
@@ -391,76 +386,36 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         Logger.log('wallet', 'createDepositTransaction toAmount:', toAmount);
 
-        let lockAddres = '';
+        let lockAddress = '';
         switch (toSubWalletId) {
             case StandardCoinName.ETHSC:
-                lockAddres = Config.ETHSC_DEPOSIT_ADDRESS;
+                lockAddress = Config.ETHSC_DEPOSIT_ADDRESS;
                 break;
             case StandardCoinName.ETHDID:
-                lockAddres = Config.ETHDID_DEPOSIT_ADDRESS;
+                lockAddress = Config.ETHDID_DEPOSIT_ADDRESS;
                 break;
             default:
                 Logger.error('wallet', 'createDepositTransaction not support ', toSubWalletId);
                 return null;
         }
 
-        // TODO: use safe
-        return SPVService.instance.createDepositTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            1,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDepositTransaction(
+            au.utxo,
             toSubWalletId,
             toAmount.toString(),
             toAddress,
-            lockAddres,
+            lockAddress,
             '10000',
             memo // User input memo
         );
     }
 
-    // Ignore gasPrice, gasLimit and nonce.
     public async createWithdrawTransaction(toAddress: string, amount: number, memo, gasPrice: string, gasLimit: string, nonce: number): Promise<string> {
-        let toAmount = 0;
-        let au: AvalaibleUtxos = null;
-
-        if (amount == -1) {
-            // toAmount = Math.floor(this.balance.minus(20000).toNumber());
-            au = await this.getAvailableUtxo(-1);
-            toAmount = au.value - 20000;//20000: fee, cross transafer need more fee.
-        } else {
-            toAmount = Util.accMul(amount, Config.SELA);
-            au = await this.getAvailableUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
-        }
-        if (!au.utxo) return;
-
-        Logger.log('wallet', 'createWithdrawTransaction toAmount:', toAmount);
-
-        // TODO: use safe
-        return SPVService.instance.createWithdrawTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id, // From subwallet id
-            JSON.stringify(au.utxo),
-            toAmount.toString(),
-            toAddress,
-            '10000',
-            memo
-        );
+        return await null;
     }
 
     public async createIDTransaction(payload: string, memo = ""): Promise<string> {
-        let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
-
-        // TODO: use safe
-        return SPVService.instance.createIdTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
-            payload,
-            memo, // User input memo
-            '10000',
-        );
+        return await null;
     }
 
     public async createConsolidateTransaction(utxoArray: Utxo[], memo = ''): Promise<string> {
@@ -491,11 +446,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             "Amount": toAmount.toString()
         }]
 
-        return SPVService.instance.createTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id, // From subwallet id
-            JSON.stringify(utxoArrayForSDK),
-            JSON.stringify(outputs),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createPaymentTransaction(
+            utxoArrayForSDK,
+            outputs,
             '10000',
             memo
         );
@@ -1248,10 +1201,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createProposalTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1262,10 +1213,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createProposalChangeOwnerTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalChangeOwnerTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1276,10 +1225,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createTerminateProposalTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createTerminateProposalTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1290,10 +1237,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createSecretaryGeneralElectionTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createSecretaryGeneralElectionTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1304,10 +1249,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createProposalTrackingTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalTrackingTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1318,10 +1261,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createProposalReviewTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalReviewTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1332,10 +1273,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createProposalWithdrawTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalWithdrawTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1346,10 +1285,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createReserveCustomIDTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createReserveCustomIDTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1360,10 +1297,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createReceiveCustomIDTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createReceiveCustomIDTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1374,10 +1309,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createChangeCustomIDFeeTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createChangeCustomIDFeeTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1388,10 +1321,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createRegisterSidechainTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRegisterSidechainTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1405,10 +1336,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(amount + 20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createRegisterProducerTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRegisterProducerTransaction(
+            au.utxo,
             payload,
             amount.toString(),
             '10000',
@@ -1420,10 +1349,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createCancelProducerTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createCancelProducerTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1434,10 +1361,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createUpdateProducerTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUpdateProducerTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1445,10 +1370,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public createRetrieveDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<string> {
-        return SPVService.instance.createRetrieveDepositTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveDepositTransaction(
+            utxo,
             Util.accMul(amount, Config.SELA).toString(),
             '10000',
             memo
@@ -1462,10 +1385,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(amount + 20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createRegisterCRTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRegisterCRTransaction(
+            au.utxo,
             payload,
             amount.toString(),
             '10000',
@@ -1477,10 +1398,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createUnregisterCRTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUnregisterCRTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1491,10 +1410,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createUpdateCRTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUpdateCRTransaction(
+            au.utxo,
             payload,
             '10000',
             memo
@@ -1502,10 +1419,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public createRetrieveCRDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<string> {
-        return SPVService.instance.createRetrieveCRDepositTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveCRDepositTransaction(
+            utxo,
             Util.accMul(amount, Config.SELA).toString(),
             '10000',
             memo
@@ -1516,10 +1431,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return SPVService.instance.createCRCouncilMemberClaimNodeTransaction(
-            jsToSpvWalletId(this.masterWallet.id),
-            this.id,
-            JSON.stringify(au.utxo),
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createCRCouncilMemberClaimNodeTransaction(
+            au.utxo,
             payload,
             '10000',
             memo

@@ -12,7 +12,7 @@ import { CoinTxInfoParams } from "src/app/wallet/pages/wallet/coin/coin-tx-info/
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { OfflineTransactionsService } from "src/app/wallet/services/offlinetransactions.service";
-import { PubKeyInfo } from "src/app/wallet/services/spv.service";
+import { PubKeyInfo, VoteContent } from "src/app/wallet/services/spv.service";
 import { Native } from "../../../../../../services/native.service";
 import { Safe } from "../../../../../safes/safe";
 import { AnyNetworkWallet } from '../../../../base/networkwallets/networkwallet';
@@ -55,6 +55,116 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     Logger.log("wallet", "Created multisig transaction", tx);
 
     return await tx;
+  }
+
+  public createVoteTransaction(inputs: UtxoForSDK[], voteContent: VoteContent[], fee: string, memo: string): Promise<any> {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createDepositTransaction(inputs: UtxoForSDK[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createProposalChangeOwnerTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createTerminateProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createSecretaryGeneralElectionTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createProposalTrackingTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createProposalReviewTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createProposalWithdrawTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createReserveCustomIDTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createReceiveCustomIDTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createChangeCustomIDFeeTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createRegisterSidechainTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createRegisterProducerTransaction(inputs: UtxoForSDK[], payload: string, amount: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createCancelProducerTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createUpdateProducerTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createRetrieveDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createRegisterCRTransaction(inputs: UtxoForSDK[], payload: string, amount: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createUnregisterCRTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createUpdateCRTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createRetrieveCRDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public createCRCouncilMemberClaimNodeTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
   }
 
   public async signTransaction(subWallet: AnySubWallet, rawTx: JSONObject, transfer: Transfer): Promise<SignTransactionResult> {

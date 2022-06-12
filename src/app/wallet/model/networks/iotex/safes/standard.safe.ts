@@ -61,8 +61,8 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
       return await [this.evmAddress];
   }
 
-  createContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
-    return EVMService.instance.createUnsignedContractTransaction(contractAddress, gasPrice, gasLimit, nonce, data);
+  createContractTransaction(contractAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
+    return EVMService.instance.createUnsignedContractTransaction(contractAddress, amount, gasPrice, gasLimit, nonce, data);
   }
 
   async createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {

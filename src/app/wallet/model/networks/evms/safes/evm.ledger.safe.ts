@@ -62,8 +62,8 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
         return Promise.resolve(txData);
     }
 
-    public createContractTransaction(contractAddress: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
-        return EVMService.instance.createUnsignedContractTransaction(contractAddress, gasPrice, gasLimit, nonce, data);
+    public createContractTransaction(contractAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
+        return EVMService.instance.createUnsignedContractTransaction(contractAddress, amount, gasPrice, gasLimit, nonce, data);
     }
 
     public personalSign(): string {

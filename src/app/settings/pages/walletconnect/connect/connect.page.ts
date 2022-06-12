@@ -53,7 +53,7 @@ export class WalletConnectConnectPage implements OnInit {
       this.ethAccounts = [];
       let activeWallet = this.walletManager.activeNetworkWallet.value;
       let subwallet = activeWallet.getMainEvmSubWallet();
-      this.ethAccounts.push(await subwallet.createAddress());
+      this.ethAccounts.push(await subwallet.getCurrentReceiverAddress());
     });
   }
 

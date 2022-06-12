@@ -162,7 +162,7 @@ export class GlobalWalletConnectService extends GlobalService {
    * Returns the eth account address associated with the given master wallet.
    */
   private getAccountFromNetworkWallet(wallet: AnyNetworkWallet): Promise<string> {
-    return wallet.getMainEvmSubWallet().createAddress();
+    return wallet.getMainEvmSubWallet().getCurrentReceiverAddress();
   }
 
   public async onUserSignOut(): Promise<void> {

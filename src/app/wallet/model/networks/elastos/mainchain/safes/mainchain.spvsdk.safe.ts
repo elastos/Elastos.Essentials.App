@@ -1,7 +1,7 @@
 import { Logger } from "src/app/logger";
 import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { jsToSpvWalletId, PubKeyInfo, SPVService } from "src/app/wallet/services/spv.service";
+import { jsToSpvWalletId, PubKeyInfo, SPVService, VoteContent } from "src/app/wallet/services/spv.service";
 import { SignTransactionResult } from "../../../../safes/safe.types";
 import { SPVSDKSafe } from "../../../../safes/spvsdk.safe";
 import { AnySubWallet } from "../../../base/subwallets/subwallet";
@@ -12,9 +12,259 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
   public createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string) {
     return SPVService.instance.createTransaction(
       jsToSpvWalletId(this.masterWallet.id),
-      this.chainId, // From subwallet id
+      this.chainId,
       JSON.stringify(inputs),
       JSON.stringify(outputs),
+      fee,
+      memo
+    );
+  }
+
+  public createVoteTransaction(inputs: UtxoForSDK[], voteContent: VoteContent[], fee: string, memo: string) {
+    return SPVService.instance.createVoteTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      JSON.stringify(voteContent),
+      fee,
+      memo
+    );
+  }
+
+  public createDepositTransaction(inputs: UtxoForSDK[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string) {
+    return SPVService.instance.createDepositTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      1,
+      JSON.stringify(inputs),
+      toSubwalletId,
+      amount,
+      toAddress,
+      lockAddress,
+      fee,
+      memo // User input memo
+    );
+  }
+
+  public createProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createProposalTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createProposalChangeOwnerTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createProposalChangeOwnerTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createTerminateProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createTerminateProposalTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createSecretaryGeneralElectionTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createSecretaryGeneralElectionTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createProposalTrackingTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createProposalTrackingTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createProposalReviewTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createProposalReviewTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createProposalWithdrawTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createProposalWithdrawTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createReserveCustomIDTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createReserveCustomIDTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createReceiveCustomIDTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createReceiveCustomIDTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createChangeCustomIDFeeTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createChangeCustomIDFeeTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createRegisterSidechainTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createRegisterSidechainTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  //dpos registration transaction functions
+  public createRegisterProducerTransaction(inputs: UtxoForSDK[], payload: string, amount: string, fee: string, memo: string) {
+    return SPVService.instance.createRegisterProducerTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      amount,
+      fee,
+      memo
+    );
+  }
+
+  public createCancelProducerTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createCancelProducerTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createUpdateProducerTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createUpdateProducerTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createRetrieveDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+    return SPVService.instance.createRetrieveDepositTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      amount,
+      fee,
+      memo
+    );
+  }
+
+  // CR registration transaction functions
+  public createRegisterCRTransaction(inputs: UtxoForSDK[], payload: string, amount: string, fee: string, memo: string) {
+    return SPVService.instance.createRegisterCRTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      amount,
+      fee,
+      memo
+    );
+  }
+
+  public createUnregisterCRTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createUnregisterCRTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createUpdateCRTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createUpdateCRTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
+      fee,
+      memo
+    );
+  }
+
+  public createRetrieveCRDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+    return SPVService.instance.createRetrieveCRDepositTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      amount,
+      fee,
+      memo
+    );
+  }
+
+  public createCRCouncilMemberClaimNodeTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    return SPVService.instance.createCRCouncilMemberClaimNodeTransaction(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      JSON.stringify(inputs),
+      payload,
       fee,
       memo
     );

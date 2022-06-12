@@ -258,6 +258,7 @@ export class ERC1155Service {
 
         let rawTransaction = await (networkWallet.safe as unknown as EVMSafe).createContractTransaction(
             nftAddress,
+            '0',
             gasPrice,
             web3.utils.toHex(gasLimit),
             await this.evmService.getNonce(networkWallet.network, senderAddress),

@@ -35,7 +35,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         this.tokenDecimals = 8;
         this.tokenAmountMulipleTimes = Config.SELAAsBigNumber;
 
-        void this.createAddress();
+        void this.getRootPaymentAddress();
     }
 
     public async startBackgroundUpdates(): Promise<void> {
@@ -67,7 +67,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return await WalletUtil.isBTCAddress(address);
     }
 
-    public async createAddress(): Promise<string> {
+    public async getRootPaymentAddress(): Promise<string> {
         if (!this.legacyAddress) {
             this.legacyAddress = await this.getCurrentReceiverAddress();
         }

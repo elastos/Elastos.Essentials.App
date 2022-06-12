@@ -192,7 +192,7 @@ export class NewPacketPage {
     let targetSubWallet = this.tokenSubwallet || this.walletService.getActiveNetworkWallet().getMainEvmSubWallet();
 
     // Get user's EVM address
-    let creatorAddress = await targetSubWallet.createAddress();
+    let creatorAddress = await targetSubWallet.getCurrentReceiverAddress();
 
     // Prepare packet data
     let packet: PacketToCreate = {

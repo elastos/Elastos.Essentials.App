@@ -2,12 +2,12 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
-import { jsToSpvWalletId, SPVService } from 'src/app/wallet/services/spv.service';
 import { Config } from '../../../../../../config/Config';
 import { StandardCoinName } from '../../../../../coin';
 import { ElastosMainChainWalletNetworkOptions } from '../../../../../masterwallets/wallet.types';
 import { EthTransaction } from '../../../../evms/evm.types';
 import { AnyEVMNetworkWallet } from '../../../../evms/networkwallets/evm.networkwallet';
+import { EVMSafe } from '../../../../evms/safes/evm.safe';
 import { MainCoinEVMSubWallet } from '../../../../evms/subwallets/evm.subwallet';
 
 /**
@@ -109,24 +109,11 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
     const toAmountSend = (await this.getWeb3()).utils.toWei(fixedAmount);
     const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
 
-    const data = method.encodeABI();
-
     let nonce = nonceArg;
     if (nonce === -1) {
       nonce = await this.getNonce();
     }
     Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' withdrawContractAddress:', this.withdrawContractAddress);
-    return SPVService.instance.createTransferGeneric(
-      jsToSpvWalletId(this.masterWallet.id),
-      this.id,
-      this.withdrawContractAddress,
-      toAmountSend,
-      0, // WEI
-      gasPrice,
-      0, // WEI
-      gasLimit,
-      data,
-      nonce
-    );
+    return (this.networkWallet.safe as unknown as EVMSafe).createContractTransaction(this.withdrawContractAddress, toAmountSend, gasPrice, gasLimit, nonce, method.encodeABI());
   }
 }
