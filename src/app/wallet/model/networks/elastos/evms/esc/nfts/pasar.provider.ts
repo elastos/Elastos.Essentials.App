@@ -40,7 +40,13 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
               "thumbnail": "feeds:imgage:QmSZjdUSu8qmgD8sng3TiVTKsTKzAggpaR4dt88Ekd5FuL"
           }
         */
-        let jsonMetadataResponse = await fetch(`https://ipfs.trinity-tech.io/ipfs/${assetJsonMetadataUri}`);
+        let metadataUrl: string = null;
+        if (uri.startsWith("pasar:json:")) // Dirty hack for the non connected feeds/pasar IPFS gateways...
+          metadataUrl = `https://ipfs.pasarprotocol.io/ipfs/${assetJsonMetadataUri}`;
+        else
+          metadataUrl = `https://ipfs.trinity-tech.io/ipfs/${assetJsonMetadataUri}`;
+
+        let jsonMetadataResponse = await fetch(metadataUrl);
         if (jsonMetadataResponse && jsonMetadataResponse.ok) {
           let jsonMetadata = await jsonMetadataResponse.json();
           console.log("pasar nft json:", jsonMetadata);
@@ -67,7 +73,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
             let thumbnailUri = dataEntry["thumbnail"] as string;
             // Expected uri format: "pasar:imgage:QmSZjdUSu8qmgD8sng3TiVTKsTKzAggpaR4dt88Ekd5FuL"
             if (thumbnailUri.startsWith("pasar:image")) {
-              asset.imageURL = `https://ipfs.trinity-tech.io/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
+              asset.imageURL = `https://ipfs.pasarprotocol.io/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
             }
           }
 
