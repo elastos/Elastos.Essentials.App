@@ -105,10 +105,12 @@ export class CoinNFTDetailsPage implements OnInit {
     }
 
     public getDisplayableAssetID(): string {
-        if (this.asset.displayableId.length < 20)
+        return this.asset.displayableId;
+
+        /* if (this.asset.displayableId.length < 20)
             return this.asset.displayableId;
 
-        return this.asset.displayableId.substr(0, 20) + "...";
+        return this.asset.displayableId.substr(0, 20) + "..."; */
     }
 
     public hasRealAssetIcon(): boolean {

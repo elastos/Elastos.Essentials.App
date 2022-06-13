@@ -122,6 +122,8 @@ export class ERC1155Service {
         let subject = new BehaviorSubject<FetchAssetsEvent>({ assets: [] });
         let observable = subject.asObservable();
 
+        console.log("fetchAllAssets", contractAddress);
+
         void (async () => {
             let assets: NFTAsset[] = [];
             let assetsCouldBeRetrieved = false;

@@ -6,7 +6,11 @@ import { NFTAsset } from "../../../../evms/nfts/nftasset";
 
 export class ElastosPasarERC1155Provider extends ERC1155Provider {
   public supportedContractAddresses = [
-    "0x020c7303664bc88ae92cE3D380BF361E03B78B81"
+    "0x020c7303664bc88ae92cE3D380BF361E03B78B81", // Feeds mainnet v1
+    "0xed1978c53731997f4dafba47c9b07957ef6f3961", // Feeds testnet v1
+    "0x694eba9af996b9dab7e4b601fada8b70b85fbb35", // Feeds testnet v1
+    "0xf63f820f4a0bc6e966d61a4b20d24916713ebb95", // Pasar collection mainnet
+    "0x32496388d7c0CDdbF4e12BDc84D39B9E42ee4CB0" // Pasar collection testnet
   ];
 
   public async fetchNFTAssetInformation(erc1155Contract: Contract, asset: NFTAsset, accountAddress: string): Promise<void> {

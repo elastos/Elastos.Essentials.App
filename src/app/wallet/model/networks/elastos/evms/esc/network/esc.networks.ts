@@ -122,7 +122,11 @@ export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBas
       "Elastos smart chain Testnet",
       "assets/wallet/coins/ela-gray.svg",
       TESTNET_TEMPLATE,
-      21
+      21,
+      [], [], [],
+      [
+        new ElastosPasarERC1155Provider()
+      ]
     );
   }
 
