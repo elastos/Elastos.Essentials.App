@@ -89,7 +89,7 @@ export const zh = {
     'print-yes': '是',
 
     // Scan
-    'scan-title': "Paper key scan",
+    'scan-title': "扫描助记词",
 
     // Prepare DID
     'getting-ready': '准备',
