@@ -5,8 +5,8 @@ import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
-import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Direction, GlobalNavService } from 'src/app/services/global.nav.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -32,7 +32,7 @@ export class UXService {
     private nav: GlobalNavService,
     private native: GlobalNativeService,
     private popoverCtrl: PopoverController,
-    private events: Events,
+    private events: GlobalEvents,
     private theme: GlobalThemeService
   ) {
     selfUxService = this;

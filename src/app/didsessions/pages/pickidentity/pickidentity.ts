@@ -8,8 +8,8 @@ import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
-import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -34,7 +34,7 @@ export class PickIdentityPage implements OnInit {
     public uxService: UXService,
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    private events: Events,
+    private events: GlobalEvents,
     public popupProvider: PopupProvider,
     private splashScreen: SplashScreen,
     private globalNetworksService: GlobalNetworksService,

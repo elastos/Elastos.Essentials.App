@@ -5,9 +5,9 @@ import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
-import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService, SignInOptions } from 'src/app/services/global.didsessions.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
@@ -63,7 +63,7 @@ export class IdentityService {
 
     constructor(
         public zone: NgZone,
-        private events: Events,
+        private events: GlobalEvents,
         private popupProvider: PopupProvider,
         private language: GlobalLanguageService,
         private translate: TranslateService,

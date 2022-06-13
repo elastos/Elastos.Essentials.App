@@ -23,7 +23,7 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
@@ -54,7 +54,7 @@ export class CustomNetworkService {
     private customNetworkDiskEntries: CustomNetworkDiskEntry[] = [];
 
     constructor(
-        public events: Events,
+        public events: GlobalEvents,
         public native: Native,
         public popupProvider: PopupProvider,
         private localStorage: LocalStorage,

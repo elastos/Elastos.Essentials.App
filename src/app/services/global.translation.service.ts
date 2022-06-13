@@ -7,11 +7,11 @@ import { TranslateService } from '@ngx-translate/core';
 @Injectable({
     providedIn: 'root'
 })
-export class TranslationService {
-    public static instance: TranslationService = null;
+export class GlobalTranslationService {
+    public static instance: GlobalTranslationService = null;
 
     constructor(public translate: TranslateService) {
-        TranslationService.instance = this;
+        GlobalTranslationService.instance = this;
     }
 
     public translateInstant(key: string, interpolateParams?: unknown): string {

@@ -3,7 +3,7 @@ import { ToastController } from '@ionic/angular';
 import * as moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
@@ -19,7 +19,7 @@ export class BackgroundService {
     constructor(
         public zone: NgZone,
         public toastCtrl: ToastController,
-        public events: Events,
+        public events: GlobalEvents,
         private storage: GlobalStorageService,
         private hiveService: HiveService,
         private notificationsManager: GlobalNotificationsService

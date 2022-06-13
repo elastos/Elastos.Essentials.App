@@ -8,7 +8,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBar
 import { GlobalConfig } from "src/app/config/globalconfig";
 import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { Logger } from "src/app/logger";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalHiveService } from "src/app/services/global.hive.service";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
 import { GlobalLanguageService } from "src/app/services/global.language.service";
@@ -70,7 +70,7 @@ export class EditProfilePage {
   constructor(
     public router: Router,
     public zone: NgZone,
-    public events: Events,
+    public events: GlobalEvents,
     private didService: DIDService,
     private authService: AuthService,
     private modalCtrl: ModalController,

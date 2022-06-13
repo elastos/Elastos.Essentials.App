@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDURL } from '../../../model/didurl.model';
 import { DIDDocumentPublishEvent } from '../../../model/eventtypes.model';
@@ -63,7 +63,7 @@ export class RegisterApplicationProfileRequestPage {
 
   constructor(
     private didService: DIDService,
-    private events: Events,
+    private events: GlobalEvents,
     private translate: TranslateService,
     private appServices: UXService,
     public profileService: ProfileService,
@@ -91,7 +91,7 @@ export class RegisterApplicationProfileRequestPage {
       this.publishresultSubscription = null;
     }
     if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
+      void this.rejectRequest(false);
     }
   }
 

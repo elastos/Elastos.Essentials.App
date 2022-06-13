@@ -13,7 +13,7 @@ import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from "src/app/he
 import { AuthService } from "src/app/identity/services/auth.service";
 import { Logger } from "src/app/logger";
 import { GlobalCredentialTypesService } from "src/app/services/credential-types/global.credential.types.service";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
@@ -78,7 +78,7 @@ export class CredentialDetailsPage implements OnInit {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
-    public events: Events,
+    public events: GlobalEvents,
     public route: ActivatedRoute,
     private router: Router,
     public zone: NgZone,

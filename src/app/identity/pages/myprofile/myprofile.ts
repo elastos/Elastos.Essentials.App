@@ -7,7 +7,7 @@ import { TitleBarComponent } from "src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { DappBrowserService } from "src/app/dappbrowser/services/dappbrowser.service";
 import { Logger } from "src/app/logger";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -17,10 +17,8 @@ import { DIDDocument } from "../../model/diddocument.model";
 import { DIDURL } from "../../model/didurl.model";
 import { Profile } from "../../model/profile.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { AuthService } from "../../services/auth.service";
 import { DIDService } from "../../services/did.service";
 import { DIDDocumentsService } from "../../services/diddocuments.service";
-import { DIDSyncService } from "../../services/didsync.service";
 import { Native } from "../../services/native";
 import { ProfileService } from "../../services/profile.service";
 
@@ -57,13 +55,11 @@ export class MyProfilePage {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
-    public events: Events,
+    public events: GlobalEvents,
     public route: ActivatedRoute,
     public zone: NgZone,
     private translate: TranslateService,
-    private authService: AuthService,
     private didService: DIDService,
-    private didSyncService: DIDSyncService,
     private modalCtrl: ModalController,
     private native: Native,
     public theme: GlobalThemeService,

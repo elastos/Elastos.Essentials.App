@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
-
-import { DidService } from './did.service';
-import { Contact } from '../models/contact.model';
-import { FriendsService } from './friends.service';
-import { Hive } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
-import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
+import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { Contact } from '../models/contact.model';
+import { DidService } from './did.service';
+import { FriendsService } from './friends.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +20,7 @@ export class BackupService {
   public restoredContacts: Contact[] = [];
 
   constructor(
-    private events: Events,
+    private events: GlobalEvents,
     private didService: DidService,
     private globalHiveService: GlobalHiveService,
     private globalStorage: GlobalStorageService,

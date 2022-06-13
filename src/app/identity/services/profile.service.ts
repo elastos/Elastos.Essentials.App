@@ -9,7 +9,7 @@ import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { Logger } from "src/app/logger";
 import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { ContactNotifierService } from "src/app/services/contactnotifier.service";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalHiveService, VaultLinkStatusCheckState } from "src/app/services/global.hive.service";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
@@ -27,7 +27,6 @@ import { BasicCredentialsService } from './basiccredentials.service';
 import { DIDService } from "./did.service";
 import { DIDDocumentsService } from "./diddocuments.service";
 import { DIDSyncService } from "./didsync.service";
-import { DIDEvents } from "./events";
 import { Native } from "./native";
 
 
@@ -101,13 +100,10 @@ export class ProfileService extends GlobalService {
   private activatedDidSub: Subscription = null;
 
   constructor(
-    public events: Events,
+    public events: GlobalEvents,
     private native: Native,
     private zone: NgZone,
     private popoverCtrl: PopoverController,
-    private didService: DIDService,
-    private didSyncService: DIDSyncService,
-    private didDocumentsService: DIDDocumentsService,
     private translate: TranslateService,
     private basicCredentialService: BasicCredentialsService,
     private globalIntentService: GlobalIntentService,
@@ -125,7 +121,7 @@ export class ProfileService extends GlobalService {
   init() {
     GlobalServiceManager.getInstance().registerService(this);
 
-    this.didSyncService.didNeedsToBePublishedStatus.subscribe((didNeedsToBePublished) => {
+    DIDSyncService.instance.didNeedsToBePublishedStatus.subscribe((didNeedsToBePublished) => {
       this.didNeedsToBePublished = didNeedsToBePublished;
     });
 
@@ -163,11 +159,11 @@ export class ProfileService extends GlobalService {
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // Wait for the main DID to be loaded before doing anything
-    this.activatedDidSub = this.didService.activatedDid.subscribe(activeDid => {
+    this.activatedDidSub = DIDService.instance.activatedDid.subscribe(activeDid => {
       if (activeDid) {
         let didString = activeDid.getDIDString();
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.didDocumentsService.onlineDIDDocumentsStatus.get(didString).subscribe(async (status) => {
+        DIDDocumentsService.instance.onlineDIDDocumentsStatus.get(didString).subscribe(async (status) => {
           Logger.log("identity", "Profile service got DID Document status change event for DID " + didString);
           if (status.checked) {
             this.publishStatusFetched = true;
@@ -245,7 +241,7 @@ export class ProfileService extends GlobalService {
    */
   buildCredentialEntries(publishAvatar?: boolean) {
     // Sort credentials by title
-    let rawCredentials = this.didService.getActiveDid().credentials;
+    let rawCredentials = DIDService.instance.getActiveDid().credentials;
     rawCredentials.sort((c1, c2) => {
       if (c1.pluginVerifiableCredential.getFragment() > c2.pluginVerifiableCredential.getFragment())
         return 1;
@@ -339,7 +335,7 @@ export class ProfileService extends GlobalService {
     if (!credential)
       return false;
 
-    let currentDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
+    let currentDidDocument = DIDService.instance.getActiveDid().getLocalDIDDocument();
     if (!currentDidDocument)
       return false;
 
@@ -391,7 +387,7 @@ export class ProfileService extends GlobalService {
     let credential = this.credentials.find((item) => {
       return item.credential.getFragment() == key;
     });
-    let currentDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
+    let currentDidDocument = DIDService.instance.getActiveDid().getLocalDIDDocument();
     if (credential) {
       Logger.log("identity", "Changing visibility of " + key + " to visibility " + willingToBePubliclyVisible + " in profile service credentials");
       credential.isInLocalDocument = willingToBePubliclyVisible;
@@ -603,7 +599,7 @@ export class ProfileService extends GlobalService {
       async () => {
         let password = AuthService.instance.getCurrentUserPassword();
 
-        let currentDidDocument = this.didService
+        let currentDidDocument = DIDService.instance
           .getActiveDid()
           .getLocalDIDDocument();
 
@@ -635,7 +631,7 @@ export class ProfileService extends GlobalService {
     currentDidDocument: DIDDocument
   ): Promise<boolean> {
     // Delete locally
-    await this.didService
+    await DIDService.instance
       .getActiveDid()
       .deleteCredential(new DIDURL(entry.credential.getId()), true);
     // Delete from local DID document
@@ -664,12 +660,12 @@ export class ProfileService extends GlobalService {
    */
   private async checkIfLocalDIDDocumentNeedsToBeSynchronizedWithChain(): Promise<void> {
     Logger.log("identity", "Comparing local and remote DID documents for potential synchronization");
-    let localDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
+    let localDidDocument = DIDService.instance.getActiveDid().getLocalDIDDocument();
     if (this.publishedDIDDocument && localDidDocument && (this.publishedDIDDocument.getUpdated() > localDidDocument.getUpdated())) {
       Logger.log("identity", "The published document is more recent than the local one. SYNCHRONIZING");
 
       // Synchronize local document with on chain document - TODO: WHY?
-      await this.didService.getActiveDidStore().synchronize();
+      await DIDService.instance.getActiveDidStore().synchronize();
 
       Logger.log("identity", "DID document synchronization complete");
     }
@@ -786,7 +782,7 @@ export class ProfileService extends GlobalService {
         let password = AuthService.instance.getCurrentUserPassword();
 
         await this.updateDIDDocumentFromSelection(password);
-        await this.didSyncService.publishActiveDIDDIDDocument(password);
+        await DIDSyncService.instance.publishActiveDIDDIDDocument(password);
       },
       () => {
         // Cancelled
@@ -800,7 +796,7 @@ export class ProfileService extends GlobalService {
   *****************************************************/
   private async updateDIDDocumentFromSelection(password: string) {
     let changeCount = 0;
-    let currentDidDocument = this.didService.getActiveDid().getLocalDIDDocument();
+    let currentDidDocument = DIDService.instance.getActiveDid().getLocalDIDDocument();
 
     for (let credential of this.allCreds) {
       await this.updateDIDDocumentFromSelectionEntry(
@@ -982,7 +978,7 @@ export class ProfileService extends GlobalService {
     if (!this.avatarDataUrlSubject) {
       this.avatarDataUrlSubject = new BehaviorSubject<string>(null);
 
-      DIDEvents.instance.events.subscribe("did:avatarchanged", () => {
+      GlobalEvents.instance.subscribe("did:avatarchanged", () => {
         void this.refreshAvatarUrl();
       });
     }
@@ -1011,7 +1007,7 @@ export class ProfileService extends GlobalService {
       //console.log("DEBUG refreshAvatarUrl()", avatarCredential, avatarCredential.getSubject())
       if (avatarCredential.getSubject() && avatarCredential.getSubject().avatar && avatarCredential.getSubject().avatar.data) {
         //return "data:image/png;base64," + avatarCredential.getSubject().avatar.data;
-        let avatarCacheKey = this.didService.getActiveDid().getDIDString() + "-avatar";
+        let avatarCacheKey = DIDService.instance.getActiveDid().getDIDString() + "-avatar";
         let hiveAssetUrl: string = avatarCredential.getSubject().avatar.data;
 
         //console.log("DEBUG refreshAvatarUrl() hiveAssetUrl", avatarCacheKey, hiveAssetUrl)

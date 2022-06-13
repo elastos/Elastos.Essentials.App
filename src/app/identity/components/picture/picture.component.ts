@@ -1,14 +1,14 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { NavParams, ModalController } from '@ionic/angular';
-import { ProfileService } from '../../services/profile.service';
-import { LocalStorage } from '../../services/localstorage';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Logger } from 'src/app/logger';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { Events } from 'src/app/services/events.service';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { pictureMimeType } from 'src/app/helpers/picture.helpers';
+import { Logger } from 'src/app/logger';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { LocalStorage } from '../../services/localstorage';
+import { ProfileService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-picture',
@@ -38,8 +38,8 @@ export class PictureComponent implements OnInit {
     public theme: GlobalThemeService,
     public storage: LocalStorage,
     private native: GlobalNativeService,
-    public events: Events
-  ) {}
+    public events: GlobalEvents
+  ) { }
 
   ngOnInit() {
     if (PictureComponent.shared.dataUrlImageIn) {
@@ -97,7 +97,7 @@ export class PictureComponent implements OnInit {
           }
 
           PictureComponent.shared.rawBase64ImageOut = imageData;
-          PictureComponent.shared.dataUrlImageOut = 'data:'+mimeType+';base64,' + imageData;
+          PictureComponent.shared.dataUrlImageOut = 'data:' + mimeType + ';base64,' + imageData;
           this.dataUrlImage = PictureComponent.shared.dataUrlImageOut;
         }
       });

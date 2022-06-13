@@ -114,7 +114,6 @@ export const it = {
     'error-failed-to-publish': 'Failed to publish identity: ',
     'error-failed-to-sign': 'Failed to sign in: ',
   }
-}
 };
 
 

@@ -5,7 +5,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalCredentialTypesService } from "src/app/services/credential-types/global.credential.types.service";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { DIDDocument } from "../../model/diddocument.model";
@@ -48,7 +48,7 @@ export class CredentialsPage {
   private credentialdeletedSubscription: Subscription = null;
 
   constructor(
-    public events: Events,
+    public events: GlobalEvents,
     public route: ActivatedRoute,
     public zone: NgZone,
     private translate: TranslateService,
@@ -89,10 +89,10 @@ export class CredentialsPage {
     });
 
     this.credentialdeletedSubscription = this.events.subscribe("did:credentialdeleted", () => {
-        this.zone.run(() => {
-          this.init();
-        });
+      this.zone.run(() => {
+        this.init();
       });
+    });
   }
 
   unsubscribe(subscription: Subscription) {

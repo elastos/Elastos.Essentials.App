@@ -4,7 +4,7 @@ import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TxSuccessComponent } from 'src/app/wallet/components/tx-success/tx-success.component';
@@ -108,7 +108,7 @@ export class WalletSettingsPage implements OnInit {
     constructor(
         public route: ActivatedRoute,
         public router: Router,
-        public events: Events,
+        public events: GlobalEvents,
         public localStorage: LocalStorage,
         public popupProvider: PopupProvider,
         public walletManager: WalletService,

@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
@@ -69,7 +69,7 @@ export class CoinListPage implements OnInit, OnDestroy {
         public native: Native,
         public localStorage: LocalStorage,
         public modalCtrl: ModalController,
-        public events: Events,
+        public events: GlobalEvents,
         private translate: TranslateService,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,

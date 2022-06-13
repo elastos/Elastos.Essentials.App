@@ -4,7 +4,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { ElastosMainChainWalletNetworkOptions, WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
@@ -29,7 +29,7 @@ export class WalletAdvancedImportPage implements OnInit {
     private authService: AuthService,
     private native: Native,
     public translate: TranslateService,
-    public events: Events,
+    public events: GlobalEvents,
   ) {
     this.masterWalletId = walletService.createMasterWalletID();
   }

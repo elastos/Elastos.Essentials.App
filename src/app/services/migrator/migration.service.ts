@@ -3,6 +3,7 @@ import { sleep } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
 import { IdentityEntry } from "src/app/model/didsessions/identityentry";
+import { GlobalTranslationService } from "src/app/services/global.translation.service";
 import { GlobalNavService } from "../global.nav.service";
 import { GlobalStorageService } from "../global.storage.service";
 import { DIDSessionsStore } from './../stores/didsessions.store';
@@ -17,13 +18,6 @@ import { JSWalletListMigration } from "./migrations/jswalletlist.migration";
  * EACH MIGRATION MUST HAVE A DIFFERENT ID
  */
 const LATEST_MIGRATION_ID = 2;
-
-// IMPORTANT: KEEP THIS LIST ORDERED FROM OLD TO RECENT TO RUN MIGRATIONS IN THE RIGHT ORDER
-const MIGRATIONS: Migration[] = [
-  // Convert wallets list managed by the SPVSDK into a JS/App side management (reduce dependencies to the SPVSDK)
-  new JSWalletListMigration(1),
-  new BrowserFavoritesElastosNetworkSplitMigration(2)
-];
 
 type MigrationEvent = {
   event: "migrationstarting" | "migrationcompleted" | "migrationerror",
@@ -47,10 +41,24 @@ type StatsCallback = (totalMigrations: number) => void;
   providedIn: 'root'
 })
 export class MigrationService {
+  // IMPORTANT: KEEP THIS LIST ORDERED FROM OLD TO RECENT TO RUN MIGRATIONS IN THE RIGHT ORDER
+  // Keep this list here, not in global const, as it depends on the translation service to be ready
+  private MIGRATIONS: Migration[];
+
   private identityToMigrate: IdentityEntry; // DID that has to be migrated - set after a checkAndMigrate() process is started
   private onGoingMigrationResolver: (value: void | PromiseLike<void>) => void;
 
-  constructor(private storage: GlobalStorageService, private globalNavService: GlobalNavService) { }
+  constructor(
+    private storage: GlobalStorageService,
+    private globalNavService: GlobalNavService,
+    private translate: GlobalTranslationService, // for init
+  ) {
+    this.MIGRATIONS = [
+      // Convert wallets list managed by the SPVSDK into a JS/App side management (reduce dependencies to the SPVSDK)
+      new JSWalletListMigration(1),
+      new BrowserFavoritesElastosNetworkSplitMigration(2)
+    ];
+  }
 
   /**
    * Checks if some migrations have to be done for this DID. If so, this method resolves only
@@ -104,7 +112,7 @@ export class MigrationService {
    * Tells if some migrations are due for a given DID user/context.
    */
   public async migrationsRequiredForDID(did: string): Promise<boolean> {
-    if (MIGRATIONS.length == 0)
+    if (this.MIGRATIONS.length == 0)
       return false;
 
     // Old users (before migrations where introduced) don't have lastCheckedMigrationId so we consider they are
@@ -127,7 +135,7 @@ export class MigrationService {
   public async runMigrations(statsCallback: StatsCallback, migrationCallback: MigrationCallback): Promise<boolean> {
     let lastCheckedMigrationId = await this.storage.getSetting(this.identityToMigrate.didString, "migrations", "lastCheckedMigrationId", 0);
 
-    let migrationsToRun = MIGRATIONS.filter(migration => migration.uniquelyIncrementedId > lastCheckedMigrationId);
+    let migrationsToRun = this.MIGRATIONS.filter(migration => migration.uniquelyIncrementedId > lastCheckedMigrationId);
     statsCallback(migrationsToRun.length);
 
     // Simulate the target DID as the "signed in" one because many APIs relied on this field
@@ -177,7 +185,7 @@ export class MigrationService {
     await this.saveLastCheckedMigrationId(identityEntry.didString, 0);
 
     // Let migrations reset their own data
-    for (let migration of MIGRATIONS) {
+    for (let migration of this.MIGRATIONS) {
       await migration.debugClearMigrationState(identityEntry);
     }
 

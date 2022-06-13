@@ -7,7 +7,7 @@ import { ContactsInitService } from 'src/app/contacts/services/init.service';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -69,7 +69,7 @@ export class AppmanagerService {
         private modalController: ModalController,
         public menuCtrl: MenuController,
         private translate: TranslateService,
-        private events: Events,
+        private events: GlobalEvents,
         private didService: DIDManagerService,
         private native: GlobalNativeService,
         private storage: GlobalStorageService,

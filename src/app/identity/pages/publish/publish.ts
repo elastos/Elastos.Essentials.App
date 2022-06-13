@@ -4,7 +4,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
@@ -28,7 +28,7 @@ export class PublishPage {
     public updatingVisibility = false; // Lock toggles while updating the document for a short while to avoid parrallel updates
 
     constructor(
-        public events: Events,
+        public events: GlobalEvents,
         public route: ActivatedRoute,
         public zone: NgZone,
         private translate: TranslateService,

@@ -7,14 +7,13 @@ import moment from "moment";
 import Queue from "promise-queue";
 import { firstValueFrom } from "rxjs";
 import { lazyJsonLdImport } from "src/app/helpers/import.helper";
-import { DIDDocument } from "src/app/identity/model/diddocument.model";
+import type { DIDDocument } from "src/app/identity/model/diddocument.model";
 import { DIDURL } from "src/app/identity/model/didurl.model";
 import { DIDDocumentsService } from "src/app/identity/services/diddocuments.service";
 import { Logger } from "src/app/logger";
-import { JSONObject } from "src/app/model/json";
-import { Events } from "src/app/services/events.service";
+import type { JSONObject } from "src/app/model/json";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { TimeBasedPersistentCache } from "src/app/wallet/model/timebasedpersistentcache";
-import { DIDService } from "../../identity/services/did.service";
 import { LocalStorage } from "../../identity/services/localstorage";
 import { Native } from "../../identity/services/native";
 
@@ -57,11 +56,9 @@ export class GlobalCredentialTypesService {
   constructor(
     public zone: NgZone,
     public toastCtrl: ToastController,
-    public events: Events,
+    public events: GlobalEvents,
     public localStorage: LocalStorage,
     public native: Native,
-    private didService: DIDService,
-    private didDocumentsService: DIDDocumentsService,
     private http: HttpClient
   ) {
   }
@@ -226,7 +223,7 @@ export class GlobalCredentialTypesService {
           return null;
         }
 
-        let docStatus = await this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(publisher);
+        let docStatus = await DIDDocumentsService.instance.fetchOrAwaitDIDDocumentWithStatus(publisher);
         if (docStatus.document) {
           let serviceId = `${publisher}#${shortType}`;
           let contextPayload = this.getContextPayloadFromDIDDocument(docStatus.document, serviceId);

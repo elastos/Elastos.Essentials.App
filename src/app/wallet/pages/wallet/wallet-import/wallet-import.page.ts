@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
 import { ElastosMainChainWalletNetworkOptions, WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../services/auth.service';
@@ -52,7 +52,7 @@ export class WalletImportPage implements OnInit {
         public walletService: WalletService,
         public native: Native,
         public localStorage: LocalStorage,
-        public events: Events,
+        public events: GlobalEvents,
         public popupProvider: PopupProvider,
         public zone: NgZone,
         private authService: AuthService,

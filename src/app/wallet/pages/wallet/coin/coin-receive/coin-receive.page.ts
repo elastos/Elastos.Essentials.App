@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
@@ -33,7 +33,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     constructor(
         public route: ActivatedRoute,
         public zone: NgZone,
-        public events: Events,
+        public events: GlobalEvents,
         public walletManager: WalletService,
         public native: Native,
         private coinTransferService: CoinTransferService,

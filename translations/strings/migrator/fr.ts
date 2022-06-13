@@ -5,8 +5,9 @@ export const fr = {
         'migrator-ongoing': 'Opération en cours: ',
         'migrator-success': 'Terminé, veuillez toucher pour continuer!',
         'migrator-fail': 'Malheureusement la mise à jour des données a échoué. Veuillez contacter l\'équipe de développement',
-        'migrator-start': 'Démarrer'
+        'migrator-start': 'Démarrer',
+
+        'migration-wallet-list-storage': "Conversion de la liste des portefeuilles",
+        'migration-elastos-browser-favorites': "Favoris du navigateur pour les chaînes Elastos"
     }
 };
-
-

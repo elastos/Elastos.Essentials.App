@@ -1,4 +1,5 @@
 import { IdentityEntry } from "src/app/model/didsessions/identityentry";
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { Migration } from "../migration";
 
 /**
@@ -9,7 +10,7 @@ import { Migration } from "../migration";
  */
 export class BrowserFavoritesElastosNetworkSplitMigration extends Migration {
   constructor(uniquelyIncrementedId: number) {
-    super(uniquelyIncrementedId, "Browser favorites for elastos network split conversion");
+    super(uniquelyIncrementedId, GlobalTranslationService.instance.translateInstant('migrator.migration-elastos-browser-favorites'));
   }
 
   public async migrate(identityEntry: IdentityEntry): Promise<void> {

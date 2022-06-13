@@ -3,11 +3,11 @@ import { Subject } from 'rxjs';
 import { GlobalRedPacketServiceAddresses } from 'src/app/config/globalconfig';
 import { lazyWeb3Import } from 'src/app/helpers/import.helper';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
-import { TranslationService } from 'src/app/identity/services/translation.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { BridgeService } from 'src/app/wallet/services/evm/bridge.service';
 import { EarnService } from 'src/app/wallet/services/evm/earn.service';
@@ -367,7 +367,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         if (transaction.hide) return null;
 
         const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
-        const datetime = timestamp === 0 ? TranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+        const datetime = timestamp === 0 ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
         const direction = await this.getERC20TransactionDirection(transaction.to);
         transaction.Direction = direction;
@@ -404,10 +404,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = TransactionStatus.CONFIRMED;
-            transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
+            transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
         } else {
             transactionInfo.status = TransactionStatus.PENDING;
-            transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
+            transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
         }
 
         // MESSY again - No "Direction" field in ETH transactions (contrary to other chains). Calling a private method to determine this.

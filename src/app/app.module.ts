@@ -1,4 +1,5 @@
-import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, Injectable, NgModule, Provider } from '@angular/core';
+import { LOCATION_INITIALIZED } from '@angular/common';
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, Injectable, Injector, NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy } from '@angular/router';
@@ -11,7 +12,7 @@ import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 //import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
 import { IonicStorageModule } from '@ionic/storage';
-import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
 import { Observable } from 'rxjs';
@@ -166,6 +167,27 @@ export function TranslateLoaderFactory() {
   }
 }*/
 
+/**
+ * Initializer used as provider to make sure the translation service is fully loaded, and translations loaded,
+ * before trying to run any code that may use translations.
+ */
+export function appInitializerFactory(translate: TranslateService, injector: Injector) {
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+  return () => new Promise<any>(async (resolve: any) => {
+    const locationInitialized = injector.get(LOCATION_INITIALIZED, Promise.resolve(null));
+    await locationInitialized;
+    const langToSet = 'en-GB'
+    translate.setDefaultLang('en-US');
+    translate.use(langToSet).subscribe(() => {
+      Logger.log('boot', `Successfully initialized '${langToSet}' language.'`);
+    }, err => {
+      Logger.error('boot', `Problem with '${langToSet}' language initialization.'`);
+    }, () => {
+      resolve(null);
+    });
+  });
+}
+
 let providers: Provider[] = [
   AppVersion,
   Keyboard,
@@ -175,7 +197,12 @@ let providers: Provider[] = [
   FirebaseX,
   { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
-  //{ provide: TranslateModule, deps: [TranslationsLoader.loadAllModulesAndMerge("")]}
+  {
+    provide: APP_INITIALIZER,
+    useFactory: appInitializerFactory,
+    deps: [TranslateService, Injector],
+    multi: true
+  }
 ]
 
 // Add sentry to prod build only

@@ -8,14 +8,14 @@ import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, Ti
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import {
-    LauncherNotification,
-    LauncherNotificationType, NotificationManagerService
+  LauncherNotification,
+  LauncherNotificationType, NotificationManagerService
 } from '../../services/notificationmanager.service';
 import { TipsService } from '../../services/tips.service';
 
@@ -42,7 +42,7 @@ export class NotificationsPage implements OnInit {
     public theme: GlobalThemeService,
     public translate: TranslateService,
     private tipsService: TipsService,
-    private events: Events,
+    private events: GlobalEvents,
     // In-app Services
     private hiveManagerInitService: HiveManagerInitService,
     private dposVotingInitService: DPoSVotingInitService,

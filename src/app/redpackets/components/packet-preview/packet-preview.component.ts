@@ -2,10 +2,10 @@ import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, 
 import { PopoverController } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
-import { TranslationService } from 'src/app/identity/services/translation.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { GrabStatus } from '../../model/grab.model';
@@ -69,14 +69,14 @@ export class PacketPreviewComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         if (this.grabbedPacketsSubscription)
-          this.grabbedPacketsSubscription.unsubscribe();
+            this.grabbedPacketsSubscription.unsubscribe();
     }
 
     private preparePacket(packet: Packet) {
         if (packet) {
             this.updatePacketStatus();
             this.didService.fetchUserInformation(packet.creatorDID).subscribe(userInfo => {
-                this.creator = userInfo && userInfo.name ? userInfo.name : TranslationService.instance.translateInstant("redpackets.anonymous");
+                this.creator = userInfo && userInfo.name ? userInfo.name : GlobalTranslationService.instance.translateInstant("redpackets.anonymous");
             });
         }
     }

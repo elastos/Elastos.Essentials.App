@@ -6,7 +6,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
@@ -23,7 +23,7 @@ export class ScanPage implements OnInit {
   constructor(
     private qrScanner: QRScanner,
     private uxService: UXService,
-    private events: Events,
+    private events: GlobalEvents,
     private identityService: IdentityService,
     private zone: NgZone,
     private globalNav: GlobalNavService,

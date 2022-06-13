@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
@@ -32,7 +32,7 @@ export class CoinAddressPage {
         public native: Native,
         private globalNav: GlobalNavService,
         public router: Router,
-        public events: Events,
+        public events: GlobalEvents,
         public theme: GlobalThemeService,
         private translate: TranslateService,
     ) {

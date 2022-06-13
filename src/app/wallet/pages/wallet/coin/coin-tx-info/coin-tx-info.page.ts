@@ -6,8 +6,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
@@ -89,7 +89,7 @@ export class CoinTxInfoPage implements OnInit {
     public txDetails: TransactionDetail[] = [];
 
     constructor(
-        public events: Events,
+        public events: GlobalEvents,
         public router: Router,
         public walletManager: WalletService,
         public native: Native,

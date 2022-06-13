@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { defaultContacts } from '../../config/config';
@@ -26,7 +26,7 @@ import { UxService } from '../../services/ux.service';
 })
 export class FriendsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
-  @ViewChild('slider', {static: false}) slider: IonSlides;
+  @ViewChild('slider', { static: false }) slider: IonSlides;
 
   public favActive = false;
   private subscription: Subscription = null;
@@ -49,7 +49,7 @@ export class FriendsPage implements OnInit {
     public appService: AppService,
     public uxService: UxService,
     private zone: NgZone,
-    private events: Events,
+    private events: GlobalEvents,
     private globalNav: GlobalNavService
   ) {
   }
@@ -68,7 +68,7 @@ export class FriendsPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('common.contacts'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "add",
-      iconPath:  BuiltInIcon.ADD
+      iconPath: BuiltInIcon.ADD
     });
 
     this.titleBarIconClickedListener = (clickedIcon) => {
@@ -103,7 +103,7 @@ export class FriendsPage implements OnInit {
   }
 
   async getActiveSlide() {
-    if(this.friendsService.contacts.length) {
+    if (this.friendsService.contacts.length) {
       const index = await this.slider.getActiveIndex();
       this.friendsService.activeSlide = this.friendsService.contacts[index] || this.friendsService.contacts[this.friendsService.contacts.length - 1];
       Logger.log('contacts', 'friends.getActiveSlide - ', this.friendsService.activeSlide);

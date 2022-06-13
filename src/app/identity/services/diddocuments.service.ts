@@ -1,10 +1,9 @@
 import { Injectable, NgZone } from "@angular/core";
 import { ToastController } from "@ionic/angular";
-import { TranslateService } from "@ngx-translate/core";
 import { BehaviorSubject } from "rxjs";
 import { DIDURL } from "src/app/identity/model/didurl.model";
 import { Logger } from "src/app/logger";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
 import { DIDDocument } from "../model/diddocument.model";
 import { DIDService } from "./did.service";
@@ -67,14 +66,11 @@ export class DIDDocumentsService {
 
   constructor(
     public zone: NgZone,
-    private translate: TranslateService,
     public toastCtrl: ToastController,
-    public events: Events,
+    public events: GlobalEvents,
     public popupProvider: PopupProvider,
     public localStorage: LocalStorage,
-    private didService: DIDService,
-    public native: Native,
-    private globalHiveCacheService: GlobalHiveCacheService
+    public native: Native
   ) {
     DIDDocumentsService.instance = this;
   }
@@ -83,7 +79,7 @@ export class DIDDocumentsService {
    * Fetches the DID Document and notifies listeners when this is ready
    */
   public async fetchActiveUserOnlineDIDDocument(forceRemote = false): Promise<DIDDocument> {
-    let didString = this.didService.getActiveDid().getDIDString();
+    let didString = DIDService.instance.getActiveDid().getDIDString();
     let currentOnChainDIDDocument = await this.resolveDIDWithoutDIDStore(
       didString,
       forceRemote
@@ -198,7 +194,7 @@ export class DIDDocumentsService {
     if (!hiveIconUrl)
       return null;
 
-    return this.globalHiveCacheService.getAssetByUrl(hiveIconUrl, hiveIconUrl);
+    return GlobalHiveCacheService.instance.getAssetByUrl(hiveIconUrl, hiveIconUrl);
   }
 
   /**

@@ -6,7 +6,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { Logger } from "src/app/logger";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
@@ -14,10 +14,8 @@ import { DIDDocument } from "../../model/diddocument.model";
 import { Profile } from "../../model/profile.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { DIDService } from "../../services/did.service";
-import { DIDSyncService } from "../../services/didsync.service";
 import { Native } from "../../services/native";
 import { ProfileService } from "../../services/profile.service";
-import { UXService } from "../../services/ux.service";
 
 
 @Component({
@@ -51,14 +49,12 @@ export class ProfilePage {
 
   constructor(
     private http: HttpClient,
-    public events: Events,
+    public events: GlobalEvents,
     public route: ActivatedRoute,
     public zone: NgZone,
     private translate: TranslateService,
     private didService: DIDService,
-    private didSyncService: DIDSyncService,
     private modalCtrl: ModalController,
-    private uxService: UXService,
     public native: Native,
     public theme: GlobalThemeService,
     public profileService: ProfileService,

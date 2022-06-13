@@ -5,8 +5,8 @@ import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from 'src/app/he
 import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
 import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
+import { GlobalTranslationService } from '../../services/global.translation.service';
 import { BasicCredentialsService } from '../services/basiccredentials.service';
-import { TranslationService } from '../services/translation.service';
 
 export class VerifiableCredential {
     private title: string = null;
@@ -36,7 +36,7 @@ export class VerifiableCredential {
             // Fallback try to guess a name, or use a default display
             let fragment = this.pluginVerifiableCredential.getFragment();
             let translationKey = "identity.credential-info-type-" + fragment;
-            let translated = TranslationService.instance.translateInstant(translationKey);
+            let translated = GlobalTranslationService.instance.translateInstant(translationKey);
 
             if (!translated || translated == "" || translated == translationKey)
                 this.title = fragment;

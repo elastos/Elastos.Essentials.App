@@ -17,19 +17,15 @@ import { GlobalCredentialToolboxService } from 'src/app/services/credential-tool
 import { GlobalCredentialTypesService } from 'src/app/services/credential-types/global.credential.types.service';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
 import { DID } from '../../../model/did.model';
 import { RequestCredentialsIntent } from '../../../model/identity.intents';
 import { VerifiableCredential } from '../../../model/verifiablecredential.model';
 import { AuthService } from '../../../services/auth.service';
-import { BasicCredentialsService } from '../../../services/basiccredentials.service';
 import { DIDService } from '../../../services/did.service';
-import { DIDSyncService } from '../../../services/didsync.service';
 import { ExpirationService } from '../../../services/expiration.service';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
-import { ProfileService } from '../../../services/profile.service';
 import { UXService } from '../../../services/ux.service';
 import { V1Claim } from './model/v1claim';
 
@@ -134,18 +130,13 @@ export class RequestCredentialsPage {
     private sanitizer: DomSanitizer,
     public appServices: UXService,
     public didService: DIDService,
-    private uxService: UXService,
     private authService: AuthService,
-    private basicCredentialService: BasicCredentialsService,
     private translate: TranslateService,
-    private profileService: ProfileService,
     private expirationService: ExpirationService,
-    private didSyncService: DIDSyncService,
     public theme: GlobalThemeService,
     private popupService: PopupProvider,
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
-    private globalIntentService: GlobalIntentService,
     private didDocumentsService: DIDDocumentsService,
     private credentialTypesService: GlobalCredentialTypesService,
     private intentService: IntentReceiverService,

@@ -6,14 +6,12 @@ import { runDelayed } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { NetworkException } from "src/app/model/exceptions/network.exception";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { DIDPublicationStatus, GlobalPublicationService } from "src/app/services/global.publication.service";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { DIDHelper } from "../helpers/did.helper";
 import { DIDDocument } from "../model/diddocument.model";
-import {
-  DIDDocumentPublishEvent
-} from "../model/eventtypes.model";
+import { DIDDocumentPublishEvent } from "../model/eventtypes.model";
 import { DIDNotUpToDateException } from "../model/exceptions/didnotuptodateexception";
 import { DIDService } from "./did.service";
 import { DIDDocumentsService } from "./diddocuments.service";
@@ -41,12 +39,10 @@ export class DIDSyncService implements GlobalService {
     public zone: NgZone,
     private translate: TranslateService,
     public toastCtrl: ToastController,
-    public events: Events,
+    public events: GlobalEvents,
     public popupProvider: PopupProvider,
     public localStorage: LocalStorage,
-    private didService: DIDService,
     public native: Native,
-    private didDocumentsService: DIDDocumentsService,
     private globalPublicationService: GlobalPublicationService
   ) {
     DIDSyncService.instance = this;
@@ -59,11 +55,11 @@ export class DIDSyncService implements GlobalService {
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // Wait for the main DID to be loaded before doing anything
-    this.activatedDidSub = this.didService.activatedDid.subscribe(activeDid => {
+    this.activatedDidSub = DIDService.instance.activatedDid.subscribe(activeDid => {
       if (activeDid) {
         // Fetch online DID document for this user.
         // Give some time to release the Essentials startup from too many operations.
-        runDelayed(() => this.didDocumentsService.fetchActiveUserOnlineDIDDocument(), 3000);
+        runDelayed(() => DIDDocumentsService.instance.fetchActiveUserOnlineDIDDocument(), 3000);
       }
     });
 
@@ -96,16 +92,16 @@ export class DIDSyncService implements GlobalService {
 
     this.globalPublicationService.publicationStatus.subscribe((status) => {
       Logger.log("identity", "DID publication status update for DID", status);
-      if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED && this.didService.getActiveDid() && status.didString === this.didService.getActiveDid().getDIDString()) {
+      if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED && DIDService.instance.getActiveDid() && status.didString === DIDService.instance.getActiveDid().getDIDString()) {
         Logger.log("identity", "DID publication complete, fetching the latest document online to refresh the UI");
         // DID published ? Fetch the latest DID Document to let the UI refresh its status (published or not, modified, etc)
-        void this.didDocumentsService.fetchActiveUserOnlineDIDDocument();
+        void DIDDocumentsService.instance.fetchActiveUserOnlineDIDDocument();
       }
     });
   }
 
   public async fetchActiveUserOnlineDIDDocument(forceRemote = false) {
-    let currentOnChainDIDDocument = await this.didDocumentsService.fetchActiveUserOnlineDIDDocument(forceRemote);
+    let currentOnChainDIDDocument = await DIDDocumentsService.instance.fetchActiveUserOnlineDIDDocument(forceRemote);
     this.checkIfDIDDocumentNeedsToBePublished(currentOnChainDIDDocument);
   }
 
@@ -116,10 +112,9 @@ export class DIDSyncService implements GlobalService {
     try {
       await this.native.showLoading(this.translate.instant('common.please-wait'));
       await this.globalPublicationService.publishDIDFromStore(
-        this.didService
-          .getActiveDidStore().getId(),
+        DIDService.instance.getActiveDidStore().getId(),
         password,
-        this.didService.getActiveDid().getDIDString(),
+        DIDService.instance.getActiveDid().getDIDString(),
         true,
         parentIntentId
       );
@@ -149,7 +144,7 @@ export class DIDSyncService implements GlobalService {
 
   private async publishDIDTransaction(payload: string, memo: string) {
     // Open the "fast did publishing" screen.
-    await this.globalPublicationService.publishDIDFromRequest(this.didService.getActiveDid().getDIDString(), JSON.parse(payload), memo, true, IntentReceiverService.instance.getOnGoingIntentId());
+    await this.globalPublicationService.publishDIDFromRequest(DIDService.instance.getActiveDid().getDIDString(), JSON.parse(payload), memo, true, IntentReceiverService.instance.getOnGoingIntentId());
   }
 
   private onDIDDocumentPublishResponse(result: DIDDocumentPublishEvent) {

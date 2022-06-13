@@ -1,6 +1,6 @@
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
@@ -109,7 +109,7 @@ export class SPVService {
 
     private masterWalletIdMapping: JSSPVMasterWalletIDPair[] = [];
 
-    constructor(private native: Native, private event: Events, private popupProvider: PopupProvider) {
+    constructor(private native: Native, private event: GlobalEvents, private popupProvider: PopupProvider) {
         SPVService.instance = this;
     }
 

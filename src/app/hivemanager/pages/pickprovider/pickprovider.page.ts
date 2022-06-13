@@ -8,7 +8,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/
 import { ProfileService } from 'src/app/identity/services/profile.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -64,7 +64,7 @@ export class PickProviderPage implements OnInit {
     private nav: GlobalNavService,
     private popup: PopupService,
     private prefs: GlobalPreferencesService,
-    private events: Events,
+    private events: GlobalEvents,
     private native: GlobalNativeService,
     public profileService: ProfileService,
     private globalNetworksService: GlobalNetworksService,

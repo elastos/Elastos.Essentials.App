@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDService } from '../../services/did.service';
 import { Native } from '../../services/native';
@@ -17,7 +17,7 @@ export class AdvancedSettingsPage implements OnInit {
 
   constructor(
     private didService: DIDService,
-    private events: Events,
+    private events: GlobalEvents,
     public translate: TranslateService,
     private native: Native,
     public theme: GlobalThemeService
@@ -35,16 +35,16 @@ export class AdvancedSettingsPage implements OnInit {
     await this.native.showLoading();
 
     try {
-        await this.didService.activeDidStore.synchronize();
-        await this.native.hideLoading();
-        this.events.publish('did:didchanged');
-        this.native.toast_trans('identity.did-sync-success');
-        await this.native.go("/identity/myprofile/home");
+      await this.didService.activeDidStore.synchronize();
+      await this.native.hideLoading();
+      this.events.publish('did:didchanged');
+      this.native.toast_trans('identity.did-sync-success');
+      await this.native.go("/identity/myprofile/home");
     }
     catch (err) {
-        Logger.error('identity', ' synchronize:', err)
-        await this.native.hideLoading();
-        this.native.toast_trans('identity.did-sync-error');
+      Logger.error('identity', ' synchronize:', err)
+      await this.native.hideLoading();
+      this.native.toast_trans('identity.did-sync-error');
     }
   }
 

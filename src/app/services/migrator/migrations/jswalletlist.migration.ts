@@ -1,10 +1,11 @@
 import { IdentityEntry } from "src/app/model/didsessions/identityentry";
+import { GlobalTranslationService } from "../../global.translation.service";
 import { Migration } from "../migration";
 
 // 2022-02-17
 export class JSWalletListMigration extends Migration {
   constructor(uniquelyIncrementedId: number) {
-    super(uniquelyIncrementedId, "Wallet list storage conversion");
+    super(uniquelyIncrementedId, GlobalTranslationService.instance.translateInstant('migrator.migration-wallet-list-storage'));
   }
 
   public async migrate(identityEntry: IdentityEntry): Promise<void> {

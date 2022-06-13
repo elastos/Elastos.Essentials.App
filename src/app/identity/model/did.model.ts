@@ -1,10 +1,9 @@
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
 import { DIDHelper } from '../helpers/did.helper';
 import { BasicCredentialsService } from '../services/basiccredentials.service';
-import { DIDEvents } from '../services/events';
 import { AvatarCredentialSubject } from './avatarcredentialsubject';
 import { DIDDocument } from './diddocument.model';
 import { DIDFeatures } from './didfeatures';
@@ -18,7 +17,7 @@ export class DID {
 
     private didDocument: DIDDocument;
 
-    constructor(public pluginDid: DIDPlugin.DID, private events: Events, private didSessions: GlobalDIDSessionsService) {
+    constructor(public pluginDid: DIDPlugin.DID) {
     }
 
     public async loadAll() {
@@ -105,9 +104,9 @@ export class DID {
 
             if (notifyChange) {
                 if (existingCredential)
-                    this.events.publish('did:credentialmodified', vc.pluginVerifiableCredential.getId());
+                    GlobalEvents.instance.publish('did:credentialmodified', vc.pluginVerifiableCredential.getId());
                 else
-                    this.events.publish('did:credentialadded', vc.pluginVerifiableCredential.getId());
+                    GlobalEvents.instance.publish('did:credentialadded', vc.pluginVerifiableCredential.getId());
             }
 
             resolve(credential);
@@ -125,7 +124,7 @@ export class DID {
 
         if (notifyChange) {
             // Notify listeners that a credential has been added
-            this.events.publish('did:credentialadded', vc.pluginVerifiableCredential.getId());
+            GlobalEvents.instance.publish('did:credentialadded', vc.pluginVerifiableCredential.getId());
         }
     }
 
@@ -149,9 +148,9 @@ export class DID {
 
         if (notifyChange) {
             if (existingCredential)
-                this.events.publish('did:credentialmodified', vc.pluginVerifiableCredential.getId());
+                GlobalEvents.instance.publish('did:credentialmodified', vc.pluginVerifiableCredential.getId());
             else
-                this.events.publish('did:credentialadded', vc.pluginVerifiableCredential.getId());
+                GlobalEvents.instance.publish('did:credentialadded', vc.pluginVerifiableCredential.getId());
         }
     }
 
@@ -262,12 +261,12 @@ export class DID {
                     // Special handler for the special "name" field
                     if (entry.key == "name") {
                         // Save this new name in the did session plugin.
-                        let signedInEntry = await this.didSessions.getSignedInIdentity();
+                        let signedInEntry = await GlobalDIDSessionsService.instance.getSignedInIdentity();
                         signedInEntry.name = entry.value;
-                        await this.didSessions.addIdentityEntry(signedInEntry);
+                        await GlobalDIDSessionsService.instance.addIdentityEntry(signedInEntry);
 
                         // Let listeners know
-                        DIDEvents.instance.events.publish("did:namechanged");
+                        GlobalEvents.instance.publish("did:namechanged");
                     }
 
                     // Special handler for the special "avatar" field
@@ -294,15 +293,15 @@ export class DID {
 
                         if (base64ImageData) {
                             // Save this new avatar in the did session plugin.
-                            let signedInEntry = await this.didSessions.getSignedInIdentity();
+                            let signedInEntry = await GlobalDIDSessionsService.instance.getSignedInIdentity();
                             signedInEntry.avatar = {
                                 contentType: avatar["content-type"],
                                 base64ImageData: base64ImageData
                             }
-                            await this.didSessions.addIdentityEntry(signedInEntry);
+                            await GlobalDIDSessionsService.instance.addIdentityEntry(signedInEntry);
 
                             // Let listeners know
-                            DIDEvents.instance.events.publish("did:avatarchanged");
+                            GlobalEvents.instance.publish("did:avatarchanged");
                         }
                         else {
                             Logger.warn("identity", "Avatar type " + avatar.type + " is unknown. Not applying it to DID session");
@@ -315,7 +314,7 @@ export class DID {
                     return;
                 }
 
-                this.events.publish("credentials:modified");
+                GlobalEvents.instance.publish("credentials:modified");
             }
 
             Logger.log('Identity', "Credentials after write profile:", this.credentials);
@@ -400,7 +399,7 @@ export class DID {
 
         if (notifyChange) {
             // Notify listeners that a credential has been deleted
-            this.events.publish('did:credentialdeleted', credentialDidUrl.toString());
+            GlobalEvents.instance.publish('did:credentialdeleted', credentialDidUrl.toString());
         }
 
         return true;

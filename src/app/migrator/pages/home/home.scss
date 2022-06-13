@@ -1,5 +1,10 @@
 @import "../../root.scss";
 
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
 p {
     margin-left: 20px;
 }
@@ -8,4 +13,9 @@ ion-button {
     display: block;
     margin: 20px auto;
     width: 90%;
+}
+
+ion-spinner {
+    align-self: center;
+    margin: 10px;
 }

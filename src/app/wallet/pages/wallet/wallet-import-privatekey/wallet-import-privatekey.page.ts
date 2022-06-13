@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { PrivateKeyType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
@@ -36,7 +36,7 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
     private authService: AuthService,
     private native: Native,
     public translate: TranslateService,
-    public events: Events,
+    public events: GlobalEvents,
     public zone: NgZone,
     private intentService: IntentService,
     public element: ElementRef

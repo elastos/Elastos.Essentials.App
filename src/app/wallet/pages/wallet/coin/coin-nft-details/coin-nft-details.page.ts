@@ -27,7 +27,7 @@ import moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
@@ -58,7 +58,7 @@ export class CoinNFTDetailsPage implements OnInit {
         public walletManager: WalletService,
         public translate: TranslateService,
         public native: Native,
-        public events: Events,
+        public events: GlobalEvents,
         public popupProvider: PopupProvider,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,

@@ -6,7 +6,7 @@ import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { Contact as ContactNotifierContact, ContactNotifierService } from 'src/app/services/contactnotifier.service';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
@@ -79,7 +79,7 @@ export class FriendsService extends GlobalService {
     public translate: TranslateService,
     private native: NativeService,
     private storage: GlobalStorageService,
-    private events: Events,
+    private events: GlobalEvents,
     private didService: DidService,
     private contactNotifier: ContactNotifierService,
     private globalIntentService: GlobalIntentService,

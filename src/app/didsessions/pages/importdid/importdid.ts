@@ -10,7 +10,7 @@ import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDMnemonicHelper } from '../../helpers/didmnemonic.helper';
@@ -63,7 +63,7 @@ export class ImportDIDPage {
     private translate: TranslateService,
     private popup: PopupProvider,
     public theme: GlobalThemeService,
-    private events: Events,
+    private events: GlobalEvents,
     public element: ElementRef,
     private mnemonicKeypadService: GlobalMnemonicKeypadService
   ) {

@@ -3,7 +3,7 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class WarningComponent implements OnInit {
     public theme: GlobalThemeService,
     private navParams: NavParams,
     private popoverCtrl: PopoverController,
-    private events: Events,
+    private events: GlobalEvents,
     public translate: TranslateService
   ) { }
 

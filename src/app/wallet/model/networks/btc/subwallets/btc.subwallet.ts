@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
-import { TranslationService } from 'src/app/identity/services/translation.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../config/Config';
 import { BTCTransaction, BTCUTXO, BTCUtxoForLedger } from '../../../btc.types';
@@ -89,7 +89,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
     public async getTransactionInfo(transaction: BTCTransaction): Promise<TransactionInfo> {
         const timestamp = transaction.blockTime * 1000; // Convert seconds to use milliseconds
-        const datetime = timestamp === 0 ? TranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+        const datetime = timestamp === 0 ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
         const direction = transaction.direction;
 
@@ -118,10 +118,10 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
         if (transaction.confirmations > 0) {
             transactionInfo.status = TransactionStatus.CONFIRMED;
-            transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
+            transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
         } else {
             transactionInfo.status = TransactionStatus.PENDING;
-            transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
+            transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
         }
 
         if (direction === TransactionDirection.RECEIVED) {

@@ -4,8 +4,8 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
@@ -112,7 +112,7 @@ export class NodesService {
         public voteService: VoteService,
         private walletManager: WalletService,
         public popupProvider: GlobalPopupService,
-        public events: Events,
+        public events: GlobalEvents,
         public zone: NgZone,
     ) {
 

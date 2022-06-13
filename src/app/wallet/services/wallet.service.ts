@@ -28,8 +28,8 @@ import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { AESEncrypt } from '../../helpers/crypto/aes';
@@ -114,7 +114,7 @@ export class WalletService {
     public subwalletTransactionStatus = new SubwalletTransactionStatus();
 
     constructor(
-        public events: Events,
+        public events: GlobalEvents,
         public native: Native,
         public zone: NgZone,
         public modalCtrl: ModalController,

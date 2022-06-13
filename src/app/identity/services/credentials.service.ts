@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from "@angular/core";
 import { ToastController } from "@ionic/angular";
-import { Events } from "src/app/services/events.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { DIDURL } from "../model/didurl.model";
 import { VerifiableCredential } from "../model/verifiablecredential.model";
 import { AuthService } from "./auth.service";
@@ -15,7 +15,7 @@ export class CredentialsService {
   constructor(
     public zone: NgZone,
     public toastCtrl: ToastController,
-    public events: Events,
+    public events: GlobalEvents,
     public localStorage: LocalStorage,
     public native: Native,
     private didService: DIDService

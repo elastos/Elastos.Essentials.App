@@ -2,7 +2,7 @@ import { Injectable, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { DIDService } from './did.service';
 
@@ -30,7 +30,7 @@ export class UXService {
 
     constructor(
         public translate: TranslateService,
-        public events: Events,
+        public events: GlobalEvents,
         private didService: DIDService,
         private globalIntentService: GlobalIntentService
     ) {

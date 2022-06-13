@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Contact } from '../../models/contact.model';
 import { DidService } from '../../services/did.service';
@@ -28,7 +28,7 @@ export class OptionsComponent implements OnInit {
     private navParams: NavParams,
     public translate: TranslateService,
     public theme: GlobalThemeService,
-    public events: Events,
+    public events: GlobalEvents,
   ) { }
 
   ngOnInit() {

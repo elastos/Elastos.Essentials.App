@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, RequestCredentialsIntent, SetHiveProviderIdentityIntent } from '../model/identity.intents';
@@ -26,7 +26,7 @@ export class IntentReceiverService {
 
     constructor(
         public translate: TranslateService,
-        public events: Events,
+        public events: GlobalEvents,
         private native: Native,
         private popup: PopupProvider,
         private appIDService: AppIDService, // Keep it for init

@@ -29,7 +29,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -88,7 +88,7 @@ export class LedgerConnectPage implements OnInit {
     public ledgerNanoAppname = '';
 
     constructor(
-        public events: Events,
+        public events: GlobalEvents,
         public native: Native,
         public router: Router,
         private authService: AuthService,

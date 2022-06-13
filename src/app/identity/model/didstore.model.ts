@@ -1,12 +1,10 @@
-import { DID } from './did.model';
-import { Config } from '../services/config';
-import { DIDDocument } from './diddocument.model';
-import { DIDHelper } from '../helpers/did.helper';
-import { LocalStorage } from '../services/localstorage';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
+import { DIDHelper } from '../helpers/did.helper';
+import { Config } from '../services/config';
+import { LocalStorage } from '../services/localstorage';
+import { DID } from './did.model';
+import { DIDDocument } from './diddocument.model';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -15,11 +13,7 @@ export class DIDStore {
     public dids: DID[] = [];
     private activeDid: DID = null;
 
-    constructor(
-        private events: Events,
-        private didSessions: GlobalDIDSessionsService,
-        private globalIntentService: GlobalIntentService
-    ) { }
+    constructor() { }
 
     public getActiveDid(): DID {
         return this.activeDid
@@ -106,10 +100,10 @@ export class DIDStore {
     /**
      * Fills this object model by loading a plugin DID store with all its contained DIDs, credentials, etc.
      */
-    public static async loadFromDidStoreId(didStoreId: string, events: Events, didSessions: GlobalDIDSessionsService, intentService: GlobalIntentService): Promise<DIDStore> {
+    public static async loadFromDidStoreId(didStoreId: string): Promise<DIDStore> {
         Logger.log("Identity", "Loading all data from DID Store " + didStoreId);
 
-        let didStore = new DIDStore(events, didSessions, intentService);
+        let didStore = new DIDStore();
         await didStore.loadAll(didStoreId, false);
 
         return didStore;
@@ -132,7 +126,7 @@ export class DIDStore {
             if (!didWasDeleted) {
                 Logger.log("Identity", "Loading DID " + pluginDid.getDIDString());
 
-                let did = new DID(pluginDid, this.events, this.didSessions);
+                let did = new DID(pluginDid);
                 try {
                     await did.loadAll();
                     this.dids.push(did);
@@ -204,7 +198,7 @@ export class DIDStore {
      * sidechain for us.
      */
     private createIdTransactionCallback(payload: string, memo: string) {
-        this.events.publish("diddocument:onpublishpayload", {
+        GlobalEvents.instance.publish("diddocument:onpublishpayload", {
             payload,
             memo
         });

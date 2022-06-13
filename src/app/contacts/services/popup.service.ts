@@ -1,15 +1,14 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Contact } from '../models/contact.model';
-import { PopoverController, ModalController } from '@ionic/angular';
-import { DeleteComponent } from '../components/delete/delete.component';
-import { FriendsService } from './friends.service';
-import { OptionsComponent } from '../components/options/options.component';
-import { UxService } from './ux.service';
-import { QRCodeComponent } from '../components/qrcode/qrcode.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
-import { DIDPublishingComponent } from 'src/app/components/did-publishing/did-publishing.component';
+import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DeleteComponent } from '../components/delete/delete.component';
+import { OptionsComponent } from '../components/options/options.component';
+import { QRCodeComponent } from '../components/qrcode/qrcode.component';
+import { Contact } from '../models/contact.model';
+import { FriendsService } from './friends.service';
+import { UxService } from './ux.service';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +28,7 @@ export class PopupService {
     private uxService: UxService,
     private theme: GlobalThemeService,
     private zone: NgZone,
-    private events: Events
+    private events: GlobalEvents
   ) {
     this.events.subscribe('showDeleteContactPrompt', (contact) => {
       this.zone.run(() => {

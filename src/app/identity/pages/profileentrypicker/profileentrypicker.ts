@@ -3,7 +3,7 @@ import { ModalController, NavParams } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { BasicCredentialEntry } from '../../model/basiccredentialentry.model';
 import { BasicCredentialInfo } from '../../model/basiccredentialinfo.model';
@@ -27,7 +27,7 @@ export class ProfileEntryPickerPage {
     private modalCtrl: ModalController,
     public navParams: NavParams,
     public theme: GlobalThemeService,
-    public events: Events,
+    public events: GlobalEvents,
 
   ) {
     // List of keys we don't want to show (probably already existing in the profile)

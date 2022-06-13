@@ -33,7 +33,7 @@ import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
@@ -153,7 +153,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         public walletManager: WalletService,
         public coinTransferService: CoinTransferService,
         public native: Native,
-        public events: Events,
+        public events: GlobalEvents,
         public zone: NgZone,
         public theme: GlobalThemeService,
         private translate: TranslateService,

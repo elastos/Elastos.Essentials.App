@@ -23,7 +23,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
@@ -55,7 +55,7 @@ export class WalletNetworkService {
     private priorityNetworkChangeCallback?: PriorityNetworkChangeCallback = null;
 
     constructor(
-        public events: Events,
+        public events: GlobalEvents,
         public native: Native,
         public popupProvider: PopupProvider,
         private globalNetworksService: GlobalNetworksService,

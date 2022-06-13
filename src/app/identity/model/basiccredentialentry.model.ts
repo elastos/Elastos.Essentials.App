@@ -1,5 +1,5 @@
 import { area } from '../../../assets/identity/area/area';
-import { TranslationService } from "../services/translation.service";
+import { GlobalTranslationService } from "../../services/global.translation.service";
 import { CountryCodeInfo } from "./countrycodeinfo";
 
 export class BasicCredentialEntry {
@@ -51,6 +51,6 @@ export class BasicCredentialEntry {
     if (!this.value || this.value == "")
       return null;
 
-    return TranslationService.instance.translateInstant(this.value);
+    return GlobalTranslationService.instance.translateInstant(this.value);
   }
 }

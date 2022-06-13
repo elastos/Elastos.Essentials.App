@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { TranslationService } from "src/app/identity/services/translation.service";
+import { GlobalTranslationService } from "src/app/services/global.translation.service";
 import { Config } from "src/app/wallet/config/Config";
 import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo, TransactionStatus } from "../../tx-providers/transaction.types";
 import { WalletUtil } from "../../wallet.util";
@@ -47,7 +47,7 @@ export class ElastosTransactionsHelper {
 
   public static getTransactionInfo(transaction: ElastosTransaction): TransactionInfo {
     const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
-    const datetime = timestamp === 0 ? TranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+    const datetime = timestamp === 0 ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
     const transactionInfo: TransactionInfo = {
       amount: new BigNumber(-1), // Defined by inherited classes
@@ -81,16 +81,16 @@ export class ElastosTransactionsHelper {
     let statusName = null;
     switch (status) {
       case TransactionStatus.CONFIRMED:
-        statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
+        statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
         break;
       case TransactionStatus.PENDING:
-        statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
+        statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
         break;
       case TransactionStatus.UNCONFIRMED:
-        statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-unconfirmed");
+        statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-unconfirmed");
         break;
       case TransactionStatus.NOT_PUBLISHED:
-        statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-not-published");
+        statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-not-published");
         break;
     }
     return statusName;

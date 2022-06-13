@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { StandardCoinName } from '../model/coin';
@@ -35,7 +35,7 @@ export class IntentService {
     private nextScreen = '';
 
     constructor(
-        public events: Events,
+        public events: GlobalEvents,
         public native: Native,
         private walletManager: WalletService,
         private coinTransferService: CoinTransferService,

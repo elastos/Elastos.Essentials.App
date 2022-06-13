@@ -30,8 +30,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -113,7 +113,7 @@ export class CoinHomePage implements OnInit {
         public translate: TranslateService,
         private coinTransferService: CoinTransferService,
         public native: Native,
-        public events: Events,
+        public events: GlobalEvents,
         private zone: NgZone,
         public popupProvider: PopupProvider,
         private popoverCtrl: PopoverController,

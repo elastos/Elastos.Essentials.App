@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
@@ -49,7 +49,7 @@ export class CoinAddERC20Page implements OnInit {
         public route: ActivatedRoute,
         public native: Native,
         public localStorage: LocalStorage,
-        public events: Events,
+        public events: GlobalEvents,
         private walletManager: WalletService,
         private erc20CoinService: ERC20CoinService,
         private evmService: EVMService,

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import moment from "moment";
-import { TranslationService } from "src/app/identity/services/translation.service";
+import { GlobalTranslationService } from "src/app/services/global.translation.service";
 import { deserializeCosts, PacketCosts, SerializablePacketCosts, serializeCosts } from "./packetcosts.model";
 import { PaymentStatus } from "./payments.model";
 
@@ -150,13 +150,13 @@ export class Packet {
     let expiration = moment.unix(this.expirationDate);
 
     if (now.isAfter(expiration))
-      return TranslationService.instance.translateInstant("redpackets.expired");
+      return GlobalTranslationService.instance.translateInstant("redpackets.expired");
     else if (expiration.diff(now, "minutes") < 60)
-      return TranslationService.instance.translateInstant("redpackets.few-minutes-left");
+      return GlobalTranslationService.instance.translateInstant("redpackets.few-minutes-left");
     else if (expiration.diff(now, "hours") < 24)
-      return TranslationService.instance.translateInstant("redpackets.n-hours-left", { hours: Math.floor(expiration.diff(now, "hours")) });
+      return GlobalTranslationService.instance.translateInstant("redpackets.n-hours-left", { hours: Math.floor(expiration.diff(now, "hours")) });
     else
-      return TranslationService.instance.translateInstant("redpackets.n-days-left", { days: Math.floor(expiration.diff(now, "days")) });
+      return GlobalTranslationService.instance.translateInstant("redpackets.n-days-left", { days: Math.floor(expiration.diff(now, "days")) });
   }
 }
 

@@ -1,5 +1,5 @@
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { AESDecrypt } from '../../helpers/crypto/aes';
 import { StandardMasterWallet } from '../model/masterwallets/masterwallet';
 import { ElastosMainChainWalletNetworkOptions } from '../model/masterwallets/wallet.types';
@@ -15,7 +15,7 @@ import { SPVService } from './spv.service';
 export class SPVHelperService {
     public static instance: SPVHelperService = null;
 
-    constructor(private native: Native, private event: Events, private popupProvider: PopupProvider) {
+    constructor(private native: Native, private event: GlobalEvents, private popupProvider: PopupProvider) {
         SPVHelperService.instance = this;
     }
 

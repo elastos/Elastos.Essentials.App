@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from "rxjs";
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -30,7 +30,7 @@ export class HiveService {
     private router: Router,
     private storage: GlobalStorageService,
     private popup: PopupService,
-    private events: Events,
+    private events: GlobalEvents,
     public translate: TranslateService,
     private globalIntentService: GlobalIntentService,
     private globalHiveService: GlobalHiveService,

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { CryptoNameResolver } from '../model/address-resolvers';
@@ -68,7 +68,7 @@ export class WalletInitService extends GlobalService {
   constructor(
     private intentService: IntentService,
     private walletManager: WalletService,
-    private events: Events,
+    private events: GlobalEvents,
     private navService: NavService,
     private currencyService: CurrencyService,
     private uniswapCurrencyService: UniswapCurrencyService,

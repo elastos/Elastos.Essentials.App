@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Native } from 'src/app/identity/services/native';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
@@ -36,7 +36,7 @@ export class KeystoreExportPage implements OnInit {
         public zone: NgZone,
         private walletEditionService: WalletEditionService,
         public native: Native,
-        public events: Events,
+        public events: GlobalEvents,
         public theme: GlobalThemeService,
         private translate: TranslateService,
         private walletAccessService: WalletAccessService

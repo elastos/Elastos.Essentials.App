@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js';
 import { GlobalRedPacketServiceAddresses } from 'src/app/config/globalconfig';
-import { TranslationService } from 'src/app/identity/services/translation.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { BridgeService } from 'src/app/wallet/services/evm/bridge.service';
 import { EarnService } from 'src/app/wallet/services/evm/earn.service';
 import { SwapService } from 'src/app/wallet/services/evm/swap.service';
@@ -147,7 +147,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     transaction.to = transaction.to.toLowerCase();
 
     const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
-    const datetime = timestamp === 0 ? TranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+    const datetime = timestamp === 0 ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
     const direction = await this.getTransactionDirection(transaction, transaction.to);
     transaction.Direction = direction;
@@ -194,10 +194,10 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
     if (transactionInfo.confirmStatus !== 0) {
       transactionInfo.status = TransactionStatus.CONFIRMED;
-      transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
+      transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
     } else {
       transactionInfo.status = TransactionStatus.PENDING;
-      transactionInfo.statusName = TranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
+      transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
     }
 
     // MESSY again - No "Direction" field in ETH transactions (contrary to other chains). Calling a private method to determine this.
@@ -233,7 +233,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     // Use extended info is there is some
     let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
     if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation)
-      return TranslationService.instance.translateInstant(extInfo.evm.txInfo.operation.description, extInfo.evm.txInfo.operation.descriptionTranslationParams);
+      return GlobalTranslationService.instance.translateInstant(extInfo.evm.txInfo.operation.description, extInfo.evm.txInfo.operation.descriptionTranslationParams);
 
     // Fallback if no extended info: default transaction names
     const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction, transaction.to);

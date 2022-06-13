@@ -5,7 +5,7 @@ import { sleep } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -32,7 +32,7 @@ export class BackupService extends GlobalService {
   private preparingOrPrepared = false;
 
   constructor(
-    private events: Events,
+    private events: GlobalEvents,
     private didService: DIDService,
     private globalHiveService: GlobalHiveService,
     private globalStorage: GlobalStorageService

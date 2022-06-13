@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { MasterWallet } from '../../../model/masterwallets/masterwallet';
@@ -27,7 +27,7 @@ export class WalletEditNamePage implements OnInit {
         public route: ActivatedRoute,
         public native: Native,
         public localStorage: LocalStorage,
-        public events: Events,
+        public events: GlobalEvents,
         private walletManager: WalletService,
         private walletEditionService: WalletEditionService,
         private translate: TranslateService,

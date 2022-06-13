@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { MasterWallet, StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
@@ -40,7 +40,7 @@ export class StandardMultiSigCreatePage implements OnInit {
         private native: Native,
         private walletService: WalletService,
         private walletUIService: WalletUIService,
-        private events: Events,
+        private events: GlobalEvents,
         private authService: AuthService,
         private globalStartupService: GlobalStartupService
     ) {

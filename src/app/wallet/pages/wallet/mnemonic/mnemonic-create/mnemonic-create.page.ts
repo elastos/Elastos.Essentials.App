@@ -4,7 +4,7 @@ import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Util } from 'src/app/model/util';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { TitleBarForegroundMode } from '../../../../../components/titlebar/titlebar.types';
 import { Native } from '../../../../services/native.service';
@@ -19,7 +19,7 @@ import { SelectableMnemonic, WalletCreationService } from '../../../../services/
 })
 export class MnemonicCreatePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    @ViewChild('slider', {static: false}) slider: IonSlides;
+    @ViewChild('slider', { static: false }) slider: IonSlides;
 
     slideOpts = {
         initialSlide: 0,
@@ -37,7 +37,7 @@ export class MnemonicCreatePage implements OnInit {
         public walletManager: WalletService,
         public native: Native,
         public localStorage: LocalStorage,
-        public events: Events,
+        public events: GlobalEvents,
         public zone: NgZone,
         private walletCreationService: WalletCreationService,
         private translate: TranslateService,
@@ -63,7 +63,7 @@ export class MnemonicCreatePage implements OnInit {
         this.mnemonicStr = await this.walletManager.spvBridge.generateMnemonic(this.prefs.getMnemonicLang());
         void this.native.hideLoading();
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/);
-        this.zone.run(()=>{
+        this.zone.run(() => {
             for (var i = 0; i < mnemonicArr.length; i++) {
                 this.mnemonicList.push({ text: mnemonicArr[i], selected: false });
             }

@@ -4,9 +4,8 @@ import { TranslateService } from "@ngx-translate/core";
 import { BehaviorSubject } from "rxjs";
 import { Logger } from "src/app/logger";
 import { IdentityEntry } from "src/app/model/didsessions/identityentry";
-import { Events } from "src/app/services/events.service";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
-import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { DID } from "../model/did.model";
 import { DIDStore } from "../model/didstore.model";
@@ -31,12 +30,10 @@ export class DIDService extends GlobalService {
     public zone: NgZone,
     private translate: TranslateService,
     public toastCtrl: ToastController,
-    public events: Events,
+    public events: GlobalEvents,
     public localStorage: LocalStorage,
     private popupProvider: PopupProvider,
-    public native: Native,
-    private didSessions: GlobalDIDSessionsService,
-    private globalIntentService: GlobalIntentService
+    public native: Native
   ) {
     super();
     DIDService.instance = this;
@@ -70,7 +67,7 @@ export class DIDService extends GlobalService {
    */
   public async loadGlobalIdentity(noRouting = false): Promise<boolean> {
     Logger.log("Identity", "Loading global identity");
-    let signedInIdentity = await this.didSessions.getSignedInIdentity();
+    let signedInIdentity = await GlobalDIDSessionsService.instance.getSignedInIdentity();
     if (!signedInIdentity) {
       if (!noRouting)
         await this.native.setRootRouter("/identity/notsignedin");
@@ -97,7 +94,7 @@ export class DIDService extends GlobalService {
       return false;
     }
 
-    let didStore = await DIDStore.loadFromDidStoreId(storeId, this.events, this.didSessions, this.globalIntentService);
+    let didStore = await DIDStore.loadFromDidStoreId(storeId);
     if (!didStore) {
       void this.popupProvider.ionicAlert(
         "Store load error",
@@ -170,7 +167,7 @@ export class DIDService extends GlobalService {
   }
 
   public async newDidStore() {
-    let didStore = new DIDStore(this.events, this.didSessions, this.globalIntentService);
+    let didStore = new DIDStore();
     try {
       await didStore.initNewDidStore();
     } catch (e) {

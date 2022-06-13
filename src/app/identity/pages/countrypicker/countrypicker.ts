@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { area } from '../../../../assets/identity/area/area';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { Native } from '../../services/native';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
+import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { area } from '../../../../assets/identity/area/area';
+import { Native } from '../../services/native';
 
 @Component({
   selector: 'page-countrypicker',
@@ -19,7 +19,7 @@ export class CountryPickerPage {
   areaItem: any = null;
 
   constructor(
-    public events: Events,
+    public events: GlobalEvents,
     private translate: TranslateService,
     public theme: GlobalThemeService,
     private native: Native

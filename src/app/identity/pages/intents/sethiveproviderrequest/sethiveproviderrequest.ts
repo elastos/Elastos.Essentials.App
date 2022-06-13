@@ -6,13 +6,11 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { SetHiveProviderIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AuthService } from '../../../services/auth.service';
 import { DIDService } from '../../../services/did.service';
-import { DIDSyncService } from '../../../services/didsync.service';
 import { ProfileService } from '../../../services/profile.service';
 import { UXService } from '../../../services/ux.service';
 
@@ -35,11 +33,9 @@ export class SetHiveProviderRequestPage {
 
   constructor(
     private didService: DIDService,
-    private events: Events,
     private translate: TranslateService,
     private appServices: UXService,
     public profileService: ProfileService,
-    private didSyncService: DIDSyncService,
     public theme: GlobalThemeService,
     private intentService: IntentReceiverService,
     private globalHiveService: GlobalHiveService,
