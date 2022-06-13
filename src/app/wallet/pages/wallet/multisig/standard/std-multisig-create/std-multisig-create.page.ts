@@ -50,8 +50,7 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        //this.titleBar.setTheme('#732cd0', TitleBarForegroundMode.LIGHT)
-        this.titleBar.setTitle('New multi-sig wallet');
+        this.titleBar.setTitle(this.translate.instant('wallet.multi-sig-new-wallet-title'));
     }
 
     ionViewDidEnter() {
@@ -65,7 +64,7 @@ export class StandardMultiSigCreatePage implements OnInit {
 
     onCreate() {
         if (Util.isNull(this.signingWallet)) {
-            this.native.toast_trans("Please choose your signing wallet");
+            this.native.toast_trans('wallet.multi-sig-error-no-signing-wallet');
             return;
         }
         if (Util.isNull(this.wallet.name)) {
@@ -89,7 +88,7 @@ export class StandardMultiSigCreatePage implements OnInit {
 
         let walletId = this.walletService.createMasterWalletID();
         await this.authService.createAndSaveWalletPassword(walletId);
-        let testWallet = await this.walletService.newMultiSigStandardWallet(
+        await this.walletService.newMultiSigStandardWallet(
             walletId,
             this.wallet.name,
             this.signingWallet.id,
@@ -103,24 +102,6 @@ export class StandardMultiSigCreatePage implements OnInit {
             action: 'add',
             walletId: walletId
         });
-
-        /*  this.walletCreationService.name = this.wallet.name;
-         this.walletCreationService.singleAddress = this.wallet.singleAddress;
-         if (this.useMenmonicPassphrase) {
-             this.walletCreationService.mnemonicPassword = this.wallet.mnemonicPassword;
-         } else {
-             this.walletCreationService.mnemonicPassword = '';
-         }
-
-         if (this.walletCreationService.type === 1) {
-             this.native.go("/wallet/mnemonic/create");
-         } else {
-             if (this.importByPrivateKey) {
-                 this.native.go('/wallet/wallet-import-privatekey');
-             } else {
-                 this.native.go("/wallet/wallet-import");
-             }
-         } */
     }
 
     public allInputsValid(): boolean {
@@ -182,12 +163,12 @@ export class StandardMultiSigCreatePage implements OnInit {
             return;
         } */
         if (!pastedContent.startsWith("xpub")) {
-            this.native.toast_trans('Please input a valid xpub key');
+            this.native.toast_trans('wallet.multi-sig-error-invalid-xpub');
             return;
         }
 
         if (this.cosignersHaveKey(pastedContent)) {
-            this.native.toast_trans('This key is already in the list, no duplicates can be used');
+            this.native.toast_trans('wallet.multi-sig-error-xpub-in-user');
             return;
         }
 
@@ -202,7 +183,6 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     public onCosignerBlur(i: number) {
-        console.log("onCosignerBlur", i, this.cosigners[i]);
     }
 
     /**
@@ -214,6 +194,5 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     public onRequiredSignersUpdated() {
-
     }
 }

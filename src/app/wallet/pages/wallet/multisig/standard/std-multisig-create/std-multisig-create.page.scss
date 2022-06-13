@@ -44,12 +44,10 @@
             --placeholder-color: #000;
         }
 
-        ion-col {
-        }
-
         .pick-wallet {
             display: flex;
             justify-content: flex-end;
+            align-items: center;
 
             img {
                 margin-left:5px;

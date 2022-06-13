@@ -17,7 +17,6 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
         TranslateModule,
         RouterModule,
         RouterModule.forChild([
-            { path: 'create', loadChildren: () => import('./multisig-create/module').then(m => m.MultiSigCreateModule) },
             { path: 'standard/create', loadChildren: () => import('./standard/std-multisig-create/module').then(m => m.MultiSigStandardCreateModule) }
         ])
     ],

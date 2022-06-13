@@ -87,13 +87,13 @@ export const fr = {
         "settings-currency-subtitle": "Selectionnez la devise à afficher",
         "settings-custom-networks": "Réseaux Personnalisés",
         "settings-custom-networks-subtitle": "Ajoutez et modifiez vos réseaux personnalisés ici",
-        "settings-manage-networks": "Gestion les Réseaux",
+        "settings-manage-networks": "Gestion des Réseaux",
         "settings-manage-networks-subtitle": "Affichez et cachez certains réseaux, et ajoutez des réseaux personnalisés",
-        "settings-add-wallet-standard-wallet": "Standard Wallet",
-        "settings-add-wallet-multi-sig-wallet": "Multi Signature Wallet",
-        "settings-add-wallet-hardware-wallet": "Connect H/W Wallet",
-        "settings-add-wallet-new-wallet": "New Wallet",
-        "settings-add-wallet-mnemonic": "Mnemonic / Paper key",
+        "settings-add-wallet-standard-wallet": "Portefeuille Standard",
+        "settings-add-wallet-multi-sig-wallet": "Portefeuille Multi Signatures",
+        "settings-add-wallet-hardware-wallet": "Connecter un portefeuille physique",
+        "settings-add-wallet-new-wallet": "Nouveau portefeuille",
+        "settings-add-wallet-mnemonic": "Mnémonique / clé papier",
 
         /***********************
         * Select-Currency Page *
@@ -296,8 +296,8 @@ export const fr = {
         "ledger-scan-available-devices": "Appareils disponibles",
         "ledger-scan-scan-again": "Re-scanner",
         "ledger-scan-ledger-scanning": "Recherche en cours",
-        "ledger-scan-bluetooth-not-enable": "Bluetooth is not turned on, please turn on Bluetooth first",
-        "ledger-scan-open-bluetooth-setting": "Turn on Bluetooth settings",
+        "ledger-scan-bluetooth-not-enable": "Le bluetooth est éteint, veuillez l'allumer",
+        "ledger-scan-open-bluetooth-setting": "Ouvrir les paramètres bluetooth",
 
         /**********************
         * Ledger connect page *
@@ -309,7 +309,7 @@ export const fr = {
         "ledger-addresses": "Adresses",
         "ledger-address-type": "Type d'adresse",
         "ledger-pick-network": "Choisir un réseau",
-        "ledger-connect-ledger-sucess": "Connected ledger hardware wallet",
+        "ledger-connect-ledger-sucess": "Portefeuille physique Ledger connecté",
 
         /********************************************** Wallet Settings Screens ***********************************************/
 
@@ -337,8 +337,8 @@ export const fr = {
         "wallet-settings-consolidate-utxos": "Consolider",
         "wallet-settings-consolidate-utxos-subtitle": "Trop d'utxo augmente le temps de création de la transaction",
         "wallet-settings-consolidate-no-need": "Pas besoin de consolidation",
-        "wallet-settings-extended-public-keys-title": "Extended public keys",
-        "wallet-settings-extended-public-keys-subtitle": "Special keys required to create multi-signature wallets",
+        "wallet-settings-extended-public-keys-title": "Clés publiques étendues",
+        "wallet-settings-extended-public-keys-subtitle": "Clés spéciales requises pour créer des portefeuilles multi-signataires",
 
         /************************
         * Wallet Edit Name Page *
@@ -630,6 +630,22 @@ export const fr = {
         'bridge-tokens': 'Convertir vos Jetons',
         'bridge-tokens-intro': 'Les fournisseurs de services tiers suivants sont disponibles pour vous permettre de <b>convertir vos {{coinName}}</b> depuis/vers le réseau {{networkName}}, vers/depuis d\'autres réseaux:',
         'to-networks': 'Vers autres réseaux:',
+
+        /********************************
+        * Multisig standard wallet page *
+        *********************************/
+
+        'multi-sig-wallet-name': 'Nom du portefeuille',
+        'multi-sig-my-signing-wallet': 'Mon portefeuille signataire',
+        'multi-sig-pick-a-wallet': 'Choisir un portefeuille',
+        'multi-sig-other-co-signers': 'Autres co-signataires',
+        'multi-sig-add-cosigner': 'Ajouter un co-signataire',
+        'multi-sig-total-signers': 'Total des signataires',
+        'multi-sig-required-signers': 'Signataires requis',
+        'multi-sig-new-wallet-title': 'Nouveau portef. multi-sign.',
+        'multi-sig-error-no-signing-wallet': "Veuillez choisir un portefeuille avec lequel vous signerez les transactions",
+        'multi-sig-error-invalid-xpub': 'Veuillez saisir une clé xpub vqlide',
+        'multi-sig-error-xpub-in-user': 'Cette clé est déjà dans la liste, veuillez en choisir une autre',
 
         /********************************
         * Multisig tx details component *

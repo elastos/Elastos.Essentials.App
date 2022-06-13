@@ -4,7 +4,7 @@
 
         <!-- Name -->
         <ion-row class="margin-top-15">
-            <ion-label>Wallet name</ion-label>
+            <ion-label>{{ 'wallet.multi-sig-wallet-name' | translate }}</ion-label>
         </ion-row>
         <ion-row>
             <ion-input type="text" name="name" ngDefaultControl [placeholder]="'wallet.enter-name' | translate"
@@ -15,12 +15,12 @@
         <!-- My signing wallet -->
         <ion-row class="margin-top-15">
             <ion-col size="5" class="text-left">
-                <ion-label>My signing wallet</ion-label>
+                <ion-label>{{ 'wallet.multi-sig-my-signing-wallet' | translate }}</ion-label>
             </ion-col>
             <ion-col size="7" (click)="pickSigningWallet()" class="pick-wallet">
                 <!-- No picked wallet yet -->
                 <span *ngIf="!signingWallet">
-                    Pick a wallet
+                    {{ 'wallet.multi-sig-pick-a-wallet' | translate }}
                 </span>
                 <!-- a signing wallet was picked -->
                 <span *ngIf="signingWallet" class="picked-wallet">
@@ -34,7 +34,7 @@
 
         <!-- Co-signers -->
         <ion-row class="margin-top-15">
-            <ion-label>Other co-signers</ion-label>
+            <ion-label>{{ 'wallet.multi-sig-other-co-signers' | translate }}</ion-label>
         </ion-row>
         <ion-row class="cosigner-row" *ngFor="let cosigner of cosigners; let i = index; trackBy: trackCosigners">
             <ion-col size="12">
@@ -56,21 +56,21 @@
         </ion-row>
 
         <ion-button color="secondary" (click)="addCosignerEntry()">
-            <ion-label>Add a cosigner</ion-label>
+            <ion-label>{{ 'wallet.multi-sig-add-cosigner' | translate }}</ion-label>
         </ion-button>
 
         <ion-row class="margin-top-15">
             <ion-col size="6" class="text-left align-self-center">
-                Total signers
+                {{ 'wallet.multi-sig-total-signers' | translate }}
             </ion-col>
             <ion-col size="6">
-                {{getUsableCosigners().length + 1}}
+                {{ getUsableCosigners().length + 1 }}
             </ion-col>
         </ion-row>
 
         <ion-row class="margin-top-15">
             <ion-col size="6" class="text-left align-self-center">
-                Required signers
+                {{ 'wallet.multi-sig-required-signers' | translate }}
             </ion-col>
             <ion-col size="6">
                 <ion-input type="phone" name="required-signers" autocomplete="off" autocorrect="off"
