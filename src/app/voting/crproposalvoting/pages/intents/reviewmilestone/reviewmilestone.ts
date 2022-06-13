@@ -11,7 +11,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DraftService } from '../../../services/draft.service';
 
@@ -140,7 +139,7 @@ export class ReviewMilestonePage {
             Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone payload.", payload);
 
             //Get digest
-            var digest = await this.walletManager.spvBridge.proposalTrackingSecretaryDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+            var digest = await this.voteService.sourceSubwallet.proposalTrackingSecretaryDigest(JSON.stringify(payload));
             digest = Util.reverseHexToBE(digest);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone digest.", digest);
 

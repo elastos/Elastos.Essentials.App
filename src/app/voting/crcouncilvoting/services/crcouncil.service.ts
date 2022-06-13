@@ -530,8 +530,7 @@ export class CRCouncilService {
         }
 
         try {
-            let payloadString = await this.walletManager.spvBridge.generateUnregisterCRPayload(
-                this.voteService.masterWalletId, StandardCoinName.ELA, this.candidateInfo.cid);
+            let payloadString = await this.voteService.sourceSubwallet.generateUnregisterCRPayload(this.candidateInfo.cid);
             if (payloadString) {
                 let payload = JSON.parse(payloadString);
                 let signature = await this.getSignature(payload.Digest);
@@ -574,7 +573,7 @@ export class CRCouncilService {
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
-            let depositAddress = await this.walletManager.spvBridge.getCRDepositAddress(this.voteService.masterWalletId, StandardCoinName.ELA);
+            let depositAddress = await this.voteService.sourceSubwallet.getCRDepositAddress();
             let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
             Logger.log(App.CRCOUNCIL_VOTING, "utxoArray:", utxoArray);
 

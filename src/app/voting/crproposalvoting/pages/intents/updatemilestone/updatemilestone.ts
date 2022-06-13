@@ -10,7 +10,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCommand, CRCommandType, CROperationsService } from '../../../services/croperations.service';
 import { DraftService } from '../../../services/draft.service';
@@ -148,7 +147,7 @@ export class UpdatMilestonePage {
     private async getMilestoneDigest(): Promise<string> {
         let payload = this.getMilestonePayload(this.onGoingCommand);
         Logger.log(App.CRPROPOSAL_VOTING, "milestone payload", payload);
-        let digest = await this.walletManager.spvBridge.proposalTrackingOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+        let digest = await this.voteService.sourceSubwallet.proposalTrackingOwnerDigest(JSON.stringify(payload));
         let ret = Util.reverseHexToBE(digest);
 
         Logger.log(App.CRPROPOSAL_VOTING, "Got milestone digest.", ret);

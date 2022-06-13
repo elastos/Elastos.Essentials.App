@@ -35,10 +35,10 @@ import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ETHTransactionInfo, ETHTransactionInfoParser, ETHTransactionTokenApproveInfo } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
+import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
-import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -281,17 +281,13 @@ export class EscTransactionPage implements OnInit {
 
     let nonce = await this.evmSubWallet.getNonce();
     const rawTx =
-      await this.walletManager.spvBridge.createTransferGeneric(
-        jsToSpvWalletId(this.networkWallet.id),
-        this.evmSubWallet.id,
+      await (this.evmSubWallet.networkWallet.safe as unknown as EVMSafe).createContractTransaction(
         this.coinTransferService.payloadParam.to || '',
         this.coinTransferService.payloadParam.value || "0",
-        0, // WEI
         this.gasPrice,
-        0, // WEI
         this.gasLimit,
+        nonce,
         this.coinTransferService.payloadParam.data,
-        nonce
       );
 
     Logger.log('wallet', 'Created raw ESC transaction:', rawTx);

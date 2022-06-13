@@ -184,7 +184,7 @@ export class DPosRegistrationPage implements OnInit {
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
-            const payload = await this.walletManager.spvBridge.generateProducerPayload(this.masterWalletId, StandardCoinName.ELA,
+            const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
                 this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
 
             const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.depositAmount, "");
@@ -207,7 +207,7 @@ export class DPosRegistrationPage implements OnInit {
             return;
         }
 
-        const payload = await this.walletManager.spvBridge.generateProducerPayload(this.masterWalletId, StandardCoinName.ELA,
+        const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
             this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
 
         await this.globalNative.showLoading(this.translate.instant('common.please-wait'));

@@ -12,7 +12,6 @@ import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-
 import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DraftService } from '../../../services/draft.service';
 
@@ -127,8 +126,8 @@ export class ReviewProposalPage {
             var payload = await this.getProposalPayload(this.onGoingCommand);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review proposal payload.", payload);
 
-            // //Get digest
-            var digest = await this.walletManager.spvBridge.proposalReviewDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+            // Get digest
+            var digest = await this.voteService.sourceSubwallet.proposalReviewDigest(JSON.stringify(payload));
             digest = Util.reverseHexToBE(digest);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review proposal digest.", digest);
 

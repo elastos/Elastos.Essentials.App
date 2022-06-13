@@ -9,7 +9,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { SuggestionDetail } from '../../../model/suggestion-model';
 import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
@@ -112,28 +111,28 @@ export class CreateProposalPage {
         let digest: string;
         switch (this.suggestionDetail.type) {
             case "normal":
-                digest = await this.walletManager.spvBridge.proposalCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+                digest = await this.voteService.sourceSubwallet.proposalCRCouncilMemberDigest(payload);
                 break;
             case "changeproposalowner":
-                digest = await this.walletManager.spvBridge.proposalChangeOwnerCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+                digest = await this.voteService.sourceSubwallet.proposalChangeOwnerCRCouncilMemberDigest(payload);
                 break;
             case "closeproposal":
-                digest = await this.walletManager.spvBridge.terminateProposalCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+                digest = await this.voteService.sourceSubwallet.terminateProposalCRCouncilMemberDigest(payload);
                 break;
             case "secretarygeneral":
-                digest = await this.walletManager.spvBridge.proposalSecretaryGeneralElectionCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+                digest = await this.voteService.sourceSubwallet.proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload);
                 break;
             case "reservecustomizedid":
-                digest = await this.walletManager.spvBridge.reserveCustomIDCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+                digest = await this.voteService.sourceSubwallet.reserveCustomIDCRCouncilMemberDigest(payload);
                 break;
             case "receivecustomizedid":
-                digest = await this.walletManager.spvBridge.receiveCustomIDCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+                digest = await this.voteService.sourceSubwallet.receiveCustomIDCRCouncilMemberDigest(payload);
                 break;
             case "changecustomizedidfee":
-                digest = await this.walletManager.spvBridge.changeCustomIDFeeCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+                digest = await this.voteService.sourceSubwallet.changeCustomIDFeeCRCouncilMemberDigest(payload);
                 break;
             case "registersidechain":
-                digest = await this.walletManager.spvBridge.registerSidechainCRCouncilMemberDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+                digest = await this.voteService.sourceSubwallet.registerSidechainCRCouncilMemberDigest(payload);
                 break;
             default:
                 throw new Error("Don't support this type: " + this.suggestionDetail.type);

@@ -7,6 +7,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { StandardCoinName } from '../model/coin';
 import { MasterWallet } from '../model/masterwallets/masterwallet';
+import { MainChainSubWallet } from '../model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { AddERCTokenRequestParams } from '../model/networks/evms/adderctokenrequest';
 import { EVMNetwork } from '../model/networks/evms/evm.network';
 import { EditCustomNetworkRoutingParams } from '../pages/settings/edit-custom-network/edit-custom-network.page';
@@ -14,7 +15,6 @@ import { CoinTransferService, TransferType } from './cointransfer.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
 import { PopupProvider } from './popup.service';
-import { jsToSpvWalletId } from './spv.service';
 import { WalletService } from './wallet.service';
 import { WalletAccessService } from './walletaccess.service';
 import { WalletEditionService } from './walletedition.service';
@@ -272,11 +272,17 @@ export class IntentService {
         Logger.log("wallet", "Handling create proposal digest silent intent");
 
         if (intent && intent.params && intent.params.proposal) {
-            let masterWalletID = await this.walletManager.getCurrentMasterIdFromStorage();
-            let digest = await this.walletManager.spvBridge.proposalOwnerDigest(jsToSpvWalletId(masterWalletID), StandardCoinName.ELA, intent.params.proposal);
+            // let masterWalletID = await this.walletManager.getCurrentMasterIdFromStorage();
+            let activeNetworkWallet = this.walletManager.getActiveNetworkWallet();
+            let mainChainSubwallet = activeNetworkWallet.getSubWallet(StandardCoinName.ELA) as unknown as MainChainSubWallet;
+            if (mainChainSubwallet) {
+              let digest = await mainChainSubwallet.proposalOwnerDigest(intent.params.proposal);
 
-            // This is a silent intent, app will close right after calling sendIntentresponse()
-            await this.globalIntentService.sendIntentResponse({ digest: digest }, intent.intentId);
+              // This is a silent intent, app will close right after calling sendIntentresponse()
+              await this.globalIntentService.sendIntentResponse({ digest: digest }, intent.intentId);
+            } else {
+              await this.globalIntentService.sendIntentResponse({ message: "No ELA Main chain wallet", status: 'error' }, intent.intentId);
+            }
         }
         else {
             // This is a silent intent, app will close right after calling sendIntentresponse()

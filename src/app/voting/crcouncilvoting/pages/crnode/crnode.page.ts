@@ -7,7 +7,6 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCouncilService } from '../../services/crcouncil.service';
@@ -89,7 +88,7 @@ export class CRNodePage implements OnInit {
             Logger.log('crproposal', "Got review proposal payload.", payload);
 
             //Get digest
-            var digest = await this.walletManager.spvBridge.CRCouncilMemberClaimNodeDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+            var digest = await this.voteService.sourceSubwallet.CRCouncilMemberClaimNodeDigest(JSON.stringify(payload));
             Logger.log('crproposal', "Got review proposal digest.", digest);
 
             let signature = await this.crCouncilService.getSignature(digest);

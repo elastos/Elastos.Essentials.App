@@ -46,8 +46,18 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return await null; // Not supported by multisig wallets.
   }
 
+  public getOwnerDepositAddress(): Promise<string> {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
   public async getOwnerPublicKey(): Promise<string> {
     return await null; // Not supported by multisig wallets.
+  }
+
+  public getPublicKeys(start: number, count: number, internal: boolean): Promise<string[]> {
+    // TODO: Do not support.
+    return Promise.resolve(null);
   }
 
   public async createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
@@ -67,6 +77,21 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return Promise.resolve(null);
   }
 
+  public CRCouncilMemberClaimNodeDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public proposalOwnerDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public proposalCRCouncilMemberDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
   public createProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
     // TODO: Do not support.
     return Promise.resolve(null);
@@ -77,7 +102,27 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return Promise.resolve(null);
   }
 
+  public terminateProposalOwnerDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public terminateProposalCRCouncilMemberDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
   public createTerminateProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public proposalSecretaryGeneralElectionDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload: string) {
     // TODO: Do not support.
     return Promise.resolve(null);
   }
@@ -87,7 +132,27 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return Promise.resolve(null);
   }
 
+  public proposalChangeOwnerDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public proposalChangeOwnerCRCouncilMemberDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public proposalTrackingSecretaryDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
   public createProposalTrackingTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public proposalReviewDigest(payload: string) {
     // TODO: Do not support.
     return Promise.resolve(null);
   }
@@ -97,7 +162,27 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return Promise.resolve(null);
   }
 
+  public proposalTrackingOwnerDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public proposalWithdrawDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
   public createProposalWithdrawTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public reserveCustomIDOwnerDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public reserveCustomIDCRCouncilMemberDigest(payload: string) {
     // TODO: Do not support.
     return Promise.resolve(null);
   }
@@ -107,12 +192,42 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return Promise.resolve(null);
   }
 
+  public receiveCustomIDOwnerDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public receiveCustomIDCRCouncilMemberDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
   public createReceiveCustomIDTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
     // TODO: Do not support.
     return Promise.resolve(null);
   }
 
+  public changeCustomIDFeeOwnerDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public changeCustomIDFeeCRCouncilMemberDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
   public createChangeCustomIDFeeTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public registerSidechainOwnerDigest(payload: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public registerSidechainCRCouncilMemberDigest(payload: string) {
     // TODO: Do not support.
     return Promise.resolve(null);
   }
@@ -137,7 +252,32 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return Promise.resolve(null);
   }
 
+  public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any> {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public generateCancelProducerPayload(publicKey: string, payPasswd: string): Promise<any> {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
   public createRetrieveDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public getCRDepositAddress() {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public generateCRInfoPayload(publicKey: string, did: string, nickname: string, url: string, location: number) {
+    // TODO: Do not support.
+    return Promise.resolve(null);
+  }
+
+  public generateUnregisterCRPayload(CID: string) {
     // TODO: Do not support.
     return Promise.resolve(null);
   }

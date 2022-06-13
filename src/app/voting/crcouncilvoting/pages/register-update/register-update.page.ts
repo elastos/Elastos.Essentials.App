@@ -11,7 +11,6 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -162,7 +161,7 @@ export class RegisterUpdatePage implements OnInit {
         }
 
         Logger.log('RegisterUpdatePage', 'Info', this.info);
-        const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.voteService.masterWalletId, StandardCoinName.ELA,
+        const payload = await this.voteService.sourceSubwallet.generateCRInfoPayload(
             this.info.ownerpublickey, this.info.did, this.info.nickname, this.info.url, this.info.location);
 
         if (payload) {

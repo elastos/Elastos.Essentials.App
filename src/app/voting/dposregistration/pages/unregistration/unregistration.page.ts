@@ -108,7 +108,7 @@ export class DPosUnRegistrationPage implements OnInit {
             this.dposInfo = this.nodesService.dposInfo;
         }
 
-        let depositAddress = await this.walletManager.spvBridge.getOwnerDepositAddress(this.masterWalletId, StandardCoinName.ELA);
+        let depositAddress = await this.voteService.sourceSubwallet.getOwnerDepositAddress();
         const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(StandardCoinName.ELA, [depositAddress],
             this.TRANSACTION_LIMIT);
         if (txRawList && txRawList.length > 0) {
@@ -197,8 +197,7 @@ export class DPosUnRegistrationPage implements OnInit {
             return;
         }
 
-        const payload = await this.walletManager.spvBridge.generateCancelProducerPayload(this.masterWalletId, StandardCoinName.ELA,
-            this.dposInfo.ownerpublickey, payPassword);
+        const payload = await this.voteService.sourceSubwallet.generateCancelProducerPayload(this.dposInfo.ownerpublickey, payPassword);
 
         await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
         const rawTx = await this.voteService.sourceSubwallet.createCancelProducerTransaction(payload, "");
@@ -215,7 +214,7 @@ export class DPosUnRegistrationPage implements OnInit {
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
-            let depositAddress = await this.walletManager.spvBridge.getOwnerDepositAddress(this.masterWalletId, StandardCoinName.ELA);
+            let depositAddress = await this.voteService.sourceSubwallet.getOwnerDepositAddress();
             let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
             Logger.log(App.DPOS_REGISTRATION, "utxoArray:", utxoArray);
 

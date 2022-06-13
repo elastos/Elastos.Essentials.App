@@ -46,6 +46,30 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     );
   }
 
+  public CRCouncilMemberClaimNodeDigest(payload: string) {
+    return SPVService.instance.CRCouncilMemberClaimNodeDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public proposalOwnerDigest(payload: string) {
+    return SPVService.instance.proposalOwnerDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public proposalCRCouncilMemberDigest(payload: string) {
+    return SPVService.instance.proposalCRCouncilMemberDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
   public createProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
     return SPVService.instance.createProposalTransaction(
       jsToSpvWalletId(this.masterWallet.id),
@@ -68,6 +92,22 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     );
   }
 
+  public terminateProposalOwnerDigest(payload: string) {
+    return SPVService.instance.terminateProposalOwnerDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public terminateProposalCRCouncilMemberDigest(payload: string) {
+    return SPVService.instance.terminateProposalCRCouncilMemberDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
   public createTerminateProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
     return SPVService.instance.createTerminateProposalTransaction(
       jsToSpvWalletId(this.masterWallet.id),
@@ -76,6 +116,22 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
       payload,
       fee,
       memo
+    );
+  }
+
+  public proposalSecretaryGeneralElectionDigest(payload: string) {
+    return SPVService.instance.proposalSecretaryGeneralElectionDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload: string) {
+    return SPVService.instance.proposalSecretaryGeneralElectionCRCouncilMemberDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
     );
   }
 
@@ -90,6 +146,30 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     );
   }
 
+  public proposalChangeOwnerDigest(payload: string) {
+    return SPVService.instance.proposalChangeOwnerDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public proposalChangeOwnerCRCouncilMemberDigest(payload: string) {
+    return SPVService.instance.proposalChangeOwnerCRCouncilMemberDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public proposalTrackingSecretaryDigest(payload: string) {
+    return SPVService.instance.proposalTrackingSecretaryDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
   public createProposalTrackingTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
     return SPVService.instance.createProposalTrackingTransaction(
       jsToSpvWalletId(this.masterWallet.id),
@@ -98,6 +178,14 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
       payload,
       fee,
       memo
+    );
+  }
+
+  public proposalReviewDigest(payload: string) {
+    return SPVService.instance.proposalReviewDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
     );
   }
 
@@ -112,6 +200,22 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     );
   }
 
+  public proposalTrackingOwnerDigest(payload: string) {
+    return SPVService.instance.proposalTrackingOwnerDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public proposalWithdrawDigest(payload: string) {
+    return SPVService.instance.proposalWithdrawDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
   public createProposalWithdrawTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
     return SPVService.instance.createProposalWithdrawTransaction(
       jsToSpvWalletId(this.masterWallet.id),
@@ -120,6 +224,22 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
       payload,
       fee,
       memo
+    );
+  }
+
+  public reserveCustomIDOwnerDigest(payload: string) {
+    return SPVService.instance.reserveCustomIDOwnerDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public reserveCustomIDCRCouncilMemberDigest(payload: string) {
+    return SPVService.instance.reserveCustomIDCRCouncilMemberDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
     );
   }
 
@@ -134,6 +254,22 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     );
   }
 
+  public receiveCustomIDOwnerDigest(payload: string) {
+    return SPVService.instance.receiveCustomIDOwnerDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public receiveCustomIDCRCouncilMemberDigest(payload: string) {
+    return SPVService.instance.receiveCustomIDCRCouncilMemberDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
   public createReceiveCustomIDTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
     return SPVService.instance.createReceiveCustomIDTransaction(
       jsToSpvWalletId(this.masterWallet.id),
@@ -145,6 +281,22 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     );
   }
 
+  public changeCustomIDFeeOwnerDigest(payload: string) {
+    return SPVService.instance.changeCustomIDFeeOwnerDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public changeCustomIDFeeCRCouncilMemberDigest(payload: string) {
+    return SPVService.instance.changeCustomIDFeeCRCouncilMemberDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
   public createChangeCustomIDFeeTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
     return SPVService.instance.createChangeCustomIDFeeTransaction(
       jsToSpvWalletId(this.masterWallet.id),
@@ -153,6 +305,22 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
       payload,
       fee,
       memo
+    );
+  }
+
+  public registerSidechainOwnerDigest(payload: string) {
+    return SPVService.instance.registerSidechainOwnerDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
+    );
+  }
+
+  public registerSidechainCRCouncilMemberDigest(payload: string) {
+    return SPVService.instance.registerSidechainCRCouncilMemberDigest(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      payload
     );
   }
 
@@ -202,6 +370,29 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     );
   }
 
+  public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any> {
+    return SPVService.instance.generateProducerPayload(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      publicKey,
+      nodePublicKey,
+      nickname,
+      url,
+      IPAddress,
+      location,
+      payPasswd
+    );
+  }
+
+  public generateCancelProducerPayload(publicKey: string, payPasswd: string): Promise<any> {
+    return SPVService.instance.generateCancelProducerPayload(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      publicKey,
+      payPasswd
+    );
+  }
+
   public createRetrieveDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
     return SPVService.instance.createRetrieveDepositTransaction(
       jsToSpvWalletId(this.masterWallet.id),
@@ -214,6 +405,34 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
   }
 
   // CR registration transaction functions
+  public getCRDepositAddress() {
+    return SPVService.instance.getCRDepositAddress(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId
+    );
+  }
+
+  public generateCRInfoPayload(publicKey: string, did: string, nickname: string, url: string, location: number) {
+    return SPVService.instance.generateCRInfoPayload(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      publicKey,
+      did,
+      nickname,
+      url,
+      location
+    );
+  }
+
+  public generateUnregisterCRPayload(CID: string) {
+    return SPVService.instance.generateUnregisterCRPayload(
+      jsToSpvWalletId(this.masterWallet.id),
+      this.chainId,
+      CID
+    );
+  }
+
+
   public createRegisterCRTransaction(inputs: UtxoForSDK[], payload: string, amount: string, fee: string, memo: string) {
     return SPVService.instance.createRegisterCRTransaction(
       jsToSpvWalletId(this.masterWallet.id),
@@ -296,8 +515,16 @@ export class MainChainSPVSDKSafe extends SPVSDKSafe implements ElastosMainChainS
     return SPVService.instance.getOwnerAddress(jsToSpvWalletId(this.masterWallet.id), this.chainId);
   }
 
+  public getOwnerDepositAddress(): Promise<string> {
+    return SPVService.instance.getOwnerDepositAddress(jsToSpvWalletId(this.masterWallet.id), this.chainId);
+  }
+
   public getOwnerPublicKey(): Promise<string> {
     return SPVService.instance.getOwnerPublicKey(jsToSpvWalletId(this.masterWallet.id), this.chainId);
+  }
+
+  public getPublicKeys(start: number, count: number, internal: boolean): Promise<string[]> {
+    return SPVService.instance.getPublicKeys(jsToSpvWalletId(this.masterWallet.id), this.chainId, start, count, internal);
   }
 
   /**
