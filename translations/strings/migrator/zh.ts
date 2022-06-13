@@ -7,7 +7,7 @@ export const zh = {
                 'migrator-fail': '很遗憾，更新失败。请联系开发团队！',
                 'migrator-start': '开始',
 
-                'migration-wallet-list-storage': "Wallet list storage conversion",
-                'migration-elastos-browser-favorites': "Browser favorites for elastos network split conversion"
+                'migration-wallet-list-storage': "钱包列表存储转换",
+                'migration-elastos-browser-favorites': "elastos网络拆分转换浏览器收藏夹"
         }
 };
