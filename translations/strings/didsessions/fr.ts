@@ -86,6 +86,9 @@ export const fr = {
     'print-try-again': 'Non, réessayer',
     'print-yes': 'Oui',
 
+    // Scan
+    'scan-title': "Scan de clé papier",
+
     // Prepare DID
     'getting-ready': 'Finalisation en cours',
     'ready': 'Prêt!',

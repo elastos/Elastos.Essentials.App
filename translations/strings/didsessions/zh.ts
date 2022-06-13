@@ -88,6 +88,9 @@ export const zh = {
     'print-try-again': '不，再试一次',
     'print-yes': '是',
 
+    // Scan
+    'scan-title': "Paper key scan",
+
     // Prepare DID
     'getting-ready': '准备',
     'ready': '准备好啦！',

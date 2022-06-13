@@ -148,7 +148,8 @@ export class GlobalDIDSessionsService {
   }
 
   /**
-   * Signs a given identity entry in.
+   * Signs a given identity entry in. No navigation change occurs here but all services listening to the
+   * DID change event do initialize themselves ("onUserSignIn").
    *
    * This identity becomes the new global identity for the "DID Session".
    */

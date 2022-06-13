@@ -89,6 +89,9 @@ export const en = {
     'print-try-again': 'No, try again',
     'print-yes': 'Yes',
 
+    // Scan
+    'scan-title': "Paper key scan",
+
     // Prepare DID
     'getting-ready': 'Getting ready',
     'ready': 'Ready!',
@@ -111,6 +114,6 @@ export const en = {
     'error-failed-to-publish': 'Failed to publish identity: ',
     'error-failed-to-sign': 'Failed to sign in: ',
   }
- };
+};
 
 

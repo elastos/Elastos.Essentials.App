@@ -1,5 +1,6 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
@@ -26,16 +27,18 @@ export class ScanPage implements OnInit {
     private identityService: IdentityService,
     private zone: NgZone,
     private globalNav: GlobalNavService,
+    private translate: TranslateService
   ) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
+    this.titleBar.setTitle(this.translate.instant('didsessions.scan-title'));
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: 'back', iconPath: BuiltInIcon.BACK });
     this.titleBar.setNavigationMode(null);
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-        this.uxService.onTitleBarItemClicked(icon);
+      this.uxService.onTitleBarItemClicked(icon);
     });
 
     Logger.log('didsessions', 'Start scanning');
@@ -56,7 +59,7 @@ export class ScanPage implements OnInit {
         // Start scanning
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         const scanSub = this.qrScanner.scan().subscribe(async (text: string) => {
-            // Can not show the scan data. Private data, confidential. eg. mnemonic.
+          // Can not show the scan data. Private data, confidential. eg. mnemonic.
           Logger.log('didsessions', 'Scanned something length:', text.length);
 
           this.zone.run(() => {
@@ -82,10 +85,10 @@ export class ScanPage implements OnInit {
         await this.gotoImportingScreen();
       }
     })
-    .catch(async (err: any) => {
-      Logger.warn('didsessions', 'QRScanner error', err);
-      await this.gotoImportingScreen();
-    });
+      .catch(async (err: any) => {
+        Logger.warn('didsessions', 'QRScanner error', err);
+        await this.gotoImportingScreen();
+      });
   }
 
   async gotoImportingScreen() {
