@@ -1,37 +1,45 @@
 import { Injectable } from '@angular/core';
-import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
-import { Logger } from 'src/app/logger';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { Vault } from '@elastosfoundation/hive-js-sdk';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import { } from 'src/app/services/global.didsessions.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 @Injectable({
     providedIn: 'root'
 })
-export class HiveService {
-    private hiveClient: HivePlugin.Client;
+export class HiveService implements GlobalService {
+    private developerVaultServices: Vault;
+    private ttechVaultServices: Vault;
 
-    constructor(private storage: GlobalStorageService) { }
-
-    public async getHiveClient(): Promise<HivePlugin.Client> {
-        if (this.hiveClient)
-            return this.hiveClient;
-
-        let hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
-        if (hiveAuthHelper) {
-            this.hiveClient = await hiveAuthHelper.getClientWithAuth((e) => {
-                // Auth error
-                Logger.error("developertools", "Authentication error", e); // TODO: inform user.
-            });
-        }
-        return this.hiveClient;
+    constructor(private globalHiveService: GlobalHiveService) {
+        GlobalServiceManager.getInstance().registerService(this);
     }
 
-    public async getDeveloperVault(): Promise<HivePlugin.Vault> {
+    onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+        return;
+    }
+
+    onUserSignOut(): Promise<void> {
+        // On sign out, forget the current vault services to allow them to recreate for next user.
+        this.developerVaultServices = null;
+        return;
+    }
+
+    public async getDeveloperVault(): Promise<Vault> {
         let signedInUserDID = DIDSessionsStore.signedInDIDString;
-        return await (await this.getHiveClient()).getVault(signedInUserDID);
+
+        if (!this.developerVaultServices)
+            this.developerVaultServices = await this.globalHiveService.getVaultServicesFor(signedInUserDID);
+
+        return this.developerVaultServices;
     }
 
-    public async getTrinityTechVault(): Promise<HivePlugin.Vault> {
-        return await (await this.getHiveClient()).getVault("did:elastos:iXyYFboFAd2d9VmfqSvppqg1XQxBtX9ea2");
+    public async getTrinityTechVault(): Promise<Vault> {
+        if (!this.ttechVaultServices)
+            this.ttechVaultServices = await this.globalHiveService.getVaultServicesFor("did:elastos:iXyYFboFAd2d9VmfqSvppqg1XQxBtX9ea2");
+
+        return this.ttechVaultServices;
     }
 }

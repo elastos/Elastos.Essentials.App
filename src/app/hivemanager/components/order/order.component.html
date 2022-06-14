@@ -1,15 +1,15 @@
-<ion-row *ngIf="order"  [class.darkContainer]="theme.darkMode">
+<ion-row *ngIf="order" [class.darkContainer]="theme.darkMode">
     <ion-col size="12">
         <h2>{{ 'hivemanager.order.id' | translate }}</h2>
         <p>{{ order.getId() }}</p>
     </ion-col>
     <ion-col size="12">
         <h2>{{ 'hivemanager.order.plan' | translate }}</h2>
-        <p>{{ order.getPricingPlan().getName() }}</p>
+        <p>{{ getPricingPlanName() }}</p>
     </ion-col>
     <ion-col size="12">
         <h2>{{ 'hivemanager.order.state' | translate }}</h2>
-        <p>{{ getFriendlyOrderState(order) }}</p>
+        <p>{{ friendlyOrderState }}</p>
     </ion-col>
     <ion-col size="12" class="removeBorder">
         <h2>{{ 'hivemanager.order.date' | translate }}</h2>

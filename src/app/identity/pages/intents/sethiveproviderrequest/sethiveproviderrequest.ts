@@ -86,7 +86,7 @@ export class SetHiveProviderRequestPage {
           Logger.log("identity", "New DID document published. Asking the global hive manager to refresh its status");
 
           // Refresh user's vault, but don't wait.
-          void this.globalHiveService.retrieveVaultLinkStatus();
+          // TODO? void this.globalHiveService.retrieveVaultLinkStatus();
 
           void this.sendIntentResponse('published');
         } else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {

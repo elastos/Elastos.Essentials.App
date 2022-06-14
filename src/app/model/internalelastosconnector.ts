@@ -1,4 +1,4 @@
-import { Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { Logger } from "../logger";
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
@@ -24,7 +24,7 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
         Logger.log("connector", "App ID Credential generation flow started");
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-        return new Promise(async (resolve, reject)=>{
+        return new Promise(async (resolve, reject) => {
             try {
                 // No such credential, so we have to create one. Send an intent to get that from the did app
                 let res: { result: { credential: string } } = await essentialsIntentManager.sendIntent("https://did.elastos.net/appidcredissue", {
@@ -48,11 +48,15 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
         });
     }
 
+    getWeb3Provider() {
+        throw new Error("Method not implemented.");
+    }
+
     /**
      * Wallet API
      */
 
-    pay(query: Wallet.PayQuery): Promise<Wallet.TransactionResult>  {
+    pay(query: Wallet.PayQuery): Promise<Wallet.TransactionResult> {
         throw new Error("pay(): Method not implemented.");
     }
 

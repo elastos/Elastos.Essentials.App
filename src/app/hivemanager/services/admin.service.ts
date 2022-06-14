@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -15,8 +15,6 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
   providedIn: 'root'
 })
 export class AdminService {
-  private client: HivePlugin.Client;
-
   constructor(
     private storage: GlobalStorageService,
     private globalIntentService: GlobalIntentService,

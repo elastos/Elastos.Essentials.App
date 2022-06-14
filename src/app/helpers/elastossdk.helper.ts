@@ -1,5 +1,7 @@
-import { DID, Hive, Interfaces, logger as connectivityLogger, storage as connectivityStorage } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { DID, Interfaces, logger, storage } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { Vault } from "@elastosfoundation/hive-js-sdk";
 import { Logger } from "../logger";
+import { HiveDataSync } from "../model/hive/hivedatasync";
 import { GlobalStorageService } from "../services/global.storage.service";
 import { DIDSessionsStore } from './../services/stores/didsessions.store';
 import { InternalHiveAuthHelper } from "./hive.authhelper";
@@ -40,8 +42,8 @@ export class ElastosSDKHelper {
     }
 
     public static init() {
-        connectivityLogger.setLoggerLayer(new EssentialsLogger());
-        connectivityStorage.setStorageLayer(new EssentialsDIDKeyValueStore(GlobalStorageService.instance));
+        logger.setLoggerLayer(new EssentialsLogger());
+        storage.setStorageLayer(new EssentialsDIDKeyValueStore(GlobalStorageService.instance));
     }
 
     /**
@@ -63,8 +65,8 @@ export class ElastosSDKHelper {
     /**
      * @param context Isolation context to be able to handle multiple auth tokens, etc. Usually, the "app module name"
      */
-    public newHiveDataSync(userVault: HivePlugin.Vault, showDebugLogs = false): Hive.DataSync.HiveDataSync {
-        let dataSync = new Hive.DataSync.HiveDataSync(userVault, showDebugLogs);
+    public newHiveDataSync(userVault: Vault, showDebugLogs = false): HiveDataSync {
+        let dataSync = new HiveDataSync(userVault, showDebugLogs);
         return dataSync;
     }
 }

@@ -7,8 +7,6 @@ import { AppModule } from './app/app.module';
 import { Logger } from './app/logger';
 import { environment } from './environments/environment';
 
-
-
 // Replace default console logs with our own logger
 Logger.init(console);
 

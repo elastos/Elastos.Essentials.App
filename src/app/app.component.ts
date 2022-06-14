@@ -3,7 +3,7 @@ import { FirebaseX } from "@awesome-cordova-plugins/firebase-x/ngx";
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
-import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-js';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { ElastosSDKHelper } from './helpers/elastossdk.helper';
 import { Logger } from './logger';

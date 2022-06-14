@@ -1,10 +1,12 @@
-import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { DIDDocument, JWTParserBuilder, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
+import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { AppContext, AppContextProvider, Vault, VaultSubscription } from "@elastosfoundation/hive-js-sdk";
+import moment from "moment";
 import { GlobalConfig } from "../config/globalconfig";
 import { Logger } from "../logger";
-import { GlobalHiveService } from "../services/global.hive.service";
 
-declare let didManager: DIDPlugin.DIDManager;
-declare let hiveManager: HivePlugin.HiveManager;
+//declare let didManager: DIDPlugin.DIDManager;
+//declare let hiveManager: HivePlugin.HiveManager;
 
 /**
  * We rewrite our own hive authentication helper instead of using the one provided by the connectivity SDK,
@@ -15,19 +17,62 @@ export class InternalHiveAuthHelper {
   private didAccess: DID.DIDAccess;
 
   constructor() {
+    this.didAccess = new DID.DIDAccess();
+  }
+
+  public async getAppContext(targetDid: string, onAuthError?: (e: Error) => void): Promise<AppContext> {
+    let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
+
+    Logger.log("hiveauthhelper", "Getting app instance DID document");
+    let didDocument = await appInstanceDIDInfo.didStore.loadDid(appInstanceDIDInfo.did.toString());
+    Logger.log("hiveauthhelper", "Got app instance DID document. Now creating the Hive client", didDocument.toJSON());
+
+    let appContextProvider: AppContextProvider = {
+      getLocalDataDir: (): string => {
+        return "/";
+      },
+      getAppInstanceDocument: (): Promise<DIDDocument> => {
+        return Promise.resolve(didDocument);
+      },
+      getAuthorization: (authenticationChallengeJWtCode: string): Promise<string> => {
+        /**
+         * Called by the Hive plugin when a hive backend needs to authenticate the user and app.
+         * The returned data must be a verifiable presentation, signed by the app instance DID, and
+         * including a appid certification credential provided by the identity application.
+         */
+        Logger.log("hiveauthhelper", "Hive client authentication challenge callback is being called with token:", authenticationChallengeJWtCode);
+        try {
+          return this.handleVaultAuthenticationChallenge(authenticationChallengeJWtCode);
+        }
+        catch (e) {
+          Logger.error("hiveauthhelper", "Exception in authentication handler:", e);
+          if (onAuthError)
+            onAuthError(e);
+          return null;
+        }
+      }
+    }
+
+    let appContext = await AppContext.build(appContextProvider, targetDid);
+    return appContext;
+  }
+
+  public async getSubscriptionService(targetDid: string, providerAddress: string = null, onAuthError?: (e: Error) => void): Promise<VaultSubscription> {
+    let appContext = await this.getAppContext(targetDid, onAuthError);
+    if (!providerAddress)
+      providerAddress = await AppContext.getProviderAddress(targetDid); // TODO: cache, don't resolve every time
+    return new VaultSubscription(appContext, providerAddress);
   }
 
   /**
-   * Returns a hive client object ready to handle the authentication flow. This method can be used by dApps
+   * Returns a hive vault services object ready to handle the authentication flow. This method can be used by dApps
    * for convenience, or can be skipped and customized in-app if the app wants a different behaviour.
    */
-  public getClientWithAuth(onAuthError?: (e: Error) => void): Promise<HivePlugin.Client> {
+  public getVaultServices(targetDid: string, onAuthError?: (e: Error) => void): Promise<Vault> {
     //this.clearVaultAccessToken(); // TMP DEBUG HELPER
 
     // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
-    return new Promise(async (resolve) => {
-      this.didAccess = new DID.DIDAccess();
-
+    return new Promise(async (resolve, reject) => {
       let authHelper = this;
 
       // Initiate or retrieve an application instance DID. This DID is used to sign authentication content
@@ -37,52 +82,36 @@ export class InternalHiveAuthHelper {
       let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
 
       Logger.log("hiveauthhelper", "Getting app instance DID document");
-      // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
-      appInstanceDIDInfo.didStore.loadDidDocument(appInstanceDIDInfo.did.getDIDString(), async (didDocument) => {
-        Logger.log("hiveauthhelper", "Got app instance DID document. Now creating the Hive client", await didDocument.toJson());
-        let client = await hiveManager.getClient({
-          authenticationHandler: new class AuthenticationHandler implements HivePlugin.AuthenticationHandler {
-            /**
-             * Called by the Hive plugin when a hive backend needs to authenticate the user and app.
-             * The returned data must be a verifiable presentation, signed by the app instance DID, and
-             * including a appid certification credential provided by the identity application.
-             */
-            async authenticationChallenge(jwtToken: string): Promise<string> {
-              Logger.log("hiveauthhelper", "Hive client authentication challenge callback is being called with token:", jwtToken);
-              try {
-                return await authHelper.handleVaultAuthenticationChallenge(jwtToken);
-              }
-              catch (e) {
-                Logger.error("hiveauthhelper", "Exception in authentication handler:", e);
-                if (onAuthError)
-                  onAuthError(e);
-                return null;
-              }
-            }
-          },
-          authenticationDIDDocument: await didDocument.toJson()
-        });
+      try {
+        let didDocument = await appInstanceDIDInfo.didStore.loadDid(appInstanceDIDInfo.did.toString());
+        //appInstanceDIDInfo.didStore.loadDidDocument(appInstanceDIDInfo.did.getDIDString(), async (didDocument) => {
+        Logger.log("hiveauthhelper", "Got app instance DID document. Now creating the Hive client", didDocument.toJSON());
 
-        Logger.log("hiveauthhelper", "Hive client initialization completed");
-        resolve(client);
-      }, (err) => {
+        let appContext = await this.getAppContext(targetDid);
+        let providerAddress = await AppContext.getProviderAddress(targetDid);
+        let vaultServices = new Vault(appContext, providerAddress);
+
+        Logger.log("hiveauthhelper", "Hive vault services initialization completed");
+        resolve(vaultServices);
+      }
+      catch (err) {
         Logger.error("hiveauthhelper", err);
-      });
-
+        reject(err);
+      }
     });
   }
 
   /**
    * Debug method to delete user's hive vault authentication in order to force a new authentication flow.
    */
-  private clearVaultAccessToken() {
+  /* private clearVaultAccessToken() {
     GlobalHiveService.instance.vaultStatus.subscribe(s => {
       if (s) {
         console.log("DELETING HIVE VAULT ACCESS TOKEN");
         void GlobalHiveService.instance.getActiveVault().revokeAccessToken();
       }
     });
-  }
+  } */
 
   /*
   - auth challenge: JWT (iss, nonce)
@@ -111,83 +140,85 @@ export class InternalHiveAuthHelper {
     // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
     return new Promise(async (resolve, reject) => {
       // Parse, but verify on chain that this JWT is valid first
-      let parseResult = await didManager.parseJWT(true, authChallengeJwttoken);
+      try {
+        let parseResult = await new JWTParserBuilder().build().parse(authChallengeJwttoken);
+        let body = parseResult.getBody();
 
-      if (!parseResult.signatureIsValid) {
-        // Could not verify the received JWT as valid - reject the authentication request by returning a null token
-        reject("The received authentication JWT token signature cannot be verified or failed to verify: " + parseResult.errorReason + ". Is the hive back-end DID published? Are you on the right network?");
-        return;
-      }
-
-      // The request JWT must contain iss and nonce fields
-      if (!("iss" in parseResult.payload) || !("nonce" in parseResult.payload)) {
-        reject("The received authentication JWT token does not contain iss or nonce");
-        return;
-      }
-
-      // Generate a hive authentication presentation and put the credential + back-end info such as nonce inside
-      let nonce = parseResult.payload["nonce"] as string;
-      let realm = parseResult.payload["iss"] as string;
-
-      Logger.log("hiveauthhelper", "Getting app instance DID");
-      let appInstanceDID = (await this.didAccess.getOrCreateAppInstanceDID()).did;
-
-      let appInstanceDIDInfo = await this.didAccess.getExistingAppInstanceDIDInfo();
-
-      Logger.log("hiveauthhelper", "Getting app identity credential");
-      let appIdCredential = await this.didAccess.getExistingAppIdentityCredential();
-
-      if (!appIdCredential) {
-        Logger.log("hiveauthhelper", "Empty app id credential. Trying to generate a new one");
-
-        appIdCredential = await this.generateAppIdCredential();
-        if (!appIdCredential) {
-          Logger.warn("hiveauthhelper", "Failed to generate a new App ID credential");
-          resolve(null);
+        // The request JWT must contain iss and nonce fields
+        if (!body.get("iss") || !body.get("nonce")) {
+          reject("The received authentication JWT token does not contain iss or nonce");
           return;
         }
+
+        // Generate a hive authentication presentation and put the credential + back-end info such as nonce inside
+        let nonce = body.get("nonce") as string;
+        let realm = body.get("iss") as string;
+
+        Logger.log("hiveauthhelper", "Getting app instance DID");
+        let appInstanceDIDResult = await this.didAccess.getOrCreateAppInstanceDID();
+        let appInstanceDID = appInstanceDIDResult.did;
+
+        let appInstanceDIDInfo = await this.didAccess.getExistingAppInstanceDIDInfo();
+
+        Logger.log("hiveauthhelper", "Getting app identity credential");
+        let appIdCredential = await this.didAccess.getExistingAppIdentityCredential();
+
+        if (!appIdCredential) {
+          Logger.log("hiveauthhelper", "Empty app id credential. Trying to generate a new one");
+
+          appIdCredential = await this.generateAppIdCredential();
+          if (!appIdCredential) {
+            Logger.warn("hiveauthhelper", "Failed to generate a new App ID credential");
+            resolve(null);
+            return;
+          }
+        }
+
+        // Create the presentation that includes hive back end challenge (nonce) and the app id credential.
+        Logger.log("hiveauthhelper", "Creating DID presentation response for Hive authentication challenge");
+        let builder = await VerifiablePresentation.createFor(appInstanceDID.toString(), null, appInstanceDIDResult.didStore);
+        let presentation = await builder.credentials(appIdCredential).realm(realm).nonce(nonce).seal(appInstanceDIDInfo.storePassword);
+
+        if (presentation) {
+          // Generate the hive back end authentication JWT
+          Logger.log("hiveauthhelper", "Opening DID store to create a JWT for presentation:", presentation.toJSON());
+          let didStore = await DID.DIDHelper.openDidStore(appInstanceDIDInfo.storeId);
+
+          Logger.log("hiveauthhelper", "Loading DID document");
+          try {
+            let didDocument = await didStore.loadDid(appInstanceDIDInfo.didString);
+            let validityDays = 2;
+            Logger.log("hiveauthhelper", "App instance DID document", didDocument.toJSON());
+            Logger.log("hiveauthhelper", "Creating JWT");
+            try {
+              let jwtToken = await didDocument.jwtBuilder().addClaims({
+                presentation: presentation.toJSON()
+              }).setExpiration(moment().add(validityDays, "days").toDate()).sign(appInstanceDIDInfo.storePassword);
+              Logger.log("hiveauthhelper", "JWT created for presentation:", jwtToken);
+              resolve(jwtToken);
+            }
+            catch (err) {
+              reject(err);
+            }
+          }
+          catch (err) {
+            reject(err);
+          }
+        }
+        else {
+          reject("No presentation generated");
+        }
       }
-
-      // Create the presentation that includes hive back end challenge (nonce) and the app id credential.
-      Logger.log("hiveauthhelper", "Creating DID presentation response for Hive authentication challenge"),
-        appInstanceDID.createVerifiablePresentation([
-          appIdCredential
-        ],
-          realm,
-          nonce,
-          // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
-          appInstanceDIDInfo.storePassword, async (presentation) => {
-            if (presentation) {
-              // Generate the hive back end authentication JWT
-              Logger.log("hiveauthhelper", "Opening DID store to create a JWT for presentation:", await presentation.toJson());
-              let didStore = await DID.DIDHelper.openDidStore(appInstanceDIDInfo.storeId);
-
-              Logger.log("hiveauthhelper", "Loading DID document");
-              // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
-              didStore.loadDidDocument(appInstanceDIDInfo.didString, async (didDocument) => {
-                let validityDays = 2;
-                Logger.log("hiveauthhelper", "App instance DID document", await didDocument.toJson());
-                Logger.log("hiveauthhelper", "Creating JWT");
-                didDocument.createJWT({
-                  presentation: JSON.parse(await presentation.toJson())
-                }, validityDays, appInstanceDIDInfo.storePassword, (jwtToken) => {
-                  Logger.log("hiveauthhelper", "JWT created for presentation:", jwtToken);
-                  resolve(jwtToken);
-                }, (err) => {
-                  reject(err);
-                });
-              }, (err) => {
-                reject(err);
-              });
-            }
-            else {
-              reject("No presentation generated");
-            }
-          });
+      catch (e) {
+        // Verification error?
+        // Could not verify the received JWT as valid - reject the authentication request by returning a null token
+        reject("The received authentication JWT token signature cannot be verified or failed to verify: " + new String(e) + ". Is the hive back-end DID published? Are you on the right network?");
+        return;
+      }
     });
   }
 
-  private generateAppIdCredential(): Promise<DIDPlugin.VerifiableCredential> {
+  private generateAppIdCredential(): Promise<VerifiableCredential> {
     // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
     return new Promise(async (resolve) => {
       let storedAppInstanceDID = await this.didAccess.getOrCreateAppInstanceDID();
@@ -202,11 +233,15 @@ export class InternalHiveAuthHelper {
       Logger.log("hiveauthhelper", "Starting to generate a new App ID credential.");
 
       // Directly generate the credential without user confirmation.
+
+      // Convert cordova-made credential generated by essentials, into a JS credential, as we have to
+      // work with the 2 worlds so far.
       let AppIDService = (await import("../identity/services/appid.service")).AppIDService; // Lazy
-      let credential = await AppIDService.instance.generateApplicationIDCredential(appInstanceDID.getDIDString(), GlobalConfig.ESSENTIALS_APP_DID);
+      let cordovaCredential = await AppIDService.instance.generateApplicationIDCredential(appInstanceDID.toString(), GlobalConfig.ESSENTIALS_APP_DID);
+      let credential = VerifiableCredential.parse(await cordovaCredential.toString());
 
       // Save this issued credential for later use.
-      appInstanceDID.addCredential(credential);
+      await storedAppInstanceDID.didStore.storeCredential(credential);
 
       // This generated credential must contain the following properties:
       // TODO: CHECK THAT THE RECEIVED CREDENTIAL CONTENT IS VALID

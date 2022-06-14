@@ -48,7 +48,7 @@
     "@awesome-cordova-plugins/splash-screen": "5.37.3",
     "@awesome-cordova-plugins/status-bar": "5.37.3",
     "@elastosfoundation/did-js-sdk": "^2.2.3",
-    "@elastosfoundation/elastos-connectivity-sdk-cordova": "^2.0.2",
+    "@elastosfoundation/hive-js-sdk": "^2.7.1",
     "@elastosfoundation/wallet-js-sdk": "^0.0.7-alpha",
     "@ethereumjs/common": "^2.6.4",
     "@ethereumjs/tx": "^3.5.1",

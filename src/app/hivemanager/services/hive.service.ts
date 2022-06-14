@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Order, PricingPlan, Vault, VaultInfo } from '@elastosfoundation/hive-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from "rxjs";
 import { Logger } from 'src/app/logger';
@@ -12,6 +13,7 @@ import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 import { PopupService } from './popup.service';
 
 export type PaidIncompleteOrder = {
+  orderId: string;
   transactionId: string;
   vaultAddress: string;
   planName: string;
@@ -21,7 +23,7 @@ export type PaidIncompleteOrder = {
   providedIn: 'root'
 })
 export class HiveService {
-  private pricingInfo: HivePlugin.Payment.PricingInfo = null; // Cached pricing info for user's current vault provider after been fetched.
+  private pricingPlans: PricingPlan[] = []; // Cached available pricing plans for user's current vault provider after been fetched.
 
   private publicationCheckTimer: NodeJS.Timer = null;
   public publicationSubject: Subject<boolean> = new Subject();
@@ -43,8 +45,8 @@ export class HiveService {
   stop() {
   }
 
-  public getActiveVault(): HivePlugin.Vault {
-    return this.globalHiveService.getActiveVault();
+  public getActiveVault(): Vault {
+    return this.globalHiveService.getActiveVaultServices();
   }
 
   private async getLastPublishedTime(): Promise<Date> {
@@ -56,42 +58,55 @@ export class HiveService {
     await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "publicationrequesttime", Date.now());
   }
 
-  public async getPricingInfo(): Promise<HivePlugin.Payment.PricingInfo> {
-    if (this.pricingInfo)
-      return this.pricingInfo;
+  public async getPricingPlans(): Promise<PricingPlan[]> {
+    if (this.pricingPlans)
+      return this.pricingPlans;
 
-    this.pricingInfo = await this.getActiveVault().getPayment().getPricingInfo();
+    let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
+    let plans = await subscriptionService.getPricingPlanList();
 
-    return this.pricingInfo;
+    this.pricingPlans = plans;
+
+    return this.pricingPlans;
+  }
+
+  public async getActivePricingPlan(): Promise<VaultInfo> {
+    let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
+    return await subscriptionService.checkSubscription();
   }
 
   /**
    *
    */
-  public async purchasePlan(paymentSettings: HivePlugin.Payment.PaymentSettings, plan: HivePlugin.Payment.PricingPlan): Promise<void> {
+  public async purchasePlan(plan: PricingPlan): Promise<void> {
     if (plan.getCurrency() != "ELA") {
       await this.popup.ionicAlert(this.translate.instant('hivemanager.alert.unavailable'), this.translate.instant('hivemanager.alert.only-payments-in-ELA'));
       return;
     }
 
     let operationSuccessful: boolean;
-    if (plan.getCost() == 0) {
+    if (plan.getAmount() == 0) {
       // TODO: save that user doesn't want to renew his paid subscription.
       operationSuccessful = true;
     }
     else {
       try {
+        let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
+
+        // Create a payment order
+        let order = await subscriptionService.placeOrder(plan.getName());
+
         // Pay using a wallet.
-        let transactionID = await this.executePayment(plan.getCost(), await paymentSettings.getReceivingELAAddress())
+        let transactionID = await this.executePayment(order);
 
         // TODO: save txid and (maybe? or create a new order to retry?) orderid to local storage until we are sure payOrder() was successful, to make sure we don't
         // loose any payment, then retry until it's successful.
 
         if (transactionID) {
           // Save the payment information locally.
-          await this.savePaidIncompleteOrder(transactionID, this.getActiveVault().getVaultProviderAddress(), plan.getName());
+          await this.savePaidIncompleteOrder(order, transactionID, await this.getActiveVault().getProviderAddress());
 
-          await this.notifyProviderOfPaidOrder(plan.getName(), transactionID);
+          await this.notifyProviderOfPaidOrder(order, transactionID);
 
           Logger.log("HiveManager", "Plan purchase completed successfully");
 
@@ -115,13 +130,13 @@ export class HiveService {
     }
   }
 
-  private executePayment(cost: number, elaAddress: string): Promise<string> {
+  private executePayment(order: Order): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       try {
         let data: { result: { txid: string } } = await this.globalIntentService.sendIntent("https://wallet.elastos.net/pay", {
-          amount: cost,
-          receiver: elaAddress,
+          amount: order.getElaAmount(),
+          receiver: order.getElaAddress(),
           currency: "ELA"
         });
 
@@ -145,13 +160,12 @@ export class HiveService {
   /**
    * Creates a new order and notifies that it has been paid (by giving the transaction id).
    */
-  private async notifyProviderOfPaidOrder(planName: string, transactionID: string) {
-    // Create a payment order
-    let orderId = await this.getActiveVault().getPayment().placeOrder(planName);
+  private async notifyProviderOfPaidOrder(order: Order, transactionID: string) {
+    let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
 
     // Let the vault provider know which transaction IDs have been generated for the payment of this order.
     Logger.log("HiveManager", "Paying order on vault for transaction ID", transactionID);
-    await this.getActiveVault().getPayment().payOrder(orderId, [transactionID]);
+    await subscriptionService.payOrder(order.getOrderId(), transactionID);
 
     Logger.log("HiveManager", "Order paid on the vault provider");
 
@@ -169,6 +183,8 @@ export class HiveService {
   public async tryToFinalizePreviousOrders(): Promise<void> {
     Logger.log("HiveManager", "Trying to finalize paid but incomplete orders");
 
+    let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
+
     let incompleteOrders = await this.getPaidIncompleteOrders();
     if (incompleteOrders.length == 0) {
       // No incomplete order, nothing to finalize.
@@ -177,10 +193,12 @@ export class HiveService {
     }
     else {
       // For each incomplete order, try to call payOrder() again.
-      for (let order of incompleteOrders) {
+      for (let incompleteOrder of incompleteOrders) {
         try {
-          Logger.log("HiveManager", "Retrying to finalize paid incomplete order:", order);
-          await this.notifyProviderOfPaidOrder(order.planName, order.transactionId);
+          let order = await subscriptionService.getOrder(incompleteOrder.orderId);
+
+          Logger.log("HiveManager", "Retrying to finalize paid incomplete order:", incompleteOrder);
+          await this.notifyProviderOfPaidOrder(order, incompleteOrder.transactionId);
           Logger.log("HiveManager", "Retried to finalize paid incomplete order successfully");
         }
         catch (e) {
@@ -228,22 +246,28 @@ export class HiveService {
     }
   }
 
-  private async savePaidIncompleteOrder(transactionId: string, vaultAddress: string, planName: string) {
+  public async getPaidIncompleteOrderByOrderId(orderId: string): Promise<PaidIncompleteOrder> {
+    let pendingPaidOrders = await this.getPaidIncompleteOrders();
+    return pendingPaidOrders.find(o => o.orderId === orderId) || null;
+  }
+
+  private async savePaidIncompleteOrder(order: Order, transactionId: string, vaultAddress: string) {
     let pendingPaidOrders = await this.getPaidIncompleteOrders();
     pendingPaidOrders.push({
+      orderId: order.getOrderId(),
       transactionId: transactionId,
       vaultAddress: vaultAddress,
-      planName: planName
+      planName: order.getPricingName()
     });
     await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
   }
 
-  private sortOrdersByMostRecentFirst(orders: HivePlugin.Payment.Order[]): HivePlugin.Payment.Order[] {
+  private sortOrdersByMostRecentFirst(orders: Order[]): Order[] {
     // Most recent orders come first in the list.
     return orders.sort((orderA, orderB) => {
-      if (orderA.getCreationTime() < orderB.getCreationTime())
+      if (orderA.getCreateTime() < orderB.getCreateTime())
         return -1;
-      else if (orderA.getCreationTime() > orderB.getCreationTime())
+      else if (orderA.getCreateTime() > orderB.getCreateTime())
         return 1;
       else
         return 0;
@@ -254,12 +278,16 @@ export class HiveService {
    * Returns the list of orders that are awaiting payment by the hive vault
    * provider.
    */
-  public async getOrdersAwaitingPayment(): Promise<HivePlugin.Payment.Order[]> {
-    let orders = this.sortOrdersByMostRecentFirst(await this.getActiveVault().getPayment().getAllOrders());
+  public async getOrdersAwaitingPayment(): Promise<Order[]> {
+    let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
+
+    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrderList());
     Logger.log("HiveManager", "All orders:", orders);
 
     let awaitingOrders = orders.filter((o) => {
-      return o.getState() == "AWAITING_PAYMENT";
+      // Orders that are in hive SDK but not in our incomplete orders list
+      let paidIncompleteOrder = this.getPaidIncompleteOrderByOrderId(o.getOrderId());
+      return !o.getProof() && paidIncompleteOrder == null;
     });
 
     Logger.log("HiveManager", "Orders awaiting payment:", awaitingOrders);
@@ -271,12 +299,16 @@ export class HiveService {
    * Returns the list of orders that are awaiting payment confirmation by the hive vault
    * provider.
    */
-  public async getOrdersAwaitingPaymentValidation(): Promise<HivePlugin.Payment.Order[]> {
-    let orders = this.sortOrdersByMostRecentFirst(await this.getActiveVault().getPayment().getAllOrders());
+  public async getOrdersAwaitingPaymentValidation(): Promise<Order[]> {
+    let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
+
+    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrderList());
     Logger.log("HiveManager", "All orders:", orders);
 
     let awaitingOrders = orders.filter((o) => {
-      return o.getState() == "AWAITING_TX_CONFIRMATION";
+      // Orders that are in hive SDK AND in our incomplete orders list, but with no proof received by the hive node yet
+      let paidIncompleteOrder = this.getPaidIncompleteOrderByOrderId(o.getOrderId());
+      return !o.getProof() && paidIncompleteOrder != null;
     });
 
     Logger.log("HiveManager", "Orders awaiting confirmation:", awaitingOrders);
@@ -284,13 +316,15 @@ export class HiveService {
     return awaitingOrders;
   }
 
-  public async getActiveOrders(): Promise<HivePlugin.Payment.Order[]> {
-    let orders = this.sortOrdersByMostRecentFirst(await this.getActiveVault().getPayment().getAllOrders());
+  public async getActiveOrders(): Promise<Order[]> {
+    let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
+
+    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrderList());
     Logger.log("HiveManager", "All orders:", orders);
 
     let activeOrders = orders.filter((o) => {
-      // Active orders are orders COMPLETED, and not expired
-      return o.getState() == "COMPLETED" /* TODO - NOT EXPIRED */;
+      // Active orders are orders with proof
+      return o.getProof();
     });
 
     Logger.log("HiveManager", "Active orders:", activeOrders);
@@ -298,8 +332,14 @@ export class HiveService {
     return activeOrders;
   }
 
-  public getFriendlyOrderState(order: HivePlugin.Payment.Order) {
-    switch (order.getState()) {
+  public async getFriendlyOrderState(order: Order): Promise<string> {
+    let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
+
+    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrderList());
+
+    return "To do"; // TMP
+
+    /* TODO switch (order.getState()) {
       case "AWAITING_PAYMENT":
         return "Waiting for payment";
       case "AWAITING_TX_CONFIRMATION":
@@ -314,6 +354,6 @@ export class HiveService {
         return "Timed out waiting for transaction confirmation";
       default:
         return "Unknown state: " + order.getState();
-    }
+    }*/
   }
 }

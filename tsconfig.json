@@ -48,10 +48,10 @@
     ],
     "paths": {
       "crypto": [
-        "node_modules/crypto-browserify"
+        "./node_modules/crypto-browserify"
       ],
       "stream": [
-        "node_modules/stream-browserify"
+        "./node_modules/stream-browserify"
       ],
       "path": [
         "./node_modules/path-browserify"
@@ -61,6 +61,12 @@
       ],
       "bn.js": [
         "./node_modules/bn.js"
+      ],
+      "@elastosfoundation/did-js-sdk": [
+        "./node_modules/@elastosfoundation/did-js-sdk/dist/es/did.browser.js"
+      ],
+      "@elastosfoundation/elastos-connectivity-sdk-js": [
+        "./node_modules/@elastosfoundation/elastos-connectivity-sdk-js"
       ]
     }
   }
