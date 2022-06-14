@@ -159,7 +159,7 @@ export const zh = {
                 "coin-transaction-status-confirmed": "已确认",
                 "coin-transaction-status-pending": "确认中",
                 "coin-transaction-status-unconfirmed": "未确认",
-                "coin-transaction-status-not-published": "Not published",
+                "coin-transaction-status-not-published": "未发布",
                 "text-coin-close-warning": "此币种将从列表中删除",
 
                 /*******************

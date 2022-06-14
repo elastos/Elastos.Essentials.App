@@ -34,7 +34,7 @@
     </ion-row>
 
     <!-- Sharing link -->
-    <ion-row class="item-row link">
+    <ion-row class="item-row link" *ngIf="isSelfSigned">
       <ion-col size="12" class="title-col">
         <h1>{{ 'wallet.multi-signature-transaction-link' | translate }}</h1>
       </ion-col>
