@@ -119,10 +119,14 @@ export class PickIdentityPage implements OnInit {
 
   async signIn(identityEntry: IdentityEntry) {
     Logger.log('didsessions', "Trying to sign in with DID " + identityEntry.didString);
-    void this.nativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
-    await this.identityService.signIn(identityEntry, true);
+    await this.nativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
+    try {
+      await this.identityService.signIn(identityEntry, true);
+    } catch (e) {
+      Logger.error('didsessions', "Sign exception:", e);
+    }
     Logger.log('didsessions', "Sign in complete");
-    void this.nativeService.hideLoading();
+    await this.nativeService.hideLoading();
   }
 
   /**

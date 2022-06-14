@@ -274,6 +274,7 @@ export class IdentityService {
             }
         }
         catch (e) {
+            await this.nativeService.hideLoading();
             let reworkedEx = DIDHelper.reworkedPluginException(e);
             if (reworkedEx instanceof PasswordManagerCancellationException || reworkedEx instanceof WrongPasswordException
                 || reworkedEx instanceof BiometricAuthenticationFailedException || reworkedEx instanceof BiometricLockedoutException) {
@@ -382,7 +383,7 @@ export class IdentityService {
                     throw e;
                 }
             }
-            void this.nativeService.hideLoading();
+            await this.nativeService.hideLoading();
 
             // Check if we could retrieve a DID or not.
             if (didStore.dids.length > 0) {
@@ -431,7 +432,7 @@ export class IdentityService {
             }
         }
         catch (e) {
-            void this.nativeService.hideLoading();
+            await this.nativeService.hideLoading();
             let reworkedEx = e ? e : "No specific information";
             Logger.error('didsessions', 'createStoreAfterImport error', reworkedEx);
             await this.popupProvider.ionicAlert("Synchronization error", reworkedEx, this.translate.instant("common.close"));
