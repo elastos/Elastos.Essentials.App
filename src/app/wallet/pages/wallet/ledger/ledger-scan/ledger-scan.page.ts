@@ -20,7 +20,7 @@
 * SOFTWARE.
 */
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { TransportError } from "@ledgerhq/hw-transport";
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -54,19 +54,43 @@ export class LedgerScanPage implements OnInit {
     constructor(
         public native: Native,
         private translate: TranslateService,
-        public theme: GlobalThemeService
+        public theme: GlobalThemeService,
+        private zone: NgZone,
     ) { }
 
     ngOnInit() {
-        this.bleManager = new BLECentralPluginBridge();
+       void this.initBLE();
+    }
+
+    ngOnDestroy() {
+      if (this.bleManager) {
+        void this.bleManager.stopStateNotifications();
+      }
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.ledger-scan"));
     }
 
-    ionViewDidEnter() {
-        void this.doScan();
+    async initBLE() {
+      this.bleManager = new BLECentralPluginBridge();
+      if (this.bleManager) {
+        await this.bleManager.stopStateNotifications();
+        this.bleManager.startStateNotifications((state) => {
+          switch(state) {
+            case "on":
+              void this.doScan();
+              break;
+            case 'off':
+              this.isBluetoothEnable = false;
+              this.device = null;
+              this.errorMessge = this.ErrorMessage_BluetoothNoEnable;
+              break;
+          }
+        }, (error)=> {
+          Logger.warn(TAG, "startStateNotifications error " + error)
+        });
+      }
     }
 
     connectLedger() {
@@ -80,24 +104,26 @@ export class LedgerScanPage implements OnInit {
         void this.bleManager.showBluetoothSettings();
     }
 
-    async doScan() {
+    doScan() {
         this.errorMessge = null;
         this.device = null;
 
-        this.isBluetoothEnable = await this.bleManager.isEnabled();
-        if (this.isBluetoothEnable) {
-            this.scanning = true;
-            let ret = await this.searchLedgerDevice(15000).catch((e) => {
-                Logger.warn(TAG, ' searchLedgerDevice exception ', e)
-            })
-            this.scanning = false;
+        void this.zone.run(async () => {
+          this.isBluetoothEnable = await this.bleManager.isEnabled();
+          if (this.isBluetoothEnable) {
+              this.scanning = true;
+              let ret = await this.searchLedgerDevice(15000).catch((e) => {
+                  Logger.warn(TAG, ' searchLedgerDevice exception ', e)
+              })
+              this.scanning = false;
 
-            if (ret) {
-                this.device = ret;
-            }
-        } else {
-            this.errorMessge = this.ErrorMessage_BluetoothNoEnable;
-        }
+              if (ret) {
+                  this.device = ret;
+              }
+          } else {
+              this.errorMessge = this.ErrorMessage_BluetoothNoEnable;
+          }
+        });
     }
 
     searchLedgerDevice(listenTimeout?: number): Promise<BLECentralPlugin.PeripheralData> {
