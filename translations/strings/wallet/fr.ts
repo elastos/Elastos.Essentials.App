@@ -639,6 +639,7 @@ export const fr = {
         'multi-sig-my-signing-wallet': 'Mon portefeuille signataire',
         'multi-sig-pick-a-wallet': 'Choisir un portefeuille',
         'multi-sig-other-co-signers': 'Autres co-signataires',
+        'multi-sig-input-xpub-key-prompt': 'Saisir une clé xpub vqlide',
         'multi-sig-add-cosigner': 'Ajouter un co-signataire',
         'multi-sig-total-signers': 'Total des signataires',
         'multi-sig-required-signers': 'Signataires requis',

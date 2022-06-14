@@ -635,17 +635,18 @@ export const zh = {
                 * Multisig standard wallet page *
                 *********************************/
 
-                'multi-sig-wallet-name': 'Wallet name',
-                'multi-sig-my-signing-wallet': 'My signing wallet',
-                'multi-sig-pick-a-wallet': 'Pick a wallet',
-                'multi-sig-other-co-signers': 'Other cosigners',
-                'multi-sig-add-cosigner': 'Add a cosigner',
-                'multi-sig-total-signers': 'Total signers',
-                'multi-sig-required-signers': 'Required signers',
-                'multi-sig-new-wallet-title': 'New multi-sig wallet',
-                'multi-sig-error-no-signing-wallet': "Please choose your signing wallet",
-                'multi-sig-error-invalid-xpub': 'Please input a valid xpub key',
-                'multi-sig-error-xpub-in-user': 'This key is already in the list, no duplicates can be used',
+                'multi-sig-wallet-name': '钱包名称',
+                'multi-sig-my-signing-wallet': '我的签名钱包',
+                'multi-sig-pick-a-wallet': '选择钱包',
+                'multi-sig-other-co-signers': '其他联合签名人',
+                'multi-sig-input-xpub-key-prompt': '输入扩展密钥',
+                'multi-sig-add-cosigner': '添加签名人',
+                'multi-sig-total-signers': '签名人总数',
+                'multi-sig-required-signers': '所需签名数',
+                'multi-sig-new-wallet-title': '创建多签钱包',
+                'multi-sig-error-no-signing-wallet': "请选择您的签名钱包",
+                'multi-sig-error-invalid-xpub': '请输入有效的扩展密钥',
+                'multi-sig-error-xpub-in-user': '此密钥已在列表中',
 
                 /********************************
                 * Multisig tx details component *

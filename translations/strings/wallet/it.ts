@@ -639,6 +639,7 @@ export const it = {
         'multi-sig-my-signing-wallet': 'My signing wallet',
         'multi-sig-pick-a-wallet': 'Pick a wallet',
         'multi-sig-other-co-signers': 'Other cosigners',
+        'multi-sig-input-xpub-key-prompt': 'Input xpub key',
         'multi-sig-add-cosigner': 'Add a cosigner',
         'multi-sig-total-signers': 'Total signers',
         'multi-sig-required-signers': 'Required signers',
