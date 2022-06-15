@@ -53,7 +53,7 @@ export class LedgerMasterWallet extends MasterWallet {
   }
 
   public hasMnemonicSupport(): boolean {
-    return false; // TODO - this hasMnemonicSupport() doesn't make enough sense, what does this mean?
+    return false;
   }
 
   public supportsNetwork(network: AnyNetwork): boolean {

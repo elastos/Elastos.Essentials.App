@@ -37,8 +37,7 @@ export class StandardMultiSigMasterWallet extends MasterWallet {
   }
 
   public hasMnemonicSupport(): boolean {
-    console.log("Multisig masterwallet hasMnemonicSupport not implemented");
-    return true; // TODO - this hasMnemonicSupport() doesn't make enough sense, what does this mean?
+    return false;
   }
 
   public supportsNetwork(network: AnyNetwork): boolean {

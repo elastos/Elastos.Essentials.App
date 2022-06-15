@@ -13,7 +13,7 @@ import { LocalStorage } from '../../../../services/storage.service';
 import { Coin, CoinID, CoinType } from '../../../coin';
 import { ExtendedTransactionInfo } from '../../../extendedtxinfo';
 import { MasterWallet } from '../../../masterwallets/masterwallet';
-import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import { WalletNetworkOptions, WalletType } from '../../../masterwallets/wallet.types';
 import { AddressUsage } from '../../../safes/addressusage';
 import { Safe } from '../../../safes/safe';
 import { TimeBasedPersistentCache } from '../../../timebasedpersistentcache';
@@ -323,6 +323,13 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      */
     public getExtendedPublicKey(): Promise<string> {
         return this.safe.getExtendedPublicKey();
+    }
+
+    /*
+     * Muti-sig and Ledger wallets can't be backed up.
+     */
+    public canBackupWallet() {
+        return this.masterWallet.type == WalletType.STANDARD;
     }
 
     /**

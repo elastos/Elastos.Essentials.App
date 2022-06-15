@@ -66,20 +66,6 @@ export class WalletSettingsPage implements OnInit {
 
     public settings: SettingsMenuEntry[] = [
         {
-            type: 'wallet-export',
-            navCallback: () => {
-                if (this.canExportKeystore) {
-                    this.showExportMenu = !this.showExportMenu;
-                } else {
-                    void this.export();
-                }
-            },
-            title: this.translate.instant("wallet.wallet-settings-backup-wallet"),
-            subtitle: this.translate.instant("wallet.wallet-settings-backup-wallet-subtitle"),
-            icon: '/assets/wallet/settings/key.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/key.svg'
-        },
-        {
             type: 'wallet-name',
             route: "/wallet/wallet-edit-name",
             title: this.translate.instant("wallet.wallet-settings-change-name"),
@@ -133,6 +119,23 @@ export class WalletSettingsPage implements OnInit {
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
         this.canExportKeystore = false; // TODO - repair - export "private key" keystores, not "elastos keystores" //this.masterWallet.createType === WalletCreateType.MNEMONIC || this.masterWallet.createType === WalletCreateType.KEYSTORE;
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
+
+        if (this.networkWallet && this.networkWallet.canBackupWallet()) {
+          this.settings.unshift({
+            type: 'wallet-export',
+            navCallback: () => {
+                if (this.canExportKeystore) {
+                    this.showExportMenu = !this.showExportMenu;
+                } else {
+                    void this.export();
+                }
+            },
+            title: this.translate.instant("wallet.wallet-settings-backup-wallet"),
+            subtitle: this.translate.instant("wallet.wallet-settings-backup-wallet-subtitle"),
+            icon: '/assets/wallet/settings/key.svg',
+            iconDarkmode: '/assets/wallet/settings/darkmode/key.svg'
+          });
+        }
 
         if (this.networkWallet && this.networkWallet.network.supportsERC20Coins()) {
             this.settings.push({
