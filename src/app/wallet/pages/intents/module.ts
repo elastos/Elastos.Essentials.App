@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { EthTransactionComponentModule } from '../../components/eth-transaction/module';
+import { WalletChooserComponentModule } from '../../components/wallet-chooser/module';
 import { AccessPage } from './access/access.page';
 import { DidTransactionPage } from './didtransaction/didtransaction.page';
 import { DPoSVotePage } from './dposvote/dposvote.page';
@@ -35,6 +36,7 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
         FormsModule,
         IonicModule,
         TranslateModule,
+        WalletChooserComponentModule,
         RouterModule,
         RouterModule.forChild([
             { path: 'access', component: AccessPage },

@@ -2,7 +2,7 @@
   <app-titlebar title="text-vote-crcouncil"></app-titlebar>
 
   <!-- Initial tx info fetch -->
-  <div class="tx-fetch" *ngIf="txInfo">
+  <div class="tx-fetch" *ngIf="!txInfo">
     <ion-spinner></ion-spinner>
     <p>
       {{ 'wallet.multi-sig-tx-fetching' | translate }}
