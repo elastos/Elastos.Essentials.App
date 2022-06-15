@@ -181,9 +181,13 @@ export class GlobalDIDSessionsService {
 
     DIDSessionsStore.signedInDIDString = this.signedInIdentity.didString;
 
-    await this.globalNativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
+    if (!options || options.showBlockingSignInDialog)
+      await this.globalNativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
+
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
-    void this.globalNativeService.hideLoading();
+
+    if (!options || options.showBlockingSignInDialog)
+      void this.globalNativeService.hideLoading();
 
     await this.saveSignedInIdentityToDisk();
 

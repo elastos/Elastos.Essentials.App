@@ -332,7 +332,7 @@ export class PrepareDIDPage {
         });
 
         try {
-          await this.globalPublicationService.publishDIDFromStore(
+          await this.globalPublicationService.publishCordovaDIDFromStore(
             this.identityService.identityBeingCreated.didStore.getId(),
             this.identityService.identityBeingCreated.storePass,
             this.identityService.identityBeingCreated.did.getDIDString());
@@ -351,7 +351,7 @@ export class PrepareDIDPage {
     try {
       await Promise.all([
         sleep(MIN_SLIDE_SHOW_DURATION_MS),
-        this.identityService.signIn(this.identityService.identityBeingCreated.didSessionsEntry)
+        this.identityService.signIn(this.identityService.identityBeingCreated.didSessionsEntry, false, false)
       ]);
       Logger.log("didsessions", "Sign in complete");
       return true;

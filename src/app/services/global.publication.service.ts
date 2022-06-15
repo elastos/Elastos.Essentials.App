@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { DIDStore, DIDTransactionAdapter } from '@elastosfoundation/did-js-sdk';
 import { ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { DIDPublishingComponent } from '../components/did-publishing/did-publishing.component';
@@ -637,8 +638,9 @@ export class GlobalPublicationService {
 
     /**
      * Opens a DID store, generates a DID request and publish it.
+     * DID Cordovq plugin version.
      */
-    public publishDIDFromStore(storeId: string, storePass: string, didString: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
+    public publishCordovaDIDFromStore(storeId: string, storePass: string, didString: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
         Logger.log("publicationservice", "Starting the DID publication process");
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
@@ -666,6 +668,47 @@ export class GlobalPublicationService {
             else {
                 // Weird, the DID we've just created could not be loaded... Let user know anyway
                 reject("Failed to load DID document for DID " + didString + " in store id " + didStore.getId());
+            }
+        });
+    }
+
+    /**
+     * Opens a DID store, generates a DID request and publish it.
+     * DID JS SDK version.
+     */
+    public publishJSDIDFromStore(storeId: string, storePass: string, didString: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
+        Logger.log("publicationservice", "Starting the DID publication process");
+
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise<void>(async (resolve, reject) => {
+            let didStore = await DIDStore.open(storeId);
+            let localDIDDocument = await didStore.loadDid(didString);
+            if (localDIDDocument) {
+                // Start the publication flow
+                let publicationService = this;
+
+                try {
+                    await localDIDDocument.publish(storePass, undefined, true, new class implements DIDTransactionAdapter {
+                        async createIdTransaction(payload: string, memo: string) {
+                            // Callback called by the DID SDK when trying to publish a DID.
+                            Logger.log("publicationservice", "Create ID transaction callback is being called", payload, memo);
+                            const payloadAsJson = JSON.parse(payload);
+                            // TODO: Identiy will showLoading when publish did. we can improve it.
+                            await publicationService.globalNativeService.hideLoading();
+                            await publicationService.publishDIDFromRequest(didString, payloadAsJson, memo, showBlockingLoader, parentIntentId);
+                            resolve();
+                        }
+                    });
+                }
+                catch (err) {
+                    // Local "publish" process errored
+                    Logger.log("publicationservice", "Local DID Document publish(): error", err);
+                    reject(err);
+                }
+            }
+            else {
+                // Weird, the DID we've just created could not be loaded... Let user know anyway
+                reject("Failed to load DID document to publish DID " + didString);
             }
         });
     }

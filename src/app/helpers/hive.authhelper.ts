@@ -1,9 +1,11 @@
 import { DIDDocument, JWTParserBuilder, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { AppContext, AppContextProvider, Vault, VaultSubscription } from "@elastosfoundation/hive-js-sdk";
+import { AppContext, AppContextProvider, Logger as HiveLogger, Vault, VaultSubscription } from "@elastosfoundation/hive-js-sdk";
 import moment from "moment";
+import Queue from 'promise-queue';
 import { GlobalConfig } from "../config/globalconfig";
 import { Logger } from "../logger";
+import { logAndReject } from "./promises";
 
 //declare let didManager: DIDPlugin.DIDManager;
 //declare let hiveManager: HivePlugin.HiveManager;
@@ -15,52 +17,64 @@ import { Logger } from "../logger";
  */
 export class InternalHiveAuthHelper {
   private didAccess: DID.DIDAccess;
+  private contextCreationQueue: Queue; // Semaphore queue to create only one context at a time. Hive SDK used to have some troubles with concurrent authentications
+  private contextsCache: { [did: string]: AppContext } = {};
 
   constructor() {
     this.didAccess = new DID.DIDAccess();
+    this.contextCreationQueue = new Queue(1);
+
+    // Hive SDK is too verbose by default, make it silent
+    HiveLogger.setDefaultLevel(HiveLogger.WARNING);
   }
 
-  public async getAppContext(targetDid: string, onAuthError?: (e: Error) => void): Promise<AppContext> {
-    let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
+  public getAppContext(targetDid: string, onAuthError?: (e: Error) => void): Promise<AppContext> {
+    return this.contextCreationQueue.add(async () => {
+      // Returned existing context for this DID if any.
+      if (targetDid in this.contextsCache)
+        return this.contextsCache[targetDid];
 
-    Logger.log("hiveauthhelper", "Getting app instance DID document");
-    let didDocument = await appInstanceDIDInfo.didStore.loadDid(appInstanceDIDInfo.did.toString());
-    Logger.log("hiveauthhelper", "Got app instance DID document. Now creating the Hive client", didDocument.toJSON());
+      let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
 
-    let appContextProvider: AppContextProvider = {
-      getLocalDataDir: (): string => {
-        return "/";
-      },
-      getAppInstanceDocument: (): Promise<DIDDocument> => {
-        return Promise.resolve(didDocument);
-      },
-      getAuthorization: (authenticationChallengeJWtCode: string): Promise<string> => {
-        /**
-         * Called by the Hive plugin when a hive backend needs to authenticate the user and app.
-         * The returned data must be a verifiable presentation, signed by the app instance DID, and
-         * including a appid certification credential provided by the identity application.
-         */
-        Logger.log("hiveauthhelper", "Hive client authentication challenge callback is being called with token:", authenticationChallengeJWtCode);
-        try {
-          return this.handleVaultAuthenticationChallenge(authenticationChallengeJWtCode);
-        }
-        catch (e) {
-          Logger.error("hiveauthhelper", "Exception in authentication handler:", e);
-          if (onAuthError)
-            onAuthError(e);
-          return null;
+      Logger.log("hiveauthhelper", "Getting app instance DID document");
+      let didDocument = await appInstanceDIDInfo.didStore.loadDid(appInstanceDIDInfo.did.toString());
+      Logger.log("hiveauthhelper", "Got app instance DID document. Now creating the Hive client", didDocument.toJSON());
+
+      let appContextProvider: AppContextProvider = {
+        getLocalDataDir: (): string => {
+          return "/";
+        },
+        getAppInstanceDocument: (): Promise<DIDDocument> => {
+          return Promise.resolve(didDocument);
+        },
+        getAuthorization: (authenticationChallengeJWtCode: string): Promise<string> => {
+          /**
+           * Called by the Hive plugin when a hive backend needs to authenticate the user and app.
+           * The returned data must be a verifiable presentation, signed by the app instance DID, and
+           * including a appid certification credential provided by the identity application.
+           */
+          Logger.log("hiveauthhelper", "Hive client authentication challenge callback is being called with token:", authenticationChallengeJWtCode, "for DID:", targetDid);
+          try {
+            return this.handleVaultAuthenticationChallenge(authenticationChallengeJWtCode);
+          }
+          catch (e) {
+            Logger.error("hiveauthhelper", "Exception in authentication handler:", e);
+            if (onAuthError)
+              onAuthError(e);
+            return null;
+          }
         }
       }
-    }
 
-    let appContext = await AppContext.build(appContextProvider, targetDid);
-    return appContext;
+      let appContext = await AppContext.build(appContextProvider, targetDid);
+      this.contextsCache[targetDid] = appContext;
+
+      return appContext;
+    });
   }
 
   public async getSubscriptionService(targetDid: string, providerAddress: string = null, onAuthError?: (e: Error) => void): Promise<VaultSubscription> {
     let appContext = await this.getAppContext(targetDid, onAuthError);
-    if (!providerAddress)
-      providerAddress = await AppContext.getProviderAddress(targetDid); // TODO: cache, don't resolve every time
     return new VaultSubscription(appContext, providerAddress);
   }
 
@@ -73,21 +87,11 @@ export class InternalHiveAuthHelper {
 
     // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
     return new Promise(async (resolve, reject) => {
-      let authHelper = this;
-
       // Initiate or retrieve an application instance DID. This DID is used to sign authentication content
       // for hive. Hive uses the given app instance DID document to verify JWTs received later, using an unpublished
       // app instance DID.
-      Logger.log("hiveauthhelper", "Getting an app instance DID");
-      let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
-
-      Logger.log("hiveauthhelper", "Getting app instance DID document");
       try {
-        let didDocument = await appInstanceDIDInfo.didStore.loadDid(appInstanceDIDInfo.did.toString());
-        //appInstanceDIDInfo.didStore.loadDidDocument(appInstanceDIDInfo.did.getDIDString(), async (didDocument) => {
-        Logger.log("hiveauthhelper", "Got app instance DID document. Now creating the Hive client", didDocument.toJSON());
-
-        let appContext = await this.getAppContext(targetDid);
+        let appContext = await this.getAppContext(targetDid, onAuthError);
         let providerAddress = await AppContext.getProviderAddress(targetDid);
         let vaultServices = new Vault(appContext, providerAddress);
 
@@ -186,33 +190,33 @@ export class InternalHiveAuthHelper {
 
           Logger.log("hiveauthhelper", "Loading DID document");
           try {
-            let didDocument = await didStore.loadDid(appInstanceDIDInfo.didString);
+            let didDocument: DIDDocument = await didStore.loadDid(appInstanceDIDInfo.didString);
             let validityDays = 2;
             Logger.log("hiveauthhelper", "App instance DID document", didDocument.toJSON());
             Logger.log("hiveauthhelper", "Creating JWT");
             try {
               let jwtToken = await didDocument.jwtBuilder().addClaims({
                 presentation: presentation.toJSON()
-              }).setExpiration(moment().add(validityDays, "days").toDate()).sign(appInstanceDIDInfo.storePassword);
+              }).setExpiration(moment().add(validityDays, "days").unix()).sign(appInstanceDIDInfo.storePassword);
               Logger.log("hiveauthhelper", "JWT created for presentation:", jwtToken);
               resolve(jwtToken);
             }
             catch (err) {
-              reject(err);
+              logAndReject("hiveauthhelper", reject, err);
             }
           }
           catch (err) {
-            reject(err);
+            logAndReject("hiveauthhelper", reject, err);
           }
         }
         else {
-          reject("No presentation generated");
+          logAndReject("hiveauthhelper", reject, "No presentation generated");
         }
       }
       catch (e) {
         // Verification error?
         // Could not verify the received JWT as valid - reject the authentication request by returning a null token
-        reject("The received authentication JWT token signature cannot be verified or failed to verify: " + new String(e) + ". Is the hive back-end DID published? Are you on the right network?");
+        logAndReject("hiveauthhelper", reject, "The received authentication JWT token signature cannot be verified or failed to verify: " + new String(e) + ". Is the hive back-end DID published? Are you on the right network?");
         return;
       }
     });

@@ -225,15 +225,21 @@ export class GlobalHiveService extends GlobalService {
   }
 
   /**
-   * Subscribes active user to the target hive vault provider.
+   * Subscribes (= sign up with the vault provider, free tier) active user to the target hive vault provider.
    */
   public async subscribeToHiveProvider(vaultProviderAddress: string): Promise<boolean> {
     Logger.log("GlobalHiveService", "Subscribing to hive provider", vaultProviderAddress);
 
     let didString = DIDSessionsStore.signedInDIDString;
 
-    let vaultInfo = await this.getVaultInfo(didString);
-    console.log("subscribeToHiveProvider vaultInfo", vaultInfo);
+    let vaultInfo: VaultInfo = null;
+    try {
+      vaultInfo = await this.getVaultInfo(didString);
+      console.log("subscribeToHiveProvider vaultInfo", vaultInfo);
+    }
+    catch (e) {
+      // Silent catch, probably not authorized because not subscribed, so we will try to subscribe to the vault.
+    }
 
     if (vaultInfo) {
       // The hive vault is already subscribed, so we have nothing to do.
@@ -241,6 +247,7 @@ export class GlobalHiveService extends GlobalService {
     }
     else {
       // No subscription - subscribe
+      Logger.log("GlobalHiveService", "subscribeToHiveProvider(): no vault info, subscribing");
       let subscriptionService = await this.hiveAuthHelper.getSubscriptionService(didString);
       vaultInfo = await subscriptionService.subscribe();
       if (!vaultInfo) {
@@ -259,12 +266,17 @@ export class GlobalHiveService extends GlobalService {
       try {
         Logger.log("GlobalHiveService", "Calling an api on the hive vault to make sure everything is fine");
 
-        let storageUsed = await vaultInfo.getStorageUsed();
-        if (!storageUsed) {
+        vaultServices = await this.hiveAuthHelper.getVaultServices(didString);
+        let nodeInfo = await vaultServices.getNodeInfo();
+
+        if (!nodeInfo) {
           Logger.error("GlobalHiveService", "Error while calling a test hive vault API. No data returned");
         }
         else {
           Logger.log("GlobalHiveService", "Vault API could be called, all good!");
+
+          // Update the vault status for listeners to start using it
+          void this.retrieveVaultStatus();
 
           // Everything is all right, now we can consider the hive setup as successfully completed.
           return true;
@@ -343,7 +355,7 @@ export class GlobalHiveService extends GlobalService {
   }
 
   /**
-   * Sets and saves a NEW vault provider for the active DID, without any transfer of data.
+   * Sets and saves a NEW vault provider for the active DID, WITHOUT any transfer of data.
    */
   public async publishVaultProvider(providerName: string, vaultAddress: string): Promise<boolean> {
     let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
@@ -418,21 +430,18 @@ export class GlobalHiveService extends GlobalService {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise<Buffer>(async (resolve) => {
       try {
-        let hiveClient = await this.checkActiveUserVaultServices();
         Logger.log("GlobalHiveService", "Calling script url to download file", hiveScriptUrl);
-        resolve(null); // CANT FETCH PICTURES FOR NOW
-        return;
-        /* TODO IN HIVE JS let reader = await hiveClient.downloadFileByScriptUrl(hiveScriptUrl); // Broken in Hive Java SDK 2.0.29
-        let rawData: Uint8Array = await reader.readAll();
+        let pictureBuffer = await (await this.getActiveUserVaultServices()).getScriptingService().downloadFileByHiveUrl(hiveScriptUrl);
+        resolve(pictureBuffer);
 
-        if (!rawData || rawData.length == 0) {
+        if (!pictureBuffer || pictureBuffer.length == 0) {
           Logger.warn("GlobalHiveService", "Got empty data while fetching hive script picture", hiveScriptUrl);
           resolve(null);
         }
         else {
-          Logger.log("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", rawData.length);
-          resolve(Buffer.from(rawData));
-        }*/
+          Logger.log("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", pictureBuffer.length);
+          resolve(pictureBuffer);
+        }
       }
       catch (e) {
         // Can't download the asset

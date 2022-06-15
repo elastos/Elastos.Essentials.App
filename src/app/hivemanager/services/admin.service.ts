@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { DID, DIDStore } from '@elastosfoundation/did-js-sdk';
+import { DID as ConnDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -8,7 +9,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ManagedProvider } from '../model/managedprovider';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
-declare let didManager: DIDPlugin.DIDManager;
+//declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 @Injectable({
@@ -88,9 +89,9 @@ export class AdminService {
   /**
    * Created a new Administration DID for a given vault provider configuration
    */
-  public async createAdminDID(provider: ManagedProvider): Promise<DID.FastDIDCreationResult> {
+  public async createAdminDID(provider: ManagedProvider): Promise<ConnDID.FastDIDCreationResult> {
     let didHelper = new ElastosSDKHelper().newDIDHelper();
-    let createdDIDInfo = await didHelper.fastCreateDID("ENGLISH");
+    let createdDIDInfo = await didHelper.fastCreateDID("english");
 
     // Save the password to the password manager
     let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
@@ -107,8 +108,8 @@ export class AdminService {
     }
 
     provider.did = {
-      storeId: createdDIDInfo.didStore.getId(),
-      didString: createdDIDInfo.did.getDIDString()
+      storeId: createdDIDInfo.didStoreId,
+      didString: createdDIDInfo.did.toString()
     }
 
     await this.updateAndSaveProvider(provider);
@@ -118,38 +119,25 @@ export class AdminService {
     return createdDIDInfo;
   }
 
-  public getAdminDIDMnemonic(provider: ManagedProvider): Promise<string> {
-    return new Promise((resolve) => {
-      didManager.initDidStore(provider.did.storeId, () => {
-        Logger.warn("hivemanager", "Create ID transaction callback called but we do not handle it!");
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      }, async (didStore) => {
-        let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-" + provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
-        didStore.exportMnemonic(passwordInfo.password, (mnemonic) => {
-          resolve(mnemonic);
-        })
-      });
-    });
+  public async getAdminDIDMnemonic(provider: ManagedProvider): Promise<string> {
+    let didStore = await DIDStore.open(provider.did.storeId);
+
+    let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-" + provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
+    return (await didStore.loadRootIdentity()).exportMnemonic(passwordInfo.password);
   }
 
   /**
    * Check on chain if the administration DID for the given vault provider has been published or not.
    * We are not looking for anything special in the did document. Just the document itself is enough.
    */
-  public retrieveAdminDIDPublicationStatus(provider: ManagedProvider): Promise<boolean> {
+  public async retrieveAdminDIDPublicationStatus(provider: ManagedProvider): Promise<boolean> {
     // No DID created? Then it's of course not published.
     if (!provider.did) {
-      return Promise.resolve(false);
+      return false;
     }
 
-    return new Promise((resolve) => {
-      didManager.resolveDidDocument(provider.did.didString, true, (didDocument) => {
-        if (didDocument)
-          resolve(true);
-        else
-          resolve(false);
-      })
-    });
+    let didDocument = await new DID(provider.did.didString).resolve(true);
+    return (!!didDocument);
   }
 
   /**
@@ -157,7 +145,7 @@ export class AdminService {
    */
   public async publishAdminDID(provider: ManagedProvider): Promise<void> {
     let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-" + provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
-    await this.globalPublicationService.publishDIDFromStore(
+    await this.globalPublicationService.publishJSDIDFromStore(
       provider.did.storeId,
       passwordInfo.password,
       provider.did.didString,

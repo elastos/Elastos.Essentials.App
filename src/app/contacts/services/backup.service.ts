@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
+import { JSONObject } from '@elastosfoundation/did-js-sdk';
 import { Vault } from '@elastosfoundation/hive-js-sdk';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';

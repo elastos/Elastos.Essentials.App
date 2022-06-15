@@ -161,7 +161,7 @@ export class DIDSession {
                 });
 
                 try {
-                    await GlobalPublicationService.instance.publishDIDFromStore(
+                    await GlobalPublicationService.instance.publishCordovaDIDFromStore(
                         this.didStore.getId(),
                         this.storePassword, this.didString, true);
                 }

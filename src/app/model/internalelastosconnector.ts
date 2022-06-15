@@ -1,8 +1,9 @@
+import { VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { Logger } from "../logger";
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
-declare let didManager: DIDPlugin.DIDManager;
+//declare let didManager: DIDPlugin.DIDManager;
 
 export class InternalElastosConnector implements Interfaces.Connectors.IConnector {
     public name = "essentials-internal";
@@ -16,11 +17,11 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
      * DID API
      */
 
-    getCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
+    getCredentials(claims: any): Promise<VerifiablePresentation> {
         throw new Error("getCredentials(): Method not implemented.");
     }
 
-    generateAppIdCredential(appInstanceDID: string): Promise<DIDPlugin.VerifiableCredential> {
+    generateAppIdCredential(appInstanceDID: string): Promise<VerifiableCredential> {
         Logger.log("connector", "App ID Credential generation flow started");
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
@@ -38,7 +39,7 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
                     resolve(null);
                     return;
                 }
-                let credential = didManager.VerifiableCredentialBuilder.fromJson(res.result.credential);
+                let credential = VerifiableCredential.parse(res.result.credential);
                 resolve(credential);
             }
             catch (err) {

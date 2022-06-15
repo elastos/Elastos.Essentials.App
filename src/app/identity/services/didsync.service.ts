@@ -111,7 +111,7 @@ export class DIDSyncService implements GlobalService {
   public async publishActiveDIDDIDDocument(password: string, parentIntentId?: number) {
     try {
       await this.native.showLoading(this.translate.instant('common.please-wait'));
-      await this.globalPublicationService.publishDIDFromStore(
+      await this.globalPublicationService.publishCordovaDIDFromStore(
         DIDService.instance.getActiveDidStore().getId(),
         password,
         DIDService.instance.getActiveDid().getDIDString(),

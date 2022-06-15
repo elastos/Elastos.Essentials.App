@@ -1,5 +1,5 @@
 import { JSONObject } from '@elastosfoundation/did-js-sdk';
-import { FindOptions, InsertOptions, UpdateOptions, Vault } from '@elastosfoundation/hive-js-sdk';
+import { AlreadyExistsException, FindOptions, InsertOptions, UpdateOptions, Vault } from '@elastosfoundation/hive-js-sdk';
 import Queue from 'promise-queue';
 import { Logger } from "src/app/logger";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
@@ -312,7 +312,18 @@ export class HiveDataSync {
     private async createContextCollection(contextName: string): Promise<void> {
         let collectionName = this.getCollectionNameForContext(contextName);
         this.logDebug("Making sure the collection " + collectionName + " exists");
-        await this.userVault.getDatabaseService().createCollection(collectionName);
+
+        try {
+            await this.userVault.getDatabaseService().createCollection(collectionName);
+        }
+        catch (e) {
+            if (e instanceof AlreadyExistsException) {
+                // SIlent catch, all good, collection exists
+            }
+            else {
+                throw e;
+            }
+        }
     }
 
     /**
