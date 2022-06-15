@@ -8,7 +8,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { ElastosMainChainWalletNetworkOptions } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { ElastosMainChainWalletNetworkOptions, WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
@@ -68,7 +68,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public supportsCrossChainTransfers(): boolean {
-        return true;
+        // Not support cross chain transfers for muti-sig and ledger wallet.
+        return this.networkWallet.masterWallet.type == WalletType.STANDARD;
     }
 
     public async startBackgroundUpdates(): Promise<void> {
