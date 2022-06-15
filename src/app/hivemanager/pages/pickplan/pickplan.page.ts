@@ -53,7 +53,7 @@ export class PickPlanPage implements OnInit {
     this.fetchingPlans = false;
   }
 
-  public pickPlan(plan: HivePlugin.Payment.PricingPlan) {
+  public pickPlan(plan: PricingPlan) {
     Logger.log("hivemanager", "pick plan", plan);
     void this.nav.navigateTo(App.HIVE_MANAGER, "/hivemanager/pickplanpurchase", { queryParams: { planName: plan.getName() } });
   }

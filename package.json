@@ -157,7 +157,6 @@
     "@elastosfoundation/elastos-connectivity-sdk-js": "^1.1.0-next",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.5",
     "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.50",
-    "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.23",
     "@ionic/angular-toolkit": "^4.0.0",
     "@types/colors": "^1.2.1",
     "@types/create-hash": "^1.2.2",
@@ -217,7 +216,6 @@
       "cordova-plugin-add-swift-support": {},
       "@elastosfoundation/elastos-cordova-plugin-carrier": {},
       "@elastosfoundation/elastos-cordova-plugin-did": {},
-      "@elastosfoundation/elastos-cordova-plugin-hive": {},
       "cordova-clipboard": {},
       "cordova-plugin-camera": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"

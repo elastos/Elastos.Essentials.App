@@ -158,7 +158,7 @@ export class BackupService extends GlobalService {
           }, async (entry) => {
             // Remote entry existing locally but modified more recently - update it
             Logger.log("identitybackup", "Modify request from the backup helper", entry);
-            let credentialJSON: HivePlugin.JSONObject = entry.data;
+            let credentialJSON: JSONObject = entry.data;
             let credential = didManager.VerifiableCredentialBuilder.fromJson(JSON.stringify(credentialJSON));
             if (credential) await this.modifyCredentialEntryLocally(credential);
             return true;
