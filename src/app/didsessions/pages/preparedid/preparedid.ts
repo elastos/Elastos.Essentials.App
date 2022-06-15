@@ -239,7 +239,7 @@ export class PrepareDIDPage {
     Logger.log("didsessions", "Checking if hive vault is ready");
     // To know if the vault is ready we need a hive client instance and then check what getvault() returns.
     // retrieveVaultLinkStatus() does that for us.
-    let vaultStatus = await this.globalHiveService.retrieveVaultLinkStatus();
+    let vaultStatus = await this.globalHiveService.vaultStatus.value;
     Logger.log("didsessions", "Hive vault status:", vaultStatus);
 
     // Try to check hive only once. If this has failed a first time we continue to not block the user.
@@ -332,7 +332,7 @@ export class PrepareDIDPage {
         });
 
         try {
-          await this.globalPublicationService.publishDIDFromStore(
+          await this.globalPublicationService.publishCordovaDIDFromStore(
             this.identityService.identityBeingCreated.didStore.getId(),
             this.identityService.identityBeingCreated.storePass,
             this.identityService.identityBeingCreated.did.getDIDString());
@@ -351,7 +351,7 @@ export class PrepareDIDPage {
     try {
       await Promise.all([
         sleep(MIN_SLIDE_SHOW_DURATION_MS),
-        this.identityService.signIn(this.identityService.identityBeingCreated.didSessionsEntry)
+        this.identityService.signIn(this.identityService.identityBeingCreated.didSessionsEntry, false, false)
       ]);
       Logger.log("didsessions", "Sign in complete");
       return true;
@@ -376,7 +376,7 @@ export class PrepareDIDPage {
     try {
       await Promise.all([
         sleep(MIN_SLIDE_SHOW_DURATION_MS),
-        this.globalHiveService.prepareHiveVault(vaultAddress)
+        this.globalHiveService.subscribeToHiveProvider(vaultAddress)
       ]);
       return true;
     }

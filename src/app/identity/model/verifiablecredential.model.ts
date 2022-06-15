@@ -96,7 +96,7 @@ export class VerifiableCredential {
                             this.iconSrc = base64DataUrl;
                         }
                         else {
-                            Logger.log("identity", "Got empty avatar data from hive");
+                            Logger.log("identity", "Got empty picture data from hive");
                             this.iconSrc = transparentPixelIconDataUrl();
                         }
                         this.loadIconWithFallback();

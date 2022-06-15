@@ -1,4 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
+import { VaultInfo } from '@elastosfoundation/hive-js-sdk';
 import { ToastController } from '@ionic/angular';
 import * as moment from 'moment';
 import { Logger } from 'src/app/logger';
@@ -14,7 +15,7 @@ import { HiveService } from './hive.service';
     providedIn: 'root'
 })
 export class BackgroundService {
-    public activePaymentPlan: HivePlugin.Payment.ActivePricingPlan = null;
+    public activePaymentPlan: VaultInfo = null;
 
     constructor(
         public zone: NgZone,
@@ -63,7 +64,8 @@ export class BackgroundService {
 
     checkPlanExpiration(today) {
         const weekFromNow = moment(today).add(7, 'days');
-        const planExpiration = moment(this.activePaymentPlan.getEndTime() * 1000);
+        //const planExpiration = moment(this.activePaymentPlan.getEndTime() * 1000);
+        const planExpiration = moment().add(30, "days"); // TODO: getEndTime() is currently missing in Hive JS SDK - Re-enable the line above when fixed.
 
         Logger.log("hivemanager", 'Plan expiration', planExpiration.format('MMMM Do YYYY, h:mm'));
         if (planExpiration.isBetween(today, weekFromNow)) {

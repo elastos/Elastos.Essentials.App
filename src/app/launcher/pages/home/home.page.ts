@@ -214,10 +214,9 @@ export class HomePage implements OnInit {
 
     // Wait to know user's hive vault status to show the hive storage widget
     this.vaultStatusSub = this.globalHiveService.vaultStatus.subscribe((vaultStatus) => {
-      if (vaultStatus && vaultStatus.publishedInfo && vaultStatus.publishedInfo.vaultAddress && vaultStatus.publishedInfo.activePricingPlan) {
-
-        let usedStorageGb = (vaultStatus.publishedInfo.activePricingPlan.getCurrentDatabaseStorageUsed() + vaultStatus.publishedInfo.activePricingPlan.getCurrentFileStorageUsed()) / 1000;
-        let maxStorageGb = vaultStatus.publishedInfo.activePricingPlan.getMaxStorage() / 1000;
+      if (vaultStatus && vaultStatus.vaultInfo && vaultStatus.vaultInfo) {
+        let usedStorageGb = vaultStatus.vaultInfo.getStorageUsed() / (1024 * 1024 * 1024);
+        let maxStorageGb = vaultStatus.vaultInfo.getStorageQuota() / (1024 * 1024 * 1024);
 
         this.hiveVaultStorageStats = {
           usedStorage: usedStorageGb.toFixed(2),

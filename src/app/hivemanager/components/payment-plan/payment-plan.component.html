@@ -8,7 +8,8 @@
     </ion-col>
     <ion-col *ngIf="purchaseablePlan.getCost() != 0" size="12" class="removeBorder">
         <h2>{{ 'hivemanager.payment-plan.cost' | translate }}</h2>
-        <p>{{ purchaseablePlan.getCost() }} {{ purchaseablePlan.getCurrency() }} / {{ purchaseablePlan.getDuration() }} {{ 'hivemanager.payment-plan.days' | translate }}</p>
+        <p>{{ purchaseablePlan.getCost() }} {{ purchaseablePlan.getCurrency() }} / {{ purchaseablePlan.getDuration() }}
+            {{ 'hivemanager.payment-plan.days' | translate }}</p>
     </ion-col>
     <ion-col *ngIf="purchaseablePlan.getCost() == 0" size="12" class="removeBorder">
         <h2>{{ 'hivemanager.payment-plan.cost' | translate }}</h2>
@@ -19,23 +20,23 @@
 
 <ion-row *ngIf="activePlan" class="ripple ion-activatable" [class.darkContainer]="theme.darkMode">
     <ion-col size="12" class="removeBorder">
-        <h1>{{ activePlan.getName() }}</h1>
+        <h1>{{ getActivePlanName() }}</h1>
     </ion-col>
     <ion-col size="12">
         <h2>{{ 'hivemanager.payment-plan.max-storage' | translate }}</h2>
-        <p>{{ activePlan.getMaxStorage() }} MB</p>
+        <p>{{ getActivePlanMaxStorage() }} MB</p>
     </ion-col>
     <ion-col size="12">
         <h2>{{ 'hivemanager.payment-plan.file-storage' | translate }}</h2>
-        <p>{{ UI.getFriendlyStorageSize(activePlan.getCurrentFileStorageUsed()) }} MB</p>
+        <p>{{ UI.getFriendlyStorageSize(getActivePlanStorageUsed()) }} MB</p>
     </ion-col>
-    <ion-col size="12">
+    <!-- <ion-col size="12">
         <h2>{{ 'hivemanager.payment-plan.data-storage' | translate }}</h2>
         <p>{{ UI.getFriendlyStorageSize(activePlan.getCurrentDatabaseStorageUsed()) }} MB</p>
-    </ion-col>
+    </ion-col> -->
     <ion-col size="12" class="removeBorder">
         <h2>{{ 'hivemanager.payment-plan.start-time' | translate }}</h2>
-        <p>{{ UI.getFriendlyDate(activePlan.getStartTime()) }}</p>
+        <p>{{ getActivePlanStartDate() }}</p>
     </ion-col>
     <ion-ripple-effect></ion-ripple-effect>
 </ion-row>

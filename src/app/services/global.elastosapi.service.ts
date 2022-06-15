@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { AppContext, DIDResolverAlreadySetupException } from '@elastosfoundation/hive-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Logger } from '../logger';
@@ -18,7 +19,6 @@ import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { DIDSessionsStore } from './stores/didsessions.store';
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let hiveManager: HivePlugin.HiveManager;
 
 export enum ElastosApiUrlType {
     // Main chain
@@ -420,7 +420,17 @@ export class GlobalElastosAPIService extends GlobalService {
         });
 
         // Hive plugin
-        await hiveManager.setDIDResolverUrl(didResolverUrl);
+        try {
+            AppContext.setupResolver(didResolverUrl, "/anyfakedir/browserside/for/didstores");
+        }
+        catch (e) {
+            if (e instanceof DIDResolverAlreadySetupException) {
+                // silent error, it's ok
+            }
+            else {
+                console.error("AppContext.setupResolver() exception:", e);
+            }
+        }
     }
 
     ////////////////

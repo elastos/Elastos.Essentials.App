@@ -33,7 +33,6 @@
       "node",
       "cordova",
       "@elastosfoundation/elastos-cordova-plugin-did",
-      "@elastosfoundation/elastos-cordova-plugin-hive",
       "elastos-essentials-plugin-intent",
       "elastos-essentials-plugin-passwordmanager",
       "elastos-essentials-plugin-wallet",
@@ -48,10 +47,10 @@
     ],
     "paths": {
       "crypto": [
-        "node_modules/crypto-browserify"
+        "./node_modules/crypto-browserify"
       ],
       "stream": [
-        "node_modules/stream-browserify"
+        "./node_modules/stream-browserify"
       ],
       "path": [
         "./node_modules/path-browserify"
@@ -61,6 +60,9 @@
       ],
       "bn.js": [
         "./node_modules/bn.js"
+      ],
+      "@elastosfoundation/elastos-connectivity-sdk-js": [
+        "./node_modules/@elastosfoundation/elastos-connectivity-sdk-js"
       ]
     }
   }

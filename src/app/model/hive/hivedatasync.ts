@@ -1,8 +1,8 @@
+import { JSONObject } from '@elastosfoundation/did-js-sdk';
+import { AlreadyExistsException, FindOptions, InsertOptions, UpdateOptions, Vault } from '@elastosfoundation/hive-js-sdk';
 import Queue from 'promise-queue';
 import { Logger } from "src/app/logger";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
-
-declare let hiveManager: HivePlugin.HiveManager;
 
 export class SyncContext {
     name: string;
@@ -81,7 +81,7 @@ export class HiveDataSync {
      *
      * Debug information can be displayed in console logs by setting showDebugLogs to true.
      */
-    constructor(private userVault: HivePlugin.Vault, private storage: GlobalStorageService, private showDebugLogs: boolean = false) {
+    constructor(private userVault: Vault, private showDebugLogs: boolean = false) {
         if (!userVault) {
             throw new Error("The backup restore helper can't be used without a user vault. Please make sure the vault was correctly initialized.");
         }
@@ -151,7 +151,7 @@ export class HiveDataSync {
      * and a sync() operation is requested to send it to the vault backup as well.
      * In case the sync() fails, the sync() operation is retried later on.
      */
-    public async upsertDatabaseEntry(context: string, key: string, data: HivePlugin.JSONObject) {
+    public async upsertDatabaseEntry(context: string, key: string, data: JSONObject) {
         this.cancelOnGoingSync();
 
         await this.opsQueue.add(async () => {
@@ -163,7 +163,7 @@ export class HiveDataSync {
         void this.sync();
     }
 
-    private async upsertDatabaseEntryLocally(contextName: string, key: string, data: HivePlugin.JSONObject) {
+    private async upsertDatabaseEntryLocally(contextName: string, key: string, data: JSONObject) {
         let now = new Date().getTime();
 
         // First, look for the entry locally. Create new entry only if nothing found.
@@ -284,25 +284,25 @@ export class HiveDataSync {
             // Note: use of updateMany instead of updateOne here (normally, we have only one entry with
             // a given key...) because there were bugs were duplicates entries were created, so we want to update
             // them all, not only the first one found.
-            await this.userVault.getDatabase().updateMany(this.getCollectionNameForContext(contextName), {
+            await this.userVault.getDatabaseService().updateMany(this.getCollectionNameForContext(contextName), {
                 key: localEntry.key
             }, {
                 $set: upsertedEntry
-            });
+            }, new UpdateOptions());
         }
         else {
             // The entry does not exist. Insert it
             this.logDebug("Inserting new vault entry: ", contextName, localEntry.key, upsertedEntry);
-            await this.userVault.getDatabase().insertOne(this.getCollectionNameForContext(contextName), upsertedEntry);
+            await this.userVault.getDatabaseService().insertOne(this.getCollectionNameForContext(contextName), upsertedEntry, new InsertOptions());
         }
     }
 
     private async getVaultDatabaseEntry(contextName: string, key: string): Promise<BackupRestoreEntry> {
         let collectionName = this.getCollectionNameForContext(contextName);
         this.logDebug("Fetching vault entry with key", key, "in collection", collectionName);
-        let vaultEntry = (await this.userVault.getDatabase().findOne(collectionName, {
+        let vaultEntry = (await this.userVault.getDatabaseService().findOne(collectionName, {
             key: key
-        }) as any) as BackupRestoreEntry;
+        }, new FindOptions()) as any) as BackupRestoreEntry;
 
         this.logDebug("Fetched vault entry:", vaultEntry);
 
@@ -312,7 +312,18 @@ export class HiveDataSync {
     private async createContextCollection(contextName: string): Promise<void> {
         let collectionName = this.getCollectionNameForContext(contextName);
         this.logDebug("Making sure the collection " + collectionName + " exists");
-        await this.userVault.getDatabase().createCollection(collectionName);
+
+        try {
+            await this.userVault.getDatabaseService().createCollection(collectionName);
+        }
+        catch (e) {
+            if (e instanceof AlreadyExistsException) {
+                // SIlent catch, all good, collection exists
+            }
+            else {
+                throw e;
+            }
+        }
     }
 
     /**
@@ -534,18 +545,18 @@ export class HiveDataSync {
         }
 
         try {
-            let entries = (await this.userVault.getDatabase().findMany(collectionName, filter) as any) as BackupRestoreEntry[];
+            let entries = (await this.userVault.getDatabaseService().findMany(collectionName, filter, new FindOptions()) as any) as BackupRestoreEntry[];
 
             this.logDebug("Received vault modified entries since last full local sync:", entries);
 
             return entries;
         }
         catch (err) {
-            if (hiveManager.errorOfType(err, "COLLECTION_NOT_FOUND")) {
+            /* TODO if (hiveManager.errorOfType(err, "COLLECTION_NOT_FOUND")) {
                 this.logDebug("Backup collection does not exist on the vault yet, thus no modified entries returned");
                 return [];
             }
-            else {
+            else */ {
                 throw err;
             }
         }
@@ -557,14 +568,14 @@ export class HiveDataSync {
         let collectionName = this.getCollectionNameForContext(contextName);
 
         try {
-            let entries = (await this.userVault.getDatabase().findMany(collectionName, {}) as any) as BackupRestoreEntry[];
+            let entries = (await this.userVault.getDatabaseService().findMany(collectionName, {}, new FindOptions()) as any) as BackupRestoreEntry[];
 
             this.logDebug("Received vault entries:", entries);
 
             return entries;
         }
         catch (err) {
-            let enhancedError = err as HivePlugin.EnhancedError;
+            let enhancedError = err as any; // TODO
             if (enhancedError.getType && enhancedError.getType() == "COLLECTION_NOT_FOUND") {
                 this.logDebug("Backup collection does not exist on the vault yet, thus no entries returned");
                 return [];
@@ -632,12 +643,12 @@ export class HiveDataSync {
 
     // Convenient promise-based way to save a setting in the app manager
     private saveSettingsEntry(key: string, value: any): Promise<void> {
-        return this.storage.setSetting(this.userVault.getVaultOwnerDid(), "hivedatasync", key, value);
+        return GlobalStorageService.instance.setSetting(this.userVault.getUserDid(), "hivedatasync", key, value);
     }
 
     // Convenient promise-based way to get a setting from the app manager
     private loadSettingsEntry(key: string): Promise<any> {
-        return this.storage.getSetting(this.userVault.getVaultOwnerDid(), "hivedatasync", key, null);
+        return GlobalStorageService.instance.getSetting(this.userVault.getUserDid(), "hivedatasync", key, null);
     }
 
     private log(message: any, ...params: any) {

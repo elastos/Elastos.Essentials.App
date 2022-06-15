@@ -1,6 +1,7 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-js';
+import { Order, VaultInfo } from '@elastosfoundation/hive-js-sdk';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -9,7 +10,7 @@ import { ProfileService } from 'src/app/identity/services/profile.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive.service';
+import { GlobalHiveService, VaultStatus } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
@@ -18,8 +19,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
 import { PopupService } from '../../services/popup.service';
 import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
-
-declare let hiveManager: HivePlugin.HiveManager;
 
 type StorageProvider = {
   name: string,
@@ -36,14 +35,14 @@ export class PickProviderPage implements OnInit {
 
   public checkingInitialStatus = true;
   public vaultProviderCouldBeContacted = false;
-  public vaultLinkStatus: VaultLinkStatus = null;
+  public vaultLinkStatus: VaultStatus = null;
   private forceProviderChange = false;
   private developerMode = false;
   public manualProviderAddress: string = null;
   public fetchingActivePaymentPlan = true;
-  public activePaymentPlan: HivePlugin.Payment.ActivePricingPlan = null;
+  public activePaymentPlan: VaultInfo = null;
   public fetchingOrdersAwaitingTxConfirmation = true;
-  public ordersAwaitingTxConfirmation: HivePlugin.Payment.Order[] = [];
+  public ordersAwaitingTxConfirmation: Order[] = [];
   public incompleteOrders: PaidIncompleteOrder[] = []; // Orders paid but not notified to the hive node (payOrder() failed).
   public publishingProvider = false;
 
@@ -244,6 +243,10 @@ export class PickProviderPage implements OnInit {
     let publicationStarted = await this.globalHiveService.publishVaultProvider(providerName, providerAddress);
     this.publishingProvider = false;
 
+    // Refresh the link status
+    this.vaultLinkStatus = await this.globalHiveService.vaultStatus.value;
+    Logger.log("HiveManager", "Vault link status:", this.vaultLinkStatus);
+
     this.forceProviderChange = false;
   }
 
@@ -251,8 +254,7 @@ export class PickProviderPage implements OnInit {
     if (await this.hiveService.getActiveVault()) {
       Logger.log("HiveManager", "Fetching active payment plan");
 
-      // TODO: PERF improvement - getActivePricingPlan() is already called in retrieveVaultLinkStatus(), this is duplicate API call to remove.
-      this.activePaymentPlan = await this.hiveService.getActiveVault().getPayment().getActivePricingPlan()
+      this.activePaymentPlan = await this.hiveService.getActivePricingPlan();
       Logger.log("HiveManager", "Got active payment plan:", this.activePaymentPlan);
     }
 
@@ -295,7 +297,7 @@ export class PickProviderPage implements OnInit {
   private async revokeHiveAuthToken() {
     Logger.log("HiveManager", "Revoking main user vault authentication token");
     // Revoke the vualt auth token
-    await this.globalHiveService.getActiveVault().revokeAccessToken();
+    await (await this.globalHiveService.getActiveUserVaultServices()).getAccessToken().invalidate();
     // Also remove the app instance DID because it contains data (app did) we may want to renew.
     // Setting the active connector to null will clenaup its context, including the app instance DID.
     await connectivity.setActiveConnector(null);

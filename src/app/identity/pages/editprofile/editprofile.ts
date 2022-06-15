@@ -1,5 +1,6 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
+import { AggregatedExecutable, FileDownloadExecutable } from "@elastosfoundation/hive-js-sdk";
 import { AlertController, IonInput, ModalController, Platform } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
@@ -31,9 +32,6 @@ import { Native } from "../../services/native";
 import { PopupProvider } from "../../services/popup";
 import { ProfileService } from "../../services/profile.service";
 import { ProfileEntryPickerPage } from "../profileentrypicker/profileentrypicker";
-
-
-declare const hiveManager: HivePlugin.HiveManager;
 
 /**
  * IMPORTANT NOTE 2021-07: This screen now saves all data directly to the local did document (except live text changes).
@@ -257,18 +255,15 @@ export class EditProfilePage {
           // Upload the the picture and create the script to let others get this picture.
           let randomPictureID = new Date().getTime();
           let avatarFileName = "identity/avatar/" + randomPictureID;
-          let uploader = await this.globalHiveService.getActiveVault().getFiles().upload(avatarFileName);
           let avatarData = Buffer.from(PictureComponent.shared.rawBase64ImageOut, "base64"); // Raw picture data, not base64 encoded
-          Logger.log("identity", "Uploaded avatar buffer:", avatarData);
-          await uploader.write(avatarData);
-          await uploader.flush();
-          await uploader.close();
-          Logger.log('identity', "Completed avatar upload to hive");
+          let uploadResponse = await (await this.globalHiveService.getActiveUserVaultServices()).getFilesService().upload(avatarFileName, avatarData, false);
+          Logger.log('identity', "Completed avatar upload to hive", uploadResponse);
 
           // Create a script to make this picture available to everyone
           let scriptName = "getMainIdentityAvatar" + randomPictureID;
-          let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript(scriptName, hiveManager.Scripting.Executables.newAggregatedExecutable(
-            [hiveManager.Scripting.Executables.Files.newDownloadExecutable(avatarFileName)]
+          let couldCreateScript = await (await this.globalHiveService.getActiveUserVaultServices()).getScriptingService().registerScript(scriptName, new AggregatedExecutable(
+            "getMainIdentityAvatar",
+            [new FileDownloadExecutable(avatarFileName)]
           ), null, true, true);
           Logger.log('identity', "Could create avatar script?", couldCreateScript);
 

@@ -27,36 +27,28 @@ export class AdminProviderEditPage implements OnInit {
   private oldName = '';
   public createName = '';
   public managedProvider: ManagedProvider = null;
-  public mnemonicShown: boolean = false;
+  public mnemonicShown = false;
   public adminDIDMnemonic: string = null;
-  public adminDIDPublicationStatusFetched: boolean = false;
-  public adminDIDPublished: boolean = false;
+  public adminDIDPublicationStatusFetched = false;
+  public adminDIDPublished = false;
 
   constructor(
     public zone: NgZone,
-    public alertController:AlertController,
+    public alertController: AlertController,
     private router: Router,
     private adminService: AdminService,
     private popup: PopupService,
     public theme: GlobalThemeService,
     private native: GlobalNativeService,
     private globalNav: GlobalNavService,
-    private translate: TranslateService,
-    // public navParams: NavParams // Err - No provider for Navparams
+    private translate: TranslateService
   ) {
     const navigation = this.router.getCurrentNavigation();
-    if(navigation.extras.state) {
+    if (navigation.extras.state) {
       const providerId = navigation.extras.state.providerId;
       Logger.log('HiveManager', 'Provider id', providerId);
       void this.init(providerId);
     }
-
-/*     this.providerId = navParams.get('providerId');
-    Logger.log('HiveManager', 'Provider id', this.providerId);
-    this.init();
-
-    this.retrieveAdminDIDPublicationStatus();
-    Logger.log('HiveManager', "Editing provider:", this.managedProvider); */
   }
 
   async init(id) {
@@ -87,7 +79,7 @@ export class AdminProviderEditPage implements OnInit {
   }
 
   async createAdminDID() {
-    if(this.createName) {
+    if (this.createName) {
       let newProvider: ManagedProvider = await this.adminService.createProvider();
       newProvider.name = this.createName;
 
@@ -100,7 +92,7 @@ export class AdminProviderEditPage implements OnInit {
   }
 
   async updateName() {
-    if(this.managedProvider.name) {
+    if (this.managedProvider.name) {
       await this.adminService.updateAndSaveProvider(this.managedProvider);
       this.native.genericToast('hivemanager.toast.provide-name-update', 2000);
     } else {
@@ -123,8 +115,8 @@ export class AdminProviderEditPage implements OnInit {
 
   async toggleMnemonic() {
     this.mnemonicShown = !this.mnemonicShown;
-    if(this.mnemonicShown) {
-      if(!this.adminDIDMnemonic) {
+    if (this.mnemonicShown) {
+      if (!this.adminDIDMnemonic) {
         this.adminDIDMnemonic = await this.adminService.getAdminDIDMnemonic(this.managedProvider);
       }
     }
@@ -136,7 +128,7 @@ export class AdminProviderEditPage implements OnInit {
   }
 
   getMnemonic(): string {
-    if(!this.mnemonicShown) {
+    if (!this.mnemonicShown) {
       return '****************************************';
     } else {
       return this.adminDIDMnemonic;

@@ -1,5 +1,6 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AggregatedExecutable, FileDownloadExecutable } from '@elastosfoundation/hive-js-sdk';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -21,8 +22,6 @@ import { DAppService } from '../../services/dapp.service';
 import { HiveService } from '../../services/hive.service';
 import { IdentityService } from '../../services/identity.service';
 import { PopupService } from '../../services/popup.service';
-
-declare let hiveManager: HivePlugin.HiveManager;
 
 @Component({
   selector: 'page-appdetails',
@@ -365,17 +364,15 @@ export class AppDetailsPage {
       // Upload the the picture and create the script to let others get this picture.
       let randomPictureID = new Date().getTime();
       let appIconFileName = "developertools/appicons/" + randomPictureID;
-      let uploader = await this.globalHiveService.getActiveVault().getFiles().upload(appIconFileName);
       let avatarData = Buffer.from(rawBase64ImageOut, "base64"); // Raw picture data, not base64 encoded
-      await uploader.write(avatarData);
-      await uploader.flush();
-      await uploader.close();
-      Logger.log('developertools', "Completed app icon upload to hive");
+      let uploadResponse = await this.globalHiveService.getActiveVaultServices().getFilesService().upload(appIconFileName, avatarData, false);
+      Logger.log('developertools', "Completed app icon upload to hive", uploadResponse);
 
       // Create a script to make this picture available to everyone
       let scriptName = "getAppIcon" + randomPictureID;
-      let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript(scriptName, hiveManager.Scripting.Executables.newAggregatedExecutable(
-        [hiveManager.Scripting.Executables.Files.newDownloadExecutable(appIconFileName)]
+      let couldCreateScript = await this.globalHiveService.getActiveVaultServices().getScriptingService().registerScript(scriptName, new AggregatedExecutable(
+        "appIconDownload",
+        [new FileDownloadExecutable(appIconFileName)]
       ), null, true, true);
       Logger.log('developertools', "Could create avatar script?", couldCreateScript);
 
