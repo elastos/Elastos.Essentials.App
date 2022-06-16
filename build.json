@@ -1,0 +1,11 @@
+{
+  "android": {
+      "debug": {
+          "keystore": "essentials-debug.keystore",
+          "storePassword": "essentials2022",
+          "alias": "essentials",
+          "password" : "essentials2022",
+          "keystoreType": ""
+      }
+  }
+ }
