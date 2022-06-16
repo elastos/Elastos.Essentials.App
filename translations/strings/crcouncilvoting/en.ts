@@ -128,7 +128,11 @@ export const en = {
         'candidate-deposit-warning': 'Do you want to register candidate? 5000 ELA deposit and a minor transaction fee are paid for candidate registration',
         'text-candidate-name-already-used': 'This candidate name is already in use',
         'candidate-unregister-warning': 'Do you want to unregister your candidate?',
+<<<<<<< HEAD
         'candidate-withdraw-warning-pre': 'Do you want to withdraw your deposite: ',
+=======
+        'candidate-withdraw-warning-pre': 'Do you want to withdraw your deposit: ',
+>>>>>>> 56ce46e2 (CU-2gbqkb3 site association files documentation)
         'candidate-withdraw-warning-suf': ' ELA?',
         'text-candidate-info-dont-modify': 'This candidate info do not modify.',
         'text-registration-no-confirm': "Last time registration don't confirm, please wait.",
@@ -429,9 +433,15 @@ export const en = {
         "681": "Wallis And Futuna Islands",
         "685": "Western Sahara",
         "967": "Yemen",
+<<<<<<< HEAD
         "338": "Yugoslavia",
         "260": "Zambia",
         "263": "Zimbabwe",
     }
 
+=======
+        "260": "Zambia",
+        "263": "Zimbabwe",
+    }
+>>>>>>> 56ce46e2 (CU-2gbqkb3 site association files documentation)
 };

@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "org.elastos.essentials.app",
+      "sha256_cert_fingerprints": [
+        "86:C6:B9:68:6F:A7:4E:A1:25:02:5B:3F:FB:E2:D5:1C:A8:BF:1D:F6:42:A0:4A:41:F1:FB:EB:A1:AE:EF:D1:94"
+      ]
+    }
+  }
+]
