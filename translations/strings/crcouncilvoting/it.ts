@@ -430,15 +430,7 @@ export const it = {
         "681": "Wallis And Futuna Islands",
         "685": "Western Sahara",
         "967": "Yemen",
-<<<<<<< HEAD
-        "338": "Yugoslavia",
         "260": "Zambia",
-        "263": "Zimbabwe",
+        "263": "Zimbabwe"
     }
-
-=======
-        "260": "Zambia",
-        "263": "Zimbabwe",
-    }
->>>>>>> 56ce46e2 (CU-2gbqkb3 site association files documentation)
 };
