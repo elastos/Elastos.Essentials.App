@@ -253,7 +253,8 @@
       "elastos-essentials-plugin-wallet": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }
