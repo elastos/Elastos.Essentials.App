@@ -29,6 +29,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { MenuSheetMenu } from '../../../components/menu-sheet/menu-sheet.component';
+import { ImportWalletType } from '../../model/masterwallets/wallet.types';
 import { Native } from '../../services/native.service';
 import { WalletCreationService } from '../../services/walletcreation.service';
 
@@ -155,14 +156,14 @@ export class SettingsPage implements OnInit {
                                 {
                                     title: this.translate.instant("wallet.settings-add-wallet-mnemonic"),
                                     routeOrAction: () => {
-                                        this.importStandardWallet();
+                                        this.importStandardWallet(ImportWalletType.MNEMONIC);
                                     }
                                 },
                                 {
                                     title: this.translate.instant("wallet.privatekey"),
                                     routeOrAction: () => {
                                         // TODO: differenciate from mnemonic menu item just above
-                                        this.importStandardWallet();
+                                        this.importStandardWallet(ImportWalletType.PRIVATEKEY);
                                     }
                                 },
                                 /* TODO {
@@ -206,10 +207,10 @@ export class SettingsPage implements OnInit {
         this.native.go("/wallet/wallet-create");
     }
 
-    importStandardWallet() {
+    importStandardWallet(type: ImportWalletType) {
         this.walletCreationService.reset();
         this.walletCreationService.isMulti = false;
         this.walletCreationService.type = 2; // import
-        this.native.go("/wallet/wallet-create");
+        this.native.go("/wallet/wallet-create", { importType: type});
     }
 }

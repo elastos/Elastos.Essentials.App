@@ -17,6 +17,11 @@ export enum WalletType {
   MULTI_SIG_EVM_GNOSIS = "multi_sign_evm_gnosis"
 }
 
+export enum ImportWalletType {
+  MNEMONIC = "mnemonic",
+  PRIVATEKEY = "privatekey"
+}
+
 export type WalletNetworkOptions = {
   network: string; // Network key. eg: elastos, bsc...
 }

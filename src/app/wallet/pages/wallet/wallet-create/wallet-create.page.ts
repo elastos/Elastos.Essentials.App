@@ -1,11 +1,12 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonInput } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
+import { ImportWalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
@@ -34,6 +35,7 @@ export class WalletCreatePage implements OnInit {
     constructor(
         public route: ActivatedRoute,
         public native: Native,
+        private router: Router,
         private walletManager: WalletService,
         public walletCreationService: WalletCreationService,
         public zone: NgZone,
@@ -46,6 +48,12 @@ export class WalletCreatePage implements OnInit {
     }
 
     ngOnInit() {
+      const navigation = this.router.getCurrentNavigation();
+      if (!Util.isEmptyObject(navigation.extras.state)) {
+          if (navigation.extras.state.importType == ImportWalletType.PRIVATEKEY) {
+            this.importByPrivateKey = true;
+          }
+      }
     }
 
     ionViewWillEnter() {
