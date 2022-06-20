@@ -43,6 +43,6 @@ export const zh = {
         'scam-warning-message': '已知此URL是恶意的，我们强烈建议您不要继续。',
 
         // Intents
-        'open-external-url-title': 'Open external URL?'
+        'open-external-url-title': '打开外部URL?'
     }
 };
