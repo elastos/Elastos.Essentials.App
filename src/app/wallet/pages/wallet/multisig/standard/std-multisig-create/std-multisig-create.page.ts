@@ -151,6 +151,13 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     /**
+     * Only allow a mex number of cosigners to be added, not an infinite number.
+     */
+    public canAddCosigners(): boolean {
+        return this.cosigners.length < 6;
+    }
+
+    /**
      * Pastes clipboard content into the target cosigner address
      */
     public async pasteCosigner(event, i: number) {

@@ -38,7 +38,8 @@
         </ion-row>
         <ion-row class="cosigner-row" *ngFor="let cosigner of cosigners; let i = index; trackBy: trackCosigners">
             <ion-col size="12">
-                <ion-input type="text" [name]="'cosigner'+i" placeholder="{{ 'wallet.multi-sig-input-xpub-key-prompt' | translate }}" autocomplete="off"
+                <ion-input type="text" [name]="'cosigner'+i"
+                    placeholder="{{ 'wallet.multi-sig-input-xpub-key-prompt' | translate }}" autocomplete="off"
                     autocorrect="off" [(ngModel)]="cosigners[i]" ngDefaultControl (blur)="onCosignerBlur(i)"
                     class="text-left">
                     <div class="icons">
@@ -55,7 +56,7 @@
             </ion-col>
         </ion-row>
 
-        <ion-button color="secondary" (click)="addCosignerEntry()">
+        <ion-button color="secondary" (click)="addCosignerEntry()" *ngIf="canAddCosigners()">
             <ion-label>{{ 'wallet.multi-sig-add-cosigner' | translate }}</ion-label>
         </ion-button>
 
