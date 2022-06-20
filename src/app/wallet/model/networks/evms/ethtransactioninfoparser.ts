@@ -47,11 +47,6 @@ export type ETHTransactionInfo = {
   events: EthContractEvent[];
 }
 
-export type ETHTransactionTokenApproveInfo = ETHTransactionInfo & {
-  tokenName: string;
-  symbol: string;
-}
-
 /**
  * Utility to extract various information such as a called method name, from a received web3 transaction
  * data (ex: 0x.......).

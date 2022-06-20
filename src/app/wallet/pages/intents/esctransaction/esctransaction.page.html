@@ -3,8 +3,8 @@
   <ion-spinner *ngIf="!transactionInfo"></ion-spinner>
   <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="transactionInfo">
     <!-- CARD HEADER -->
-    <div [ngSwitch]="transactionInfo.txType">
-      <ion-card *ngSwitchCase="'token_approve'">
+    <div [ngSwitch]="transactionInfo.type">
+      <ion-card *ngSwitchCase="'erc20_token_approve'">
         <img
           [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
         <ion-card-title>{{ 'wallet.esctransaction-approve-token' | translate
@@ -14,7 +14,7 @@
           getApproveTokenNameWithSymbol(transactionInfo) } }}
         </ion-card-subtitle>
       </ion-card>
-      <ion-card *ngSwitchDefault="'contract_call'">
+      <ion-card *ngSwitchDefault>
         <img
           [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
         <ion-card-title>{{ 'wallet.esctransaction-smart-contract' | translate }}</ion-card-title>

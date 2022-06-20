@@ -33,7 +33,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { ETHTransactionInfo, ETHTransactionInfoParser, ETHTransactionTokenApproveInfo } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
+import { ApproveERC20Operation, ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
@@ -334,10 +334,11 @@ export class EscTransactionPage implements OnInit {
     this.gasPrice = Math.floor(this.gasPriceGwei * Config.GWEI).toString();
   }
 
-  public getApproveTokenNameWithSymbol(transactionInfo: ETHTransactionTokenApproveInfo): string {
+  public getApproveTokenNameWithSymbol(transactionInfo: ETHTransactionInfo): string {
     if (!transactionInfo) // Just in case
       return "";
 
-    return `${transactionInfo.symbol} (${transactionInfo.tokenName})`;
+    let approveOperation = <ApproveERC20Operation>transactionInfo.operation;
+    return `${approveOperation.symbol} (${approveOperation.tokenName})`;
   }
 }
