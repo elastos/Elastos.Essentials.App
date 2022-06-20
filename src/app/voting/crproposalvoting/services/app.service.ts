@@ -9,8 +9,6 @@ import { ProposalStatus } from '../model/proposal-status';
 import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 import { ProposalService } from './proposal.service';
 
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -40,9 +38,9 @@ export class AppService {
     }
   }
 
-  async checkForNewProposals(today: Date) {
+  private async checkForNewProposals(today: Date) {
     // Send notification if there are any new proposals only for today
-    let newProposalsCount: number = 0;
+    let newProposalsCount = 0;
     let proposals = null;
     try {
       proposals = await this.proposalService.fetchProposals(ProposalStatus.ALL, 1);

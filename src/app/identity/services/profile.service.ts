@@ -21,6 +21,7 @@ import { CredentialDisplayEntry } from "../model/credentialdisplayentry.model";
 import { DIDDocument } from "../model/diddocument.model";
 import { DIDURL } from "../model/didurl.model";
 import { Profile } from "../model/profile.model";
+import { ProfileDisplayEntry } from "../model/profiledisplayentry.model";
 import { VerifiableCredential } from "../model/verifiablecredential.model";
 import { AuthService } from "./auth.service";
 import { BasicCredentialsService } from './basiccredentials.service';
@@ -28,14 +29,6 @@ import { DIDService } from "./did.service";
 import { DIDDocumentsService } from "./diddocuments.service";
 import { DIDSyncService } from "./didsync.service";
 import { Native } from "./native";
-
-
-type ProfileDisplayEntry = {
-  credentialId: string; // related credential id
-  label: string; // "title" to display
-  value: string; // value to display
-  willingToBePubliclyVisible?: boolean; // Whether it's currently set to become published or not.
-};
 
 type IssuerDisplayEntry = {
   did: string;

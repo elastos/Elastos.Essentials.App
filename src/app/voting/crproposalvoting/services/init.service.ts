@@ -3,6 +3,7 @@ import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { AppService } from './app.service';
 import { CROperationsService } from './croperations.service';
 import { ProposalService } from './proposal.service';
 import { SuggestionService } from './suggestion.service';
@@ -15,6 +16,7 @@ export class CRProposalVotingInitService extends GlobalService {
         private crOperations: CROperationsService,
         private proposalService: ProposalService,
         private suggestionService: SuggestionService,
+        private appService: AppService
     ) {
         super();
     }
@@ -31,7 +33,7 @@ export class CRProposalVotingInitService extends GlobalService {
             this.suggestionService.init();
             void this.proposalService.init();
 
-            //   void this.appService.getTimeCheckedForProposals();
+            void this.appService.getTimeCheckedForProposals();
         }, 7000); // 7 seconds before starting everything, to release the Essentials boot load.
         return;
     }

@@ -10,6 +10,7 @@ import { CryptoNameResolver } from '../model/address-resolvers';
 import { IdrissResolver } from '../model/address-resolvers/resolvers/IdrissAddressResolver';
 import { UnstoppableDomainsAddressResolver } from '../model/address-resolvers/resolvers/UnstoppableDomainsAddressResolver';
 import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/network/arbitrum.mainnet.network';
+import { ArbitrumTestNetNetwork } from '../model/networks/arbitrum/network/arbitrum.testnet.network';
 import { AvalancheCChainMainNetNetwork } from '../model/networks/avalanchecchain/network/avalanchecchain.mainnet.network';
 import { AvalancheCChainTestNetNetwork } from '../model/networks/avalanchecchain/network/avalanchecchain.testnet.network';
 import { BSCMainNetNetwork } from '../model/networks/bsc/network/bsc.mainnet.network';
@@ -164,7 +165,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new EthereumRopstenNetwork());
     await this.createAndRegisterNetwork(new HECOTestNetNetwork());
     await this.createAndRegisterNetwork(new BSCTestNetNetwork());
-    // await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
+    await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
     await this.createAndRegisterNetwork(new PolygonTestNetNetwork());
     await this.createAndRegisterNetwork(new FantomTestNetNetwork());
     await this.createAndRegisterNetwork(new AvalancheCChainTestNetNetwork());
