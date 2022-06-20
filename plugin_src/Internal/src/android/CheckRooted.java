@@ -20,21 +20,27 @@ public class CheckRooted {
     public static boolean isDeviceRooted() {
         if (checkDeviceDebuggable()) {
             return true;
-        } // check buildTags
+        }
+        if (isSuEnable()) {
+            return true;
+        }
+        if (isBusyboxEnable()) {
+            return true;
+        }
         if (checkSuperuserApk()) {
             return true;
-        } // Superuser.apk
+        }
           // if (checkRootPathSU()){return true;}//find su in some path
           // if (checkRootWhichSU()){return true;}//find su use 'which'
         if (checkBusybox()) {
             return true;
-        } // find su use 'which'
+        }
         if (checkAccessRootData()) {
             return true;
-        } // find su use 'which'
-        if (checkGetRootAuth()) {
-            return true;
-        } // exec su
+        }
+//        if (checkGetRootAuth()) {
+//            return true;
+//        }
 
         return false;
     }
@@ -46,6 +52,33 @@ public class CheckRooted {
             return true;
         }
         return false;
+    }
+
+    public static boolean isCommandEnable(String command) {
+        File file = null;
+        String[] paths = {"/system/bin/", "/system/xbin/", "/system/sbin/", "/sbin/",
+                "/vendor/bin/", "/su/bin/", "/system/sd/xbin/", "/system/bin/failsafe/",
+                "/data/local/xbin/", "/data/local/bin/", "/data/local/"};
+        try {
+            for (String path : paths) {
+                file = new File(path + command);
+                if (file.exists() && file.canExecute()) {
+                    Log.i(LOG_TAG, "find su in : " + path);
+                    return true;
+                }
+            }
+        } catch (Exception x) {
+            x.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean isSuEnable() {
+        return isCommandEnable("su");
+    }
+
+    public static boolean isBusyboxEnable() {
+        return isCommandEnable("busybox");
     }
 
     public static boolean checkSuperuserApk() {
