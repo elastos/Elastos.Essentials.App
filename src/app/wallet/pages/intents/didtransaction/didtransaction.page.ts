@@ -159,7 +159,8 @@ export class DidTransactionPage implements OnInit {
     }
 
     goTransaction() {
-        void this.checkValue();
+        if (this.feeDisplay)
+            void this.checkValue();
     }
 
     async checkValue() {
@@ -193,7 +194,7 @@ export class DidTransactionPage implements OnInit {
 
                 const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
                 if (result.published === false) {
-                    if (result.message.includes('oversized data')) {
+                    if (result.message && result.message.includes('oversized data')) {
                         // DID payload over size
                         await this.popupProvider.ionicAlert('wallet.transaction-fail', 'wallet.did-oversize');
                     }

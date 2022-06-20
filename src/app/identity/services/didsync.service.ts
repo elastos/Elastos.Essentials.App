@@ -119,7 +119,7 @@ export class DIDSyncService implements GlobalService {
         parentIntentId
       );
 
-      void this.native.hideLoading();
+      await this.native.hideLoading();
     } catch (err) {
       await this.native.hideLoading();
       Logger.error("identity", JSON.stringify(err));

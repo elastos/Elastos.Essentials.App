@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { DID, DIDStore } from '@elastosfoundation/did-js-sdk';
 import { DID as ConnDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { TranslateService } from '@ngx-translate/core';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ManagedProvider } from '../model/managedprovider';
@@ -18,8 +19,9 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 export class AdminService {
   constructor(
     private storage: GlobalStorageService,
-    private globalIntentService: GlobalIntentService,
-    private globalPublicationService: GlobalPublicationService
+    private globalPublicationService: GlobalPublicationService,
+    private translate: TranslateService,
+    public native: GlobalNativeService,
   ) { }
 
   async init() {
@@ -30,7 +32,7 @@ export class AdminService {
     if (!providers)
       providers = [];
 
-    return providers.sort((p1, p2) => {
+      return providers.sort((p1, p2) => {
       if (p1.creationTime > p2.creationTime) return 1;
       else return -1;
     });
@@ -104,6 +106,7 @@ export class AdminService {
 
     if (!passwordSetResult.value) {
       // Failed to save the password. Cancel DID creation
+      Logger.error('HiveManager', "createAdminDID Failed to save the password. Cancel DID creation");
       return null;
     }
 
@@ -145,10 +148,16 @@ export class AdminService {
    */
   public async publishAdminDID(provider: ManagedProvider): Promise<void> {
     let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-" + provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
-    await this.globalPublicationService.publishJSDIDFromStore(
-      provider.did.storeId,
-      passwordInfo.password,
-      provider.did.didString,
-      true);
+    await this.native.showLoading(this.translate.instant('common.please-wait'));
+    try {
+      await this.globalPublicationService.publishJSDIDFromStore(
+        provider.did.storeId,
+        passwordInfo.password,
+        provider.did.didString,
+        true);
+    } catch (e) {
+      Logger.warn('HiveManager', "publishJSDIDFromStore exception:", e);
+    }
+    await this.native.hideLoading();
   }
 }

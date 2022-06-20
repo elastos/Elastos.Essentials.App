@@ -32,6 +32,8 @@ export class AdminProviderEditPage implements OnInit {
   public adminDIDPublicationStatusFetched = false;
   public adminDIDPublished = false;
 
+  private publishing = false;
+
   constructor(
     public zone: NgZone,
     public alertController: AlertController,
@@ -102,7 +104,15 @@ export class AdminProviderEditPage implements OnInit {
   }
 
   async publishAdminDID() {
-    await this.adminService.publishAdminDID(this.managedProvider);
+    if (this.publishing) return;
+
+    this.publishing = true;
+    try {
+      await this.adminService.publishAdminDID(this.managedProvider);
+    } catch (e) {
+      Logger.log('HiveManager', "publishAdminDID exception:", e);
+    }
+    this.publishing = false;
   }
 
   async deleteVaultProvider() {

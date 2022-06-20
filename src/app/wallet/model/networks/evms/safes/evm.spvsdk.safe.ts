@@ -42,6 +42,9 @@ export class EVMSPVSDKSafe extends SPVSDKSafe implements EVMSafe {
   public async signTransaction(subWallet: AnySubWallet, rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
     let txResult = await super.signTransaction(subWallet, rawTransaction, transfer);
 
+    if (!txResult.signedTransaction)
+      return txResult; // Forward the error
+
     let parsedSignedTransaction = <SignedETHSCTransaction>JSON.parse(txResult.signedTransaction);
 
     return { signedTransaction: parsedSignedTransaction.TxSigned };
