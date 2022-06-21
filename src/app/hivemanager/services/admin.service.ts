@@ -29,10 +29,14 @@ export class AdminService {
 
   public async getManagedProviders(): Promise<ManagedProvider[]> {
     let providers = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "admin-managedproviders", []) as ManagedProvider[];
-    if (!providers)
+    if (!providers) {
       providers = [];
+    } else {
+      // in case of
+      providers = providers.filter((p) => p.did !== null);
+    }
 
-      return providers.sort((p1, p2) => {
+    return providers.sort((p1, p2) => {
       if (p1.creationTime > p2.creationTime) return 1;
       else return -1;
     });
