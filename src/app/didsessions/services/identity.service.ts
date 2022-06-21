@@ -474,6 +474,8 @@ export class IdentityService {
     public async cancelIdentiyCreation(): Promise<void> {
         // TODO: Delete the "identityBeingCreated" first
 
+        await this.signOut();
+
         // Go back to DID sessions identity list or welcome screen
         await this.uxService.navigateRoot();
     }
