@@ -159,13 +159,46 @@ export class ElastosTransactionsHelper {
         break;
       case TransactionDirection.MOVED:
         if (transaction.votecategory !== 0) {
-          // TODO: show different icon for different vote?
-          transactionName = "wallet.coin-op-vote";
+          transactionName = this.getVoteName(transaction.votecategory);
         } else {
           transactionName = "wallet.coin-op-transfered-token";
         }
         break;
     }
     return transactionName;
+  }
+
+  private static getVoteName(votecategory) {
+    let voteName = '';
+    let voteTypeCount = 0;
+
+    if ((votecategory & 1) == 1) {
+      voteTypeCount++;
+      voteName = GlobalTranslationService.instance.translateInstant('wallet.coin-op-dpos-vote');
+    }
+
+    if ((votecategory & 2) == 2) {
+      if (voteTypeCount) voteName += " + ";
+      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-vote')
+      voteTypeCount++;
+    }
+
+    if ((votecategory & 4) == 4) {
+      if (voteTypeCount) voteName += " + ";
+      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-cr-proposal-against')
+      voteTypeCount++;
+    }
+
+    if ((votecategory & 8) == 8) {
+      if (voteTypeCount) voteName += " + ";
+      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-impeachment')
+      voteTypeCount++;
+    }
+
+    if (voteTypeCount > 2) {
+      voteName = "wallet.coin-op-vote";
+    }
+
+    return voteName;
   }
 }

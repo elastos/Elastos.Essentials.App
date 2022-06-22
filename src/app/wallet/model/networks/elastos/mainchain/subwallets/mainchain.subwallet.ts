@@ -116,6 +116,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         this.balanceSpendable = await this.getTotalBalanceByType(true);
     }
 
+    // To delete?
     protected async getTransactionName(transaction: ElastosTransaction, translate: TranslateService): Promise<string> {
         if (transaction.type === TransactionDirection.MOVED) {
             // TODO: show different icon for different vote?
