@@ -3,8 +3,13 @@ import { Injectable, NgZone } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 // import { timingSafeEqual } from 'crypto';
 import { TranslateService } from '@ngx-translate/core';
+import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import { BiometricAuthenticationFailedException } from 'src/app/model/exceptions/biometricauthenticationfailed.exception';
+import { BiometricLockedoutException } from 'src/app/model/exceptions/biometriclockedout.exception';
+import { PasswordManagerCancellationException } from 'src/app/model/exceptions/passwordmanagercancellationexception';
+import { WrongPasswordException } from 'src/app/model/exceptions/wrongpasswordexception.exception';
 import { GlobalDIDSessionsService, SignInOptions } from 'src/app/services/global.didsessions.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
@@ -16,14 +21,9 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { DIDHelper } from '../helpers/did.helper';
 import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
 import { CredentialAvatar, DID } from '../model/did.model';
 import { DIDStore } from '../model/didstore.model';
-import { BiometricAuthenticationFailedException } from '../model/exceptions/biometricauthenticationfailed.exception';
-import { BiometricLockedoutException } from '../model/exceptions/biometriclockedout.exception';
-import { PasswordManagerCancellationException } from '../model/exceptions/passwordmanagercancellationexception';
-import { WrongPasswordException } from '../model/exceptions/wrongpasswordexception.exception';
 import { NewIdentity } from '../model/newidentity';
 import { PopupProvider } from './popup';
 import { UXService } from './ux.service';
@@ -330,13 +330,13 @@ export class IdentityService {
     }
 
     private async createStoreAfterImport() {
-        Logger.log('didsessions', "Create store after import");
+        Logger.warn('didsessions', "Create store after import");
 
         // Automatically find and use the best elastos API provider
         await this.globalElastosAPIService.autoDetectTheBestProvider();
 
         let didStore = await DIDStore.create();
-        Logger.log('didsessions', 'Getting didStore', didStore);
+        Logger.warn('didsessions', 'Getting didStore', didStore);
 
         // Generate a random password
         let storePassword = await passwordManager.generateRandomPassword();
@@ -352,7 +352,7 @@ export class IdentityService {
         await didStore.createPrivateIdentity(this.identityBeingCreated.mnemonicPassphrase, storePassword, mnemonicLanguage, mnemonic);
 
         // Synchronize the store with chain
-        Logger.log('didsessions', "Synchronizing identities");
+        Logger.warn('didsessions', "Synchronizing identities");
         await this.nativeService.showLoading(this.translate.instant('didsessions.retrieve-prompt'));
 
         try {
@@ -360,6 +360,7 @@ export class IdentityService {
                 await didStore.synchronize(storePassword);
             }
             catch (e) {
+              Logger.warn('didsessions', "Synchronizing exception", e);
                 // Special case - "invalid signature" during synchronize - bug of getdids.com DIDs.
                 // Recommend user to create a new DID
                 if (e) {

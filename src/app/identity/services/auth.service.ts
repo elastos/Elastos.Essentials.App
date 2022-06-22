@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
-import { DIDHelper } from '../helpers/did.helper';
-import { PasswordManagerCancelallationException } from '../model/exceptions/passwordmanagercancellationexception';
+import { PasswordManagerCancellationException } from 'src/app/model/exceptions/passwordmanagercancellationexception';
 import { DIDService } from './did.service';
 import { PopupProvider } from './popup';
 
@@ -59,7 +59,7 @@ export class AuthService {
             }
             catch (e) {
                 let reworkedError = DIDHelper.reworkedPluginException(e);
-                if (reworkedError instanceof PasswordManagerCancelallationException) {
+                if (reworkedError instanceof PasswordManagerCancellationException) {
                     // Nothing to do, just stop the flow here.
                     onCancelled();
                     resolve();

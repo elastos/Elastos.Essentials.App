@@ -1,5 +1,5 @@
+import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
-import { DIDHelper } from '../helpers/did.helper';
 import { DIDURL } from './didurl.model';
 import { VerifiableCredential } from './verifiablecredential.model';
 
@@ -58,7 +58,7 @@ export class DID {
     /**
      */
     addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: string[]): Promise<DIDPlugin.VerifiableCredential> {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve, reject)=>{
             Logger.log('didsessions', "Adding credential with id:", credentialId, props, userTypes);
 

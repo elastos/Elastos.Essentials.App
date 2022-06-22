@@ -1,6 +1,12 @@
 
 import { Logger } from "src/app/logger";
-import { PasswordManagerCancelallationException } from "../model/exceptions/passwordmanagercancellationexception";
+import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
+import { BiometricAuthenticationFailedException } from "../model/exceptions/biometricauthenticationfailed.exception";
+import { BiometricLockedoutException } from "../model/exceptions/biometriclockedout.exception";
+import { DIDNotUpToDateException } from "../model/exceptions/didnotuptodateexception";
+import { HiveInsufficientSpaceException } from "../model/exceptions/hiveinsufficientspaceexception";
+import { NetworkException } from "../model/exceptions/network.exception";
+import { PasswordManagerCancellationException } from "../model/exceptions/passwordmanagercancellationexception";
 import { WrongPasswordException } from "../model/exceptions/wrongpasswordexception.exception";
 
 /**
@@ -37,11 +43,31 @@ export class DIDHelper {
 
       if (e.message) {
         if (e.message.includes("MasterPasswordCancellation")) {
-          return new PasswordManagerCancelallationException();
+          return new PasswordManagerCancellationException();
         }
 
         if (e.message.includes("Authentication error [10]")) {
-          return new PasswordManagerCancelallationException();
+          return new PasswordManagerCancellationException();
+        }
+
+        if (e.message.includes("BIOMETRIC_AUTHENTICATION_FAILED")) {
+          return new BiometricAuthenticationFailedException();
+        }
+
+        if (e.message.includes("BIOMETRIC_LOCKED_OUT")) {
+          return new BiometricLockedoutException();
+        }
+
+        if (e.message.includes("DIDNotUpToDate")) {
+          return new DIDNotUpToDateException();
+        }
+
+        if (e.message.includes("not enough storage space")) {
+            return new HiveInsufficientSpaceException();
+        }
+
+        if (e.message.includes("Network error")) {
+            return new NetworkException();
         }
       }
     }
@@ -56,8 +82,8 @@ export class DIDHelper {
       return e; // No more info - return the raw error.
     }
 
-    // if (e.includes("have not run authority"))
-    //   return new ApiNoAuthorityException(e);
+    if (e.includes("have not run authority"))
+      return new ApiNoAuthorityException(e);
 
     // All other cases: return the raw error.
     return e;

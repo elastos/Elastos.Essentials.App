@@ -1,6 +1,6 @@
+import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { DIDHelper } from '../helpers/did.helper';
 import { Config } from '../services/config';
 import { LocalStorage } from '../services/localstorage';
 import { DID } from './did.model';

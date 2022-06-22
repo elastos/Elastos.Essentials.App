@@ -1,5 +1,5 @@
+import { DIDHelper } from "src/app/helpers/did.helper";
 import { Logger } from "src/app/logger";
-import { DIDHelper } from "../helpers/did.helper";
 
 declare let didManager: DIDPlugin.DIDManager;
 

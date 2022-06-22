@@ -1,6 +1,6 @@
+import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { DIDHelper } from '../helpers/did.helper';
 import { DID } from './did.model';
 import { NewIdentity } from './newidentity';
 

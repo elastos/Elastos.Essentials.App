@@ -1,4 +1,4 @@
-export class PasswordManagerCancelallationException implements Error {
-    name: string = "PasswordManagerCancelallationException";
+export class PasswordManagerCancellationException implements Error {
+    name: string = "PasswordManagerCancellationException";
     message: string = "User cancelled master password input";
 }

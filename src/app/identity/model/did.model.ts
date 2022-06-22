@@ -1,14 +1,14 @@
+import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
+import { ApiNoAuthorityException } from 'src/app/model/exceptions/apinoauthorityexception.exception';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
-import { DIDHelper } from '../helpers/did.helper';
 import { BasicCredentialsService } from '../services/basiccredentials.service';
 import { AvatarCredentialSubject } from './avatarcredentialsubject';
 import { DIDDocument } from './diddocument.model';
 import { DIDFeatures } from './didfeatures';
 import { DIDURL } from './didurl.model';
-import { ApiNoAuthorityException } from "./exceptions/apinoauthorityexception.exception";
 import { Profile } from './profile.model';
 import { VerifiableCredential } from './verifiablecredential.model';
 

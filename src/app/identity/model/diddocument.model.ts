@@ -1,8 +1,8 @@
+import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
-import { DIDHelper } from '../helpers/did.helper';
+import { ApiNoAuthorityException } from 'src/app/model/exceptions/apinoauthorityexception.exception';
 import { LocalStorage } from '../services/localstorage';
 import { DIDURL } from './didurl.model';
-import { ApiNoAuthorityException } from "./exceptions/apinoauthorityexception.exception";
 
 export class DIDDocument {
     constructor(
@@ -118,7 +118,7 @@ export class DIDDocument {
     /**
      * Start publishing this DID document on chain.
      * Response will be received in DIDStore.createIdTransactionCallback().
-     * 
+     *
      * @param parentIntentId If publishing a DID from an on going intent screen, pass the on going intent id to not block the intent manager.
      */
     publish(storepass: string, parentIntentId?: number): Promise<void> {
