@@ -13,13 +13,6 @@
             </ion-input>
         </ion-row>
 
-        <ion-row class="toggle-row" *ngIf="walletCreationService.type === 2">
-            <ion-col class="left-col">
-                <h1 *ngIf="importByPrivateKey">{{ 'wallet.import-wallet-by-privatekey' | translate }}</h1>
-                <h1 *ngIf="!importByPrivateKey">{{ 'wallet.import-wallet-by-mnemonic' | translate }}</h1>
-            </ion-col>
-        </ion-row>
-
         <ion-row class="toggle-row" *ngIf="!importByPrivateKey">
             <ion-col class="left-col" size="10">
                 <h1 *ngIf="wallet.singleAddress">{{ 'wallet.single-address' | translate }}</h1>

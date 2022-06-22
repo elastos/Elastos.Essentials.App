@@ -62,7 +62,11 @@ export class WalletCreatePage implements OnInit {
         if (this.walletCreationService.type === NewWallet.CREATE) {
             this.titleBar.setTitle(this.translate.instant('wallet.launcher-create-wallet'));
         } else {
-            this.titleBar.setTitle(this.translate.instant('wallet.launcher-backup-import'));
+            if (this.importByPrivateKey) {
+              this.titleBar.setTitle(this.translate.instant('wallet.import-wallet-by-privatekey'));
+            } else {
+              this.titleBar.setTitle(this.translate.instant('wallet.import-wallet-by-mnemonic'));
+            }
         }
     }
 
