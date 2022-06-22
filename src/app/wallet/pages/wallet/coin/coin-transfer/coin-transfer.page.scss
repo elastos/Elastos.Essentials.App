@@ -353,6 +353,18 @@
         font-weight: 700;
       }
     }
+
+    .ela-coinbase-warning {
+        display: flex;
+        align-items: center;
+
+        img {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin-right: 10px;
+        }
+    }
 }
 
 /********************** Dark Container **********************/

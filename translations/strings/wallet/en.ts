@@ -177,6 +177,7 @@ export const en = {
         "withdraw-note": "The minimum withdrawal amount is 0.0002 ELA and must be an integral multiple of 0.00000001",
         'crosschain-note': "Elastos cross-chain transfers usually take between 15 and 25 minutes. During this time you will not see your funds, please be patient",
         "balance-locked": "( {{ locked }} locked )",
+        "ela-coinbase-warning": "Make sure to not send Elastos Smart Chain ELA to a Coinbase address, as the ELA on Coinbase is a wrapped ethereum ERC20 ELA.",
 
         /********************
         * Coin Receive Page *

@@ -925,4 +925,28 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         });
         this.modal.present();
     }
+
+    /**
+     * We show a warning to usersto make sure they don't send ESC ELA to coinbase.
+     * Both use EVM addresses, but coinbase uses the wrapped ethereum ELA, so sending ESC ELA
+     * to coinbase would make the funds lost.
+     *
+     * This warning is shown if:
+     * - network is ESC
+     * - sending coin is ELA
+     * - transfer type is SEND
+     */
+     public shouldShowCoinbaseELAWarning(): boolean {
+      // Network should be ESC
+      if (!this.networkWallet || this.networkWallet.network.key !== 'elastos')
+          return false;
+
+      if (!this.fromSubWallet || this.fromSubWallet.id !== StandardCoinName.ETHSC)
+          return false;
+
+      if (this.transferType !== TransferType.SEND)
+          return false;
+
+      return true;
+  }
 }
