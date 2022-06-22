@@ -183,6 +183,11 @@
             <p> {{ 'wallet.crosschain-note' | translate }} </p>
         </div>
 
+        <div *ngIf="shouldShowCoinbaseELAWarning()" class="note ela-coinbase-warning">
+            <img src="assets/wallet/icons/ela_coinbase_warning.png" />
+            <p>{{ 'wallet.ela-coinbase-warning' | translate }}</p>
+        </div>
+
         <!------------------ SEND AND RECHARGE BUTTON ------------------>
         <div *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3" class="footer-container ion-no-border"
             [class.dark-footer]="theme.darkMode">

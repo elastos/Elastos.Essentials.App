@@ -188,6 +188,7 @@ export const it = {
         "withdraw-note": "L'importo minimo di prelievo è 0,0002 ELA e deve essere un multiplo intero di 0,00000001",
         'crosschain-note': "I trasferimenti cross-chain di ELA richiedono solitamente dai 15 ai 25 minuti. Durante questo periodo non vedrai i tuoi fondi, per favore sii paziente",
         "balance-locked": "( {{ locked }} locked )",
+        "ela-coinbase-warning": "Make sure to not send Elastos Smart Chain ELA to a Coinbase address, as the ELA on Coinbase is a wrapped ethereum ERC20 ELA.",
 
         /********************
         * Coin Receive Page *

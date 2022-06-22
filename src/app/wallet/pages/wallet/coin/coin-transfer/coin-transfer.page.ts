@@ -39,6 +39,7 @@ import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.serv
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { ElastosSmartChainNetworkBase } from 'src/app/wallet/model/networks/elastos/evms/esc/network/esc.networks';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
@@ -987,5 +988,29 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             return this.nftAsset.imageURL;
         else
             return "assets/wallet/coins/eth-purple.svg";
+    }
+
+    /**
+     * We show a warning to usersto make sure they don't send ESC ELA to coinbase.
+     * Both use EVM addresses, but coinbase uses the wrapped ethereum ELA, so sending ESC ELA
+     * to coinbase would make the funds lost.
+     *
+     * This warning is shown if:
+     * - network is ESC
+     * - sending coin is ELA
+     * - transfer type is SEND
+     */
+    public shouldShowCoinbaseELAWarning(): boolean {
+        // Network should be ESC
+        if (!this.networkWallet || this.networkWallet.network.key !== ElastosSmartChainNetworkBase.NETWORK_KEY)
+            return false;
+
+        if (!this.fromSubWallet || this.fromSubWallet.id !== StandardCoinName.ETHSC)
+            return false;
+
+        if (this.transferType !== TransferType.SEND)
+            return false;
+
+        return true;
     }
 }

@@ -189,6 +189,7 @@ export const fr = {
         "withdraw-note": "Le retrait minimal est de 0.0002 ELA et doit être un multiple de 0.00000001",
         'crosschain-note': "Les transferts inter-chaînes prennent généralement entre 15 et 25 minutes. Vous ne verrez pas vos fonds pendant ce temps, veuillez patienter.",
         "balance-locked": "( {{ locked }} locked )",
+        "ela-coinbase-warning": "N'envoyez pas d'ELA de la chaîne Elastos Smart Chain ELA vers une adresse Coinbase, car les ELA sur Coinbase sont des jetons ERC20 ethereum.",
 
         /********************
         * Coin Receive Page *

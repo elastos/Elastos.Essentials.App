@@ -17,6 +17,8 @@ import { elastosMainnetElkSwapProvider, elastosMainnetGlideSwapProvider } from "
 import { ElastosPasarERC1155Provider } from "../nfts/pasar.provider";
 
 export abstract class ElastosSmartChainNetworkBase extends ElastosEVMNetwork<WalletNetworkOptions> {
+  public static NETWORK_KEY = "elastossmartchain";
+
   public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
@@ -66,7 +68,7 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
 
   constructor() {
     super(
-      "elastossmartchain",
+      ElastosSmartChainNetworkBase.NETWORK_KEY,
       "Elastos smart chain",
       "assets/wallet/coins/ela-gray.svg",
       MAINNET_TEMPLATE,
@@ -118,7 +120,7 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
 export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBase {
   constructor() {
     super(
-      "elastossmartchain",
+      ElastosSmartChainNetworkBase.NETWORK_KEY,
       "Elastos smart chain Testnet",
       "assets/wallet/coins/ela-gray.svg",
       TESTNET_TEMPLATE,
