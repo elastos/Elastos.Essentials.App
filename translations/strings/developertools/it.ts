@@ -40,8 +40,10 @@ export const it = {
         'different-did': 'Diverso dall\'utente presente. Pubblica per aggiornare.',
         'uploading-icon': 'Invio dell\'icona dell\'app allo spazio di archiviazione Hive dello sviluppatore, attendi...',
         'touch-to-change': 'Tocca l\'icona per cambiarlo',
+        'app-unnamed': 'Senza nome',
 
         // Placeholders
+        'appName-placeholder': 'Inserisci qui il nome della tua domanda',
         'redirecturl-placeholder': 'Inserisci qui il tuo "URL di reindirizzamento" se ne hai uno',
         'nativecustomscheme-placeholder': 'Inserisci qui il tuo "schema personalizzato" se ne hai uno',
         'nativecallbackurl-placeholder': 'Inserisci qui il tuo "callback URL" se ne hai uno',

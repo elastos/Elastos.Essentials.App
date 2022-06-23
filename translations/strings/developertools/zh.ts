@@ -40,8 +40,10 @@ export const zh = {
         'different-did': '与当前登录的用户不同-请发布以进行更新',
         'uploading-icon': '正在将应用图标上传到开发人员的 Hive Vault，请稍候...',
         'touch-to-change': '点击图标可进行更改',
+        'app-unnamed': '未命名',
 
         // Placeholders
+        'appName-placeholder': '在此处设置应用名称',
         'redirecturl-placeholder': '在此处设置您的 Intent 重定向 URL（如果有）',
         'nativecustomscheme-placeholder': '在此处设置您自定义 Scheme（如果有）',
         'nativecallbackurl-placeholder': '在此处设置您的 Intent 回调 URL（如果有）',

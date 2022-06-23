@@ -40,8 +40,10 @@ export const fr = {
         'different-did': 'Différent de l\'utilisateur courant. Publier pour mettre à jour.',
         'uploading-icon': 'Envoie de l\'icône de l\'application vers le stockage Hive du développeur, veuillez patienter...',
         'touch-to-change': 'Toucher l\'icône pour la modifier',
+        'app-unnamed': 'Sans nom',
 
         // Placeholders
+        'appName-placeholder': 'Saisir votre nom de l\'application ici',
         'redirecturl-placeholder': 'Saisir votre "redirect url" ici si vous en avez une',
         'nativecustomscheme-placeholder': 'Saisir votre "custom scheme" ici si vous en avez un',
         'nativecallbackurl-placeholder': 'Saisir votre "callback url" ici si vous en avez une',

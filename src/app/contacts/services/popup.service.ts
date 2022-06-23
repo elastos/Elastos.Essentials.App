@@ -32,7 +32,7 @@ export class PopupService {
   ) {
     this.events.subscribe('showDeleteContactPrompt', (contact) => {
       this.zone.run(() => {
-        this.showDeletePrompt(contact);
+        void this.showDeletePrompt(contact);
       });
     });
   }
@@ -89,7 +89,7 @@ export class PopupService {
   }
 
   /*
-  ONLY TO TEST DID-PUBLISHING COMPONENT 
+  ONLY TO TEST DID-PUBLISHING COMPONENT
 
    async showQRCode(contact: Contact) {
     this.qrModal = await this.modalCtrl.create({
@@ -97,7 +97,7 @@ export class PopupService {
       cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
     });
     this.qrModal.present();
-  } 
-  
+  }
+
   */
 }

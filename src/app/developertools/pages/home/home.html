@@ -8,7 +8,7 @@
     </div>
 
     <ion-card *ngFor="let app of dappService.getDApps()" (click)="openApp(app)">
-      <ion-card-subtitle>{{ app.name }}</ion-card-subtitle>
+      <ion-card-subtitle>{{ app.name ? app.name : 'developertools.app-unnamed' | translate  }}</ion-card-subtitle>
     </ion-card>
 
   </ion-grid>

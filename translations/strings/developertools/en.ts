@@ -40,8 +40,10 @@ export const en = {
         'different-did': 'Different from currently signed in user - please publish to update',
         'uploading-icon': 'Uploading app icon to developer\'s hive vault, please wait...',
         'touch-to-change': 'Touch the icon to change it',
+        'app-unnamed': 'Unnamed',
 
         // Placeholders
+        'appName-placeholder': 'Set your app name here',
         'redirecturl-placeholder': 'Set your intents redirect url here if any',
         'nativecustomscheme-placeholder': 'Set your custom scheme here if any',
         'nativecallbackurl-placeholder': 'Set your intents callback url here if any',
