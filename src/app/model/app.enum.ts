@@ -17,5 +17,6 @@ export enum App {
     DAPP_BROWSER = "dappbrowser",
     RED_PACKETS = "redpackets",
     SECURITY = "security",
-    MIGRATOR = "migrator"
+    MIGRATOR = "migrator",
+    EASY_BRIDGE = "easy_bridge"
 }

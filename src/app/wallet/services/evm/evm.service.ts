@@ -340,6 +340,15 @@ export class EVMService {
   }
 
   /**
+   * Current block number on given network
+   */
+  public async getBlockNumber(network: AnyNetwork): Promise<number> {
+    let web3 = await this.getWeb3(network);
+    let blockNumber = await web3.eth.getBlockNumber();
+    return blockNumber;
+  }
+
+  /**
    * Get the current nonce for an account address, on the main node in use for a given network.
    */
   public async getNonce(network: AnyNetwork, accountAddress: string): Promise<number> {

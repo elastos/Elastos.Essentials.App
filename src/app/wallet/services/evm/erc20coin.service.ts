@@ -166,4 +166,21 @@ export class ERC20CoinService {
 
         return transactionFees;
     }
+
+    /**
+     * Fetches the ERC20 balance of a ERC20 contract for a given address
+     */
+    public async fetchERC20TokenBalance(network: EVMNetwork, tokenAddress: string, walletAddress: string): Promise<BigNumber> {
+        try {
+            const erc20Contract = new (await this.evmService.getWeb3(network)).eth.Contract(this.erc20ABI, tokenAddress, { from: walletAddress });
+
+            const rawBalance = await erc20Contract.methods.balanceOf(walletAddress).call();
+            if (rawBalance) {
+                return new BigNumber(rawBalance);
+            }
+        } catch (error) {
+            Logger.log('wallet', 'Failed to retrieve ERC20 token balance', network, tokenAddress, walletAddress, error);
+            return new BigNumber(0);
+        }
+    }
 }
