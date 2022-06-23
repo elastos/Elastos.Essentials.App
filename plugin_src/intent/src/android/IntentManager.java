@@ -436,65 +436,64 @@ public class IntentManager {
                         callback.onExternalIntentValid(false, "No DID found on chain matching the application DID "+appDid);
                     }
                     else {
-                        // DID document found. // Look for the #native credential
-                        VerifiableCredential nativeCredential = didDocument.getCredential("#native");
-                        if (nativeCredential == null) {
-                            callback.onExternalIntentValid(false, "No #native credential found in the app DID document. Was the 'redirect/callback url' configured and published on chain, using the developer tool dApp?");
+                        // DID document found. // Look for the #appinfo credential
+                        VerifiableCredential appInfoCredential = didDocument.getCredential("#appinfo");
+                        if (appInfoCredential == null) {
+                            callback.onExternalIntentValid(false, "No #appinfo credential found in the app DID document. Was the 'redirect/callback url' configured and published on chain, using the developer tool dApp?");
                         }
                         else {
-                            // Check redirect url, if any
-                            if (info.redirecturl != null && !info.redirecturl.equals("")) {
-                                // ANDROID ONLY - First use the custom scheme if any, otherwise fallback to the redirect url
-                                // IOS should use the redirect url.
-                                String onChainCustomScheme = (String)nativeCredential.getSubject().getProperty("customScheme");
-                                if (onChainCustomScheme == null) {
-                                    // No custom scheme: try the redirect url
-                                    String onChainRedirectUrl = (String)nativeCredential.getSubject().getProperty("redirectUrl");
-                                    if (onChainRedirectUrl == null) {
-                                        callback.onExternalIntentValid(false, "No redirectUrl found in the app DID document. Was the 'redirect url' configured and published on chain, using the developer tool dApp?");
-                                    }
-                                    else {
-                                        // We found a redirect url in the app DID document. Check that it matches the one in the intent
-                                        if (info.redirecturl.startsWith(onChainRedirectUrl)) {
-                                            // Everything ok.
-                                            callback.onExternalIntentValid(true, null);
-                                        }
-                                        else {
-                                            callback.onExternalIntentValid(false, "The registered redirect url in the App DID document ("+onChainRedirectUrl+") doesn't match with the received intent redirect url ("+info.redirecturl+")");
-                                        }
-                                    }
-                                }
-                                else {
-                                    // We found a custom scheme in the app DID document. Check that it matches the redirect url in the intent
-                                    if (info.redirecturl.startsWith(onChainCustomScheme)) {
-                                        // Everything ok.
-                                        callback.onExternalIntentValid(true, null);
-                                    }
-                                    else {
-                                        callback.onExternalIntentValid(false, "The registered custom scheme in the App DID document ("+onChainCustomScheme+") doesn't match with the received intent redirect url ("+info.redirecturl+")");
-                                    }
-                                }
-                            }
-                            // Check callback url, if any
-                            else if (info.callbackurl != null && !info.callbackurl.equals("")) {
-                                String onChainCallbackUrl = (String)nativeCredential.getSubject().getProperty("callbackurl");
-                                if (onChainCallbackUrl == null) {
-                                    callback.onExternalIntentValid(false, "No callbackurl found in the app DID document. Was the 'callback url' configured and published on chain, using the developer tool dApp?");
-                                }
-                                else {
-                                    // We found a callback url in the app DID document. Check that it matches the one in the intent
-                                    if (info.callbackurl.startsWith(onChainCallbackUrl)) {
-                                        // Everything ok.
-                                        callback.onExternalIntentValid(true, null);
-                                    }
-                                    else {
-                                        callback.onExternalIntentValid(false, "The registered callback url in the App DID document ("+onChainCallbackUrl+") doesn't match with the received intent callback url");
-                                    }
-                                }
+                            LinkedHashMap endpoints = (LinkedHashMap) appInfoCredential.getSubject().getProperty("endpoints");
+                            if (endpoints == null) {
+                                callback.onExternalIntentValid(false, "No 'endpoints' entry found in the app's DID document's #appinfo credential. Please use Essentials' developer toolbox to fix.");
                             }
                             else {
-                                // Everything ok. No callback url or redirect url, so we don't need to check anything.
-                                callback.onExternalIntentValid(true, null);
+                                // Check redirect url, if any
+                                if (info.redirecturl != null && !info.redirecturl.equals("")) {
+                                    // ANDROID ONLY - First use the custom scheme if any, otherwise fallback to the redirect url
+                                    // IOS should use the redirect url.
+                                    String onChainCustomScheme = (String) endpoints.get("customScheme");
+                                    if (onChainCustomScheme == null) {
+                                        // No custom scheme: try the redirect url
+                                        String onChainRedirectUrl = (String) endpoints.get("redirectUrl");
+                                        if (onChainRedirectUrl == null) {
+                                            callback.onExternalIntentValid(false, "No redirectUrl found in the app DID document. Was the 'redirect url' configured and published on chain, using the developer tool dApp?");
+                                        } else {
+                                            // We found a redirect url in the app DID document. Check that it matches the one in the intent
+                                            if (info.redirecturl.startsWith(onChainRedirectUrl)) {
+                                                // Everything ok.
+                                                callback.onExternalIntentValid(true, null);
+                                            } else {
+                                                callback.onExternalIntentValid(false, "The registered redirect url in the App DID document (" + onChainRedirectUrl + ") doesn't match with the received intent redirect url (" + info.redirecturl + ")");
+                                            }
+                                        }
+                                    } else {
+                                        // We found a custom scheme in the app DID document. Check that it matches the redirect url in the intent
+                                        if (info.redirecturl.startsWith(onChainCustomScheme)) {
+                                            // Everything ok.
+                                            callback.onExternalIntentValid(true, null);
+                                        } else {
+                                            callback.onExternalIntentValid(false, "The registered custom scheme in the App DID document (" + onChainCustomScheme + ") doesn't match with the received intent redirect url (" + info.redirecturl + ")");
+                                        }
+                                    }
+                                }
+                                // Check callback url, if any
+                                else if (info.callbackurl != null && !info.callbackurl.equals("")) {
+                                    String onChainCallbackUrl = (String) endpoints.get("callbackurl");
+                                    if (onChainCallbackUrl == null) {
+                                        callback.onExternalIntentValid(false, "No callbackurl found in the app DID document. Was the 'callback url' configured and published on chain, using the developer tool dApp?");
+                                    } else {
+                                        // We found a callback url in the app DID document. Check that it matches the one in the intent
+                                        if (info.callbackurl.startsWith(onChainCallbackUrl)) {
+                                            // Everything ok.
+                                            callback.onExternalIntentValid(true, null);
+                                        } else {
+                                            callback.onExternalIntentValid(false, "The registered callback url in the App DID document (" + onChainCallbackUrl + ") doesn't match with the received intent callback url");
+                                        }
+                                    }
+                                } else {
+                                    // Everything ok. No callback url or redirect url, so we don't need to check anything.
+                                    callback.onExternalIntentValid(true, null);
+                                }
                             }
                         }
                     }
