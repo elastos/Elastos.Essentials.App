@@ -22,6 +22,7 @@ export class EthereumMainNetNetwork extends EthereumBaseNetwork {
       MAINNET_TEMPLATE,
       1,
       [
+        new ERC20Coin("ELA", "ELA on Ethereum", "0xe6fd75ff38Adca4B97FBCD938c86b98772431867", 18, MAINNET_TEMPLATE, false, true),
         new ERC20Coin("BNB", "BNB", "0xB8c77482e45F1F44dE1745F52C74426C631bDD52", 18, MAINNET_TEMPLATE, false, true),
         new ERC20Coin("USDT", "USDT", "0xdac17f958d2ee523a2206206994597c13d831ec7", 6, MAINNET_TEMPLATE, false, true),
         new ERC20Coin("USDC", "USDC", "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", 6, MAINNET_TEMPLATE, false, true),
