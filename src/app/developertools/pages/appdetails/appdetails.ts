@@ -249,9 +249,9 @@ export class AppDetailsPage {
   async checkDIDPassword() {
     Logger.log("developertools", "Checking DID password.");
 
-    let storePassword = await this.dAppService.getStorePassword(this.app.didStoreId);
-
     try {
+      let storePassword = await this.dAppService.getStorePassword(this.app.didStoreId);
+
       this.didSession = await DIDSession.create(this.app.didStoreId, this.app.didString, storePassword);
 
       this.didStorePasswordIsValid = true;
@@ -259,6 +259,8 @@ export class AppDetailsPage {
     catch (err) {
       let ex = DIDHelper.reworkedDIDPluginException(err)
       Logger.error("developertools", ex);
+
+      void this.nav.navigateBack();
     }
   }
 
