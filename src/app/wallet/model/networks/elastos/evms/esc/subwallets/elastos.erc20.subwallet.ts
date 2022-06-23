@@ -1,5 +1,4 @@
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
-import { GlobalLanguageService } from "src/app/services/global.language.service";
 import { CoinID, StandardCoinName } from "../../../../../coin";
 import { AnyNetworkWallet } from "../../../../base/networkwallets/networkwallet";
 import { ERC20SubWallet } from "../../../../evms/subwallets/erc20.subwallet";
@@ -25,7 +24,7 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
   }
 
   public getDisplayableERC20TokenInfo(): string {
-    return GlobalLanguageService.instance.translate('wallet.ela-erc20');
+    return "";// GlobalLanguageService.instance.translate('wallet.ela-erc20'); // "Elastos ERC20 token" is confusing.
   }
 
   public supportInternalTransactions() {
