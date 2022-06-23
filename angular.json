@@ -125,7 +125,8 @@
           },
           "configurations": {
             "development": {
-              "browserTarget": "app:build"
+              "browserTarget": "app:build",
+              "port": 8132
             },
             "production": {
               "browserTarget": "app:build:production"

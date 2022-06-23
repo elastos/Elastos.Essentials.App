@@ -477,11 +477,12 @@
         DispatchQueue.init(label: "CheckExtIntentValidity").async {
             do {
                 if let didDocument = try DID(appDid).resolve(true) {
-                    // DID document found. Look for the #native credential
-                    if let nativeCredential = try didDocument.credential(ofId: "#native") {
+                    // DID document found. Look for the #appinfo credential
+                    if let appInfoCredential = try didDocument.credential(ofId: "#appinfo") {
+                        if let endpoints = appInfoCredential.subject?.getProperty(ofName: "endpoints")?.asDictionary() {
                         // Check redirect url, if any
                         if (info.redirecturl != nil && info.redirecturl != "") {
-                            if let onChainRedirectUrl = nativeCredential.subject?.getPropertyAsString(ofName:"redirectUrl") {
+                            if let onChainRedirectUrl = endpoints["redirectUrl"]?.asString() {
                                 // We found a redirect url in the app DID document. Check that it matches the one in the intent
                                 if (info.redirecturl!.hasPrefix(onChainRedirectUrl)) {
                                     // Everything ok.
@@ -497,7 +498,7 @@
                         }
                         // Check callback url, if any
                         else if (info.callbackurl != nil && info.callbackurl != "") {
-                            if let onChainCallbackUrl = nativeCredential.subject?.getPropertyAsString(ofName:"callbackUrl") {
+                            if let onChainCallbackUrl = endpoints["callbackUrl"]?.asString() {
                                 // We found a callback url in the app DID document. Check that it matches the one in the intent
                                 if (info.callbackurl!.hasPrefix(onChainCallbackUrl)) {
                                     // Everything ok.
@@ -515,9 +516,13 @@
                             // Everything ok. No callback url or redirect url, so we don't need to check anything.
                             onExternalIntentValid(true, nil)
                         }
+                        }
+                        else {
+                                onExternalIntentValid(false, "No 'endpoints' entry found in the app's DID document's #appinfo credential. Please use Essentials' developer toolbox to fix.")
+                        }
                     }
                     else {
-                        onExternalIntentValid(false, "No #native credential found in the app DID document. Was the 'redirect/callback url' configured and published on chain, using the developer tool dApp?")
+                        onExternalIntentValid(false, "No #appinfo credential found in the app DID document. Was the 'redirect/callback url' configured and published on chain, using the developer tool dApp?")
                     }
                 }
                 else { // Not found
