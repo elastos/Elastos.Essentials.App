@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="20506" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.5.6.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<widget android-versionCode="20600" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.6.0.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>Essentials</name>
     <description>
         Elastos essentials
@@ -238,6 +238,4 @@
     <hook src="scripts/modify_xcode_project.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <allow-navigation href="https://0.0.0.0:8100" sessionid="a89a190a" />
-    <allow-navigation href="https://192.168.1.4:8100" sessionid="13cc2f23" />
-    <allow-navigation href="https://192.168.1.2:8100" sessionid="b3bd9337" />
 </widget>
