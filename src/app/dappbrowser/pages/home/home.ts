@@ -159,7 +159,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             {
                 icon: '/assets/browser/dapps/creda.png',
                 title: 'CreDA',
-                description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
+                description: "The world's first trusted decentralized credit rating service to create a universal trust score for Web 3.0.",
                 url: 'https://creda.app/',
                 useExternalBrowser: false,
                 walletConnectSupported: true,
