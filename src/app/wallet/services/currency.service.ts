@@ -111,13 +111,11 @@ export class CurrencyService {
   }
 
   async init() {
-    this.loadAllTokenSymbol();
-
     // Load or create a cache and store this cache globally to share fetched values among several DID users.
     this.pricesCache = await TimeBasedPersistentCache.loadOrCreate("tokenprices", true);
 
+    await this.loadAllTokenSymbol();
     await this.loadExchangeRates();
-    await this.getSavedPrices();
     await this.getSavedCurrency();
     await this.getSavedCurrencyDisplayPreference();
 
@@ -145,12 +143,19 @@ export class CurrencyService {
     return displayableCurrencies;
   }
 
-  private loadAllTokenSymbol() {
+  private async loadAllTokenSymbol() {
+    this.networkMainTokenPrice = await this.globalStorage.getSetting(null, "wallet", "maintokenprice", {});
+
     let networks = this.walletNetworkService.getAvailableNetworks();
     for (let i = 0; i < networks.length; i++) {
       let tokenSymbol = networks[i].getMainTokenSymbol()
-      this.networkMainTokenPrice[tokenSymbol] = null;
+      if (!this.networkMainTokenPrice[tokenSymbol])
+        this.networkMainTokenPrice[tokenSymbol] = null;
     }
+  }
+
+  private async saveMainTokenPrice(): Promise<void> {
+    await this.globalStorage.setSetting(null, "wallet", "maintokenprice", this.networkMainTokenPrice);
   }
 
   /**
@@ -164,18 +169,6 @@ export class CurrencyService {
 
   private async saveExchangeRates(): Promise<void> {
     await this.globalStorage.setSetting(null, "wallet", "exchangerates", this.exchangeRates);
-  }
-
-  getSavedPrices(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      /* this.currencies.forEach((currency) => {
-        void this.storage.getPrice(currency.symbol).then((price) => {
-          //Logger.log('wallet', 'Saved ela price', currency.symbol, price);
-          price ? currency.price = price : currency.price = 0;
-        });
-      }); */
-      resolve();
-    });
   }
 
   async getSavedCurrency(): Promise<void> {
@@ -230,6 +223,8 @@ export class CurrencyService {
           }
           // Set exchange for BTC => USD
           this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
+          void this.saveMainTokenPrice();
+          void this.saveExchangeRates();
 
           this.pricesFetchedSubject.next(true);
           // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
