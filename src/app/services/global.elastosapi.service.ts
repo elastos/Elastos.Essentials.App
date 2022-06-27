@@ -329,17 +329,22 @@ export class GlobalElastosAPIService extends GlobalService {
      *
      * This method does NOT change the active provider for the current user if a user is signed in.
      */
-    public async autoDetectTheBestProvider(): Promise<void> {
+    public async autoDetectTheBestProvider(): Promise<boolean> {
         Logger.log("elastosapi", "Trying to auto detect the best elastos api provider");
         let bestProvider = await this.findTheBestProvider();
         Logger.log("elastosapi", "Best provider found:", bestProvider);
 
-        // Use this provider
-        this.activeProvider.next(bestProvider);
+        if (bestProvider) {
+          // Use this provider
+          this.activeProvider.next(bestProvider);
 
-        // Immediatelly let plugins know about this selected provider, because DID sessions
-        // need to set the right resolver urls even if no user is signed in.
-        await this.setResolverUrl();
+          // Immediatelly let plugins know about this selected provider, because DID sessions
+          // need to set the right resolver urls even if no user is signed in.
+          await this.setResolverUrl();
+          return true;
+        } else {
+          return false;
+        }
     }
 
     /**

@@ -198,7 +198,12 @@ export class IdentityService {
 
         try {
             // Automatically find and use the best elastos API provider
-            await this.globalElastosAPIService.autoDetectTheBestProvider();
+            let findProvider = await this.globalElastosAPIService.autoDetectTheBestProvider();
+            if (!findProvider) {
+              await this.uxService.toast_trans("common.network-or-server-error");
+              return;
+            }
+
 
             this.identityBeingCreated.mnemonic = await this.generateMnemonic();
 
@@ -318,9 +323,9 @@ export class IdentityService {
         Logger.log('didsessions', "startImportingMnemonic existingMnemonic:", existingMnemonic);
         if (!existingMnemonic) {
             Logger.log('didsessions', "Navigating to import DID");
-            this.navigateWithCompletion("/didsessions/importdid", (mnemonic) => {
+            this.navigateWithCompletion("/didsessions/importdid", async (mnemonic) => {
                 this.identityBeingCreated.mnemonic = mnemonic;
-                void this.createStoreAfterImport();
+                await this.createStoreAfterImport();
             });
         }
         else {
@@ -333,7 +338,11 @@ export class IdentityService {
         Logger.warn('didsessions', "Create store after import");
 
         // Automatically find and use the best elastos API provider
-        await this.globalElastosAPIService.autoDetectTheBestProvider();
+        let findProvider = await this.globalElastosAPIService.autoDetectTheBestProvider();
+        if (!findProvider) {
+          await this.uxService.toast_trans("common.network-or-server-error");
+          return;
+        }
 
         let didStore = await DIDStore.create();
         Logger.warn('didsessions', 'Getting didStore', didStore);

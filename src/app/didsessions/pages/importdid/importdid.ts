@@ -205,6 +205,7 @@ export class ImportDIDPage {
 
   private async doImport() {
     await this.identityService.runNextStep(this.nextStepId, this.mnemonicForImport);
+    this.loadingIdentity = false;
   }
 
   inputMnemonicCompleted() {
