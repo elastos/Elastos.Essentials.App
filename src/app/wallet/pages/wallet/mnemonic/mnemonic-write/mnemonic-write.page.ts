@@ -126,6 +126,8 @@ export class MnemonicWritePage implements OnInit {
                             );
                             await this.native.hideLoading();
 
+                            this.native.setRootRouter("/wallet/wallet-home");
+
                             this.events.publish("masterwalletcount:changed", {
                                 action: 'add',
                                 walletId: this.walletCreationService.masterId
