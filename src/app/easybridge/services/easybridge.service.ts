@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import BigNumber from "bignumber.js";
+import { Observable, Subscriber } from "rxjs";
 import { sleep } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
@@ -17,7 +18,8 @@ import { availableBridges } from "../config/bridges";
 import { bridgeableTokens } from "../config/bridgetokens";
 import { ChainInfo } from "../model/bridge";
 import { BridgeableToken } from "../model/bridgeabletoken";
-import { UsableToken } from "../model/usabletoken";
+import { DestinationToken } from "../model/destinationtoken";
+import { SourceToken } from "../model/sourcetoken";
 
 export const BRIDGE_FAUCET_API = 'https://api.glidefinance.io'
 export const VALIDATOR_TIMEOUT = 300000 // Milliseconds
@@ -31,6 +33,7 @@ type BridgeType = "native" | "token";
   providedIn: "root"
 })
 export class EasyBridgeService {
+  public static instance: EasyBridgeService;
 
   // TEMP
   private tokenToBridge = bridgeableTokens.tokens[1] // TEMP - native HT from heco
@@ -41,23 +44,126 @@ export class EasyBridgeService {
     private networkService: WalletNetworkService,
     private evmService: EVMService,
     private erc20CoinService: ERC20CoinService,
-  ) { }
+  ) {
+    EasyBridgeService.instance = this;
+  }
 
-  public async fetchBridgeableBalances(walletAddress: string): Promise<UsableToken[]> {
-    for (let token of bridgeableTokens.tokens) {
+  /**
+   * Fetches user's balance for all bridgeable tokens and returns tokens that have a balance,
+   * with the balance in human readable format.
+   */
+  public fetchBridgeableBalances(walletAddress: string): Observable<SourceToken[]> {
+    let usableTokens: SourceToken[] = [];
+
+    Logger.log("easybridge", "Fetching balances");
+
+    return new Observable(observer => {
+      let checkCount = 0;
+      for (let token of bridgeableTokens.tokens) {
+        void this.fetchBridgeableTokenBalance(token, walletAddress, usableTokens, observer).then(() => {
+          checkCount++;
+          if (checkCount === bridgeableTokens.tokens.length) {
+            Logger.log("easybridge", "Balance fetch complete");
+            observer.complete();
+          }
+        });
+      }
+    });
+  }
+
+  private async fetchBridgeableTokenBalance(token: BridgeableToken, walletAddress: string, usableTokens: SourceToken[], observer: Subscriber<SourceToken[]>): Promise<void> {
+    // Skip the token if it's on elastos. We only want to bridge from other networks for now.
+    if (this.isTokenOnElastosNetwork(token))
+      return;
+
+    try {
       let network = <EVMNetwork>this.networkService.getNetworkByChainId(token.chainId);
       let web3 = await this.evmService.getWeb3(network);
 
       let balance: BigNumber;
-      if (token.isNative)
-        await this.erc20CoinService.fetchERC20TokenBalance(network, token.address, walletAddress);
-      else {
-        let balanceString = await web3.eth.getBalance(walletAddress);
-        balance = new BigNumber(balanceString);
+      if (!token.isNative) {
+        // Convert chain balance format (long) to human readable format
+        let chainBalance = await this.erc20CoinService.fetchERC20TokenBalance(network, token.address, walletAddress);
+        balance = this.toHumanReadableAmount(chainBalance, token.decimals);
       }
-      console.log(token)
+      else {
+        let chainBalance = await web3.eth.getBalance(walletAddress);
+        balance = this.toHumanReadableAmount(chainBalance, token.decimals);
+      }
+
+      Logger.log("easybridge", `Got balance ${balance} for token ${token.symbol} (${token.name}) on chain ${token.chainId}`);
+
+      // Only return tokens that have a balance
+      if (balance.gt(0)) {
+        // Only return if the balance is larger than the min amount needed for the bridge
+        if (!token.minTx || balance.gt(token.minTx)) {
+          usableTokens.push({
+            token,
+            balance: new BigNumber(balance)
+          });
+        }
+      }
     }
-    return null;
+    catch (e) {
+      Logger.error("easybridge", e);
+      // Silent catch
+    }
+
+    observer.next(usableTokens);
+  }
+
+  /**
+   * Computes and returns the tokens that can be used as a destination token, for a given source token.
+   *
+   * The returned list is computed like this (or will be later):
+   * - the wrapped version of the token (no matter if native or ERC20)
+   * - the destination chain native coin is always returned (eg: ELA on ESC) - we will swap if needed
+   */
+  public getUsableDestinationTokens(sourceToken: SourceToken, destinationChainId: number): DestinationToken[] {
+    let destinationTokens: DestinationToken[] = [];
+
+    // Native coin
+    let nativeCoin = bridgeableTokens.tokens.find(token => token.isNative && token.chainId == destinationChainId);
+    destinationTokens.push({
+      token: nativeCoin,
+      estimatedAmount: new BigNumber(-1)
+    });
+
+    // Peer token
+    let peerTokenOnDestinationChain = this.getPeerTokenOnOtherChain(sourceToken.token, destinationChainId);
+    if (peerTokenOnDestinationChain) {
+      destinationTokens.push({
+        token: peerTokenOnDestinationChain,
+        estimatedAmount: new BigNumber(-1)
+      });
+    }
+
+    return destinationTokens;
+  }
+
+  /**
+   * Finds the given token bridge equivalent on another chain
+   */
+  public getPeerTokenOnOtherChain(token: BridgeableToken, otherChainId: number): BridgeableToken {
+    if (token.isNative) {
+      return bridgeableTokens.tokens.find(t => {
+        // Native coin: find by 'isWrappedNative'
+        return t.isWrappedNative && t.chainId === otherChainId && t.origin === token.chainId;
+      });
+    }
+    else {
+      // ERC20 token: find by wrapped addresses
+      if (token.wrappedAddresses && token.wrappedAddresses[otherChainId]) {
+        return bridgeableTokens.tokens.find(t => t.address === token.wrappedAddresses[otherChainId]);
+      }
+      else {
+        return null;
+      }
+    }
+  }
+
+  private isTokenOnElastosNetwork(token: BridgeableToken): boolean {
+    return token.chainId === 20;
   }
 
   // TODO: MOVE TO UI
@@ -131,7 +237,7 @@ export class EasyBridgeService {
     //const fromDestBlock = await this.evmService.getBlockNumber(destinationNetwork);
     const from = accountAddress;
     const recipient = accountAddress;
-    const value = this.getDecimalAmount(amount, currency.decimals);
+    const value = this.toChainHexAmount(amount, currency.decimals);
 
     Logger.log("easybridge", "Getting gas price");
     const gasPrice = await this.evmService.getGasPrice(sourceNetwork);
@@ -261,11 +367,21 @@ export class EasyBridgeService {
     }
   }
 
-  private getDecimalAmount(amount: BigNumber, decimals = 18): string {
-    return '0x' + amount.times(new BigNumber(10).pow(decimals)).toString(16);
+  /**
+   * From a human readable amount (short) to a chain amount (long)
+   */
+  private toChainHexAmount(readableAmount: BigNumber, decimals = 18): string {
+    return '0x' + readableAmount.times(new BigNumber(10).pow(decimals)).toString(16);
   }
 
-  // detect is destination exchange finished transfer
+  /**
+   * From a chain amount (long) to a human readable amount (short)
+   */
+  private toHumanReadableAmount(chainAmount: string | BigNumber, decimals = 18): BigNumber {
+    return new BigNumber(chainAmount).dividedBy(new BigNumber(10).pow(decimals));
+  }
+
+  // detect if destination exchange finished transfer
   private async detectExchangeFinished(recipient: any, bridgeType: string, sourceNetwork: number, destNetwork: number, sourceMediatorContract: string,
     destinationParamsOtherSide: any, txID: string, isToken: boolean, fromBlock: number) {
 

@@ -44,7 +44,7 @@ export const availableBridges: { [bridgeKey: string]: Bridge } = {
         contract: '0xE235CbC85e26824E4D855d4d0ac80f3A85A520E4',
         minTx: 1000, // 1000000000000000000
         maxTx: 1500000, // 1500000000000000000000000
-        fee: 1,
+        fee: 0,
       },
     },
     token: {
@@ -122,4 +122,64 @@ export const availableBridges: { [bridgeKey: string]: Bridge } = {
       },
     },
   },
+  '20_56': {
+    native: {
+      '20': {
+        contract: '0x1135BB7CEc7980f0d65741Def1e8Ab054AB4d651',
+        minTx: 200,
+        maxTx: 750000,
+        fee: 0.1,
+      },
+      '56': {
+        contract: '0x6EA7481f1096E822574a54188578d1708F64C828',
+        minTx: 2,
+        maxTx: 750000,
+        fee: 0.1,
+      },
+    },
+    token: {
+      '20': {
+        contract: '0xfBeAFe09cC2C3B9A73A8bFDA46896D1302a90F0c',
+        minTx: 200,
+        maxTx: 750000,
+        fee: 0.1,
+      },
+      '56': {
+        contract: '0x4Ca8abd60D88a0C35071d535e26E1cB2928fC45C',
+        minTx: 2,
+        maxTx: 750000,
+        fee: 0.1,
+      },
+    },
+  },
+  '56_20': {
+    native: {
+      '20': {
+        contract: '0x680424c82208DB896EdC78DD79a0a352468dd3DF',
+        minTx: 200,
+        maxTx: 750000,
+        fee: 0.1,
+      },
+      '56': {
+        contract: '0x5a70075aC335c8e99BF8c27760dD1001190A8032',
+        minTx: 2,
+        maxTx: 750000,
+        fee: 0,
+      },
+    },
+    token: {
+      '20': {
+        contract: '0x11262aB418C2d2926F5afb1e3D6e88d86B3C9017',
+        minTx: 0.5,
+        maxTx: 1000000,
+        fee: 0,
+      },
+      '56': {
+        contract: '0x3174937C38ba343faBAC64b51a9C91b3e261BBEd',
+        minTx: 0.5,
+        maxTx: 1000000,
+        fee: 0,
+      },
+    },
+  }
 }

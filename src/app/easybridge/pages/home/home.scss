@@ -2,16 +2,62 @@
 .container {
     display: flex;
     flex-direction: column;
+
+    .heading {
+        font-size: 20px;
+        margin: 20px 0;
+    }
+
+    .source-tokens, .destination-tokens {
+        .source-token, .destination-token {
+            background: rgba(255,255,255, 10%);
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+
+            &.selected {
+                background: rgba(255,255,255, 20%);
+            }
+
+            &.gone {
+                display: none;
+            }
+
+            .network-logo {
+                height: 30px;
+            }
+
+            .amount-symbol {
+                .token-symbol {
+                    font-weight: bold;
+                }
+            }
+
+            .token-name {
+                opacity: 50%;
+            }
+        }
+    }
+
+    .transfer-input {
+        //background-color: #ffffff;
+        font-size: 14px;
+        font-weight: 400;
+        text-align: left;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        --padding-start: 20px;
+        --padding-top: 20px;
+        --padding-bottom: 20px;
+        font-size: 18px;
+    }
 }
 
-p {
-    margin-left: 20px;
-}
-
-ion-button {
-    display: block;
-    margin: 20px auto;
-    width: 90%;
+.dark-container {
+    .transfer-input {
+        background-color: rgba(255,255,255, 10%);
+        color: white;
+    }
 }
 
 ion-spinner {

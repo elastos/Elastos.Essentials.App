@@ -1,16 +1,144 @@
 <ion-content>
   <app-titlebar></app-titlebar>
 
-  <ion-grid class="container ion-padding">
+  <!-- Intro -->
+  <ion-grid *ngIf="showingIntro" class="container ion-padding" [class.dark-container]="theme.darkMode">
     <p>
-      This screen lets you easily reach the Elastos ecosystem by bridging assets from other networks, to the Elastos
-      Smart Chain (ESC). This process is a multi-step process that first bridges your assets, then optionally swaps them
-      to ESC tokens.
+      Easily start using dApps on Elastos today by bridging your assets from other chains.
     </p>
     <p>
-      In order to let you easily start using apps on ESC, a faucet service will give you 0.01 ELA for the initial gas
+      Also, for a quick start on ESC, you will receive 0.01 ELA from a faucet service, as initial gas.
     </p>
-    <ion-button (click)="testBridge()">Bridge</ion-button>
+
+    <ion-button (click)="showingIntro = false">Continue</ion-button>
+
+    <ion-row>
+      <ion-col size="3"><img src="assets/browser/dapps/glidefinance.png" /></ion-col>
+      <ion-col size="9">For more advanced operations on ESC and better customization, please touch here to visit Glide
+        Finance.</ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Real operations -->
+  <ion-grid *ngIf="!showingIntro" class="container ion-padding" [class.dark-container]="theme.darkMode">
+    <!-- Source tokens -->
+    <div class="heading">Pick a source token</div>
+    <div class="source-tokens">
+      <ion-row *ngFor="let sourceToken of sourceTokens" class="source-token"
+        [class.selected]="sourceToken == selectedSourceToken"
+        [class.gone]="selectedSourceToken && selectedSourceToken != sourceToken"
+        (click)="selectSourceToken(sourceToken)">
+        <ion-col size="3">
+          <img [src]="getTokenLogo(sourceToken.token)" class="network-logo" />
+        </ion-col>
+        <ion-col size="9">
+          <div class="amount-symbol">
+            {{ getDisplayableAmount(sourceToken.balance) }}
+            <span class="token-symbol">{{ sourceToken.token.symbol
+              }}</span>
+          </div>
+          <div class="token-name">
+            {{ sourceToken.token.name }}
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-spinner *ngIf="fetchingTokens">Searching where you have tokens</ion-spinner>
+    </div>
+
+    <!-- Destination tokens -->
+    <div *ngIf="selectedSourceToken">
+      <div class="heading">Pick a received Elastos token</div>
+      <div class="destination-tokens">
+        <ion-row *ngFor="let destinationToken of destinationTokens" class="destination-token"
+          [class.selected]="destinationToken == selectedDestinationToken"
+          [class.gone]="selectedDestinationToken && selectedDestinationToken != destinationToken"
+          (click)="selectDestinationToken(destinationToken)">
+          <ion-col size="3">
+            <img [src]="getTokenLogo(destinationToken.token)" class="network-logo" />
+          </ion-col>
+          <ion-col size="9">
+            <div class="token-symbol">
+              {{ destinationToken.token.symbol }}
+            </div>
+            <div class="token-name">
+              {{ destinationToken.token.name }}
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+
+    <!-- Transfer amount -->
+    <div *ngIf="selectedSourceToken && selectedDestinationToken">
+      <div class="heading">Transfer amount</div>
+      <ion-input class="transfer-input" type="number" name="transferAmount" ngDefaultControl
+        placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="transferAmount"
+        [disabled]="transferIsBeingComputed" (ionBlur)="transferAmountChanged()"> <span class="token-symbol">{{
+          selectedSourceToken.token.symbol }}</span></ion-input>
+    </div>
+
+    <!-- Computing -->
+    <div *ngIf="transferIsBeingComputed">
+      <ion-spinner></ion-spinner>
+      Computing transfer info, please wait
+    </div>
+
+    <!-- Transfer info -->
+    <div *ngIf="selectedDestinationToken && activeTransfer">
+      <div class="heading">Transfer summary</div>
+      <ion-row>
+        <ion-col size="6">
+          Bridge fees
+        </ion-col>
+        <ion-col size="6" *ngIf="hasBridgeFees()">
+          {{ getDisplayableBridgeFees() }}% ({{ getDisplayableBridgeFeesAmount() }} {{
+          selectedSourceToken.token.symbol }})
+        </ion-col>
+        <ion-col size="6" *ngIf="!hasBridgeFees()">
+          Free
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="activeTransfer.swapStep">
+        <ion-col size="6">
+          Swap price impact
+        </ion-col>
+        <ion-col size="6">
+          {{ getDisplayableSwapPriceImpact() }} %
+        </ion-col>
+      </ion-row>
+
+      <!-- Swap info, only if a swap is required -->
+      <ion-row *ngIf="activeTransfer.swapStep">
+        <ion-col size="6">
+          Swap fees
+        </ion-col>
+        <ion-col size="6">
+          {{ getDisplayableSwapFees() }}%
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="6">
+          Received amount
+        </ion-col>
+        <ion-col size="6">
+          <b>~ {{ getDisplayableAmount(activeTransfer.estimatedReceivedAmount) }}
+            {{selectedDestinationToken.token.symbol}}</b>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!-- Steps summary -->
+    <div *ngIf="selectedDestinationToken && activeTransfer">
+      <div class="heading">Transfer progress</div>
+      Cross chains<br />
+      Get faucet ELA<br />
+      Get target token on ESC
+    </div>
+
+    <!-- Transfer action -->
+    <ion-button (click)="transfer()" [disabled]="!canTransfer()">Transfer</ion-button>
   </ion-grid>
 
 </ion-content>
