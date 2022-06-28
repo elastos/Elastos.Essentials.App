@@ -109,7 +109,7 @@ export class NotificationsPage implements OnInit {
           void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           break;
         case App.CRPROPOSAL_VOTING:
-          void this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, '/crproposalvoting/proposals/ALL');
+          void this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, '/crproposalvoting/proposals/all');
           break;
         case App.SCANNER:
           void this.globalNav.navigateTo(App.SCANNER, '/scanner/scan');
