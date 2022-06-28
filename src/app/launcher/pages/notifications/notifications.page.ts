@@ -109,6 +109,15 @@ export class NotificationsPage implements OnInit {
           void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           break;
         case App.CRPROPOSAL_VOTING:
+          if (url) {
+            let index = url.indexOf('?hash=');
+            if (index) {
+              let proposalHash = url.substring(index + 6)
+              if (proposalHash) {
+                return this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/proposal-details", { state: { proposalHash: proposalHash } });
+              }
+            }
+          }
           void this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, '/crproposalvoting/proposals/all');
           break;
         case App.SCANNER:

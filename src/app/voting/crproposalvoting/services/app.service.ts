@@ -5,6 +5,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { ProposalSearchResult } from '../model/proposal-search-result';
 import { ProposalStatus } from '../model/proposal-status';
 import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 import { ProposalService } from './proposal.service';
@@ -41,7 +42,8 @@ export class AppService {
   private async checkForNewProposals(today: Date) {
     // Send notification if there are any new proposals only for today
     let newProposalsCount = 0;
-    let proposals = null;
+    let proposals : ProposalSearchResult[] = null;
+    let newProposalsHash = '';
     try {
       proposals = await this.proposalService.fetchProposals(ProposalStatus.ALL, 1);
       Logger.log('crproposal', 'Background service: Proposals fetched', proposals);
@@ -49,6 +51,7 @@ export class AppService {
       proposals.forEach((proposal) => {
         if (moment(proposal.createdAt * 1000).isSame(today, 'd')) {
           newProposalsCount++;
+          newProposalsHash = proposal.proposalHash;
         }
       });
     }
@@ -59,8 +62,10 @@ export class AppService {
 
     if (newProposalsCount > 0) {
       let message = "";
+      let url = 'https://launcher.elastos.net/app'
       if (newProposalsCount === 1) {
         message = this.translate.instant('crproposalvoting.crc-proposals-today-msg');
+        url += '?hash=' + newProposalsHash;
       } else {
         message = this.translate.instant('crproposalvoting.crc-proposals-today-msg1') + newProposalsCount + this.translate.instant('crproposalvoting.crc-proposals-today-msg2');
       }
@@ -70,7 +75,7 @@ export class AppService {
         key: 'proposalsToday',
         title: this.translate.instant('crproposalvoting.crc-proposals-today'),
         message: message,
-        url: 'https://launcher.elastos.net/app?id=' + 'org.elastos.trinity.dapp.crproposal'
+        url: url
       };
       void this.notifications.sendNotification(notification);
     }
@@ -86,8 +91,10 @@ export class AppService {
 
       if (targetProposalIndex > 0) {
         let message = "";
+        let url = 'https://launcher.elastos.net/app'
         if (targetProposalIndex === 1) {
           message = this.translate.instant('crproposalvoting.new-crc-proposals-msg');
+          url += '?hash=' + newProposalsHash;
         } else {
           message = this.translate.instant('crproposalvoting.new-crc-proposals-msg1') + targetProposalIndex + this.translate.instant('crproposalvoting.new-crc-proposals-msg2');
         }
@@ -96,7 +103,7 @@ export class AppService {
           key: 'newProposals',
           title: this.translate.instant('crproposalvoting.new-crc-proposals'),
           message: message,
-          url: 'https://launcher.elastos.net/app?id=' + 'org.elastos.trinity.dapp.crproposal'
+          url: url
         };
         void this.notifications.sendNotification(notification);
       }
