@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -19,7 +19,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
   templateUrl: 'pickidentity.html',
   styleUrls: ['./pickidentity.scss']
 })
-export class PickIdentityPage implements OnInit {
+export class PickIdentityPage {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   groupedIdentities: IdentityGroup[] = [];
@@ -52,22 +52,6 @@ export class PickIdentityPage implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
-      switch (template) {
-        case MAINNET_TEMPLATE:
-          this.titleBar.setTitle(this.translate.instant("didsessions.pick-identity"));
-          break;
-        case TESTNET_TEMPLATE:
-          this.titleBar.setTitle('TEST NET Active');
-          break;
-        case 'LRW':
-          this.titleBar.setTitle('CR Private Net Active');
-          break;
-      }
-    });
-  }
-
   ionViewWillEnter() {
     if (!this.theme.darkMode) {
       this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
@@ -75,6 +59,7 @@ export class PickIdentityPage implements OnInit {
       this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
     }
 
+    this.setTitle();
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "settings", iconPath: BuiltInIcon.SETTINGS });
@@ -94,6 +79,20 @@ export class PickIdentityPage implements OnInit {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+  }
+
+  setTitle() {
+    switch ( this.globalNetworksService.activeNetworkTemplate.value) {
+      case MAINNET_TEMPLATE:
+        this.titleBar.setTitle(this.translate.instant("didsessions.pick-identity"));
+        break;
+      case TESTNET_TEMPLATE:
+        this.titleBar.setTitle('TEST NET Active');
+        break;
+      case 'LRW':
+        this.titleBar.setTitle('CR Private Net Active');
+        break;
+    }
   }
 
   async loadIdentities() {
