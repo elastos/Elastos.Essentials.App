@@ -30,6 +30,8 @@ export const it = {
         'votercanceled': 'Respinto',
         'terminated': 'Terminato',
         'aborted': 'Interrotto',
+
+        'not-enough-ela-for-vote': 'The active wallet balance is insufficient. Please recharge or select another Wallet',
     }
 
 };

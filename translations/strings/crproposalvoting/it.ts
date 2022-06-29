@@ -204,7 +204,6 @@ export const it = {
         'no-opinion-data': 'Can not get the opinion data for now.',
         'no-command-type': 'This CR commond type is currently not supported.',
         'no-data': 'Can not get the data for now, please try again.',
-        'ela-not-enough': 'The availability ELA is not enough for transaction.'
     }
 
 };

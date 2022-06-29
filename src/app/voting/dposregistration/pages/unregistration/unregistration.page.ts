@@ -192,6 +192,10 @@ export class DPosUnRegistrationPage implements OnInit {
             return;
         }
 
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+          return;
+        }
+
         const payPassword = await this.authService.getWalletPassword(this.masterWalletId);
         if (payPassword === null) {// cancelled by user
             return;

@@ -30,6 +30,8 @@ export const zh = {
         'terminated': '已终止',
         'aborted': '已终止',
 
+        'not-enough-ela-for-vote': '当前钱包余额不足，请充值或选择其他钱包',
+
     }
 
 };

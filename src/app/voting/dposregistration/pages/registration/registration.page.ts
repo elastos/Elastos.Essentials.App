@@ -202,6 +202,10 @@ export class DPosRegistrationPage implements OnInit {
     async update() {
         Logger.log('dposregistration', 'Calling update()', this.dposInfo);
 
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+          return;
+        }
+
         const payPassword = await this.authService.getWalletPassword(this.masterWalletId);
         if (payPassword === null) {// cancelled by user
             return;

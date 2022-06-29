@@ -79,6 +79,10 @@ export class CRNodePage implements OnInit {
             return;
         }
 
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+          return;
+        }
+
         try {
             //Get payload
             var payload = {

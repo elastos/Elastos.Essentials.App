@@ -201,7 +201,7 @@ export class VoteService {
 
         let enoughBalance = await this.sourceSubwallet.isAvailableBalanceEnough(new BigNumber(20000));
         if (!enoughBalance) {
-            await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.ela-not-enough');
+            await this.globalPopupService.ionicAlert('wallet.insufficient-balance', 'voting.not-enough-ela-for-vote');
             return false;
         }
 

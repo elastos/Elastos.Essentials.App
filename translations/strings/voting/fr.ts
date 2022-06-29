@@ -29,6 +29,8 @@ export const fr = {
         'votercanceled': 'Rejected',
         'terminated': 'Terminated',
         'aborted': 'Aborted',
+
+        'not-enough-ela-for-vote': 'The active wallet balance is insufficient. Please recharge or select another Wallet',
     }
 
 };

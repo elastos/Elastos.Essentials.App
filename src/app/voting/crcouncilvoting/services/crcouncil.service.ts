@@ -525,6 +525,10 @@ export class CRCouncilService {
             return;
         }
 
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+          return;
+        }
+
         if (!await this.globalPopupService.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-unregister-warning', 'common.confirm', 'common.cancel')) {
             return;
         }
@@ -562,6 +566,10 @@ export class CRCouncilService {
         if (!await this.voteService.isSamePublicKey()) {
             void this.globalPopupService.ionicAlert('wallet.text-warning', 'crcouncilvoting.use-registered-wallet');
             return;
+        }
+
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+          return;
         }
 
         let msg = this.translate.instant('crcouncilvoting.candidate-withdraw-warning-pre') + available +
