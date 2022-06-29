@@ -40,6 +40,7 @@ export const it = {
         'different-did': 'Diverso dall\'utente presente. Pubblica per aggiornare.',
         'uploading-icon': 'Invio dell\'icona dell\'app allo spazio di archiviazione Hive dello sviluppatore, attendi...',
         'touch-to-change': 'Tocca l\'icona per cambiarlo',
+        'set-app-icon': 'Imposta l\'icona',
         'app-unnamed': 'Senza nome',
 
         // Placeholders

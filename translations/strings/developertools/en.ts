@@ -40,6 +40,7 @@ export const en = {
         'different-did': 'Different from currently signed in user - please publish to update',
         'uploading-icon': 'Uploading app icon to developer\'s hive vault, please wait...',
         'touch-to-change': 'Touch the icon to change it',
+        'set-app-icon': 'Please set the icon',
         'app-unnamed': 'Unnamed',
 
         // Placeholders

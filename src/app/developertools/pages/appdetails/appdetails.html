@@ -22,7 +22,8 @@
           <ion-col size="12" class="app-icon">
             <ion-img *ngIf="!fetchingIcon && !uploadingIcon" [src]="getAppIcon()"
               (click)="selectAndUploadAppIconFromLibrary()"></ion-img>
-            <p *ngIf="!fetchingIcon && !uploadingIcon">{{ 'developertools.touch-to-change' | translate }}</p>
+            <p *ngIf="!fetchingIcon && !uploadingIcon && !base64iconPath" style="color:red" >{{ 'developertools.set-app-icon' | translate }}</p>
+            <p *ngIf="!fetchingIcon && !uploadingIcon && base64iconPath" style="color:black" >{{ 'developertools.touch-to-change' | translate }}</p>
             <ion-spinner *ngIf="fetchingIcon || uploadingIcon" color="danger"></ion-spinner>
           </ion-col>
           <ion-col size="12">

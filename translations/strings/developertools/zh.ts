@@ -40,6 +40,7 @@ export const zh = {
         'different-did': '与当前登录的用户不同-请发布以进行更新',
         'uploading-icon': '正在将应用图标上传到开发人员的 Hive Vault，请稍候...',
         'touch-to-change': '点击图标可进行更改',
+        'set-app-icon': '请设置图标',
         'app-unnamed': '未命名',
 
         // Placeholders

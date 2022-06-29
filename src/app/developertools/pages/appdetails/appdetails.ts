@@ -151,6 +151,11 @@ export class AppDetailsPage {
     if (this.publishingDid)
       return;
 
+    // Must set the app icon
+    if (!this.base64iconPath) {
+      return this.native.genericToast('developertools.set-app-icon', 2000, 'dark');
+    }
+
     this.publishingDid = true;
     let publishedSuccessfully = await this.identityService.publishAppIdentity(this.didSession, this.appName, this.appIconUrl, this.nativeRedirectUrl, this.nativeCallbackUrl, this.nativeCustomScheme);
     this.publishingDid = false;
