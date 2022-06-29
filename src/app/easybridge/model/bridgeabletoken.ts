@@ -13,3 +13,17 @@ export type BridgeableToken = {
     [chainId: number]: string
   }
 }
+
+export const equalTokens = (t1: BridgeableToken, t2: BridgeableToken): boolean => {
+  if (!t1 || !t2)
+    return false;
+
+  if (t1.isNative != t2.isNative) // Different types
+    return false;
+
+  if (t1.isNative && t1.chainId != t2.chainId)
+    return false;// Both native, different chain ids
+
+  // ERC20
+  return t1.address === t2.address;
+}

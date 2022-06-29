@@ -1,8 +1,14 @@
 <ion-content>
   <app-titlebar></app-titlebar>
 
+  <!-- Initializing / Reloading and recomputing existing transfer -->
+  <ion-grid *ngIf="initializing" class="container ion-padding" [class.dark-container]="theme.darkMode">
+    <ion-spinner></ion-spinner>
+    Restoring on going transfer
+  </ion-grid>
+
   <!-- Intro -->
-  <ion-grid *ngIf="showingIntro" class="container ion-padding" [class.dark-container]="theme.darkMode">
+  <ion-grid *ngIf="!initializing && showingIntro" class="container ion-padding" [class.dark-container]="theme.darkMode">
     <p>
       Easily start using dApps on Elastos today by bridging your assets from other chains.
     </p>
@@ -20,7 +26,8 @@
   </ion-grid>
 
   <!-- Real operations -->
-  <ion-grid *ngIf="!showingIntro" class="container ion-padding" [class.dark-container]="theme.darkMode">
+  <ion-grid *ngIf="!initializing && !showingIntro" class="container ion-padding"
+    [class.dark-container]="theme.darkMode">
     <!-- Source tokens -->
     <div class="heading">Pick a source token</div>
     <div class="source-tokens">
@@ -73,7 +80,8 @@
       <div class="heading">Transfer amount</div>
       <ion-input class="transfer-input" type="number" name="transferAmount" ngDefaultControl
         placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="transferAmount"
-        [disabled]="transferIsBeingComputed" (ionBlur)="transferAmountChanged()"> <span class="token-symbol">{{
+        [disabled]="!this.canEditFields || transferIsBeingComputed" (ionBlur)="transferAmountChanged()"> <span
+          class="token-symbol">{{
           selectedSourceToken.token.symbol }}</span></ion-input>
     </div>
 
@@ -132,13 +140,12 @@
     <!-- Steps summary -->
     <div *ngIf="selectedDestinationToken && activeTransfer">
       <div class="heading">Transfer progress</div>
-      Cross chains<br />
-      Get faucet ELA<br />
-      Get target token on ESC
+      {{ getTransferProgressIndex() }} / {{ getTotalNumberOfSteps() }} - {{ getTransferProgressMessage() }}
     </div>
 
     <!-- Transfer action -->
     <ion-button (click)="transfer()" [disabled]="!canTransfer()">Transfer</ion-button>
+    <ion-button (click)="reset()" [disabled]="!canReset()">Reset</ion-button>
   </ion-grid>
 
 </ion-content>

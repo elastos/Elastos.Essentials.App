@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { Pair, Router, Trade } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
 import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { EVMNetwork } from '../../wallet/model/networks/evms/evm.network';
 import { AnyNetwork } from '../../wallet/model/networks/network';
@@ -187,7 +188,8 @@ export class UniswapService {
 
       return new Pair(currencyAmount0, currencyAmount1, factoryAddress, initCodeHash);
     } catch (e) {
-      Logger.log('easybridge', 'fetchPairData error', tokenA, tokenB, e);
+      // Silent, cause some pair combinations may not exist and this is normal.
+      // Logger.log('easybridge', 'fetchPairData error', tokenA, tokenB, e);
       return null;
     }
   }
@@ -195,8 +197,10 @@ export class UniswapService {
   /**
    * Executes the given swap on chain
    */
-  public async executeSwapTrade(mainCoinSubWallet: AnyMainCoinEVMSubWallet, trade: Trade<any, any, TradeType.EXACT_INPUT>, walletAddress: string, recipientAddress: string): Promise<void> {
+  public async executeSwapTrade(mainCoinSubWallet: AnyMainCoinEVMSubWallet, trade: Trade<any, any, TradeType.EXACT_INPUT>): Promise<void> {
     let network = mainCoinSubWallet.networkWallet.network;
+
+    let walletAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
 
     let currencyProvider = network.getUniswapCurrencyProvider();
     if (!currencyProvider)
@@ -206,7 +210,7 @@ export class UniswapService {
     let swapParams = Router.swapCallParameters(trade, {
       feeOnTransfer: true,
       allowedSlippage: new Percent(MAX_SLIPPAGE_PERCENT),
-      recipient: recipientAddress,
+      recipient: walletAddress,
       ttl: 120 // 2 minutes validity
     });
 
