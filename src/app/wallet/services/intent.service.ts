@@ -153,7 +153,7 @@ export class IntentService {
         let navigationState = {};
         switch (this.getShortAction(intent.action)) {
             case 'dposvotetransaction':
-                Logger.log("wallet", 'DPOS Transaction intent content:', intent.params);
+                Logger.log("wallet", 'DPoS Transaction intent content:', intent.params);
                 this.nextScreen = '/wallet/intents/dposvote';
                 this.coinTransferService.publickeys = intent.params.publickeys;
                 break;

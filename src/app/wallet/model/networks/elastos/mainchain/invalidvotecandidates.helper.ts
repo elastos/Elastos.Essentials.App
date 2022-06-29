@@ -160,7 +160,7 @@ export class InvalidVoteCandidatesHelper {
       Logger.warn('wallet', 'dpos nodes:', dposnodes)
 
       for (let dposnode in dposNodeCandidates) {
-        Logger.log('wallet', "Checking vote for DPOS voting invalidity:", dposnode);
+        Logger.log('wallet', "Checking vote for DPoS voting invalidity:", dposnode);
 
         let matchingProposal = dposnodes.producers.find((currentlyDposnode) => {
           return currentlyDposnode.ownerpublickey === dposnode;
