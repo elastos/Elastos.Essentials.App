@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalConfig } from 'src/app/config/globalconfig';
+import { DIDHelper } from 'src/app/helpers/did.helper';
 import { pictureMimeType, rawImageToBase64DataUrl } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { ApplicationDIDInfo, GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
@@ -15,7 +16,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { DeleteComponent } from '../../components/delete/delete.component';
-import { DIDHelper } from '../../helpers/did.helper';
 import { DIDSession } from '../../model/didsession.model';
 import { StorageDApp } from '../../model/storagedapp.model';
 import { DAppService } from '../../services/dapp.service';
@@ -257,7 +257,7 @@ export class AppDetailsPage {
       this.didStorePasswordIsValid = true;
     }
     catch (err) {
-      let ex = DIDHelper.reworkedDIDPluginException(err)
+      let ex = DIDHelper.reworkedPluginException(err)
       Logger.error("developertools", ex);
 
       void this.nav.navigateBack();

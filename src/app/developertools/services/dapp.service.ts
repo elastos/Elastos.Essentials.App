@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
+import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -116,76 +117,80 @@ export class DAppService {
             // Save app to local storage (app name, did store id)
             // Display the did string
 
-            // We create a new DID store with a single DID for every dapp because we want totally
-            // separate dapps (they should not share the same mnemonic in case of ownership transfer).
-            let didStore = await this.createDIDStore();
+            try {
+              // We create a new DID store with a single DID for every dapp because we want totally
+              // separate dapps (they should not share the same mnemonic in case of ownership transfer).
+              let didStore = await this.createDIDStore();
 
-            if (typeof didManager != 'undefined') {
-                // Generate a mnemonic string that we will display to the user, if none is provided.
-                // Otherwise, use the provided one (imported).
-                if (!mnemonic) {
-                    mnemonic = await this.generateMnemonic();
-                    Logger.log("developertools", "Mnemonic generated successfully");
-                }
+              if (typeof didManager != 'undefined') {
+                  // Generate a mnemonic string that we will display to the user, if none is provided.
+                  // Otherwise, use the provided one (imported).
+                  if (!mnemonic) {
+                      mnemonic = await this.generateMnemonic();
+                      Logger.log("developertools", "Mnemonic generated successfully");
+                  }
 
-                let storePassword = await this.getStorePassword(didStore.getId());
+                  let storePassword = await this.getStorePassword(didStore.getId());
 
-                // Create the root key to be able to create a DID right after
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                didStore.initPrivateIdentity("ENGLISH", mnemonic, passphrase, storePassword, true, async () => {
-                    Logger.log("developertools", "Private identity created successfully");
+                  // Create the root key to be able to create a DID right after
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  didStore.initPrivateIdentity("ENGLISH", mnemonic, passphrase, storePassword, true, async () => {
+                      Logger.log("developertools", "Private identity created successfully");
 
-                    // Synchronize potentially published DID document on chain
-                    await this.syncStore(didStore, storePassword);
+                      // Synchronize potentially published DID document on chain
+                      await this.syncStore(didStore, storePassword);
 
-                    // Check if there are imported DIDs from chain. If so, use the first one in the list.
-                    // Otherwise, create a new DID.
-                    let existingDIDs = await this.listDIDs(didStore);
+                      // Check if there are imported DIDs from chain. If so, use the first one in the list.
+                      // Otherwise, create a new DID.
+                      let existingDIDs = await this.listDIDs(didStore);
 
-                    if (!existingDIDs || existingDIDs.length === 0) {
-                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                        didStore.newDid(storePassword, "", async (did) => {
-                            Logger.log("developertools", "DID created successfully", did);
+                      if (!existingDIDs || existingDIDs.length === 0) {
+                          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                          didStore.newDid(storePassword, "", async (did) => {
+                              Logger.log("developertools", "DID created successfully", did);
 
-                            let dapp = new StorageDApp();
-                            dapp.name = appName;
-                            dapp.didStoreId = didStore.getId();
-                            dapp.didString = did.getDIDString();
+                              let dapp = new StorageDApp();
+                              dapp.name = appName;
+                              dapp.didStoreId = didStore.getId();
+                              dapp.didString = did.getDIDString();
 
-                            // Store app info to permanent storage
-                            await this.storeDApp(dapp);
+                              // Store app info to permanent storage
+                              await this.storeDApp(dapp);
 
-                            resolve({
-                                dapp: dapp,
-                                mnemonic: mnemonic
-                            });
-                        }, (err) => {
-                            Logger.error("developertools", err);
-                        });
-                    }
-                    else {
-                        // Existing DID - we handle only the first one in the list
-                        let appDid = existingDIDs[0].getDIDString();
+                              resolve({
+                                  dapp: dapp,
+                                  mnemonic: mnemonic
+                              });
+                          }, (err) => {
+                              Logger.error("developertools", err);
+                          });
+                      }
+                      else {
+                          // Existing DID - we handle only the first one in the list
+                          let appDid = existingDIDs[0].getDIDString();
 
-                        // Fetch the app did document to get its name
-                        let publishedAppInfo = await this.globalApplicationDidService.fetchPublishedAppInfo(appDid);
+                          // Fetch the app did document to get its name
+                          let publishedAppInfo = await this.globalApplicationDidService.fetchPublishedAppInfo(appDid);
 
-                        let dapp = new StorageDApp();
-                        dapp.name = publishedAppInfo ? publishedAppInfo.name : "Unnamed";
-                        dapp.didStoreId = didStore.getId();
-                        dapp.didString = appDid;
+                          let dapp = new StorageDApp();
+                          dapp.name = publishedAppInfo ? publishedAppInfo.name : "Unnamed";
+                          dapp.didStoreId = didStore.getId();
+                          dapp.didString = appDid;
 
-                        // Store app info to permanent storage
-                        await this.storeDApp(dapp);
+                          // Store app info to permanent storage
+                          await this.storeDApp(dapp);
 
-                        resolve({
-                            dapp: dapp,
-                            mnemonic: mnemonic
-                        });
-                    }
-                }, (err) => {
-                    reject(err);
-                });
+                          resolve({
+                              dapp: dapp,
+                              mnemonic: mnemonic
+                          });
+                      }
+                  }, (err) => {
+                      reject(err);
+                  });
+              }
+            } catch (err) {
+              reject(err);
             }
         });
     }
@@ -205,7 +210,7 @@ export class DAppService {
             // Create an arbitrary DID store ID
             let didStoreId = this.generateRandomUUID(8, 16);
 
-            Logger.log("developertools", "Creating a new DID store");
+            Logger.log("developertools", "Creating a new DID store", didStoreId);
             didManager.initDidStore(didStoreId, (payload, memo) => {
                 // No transaction to publish in this ID transaction callback, it should never be called.
                 // Another callback is used when publishing the app.
@@ -223,12 +228,21 @@ export class DAppService {
                     key: passwordKey,
                     password: storePassword
                 };
-                let passwordResult = await passwordManager.setPasswordInfo(passwordInfo);
 
-                if (passwordResult.value)
+                let passwordResult = null;
+                try {
+                  passwordResult = await passwordManager.setPasswordInfo(passwordInfo);
+                } catch (err) {
+                  let ex = DIDHelper.reworkedPluginException(err)
+                  Logger.error("developertools", ex);
+                }
+
+                if (passwordResult && passwordResult.value)
                     resolve(didStore);
-                else
+                else {
+                    didManager.deleteDidStore(didStoreId);
                     reject("Password storage was cancelled or something wrong happened. Can't save the DID store password to password manager.")
+                }
             }, (err) => {
                 reject(err);
             })
