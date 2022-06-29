@@ -111,7 +111,7 @@ export class NotificationsPage implements OnInit {
         case App.CRPROPOSAL_VOTING:
           if (url) {
             let index = url.indexOf('?hash=');
-            if (index) {
+            if (index > 0) {
               let proposalHash = url.substring(index + 6)
               if (proposalHash) {
                 return this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/proposal-details", { state: { proposalHash: proposalHash } });
