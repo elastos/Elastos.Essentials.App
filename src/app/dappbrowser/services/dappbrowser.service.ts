@@ -420,14 +420,16 @@ export class DappBrowserService implements GlobalService {
         // Get the active wallet address
         if (networkWallet) {
             let subwallet = networkWallet.getMainEvmSubWallet();
-            this.userAddress = await subwallet.getCurrentReceiverAddress();
+            if (subwallet) {
+              this.userAddress = await subwallet.getCurrentReceiverAddress();
 
-            Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
+              Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
 
-            void dappBrowser.executeScript({
-                code: " \
-                    window.ethereum.setAddress('"+ this.userAddress + "');\
-                "});
+              void dappBrowser.executeScript({
+                  code: " \
+                      window.ethereum.setAddress('"+ this.userAddress + "');\
+                  "});
+            }
         }
     }
 
