@@ -83,6 +83,10 @@
         [disabled]="!this.canEditFields || transferIsBeingComputed" (ionBlur)="transferAmountChanged()"> <span
           class="token-symbol">{{
           selectedSourceToken.token.symbol }}</span></ion-input>
+
+      <div *ngIf="userAmountBelowMinAmount()">
+        Below minimum amount of {{ activeTransfer.bridgeStep.minTx }} {{ selectedSourceToken.token.symbol }}.
+      </div>
     </div>
 
     <!-- Computing -->
@@ -92,7 +96,7 @@
     </div>
 
     <!-- Transfer info -->
-    <div *ngIf="selectedDestinationToken && activeTransfer">
+    <div *ngIf="selectedDestinationToken && activeTransfer && canTransfer()">
       <div class="heading">Transfer summary</div>
       <ion-row>
         <ion-col size="6">
@@ -140,12 +144,15 @@
     <!-- Steps summary -->
     <div *ngIf="selectedDestinationToken && activeTransfer">
       <div class="heading">Transfer progress</div>
-      {{ getTransferProgressIndex() }} / {{ getTotalNumberOfSteps() }} - {{ getTransferProgressMessage() }}
+      {{ getTransferProgressIndex() + 1 }} / {{ getTotalNumberOfSteps() }} - {{ getTransferProgressMessage() }}
     </div>
 
     <!-- Transfer action -->
-    <ion-button (click)="transfer()" [disabled]="!canTransfer()">Transfer</ion-button>
-    <ion-button (click)="reset()" [disabled]="!canReset()">Reset</ion-button>
+    <ion-button (click)="transfer()" [disabled]="!canTransfer()" *ngIf="!isCompleted()">{{ getTransferButtonText() }}
+    </ion-button>
+    <ion-button (click)="reset()" [disabled]="!canReset()" *ngIf="!isCompleted()">Reset</ion-button>
+
+    <ion-button (click)="done()" *ngIf="isCompleted()">Done!</ion-button>
   </ion-grid>
 
 </ion-content>

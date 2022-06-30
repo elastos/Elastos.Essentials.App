@@ -81,6 +81,11 @@ export class HomePage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+
+    // Transfer is completed? Clean it up to restart fresh next time
+    if (this.activeTransfer && this.activeTransfer.currentStep === TransferStep.COMPLETED) {
+      void this.activeTransfer.reset();
+    }
   }
 
   private async init(): Promise<void> {
@@ -219,6 +224,16 @@ export class HomePage {
   }
 
   /**
+   * Transfer amount changed by user on UI
+   */
+  public transferAmountChanged() {
+    if (this.transferIsBeingComputed || this.transferStarted) // Transfer is being computed or executed - don't allow to change things
+      return;
+
+    void this.recomputeTransfer();
+  }
+
+  /**
    * Rebuilds the list of possible destination tokens based on the selected source token.
    */
   private updateDestinationTokens() {
@@ -265,23 +280,28 @@ export class HomePage {
     }
   }
 
-  /**
-   * Transfer amount changed by user on UI
-   */
-  public transferAmountChanged() {
-    if (this.transferIsBeingComputed || this.transferStarted) // Transfer is being computed or executed - don't allow to change things
-      return;
-
-    void this.recomputeTransfer();
+  public getTransferButtonText(): string {
+    if (!this.activeTransfer || this.activeTransfer.currentStep === TransferStep.NEW)
+      return "Start transfer";
+    else
+      return "Resume transfer";
   }
 
   public canTransfer(): boolean {
-    return this.activeTransferCanContinue && this.activeTransfer && !!this.selectedDestinationToken && !!this.selectedSourceToken && !!this.transferAmount && !this.transferStarted;
-    // TODO: && transferAmount > min tx amount
+    return this.activeTransferCanContinue && this.activeTransfer &&
+      !!this.selectedDestinationToken && !!this.selectedSourceToken &&
+      !!this.transferAmount && !this.transferStarted && !this.userAmountBelowMinAmount();
   }
 
   public canReset(): boolean {
     return this.activeTransferCanDismiss || (this.activeTransfer && this.activeTransfer.currentStep == TransferStep.NEW);
+  }
+
+  public userAmountBelowMinAmount(): boolean {
+    if (!this.activeTransfer)
+      return false;
+
+    return this.transferAmount < this.activeTransfer.bridgeStep.minTx;
   }
 
   /**
@@ -313,8 +333,21 @@ export class HomePage {
     this.selectedDestinationToken = null;
     this.transferAmount = null;
     this.transferStarted = false;
+    this.canEditFields = true;
 
     void this.prepareForNewTransfer();
+  }
+
+  /**
+   * User clicks the done button. We exit the screen.
+   * When exiting, ths completed transfer will be cleaned up
+   */
+  public done() {
+    void this.globalNavService.goToLauncher();
+  }
+
+  public isCompleted(): boolean {
+    return this.activeTransfer && this.activeTransfer.currentStep === TransferStep.COMPLETED;
   }
 
   public getTransferProgressIndex(): number {

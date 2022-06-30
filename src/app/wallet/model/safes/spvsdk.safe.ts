@@ -1,4 +1,5 @@
 import { Logger } from "src/app/logger";
+import { AuthService } from "../../services/auth.service";
 import { Transfer } from "../../services/cointransfer.service";
 import { SPVHelperService } from "../../services/spv.helper.service";
 import { jsToSpvWalletId, SPVService } from "../../services/spv.service";
@@ -40,8 +41,16 @@ export class SPVSDKSafe extends Safe {
     );
   }
 
-  public async signTransaction(subWallet: AnySubWallet, rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
-    const password = await WalletService.instance.openPayModal(transfer);
+  public async signTransaction(subWallet: AnySubWallet, rawTransaction: string, transfer: Transfer, forcePasswordPrompt = true, visualFeedback = true): Promise<SignTransactionResult> {
+    let password: string;
+    if (forcePasswordPrompt) {
+      password = await WalletService.instance.openPayModal(transfer);
+    }
+    else {
+      password = await AuthService.instance.getWalletPassword(transfer.masterWalletId, true, false); // Don't force password
+      transfer.payPassword = password;
+    }
+
     if (!password) {
       Logger.log("wallet", "No password received. Cancelling");
       return {

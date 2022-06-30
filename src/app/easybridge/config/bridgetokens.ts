@@ -11,7 +11,6 @@ export const bridgeableTokens: {
       "address": null,
       "chainId": 20,
       "decimals": 18,
-      "minTx": 1, // TODO: CHECK THIS PROBABLY WRONG
       isNative: true,
       wrappedAddresses: {
         1: "0xe6fd75ff38Adca4B97FBCD938c86b98772431867", // ELA on Ethereum,
@@ -25,7 +24,6 @@ export const bridgeableTokens: {
       "address": null,
       "chainId": 128,
       "decimals": 18,
-      "minTx": 1, // TODO: CHECK THIS PROBABLY WRONG
       isNative: true,
       wrappedAddresses: {
         20: "0xeceefC50f9aAcF0795586Ed90a8b9E24f55Ce3F3" // HT on Elastos,
@@ -37,7 +35,6 @@ export const bridgeableTokens: {
       "address": null,
       "chainId": 56,
       "decimals": 18,
-      "minTx": 0.1, // TODO: CHECK THIS PROBABLY WRONG
       isNative: true,
       wrappedAddresses: {
         20: "0x51B85F3889c7EA8f6d5EdEBFBadaDA0fDcE236c9" // BNB on Elastos,
@@ -49,7 +46,6 @@ export const bridgeableTokens: {
       "address": null,
       "chainId": 1,
       "decimals": 18,
-      "minTx": 1, // TODO: CHECK THIS PROBABLY WRONG
       isNative: true,
       wrappedAddresses: {
         20: "0x802c3e839E4fDb10aF583E3E759239ec7703501e" // ETH on Elastos,
@@ -64,7 +60,6 @@ export const bridgeableTokens: {
       "chainId": 20,
       "decimals": 18,
       "origin": 1,
-      "minTx": 1,
       isNative: false,
       isWrappedNative: true
     },
@@ -85,7 +80,6 @@ export const bridgeableTokens: {
       "chainId": 20,
       "decimals": 18,
       "origin": 56,
-      "minTx": 2,
       "fee": 0.1,
       isNative: false,
       isWrappedNative: true
@@ -97,7 +91,6 @@ export const bridgeableTokens: {
       "chainId": 1,
       "decimals": 18,
       "origin": 20,
-      "minTx": 1000,
       isNative: false,
       isWrappedNative: true
     },
@@ -118,7 +111,6 @@ export const bridgeableTokens: {
       "chainId": 56,
       "decimals": 18,
       "origin": 20,
-      "minTx": 0.01,
       "fee": 0,
       isNative: false,
       isWrappedNative: true
@@ -180,7 +172,6 @@ export const bridgeableTokens: {
       "chainId": 1,
       "decimals": 6,
       "origin": 1,
-      "minTx": 5000,
       isNative: false,
       wrappedAddresses: {
         20: "0xA06be0F5950781cE28D965E5EFc6996e88a8C141" // USDC on Elastos
@@ -193,7 +184,6 @@ export const bridgeableTokens: {
       "chainId": 20,
       "decimals": 6,
       "origin": 1,
-      "minTx": 5000,
       isNative: false,
       wrappedAddresses: {
         1: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" // USD Coin (on ethereum)
@@ -230,7 +220,6 @@ export const bridgeableTokens: {
       "chainId": 1,
       "decimals": 18,
       "origin": 1,
-      "minTx": 10000,
       isNative: false,
       wrappedAddresses: {
         20: "0xe2390b8B08a9Ab68e6f1aaA150B2ddD03900CE25" // Material on Elastos
@@ -243,7 +232,6 @@ export const bridgeableTokens: {
       "chainId": 20,
       "decimals": 18,
       "origin": 1,
-      "minTx": 100000,
       "fee": 2,
       isNative: false,
       wrappedAddresses: {
@@ -257,7 +245,6 @@ export const bridgeableTokens: {
       "chainId": 56,
       "decimals": 18,
       "origin": 56,
-      "minTx": 1000,
       "fee": 0,
       isNative: false,
       wrappedAddresses: {
@@ -271,7 +258,6 @@ export const bridgeableTokens: {
       "chainId": 20,
       "decimals": 18,
       "origin": 56,
-      "minTx": 1000,
       "fee": 0.1,
       isNative: false,
       wrappedAddresses: {
@@ -285,7 +271,6 @@ export const bridgeableTokens: {
       "chainId": 56,
       "decimals": 18,
       "origin": 56,
-      "minTx": 0.025,
       "fee": 0,
       isNative: false,
       wrappedAddresses: {
@@ -299,7 +284,6 @@ export const bridgeableTokens: {
       "chainId": 20,
       "decimals": 18,
       "origin": 56,
-      "minTx": 0.025,
       "fee": 0.1,
       isNative: false,
       wrappedAddresses: {

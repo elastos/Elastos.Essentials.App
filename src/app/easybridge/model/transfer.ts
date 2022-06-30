@@ -8,11 +8,12 @@ import { Trade } from "src/app/thirdparty/custom-uniswap-v2-sdk/src";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { EVMNetworkWallet } from "src/app/wallet/model/networks/evms/networkwallets/evm.networkwallet";
 import { AnyMainCoinEVMSubWallet } from "src/app/wallet/model/networks/evms/subwallets/evm.subwallet";
+import { AuthService } from "src/app/wallet/services/auth.service";
 import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { EasyBridgeService } from "../services/easybridge.service";
 import { UniswapService } from "../services/uniswap.service";
-import { BridgeableToken } from "./bridgeabletoken";
+import { BridgeableToken, equalTokens } from "./bridgeabletoken";
 
 export enum TransferStep {
   NEW = "new",
@@ -41,7 +42,8 @@ type BridgeStep = {
   destinationToken: BridgeableToken;
 
   // State
-  transactionPublishDate?: number; // Timestamp at which the transaction got published
+  minTx: number; // Min amount to be transferred (human readable format) from the source network
+  //transactionPublishDate?: number; // Timestamp at which the transaction got published
   transactionHash?: string; // Bridge contract transaction hash on the source chain
   destinationBlockBefore?: number; // Block at which the destination chain was just before calling the bridge
 
@@ -62,6 +64,7 @@ type SwapStep = {
   to: BridgeableToken;
 
   // State
+  transactionHash?: string; // Swap contract transaction hash on the destination chain
 
   // Computed
   swapFees: number; // Total swap fees in percentage of the input amount.
@@ -128,7 +131,11 @@ export class Transfer implements SerializedTransfer {
   estimatedReceivedAmount: BigNumber = null;
 
   // Computed
-  private mainCoinSubWallet: AnyMainCoinEVMSubWallet = null;
+  private sourceNetworkSubWallet: AnyMainCoinEVMSubWallet = null; // subwallet instance on the bridge source network
+  private destinationNetworkSubWallet: AnyMainCoinEVMSubWallet = null; // subwallet instance on the destination network
+
+  // Ephemeral, reseted when coming back to the bridge screen
+  private promptPayPassword = true; // Prompt the first time on the screen, but not for all transactions.
 
   public status = new BehaviorSubject<TransferStatus>({
     step: this.currentStep,
@@ -214,16 +221,23 @@ export class Transfer implements SerializedTransfer {
   private async updateComputations(): Promise<void> {
     Logger.log("easybridge", "Computing transfer information", this.masterWalletId, this.sourceToken, this.destinationToken, this.amount);
 
-    let sourceMasterWallet = WalletService.instance.getMasterWallet(this.masterWalletId);
+    let masterWallet = WalletService.instance.getMasterWallet(this.masterWalletId);
     let sourceNetwork = <EVMNetwork>WalletNetworkService.instance.getNetworkByChainId(this.sourceToken.chainId);
 
+    let destinationNetwork = <EVMNetwork>WalletNetworkService.instance.getNetworkByChainId(this.destinationToken.chainId);
+
     // Get a network wallet for the target source chain - don't launch its background services
-    let sourceNetworkWallet = await sourceNetwork.createNetworkWallet(sourceMasterWallet, false);
-    console.log("Source network wallet:", sourceNetworkWallet);
+    let sourceNetworkWallet = await sourceNetwork.createNetworkWallet(masterWallet, false);
     if (!(sourceNetworkWallet instanceof EVMNetworkWallet))
       throw new Error("Easy bridge service can only be used with EVM networks");
 
-    this.mainCoinSubWallet = sourceNetworkWallet.getMainEvmSubWallet();
+    // Get a network wallet for the target source chain - don't launch its background services
+    let destinationNetworkWallet = await destinationNetwork.createNetworkWallet(masterWallet, false);
+    if (!(destinationNetworkWallet instanceof EVMNetworkWallet))
+      throw new Error("Easy bridge service can only be used with EVM networks");
+
+    this.sourceNetworkSubWallet = sourceNetworkWallet.getMainEvmSubWallet();
+    this.destinationNetworkSubWallet = destinationNetworkWallet.getMainEvmSubWallet();
 
     // Compute bridge destination token, if not already known
     if (!this.bridgeStep) {
@@ -245,13 +259,14 @@ export class Transfer implements SerializedTransfer {
         sourceToken: this.sourceToken, // Global transfer source token is the bridge source token
         destinationToken: bridgeDestinationToken, // token received after bridge. Could be the final destination token or something intermediate
         bridgeFees,
-        bridgeFeesAmount
+        bridgeFeesAmount,
+        minTx: (await EasyBridgeService.instance.getMinTx(this.sourceToken, bridgeDestinationToken)).toNumber()
       };
     }
 
     // If the bridge destination token is not the final destination token, then this normally means we need to swap.
     // TODO: (but let's check this feasibility)
-    if (this.destinationToken != this.bridgeStep.destinationToken) {
+    if (!equalTokens(this.destinationToken, this.bridgeStep.destinationToken)) {
       let swapNetwork = <EVMNetwork>WalletNetworkService.instance.getNetworkByChainId(this.bridgeStep.destinationToken.chainId);
 
       let currencyProvider = swapNetwork.getUniswapCurrencyProvider();
@@ -307,14 +322,36 @@ export class Transfer implements SerializedTransfer {
       switch (this.currentStep) {
         case TransferStep.NEW:
         case TransferStep.BRIDGE_TX_REJECTED:
-          autoProcessNextStep = await this.executeBridge(this.mainCoinSubWallet);
+          // First step
+          if (!await this.checkUnlockMasterPassword())
+            autoProcessNextStep = false;
+          else
+            autoProcessNextStep = await this.executeBridge();
           break;
         case TransferStep.BRIDGE_TX_PUBLISHED:
-          autoProcessNextStep = await this.awaitBridgedTokensAtDestination(this.mainCoinSubWallet);
+          // Bridge called, now wait for the tokens to be received on the destination chain
+          autoProcessNextStep = await this.awaitBridgedTokensAtDestination();
           break;
         case TransferStep.BRIDGE_TOKEN_RECEIVED:
-          //if (this.swapStep)
-          //autoProcessNextStep = await this.executeSwap(this.mainCoinSubWallet);
+          // Token received, call the faucet
+          autoProcessNextStep = await this.callFaucet();
+          break;
+        case TransferStep.FAUCET_API_CALLED:
+          // Faucet called, check if there is a swap to do
+          if (this.swapStep) {
+            if (!await this.checkUnlockMasterPassword())
+              autoProcessNextStep = false;
+            else
+              autoProcessNextStep = await this.executeSwap();
+          }
+          else {
+            await this.executeCompletion();
+            autoProcessNextStep = false; // loop end
+          }
+          break;
+        case TransferStep.SWAP_TX_PUBLISHED:
+          await this.executeCompletion();
+          autoProcessNextStep = false; // loop end
           break;
         default:
           throw new Error(`Unknown step ${this.currentStep}`);
@@ -324,7 +361,7 @@ export class Transfer implements SerializedTransfer {
     // TODO: Faucet
   }
 
-  private async executeBridge(mainCoinSubWallet: AnyMainCoinEVMSubWallet): Promise<boolean> {
+  private async executeBridge(): Promise<boolean> {
     // Execute the bridge
     Logger.log("easybridge", "Executing the bridge");
 
@@ -332,7 +369,7 @@ export class Transfer implements SerializedTransfer {
     // Don't save
     this.emitStatus();
 
-    let result = await EasyBridgeService.instance.executeBridge(this.mainCoinSubWallet, this.sourceToken, this.destinationToken, new BigNumber(this.amount));
+    let result = await EasyBridgeService.instance.executeBridge(this.sourceNetworkSubWallet, this.sourceToken, this.destinationToken, new BigNumber(this.amount));
     if (!result || !result.txId) {
       Logger.log("easybridge", "Bridge transaction could not be sent.");
 
@@ -360,20 +397,59 @@ export class Transfer implements SerializedTransfer {
   /**
    * Awaits until the bridged tokens are found on the destination chain
    */
-  private async awaitBridgedTokensAtDestination(mainCoinSubWallet: AnyMainCoinEVMSubWallet): Promise<boolean> {
-    let destinationNetwork = <EVMNetwork>WalletNetworkService.instance.getNetworkByChainId(this.destinationToken.chainId);
+  private async awaitBridgedTokensAtDestination(): Promise<boolean> {
+    const bridgeTokensReceived = await EasyBridgeService.instance.detectExchangeFinished(this.sourceNetworkSubWallet, this.sourceToken, this.destinationToken, this.bridgeStep.destinationBlockBefore);
+    if (bridgeTokensReceived) {
+      // Bridged tokens have been received on destination chain
 
-    await EasyBridgeService.instance.detectExchangeFinished(this.mainCoinSubWallet, this.sourceToken, this.destinationToken, this.bridgeStep.destinationBlockBefore);
-    return false;
+      this.currentStep = TransferStep.BRIDGE_TOKEN_RECEIVED;
+      await this.save();
+      this.emitStatus();
+    }
+    else {
+      // Timeout while checking, maybe the bridge takes too long or is stuck.
+    }
+
+    return bridgeTokensReceived;
   }
 
-  private async executeSwap() {
+  private async callFaucet(): Promise<boolean> {
+    const result = await EasyBridgeService.instance.callBridgeFaucet(this.sourceNetworkSubWallet, this.bridgeStep.transactionHash, this.sourceToken);
+
+    this.currentStep = TransferStep.FAUCET_API_CALLED;
+    await this.save();
+    this.emitStatus();
+
+    return true; // No matter what the real faucet result is, let's continue, not blocking.
+  }
+
+  private async executeSwap(): Promise<boolean> {
     Logger.log("easybridge", "Recomputing swap data just before swapping");
     await this.updateComputations();
 
     Logger.log("easybridge", "Executing the swap");
-    await UniswapService.instance.executeSwapTrade(this.mainCoinSubWallet, this.swapStep.trade);
-    Logger.log("easybridge", "Swap complete");
+    let txId = await UniswapService.instance.executeSwapTrade(this.destinationNetworkSubWallet, this.swapStep.from, this.swapStep.trade);
+    if (txId) {
+      Logger.log("easybridge", "Swap complete");
+
+      this.currentStep = TransferStep.SWAP_TX_PUBLISHED;
+      this.swapStep.transactionHash = txId;
+      await this.save();
+      this.emitStatus();
+
+      return true;
+    }
+    else {
+      Logger.log("easybridge", "Swap failed");
+
+      return false;
+    }
+  }
+
+  private async executeCompletion(): Promise<void> {
+    this.currentStep = TransferStep.COMPLETED;
+    await this.save();
+    this.emitStatus();
   }
 
   private emitStatus(error?: string) {
@@ -461,13 +537,16 @@ export class Transfer implements SerializedTransfer {
       case TransferStep.BRIDGE_TX_PUBLISHING:
         return "Requesting to cross chains";
       case TransferStep.BRIDGE_TX_PUBLISHED:
-        return "Awaiting cross chain result. This can take a few second to several minutes";
+        return "Awaiting cross chain result. This can take a few seconds to several minutes";
       case TransferStep.BRIDGE_TX_REJECTED:
         return "Cross chain failed";
       case TransferStep.BRIDGE_TOKEN_RECEIVED:
         return "Tokens arrived on ESC";
       case TransferStep.FAUCET_API_CALLED:
-        return "TODO";
+        let msg = "Faucet called to receive a few native coins for gas.";
+        if (this.swapStep)
+          msg += " Now swapping tokens.";
+        return msg;
       case TransferStep.SWAP_TX_PUBLISHED:
         return "Exchanging tokens on ESC";
       case TransferStep.SWAP_TX_REJECTED:
@@ -478,6 +557,27 @@ export class Transfer implements SerializedTransfer {
         return "Completed";
       default:
         throw new Error(`getTransferProgressMessage(): Unhandled step ${this.currentStep}`);
+    }
+  }
+
+  /**
+   * Checks if the master password has been prompted (and got) during this transfer session.
+   * If not, we force getting it before continuing, because further bridge and operations do not ask for it to automatize
+   * the operations. But we need to request it at least once for security reason.
+   *
+   * Returns true if the operations can continue (got password, now or earlier).
+   */
+  private async checkUnlockMasterPassword(): Promise<boolean> {
+    if (!this.promptPayPassword)
+      return true; // Already got before, all right
+
+    let password = await AuthService.instance.getWalletPassword(this.masterWalletId, true, true);
+    if (password) {
+      this.promptPayPassword = false;
+      return true;
+    }
+    else {
+      return false;
     }
   }
 }

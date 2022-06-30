@@ -9,6 +9,7 @@ import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { EVMNetwork } from '../../wallet/model/networks/evms/evm.network';
 import { AnyNetwork } from '../../wallet/model/networks/network';
 import { EVMService } from '../../wallet/services/evm/evm.service';
@@ -195,10 +196,11 @@ export class UniswapService {
   }
 
   /**
-   * Executes the given swap on chain
+   * Executes the given swap on chain.
+   * Returns the transaction ID, if published.
    */
-  public async executeSwapTrade(mainCoinSubWallet: AnyMainCoinEVMSubWallet, trade: Trade<any, any, TradeType.EXACT_INPUT>): Promise<void> {
-    let network = mainCoinSubWallet.networkWallet.network;
+  public async executeSwapTrade(mainCoinSubWallet: AnyMainCoinEVMSubWallet, sourceSwapToken: BridgeableToken, trade: Trade<any, any, TradeType.EXACT_INPUT>): Promise<string> {
+    let network = <EVMNetwork>WalletNetworkService.instance.getNetworkByChainId(sourceSwapToken.chainId);
 
     let walletAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
 
@@ -251,8 +253,15 @@ export class UniswapService {
       masterWalletId: mainCoinSubWallet.networkWallet.masterWallet.id,
       subWalletId: mainCoinSubWallet.id,
     });
-    let sendResult = await mainCoinSubWallet.signAndSendRawTransaction(unsignedTx, transfer, false);
+    let sendResult = await mainCoinSubWallet.signAndSendRawTransaction(unsignedTx, transfer, false, false, false);
     Logger.log("easybridge", "Signing and sending transaction result:", sendResult);
+
+    if (!sendResult || !sendResult.published) {
+      return null; // Failed to publish
+    }
+    else {
+      return sendResult.txid;
+    }
   }
 
   /**

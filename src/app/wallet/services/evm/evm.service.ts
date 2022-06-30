@@ -65,9 +65,10 @@ class ETHTransactionManager {
    *
    * @returns The published transaction ID, if any.
    */
-  public async publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, signedTransaction: string, transfer: Transfer): Promise<string> {
+  public async publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, signedTransaction: string, transfer: Transfer, visualFeedback = true): Promise<string> {
     try {
-      await this.displayPublicationLoader();
+      if (visualFeedback)
+        await this.displayPublicationLoader();
 
       let result: RawTransactionPublishResult;
       try {
@@ -311,8 +312,8 @@ export class EVMService {
     this.manager.resetStatus();
   }
 
-  public publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, transaction: string, transfer: Transfer): Promise<string> {
-    return this.manager.publishTransaction(subwallet, transaction, transfer);
+  public publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, transaction: string, transfer: Transfer, visualFeedback = true): Promise<string> {
+    return this.manager.publishTransaction(subwallet, transaction, transfer, visualFeedback);
   }
 
   /**

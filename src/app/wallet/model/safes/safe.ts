@@ -47,14 +47,29 @@ export abstract class Safe {
     return null; // Default implementation: ext pub key not provided for now.
   }
 
-  // TODO: remove this Transfer object, dirty.
-  public abstract signTransaction(subWallet: AnySubWallet, rawTx: string | TxData | BTCTxData, transfer: Transfer): Promise<SignTransactionResult>;
+  /**
+   * Signs a transaction.
+   *
+   * By default, the master password is required, even if elready known, as a security step. But this can be
+   * disabled, for example to chain operations (eg: easy bridge feature0, using forcePasswordPrompt = false.
+   *
+   * The UI feedback (popup) can also be hidden using visualFeedback = false.
+   *
+   * TODO: remove this Transfer object, dirty.
+   *
+   * @param subWallet
+   * @param rawTx
+   * @param transfer
+   * @param forcePasswordPrompt Should be true by default
+   * @param visualFeedback Should be true by default
+   */
+  public abstract signTransaction(subWallet: AnySubWallet, rawTx: string | TxData | BTCTxData, transfer: Transfer, forcePasswordPrompt?: boolean, visualFeedback?: boolean): Promise<SignTransactionResult>;
 
   /**
    * Gives a last chance to the safe to modify the signed transaction in a payload that can be published.
    * For instance, elastos mainchain signed tx is a json string, but it has to be converted to a publishable
    * payload before sending to chain.
-   * 
+   *
    * By default, this returns the original signed transaction.
    */
   public async convertSignedTransactionToPublishableTransaction(subWallet: AnySubWallet, signedTx: string): Promise<string> {
