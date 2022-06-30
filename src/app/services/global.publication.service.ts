@@ -575,7 +575,8 @@ class DIDPublishingManager {
             component: DIDPublishingComponent,
             componentProps: {},
             backdropDismiss: false, // Not closeable
-            cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
+            cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base',
+            id: 'didpublicationloader'
         });
 
         void modal.onDidDismiss().then((params) => {

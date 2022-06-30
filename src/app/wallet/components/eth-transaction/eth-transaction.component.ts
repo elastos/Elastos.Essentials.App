@@ -50,6 +50,7 @@ export class ETHTransactionComponent implements OnInit {
             this.publishing = false;
             this.publicationSuccessful = true;
           });
+
           // Show the successful result and automatically exit this screen.
           setTimeout(() => {
             this.exitComponent();
@@ -102,6 +103,6 @@ export class ETHTransactionComponent implements OnInit {
 
   exitComponent() {
     if (this.publicationStatusSub) this.publicationStatusSub.unsubscribe();
-    void this.modalCtrl.dismiss();
+    void this.modalCtrl.dismiss(null, null, 'evmtransactionloader');
   }
 }

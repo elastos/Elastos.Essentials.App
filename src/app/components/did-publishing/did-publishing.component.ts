@@ -68,6 +68,6 @@ export class DIDPublishingComponent implements OnInit {
       this.publicationStatusSub.unsubscribe();
       this.publicationStatusSub = null;
     }
-    void this.modalCtrl.dismiss();
+    void this.modalCtrl.dismiss(null, null, 'didpublicationloader');
   }
 }

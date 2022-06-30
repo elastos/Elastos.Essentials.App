@@ -263,7 +263,8 @@ class ETHTransactionManager {
       component: (await import('../../components/eth-transaction/eth-transaction.component')).ETHTransactionComponent,
       componentProps: {},
       backdropDismiss: false, // Not closeable
-      cssClass: "wallet-component-base"
+      cssClass: "wallet-component-base",
+      id: 'evmtransactionloader'
     });
 
     void modal.onDidDismiss().then((params) => {
