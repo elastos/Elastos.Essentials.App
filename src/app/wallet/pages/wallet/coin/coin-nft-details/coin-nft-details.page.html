@@ -15,7 +15,7 @@
                 </div>
 
                 <div class="info-block">
-                    <div class="info-title">Name</div>
+                    <div class="info-title">{{ 'wallet.nft-name' | translate }}</div>
                     <div class="info-value">{{ getDisplayableAssetName() }}</div>
                 </div>
 
@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="info-block" *ngIf="asset.description">
-                    <div class="info-title">Description</div>
+                    <div class="info-title">{{ 'wallet.nft-description' | translate }}</div>
                     <div class="info-value asset-description">{{ asset.description }}</div>
                 </div>
             </ion-row>

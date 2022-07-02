@@ -26,7 +26,8 @@ export const fr = {
         "find-new-token": "Nouveau Jeton",
         "find-new-token-msg": "Nouveau jeton {{ token }} trouvé sur le réseau {{ network }}",
         "find-new-tokens-msg": "{{ count }} nouveaux jetons trouvés sur le réseau {{ network }}",
-
+        "nft-name": "Nom",
+        "nft-description": "Description",
 
         /*******************
         * Generic Messages *

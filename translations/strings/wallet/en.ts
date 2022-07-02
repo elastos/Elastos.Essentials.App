@@ -26,6 +26,8 @@ export const en = {
         "find-new-token": "New Coin",
         "find-new-token-msg": "New coin {{ token }} found on {{ network }} network",
         "find-new-tokens-msg": "{{ count }} new coins found on {{ network }} network",
+        "nft-name": "Name",
+        "nft-description": "Description",
 
         /*******************
         * Generic Messages *
