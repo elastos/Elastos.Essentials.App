@@ -1,16 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonInput } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import * as bs58check from "bs58check";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { MasterWallet, StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { Native } from 'src/app/wallet/services/native.service';
+import { LocalStorage } from 'src/app/wallet/services/storage.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
 
@@ -42,7 +43,7 @@ export class StandardMultiSigCreatePage implements OnInit {
         private walletUIService: WalletUIService,
         private events: GlobalEvents,
         private authService: AuthService,
-        private globalStartupService: GlobalStartupService
+        public localStorage: LocalStorage
     ) {
     }
 
@@ -87,21 +88,25 @@ export class StandardMultiSigCreatePage implements OnInit {
         Logger.log("wallet", "Creating multisig wallet with signing wallet", this.signingWallet);
 
         let walletId = this.walletService.createMasterWalletID();
-        await this.authService.createAndSaveWalletPassword(walletId);
-        await this.walletService.newMultiSigStandardWallet(
-            walletId,
-            this.wallet.name,
-            this.signingWallet.id,
-            this.requiredSigners,
-            this.getUsableCosigners()
-        );
+        try {
+          await this.authService.createAndSaveWalletPassword(walletId);
+          await this.walletService.newMultiSigStandardWallet(
+              walletId,
+              this.wallet.name,
+              this.signingWallet.id,
+              this.requiredSigners,
+              this.getUsableCosigners()
+          );
+          this.native.setRootRouter("/wallet/wallet-home");
 
-        this.native.setRootRouter("/wallet/wallet-home");
-
-        this.events.publish("masterwalletcount:changed", {
-            action: 'add',
-            walletId: walletId
-        });
+          this.events.publish("masterwalletcount:changed", {
+              action: 'add',
+              walletId: walletId
+          });
+        } catch (e) {
+          Logger.error('wallet', 'MultiSigStandardWallet create error:', e);
+          await this.localStorage.deleteMasterWallet(walletId);
+        }
     }
 
     public allInputsValid(): boolean {
@@ -190,6 +195,14 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     public onCosignerBlur(i: number) {
+      this.cosigners[i] = this.cosigners[i].trim();
+
+      try {
+        if (this.cosigners[i])
+          bs58check.decode(this.cosigners[i]);
+      } catch (e) {
+        this.native.toast_trans('wallet.multi-sig-error-invalid-xpub');
+      }
     }
 
     /**
