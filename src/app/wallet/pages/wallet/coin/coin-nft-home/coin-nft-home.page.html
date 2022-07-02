@@ -5,10 +5,10 @@
         <ion-row class="main-title-row">
             <ion-col size="12">
                 <h1>{{ 'wallet.nft-overview' | translate}}</h1>
-                <p *ngIf="todaysTransactions > 20">{{ 'wallet.coin-new-transactions-today' | translate:{ '20+':
+                <!-- <p *ngIf="todaysTransactions > 20">{{ 'wallet.coin-new-transactions-today' | translate:{ '20+':
                     todaysTransactions} }}}</p>
                 <p *ngIf="todaysTransactions <= 20">{{ 'wallet.coin-new-transactions-today' |
-                    translate:{todaysTransactions: todaysTransactions} }}</p>
+                    translate:{todaysTransactions: todaysTransactions} }}</p> -->
             </ion-col>
         </ion-row>
         <ion-row class="gray-card card-row">
