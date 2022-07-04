@@ -1,6 +1,6 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import { AggregatedExecutable, FileDownloadExecutable } from "@elastosfoundation/hive-js-sdk";
+import { AggregatedExecutable, Executable, ExecutableType } from "@elastosfoundation/hive-js-sdk";
 import { AlertController, IonInput, ModalController, Platform } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
@@ -261,11 +261,10 @@ export class EditProfilePage {
 
           // Create a script to make this picture available to everyone
           let scriptName = "getMainIdentityAvatar" + randomPictureID;
-          let couldCreateScript = await (await this.globalHiveService.getActiveUserVaultServices()).getScriptingService().registerScript(scriptName, new AggregatedExecutable(
+          await (await this.globalHiveService.getActiveUserVaultServices()).getScriptingService().registerScript(scriptName, new AggregatedExecutable(
             "getMainIdentityAvatar",
-            [new FileDownloadExecutable(avatarFileName)]
+            [new Executable('download', ExecutableType.FILE_DOWNLOAD, {path: avatarFileName})]
           ), null, true, true);
-          Logger.log('identity', "Could create avatar script?", couldCreateScript);
 
           let currentUserDID = this.didService.getActiveDid().getDIDString();
           let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;

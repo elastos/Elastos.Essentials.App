@@ -432,14 +432,13 @@ export class GlobalHiveService extends GlobalService {
       try {
         Logger.log("GlobalHiveService", "Calling script url to download file", hiveScriptUrl);
         let pictureBuffer = await (await this.getActiveUserVaultServices()).getScriptingService().downloadFileByHiveUrl(hiveScriptUrl);
-        resolve(pictureBuffer);
 
         if (!pictureBuffer || pictureBuffer.length == 0) {
           Logger.warn("GlobalHiveService", "Got empty data while fetching hive script picture", hiveScriptUrl);
           resolve(null);
         }
         else {
-          Logger.log("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", pictureBuffer.length);
+          Logger.warn("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", pictureBuffer.length);
           resolve(pictureBuffer);
         }
       }
