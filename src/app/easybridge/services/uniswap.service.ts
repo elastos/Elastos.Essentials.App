@@ -9,6 +9,7 @@ import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
+import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { EVMNetwork } from '../../wallet/model/networks/evms/evm.network';
 import { AnyNetwork } from '../../wallet/model/networks/network';
@@ -30,7 +31,8 @@ export class UniswapService {
   private stopService = false;
 
   constructor(
-    private evmService: EVMService
+    private evmService: EVMService,
+    private erc20CoinService: ERC20CoinService
   ) {
     UniswapService.instance = this;
   }
@@ -135,12 +137,6 @@ export class UniswapService {
           bestTrade = trade;
       }
 
-      let tradeImpactDecimal = parseFloat(bestTrade.priceImpact.toSignificant(2));
-      if (tradeImpactDecimal > MAX_SLIPPAGE_PERCENT) { // Slippage more than x%? There is a problem...
-        Logger.warn("easybridge", `Trade impact of ${tradeImpactDecimal}% is too high, skipping this valuation. Worthless token, or not enough liquidity`);
-        return null;
-      }
-
       return bestTrade;
     }
     else {
@@ -216,6 +212,16 @@ export class UniswapService {
       ttl: 120 // 2 minutes validity
     });
 
+    // TEST ONLY - TO RESET APPROVAL TO 0
+    //await this.erc20CoinService.setSpendingApproval(mainCoinSubWallet, sourceSwapToken.address, sourceSwapToken.decimals, currencyProvider.getRouterAddress(), new BigNumber(0));
+    //await sleep(10000)
+
+    let amount = new BigNumber(trade.inputAmount.toExact()); // Human readable amount
+    let chainAmount = this.erc20CoinService.toChainAmount(amount);
+    await this.erc20CoinService.approveSpendingIfNeeded(mainCoinSubWallet, sourceSwapToken.address, sourceSwapToken.decimals, currencyProvider.getRouterAddress(), chainAmount);
+
+    //return null; // TEST ONLY - TO RESET APPROVAL TO 0
+
     if (!swapParams)
       throw new Error("Unable to compute swap call parameters");
 
@@ -224,10 +230,8 @@ export class UniswapService {
 
     let swapMethod = await contract.methods[swapParams.methodName](...swapParams.args);
 
-    // TODO: make a more generic method on EVM subwallet to create a tx from a web3 method call
-
     // Estimate gas cost - don't catch, we need a real estimation from chain
-    Logger.log("easybridge", "Estimating gas for the swap token method");
+    Logger.log("easybridge", "Estimating gas for the swap token method", walletAddress, swapMethod, swapParams);
     let gasTemp = await swapMethod.estimateGas({
       from: walletAddress,
       value: swapParams.value

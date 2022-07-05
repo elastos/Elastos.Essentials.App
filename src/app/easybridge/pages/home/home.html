@@ -147,6 +147,11 @@
       {{ getTransferProgressIndex() + 1 }} / {{ getTotalNumberOfSteps() }} - {{ getTransferProgressMessage() }}
     </div>
 
+    <!-- Errors -->
+    <div *ngIf="lastError" class="last-error">
+      <img src="assets/easybridge/icons/orange-warning.svg" /> {{ lastError }}
+    </div>
+
     <!-- Transfer action -->
     <ion-button (click)="transfer()" [disabled]="!canTransfer()" *ngIf="!isCompleted()">{{ getTransferButtonText() }}
     </ion-button>

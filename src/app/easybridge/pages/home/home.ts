@@ -7,11 +7,15 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { BridgeableToken, equalTokens } from '../../model/bridgeabletoken';
@@ -42,6 +46,7 @@ export class HomePage {
   public fetchingTokens = false;
   public canEditFields = true;
   public transferStarted = false; // Whether the transfer setup can be changed by the user (source token, amount etc). This gets disabled after the transfer button is clicked
+  public lastError: string = null;
 
   public sourceTokens: SourceToken[] = [];
   public selectedSourceToken: SourceToken = null;
@@ -68,7 +73,11 @@ export class HomePage {
     private networkService: WalletNetworkService,
     private easyBridgeService: EasyBridgeService,
     private uniswapService: UniswapService, // Init
+    private firebase: GlobalFirebaseService,
+    private popupService: GlobalPopupService,
     public globalNativeService: GlobalNativeService,
+    private erc20CoinService: ERC20CoinService,
+    private evmService: EVMService
   ) { }
 
   ionViewWillEnter() {
@@ -101,7 +110,9 @@ export class HomePage {
     else {
       // Existing transfer? Don't show the intro, directly show the status
       this.showingIntro = false;
-      this.canEditFields = false;
+
+      if (this.activeTransfer.currentStep !== TransferStep.NEW)
+        this.canEditFields = false;
 
       this.subscribeToTransferStatus();
 
@@ -163,6 +174,31 @@ export class HomePage {
     });
   }
 
+  private async refreshActiveTransferSourceTokenBalance() {
+    if (!this.selectedSourceToken)
+      return;
+
+    try {
+      let walletAddress = await this.activeTransfer.getWalletAddress();
+      let sourceNetwork = <EVMNetwork>this.networkService.getNetworkByChainId(this.activeTransfer.sourceToken.chainId);
+
+      let chainBalance: BigNumber;
+      if (this.activeTransfer.sourceToken.isNative) {
+        let web3 = await this.evmService.getWeb3(sourceNetwork);
+        chainBalance = new BigNumber(await web3.eth.getBalance(walletAddress));
+      } else {
+        chainBalance = await this.erc20CoinService.fetchERC20TokenBalance(sourceNetwork, this.activeTransfer.sourceToken.address, walletAddress);
+      }
+
+      let readableAmount = this.erc20CoinService.toHumanReadableAmount(chainBalance, this.activeTransfer.sourceToken.decimals);
+      this.selectedSourceToken.balance = readableAmount;
+    }
+    catch (e) {
+      Logger.warn("easybridge", "Refresh source token balance error:", e);
+      // Silent catch, not blocking...
+    }
+  }
+
   public getDisplayableAmount(readableBalance: BigNumber): string {
     return readableBalance.toPrecision(5);
   }
@@ -202,9 +238,10 @@ export class HomePage {
     }
 
     this.selectedSourceToken = sourceToken;
-    this.updateDestinationTokens();
-
+    this.selectedDestinationToken = null;
     this.transferAmount = null;
+
+    this.updateDestinationTokens();
   }
 
   public async selectDestinationToken(destinationToken: DestinationToken) {
@@ -239,13 +276,25 @@ export class HomePage {
   private updateDestinationTokens() {
     // Support for ESC only for now
     this.destinationTokens = this.easyBridgeService.getUsableDestinationTokens(this.selectedSourceToken, 20);
+    if (this.destinationTokens.length == 1) {
+      // Only one destination token, select it for convenience
+      void this.selectDestinationToken(this.destinationTokens[0]);
+    }
   }
 
   private async recomputeTransfer() {
+    this.lastError = null;
+
     if (!(this.transferAmount > 0))
       return;
 
     Logger.log("easybridge", "Recomputing transfer info", this.transferAmount);
+
+    // Make sure there is enough balance
+    if (this.selectedSourceToken.balance.lt(this.transferAmount)) {
+      this.lastError = "Not enough tokens available in your wallet";
+      return;
+    }
 
     this.zone.run(() => {
       this.unsubscribeFromTransferStatus();
@@ -270,7 +319,8 @@ export class HomePage {
       Logger.log("easybridge", "Transfer status:", status);
       this.activeTransferCanContinue = status.canContinue;
       this.activeTransferCanDismiss = status.canDismiss;
-    })
+      this.lastError = status.lastError;
+    });
   }
 
   private unsubscribeFromTransferStatus() {
@@ -288,9 +338,11 @@ export class HomePage {
   }
 
   public canTransfer(): boolean {
-    return this.activeTransferCanContinue && this.activeTransfer &&
+    return this.activeTransferCanContinue && this.activeTransfer && this.activeTransfer.canExecute &&
       !!this.selectedDestinationToken && !!this.selectedSourceToken &&
-      !!this.transferAmount && !this.transferStarted && !this.userAmountBelowMinAmount();
+      !!this.transferAmount && !this.transferStarted &&
+      !this.userAmountBelowMinAmount() &&
+      this.selectedSourceToken.balance.gte(this.transferAmount); // Balance should be high enough
   }
 
   public canReset(): boolean {
@@ -308,14 +360,32 @@ export class HomePage {
    * Starts or continues the transfer process where it was interrupted.
    */
   public async transfer() {
+    if (!this.activeTransfer.hasUserAgreement()) {
+      let agreed = await this.popupService.showConfirmationPopup("Transfer agreement", "By continuing, you agree to let Elastos Essentials use third party exchanges and APIs, and give spending approval of tokens to the relevant bridge/swap contracts.");
+      if (agreed) {
+        this.activeTransfer.approveUserAgreement();
+      }
+      else {
+        // User agreement not accepted
+        return;
+      }
+    }
+
     this.transferStarted = true;
     this.canEditFields = false;
 
+    void this.firebase.logEvent("easybridge-transfer-start", {
+      from: this.activeTransfer.sourceToken,
+      to: this.activeTransfer.destinationToken,
+      amount: this.activeTransfer.amount
+    });
+
     await this.activeTransfer.execute();
 
-    this.transferStarted = false;
+    // Refresh selected source token balance after spending some
+    void this.refreshActiveTransferSourceTokenBalance();
 
-    // TODO: update status live, reset data after transfer, show result, etc
+    this.transferStarted = false;
   }
 
   /**
@@ -334,6 +404,7 @@ export class HomePage {
     this.transferAmount = null;
     this.transferStarted = false;
     this.canEditFields = true;
+    this.lastError = null;
 
     void this.prepareForNewTransfer();
   }

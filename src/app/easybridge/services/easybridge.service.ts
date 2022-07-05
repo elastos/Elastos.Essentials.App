@@ -101,11 +101,11 @@ export class EasyBridgeService {
       if (!token.isNative) {
         // Convert chain balance format (long) to human readable format
         let chainBalance = await this.erc20CoinService.fetchERC20TokenBalance(network, token.address, walletAddress);
-        balance = this.toHumanReadableAmount(chainBalance, token.decimals);
+        balance = this.erc20CoinService.toHumanReadableAmount(chainBalance, token.decimals);
       }
       else {
         let chainBalance = await web3.eth.getBalance(walletAddress);
-        balance = this.toHumanReadableAmount(chainBalance, token.decimals);
+        balance = this.erc20CoinService.toHumanReadableAmount(chainBalance, token.decimals);
       }
 
       Logger.log("easybridge", `Got balance ${balance} for token ${token.symbol} (${token.name}) on chain ${token.chainId}`);
@@ -144,12 +144,14 @@ export class EasyBridgeService {
     });
 
     // Peer token
-    let peerTokenOnDestinationChain = this.getPeerTokenOnOtherChain(sourceToken.token, destinationChainId);
-    if (peerTokenOnDestinationChain) {
-      destinationTokens.push({
-        token: peerTokenOnDestinationChain,
-        estimatedAmount: new BigNumber(-1)
-      });
+    if (!sourceToken.token.isWrappedNative) { // Not wrapped native, cause native already added above
+      let peerTokenOnDestinationChain = this.getPeerTokenOnOtherChain(sourceToken.token, destinationChainId);
+      if (peerTokenOnDestinationChain) {
+        destinationTokens.push({
+          token: peerTokenOnDestinationChain,
+          estimatedAmount: new BigNumber(-1)
+        });
+      }
     }
 
     return destinationTokens;
@@ -163,6 +165,12 @@ export class EasyBridgeService {
       return bridgeableTokens.tokens.find(t => {
         // Native coin: find by 'isWrappedNative'
         return t.isWrappedNative && t.chainId === otherChainId && t.origin === token.chainId;
+      });
+    }
+    else if (token.isWrappedNative) {
+      return bridgeableTokens.tokens.find(t => {
+        // Wrapped native coin: find by native and chaind id
+        return t.isNative && t.chainId === token.origin;
       });
     }
     else {
@@ -187,7 +195,7 @@ export class EasyBridgeService {
     const bridgeSelected = `${sourceNetwork.getMainChainID()}_${destinationNetwork.getMainChainID()}`;
     const bridgeDestinationSelected = `${destinationNetwork.getMainChainID()}_${sourceNetwork.getMainChainID()}`;
 
-    const bridgeType: BridgeType = sourceToken.isNative ? "native" : "token";
+    const bridgeType: BridgeType = sourceToken.isNative || sourceToken.isWrappedNative ? "native" : "token";
 
     const bridgeParams = availableBridges[bridgeSelected][bridgeType][sourceNetwork.getMainChainID()];
     const bridgeParamsOtherSide = availableBridges[bridgeSelected][bridgeType][destinationNetwork.getMainChainID()];
@@ -233,9 +241,6 @@ export class EasyBridgeService {
     try {
       let bridgeContext = this.computeBridgeContext(sourceToken, destinationToken);
 
-      // If mediator is not approved to spend user's tokens yet, make it approved. Await will complete after approval
-      await this.approveMediatorAsSpenderIfNeeded(mainCoinSubWallet, bridgeContext, amount);
-
       // Do the actual transfer
       let result = await this.coinTransfer(mainCoinSubWallet, bridgeContext, amount);
 
@@ -252,12 +257,13 @@ export class EasyBridgeService {
 
     const from = accountAddress;
     const recipient = accountAddress;
-    const value = this.toChainHexAmount(amount, context.sourceToken.decimals);
+    const value = this.erc20CoinService.toChainHexAmount(amount, context.sourceToken.decimals);
 
     const destProvider = await this.evmService.getWeb3(context.destinationNetwork);
     const fromDestBlock = await destProvider.eth.getBlockNumber();
 
     Logger.log("easybridge", "Getting gas price");
+
     const gasPrice = await this.evmService.getGasPrice(context.sourceNetwork);
 
     // Fetch the min amount required by the bridge contract to accept a transfer for this token
@@ -267,17 +273,23 @@ export class EasyBridgeService {
 
     let relayMethod: any = null;
     let nativeRelayValue: string = null; // Amount of native coins send to the relay method. none for tokens
+    let contractAddress: string = null;
     if (!context.sourceToken.isNative) {
+      const mediatorAddress = this.foreignOrigin(context.sourceToken.address, context.sourceToken.chainId) ? context.reverseBridgeParams.contract : context.bridgeParams.contract;
+
+      // If mediator is not approved to spend user's tokens yet, make it approved. Await will complete after approval
+      await this.approveMediatorAsSpenderIfNeeded(mainCoinSubWallet, context, mediatorAddress, amount);
+
       if (!context.sourceToken.isWrappedNative) {
         // Regular erc20 token, not wrapped native
-        const mediatorAddress = this.foreignOrigin(context.sourceToken.address, context.sourceToken.chainId) ? context.reverseBridgeParams.contract : context.bridgeParams.contract;
-        const tokenSourceMediator = await this.getNativeSourceMediator(context.sourceNetwork, mediatorAddress, accountAddress);
+        contractAddress = mediatorAddress;
+        const tokenSourceMediator = await this.getNativeSourceMediator(context.sourceNetwork, contractAddress, accountAddress);
 
         Logger.log("easybridge", "Calling bridge method (case 1)");
         relayMethod = await tokenSourceMediator.methods.relayTokens(context.sourceToken.address, recipient, value);
       } else {
         // Wrapped native
-        //const type = 'transferAndCall'
+        contractAddress = context.sourceToken.address;
         const tokenSourceMediator = await this.getErc677Contract(context.sourceNetwork, context.sourceToken.address, accountAddress)
 
         Logger.log("easybridge", "Calling bridge method (case 2)");
@@ -285,6 +297,7 @@ export class EasyBridgeService {
       }
     } else {
       // Native source token
+      contractAddress = context.bridgeParams.contract;
       const nativeSourceMediator = await this.getNativeSourceMediator(context.sourceNetwork, context.bridgeParams.contract, accountAddress);
 
       Logger.log("easybridge", "Calling bridge method (case 3)");
@@ -292,32 +305,15 @@ export class EasyBridgeService {
       nativeRelayValue = value;
     }
 
-    const { gasLimit, nonce } = await this.methodGasAndNonce(relayMethod, context, from, nativeRelayValue);
+    const { gasLimit, nonce } = await this.evmService.methodGasAndNonce(relayMethod, context.sourceNetwork, from, nativeRelayValue);
 
     Logger.log("easybridge", "Creating unsigned transaction");
     let safe = <EVMSafe><unknown>mainCoinSubWallet.networkWallet.safe;
-    let unsignedTx = await safe.createContractTransaction(context.bridgeParams.contract, nativeRelayValue || "0", gasPrice, gasLimit, nonce, relayMethod.encodeABI());
+    let unsignedTx = await safe.createContractTransaction(contractAddress, nativeRelayValue || "0", gasPrice, gasLimit, nonce, relayMethod.encodeABI());
 
     const txId = await this.sendUnsignedTransaction(mainCoinSubWallet, unsignedTx);
 
     return { txId, destinationBlockBefore: fromDestBlock };
-  }
-
-  private async methodGasAndNonce(webMethod: any, context: BridgeContext, from: string, value?: string): Promise<{ gasLimit: string, nonce: number }> {
-    // Estimate gas cost - don't catch, we need a real estimation from chain
-    Logger.log("easybridge", "Estimating gas for the relay token method", webMethod, context, from, value);
-    let gasTemp = await webMethod.estimateGas({
-      from: from,
-      value: value
-    });
-
-    // '* 1.5': Make sure the gaslimit is big enough - add a bit of margin for fluctuating gas price
-    let gasLimit = Math.ceil(gasTemp * 1.5).toString();
-
-    Logger.log("easybridge", "Getting nonce");
-    let nonce = await this.evmService.getNonce(context.sourceNetwork, from);
-
-    return { gasLimit, nonce };
   }
 
   private async sendUnsignedTransaction(mainCoinSubWallet: AnyMainCoinEVMSubWallet, unsignedTx: any): Promise<string> {
@@ -336,11 +332,15 @@ export class EasyBridgeService {
       return sendResult.txid;
   }
 
-  // Detect if destination exchange finished transfer
+  /**
+   * Detects if transfer is completed on the destination exchange.
+   *
+   * @return the received amount, in chain amount format.
+   */
   public async detectExchangeFinished(
     mainCoinSubWallet: AnyMainCoinEVMSubWallet,
     sourceToken: BridgeableToken,
-    destinationToken: BridgeableToken, fromBlock: number): Promise<boolean> {
+    destinationToken: BridgeableToken, fromBlock: number): Promise<string> {
 
     let accountAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
     let bridgeContext = this.computeBridgeContext(sourceToken, destinationToken);
@@ -352,43 +352,55 @@ export class EasyBridgeService {
 
     let paddedRecipientAddress = '0x' + accountAddress.substr(2).padStart(64, "0"); // 64 = 32 bytes * 2 chars per byte // 20 bytes to 32 bytes
 
-    debugger;
+    let returnValueAmountIndex: number; // Index of the received tokens amount in the event returned values
     if (sourceToken.isNative || sourceToken.isWrappedNative) {
-      sourceMediator = await this.getNativeSourceMediator(bridgeContext.destinationNetwork, bridgeContext.bridgeParamsOtherSide.contract, accountAddress);
+      const mediatorAddress = sourceToken.isWrappedNative ? bridgeContext.reverseBridgeParamsOtherSide.contract : bridgeContext.bridgeParamsOtherSide.contract;
+      sourceMediator = await this.getNativeSourceMediator(bridgeContext.destinationNetwork, mediatorAddress, accountAddress);
       tokensBridgedEvent = Web3.utils.sha3("TokensBridged(address,uint256,bytes32)");
-      topics = [tokensBridgedEvent/* , paddedRecipientAddress */];
+      topics = [tokensBridgedEvent, paddedRecipientAddress];
+      returnValueAmountIndex = 1;
     } else {
-      // TODO: check bridgeParamsOtherSide and its friends, could be messed up
       const tokenDestinationMediator = this.foreignOrigin(bridgeContext.sourceToken.address, bridgeContext.sourceToken.chainId) ? bridgeContext.reverseBridgeParamsOtherSide.contract : bridgeContext.bridgeParamsOtherSide.contract;
       sourceMediator = await this.getTokenSourceMediator(bridgeContext.destinationNetwork, tokenDestinationMediator, accountAddress);
       tokensBridgedEvent = Web3.utils.sha3("TokensBridged(address,address,uint256,bytes32)");
       topics = [tokensBridgedEvent, null, paddedRecipientAddress];
+      returnValueAmountIndex = 2;
     }
 
     // Wait until we can detect that the transfer is finished
     const stopTime = Date.now() + VALIDATOR_TIMEOUT_MS
     while (Date.now() <= stopTime) {
       const currentBlock = await destProvider.eth.getBlockNumber();
+      const address = bridgeContext.bridgeParamsOtherSide.contract;
 
-      Logger.log("easybridge", "Checking bridge status");
+      Logger.log("easybridge", "Checking bridge status", "Address:", address, topics);
 
       const tokenBridgedEvents = await sourceMediator.getPastEvents("TokensBridged", {
         fromBlock,
         toBlock: currentBlock,
-        address: bridgeContext.bridgeParamsOtherSide.contract,
+        address,
         //filter: { txreceipt_status: 1 },
         topics
       });
 
       if (tokenBridgedEvents.length > 0) {
-        Logger.log("easybridge", "Bridge complete!", tokenBridgedEvents);
-        return true;
+        // Sort by most recent first so we always work on the latest
+        tokenBridgedEvents.sort((a, b) => b.blockNumber - a.blockNumber);
+
+        // Get the received amount and returns it. This is what will be used by the swap to swap the right number of tokens, as we usually
+        // receive less than what was sent because of bridge fees.
+        let bridgeEvent = tokenBridgedEvents[0];
+        let receivedChainAmount = <string>bridgeEvent.returnValues[returnValueAmountIndex];
+
+        Logger.log("easybridge", "Bridge complete!", tokenBridgedEvents, bridgeEvent, receivedChainAmount);
+
+        return receivedChainAmount;
       }
 
       await sleep(5000);
     }
 
-    return false;
+    return null;
   }
 
   /**
@@ -396,7 +408,7 @@ export class EasyBridgeService {
   * in human readable amount
   */
   public getMinTx(sourceToken: BridgeableToken, destinationToken: BridgeableToken): Promise<BigNumber> {
-    if (sourceToken.isNative)
+    if (sourceToken.isNative || sourceToken.isWrappedNative)
       return this.getMinTxForNative(sourceToken, destinationToken);
     else
       return this.getMinTxForToken(sourceToken, destinationToken);
@@ -408,7 +420,7 @@ export class EasyBridgeService {
 
     // Don't catch, let the exception be forwarded
     const minPerTxChain = await bridgeMediator.methods.minPerTx().call();
-    let minPerTx = this.toHumanReadableAmount(minPerTxChain, sourceToken.decimals);
+    let minPerTx = this.erc20CoinService.toHumanReadableAmount(minPerTxChain, sourceToken.decimals);
 
     Logger.log("easybridge", "Min per tx (native):", minPerTx.toString(10));
 
@@ -421,85 +433,28 @@ export class EasyBridgeService {
 
     // Don't catch, let the exception be forwarded
     const minPerTxChain = await bridgeMediator.methods.minPerTx(sourceToken.address).call();
-    let minPerTx = this.toHumanReadableAmount(minPerTxChain, sourceToken.decimals);
+    let minPerTx = this.erc20CoinService.toHumanReadableAmount(minPerTxChain, sourceToken.decimals);
 
     Logger.log("easybridge", "Min per tx (token):", minPerTx.toString(10));
 
     return minPerTx;
   }
 
-  private async approveMediatorAsSpenderIfNeeded(mainCoinSubWallet: AnyMainCoinEVMSubWallet, context: BridgeContext, amount: BigNumber): Promise<boolean> {
+  /**
+   * Increase the allowance to the bridge contract to spend user's tokens on the source chain, if the allowance is 0
+   * or too low.
+   * Returns true if the allowance could successfully be upgraded to a valid level, false otherwise.
+   *
+   * @param amount Human readable amount
+   */
+  private async approveMediatorAsSpenderIfNeeded(mainCoinSubWallet: AnyMainCoinEVMSubWallet, context: BridgeContext, mediatorAddress: string, amount: BigNumber): Promise<boolean> {
     if (context.sourceToken.isNative)
       return false;
 
     if (context.bridgeParams === undefined)
       return false;
 
-    let accountAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
-    let network = mainCoinSubWallet.networkWallet.network;
-
-    const tokenContract = await this.getErc20Contract(network, context.sourceToken.address, accountAddress);
-    const mediator = this.foreignOrigin(context.sourceToken.address, context.sourceToken.chainId) ? context.bridgeParamsOtherSide.contract : context.bridgeParams.contract;
-
-    try {
-      const allowanceStr = await tokenContract.methods.allowance(accountAddress, mediator).call();
-      const currentAllowance = this.toHumanReadableAmount(allowanceStr, context.sourceToken.decimals); //new BigNumber(response.toString())
-      Logger.log("easybridge", "Current allowance:", currentAllowance.toString(10), context.sourceToken, mediator);
-      //const value = new BigNumber(this.parseValue(amount, context.sourceToken.decimals).toString())
-      //console.log(value.toString())
-
-      return !currentAllowance.gt(currentAllowance);
-    } catch (error) {
-      return false;
-    }
-  }
-
-  private useApproveMediator(currency, request, reverseBridgeParams) {
-    /* TODO const [requestedApproval, setRequestedApproval] = useState(false)
-    const [approvalComplete, setApprovalComplete] = useState(false)
-    const { toastSuccess, toastError } = useToast()
-    // const dispatch = useAppDispatch()
-    const { account, library } = useWeb3React()
-
-    const handleApprove = useCallback(async () => {
-      const isToken = currency instanceof Token
-      if (!isToken) { setRequestedApproval(false); return }
-      if (request === undefined) { setRequestedApproval(false); return }
-
-      const mediator = foreignOrigin(currency.address, currency.chainId) ? reverseBridgeParams.contract : request.contract;
-      const tokenContract = getBep20Contract(currency.address, library.getSigner(account))
-      // const response = (await tokenContract.allowance(account, mediator))
-      // const allowance = ethersToBigNumber(response)
-
-      try {
-        // if (!allowance.gt(0)) {
-        setRequestedApproval(true)
-        const tx = await tokenContract.approve(mediator, ethers.constants.MaxUint256)
-        const receipt = await tx.wait()
-        // dispatch(updateUserAllowance(sousId, account))
-        if (receipt.status) {
-          toastSuccess(
-            t('Contract Enabled'),
-            t('You can now bridge your %symbol%!', { symbol: currency.symbol }),
-          )
-          setRequestedApproval(false)
-          setApprovalComplete(true)
-        } else {
-          // user rejected tx or didn't go thru
-          toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-          setRequestedApproval(false)
-        }
-        // } else {
-        // setRequestedApproval(false)
-        // }
-      } catch (e) {
-        setRequestedApproval(false)
-        console.error(e)
-        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-      }
-    }, [currency, account, library, request, t, toastError, toastSuccess, reverseBridgeParams])
-
-    return { handleApprove, requestedApproval, approvalComplete } */
+    return await this.erc20CoinService.approveSpendingIfNeeded(mainCoinSubWallet, context.sourceToken.address, context.sourceToken.decimals, mediatorAddress, amount);
   }
 
   /**
@@ -507,7 +462,7 @@ export class EasyBridgeService {
    */
   public async callBridgeFaucet(mainCoinSubWallet: AnyMainCoinEVMSubWallet, txID: string, sourceToken: BridgeableToken): Promise<{ requested: boolean, wasAlreadyUsed: boolean }> {
     const network = <EVMNetwork>WalletNetworkService.instance.getNetworkByChainId(sourceToken.chainId);
-    const type = 'relayTokens';
+    const type = !sourceToken.isNative && sourceToken.isWrappedNative ? 'transferAndCall' : 'relayTokens';
 
     Logger.log("easybridge", "Checking and calling faucet");
 
@@ -521,7 +476,7 @@ export class EasyBridgeService {
         const dataSuccessGet = await responseGet.json();
 
         if (dataSuccessGet.has_use_faucet === false) {
-          Logger.log("easybridge", "Requesting to get faucet tokens");
+          Logger.log("easybridge", "Requesting to get faucet tokens 23", dataSuccessGet);
 
           const response = await fetch(`${BRIDGE_FAUCET_API}/faucet`, {
             method: 'POST',
@@ -571,32 +526,6 @@ export class EasyBridgeService {
     return new (await this.evmService.getWeb3(network)).eth.Contract(ERC677_ABI, contractAddress, { from: signerWalletAddress });
   }
 
-  private async getErc20Contract(network: EVMNetwork, contractAddress: string, signerWalletAddress: string): Promise<Contract> {
-    let ERC20_ABI = (await import('src/assets/wallet/ethereum/StandardErc20ABI.json')).default as any;
-    return new (await this.evmService.getWeb3(network)).eth.Contract(ERC20_ABI, contractAddress, { from: signerWalletAddress });
-  }
-
-  // NOTE: from glide - No real idea what this is for now
-  private parseValue(num: any, dec: number) {
-    if (!num) {
-      return window.BigInt(0);
-    }
-
-    const number = Number(num);
-    const numberDec = this.countDecimals(number);
-    const round = window.BigInt(10 ** Number(dec));
-    const value =
-      (window.BigInt(Math.floor(number * 10 ** numberDec)) * round) /
-      window.BigInt(10 ** numberDec);
-    return value;
-  }
-
-  // From glide
-  private countDecimals(value: any) {
-    if (Math.floor(value) === value) return 0;
-    return value.toString().split('.')[1].length || 0;
-  }
-
   /**
    * Checks if a token at a given address is NOT originated from that chain.
    * This differenciates the way tokens need to be wrapped in the destination chain, or reverted back to
@@ -610,19 +539,5 @@ export class EasyBridgeService {
       return true;
 
     return false;
-  }
-
-  /**
- * From a human readable amount (short) to a chain amount (long)
- */
-  private toChainHexAmount(readableAmount: BigNumber, decimals = 18): string {
-    return '0x' + readableAmount.times(new BigNumber(10).pow(decimals)).toString(16);
-  }
-
-  /**
-   * From a chain amount (long) to a human readable amount (short)
-   */
-  private toHumanReadableAmount(chainAmount: string | BigNumber, decimals = 18): BigNumber {
-    return new BigNumber(chainAmount).dividedBy(new BigNumber(10).pow(decimals));
   }
 }

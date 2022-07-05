@@ -1,6 +1,7 @@
 import { TradeType } from "@uniswap/sdk-core";
 import BigNumber from "bignumber.js";
 import { BehaviorSubject } from "rxjs";
+import { sleep } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
@@ -8,12 +9,16 @@ import { Trade } from "src/app/thirdparty/custom-uniswap-v2-sdk/src";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { EVMNetworkWallet } from "src/app/wallet/model/networks/evms/networkwallets/evm.networkwallet";
 import { AnyMainCoinEVMSubWallet } from "src/app/wallet/model/networks/evms/subwallets/evm.subwallet";
+import { AddressUsage } from "src/app/wallet/model/safes/addressusage";
 import { AuthService } from "src/app/wallet/services/auth.service";
+import { ERC20CoinService } from "src/app/wallet/services/evm/erc20coin.service";
 import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { EasyBridgeService } from "../services/easybridge.service";
 import { UniswapService } from "../services/uniswap.service";
 import { BridgeableToken, equalTokens } from "./bridgeabletoken";
+
+const MAX_PRICE_IMPACT_PERCENT = 5;
 
 export enum TransferStep {
   NEW = "new",
@@ -46,6 +51,7 @@ type BridgeStep = {
   //transactionPublishDate?: number; // Timestamp at which the transaction got published
   transactionHash?: string; // Bridge contract transaction hash on the source chain
   destinationBlockBefore?: number; // Block at which the destination chain was just before calling the bridge
+  receivedTokenAmount?: string; // Exact number of tokens really received, in chain format (from chain event values)
 
   // Computed
   bridgeFees: number; // Bridge fees in percentage of the transaction
@@ -83,6 +89,7 @@ type SerializedTransfer = {
 
   // Global state machine
   currentStep: TransferStep;
+  userAgreed: boolean;
 
   // Computed steps
   bridgeStep: BridgeStep;
@@ -129,6 +136,9 @@ export class Transfer implements SerializedTransfer {
   faucetStep: FaucetStep = null;
   swapStep: SwapStep = null;
   estimatedReceivedAmount: BigNumber = null;
+  canExecute: boolean; // Whether the transfer can safely be executed or not (balance / route / swap slippage check)
+  cannotExecuteReason: string = null;
+  userAgreed: boolean;
 
   // Computed
   private sourceNetworkSubWallet: AnyMainCoinEVMSubWallet = null; // subwallet instance on the bridge source network
@@ -159,8 +169,6 @@ export class Transfer implements SerializedTransfer {
 
     await transfer.updateComputations();
 
-    transfer.emitStatus(); // Emit an initial status right after the initial setup
-
     return transfer;
   }
 
@@ -169,8 +177,6 @@ export class Transfer implements SerializedTransfer {
 
     await transfer.compute(masterWalletId, sourceToken, destinationToken, amount);
     await transfer.save();
-
-    transfer.emitStatus(); // Emit an initial status right after the initial setup
 
     return transfer;
   }
@@ -188,7 +194,8 @@ export class Transfer implements SerializedTransfer {
       bridgeStep: this.bridgeStep,
       faucetStep: this.faucetStep,
       swapStep: this.swapStep,
-      estimatedReceivedAmount: this.estimatedReceivedAmount
+      estimatedReceivedAmount: this.estimatedReceivedAmount,
+      userAgreed: this.userAgreed
     };
 
     return GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString, "easybridge", "activetransfer", serializedTransfer);
@@ -210,6 +217,7 @@ export class Transfer implements SerializedTransfer {
     this.faucetStep = null;
     this.swapStep = null;
     this.estimatedReceivedAmount = null;
+    this.canExecute = false;
 
     await this.updateComputations();
   }
@@ -220,6 +228,10 @@ export class Transfer implements SerializedTransfer {
    */
   private async updateComputations(): Promise<void> {
     Logger.log("easybridge", "Computing transfer information", this.masterWalletId, this.sourceToken, this.destinationToken, this.amount);
+
+    // Unless said otherwise below, we may be able to execute the transfer.
+    this.canExecute = true;
+    this.cannotExecuteReason = "Unknown reason";
 
     let masterWallet = WalletService.instance.getMasterWallet(this.masterWalletId);
     let sourceNetwork = <EVMNetwork>WalletNetworkService.instance.getNetworkByChainId(this.sourceToken.chainId);
@@ -273,19 +285,45 @@ export class Transfer implements SerializedTransfer {
       if (!currencyProvider)
         throw new Error('Transfer compute(): No currency provider found');
 
-      //let sourceCoin = new ERC20Coin("test", "test", sourceToken.address, sourceToken.decimals, MAINNET_TEMPLATE, true, false);
-      //let destCoin = new ERC20Coin("test2", "test2", destinationToken.address, destinationToken.decimals, MAINNET_TEMPLATE, true, false);
-      let trade = await UniswapService.instance.computeSwap(swapNetwork, this.bridgeStep.destinationToken, new BigNumber(this.amount), this.destinationToken);
+      // Choose the right swap amount as swap input. If no bridge has been done yet, we use the global transfer amount as simulated
+      // input amount for the swap. Buf if we got an exact bridged amount from a bridge event, we use this value for the swap.
+      // We cannot use the global input amount for the real swap as user may not have enough tokens, as the bridged amount got
+      // some bridge fees deduced and the received amount is lower.
+      let swapInputAmount: BigNumber; // Human readable
+      if (this.bridgeStep.receivedTokenAmount) {
+        swapInputAmount = ERC20CoinService.instance.toHumanReadableAmount(this.bridgeStep.receivedTokenAmount, this.bridgeStep.destinationToken.decimals);
+        Logger.log("easybridge", "Using exact received bridge amount to compute swap", swapInputAmount.toString(10));
+      }
+      else {
+        swapInputAmount = new BigNumber(this.amount);
+        Logger.log("easybridge", "Using global transfer input amount to compute swap", swapInputAmount.toString(10));
+      }
 
-      // Swap fees: usually something like 0.25% * number of hops in the trade
-      let swapFees = currencyProvider.getSwapFees() * trade.route.pairs.length;
+      let trade = await UniswapService.instance.computeSwap(swapNetwork, this.bridgeStep.destinationToken, swapInputAmount, this.destinationToken);
+      if (trade) {
+        // Make sure the slippage is not too high
+        let tradeImpactDecimal = parseFloat(trade.priceImpact.toSignificant(2));
 
-      this.swapStep = {
-        from: this.bridgeStep.destinationToken,
-        to: this.destinationToken,
-        trade,
-        swapFees
-      };
+        // Swap fees: usually something like 0.25% * number of hops in the trade
+        let swapFees = currencyProvider.getSwapFees() * trade.route.pairs.length;
+
+        this.swapStep = {
+          from: this.bridgeStep.destinationToken,
+          to: this.destinationToken,
+          trade,
+          swapFees,
+        };
+
+        if (tradeImpactDecimal > MAX_PRICE_IMPACT_PERCENT) {
+          this.canExecute = false;
+          this.cannotExecuteReason = "Swap cannot be executed, slippage is too high. Possibly not enough liquidity on the DEX.";
+        }
+      }
+      else {
+        // No available trade
+        this.canExecute = false;
+        this.cannotExecuteReason = "Failed to find a good swap trade. Possibly not enough liquidity on the DEX.";
+      }
     }
 
     // Compute the final received amount estimation
@@ -300,6 +338,17 @@ export class Transfer implements SerializedTransfer {
       // No swap involved. Received amount is bridged amount minus bridge fees
       this.estimatedReceivedAmount = new BigNumber(this.amount).minus(this.bridgeStep.bridgeFeesAmount);
     }
+
+    this.emitPostComputationStatus();
+  }
+
+  private emitPostComputationStatus() {
+    if (this.canExecute) {
+      this.emitStatus(); // Emit an initial status right after the initial setup
+    }
+    else {
+      this.emitStatus(this.cannotExecuteReason);
+    }
   }
 
   private computeBridgeFees(sourceToken: BridgeableToken, destinationToken: BridgeableToken, amount: number): { feePercent: number, feeAmount: BigNumber } {
@@ -313,7 +362,7 @@ export class Transfer implements SerializedTransfer {
   /**
    * Executes all the transfer steps: bridge, faucet and swap. The process resumes where it was interrupted.
    *
-   * The onTransferUpdated callback is called every time a significant step is completed and the transfer
+   * The status event is called every time a significant step is completed and the transfer
    * object (this) is updated (transaction sent), api confirmed, etc.
    */
   public async execute(): Promise<void> {
@@ -356,9 +405,9 @@ export class Transfer implements SerializedTransfer {
         default:
           throw new Error(`Unknown step ${this.currentStep}`);
       }
-    }
 
-    // TODO: Faucet
+      await sleep(500);
+    }
   }
 
   private async executeBridge(): Promise<boolean> {
@@ -376,7 +425,7 @@ export class Transfer implements SerializedTransfer {
       this.currentStep = TransferStep.NEW;
       await this.save();
 
-      this.emitStatus();
+      this.emitStatus("Bridge request could not be sent, please try again.");
 
       return false;
     }
@@ -398,19 +447,23 @@ export class Transfer implements SerializedTransfer {
    * Awaits until the bridged tokens are found on the destination chain
    */
   private async awaitBridgedTokensAtDestination(): Promise<boolean> {
-    const bridgeTokensReceived = await EasyBridgeService.instance.detectExchangeFinished(this.sourceNetworkSubWallet, this.sourceToken, this.destinationToken, this.bridgeStep.destinationBlockBefore);
-    if (bridgeTokensReceived) {
+    const chainAmoundReceived = await EasyBridgeService.instance.detectExchangeFinished(this.sourceNetworkSubWallet, this.sourceToken, this.destinationToken, this.bridgeStep.destinationBlockBefore);
+    if (chainAmoundReceived) {
       // Bridged tokens have been received on destination chain
 
       this.currentStep = TransferStep.BRIDGE_TOKEN_RECEIVED;
+      this.bridgeStep.receivedTokenAmount = chainAmoundReceived;
       await this.save();
       this.emitStatus();
+
+      return true;
     }
     else {
       // Timeout while checking, maybe the bridge takes too long or is stuck.
-    }
+      this.emitStatus("Bridging tokens between chains seems to take more time than expected. Please come back later to check again and continue.");
 
-    return bridgeTokensReceived;
+      return false;
+    }
   }
 
   private async callFaucet(): Promise<boolean> {
@@ -428,19 +481,30 @@ export class Transfer implements SerializedTransfer {
     await this.updateComputations();
 
     Logger.log("easybridge", "Executing the swap");
-    let txId = await UniswapService.instance.executeSwapTrade(this.destinationNetworkSubWallet, this.swapStep.from, this.swapStep.trade);
-    if (txId) {
-      Logger.log("easybridge", "Swap complete");
+    let txId: string;
+    try {
+      txId = await UniswapService.instance.executeSwapTrade(this.destinationNetworkSubWallet, this.swapStep.from, this.swapStep.trade);
+      if (txId) {
+        Logger.log("easybridge", "Swap complete");
 
-      this.currentStep = TransferStep.SWAP_TX_PUBLISHED;
-      this.swapStep.transactionHash = txId;
-      await this.save();
-      this.emitStatus();
+        this.currentStep = TransferStep.SWAP_TX_PUBLISHED;
+        this.swapStep.transactionHash = txId;
+        await this.save();
+        this.emitStatus();
 
-      return true;
+        return true;
+      }
     }
-    else {
+    catch (e) {
+      // Gas estimation error, network error...
+      Logger.log("easybridge", "executeSwapTrade() error:", e);
+      // Fallthrough
+    }
+
+    if (!txId) {
       Logger.log("easybridge", "Swap failed");
+
+      this.emitStatus("Swap failed to execute, this could be a network or blockchain error, please try again.");
 
       return false;
     }
@@ -507,7 +571,7 @@ export class Transfer implements SerializedTransfer {
         return 1;
       case TransferStep.BRIDGE_TX_PUBLISHED:
         return 2;
-      case TransferStep.BRIDGE_TX_REJECTED:
+      case TransferStep.BRIDGE_TX_REJECTED: // TODO
         return 3;
       case TransferStep.BRIDGE_TOKEN_RECEIVED:
         return 4;
@@ -515,7 +579,7 @@ export class Transfer implements SerializedTransfer {
         return 5;
       case TransferStep.SWAP_TX_PUBLISHED:
         return 6;
-      case TransferStep.SWAP_TX_REJECTED:
+      case TransferStep.SWAP_TX_REJECTED: // TODO
         return 7;
       case TransferStep.SWAP_TOKEN_RECEIVED:
         return 8;
@@ -541,9 +605,9 @@ export class Transfer implements SerializedTransfer {
       case TransferStep.BRIDGE_TX_REJECTED:
         return "Cross chain failed";
       case TransferStep.BRIDGE_TOKEN_RECEIVED:
-        return "Tokens arrived on ESC";
+        return "Tokens arrived on ESC. Calling faucet to get a few ELA for gas.";
       case TransferStep.FAUCET_API_CALLED:
-        let msg = "Faucet called to receive a few native coins for gas.";
+        let msg = "Faucet was called to receive a few native coins for gas.";
         if (this.swapStep)
           msg += " Now swapping tokens.";
         return msg;
@@ -577,7 +641,21 @@ export class Transfer implements SerializedTransfer {
       return true;
     }
     else {
+      this.emitStatus("No authorization, cancelled.");
       return false;
     }
+  }
+
+  public getWalletAddress(): Promise<string> {
+    return this.sourceNetworkSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
+  }
+
+  public hasUserAgreement(): boolean {
+    return this.userAgreed;
+  }
+
+  public approveUserAgreement() {
+    this.userAgreed = true;
+    void this.save();
   }
 }
