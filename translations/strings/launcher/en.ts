@@ -77,7 +77,7 @@ export const en = {
         'app-dpos-registration': 'DPoS Registration',
         'app-dpos-registration-description': 'DPoS registration manager',
         'app-crcouncil-registration': 'CR Registration',
-        'app-crcouncil-registration-description': 'CR  registration manager',
+        'app-crcouncil-registration-description': 'CR registration manager',
         'app-redpackets': 'Red Packets',
         'app-redpackets-description': 'Share happiness or promote your project, send red packets!',
 

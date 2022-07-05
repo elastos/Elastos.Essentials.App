@@ -335,7 +335,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             // Send NFT
             case TransferType.SEND_NFT:
-                this.titleBar.setTitle(this.translate.instant('wallet.ext-tx-info-type-send-erc1155-nft'));
+                this.titleBar.setTitle(this.translate.instant('wallet.ext-tx-info-type-send-nft'));
 
                 this.transaction = this.createSendNFTTransaction;
 
