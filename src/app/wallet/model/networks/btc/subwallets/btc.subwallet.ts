@@ -79,7 +79,14 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     protected async getTransactionName(transaction: BTCTransaction): Promise<string> {
-        return await '';
+      switch (transaction.direction) {
+          case TransactionDirection.RECEIVED:
+              return await "wallet.coin-op-received-token";
+          case TransactionDirection.SENT:
+              return "wallet.coin-op-sent-token";
+          default:
+              return "Invalid";
+      }
     }
 
     public getAddressCount(internal: boolean): number {
