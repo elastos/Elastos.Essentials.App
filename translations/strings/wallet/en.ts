@@ -700,9 +700,8 @@ export const en = {
         /*****************************
         * Extended transaction info  *
         ******************************/
-        'ext-tx-info-type-send-erc1155-nft': 'Send NFT',
-        'ext-tx-info-type-send-erc721-nft': 'Send NFT',
-        'ext-tx-info-type-send-erc721-nft-name': 'Send {{ name }}',
+        'ext-tx-info-type-send-nft': 'Send NFT',
+        'ext-tx-info-type-send-nft-name': 'Send {{ name }}',
         'ext-tx-info-type-send-erc20': 'Send {{ symbol }}',
         'ext-tx-info-type-send-tokens': 'Send tokens',
         'ext-tx-info-type-swap-erc20': '{{ fromSymbol }} → {{ toSymbol }}',

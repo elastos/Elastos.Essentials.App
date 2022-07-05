@@ -700,9 +700,8 @@ export const zh = {
                 /*****************************
                 * Extended transaction info  *
                 ******************************/
-                'ext-tx-info-type-send-erc1155-nft': '发送 NFT',
-                'ext-tx-info-type-send-erc721-nft': '发送 NFT',
-                'ext-tx-info-type-send-erc721-nft-name': '发送 {{ name }}',
+                'ext-tx-info-type-send-nft': '发送 NFT',
+                'ext-tx-info-type-send-nft-name': '发送 {{ name }}',
                 'ext-tx-info-type-send-erc20': '发送 {{ symbol }}',
                 'ext-tx-info-type-send-tokens': '发送代币',
                 'ext-tx-info-type-swap-erc20': '{{ fromSymbol }} → {{ toSymbol }}',

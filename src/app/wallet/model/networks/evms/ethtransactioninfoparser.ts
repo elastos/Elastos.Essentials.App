@@ -2,6 +2,7 @@ import { utils } from "ethers";
 import { Logger } from "src/app/logger";
 import { GlobalEthereumRPCService } from "src/app/services/global.ethereum.service";
 import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
+import { ERC1155Service } from "src/app/wallet/services/evm/erc1155.service";
 import { ERC721Service } from "src/app/wallet/services/evm/erc721.service";
 import type { TransactionReceipt } from "web3-core";
 import { ERC20CoinInfo, ERC20CoinService } from "../../../services/evm/erc20coin.service";
@@ -129,7 +130,19 @@ export class ETHTransactionInfoParser {
     switch (methodAction) {
       case '0x0febdd49': // ERC1155 safeTransferFrom(address,address,uint256,uint256)
         txInfo.type = ETHOperationType.SEND_NFT;
-        txInfo.operation = { description: "wallet.ext-tx-info-type-send-erc1155-nft" };
+        try {
+          let coinInfo = await this.getERC1155TokenInfoOrThrow(txTo);
+          if (coinInfo) {
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-nft-name', descriptionTranslationParams: { name: coinInfo.name } };
+          }
+          else {
+            txInfo.operation = { description: "wallet.ext-tx-info-type-send-nft" };
+          }
+        }
+        catch (e) {
+          Logger.warn('wallet', 'ERC1155 exception', e)
+          txInfo.operation = { description: "wallet.ext-tx-info-type-send-nft" };
+        }
         break;
 
       case '0x42842e0e': // ERC721 safeTransferFrom(address,address,uint256,uint256)
@@ -137,15 +150,15 @@ export class ETHTransactionInfoParser {
         try {
           let coinInfo = await this.getERC721TokenInfoOrThrow(txTo);
           if (coinInfo) {
-            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-erc721-nft-name', descriptionTranslationParams: { name: coinInfo.name } };
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-nft-name', descriptionTranslationParams: { name: coinInfo.name } };
           }
           else {
-            txInfo.operation = { description: "wallet.ext-tx-info-type-send-erc721-nft" };
+            txInfo.operation = { description: "wallet.ext-tx-info-type-send-nft" };
           }
         }
         catch (e) {
           Logger.warn('wallet', 'ERC721 exception', e)
-          txInfo.operation = { description: "wallet.ext-tx-info-type-send-erc721-nft" };
+          txInfo.operation = { description: "wallet.ext-tx-info-type-send-nft" };
         }
         break;
       case '0x23b872dd': // ERC20 or ERC721 transferFrom(address,address,uint256)
@@ -428,6 +441,14 @@ export class ETHTransactionInfoParser {
     let coinInfo = await ERC721Service.instance.getCoinInfo(contractAddress);
     if (!coinInfo)
       throw new Error("Unable to get ERC721 token info");
+
+    return coinInfo
+  }
+
+  private async getERC1155TokenInfoOrThrow(contractAddress: string): Promise<NFTResolvedInfo> {
+    let coinInfo = await ERC1155Service.instance.getCoinInfo(contractAddress);
+    if (!coinInfo)
+      throw new Error("Unable to get ERC1155 token info");
 
     return coinInfo
   }
