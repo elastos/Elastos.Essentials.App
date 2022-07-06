@@ -8,6 +8,7 @@ import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/maste
 import { AddressUsage } from "../../../safes/addressusage";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { StandardSafe } from "../../../safes/standard.safe";
+import { WalletUtil } from "../../../wallet.util";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EVMSafe } from "../../evms/safes/evm.safe";
@@ -33,8 +34,9 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
 
       let mnemonic = await (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
       if (mnemonic) {
+        let wordlist = await WalletUtil.getMnemonicWordlist(mnemonic);
         const Wallet = (await import("ethers")).Wallet;
-        let mnemonicWallet = Wallet.fromMnemonic(mnemonic);
+        let mnemonicWallet = Wallet.fromMnemonic(mnemonic, null, wordlist);
         this.evmAddress = mnemonicWallet.address;
       }
       else {

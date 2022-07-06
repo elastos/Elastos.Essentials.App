@@ -21,10 +21,15 @@
  */
 import BigNumber from 'bignumber.js';
 import { Network, validate } from 'bitcoin-address-validation';
+
 import moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { CurrencyService } from '../services/currency.service';
+// import { langFr as fr } from "@ethersproject/wordlists/lib/lang-fr";
+// import { langIt as it } from "@ethersproject/wordlists/lib/lang-it";
+// import { langZhCn as zh_cn } from "@ethersproject/wordlists/lib/lang-zh";
+import { wordlists } from 'ethers';
 
 export class WalletUtil {
   static isInvalidWalletName(text): boolean {
@@ -105,5 +110,46 @@ export class WalletUtil {
   public static async isEVMAddress(address: string): Promise<boolean> {
     const isAddress = (await import('web3-utils')).isAddress;
     return isAddress(address);
+  }
+
+  public static async getMnemonicWordlist(mnemonic: string) {
+    let wordlistKey = ['en', 'zh_cn', 'fr', 'it']
+
+      // default: wordlists['en']
+      // wordlists['zh_cn'] = zh_cn;
+      // wordlists['fr'] = fr;
+      // wordlists['it'] = it;
+
+      // Avoid multiple consecutive spaces in the string
+      let mnemonicArray = mnemonic.split(/[\u3000\s]+/);
+      for (let index = 0; index < wordlistKey.length; index++) {
+        let key = wordlistKey[index];
+        if (!wordlists[key]) {
+          switch (key) {
+            case 'zh_cn':
+              const zh_cn = (await import("@ethersproject/wordlists/lib/lang-zh")).langZhCn;
+              wordlists['zh_cn'] = zh_cn;
+            break;
+            case 'fr':
+              const fr = (await import("@ethersproject/wordlists/lib/lang-fr")).langFr;
+              wordlists['fr'] = fr;
+            break;
+            case 'it':
+              const it = (await import("@ethersproject/wordlists/lib/lang-it")).langIt;
+              wordlists['it'] = it;
+            break;
+          }
+        }
+
+        let i = 0;
+        for (i = 0; i < mnemonicArray.length; i++) {
+          let index = wordlists[key].getWordIndex(mnemonicArray[i])
+          if (index == undefined || index < 0) break;
+        }
+        if (i == mnemonicArray.length) {
+          Logger.log('wallet', 'getMnemonicWordlist find wordlist', key)
+          return wordlists[key];
+        }
+      }
   }
 }
