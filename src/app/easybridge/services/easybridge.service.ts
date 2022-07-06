@@ -403,6 +403,18 @@ export class EasyBridgeService {
     return null;
   }
 
+  public getFees(sourceToken: BridgeableToken, destinationToken: BridgeableToken, amount: number): number {
+    let context = this.computeBridgeContext(sourceToken, destinationToken);
+    let feesPercent = 0;
+
+    if (sourceToken.fee !== undefined)
+      feesPercent = sourceToken.fee;
+    else if (context.bridgeParams.fee != undefined)
+      feesPercent = context.bridgeParams.fee;
+
+    return feesPercent;
+  }
+
   /**
   * Returns the minimum number of tokens that have to be bridged for the tx to not be rejected,
   * in human readable amount
@@ -476,7 +488,7 @@ export class EasyBridgeService {
         const dataSuccessGet = await responseGet.json();
 
         if (dataSuccessGet.has_use_faucet === false) {
-          Logger.log("easybridge", "Requesting to get faucet tokens 23", dataSuccessGet);
+          Logger.log("easybridge", "Requesting to get faucet tokens", dataSuccessGet);
 
           const response = await fetch(`${BRIDGE_FAUCET_API}/faucet`, {
             method: 'POST',
@@ -493,6 +505,11 @@ export class EasyBridgeService {
 
           if (response.ok) {
             await response.json();
+
+            Logger.log("easybridge", "Faucet requested, waiting for block confirmation");
+            await sleep(20000); // Wait to make sure the ELA faucet has arrived before trying to use it for swaps
+            // TODO: Better to poll ELA balance every second or so instead of waiting 20 long seconds. Could be faster
+
             return { requested: true, wasAlreadyUsed: false };
           } else {
             await response.json();

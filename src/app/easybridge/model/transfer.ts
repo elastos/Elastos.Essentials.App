@@ -5,6 +5,7 @@ import { sleep } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
+import { GlobalTranslationService } from "src/app/services/global.translation.service";
 import { Trade } from "src/app/thirdparty/custom-uniswap-v2-sdk/src";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { EVMNetworkWallet } from "src/app/wallet/model/networks/evms/networkwallets/evm.networkwallet";
@@ -55,7 +56,7 @@ type BridgeStep = {
 
   // Computed
   bridgeFees: number; // Bridge fees in percentage of the transaction
-  bridgeFeesAmount: BigNumber; // Bridge fees in source token amount, human readable format
+  bridgeFeesAmount: number; // Bridge fees in source token amount, human readable format
 }
 
 type FaucetStep = {
@@ -271,7 +272,7 @@ export class Transfer implements SerializedTransfer {
         sourceToken: this.sourceToken, // Global transfer source token is the bridge source token
         destinationToken: bridgeDestinationToken, // token received after bridge. Could be the final destination token or something intermediate
         bridgeFees,
-        bridgeFeesAmount,
+        bridgeFeesAmount: bridgeFeesAmount.toNumber(), // NOTE: Loss of precision here but ok for display and for our tokens list for now
         minTx: (await EasyBridgeService.instance.getMinTx(this.sourceToken, bridgeDestinationToken)).toNumber()
       };
     }
@@ -295,8 +296,8 @@ export class Transfer implements SerializedTransfer {
         Logger.log("easybridge", "Using exact received bridge amount to compute swap", swapInputAmount.toString(10));
       }
       else {
-        swapInputAmount = new BigNumber(this.amount);
-        Logger.log("easybridge", "Using global transfer input amount to compute swap", swapInputAmount.toString(10));
+        swapInputAmount = new BigNumber(this.amount).minus(this.bridgeStep.bridgeFeesAmount);
+        Logger.log("easybridge", "Using global transfer input amount (minus bridge fees) to compute swap", swapInputAmount.toString(10));
       }
 
       let trade = await UniswapService.instance.computeSwap(swapNetwork, this.bridgeStep.destinationToken, swapInputAmount, this.destinationToken);
@@ -316,13 +317,13 @@ export class Transfer implements SerializedTransfer {
 
         if (tradeImpactDecimal > MAX_PRICE_IMPACT_PERCENT) {
           this.canExecute = false;
-          this.cannotExecuteReason = "Swap cannot be executed, slippage is too high. Possibly not enough liquidity on the DEX.";
+          this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('easybridge.error-swap-slippage-too-high');
         }
       }
       else {
         // No available trade
         this.canExecute = false;
-        this.cannotExecuteReason = "Failed to find a good swap trade. Possibly not enough liquidity on the DEX.";
+        this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('easybridge.error-swap-no-trade');
       }
     }
 
@@ -352,10 +353,10 @@ export class Transfer implements SerializedTransfer {
   }
 
   private computeBridgeFees(sourceToken: BridgeableToken, destinationToken: BridgeableToken, amount: number): { feePercent: number, feeAmount: BigNumber } {
-    let feePercent = sourceToken.fee || 0;
+    let feePercent = EasyBridgeService.instance.getFees(sourceToken, destinationToken, amount);
     return {
       feePercent: feePercent,
-      feeAmount: new BigNumber(amount).multipliedBy(feePercent)
+      feeAmount: new BigNumber(amount).multipliedBy(feePercent).dividedBy(100)
     };
   }
 
@@ -460,7 +461,7 @@ export class Transfer implements SerializedTransfer {
     }
     else {
       // Timeout while checking, maybe the bridge takes too long or is stuck.
-      this.emitStatus("Bridging tokens between chains seems to take more time than expected. Please come back later to check again and continue.");
+      this.emitStatus(GlobalTranslationService.instance.translateInstant('easybridge.bridging-takes-too-long'));
 
       return false;
     }
@@ -504,7 +505,7 @@ export class Transfer implements SerializedTransfer {
     if (!txId) {
       Logger.log("easybridge", "Swap failed");
 
-      this.emitStatus("Swap failed to execute, this could be a network or blockchain error, please try again.");
+      this.emitStatus(GlobalTranslationService.instance.translateInstant('easybridge.error-swap-failed'));
 
       return false;
     }
@@ -597,28 +598,28 @@ export class Transfer implements SerializedTransfer {
   public getTransferProgressMessage(): string {
     switch (this.currentStep) {
       case TransferStep.NEW:
-        return "Not started";
+        return GlobalTranslationService.instance.translateInstant('easybridge.step-not-started');
       case TransferStep.BRIDGE_TX_PUBLISHING:
-        return "Requesting to cross chains";
+        return GlobalTranslationService.instance.translateInstant('easybridge.step-bridge-publishing');
       case TransferStep.BRIDGE_TX_PUBLISHED:
-        return "Awaiting cross chain result. This can take a few seconds to several minutes";
+        return GlobalTranslationService.instance.translateInstant('easybridge.step-bridge-published');
       case TransferStep.BRIDGE_TX_REJECTED:
-        return "Cross chain failed";
+        return GlobalTranslationService.instance.translateInstant('easybridge.step-bridge-rejected');
       case TransferStep.BRIDGE_TOKEN_RECEIVED:
-        return "Tokens arrived on ESC. Calling faucet to get a few ELA for gas.";
+        return GlobalTranslationService.instance.translateInstant('easybridge.step-bridge-received');
       case TransferStep.FAUCET_API_CALLED:
-        let msg = "Faucet was called to receive a few native coins for gas.";
+        let msg = GlobalTranslationService.instance.translateInstant('easybridge.step-faucet-called');
         if (this.swapStep)
-          msg += " Now swapping tokens.";
+          msg += " " + GlobalTranslationService.instance.translateInstant('easybridge.step-faucet-swap');
         return msg;
       case TransferStep.SWAP_TX_PUBLISHED:
-        return "Exchanging tokens on ESC";
+        return GlobalTranslationService.instance.translateInstant('easybridge.step-swap-published');
       case TransferStep.SWAP_TX_REJECTED:
-        return "Tokens exchange failed on ESC";
+        return GlobalTranslationService.instance.translateInstant('easybridge.step-swap-failed');
       case TransferStep.SWAP_TOKEN_RECEIVED:
-        return "Tokens exchange completed on ESC";
+        return GlobalTranslationService.instance.translateInstant('easybridge.step-swap-received');
       case TransferStep.COMPLETED:
-        return "Completed";
+        return GlobalTranslationService.instance.translateInstant('easybridge.step-completed');
       default:
         throw new Error(`getTransferProgressMessage(): Unhandled step ${this.currentStep}`);
     }
@@ -641,7 +642,7 @@ export class Transfer implements SerializedTransfer {
       return true;
     }
     else {
-      this.emitStatus("No authorization, cancelled.");
+      this.emitStatus(GlobalTranslationService.instance.translateInstant('easybridge.error-no-authorization'));
       return false;
     }
   }

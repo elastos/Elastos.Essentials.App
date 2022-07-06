@@ -4,24 +4,23 @@
   <!-- Initializing / Reloading and recomputing existing transfer -->
   <ion-grid *ngIf="initializing" class="container ion-padding" [class.dark-container]="theme.darkMode">
     <ion-spinner></ion-spinner>
-    Restoring on going transfer
+    {{ 'easybridge.restoring-transfer' | translate }}
   </ion-grid>
 
   <!-- Intro -->
   <ion-grid *ngIf="!initializing && showingIntro" class="container ion-padding" [class.dark-container]="theme.darkMode">
     <p>
-      Easily start using dApps on Elastos today by bridging your assets from other chains.
+      {{ 'easybridge.intro-1' | translate }}
     </p>
     <p>
-      Also, for a quick start on ESC, you will receive 0.01 ELA from a faucet service, as initial gas.
+      {{ 'easybridge.intro-2' | translate }}
     </p>
 
-    <ion-button (click)="showingIntro = false">Continue</ion-button>
+    <ion-button (click)="showingIntro = false">{{ 'common.continue' | translate }}</ion-button>
 
     <ion-row>
       <ion-col size="3"><img src="assets/browser/dapps/glidefinance.png" /></ion-col>
-      <ion-col size="9">For more advanced operations on ESC and better customization, please touch here to visit Glide
-        Finance.</ion-col>
+      <ion-col size="9">{{ 'easybridge.glide-intro' | translate }}</ion-col>
     </ion-row>
   </ion-grid>
 
@@ -29,7 +28,8 @@
   <ion-grid *ngIf="!initializing && !showingIntro" class="container ion-padding"
     [class.dark-container]="theme.darkMode">
     <!-- Source tokens -->
-    <div class="heading">Pick a source token</div>
+    <div class="heading">{{ 'easybridge.pick-source-token' | translate }}</div>
+    <div class="wallet-name">{{ 'easybridge.active-wallet' | translate }}: <b>{{ getWalletName() }}</b></div>
     <div class="source-tokens">
       <ion-row *ngFor="let sourceToken of sourceTokens" class="source-token"
         [class.selected]="sourceToken == selectedSourceToken"
@@ -41,20 +41,19 @@
         <ion-col size="9">
           <div class="amount-symbol">
             {{ getDisplayableAmount(sourceToken.balance) }}
-            <span class="token-symbol">{{ sourceToken.token.symbol
-              }}</span>
+            <span class="token-symbol">{{ sourceToken.token.symbol }}</span>
           </div>
           <div class="token-name">
             {{ sourceToken.token.name }}
           </div>
         </ion-col>
       </ion-row>
-      <ion-spinner *ngIf="fetchingTokens">Searching where you have tokens</ion-spinner>
+      <ion-spinner *ngIf="fetchingTokens">{{ 'easybridge.searching-tokens' | translate }}</ion-spinner>
     </div>
 
     <!-- Destination tokens -->
     <div *ngIf="selectedSourceToken">
-      <div class="heading">Pick a received Elastos token</div>
+      <div class="heading">{{ 'easybridge.pick-destination-token' | translate }}</div>
       <div class="destination-tokens">
         <ion-row *ngFor="let destinationToken of destinationTokens" class="destination-token"
           [class.selected]="destinationToken == selectedDestinationToken"
@@ -77,7 +76,7 @@
 
     <!-- Transfer amount -->
     <div *ngIf="selectedSourceToken && selectedDestinationToken">
-      <div class="heading">Transfer amount</div>
+      <div class="heading">{{ 'easybridge.transfer-amount' | translate }}</div>
       <ion-input class="transfer-input" type="number" name="transferAmount" ngDefaultControl
         placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="transferAmount"
         [disabled]="!this.canEditFields || transferIsBeingComputed" (ionBlur)="transferAmountChanged()"> <span
@@ -85,35 +84,36 @@
           selectedSourceToken.token.symbol }}</span></ion-input>
 
       <div *ngIf="userAmountBelowMinAmount()">
-        Below minimum amount of {{ activeTransfer.bridgeStep.minTx }} {{ selectedSourceToken.token.symbol }}.
+        {{ 'easybridge.below-min-bridge-amount' | translate : {minTx: activeTransfer.bridgeStep.minTx, symbol:
+        selectedSourceToken.token.symbol } }}
       </div>
     </div>
 
     <!-- Computing -->
     <div *ngIf="transferIsBeingComputed">
       <ion-spinner></ion-spinner>
-      Computing transfer info, please wait
+      {{ 'easybridge.computing-transfer-info' | translate }}
     </div>
 
     <!-- Transfer info -->
     <div *ngIf="selectedDestinationToken && activeTransfer && canTransfer()">
-      <div class="heading">Transfer summary</div>
+      <div class="heading">{{ 'easybridge.transfer-summary' | translate }}</div>
       <ion-row>
         <ion-col size="6">
-          Bridge fees
+          {{ 'easybridge.bridge-fees' | translate }}
         </ion-col>
         <ion-col size="6" *ngIf="hasBridgeFees()">
           {{ getDisplayableBridgeFees() }}% ({{ getDisplayableBridgeFeesAmount() }} {{
           selectedSourceToken.token.symbol }})
         </ion-col>
         <ion-col size="6" *ngIf="!hasBridgeFees()">
-          Free
+          {{ 'easybridge.free' | translate }}
         </ion-col>
       </ion-row>
 
       <ion-row *ngIf="activeTransfer.swapStep">
         <ion-col size="6">
-          Swap price impact
+          {{ 'easybridge.swap-price-impact' | translate }}
         </ion-col>
         <ion-col size="6">
           {{ getDisplayableSwapPriceImpact() }} %
@@ -123,7 +123,7 @@
       <!-- Swap info, only if a swap is required -->
       <ion-row *ngIf="activeTransfer.swapStep">
         <ion-col size="6">
-          Swap fees
+          {{ 'easybridge.swap-fees' | translate }}
         </ion-col>
         <ion-col size="6">
           {{ getDisplayableSwapFees() }}%
@@ -132,7 +132,7 @@
 
       <ion-row>
         <ion-col size="6">
-          Received amount
+          {{ 'easybridge.received-amount' | translate }}
         </ion-col>
         <ion-col size="6">
           <b>~ {{ getDisplayableAmount(activeTransfer.estimatedReceivedAmount) }}
@@ -143,7 +143,7 @@
 
     <!-- Steps summary -->
     <div *ngIf="selectedDestinationToken && activeTransfer">
-      <div class="heading">Transfer progress</div>
+      <div class="heading">{{ 'easybridge.transfer-progress' | translate }}</div>
       {{ getTransferProgressIndex() + 1 }} / {{ getTotalNumberOfSteps() }} - {{ getTransferProgressMessage() }}
     </div>
 
@@ -155,9 +155,10 @@
     <!-- Transfer action -->
     <ion-button (click)="transfer()" [disabled]="!canTransfer()" *ngIf="!isCompleted()">{{ getTransferButtonText() }}
     </ion-button>
-    <ion-button (click)="reset()" [disabled]="!canReset()" *ngIf="!isCompleted()">Reset</ion-button>
+    <ion-button (click)="reset()" [disabled]="!canReset()" *ngIf="!isCompleted()">{{ 'easybridge.reset' | translate }}
+    </ion-button>
 
-    <ion-button (click)="done()" *ngIf="isCompleted()">Done!</ion-button>
+    <ion-button (click)="done()" *ngIf="isCompleted()">{{ 'easybridge.done' | translate }}</ion-button>
   </ion-grid>
 
 </ion-content>

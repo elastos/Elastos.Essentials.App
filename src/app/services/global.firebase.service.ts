@@ -36,6 +36,8 @@ export class GlobalFirebaseService {
             this.firebase.onMessageReceived().subscribe(msg => {
                 Logger.log("firebase", "Received message", msg);
             });
+
+            void this.firebase.setAnalyticsCollectionEnabled(true);
         });
         return;
     }

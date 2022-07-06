@@ -77,7 +77,7 @@ export class HomePage {
     private popupService: GlobalPopupService,
     public globalNativeService: GlobalNativeService,
     private erc20CoinService: ERC20CoinService,
-    private evmService: EVMService
+    private evmService: EVMService,
   ) { }
 
   ionViewWillEnter() {
@@ -141,12 +141,12 @@ export class HomePage {
     }
     else {
       // Get the active master wallet ID (the currently selected one in essentials)
-      console.log("Source master wallet ID:", masterWalletId);
+      Logger.log("easybridge", "Source master wallet ID:", masterWalletId);
       let sourceMasterWallet = this.walletService.getMasterWallet(masterWalletId);
 
       // Get a network wallet for the target source chain - don't launch its background services
       let sourceNetworkWallet = await network.createNetworkWallet(sourceMasterWallet, false);
-      console.log("Source network wallet:", sourceNetworkWallet);
+      Logger.log("easybridge", "Source network wallet:", sourceNetworkWallet);
 
       this.mainCoinSubWallet = await sourceNetworkWallet.getMainEvmSubWallet();
     }
@@ -197,6 +197,13 @@ export class HomePage {
       Logger.warn("easybridge", "Refresh source token balance error:", e);
       // Silent catch, not blocking...
     }
+  }
+
+  public getWalletName(): string {
+    if (!this.mainCoinSubWallet)
+      return null;
+
+    return this.mainCoinSubWallet.masterWallet.name;
   }
 
   public getDisplayableAmount(readableBalance: BigNumber): string {
@@ -332,9 +339,9 @@ export class HomePage {
 
   public getTransferButtonText(): string {
     if (!this.activeTransfer || this.activeTransfer.currentStep === TransferStep.NEW)
-      return "Start transfer";
+      return this.translate.instant("easybridge.start-transfer");
     else
-      return "Resume transfer";
+      return this.translate.instant("easybridge.resume-transfer");
   }
 
   public canTransfer(): boolean {
@@ -361,7 +368,10 @@ export class HomePage {
    */
   public async transfer() {
     if (!this.activeTransfer.hasUserAgreement()) {
-      let agreed = await this.popupService.showConfirmationPopup("Transfer agreement", "By continuing, you agree to let Elastos Essentials use third party exchanges and APIs, and give spending approval of tokens to the relevant bridge/swap contracts.");
+      let agreed = await this.popupService.showConfirmationPopup(
+        this.translate.instant("easybridge.transfer-agreement-title"),
+        this.translate.instant("easybridge.transfer-agreement-content")
+      );
       if (agreed) {
         this.activeTransfer.approveUserAgreement();
       }
@@ -374,9 +384,9 @@ export class HomePage {
     this.transferStarted = true;
     this.canEditFields = false;
 
-    void this.firebase.logEvent("easybridge-transfer-start", {
-      from: this.activeTransfer.sourceToken,
-      to: this.activeTransfer.destinationToken,
+    void this.firebase.logEvent("easybridge_transfer_start", {
+      fromtoken: this.activeTransfer.sourceToken.symbol,
+      totoken: this.activeTransfer.destinationToken.symbol,
       amount: this.activeTransfer.amount
     });
 
@@ -437,7 +447,7 @@ export class HomePage {
 
   public getTransferProgressMessage(): string {
     if (!this.activeTransfer)
-      return "Not started";
+      return this.translate.instant("easybridge.not-started");
 
     return this.activeTransfer.getTransferProgressMessage();
   }
