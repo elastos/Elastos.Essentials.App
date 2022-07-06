@@ -289,7 +289,8 @@ export class WalletService {
 
     private async terminateActiveNetworkWallets(): Promise<void> {
         for (let networkWallet of this.getNetworkWalletsList()) {
-            await networkWallet.stopBackgroundUpdates();
+            if (networkWallet)
+                await networkWallet.stopBackgroundUpdates();
         }
     }
 
@@ -660,10 +661,10 @@ export class WalletService {
         if (!networkWallet) {
             Logger.warn("wallet", "Failed to create network wallet", masterWallet, activeNetwork);
         }
-        else {
-            // Notify that this network wallet is the active one
-            await this.setActiveNetworkWallet(networkWallet);
-        }
+
+        // Notify that this network wallet is the active one
+        // NOTE: even if the network wallet creation fails we still make it active to let wallet home display something
+        await this.setActiveNetworkWallet(networkWallet, masterWallet);
     }
 
     /**

@@ -45,7 +45,11 @@
                     <div class="icons">
                         <!-- paste -->
                         <div class="icon" (click)="pasteCosigner($event, i)">
-                            <ion-icon mode="ios" name="clipboard-outline"></ion-icon>
+                            <ion-icon mode="ios" name="clipboard"></ion-icon>
+                        </div>
+                        <!-- delete -->
+                        <div class="icon" (click)="deleteCosigner($event, i)">
+                            <ion-icon mode="ios" name="trash"></ion-icon>
                         </div>
                         <!-- scan -->
                         <!-- <div class="icon" (click)="pasteCosigner($event, i)">

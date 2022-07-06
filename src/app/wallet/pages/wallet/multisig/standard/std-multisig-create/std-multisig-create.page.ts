@@ -89,23 +89,23 @@ export class StandardMultiSigCreatePage implements OnInit {
 
         let walletId = this.walletService.createMasterWalletID();
         try {
-          await this.authService.createAndSaveWalletPassword(walletId);
-          await this.walletService.newMultiSigStandardWallet(
-              walletId,
-              this.wallet.name,
-              this.signingWallet.id,
-              this.requiredSigners,
-              this.getUsableCosigners()
-          );
-          this.native.setRootRouter("/wallet/wallet-home");
+            await this.authService.createAndSaveWalletPassword(walletId);
+            await this.walletService.newMultiSigStandardWallet(
+                walletId,
+                this.wallet.name,
+                this.signingWallet.id,
+                this.requiredSigners,
+                this.getUsableCosigners()
+            );
+            this.native.setRootRouter("/wallet/wallet-home");
 
-          this.events.publish("masterwalletcount:changed", {
-              action: 'add',
-              walletId: walletId
-          });
+            this.events.publish("masterwalletcount:changed", {
+                action: 'add',
+                walletId: walletId
+            });
         } catch (e) {
-          Logger.error('wallet', 'MultiSigStandardWallet create error:', e);
-          await this.localStorage.deleteMasterWallet(walletId);
+            Logger.error('wallet', 'MultiSigStandardWallet create error:', e);
+            await this.localStorage.deleteMasterWallet(walletId);
         }
     }
 
@@ -116,10 +116,17 @@ export class StandardMultiSigCreatePage implements OnInit {
         if (!this.signingWallet)
             return false; // Need to have picked a signing wallet - no watch mode for now
 
+        if (parseInt(<any>this.requiredSigners) <= 0)
+            return false; // Need at least one signer, and need to bit a number
+
         if (this.requiredSigners > this.getUsableCosigners().length)
             return false; // Can't have more signers required than total cosigners
 
-        // TODO: no duplicate keys
+        // No invalid xpub
+        for (let cosigner of this.cosigners) {
+            if (!this.cosignerKeyIsValidIsValid(cosigner))
+                return false;
+        }
 
         return true;
     }
@@ -145,7 +152,7 @@ export class StandardMultiSigCreatePage implements OnInit {
      * Remove empty cosigners from the list to get the real list of usable cosigners
      */
     public getUsableCosigners(): string[] {
-        return this.cosigners.filter(c => c !== "");
+        return this.cosigners.filter(c => this.cosignerKeyIsValidIsValid(c));
     }
 
     /**
@@ -153,6 +160,10 @@ export class StandardMultiSigCreatePage implements OnInit {
      */
     public addCosignerEntry() {
         this.cosigners.push("");
+    }
+
+    public deleteCosigner(event, i: number) {
+        this.cosigners.splice(i, 1);
     }
 
     /**
@@ -195,14 +206,26 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     public onCosignerBlur(i: number) {
-      this.cosigners[i] = this.cosigners[i].trim();
+        this.cosigners[i] = this.cosigners[i].trim();
 
-      try {
-        if (this.cosigners[i])
-          bs58check.decode(this.cosigners[i]);
-      } catch (e) {
-        this.native.toast_trans('wallet.multi-sig-error-invalid-xpub');
-      }
+        if (!this.cosignerKeyIsValidIsValid(this.cosigners[i])) {
+            this.native.toast_trans('wallet.multi-sig-error-invalid-xpub');
+
+            // Don't let the user keep a wrong xpub inputed
+            this.cosigners[i] = '';
+        }
+    }
+
+    private cosignerKeyIsValidIsValid(key: string): boolean {
+        if (!key)
+            return false;
+
+        try {
+            bs58check.decode(key);
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 
     /**
