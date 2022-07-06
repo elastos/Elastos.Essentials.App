@@ -29,6 +29,8 @@ import { CurrencyService } from '../services/currency.service';
 // import { langFr as fr } from "@ethersproject/wordlists/lib/lang-fr";
 // import { langIt as it } from "@ethersproject/wordlists/lib/lang-it";
 // import { langZhCn as zh_cn } from "@ethersproject/wordlists/lib/lang-zh";
+// import { Address } from '@elastosfoundation/wallet-js-sdk/typings/walletcore/Address';
+import * as bs58check from "bs58check";
 import { wordlists } from 'ethers';
 
 export class WalletUtil {
@@ -98,8 +100,17 @@ export class WalletUtil {
   }
 
   public static isELAAddress(address: string) {
-    Logger.warn('wallet', 'The implementation is missing. Later we will replace with elastos JS wallet sdk api!');
-    return true;
+    Logger.warn('wallet', 'Later we will replace with elastos JS wallet sdk api!');
+    // return Address.newFromAddressString(address).valid()
+    try {
+      if (address) {
+        bs58check.decode(address.trim());
+        // TODO: Check the programHash
+        return true;
+      }
+    } catch (e) {
+    }
+    return false;
   }
 
   public static isBTCAddress(address: string) {
