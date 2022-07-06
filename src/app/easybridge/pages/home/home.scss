@@ -1,0 +1,81 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+
+    .heading {
+        font-size: 20px;
+        margin: 20px 0;
+    }
+
+    .wallet-name {
+        margin-bottom: 20px;
+    }
+
+    .source-tokens, .destination-tokens {
+        .source-token, .destination-token {
+            background: rgba(255,255,255, 10%);
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+
+            &.selected {
+                background: rgba(255,255,255, 20%);
+            }
+
+            &.gone {
+                display: none;
+            }
+
+            .network-logo {
+                height: 30px;
+            }
+
+            .amount-symbol {
+                .token-symbol {
+                    font-weight: bold;
+                }
+            }
+
+            .token-name {
+                opacity: 50%;
+            }
+        }
+    }
+
+    .transfer-input {
+        //background-color: #ffffff;
+        font-size: 14px;
+        font-weight: 400;
+        text-align: left;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        --padding-start: 20px;
+        --padding-top: 20px;
+        --padding-bottom: 20px;
+        font-size: 18px;
+    }
+
+    .last-error {
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+
+        img {
+            margin-right: 10px;
+            height: 20px;
+        }
+    }
+}
+
+.dark-container {
+    .transfer-input {
+        background-color: rgba(255,255,255, 10%);
+        color: white;
+    }
+}
+
+ion-spinner {
+    align-self: center;
+    margin: 10px;
+}

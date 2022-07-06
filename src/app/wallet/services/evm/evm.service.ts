@@ -10,6 +10,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import type Web3 from 'web3';
 import type { TransactionReceipt } from 'web3-core';
+import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import type { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
 import type { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
@@ -65,9 +66,10 @@ class ETHTransactionManager {
    *
    * @returns The published transaction ID, if any.
    */
-  public async publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, signedTransaction: string, transfer: Transfer): Promise<string> {
+  public async publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, signedTransaction: string, transfer: Transfer, visualFeedback = true): Promise<string> {
     try {
-      await this.displayPublicationLoader();
+      if (visualFeedback)
+        await this.displayPublicationLoader();
 
       let result: RawTransactionPublishResult;
       try {
@@ -312,8 +314,8 @@ export class EVMService {
     this.manager.resetStatus();
   }
 
-  public publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, transaction: string, transfer: Transfer): Promise<string> {
-    return this.manager.publishTransaction(subwallet, transaction, transfer);
+  public publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, transaction: string, transfer: Transfer, visualFeedback = true): Promise<string> {
+    return this.manager.publishTransaction(subwallet, transaction, transfer, visualFeedback);
   }
 
   /**
@@ -341,6 +343,15 @@ export class EVMService {
   }
 
   /**
+   * Current block number on given network
+   */
+  public async getBlockNumber(network: AnyNetwork): Promise<number> {
+    let web3 = await this.getWeb3(network);
+    let blockNumber = await web3.eth.getBlockNumber();
+    return blockNumber;
+  }
+
+  /**
    * Get the current nonce for an account address, on the main node in use for a given network.
    */
   public async getNonce(network: AnyNetwork, accountAddress: string): Promise<number> {
@@ -353,6 +364,23 @@ export class EVMService {
     }
 
     return -1;
+  }
+
+  public async methodGasAndNonce(webMethod: any, network: EVMNetwork, from: string, value?: string): Promise<{ gasLimit: string, nonce: number }> {
+    // Estimate gas cost - don't catch, we need a real estimation from chain
+    Logger.log("wallet", "Estimating gas for method", webMethod, network, from, value);
+    let gasTemp = await webMethod.estimateGas({
+      from: from,
+      value: value
+    });
+
+    // '* 1.5': Make sure the gaslimit is big enough - add a bit of margin for fluctuating gas price
+    let gasLimit = Math.ceil(gasTemp * 1.5).toString();
+
+    Logger.log("wallet", "Getting nonce");
+    let nonce = await this.getNonce(network, from);
+
+    return { gasLimit, nonce };
   }
 
   public async getTransactionReceipt(network: AnyNetwork, txHash: string): Promise<TransactionReceipt> {

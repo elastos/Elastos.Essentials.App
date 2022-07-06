@@ -20,7 +20,8 @@ class TranslationsLoader {
         "redpackets",
         "security",
         "voting",
-        "migrator"
+        "migrator",
+        "easybridge"
     ];
     static languagesToLoad = [
         "en",

@@ -234,6 +234,20 @@ export class ETHTransactionInfoParser {
         }
         break;
 
+      case '0x791ac947': // swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256)
+        txInfo.type = ETHOperationType.SWAP;
+        try {
+          let params = this.extractTransactionParamValues(["function swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
+          let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
+          let fromTokenAddress = tokensPath[0]; // First entry of tokensPath is the source ERC20 token.
+          let fromCoinInfo = await this.getERC20TokenInfoOrThrow(fromTokenAddress);
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: this.network.getMainTokenSymbol() } };
+        }
+        catch (e) {
+          txInfo.operation = { description: "wallet.ext-tx-info-type-swap-tokens" };
+        }
+        break;
+
       case '0x7ff36ab5': // swapExactETHForTokens(uint256,address[],address,uint256)
         txInfo.type = ETHOperationType.SWAP;
         try {

@@ -446,8 +446,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return Promise.resolve([]);
   }
 
-  public publishTransaction(signedTransaction: string): Promise<string> {
-    return EVMService.instance.publishTransaction(this, signedTransaction, null);
+  public publishTransaction(signedTransaction: string, visualFeedback = true): Promise<string> {
+    return EVMService.instance.publishTransaction(this, signedTransaction, null, visualFeedback);
   }
 
   /**

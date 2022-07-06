@@ -8,7 +8,7 @@
  */
 import type { Contract } from "@ethersproject/contracts";
 import type { JsonRpcProvider } from "@ethersproject/providers";
-import type { CurrencyAmount, Token } from "@uniswap/sdk-core";
+import type { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
 import type WalletConnect from "@walletconnect/client";
 import type { ec } from "elliptic";
 import type PhishingDetector from "eth-phishing-detect";
@@ -38,13 +38,14 @@ export const lazyEthersJsonRPCProviderImport = async (): Promise<typeof JsonRpcP
   return importsCache["@ethersproject/providers"].JsonRpcProvider;
 }
 
-export const lazyUniswapSDKCoreImport = async (): Promise<{ CurrencyAmount: typeof CurrencyAmount, Token: typeof Token }> => {
+export const lazyUniswapSDKCoreImport = async (): Promise<{ CurrencyAmount: typeof CurrencyAmount, Token: typeof Token, Percent: typeof Percent }> => {
   if (!importsCache["@uniswap/sdk-core"])
     importsCache["@uniswap/sdk-core"] = await import("@uniswap/sdk-core");
 
   return {
     CurrencyAmount: importsCache["@uniswap/sdk-core"].CurrencyAmount,
-    Token: importsCache["@uniswap/sdk-core"].Token
+    Token: importsCache["@uniswap/sdk-core"].Token,
+    Percent: importsCache["@uniswap/sdk-core"].Percent
   };
 }
 

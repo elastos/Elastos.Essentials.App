@@ -1,16 +1,13 @@
 import {
-  computePriceImpact,
-  Token,
-  Currency,
+  computePriceImpact, Currency,
   CurrencyAmount,
   Fraction,
   Percent,
   Price,
-  sortedInsert,
-  TradeType
+  sortedInsert, Token, TradeType
 } from '@uniswap/sdk-core'
-import { ONE, ZERO } from '../constants'
 import invariant from 'tiny-invariant'
+import { ONE, ZERO } from '../constants'
 
 import { Pair } from './pair'
 import { Route } from './route'

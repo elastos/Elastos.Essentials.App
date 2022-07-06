@@ -90,7 +90,7 @@ export type SPVNetworkConfig = { [networkName: string]: JSONObject };
 export class WalletService {
     public static instance: WalletService = null;
 
-    public activeMasterWalletId = null;
+    public activeMasterWalletId: string = null;
 
     public masterWallets: {
         [index: string]: MasterWallet

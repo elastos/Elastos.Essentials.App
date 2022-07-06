@@ -7,6 +7,22 @@ import { ERC20Coin } from "../../coin";
 export abstract class UniswapCurrencyProvider {
   public abstract getFactoryAddress(): string;
 
+  /**
+   * Address of the router contract for this uniswap v2 DEX.
+   * None defined by default. Used only for swap operations (easy elastos bridge on ESC) for now
+   */
+  public getRouterAddress(): string {
+    return null;
+  }
+
+  /**
+   * Returns swap fees (percentage, eg: 0.25 for 0.25%) used by this DEX while doing token swaps.
+   * Used only for swap operations (easy elastos bridge on ESC) for now.
+   */
+  public getSwapFees(): number {
+    return 0;
+  }
+
   // NOTE: The init code hash can be find on the block explorer, on the factory contract, INIT_CODE_PAIR_HASH
   public abstract getFactoryInitCodeHash(): string;
 
@@ -21,4 +37,12 @@ export abstract class UniswapCurrencyProvider {
    * pair to compute trades.
    */
   public abstract getWrappedNativeCoin(): ERC20Coin;
+
+  /**
+   * Returns a list of coins that may be used to build swap pairs while computing trade routes.
+   * - The wrapped coin doesn't need to be returned.
+   */
+  public getUsualSwapCoinsForPairs(): ERC20Coin[] {
+    return [];
+  }
 }

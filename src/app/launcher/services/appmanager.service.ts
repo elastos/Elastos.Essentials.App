@@ -177,6 +177,15 @@ export class AppmanagerService {
                 shouldBeDisplayed: () => true,
                 apps: [
                     {
+                        id: 'easybridge',
+                        routerContext: App.EASY_BRIDGE,
+                        name: this.translate.instant('launcher.app-easybridge'),
+                        description: this.translate.instant('launcher.app-easybridge-description'),
+                        icon: '/assets/launcher/apps/app-icons/easybridge.png',
+                        hasWidget: false,
+                        routerPath: '/easybridge/home'
+                    },
+                    {
                         id: 'redpackets',
                         routerContext: App.RED_PACKETS,
                         name: this.translate.instant('launcher.app-redpackets'),

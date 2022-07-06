@@ -371,8 +371,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    * This method returns when a transaction ID is obtained, without waiting for confirmation.
    * But some implementations like the EVM one continue to check for confirmations and emit
    * a evm transaction status event later on.
+   * 
+   * @param visualFeedback Show UI progress/feedback or not. Must be true by default
    */
-  protected abstract publishTransaction(signedTransaction: string): Promise<string>;
+  protected abstract publishTransaction(signedTransaction: string, visualFeedback?: boolean): Promise<string>;
 
   /**
    * (Optionally) Internally called by implementations of publishTransaction() to display a generic publication
@@ -397,14 +399,19 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
   /**
    * Signs a RAW transaction using a safe, and initiates the publication flow by calling
    * publishTransaction().
+   * 
+   * By default, the master password is required, even if elready known, as a security step. But this can be
+   * disabled, for example to chain operations (eg: easy bridge feature0, using forcePasswordPrompt = false.
+   * 
+   * The UI feedback (popup) can also be hidden using visualFeedback = false.
    *
    * Optionally navigates home after completion. TODO: MOVE THIS NAVIGATION IN SCREENS
    */
   // TODO: make this "transfer" object disappear...
-  public async signAndSendRawTransaction(rawTransaction: any, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
+  public async signAndSendRawTransaction(rawTransaction: any, transfer: Transfer, navigateHomeAfterCompletion = true, forcePasswordPrompt = true, visualFeedback = true): Promise<RawTransactionPublishResult> {
     // Ask the safe to sign the transaction. This includes potential password prompt or other UI operations
     // depending on the safe requirements.
-    let signedTxResult = await this.networkWallet.safe.signTransaction(this, rawTransaction, transfer);
+    let signedTxResult = await this.networkWallet.safe.signTransaction(this, rawTransaction, transfer, forcePasswordPrompt, visualFeedback);
     if (!signedTxResult.signedTransaction) {
       if (signedTxResult.errorType === SignTransactionErrorType.DELEGATED) {
         Logger.log("wallet", "Transaction signature has been delegated to another flow.");
@@ -423,10 +430,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
       }
     }
 
-    return this.sendSignedTransaction(signedTxResult.signedTransaction, transfer, navigateHomeAfterCompletion);
+    return this.sendSignedTransaction(signedTxResult.signedTransaction, transfer, navigateHomeAfterCompletion, visualFeedback);
   }
 
-  public async sendSignedTransaction(signedTransaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
+  public async sendSignedTransaction(signedTransaction: string, transfer: Transfer, navigateHomeAfterCompletion = true, visualFeedback = true): Promise<RawTransactionPublishResult> {
     try {
       //await Native.instance.showLoading(WalletService.instance.translate.instant('common.please-wait'));
 
@@ -435,7 +442,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
       await this.markGenericOutgoingTransactionStart();
 
       let transactionToPublish = await this.networkWallet.safe.convertSignedTransactionToPublishableTransaction(this, signedTransaction);
-      let txid = await this.publishTransaction(transactionToPublish);
+      let txid = await this.publishTransaction(transactionToPublish, visualFeedback);
 
       await this.markGenericOutgoingTransactionEnd(txid);
 
