@@ -109,7 +109,7 @@ export class HiveBackupCredentialIssueRequestPage {
                 Logger.log('identity', "HiveBackupCredIssueRequest - issuing credential");
 
                 await this.didService.getActiveDid().pluginDid.issueCredential(
-                    this.didService.getActiveDid().getDIDString(),
+                    this.receivedIntent.params.sourceHiveNodeDID,
                     "#hive-backup-credential",
                     ['HiveBackupCredential'],
                     3, // Short expiration, 3 days
