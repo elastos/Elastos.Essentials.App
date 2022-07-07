@@ -141,7 +141,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
                 })
             }
             else {
-                if (this.masterWallet.type === WalletType.LEDGER) {
+                if (this.masterWallet && (this.masterWallet.type === WalletType.LEDGER)) {
                     if (!this.masterWallet.supportsNetwork(this.networkService.activeNetwork.value)) {
                         this.noAddressForLedgerWallet = true;
                     }

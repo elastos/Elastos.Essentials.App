@@ -411,7 +411,7 @@ export class EVMService {
 
   public async isAddress(network: AnyNetwork, address: string): Promise<boolean> {
     const isAddress = (await import("web3-utils")).isAddress;
-    return isAddress(address.toLowerCase());
+    return isAddress(address);
   }
 
   public async isContractAddress(network: AnyNetwork, address: string): Promise<boolean> {

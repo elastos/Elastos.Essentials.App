@@ -120,6 +120,8 @@ export class CoinAddERC20Page implements OnInit {
 
     checkCoinAddress() {
         void this.zone.run(async () => {
+            this.coinAddress = this.coinAddress.toLowerCase()
+
             // Check if this looks like a valid address. If not, give feedback to user.
             if (!(await this.evmService.isAddress(this.networkWallet.network, this.coinAddress))) {
                 void this.popup.ionicAlert("wallet.not-a-valid-address", "wallet.coin-adderc20-not-a-erc20-contract", "common.ok");
