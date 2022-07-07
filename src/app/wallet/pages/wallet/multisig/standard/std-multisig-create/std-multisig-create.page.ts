@@ -56,6 +56,9 @@ export class StandardMultiSigCreatePage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('wallet.multi-sig-new-wallet-title'));
+
+        // Auto select the only available master wallet as signing wallet, if there is only one
+        void this.tryToAutoSelectedSigningWallet();
     }
 
     ionViewDidEnter() {
@@ -65,6 +68,14 @@ export class StandardMultiSigCreatePage implements OnInit {
         this.theme.activeTheme.subscribe((activeTheme) => {
             this.titleBar.setTitleBarTheme(activeTheme);
         });
+    }
+
+    private async tryToAutoSelectedSigningWallet() {
+        let masterWallet = this.walletService.getMasterWalletsList()
+
+        // Auto select the only available wallet
+        if (masterWallet && masterWallet.length === 1)
+            await this.useSigningWallet(masterWallet[0]);
     }
 
     onCreate() {
@@ -159,27 +170,31 @@ export class StandardMultiSigCreatePage implements OnInit {
         });
 
         if (pickedWallet) {
-            this.signingWallet = pickedWallet.masterWallet;
-
-            // Load the elastos mainchain network wallet for this master wallet, to get its xpub and check a few things
-            let elastosMainchainNetwork = this.networkService.getNetworkByKey(ElastosMainChainNetworkBase.networkKey);
-            let sourceNetworkWallet = await elastosMainchainNetwork.createNetworkWallet(this.signingWallet, false);
-            this.signingWalletXPub = await sourceNetworkWallet.getExtendedPublicKey();
-
-            if (!this.signingWalletXPub) {
-                // Happens if user didn't enter the master password to get the wallet xpub
-                this.signingWallet = null;
-                return;
-            }
-
-            // If this xpub was already in use in the cosigners list, simply delete it
-            this.cosigners = this.cosigners.map(c => {
-                if (c.toLowerCase() === this.signingWalletXPub.toLowerCase())
-                    return "";
-                else
-                    return c;
-            });
+            await this.useSigningWallet(pickedWallet.masterWallet);
         }
+    }
+
+    private async useSigningWallet(signingMasterWallet: MasterWallet) {
+        this.signingWallet = signingMasterWallet;
+
+        // Load the elastos mainchain network wallet for this master wallet, to get its xpub and check a few things
+        let elastosMainchainNetwork = this.networkService.getNetworkByKey(ElastosMainChainNetworkBase.networkKey);
+        let sourceNetworkWallet = await elastosMainchainNetwork.createNetworkWallet(this.signingWallet, false);
+        this.signingWalletXPub = await sourceNetworkWallet.getExtendedPublicKey();
+
+        if (!this.signingWalletXPub) {
+            // Happens if user didn't enter the master password to get the wallet xpub
+            this.signingWallet = null;
+            return;
+        }
+
+        // If this xpub was already in use in the cosigners list, simply delete it
+        this.cosigners = this.cosigners.map(c => {
+            if (c.toLowerCase() === this.signingWalletXPub.toLowerCase())
+                return "";
+            else
+                return c;
+        });
     }
 
     /**
@@ -284,6 +299,14 @@ export class StandardMultiSigCreatePage implements OnInit {
         } catch (e) {
             return false;
         }
+    }
+
+    /**
+     * Returns the current total of signers.
+     * This is the number of valid cosigners, plus user's signing wallet if one has been chosen already.
+     */
+    public getTotalSigners(): number {
+        return this.getUsableCosigners().length + (this.signingWallet ? 1 : 0);
     }
 
     /**
