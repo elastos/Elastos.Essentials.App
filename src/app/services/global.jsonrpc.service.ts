@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import Queue from "promise-queue";
 import { Logger } from 'src/app/logger';
 import { sleep } from '../helpers/sleep.helper';
+//import PQueue from 'p-queue';
+
 
 type JSONRPCResponse = {
     error: string;
@@ -18,6 +20,8 @@ export type RPCLimitatorSettings = {
 /**
  * RPC limitators help us control the speed/conditions at which we send RPC API calls, in
  * order to deal with various third party services limitations.
+ *
+ * Usually, such limitations are required by block explorers as their APIs are expensive, not really by the main RPC APIs.
  */
 type RPCLimitator = {
     // Provided settings by creator
@@ -32,11 +36,6 @@ type RPCLimitator = {
 })
 export class GlobalJsonRPCService {
     public static instance: GlobalJsonRPCService = null;
-
-    // Concurrency queues to ensure that we don't send too many API calls to the same RPC URL at the same
-    // time, as rate limiting systems on nodes would reject some of our requests.
-    //private postQueue = new Queue(1); // Concurrency: 1
-    //private getQueue = new Queue(1); // Concurrency: 1
 
     private limitators: Map<string, RPCLimitator> = new Map();
 
@@ -60,7 +59,7 @@ export class GlobalJsonRPCService {
 
     private getLimitator(name: string): RPCLimitator {
         if (!this.limitators.has(name)) {
-            // the limitator doesn't exist, create a new one with default parameters and the given name
+            // The limitator doesn't exist, create a new one with default parameters and the given name
             // Note: we don't share a single default one to avoid different networks sharing the same default limitator.
             this.registerLimitator(name, {
                 minRequestsInterval: 100 // Let's be gentle, apply a max of 10 requests per second even if nothing is specified by default.

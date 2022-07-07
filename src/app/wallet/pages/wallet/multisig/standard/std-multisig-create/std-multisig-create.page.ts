@@ -8,9 +8,11 @@ import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { MasterWallet, StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
+import { ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elastos/mainchain/network/elastos.networks';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { Native } from 'src/app/wallet/services/native.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { LocalStorage } from 'src/app/wallet/services/storage.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
@@ -25,6 +27,7 @@ export class StandardMultiSigCreatePage implements OnInit {
     @ViewChild('input', { static: false }) input: IonInput;
 
     public signingWallet: MasterWallet = null; // Current user's wallet to sign multisig transactions. One of the cosigners.
+    private signingWalletXPub: string = null; // XPUB of the selected signing wallet if any. Used to make sure that the user doesn't put the signing wallet xpub in the list of cosigners again
     public cosigners = ['', '']; // Array of xpub cosigners keys - two empty keys by default
     public requiredSigners = 2; // Default
 
@@ -41,6 +44,7 @@ export class StandardMultiSigCreatePage implements OnInit {
         private native: Native,
         private walletService: WalletService,
         private walletUIService: WalletUIService,
+        private networkService: WalletNetworkService,
         private events: GlobalEvents,
         private authService: AuthService,
         public localStorage: LocalStorage
@@ -81,6 +85,14 @@ export class StandardMultiSigCreatePage implements OnInit {
             return;
         }
 
+        // No invalid xpub
+        for (let cosigner of this.cosigners) {
+            if (!this.cosignerKeyIsValidIsValid(cosigner)) {
+                this.native.toast_trans('wallet.multi-sig-error-invalid-xpub');
+                return;
+            }
+        }
+
         void this.createWallet();
     }
 
@@ -116,10 +128,11 @@ export class StandardMultiSigCreatePage implements OnInit {
         if (!this.signingWallet)
             return false; // Need to have picked a signing wallet - no watch mode for now
 
-        if (parseInt(<any>this.requiredSigners) <= 0)
+        let reqSigners = parseInt(<any>this.requiredSigners);
+        if (reqSigners <= 0 || Number.isNaN(reqSigners))
             return false; // Need at least one signer, and need to bit a number
 
-        if (this.requiredSigners > this.getUsableCosigners().length)
+        if (this.requiredSigners > this.getUsableCosigners().length + 1) // +1 because the user himself counts as as usable cosigners too
             return false; // Can't have more signers required than total cosigners
 
         // No invalid xpub
@@ -144,8 +157,29 @@ export class StandardMultiSigCreatePage implements OnInit {
 
             return true;
         });
-        if (pickedWallet)
+
+        if (pickedWallet) {
             this.signingWallet = pickedWallet.masterWallet;
+
+            // Load the elastos mainchain network wallet for this master wallet, to get its xpub and check a few things
+            let elastosMainchainNetwork = this.networkService.getNetworkByKey(ElastosMainChainNetworkBase.networkKey);
+            let sourceNetworkWallet = await elastosMainchainNetwork.createNetworkWallet(this.signingWallet, false);
+            this.signingWalletXPub = await sourceNetworkWallet.getExtendedPublicKey();
+
+            if (!this.signingWalletXPub) {
+                // Happens if user didn't enter the master password to get the wallet xpub
+                this.signingWallet = null;
+                return;
+            }
+
+            // If this xpub was already in use in the cosigners list, simply delete it
+            this.cosigners = this.cosigners.map(c => {
+                if (c.toLowerCase() === this.signingWalletXPub.toLowerCase())
+                    return "";
+                else
+                    return c;
+            });
+        }
     }
 
     /**
@@ -179,40 +213,64 @@ export class StandardMultiSigCreatePage implements OnInit {
     public async pasteCosigner(event, i: number) {
         let pastedContent = await this.native.pasteFromClipboard() as string;
 
-        /* TODO: ensure valid xpub, or don't paste
-         const isAddressValid = await this.isAddressValid(this.toAddress);
-        if (!isAddressValid) {
-            this.native.toast_trans('wallet.not-a-valid-address');
-            return;
-        } */
-        if (!pastedContent.startsWith("xpub")) {
-            this.native.toast_trans('wallet.multi-sig-error-invalid-xpub');
-            return;
-        }
+        this.cosigners[i] = pastedContent.trim();
 
-        if (this.cosignersHaveKey(pastedContent)) {
-            this.native.toast_trans('wallet.multi-sig-error-xpub-in-user');
-            return;
-        }
-
-        this.cosigners[i] = pastedContent;
+        this.ensureValidCosignerAtIndex(i);
     }
 
     /**
-     * Ensure no duplicate
+     * Ensure no duplicate in the cosigners list
      */
     private cosignersHaveKey(key: string): boolean {
         return this.cosigners.includes(key);
     }
 
+    /**
+     * Counts how many cosigners entry have the value "key".
+     * used to check duplicates.
+     */
+    private cosignersCountKey(key: string): number {
+        return this.cosigners.reduce((prev, cur) => {
+            return (cur === key) ? prev + 1 : prev;
+        }, 0);
+    }
+
+    /**
+     * Whether the given key if the selected signing wallet one or not.
+     */
+    private isSigningWalletKey(key: string): boolean {
+        if (!this.signingWalletXPub)
+            return false;
+
+        return this.signingWalletXPub.toLowerCase() === key.toLowerCase();
+    }
+
     public onCosignerBlur(i: number) {
         this.cosigners[i] = this.cosigners[i].trim();
+        this.ensureValidCosignerAtIndex(i);
+    }
 
-        if (!this.cosignerKeyIsValidIsValid(this.cosigners[i])) {
+    /**
+     * Checks the cosigner entry at a given index in the cosigners array. If the value is invalid,
+     * shows an error and resets the entry to an empty value.
+     */
+    private ensureValidCosignerAtIndex(index: number) {
+        if (!this.cosigners[index].startsWith("xpub")) {
             this.native.toast_trans('wallet.multi-sig-error-invalid-xpub');
+            this.cosigners[index] = '';
+            return;
+        }
 
-            // Don't let the user keep a wrong xpub inputed
-            this.cosigners[i] = '';
+        if (this.cosignersCountKey(this.cosigners[index]) > 1 || this.isSigningWalletKey(this.cosigners[index])) {
+            this.native.toast_trans('wallet.multi-sig-error-xpub-in-user');
+            this.cosigners[index] = '';
+            return;
+        }
+
+        if (!this.cosignerKeyIsValidIsValid(this.cosigners[index])) {
+            this.native.toast_trans('wallet.multi-sig-error-invalid-xpub');
+            this.cosigners[index] = '';
+            return;
         }
     }
 
