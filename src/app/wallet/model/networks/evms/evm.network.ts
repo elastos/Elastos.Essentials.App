@@ -12,6 +12,7 @@ import { NetworkAPIURLType } from "../base/networkapiurltype";
 import { AnyNetwork, Network } from "../network";
 import { EVMNetworkWallet } from "./networkwallets/evm.networkwallet";
 import { ERC1155Provider } from "./nfts/erc1155.provider";
+import { ERC721Provider } from "./nfts/erc721.provider";
 import { ERC20SubWallet } from "./subwallets/erc20.subwallet";
 import { UniswapCurrencyProvider } from "./uniswap.currencyprovider";
 
@@ -39,9 +40,10 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     earnProviders: EarnProvider[] = [],
     swapProviders: SwapProvider[] = [],
     bridgeProviders: BridgeProvider[] = [],
-    erc1155Providers: ERC1155Provider[] = []
+    erc1155Providers: ERC1155Provider[] = [],
+    erc721Providers: ERC721Provider[] = []
   ) {
-    super(key, name, logo, networkTemplate, earnProviders, swapProviders, bridgeProviders, erc1155Providers);
+    super(key, name, logo, networkTemplate, earnProviders, swapProviders, bridgeProviders, erc1155Providers, erc721Providers);
   }
 
   public async init(): Promise<void> {
@@ -238,6 +240,15 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
   public getERC1155Provider(contractAddress: string): ERC1155Provider {
     let lowerCaseContract = contractAddress.toLowerCase();
     let provider = this.erc1155Providers.find(p => p.supportedContractAddresses.map(c => c.toLowerCase()).find(p => p.indexOf(lowerCaseContract) >= 0));
+    return provider;
+  }
+
+  /**
+   * Returns the first provider able to support the provided erc721 contract address
+   */
+  public getERC721Provider(contractAddress: string): ERC721Provider {
+    let lowerCaseContract = contractAddress.toLowerCase();
+    let provider = this.erc721Providers.find(p => p.supportedContractAddresses.map(c => c.toLowerCase()).find(p => p.indexOf(lowerCaseContract) >= 0));
     return provider;
   }
 

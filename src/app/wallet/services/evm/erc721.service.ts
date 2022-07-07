@@ -26,7 +26,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { lazyWeb3Import } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import type Web3 from 'web3';
+import { Contract } from 'web3-eth-contract';
 import type { AnyNetworkWallet } from '../../model/networks/base/networkwallets/networkwallet';
+import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { NFTAsset } from '../../model/networks/evms/nfts/nftasset';
 import type { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
 import type { EVMSafe } from '../../model/networks/evms/safes/evm.safe';
@@ -120,7 +122,7 @@ export class ERC721Service {
      *
      * Returns null if owner assets can't be retrieved (i.e. not a enumerable contract, non standard contract, etc)
      */
-    public fetchAllAssets(accountAddress: string, contractAddress: string): Observable<FetchAssetsEvent> {
+    public fetchAllAssets(network: EVMNetwork, accountAddress: string, contractAddress: string): Observable<FetchAssetsEvent> {
         let subject = new BehaviorSubject<FetchAssetsEvent>({ assets: [] });
         let observable = subject.asObservable();
 
@@ -174,7 +176,7 @@ export class ERC721Service {
 
                 for (let i = 0; i < tokenIDs.length; i++) {
                     let tokenID = tokenIDs[i];
-                    void this.fetchTokenID(erc721Contract, tokenID).then(asset => {
+                    void this.fetchTokenID(network, erc721Contract, contractAddress, accountAddress, tokenID).then(asset => {
                         assets.push(asset);
                         subject.next({ assets });
 
@@ -198,7 +200,7 @@ export class ERC721Service {
         return observable;
     }
 
-    private async fetchTokenID(erc721Contract: any, tokenID: string): Promise<NFTAsset> {
+    private async fetchTokenID(network: EVMNetwork, erc721Contract: Contract, contractAddress: string, accountAddress: string, tokenID: string): Promise<NFTAsset> {
         let asset = new NFTAsset();
         asset.id = tokenID;
         asset.displayableId = asset.id;
@@ -221,7 +223,7 @@ export class ERC721Service {
         }
 
         if (tokenURI) {
-            await this.extractAssetMetadata(asset, tokenURI);
+            await this.extractAssetMetadata(network, asset, erc721Contract, contractAddress, accountAddress, tokenURI);
         }
 
         return asset;
@@ -348,49 +350,59 @@ export class ERC721Service {
             "value": 1546360800
         }
     */
-    private async extractAssetMetadata(asset: NFTAsset, tokenURI: string): Promise<any> {
-        // Unsupported url format
-        if (!tokenURI || (!tokenURI.startsWith("http") && !tokenURI.startsWith("ipfs"))) {
-            return;
+    private async extractAssetMetadata(network: EVMNetwork, asset: NFTAsset, contract: Contract, contractAddress: string, accountAddress: string, tokenURI: string): Promise<void> {
+        let erc721Provider = network.getERC721Provider(contractAddress);
+
+        if (erc721Provider) {
+            // There is a custom provider available, let it extract the relevant data
+            return erc721Provider.fetchNFTAssetInformation(contract, asset, tokenURI, accountAddress);
         }
+        else {
+            // No specific provider found, use generic ERC721 metadata extraction
 
-        // If the url is a IPFS url, replace it with a gateway
-        tokenURI = this.replaceIPFSUrl(tokenURI);
+            // Unsupported url format
+            if (!tokenURI || (!tokenURI.startsWith("http") && !tokenURI.startsWith("ipfs"))) {
+                return;
+            }
 
-        try {
-            let metadata: any = await this.http.get(tokenURI).toPromise();
-            Logger.log("wallet", "Got NFT metadata", metadata);
+            // If the url is a IPFS url, replace it with a gateway
+            tokenURI = this.replaceIPFSUrl(tokenURI);
 
-            // Name
-            if ("properties" in metadata && "name" in metadata.properties)
-                asset.name = metadata.properties.name.description || null;
-            else
-                asset.name = metadata.name || null;
+            try {
+                let metadata: any = await this.http.get(tokenURI).toPromise();
+                Logger.log("wallet", "Got NFT metadata", metadata);
 
-            // Description
-            if ("properties" in metadata && "description" in metadata.properties)
-                asset.description = metadata.properties.description.description || null;
-            else
-                asset.description = metadata.description || null;
+                // Name
+                if ("properties" in metadata && "name" in metadata.properties)
+                    asset.name = metadata.properties.name.description || null;
+                else
+                    asset.name = metadata.name || null;
 
-            // Picture
-            if ("properties" in metadata && "image" in metadata.properties)
-                asset.imageURL = this.replaceIPFSUrl(metadata.properties.image.description || null);
-            else
-                asset.imageURL = this.replaceIPFSUrl(metadata.image || null);
+                // Description
+                if ("properties" in metadata && "description" in metadata.properties)
+                    asset.description = metadata.properties.description.description || null;
+                else
+                    asset.description = metadata.description || null;
 
-            // OpenSea information
-            asset.attributes = metadata.attributes || [];
-            if ("externa_url" in metadata)
-                asset.externalURL = metadata.externa_url;
+                // Picture
+                if ("properties" in metadata && "image" in metadata.properties)
+                    asset.imageURL = this.replaceIPFSUrl(metadata.properties.image.description || null);
+                else
+                    asset.imageURL = this.replaceIPFSUrl(metadata.image || null);
 
-            // Unset the image if not a valid url
-            if (asset.imageURL && !asset.imageURL.startsWith("http"))
-                asset.imageURL = null;
-        }
-        catch (e) {
-            // Silent catch
-            return;
+                // OpenSea information
+                asset.attributes = metadata.attributes || [];
+                if ("externa_url" in metadata)
+                    asset.externalURL = metadata.externa_url;
+
+                // Unset the image if not a valid url
+                if (asset.imageURL && !asset.imageURL.startsWith("http"))
+                    asset.imageURL = null;
+            }
+            catch (e) {
+                // Silent catch
+                return;
+            }
         }
     }
 

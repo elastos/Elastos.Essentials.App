@@ -14,6 +14,7 @@ import { ElastosMainnetUniswapCurrencyProvider } from "../currency/elastos.unisw
 import { elastosMainnetElkBridgeProvider, elastosMainnetGlideBridgeProvider, elastosMainnetShadowTokenBridgeProvider } from "../earn/bridge.providers";
 import { elastosMainnetElkEarnProvider } from "../earn/earn.providers";
 import { elastosMainnetElkSwapProvider, elastosMainnetGlideSwapProvider } from "../earn/swap.providers";
+import { ElastosMeteastERC721Provider } from "../nfts/meteast.provider";
 import { ElastosPasarERC1155Provider } from "../nfts/pasar.provider";
 
 export abstract class ElastosSmartChainNetworkBase extends ElastosEVMNetwork<WalletNetworkOptions> {
@@ -87,6 +88,9 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
       ],
       [
         new ElastosPasarERC1155Provider()
+      ],
+      [
+        new ElastosMeteastERC721Provider()
       ]
     );
 

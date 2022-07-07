@@ -7,6 +7,7 @@ import type { PrivateKeyType, WalletNetworkOptions } from "../masterwallets/wall
 import { NetworkAPIURLType } from "./base/networkapiurltype";
 import type { AnyNetworkWallet } from "./base/networkwallets/networkwallet";
 import type { ERC1155Provider } from "./evms/nfts/erc1155.provider";
+import { ERC721Provider } from "./evms/nfts/erc721.provider";
 
 export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOptions> {
   constructor(
@@ -18,6 +19,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
     public swapProviders: SwapProvider[] = [],
     public bridgeProviders: BridgeProvider[] = [],
     public erc1155Providers: ERC1155Provider[] = [],
+    public erc721Providers: ERC721Provider[] = [],
   ) {
   }
 

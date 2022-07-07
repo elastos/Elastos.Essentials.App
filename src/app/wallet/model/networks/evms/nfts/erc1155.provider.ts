@@ -3,7 +3,7 @@ import { NFTAsset } from "./nftasset";
 
 export abstract class ERC1155Provider {
   // Deployed ERC1155 contract addresses recognised as a known NFT type by this provider.
-  // ie: "Feeds Pasar" on Elastos recognises 0x020c7303664bc88ae92cE3D380BF361E03B78B81 NFTs as this is were
+  // ie: "Feeds Pasar" on Elastos recognises 0x020c7303664bc88ae92cE3D380BF361E03B78B81 NFTs as this is where
   // it mints its NFTs.
   public abstract supportedContractAddresses: string[];
 

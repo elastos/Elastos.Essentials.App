@@ -512,7 +512,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         void (async () => {
             let accountAddress = await this.getMainEvmSubWallet().getCurrentReceiverAddress();
             if (nft.type == NFTType.ERC721) {
-                ERC721Service.instance.fetchAllAssets(accountAddress, nft.contractAddress).subscribe({
+                ERC721Service.instance.fetchAllAssets(<EVMNetwork>this.network, accountAddress, nft.contractAddress).subscribe({
                     next: event => {
                         nft.assets = event.assets; // can be null (couldn't fetch assets) or empty (0 assets)
                         subject.next(nft.assets);
