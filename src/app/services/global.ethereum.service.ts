@@ -91,7 +91,8 @@ export class GlobalEthereumRPCService {
         };
 
         try {
-            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName);
+            // Get nonce: always high priority, probably to publish transactions
+            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName, 5000, false, true);
             return parseInt(result);
         }
         catch (err) {
@@ -175,7 +176,8 @@ export class GlobalEthereumRPCService {
         };
 
         try {
-            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName);
+            // Estimate gas: always high priority, probably to publish transactions
+            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName, 5000, false, true);
             return parseInt(result);
         }
         catch (err) {

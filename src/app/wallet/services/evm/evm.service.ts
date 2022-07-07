@@ -321,14 +321,16 @@ export class EVMService {
   /**
    * Creates a new Web3 instance or return a cached one, for the given network.
    */
-  public async getWeb3(network: AnyNetwork): Promise<Web3> {
-    if (network.name in this.web3s) {
-      return this.web3s[network.name];
+  public async getWeb3(network: AnyNetwork, highPriority = false): Promise<Web3> {
+    let cacheEntry = `${network.name}_${highPriority ? 'high' : 'normal'}`;
+
+    if (cacheEntry in this.web3s) {
+      return this.web3s[cacheEntry];
     }
     else {
       const Web3 = await lazyWeb3Import();
-      let web3 = new Web3(new EssentialsWeb3Provider(network.getRPCUrl(), network.key));
-      this.web3s[network.name] = web3;
+      let web3 = new Web3(new EssentialsWeb3Provider(network.getRPCUrl(), network.key, highPriority));
+      this.web3s[cacheEntry] = web3;
       return web3;
     }
   }

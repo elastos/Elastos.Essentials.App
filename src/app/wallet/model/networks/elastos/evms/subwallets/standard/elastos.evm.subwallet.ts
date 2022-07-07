@@ -54,7 +54,7 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
   public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string, nonceArg = -1): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const contractAbi = require("src/assets/wallet/ethereum/ETHSCWithdrawABI.json");
-    const ethscWithdrawContract = new ((await this.getWeb3()).eth.Contract)(contractAbi, this.withdrawContractAddress);
+    const ethscWithdrawContract = new ((await this.getWeb3(true)).eth.Contract)(contractAbi, this.withdrawContractAddress);
     let gasPrice = gasPriceArg;
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
@@ -87,7 +87,7 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
           to: this.withdrawContractAddress,
           value: estimateAmount,
         }
-        estimateGas = await (await this.getWeb3()).eth.estimateGas(tx);
+        estimateGas = await (await this.getWeb3(true)).eth.estimateGas(tx);
       } catch (error) {
         Logger.error('wallet', 'estimateGas error:', error);
         estimateGas = 28100;
@@ -106,7 +106,7 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
     const fixedAmount = amountTemp.substring(0, amountTemp.lastIndexOf('.') + 9)
     // TODO fixedAmount >= 0.0002 (_amount.sub(_fee) >= _fee)
 
-    const toAmountSend = (await this.getWeb3()).utils.toWei(fixedAmount);
+    const toAmountSend = (await this.getWeb3(true)).utils.toWei(fixedAmount);
     const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
 
     let nonce = nonceArg;

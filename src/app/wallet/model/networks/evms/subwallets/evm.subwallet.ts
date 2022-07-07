@@ -108,8 +108,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return this.ethscAddress;
   }
 
-  public getWeb3(): Promise<Web3> {
-    return EVMService.instance.getWeb3(this.networkWallet.network as EVMNetwork);
+  public getWeb3(highPriority = false): Promise<Web3> {
+    return EVMService.instance.getWeb3(this.networkWallet.network as EVMNetwork, highPriority);
   }
 
   protected getNetwork(): EVMNetwork {
@@ -454,7 +454,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
    * Returns the current gas price on chain.
    */
   public async getGasPrice(): Promise<string> {
-    const gasPrice = await (await this.getWeb3()).eth.getGasPrice();
+    const gasPrice = await (await this.getWeb3(true)).eth.getGasPrice();
     //Logger.log('wallet', "GAS PRICE: ", gasPrice)
     return gasPrice;
   }
@@ -471,7 +471,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public async estimateGas(tx): Promise<number> {
-    let gasLimit = await (await this.getWeb3()).eth.estimateGas(tx);
+    let gasLimit = await (await this.getWeb3(true)).eth.estimateGas(tx);
     return gasLimit;
   }
 

@@ -8,7 +8,7 @@ import { GlobalJsonRPCService } from "../services/global.jsonrpc.service";
 // time, as rate limiting systems on nodes would reject some of our requests.
 const callJsonRPCQueue = new Queue(1); // Concurrency: 1
 export class EssentialsWeb3Provider implements AbstractProvider {
-    constructor(private rpcApiUrl: string, private limitatorName: string, highPriority = false) {
+    constructor(private rpcApiUrl: string, private limitatorName: string, private highPriority = false) {
     }
 
     /*  private callJsonRPC(payload): Promise<any> {
@@ -61,7 +61,7 @@ export class EssentialsWeb3Provider implements AbstractProvider {
             // All methods not handled above are sent through JSON RPC API to the user-defined node url.
             default:
                 try {
-                    let result = await GlobalJsonRPCService.instance.httpPost(this.rpcApiUrl, payload, this.limitatorName, 5000, true);
+                    let result = await GlobalJsonRPCService.instance.httpPost(this.rpcApiUrl, payload, this.limitatorName, 5000, true, this.highPriority);
                     callback(null, result);
                 }
                 catch (e) {

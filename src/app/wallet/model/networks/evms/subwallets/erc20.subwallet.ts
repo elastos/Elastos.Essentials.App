@@ -172,10 +172,6 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return coin.getName();
     }
 
-    public getWeb3(): Web3 {
-        return this.web3;
-    }
-
     public isAddressValid(address: string): Promise<boolean> {
         return WalletUtil.isEVMAddress(address);
     }
@@ -467,10 +463,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
-        const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
+        const erc20Contract = new this.highPriorityWeb3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
         let gasPrice = gasPriceArg;
         if (gasPrice == null) {
-            gasPrice = await this.web3.eth.getGasPrice();
+            gasPrice = await this.highPriorityWeb3.eth.getGasPrice();
         }
 
         Logger.log('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
@@ -483,7 +479,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         }
 
         // Incompatibility between our bignumber lib and web3's BN lib. So we must convert by using intermediate strings
-        const web3BigNumber = this.web3.utils.toBN(amountWithDecimals.toString(10));
+        const web3BigNumber = this.highPriorityWeb3.utils.toBN(amountWithDecimals.toString(10));
         const method = erc20Contract.methods.transfer(toAddress, web3BigNumber);
 
         let gasLimit = gasLimitArg;
@@ -567,7 +563,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
      * Returns the current gas price on chain.
      */
     public async getGasPrice(): Promise<string> {
-        const gasPrice = await this.web3.eth.getGasPrice();
+        const gasPrice = await this.highPriorityWeb3.eth.getGasPrice();
         Logger.log('wallet', "GAS PRICE: ", gasPrice)
         return gasPrice;
     }
