@@ -239,7 +239,9 @@ export class WalletService {
             Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork);
 
             this.networkWallets = {};
-            for (let masterWallet of this.getMasterWalletsList()) {
+            let masterWalletsList = this.getMasterWalletsList()
+            for (let i = 0; i < masterWalletsList.length; i++) {
+                let masterWallet = masterWalletsList[i];
                 Logger.log("wallet", "Creating network wallet for master wallet:", masterWallet);
 
                 let networkWallet: AnyNetworkWallet = null;
@@ -279,8 +281,22 @@ export class WalletService {
                     // If the network wallet creation failed for any reason, we still want to set the active network
                     // to "null" to not get an ankward situation with a new network and the old network wallet.
                     if (masterWallet.id === this.activeMasterWalletId) {
-                        Logger.log("wallet", "Setting the network wallet as active one:", networkWallet);
-                        this.activeNetworkWallet.next(networkWallet);
+                        if (networkWallet.masterWallet.supportsNetwork(activatedNetwork)) {
+                          this.activeNetworkWallet.next(networkWallet);
+                        } else {
+                          // Can't call this.getNetworkWalletsList();
+                          // The onActiveNetworkChanged is high priority NetworkChangeCallback, so this.networkService.activeNetwork.value is older one.
+                          let networkwalletslist =  Object.values(this.networkWallets).filter(nw => nw.masterWallet.supportsNetwork(activatedNetwork));
+                          if (networkwalletslist.length > 0) {
+                            await this.setActiveNetworkWallet(networkwalletslist[0])
+                          } else {
+                            if (masterWalletsList.length - 1 > i) {
+                              this.activeMasterWalletId = masterWalletsList[i + 1].id;
+                            } else {
+                              this.activeNetworkWallet.next(null);
+                            }
+                          }
+                        }
                     }
                 }
             }
@@ -649,7 +665,7 @@ export class WalletService {
      * as well for the currently active network.
      */
     public async activateMasterWallet(wallet: MasterWallet) {
-        Logger.log('wallet', "Adding master wallet to local model", wallet.id, name);
+        Logger.log('wallet', "Adding master wallet to local model", wallet.id, wallet.name);
 
         // Build the associated network Wallet
         let activeNetwork = this.networkService.activeNetwork.value;
@@ -728,8 +744,13 @@ export class WalletService {
 
             if (Object.values(this.networkWallets).length > 0) {
                 let networkWalletList = this.getNetworkWalletsList();
-                await this.setActiveNetworkWallet(networkWalletList[0]);
-                this.native.setRootRouter("/wallet/wallet-home");
+                if (networkWalletList && networkWalletList[0]) {
+                  await this.setActiveNetworkWallet(networkWalletList[0]);
+                  this.native.setRootRouter("/wallet/wallet-home");
+                } else {
+                  this.activeNetworkWallet.next(null);
+                  this.goToLauncherScreen();
+                }
             } else {
                 this.activeNetworkWallet.next(null);
                 this.goToLauncherScreen();

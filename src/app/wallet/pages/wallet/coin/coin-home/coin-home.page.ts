@@ -625,7 +625,8 @@ export class CoinHomePage implements OnInit {
         if (extTxInfo && extTxInfo.evm && extTxInfo.evm.txInfo && extTxInfo.evm.txInfo.operation && extTxInfo.evm.txInfo.operation.description)
             return this.translate.instant(extTxInfo.evm.txInfo.operation.description, extTxInfo.evm.txInfo.operation.descriptionTranslationParams);
  */
-        return this.translate.instant(transfer.name);
+        if (transfer && transfer.name)
+          return this.translate.instant(transfer.name);
     }
 
     public getContractEvents(transfer: TransactionInfo): EthContractEvent[] {
