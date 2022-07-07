@@ -128,7 +128,7 @@ export class StandardMultiSigCreatePage implements OnInit {
             });
         } catch (e) {
             Logger.error('wallet', 'MultiSigStandardWallet create error:', e);
-            await this.localStorage.deleteMasterWallet(walletId);
+            await this.walletService.destroyMasterWallet(walletId)
         }
     }
 
