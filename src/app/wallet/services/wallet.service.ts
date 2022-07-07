@@ -664,7 +664,10 @@ export class WalletService {
 
         // Notify that this network wallet is the active one
         // NOTE: even if the network wallet creation fails we still make it active to let wallet home display something
-        await this.setActiveNetworkWallet(networkWallet, masterWallet);
+        if (networkWallet)
+            await this.setActiveNetworkWallet(networkWallet);
+        else
+            await this.setActiveNetworkWallet(null, masterWallet);
     }
 
     /**

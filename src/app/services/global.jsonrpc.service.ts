@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import Queue from "promise-queue";
+import PQueue from 'p-queue';
 import { Logger } from 'src/app/logger';
 import { sleep } from '../helpers/sleep.helper';
-//import PQueue from 'p-queue';
 
 
 type JSONRPCResponse = {
@@ -28,7 +27,7 @@ type RPCLimitator = {
     settings: RPCLimitatorSettings;
 
     // Internal state
-    queue: Queue;
+    queue: PQueue;
 }
 
 @Injectable({
@@ -48,7 +47,7 @@ export class GlobalJsonRPCService {
 
     public registerLimitator(name: string, settings: RPCLimitatorSettings = {}): RPCLimitator {
         let limitator: RPCLimitator = {
-            queue: new Queue(1),
+            queue: new PQueue({ concurrency: 1 }),
             settings
         };
 
