@@ -30,8 +30,9 @@ import { CurrencyService } from '../services/currency.service';
 // import { langIt as it } from "@ethersproject/wordlists/lib/lang-it";
 // import { langZhCn as zh_cn } from "@ethersproject/wordlists/lib/lang-zh";
 // import { Address } from '@elastosfoundation/wallet-js-sdk/typings/walletcore/Address';
-import * as bs58check from "bs58check";
+import { Address } from '@elastosfoundation/wallet-js-sdk';
 import { wordlists } from 'ethers';
+import { ELAAddressPrefix } from 'src/app/helpers/ela/ela.address';
 
 export class WalletUtil {
   static isInvalidWalletName(text): boolean {
@@ -100,13 +101,19 @@ export class WalletUtil {
   }
 
   public static isELAAddress(address: string) {
-    Logger.warn('wallet', 'Later we will replace with elastos JS wallet sdk api!');
-    // return Address.newFromAddressString(address).valid()
     try {
       if (address) {
-        bs58check.decode(address.trim());
-        // TODO: Check the programHash
-        return true;
+        let addressObj =  Address.newFromAddressString(address.trim());
+        if (addressObj.valid()) {
+          let prefix = addressObj.programHash().prefix() as any;
+          switch (prefix) {
+            case ELAAddressPrefix.PrefixStandard:
+            case ELAAddressPrefix.PrefixMultiSign:
+              return true;
+            default:
+              return false;
+          }
+        }
       }
     } catch (e) {
     }

@@ -33,7 +33,7 @@ export enum ELAAddressSignType {
   SignTypeDestroy = 0xAA,
 }
 
-enum ELAAddressPrefix {
+export enum ELAAddressPrefix {
   PrefixStandard = 0x21,
   PrefixMultiSign = 0x12,
   PrefixCrossChain = 0x4B,
