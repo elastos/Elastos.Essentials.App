@@ -29,7 +29,7 @@ export class StandardMultiSigCreatePage implements OnInit {
     public signingWallet: MasterWallet = null; // Current user's wallet to sign multisig transactions. One of the cosigners.
     private signingWalletXPub: string = null; // XPUB of the selected signing wallet if any. Used to make sure that the user doesn't put the signing wallet xpub in the list of cosigners again
     public cosigners = ['', '']; // Array of xpub cosigners keys - two empty keys by default
-    public requiredSigners = 2; // Default
+    public requiredSigners = "2"; // Default - string to avoid issues with angular input
 
     public wallet = {
         name: '',
@@ -106,7 +106,7 @@ export class StandardMultiSigCreatePage implements OnInit {
                 walletId,
                 this.wallet.name,
                 this.signingWallet.id,
-                this.requiredSigners,
+                parseInt(this.requiredSigners),
                 this.getUsableCosigners()
             );
             this.native.setRootRouter("/wallet/wallet-home");
@@ -128,11 +128,11 @@ export class StandardMultiSigCreatePage implements OnInit {
         if (!this.signingWallet)
             return false; // Need to have picked a signing wallet - no watch mode for now
 
-        let reqSigners = parseInt(<any>this.requiredSigners);
+        let reqSigners = parseInt(this.requiredSigners);
         if (reqSigners <= 0 || Number.isNaN(reqSigners))
             return false; // Need at least one signer, and need to bit a number
 
-        if (this.requiredSigners > this.getUsableCosigners().length + 1) // +1 because the user himself counts as as usable cosigners too
+        if (reqSigners > this.getUsableCosigners().length + 1) // +1 because the user himself counts as as usable cosigners too
             return false; // Can't have more signers required than total cosigners
 
         // No invalid xpub

@@ -38,6 +38,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     public coin: ERC20Coin;
     /** Web3 variables to call smart contracts */
     protected web3: Web3;
+    protected highPriorityWeb3: Web3;
     private erc20ABI: any;
 
     private tokenAddress = '';
@@ -89,10 +90,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
         // Get Web3 and the ERC20 contract ready
         const EssentialsWeb3Provider = (await import('src/app/model/essentialsweb3provider')).EssentialsWeb3Provider;
-        const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl, this.network.key);
 
         const Web3 = await lazyWeb3Import();
-        this.web3 = new Web3(trinityWeb3Provider);
+        this.web3 = new Web3(new EssentialsWeb3Provider(this.rpcApiUrl, this.network.key, false));
+        this.highPriorityWeb3 = new Web3(new EssentialsWeb3Provider(this.rpcApiUrl, this.network.key, true));
 
         // Standard ERC20 contract ABI
         this.erc20ABI = require("src/assets/wallet/ethereum/StandardErc20ABI.json");
