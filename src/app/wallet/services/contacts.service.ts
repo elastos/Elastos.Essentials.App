@@ -2,12 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import * as CryptoAddressResolvers from '../model/address-resolvers';
+import { NameResolvingService } from './nameresolving.service';
 import { LocalStorage } from './storage.service';
 
 export type Contact = {
   cryptoname: string;
-  address: string;
+  type: string;
+  addresses: CryptoAddress[];
 };
+
+export type CryptoAddress = {
+  type: string;
+  address: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -35,33 +42,89 @@ export class ContactsService {
       void this.storage.getContacts().then(async (contacts) => {
         Logger.log('wallet', "Fetched stored contacts", contacts);
         if (contacts) {
-          this.contacts = contacts;
-          let contactsChecked = 0;
-          let needUpdate = false;
-          const cryptoNameResolver = new CryptoAddressResolvers.CryptoNameResolver(this.http);
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          for (let index = 0; index < contacts.length; index++) {
-            let contact = contacts[index];
-            if (contact.cryptoname.startsWith('CryptoName: ')) {
-              contact.cryptoname = contact.cryptoname.replace('CryptoName: ', '')
-              needUpdate = true;
-            }
-            const results: CryptoAddressResolvers.Address[] = await cryptoNameResolver.resolve(contact.cryptoname, null /* TODO */ /* StandardCoinName.ELA */);
-            contactsChecked++;
-            if (results && results[0]) {
-              contact.address = results[0].address;
-              needUpdate = true;
-            }
-            else {
-              this.contacts.splice(index, 1);
-            }
-            if ((contactsChecked === contacts.length) && needUpdate) {
-              void this.storage.setContacts(this.contacts);
-            }
-          }
+          await this.updateContacts(contacts);
         }
         resolve();
       });
     });
+  }
+
+  async updateContacts(contacts: Contact[]) {
+    this.contacts = contacts;
+    let needUpdate = false;
+    let cryptoNameResolver = NameResolvingService.instance.getResolverByName('CryptoName');
+    let idrissAddressResolver = NameResolvingService.instance.getResolverByName('Idriss');
+    let usDomainResolver = NameResolvingService.instance.getResolverByName('Unstoppable Domains');
+    for (let index = 0; index < contacts.length; index++) {
+      let contact = contacts[index];
+      if (contact.cryptoname.startsWith('CryptoName: ')) {
+        contact.cryptoname = contact.cryptoname.replace('CryptoName: ', '')
+        needUpdate = true;
+      }
+
+      let results: CryptoAddressResolvers.Address[] = null;
+      switch (contact.type) {
+        case 'CryptoName':
+          results = await cryptoNameResolver.resolve(contact.cryptoname, null);
+        break;
+        case 'Idriss':
+          results = await idrissAddressResolver.resolve(contact.cryptoname, null);
+        break;
+        case 'Unstoppable Domains':
+          results = await usDomainResolver.resolve(contact.cryptoname, null);
+        break;
+        default:
+        break;
+      }
+
+      if (results) {
+        for (let i = 0; i < results.length; i++) {
+          const addressFind = contact.addresses.find((ad) => ad.type === results[i].addressType);
+          if (!addressFind) {
+            contact.addresses.push({type: results[i].addressType, address: results[i].address})
+            needUpdate = true;
+          } else {
+            // update
+            if (addressFind.address != results[i].address) {
+              addressFind.address = results[i].address;
+              needUpdate = true;
+            }
+          }
+        }
+      }
+    }
+
+    if (needUpdate) {
+      void this.storage.setContacts(this.contacts);
+    }
+  }
+
+  async addContact(address: CryptoAddressResolvers.CryptoNameAddress) {
+    let needUpdate = false;
+    const targetContact = this.contacts.find((contact) => (contact.cryptoname === address.name) && (contact.type === address.type));
+    if (!targetContact) {
+        this.contacts.push({
+            cryptoname: address.name,
+            type: address.type,
+            addresses: [{type: address.addressType, address: address.address}]
+        });
+
+        needUpdate = true;
+    } else {
+      if (targetContact.addresses) {
+        const addressFind = targetContact.addresses.find((ad) => ad.address === address.address);
+        if (!addressFind) {
+          targetContact.addresses.push({type: address.addressType, address: address.address})
+          needUpdate = true;
+        }
+      } else {
+        targetContact.addresses = [{type: address.addressType, address: address.address}];
+        needUpdate = true;
+      }
+    }
+
+    if (needUpdate) {
+      await this.setContacts();
+    }
   }
 }

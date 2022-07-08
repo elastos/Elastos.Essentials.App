@@ -16,9 +16,6 @@ export class IdrissResolver extends Resolver {
     public async resolve(name: string, subWallet: AnySubWallet): Promise<Address[]> {
         let addresses: Address[] = [];
 
-        if (!subWallet)
-            return [];
-
         if (!this.isInputValid(name)) {
             return [];
         }
@@ -31,8 +28,8 @@ export class IdrissResolver extends Resolver {
             const result = await idriss.resolve(name);
             if (result) {
                 for (var index in result) {
-                    if (await subWallet.isAddressValid(result[index])) {
-                        addresses.push(new IdrissAddress(name + ' ' + index, result[index]));
+                    if (!subWallet || await subWallet.isAddressValid(result[index])) {
+                        addresses.push(new IdrissAddress(name, result[index], index));
                     }
                 }
             }

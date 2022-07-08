@@ -1,8 +1,9 @@
 import { Address } from "./Address";
 
 export class UnstoppableDomainsAddress extends Address {
-    constructor(public name: string, address: string) {
-        super(address);
+    public type = 'UnstoppableDomains';
+    constructor(public name: string, address: string, addressType: string) {
+        super(address, addressType);
     }
 
     public getDisplayName() {

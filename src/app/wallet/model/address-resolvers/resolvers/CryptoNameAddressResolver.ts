@@ -17,9 +17,6 @@ export class CryptoNameResolver extends Resolver {
     public async resolve(name: string, subWallet: AnySubWallet): Promise<Address[]> {
         let addresses: Address[] = [];
 
-        if (!subWallet)
-            return [];
-
         Logger.log('wallet', "Searching name " + name + " on cryptoname...");
 
         try {
@@ -32,8 +29,8 @@ export class CryptoNameResolver extends Resolver {
             if (result) {
               let resultObj = JSON.parse(result)
                 for (var index in resultObj) {
-                  if (index.endsWith('.address') && await subWallet.isAddressValid(resultObj[index])) {
-                      addresses.push(new CryptoNameAddress(name + ' ' + index, resultObj[index]));
+                  if (index.endsWith('.address') && (!subWallet || await subWallet.isAddressValid(resultObj[index]))) {
+                      addresses.push(new CryptoNameAddress(name, resultObj[index], index));
                   }
               }
             }

@@ -85,8 +85,8 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
             let results = await resolution.records(name, [recordKey]);
             console.log(`Domain ${name} results:`, results);
 
-            if (recordKey in results)
-                return [new UnstoppableDomainsAddress(name, results[recordKey])];
+            if (recordKey in results && results[recordKey])
+                return [new UnstoppableDomainsAddress(name, results[recordKey], recordKey)];
         }
         catch (err) {
             //console.error("TMP", err);

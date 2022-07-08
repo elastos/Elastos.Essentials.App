@@ -309,13 +309,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     // NOTE: picking a contact works only for elastos mainchain for now, until we get a better
                     // standardization for credential types that could store wallet addresses.
                     this.setContactsKeyVisibility(true);
-
-                    // Only show cryptonames key if user has previously used crypto names
-                    if (this.contactsService.contacts.length) {
-                        this.setCryptonamesKeyVisibility(true);
-                    }
                 }
 
+                // Only show cryptonames key if user has previously used crypto names
+                if (this.contactsService.contacts.length) {
+                    this.setCryptonamesKeyVisibility(true);
+                }
                 break;
             // For Pay Intent
             case TransferType.PAY:
@@ -789,18 +788,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         // this.addressName = suggestedAddress.getDisplayName();
         this.addressName = suggestedAddress.name;
 
+
         // Hide/reset suggestions
         this.suggestedAddresses = [];
-
-        const targetContact = this.contactsService.contacts.find((contact) => contact.address === suggestedAddress.address);
-        if (!targetContact) {
-            this.contactsService.contacts.push({
-                cryptoname: this.addressName,
-                address: this.toAddress
-            });
-
-            await this.contactsService.setContacts();
-        }
+        await this.contactsService.addContact(suggestedAddress);
 
         this.setCryptonamesKeyVisibility(true);
     }
@@ -814,9 +805,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     async showCryptonames() {
+        let targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
         this.modal = await this.modalCtrl.create({
             component: ContactsComponent,
             componentProps: {
+              subWallet: targetSubwallet
             },
         });
         this.modal.onWillDismiss().then((params) => {

@@ -48,6 +48,10 @@ export class NameResolvingService {
         return this.resolvers;
     }
 
+    public getResolverByName(name: string): Resolver {
+      return this.resolvers.find((r) => r.getName() === name);
+    }
+
     public reset() {
         this.resolvers = [];
     }
