@@ -466,7 +466,8 @@ export class EasyBridgeService {
     if (context.bridgeParams === undefined)
       return false;
 
-    return await this.erc20CoinService.approveSpendingIfNeeded(mainCoinSubWallet, context.sourceToken.address, context.sourceToken.decimals, mediatorAddress, amount);
+    const chainAmount = this.erc20CoinService.toChainAmount(amount, context.sourceToken.decimals);
+    return await this.erc20CoinService.approveSpendingIfNeeded(mainCoinSubWallet, context.sourceToken.address, context.sourceToken.decimals, mediatorAddress, chainAmount);
   }
 
   /**
