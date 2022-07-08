@@ -78,16 +78,13 @@ export class WalletChooserComponent implements OnInit {
     else
       this.selectedMasterWallet = null;
 
-    let masterWallets = this.walletService.getMasterWalletsList();
+    let networkWallets = this.walletService.getNetworkWalletsList();
 
     // Build the list of available network wallets from the master wallets
     this.networkWalletsToShowInList = {};
-    masterWallets.forEach(mw => {
-      let networkWallet = this.walletService.getNetworkWalletFromMasterWalletId(mw.id);
-      if (networkWallet) {
-        if (!this.options.filter || this.options.filter(networkWallet))
-          this.networkWalletsToShowInList[mw.id] = networkWallet;
-      }
+    networkWallets.forEach(networkWallet => {
+      if (!this.options.filter || this.options.filter(networkWallet))
+        this.networkWalletsToShowInList[networkWallet.id] = networkWallet;
     });
 
     this.masterWalletsToShowInList = Object.values(this.networkWalletsToShowInList).map(nw => nw.masterWallet);
