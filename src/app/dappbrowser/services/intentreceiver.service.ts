@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { DappBrowserService } from './dappbrowser.service';
 
@@ -58,6 +59,9 @@ export class IntentReceiverService {
     }
 
     private async handleOpenUrlRequest(intent: EssentialsIntentPlugin.ReceivedIntent, url: string) {
+        // Close any active browser so we can see the popup
+        await GlobalNavService.instance.navigateHome();
+
         let confirmed = await this.globalPopupService.ionicConfirm("dappbrowser.open-external-url-title", url, 'common.continue', 'common.close');
         if (confirmed) {
             // Confirmed, we can open the url

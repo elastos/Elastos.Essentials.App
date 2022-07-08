@@ -331,6 +331,13 @@ export class DappBrowserService implements GlobalService {
         this.activeBrowsedAppInfo.next(await this.saveBrowsedAppInfo(appInfo));
     }
 
+    /**
+     * Hides the active browser, if any
+     */
+    public hideActiveBrowser() {
+        dappBrowser.hide();
+    }
+
     public async handleEvent(event: DappBrowserPlugin.DappBrowserEvent) {
         Logger.log("dappbrowser", "Received event", event);
         switch (event.type) {
@@ -421,12 +428,12 @@ export class DappBrowserService implements GlobalService {
         if (networkWallet) {
             let subwallet = networkWallet.getMainEvmSubWallet();
             if (subwallet) {
-              this.userAddress = await subwallet.getCurrentReceiverAddress();
+                this.userAddress = await subwallet.getCurrentReceiverAddress();
 
-              Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
+                Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
 
-              void dappBrowser.executeScript({
-                  code: " \
+                void dappBrowser.executeScript({
+                    code: " \
                       window.ethereum.setAddress('"+ this.userAddress + "');\
                   "});
             }
