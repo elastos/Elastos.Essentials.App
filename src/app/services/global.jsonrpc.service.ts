@@ -120,8 +120,14 @@ export class GlobalJsonRPCService {
                                 }
                             }
                         } catch (e) {
-                            Logger.error("GlobalJsonRPCService", 'httpPost exception:', e, resultString);
-                            reject("Invalid JSON response returned by the JSON RPC");
+                            //Logger.warn("GlobalJsonRPCService", 'httpPost exception:', e, resultString);
+                            let paramsAsString = "invalid format";
+                            try {
+                                paramsAsString = JSON.stringify(param);
+                            }
+                            catch (e) { }
+
+                            reject("Invalid JSON response returned by the JSON RPC for url: " + rpcApiUrl + ", with params: " + paramsAsString);
                         }
                     }
                 };
@@ -143,7 +149,7 @@ export class GlobalJsonRPCService {
                 }
             });
         }, {
-            // Some requests can have high priority to make sure that we send publish transaction requests 
+            // Some requests can have high priority to make sure that we send publish transaction requests
             // rapidly even if many ERC20 tokens price computations are queue for instance.
             priority: highPriority ? 1 : 0
         });

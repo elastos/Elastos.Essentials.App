@@ -366,10 +366,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         Logger.log('wallet', 'createVoteTransaction:', JSON.stringify(newVoteContents));
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createVoteTransaction(
-          au.utxo,
-          newVoteContents,
-          '10000',
-          memo);
+            au.utxo,
+            newVoteContents,
+            '10000',
+            memo);
     }
 
     public async createDepositTransaction(toSubWalletId: StandardCoinName, toAddress: string, amount: number, memo = ""): Promise<string> {
@@ -458,9 +458,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     // CR
     public CRCouncilMemberClaimNodeDigest(payload: string): Promise<string> {
-      Logger.log('wallet', 'CRCouncilMemberClaimNodeDigest:', payload);
+        Logger.log('wallet', 'CRCouncilMemberClaimNodeDigest:', payload);
 
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).CRCouncilMemberClaimNodeDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).CRCouncilMemberClaimNodeDigest(payload);
     }
 
     /**
@@ -853,15 +853,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public getOwnerDepositAddress(): Promise<string> {
-      return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerDepositAddress();
-  }
+        return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerDepositAddress();
+    }
 
     public getOwnerPublicKey(): Promise<string> {
-      return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerPublicKey();
+        return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerPublicKey();
     }
 
     public getPublicKeys(start: number, count: number, internal: boolean): Promise<string[]> {
-      return (this.networkWallet.safe as any as ElastosMainChainSafe).getPublicKeys(start, count, internal);
+        return (this.networkWallet.safe as any as ElastosMainChainSafe).getPublicKeys(start, count, internal);
     }
 
     private async getBalanceByOwnerAddress(spendable = false) {
@@ -1215,11 +1215,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     //
 
     public proposalOwnerDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalOwnerDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalOwnerDigest(payload);
     }
 
     public proposalCRCouncilMemberDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalCRCouncilMemberDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalCRCouncilMemberDigest(payload);
     }
 
     public async createProposalTransaction(payload: string, memo = ""): Promise<string> {
@@ -1247,11 +1247,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public terminateProposalOwnerDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).terminateProposalOwnerDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).terminateProposalOwnerDigest(payload);
     }
 
     public terminateProposalCRCouncilMemberDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).terminateProposalCRCouncilMemberDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).terminateProposalCRCouncilMemberDigest(payload);
     }
 
     public async createTerminateProposalTransaction(payload: string, memo = ""): Promise<string> {
@@ -1267,11 +1267,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public proposalSecretaryGeneralElectionDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalSecretaryGeneralElectionDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalSecretaryGeneralElectionDigest(payload);
     }
 
     public proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload);
     }
 
     public async createSecretaryGeneralElectionTransaction(payload: string, memo = ""): Promise<string> {
@@ -1287,15 +1287,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public proposalChangeOwnerDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalChangeOwnerDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalChangeOwnerDigest(payload);
     }
 
     public proposalChangeOwnerCRCouncilMemberDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalChangeOwnerCRCouncilMemberDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalChangeOwnerCRCouncilMemberDigest(payload);
     }
 
     public proposalTrackingSecretaryDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalTrackingSecretaryDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalTrackingSecretaryDigest(payload);
     }
 
     public async createProposalTrackingTransaction(payload: string, memo = ""): Promise<string> {
@@ -1311,7 +1311,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public proposalReviewDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalReviewDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalReviewDigest(payload);
     }
 
     public async createProposalReviewTransaction(payload: string, memo = ""): Promise<string> {
@@ -1327,11 +1327,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public proposalTrackingOwnerDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalTrackingOwnerDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalTrackingOwnerDigest(payload);
     }
 
     public proposalWithdrawDigest(payload: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalWithdrawDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalWithdrawDigest(payload);
     }
 
     public async createProposalWithdrawTransaction(payload: string, memo = ""): Promise<string> {
@@ -1347,11 +1347,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public reserveCustomIDOwnerDigest(payload: string) {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).reserveCustomIDOwnerDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).reserveCustomIDOwnerDigest(payload);
     }
 
     public reserveCustomIDCRCouncilMemberDigest(payload: string) {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).reserveCustomIDCRCouncilMemberDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).reserveCustomIDCRCouncilMemberDigest(payload);
     }
 
     public async createReserveCustomIDTransaction(payload: string, memo = ""): Promise<string> {
@@ -1367,11 +1367,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public receiveCustomIDOwnerDigest(payload: string) {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).receiveCustomIDOwnerDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).receiveCustomIDOwnerDigest(payload);
     }
 
     public receiveCustomIDCRCouncilMemberDigest(payload: string) {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).receiveCustomIDCRCouncilMemberDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).receiveCustomIDCRCouncilMemberDigest(payload);
     }
 
     public async createReceiveCustomIDTransaction(payload: string, memo = ""): Promise<string> {
@@ -1387,11 +1387,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public changeCustomIDFeeOwnerDigest(payload: string) {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).changeCustomIDFeeOwnerDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).changeCustomIDFeeOwnerDigest(payload);
     }
 
     public changeCustomIDFeeCRCouncilMemberDigest(payload: string) {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).changeCustomIDFeeCRCouncilMemberDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).changeCustomIDFeeCRCouncilMemberDigest(payload);
     }
 
     public async createChangeCustomIDFeeTransaction(payload: string, memo = ""): Promise<string> {
@@ -1407,11 +1407,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public registerSidechainOwnerDigest(payload: string) {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).registerSidechainOwnerDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).registerSidechainOwnerDigest(payload);
     }
 
     public registerSidechainCRCouncilMemberDigest(payload: string) {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).registerSidechainCRCouncilMemberDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).registerSidechainCRCouncilMemberDigest(payload);
     }
 
     public async createRegisterSidechainTransaction(payload: string, memo = ""): Promise<string> {
@@ -1467,22 +1467,22 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateProducerPayload(
-          publicKey,
-          nodePublicKey,
-          nickname,
-          url,
-          IPAddress,
-          location,
-          payPasswd
-      );
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateProducerPayload(
+            publicKey,
+            nodePublicKey,
+            nickname,
+            url,
+            IPAddress,
+            location,
+            payPasswd
+        );
     }
 
     public generateCancelProducerPayload(publicKey: string, payPasswd: string): Promise<any> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateCancelProducerPayload(
-          publicKey,
-          payPasswd
-      );
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateCancelProducerPayload(
+            publicKey,
+            payPasswd
+        );
     }
 
     public createRetrieveDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<string> {
@@ -1498,21 +1498,21 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     //CR registration transaction functions
     //
     public getCRDepositAddress(): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).getCRDepositAddress();
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).getCRDepositAddress();
     }
 
     public generateCRInfoPayload(publicKey: string, did: string, nickname: string, url: string, location: number): Promise<any> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateCRInfoPayload(
-        publicKey,
-        did,
-        nickname,
-        url,
-        location
-      );
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateCRInfoPayload(
+            publicKey,
+            did,
+            nickname,
+            url,
+            location
+        );
     }
 
     public generateUnregisterCRPayload(cid: string): Promise<string> {
-      return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateUnregisterCRPayload(cid);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateUnregisterCRPayload(cid);
     }
 
     public async createRegisterCRTransaction(payload: string, amount: number, memo = ""): Promise<string> {

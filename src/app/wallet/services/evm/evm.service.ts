@@ -387,8 +387,15 @@ export class EVMService {
 
   public async getTransactionReceipt(network: AnyNetwork, txHash: string): Promise<TransactionReceipt> {
     let web3 = await this.getWeb3(network);
-    let receipt = await web3.eth.getTransactionReceipt(txHash);
-    return receipt;
+
+    try {
+      let receipt = await web3.eth.getTransactionReceipt(txHash);
+      return receipt;
+    }
+    catch (e) {
+      Logger.warn("wallet", "Failed to get transaction receipt", e);
+      return null;
+    }
   }
 
   /**

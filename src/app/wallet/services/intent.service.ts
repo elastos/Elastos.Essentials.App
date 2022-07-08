@@ -276,12 +276,12 @@ export class IntentService {
             let activeNetworkWallet = this.walletManager.getActiveNetworkWallet();
             let mainChainSubwallet = activeNetworkWallet.getSubWallet(StandardCoinName.ELA) as unknown as MainChainSubWallet;
             if (mainChainSubwallet) {
-              let digest = await mainChainSubwallet.proposalOwnerDigest(intent.params.proposal);
+                let digest = await mainChainSubwallet.proposalOwnerDigest(intent.params.proposal);
 
-              // This is a silent intent, app will close right after calling sendIntentresponse()
-              await this.globalIntentService.sendIntentResponse({ digest: digest }, intent.intentId);
+                // This is a silent intent, app will close right after calling sendIntentresponse()
+                await this.globalIntentService.sendIntentResponse({ digest: digest }, intent.intentId);
             } else {
-              await this.globalIntentService.sendIntentResponse({ message: "No ELA Main chain wallet", status: 'error' }, intent.intentId);
+                await this.globalIntentService.sendIntentResponse({ message: "No ELA Main chain wallet", status: 'error' }, intent.intentId);
             }
         }
         else {

@@ -121,20 +121,20 @@ export class WalletSettingsPage implements OnInit {
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
 
         if (this.networkWallet && this.networkWallet.canBackupWallet()) {
-          this.settings.unshift({
-            type: 'wallet-export',
-            navCallback: () => {
-                if (this.canExportKeystore) {
-                    this.showExportMenu = !this.showExportMenu;
-                } else {
-                    void this.export();
-                }
-            },
-            title: this.translate.instant("wallet.wallet-settings-backup-wallet"),
-            subtitle: this.translate.instant("wallet.wallet-settings-backup-wallet-subtitle"),
-            icon: '/assets/wallet/settings/key.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/key.svg'
-          });
+            this.settings.unshift({
+                type: 'wallet-export',
+                navCallback: () => {
+                    if (this.canExportKeystore) {
+                        this.showExportMenu = !this.showExportMenu;
+                    } else {
+                        void this.export();
+                    }
+                },
+                title: this.translate.instant("wallet.wallet-settings-backup-wallet"),
+                subtitle: this.translate.instant("wallet.wallet-settings-backup-wallet-subtitle"),
+                icon: '/assets/wallet/settings/key.svg',
+                iconDarkmode: '/assets/wallet/settings/darkmode/key.svg'
+            });
         }
 
         if (this.networkWallet && this.networkWallet.network.supportsERC20Coins()) {
