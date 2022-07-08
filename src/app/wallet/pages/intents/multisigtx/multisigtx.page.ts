@@ -116,7 +116,7 @@ export class MultiSigTxPage implements OnInit {
 
     Logger.log("wallet", "Multisig Transaction intent params", this.receivedIntent.params);
 
-    this.initializationComplete = true;
+    this.initializationComplete = false;
     this.transactionKey = this.receivedIntent.params.t;
     void this.multiSigService.fetchPendingTransaction(this.receivedIntent.params.t).then(async txInfo => {
       Logger.log("wallet", "Pending transaction info retrieved:", txInfo);
@@ -139,7 +139,7 @@ export class MultiSigTxPage implements OnInit {
         }
       }
 
-      this.initializationComplete = false;
+      this.initializationComplete = true;
     });
   }
 
@@ -174,7 +174,7 @@ export class MultiSigTxPage implements OnInit {
   }
 
   public canContinue(): boolean {
-    return !this.hasErrors() && !this.initializationComplete && !!this.multiSigWallet && !!this.networkWallet;
+    return !this.hasErrors() && this.initializationComplete && !!this.multiSigWallet && !!this.networkWallet;
   }
 
   public async continue() {
