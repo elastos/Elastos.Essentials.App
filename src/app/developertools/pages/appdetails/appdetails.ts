@@ -379,7 +379,7 @@ export class AppDetailsPage {
       let scriptName = "getAppIcon" + randomPictureID;
       let couldCreateScript = await this.globalHiveService.getActiveVaultServices().getScriptingService().registerScript(scriptName, new AggregatedExecutable(
         "appIconDownload",
-        [new Executable('download', ExecutableType.FILE_DOWNLOAD, {path: appIconFileName})]
+        [new Executable('download', ExecutableType.FILE_DOWNLOAD, { path: appIconFileName })]
       ), null, true, true);
       Logger.log('developertools', "Could create avatar script?", couldCreateScript);
 
@@ -393,7 +393,7 @@ export class AppDetailsPage {
     }
     catch (e) {
       Logger.error('developertools', 'Failed to upload app icon to hive', e);
-      this.native.errToast('Failed to upload app picture to hive storage');
+      this.native.errToast('developertools.failed-to-upload-picture-to-hive');
     }
 
     this.uploadingIcon = false;

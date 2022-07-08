@@ -42,6 +42,7 @@ export const en = {
         'touch-to-change': 'Touch the icon to change it',
         'set-app-icon': 'Please set the icon',
         'app-unnamed': 'Unnamed',
+        'failed-to-upload-picture-to-hive': 'Failed to upload app picture to hive storage',
 
         // Placeholders
         'appName-placeholder': 'Set your app name here',

@@ -42,6 +42,7 @@ export const it = {
         'touch-to-change': 'Tocca l\'icona per cambiarlo',
         'set-app-icon': 'Imposta l\'icona',
         'app-unnamed': 'Senza nome',
+        'failed-to-upload-picture-to-hive': 'Failed to upload app picture to hive storage',
 
         // Placeholders
         'appName-placeholder': 'Inserisci qui il nome della tua domanda',

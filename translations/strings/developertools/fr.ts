@@ -42,6 +42,7 @@ export const fr = {
         'touch-to-change': 'Toucher l\'icône pour la modifier',
         'set-app-icon': 'Veuillez définir l\'icône',
         'app-unnamed': 'Sans nom',
+        'failed-to-upload-picture-to-hive': 'Impossible de stocker l\'image sur l\'espace de stockage Hive',
 
         // Placeholders
         'appName-placeholder': 'Saisir votre nom de l\'application ici',
