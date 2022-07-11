@@ -34,9 +34,7 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
 
       let mnemonic = await (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
       if (mnemonic) {
-        let wordlist = await WalletUtil.getMnemonicWordlist(mnemonic);
-        const Wallet = (await import("ethers")).Wallet;
-        let mnemonicWallet = Wallet.fromMnemonic(mnemonic, null, wordlist);
+        let mnemonicWallet = await this.getWalletFromMnemonic(mnemonic);
         this.evmAddress = mnemonicWallet.address;
       }
       else {
@@ -82,17 +80,41 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
   }
 
   public async signTransaction(subWallet: AnySubWallet, rawTx: any, transfer: Transfer): Promise<SignTransactionResult> {
+    let signTransactionResult: SignTransactionResult = {
+      signedTransaction: null
+    }
+
     let web3 = await EVMService.instance.getWeb3(this.network);
 
-    let mnemonic = await (this.masterWallet as StandardMasterWallet).getMnemonic(await AuthService.instance.getWalletPassword(this.masterWallet.id));
+    // No data - need to compute
+    let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id);
+    if (!payPassword)
+      return signTransactionResult;
 
     // TODO: handle wallets imported by private key
-    const Wallet = (await import("ethers")).Wallet;
-    let mnemonicWallet = Wallet.fromMnemonic(mnemonic);
-    let signResult = await web3.eth.accounts.signTransaction(rawTx, mnemonicWallet.privateKey);
-
-    return {
-      signedTransaction: signResult.rawTransaction
+    let privateKey = null;
+    let mnemonic = await (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
+    if (mnemonic) {
+      let mnemonicWallet = await this.getWalletFromMnemonic(mnemonic)
+      privateKey = mnemonicWallet.privateKey;
+    } else {
+      // No mnemonic - check if we have a private key instead
+      privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+      if (!privateKey) {
+        Logger.warn('wallet', 'IoTeXStandardSafe::signTransaction can not find the private key');
+        return signTransactionResult;
+      }
     }
+
+    let signResult = await web3.eth.accounts.signTransaction(rawTx, privateKey);
+
+    signTransactionResult.signedTransaction = signResult.rawTransaction;
+    return signTransactionResult;
+  }
+
+  private async getWalletFromMnemonic(mnemonic: string) {
+    let wordlist = await WalletUtil.getMnemonicWordlist(mnemonic);
+    const Wallet = (await import("ethers")).Wallet;
+    return Wallet.fromMnemonic(mnemonic, null, wordlist);
   }
 }
