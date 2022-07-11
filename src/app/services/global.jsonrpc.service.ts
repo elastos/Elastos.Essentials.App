@@ -77,7 +77,7 @@ export class GlobalJsonRPCService {
      * By default, this API parses the result and returns the result data from the parsed JSON for convenience.
      * It's though possible to get the raw result (only parsed as json) by setting returnRawResult to true. (Used by our Essentials Web3 provider).
      */
-    httpPost(rpcApiUrl: string, param: any, limitatorName = "default", timeout = 5000, returnRawResult = false, highPriority = false): Promise<any> {
+    httpPost(rpcApiUrl: string, param: any, limitatorName = "default", timeout = 10000, returnRawResult = false, highPriority = false): Promise<any> {
         if (!rpcApiUrl) {
             return null;
         }
