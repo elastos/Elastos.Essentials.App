@@ -3,6 +3,7 @@ import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { Address } from '../addresses/Address';
 import { IdrissAddress } from "../addresses/IdrissAddress";
 import { Resolver } from "./Resolver";
+
 export class IdrissResolver extends Resolver {
     constructor() {
         super();
@@ -16,16 +17,17 @@ export class IdrissResolver extends Resolver {
     public async resolve(name: string, subWallet: AnySubWallet): Promise<Address[]> {
         let addresses: Address[] = [];
 
+        name = name.trim().replace(' ', ''); // Remove spaces before name and secret
+
         if (!this.isInputValid(name)) {
             return [];
         }
 
-        name = name.trim();
-
         try {
-            const IdrissCrypto = (await import("idriss-crypto")).IdrissCrypto;
+            const IdrissCrypto = (await import("idriss-crypto/lib/browser")).IdrissCrypto;
             const idriss = new IdrissCrypto();
             const result = await idriss.resolve(name);
+
             if (result) {
                 for (var index in result) {
                     if (!subWallet || await subWallet.isAddressValid(result[index])) {
