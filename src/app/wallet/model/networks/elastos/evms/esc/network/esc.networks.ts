@@ -111,7 +111,10 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
   public getBuiltInERC20Coins(): ERC20Coin[] {
     let availableCoins: ERC20Coin[] = [];
 
-    //availableCoins.push(new ERC20Coin("TTECH", "Trinity Tech", "0xa4e4a46b228f3658e96bf782741c67db9e1ef91c", 18, MAINNET_TEMPLATE, false));
+    availableCoins.push(new ERC20Coin("GLIDE", "Glide", "0xd39eC832FF1CaaFAb2729c76dDeac967ABcA8F27", 18, MAINNET_TEMPLATE, false, true));
+    availableCoins.push(new ERC20Coin("CREDA", "CreDA Protocol Token", "0xc136E6B376a9946B156db1ED3A34b08AFdAeD76d", 18, MAINNET_TEMPLATE, false, true));
+    availableCoins.push(new ERC20Coin("FILDA", "FilDA on ESC", "0x00E71352c91Ff5B820ab4dF08bb47653Db4e32C0", 18, MAINNET_TEMPLATE, false, true));
+    availableCoins.push(new ERC20Coin("ELK", "Elk", "0xeEeEEb57642040bE42185f49C52F7E9B38f8eeeE", 18, MAINNET_TEMPLATE, false, true));
 
     return availableCoins;
   }
