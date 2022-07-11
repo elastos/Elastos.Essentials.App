@@ -244,7 +244,7 @@ export class ERC20CoinService {
 
         Logger.log("wallet", "Increasing ERC20 token spending allowance", erc20ContractAddress, erc20TokenDecimals, chainAmount.toString(10));
 
-        const approveMethod = await tokenContract.methods.approve(allowedAddress, chainAmount);
+        const approveMethod = await tokenContract.methods.approve(allowedAddress, chainAmount.toString(10));
 
         const { gasLimit, nonce } = await this.evmService.methodGasAndNonce(approveMethod, network, accountAddress, "0");
 
