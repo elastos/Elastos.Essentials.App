@@ -218,6 +218,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         // TODO: Should show all the sender address.
         transactionInfo.from = senderAddresses ? senderAddresses[0] : null;
 
+        let receiverAddresses = this.getReceiverAddress(transaction);
+        transactionInfo.to = receiverAddresses ? receiverAddresses[0] : null;
+
         if (transaction.type === TransactionDirection.RECEIVED) {
             transactionInfo.type = TransactionType.RECEIVED;
             transactionInfo.symbol = '+';
@@ -295,6 +298,21 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             return null;
         }
     }
+
+    private getReceiverAddress(transaction: ElastosTransaction): string[] {
+      if (transaction.type === TransactionDirection.SENT) {
+          if (!transaction.outputs) {
+              return null;
+          }
+          let receiveAddresses = [];
+          for (let i = 0, len = transaction.outputs.length; i < len; i++) {
+            receiveAddresses.push(transaction.outputs[i])
+          }
+          return receiveAddresses.length > 0 ? receiveAddresses : null;
+      } else {
+          return null;
+      }
+  }
 
     public supportMemo() {
         return true;

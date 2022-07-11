@@ -62,7 +62,7 @@ export class ElastosTransactionsHelper {
       statusName: ElastosTransactionsHelper.getTransactionStatusName(transaction.Status),
       symbol: '', // Defined by inherited classes
       from: null,
-      to: transaction.address,
+      to: null,
       timestamp,
       txid: null, // Defined by inherited classes
       type: null, // Defined by inherited classes
