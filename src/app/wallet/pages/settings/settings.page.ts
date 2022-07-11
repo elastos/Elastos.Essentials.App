@@ -188,7 +188,7 @@ export class SettingsPage implements OnInit {
                     title: this.translate.instant("wallet.settings-add-wallet-multi-sig-wallet"),
                     items: [
                         {
-                            title: "Elastos mainchain",
+                            title: "Elastos main chain",
                             routeOrAction: "/wallet/multisig/standard/create"
                         }
                     ]

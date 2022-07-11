@@ -341,7 +341,7 @@ export const zh = {
                 "delete-wallet-confirm-title": "删除钱包",
                 "delete-wallet-confirm-subtitle": "您的钱包将从此设备上删除。 您可以重新导入此钱包，请确保已经备份好钱包助记词。",
                 "wallet-settings-consolidate-utxos": "零钱换整",
-                "wallet-settings-consolidate-utxos-subtitle": "Utxo 数量过多会增加创建交易的时间",
+                "wallet-settings-consolidate-utxos-subtitle": "UTXO 数量过多会增加创建交易的时间",
                 "wallet-settings-consolidate-no-need": "无需执行零钱换整",
                 "wallet-settings-extended-public-keys-title": "扩展公钥",
                 "wallet-settings-extended-public-keys-subtitle": "创建多签钱包所需的特殊密钥",
@@ -674,8 +674,8 @@ export const zh = {
                 'multi-sig-tx-title': '多签交易',
                 'multi-sig-tx-fetching': '正在获取交易信息，请稍候。',
                 'multi-sig-tx-no-tx-found': '抱歉，找不到匹配的交易。',
-                'multi-sig-tx-unknown-network': '抱歉，您的Essentials版本中不存在此交易适用的网络。',
-                'multi-sig-tx-pick-wallet': '请选择正确的多签钱包。',
+                'multi-sig-tx-unknown-network': '抱歉，您的 Essentials 版本中不存在此交易适用的网络。',
+                'multi-sig-tx-pick-wallet': '请选择正确的多签钱包',
                 'multi-sig-tx-select-wallet': '选择多签钱包',
                 'multi-sig-tx-selected-wallet': '已选的钱包',
                 'multi-sig-tx-switched-to-network': '切换到 {{ network }}',
@@ -688,7 +688,7 @@ export const zh = {
                 'multi-sig-extended-public-key-info': '这是您的扩展公钥。您可以将此密钥用作多签钱包的联合签名者密钥。',
                 'multi-sig-extended-public-key-copy': '点击即可复制',
                 'multi-sig-extended-public-key-note': '技术说明',
-                'multi-sig-extended-public-key-note-info': '此扩展公钥是使用BIP45派生的，以便在多签钱包中使用，而由于历史原因，您的elastos主链钱包使用BIP44。',
+                'multi-sig-extended-public-key-note-info': '此扩展公钥是使用BIP45派生的，以便在多签钱包中使用，而由于历史原因，您的 Elastos 主链钱包使用BIP44。',
 
                 /************************
                 * Offline transactions  *
