@@ -161,7 +161,6 @@
 
     .btn {
         height: 47px;
-        width: 46.5%;
         position: fixed;
         bottom: 20px;
         display: flex;
@@ -186,6 +185,7 @@
     }
 
     .confirm {
+        left: 2%;
         right: 2%;
         box-shadow: 0 3px 15px 0 #ededf0;
         background-color: #6e23d0;

@@ -30,10 +30,6 @@
     </p>
 
     <!-- BUTTONS FOOTER -->
-    <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
-      <ion-label>{{ 'common.cancel' | translate}}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
     <div class="btn confirm ion-activatable ripple" (click)="continue()" *ngIf="canContinue()">
       <ion-label>{{ 'common.confirm' | translate}}</ion-label>
       <ion-ripple-effect></ion-ripple-effect>
