@@ -332,6 +332,16 @@ export class DappBrowserService implements GlobalService {
     }
 
     /**
+     * Closes the active browser, if any.
+     *
+     * Check browser.ts in the browser screen for the list of special modes when closing, for specific follow up action.
+     * If no mode is given, the navigation simply goes back.
+     */
+    public close(mode?: "goToLauncher"): Promise<void> {
+        return dappBrowser.close(mode);
+    }
+
+    /**
      * Hides the active browser, if any
      */
     public hideActiveBrowser() {

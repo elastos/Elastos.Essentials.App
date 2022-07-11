@@ -25,9 +25,6 @@ export class BrowserPage implements DappBrowserClient {
     @ViewChild(BrowserTitleBarComponent, { static: false }) titleBar: BrowserTitleBarComponent;
 
     public shot: string = null;
-    // Whether we plan to come back after leaving this screen. eg come back from the menu.
-    // This allows us to know if the webview must be closed or just hidden
-    private leavingTemporarily = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
     private backButtonSub: Subscription;
@@ -86,12 +83,7 @@ export class BrowserPage implements DappBrowserClient {
             this.shot = await dappBrowser.getWebViewShot();
         });
 
-        if (this.leavingTemporarily) {
-            this.leavingTemporarily = false;
-            dappBrowser.hide();
-        }
-        else
-            void dappBrowser.close();
+        dappBrowser.hide();
 
         if (this.backButtonSub) {
             this.backButtonSub.unsubscribe();
@@ -106,11 +98,12 @@ export class BrowserPage implements DappBrowserClient {
 
     onExit(mode?: string) {
         this.dappbrowserService.setClient(null);
-        if (mode) {
-            void this.nav.goToLauncher();
-        }
-        else {
-            void this.nav.navigateBack();
+        switch (mode) {
+            case "goToLauncher":
+                void this.nav.goToLauncher();
+                break;
+            default:
+                void this.nav.navigateBack();
         }
     }
 
@@ -155,7 +148,6 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     onMenu() {
-        this.leavingTemporarily = true;
         void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
     }
 

@@ -191,6 +191,7 @@ export class IntentService {
                 break;
 
             case 'multisigtx':
+                Logger.log("wallet", 'Handling multisig intent:', intent);
                 this.nextScreen = '/wallet/intents/multisigtx';
                 this.coinTransferService.intentTransfer = intent;
                 break;
