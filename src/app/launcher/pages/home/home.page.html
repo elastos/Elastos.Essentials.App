@@ -45,20 +45,6 @@
       </ion-col>
     </ion-row>
 
-    <!-- Wallet Connect -->
-    <ion-row class="wallet-connect-row" *ngIf="someWalletConnectSessionsCanBeDisplayed()"
-      (click)="showWalletConnectSessions()">
-      <img class="icon" src="assets/settings/icon/walletconnect.svg">
-      <ion-label>{{ 'launcher.active-wallet-connect-sessions' | translate }}</ion-label>
-      <ion-col *ngFor="let connector of walletConnectConnectors" class="connector-col" size="12">
-        <div class="connector"
-          *ngIf="connector.connected && connector.peerMeta && connector.peerMeta.icons && connector.peerMeta.icons.length > 0">
-          <img class="connector-logo" [src]="connector.peerMeta.icons[0]"
-            (error)="connector.peerMeta.icons[0]='assets/settings/icon/walletconnect.svg'" />
-          <p>{{ connector.peerMeta.name }}</p>
-        </div>
-      </ion-col>
-    </ion-row>
 
     <!-- Wallets -->
     <ion-row class="wallets-row" *ngIf="walletNetworkService.activeNetwork.value">
@@ -170,6 +156,21 @@
               [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
           </ion-col>
         </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <!-- Wallet Connect -->
+    <ion-row class="wallet-connect-row" *ngIf="someWalletConnectSessionsCanBeDisplayed()"
+      (click)="showWalletConnectSessions()">
+      <img class="icon" src="assets/settings/icon/walletconnect.svg">
+      <ion-label>{{ 'launcher.active-wallet-connect-sessions' | translate }}</ion-label>
+      <ion-col *ngFor="let connector of walletConnectConnectors" class="connector-col" size="12">
+        <div class="connector"
+          *ngIf="connector.connected && connector.peerMeta && connector.peerMeta.icons && connector.peerMeta.icons.length > 0">
+          <img class="connector-logo" [src]="connector.peerMeta.icons[0]"
+            (error)="connector.peerMeta.icons[0]='assets/settings/icon/walletconnect.svg'" />
+          <p>{{ connector.peerMeta.name }}</p>
+        </div>
       </ion-col>
     </ion-row>
 
