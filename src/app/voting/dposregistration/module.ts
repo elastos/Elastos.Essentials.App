@@ -7,6 +7,7 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
 import { DPosRegistrationPage } from './pages/registration/registration.page';
 import { DPosUnRegistrationPage } from './pages/unregistration/unregistration.page';
 import { DPoSRegistrationRoutingModule } from './routing';
@@ -25,7 +26,8 @@ import { DPoSRegistrationRoutingModule } from './routing';
     DPoSRegistrationRoutingModule,
     IonicModule,
     IonicStorageModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    StdTransactionComponentModule
   ],
   bootstrap: [],
   entryComponents: [

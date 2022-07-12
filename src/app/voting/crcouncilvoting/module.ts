@@ -8,6 +8,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
+import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
 import { ComponentsModule } from './components/components.module';
 import { RoundProgressModule } from './components/round-progress/round-progress.module';
 import { CandidatePage } from './pages/candidate/candidate.page';
@@ -43,6 +44,7 @@ import { CRCouncilVotingRoutingModule } from './routing';
     FormsModule,
     CRCouncilVotingRoutingModule,
     SharedComponentsModule,
+    StdTransactionComponentModule,
     RoundProgressModule,
     IonicModule,
     IonicStorageModule,

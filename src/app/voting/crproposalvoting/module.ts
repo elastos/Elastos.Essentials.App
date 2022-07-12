@@ -6,6 +6,7 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
 import { ComponentsModule } from './components/components.module';
 import { ProposalSearchResultComponent } from './components/proposal-search-result/proposal-search-result.component';
 import { CreateProposalPage } from './pages/intents/createproposal/createproposal';
@@ -47,6 +48,7 @@ import { PopupService } from './services/popup.service';
     CRProposalVotingRoutingModule,
     HttpClientModule,
     SharedComponentsModule,
+    StdTransactionComponentModule,
     FormsModule,
     IonicModule,
     IonicStorageModule,
