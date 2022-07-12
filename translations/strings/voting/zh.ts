@@ -31,6 +31,7 @@ export const zh = {
         'aborted': '已终止',
 
         'not-enough-ela-for-vote': '当前钱包余额不足，请充值或选择其他钱包',
+        'multi-sign-reject-voting': '多签钱包不能投票。',
 
     }
 

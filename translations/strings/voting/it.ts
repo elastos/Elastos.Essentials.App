@@ -32,6 +32,7 @@ export const it = {
         'aborted': 'Interrotto',
 
         'not-enough-ela-for-vote': 'The active wallet balance is insufficient. Please recharge or select another Wallet',
+        'multi-sign-reject-voting': 'Vota contro con Multi sign.',
     }
 
 };

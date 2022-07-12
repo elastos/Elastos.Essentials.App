@@ -137,7 +137,6 @@ export const fr = {
         'vote-number': 'Entrer le nombre de votes',
         'max-votes-pre': 'Max ',
         'max-votes-suf': ' Votes',
-        'multi-sign-reject-voting': 'Multi sign reject voting.',
         'greater-than-max-votes': 'Plus grand que le nombre de votes Max.',
         'less-than-equal-zero-votes': 'Moins de 0 votes.',
         'voteforproposal-successfully': 'Vote réussi, veuillez attendre la confirmation de la transaction.',

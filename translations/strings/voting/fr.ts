@@ -31,6 +31,7 @@ export const fr = {
         'aborted': 'Aborted',
 
         'not-enough-ela-for-vote': 'The active wallet balance is insufficient. Please recharge or select another Wallet',
+        'multi-sign-reject-voting': 'Multi sign reject voting.',
     }
 
 };

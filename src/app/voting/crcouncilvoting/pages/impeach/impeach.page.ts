@@ -58,7 +58,7 @@ export class ImpeachCRMemberPage {
 
     async goTransaction(): Promise<boolean> {
         if (this.voteService.sourceSubwallet.masterWallet.type !== WalletType.STANDARD) {
-            await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.multi-sign-reject-voting');
+            await this.popupProvider.ionicAlert("common.error", 'voting.multi-sign-reject-voting');
             return false;
         }
         // Request the wallet to publish our vote.

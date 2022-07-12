@@ -106,7 +106,7 @@ export class VoteForProposalPage {
 
     async goTransaction(): Promise<boolean> {
         if (this.voteService.sourceSubwallet.masterWallet.type !== WalletType.STANDARD) {
-            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.multi-sign-reject-voting');
+            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'voting.multi-sign-reject-voting');
             return false;
         }
         // Request the wallet to publish our vote.

@@ -138,7 +138,6 @@ export const it = {
         'vote-number': 'Inserisci il numero di voti',
         'max-votes-pre': 'Max ',
         'max-votes-suf': ' Voti',
-        'multi-sign-reject-voting': 'Vota contro con Multi sign.',
         'greater-than-max-votes': 'Voti superiori a quelli disponibili.',
         'less-than-equal-zero-votes': 'Less than or equal to 0 votes.',
         'voteforproposal-successfully': 'Votazione effettuata con successo, attendi la conferma della transazione.',
