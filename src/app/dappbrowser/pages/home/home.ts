@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -20,8 +19,6 @@ import { BrowsedAppInfo } from '../../model/browsedappinfo';
 import { BrowserFavorite } from '../../model/favorite';
 import { DappBrowserService } from '../../services/dappbrowser.service';
 import { FavoritesService } from '../../services/favorites.service';
-
-declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
 type DAppMenuEntry = {
     icon: string;
@@ -61,7 +58,6 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
         public zone: NgZone,
-        private platform: Platform,
         private globalStartupService: GlobalStartupService,
         private globalIntentService: GlobalIntentService,
         private globalStorageService: GlobalStorageService,
@@ -292,7 +288,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             },
         ];
 
-        this.buildFilteredDApps();
+        this.updateFavoritesAndApps();
     }
 
     async ionViewWillEnter() {
@@ -303,15 +299,15 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         await this.checkNoInAppNoticeStatus();
 
         this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
-            this.buildFilteredFavorites();
-            this.buildFilteredDApps();
-            this.buildFilteredDAppsWithFavorites();
+            if (favorites) {
+              this.updateFavoritesAndApps();
+            }
         });
 
         this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
-            this.buildFilteredFavorites();
-            this.buildFilteredDApps();
-            this.buildFilteredDAppsWithFavorites();
+            if (network) {
+              this.updateFavoritesAndApps();
+            }
         });
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -335,6 +331,15 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             this.recentAppsSubscription = null;
         }
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
+    private updateFavoritesAndApps() {
+      // Build dapps and favorites only when the active network and favorites are ininialized.
+      if (this.favoritesService.favoritesSubject.value && this.walletNetworkService.activeNetwork.value) {
+        this.buildFilteredFavorites();
+        this.buildFilteredDApps();
+        this.buildFilteredDAppsWithFavorites();
+      }
     }
 
     public setTheme(darkMode: boolean) {
@@ -374,9 +379,12 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
      * was manually enabled, or favorites that don't have any network enabled at all (means "show all").
      */
     private buildFilteredFavorites() {
-        this.favorites = this.favoritesService.getFavorites().filter(f => {
-            return f.networks.length == 0 || f.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
-        });
+        let allFavorites = this.favoritesService.getFavorites();
+        if (allFavorites) {
+          this.favorites = allFavorites.filter(f => {
+              return f.networks.length == 0 || f.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
+          });
+        }
     }
 
     private buildFilteredDApps() {
