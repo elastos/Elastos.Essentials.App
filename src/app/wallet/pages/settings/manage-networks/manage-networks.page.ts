@@ -43,11 +43,13 @@ export class ManageNetworksPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.netListSubscription = this.networkService.networksList.subscribe(allNetworks => {
+    this.netListSubscription = this.networkService.networksList.subscribe(_ => {
       this.customNetworkEntries = this.customNetworksService.getCustomNetworkEntries();
 
+      let networks = this.networkService.getDisplayableNetworks();
+
       // Build the list of editable networks
-      this.availableNetworks = allNetworks.map(n => {
+      this.availableNetworks = networks.map(n => {
         let customNetworkEntry = this.customNetworkEntries.find(cn => cn.key === n.key);
 
         return {
