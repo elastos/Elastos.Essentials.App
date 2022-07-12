@@ -1,60 +1,157 @@
+ion-content {
+    --padding-bottom: 180px;
+}
 
 .container {
     display: flex;
     flex-direction: column;
 
+    &.intro-loading {
+        text-align: center;
+
+        ion-spinner {
+            margin: 20px;
+        }
+    }
+
     .heading {
-        font-size: 20px;
+        font-size: 12px;
         margin: 20px 0;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+
+        &.highlighted {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+    }
+
+    .card {
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        background: white;
+    }
+
+    .glide-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     }
 
     .wallet-name {
         margin-bottom: 20px;
     }
 
+    .fetch-tokens-heading {
+        display: flex;
+        flex-direction: row;
+    }
+
     .source-tokens, .destination-tokens {
         .source-token, .destination-token {
-            background: rgba(255,255,255, 10%);
-            padding: 10px;
+            padding: 15px;
             margin-bottom: 5px;
             border-radius: 10px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            border: solid 2px transparent;
+            background: white;
+
+            .left {
+                margin-right: 15px;
+
+                .network-logo {
+                    height: 40px;
+                }
+            }
 
             &.selected {
-                background: rgba(255,255,255, 20%);
+                border-color: #9368F0;
             }
 
             &.gone {
                 display: none;
             }
 
-            .network-logo {
-                height: 30px;
-            }
-
-            .amount-symbol {
-                .token-symbol {
+            .right {
+                .amount-symbol {
+                    margin-bottom: 5px;
                     font-weight: bold;
-                }
-            }
 
-            .token-name {
-                opacity: 50%;
+                    .token-symbol {
+
+                    }
+                }
+
+                .token-name {
+                    opacity: 50%;
+                }
             }
         }
     }
 
-    .transfer-input {
-        //background-color: #ffffff;
-        font-size: 14px;
-        font-weight: 400;
-        text-align: left;
-        margin-bottom: 20px;
+    .amount-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 10px;
         border-radius: 10px;
-        --padding-start: 20px;
-        --padding-top: 20px;
-        --padding-bottom: 20px;
-        font-size: 18px;
+        margin-bottom: 5px;
+        background: white;
+
+        .transfer-input {
+            font-size: 14px;
+            font-weight: 400;
+            text-align: left;
+            border-radius: 10px;
+            font-size: 18px;
+            text-align: right;
+        }
+
+        .token-symbol {
+            margin-top: 2px;
+            font-weight: bold;
+        }
     }
+
+    .computing-container {
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .transfer-summary {
+        margin-top: 10px;
+
+        .heading {
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        ion-col {
+            margin-bottom: 10px;
+            padding: 0;
+
+            &:nth-child(2) {
+                padding-left: 10px;
+            }
+        }
+    }
+}
+
+.footer {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px;
+    left: auto;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1);
 
     .last-error {
         margin: 20px 0;
@@ -66,12 +163,65 @@
             height: 20px;
         }
     }
+
+    .buttons {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .transfer-progress {
+        .heading {
+            font-weight: 600;
+        }
+
+        .progress-step, .progress-message {
+            margin-top: 10px;
+        }
+
+        .progress-message {
+            margin-bottom: 10px;
+        }
+    }
 }
 
 .dark-container {
-    .transfer-input {
-        background-color: rgba(255,255,255, 10%);
-        color: white;
+    .card {
+        background: #212021;
+    }
+
+    .amount-container {
+        background: #212021;
+
+        .transfer-input {
+            color: white;
+        }
+    }
+
+    .source-tokens, .destination-tokens {
+        .source-token, .destination-token {
+            background: #212021;
+        }
+    }
+
+    .transfer-summary {
+        color: #ACB1B6;
+
+        .heading {
+            color: #FFF;
+        }
+    }
+
+    .footer {
+        background: #212021;
+        box-shadow: 0 -10px 20px rgba(255, 255, 255, 0.1);
+
+        .transfer-progress {
+            color: #ACB1B6;
+
+            .heading {
+                color: white;
+            }
+        }
     }
 }
 

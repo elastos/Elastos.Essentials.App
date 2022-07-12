@@ -1,11 +1,12 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
-import { NavController } from '@ionic/angular';
+import { IonInput, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { Logger } from 'src/app/logger';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -77,6 +78,7 @@ export class HomePage {
     private popupService: GlobalPopupService,
     public globalNativeService: GlobalNativeService,
     private erc20CoinService: ERC20CoinService,
+    private dAppBrowserService: DappBrowserService,
     private evmService: EVMService,
   ) { }
 
@@ -277,6 +279,13 @@ export class HomePage {
     void this.recomputeTransfer();
   }
 
+  public transferAmountFocused(event, input: IonInput) {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    setTimeout(async () => {
+      (await input.getInputElement()).scrollIntoView({ behavior: 'smooth' });
+    }, 500);
+  }
+
   /**
    * Rebuilds the list of possible destination tokens based on the selected source token.
    */
@@ -450,5 +459,9 @@ export class HomePage {
       return this.translate.instant("easybridge.not-started");
 
     return this.activeTransfer.getTransferProgressMessage();
+  }
+
+  public openGlideFinance() {
+    void this.dAppBrowserService.open("https://glidefinance.io", "Glide Finance");
   }
 }

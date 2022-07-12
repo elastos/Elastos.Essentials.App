@@ -21,7 +21,6 @@ ion-content {
 
     .id-row {
         margin: 20px 0;
-        padding-bottom: 10px;
 
         ion-col {
             display: flex;
@@ -348,6 +347,8 @@ ion-content {
     }
 
     .wallet-connect-row {
+        margin-top: 30px;
+
         .icon {
             height: 30px;
             margin-top: -35px;
