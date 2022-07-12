@@ -172,7 +172,7 @@ export class UniswapService {
 
       var address = Pair.getAddress(tokenA, tokenB, factoryAddress, initCodeHash);
 
-      let uniswapPairContract = new (await EVMService.instance.getWeb3(network)).eth.Contract(<any>IUniswapV2Pair.abi, address);
+      let uniswapPairContract = new (await EVMService.instance.getWeb3(network, true)).eth.Contract(<any>IUniswapV2Pair.abi, address);
       let _ref = await uniswapPairContract.methods.getReserves().call();
 
       var reserves0 = _ref[0],
@@ -226,7 +226,7 @@ export class UniswapService {
       throw new Error("Unable to compute swap call parameters");
 
     let IUniswapV2Router02ABI = (await import('@uniswap/v2-periphery/build/IUniswapV2Router02.json')).abi as any;
-    let contract = new (await this.evmService.getWeb3(network)).eth.Contract(IUniswapV2Router02ABI, currencyProvider.getRouterAddress(), { from: walletAddress });
+    let contract = new (await this.evmService.getWeb3(network, true)).eth.Contract(IUniswapV2Router02ABI, currencyProvider.getRouterAddress(), { from: walletAddress });
 
     let swapMethod = await contract.methods[swapParams.methodName](...swapParams.args);
 

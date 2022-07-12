@@ -95,7 +95,7 @@ export class EasyBridgeService {
 
     try {
       let network = <EVMNetwork>this.networkService.getNetworkByChainId(token.chainId);
-      let web3 = await this.evmService.getWeb3(network);
+      let web3 = await this.evmService.getWeb3(network, true);
 
       let balance: BigNumber;
       if (!token.isNative) {
@@ -259,7 +259,7 @@ export class EasyBridgeService {
     const recipient = accountAddress;
     const value = this.erc20CoinService.toChainHexAmount(amount, context.sourceToken.decimals);
 
-    const destProvider = await this.evmService.getWeb3(context.destinationNetwork);
+    const destProvider = await this.evmService.getWeb3(context.destinationNetwork, true);
     const fromDestBlock = await destProvider.eth.getBlockNumber();
 
     Logger.log("easybridge", "Getting gas price");
@@ -345,7 +345,7 @@ export class EasyBridgeService {
     let accountAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
     let bridgeContext = this.computeBridgeContext(sourceToken, destinationToken);
 
-    const destProvider = await this.evmService.getWeb3(bridgeContext.destinationNetwork);
+    const destProvider = await this.evmService.getWeb3(bridgeContext.destinationNetwork, true);
     let sourceMediator: Contract;
     let tokensBridgedEvent: string;
     let topics: (string | string[])[];
@@ -531,17 +531,17 @@ export class EasyBridgeService {
 
   private async getNativeSourceMediator(network: EVMNetwork, contractAddress: string, signerWalletAddress: string): Promise<Contract> {
     let AMB_NATIVE_ERC_ABI = (await import('src/assets/easybridge/contracts/AMB_NATIVE_ERC_ABI.json')).default as any;
-    return new (await this.evmService.getWeb3(network)).eth.Contract(AMB_NATIVE_ERC_ABI, contractAddress, { from: signerWalletAddress });
+    return new (await this.evmService.getWeb3(network, true)).eth.Contract(AMB_NATIVE_ERC_ABI, contractAddress, { from: signerWalletAddress });
   }
 
   private async getTokenSourceMediator(network: EVMNetwork, contractAddress: string, signerWalletAddress: string): Promise<Contract> {
     let MULTI_AMB_ERC_ERC_ABI = (await import('src/assets/easybridge/contracts/MULTI_AMB_ERC_ERC_ABI.json')).default as any;
-    return new (await this.evmService.getWeb3(network)).eth.Contract(MULTI_AMB_ERC_ERC_ABI, contractAddress, { from: signerWalletAddress });
+    return new (await this.evmService.getWeb3(network, true)).eth.Contract(MULTI_AMB_ERC_ERC_ABI, contractAddress, { from: signerWalletAddress });
   }
 
   private async getErc677Contract(network: EVMNetwork, contractAddress: string, signerWalletAddress: string): Promise<Contract> {
     let ERC677_ABI = (await import('src/assets/easybridge/contracts/ERC677_ABI.json')).default as any;
-    return new (await this.evmService.getWeb3(network)).eth.Contract(ERC677_ABI, contractAddress, { from: signerWalletAddress });
+    return new (await this.evmService.getWeb3(network, true)).eth.Contract(ERC677_ABI, contractAddress, { from: signerWalletAddress });
   }
 
   /**
