@@ -34,6 +34,7 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
     }
     catch (err) {
       Logger.error("wallet", "Can not Create Elastos main chain standard subwallets ", err);
+      throw err;
     }
   }
 

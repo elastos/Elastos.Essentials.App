@@ -281,22 +281,8 @@ export class WalletService {
                     // If the network wallet creation failed for any reason, we still want to set the active network
                     // to "null" to not get an ankward situation with a new network and the old network wallet.
                     if (masterWallet.id === this.activeMasterWalletId) {
-                        if (networkWallet.masterWallet.supportsNetwork(activatedNetwork)) {
+                          Logger.log("wallet", "Setting the network wallet as active one:", networkWallet);
                           this.activeNetworkWallet.next(networkWallet);
-                        } else {
-                          // Can't call this.getNetworkWalletsList();
-                          // The onActiveNetworkChanged is high priority NetworkChangeCallback, so this.networkService.activeNetwork.value is older one.
-                          let networkwalletslist =  Object.values(this.networkWallets).filter(nw => nw.masterWallet.supportsNetwork(activatedNetwork));
-                          if (networkwalletslist.length > 0) {
-                            await this.setActiveNetworkWallet(networkwalletslist[0])
-                          } else {
-                            if (masterWalletsList.length - 1 > i) {
-                              this.activeMasterWalletId = masterWalletsList[i + 1].id;
-                            } else {
-                              this.activeNetworkWallet.next(null);
-                            }
-                          }
-                        }
                     }
                 }
             }
