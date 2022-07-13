@@ -1095,16 +1095,15 @@ export class DappBrowserService implements GlobalService {
     }
 
     /**
-     * Launch a recently browsed app. If the last network used while browing this dapp
-     * is not the active one, first toggle to the right network that users like to use with this
-     * dapp.
+     * Launch a recently browsed app.
      */
-    public async openRecentApp(recentApp: BrowsedAppInfo) {
-        if (recentApp.network && recentApp.network != this.getActiveNetworkKey()) {
+    public openRecentApp(recentApp: BrowsedAppInfo) {
+        /* if (recentApp.network && recentApp.network != this.getActiveNetworkKey()) {
             let previousNetwork = WalletNetworkService.instance.getNetworkByKey(recentApp.network);
             if (previousNetwork)
                 await WalletNetworkService.instance.setActiveNetwork(previousNetwork);
-        }
+        } */
+
         if (recentApp.useExternalBrowser) {
             void this.globalIntentService.sendIntent('openurl', { url: recentApp.url });
             // Update lastBrowsed.
