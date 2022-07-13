@@ -6,7 +6,7 @@ import { GlobalMnemonicKeypadService, MnemonicLanguage } from 'src/app/services/
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 type MnemonicKeypadComponentOptions = {
-  // TODO
+  restartWithWords: string[];
 }
 
 @Component({
@@ -30,9 +30,7 @@ export class MnemonicKeypadComponent implements OnInit {
   public suggestedWords: string[] = [];
   public languages: MnemonicLanguage[] = [];
   public selectedLanguage = "en";
-
-  // Private model
-  private selectedWords: string[] = [];
+  public selectedWords: string[] = [];
 
   constructor(
     private navParams: NavParams,
@@ -44,8 +42,12 @@ export class MnemonicKeypadComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.options = this.navParams.data as MnemonicKeypadComponentOptions;
+    this.options = this.navParams.data as MnemonicKeypadComponentOptions || {
+      restartWithWords: []
+    };
+
     this.languages = this.mnemonicKeypadService.getSupportedLanguages();
+    this.selectedWords = this.options.restartWithWords;
 
     // Auto-select language based on app language
     let appLanguage = this.languageService.activeLanguage.value;
@@ -98,5 +100,13 @@ export class MnemonicKeypadComponent implements OnInit {
     let clipboardContent = await this.clipboard.paste();
     this.mnemonicKeypadService.pastedContent.next(clipboardContent);
     this.closeKeypad();
+  }
+
+  /**
+   * Deletes the previous word previously validated.
+   */
+  public deletePreviousWord() {
+    this.selectedWords.pop();
+    this.mnemonicKeypadService.typedMnemonicWords.next(this.selectedWords);
   }
 }

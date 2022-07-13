@@ -66,15 +66,18 @@ export class GlobalMnemonicKeypadService {
    * Resolves when the popup is closed (input ended, or cancelled)
    *
    * @param numberOfExpectedWords The keypad auto closes once user chose this number of words.
+   * @param restartWithWords Restart the mnemonic input where it was started earlier.
    */
-  public promptMnemonic(numberOfExpectedWords: number, wordInputCb: (words: string[]) => void, pasteCb: (pasted: string) => void, modalShownCb?: () => void): Promise<void> {
+  public promptMnemonic(numberOfExpectedWords: number, restartWithWords: string[] = [], wordInputCb: (words: string[]) => void, pasteCb: (pasted: string) => void, modalShownCb?: () => void): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise(async resolve => {
       await this.dismissMnemonicPrompt();
 
       this.activeMnemonicModal = await this.modalCtrl.create({
         component: MnemonicKeypadComponent,
-        componentProps: {},
+        componentProps: {
+          restartWithWords
+        },
         backdropDismiss: true, // Closeable
         showBackdrop: false,
         cssClass: !this.theme.darkMode ? "identity-mnemonickeypad-component" : 'identity-mnemonickeypad-component-dark'
@@ -90,6 +93,8 @@ export class GlobalMnemonicKeypadService {
         }
       });
       let pasteSub = this.pastedContent.subscribe(pasteCb);
+
+      this.typedMnemonicWords
 
       void this.activeMnemonicModal.onDidDismiss().then((params) => {
         // Restore background content original size

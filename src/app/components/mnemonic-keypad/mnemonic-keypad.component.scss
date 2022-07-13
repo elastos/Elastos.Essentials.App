@@ -43,6 +43,18 @@ ion-content {
     }
 }
 
+.previous {
+    display: flex;
+
+    img {
+        margin-right: 5px;
+    }
+
+    .delete {
+        text-align: left;
+    }
+}
+
 .keypad {
     padding: 10px;
 
@@ -81,9 +93,9 @@ ion-content {
 
         .lang {
             img {
-                width: 43px;
-                height: 25px;
-                margin: 10px;
+                width: 38px;
+                height: 23px;
+                margin: 8px;
             }
         }
 

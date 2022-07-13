@@ -35,7 +35,7 @@ export class ImportDIDPage {
 
   private nextStepId: number;
   public loadingIdentity = false;
-  public mnemonicWords = new Array<any>()
+  public mnemonicWords = new Array<string>()
   public mnemonicSentence = "";
   //   public mnemonicSentence: string = "income diesel latin coffee tourist kangaroo lumber great ill amazing say left"; // TMP TESTNET
   private mnemonicForImport = "";
@@ -224,15 +224,8 @@ export class ImportDIDPage {
     });
   }
 
-  private clearMnemonic() {
-    this.mnemonicSentence = "";
-    this.onMnemonicSentenceChanged();
-  }
-
   public async startMnemonicInput() {
-    this.clearMnemonic();
-
-    await this.mnemonicKeypadService.promptMnemonic(12, words => {
+    await this.mnemonicKeypadService.promptMnemonic(12, this.mnemonicWords, words => {
       // Update words in the input box when received from the mnemonic keypad
       this.mnemonicSentence = words.join(" ");
       this.onMnemonicSentenceChanged();

@@ -173,10 +173,9 @@ export class MnemonicWritePage implements OnInit {
     }
 
     public async showMnemonicInputKeypad() {
-        this.inputList = [];
         this.updateSliderPosition();
 
-        await this.mnemonicKeypadService.promptMnemonic(12, words => {
+        await this.mnemonicKeypadService.promptMnemonic(12, this.inputList, words => {
             this.onMnemonicWordsListUpdate(words);
         }, pasted => {
             this.onMnemonicPaste(pasted);

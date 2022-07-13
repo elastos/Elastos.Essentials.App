@@ -8,6 +8,12 @@
     <div class="ongoing">
       {{onGoingInput}}
       <img class="clear" *ngIf="onGoingInput" src="assets/settings/icon/delete.svg" (click)="clearCurrentInput()" />
+
+      <!-- Ability to delete previous words -->
+      <div class="previous" *ngIf="!onGoingInput && selectedWords.length > 0" (click)="deletePreviousWord()">
+        <img class="clear" src="assets/settings/icon/delete.svg" />
+        <div class="delete">{{ 'common.delete' | translate }} <b>{{ selectedWords[selectedWords.length-1] }}</b></div>
+      </div>
     </div>
     <div class="keypad">
       <div *ngFor="let letterLine of inputLetters" class="letter-line">
