@@ -75,7 +75,7 @@ export const zh = {
     'error-invalid-probability': "概率错误，请使用 0-100 ",
     'error-invalid-expiration-time': "有效期错误，请使用 1-7 天",
     'error-no-message': "善待您的好友，给他们一个问候!",
-    'error-message-too-long': 'Your message is too long (max 200)',
+    'error-message-too-long': '您的消息太长了(至多 200 字符)',
     'error-packet-creation-failed': "无法创建红包，请稍后再试。",
     'technical-preview-title': '备注: 技术预览版',
     'technical-preview-info': '红包服务是最近推出的服务，目前仍然是技术预览版。请确保只创建小额代币的红包。',

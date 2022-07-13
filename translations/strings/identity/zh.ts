@@ -285,7 +285,7 @@ export const zh = {
         'credential-info-type-tiktok': '抖音',
         'credential-info-type-paypal': 'Paypal',
         'credential-info-type-venmo': 'Venmo',
-        'credential-info-type-linkedin': 'LinkedIn',
+        'credential-info-type-linkedin': '领英',
         'credential-info-type-discord': 'Discord',
 
         /******************** Messages ********************/

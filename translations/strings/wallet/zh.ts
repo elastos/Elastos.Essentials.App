@@ -195,7 +195,7 @@ export const zh = {
                 'crosschain-note': "Elastos跨链转账一般需要15到25分钟。在此期间，您将无法看到这笔资金，请耐心等待",
                 "balance-locked": "( {{ locked }} 确认中 )",
                 "ela-coinbase-warning": "请确保不要将 Elastos Smart Chain 的 ELA 发送到 Coinbase 地址，因为 Coinbase 上的 ELA 是基于以太坊网络的 ERC20 ELA。",
-                "nft-transaction-creation-error": "It seems like the transfer operation cannot be done for this NFT. Some NFTs are locked and require special conditions to be transferred. Please check with the original NFT marketplace or with the NFT creator.",
+                "nft-transaction-creation-error": "似乎无法对此 NFT 进行转让操作。一些 NFT 被锁定，需要特殊条件才能转让。请咨询原始 NFT 市场或 NFT 创建者。",
 
                 /********************
                 * Coin Receive Page *
@@ -445,7 +445,7 @@ export const zh = {
                 'nft-properties': '属性',
                 'nft-no-properties-yet': '属性显示尚不支持，即将推出',
                 'nft-assets-owned': '项资产',
-                'nft-attributes': 'Attributes',
+                'nft-attributes': '属性',
 
                 /********************************************** Intent Screens ***********************************************/
 

@@ -672,7 +672,7 @@ export const en = {
         /***************************
         * Multisig tx intent page  *
         ****************************/
-        'multi-sig-tx-title': 'Multisig transaction',
+        'multi-sig-tx-title': 'Multi-sig transaction',
         'multi-sig-tx-fetching': 'Fetching transaction information, please wait.',
         'multi-sig-tx-no-tx-found': 'Sorry, no matching transaction was found.',
         'multi-sig-tx-unknown-network': 'Sorry, This transaction is for a network that doesn\'t exist in your version of Essentials.',
