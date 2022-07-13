@@ -195,6 +195,7 @@ export const fr = {
         'crosschain-note': "Les transferts inter-chaînes prennent généralement entre 15 et 25 minutes. Vous ne verrez pas vos fonds pendant ce temps, veuillez patienter.",
         "balance-locked": "( {{ locked }} locked )",
         "ela-coinbase-warning": "N'envoyez pas d'ELA de la chaîne Elastos Smart Chain ELA vers une adresse Coinbase, car les ELA sur Coinbase sont des jetons ERC20 ethereum.",
+        "nft-transaction-creation-error": "Il semble que le transfert ne puisse pas être réalisé pour ce NFT. Certains NFTs sont bloqués et nécessitent des conditions spéciales pour être transférés. Veuillez vous renseigner auprès de la marketplace ou du créateur du NFT.",
 
         /********************
         * Coin Receive Page *

@@ -457,6 +457,11 @@ export class ERC721Service {
             gasLimit = Math.ceil(gasTemp * 1.5);
         } catch (error) {
             Logger.error("wallet", 'createRawTransferERC721Transaction(): estimateGas error:', error);
+            if (new String(error).includes("gas required exceeds allowance")) {
+                // This highly probably means that the transfer method will fail because it's locked somehow (by non standard implementations).
+                Logger.warn("wallet", "createRawTransferERC721Transaction(): transfer method can't be called. Unable to create transfer transaction.");
+                return null;
+            }
         }
 
         let gasPrice = await this.evmService.getGasPrice(networkWallet.network);

@@ -195,6 +195,7 @@ export const en = {
         'crosschain-note': "Elastos cross-chain transfers usually take between 15 and 25 minutes. During this time you will not see your funds, please be patient",
         "balance-locked": "( {{ locked }} locked )",
         "ela-coinbase-warning": "Make sure to not send Elastos Smart Chain ELA to a Coinbase address, as the ELA on Coinbase is a wrapped ethereum ERC20 ELA.",
+        "nft-transaction-creation-error": "It seems like the transfer operation cannot be done for this NFT. Some NFTs are locked and require special conditions to be transferred. Please check with the original NFT marketplace or with the NFT creator.",
 
         /********************
         * Coin Receive Page *

@@ -476,13 +476,21 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     this.toAddress
                 );
             }
+
+            if (!rawTx) {
+                // Probably failed to create transaction because of non standard NFT transfer methods in contracts.
+                // Let user know
+                await PopupProvider.instance.ionicAlert("wallet.transaction-fail", "wallet.nft-transaction-creation-error");
+            }
+
         } catch (err) {
             await this.parseException(err);
         }
         await this.native.hideLoading();
 
         // SIGN AND PUBLISH
-        await this.signAndSendRawTransaction(rawTx);
+        if (rawTx)
+            await this.signAndSendRawTransaction(rawTx);
     }
 
     private async signAndSendRawTransaction(rawTx) {
@@ -809,7 +817,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.modal = await this.modalCtrl.create({
             component: ContactsComponent,
             componentProps: {
-              subWallet: targetSubwallet
+                subWallet: targetSubwallet
             },
         });
         this.modal.onWillDismiss().then((params) => {
