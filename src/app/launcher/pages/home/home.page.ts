@@ -11,6 +11,7 @@ import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, Ti
 import { BrowsedAppInfo } from 'src/app/dappbrowser/model/browsedappinfo';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { reducedWalletAddress } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
@@ -317,7 +318,10 @@ export class HomePage implements OnInit {
     // Select the active wallet in the wallets slides
     let activeWalletIndex = this.walletService.getActiveNetworkWalletIndex();
     if (activeWalletIndex != -1) { // Happens if no wallet
-      void this.walletsSlider.slideTo(activeWalletIndex, 0);
+      runDelayed(() => {
+        // Delay 100ms: Wait for the initialization of the walletsSlider to complete.
+        void this.walletsSlider.slideTo(activeWalletIndex, 0);
+      }, 100);
     }
 
     // Save wallet addresses locally for easy copy
