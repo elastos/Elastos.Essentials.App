@@ -92,6 +92,7 @@ export const fr = {
         'connect': 'Connexion',
         'wallet-connect-no-session': 'Aucune session active',
         'wallet-connect-no-session-info': 'Il n\'y a actuellement pas de connexion avec une appli tierce via Wallet Connect. Trouvez le boutton Wallet Connect dans l\'application externe, et scannez le QR code fourni, avec le scanner Elastos Essentials.',
+        'wallet-connect-no-address': "Pas de portefeuille actif, ou le réseau actif n'est pas compatible Ethereum (mais vous pouvez continuer).",
 
         /********** Startup Screen Page **********/
         'startupscreen': 'Ecran de démarrage',

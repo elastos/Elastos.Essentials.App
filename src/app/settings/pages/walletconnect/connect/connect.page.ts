@@ -52,8 +52,11 @@ export class WalletConnectConnectPage implements OnInit {
       // Use only the active master wallet.
       this.ethAccounts = [];
       let activeWallet = this.walletManager.activeNetworkWallet.value;
-      let subwallet = activeWallet.getMainEvmSubWallet();
-      this.ethAccounts.push(await subwallet.getCurrentReceiverAddress());
+      if (activeWallet) {
+        let subwallet = activeWallet.getMainEvmSubWallet();
+        if (subwallet) // Can be null, if the active network is not EVM
+          this.ethAccounts.push(await subwallet.getCurrentReceiverAddress());
+      }
     });
   }
 
