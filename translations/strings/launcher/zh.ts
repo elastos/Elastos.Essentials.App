@@ -80,7 +80,7 @@ export const zh = {
         'app-crcouncil-registration-description': 'CR 委员参选管理',
         'app-redpackets': '红包',
         'app-redpackets-description': '分享快乐或宣传您的项目，发送红包!',
-        'app-easybridge': '获得 ELA！',
+        'app-easybridge': '获得 ELA ！',
         'app-easybridge-description': '在2分钟内将代币从其他链转换为 Elastos 代币',
 
         /*********** Tips generic ************/
