@@ -22,11 +22,11 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { MenuSheetMenu } from '../../../components/menu-sheet/menu-sheet.component';
 import { ImportWalletType } from '../../model/masterwallets/wallet.types';
@@ -103,7 +103,7 @@ export class SettingsPage implements OnInit {
         private native: Native,
         private router: Router,
         private walletCreationService: WalletCreationService,
-        private modalCtrl: ModalController,
+        private globalStartupService: GlobalStartupService,
         private globalNativeService: GlobalNativeService,
     ) {
     }
@@ -123,6 +123,11 @@ export class SettingsPage implements OnInit {
             this.addWallet();
             this.autoOpenCreateWallet = false;
         }
+    }
+
+    ionViewDidEnter() {
+      // Hide splash screen if the wallet is the startup screen.
+      this.globalStartupService.setStartupScreenReady();
     }
 
     public go(item: SettingsEntry) {
