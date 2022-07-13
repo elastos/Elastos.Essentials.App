@@ -80,6 +80,8 @@ export const zh = {
         'app-crcouncil-registration-description': 'CR 委员参选管理',
         'app-redpackets': '红包',
         'app-redpackets-description': '分享快乐或宣传您的项目，发送红包!',
+        'app-easybridge': 'Get ELA!',
+        'app-easybridge-description': 'Convert tokens from other chains to Elastos tokens in less than 2 minutes',
 
         /*********** Tips generic ************/
         'tip-of-the-day': '每日提示',

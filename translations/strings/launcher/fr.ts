@@ -80,6 +80,8 @@ export const fr = {
         'app-crcouncil-registration-description': 'Gestionnaire de candidature CR',
         'app-redpackets': 'Paquets rouges',
         'app-redpackets-description': 'Partagez du fun ou faites la promo de votre projet, envoyez des paquets rouges!',
+        'app-easybridge': 'Obtenez des ELA!',
+        'app-easybridge-description': 'Convertissez vos jetons sur d\'autres chaînes vers des ELA en moins de 2 minutes',
 
         /*********** Tips generic ************/
         'tip-of-the-day': 'Astuce du jour',

@@ -80,6 +80,8 @@ export const it = {
         'app-crcouncil-registration-description': 'Gestore della registrazione CR',
         'app-redpackets': 'Red Packets',
         'app-redpackets-description': 'Share happiness or promote your project, send red packets!',
+        'app-easybridge': 'Get ELA!',
+        'app-easybridge-description': 'Convert tokens from other chains to Elastos tokens in less than 2 minutes',
 
         /*********** Tips generic ************/
         'tip-of-the-day': 'Consiglio del giorno',
