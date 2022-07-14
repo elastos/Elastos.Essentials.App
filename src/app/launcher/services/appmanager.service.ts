@@ -169,7 +169,7 @@ export class AppmanagerService {
                         routerContext: App.EASY_BRIDGE,
                         name: this.translate.instant('launcher.app-easybridge'),
                         description: this.translate.instant('launcher.app-easybridge-description'),
-                        icon: '/assets/launcher/apps/app-icons/easybridge.png',
+                        icon: '/assets/launcher/apps/app-icons/easybridge.svg',
                         hasWidget: false,
                         routerPath: '/easybridge/home'
                     },
