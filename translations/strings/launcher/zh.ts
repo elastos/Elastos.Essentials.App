@@ -81,7 +81,7 @@ export const zh = {
         'app-redpackets': '红包',
         'app-redpackets-description': '分享快乐或宣传您的项目，发送红包!',
         'app-easybridge': '获得 ELA ！',
-        'app-easybridge-description': '在2分钟内将代币从其他链转换为 Elastos 代币',
+        'app-easybridge-description': '在2分钟内将代币从其他链兑换为 Elastos 代币',
 
         /*********** Tips generic ************/
         'tip-of-the-day': '每日提示',
