@@ -47,6 +47,7 @@ import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
 import { ERC1155Service } from './evm/erc1155.service';
 import { ERC721Service } from './evm/erc721.service';
+import { MultiSigService } from './multisig.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
 import { OfflineTransactionsService } from './offlinetransactions.service';
@@ -128,6 +129,7 @@ export class WalletService {
         private safeService: SafeService, // Keep this - init
         private networkService: WalletNetworkService,
         private globalNetworksService: GlobalNetworksService,
+        private multiSigService: MultiSigService, // Keep for init
         private offlineTransactionsService: OfflineTransactionsService, // Keep for init
         private didSessions: GlobalDIDSessionsService
     ) {
@@ -281,8 +283,8 @@ export class WalletService {
                     // If the network wallet creation failed for any reason, we still want to set the active network
                     // to "null" to not get an ankward situation with a new network and the old network wallet.
                     if (masterWallet.id === this.activeMasterWalletId) {
-                          Logger.log("wallet", "Setting the network wallet as active one:", networkWallet);
-                          this.activeNetworkWallet.next(networkWallet);
+                        Logger.log("wallet", "Setting the network wallet as active one:", networkWallet);
+                        this.activeNetworkWallet.next(networkWallet);
                     }
                 }
             }
@@ -731,11 +733,11 @@ export class WalletService {
             if (Object.values(this.networkWallets).length > 0) {
                 let networkWalletList = this.getNetworkWalletsList();
                 if (networkWalletList && networkWalletList[0]) {
-                  await this.setActiveNetworkWallet(networkWalletList[0]);
-                  this.native.setRootRouter("/wallet/wallet-home");
+                    await this.setActiveNetworkWallet(networkWalletList[0]);
+                    this.native.setRootRouter("/wallet/wallet-home");
                 } else {
-                  this.activeNetworkWallet.next(null);
-                  this.goToLauncherScreen();
+                    this.activeNetworkWallet.next(null);
+                    this.goToLauncherScreen();
                 }
             } else {
                 this.activeNetworkWallet.next(null);
