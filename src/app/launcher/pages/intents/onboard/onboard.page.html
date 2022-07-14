@@ -1,0 +1,42 @@
+<ion-content [class.dark-container]="theme.darkMode">
+  <app-titlebar></app-titlebar>
+  <ion-grid class="onboard-container" *ngIf="config">
+
+    <!-- Main feature info -->
+    <div class="feature-logo-container">
+      <img src="assets/launcher/apps/app-icons/easybridge.svg">
+    </div>
+
+    <div class="feature-title">
+      {{ config.title }}
+    </div>
+
+    <div class="feature-intro">
+      {{ config.introduction }}
+    </div>
+
+    <!-- App info, if any -->
+    <div *ngIf="callingAppInfo" class="calling-app">
+      <div class="app-icon">
+        <img [src]="callingAppInfo.icon">
+      </div>
+      <div class="right">
+        <div class="recommended">
+          Recommended by
+        </div>
+        <div class="app-name">
+          {{ callingAppInfo.name }}
+        </div>
+      </div>
+    </div>
+
+  </ion-grid>
+
+  <div class="footer" *ngIf="config">
+    <div class="buttons">
+      <ion-button *ngIf="!unsupportedFeature" (click)="mainFeatureAction()">{{ config.button }}</ion-button>
+      <ion-button *ngIf="unsupportedFeature" (click)="unsupportedFeatureAction()">{{ 'common.close' | translate }}
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

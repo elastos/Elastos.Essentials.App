@@ -5,6 +5,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AppmanagerService } from './appmanager.service';
 import { DIDManagerService } from './didmanager.service';
+import { IntentReceiverService } from './intentreceiver.service';
 import { TipsService } from './tips.service';
 
 @Injectable({
@@ -16,6 +17,7 @@ export class LauncherInitService extends GlobalService {
     private translate: TranslateService,
     private didSessions: GlobalDIDSessionsService,
     private appManagerService: AppmanagerService,
+    private intentReceiverService: IntentReceiverService,
     private tipsService: TipsService,
     private didManager: DIDManagerService
   ) {
@@ -33,6 +35,7 @@ export class LauncherInitService extends GlobalService {
   public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // No blocking services start
     this.appManagerService.init();
+    this.intentReceiverService.init();
     this.tipsService.init();
 
     return;
@@ -40,6 +43,7 @@ export class LauncherInitService extends GlobalService {
 
   public onUserSignOut(): Promise<void> {
     this.appManagerService.stop();
+    this.intentReceiverService.stop();
 
     return;
   }

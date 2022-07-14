@@ -440,9 +440,10 @@ export class GlobalWalletConnectService extends GlobalService {
   }
   */
   private async handleCallRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    let showReturnMessage = true;
     if (request.method === "essentials_url_intent") {
       // Custom essentials request (not ethereum) over wallet connect protocol
-      await this.handleEssentialsCustomRequest(connector, request);
+      showReturnMessage = await this.handleEssentialsCustomRequest(connector, request);
     }
     else if (request.method === "wallet_watchAsset") {
       await this.handleAddERCTokenRequest(connector, request);
@@ -507,9 +508,11 @@ export class GlobalWalletConnectService extends GlobalService {
       }
     }
 
-    // Because for now we don't close Essentials after handling wallet connect requests, we simply
-    // inform users to manually "alt tab" to return to the app they are coming from.
-    this.native.genericToast("settings.wallet-connect-popup", 2000);
+    if (showReturnMessage) {
+      // Because for now we don't close Essentials after handling wallet connect requests, we simply
+      // inform users to manually "alt tab" to return to the app they are coming from.
+      this.native.genericToast("settings.wallet-connect-popup", 2000);
+    }
   }
 
   private async handleAddERCTokenRequest(connector: WalletConnect, request: JsonRpcRequest) {
@@ -763,8 +766,10 @@ export class GlobalWalletConnectService extends GlobalService {
    * Handles custom essentials request coming from the wallet connect protocol.
    * method: "essentials_url_intent"
    * params: {url: "the essentials intent url" }
+   *
+   * @returns true is the "return to app" message should be shown to user, false otherwise
    */
-  private async handleEssentialsCustomRequest(connector: WalletConnect, request: JsonRpcRequest) {
+  private async handleEssentialsCustomRequest(connector: WalletConnect, request: JsonRpcRequest): Promise<boolean> {
     let intentUrl = request.params[0]["url"] as string;
     try {
       Logger.log("walletconnect", "Sending custom essentials intent request", intentUrl);
@@ -776,6 +781,13 @@ export class GlobalWalletConnectService extends GlobalService {
         id: request.id,
         result: response
       });
+
+      // Special case: "onboard" intent should not show a return message to user as it finishes instantly without response value,
+      // but user should continue in Essetials after that.
+      if (intentUrl.includes("/onboard"))
+        return false;
+      else
+        return true;
     }
     catch (e) {
       Logger.error("walletconnect", "Send intent error", e);
@@ -793,6 +805,8 @@ export class GlobalWalletConnectService extends GlobalService {
 
       if (await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString))
         this.native.genericToast("settings.raw-request" + intentUrl, 2000);
+
+      return false;
     }
   }
 

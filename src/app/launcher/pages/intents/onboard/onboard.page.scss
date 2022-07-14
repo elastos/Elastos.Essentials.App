@@ -1,0 +1,106 @@
+@import "src/app/launcher/root.scss";
+
+.onboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+
+  .feature-logo-container {
+    padding: 10px;
+    background: #373737;
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+
+    img {
+      height: 120px;
+      width: 120px;
+    }
+  }
+
+  .feature-title {
+    font-size: 18px;
+    margin: 20px 0;
+    font-weight: bold;
+  }
+
+  .feature-intro {
+    font-size: 16px;
+    line-height: 26px;
+  }
+
+  .calling-app {
+    display: flex;
+    align-items: center;
+    margin-top: 40px;
+
+    .app-icon {
+      margin-right: 20px;
+      border-radius: 50%;
+      box-shadow: 0 0px 20px rgb(0 0 0 / 10%);
+
+      img {
+        height: 70px;
+        border-radius: 50%;
+      }
+    }
+
+    .right {
+      .recommended {
+
+      }
+
+      .app-name {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.footer {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1);
+
+  .buttons {
+      display: flex;
+      flex-direction: row;
+  }
+}
+
+/** Dark Mode **/
+.dark-container {
+  .feature-logo-container {
+    background: #373737;
+  }
+
+  .calling-app {
+    .app-icon {
+      box-shadow: 0 0 20px rgb(100 100 100 / 70%);
+    }
+
+    .right {
+      .recommended {
+        color: #888;
+      }
+    }
+  }
+
+  .footer {
+    background: #212021;
+    box-shadow: 0 -10px 20px rgba(255, 255, 255, 0.1);
+
+    .transfer-progress {
+        color: #ACB1B6;
+
+        .heading {
+            color: white;
+        }
+    }
+}
+}

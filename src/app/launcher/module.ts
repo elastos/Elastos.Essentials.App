@@ -17,7 +17,6 @@ import { EmptyPage, LauncherRoutingModule } from './routing';
     NotificationsPage,
     TipsPage,
     OnboardPage,
-    //SafePipe,
   ],
   entryComponents: [
     EmptyPage,

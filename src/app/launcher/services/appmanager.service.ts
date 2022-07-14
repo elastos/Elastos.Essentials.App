@@ -56,7 +56,6 @@ export class AppmanagerService {
     /* Onboard */
     private firstVisit = false;
 
-    private intentSubscription: Subscription = null;
     private updateSubscription: Subscription = null;
     private tipSubscription: Subscription = null;
     private languageSubscription: Subscription = null;
@@ -92,13 +91,6 @@ export class AppmanagerService {
             this.initAppsList();
         });
 
-        this.intentSubscription = this.globalIntentService.intentListener.subscribe((receivedIntent) => {
-            if (!receivedIntent)
-                return;
-
-            this.onIntentReceived(receivedIntent);
-        });
-
         this.updateSubscription = this.events.subscribe("updateNotifications", () => {
             // TODO @chad this.notification.fillAppInfoToNotification(this.installService.appInfos);
         });
@@ -109,10 +101,6 @@ export class AppmanagerService {
     }
 
     public stop() {
-        if (this.intentSubscription) {
-            this.intentSubscription.unsubscribe();
-            this.intentSubscription = null;
-        }
         if (this.updateSubscription) {
             this.updateSubscription.unsubscribe();
             this.updateSubscription = null;
@@ -224,23 +212,6 @@ export class AppmanagerService {
         } else {
             await this.globalNav.navigateRoot(App.LAUNCHER, 'launcher/onboard');
         }
-    }
-
-    /******************************** Intent Listener ********************************/
-
-    // Intent
-    onIntentReceived(ret: EssentialsIntentPlugin.ReceivedIntent) {
-        switch (this.getShortAction(ret.action)) {
-        }
-    }
-
-    /**
-     * From a full new-style action string such as https://launcher.elastos.net/app
-     * returns the short old-style action "app" for convenience.
-     */
-    private getShortAction(fullAction: string): string {
-        const intentDomainRoot = "https://launcher.elastos.net/";
-        return fullAction.replace(intentDomainRoot, "");
     }
 
     async returnHome() {

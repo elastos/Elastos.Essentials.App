@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { NavController, PopoverController } from '@ionic/angular';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
@@ -48,7 +48,8 @@ export class GlobalNavService {
     constructor(
         private navCtrl: NavController,
         private splashScreen: SplashScreen,
-        private popoverCtrl: PopoverController
+        private popoverCtrl: PopoverController,
+        private zone: NgZone
     ) {
         GlobalNavService.instance = this;
     }
@@ -114,7 +115,9 @@ export class GlobalNavService {
         // as it is not possible to use a custom RouterReuseStrategy with ionic (which could or could not have helped
         // to solve this 'sendIntent' problem).
         //this.navCtrl.navigateRoot(route, routerOptions);
-        return this.navCtrl.navigateForward(route, routerOptions);
+        return this.zone.run(() => {
+            return this.navCtrl.navigateForward(route, routerOptions);
+        });
     }
 
     /**
@@ -140,7 +143,10 @@ export class GlobalNavService {
         };
         this.navigationHistory = [];
         this.navigationHistory.push(didSessionHome);
-        return this.navCtrl.navigateRoot(didSessionHome.route, { animationDirection: 'back' });
+
+        return this.zone.run(() => {
+            return this.navCtrl.navigateRoot(didSessionHome.route, { animationDirection: 'back' });
+        });
     }
 
     /**
@@ -157,10 +163,12 @@ export class GlobalNavService {
         this.navigationHistory = [];
         this.navigationHistory.push(launcherHome);
 
-        if (direction != Direction.NONE) // No animation - ex for the first arrival on the launcher home
-            return this.navCtrl.navigateRoot(launcherHome.route, { animationDirection: direction });
-        else
-            return this.navCtrl.navigateRoot(launcherHome.route);
+        return this.zone.run(() => {
+            if (direction != Direction.NONE) // No animation - ex for the first arrival on the launcher home
+                return this.navCtrl.navigateRoot(launcherHome.route, { animationDirection: direction });
+            else
+                return this.navCtrl.navigateRoot(launcherHome.route);
+        });
     }
 
     /**
@@ -178,7 +186,9 @@ export class GlobalNavService {
             this.navigationHistory.push({ context, route, routerOptions });
         }
 
-        return this.navCtrl.navigateForward(route, routerOptions);
+        return this.zone.run(() => {
+            return this.navCtrl.navigateForward(route, routerOptions);
+        });
     }
 
     /**

@@ -457,6 +457,9 @@ export class GlobalHiveService extends GlobalService {
    * Ex: hive://user_did@app_did/getMainIdentityAvatar ---> "data:image/png;base64,iVe89...."
    */
   public fetchHiveScriptPictureToDataUrl(hiveScriptUrl: string): Promise<string> {
+    if (!hiveScriptUrl)
+      return null;
+
     return new Promise(resolve => {
       void this.fetchHiveScriptPicture(hiveScriptUrl).then(rawPicture => {
         resolve(rawImageToBase64DataUrl(rawPicture));
