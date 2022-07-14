@@ -30,14 +30,17 @@ export class InternalHiveAuthHelper {
 
   public getAppContext(targetDid: string, onAuthError?: (e: Error) => void): Promise<AppContext> {
     return this.contextCreationQueue.add(async () => {
-      // Returned existing context for this DID if any.
-      if (targetDid in this.contextsCache)
-        return this.contextsCache[targetDid];
-
       let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
+      let appDidString = appInstanceDIDInfo.did.toString();
+      let cacheKey = targetDid + appDidString;
+
+      // Returned existing context for this DID if any.
+      if (cacheKey in this.contextsCache)
+        return this.contextsCache[cacheKey];
+
 
       Logger.log("hiveauthhelper", "Getting app instance DID document");
-      let didDocument = await appInstanceDIDInfo.didStore.loadDid(appInstanceDIDInfo.did.toString());
+      let didDocument = await appInstanceDIDInfo.didStore.loadDid(appDidString);
       Logger.log("hiveauthhelper", "Got app instance DID document. Now creating the Hive client", didDocument.toJSON());
 
       let appContextProvider: AppContextProvider = {
@@ -66,8 +69,8 @@ export class InternalHiveAuthHelper {
         }
       }
 
-      let appContext = await AppContext.build(appContextProvider, targetDid);
-      this.contextsCache[targetDid] = appContext;
+      let appContext = await AppContext.build(appContextProvider, targetDid, appDidString);
+      this.contextsCache[cacheKey] = appContext;
 
       return appContext;
     });
