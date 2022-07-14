@@ -172,6 +172,7 @@ export class WalletService {
             await this.spvBridge.destroy();
 
         await this.terminateActiveNetworkWallets();
+        this.activeNetworkWallet.next(null);
 
         this.networkService.resetPriorityNetworkChangeCallback();
 

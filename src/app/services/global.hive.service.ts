@@ -438,7 +438,7 @@ export class GlobalHiveService extends GlobalService {
           resolve(null);
         }
         else {
-          Logger.warn("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", pictureBuffer.length);
+          Logger.log("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", pictureBuffer.length);
           resolve(pictureBuffer);
         }
       }
