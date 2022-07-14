@@ -3,11 +3,8 @@
 
     <ion-grid class="content">
         <!-- Header -->
-        <ion-row class="searching-row">
-            <ion-col size="7">
-                <div class='title'>{{ 'wallet.ledger-scan-available-devices' | translate }}</div>
-            </ion-col>
-            <ion-col size="5" (click)="doScan()" *ngIf="!scanning" class="scan-again">
+        <ion-row class="searching-row" (click)="doScan()" *ngIf="!scanning">
+            <ion-col class="scan-again">
                 <img
                     [src]="!theme.darkMode ? 'assets/wallet/icons/reload.svg' : 'assets/wallet/icons/darkmode/reload.svg'" />
                 {{ 'wallet.ledger-scan-scan-again' | translate }}
@@ -29,6 +26,9 @@
         </ion-row>
 
         <!-- Found device -->
+        <ion-row class="device-row ripple ion-activatable" *ngIf="device" (click)="connectLedger()">
+            <div class='title'>{{ 'wallet.ledger-scan-available-devices' | translate }}</div>
+        </ion-row>
         <ion-row class="device-row ripple ion-activatable" *ngIf="device" (click)="connectLedger()">
             <ion-col size="11">
                 <ion-label>{{ device.name }}</ion-label>
