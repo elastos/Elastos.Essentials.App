@@ -27,6 +27,8 @@ export const fr = {
         "reset": "Abandonner",
         "done": "Terminé!",
         "below-min-bridge-amount": "Montant minimal pour ce jeton: {{ minTx }} {{ symbol }}.",
+        "reset-confirmation-title": "Annuler le transfert",
+        "reset-confirmation-content": "Assurez-vous de n'annuler le transfert en cours que s'il semble bloqué. Vous ne perdrez pas vos fonds mais ils pourraient ne pas être arrivés à leur destination finale.",
 
         // Transfer steps
         "step-not-started": "Pas encore commencé",

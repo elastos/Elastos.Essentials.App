@@ -27,6 +27,8 @@ export const it = {
         "reset": "Reset",
         "done": "Done!",
         "below-min-bridge-amount": "Below minimum amount of {{ minTx }} {{ symbol }}.",
+        "reset-confirmation-title": "Reset active transfer",
+        "reset-confirmation-content": "Make sure to reset the current transfer only if your current one seems to be stuck. You won't loose funds but your assets may not have arrived on the target chain.",
 
         // Transfer steps
         "step-not-started": "Not started",

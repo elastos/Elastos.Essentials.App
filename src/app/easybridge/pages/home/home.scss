@@ -1,5 +1,5 @@
 ion-content {
-    --padding-bottom: 180px;
+    --padding-bottom: 240px;
 }
 
 .container {
@@ -165,7 +165,8 @@ ion-content {
 
     .buttons {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        align-items: center;
     }
 
     .transfer-progress {

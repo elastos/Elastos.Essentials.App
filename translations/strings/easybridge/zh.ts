@@ -27,6 +27,8 @@ export const zh = {
         "reset": "重置",
         "done": "完成 ！",
         "below-min-bridge-amount": "低于 {{ minTx }} {{ symbol }} 的最小数量。",
+        "reset-confirmation-title": "Reset active transfer",
+        "reset-confirmation-content": "Make sure to reset the current transfer only if your current one seems to be stuck. You won't loose funds but your assets may not have arrived on the target chain.",
 
         // Transfer steps
         "step-not-started": "未开始",

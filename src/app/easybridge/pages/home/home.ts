@@ -420,21 +420,28 @@ export class HomePage {
    * Deletes current transfer state to restart from scratch.
    */
   public async reset() {
-    this.unsubscribeFromTransferStatus();
+    let agreed = await this.popupService.showConfirmationPopup(
+      this.translate.instant("easybridge.reset-confirmation-title"),
+      this.translate.instant("easybridge.reset-confirmation-content")
+    );
 
-    if (this.activeTransfer) {  // Normally, should always be set, just in case.
-      await this.activeTransfer.reset();
-      this.activeTransfer = null;
+    if (agreed) {
+      this.unsubscribeFromTransferStatus();
+
+      if (this.activeTransfer) {  // Normally, should always be set, just in case.
+        await this.activeTransfer.reset();
+        this.activeTransfer = null;
+      }
+
+      this.selectedSourceToken = null;
+      this.selectedDestinationToken = null;
+      this.transferAmount = null;
+      this.transferStarted = false;
+      this.canEditFields = true;
+      this.lastError = null;
+
+      void this.prepareForNewTransfer();
     }
-
-    this.selectedSourceToken = null;
-    this.selectedDestinationToken = null;
-    this.transferAmount = null;
-    this.transferStarted = false;
-    this.canEditFields = true;
-    this.lastError = null;
-
-    void this.prepareForNewTransfer();
   }
 
   /**
