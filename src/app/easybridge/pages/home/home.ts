@@ -13,8 +13,9 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
-import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -54,7 +55,10 @@ export class HomePage {
   public destinationTokens: DestinationToken[] = [];
   public selectedDestinationToken: DestinationToken = null;
   public transferAmount: number = null;
-  private mainCoinSubWallet: AnyMainCoinEVMSubWallet = null;
+
+  private masterWallet: MasterWallet = null;
+  private evmWalletAddress: string = null;
+  //private mainCoinSubWallet: AnyMainCoinEVMSubWallet = null;
 
   public activeTransfer: Transfer = null;
   public transferIsBeingComputed = false;
@@ -121,43 +125,48 @@ export class HomePage {
       // Update UI with saved data
       this.transferAmount = this.activeTransfer.amount;
       let sourceNetwork = <EVMNetwork>this.networkService.getNetworkByChainId(this.activeTransfer.sourceToken.chainId);
-      await this.loadSubWallet(this.activeTransfer.masterWalletId, sourceNetwork);
-      this.fetchSourceTokensBalances();
-      this.selectedDestinationToken = {
-        token: this.activeTransfer.destinationToken,
-        estimatedAmount: new BigNumber(0)
-      };
+      if (await this.loadWalletAndAddress(this.activeTransfer.masterWalletId, sourceNetwork)) {
+        this.fetchSourceTokensBalances();
+        this.selectedDestinationToken = {
+          token: this.activeTransfer.destinationToken,
+          estimatedAmount: new BigNumber(0)
+        };
+      }
     }
 
     this.initializing = false;
   }
 
   private async prepareForNewTransfer() {
-    await this.loadSubWallet(this.walletService.activeMasterWalletId, <EVMNetwork>this.walletService.activeNetworkWallet.value.network);
-    this.fetchSourceTokensBalances();
+    if (await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.walletService.activeNetworkWallet.value.network)) {
+      this.fetchSourceTokensBalances();
+    }
   }
 
-  private async loadSubWallet(masterWalletId: string, network: EVMNetwork): Promise<void> {
-    if (!(network instanceof EVMNetwork)) {
-      // TODO
-    }
-    else {
-      // Get the active master wallet ID (the currently selected one in essentials)
-      Logger.log("easybridge", "Source master wallet ID:", masterWalletId);
-      let sourceMasterWallet = this.walletService.getMasterWallet(masterWalletId);
+  private async loadWalletAndAddress(masterWalletId: string, network: EVMNetwork): Promise<boolean> {
+    // Load the master wallet
+    this.masterWallet = this.walletService.getMasterWallet(masterWalletId);
 
-      // Get a network wallet for the target source chain - don't launch its background services
-      let sourceNetworkWallet = await network.createNetworkWallet(sourceMasterWallet, false);
-      Logger.log("easybridge", "Source network wallet:", sourceNetworkWallet);
-
-      this.mainCoinSubWallet = await sourceNetworkWallet.getMainEvmSubWallet();
+    // Find the matching EVM address - to make sure, we load an arbitrary EVM network to get the common EVM address
+    let elastosSmartChain = this.networkService.getNetworkByKey("elastossmartchain");
+    let elastosNetworkWallet = await elastosSmartChain.createNetworkWallet(this.masterWallet, false);
+    if (!elastosNetworkWallet) {
+      // Failed to initialize an EVM network wallet for the active subwallet. Could be for instance if
+      // we are using a multisig elastos mainchain wallet. In such case, informa user and exit
+      void this.popupService.ionicAlert("Unsupported wallet", "This wallet does not support token operations, please select another wallet first.");
+      void this.globalNavService.navigateBack();
+      return false;
     }
+
+    this.evmWalletAddress = await elastosNetworkWallet.getMainEvmSubWallet().getTokenAddress(AddressUsage.EVM_CALL);
+
+    return true;
   }
 
   private fetchSourceTokensBalances() {
     // Start fetching balances and populate the UI list are they arrive.
     this.fetchingTokens = true;
-    this.easyBridgeService.fetchBridgeableBalances(this.mainCoinSubWallet).subscribe({
+    this.easyBridgeService.fetchBridgeableBalances(this.evmWalletAddress).subscribe({
       next: usableTokens => {
         this.sourceTokens = usableTokens;
 
@@ -202,10 +211,10 @@ export class HomePage {
   }
 
   public getWalletName(): string {
-    if (!this.mainCoinSubWallet)
+    if (!this.masterWallet)
       return null;
 
-    return this.mainCoinSubWallet.masterWallet.name;
+    return this.masterWallet.name;
   }
 
   public getDisplayableAmount(readableBalance: BigNumber): string {
@@ -318,7 +327,7 @@ export class HomePage {
       this.transferIsBeingComputed = true;
     });
 
-    let transfer = await Transfer.prepareNewTransfer(this.mainCoinSubWallet.networkWallet.id, this.selectedSourceToken.token, this.selectedDestinationToken.token, this.transferAmount);
+    let transfer = await Transfer.prepareNewTransfer(this.masterWallet.id, this.selectedSourceToken.token, this.selectedDestinationToken.token, this.transferAmount);
 
     Logger.log("easybridge", "Transfer computation result:", transfer);
 

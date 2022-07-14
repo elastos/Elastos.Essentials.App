@@ -65,18 +65,18 @@ export class EasyBridgeService {
    * Fetches user's balance for all bridgeable tokens and returns tokens that have a balance,
    * with the balance in human readable format.
    */
-  public fetchBridgeableBalances(mainCoinSubWallet: AnyMainCoinEVMSubWallet): Observable<SourceToken[]> {
+  public fetchBridgeableBalances(evmWalletAddress: string): Observable<SourceToken[]> {
     let usableTokens: SourceToken[] = [];
 
     Logger.log("easybridge", "Fetching balances");
 
     return new Observable(observer => {
-      void (async () => {
-        let walletAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
+      void (() => {
+        //let walletAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
 
         let checkCount = 0;
         for (let token of bridgeableTokens.tokens) {
-          void this.fetchBridgeableTokenBalance(token, walletAddress, usableTokens, observer).then(() => {
+          void this.fetchBridgeableTokenBalance(token, evmWalletAddress, usableTokens, observer).then(() => {
             checkCount++;
             if (checkCount === bridgeableTokens.tokens.length) {
               Logger.log("easybridge", "Balance fetch complete");
@@ -88,7 +88,7 @@ export class EasyBridgeService {
     });
   }
 
-  private async fetchBridgeableTokenBalance(token: BridgeableToken, walletAddress: string, usableTokens: SourceToken[], observer: Subscriber<SourceToken[]>): Promise<void> {
+  private async fetchBridgeableTokenBalance(token: BridgeableToken, evmWalletAddress: string, usableTokens: SourceToken[], observer: Subscriber<SourceToken[]>): Promise<void> {
     // Skip the token if it's on elastos. We only want to bridge from other networks for now.
     if (this.isTokenOnElastosNetwork(token))
       return;
@@ -100,11 +100,11 @@ export class EasyBridgeService {
       let balance: BigNumber;
       if (!token.isNative) {
         // Convert chain balance format (long) to human readable format
-        let chainBalance = await this.erc20CoinService.fetchERC20TokenBalance(network, token.address, walletAddress);
+        let chainBalance = await this.erc20CoinService.fetchERC20TokenBalance(network, token.address, evmWalletAddress);
         balance = this.erc20CoinService.toHumanReadableAmount(chainBalance, token.decimals);
       }
       else {
-        let chainBalance = await web3.eth.getBalance(walletAddress);
+        let chainBalance = await web3.eth.getBalance(evmWalletAddress);
         balance = this.erc20CoinService.toHumanReadableAmount(chainBalance, token.decimals);
       }
 
