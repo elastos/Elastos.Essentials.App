@@ -222,14 +222,12 @@ export class CoinHomePage implements OnInit {
     ngOnInit() {
     }
 
-    initData(updateAll = false) {
+    async initData(updateAll = false) {
         this.shouldShowLoadingSpinner = true;
         if (updateAll) {
-            // Parrallel tx fetch to go faster
-            void Promise.all([
-                this.subWallet.fetchNewestTransactions(TransactionListType.NORMAL),
-                this.subWallet.fetchNewestTransactions(TransactionListType.INTERNAL)
-            ])
+            // Must one by one.
+            await this.subWallet.fetchNewestTransactions(TransactionListType.NORMAL),
+            await this.subWallet.fetchNewestTransactions(TransactionListType.INTERNAL)
         } else {
             void this.subWallet.fetchNewestTransactions(this.transactionListType);
         }

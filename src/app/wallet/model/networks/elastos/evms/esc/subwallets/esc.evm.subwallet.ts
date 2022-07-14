@@ -13,4 +13,8 @@ export class EscSubWallet extends ElastosEVMSubWallet {
 
     this.withdrawContractAddress = Config.ETHSC_WITHDRAW_ADDRESS.toLowerCase();
   }
+
+  public supportInternalTransactions() {
+    return true;
+  }
 }
