@@ -32,6 +32,8 @@ export class BackupService extends GlobalService {
 
   private preparingOrPrepared = false;
 
+  private signedIn = false;
+
   constructor(
     private events: GlobalEvents,
     private didService: DIDService,
@@ -83,10 +85,13 @@ export class BackupService extends GlobalService {
       }
     });
 
+    this.signedIn = true;
+
     return;
   }
 
   onUserSignOut(): Promise<void> {
+    this.signedIn = false;
     if (this.credAddedSub)
       this.credAddedSub.unsubscribe();
 
@@ -118,6 +123,8 @@ export class BackupService extends GlobalService {
 
     // Don't start immediatelly at boot to not overload the boot sequence
     await sleep(10000);
+
+    if (!this.signedIn) return; // In case the user sign out
 
     void this.globalHiveService.getActiveUserVaultServices().then(async vaultServices => {
       try {

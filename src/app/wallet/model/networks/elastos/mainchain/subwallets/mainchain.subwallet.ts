@@ -79,6 +79,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         runDelayed(async () => {
+            if (this.backGroundUpdateStoped) return;
+
             if (!this.isSingleAddress()) {
                 await this.checkAddresses(true);
                 await this.checkAddresses(false);
@@ -515,6 +517,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
      * If the last address is used, the spvsdk will create new addresses.
      */
     protected async checkAddresses(internal: boolean) {
+        if (this.backGroundUpdateStoped) return false;
+
         const checkCount = 10;
         let startIndex = this.externalAddressCount;
 
@@ -569,6 +573,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     // Some pending transactions may be long ago transactions, which may not be updated when updating transaction records,
     // So we must first process the pending transactions after startup to confirm whether they are confirmed or invalid transactions.
     private async updatePendingTransaction() {
+      if (this.backGroundUpdateStoped) return;
+
         let transaction = await this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
         let pendingTransactions = [];
         for (let i = 0, len = transaction.length; i < len; i++) {
@@ -854,6 +860,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
      * Get balance by RPC
      */
     public async getBalanceByRPC() {
+        if (this.backGroundUpdateStoped) return;
+
         let totalBalance = await this.getTotalBalanceByType(false);
         if (totalBalance !== null) {
             this.balance = totalBalance;

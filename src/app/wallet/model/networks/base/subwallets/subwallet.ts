@@ -35,6 +35,8 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
   public loadTxDataFromCache = true;
   public subwalletTransactionStatusID = '';
 
+  public backGroundUpdateStoped = false;
+
   constructor(public networkWallet: NetworkWallet<any, WalletNetworkOptionsType>, id: CoinID, public type: CoinType) {
     this.masterWallet = networkWallet.masterWallet;
     this.id = id;
@@ -61,10 +63,12 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    * This method can be overriden by subwallet implementations.
    */
   public startBackgroundUpdates(): Promise<void> {
+    this.backGroundUpdateStoped = false;
     return;
   }
 
   public stopBackgroundUpdates(): Promise<void> {
+    this.backGroundUpdateStoped = true;
     return;
   }
 
@@ -371,7 +375,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    * This method returns when a transaction ID is obtained, without waiting for confirmation.
    * But some implementations like the EVM one continue to check for confirmations and emit
    * a evm transaction status event later on.
-   * 
+   *
    * @param visualFeedback Show UI progress/feedback or not. Must be true by default
    */
   protected abstract publishTransaction(signedTransaction: string, visualFeedback?: boolean): Promise<string>;
@@ -399,10 +403,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
   /**
    * Signs a RAW transaction using a safe, and initiates the publication flow by calling
    * publishTransaction().
-   * 
+   *
    * By default, the master password is required, even if elready known, as a security step. But this can be
    * disabled, for example to chain operations (eg: easy bridge feature0, using forcePasswordPrompt = false.
-   * 
+   *
    * The UI feedback (popup) can also be hidden using visualFeedback = false.
    *
    * Optionally navigates home after completion. TODO: MOVE THIS NAVIGATION IN SCREENS
