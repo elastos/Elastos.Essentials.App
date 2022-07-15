@@ -29,6 +29,9 @@ export const fr = {
         "below-min-bridge-amount": "Montant minimal pour ce jeton: {{ minTx }} {{ symbol }}.",
         "reset-confirmation-title": "Annuler le transfert",
         "reset-confirmation-content": "Assurez-vous de n'annuler le transfert en cours que s'il semble bloqué. Vous ne perdrez pas vos fonds mais ils pourraient ne pas être arrivés à leur destination finale.",
+        "unsupported-wallet": "Portefeuille non supporté",
+        "unsupported-wallet-info": "Ce portefeuille ne supporte pas les opérations sur les jetons, veuillez d'abord sélectionner un autre portefeuille.",
+        "not-enough-tokens": "Balance du portefeuille insuffisante",
 
         // Transfer steps
         "step-not-started": "Pas encore commencé",

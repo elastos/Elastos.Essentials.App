@@ -29,6 +29,9 @@ export const it = {
         "below-min-bridge-amount": "Below minimum amount of {{ minTx }} {{ symbol }}.",
         "reset-confirmation-title": "Reset active transfer",
         "reset-confirmation-content": "Make sure to reset the current transfer only if your current one seems to be stuck. You won't loose funds but your assets may not have arrived on the target chain.",
+        "unsupported-wallet": "Unsupported wallet",
+        "unsupported-wallet-info": "This wallet does not support token operations, please select another wallet first.",
+        "not-enough-tokens": "Not enough tokens available in your wallet",
 
         // Transfer steps
         "step-not-started": "Not started",

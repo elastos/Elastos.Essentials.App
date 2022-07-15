@@ -13,6 +13,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
@@ -153,7 +154,7 @@ export class HomePage {
     if (!elastosNetworkWallet) {
       // Failed to initialize an EVM network wallet for the active subwallet. Could be for instance if
       // we are using a multisig elastos mainchain wallet. In such case, informa user and exit
-      void this.popupService.ionicAlert("Unsupported wallet", "This wallet does not support token operations, please select another wallet first.");
+      void this.popupService.ionicAlert("easybridge.unsupported-wallet", "easybridge.unsupported-wallet-info");
       void this.globalNavService.navigateBack();
       return false;
     }
@@ -317,7 +318,7 @@ export class HomePage {
 
     // Make sure there is enough balance
     if (this.selectedSourceToken.balance.lt(this.transferAmount)) {
-      this.lastError = "Not enough tokens available in your wallet";
+      this.lastError = GlobalTranslationService.instance.translateInstant("easybridge.not-enough-tokens");
       return;
     }
 
