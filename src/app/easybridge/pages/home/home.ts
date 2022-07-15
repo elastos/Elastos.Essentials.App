@@ -138,7 +138,7 @@ export class HomePage {
   }
 
   private async prepareForNewTransfer() {
-    if (await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.walletService.activeNetworkWallet.value.network)) {
+    if (await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.networkService.activeNetwork.value)) {
       this.fetchSourceTokensBalances();
     }
   }
