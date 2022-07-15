@@ -25,6 +25,7 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalSwitchNetworkService } from './global.switchnetwork.service';
+import { GlobalTranslationService } from './global.translation.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
 
 /**
@@ -559,7 +560,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let targetNetwork = this.walletNetworkService.getNetworkByChainId(chainId);
     if (!targetNetwork) {
       // We don't support this network
-      this.native.errToast("Network with chain ID " + switchParams.chainId + " is currently not supported");
+      this.native.errToast(GlobalTranslationService.instance.translateInstant("common.wc-not-supported-chainId", { chainId: switchParams.chainId }));
       connector.rejectRequest({
         id: request.id,
         error: {

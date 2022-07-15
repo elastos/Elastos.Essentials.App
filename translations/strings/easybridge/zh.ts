@@ -29,9 +29,9 @@ export const zh = {
         "below-min-bridge-amount": "低于 {{ minTx }} {{ symbol }} 的最小数量。",
         "reset-confirmation-title": "重置兑换",
         "reset-confirmation-content": "确保仅在当前兑换似乎卡住时才重置当前兑换。 您不会丢失资金，但您的资产可能尚未到达目标链。",
-        "unsupported-wallet": "Unsupported wallet",
-        "unsupported-wallet-info": "This wallet does not support token operations, please select another wallet first.",
-        "not-enough-tokens": "Not enough tokens available in your wallet",
+        "unsupported-wallet": "钱包不支持",
+        "unsupported-wallet-info": "此钱包不支持代币操作，请先选择其他钱包。",
+        "not-enough-tokens": "代币余额不足",
 
         // Transfer steps
         "step-not-started": "未开始",

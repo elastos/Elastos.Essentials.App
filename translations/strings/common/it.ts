@@ -50,6 +50,7 @@ export const it = {
         'error': 'Errore',
         'sentry-message': 'Spiacenti, l\'applicazione ha riscontrato un errore. Il team di sviluppo è stato informato.',
         'network-or-server-error': 'Network or server error, please try again later!',
+        "wc-not-supported-chainId": "Network with chain ID {{chainId}} is currently not supported",
 
         // Related to DID
         'sign-in': 'Accedi',

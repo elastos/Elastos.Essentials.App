@@ -51,6 +51,7 @@ export const zh = {
         'error': '错误',
         'sentry-message': '抱歉，程序出错了，已向开发团队报告。',
         'network-or-server-error': '网络或服务器错误，请稍后重试!',
+        "wc-not-supported-chainId": "不支持网络 {{chainId}}",
 
         // Related to DID
         'sign-in': '登录',

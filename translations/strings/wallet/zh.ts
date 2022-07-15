@@ -120,7 +120,6 @@ export const zh = {
                 /*****************
                 * Coin Home Page *
                 ******************/
-                "coin-overview": "{{coinName}} 概述",
                 "coin-new-transactions-today": "今天有 {{ todaysTransactions }} 笔交易",
                 "coin-balance": "金额",
                 "coin-action-recharge": "侧链充值",

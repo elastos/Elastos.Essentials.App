@@ -120,7 +120,6 @@ export const it = {
         /*****************
         * Coin Home Page *
         ******************/
-        "coin-overview": "Token {{coinName}} - Anteprima",
         "coin-new-transactions-today": "{{todaysTransactions}} NUOVE/A TRANSAZIONI/E OGGI",
         "coin-balance": "Saldo",
         "coin-action-recharge": "TRASFERISCI",
