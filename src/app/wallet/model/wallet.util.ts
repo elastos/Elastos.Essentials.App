@@ -77,7 +77,13 @@ export class WalletUtil {
   }
 
   public static getAmountWithoutScientificNotation(amount: BigNumber | number, precision: number): string {
-    let amountString = amount.toFixed();
+    let amountBN = new BigNumber(amount);
+    if (amountBN.isInteger())
+      return amountBN.toFormat(0); // Integer? Return a int format, without trailing .
+    else
+      return amountBN.toFormat(precision).replace(/0*$/g, ""); // Format with target precision, but remove trailing zeros
+
+    /* let amountString = amount.toFixed();
     if (amountString.indexOf('e') != -1) {
       return amount.toFixed(precision).replace(/0*$/g, "");
     } else {
@@ -86,7 +92,7 @@ export class WalletUtil {
       //   amountString = amountString.substring(0, maxLength)
       // }
       return amountString;
-    }
+    } */
   }
 
   /**
@@ -103,7 +109,7 @@ export class WalletUtil {
   public static isELAAddress(address: string) {
     try {
       if (address) {
-        let addressObj =  Address.newFromAddressString(address.trim());
+        let addressObj = Address.newFromAddressString(address.trim());
         if (addressObj.valid()) {
           let prefix = addressObj.programHash().prefix() as any;
           switch (prefix) {
@@ -133,41 +139,41 @@ export class WalletUtil {
   public static async getMnemonicWordlist(mnemonic: string) {
     let wordlistKey = ['en', 'zh_cn', 'fr', 'it']
 
-      // default: wordlists['en']
-      // wordlists['zh_cn'] = zh_cn;
-      // wordlists['fr'] = fr;
-      // wordlists['it'] = it;
+    // default: wordlists['en']
+    // wordlists['zh_cn'] = zh_cn;
+    // wordlists['fr'] = fr;
+    // wordlists['it'] = it;
 
-      // Avoid multiple consecutive spaces in the string
-      let mnemonicArray = mnemonic.split(/[\u3000\s]+/);
-      for (let index = 0; index < wordlistKey.length; index++) {
-        let key = wordlistKey[index];
-        if (!wordlists[key]) {
-          switch (key) {
-            case 'zh_cn':
-              const zh_cn = (await import("@ethersproject/wordlists/lib/lang-zh")).langZhCn;
-              wordlists['zh_cn'] = zh_cn;
+    // Avoid multiple consecutive spaces in the string
+    let mnemonicArray = mnemonic.split(/[\u3000\s]+/);
+    for (let index = 0; index < wordlistKey.length; index++) {
+      let key = wordlistKey[index];
+      if (!wordlists[key]) {
+        switch (key) {
+          case 'zh_cn':
+            const zh_cn = (await import("@ethersproject/wordlists/lib/lang-zh")).langZhCn;
+            wordlists['zh_cn'] = zh_cn;
             break;
-            case 'fr':
-              const fr = (await import("@ethersproject/wordlists/lib/lang-fr")).langFr;
-              wordlists['fr'] = fr;
+          case 'fr':
+            const fr = (await import("@ethersproject/wordlists/lib/lang-fr")).langFr;
+            wordlists['fr'] = fr;
             break;
-            case 'it':
-              const it = (await import("@ethersproject/wordlists/lib/lang-it")).langIt;
-              wordlists['it'] = it;
+          case 'it':
+            const it = (await import("@ethersproject/wordlists/lib/lang-it")).langIt;
+            wordlists['it'] = it;
             break;
-          }
-        }
-
-        let i = 0;
-        for (i = 0; i < mnemonicArray.length; i++) {
-          let index = wordlists[key].getWordIndex(mnemonicArray[i])
-          if (index == undefined || index < 0) break;
-        }
-        if (i == mnemonicArray.length) {
-          Logger.log('wallet', 'getMnemonicWordlist find wordlist', key)
-          return wordlists[key];
         }
       }
+
+      let i = 0;
+      for (i = 0; i < mnemonicArray.length; i++) {
+        let index = wordlists[key].getWordIndex(mnemonicArray[i])
+        if (index == undefined || index < 0) break;
+      }
+      if (i == mnemonicArray.length) {
+        Logger.log('wallet', 'getMnemonicWordlist find wordlist', key)
+        return wordlists[key];
+      }
+    }
   }
 }
