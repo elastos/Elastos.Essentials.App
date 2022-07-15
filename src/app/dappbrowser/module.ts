@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { GlobalDirectivesModule } from '../helpers/directives/module';
 import { NetworkChooserComponentModule } from '../wallet/components/network-chooser/module';
+import { WalletChooserComponentModule } from '../wallet/components/wallet-chooser/module';
 import { BrowserTitleBarComponent } from './components/titlebar/titlebar.component';
 import { BrowserPage } from './pages/browser/browser';
 import { EditFavoritePage } from './pages/edit-favorite/edit-favorite';
@@ -27,6 +28,7 @@ import { DAppBrowserRoutingModule } from './routing';
     CommonModule,
     SharedComponentsModule,
     NetworkChooserComponentModule,
+    WalletChooserComponentModule,
     DAppBrowserRoutingModule,
     HttpClientModule,
     FormsModule,
