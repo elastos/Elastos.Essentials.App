@@ -3,7 +3,7 @@
 
     <ion-grid class="content">
         <!-- Header -->
-        <ion-row class="searching-row" (click)="doScan()" *ngIf="!scanning">
+        <ion-row class="searching-row" (click)="doScan()" *ngIf="isBluetoothEnable && !scanning">
             <ion-col class="scan-again">
                 <img
                     [src]="!theme.darkMode ? 'assets/wallet/icons/reload.svg' : 'assets/wallet/icons/darkmode/reload.svg'" />
@@ -20,7 +20,7 @@
         <!-- Error: No bluetooth -->
         <ion-row class="retry-row" *ngIf="!isBluetoothEnable">
             <div>{{ 'wallet.ledger-scan-bluetooth-not-enable' | translate }}</div>
-            <ion-button color="primary" (click)="showBluetoothSetting()">
+            <ion-button color="primary" (click)="showBluetoothSetting()" *ngIf="supportOpeningBluetoothSetting">
                 <ion-label>{{ 'wallet.ledger-scan-open-bluetooth-setting' | translate }}</ion-label>
             </ion-button>
         </ion-row>

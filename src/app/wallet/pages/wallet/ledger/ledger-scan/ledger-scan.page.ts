@@ -21,6 +21,7 @@
 */
 
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { TransportError } from "@ledgerhq/hw-transport";
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -45,6 +46,7 @@ export class LedgerScanPage implements OnInit {
 
     public scanning = false;
     public isBluetoothEnable = true;
+    public supportOpeningBluetoothSetting = true;
 
     public errorMessge = '';
     private ErrorMessage_ListenTimeout = "No Ledger device found (timeout)";
@@ -52,11 +54,16 @@ export class LedgerScanPage implements OnInit {
     private ErrorMessage_BluetoothNoEnable = "Bluetooth is not enable";
 
     constructor(
+        private platform: Platform,
         public native: Native,
         private translate: TranslateService,
         public theme: GlobalThemeService,
         private zone: NgZone,
-    ) { }
+    ) {
+      if (this.platform.platforms().indexOf('ios') >= 0) {
+        this.supportOpeningBluetoothSetting = false;
+      }
+    }
 
     ngOnInit() {
        void this.initBLE();
