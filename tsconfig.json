@@ -63,9 +63,6 @@
       ],
       "@elastosfoundation/elastos-connectivity-sdk-js": [
         "./node_modules/@elastosfoundation/elastos-connectivity-sdk-js"
-      ],
-      "@elastosfoundation/hive-js-sdk": [
-        "./node_modules/@elastosfoundation/hive-js-sdk"
       ]
     }
   }
