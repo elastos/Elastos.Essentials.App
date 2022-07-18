@@ -380,6 +380,15 @@ export class WalletService {
         });
     }
 
+    public getActiveMasterWalletIndex(): number {
+      if (!this.activeNetworkWallet.value)
+          return -1;
+
+      return this.getMasterWalletsList().findIndex(w => {
+          return w.id === this.activeNetworkWallet.value.id
+      });
+  }
+
     public getNetworkWalletFromMasterWalletId(masterId: string): AnyNetworkWallet {
         return Object.values(this.networkWallets).find(w => w.id === masterId);
     }

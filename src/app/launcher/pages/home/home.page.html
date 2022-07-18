@@ -62,51 +62,57 @@
         </ion-row>
       </ion-col>
       <ion-col size="12" class="wallets-col">
-        <div *ngIf="networkWalletsList.length == 0" (click)="openWallet()" class="no-wallet">
+        <div *ngIf="masterWalletWithNetworkWalletList.length == 0" (click)="openWallet()" class="no-wallet">
           {{ 'launcher.touch-to-create-wallet' | translate }}
         </div>
 
         <!-- Wallets list - horizontal slide -->
-        <ion-slides pager={true} [style]="networkWalletsList.length === 0 ? 'display:gone':''" #walletsSlider
+        <ion-slides pager={true} [style]="masterWalletWithNetworkWalletList.length === 0 ? 'display:gone':''" #walletsSlider
           [options]="walletsSlideOpts" (ionSlideDidChange)="onWalletWidgetSlideChanged()">
-          <ion-slide *ngFor="let networkWallet of networkWalletsList">
+          <ion-slide *ngFor="let masterWalletMap of masterWalletWithNetworkWalletList">
             <div class="wallet-widget-row ripple ion-activatable" [ngStyle]="
             {
-                'background-image': networkWallet.masterWallet.theme ?
-                'url(' + networkWallet.masterWallet.theme.background + ')' :
+                'background-image': masterWalletMap.masterWallet.theme ?
+                'url(' + masterWalletMap.masterWallet.theme.background + ')' :
                 'url(/assets/wallet/cards/maincards/card-purple.svg)'
             }">
               <ion-row class="card-label-row" (click)="openWallet()">
                 <ion-row class="top-row">
                   <ion-col size="12">
-                    <div class="wallet-name">{{ networkWallet.masterWallet.name }}</div>
+                    <div class="wallet-name">{{ masterWalletMap.masterWallet.name }}</div>
                   </ion-col>
                 </ion-row>
-                <div class="total">{{ 'wallet.total-amount' | translate }}</div>
-                <div *ngIf="!currencyService.useCurrency" class="balance">
-                  {{ getFriendlyBalance(networkWallet.getDisplayBalance(), networkWallet.getDecimalPlaces()) }}
-                  {{ networkWallet.getDisplayTokenName() }}
+                <div *ngIf="!masterWalletMap.networkWallet">
+                  {{ 'wallet.unsupported-on-network' | translate:{network:
+                    walletNetworkService.activeNetwork.value.name} }}
                 </div>
-                <div *ngIf="currencyService.useCurrency" class="balance">
-                  {{ getFriendlyBalance(networkWallet.getDisplayBalanceInActiveCurrency()) }}
-                  {{ currencyService.selectedCurrency.symbol }}
-                </div>
-
-                <!-- Single address - directly copy -->
-                <div class="single-address" *ngIf="getWalletAddresses(networkWallet).length === 1"
-                  (click)="copySingleAddressToClipboard($event, getWalletAddresses(networkWallet)[0].address)">
-                  <div class="title">{{ 'launcher.address' | translate }}</div>
-                  <div class="bottom">
-                    <div class="address">{{getReducedWalletAddress(getWalletAddresses(networkWallet)[0].address)}}</div>
-                    <img [src]="'assets/launcher/icons/dark_mode/copy.svg'">
+                <div *ngIf="masterWalletMap.networkWallet">
+                  <div class="total">{{ 'wallet.total-amount' | translate }}</div>
+                  <div *ngIf="!currencyService.useCurrency" class="balance">
+                    {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalance(), masterWalletMap.networkWallet.getDecimalPlaces()) }}
+                    {{ masterWalletMap.networkWallet.getDisplayTokenName() }}
                   </div>
-                </div>
+                  <div *ngIf="currencyService.useCurrency" class="balance">
+                    {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalanceInActiveCurrency()) }}
+                    {{ currencyService.selectedCurrency.symbol }}
+                  </div>
 
-                <!-- Several addresses - need to open a popup to select -->
-                <div class="addresses" *ngIf="getWalletAddresses(networkWallet).length > 1"
-                  (click)="pickWalletAddress($event, networkWallet)">
-                  {{ 'launcher.addresses' | translate }}
-                  <img [src]="'assets/wallet/icons/darkmode/down-arrow.svg'">
+                  <!-- Single address - directly copy -->
+                  <div class="single-address" *ngIf="getWalletAddresses(masterWalletMap.networkWallet).length === 1"
+                    (click)="copySingleAddressToClipboard($event, getWalletAddresses(masterWalletMap.networkWallet)[0].address)">
+                    <div class="title">{{ 'launcher.address' | translate }}</div>
+                    <div class="bottom">
+                      <div class="address">{{getReducedWalletAddress(getWalletAddresses(masterWalletMap.networkWallet)[0].address)}}</div>
+                      <img [src]="'assets/launcher/icons/dark_mode/copy.svg'">
+                    </div>
+                  </div>
+
+                  <!-- Several addresses - need to open a popup to select -->
+                  <div class="addresses" *ngIf="getWalletAddresses(masterWalletMap.networkWallet).length > 1"
+                    (click)="pickWalletAddress($event, masterWalletMap.networkWallet)">
+                    {{ 'launcher.addresses' | translate }}
+                    <img [src]="'assets/wallet/icons/darkmode/down-arrow.svg'">
+                  </div>
                 </div>
               </ion-row>
               <ion-ripple-effect></ion-ripple-effect>

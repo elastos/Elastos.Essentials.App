@@ -28,6 +28,7 @@ import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
@@ -41,6 +42,12 @@ import { WalletAddressChooserComponent } from '../../components/wallet-address-c
 import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
 import { NotificationsPage } from '../notifications/notifications.page';
+
+// The networkWallet is null if the masterWallet is not supported on the active netowrk.
+type MasterWalletWithNetworkWallet = {
+  masterWallet: MasterWallet;
+  networkWallet: AnyNetworkWallet
+}
 
 @Component({
   selector: 'app-home',
@@ -65,6 +72,7 @@ export class HomePage implements OnInit {
   private publicRedPacketsSubscription: Subscription = null; // Public red packets that can be grabbed
 
   // Widget data
+  public masterWalletWithNetworkWalletList: MasterWalletWithNetworkWallet[] = []
   public networkWalletsList: AnyNetworkWallet[] = [];
   public activeNetwork: AnyNetwork = null;
   private activeWalletAddresses: { [walletId: string]: WalletAddressInfo[] } = {};
@@ -206,11 +214,15 @@ export class HomePage implements OnInit {
     });
 
     this.networkWalletSub = this.walletService.activeNetworkWallet.subscribe(networkWallet => {
-      void this.updateWidgetMainWallet();
+      if (this.walletService.walletServiceStatus.value) {
+        void this.updateWidgetMainWallet();
+      }
     });
 
     this.activeNetworkSub = this.walletNetworkService.activeNetwork.subscribe(networkName => {
-      void this.updateWidgetMainWallet();
+      if (this.walletService.walletServiceStatus.value) {
+        void this.updateWidgetMainWallet();
+      }
     });
 
     // Wait to know user's hive vault status to show the hive storage widget
@@ -313,10 +325,22 @@ export class HomePage implements OnInit {
       this.activeNetwork = null;
     }
 
+    // Widget will show all the master wallets, even some of them are unsupported on the active network.
     this.networkWalletsList = this.walletService.getNetworkWalletsList();
+    let masterWallets = this.walletService.getMasterWalletsList();
+
+    this.masterWalletWithNetworkWalletList = [];
+
+    for (let masterWallet of masterWallets) {
+      let networkWallet = this.networkWalletsList.find((nw) => nw.masterWallet.id === masterWallet.id)
+      this.masterWalletWithNetworkWalletList.push({
+        masterWallet: masterWallet,
+        networkWallet: networkWallet
+      })
+    }
 
     // Select the active wallet in the wallets slides
-    let activeWalletIndex = this.walletService.getActiveNetworkWalletIndex();
+    let activeWalletIndex = this.walletService.getActiveMasterWalletIndex();
     if (activeWalletIndex != -1) { // Happens if no wallet
       runDelayed(() => {
         // Delay 100ms: Wait for the initialization of the walletsSlider to complete.
@@ -405,8 +429,11 @@ export class HomePage implements OnInit {
 
   public async onWalletWidgetSlideChanged() {
     let activeIndex = await this.walletsSlider.getActiveIndex();
-    let newlyActiveWallet = this.walletService.getNetworkWalletsList()[activeIndex];
-    void this.walletService.setActiveNetworkWallet(newlyActiveWallet);
+    let newlyActiveWallet = this.masterWalletWithNetworkWalletList[activeIndex].networkWallet;
+    let masterWallet = null;
+    if (!newlyActiveWallet)
+      masterWallet = this.masterWalletWithNetworkWalletList[activeIndex].masterWallet;
+    void this.walletService.setActiveNetworkWallet(newlyActiveWallet, masterWallet);
   }
 
   public pickNetwork() {
