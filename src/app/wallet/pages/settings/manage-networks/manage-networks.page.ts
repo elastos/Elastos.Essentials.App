@@ -46,7 +46,7 @@ export class ManageNetworksPage implements OnInit {
     this.netListSubscription = this.networkService.networksList.subscribe(_ => {
       this.customNetworkEntries = this.customNetworksService.getCustomNetworkEntries();
 
-      let networks = this.networkService.getDisplayableNetworks();
+      let networks = this.networkService.getAvailableNetworks();
 
       // Build the list of editable networks
       this.availableNetworks = networks.map(n => {
