@@ -50,6 +50,10 @@
           </div>
         </div>
       </div>
+
+      <div *ngIf="!fetchingTokens && sourceTokens.length === 0">
+        {{ 'easybridge.no-source-funds' | translate }}
+      </div>
     </div>
 
     <!-- Destination tokens -->

@@ -32,6 +32,7 @@ export const it = {
         "unsupported-wallet": "Unsupported wallet",
         "unsupported-wallet-info": "This wallet does not support token operations, please select another wallet first.",
         "not-enough-tokens": "Not enough tokens available in your wallet",
+        "no-source-funds": "We couldn't find any asset for this wallet address on the supported chains. Please try with a different wallet.",
 
         // Transfer steps
         "step-not-started": "Not started",

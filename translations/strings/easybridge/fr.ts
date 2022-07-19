@@ -32,6 +32,7 @@ export const fr = {
         "unsupported-wallet": "Portefeuille non supporté",
         "unsupported-wallet-info": "Ce portefeuille ne supporte pas les opérations sur les jetons, veuillez d'abord sélectionner un autre portefeuille.",
         "not-enough-tokens": "Balance du portefeuille insuffisante",
+        "no-source-funds": "Aucun jeton trouvé sur les chaînes supportées. Veuillez essayer avec un portefeuille différent",
 
         // Transfer steps
         "step-not-started": "Pas encore commencé",
