@@ -78,18 +78,6 @@ export class NewPacketPage {
   public titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private networkSubscription: Subscription = null;
 
-  updateProbability(probability: number): void {
-    probability = parseFloat(probability.toString().replace("%", ""));
-    if (probability > 100) {
-      probability = 100;
-    }
-    if (probability < 0) {
-      probability = 0;
-    }
-    this.probability = probability;
-    this.probabilityPercent = probability + '%';
-  }
-
   constructor(
     public navCtrl: NavController,
     private globalNavService: GlobalNavService,
@@ -143,11 +131,29 @@ export class NewPacketPage {
     return this.didSessions.getSignedInIdentity();
   }
 
+  updateProbability(probability: number): void {
+    probability = parseFloat(probability.toString().replace("%", ""));
+    if (probability > 100) {
+      probability = 100;
+    }
+    if (probability < 0) {
+      probability = 0;
+    }
+    this.probability = probability;
+    this.probabilityPercent = probability + '%';
+  }
+
   /**
    * Checks all inputs and informs user if something is wrong or missing
    */
   public validateInputs(): boolean {
     if (!this.packets) {
+      void this.formErr(this.translate.instant("redpackets.error-invalid-number-of-packets"));
+      return false;
+    }
+
+    const packetsBN = new BigNumber(this.packets);
+    if (packetsBN.isNaN() || !packetsBN.isInteger() || !packetsBN.gte(1)) {
       void this.formErr(this.translate.instant("redpackets.error-invalid-number-of-packets"));
       return false;
     }
