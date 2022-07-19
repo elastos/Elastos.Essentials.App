@@ -12,6 +12,8 @@ export class ElastosMainChainTransactionProvider extends TransactionProvider<Ela
   private mainChainProvider: ElastosMainChainSubWalletProvider<MainChainSubWallet>;
 
   public async start(): Promise<void> {
+    super.start()
+
     this.elaSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
 
     this.mainChainProvider = new ElastosMainChainSubWalletProvider(this, this.elaSubWallet);

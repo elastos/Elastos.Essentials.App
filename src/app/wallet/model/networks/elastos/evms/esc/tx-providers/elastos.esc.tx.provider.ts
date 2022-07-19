@@ -20,6 +20,8 @@ export class ElastosSmartChainTransactionProvider extends TransactionProvider<El
   private internalTXProvider: EtherscanEVMSubWalletInternalTransactionProvider<AnyMainCoinEVMSubWallet> = null;
 
   public async start(): Promise<void> {
+    super.start()
+
     this.escSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as EscSubWallet;
 
     // TODO: No ETHSC in LRW

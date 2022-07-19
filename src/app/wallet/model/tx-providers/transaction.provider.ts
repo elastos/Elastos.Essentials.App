@@ -63,7 +63,9 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   /**
    * Starts the provider so it can periodically search for new transactions and tokens.
    */
-  public abstract start();
+  public start() {
+    this.isRunning = true;
+  }
 
   /**
    * Stops the provider. For instance, when the network is changed.

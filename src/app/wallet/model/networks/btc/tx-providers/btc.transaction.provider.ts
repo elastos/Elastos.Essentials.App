@@ -11,10 +11,10 @@ export class BTCTransactionProvider extends TransactionProvider<BTCTransaction> 
   //   private tokenProvider: ElastosTokenSubWalletProvider;
 
   public async start(): Promise<void> {
+    super.start()
+
     this.mainProvider = this.createBTCSubWalletProvider();
     await this.mainProvider.initialize();
-
-    this.isRunning = true;
 
     // this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
     // await this.tokenProvider.initialize();

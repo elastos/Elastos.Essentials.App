@@ -19,6 +19,8 @@ export abstract class EVMTransactionProvider extends TransactionProvider<EthTran
   }
 
   public async start() {
+    super.start()
+
     let subwallet = this.networkWallet.getSubWallet(this.networkWallet.network.getEVMSPVConfigName()) as AnyMainCoinEVMSubWallet;
 
     this.createEVMSubWalletProvider(subwallet);
@@ -32,8 +34,6 @@ export abstract class EVMTransactionProvider extends TransactionProvider<EthTran
     this.createEVMSubWalletInternalTransactionProvider(subwallet);
     if (this.internalTXProvider)
       await this.internalTXProvider.initialize();
-
-    this.isRunning = true;
   }
 
   /**
