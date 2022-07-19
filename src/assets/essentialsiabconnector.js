@@ -183,6 +183,41 @@
     }
 
     /**
+     * IMPORTANT NOTE: This internal essentials connector must NOT use the DID JS SDK and Connectivity SDK
+     * classes directly because otherwise this conflicst with those SDKs imported by the running apps. If
+     * multiple versions of those SDKs are in use in the same webview, webpack loader mixes SDK classes in a wrong
+     * way, and type checks such as "myVar instanceof DID" sometimes works, sometimes doesn't, because there are
+     * multiple versions of the "DID" class that are actually not "the same".
+     *
+     * So the trick to access DID SDK and Connectivity SDK methods here is to make the connectivity SDK provide
+     * references to those modules, loaded from the main app bundle, and use them in this connector without bundling
+     * anything.
+     */
+    class UXOperations {
+        static async onBoard(feature, title, introduction, button) {
+            console.log("onBoard request received", feature, title, introduction, button);
+            await this.postEssentialsUrlIntent("https://essentials.elastos.net/onboard", {
+                feature,
+                title, introduction, button
+            });
+        }
+        static async postEssentialsUrlIntent(url, params) {
+            // Append informative caller information to the intent, if available.
+            // getApplicationDID() throws an error if called when no app did has been set.
+            try {
+                params["caller"] = context.connectivity.getApplicationDID();
+            }
+            catch {
+                // Silent catch, it's ok
+            }
+            return essentialsBridge.postMessage("elastos_essentials_url_intent", {
+                url,
+                params
+            });
+        }
+    }
+
+    /**
      * Connector generated as a standalone JS file that can be injected into dApps opened from the
      * Essentials dApp browser. This connector is normally injected as a global window.elastos and can then
      * be found by the connectivity SDK as one of the available connectors for elastos operations.
@@ -269,6 +304,12 @@
         }
         sendSmartContractTransaction(payload) {
             throw new Error("Method not implemented.");
+        }
+        /**
+         * UI API
+         */
+        onBoard(feature, title, introduction, button) {
+            return UXOperations.onBoard(feature, title, introduction, button);
         }
         sendResponse(id, result) {
             essentialsBridge.sendResponse(id, result);
