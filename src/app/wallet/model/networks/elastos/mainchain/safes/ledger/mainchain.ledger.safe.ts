@@ -45,7 +45,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
       return Promise.resolve([this.elaAddress]);
     }
     else {
-      throw new Error("MainChainLedgerSafe: No ela address.");
+      return Promise.resolve(null);
     }
   }
 

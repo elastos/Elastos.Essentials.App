@@ -126,16 +126,24 @@ export class WalletHomePage implements OnInit, OnDestroy {
             this.masterWallet = this.walletManager.getActiveMasterWallet();
 
             if (activeNetworkWallet) {
+                this.checkLedgerWallet();
+
                 this.isEVMNetworkWallet = this.networkWallet.getMainEvmSubWallet() ? true : false;
 
                 this.refreshSubWalletsList();
                 this.refreshStakingAssetsList();
 
+                if (this.subWalletsListChangeSubscription) {
+                    this.subWalletsListChangeSubscription.unsubscribe();
+                }
                 // Know when a subwallet is added or removed, to refresh our list
                 this.subWalletsListChangeSubscription = this.networkWallet.subWalletsListChange.subscribe(() => {
                     this.refreshSubWalletsList();
                 });
 
+                if (this.stakedAssetsUpdateSubscription) {
+                    this.stakedAssetsUpdateSubscription.unsubscribe();
+                }
                 this.stakedAssetsUpdateSubscription = this.networkWallet.stakedAssetsUpdate.subscribe((data) => {
                     this.refreshStakingAssetsList();
                 })
@@ -151,6 +159,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
         });
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
             this.currentNetwork = activeNetwork;
+
+            this.checkLedgerWallet();
         });
 
         this.sendTransactionSubscription = this.events.subscribe("wallet:transactionsent", () => {
@@ -429,6 +439,15 @@ export class WalletHomePage implements OnInit, OnDestroy {
         await this.uiService.setWalletSortTtype(newSortType);
 
         this.refreshSubWalletsList();
+    }
+
+    private checkLedgerWallet() {
+        this.noAddressForLedgerWallet = false;
+        if (this.masterWallet && (this.masterWallet.type === WalletType.LEDGER)) {
+            if (!this.masterWallet.supportsNetwork(this.networkService.activeNetwork.value)) {
+                this.noAddressForLedgerWallet = true;
+            }
+        }
     }
 
     public async getAddressFromLedger() {

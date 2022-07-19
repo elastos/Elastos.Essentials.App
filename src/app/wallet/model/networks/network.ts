@@ -1,3 +1,4 @@
+import { Logger } from "src/app/logger";
 import type { SPVNetworkConfig } from "../../services/wallet.service";
 import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
@@ -40,9 +41,13 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
    */
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<AnyNetworkWallet> {
+    // We don't create networkWallet if the master wallet does not support the active network.
+    // eg. the ledger wallet has no ela address or evm address.
+    if (!masterWallet.supportsNetwork(this)) {
+        Logger.warn("wallet", "Wallet ", masterWallet.name, " does not support network", this.name)
+        return null;
+    }
     let wallet = await this.newNetworkWallet(masterWallet);
-    console.warn("DEBUG createNetworkWallet", wallet)
-
     if (wallet) {
       await wallet.initialize();
 

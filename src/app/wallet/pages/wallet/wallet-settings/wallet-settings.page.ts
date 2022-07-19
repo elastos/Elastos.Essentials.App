@@ -174,7 +174,7 @@ export class WalletSettingsPage implements OnInit {
             iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
         });
 
-        if (this.walletNetworkService.isActiveNetworkElastosMainchain()) {
+        if (this.networkWallet && this.walletNetworkService.isActiveNetworkElastosMainchain()) {
             this.settings.push({
                 type: 'wallet-consolidate-utxos',
                 navCallback: () => {

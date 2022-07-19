@@ -74,13 +74,13 @@
                 }">
                 </div>
             </ion-row>
-            <ion-row *ngIf="!networkWallet && noAddressForLedgerWallet" (click)="getAddressFromLedger()">
+            <ion-row *ngIf="noAddressForLedgerWallet" (click)="getAddressFromLedger()">
                 {{ 'wallet.wallet-connect-to-ledger' | translate }}
             </ion-row>
             <ion-row *ngIf="!networkWallet && !noAddressForLedgerWallet">
                 {{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetwork.name} }}
             </ion-row>
-            <div *ngIf="networkWallet" style="width:100%">
+            <div *ngIf="networkWallet && !noAddressForLedgerWallet" style="width:100%">
                 <!-- TOKENS -->
                 <!-- Coin list header -->
                 <ion-row class="list-title-row">

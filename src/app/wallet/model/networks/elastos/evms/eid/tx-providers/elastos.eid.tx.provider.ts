@@ -11,6 +11,8 @@ export class ElastosIdentityTransactionProvider extends TransactionProvider<Elas
   private eidProvider: ElastosEidSubWalletProvider;
 
   public async start(): Promise<void> {
+    super.start()
+
     this.eidSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ETHDID) as EidSubWallet;
 
     this.eidProvider = new ElastosEidSubWalletProvider(this, this.eidSubWallet);

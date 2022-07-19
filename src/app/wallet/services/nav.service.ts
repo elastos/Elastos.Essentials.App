@@ -13,8 +13,7 @@ export class NavService {
     public showStartupScreen() {
         Logger.log("wallet", "Computing and showing startup screen");
 
-        // Number of wallets supported by the current network
-        if (this.walletManager.getNetworkWalletsList().length > 0) {
+        if (this.walletManager.getMasterWalletsCount() > 0) {
             // Go to wallet's home page.
             this.native.go("/wallet/wallet-home");
         }
