@@ -2,22 +2,39 @@
 
 ion-content {
   .footer {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: row !important;
     position: sticky;
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 100;
 
     .cancel {
-      --background: #fff;
-      --background-activated: #fcfcfc;
+      --background: #f0f0f0;
+      --background-activated: #e0e0e0;
       color: #640fd4;
       transition: all 0.3s ease;
     }
   }
 
   .dark-container.footer {
+    background: #212021;
+    box-shadow: 0 -10px 20px rgba(255, 255, 255, 0.1);
+
+    .transfer-progress {
+        color: #ACB1B6;
+
+        .heading {
+            color: white;
+        }
+    }
+
     .cancel {
       --background: linear-gradient(to bottom, #3c3c3c, #2c2c2c);
       --background-activated: linear-gradient(to bottom, #4c4c4c, #2c2c2c);
