@@ -294,6 +294,7 @@ export const zh = {
                 "ledger-account-select": "请选择 Ledger 账号",
                 "ledger-connecting": "正在搜索 Ledger 钱包",
                 "ledger-prompt": "请开启 Ledger Nano X，保持解锁，并打开 {{appname}} 应用程序",
+                "ledger-connected-device": "已连接设备",
 
                 /*******************
                 * Ledger scan page *

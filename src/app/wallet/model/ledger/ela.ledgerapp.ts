@@ -25,7 +25,7 @@ export class ELALedgerApp extends LedgerApp<ELAAddressType> {
 
   public async getAddressesByType(startIndex: number, count: number, type: ELAAddressType): Promise<AnyLedgerAccount[]> {
     let addresses = [];
-    let path = ela_paths[type] || ela_paths[0];
+    let path = ela_paths[type] || ela_paths["m2305"];
     for (let i = startIndex; i < startIndex + count; i++) {
       const realPath = path.replace("x", String(i));
       const address = await this.elaApp.getAddress(realPath);
@@ -39,7 +39,7 @@ export class ELALedgerApp extends LedgerApp<ELAAddressType> {
       })
     }
 
-    Logger.warn('wallet', "ELALedgerApp Addresses :", addresses);
+    Logger.log('wallet', "ELALedgerApp Addresses :", addresses);
     return addresses;
   }
 

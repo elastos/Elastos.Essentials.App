@@ -294,6 +294,7 @@ export const fr = {
         "ledger-account-select": "Please select a account from ledger",
         "ledger-connecting": "Searching Ledger Wallet",
         "ledger-prompt": "Please open Ledger Nano X, keep it unlocked, and open the {{appname}} application",
+        "ledger-connected-device": "Connected device",
 
         /*******************
         * Ledger scan page *
