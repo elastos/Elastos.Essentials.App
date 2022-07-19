@@ -83,9 +83,11 @@ export class LedgerScanPage implements OnInit {
       this.bleManager = new BLECentralPluginBridge();
       if (this.bleManager) {
         await this.bleManager.stopStateNotifications();
-        this.bleManager.startStateNotifications((state) => {
+        this.bleManager.startStateNotifications(async (state) => {
           switch(state) {
             case "on":
+              // BluetoothTransport.listen will call startStateNotifications, so we need to call stopStateNotifications.
+              await this.bleManager.stopStateNotifications();
               void this.doScan();
               break;
             case 'off':
@@ -119,7 +121,7 @@ export class LedgerScanPage implements OnInit {
           this.isBluetoothEnable = await this.bleManager.isEnabled();
           if (this.isBluetoothEnable) {
               this.scanning = true;
-              let ret = await this.searchLedgerDevice(15000).catch((e) => {
+              let ret = await this.searchLedgerDevice(10000).catch((e) => {
                   Logger.warn(TAG, ' searchLedgerDevice exception ', e)
               })
               this.scanning = false;

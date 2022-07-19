@@ -74,8 +74,9 @@ export class Device {
     }
 
     public characteristicsForService(uuid: string): BLECentralPlugin.PeripheralCharacteristic[] {
+        let uuidLowCase = uuid.toLowerCase()
         return this.characteristics.filter( c => {
-            return c.service == uuid;
+            return c.service.toLowerCase() === uuidLowCase;
         })
     }
 

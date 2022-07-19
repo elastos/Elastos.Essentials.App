@@ -155,7 +155,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
 
         }
       } catch (e) {
-        // we attempt to connect to service
+        Logger.warn(TAG, 'device.characteristicsForService exception ', e)
       }
     }
   }
@@ -170,7 +170,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     characteristics = await device.characteristicsForService(serviceUuid);
   }
 
-  if (!characteristics) {
+  if (!characteristics || (characteristics.length == 0)) {
     throw new TransportError("service not found", "BLEServiceNotFound");
   }
 
@@ -179,11 +179,12 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   let notifyC;
 
   for (const c of characteristics) {
-    if (c.characteristic === writeUuid) {
+    let characteristicLowercase = c.characteristic.toLowerCase()
+    if (characteristicLowercase === writeUuid) {
       writeC = c;
-    } else if (c.characteristic === writeCmdUuid) {
+    } else if (characteristicLowercase === writeCmdUuid) {
       writeCmdC = c;
-    } else if (c.characteristic === notifyUuid) {
+    } else if (characteristicLowercase === notifyUuid) {
       notifyC = c;
     }
   }
@@ -329,15 +330,17 @@ export default class BluetoothTransport extends Transport {
     bleManager.startStateNotifications(async (state) => {
       if (state === "on") {
         await bleManager.stopStateNotifications();
-        const devices = await bleManager.connectedDevices(
-          getBluetoothServiceUuids()
-        );
-        if (unsubscribed) return;
-        await Promise.all(
-          devices.map((d) =>
-            BluetoothTransport.disconnect(d.id).catch(() => {})
-          )
-        );
+        // We will call disconnect when open device.
+        // const devices = await bleManager.connectedDevices(
+        //   getBluetoothServiceUuids()
+        // );
+        // Logger.warn(TAG, 'connectedDevices devices', devices)
+        // if (unsubscribed) return;
+        // await Promise.all(
+        //   devices.map((d) =>
+        //     BluetoothTransport.disconnect(d.id).catch(() => {})
+        //   )
+        // );
         if (unsubscribed) return;
 
         bleManager.startScan(
@@ -360,6 +363,8 @@ export default class BluetoothTransport extends Transport {
       } else if (state === "off") {
         observer.error("bluetooth is not enable");
       }
+    }, (error) => {
+      Logger.log(TAG, "startStateNotifications error", error);
     });
 
     const unsubscribe = () => {
