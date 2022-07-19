@@ -19,8 +19,8 @@ export class IntentService {
   }
 
   init() {
-    this.intentSubscription = this.intentService.intentListener.subscribe((receivedIntent)=>{
-      if(receivedIntent)
+    this.intentSubscription = this.intentService.intentListener.subscribe((receivedIntent) => {
+      if (receivedIntent)
         this.onReceiveIntent(receivedIntent);
     })
   }
@@ -47,6 +47,7 @@ export class IntentService {
         Logger.log('contacts', 'addfriend intent', ret);
         this.zone.run(() => {
           void this.friendsService.addContactByIntent(ret.params.did, ret.params.carrier);
+          this.sendEmptyIntentRes();
         });
         break;
       case "https://contact.elastos.net/viewfriendinvitation":
@@ -54,6 +55,7 @@ export class IntentService {
         this.zone.run(() => {
           this.friendsService.contactNotifierInviationId = ret.params.invitationid;
           void this.friendsService.addContactByIntent(ret.params.did);
+          this.sendEmptyIntentRes();
         });
         break;
       case "share":
@@ -66,12 +68,14 @@ export class IntentService {
 
         this.zone.run(() => {
           this.friendsService.getContacts(false, 'share');
+          this.sendEmptyIntentRes();
         });
         break;
       case "https://contact.elastos.net/viewfriend":
         Logger.log('contacts', 'viewfriend intent', ret);
         this.zone.run(() => {
           this.friendsService.viewContact(ret.params.did);
+          this.sendEmptyIntentRes();
         });
         break;
       case "https://contact.elastos.net/pickfriend":
@@ -79,28 +83,26 @@ export class IntentService {
         this.zone.run(() => {
           let params = ret.params;
           // Single Invite, No Filter
-          if(
+          if (
             !params.hasOwnProperty('singleSelection') && !params.hasOwnProperty('filter') ||
-            params.hasOwnProperty('singleSelection') && params.singleSelection === true && !params.hasOwnProperty('filter'))
-          {
+            params.hasOwnProperty('singleSelection') && params.singleSelection === true && !params.hasOwnProperty('filter')) {
             Logger.log('contacts', 'pickfriend intent is single selection without filter');
             this.friendsService.getContacts(true, 'pickfriend');
           }
           // Multiple Invite, No Filter
-          if(params.hasOwnProperty('singleSelection') && params.singleSelection === false && !params.hasOwnProperty('filter')) {
+          if (params.hasOwnProperty('singleSelection') && params.singleSelection === false && !params.hasOwnProperty('filter')) {
             Logger.log('contacts', 'pickfriend intent is multiple selection without filter');
             this.friendsService.getContacts(false, 'pickfriend');
           }
           // Single Invite, With Filter
-          if(
+          if (
             !params.hasOwnProperty('singleSelection') && params.hasOwnProperty('filter') ||
-            params.hasOwnProperty('singleSelection') && params.singleSelection === true && params.hasOwnProperty('filter'))
-          {
+            params.hasOwnProperty('singleSelection') && params.singleSelection === true && params.hasOwnProperty('filter')) {
             Logger.log('contacts', 'pickfriend intent is single selection and filtered by credential');
             this.friendsService.getFilteredContacts(true, ret);
           }
           // Multiple Invite, With Filter
-          if(params.hasOwnProperty('singleSelection') && params.singleSelection === false && params.hasOwnProperty('filter')) {
+          if (params.hasOwnProperty('singleSelection') && params.singleSelection === false && params.hasOwnProperty('filter')) {
             Logger.log('contacts', 'pickfriend intent is multiple selection and filtered by credential');
             this.friendsService.getFilteredContacts(false, ret);
           }

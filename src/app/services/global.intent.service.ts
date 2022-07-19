@@ -80,7 +80,7 @@ export class GlobalIntentService {
         this.processNextIntentRequest();
       }
       else {
-        Logger.log("Intents", "Another intent is already being processed. This one will be executed later", intentToProcess);
+        Logger.log("Intents", "Another intent is already being processed. This one will be executed later", this.intentsBeingProcessed);
       }
     });
   }

@@ -153,7 +153,7 @@ export class ScanPage {
                     this.stopScanning()
 
                     // Either emit a new intent if the scanner app was opened manually, or
-                    // send a intent resposne if this app was opened by a "scanqrcode" intent request.
+                    // send a intent response if this app was opened by a "scanqrcode" intent request.
                     if (!this.fromIntentRequest)
                         await this.runScannedContent(this.scannedText)
                     else
