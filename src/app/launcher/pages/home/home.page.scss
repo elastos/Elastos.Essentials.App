@@ -465,7 +465,6 @@ ion-content {
                     bottom: -4px;
                     font-size: 12px;
                     font-weight: 400;
-                    display: flex;
                     padding-bottom: 1px;
                     display: flex;
                     flex-direction: column;
@@ -500,6 +499,12 @@ ion-content {
                         margin-left: 3px;
                     }
                 }
+
+                .unsupported-wallet {
+                  height: 35px;
+                  font-size: 12px;
+                  margin: auto;
+              }
             }
 
             .arrow-down {

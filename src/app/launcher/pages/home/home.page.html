@@ -82,7 +82,7 @@
                     <div class="wallet-name">{{ masterWalletMap.masterWallet.name }}</div>
                   </ion-col>
                 </ion-row>
-                <div *ngIf="!masterWalletMap.networkWallet">
+                <div *ngIf="!masterWalletMap.networkWallet" class="unsupported-wallet">
                   {{ 'wallet.unsupported-on-network' | translate:{network:
                     walletNetworkService.activeNetwork.value.name} }}
                 </div>
