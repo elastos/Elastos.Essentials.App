@@ -336,7 +336,8 @@ export class PayPage {
           }
         }
       });
-      await this.ethTransactionService.publishTransaction(evmSubWallet, rawTx, transfer);
+
+      await evmSubWallet.signAndSendRawTransaction(rawTx, transfer, false);
     }
     catch (err) {
       Logger.error('redpackets', 'publishTransaction error:', err)
@@ -428,8 +429,8 @@ export class PayPage {
           txStatusSub.unsubscribe();
         }
       });
-      let test = await this.ethTransactionService.publishTransaction(evmSubWallet, rawTx, transfer);
-      console.log("TEST TX", test);
+
+      await evmSubWallet.signAndSendRawTransaction(rawTx, transfer, false);
     }
     catch (err) {
       Logger.error('redpackets', 'publishTransaction ERC20 error:', err)
