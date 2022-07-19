@@ -32,7 +32,7 @@ export const zh = {
         "unsupported-wallet": "钱包不支持",
         "unsupported-wallet-info": "此钱包不支持代币操作，请先选择其他钱包。",
         "not-enough-tokens": "代币余额不足",
-        "no-source-funds": "We couldn't find any asset for this wallet address on the supported chains. Please try with a different wallet.",
+        "no-source-funds": "我们在支持的链上找不到此钱包地址的任何资产，请尝试使用其他钱包。",
 
         // Transfer steps
         "step-not-started": "未开始",
