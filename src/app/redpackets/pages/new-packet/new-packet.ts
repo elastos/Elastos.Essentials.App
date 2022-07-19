@@ -158,9 +158,8 @@ export class NewPacketPage {
       return false;
     }
 
-    console.log("this.tokenAmount", this.tokenAmount)
-
-    if (!this.tokenAmount || this.tokenAmount === "") {
+    const tokenAmountBN = new BigNumber(this.tokenAmount);
+    if (tokenAmountBN.isNaN() || tokenAmountBN.lte(0)) {
       void this.formErr(this.translate.instant("redpackets.error-invalid-number-of-tokens"));
       return false;
     }
