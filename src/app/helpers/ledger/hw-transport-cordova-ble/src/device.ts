@@ -51,11 +51,11 @@ export class Device {
     }
 
     public connect(): Promise<BLECentralPlugin.PeripheralDataExtended> {
-        Logger.warn(TAG, ' device connect', this.id)
+        Logger.log(TAG, ' device connect', this.id)
         return new Promise((resolve, reject) => {
             ble.connect(this.id,
                 (data: BLECentralPlugin.PeripheralDataExtended) => {
-                    Logger.warn(TAG, 'device connected', this.id)
+                    Logger.log(TAG, 'device connected', this.id)
                     this.copyData(data);resolve(data); },
                 (error: string | BLECentralPlugin.BLEError) => { reject(error); });
             });

@@ -1,11 +1,11 @@
 /* eslint-disable prefer-template */
 import type { DeviceModel } from "@ledgerhq/devices";
 import {
-  getBluetoothServiceUuids,
-  getInfosForServiceUuid
+    getBluetoothServiceUuids,
+    getInfosForServiceUuid
 } from "@ledgerhq/devices";
 import {
-  CantOpenDevice, DisconnectedDeviceDuringOperation, TransportError
+    CantOpenDevice, DisconnectedDeviceDuringOperation, TransportError
 } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
 import { defer, from, merge, Observable } from "rxjs";
@@ -87,29 +87,6 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
 
     await awaitsBleOn();
 
-    // TODO: devices?
-    // if (!device) {
-    //   // works for iOS but not Android
-    //   const devices = await bleManager.devices([deviceOrId]);
-    //   log("ble-verbose", `found ${devices.length} devices`);
-    //   [device] = devices;
-    // }
-
-    // TODO: connectedPeripheralsWithServices is only supported in iOS.
-    // if (!device) {
-    //   const connectedDevices = await bleManager.connectedDevices(
-    //     getBluetoothServiceUuids()
-    //   );
-    //   const connectedDevicesFiltered = connectedDevices.filter(
-    //     (d) => d.id === deviceOrId
-    //   );
-    //   log(
-    //     "ble-verbose",
-    //     `found ${connectedDevicesFiltered.length} connected devices`
-    //   );
-    //   [device] = connectedDevicesFiltered;
-    // }
-
     if (!device) {
       try {
         let deviceData = await bleManager.connect(deviceOrId);
@@ -119,26 +96,10 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
         throw e;
       }
     }
-
-    if (!device) {
-      throw new CantOpenDevice();
-    }
-  } else {
-    device = new Device(deviceOrId);
   }
 
-// TODO: We need to get the PeripheralDataExtended, so call connect.
-  if ((await device.isConnected())) {
-      Logger.warn(TAG, 'already connected ')
-      await device.disconnect();
-  }
-  if (!(await device.isConnected())) {
-    try {
-      await device.connect();
-    } catch (e: any) {
-      Logger.error(TAG, 'connect error ', e)
-      throw e;
-    }
+  if (!device) {
+    throw new CantOpenDevice();
   }
 
   let res = retrieveInfos(device);
@@ -152,7 +113,6 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
         } else {
             res = getInfosForServiceUuid(uuid);
             break;
-
         }
       } catch (e) {
         Logger.warn(TAG, 'device.characteristicsForService exception ', e)

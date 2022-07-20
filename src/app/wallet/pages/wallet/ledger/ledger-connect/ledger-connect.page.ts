@@ -89,6 +89,8 @@ export class LedgerConnectPage implements OnInit {
     public errorMessge = '';
     public ledgerNanoAppname = '';
 
+    private connectDeviceTimerout: any = null;
+
     constructor(
         public events: GlobalEvents,
         public native: Native,
@@ -105,19 +107,20 @@ export class LedgerConnectPage implements OnInit {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             this.device = navigation.extras.state.device;
-            Logger.log(TAG, ' device:', this.device)
+            Logger.log(TAG, 'LedgerConnectPage device:', this.device)
         }
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.ledger-connect"));
-        void this.doConnect();
+        this.connectDevice();
     }
 
     ionViewWillLeave() {
         if (this.transport) {
             void this.transport.close();
         }
+        this.closeTimeout();
     }
 
     private async doConnect() {
@@ -128,12 +131,33 @@ export class LedgerConnectPage implements OnInit {
             }
             this.connecting = true;
             this.transport = await BluetoothTransport.open(this.device.id);
+            this.closeTimeout();
         }
         catch (e) {
             Logger.error('ledger', ' initLedger error:', e);
             this.connectError = true;
         }
         this.connecting = false;
+    }
+
+    // TODO: Why BluetoothTransport.open can work for the first time, but no return for the second time?
+    // if the BluetoothTransport.open can not return, we should connect device again.
+    private connectDevice() {
+        if (this.transport) return;
+
+        void this.doConnect();
+
+        this.connectDeviceTimerout = setTimeout(() => {
+            Logger.warn('ledger', ' Timeout, Connect device again');
+            void this.connectDevice();
+        }, 3000);
+    }
+
+    private closeTimeout() {
+        if (this.connectDeviceTimerout) {
+            clearTimeout(this.connectDeviceTimerout);
+            this.connectDeviceTimerout = null;
+        }
     }
 
     private async refreshAddresses() {
@@ -144,6 +168,7 @@ export class LedgerConnectPage implements OnInit {
         catch (e) {
             this.failedToGetAddress = true;
             Logger.warn('wallet', 'LedgerApp ', this.ledgerNanoAppname, ' get addresses exception', e)
+            // TODO
             // TransportError id : "TransportLocked"  -- reconnect ledger?
             // TransportStatusError statusCode: 25873 (0x6511)  -- Open the right app on Ledger.
         }
