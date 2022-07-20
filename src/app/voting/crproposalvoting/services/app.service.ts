@@ -94,7 +94,7 @@ export class AppService {
         let url = 'https://launcher.elastos.net/app'
         if (targetProposalIndex === 1) {
           message = this.translate.instant('crproposalvoting.new-crc-proposals-msg');
-          url += '?hash=' + newProposalsHash;
+          url += '?hash=' + proposals[0].proposalHash;
         } else {
           message = this.translate.instant('crproposalvoting.new-crc-proposals-msg1') + targetProposalIndex + this.translate.instant('crproposalvoting.new-crc-proposals-msg2');
         }
