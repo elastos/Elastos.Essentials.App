@@ -38,6 +38,12 @@
 
       <ion-spinner *ngIf="connecting" class="spinner"></ion-spinner>
 
+      <!-- Get addresses in progress -->
+      <ion-row *ngIf="taskInProgress" class="scanning">
+        <ion-spinner name="crescent"></ion-spinner>
+        <ion-label>{{ 'wallet.ledger-getting-addresses' | translate }}</ion-label>
+      </ion-row>
+
       <ion-row class="ledger-row" *ngIf="hasGotAddress()">
         <ion-label> {{ 'wallet.ledger-connecting' | translate }} </ion-label>
       </ion-row>

@@ -11,6 +11,7 @@ import { SignTransactionResult } from "src/app/wallet/model/safes/safe.types";
 import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { VoteContent } from "src/app/wallet/services/spv.service";
+import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
 import { AnySubWallet } from "../../../../base/subwallets/subwallet";
 import { ElastosMainChainSafe } from "../mainchain.safe";
 
@@ -21,6 +22,9 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
   private elaAddress = null;
   private publicKey = '';
   private addressPath = '';
+  private txData;
+  private unsignedTx;
+  private signedTx;
 
   constructor(protected masterWallet: LedgerMasterWallet) {
     super(masterWallet);
@@ -320,31 +324,37 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
 
   public async signTransaction(subWallet: AnySubWallet, tx: any, transfer: Transfer): Promise<SignTransactionResult> {
     // TODO: use the elastos-mainchain-app ledger 'app' to talk to the ELA ledger app to sign
-    const rawTx = await ELATransactionCoder.encodeTx(tx, false);
-    if (Math.ceil(rawTx.length / 2) > MAX_TX_SIZE) {
+    this.txData = tx;
+
+    this.unsignedTx = await ELATransactionCoder.encodeTx(tx, false);
+    if (Math.ceil(this.unsignedTx.length / 2) > MAX_TX_SIZE) {
       Logger.warn('wallet', 'MainChainLedgerSafe createPaymentTransaction: TX size too big') // if TX size too big, try less UTXOs
     }
-    Logger.warn('wallet', 'MainChainLedgerSafe signTransaction:', rawTx);
 
     let signTransactionResult: SignTransactionResult = {
       signedTransaction: null
     }
 
-    const ela = new Ela(null);
-    let response = await ela.signTransaction(rawTx, this.addressPath);
-    if (!response.success) {
+    // Wait for the ledger sign the transaction.
+    let signed = await WalletUIService.instance.connectLedgerAndSignTransaction(this.masterWallet.deviceID, this)
+    if (!signed) {
+      Logger.log('ledger', "MainChainLedgerSafe::signTransaction can't connect to ledger or user canceled");
       return signTransactionResult;
     }
 
-    const signature = Buffer.from(response.signature, 'hex');
-    const encodedTx = await ELATransactionSigner.addSignatureToTx(tx, this.publicKey, signature);
-    Logger.warn('wallet', 'MainChainLedgerSafe encodedTx:', encodedTx);
-    signTransactionResult.signedTransaction = encodedTx
+    signTransactionResult.signedTransaction = this.signedTx
     return signTransactionResult;
   }
 
-  public signTransactionByLedger(transport: BluetoothTransport) {
-    throw new Error("Method not implemented.");
+  public async signTransactionByLedger(transport: BluetoothTransport) {
+    const ela = new Ela(transport);
+    let response = await ela.signTransaction(this.unsignedTx, this.addressPath);
+    if (!response.success) {
+      return ;
+    }
+
+    const signature = Buffer.from(response.signature, 'hex');
+    this.signedTx = await ELATransactionSigner.addSignatureToTx(this.txData, this.publicKey, signature);
   }
 }
 
