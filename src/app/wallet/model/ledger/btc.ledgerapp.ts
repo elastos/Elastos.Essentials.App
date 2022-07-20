@@ -13,7 +13,7 @@ export enum BTCAddressType {
 
 const btc_mainnet_paths = {
   "segwit": "84'/0'/x'/0/0",
-  "legacy": "44'/0'/x'/0/0'",
+  "legacy": "44'/0'/x'/0/0",
   "p2sh": "49'/0'/0'/0/0",
 };
 

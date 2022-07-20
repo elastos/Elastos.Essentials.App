@@ -239,7 +239,7 @@ export class LedgerConnectPage implements OnInit {
     private buildBTCAddressTypeMenuItems(): MenuSheetMenu[] {
         return [
             {
-                title: "Segwit",
+                title: "Native Segwit",
                 routeOrAction: () => {
                     this.addressType = BTCAddressType.SEGWIT;
                     // Reset addresses
@@ -282,7 +282,7 @@ export class LedgerConnectPage implements OnInit {
 
     public getDisplayableAddressType(): string {
         switch (this.addressType) {
-            case BTCAddressType.SEGWIT: return "Segwit";
+            case BTCAddressType.SEGWIT: return "Native Segwit";
             case BTCAddressType.LEGACY: return "Legacy";
         }
     }
