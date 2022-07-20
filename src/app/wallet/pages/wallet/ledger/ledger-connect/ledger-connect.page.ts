@@ -184,7 +184,7 @@ export class LedgerConnectPage implements OnInit {
     }
 
     public shouldShowGetAddressButton() {
-        return this.failedToGetAddress && !this.hasGotAddress();
+        return (this.failedToGetAddress || this.shouldPickAddressType) && !this.hasGotAddress();
     }
 
     public async pickNetwork() {
@@ -223,7 +223,8 @@ export class LedgerConnectPage implements OnInit {
 
         // Reset addresses
         this.addresses = [];
-        void this.refreshAddresses();
+        if (!this.shouldPickAddressType)
+          void this.refreshAddresses();
     }
 
     private buildBTCAddressTypeMenuItems(): MenuSheetMenu[] {
@@ -232,6 +233,8 @@ export class LedgerConnectPage implements OnInit {
                 title: "Segwit",
                 routeOrAction: () => {
                     this.addressType = BTCAddressType.SEGWIT;
+                    // Reset addresses
+                    this.addresses = [];
                     void this.refreshAddresses();
                 }
             },
@@ -239,6 +242,8 @@ export class LedgerConnectPage implements OnInit {
                 title: "Legacy",
                 routeOrAction: () => {
                     this.addressType = BTCAddressType.LEGACY;
+                    // Reset addresses
+                    this.addresses = [];
                     void this.refreshAddresses();
                 }
             }
@@ -268,7 +273,8 @@ export class LedgerConnectPage implements OnInit {
 
     public getDisplayableAddressType(): string {
         switch (this.addressType) {
-            case BTCAddressType.SEGWIT: return "Segwit"
+            case BTCAddressType.SEGWIT: return "Segwit";
+            case BTCAddressType.LEGACY: return "Legacy";
         }
     }
 
