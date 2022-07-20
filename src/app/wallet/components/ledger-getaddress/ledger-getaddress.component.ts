@@ -43,6 +43,7 @@ export class LedgerGetAddressComponent implements OnInit {
   public addresses: AnyLedgerAccount[] = [];
 
   public ledgerNanoAppname = '';
+  private connectDeviceTimerout: any = null;
 
   constructor(
     private navParams: NavParams,
@@ -56,15 +57,43 @@ export class LedgerGetAddressComponent implements OnInit {
     this.ledgerDeviceId = this.navParams.data.deviceId;
     this.accounType = this.navParams.data.accounType;
     this.initLedgerAppName();
-    void this.connect();
+    void this.connectDevice();
   }
 
-  async connect() {
-    Logger.log("wallet", "Ledger connecting... ", this.ledgerDeviceId);
-    this.connecting = true;
-    this.transport = await BluetoothTransport.open(this.ledgerDeviceId);
+  private async doConnect() {
+    try {
+      if (this.transport) {
+        await this.transport.close();
+        this.transport = null;
+      }
+      this.connecting = true;
+      this.transport = await BluetoothTransport.open(this.ledgerDeviceId);
+      this.closeTimeout();
+    }
+    catch (e) {
+      Logger.error('wallet', 'BluetoothTransport.open error:', e);
+    }
     this.connecting = false;
-    Logger.log("wallet", "Ledger connected ", this.transport);
+  }
+
+  // TODO: Why BluetoothTransport.open can work for the first time, but no return for the second time?
+  // if the BluetoothTransport.open can not return, we should connect device again.
+  private connectDevice() {
+    if (this.transport) return;
+
+    void this.doConnect();
+
+    this.connectDeviceTimerout = setTimeout(() => {
+      Logger.warn('wallet', ' Timeout, Connect device again');
+      void this.connectDevice();
+    }, 3000);
+  }
+
+  private closeTimeout() {
+    if (this.connectDeviceTimerout) {
+      clearTimeout(this.connectDeviceTimerout);
+      this.connectDeviceTimerout = null;
+    }
   }
 
   async disconnect() {

@@ -296,6 +296,11 @@ export const zh = {
                 "ledger-prompt": "请开启 Ledger Nano X，保持解锁，并打开 {{appname}} 应用程序",
                 "ledger-connected-device": "已连接设备",
 
+                /*********************
+                * Ledger Sign Component *
+                **********************/
+                "ledger-sign": "使用 Ledger 签名",
+
                 /*******************
                 * Ledger scan page *
                 ********************/

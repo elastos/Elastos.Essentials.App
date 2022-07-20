@@ -296,6 +296,11 @@ export const fr = {
         "ledger-prompt": "Please open Ledger Nano X, keep it unlocked, and open the {{appname}} application",
         "ledger-connected-device": "Connected device",
 
+        /*********************
+        * Ledger Sign Component *
+        **********************/
+        "ledger-sign": "Sign with Ledger",
+
         /*******************
         * Ledger scan page *
         ********************/
