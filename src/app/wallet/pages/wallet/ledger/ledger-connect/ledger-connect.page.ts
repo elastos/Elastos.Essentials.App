@@ -61,6 +61,8 @@ export class LedgerConnectPage implements OnInit {
     public transport: Transport = null;
     public connecting = false;
     public connectError = false;
+    public gettingAddresses = false;
+    private failedToGetAddress = false;
 
     public addresses: AnyLedgerAccount[] = [];
     // for test
@@ -135,7 +137,17 @@ export class LedgerConnectPage implements OnInit {
     }
 
     private async refreshAddresses() {
-        this.addresses = await this.ledgerApp.getAddresses(this.addressType, 0, 5, false);
+        this.gettingAddresses = true;
+        try {
+            this.addresses = await this.ledgerApp.getAddresses(this.addressType, 0, 5, false);
+        }
+        catch (e) {
+            this.failedToGetAddress = true;
+            Logger.warn('wallet', 'LedgerApp ', this.ledgerNanoAppname, ' get addresses exception', e)
+            // TransportError id : "TransportLocked"  -- reconnect ledger?
+            // TransportStatusError statusCode: 25873 (0x6511)  -- Open the right app on Ledger.
+        }
+        this.gettingAddresses = false;
     }
 
     hasGotAddress() {
@@ -146,7 +158,15 @@ export class LedgerConnectPage implements OnInit {
         return this.addresses;
     }
 
+    public shouldShowGetAddressButton() {
+        return this.failedToGetAddress && !this.hasGotAddress();
+    }
+
     public async pickNetwork() {
+        if (!this.transport) {
+            Logger.warn(TAG, 'Ledger is disconnected!')
+            return;
+        }
         this.selectedNetwork = await this.walletNetworkUIService.pickNetwork();
         if (!this.selectedNetwork) return;
 

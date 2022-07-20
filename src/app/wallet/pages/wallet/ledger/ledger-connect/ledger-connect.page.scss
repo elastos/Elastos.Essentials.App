@@ -90,9 +90,28 @@
     background: darkgray;
 }
 
+.btn-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+
+    ion-button {
+      height: 50px;
+      width: 90%;
+      --background: linear-gradient(to bottom, #732dcf, #640fd4);
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+}
+
 .scanning {
     display: flex;
     align-items: center;
+    justify-content: center;
 
     ion-spinner {
         margin-right: 10px;

@@ -48,9 +48,15 @@
             </ion-row>
 
             <!-- Connection in progress -->
-            <ion-row *ngIf="row connecting" class="scanning">
+            <ion-row *ngIf="connecting" class="scanning">
                 <ion-spinner name="crescent"></ion-spinner>
                 <ion-label>{{ 'wallet.ledger-connecting-to-device' | translate }}</ion-label>
+            </ion-row>
+
+            <!-- Get addresses in progress -->
+            <ion-row *ngIf="gettingAddresses" class="scanning">
+                <ion-spinner name="crescent"></ion-spinner>
+                <ion-label>{{ 'wallet.ledger-getting-addresses' | translate }}</ion-label>
             </ion-row>
 
             <!-- Addresses -->
@@ -69,6 +75,12 @@
                     <img src="assets/wallet/icons/right-arrow-alt.svg" />
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
+            </ion-row>
+
+            <ion-row class="btn-row" *ngIf="shouldShowGetAddressButton()">
+                <ion-button color="tertiary" (click)="refreshAddresses()">
+                  {{ 'wallet.ledger-get-addresses' | translate }}
+                </ion-button>
             </ion-row>
 
         </ng-container>

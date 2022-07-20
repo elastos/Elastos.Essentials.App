@@ -317,6 +317,8 @@ export const fr = {
         "ledger-address-type": "Type d'adresse",
         "ledger-pick-network": "Choisir un réseau",
         "ledger-connect-ledger-sucess": "Portefeuille physique Ledger connecté",
+        "ledger-getting-addresses": "Getting address",
+        "ledger-get-addresses": "Get addresses",
 
         /********************************************** Wallet Settings Screens ***********************************************/
 

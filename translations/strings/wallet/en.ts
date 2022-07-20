@@ -317,6 +317,8 @@ export const en = {
         "ledger-address-type": "Address type",
         "ledger-pick-network": "Pick network",
         "ledger-connect-ledger-sucess": "Connected ledger hardware wallet",
+        "ledger-getting-addresses": "Getting address",
+        "ledger-get-addresses": "Get addresses",
 
         /********************************************** Wallet Settings Screens ***********************************************/
 

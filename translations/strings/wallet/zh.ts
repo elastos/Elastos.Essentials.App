@@ -317,6 +317,8 @@ export const zh = {
                 "ledger-address-type": "地址类型",
                 "ledger-pick-network": "选择网络",
                 "ledger-connect-ledger-sucess": "成功连接 Ledger 硬件钱包",
+                "ledger-getting-addresses": "正在获取地址",
+                "ledger-get-addresses": "获取地址",
 
                 /********************************************** Wallet Settings Screens ***********************************************/
 
