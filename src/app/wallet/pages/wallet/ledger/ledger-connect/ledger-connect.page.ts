@@ -38,6 +38,8 @@ import { BTCAddressType, BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.le
 import { ELAAddressType, ELALedgerApp } from 'src/app/wallet/model/ledger/ela.ledgerapp';
 import { EVMAddressType, EVMLedgerApp } from 'src/app/wallet/model/ledger/evm.ledgerapp';
 import { AnyLedgerAccount, LedgerAddressType, LedgerApp } from 'src/app/wallet/model/ledger/ledgerapp';
+import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
+import { LedgerAccountOptions } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { BTCNetworkBase } from 'src/app/wallet/model/networks/btc/network/btc.base.network';
 import { ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elastos/mainchain/network/elastos.networks';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
@@ -49,6 +51,11 @@ import { WalletService } from 'src/app/wallet/services/wallet.service';
 
 const TAG = 'ledger';
 
+export enum LedgerConnectType {
+  CreateWallet = 'create',// Get address to create wallet
+  AddAccount = 'add',     // Add address to existing wallet
+}
+
 @Component({
     selector: 'app-ledger-connect',
     templateUrl: './ledger-connect.page.html',
@@ -58,6 +65,7 @@ export class LedgerConnectPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public device = null;
+    private ledgerConnectType: LedgerConnectType = null;
     public transport: Transport = null;
     public connecting = false;
     public connectError = false;
@@ -107,6 +115,7 @@ export class LedgerConnectPage implements OnInit {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             this.device = navigation.extras.state.device;
+            this.ledgerConnectType = navigation.extras.state.type;
             Logger.log(TAG, 'LedgerConnectPage device:', this.device)
         }
     }
@@ -280,7 +289,22 @@ export class LedgerConnectPage implements OnInit {
 
     public async selectAddress(account: AnyLedgerAccount) {
         Logger.log(TAG, 'Selected account/address:', account)
-        await this.createLedgerWallet(account);
+        if (this.ledgerConnectType == LedgerConnectType.CreateWallet) {
+          await this.createLedgerWallet(account);
+        } else {
+          let masterWallet = this.walletService.getActiveMasterWallet();
+          let accountOpt: LedgerAccountOptions = { type: account.type, accountID: account.address, accountPath: account.path, publicKey: account.publicKey };
+          (masterWallet as LedgerMasterWallet).addAccountOptions(accountOpt);
+          void masterWallet.save();
+          // create networkwallet and active
+          let networkWallet = await WalletNetworkService.instance.activeNetwork.value.createNetworkWallet(masterWallet);
+
+          if (networkWallet) {
+              // Notify that this network wallet is the active one
+              await this.walletService.setActiveNetworkWallet(networkWallet);
+              this.native.setRootRouter("/wallet/wallet-home");
+          }
+        }
     }
 
     private async createLedgerWallet(account: AnyLedgerAccount) {

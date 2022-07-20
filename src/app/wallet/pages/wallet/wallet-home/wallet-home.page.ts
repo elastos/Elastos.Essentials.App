@@ -31,7 +31,6 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
-import { LedgerAccountType } from 'src/app/wallet/model/ledger.types';
 import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
@@ -54,6 +53,7 @@ import { LocalStorage } from '../../../services/storage.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
+import { LedgerConnectType } from '../ledger/ledger-connect/ledger-connect.page';
 
 @Component({
     selector: 'app-wallet-home',
@@ -450,31 +450,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }
     }
 
-    public async getAddressFromLedger() {
-        let accountType: LedgerAccountType;
-        switch (this.currentNetwork.key.toLowerCase()) {
-            case 'elastos':
-                accountType = LedgerAccountType.ELA
-                break;
-            case 'btc':
-                accountType = LedgerAccountType.BTC
-                break;
-            default:
-                accountType = LedgerAccountType.EVM
-                break;
-        }
-
-        let account = await this.walletUIService.connectLedgerAndGetAddress((this.masterWallet as LedgerMasterWallet).deviceID, accountType);
-        if (account) {
-            (this.masterWallet as LedgerMasterWallet).addAccountOptions(account);
-            void this.masterWallet.save();
-            // create networkwallet and active
-            this.networkWallet = await this.currentNetwork.createNetworkWallet(this.masterWallet);
-
-            if (this.networkWallet) {
-                // Notify that this network wallet is the active one
-                await this.walletManager.setActiveNetworkWallet(this.networkWallet);
-            }
-        }
+    public getAddressFromLedger() {
+      this.native.go("/wallet/ledger/scan", { device: (this.masterWallet as LedgerMasterWallet).deviceID, type: LedgerConnectType.AddAccount});
     }
 }

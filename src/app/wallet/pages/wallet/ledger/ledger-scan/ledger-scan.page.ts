@@ -21,6 +21,7 @@
 */
 
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { TransportError } from "@ledgerhq/hw-transport";
 import { TranslateService } from '@ngx-translate/core';
@@ -28,8 +29,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BLECentralPluginBridge } from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BLECentralPluginBridge';
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Native } from 'src/app/wallet/services/native.service';
+import { LedgerConnectType } from '../ledger-connect/ledger-connect.page';
 
 const TAG = 'ledger';
 
@@ -48,6 +51,8 @@ export class LedgerScanPage implements OnInit {
     public isBluetoothEnable = true;
     public supportOpeningBluetoothSetting = true;
 
+    private ledgerConnectType: LedgerConnectType = LedgerConnectType.CreateWallet;
+
     public errorMessge = '';
     private ErrorMessage_ListenTimeout = "No Ledger device found (timeout)";
     private ErrorMessage_NoDeviceFound = "No Ledger device found";
@@ -56,6 +61,7 @@ export class LedgerScanPage implements OnInit {
     constructor(
         private platform: Platform,
         public native: Native,
+        public router: Router,
         private translate: TranslateService,
         public theme: GlobalThemeService,
         private zone: NgZone,
@@ -63,6 +69,12 @@ export class LedgerScanPage implements OnInit {
       if (this.platform.platforms().indexOf('ios') >= 0) {
         this.supportOpeningBluetoothSetting = false;
       }
+
+      const navigation = this.router.getCurrentNavigation();
+        if (!Util.isEmptyObject(navigation.extras.state)) {
+            if (navigation.extras.state.type)
+              this.ledgerConnectType = navigation.extras.state.type;
+        }
     }
 
     ngOnInit() {
@@ -105,7 +117,7 @@ export class LedgerScanPage implements OnInit {
     connectLedger() {
         Logger.log(TAG, "connectLedger:", this.device);
         if (this.device) {
-            this.native.go("/wallet/ledger/connect", { device: this.device });
+            this.native.go("/wallet/ledger/connect", { device: this.device, type: this.ledgerConnectType});
         }
     }
 

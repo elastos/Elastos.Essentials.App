@@ -24,12 +24,9 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { LedgerGetAddressComponent, LedgerGetAddressComponentOptions } from '../components/ledger-getaddress/ledger-getaddress.component';
 import { LedgerSignComponent, LedgerSignComponentOptions } from '../components/ledger-sign/ledger-sign.component';
 import { WalletChooserComponent, WalletChooserComponentOptions, WalletChooserFilter } from '../components/wallet-chooser/wallet-chooser.component';
-import { LedgerAccountType } from '../model/ledger.types';
 import { MasterWallet } from '../model/masterwallets/masterwallet';
-import { LedgerAccountOptions } from '../model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
 import { Safe } from '../model/safes/safe';
 import { WalletService } from './wallet.service';
@@ -135,33 +132,6 @@ export class WalletUIService {
             void modal.onWillDismiss().then((params) => {
                 if (params.data) {
                     resolve(params.data);
-                }
-                else
-                    resolve(null);
-            });
-            void modal.present();
-        });
-    }
-
-    /**
-     * @dependson Import LedgerGetAddressComponentModule
-     */
-    async connectLedgerAndGetAddress(deviceId: string, accounType: LedgerAccountType): Promise<LedgerAccountOptions> {
-        let options: LedgerGetAddressComponentOptions = {
-            deviceId: deviceId,
-            accounType: accounType
-        };
-
-        let modal = await this.modalCtrl.create({
-            component: LedgerGetAddressComponent,
-            componentProps: options,
-            backdropDismiss: false,
-        });
-
-        return new Promise(resolve => {
-            void modal.onWillDismiss().then((params) => {
-                if (params.data && params.data.account) {
-                    resolve(params.data.account);
                 }
                 else
                     resolve(null);
