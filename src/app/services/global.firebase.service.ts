@@ -42,7 +42,12 @@ export class GlobalFirebaseService {
         return;
     }
 
-    public logEvent(eventName: string, data: any) {
-        return this.firebase.logEvent(eventName, data);
+    public logEvent(eventName: string, data: any = {}) {
+        try {
+            this.firebase.logEvent(eventName, data);
+        }
+        catch (e) {
+            Logger.error("firebase", "Log event error:", e);
+        }
     }
 }

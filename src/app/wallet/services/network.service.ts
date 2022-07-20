@@ -24,6 +24,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
@@ -60,6 +61,7 @@ export class WalletNetworkService {
         public popupProvider: PopupProvider,
         private globalNetworksService: GlobalNetworksService,
         private globalStorageService: GlobalStorageService,
+        private globalFirebaseService: GlobalFirebaseService,
         private localStorage: LocalStorage) {
         WalletNetworkService.instance = this;
     }
@@ -173,6 +175,9 @@ export class WalletNetworkService {
 
         // Save choice to local storage
         await this.localStorage.set('activenetwork', network.key);
+
+        // Stats
+        void this.globalFirebaseService.logEvent("switch-network-" + network.key);
 
         await this.notifyNetworkChange(network);
     }
