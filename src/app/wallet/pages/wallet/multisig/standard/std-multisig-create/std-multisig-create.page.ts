@@ -216,10 +216,12 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     /**
-     * Only allow a mex number of cosigners to be added, not an infinite number.
+     * Only allow a max number of cosigners to be added, not an infinite number.
      */
     public canAddCosigners(): boolean {
-        return this.cosigners.length < 6;
+        // Elastos SDK: MAX_MULTISIGN_COSIGNERS = 6; (including the current signer)
+        // So for our UI this means max 5 cosigners.
+        return this.cosigners.length < 5;
     }
 
     /**
