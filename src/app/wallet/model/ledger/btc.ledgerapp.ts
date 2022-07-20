@@ -61,7 +61,7 @@ export class BTCLedgerApp extends LedgerApp<BTCAddressType> {
         type: LedgerAccountType.BTC,
         address: address.bitcoinAddress,
         pathIndex: i,
-        path,
+        path: realPath,
         addressType: type,
         publicKey: address.publicKey
       })

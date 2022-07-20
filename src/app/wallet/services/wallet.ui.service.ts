@@ -160,8 +160,8 @@ export class WalletUIService {
 
         return new Promise(resolve => {
             void modal.onWillDismiss().then((params) => {
-                if (params.data) {
-                    resolve(params.data);
+                if (params.data && params.data.account) {
+                    resolve(params.data.account);
                 }
                 else
                     resolve(null);

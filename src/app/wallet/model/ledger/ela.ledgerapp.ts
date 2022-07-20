@@ -34,7 +34,7 @@ export class ELALedgerApp extends LedgerApp<ELAAddressType> {
         type: LedgerAccountType.ELA,
         address: address.address,
         pathIndex: i,
-        realPath,
+        path: realPath,
         publicKey: address.publicKey
       })
     }

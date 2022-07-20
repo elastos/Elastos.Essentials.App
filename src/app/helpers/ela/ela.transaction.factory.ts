@@ -73,7 +73,7 @@ export class ELATransactionFactory {
     return encodedSignedTx;
   }
 
-  static createUnsignedSendToTx = (unspentTransactionOutputs, sendToAddress, sendAmount, publicKey, feeAmountSats, feeAccount, txMemo) => {
+  static createUnsignedSendToTx = async (unspentTransactionOutputs, sendToAddress, sendAmount, publicKey, feeAmountSats, feeAccount, txMemo) => {
     if (unspentTransactionOutputs == undefined) {
       throw new Error(`unspentTransactionOutputs is undefined`);
     }
@@ -95,10 +95,10 @@ export class ELATransactionFactory {
     /* eslint-disable */
     const sendAmountSats = new BigNumber(sendAmount, 10);
     /* eslint-enable */
-    return this.createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountSats, feeAccount, txMemo);
+    return await this.createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountSats, feeAccount, txMemo);
   };
 
-  static createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountStr, feeAccount, txMemo) {
+  static async createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountStr, feeAccount, txMemo) {
     if (unspentTransactionOutputs == undefined) {
       throw new Error(`unspentTransactionOutputs is undefined`);
     }
@@ -118,7 +118,7 @@ export class ELATransactionFactory {
       throw new Error(`feeAccount is undefined`);
     }
 
-    const address = ELAAddressHelper.getAddressFromPublicKey(publicKey);
+    const address = await ELAAddressHelper.getAddressFromPublicKey(publicKey);
     Logger.warn('wallet', ' createUnsignedSendToTxSats address:', address, ' publicKey:', publicKey)
     const tx: TX_Content = {
       TxType: 2,
@@ -244,7 +244,7 @@ export class ELATransactionFactory {
     utxo.valueSats = valueBigNumber.times(SELA);
   }
 
-  static createUnsignedVoteTx(unspentTransactionOutputs, publicKey, feeAmountSats, candidates, feeAccount) {
+  static async createUnsignedVoteTx(unspentTransactionOutputs, publicKey, feeAmountSats, candidates, feeAccount) {
     if (unspentTransactionOutputs == undefined) {
       throw new Error(`unspentTransactionOutputs is undefined`);
     }
@@ -279,7 +279,7 @@ export class ELATransactionFactory {
     });
     sendAmountSats = sendAmountSats.minus(feeAmountSats).minus(FEE_SATS);
 
-    const tx = this.createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountSats, feeAccount, '');
+    const tx = await this.createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountSats, feeAccount, '');
     tx.Version = VERSION9;
     const voteOutput = tx.Outputs[0];
     voteOutput.Type = 1;
