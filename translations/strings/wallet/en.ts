@@ -71,7 +71,7 @@ export const en = {
         "wallets": "Wallets",
         "explore-your-wallets": "Explore your wallets",
         "wallet-unsupported-on-network": "This wallet is unsupported on the {{ network }} network. Please select another network or wallet.",
-        "wallet-connect-to-ledger": "Connect to ledger Wallet",
+        "wallet-connect-to-ledger": "Please connect the Ledger Nano X",
 
         /********************************************** General Settings Screen ***********************************************/
 
