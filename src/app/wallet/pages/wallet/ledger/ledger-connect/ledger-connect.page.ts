@@ -296,14 +296,9 @@ export class LedgerConnectPage implements OnInit {
           let accountOpt: LedgerAccountOptions = { type: account.type, accountID: account.address, accountPath: account.path, publicKey: account.publicKey };
           (masterWallet as LedgerMasterWallet).addAccountOptions(accountOpt);
           void masterWallet.save();
-          // create networkwallet and active
-          let networkWallet = await WalletNetworkService.instance.activeNetwork.value.createNetworkWallet(masterWallet);
 
-          if (networkWallet) {
-              // Notify that this network wallet is the active one
-              await this.walletService.setActiveNetworkWallet(networkWallet);
-              this.native.setRootRouter("/wallet/wallet-home");
-          }
+          await this.walletService.activateMasterWallet(masterWallet);
+          this.native.setRootRouter("/wallet/wallet-home");
         }
     }
 
