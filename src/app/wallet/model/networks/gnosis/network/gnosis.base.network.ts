@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -12,6 +13,14 @@ export class GnosisBaseNetwork extends EVMNetwork {
         let GnosisNetworkWallet = (await import("../networkwallets/standard/gnosis.network.wallet")).GnosisNetworkWallet;
         return new GnosisNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        let GnosisLedgerNetworkWallet = (await import("../networkwallets/ledger/gnosis.ledger.network.wallet")).GnosisLedgerNetworkWallet;
+        return new GnosisLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

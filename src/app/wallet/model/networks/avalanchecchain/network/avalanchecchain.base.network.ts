@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -13,6 +14,14 @@ export abstract class AvalancheCChainBaseNetwork extends EVMNetwork {
         const AvalancheCChainNetworkWallet = (await import("../networkwallets/standard/avalanchecchain.network.wallet")).AvalancheCChainNetworkWallet;
         return new AvalancheCChainNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        const AvalancheCChainLedgerNetworkWallet = (await import("../networkwallets/ledger/avalanchecchain.ledger.network.wallet")).AvalancheCChainLedgerNetworkWallet;
+        return new AvalancheCChainLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

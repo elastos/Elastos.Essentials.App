@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -12,6 +13,14 @@ export class ArbitrumBaseNetwork extends EVMNetwork {
         const ArbitrumNetworkWallet = (await import("../networkwallets/standard/arbitrum.network.wallet")).ArbitrumNetworkWallet;
         return new ArbitrumNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        const ArbitrumLedgerNetworkWallet = (await import("../networkwallets/ledger/arbitrum.ledger.network.wallet")).ArbitrumLedgerNetworkWallet;
+        return new ArbitrumLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

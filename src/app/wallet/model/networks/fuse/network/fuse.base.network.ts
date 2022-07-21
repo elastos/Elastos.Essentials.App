@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -12,6 +13,14 @@ export class FuseBaseNetwork extends EVMNetwork {
         const FuseNetworkWallet = (await import("../networkwallets/standard/fuse.network.wallet")).FuseNetworkWallet;
         return new FuseNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        const FuseLedgerNetworkWallet = (await import("../networkwallets/ledger/fuse.ledger.network.wallet")).FuseLedgerNetworkWallet;
+        return new FuseLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

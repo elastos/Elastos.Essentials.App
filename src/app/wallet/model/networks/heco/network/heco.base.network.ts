@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -12,6 +13,14 @@ export class HecoBaseNetwork extends EVMNetwork {
         let HecoNetworkWallet = (await import("../networkwallets/standard/heco.network.wallet")).HecoNetworkWallet;
         return new HecoNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        let HecoLedgerNetworkWallet = (await import("../networkwallets/ledger/heco.ledger.network.wallet")).HecoLedgerNetworkWallet;
+        return new HecoLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

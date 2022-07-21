@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -12,6 +13,14 @@ export class PolygonBaseNetwork extends EVMNetwork {
         let PolygonNetworkWallet = (await import("../networkwallets/standard/polygon.network.wallet")).PolygonNetworkWallet;
         return new PolygonNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        let PolygonLedgerNetworkWallet = (await import("../networkwallets/ledger/polygon.ledger.network.wallet")).PolygonLedgerNetworkWallet;
+        return new PolygonLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

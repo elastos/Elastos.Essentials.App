@@ -1,4 +1,5 @@
 
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
@@ -11,6 +12,14 @@ export class EthereumBaseNetwork extends EVMNetwork {
         const EthereumStandardNetworkWallet = (await import("../networkwallets/standard/ethereum.network.wallet")).EthereumStandardNetworkWallet;
         return new EthereumStandardNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        const EthereumLedgerNetworkWallet = (await import("../networkwallets/ledger/ethereum.ledger.network.wallet")).EthereumLedgerNetworkWallet;
+        return new EthereumLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

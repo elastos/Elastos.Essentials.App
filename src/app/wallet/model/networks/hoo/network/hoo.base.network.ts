@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -12,6 +13,14 @@ export class HooBaseNetwork extends EVMNetwork {
         let HooNetworkWallet = (await import("../networkwallets/standard/hoo.network.wallet")).HooNetworkWallet;
         return new HooNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        let HooLedgerNetworkWallet = (await import("../networkwallets/ledger/hoo.ledger.network.wallet")).HooLedgerNetworkWallet;
+        return new HooLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

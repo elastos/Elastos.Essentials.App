@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -12,6 +13,14 @@ export class BSCBaseNetwork extends EVMNetwork {
         const BSCNetworkWallet = (await import("../networkwallets/standard/bsc.network.wallet")).BSCNetworkWallet;
         return new BSCNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        const BSCLedgerNetworkWallet = (await import("../networkwallets/ledger/bsc.ledger.network.wallet")).BSCLedgerNetworkWallet;
+        return new BSCLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

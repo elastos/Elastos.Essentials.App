@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -9,9 +10,17 @@ export class FantomBaseNetwork extends EVMNetwork {
   protected async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
-        const FantomNetworkWallet = (await import("../networkwallets/standard/bsc.network.wallet")).FantomNetworkWallet;
+        const FantomNetworkWallet = (await import("../networkwallets/standard/fantom.network.wallet")).FantomNetworkWallet;
         return new FantomNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        const FantomLedgerNetworkWallet = (await import("../networkwallets/ledger/fantom.ledger.network.wallet")).FantomLedgerNetworkWallet;
+        return new FantomLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName

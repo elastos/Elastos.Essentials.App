@@ -1,3 +1,4 @@
+import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -12,6 +13,14 @@ export class CronosBaseNetwork extends EVMNetwork {
         const CronosNetworkWallet = (await import("../networkwallets/standard/cronos.network.wallet")).CronosNetworkWallet;
         return new CronosNetworkWallet(
           masterWallet as StandardMasterWallet,
+          this,
+          this.getMainTokenSymbol(),
+          this.mainTokenFriendlyName
+        );
+      case WalletType.LEDGER:
+        const CronosLedgerNetworkWallet = (await import("../networkwallets/ledger/cronos.ledger.network.wallet")).CronosLedgerNetworkWallet;
+        return new CronosLedgerNetworkWallet(
+          masterWallet as LedgerMasterWallet,
           this,
           this.getMainTokenSymbol(),
           this.mainTokenFriendlyName
