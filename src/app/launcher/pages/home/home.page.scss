@@ -504,7 +504,7 @@ ion-content {
                   height: 35px;
                   font-size: 12px;
                   margin: auto;
-              }
+                }
             }
 
             .arrow-down {
@@ -714,7 +714,8 @@ ion-content {
 
         .single-address,
         .addresses,
-        .header-row {
+        .header-row,
+        .unsupported-wallet {
             color: #fff;
         }
     }

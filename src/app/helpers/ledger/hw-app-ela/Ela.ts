@@ -57,19 +57,6 @@ export default class Ela {
     this.transport = transport;
   }
 
-  //TODO: delete it, just for test
-  showGetAddressApduMessage(path = "") {
-    if (path == "") {
-      bip44Path = bip44StandardPathBase;
-    } else {
-      bip44Path = this.encodePath(path);
-    }
-    Logger.warn(TAG, ' getAddress: bip44Path', bip44Path, ' path:', path)
-
-    const message = Buffer.from('8004000000' + bip44Path, 'hex');
-    Logger.warn(TAG, ' getAddress: message', message.toString('hex').toUpperCase())
-  }
-
   /**
    * get ELA address for a given BIP 32 path.
    * @param path a path in BIP 32 format
@@ -166,7 +153,7 @@ export default class Ela {
           }
         }
       }
-      Logger.log(TAG, 'signature:', signature);
+      // Logger.log(TAG, 'signature:', signature);
       return Promise.resolve({
         success: success,
         message: message,

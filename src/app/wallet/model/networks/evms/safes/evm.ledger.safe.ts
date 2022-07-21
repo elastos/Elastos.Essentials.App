@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import type { Transaction as EthereumTx, TxData } from "@ethereumjs/tx";
+import type { TxData } from "@ethereumjs/tx";
 import { lazyWeb3Import } from "src/app/helpers/import.helper";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
@@ -19,7 +19,10 @@ import { EVMSafe } from "./evm.safe";
 export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
     private evmAddress = null;
     private addressPath = '';
-    private evmTx: EthereumTx = null;
+    private signedTx = null;
+    private unsignedTx = null;
+    private txData: TxData = null;
+    private common = null;
 
     constructor(protected masterWallet: LedgerMasterWallet, protected chainId: number) {
         super(masterWallet);
@@ -44,7 +47,7 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
             return Promise.resolve([this.evmAddress]);
         }
         else {
-            throw new Error("EVMSafe: No evm address.");
+            throw new Error("EVMLedgerSafe: No evm address.");
         }
     }
 
@@ -58,7 +61,7 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
             to: toAddress,
             value: web3.utils.toHex(web3.utils.toWei(amount.toString())),
         }
-        Logger.log('wallet', 'EVMSafe::createTransferTransaction:', txData);
+        Logger.log('wallet', 'EVMLedgerSafe::createTransferTransaction:', txData);
         return Promise.resolve(txData);
     }
 
@@ -71,55 +74,56 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
     }
 
     public async signTransaction(subWallet: AnySubWallet, txData: TxData, transfer: Transfer): Promise<SignTransactionResult> {
-        Logger.log('ledger', "EVMSafe::signTransaction chainId:", this.chainId);
+        Logger.log('wallet', "EVMLedgerSafe::signTransaction chainId:", this.chainId);
         let signTransactionResult: SignTransactionResult = {
             signedTransaction: null
         }
 
+        await this.initCommon();
         await this.createEthereumTx(txData)
 
         // Wait for the ledger sign the transaction.
         let signed = await WalletUIService.instance.connectLedgerAndSignTransaction(this.masterWallet.deviceID, this)
         if (!signed) {
-            Logger.log('ledger', "EVMSafe::signTransaction can't connect to ledger or user canceled");
+            Logger.log('wallet', "EVMLedgerSafe::signTransaction can't connect to ledger or user canceled");
             return signTransactionResult;
         }
 
-        signTransactionResult.signedTransaction = this.evmTx.serialize().toString('hex');
+        signTransactionResult.signedTransaction = this.signedTx.serialize().toString('hex');
         return signTransactionResult;
     }
 
     public async signTransactionByLedger(transport: BluetoothTransport): Promise<void> {
-        Logger.log('ledger', "EVMSafe::signTransactionByLedger");
-        let unsignedTx = this.evmTx.serialize().toString('hex')
+        Logger.log('wallet', "EVMLedgerSafe::signTransactionByLedger");
 
         const AppEth = (await import("@ledgerhq/hw-app-eth")).default;
         const eth = new AppEth(transport);
-        // TODO: use the right HD derivation path.
-        const r = await eth.signTransaction(this.addressPath, unsignedTx);
+        const ret = await eth.signTransaction(this.addressPath, this.unsignedTx);
+        let v = Buffer.from(ret.v, "hex");
+        let r = Buffer.from(ret.r, "hex");
+        let s = Buffer.from(ret.s, "hex")
 
+        this.txData = { ...this.txData, v, r, s }
         const Transaction = (await import("@ethereumjs/tx")).Transaction;
-        this.evmTx = new Transaction({
-            v: Buffer.from(r.v, "hex"),
-            r: Buffer.from(r.r, "hex"),
-            s: Buffer.from(r.s, "hex")
-        });
+        this.signedTx = Transaction.fromTxData(this.txData, { common: this.common })
+    }
+
+    private async initCommon() {
+      if (!this.common) {
+        const Common = (await import('@ethereumjs/common')).default;
+        this.common = Common.custom({ chainId: this.chainId })
+      }
     }
 
     private async createEthereumTx(txData: TxData): Promise<void> {
-        const Common = (await import('@ethereumjs/common')).default;
-        let common = Common.forCustomChain(
-            'mainnet',
-            { chainId: this.chainId },
-            'petersburg'
-        );
+        this.txData = txData;
 
         const Transaction = (await import("@ethereumjs/tx")).Transaction;
-        this.evmTx = new Transaction(txData, { 'common': common });
+        let tx = Transaction.fromTxData(txData, { common: this.common });
+        let unsignedTx = tx.getMessageToSign(false)
 
-        // Set the EIP155 bits
-        this.evmTx.raw[6] = Buffer.from([this.chainId]); // v
-        this.evmTx.raw[7] = Buffer.from([]); // r
-        this.evmTx.raw[8] = Buffer.from([]); // s
+        const rlp = (await import("ethereumjs-util")).rlp
+        this.unsignedTx = rlp.encode(unsignedTx)
+        Logger.log('ledger', "EVMLedgerSafe::createEthereumTx", this.unsignedTx);
     }
 }

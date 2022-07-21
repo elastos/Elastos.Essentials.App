@@ -76,7 +76,7 @@ export class BTCLedgerApp extends LedgerApp<BTCAddressType> {
 
   public getDisplayableAddressType(addressType: BTCAddressType): string {
     switch (addressType) {
-      case BTCAddressType.SEGWIT: return "Segwit";
+      case BTCAddressType.SEGWIT: return "Native Segwit";
       case BTCAddressType.LEGACY: return "Legacy";
       default: return null;
     }

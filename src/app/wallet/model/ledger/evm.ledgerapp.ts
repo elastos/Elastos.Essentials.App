@@ -35,7 +35,7 @@ export class EVMLedgerApp extends LedgerApp<EVMAddressType> {
       })
     }
 
-    Logger.warn('wallet', "EVMLedgerApp Addresses :", addresses);
+    Logger.log('wallet', "EVMLedgerApp Addresses :", addresses);
     return addresses;
   }
 }
