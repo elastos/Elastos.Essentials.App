@@ -39,6 +39,7 @@ class ETHTransactionManager {
   private checkTimes = 0;
   private waitforTimes = 20; // seconds
   private defaultGasLimit = '200000';
+  private modal: HTMLIonModalElement = null;
 
   constructor(
     private publicationService: EVMService,
@@ -176,6 +177,7 @@ class ETHTransactionManager {
             this.emitEthTransactionStatusChange(status);
           }
           else {
+            this.closePublicationLoader()
             await PopupProvider.instance.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
           }
         }
@@ -260,7 +262,7 @@ class ETHTransactionManager {
    * TODO: MAKE A SIMILAR COMPONENT DIALOG FOR OTHER NETWORK, SAME UI
    */
   public async displayPublicationLoader(): Promise<void> {
-    const modal = await this.modalCtrl.create({
+      this.modal = await this.modalCtrl.create({
       // eslint-disable-next-line import/no-cycle
       component: (await import('../../components/eth-transaction/eth-transaction.component')).ETHTransactionComponent,
       componentProps: {},
@@ -269,11 +271,17 @@ class ETHTransactionManager {
       id: 'evmtransactionloader'
     });
 
-    void modal.onDidDismiss().then((params) => {
+    void this.modal.onDidDismiss().then((params) => {
       //
+      this.modal = null;
     });
 
-    void modal.present();
+    void this.modal.present();
+  }
+
+  public closePublicationLoader() {
+    if (this.modal)
+      void this.modal.dismiss();
   }
 }
 

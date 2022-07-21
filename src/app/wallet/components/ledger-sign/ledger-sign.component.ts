@@ -8,6 +8,7 @@ import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { LedgerSafe } from '../../model/safes/ledger.safe';
 import { Safe } from '../../model/safes/safe';
+import { Native } from '../../services/native.service';
 import { WalletNetworkService } from '../../services/network.service';
 
 export type LedgerSignComponentOptions = {
@@ -35,6 +36,7 @@ export class LedgerSignComponent implements OnInit {
 
   constructor(
     private navParams: NavParams,
+    public native: Native,
     public translate: TranslateService,
     public theme: GlobalThemeService,
     private modalCtrl: ModalController,
@@ -117,6 +119,17 @@ export class LedgerSignComponent implements OnInit {
     } catch (err) {
       Logger.log("wallet", "LedgerSignComponent signTransactionByLedger error: ", err);
       // TODO : if the ledger is disconnected, we need connect ledger again.
+      // CustomError -- statusCode 25873(0x6511) name: DisconnectedDeviceDuringOperation -- the app is not started.
+      // TransportStausError -- statusCode: 28160(0x6e00)  -- open the wrong app
+      // TransportStausError -- statusCode: 27013(0x6985)  -- user canceled the transaction
+      if (err.statusCode == 27013) return;
+
+      if (err.message) {
+        // TODO: Display user-friendly messages.
+        this.native.toast_trans(err.message);
+      } else {
+        this.native.toast_trans('wallet.ledger-prompt');
+      }
     }
   }
 
@@ -126,10 +139,12 @@ export class LedgerSignComponent implements OnInit {
       this.signing = true;
       await this.signTransaction();
       this.signing = false;
-      void this.disconnect();
-      void this.modalCtrl.dismiss({
-        signed: this.signSucceeded
-      });
+      if (this.signSucceeded) {
+        void this.disconnect();
+        void this.modalCtrl.dismiss({
+          signed: this.signSucceeded
+        });
+      }
     } catch (err) {
       Logger.warn("wallet", "LedgerSignComponent sign failed:", err)
     }

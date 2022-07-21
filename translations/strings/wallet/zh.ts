@@ -289,17 +289,12 @@ export const zh = {
                 'unsupported-on-network': '不支持 {{network}} 网络.',
 
                 /*********************
-                * Ledger Get Address Component *
-                **********************/
-                "ledger-account-select": "请选择 Ledger 账号",
+                 * Ledger Sign Component *
+                 **********************/
+                "ledger-sign": "使用 Ledger 签名",
                 "ledger-connecting": "正在搜索 Ledger 钱包",
                 "ledger-prompt": "请开启 Ledger Nano X，保持解锁，并打开 {{appname}} 应用程序",
                 "ledger-connected-device": "已连接设备",
-
-                /*********************
-                * Ledger Sign Component *
-                **********************/
-                "ledger-sign": "使用 Ledger 签名",
 
                 /*******************
                 * Ledger scan page *

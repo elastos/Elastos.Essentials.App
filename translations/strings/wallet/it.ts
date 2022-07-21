@@ -289,17 +289,12 @@ export const it = {
         'unsupported-on-network': 'Unsupported on the {{network}} network.',
 
         /*********************
-        * Ledger Get Address Component *
-        **********************/
-        "ledger-account-select": "Please select a account from ledger",
+         * Ledger Sign Component *
+         **********************/
+        "ledger-sign": "Sign with Ledger",
         "ledger-connecting": "Searching Ledger Wallet",
         "ledger-prompt": "Please open Ledger Nano X, keep it unlocked, and open the {{appname}} application",
         "ledger-connected-device": "Connected device",
-
-        /*********************
-        * Ledger Sign Component *
-        **********************/
-        "ledger-sign": "Sign with Ledger",
 
         /*******************
         * Ledger scan page *
