@@ -14,7 +14,7 @@ export class BSCMainNetNetwork extends BSCBaseNetwork {
   constructor() {
     super(
       "bsc",
-      "BSC",
+      "BNB Smart Chain",
       "assets/wallet/networks/bscchain.png",
       "BNB",
       "Binance Coin",
