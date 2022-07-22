@@ -3,47 +3,72 @@
 .ledger-container {
   height: 100%;
   border-radius: 11px;
-  padding: 5px;
-  margin: 10px 15px;
+  // padding: 5px;
+  // margin: 10px 15px;
   background-color: #ffffff;
   box-shadow: 0 3px 15px 0 #ededf0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 25px 5px;
+  position: relative;
 
-  .ledger-row {
-    margin-bottom: 20px;
+  h1, h2 {
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    padding: 0 20px;
+  }
 
-    ion-col {
+  h2 {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .prompt-row {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 15px 10px;
+    border-radius: 13px;
+    background: lightgray;
+
+    ion-label {
+        font-weight: 500;
+        font-size: 14px;
+    }
+  }
+
+  .device-row {
+    margin: 5px 0;
+
+    .device-name {
+        font-weight: bold;
+    }
+  }
+
+  .btn-row {
+    height: 80px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    .btn {
+      height: 45px;
       display: flex;
-      justify-content: space-between;
-      align-items:center;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      background-color: #f8f8ff;
 
       ion-label {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
-        h1,
-        p {
-          margin: 0;
-        }
-
-        h1 {
-          font-size: 22px;
-          font-weight: 500;
-          line-height: 0.8;
-          text-align: left;
-          margin: 0 0 10px;
-        }
-
-        p {
-          height: 11px;
-          font-size: 10px;
-          font-weight: 500;
-          letter-spacing: 1px;
-          text-align: left;
-          color: #000000;
-          opacity: 0.7;
-        }
+        font-size: 15px;
+        font-weight: 500;
+        color: #161740;
+        font-family: 'Inter' !important;
       }
     }
   }
@@ -53,14 +78,26 @@
   background-color: #212021;
   box-shadow: 0px 123px 89px #000000ad;
 
-  .ledger-row {
-    ion-col {
+  h1, h2 {
+    color: #ffffff;
+  }
+
+  .prompt-row {
+    background: darkgray;
+  }
+
+  .btn-row {
+    .btn {
+      background: #313031;
+
       ion-label {
-        h1,
-        p {
-          color: #ffffff;
-        }
+        color: #fdfeff;
       }
     }
   }
 }
+
+.ripple {
+  overflow: hidden;
+}
+
