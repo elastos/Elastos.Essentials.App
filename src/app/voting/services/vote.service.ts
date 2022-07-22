@@ -118,9 +118,19 @@ export class VoteService {
         this.networkWallet = networkWallet;
         this.masterWalletId = networkWallet.id;
 
-        //If multi sign will be rejected
-        if (networkWallet.masterWallet.type !== WalletType.STANDARD) {
+        switch (networkWallet.masterWallet.type) {
+          case WalletType.STANDARD:
+            break;
+          case WalletType.LEDGER:
+            await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
+            return;
+          case WalletType.MULTI_SIG_STANDARD:
+          case WalletType.MULTI_SIG_EVM_GNOSIS:
             await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
+            return;
+          default:
+            // Should not happen.
+            Logger.error('wallet', 'Not support, pls check the wallet type:', networkWallet.masterWallet.type)
             return;
         }
 

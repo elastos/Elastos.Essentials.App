@@ -32,6 +32,7 @@ export const zh = {
 
         'not-enough-ela-for-vote': '当前钱包余额不足，请充值或选择其他钱包',
         'multi-sign-reject-voting': '多签钱包不能投票。',
+        'ledger-reject-voting': 'Ledger钱包暂不能投票。',
 
     }
 

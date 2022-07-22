@@ -32,6 +32,7 @@ export const en = {
 
         'not-enough-ela-for-vote': 'The active wallet balance is insufficient. Please recharge or select another Wallet',
         'multi-sign-reject-voting': 'Multi sign reject voting.',
+        'ledger-reject-voting': 'Ledger wallet does not support voting.',
     }
 
 };

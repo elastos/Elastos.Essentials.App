@@ -57,12 +57,24 @@ export class ImpeachCRMemberPage {
     // }
 
     async goTransaction(): Promise<boolean> {
-        if (this.voteService.sourceSubwallet.masterWallet.type !== WalletType.STANDARD) {
-            await this.popupProvider.ionicAlert("common.error", 'voting.multi-sign-reject-voting');
-            return false;
+        switch (this.voteService.sourceSubwallet.masterWallet.type) {
+          case WalletType.STANDARD:
+            break;
+          case WalletType.LEDGER:
+            await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
+            return;
+          case WalletType.MULTI_SIG_STANDARD:
+          case WalletType.MULTI_SIG_EVM_GNOSIS:
+            await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
+            return;
+          default:
+            // Should not happen.
+            Logger.error('wallet', 'Not support, pls check the wallet type:', this.voteService.sourceSubwallet.masterWallet.type)
+            return;
         }
+
         // Request the wallet to publish our vote.
-        else if (!await this.voteService.checkPendingBalance()) {
+        if (!await this.voteService.checkPendingBalance()) {
             return false;
         }
         if (!this.amount) {
