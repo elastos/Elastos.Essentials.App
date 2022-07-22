@@ -177,9 +177,18 @@ export class LedgerConnectPage implements OnInit {
         catch (e) {
             this.failedToGetAddress = true;
             Logger.warn('wallet', 'LedgerApp ', this.ledgerNanoAppname, ' get addresses exception', e)
-            // TODO
-            // TransportError id : "TransportLocked"  -- reconnect ledger?
-            // TransportStatusError statusCode: 25873 (0x6511)  -- Open the right app on Ledger.
+            // TODO : if the ledger is disconnected, we need connect ledger again.
+            // CustomError -- statusCode 25873(0x6511) name: DisconnectedDeviceDuringOperation -- the app is not started.
+            // TransportStausError -- statusCode: 28160(0x6e00)  -- open the wrong app
+            // TransportStausError -- statusCode: 27013(0x6985)  -- user canceled the transaction
+            if (e.statusCode == 27013) return;
+
+            if (e.message) {
+              // TODO: Display user-friendly messages.
+              this.native.toast_trans(e.message);
+            } else {
+              this.native.toast_trans('wallet.ledger-prompt');
+            }
         }
         this.gettingAddresses = false;
     }
