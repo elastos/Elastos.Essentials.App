@@ -87,7 +87,8 @@
 }
 
 .prompt-row {
-    background: darkgray;
+    margin-top: 15px;
+    background: lightblue;
 }
 
 .btn-row {
@@ -122,4 +123,8 @@
     .account-row {
         background: #2C2C2C;
     }
+
+    .prompt-row {
+      background: lightseagreen;
+  }
 }

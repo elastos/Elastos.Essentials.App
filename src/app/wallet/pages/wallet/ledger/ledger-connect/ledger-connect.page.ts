@@ -33,6 +33,7 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { LedgerAccountType } from 'src/app/wallet/model/ledger.types';
 import { BTCAddressType, BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.ledgerapp';
 import { ELAAddressType, ELALedgerApp } from 'src/app/wallet/model/ledger/ela.ledgerapp';
@@ -282,7 +283,7 @@ export class LedgerConnectPage implements OnInit {
         }
 
         let menu: MenuSheetMenu = {
-            title: "Choose Address Type",
+            title: GlobalTranslationService.instance.translateInstant("wallet.ledger-choose-address-type"),
             items: menuItems
         };
 

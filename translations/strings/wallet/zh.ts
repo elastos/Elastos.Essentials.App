@@ -295,6 +295,7 @@ export const zh = {
                 "ledger-connecting": "正在搜索 Ledger 钱包",
                 "ledger-prompt": "请开启 Ledger Nano X，保持解锁，并打开 {{appname}} 应用程序",
                 "ledger-connected-device": "已连接设备",
+                "ledger-confirm-on-ledger-prompt": "点击 继续 后，请在 Ledger 上查看交易并确认！",
 
                 /*******************
                 * Ledger scan page *
@@ -319,6 +320,7 @@ export const zh = {
                 "ledger-connect-ledger-sucess": "成功连接 Ledger 硬件钱包",
                 "ledger-getting-addresses": "正在获取地址",
                 "ledger-get-addresses": "获取地址",
+                "ledger-choose-address-type": "选择地址类型",
 
                 /********************************************** Wallet Settings Screens ***********************************************/
 

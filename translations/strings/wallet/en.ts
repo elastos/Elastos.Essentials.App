@@ -296,6 +296,7 @@ export const en = {
         "ledger-connecting": "Searching Ledger Wallet",
         "ledger-prompt": "Please open Ledger Nano X, keep it unlocked, and open the {{appname}} application",
         "ledger-connected-device": "Connected device",
+        "ledger-confirm-on-ledger-prompt": "After clicking continue, please check the transaction on Ledger and confirm!",
 
         /*******************
         * Ledger scan page *
@@ -320,6 +321,7 @@ export const en = {
         "ledger-connect-ledger-sucess": "Connected ledger hardware wallet",
         "ledger-getting-addresses": "Getting address",
         "ledger-get-addresses": "Get addresses",
+        "ledger-choose-address-type": "Choose Address Type",
 
         /********************************************** Wallet Settings Screens ***********************************************/
 
