@@ -44,7 +44,7 @@ export class GlobalFirebaseService {
 
     public logEvent(eventName: string, data: any = {}) {
         try {
-            this.firebase.logEvent(eventName, data);
+            void this.firebase.logEvent(eventName, data);
         }
         catch (e) {
             Logger.error("firebase", "Log event error:", e);
