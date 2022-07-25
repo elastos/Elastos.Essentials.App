@@ -8,7 +8,7 @@ import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/
 import { Logger } from "src/app/logger";
 import { Util } from "src/app/model/util";
 import { Config } from "src/app/wallet/config/Config";
-import { BTCOutputData, BTCSignedTransactionResult, BTCTxData, BTCUtxoForLedger } from "src/app/wallet/model/btc.types";
+import { BTCOutputData, BTCTxData, BTCUtxoForLedger } from "src/app/wallet/model/btc.types";
 import { LedgerAccountType } from "src/app/wallet/model/ledger.types";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { Safe } from "src/app/wallet/model/safes/safe";
@@ -109,14 +109,7 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
       return signTransactionResult;
     }
 
-    const tx = bitcoinjs.Transaction.fromHex(this.signedTx);
-
-    let btcSignedData: BTCSignedTransactionResult = {
-      Data: this.signedTx,
-      TxHash: tx.getId(),
-    }
-
-    signTransactionResult.signedTransaction = JSON.stringify(btcSignedData)
+    signTransactionResult.signedTransaction = this.signedTx;
     return signTransactionResult;
   }
 
