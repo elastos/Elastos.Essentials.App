@@ -12,13 +12,7 @@
             </ion-col>
         </ion-row>
 
-        <!-- Error: Connection error-->
-        <ion-row class="error-row" *ngIf="connectError">
-            <div>{{ 'wallet.ledger-connect-error' | translate }}</div>
-        </ion-row>
-
-        <ng-container *ngIf="!connectError">
-
+        <ng-container>
             <!-- Pick network -->
             <ion-row class="row network-row">
                 <ion-col size="7">
@@ -45,6 +39,11 @@
 
             <ion-row *ngIf="ledgerNanoAppname" class="prompt-row">
                 <ion-label>{{ 'wallet.ledger-prompt' | translate:{ appname: ledgerNanoAppname } }}</ion-label>
+            </ion-row>
+
+            <!-- Error: Connection error-->
+            <ion-row class="error-row" *ngIf="connectError">
+              <div>{{ 'wallet.ledger-connect-error' | translate }}</div>
             </ion-row>
 
             <!-- Connection in progress -->
@@ -82,7 +81,6 @@
                   {{ 'wallet.ledger-get-addresses' | translate }}
                 </ion-button>
             </ion-row>
-
         </ng-container>
 
     </ion-grid>

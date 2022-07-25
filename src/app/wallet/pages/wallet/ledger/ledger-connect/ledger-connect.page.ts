@@ -22,8 +22,10 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { DisconnectedDeviceDuringOperation } from '@ledgerhq/errors';
 import Transport from '@ledgerhq/hw-transport';
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { MenuSheetMenu } from 'src/app/components/menu-sheet/menu-sheet.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
@@ -85,10 +87,13 @@ export class LedgerConnectPage implements OnInit {
 
     private masterWalletId = '';
     public selectedNetwork: AnyNetwork = null;
+    private preNetwork: AnyNetwork = null; // We should create a new transport if we changed the network.
     private walletName = '';
     private walletAddress = '';
     public shouldPickAddressType = false;
+
     private ledgerApp: LedgerApp<any> = null;
+
     private addressType: LedgerAddressType = null;
     private addressPath = '';
     private accountIndex = -1;
@@ -99,6 +104,9 @@ export class LedgerConnectPage implements OnInit {
     public ledgerNanoAppname = '';
 
     private connectDeviceTimerout: any = null;
+
+    public ledgerConnectStatus = new BehaviorSubject<boolean>(false);
+
 
     constructor(
         public events: GlobalEvents,
@@ -138,10 +146,13 @@ export class LedgerConnectPage implements OnInit {
             if (this.transport) {
                 await this.transport.close();
                 this.transport = null;
+                this.ledgerConnectStatus.next(false);
             }
             this.connecting = true;
+            this.connectError = false;
             this.transport = await BluetoothTransport.open(this.device.id);
             this.closeTimeout();
+            this.ledgerConnectStatus.next(true);
         }
         catch (e) {
             Logger.error('ledger', ' initLedger error:', e);
@@ -163,6 +174,25 @@ export class LedgerConnectPage implements OnInit {
         }, 3000);
     }
 
+    //
+    private async reConnectDecice() {
+      if (this.transport) {
+        await this.transport.close();
+        this.transport = null;
+        this.ledgerConnectStatus.next(false);
+      }
+
+      this.connectDevice();
+      return new Promise<void>((resolve) => {
+        let ledgerStatusSubscription: Subscription = this.ledgerConnectStatus.subscribe( (connected)=> {
+          if (connected) {
+            ledgerStatusSubscription.unsubscribe();
+            resolve();
+          }
+        })
+      });
+    }
+
     private closeTimeout() {
         if (this.connectDeviceTimerout) {
             clearTimeout(this.connectDeviceTimerout);
@@ -171,18 +201,35 @@ export class LedgerConnectPage implements OnInit {
     }
 
     private async refreshAddresses() {
+        // Every time we change the app on ledger, we need to reconnect ledger.
+        if (this.failedToGetAddress) {
+          await this.reConnectDecice();
+          this.createLedgerApp();
+        }
+
         this.gettingAddresses = true;
         try {
             this.addresses = await this.ledgerApp.getAddresses(this.addressType, 0, 5, false);
+            this.gettingAddresses = false;
+            this.failedToGetAddress = false;
         }
         catch (e) {
+            this.gettingAddresses = false;
             this.failedToGetAddress = true;
-            Logger.warn('wallet', 'LedgerApp ', this.ledgerNanoAppname, ' get addresses exception', e)
-            // TODO : if the ledger is disconnected, we need connect ledger again.
+
             // CustomError -- statusCode 25873(0x6511) name: DisconnectedDeviceDuringOperation -- the app is not started.
+            // CustomError -- message: DisconnectedDeviceDuringOperation name:DisconnectedDeviceDuringOperation
+            // CustomError -- message: An action was already pending on the Ledger device. Please deny or reconnect. name: TransportRaceCondition
             // TransportStausError -- statusCode: 28160(0x6e00)  -- open the wrong app
             // TransportStausError -- statusCode: 27013(0x6985)  -- user canceled the transaction
-            if (e.statusCode == 27013) return;
+            // TransportErro -- id: TransportLocked name: TransportError message: Ledger Device is busy (lock getAddress)
+            // if (e.statusCode == 27013) return;
+
+            // if the ledger is disconnected, we need connect ledger again.
+            if (e instanceof DisconnectedDeviceDuringOperation || e.id === 'TransportLocked' || e.name === 'TransportRaceCondition') {
+              void this.refreshAddresses();
+              return;
+            }
 
             if (e.message) {
               // TODO: Display user-friendly messages.
@@ -191,7 +238,6 @@ export class LedgerConnectPage implements OnInit {
               this.native.toast_trans('wallet.ledger-prompt');
             }
         }
-        this.gettingAddresses = false;
     }
 
     hasGotAddress() {
@@ -214,36 +260,46 @@ export class LedgerConnectPage implements OnInit {
         this.selectedNetwork = await this.walletNetworkUIService.pickNetwork();
         if (!this.selectedNetwork) return;
 
-        // Prepare the address type selection, or auto-select it.
-        switch (this.selectedNetwork.key) {
-            case BTCNetworkBase.networkKey:
-                this.shouldPickAddressType = true;
-                this.addressType = BTCAddressType.SEGWIT;
-                this.ledgerApp = new BTCLedgerApp(this.transport);
-                let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
-                if (network === MAINNET_TEMPLATE) {
-                    this.ledgerNanoAppname = "Bitcoin"
-                } else {
-                    this.ledgerNanoAppname = "Bitcoin Test"
-                }
-                break;
-            case ElastosMainChainNetworkBase.networkKey:
-                this.shouldPickAddressType = false;
-                this.addressType = ELAAddressType.M2305;
-                this.ledgerApp = new ELALedgerApp(this.transport);
-                this.ledgerNanoAppname = "Elastos"
-                break;
-            default: // Consider all other networks as EVMs - auto select the only type
-                this.shouldPickAddressType = false;
-                this.addressType = EVMAddressType.EVM_STANDARD;
-                this.ledgerApp = new EVMLedgerApp(this.transport);
-                this.ledgerNanoAppname = "Ethereum"
-        }
-
         // Reset addresses
         this.addresses = [];
+
+        if (this.preNetwork && (this.preNetwork != this.selectedNetwork)) {
+          await this.reConnectDecice();
+        }
+        this.preNetwork = this.selectedNetwork;
+
+        this.createLedgerApp();
+
         if (!this.shouldPickAddressType)
           void this.refreshAddresses();
+    }
+
+    private createLedgerApp() {
+      // Prepare the address type selection, or auto-select it.
+      switch (this.selectedNetwork.key) {
+        case BTCNetworkBase.networkKey:
+            this.shouldPickAddressType = true;
+            this.addressType = BTCAddressType.SEGWIT;
+            this.ledgerApp = new BTCLedgerApp(this.transport);
+            let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
+            if (network === MAINNET_TEMPLATE) {
+                this.ledgerNanoAppname = "Bitcoin"
+            } else {
+                this.ledgerNanoAppname = "Bitcoin Test"
+            }
+            break;
+        case ElastosMainChainNetworkBase.networkKey:
+            this.shouldPickAddressType = false;
+            this.addressType = ELAAddressType.M2305;
+            this.ledgerApp = new ELALedgerApp(this.transport);
+            this.ledgerNanoAppname = "Elastos"
+            break;
+        default: // Consider all other networks as EVMs - auto select the only type
+            this.shouldPickAddressType = false;
+            this.addressType = EVMAddressType.EVM_STANDARD;
+            this.ledgerApp = new EVMLedgerApp(this.transport);
+            this.ledgerNanoAppname = "Ethereum"
+      }
     }
 
     private buildBTCAddressTypeMenuItems(): MenuSheetMenu[] {
@@ -374,5 +430,17 @@ export class LedgerConnectPage implements OnInit {
         } while (nameValid);
 
         this.walletName = walletName;
+    }
+
+    public reset() {
+      if (this.transport) {
+        void this.transport.close();
+        this.transport = null;
+      }
+      this.closeTimeout();
+    }
+
+    public connect() {
+      this.connectDevice();
     }
 }
