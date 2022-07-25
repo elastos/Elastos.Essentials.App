@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonInput } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import * as bs58check from "bs58check";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
@@ -139,11 +140,11 @@ export class StandardMultiSigCreatePage implements OnInit {
         if (!this.signingWallet)
             return false; // Need to have picked a signing wallet - no watch mode for now
 
-        let reqSigners = parseInt(this.requiredSigners);
-        if (reqSigners <= 0 || Number.isNaN(reqSigners))
-            return false; // Need at least one signer, and need to bit a number
+        let reqSigners = new BigNumber(this.requiredSigners);
+        if (reqSigners.isNaN() || !reqSigners.isInteger() || reqSigners.lte(0))
+            return false; // Need at least one signer, and need to be a valid number
 
-        if (reqSigners > this.getUsableCosigners().length + 1) // +1 because the user himself counts as as usable cosigners too
+        if (reqSigners.gt(this.getUsableCosigners().length + 1)) // +1 because the user himself counts as as usable cosigners too
             return false; // Can't have more signers required than total cosigners
 
         // No invalid xpub
