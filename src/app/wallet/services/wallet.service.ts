@@ -715,6 +715,12 @@ export class WalletService {
             return;
         }
 
+        // Stop background updates.
+        let networkwallet = this.getNetworkWalletFromMasterWalletId(id);
+        if (networkwallet) {
+          await networkwallet.stopBackgroundUpdates();
+        }
+
         try {
             await this.masterWallets[id].destroy();
         }
