@@ -14,7 +14,7 @@ import { EtherscanHelper } from "./etherscan.helper";
 const MAX_RESULTS_PER_FETCH = 30
 
 export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEVMSubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
-  private canFetchMore = true;
+  protected canFetchMore = true;
 
   constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, private apiKey?: string) {
     super(provider, subWallet);

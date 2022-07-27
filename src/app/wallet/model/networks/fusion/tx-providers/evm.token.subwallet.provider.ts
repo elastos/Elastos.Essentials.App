@@ -65,7 +65,7 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
         1,
         100);
       if (result.transactions && result.transactions.length >0) {
-        let tokens = await this.getERCTokensFromTransferEvents(result.transactions, tokenTypeMapList[i].ercTokenType);
+        let tokens = await this.getERCTokensFromTransactions(result.transactions, tokenTypeMapList[i].ercTokenType);
         if (tokens.length > 0) {
           await this.provider.onTokenInfoFound(tokens);
         }
@@ -76,7 +76,7 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
   /**
    * Can not get the token list directly, So get the token list by token transactions.
    */
-   public async getERCTokensFromTransferEvents(transactions: EthTokenTransaction[], tokenType: TokenType) {
+   private async getERCTokensFromTransactions(transactions: EthTokenTransaction[], tokenType: TokenType) {
     let ercTokens: ERCTokenInfo[] = [];
     let ercTokenContractAddresss = [];
     let ercTokenHasOutgoTxContractAddresss = [];
