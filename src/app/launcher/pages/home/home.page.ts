@@ -41,6 +41,7 @@ import { OptionsComponent } from '../../components/options/options.component';
 import { WalletAddressChooserComponent } from '../../components/wallet-address-chooser/wallet-address-chooser.component';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
+import { WidgetsService } from '../../widgets/services/widgets.service';
 import { NotificationsPage } from '../notifications/notifications.page';
 
 // The networkWallet is null if the masterWallet is not supported on the active netowrk.
@@ -120,6 +121,7 @@ export class HomePage implements OnInit {
     private globalNative: GlobalNativeService,
     private browserService: DappBrowserService,
     private packetService: PacketService,
+    private widgetsService: WidgetsService,
     private didSessions: GlobalDIDSessionsService) {
   }
 
@@ -140,12 +142,19 @@ export class HomePage implements OnInit {
 
     this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
     this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
+      key: "edit-widgets",
+      iconPath: BuiltInIcon.EDIT
+    });
     this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
       key: "notifications",
       iconPath: BuiltInIcon.NOTIFICATIONS
     });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       switch (icon.key) {
+        case 'edit-widgets':
+          void this.toggleEditWidgets();
+          return;
         case 'notifications':
           void this.showNotifications();
           break;
@@ -363,6 +372,10 @@ export class HomePage implements OnInit {
     });
     this.modal.onDidDismiss().then(() => { this.modal = null; });
     await this.modal.present();
+  }
+
+  private toggleEditWidgets() {
+    this.widgetsService.toggleEditionMode();
   }
 
   /************** Show App/Identity Options **************/

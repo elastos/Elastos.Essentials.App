@@ -11,6 +11,15 @@ ion-content {
     min-height: 100%;
     padding: 10px 20px;
 
+    ion-slide {
+        display: flex;
+        flex-direction: column;
+    }
+
+    widget-container {
+        width: 100%;
+    }
+
     .backup-row {
         padding: 10px 10px 10px 10px;
         display: flex;

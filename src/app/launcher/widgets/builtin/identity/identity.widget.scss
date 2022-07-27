@@ -1,0 +1,59 @@
+@import "src/app/launcher/root.scss";
+
+ion-grid {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  .row {
+    overflow: hidden;
+    position: relative;
+
+    ion-row {
+      padding: 10px 20px 10px 12px;
+      display: flex;
+
+      ion-label {
+        margin-top: 3px;
+        margin-left: 5px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+
+      ion-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .share {
+        margin-right: 4px;
+      }
+
+      .favorite {
+        margin-right: 3.5px;
+      }
+
+      .sign {
+        color: #000000;
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+.darkContainer {
+  .row {
+    ion-row {
+      .sign {
+        color: #acacac;
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+@import "src/app/launcher/root.scss";
+
+.root {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-bottom: 10px;
+
+  &.editing {
+    border: solid 1px #444;
+    border-radius: 5px;
+    padding: 3px;
+  }
+
+  .edition {
+    position: absolute;
+    right: 0;
+    top: -5px;
+    background: #444;
+    padding: 5px;
+  }
+}
+

@@ -1,0 +1,18 @@
+@import "src/app/launcher/root.scss";
+
+.root {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  .add-widget {
+    font-size: 12px;
+    margin: 20px;
+    opacity: 0.7;
+  }
+}
+
+.darkContainer {
+
+}
