@@ -26,6 +26,16 @@
     font-weight: 400;
   }
 
+  .row {
+    align-self: center;
+    align-items: center;
+
+    .title {
+        font-weight: 600;
+        padding-left: 20px;
+    }
+  }
+
   .prompt-row {
     margin: 15px 0;
     display: flex;

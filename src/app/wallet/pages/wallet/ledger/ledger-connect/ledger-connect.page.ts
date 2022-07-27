@@ -107,7 +107,6 @@ export class LedgerConnectPage implements OnInit {
 
     public ledgerConnectStatus = new BehaviorSubject<boolean>(false);
 
-
     constructor(
         public events: GlobalEvents,
         public native: Native,
@@ -174,10 +173,9 @@ export class LedgerConnectPage implements OnInit {
         }, 3000);
     }
 
-    //
-    private async reConnectDecice() {
+    private reConnectDecice() {
       if (this.transport) {
-        await this.transport.close();
+        void this.transport.close();
         this.transport = null;
         this.ledgerConnectStatus.next(false);
       }

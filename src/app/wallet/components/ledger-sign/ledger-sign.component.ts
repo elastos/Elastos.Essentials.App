@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
+import { DisconnectedDeviceDuringOperation } from '@ledgerhq/errors';
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
@@ -34,6 +36,8 @@ export class LedgerSignComponent implements OnInit {
   public ledgerNanoAppname = '';
   private connectDeviceTimerout: any = null;
 
+  public ledgerConnectStatus = new BehaviorSubject<boolean>(false);
+
   constructor(
     private navParams: NavParams,
     public native: Native,
@@ -55,10 +59,12 @@ export class LedgerSignComponent implements OnInit {
       if (this.transport) {
         await this.transport.close();
         this.transport = null;
+        this.ledgerConnectStatus.next(false);
       }
       this.connecting = true;
       this.transport = await BluetoothTransport.open(this.ledgerDeviceId);
       this.closeTimeout();
+      this.ledgerConnectStatus.next(true);
     }
     catch (e) {
       Logger.error('wallet', 'BluetoothTransport.open error:', e);
@@ -77,6 +83,24 @@ export class LedgerSignComponent implements OnInit {
       Logger.warn('wallet', ' Timeout, Connect device again');
       void this.connectDevice();
     }, 3000);
+  }
+
+  private reConnectDecice() {
+    if (this.transport) {
+      void this.transport.close();
+      this.transport = null;
+      this.ledgerConnectStatus.next(false);
+    }
+
+    this.connectDevice();
+    return new Promise<void>((resolve) => {
+      let ledgerStatusSubscription: Subscription = this.ledgerConnectStatus.subscribe( (connected)=> {
+        if (connected) {
+          ledgerStatusSubscription.unsubscribe();
+          resolve();
+        }
+      })
+    });
   }
 
   private closeTimeout() {
@@ -116,17 +140,27 @@ export class LedgerSignComponent implements OnInit {
     try {
       await (this.safe as LedgerSafe).signTransactionByLedger(this.transport);
       this.signSucceeded = true;
-    } catch (err) {
-      Logger.log("wallet", "LedgerSignComponent signTransactionByLedger error: ", err);
-      // TODO : if the ledger is disconnected, we need connect ledger again.
+    } catch (e) {
+      Logger.log("wallet", "LedgerSignComponent signTransactionByLedger error: ", e);
+
       // CustomError -- statusCode 25873(0x6511) name: DisconnectedDeviceDuringOperation -- the app is not started.
+      // CustomError -- message: DisconnectedDeviceDuringOperation name:DisconnectedDeviceDuringOperation
+      // CustomError -- message: An action was already pending on the Ledger device. Please deny or reconnect. name: TransportRaceCondition
       // TransportStausError -- statusCode: 28160(0x6e00)  -- open the wrong app
       // TransportStausError -- statusCode: 27013(0x6985)  -- user canceled the transaction
-      if (err.statusCode == 27013) return;
+      // TransportErro -- id: TransportLocked name: TransportError message: Ledger Device is busy (lock getAddress)
 
-      if (err.message) {
+      if (e.statusCode == 27013) return;
+
+      // if the ledger is disconnected, we need connect ledger again.
+      if (e instanceof DisconnectedDeviceDuringOperation || e.id === 'TransportLocked' || e.name === 'TransportRaceCondition') {
+        void this.reConnectDecice();
+        return;
+      }
+
+      if (e.message) {
         // TODO: Display user-friendly messages.
-        this.native.toast_trans(err.message);
+        this.native.toast_trans(e.message);
       } else {
         this.native.toast_trans('wallet.ledger-prompt');
       }
