@@ -4,6 +4,7 @@ import { App } from "src/app/model/app.enum";
 import { GlobalLanguageService } from "src/app/services/global.language.service";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
+import { ERC20CoinService } from "../../services/evm/erc20coin.service";
 import { ERC20Coin, StandardCoinName, TokenAddress } from "../coin";
 import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../networks/base/subwallets/subwallet";
@@ -247,7 +248,15 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
               // add a subwallet as well.
               const erc20Coin = network.getERC20CoinByContractAddress(token.contractAddress);
               if (!erc20Coin) {
-                const newCoin = new ERC20Coin(token.symbol, token.name, token.contractAddress, parseInt(token.decimals), activeNetworkTemplate, true, false, timestamp);
+                let tokenDecimal;
+                if (!token.decimals) {
+                  // The token has no decimals for fusion network.
+                  tokenDecimal = await ERC20CoinService.instance.getCoinDecimals(network, token.contractAddress);
+                  token.decimals = tokenDecimal.toString();
+                } else {
+                  tokenDecimal = parseInt(token.decimals);
+                }
+                const newCoin = new ERC20Coin(token.symbol, token.name, token.contractAddress, tokenDecimal, activeNetworkTemplate, true, false, timestamp);
                 if (await network.addCustomERC20Coin(newCoin)) {
                   // Find new coin.
                   newERC20CoinsList.push(token.symbol);

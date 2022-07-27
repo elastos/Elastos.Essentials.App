@@ -28,6 +28,7 @@ import { FantomMainNetNetwork } from '../model/networks/fantom/network/fantom.ma
 import { FantomTestNetNetwork } from '../model/networks/fantom/network/fantom.testnet.network';
 import { FuseMainNetNetwork } from '../model/networks/fuse/network/fuse.mainnet.network';
 import { FusionMainNetNetwork } from '../model/networks/fusion/network/fusion.mainnet.network';
+import { FusionTestNetNetwork } from '../model/networks/fusion/network/fusion.testnet.network';
 import { GnosisMainNetNetwork } from '../model/networks/gnosis/network/gnosis.mainnet.network';
 import { HECOMainNetNetwork } from '../model/networks/heco/network/heco.mainnet.network';
 import { HECOTestNetNetwork } from '../model/networks/heco/network/heco.testnet.network';
@@ -165,6 +166,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new EthereumRopstenNetwork());
     await this.createAndRegisterNetwork(new HECOTestNetNetwork());
     await this.createAndRegisterNetwork(new BSCTestNetNetwork());
+    await this.createAndRegisterNetwork(new FusionTestNetNetwork());
     await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
     await this.createAndRegisterNetwork(new PolygonTestNetNetwork());
     await this.createAndRegisterNetwork(new FantomTestNetNetwork());

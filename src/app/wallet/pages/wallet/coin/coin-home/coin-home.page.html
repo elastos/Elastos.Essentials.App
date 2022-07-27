@@ -137,7 +137,7 @@
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>
             </ion-col>
-            <ion-col [size]="transfersColumnSize()" (click)="sendFunds()">
+            <ion-col [size]="transfersColumnSize()" (click)="sendFunds()" *ngIf="coinCanBeSent()">
                 <div class="ion-activatable btn-box">
                     <img class="send"
                         [src]="theme.darkMode ? 'assets/wallet/buttons/darkmode/send.svg' : 'assets/wallet/buttons/send.svg'">

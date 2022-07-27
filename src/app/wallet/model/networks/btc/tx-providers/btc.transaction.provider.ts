@@ -8,20 +8,12 @@ import { BTCSubWalletProvider } from "./btc.subwallet.provider";
 
 export class BTCTransactionProvider extends TransactionProvider<BTCTransaction> {
   private mainProvider: BTCSubWalletProvider<BTCSubWallet>;
-  //   private tokenProvider: ElastosTokenSubWalletProvider;
 
   public async start(): Promise<void> {
     super.start()
 
     this.mainProvider = this.createBTCSubWalletProvider();
     await this.mainProvider.initialize();
-
-    // this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
-    // await this.tokenProvider.initialize();
-
-    // Discover new transactions globally for all tokens at once, in order to notify user
-    // of NEW tokens received, and NEW payments received for existing tokens.
-    // this.refreshEvery(() => this.tokenProvider.discoverTokens(), 30000);
   }
 
   /**

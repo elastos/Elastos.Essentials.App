@@ -494,6 +494,13 @@ export class CoinHomePage implements OnInit {
         return this.subWallet.supportsCrossChainTransfers();
     }
 
+    // TODO: We can not send ERC20 token on fusion network for now.
+    // For FRC759 token, We cannot transfer without calling other contracts.
+    // Remove it if the token can be sent.
+    coinCanBeSent() {
+      return !((this.networkWallet.network.key === 'fusion') && (this.subWallet instanceof ERC20SubWallet))
+    }
+
     /**
      * Whether the active subwallet can display currency amounts or not. For example for now,
      * we are not able to display USD value for ERC20 tokens.
