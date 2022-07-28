@@ -353,6 +353,12 @@ export class LedgerConnectPage implements OnInit {
 
     public async selectAddress(account: AnyLedgerAccount) {
         Logger.log(TAG, 'Selected account/address:', account)
+
+        // switch network if the picked network isn't the active network.
+        if (this.selectedNetwork != WalletNetworkService.instance.activeNetwork.value) {
+          await WalletNetworkService.instance.setActiveNetwork(this.selectedNetwork);
+        }
+
         if (this.ledgerConnectType == LedgerConnectType.CreateWallet) {
           await this.createLedgerWallet(account);
         } else {
@@ -381,11 +387,6 @@ export class LedgerConnectPage implements OnInit {
             if (payPassword) {
                 await this.native.showLoading(this.translate.instant('common.please-wait'));
                 await this.importWalletWithLedger(payPassword);
-
-                // switch network if the picked network isn't the active network.
-                if (this.selectedNetwork != WalletNetworkService.instance.activeNetwork.value) {
-                    void WalletNetworkService.instance.setActiveNetwork(this.selectedNetwork);
-                }
             }
         }
         catch (err) {
