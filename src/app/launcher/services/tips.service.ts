@@ -59,8 +59,8 @@ export class TipsService {
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "Taking screenshots",
-      message: "Wanna take screenshots of Essentials, or record videos? For your safety this is disabled by default. But you can enable this feature by temporarily enabling the developer mode from the settings screen, then turn on the screen capture option. Don't forget to stop the developer mode when you don't need it any more.",
+      title: "launcher.tip-title-taking-screenshots",
+      message: "launcher.tip-message-taking-screenshots",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {

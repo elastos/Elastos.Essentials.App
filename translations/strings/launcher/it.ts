@@ -106,6 +106,8 @@ export const it = {
         'tip-message-not-only-for-crypto-players': 'Anche se Elastos Essentials utilizza la blockchain per gestire le identità decentralizzate (DID) - e le blockchain necessitano di criptovalute per funzionare - facciamo del nostro meglio per <b>fornire l\'accesso a quante più funzionalità possibili senza dover possedere criptovalute</b >, perché sappiamo che può essere complesso (e a volte preoccupante) acquisire e gestire  criptovalute.',
         'tip-title-bring-friends': 'Invita amici',
         'tip-message-bring-friends': 'Quindi ti piace il concetto di Elastos Essentials? Ti piace controllare la tua identità digitale, migliorare la tua privacy, utilizzare Internet con più sicurezza e trasparenza? <br/><br/> Vorresti che i tuoi amici si unissero a te, ma ritieni che utilizzare le applicazioni su Essentials <b>non sia facile</b> come usare le applicazioni tradizionali? <br/> <br/> HAI RAGIONE! Ma come per qualsiasi <b>innovazione</b>, ci vuole un po\' di tempo per adattarsi. Dopo un po\', la maggior parte delle persone <b>capirà il valore di questo nuovo "internet"</b> e si unirà a te senza difficoltà.',
+        'tip-title-taking-screenshots': 'Taking screenshots',
+        'tip-message-taking-screenshots': 'Wanna take screenshots of Essentials, or record videos? For your safety this is disabled by default. But you can enable this feature by temporarily enabling the developer mode from the settings screen, then turn on the screen capture option. Don\'t forget to stop the developer mode when you don\'t need it any more.',
 
         /********* Developer Tips *********/
         'tip-title-dev-getting-support': 'Sei uno sviluppatore?',

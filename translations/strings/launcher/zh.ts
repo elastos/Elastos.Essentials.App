@@ -107,6 +107,8 @@ export const zh = {
         'tip-message-not-only-for-crypto-players': '尽管 Elastos Essentials 使用区块链来管理去中心的身份 - 区块链需要加密货币才能运行 - 但我们尽最大努力<b>在不要求您持有加密货币的情况下提供大部分功能</b>，正如我们所知，获取加密货币可能很复杂（且令人担忧）。',
         'tip-title-bring-friends': '邀请朋友',
         'tip-message-bring-friends': '所以您喜欢 Elastos Essentials 的概念吗？您喜欢拥有自己的身份，对您的数据拥有隐私权，使用信任度更高且更透明的互联网吗？<br/><br/>您希望您的朋友加入，但您觉得使用 Elastos Essentials 支持的应用程序<b>不像使用传统应用程序那样容易</b>吗？<br/><br/>您说对了！但是，与任何<b>创新</b>一样，需要一点时间来适应。一段时间后，大多数人<b>将了解新互联网的价值</b>，并且会毫不费力地加入。',
+        'tip-title-taking-screenshots': '截屏',
+        'tip-message-taking-screenshots': '需要截屏或录制视频？为了您的安全，默认禁用此选项。您也可以在<设置>里临时启用开发者模式，然后在 <开发者选项中> 允许屏幕截图。当您不再需要开发者模式时，请将其关闭。',
 
         /********* Developer Tips *********/
         'tip-title-dev-getting-support': '在哪里可以找到开发人员支持？',

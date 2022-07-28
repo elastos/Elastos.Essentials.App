@@ -106,6 +106,8 @@ export const en = {
         'tip-message-not-only-for-crypto-players': 'While Elastos Essentials uses blockchains to manage decentralized identities - and blockchains need crypto currencies to run - we try our best to <b>bring most of the features without requesting you to hold crypto currencies</b>, as we know it can be complex (and worrying) to acquire crypto-currencies.',
         'tip-title-bring-friends': 'Inviting friends',
         'tip-message-bring-friends': 'So you like the Elastos Essentials concept? You like to own your identity, having privacy over your data, using an internet with more trust and less hiding?<br/><br/>You would like your friends to join, but you feel using Elastos Essentials powered apps is <b>not as easy</b> as using traditional applications?<br/><br/>YOU ARE RIGHT! But like every <b>new innovation</b>, it takes a bit of time to adapt. After a while, most people <b>will understand the power of this new internet</b> and will join without efforts.',
+        'tip-title-taking-screenshots': 'Taking screenshots',
+        'tip-message-taking-screenshots': 'Wanna take screenshots of Essentials, or record videos? For your safety this is disabled by default. But you can enable this feature by temporarily enabling the developer mode from the settings screen, then turn on the screen capture option. Don\'t forget to stop the developer mode when you don\'t need it any more.',
 
         /********* Developer Tips *********/
         'tip-title-dev-getting-support': 'Where to get dev support?',
