@@ -10,7 +10,7 @@ export class GnosisAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case GnosisApiType.RPC: return 'https://dai.poa.network';
+          case GnosisApiType.RPC: return 'https://blockscout.com/xdai/mainnet/api/eth-rpc';
           case GnosisApiType.ETHERSCAN_API: return 'https://blockscout.com/xdai/mainnet/api';
           default:
             throw new Error("Gnosis API - Unknown api type " + type);
