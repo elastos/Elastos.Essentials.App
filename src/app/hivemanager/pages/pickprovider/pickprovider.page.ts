@@ -4,6 +4,7 @@ import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-js';
 import { Order, VaultInfo } from '@elastosfoundation/hive-js-sdk';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { ProfileService } from 'src/app/identity/services/profile.service';
@@ -49,7 +50,8 @@ export class PickProviderPage implements OnInit {
   // Hardcoded list of suggested providers for now
   public storageProviders: StorageProvider[] = [];
 
-  private menu: any;
+  private vaultStatusSubscription: Subscription = null;
+  private eventSubscription: Subscription = null;
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -90,11 +92,11 @@ export class PickProviderPage implements OnInit {
       this.storageProviders = [];
     }
 
-    this.route.queryParams.subscribe((data) => {
-      //Logger.log("HiveManager", "QUERY PARAMS", data);
-    });
+    // this.route.queryParams.subscribe((data) => {
+    //   //Logger.log("HiveManager", "QUERY PARAMS", data);
+    // });
 
-    this.events.subscribe("plan-just-purchased", () => {
+    this.eventSubscription = this.events.subscribe("plan-just-purchased", () => {
       Logger.log("HiveManager", "Payment just purchased. Refreshing status.");
       void this.checkInitialStatus();
     });
@@ -154,7 +156,7 @@ export class PickProviderPage implements OnInit {
 
   ionViewDidEnter() {
     Logger.log("hivemanager", "Pick provider: subscribing to vault status events");
-    this.globalHiveService.vaultStatus.subscribe((status) => {
+    this.vaultStatusSubscription = this.globalHiveService.vaultStatus.subscribe((status) => {
       void this.checkInitialStatus();
     })
   }
@@ -168,6 +170,16 @@ export class PickProviderPage implements OnInit {
     }
 
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+
+    if (this.vaultStatusSubscription) {
+      this.vaultStatusSubscription.unsubscribe();
+      this.vaultStatusSubscription = null;
+    }
+
+    if (this.eventSubscription) {
+      this.eventSubscription.unsubscribe()
+      this.eventSubscription = null;
+    }
   }
 
   private checkInitialStatus() {

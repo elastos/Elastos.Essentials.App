@@ -368,7 +368,14 @@ export class GlobalHiveService extends GlobalService {
 
     // First try to create the vault on the provider
     try {
-      let createdVaultInfo = await subscriptionServices.subscribe();
+      let createdVaultInfo = null;
+      try {
+        createdVaultInfo = await subscriptionServices.subscribe();
+      }
+      catch (e) {
+        // Maybe already exist. Ignore this exception.
+      }
+
       if (createdVaultInfo) {
         Logger.log("GlobalHiveService", "Vault was newly created on the provider. Now updating vault address on user's DID");
         // Vault creation succeeded, we can now save the provider address on ID chain.
@@ -379,6 +386,12 @@ export class GlobalHiveService extends GlobalService {
       }
 
       let publicationStarted = await this.publishVaultProviderToIDChain(providerName, vaultAddress);
+
+      // TODO: How to update the vault status?
+      // It will take a few minutes to take effect.
+      // if (publicationStarted)
+      //   await this.retrieveVaultStatus()
+
       return publicationStarted;
     }
     catch (err) {
