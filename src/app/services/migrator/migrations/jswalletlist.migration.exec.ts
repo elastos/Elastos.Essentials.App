@@ -43,8 +43,11 @@ export const migrateSPVNetworkTemplate = async (networkTemplate: string, identit
       spvNetworkTemplate = networkTemplate;
   }
 
+  // We need to configure ethsc to obtain the private key.
+  let spvnetworkconfig = {'ELA':{}, 'ETHSC': {ChainID: 20, NetworkID: 20 }}
+
   //PrvNet MainNet TestNet
-  await spvService.setNetwork(spvNetworkTemplate, "{}");
+  await spvService.setNetwork(spvNetworkTemplate, JSON.stringify(spvnetworkconfig));
 
   let rootPath = identityEntry.didStoragePath;
   await spvService.init(rootPath);
