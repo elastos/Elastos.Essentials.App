@@ -13,6 +13,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/tx-providers/transaction.types';
+import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Vote } from '../model/history.model';
 import { DPosNode } from '../model/nodes.model';
@@ -183,7 +184,7 @@ export class NodesService {
 
     async getStoredVotes() {
         this._votes = [];
-        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'dposvoting', this.voteService.masterWalletId + '-votes', []).then(data => {
+        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'dposvoting', jsToSpvWalletId(this.voteService.masterWalletId) + '-votes', []).then(data => {
             if (data && data.length > 0) {
                 // filter invalid votes.
                 this._votes = data.filter(c => { return c.tx; });
@@ -196,7 +197,7 @@ export class NodesService {
     async setStoredVotes() {
         this.sortVotes();
         Logger.log('dposvoting', 'Vote history updated', this._votes);
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "dposvoting", this.voteService.masterWalletId + '-votes', this._votes);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "dposvoting", jsToSpvWalletId(this.voteService.masterWalletId) + '-votes', this._votes);
     }
 
     // getStoredNodes() {
