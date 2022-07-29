@@ -40,6 +40,7 @@ export const it = {
         "step-bridge-published": "Awaiting cross chain result. This can take a few seconds to several minutes",
         "step-bridge-rejected": "Cross chain failed",
         "step-bridge-received": "Tokens arrived on destination network. Calling faucet to get a few coins for gas.",
+        "step-bridge-request-not-sent": "Bridge request could not be sent, please try again.",
         "step-faucet-called": "Faucet was called to receive a few native coins for gas.",
         "step-faucet-swap": "Now swapping tokens.",
         "step-swap-published": "Exchanging tokens",
@@ -52,6 +53,7 @@ export const it = {
         "error-swap-failed": "Swap failed to execute, this could be a network or blockchain error, please try again.",
         "error-swap-slippage-too-high": "Swap cannot be executed, slippage is too high. Possibly not enough liquidity on the DEX.",
         "error-swap-no-trade": "Failed to find a good swap trade. Possibly not enough liquidity on the DEX.",
-        "error-no-authorization": "No authorization, cancelled."
+        "error-no-authorization": "No authorization, cancelled.",
+        "error-unknown": "Unknown reason",
     }
 }
