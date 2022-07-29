@@ -39,6 +39,7 @@ import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
+import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -83,6 +84,7 @@ export class EscTransactionPage implements OnInit {
     public theme: GlobalThemeService,
     private erc20service: ERC20CoinService, // Keep it to initialize the service for the ETHTransactionInfoParser
     public uiService: UiService,
+    private walletUIService: WalletUIService, // Keep for init
     private ethTransactionService: EVMService
   ) {
   }
@@ -107,9 +109,14 @@ export class EscTransactionPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    if (this.networkWallet.masterWallet.type !== WalletType.STANDARD) {
-      // TODO: reject esctransaction if multi sign (show error popup)
-      void this.cancelOperation();
+    switch (this.networkWallet.masterWallet.type) {
+      case WalletType.MULTI_SIG_EVM_GNOSIS:
+      case WalletType.MULTI_SIG_STANDARD:
+        // TODO: reject esctransaction if multi sign (show error popup)
+        void this.cancelOperation();
+      break;
+      default:
+      break;
     }
   }
 

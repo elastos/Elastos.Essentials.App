@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { EthTransactionComponentModule } from '../../components/eth-transaction/module';
+import { LedgerSignComponentModule } from '../../components/ledger-sign/module';
 import { StdTransactionComponentModule } from '../../components/std-transaction/module';
 import { WalletChooserComponentModule } from '../../components/wallet-chooser/module';
 import { AccessPage } from './access/access.page';
@@ -32,6 +33,7 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
     ],
     imports: [
         EthTransactionComponentModule,
+        LedgerSignComponentModule,
         SharedComponentsModule,
         StdTransactionComponentModule,
         CommonModule,
