@@ -58,6 +58,7 @@ import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
 import { UiService } from './ui.service';
 import { WalletService } from './wallet.service';
+import { WalletUIService } from './wallet.ui.service';
 
 @Injectable({
   providedIn: 'root'
@@ -87,6 +88,7 @@ export class WalletInitService extends GlobalService {
     private bridgeService: BridgeService, // IMPORTANT: unused, but keep it here for initialization
     private defiService: DefiService, // IMPORTANT: unused, but keep it here for initialization
     private erc20CoinService: ERC20CoinService,
+    private walletUIService: WalletUIService, // IMPORTANT: unused, but keep it here for initialization
     private httpClient: HttpClient
   ) {
     super();

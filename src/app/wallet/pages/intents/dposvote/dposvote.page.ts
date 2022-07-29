@@ -90,9 +90,14 @@ export class DPoSVotePage implements OnInit {
     }
 
     ionViewDidEnter() {
-        if (this.sourceSubwallet.masterWallet.type !== WalletType.STANDARD) {
-            // TODO: reject voting if multi sign (show error popup), as multi sign wallets cannot vote.
+        switch (this.sourceSubwallet.masterWallet.type) {
+          case WalletType.MULTI_SIG_EVM_GNOSIS:
+          case WalletType.MULTI_SIG_STANDARD:
+            // TODO: reject esctransaction if multi sign (show error popup)
             void this.cancelOperation();
+          break;
+          default:
+          break;
         }
     }
 

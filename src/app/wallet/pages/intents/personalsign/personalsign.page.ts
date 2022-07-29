@@ -100,9 +100,14 @@ export class PersonalSignPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    if (this.networkWallet.masterWallet.type !== WalletType.STANDARD) {
-      // TODO: reject esctransaction if multi sign (show error popup)
-      void this.cancelOperation();
+    switch (this.networkWallet.masterWallet.type) {
+      case WalletType.MULTI_SIG_EVM_GNOSIS:
+      case WalletType.MULTI_SIG_STANDARD:
+        // TODO: reject esctransaction if multi sign (show error popup)
+        void this.cancelOperation();
+      break;
+      default:
+      break;
     }
   }
 

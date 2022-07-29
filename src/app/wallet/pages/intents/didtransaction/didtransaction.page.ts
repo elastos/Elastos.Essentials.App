@@ -75,7 +75,7 @@ export class DidTransactionPage implements OnInit {
         public native: Native,
         public zone: NgZone,
         private translate: TranslateService,
-        public theme: GlobalThemeService
+        public theme: GlobalThemeService,
     ) {
         void this.init();
     }
@@ -98,10 +98,15 @@ export class DidTransactionPage implements OnInit {
     }
 
     ionViewDidEnter() {
-        if (this.networkWallet.masterWallet.type !== WalletType.STANDARD) {
-            // TODO: reject didtransaction if multi sign (show error popup)
-            void this.cancelOperation();
-        }
+      switch (this.networkWallet.masterWallet.type) {
+        case WalletType.MULTI_SIG_EVM_GNOSIS:
+        case WalletType.MULTI_SIG_STANDARD:
+          // TODO: reject esctransaction if multi sign (show error popup)
+          void this.cancelOperation();
+        break;
+        default:
+        break;
+      }
     }
 
     ngOnDestroy() {

@@ -258,13 +258,13 @@ export class DappBrowserService implements GlobalService {
             // Get the active network RPC URL
             this.rpcUrl = activeNetwork.getRPCUrl();
 
+            this.userAddress = null;
             // Get the active wallet address
             if (WalletService.instance.activeNetworkWallet.value) {
                 let subwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
-                this.userAddress = await subwallet.getCurrentReceiverAddress();
+                if (subwallet)
+                  this.userAddress = await subwallet.getCurrentReceiverAddress();
             }
-            else
-                this.userAddress = null;
         }
         else {
             this.activeChainID = 0;
