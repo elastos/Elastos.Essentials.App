@@ -444,7 +444,7 @@ export class EVMService {
       gasPrice: web3.utils.toHex(gasPrice),
       to: contractAddress,
       data: data,
-      value: web3.utils.toHex(web3.utils.toWei(amount, 'ether'))
+      value: web3.utils.toHex(amount) // the unit of amount is wei
     }
     Logger.log('wallet', 'EVMService::createUnsignedContractTransaction:', txData);
     return Promise.resolve(txData);

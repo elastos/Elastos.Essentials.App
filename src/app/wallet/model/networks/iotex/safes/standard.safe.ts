@@ -1,6 +1,7 @@
 import type { TxData } from "@ethereumjs/tx";
 import { from } from "@iotexproject/iotex-address-ts";
 import { Logger } from "src/app/logger";
+import { Util } from "src/app/model/util";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
@@ -73,7 +74,7 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
       gasLimit: web3.utils.toHex(gasLimit),
       gasPrice: web3.utils.toHex(gasPrice),
       to: toAddress,
-      value: web3.utils.toHex(web3.utils.toWei(amount.toString())),
+      value: web3.utils.toHex(web3.utils.toWei(Util.getDecimalString(amount))),
     }
     Logger.log('wallet', 'IoTeXStandardSafe::createTransferTransaction:', txData);
     return Promise.resolve(txData);

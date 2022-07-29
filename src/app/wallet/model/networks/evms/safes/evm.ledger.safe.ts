@@ -3,6 +3,7 @@ import type { TxData } from "@ethereumjs/tx";
 import { lazyWeb3Import } from "src/app/helpers/import.helper";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
+import { Util } from "src/app/model/util";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
@@ -59,7 +60,7 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
             gasLimit: web3.utils.toHex(gasLimit),
             gasPrice: web3.utils.toHex(gasPrice),
             to: toAddress,
-            value: web3.utils.toHex(web3.utils.toWei(amount.toString())),
+            value: web3.utils.toHex(web3.utils.toWei(Util.getDecimalString(amount))),
         }
         Logger.log('wallet', 'EVMLedgerSafe::createTransferTransaction:', txData);
         return Promise.resolve(txData);
