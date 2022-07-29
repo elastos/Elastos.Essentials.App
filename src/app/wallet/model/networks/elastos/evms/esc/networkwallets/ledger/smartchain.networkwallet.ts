@@ -59,7 +59,6 @@ export class ElastosSmartChainLedgerNetworkWallet extends ElastosLedgerEVMNetwor
         address: await this.subWallets[StandardCoinName.ETHSC].getCurrentReceiverAddress()
       });
     }
-    Logger.warn("wallet", "ElastosSmartChainLedgerNetworkWallet getAddresses ", addresses);
     return addresses;
   }
 
