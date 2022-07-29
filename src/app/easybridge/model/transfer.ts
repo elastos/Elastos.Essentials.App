@@ -232,7 +232,7 @@ export class Transfer implements SerializedTransfer {
 
     // Unless said otherwise below, we may be able to execute the transfer.
     this.canExecute = true;
-    this.cannotExecuteReason = "Unknown reason";
+    this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('easybridge.error-unknown');
 
     let masterWallet = WalletService.instance.getMasterWallet(this.masterWalletId);
     let sourceNetwork = <EVMNetwork>WalletNetworkService.instance.getNetworkByChainId(this.sourceToken.chainId);
@@ -426,7 +426,7 @@ export class Transfer implements SerializedTransfer {
       this.currentStep = TransferStep.NEW;
       await this.save();
 
-      this.emitStatus("Bridge request could not be sent, please try again.");
+      this.emitStatus(GlobalTranslationService.instance.translateInstant('easybridge.step-bridge-request-not-sent'));
 
       return false;
     }

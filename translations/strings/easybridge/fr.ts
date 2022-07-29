@@ -40,6 +40,7 @@ export const fr = {
         "step-bridge-published": "En attente du résultat inter-chaînes. Ceci peut prendre de quelques secondes à plusieurs minutes.",
         "step-bridge-rejected": "Le transfert inter-chaînes à échoué.",
         "step-bridge-received": "Les jetons sont arrivés sur la chaîne de destination. Appel au service faucet pour obtenir des jetons pour le gas.",
+        "step-bridge-request-not-sent": "La demande de pont n'a pas pu être envoyée, veuillez réessayer.",
         "step-faucet-called": "Le service faucet a été appelé pour obtenir des jetons pour le gas.",
         "step-faucet-swap": "Début de l'échange des jetons.",
         "step-swap-published": "Echange des jetons en cours.",
@@ -52,6 +53,7 @@ export const fr = {
         "error-swap-failed": "L'échange de jetons à échoué, peut-être à cause d'une erreur du réseau ou de la chaîne de blocs. Veuillez réessayer.",
         "error-swap-slippage-too-high": "L'échange ne peut pas être éxécuté, la variance est trop élevée. Le DEX n'a peut être pas suffisamment de liquidités.",
         "error-swap-no-trade": "Impossible de trouver un bon échange pour les jetons. Le DEX n'a peut être pas suffisamment de liquidités.",
-        "error-no-authorization": "Autorisation réfusée, opération annulée."
+        "error-no-authorization": "Autorisation réfusée, opération annulée.",
+        "error-unknown": "Raison inconnue",
     }
 }

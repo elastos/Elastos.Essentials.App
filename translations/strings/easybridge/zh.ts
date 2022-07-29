@@ -40,7 +40,8 @@ export const zh = {
         "step-bridge-published": "等待跨链结果，这可能需要几秒到几分钟。",
         "step-bridge-rejected": "跨链失败",
         "step-bridge-received": "代币到达目的网络，调用 Faucet 来获取一些 gas。",
-        "step-faucet-called": "调用 Faucet 来接收一些原生币作为 gas，",
+        "step-bridge-request-not-sent": "无法发送跨链请求，请重试。",
+        "step-faucet-called": "调用 Faucet 来接收一些原生币作为 gas。",
         "step-faucet-swap": "现在兑换代币。",
         "step-swap-published": "兑换代币",
         "step-swap-failed": "代币兑换失败",
@@ -52,6 +53,8 @@ export const zh = {
         "error-swap-failed": "兑换执行失败，可能是网络或区块链错误，请重试。",
         "error-swap-slippage-too-high": "兑换无法执行，滑点太高。可能 DEX 流动性不足。",
         "error-swap-no-trade": "未能找到好的兑换交易。可能 DEX 上没有足够的流动性。",
-        "error-no-authorization": "没有授权，已取消。"
+        "error-no-authorization": "没有授权，已取消。",
+        "error-unknown": "未知原因",
+
     }
 }
