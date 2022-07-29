@@ -1,18 +1,36 @@
 @import "src/app/launcher/root.scss";
 
 .root {
-  padding: 10px 0;
+  padding: 10px 10px;
   display: flex;
   justify-content: center;
   flex-direction: column;
 
+  .info {
+    font-size: 12px;
+    margin: 20px;
+  }
+
+  .widgets-list {
+    min-height: 60px;
+    overflow: hidden;
+    display: block;
+  }
+
   .add-widget {
     font-size: 12px;
     margin: 20px;
+    margin-bottom: 40px;
     opacity: 0.7;
   }
 }
 
-.darkContainer {
+// Placeholder showing the insertion position while dragging
+.drag-placeholder {
+  background: orange;
+  opacity: 0.5;
+  height: 10px;
+}
 
+.darkContainer {
 }

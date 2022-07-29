@@ -10,142 +10,142 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
-@import './theme/declared.scss';
-@import './theme/ionic.scss';
+@import "./theme/declared.scss";
+@import "./theme/ionic.scss";
 
 /********************** SHARED FONTS **********************/
 @font-face {
-    font-family: 'Montserrat';
+    font-family: "Montserrat";
     font-weight: 300;
     font-style: normal;
-    src: url('assets/fonts/montserrat/Montserrat-Light.ttf');
+    src: url("assets/fonts/montserrat/Montserrat-Light.ttf");
 }
 @font-face {
-    font-family: 'Montserrat';
+    font-family: "Montserrat";
     font-weight: 400;
     font-style: normal;
-    src: url('assets/fonts/montserrat/Montserrat-Regular.ttf');
+    src: url("assets/fonts/montserrat/Montserrat-Regular.ttf");
 }
 @font-face {
-    font-family: 'Montserrat';
+    font-family: "Montserrat";
     font-weight: 500;
     font-style: normal;
-    src: url('assets/fonts/montserrat/Montserrat-Medium.ttf');
+    src: url("assets/fonts/montserrat/Montserrat-Medium.ttf");
 }
 @font-face {
-    font-family: 'Montserrat';
+    font-family: "Montserrat";
     font-weight: 600;
     font-style: normal;
-    src: url('assets/fonts/montserrat/Montserrat-SemiBold.ttf');
+    src: url("assets/fonts/montserrat/Montserrat-SemiBold.ttf");
 }
 @font-face {
-    font-family: 'Montserrat';
+    font-family: "Montserrat";
     font-weight: 700;
     font-style: normal;
-    src: url('assets/fonts/montserrat/Montserrat-Bold.ttf');
+    src: url("assets/fonts/montserrat/Montserrat-Bold.ttf");
 }
 @font-face {
-    font-family: 'Montserrat';
+    font-family: "Montserrat";
     font-weight: 800;
     font-style: normal;
-    src: url('assets/fonts/montserrat/Montserrat-ExtraBold.ttf');
+    src: url("assets/fonts/montserrat/Montserrat-ExtraBold.ttf");
 }
 @font-face {
-    font-family: 'Montserrat';
+    font-family: "Montserrat";
     font-weight: 900;
     font-style: normal;
-    src: url('assets/fonts/montserrat/Montserrat-Black.ttf');
+    src: url("assets/fonts/montserrat/Montserrat-Black.ttf");
 }
 
 @font-face {
-    font-family: 'Inter';
+    font-family: "Inter";
     font-weight: 300;
     font-style: normal;
-    src: url('assets/fonts/inter/Inter-Light.ttf');
+    src: url("assets/fonts/inter/Inter-Light.ttf");
 }
 @font-face {
-    font-family: 'Inter';
+    font-family: "Inter";
     font-weight: 400;
     font-style: normal;
-    src: url('assets/fonts/inter/Inter-Regular.ttf');
+    src: url("assets/fonts/inter/Inter-Regular.ttf");
 }
 @font-face {
-    font-family: 'Inter';
+    font-family: "Inter";
     font-weight: 500;
     font-style: normal;
-    src: url('assets/fonts/inter/Inter-Medium.ttf');
+    src: url("assets/fonts/inter/Inter-Medium.ttf");
 }
 @font-face {
-    font-family: 'Inter';
+    font-family: "Inter";
     font-weight: 600;
     font-style: normal;
-    src: url('assets/fonts/inter/Inter-SemiBold.ttf');
+    src: url("assets/fonts/inter/Inter-SemiBold.ttf");
 }
 @font-face {
-    font-family: 'Inter';
+    font-family: "Inter";
     font-weight: 700;
     font-style: normal;
-    src: url('assets/fonts/inter/Inter-Bold.ttf');
+    src: url("assets/fonts/inter/Inter-Bold.ttf");
 }
 @font-face {
-    font-family: 'Inter';
+    font-family: "Inter";
     font-weight: 800;
     font-style: normal;
-    src: url('assets/fonts/inter/Inter-ExtraBold.ttf');
+    src: url("assets/fonts/inter/Inter-ExtraBold.ttf");
 }
 @font-face {
-    font-family: 'Inter';
+    font-family: "Inter";
     font-weight: 900;
     font-style: normal;
-    src: url('assets/fonts/inter/Inter-Black.ttf');
+    src: url("assets/fonts/inter/Inter-Black.ttf");
 }
 
 @font-face {
-    font-family: 'Raleway';
+    font-family: "Raleway";
     font-weight: 300;
     font-style: normal;
-    src: url('assets/fonts/raleway/Raleway-Light.ttf') format('truetype');
-  }
+    src: url("assets/fonts/raleway/Raleway-Light.ttf") format("truetype");
+}
 @font-face {
-    font-family: 'Raleway';
+    font-family: "Raleway";
     font-weight: 400;
     font-style: normal;
-    src: url('assets/fonts/raleway/Raleway-Regular.ttf') format('truetype');
-  }
+    src: url("assets/fonts/raleway/Raleway-Regular.ttf") format("truetype");
+}
 @font-face {
-    font-family: 'Raleway';
+    font-family: "Raleway";
     font-weight: 500;
     font-style: normal;
-    src: url('assets/fonts/raleway/Raleway-Medium.ttf') format('truetype');
-  }
+    src: url("assets/fonts/raleway/Raleway-Medium.ttf") format("truetype");
+}
 @font-face {
-    font-family: 'Raleway';
+    font-family: "Raleway";
     font-weight: 600;
     font-style: normal;
-    src: url('assets/fonts/raleway/Raleway-SemiBold.ttf') format('truetype');
-  }
+    src: url("assets/fonts/raleway/Raleway-SemiBold.ttf") format("truetype");
+}
 @font-face {
-    font-family: 'Raleway';
+    font-family: "Raleway";
     font-weight: 700;
     font-style: normal;
-    src: url('assets/fonts/raleway/Raleway-Bold.ttf') format('truetype');
-  }
+    src: url("assets/fonts/raleway/Raleway-Bold.ttf") format("truetype");
+}
 @font-face {
-    font-family: 'Raleway';
+    font-family: "Raleway";
     font-weight: 800;
     font-style: normal;
-    src: url('assets/fonts/raleway/Raleway-ExtraBold.ttf') format('truetype');
-  }
+    src: url("assets/fonts/raleway/Raleway-ExtraBold.ttf") format("truetype");
+}
 @font-face {
-    font-family: 'Raleway';
+    font-family: "Raleway";
     font-weight: 900;
     font-style: normal;
-    src: url('assets/fonts/raleway/Raleway-Black.ttf') format('truetype');
+    src: url("assets/fonts/raleway/Raleway-Black.ttf") format("truetype");
 }
 
 /** Global font family **/
 * {
-    font-family: 'Montserrat' !important;
+    font-family: "Montserrat" !important;
 }
 
 /** Remove 'box' outline on clicked items **/
@@ -157,7 +157,7 @@
 .hidden {
     visibility: hidden;
 }
-  
+
 /** Blur screen when a popup is showing **/
 .blur {
     filter: blur(2.5px);
@@ -176,31 +176,31 @@
 
 /** Simple class to apply theme background **/
 .lightmode {
-    background: #F5F5FD;
+    background: #f5f5fd;
 
-  /*   ion-refresher {
+    /*   ion-refresher {
         background: #F5F5FD;
         color: #121212;
-    
+
         ion-refresher-content {
             background: #F5F5FD;
             color: #121212;
-    
+
             .refresher-pulling {
                 background: #F5F5FD;
                 color: #121212;
-    
+
                 .refresher-pulling-icon {
                     background: #F5F5FD;
                     border: #F5F5FD;
                     color: #121212;
                 }
             }
-    
+
             .refresher-refreshing {
                 background: #F5F5FD;
                 color: #121212;
-                
+
                 .refresher-refreshing-icon {
                     background: #F5F5FD;
                     border: #F5F5FD;
@@ -214,25 +214,25 @@
 .darkmode {
     background: #121212;
 
-   /*  ion-refresher {
+    /*  ion-refresher {
         background: #121212;
         color: white;
-        
+
         ion-refresher-content {
             background: #121212;
             color: white;
-    
+
             .refresher-pulling {
                 background: #121212;
                 color: white;
-    
+
                 .refresher-pulling-icon {
                     background: #121212;
                     border: #121212;
                     color: white;
                 }
         }
-    
+
             .refresher-refreshing {
                 .refresher-refreshing-icon {
                     background: #121212;

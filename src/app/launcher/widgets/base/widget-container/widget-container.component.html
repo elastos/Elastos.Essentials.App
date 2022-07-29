@@ -1,8 +1,23 @@
 <div class="root" [class.darkContainer]="theme.darkMode">
-  <div #container>
+  <!-- Info about edition mode -->
+  <div *ngIf="inLiveMode() && editing" class="info">
+    Note: some widgets show only in edition mode and disappear in standard mode. No worries, they will apper when they
+    think they have to!
   </div>
 
-  <div class="add-widget" (click)="addWidget()">
+  <div class="add-widget" (click)="addWidget()" *ngIf="inLiveMode() && editing">
     + Add widget
   </div>
+
+  <div #widgetsboundaries id="widgetsboundaries">
+    <div #widgetslist class="widgets-list">
+      <!-- Use a template that disappears at runtime because createComponent() adds new children as SIBLING of #container, not inside... -->
+      <ng-template #container></ng-template>
+    </div>
+  </div>
 </div>
+
+<!-- Placeholder showing the insertion position while dragging -->
+<ng-template #dragplaceholder>
+  <div class="drag-placeholder"></div>
+</ng-template>

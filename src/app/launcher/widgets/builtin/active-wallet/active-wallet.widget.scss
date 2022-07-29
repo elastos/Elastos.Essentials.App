@@ -1,0 +1,192 @@
+@import "../../widgets.scss";
+
+.wallets-row {
+    .title-col {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        padding: 0 0 5px 5px;
+        color: #000000;
+    }
+
+    .header-row {
+        align-items: center;
+
+        .title-col {
+            padding: 0;
+        }
+
+        .network-col {
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: #1c1c1c;
+
+            .network-logo,
+            .toggle {
+                height: 16px;
+            }
+
+            .network-logo {
+                margin-right: 5px;
+            }
+
+            .toggle {
+                margin-left: 5px;
+            }
+        }
+    }
+
+    .wallets-col {
+        .no-wallet {
+            text-align: center;
+        }
+    }
+
+    .wallet-widget-row {
+        position: relative;
+        border-radius: 14px;
+        padding: 5px 10px 10px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+
+        .card-label-row {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            position: relative;
+
+            .top-row {
+                display: flex;
+
+                ion-col {
+                    .wallet-name {
+                        font-weight: 500;
+                        font-size: 12px;
+                        justify-content: flex-start;
+                        text-align: left;
+                        margin-bottom: 15px;
+                    }
+                }
+            }
+
+            .total {
+                font-size: 10px;
+                text-transform: capitalize;
+                letter-spacing: 0.8px;
+                color: #ffffff;
+                margin-bottom: 4px;
+                margin-left: 5px;
+                opacity: 1;
+            }
+
+            .balance {
+                font-size: 20px;
+                letter-spacing: 1.05px;
+                line-height: 0.85;
+                font-weight: 700;
+                color: #ffffff;
+                margin-left: 5px;
+                margin-top: 5px;
+            }
+
+            .single-address {
+                position: absolute;
+                right: 0px;
+                bottom: -4px;
+                font-size: 12px;
+                font-weight: 400;
+                padding-bottom: 1px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+
+                .title {
+                    font-weight: 600;
+                }
+
+                .bottom {
+                    display: flex;
+                    justify-content: center;
+                    font-size: 10px;
+
+                    img {
+                        margin-left: 5px;
+                    }
+                }
+            }
+
+            .addresses {
+                position: absolute;
+                right: 0px;
+                bottom: 0px;
+                font-size: 12px;
+                font-weight: 400;
+                display: flex;
+                justify-content: center;
+                padding-bottom: 1px;
+
+                img {
+                    margin-left: 3px;
+                }
+            }
+
+            .unsupported-wallet {
+                height: 35px;
+                font-size: 12px;
+                margin: auto;
+            }
+        }
+
+        .arrow-down {
+            position: absolute;
+            z-index: 0;
+            bottom: -15px;
+            left: 10%;
+            height: 30px;
+            width: 30px;
+            transform: translate(2px, -2px) rotate(-45deg);
+            -webkit-transform: translate(2px, -2px) rotate(-45deg);
+            border-right: 2px solid transparent;
+            border-top: 2px solid transparent;
+            display: inline-block;
+            -moz-transform: translate(2px, -2px) rotate(-45deg);
+            -ms-transform: translate(2px, -2px) rotate(-45deg);
+            -o-transform: translate(2px, -2px) rotate(-45deg);
+        }
+    }
+
+    .top-row {
+        .wallet-name {
+            color: #fff;
+        }
+    }
+
+    .card-label-row {
+        .total {
+            color: #fff;
+        }
+    }
+
+    .single-address,
+    .addresses,
+    .header-row,
+    .unsupported-wallet {
+        color: #fff;
+    }
+}
+
+.darkContainer {
+    .title-col {
+        color: #9d9d9d;
+    }
+
+    .header-row {
+        .network-col {
+            color: #acacac;
+        }
+    }
+}

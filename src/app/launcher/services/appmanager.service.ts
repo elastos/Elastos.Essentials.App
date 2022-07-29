@@ -3,27 +3,21 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MenuController, ModalController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { ContactsInitService } from 'src/app/contacts/services/init.service';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
-import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
-import { WalletInitService } from 'src/app/wallet/services/init.service';
-import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Tip } from '../model/tip.model';
 import { NotificationsPage } from '../pages/notifications/notifications.page';
 import { TipsPage } from '../pages/tips/tips.page';
 import { DIDManagerService } from './didmanager.service';
 
-type RunnableApp = {
+export type RunnableApp = {
     id: string;
     name: string;
     routerContext: string; // Ex: "wallet"
@@ -35,7 +29,7 @@ type RunnableApp = {
     startCall?: () => Promise<void>;
 }
 
-type RunnableAppCategory = {
+export type RunnableAppCategory = {
     type: string,
     apps: RunnableApp[];
     shouldBeDisplayed: () => boolean;
@@ -45,9 +39,6 @@ type RunnableAppCategory = {
     providedIn: 'root'
 })
 export class AppmanagerService {
-    // List of runnable apps
-    public runnableApps: RunnableAppCategory[] = null;
-
     /* Popups */
     private notificationsShown = false;
     private notificationsShowing = false;
@@ -73,23 +64,13 @@ export class AppmanagerService {
         private native: GlobalNativeService,
         private storage: GlobalStorageService,
         private language: GlobalLanguageService,
-        private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService,
         // In-app Services
         private hiveManagerInitService: HiveManagerInitService,
-        private dposVotingInitService: DPoSVotingInitService,
-        private walletInitService: WalletInitService,
-        private crCouncilVotingInitService: CRCouncilVotingInitService,
-        private contactsInitService: ContactsInitService,
-        private walletNetworkService: WalletNetworkService
     ) { }
 
     public init() {
         Logger.log("Launcher", 'App manager service is initializing');
-
-        this.languageSubscription = this.language.activeLanguage.subscribe((lang) => {
-            this.initAppsList();
-        });
 
         this.updateSubscription = this.events.subscribe("updateNotifications", () => {
             // TODO @chad this.notification.fillAppInfoToNotification(this.installService.appInfos);
@@ -113,96 +94,6 @@ export class AppmanagerService {
             this.languageSubscription.unsubscribe();
             this.languageSubscription = null;
         }
-    }
-
-    private initAppsList() {
-        this.runnableApps = [
-            {
-                type: 'launcher.elastos-voting',
-                shouldBeDisplayed: () => this.walletNetworkService.isActiveNetworkElastos(),
-                apps: [
-                    {
-                        id: 'dpos',
-                        routerContext: App.DPOS_VOTING,
-                        name: this.translate.instant('launcher.app-dpos-voting'),
-                        description: this.translate.instant('launcher.app-dpos-description'),
-                        icon: '/assets/launcher/apps/app-icons/dpos.svg',
-                        hasWidget: false,
-                        startCall: () => this.dposVotingInitService.start()
-                    },
-                    {
-                        id: 'crcouncil',
-                        routerContext: App.CRCOUNCIL_VOTING,
-                        name: this.translate.instant('launcher.app-cr-council'),
-                        description: this.translate.instant('launcher.app-crcouncil-description'),
-                        icon: '/assets/launcher/apps/app-icons/council.svg',
-                        hasWidget: false,
-                        startCall: () => this.crCouncilVotingInitService.startCouncil()
-                    },
-                    {
-                        id: 'crproposal',
-                        routerContext: App.CRPROPOSAL_VOTING,
-                        name: this.translate.instant('launcher.app-cr-proposal'),
-                        description: this.translate.instant('launcher.app-crproposal-description'),
-                        icon: '/assets/launcher/apps/app-icons/proposal.svg',
-                        hasWidget: false,
-                        routerPath: '/crproposalvoting/proposals/all'
-                    },
-                    {
-                        id: 'crsuggestion',
-                        routerContext: App.CRPROPOSAL_VOTING,
-                        name: this.translate.instant('launcher.app-cr-suggestion'),
-                        description: this.translate.instant('launcher.app-crsuggestion-description'),
-                        icon: '/assets/launcher/apps/app-icons/suggestion.svg',
-                        iconDark: '/assets/launcher/apps/app-icons/suggestion_dark.svg',
-                        hasWidget: false,
-                        routerPath: '/crproposalvoting/suggestions/all'
-                    },
-                ]
-            },
-            {
-                type: 'launcher.utilities',
-                shouldBeDisplayed: () => true,
-                apps: [
-                    {
-                        id: 'easybridge',
-                        routerContext: App.EASY_BRIDGE,
-                        name: this.translate.instant('launcher.app-easybridge'),
-                        description: this.translate.instant('launcher.app-easybridge-description'),
-                        icon: '/assets/launcher/apps/app-icons/easybridge.svg',
-                        hasWidget: false,
-                        routerPath: '/easybridge/home'
-                    },
-                    {
-                        id: 'redpackets',
-                        routerContext: App.RED_PACKETS,
-                        name: this.translate.instant('launcher.app-redpackets'),
-                        description: this.translate.instant('launcher.app-redpackets-description'),
-                        icon: '/assets/launcher/apps/app-icons/redpackets.png',
-                        hasWidget: false,
-                        routerPath: '/redpackets/home'
-                    },
-                    {
-                        id: 'contacts',
-                        routerContext: App.CONTACTS,
-                        name: this.translate.instant('launcher.app-contacts'),
-                        description: this.translate.instant('launcher.app-contacts-description'),
-                        icon: '/assets/launcher/apps/app-icons/contacts.svg',
-                        hasWidget: false,
-                        startCall: () => this.contactsInitService.start()
-                    },
-                    {
-                        id: 'hive',
-                        routerContext: App.HIVE_MANAGER,
-                        name: this.translate.instant('launcher.app-hive'),
-                        description: this.translate.instant('launcher.app-hive-description'),
-                        icon: '/assets/launcher/apps/app-icons/hive.svg',
-                        hasWidget: true,
-                        startCall: () => this.hiveManagerInitService.start()
-                    },
-                ]
-            }
-        ];
     }
 
     async getVisit() {

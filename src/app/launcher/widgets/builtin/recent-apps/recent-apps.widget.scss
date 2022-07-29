@@ -1,0 +1,80 @@
+@import "../../widgets.scss";
+
+.dapps-row {
+  padding-top: 10px !important;
+
+  .title-col {
+    padding: 0px;
+  }
+  .more-col {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    justify-content: flex-end;
+
+    img {
+      margin-left: 5px;
+      height: 10px;
+    }
+  }
+
+  .apps-col {
+    display: flex;
+    flex-wrap: wrap;
+    height: 66px;
+    max-height: 66px; // For webviews on ios ~~ 15.4.1+ that just don't care about "height".
+    flex-direction: column;
+    align-content: flex-start;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    width: 100%;
+
+    .recent-app {
+      width: 70px;
+      margin-right: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+
+      img {
+        max-width: 100%;
+        height: 40px;
+        margin-bottom: 5px;
+        border-radius: 10px;
+      }
+
+      .network {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        right: 10px;
+        bottom: 10px;
+        border: solid 1px rgba(255, 255, 255, 0.5);
+      }
+
+      .title {
+        text-align: center;
+        font-size: 9px;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  &.darkContainer {
+    .more-col {
+      color: #acacac;
+    }
+
+    .apps-col {
+      .recent-app {
+        .title {
+          color: #acacac;
+        }
+      }
+    }
+  }
+}

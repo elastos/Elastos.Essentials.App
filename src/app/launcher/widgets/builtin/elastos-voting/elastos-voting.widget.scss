@@ -1,0 +1,11 @@
+@import "../../widgets.scss";
+
+.elastos-voting-row {
+  .mid-col {
+    align-items: center;
+
+    ion-label {
+      text-align: left;
+    }
+  }
+}

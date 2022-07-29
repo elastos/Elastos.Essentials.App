@@ -1,23 +1,75 @@
 @import "src/app/launcher/root.scss";
 
+:host {
+  display: block;
+}
+
 .root {
   display: flex;
   flex-direction: column;
   position: relative;
-  margin-bottom: 10px;
+  margin: 5px 0;
 
   &.editing {
-    border: solid 1px #444;
-    border-radius: 5px;
-    padding: 3px;
+    //border: solid 2px #888;
+    //border-radius: 15px;
+    //padding: 3px;
+    overflow: hidden;
+  }
+
+  &.selecting {
+    border-bottom: solid 1px #555;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .touch-disabler {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
   }
 
   .edition {
     position: absolute;
     right: 0;
-    top: -5px;
-    background: #444;
-    padding: 5px;
+    top: 0px;
+    width: 60px;
+
+    ion-col {
+      display: flex;
+      align-items: center;
+    }
+
+    .item {
+      background: #444;
+      padding: 5px;
+    }
+
+    &.reduced {
+      width: 0px;
+      overflow: hidden;
+    }
+  }
+
+  .selection {
+    position: absolute;
+    left: 50%;
+    right: 0;
+    bottom: 0px;
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    margin: 10px;
+    box-shadow: 0 0 5px #888;
+    z-index: 20000;
+    transition: 0 0.3s ease;
+
+    &:active {
+      background: rgba(0, 0, 0, 1);
+    }
   }
 }
-

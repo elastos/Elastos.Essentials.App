@@ -1,0 +1,14 @@
+<!-- Wallet Connect -->
+<ion-row class="wallet-connect-row widget-background" [class.darkContainer]="theme.darkMode"
+  *ngIf="someWalletConnectSessionsCanBeDisplayed() || forSelection || editing" (click)="showWalletConnectSessions()">
+  <img class="icon" src="assets/settings/icon/walletconnect.svg">
+  <ion-label>{{ 'launcher.active-wallet-connect-sessions' | translate }}</ion-label>
+  <ion-col *ngFor="let connector of walletConnectConnectors" class="connector-col" size="12">
+    <div class="connector"
+      *ngIf="connector.connected && connector.peerMeta && connector.peerMeta.icons && connector.peerMeta.icons.length > 0">
+      <img class="connector-logo" [src]="connector.peerMeta.icons[0]"
+        (error)="connector.peerMeta.icons[0]='assets/settings/icon/walletconnect.svg'" />
+      <p>{{ connector.peerMeta.name }}</p>
+    </div>
+  </ion-col>
+</ion-row>

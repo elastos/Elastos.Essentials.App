@@ -1,0 +1,176 @@
+.widget-background {
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 15px 10px;
+  opacity: 1;
+  background-color: #ffffff;
+  box-shadow: 0 3px 15px 0 #ededf0;
+
+  .title-col {
+    text-align: left;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    padding: 0 0 5px 5px;
+  }
+
+  // Weird, should not be put in the generic widget background. Inherited from the previous launcher screen style
+  .app-col {
+    padding: 0;
+
+    .add-border {
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    .app-row {
+      padding: 10px 0;
+
+      ion-col {
+        display: flex;
+        align-items: center;
+      }
+
+      .left-col {
+        justify-content: flex-start;
+
+        .icon-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 12px;
+          width: 48px;
+          height: 48px;
+          opacity: 1;
+
+          img {
+            width: 55%;
+            height: 55%;
+          }
+        }
+      }
+
+      .mid-col {
+        justify-content: flex-start;
+        align-items: center;
+
+        ion-label {
+          h1 {
+            color: #000000;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+          }
+
+          p {
+            color: #000000;
+            opacity: 0.7;
+            font-size: 10px;
+            font-weight: 500;
+            margin-top: 3px;
+          }
+        }
+      }
+
+      .right-col {
+        justify-content: flex-end;
+      }
+
+      .widget-col {
+        padding-top: 0;
+
+        .wallet-widget {
+          background: #742fcf;
+          border-radius: 7px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          padding: 8px;
+          line-height: 1.6;
+
+          span {
+            color: white;
+            font-weight: 500;
+            font-size: 10px;
+          }
+
+          .active-wallet,
+          .active-network {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: block;
+            color: #ffffff;
+          }
+        }
+
+        .hive-widget {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          ion-progress-bar {
+            width: 50%;
+          }
+
+          span {
+            margin-left: 3px;
+            font-size: 9px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-align: right;
+          }
+        }
+      }
+    }
+  }
+}
+
+.darkContainer {
+  .widget-background,
+  &.widget-background {
+    background: #212021;
+    box-shadow: none;
+
+    .app-col {
+      .add-border {
+        border-bottom: 1px solid #464646;
+      }
+
+      .app-row {
+        .left-col {
+          .icon-container {
+            box-shadow: 0px 0px 1px #000000e2;
+            background: #363636;
+          }
+        }
+
+        .mid-col {
+          ion-label {
+            h1 {
+              color: #ffffff;
+            }
+
+            p {
+              color: #acacac;
+              opacity: 1;
+            }
+          }
+        }
+
+        .widget-col {
+          .hive-widget {
+            span {
+              color: #7c7c7c;
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}

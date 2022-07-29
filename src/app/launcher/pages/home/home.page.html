@@ -3,210 +3,15 @@
 
   <ion-grid class="container" [class.light-container]="!theme.darkMode" [class.dark-container]="theme.darkMode">
 
-    <ion-slides>
+    <ion-slides #widgetsslides [options]="widgetsSlidesOpts" class="widgets-containers-slides">
       <ion-slide>
         <widget-container name="left"></widget-container>
       </ion-slide>
       <ion-slide>
-        <!-- Identity -->
-        <ion-row *ngIf="getSignedInIdentity()" class="id-row">
-          <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">
-            <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-              <img
-                [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
-            </ion-avatar>
-            <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
-              <img
-                [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
-            </ion-avatar>
-          </ion-col>
-
-          <ion-col size="7.25" class="mid-col" (click)="showMyIdentity()">
-            <h1>{{ getDateFromNow().toUpperCase() }}</h1>
-            <h2>{{ getSignedInIdentity().name }}</h2>
-          </ion-col>
-          <ion-col offset="0.75" size="1.25" class="right-col" (click)="showOptions($event)">
-            <img
-              [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
-          </ion-col>
-        </ion-row>
-
-        <!-- Backup identity -->
-        <ion-row class="backup-row" *ngIf="identityNeedsBackup">
-          <ion-col class="left-col" size="1.75">
-            <img src="/assets/launcher/icons/finger-print.svg">
-          </ion-col>
-          <ion-col class="mid-col" size="6.25">
-            <ion-label>
-              <h1>{{ 'launcher.backup-title' | translate }}</h1>
-              <p>{{ 'launcher.backup-message' | translate }}</p>
-            </ion-label>
-          </ion-col>
-          <ion-col class="right-col" size="4">
-            <div class="ion-activatable ripple" (click)="backupIdentity()">
-              <h1>{{ 'launcher.backup-button' | translate }}</h1>
-              <ion-ripple-effect></ion-ripple-effect>
-            </div>
-          </ion-col>
-        </ion-row>
-
-
-        <!-- Wallets -->
-        <ion-row class="wallets-row" *ngIf="walletNetworkService.activeNetwork.value">
-          <ion-col size=12>
-            <ion-row class="header-row">
-              <ion-col size="6" class="title-col" (click)="openWallet()">
-                <ion-label>{{ 'launcher.active-wallet' | translate }}</ion-label>
-              </ion-col>
-              <ion-col size="6" class="network-col" (click)="pickNetwork()">
-                <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
-                {{ walletNetworkService.activeNetwork.value.name }}
-                <img class="toggle"
-                  [src]="!theme.darkMode ? 'assets/wallet/icons/change-wallet.svg' : 'assets/wallet/icons/darkmode/change-wallet.svg'">
-              </ion-col>
-            </ion-row>
-          </ion-col>
-          <ion-col size="12" class="wallets-col">
-            <div *ngIf="masterWalletWithNetworkWalletList.length == 0" (click)="openWallet()" class="no-wallet">
-              {{ 'launcher.touch-to-create-wallet' | translate }}
-            </div>
-
-            <!-- Wallets list - horizontal slide -->
-            <ion-slides pager={true} [style]="masterWalletWithNetworkWalletList.length === 0 ? 'display:gone':''"
-              #walletsSlider [options]="walletsSlideOpts" (ionSlideDidChange)="onWalletWidgetSlideChanged()">
-              <ion-slide *ngFor="let masterWalletMap of masterWalletWithNetworkWalletList">
-                <div class="wallet-widget-row ripple ion-activatable" [ngStyle]="
-        {
-            'background-image': masterWalletMap.masterWallet.theme ?
-            'url(' + masterWalletMap.masterWallet.theme.background + ')' :
-            'url(/assets/wallet/cards/maincards/card-purple.svg)'
-        }">
-                  <ion-row class="card-label-row" (click)="openWallet()">
-                    <ion-row class="top-row">
-                      <ion-col size="12">
-                        <div class="wallet-name">{{ masterWalletMap.masterWallet.name }}</div>
-                      </ion-col>
-                    </ion-row>
-                    <div *ngIf="!masterWalletMap.networkWallet" class="unsupported-wallet">
-                      {{ 'wallet.unsupported-on-network' | translate:{network:
-                      walletNetworkService.activeNetwork.value.name} }}
-                    </div>
-                    <div *ngIf="masterWalletMap.networkWallet">
-                      <div class="total">{{ 'wallet.total-amount' | translate }}</div>
-                      <div *ngIf="!currencyService.useCurrency" class="balance">
-                        {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalance(),
-                        masterWalletMap.networkWallet.getDecimalPlaces()) }}
-                        {{ masterWalletMap.networkWallet.getDisplayTokenName() }}
-                      </div>
-                      <div *ngIf="currencyService.useCurrency" class="balance">
-                        {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalanceInActiveCurrency()) }}
-                        {{ currencyService.selectedCurrency.symbol }}
-                      </div>
-
-                      <!-- Single address - directly copy -->
-                      <div class="single-address" *ngIf="getWalletAddresses(masterWalletMap.networkWallet).length === 1"
-                        (click)="copySingleAddressToClipboard($event, getWalletAddresses(masterWalletMap.networkWallet)[0].address)">
-                        <div class="title">{{ 'launcher.address' | translate }}</div>
-                        <div class="bottom">
-                          <div class="address">
-                            {{getReducedWalletAddress(getWalletAddresses(masterWalletMap.networkWallet)[0].address)}}
-                          </div>
-                          <img [src]="'assets/launcher/icons/dark_mode/copy.svg'">
-                        </div>
-                      </div>
-
-                      <!-- Several addresses - need to open a popup to select -->
-                      <div class="addresses" *ngIf="getWalletAddresses(masterWalletMap.networkWallet).length > 1"
-                        (click)="pickWalletAddress($event, masterWalletMap.networkWallet)">
-                        {{ 'launcher.addresses' | translate }}
-                        <img [src]="'assets/wallet/icons/darkmode/down-arrow.svg'">
-                      </div>
-                    </div>
-                  </ion-row>
-                  <ion-ripple-effect></ion-ripple-effect>
-                </div>
-              </ion-slide>
-            </ion-slides>
-          </ion-col>
-        </ion-row>
-
-        <!-- dApps -->
-        <ion-row class="dapps-row">
-          <ion-row *ngIf="recentApps.length > 0">
-            <!-- Has recent apps - category header -->
-            <ion-col size="8" class="title-col">
-              {{ 'dappbrowser.recent-apps' | translate}}
-            </ion-col>
-            <ion-col size="4" class="more-col" (click)="openDApps()">
-              {{ 'dappbrowser.all-dapps' | translate}}
-              <img
-                [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
-            </ion-col>
-          </ion-row>
-          <!-- Has recent apps - Apps list -->
-          <ion-col class="apps-col" size="12" *ngIf="recentApps.length > 0">
-            <div class="recent-app" *ngFor="let app of recentApps" (click)="openRecentApp(app)">
-              <img [src]="app.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
-              <!-- <img class="network" [src]="getRecentAppNetworkIcon(app)"> -->
-              <div class="title">{{ getShortRecentAppTitle(app)}}</div>
-            </div>
-          </ion-col>
-          <!-- No recent apps -->
-          <ion-col class="app-col no-app-col" size="12" (click)="openDApps()" *ngIf="recentApps.length == 0">
-            <ion-row class="app-row">
-              <ion-col class="left-col" size="2">
-                <div class="icon-container" id="browser">
-                  <img src="/assets/launcher/apps/app-icons/browser.svg">
-                </div>
-              </ion-col>
-              <ion-col class="mid-col" offset="0.2" size="8">
-                <ion-label>
-                  <h1>{{ 'launcher.app-browser' | translate }}</h1>
-                  <p>{{ 'launcher.app-browser-description' | translate }}</p>
-                </ion-label>
-              </ion-col>
-              <ion-col class="right-col" size="1.8">
-                <img
-                  [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
-              </ion-col>
-            </ion-row>
-          </ion-col>
-        </ion-row>
-
-        <!-- Wallet Connect -->
-        <ion-row class="wallet-connect-row" *ngIf="someWalletConnectSessionsCanBeDisplayed()"
-          (click)="showWalletConnectSessions()">
-          <img class="icon" src="assets/settings/icon/walletconnect.svg">
-          <ion-label>{{ 'launcher.active-wallet-connect-sessions' | translate }}</ion-label>
-          <ion-col *ngFor="let connector of walletConnectConnectors" class="connector-col" size="12">
-            <div class="connector"
-              *ngIf="connector.connected && connector.peerMeta && connector.peerMeta.icons && connector.peerMeta.icons.length > 0">
-              <img class="connector-logo" [src]="connector.peerMeta.icons[0]"
-                (error)="connector.peerMeta.icons[0]='assets/settings/icon/walletconnect.svg'" />
-              <p>{{ connector.peerMeta.name }}</p>
-            </div>
-          </ion-col>
-        </ion-row>
-
-        <ion-row class="packets-row ion-activatable ripple" *ngIf="publicRedPackets.length > 0"
-          (click)="viewPublicRedPackets()">
-          <div class="icon-col">
-            <img src="assets/redpackets/images/packets.png" />
-          </div>
-          <div class="main-col">
-            <div class="title">{{ 'redpackets.red-packets' | translate }}</div>
-            <div class="subtitle">
-              {{ 'launcher.n-red-packets-to-grab' | translate: { packets: publicRedPackets.length } }}
-            </div>
-          </div>
-          <div class="right-col">
-            <img src="assets/launcher/icons/right-arrow-white.svg" />
-          </div>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-row>
+        <widget-container name="main"></widget-container>
 
         <!-- Dynamic categories -->
-        <div *ngFor="let category of appService.runnableApps">
+        <!-- <div *ngFor="let category of appService.runnableApps">
           <ion-row *ngIf="category.shouldBeDisplayed()" class="category-row">
             <ion-col size="12" class="title-col">
               <ion-label>{{ category.type | translate }}</ion-label>
@@ -237,31 +42,10 @@
               </ion-row>
             </ion-col>
           </ion-row>
-        </div>
-
-        <!-- Sign out -->
-        <ion-row *ngIf="getSignedInIdentity()" class="category-row logout-row ion-activatable ripple"
-          (click)="signOut()">
-          <ion-col class="app-col" size="12">
-            <ion-row class="app-row logout-row">
-              <ion-col class="left-col" size="2">
-                <div class="icon-container">
-                  <img src="/assets/launcher/apps/app-icons/logout.svg">
-                </div>
-              </ion-col>
-              <ion-col class="mid-col" offset="0.2" size="8">
-                <ion-label>
-                  <h1>{{ 'common.sign-out' | translate }}</h1>
-                </ion-label>
-              </ion-col>
-              <ion-col class="right-col" size="1.8">
-                <img
-                  [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
-              </ion-col>
-            </ion-row>
-          </ion-col>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-row>
+        </div>-->
+      </ion-slide>
+      <ion-slide>
+        <widget-container name="right"></widget-container>
       </ion-slide>
     </ion-slides>
 

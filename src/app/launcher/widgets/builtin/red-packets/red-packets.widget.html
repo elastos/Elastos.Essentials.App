@@ -1,0 +1,23 @@
+<ion-row class="widget-background category-row red-packets-row ion-activatable ripple"
+  [class.darkContainer]="theme.darkMode">
+  <ion-col class="app-col" size="12" (click)="appService.startApp(app)">
+    <ion-row class="app-row">
+      <ion-col class="left-col" size="2">
+        <div class="icon-container" [id]="app.id">
+          <img [src]="app.iconDark && theme.darkMode ? app.iconDark : app.icon">
+        </div>
+      </ion-col>
+      <ion-col class="mid-col" offset="0.2" size="8">
+        <ion-label>
+          <h1>{{ app.name }}</h1>
+          <p>{{ app.description }}</p>
+        </ion-label>
+      </ion-col>
+      <ion-col class="right-col" size="1.8">
+        <img
+          [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+      </ion-col>
+    </ion-row>
+  </ion-col>
+  <ion-ripple-effect></ion-ripple-effect>
+</ion-row>

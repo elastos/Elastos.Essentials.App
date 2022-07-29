@@ -1,0 +1,49 @@
+@import "../../widgets.scss";
+
+.packets-row {
+  width: 100% auto;
+  padding: 10px;
+  display: flex;
+  margin: 0px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
+  background: radial-gradient(48.4% 139.25% at 11.47% 50%, #9a0c0f 0%, #ad252b 0.01%, #7a070a 100%);
+  border-radius: 13px;
+
+  .icon-col {
+    position: absolute;
+    img {
+      width: 80px;
+    }
+  }
+
+  .main-col {
+    min-width: 0; // Avoid left-col to push right-col out
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 50%;
+    padding: 10px;
+    margin-left: 80px;
+    color: #fff;
+
+    .subtitle {
+      font-weight: 600;
+      font-size: 13px;
+      margin-top: 3px;
+    }
+  }
+
+  .right-col {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 11px;
+      margin-right: 10px;
+    }
+  }
+}

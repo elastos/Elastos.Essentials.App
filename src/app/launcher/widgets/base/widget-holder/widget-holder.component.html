@@ -1,8 +1,22 @@
-<div [class.darkContainer]="theme.darkMode" class="root" [class.editing]="editing">
+<div [class.darkContainer]="theme.darkMode" class="root" [class.editing]="editing" [class.selecting]="selecting">
   <div #container>
   </div>
 
-  <div class="edition" *ngIf="editing">
-    Move
+  <!-- <div class="touch-disabler" (touchstart)="disablerTouchStart($event)" *ngIf="selecting"></div> -->
+
+  <!-- Note: need to hide, not use *ngIf, to let the drag handle exist when the holder is created -->
+  <div class="edition" [class.reduced]="!editing">
+    <ion-row>
+      <ion-col size="6" class="item" (click)="deleteWidget()">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-col>
+      <ion-col size="6" class="item" #dragHandle>
+        <ion-icon name="move-outline"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <div class="selection" *ngIf="selecting" (click)="selectWidget()">
+    <ion-icon name="plus-outline"></ion-icon> Select
   </div>
 </div>

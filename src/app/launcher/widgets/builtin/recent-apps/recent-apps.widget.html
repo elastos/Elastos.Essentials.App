@@ -1,0 +1,41 @@
+<ion-row class="dapps-row widget-background" [class.darkContainer]="theme.darkMode">
+  <ion-row *ngIf="recentApps.length > 0">
+    <!-- Has recent apps - category header -->
+    <ion-col size="8" class="title-col">
+      {{ 'dappbrowser.recent-apps' | translate}}
+    </ion-col>
+    <ion-col size="4" class="more-col" (click)="openDApps()">
+      {{ 'dappbrowser.all-dapps' | translate}}
+      <img
+        [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+    </ion-col>
+  </ion-row>
+  <!-- Has recent apps - Apps list -->
+  <ion-col class="apps-col" size="12" *ngIf="recentApps.length > 0">
+    <div class="recent-app" *ngFor="let app of recentApps" (click)="openRecentApp(app)">
+      <img [src]="app.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
+      <!-- <img class="network" [src]="getRecentAppNetworkIcon(app)"> -->
+      <div class="title">{{ getShortRecentAppTitle(app)}}</div>
+    </div>
+  </ion-col>
+  <!-- No recent apps -->
+  <ion-col class="app-col no-app-col" size="12" (click)="openDApps()" *ngIf="recentApps.length == 0">
+    <ion-row class="app-row">
+      <ion-col class="left-col" size="2">
+        <div class="icon-container" id="browser">
+          <img src="/assets/launcher/apps/app-icons/browser.svg">
+        </div>
+      </ion-col>
+      <ion-col class="mid-col" offset="0.2" size="8">
+        <ion-label>
+          <h1>{{ 'launcher.app-browser' | translate }}</h1>
+          <p>{{ 'launcher.app-browser-description' | translate }}</p>
+        </ion-label>
+      </ion-col>
+      <ion-col class="right-col" size="1.8">
+        <img
+          [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>
