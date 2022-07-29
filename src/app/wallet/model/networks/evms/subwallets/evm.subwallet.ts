@@ -191,7 +191,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
     transactionInfo.amount = new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes);
     // There is no gasUsed and gasPrice, only gas (fee) on fusion network.
-    if (transaction.gasUsed.length > 0 && transaction.gasPrice.length > 0) {
+    // There is only gasUesd, no gasPride for some internal transactions.
+    if (transaction.gasUsed?.length > 0 && transaction.gasPrice?.length > 0) {
       transactionInfo.fee = new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(this.tokenAmountMulipleTimes).toFixed();
     } else if (transaction.gas.length > 0) {
       transactionInfo.fee = new BigNumber(transaction.gas).dividedBy(this.tokenAmountMulipleTimes).toFixed();
