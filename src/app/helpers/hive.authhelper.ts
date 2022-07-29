@@ -148,7 +148,7 @@ export class InternalHiveAuthHelper {
     return new Promise(async (resolve, reject) => {
       // Parse, but verify on chain that this JWT is valid first
       try {
-        let parseResult = await new JWTParserBuilder().build().parse(authChallengeJwttoken);
+        let parseResult = await (new JWTParserBuilder()).setAllowedClockSkewSeconds(300).build().parse(authChallengeJwttoken);
         let body = parseResult.getBody();
 
         // The request JWT must contain iss and nonce fields
