@@ -37,8 +37,8 @@ export class CoinListPage implements OnInit, OnDestroy {
     masterWallet: MasterWallet = null;
     networkWallet: AnyNetworkWallet = null;
     private network: EVMNetwork;
-    coinList: EditableCoinInfo[] = null;
-    newCoinList: EditableCoinInfo[] = null;
+    coinList: EditableCoinInfo[] = [];
+    newCoinList: EditableCoinInfo[] = [];
     coinListCache = {};
     payPassword = "";
     singleAddress = false;
@@ -136,25 +136,29 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     async init() {
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletManager.activeMasterWalletId);
-        this.network = (<EVMNetwork>this.networkWallet.network);
-        this.masterWallet = this.networkWallet.masterWallet;
+        if (!this.networkWallet) return;
 
-        this.updateSubscription = this.events.subscribe("error:update", () => {
-            this.currentCoin["open"] = false;
-        });
-        this.destroySubscription = this.events.subscribe("error:destroySubWallet", () => {
-            this.currentCoin["open"] = true;
-        });
-        this.coinAddSubscription = this.network.onCoinAdded.subscribe(() => {
-            void this.refreshCoinList();
-        });
-        this.coinDeleteSubscription = this.network.onCoinDeleted.subscribe(() => {
-            void this.refreshCoinList();
-        });
+        this.masterWallet = this.networkWallet.masterWallet;
+        this.network = (<EVMNetwork>this.networkWallet.network);
+        // TODO: Navigate to this page from a notification, and maybe the active network does not support ERC20 Coins.
+        if (this.network.supportsERC20Coins()) {
+          this.updateSubscription = this.events.subscribe("error:update", () => {
+              this.currentCoin["open"] = false;
+          });
+          this.destroySubscription = this.events.subscribe("error:destroySubWallet", () => {
+              this.currentCoin["open"] = true;
+          });
+          this.coinAddSubscription = this.network.onCoinAdded.subscribe(() => {
+              void this.refreshCoinList();
+          });
+          this.coinDeleteSubscription = this.network.onCoinDeleted.subscribe(() => {
+              void this.refreshCoinList();
+          });
+
+          await this.refreshCoinList();
+        }
 
         void this.native.hideLoading();
-
-        await this.refreshCoinList();
     }
 
     private async refreshCoinList() {
@@ -168,10 +172,14 @@ export class CoinListPage implements OnInit, OnDestroy {
 
         this.sortCoinList();
 
+        this.newCoinList = [];
         const lastAccessTime = this.network.getLastAccessTime();
-        this.newCoinList = this.coinList.filter((coin) => {
+        let newCoins = this.coinList.filter((coin) => {
             return (coin.coin.getCreatedTime() > lastAccessTime)
         })
+        if (newCoins) {
+          this.newCoinList = newCoins;
+        }
 
         const timestamp = (new Date()).valueOf();
         this.network.updateAccessTime(timestamp);
