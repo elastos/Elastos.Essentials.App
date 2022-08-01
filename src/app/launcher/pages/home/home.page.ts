@@ -151,6 +151,13 @@ export class HomePage implements OnInit {
     this.widgetsEditionModeSub = this.widgetsService.editionMode.subscribe(editionMode => {
       // Lock the slider during edition to avoid horizontal scrolling
       void this.widgetsSlides.lockSwipes(editionMode);
+
+      // When the mode changes to edition, the active slide content will get higher
+      // as new content is shown. We need to wait for this content (invisible widgets) to be shown then
+      // force a recomputation of the slider height, otherwiser the user can't scroll down.
+      setTimeout(() => {
+        void this.widgetsSlides.updateAutoHeight(0);
+      }, 500);
     });
 
     //Logger.log("launcher", "Launcher home screen will enter completed")

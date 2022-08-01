@@ -7,7 +7,7 @@ import { randomHex } from 'web3-utils';
 import { WidgetContainerComponent } from '../base/widget-container/widget-container.component';
 import { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
 import { Widget } from '../base/widget.interface';
-import { WidgetContainerState, WidgetState } from '../base/widgetcontainerstate';
+import { BuiltInWidgetType, WidgetContainerState, WidgetState } from '../base/widgetcontainerstate';
 import { WidgetsBuilder } from './widgets.builder';
 
 const PERSISTENCE_CONTEXT = "launcher-widget";
@@ -23,6 +23,7 @@ const builtInWidgets: WidgetState[] = [
     { category: "builtin", builtInType: "contacts" },
     { category: "builtin", builtInType: "red-packets" },
     { category: "builtin", builtInType: "hive" },
+    { category: "builtin", builtInType: "discover-dapps" },
     { category: "builtin", builtInType: "new-red-packets" },
     { category: "builtin", builtInType: "backup-identity" },
 ];
@@ -53,9 +54,9 @@ export class WidgetsService {
     ) {
         WidgetsService.instance = this;
         // TMP DEBUG
-        /* void this.saveContainerState("left", {
-            widgets: []
-        }); */
+        /* void this.deleteContainerState("left");
+        void this.deleteContainerState("right");
+        void this.deleteContainerState("main"); */
     }
 
     public getAvailableBuiltInWidgets(): WidgetState[] {
@@ -82,11 +83,8 @@ export class WidgetsService {
         let state = <WidgetContainerState>await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, PERSISTENCE_CONTEXT, key, null);
 
         if (!state) {
-            // TODO: generate and save a default configuration for the default container layout.
-            // TEMP: just return empty list
-            return {
-                widgets: []
-            }
+            // Generate and save a default configuration for the default container layout, if this is a well known default container name
+            state = await this.generateDefaultContainerState(widgetContainerName);
         }
 
         return state;
@@ -95,6 +93,11 @@ export class WidgetsService {
     private async saveContainerState(widgetContainerName: string, state: WidgetContainerState): Promise<void> {
         const key = "widget-container-state-" + widgetContainerName;
         await this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, PERSISTENCE_CONTEXT, key, state);
+    }
+
+    private async deleteContainerState(widgetContainerName: string): Promise<void> {
+        const key = "widget-container-state-" + widgetContainerName;
+        await this.globalStorageService.deleteSetting(DIDSessionsStore.signedInDIDString, PERSISTENCE_CONTEXT, key);
     }
 
     /**
@@ -130,11 +133,7 @@ export class WidgetsService {
         if (!forSelection)
             insertAtTop = true;
 
-        // Clone the template state to make sure we don't edit its fields.
-        let newWidgetState: WidgetState = Object.assign({}, widgetStateConfig);
-
-        // Assign a unique ID
-        newWidgetState.id = randomHex(8);
+        let newWidgetState = this.createWidgetState(widgetStateConfig);
 
         let { dragRef, widgetComponentInstance, widgetHolderComponentRef } = await WidgetsBuilder.appendWidgetFromState(
             widgetContainer.name,
@@ -168,6 +167,26 @@ export class WidgetsService {
         }
 
         return { dragRef, widgetHolderComponentRef };
+    }
+
+    /**
+     * Creates a new widget state with a unique ID, based on a widget state config/
+     */
+    private createWidgetState(widgetStateConfig: WidgetState): WidgetState {
+        // Clone the template state to make sure we don't edit its fields.
+        let newWidgetState: WidgetState = Object.assign({}, widgetStateConfig);
+
+        // Assign a unique ID
+        newWidgetState.id = randomHex(8);
+
+        return newWidgetState;
+    }
+
+    private createBuiltInWidgetState(builtInType: BuiltInWidgetType): WidgetState {
+        return this.createWidgetState({
+            category: "builtin",
+            builtInType
+        });
     }
 
     /**
@@ -219,5 +238,37 @@ export class WidgetsService {
         for (let instance of this.componentsInstances) {
             await instance.widget.onWidgetDeinit?.();
         }
+    }
+
+    private generateDefaultContainerState(widgetContainerName: string): WidgetContainerState {
+        let widgets: WidgetState[] = [];
+
+        switch (widgetContainerName) {
+            case "left":
+                widgets.push(this.createBuiltInWidgetState("recent-apps"));
+                widgets.push(this.createBuiltInWidgetState("wallet-connect"));
+                widgets.push(this.createBuiltInWidgetState("signout"));
+                break;
+            case "main":
+                widgets.push(this.createBuiltInWidgetState("identity"));
+                widgets.push(this.createBuiltInWidgetState("backup-identity"));
+                widgets.push(this.createBuiltInWidgetState("active-wallet"));
+                widgets.push(this.createBuiltInWidgetState("new-red-packets"));
+
+                widgets.push(this.createBuiltInWidgetState("discover-dapps"));
+                widgets.push(this.createBuiltInWidgetState("easy-bridge"));
+                widgets.push(this.createBuiltInWidgetState("red-packets"));
+
+                break;
+            case "right":
+                widgets.push(this.createBuiltInWidgetState("elastos-voting"));
+                widgets.push(this.createBuiltInWidgetState("contacts"));
+                widgets.push(this.createBuiltInWidgetState("hive"));
+                break;
+        }
+
+        return {
+            widgets
+        };
     }
 }

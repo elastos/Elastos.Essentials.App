@@ -4,12 +4,14 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
+import { GlobalDirectivesModule } from "src/app/helpers/directives/module";
 import { WidgetChooserComponent } from "./base/widget-chooser/widget-chooser.component";
 import { WidgetContainerComponent } from './base/widget-container/widget-container.component';
 import { WidgetHolderComponent } from './base/widget-holder/widget-holder.component';
 import { ActiveWalletWidget } from "./builtin/active-wallet/active-wallet.widget";
 import { BackupIdentityWidget } from "./builtin/backup-identity/backup-identity.widget";
 import { ContactsWidget } from "./builtin/contacts/contacts.widget";
+import { DiscoverDAppsWidget } from "./builtin/discover-dapps/discover-dapps.widget";
 import { EasyBridgeWidget } from "./builtin/easy-bridge/easy-bridge.widget";
 import { ElastosVotingWidget } from "./builtin/elastos-voting/elastos-voting.widget";
 import { HiveWidget } from "./builtin/hive/hive.widget";
@@ -38,14 +40,16 @@ import { WalletConnectWidget } from "./builtin/wallet-connect/wallet-connect.wid
     EasyBridgeWidget,
     ContactsWidget,
     RedPacketsWidget,
-    HiveWidget
+    HiveWidget,
+    DiscoverDAppsWidget
   ],
   imports: [
     CommonModule,
     IonicModule,
     TranslateModule,
     DragDropModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    GlobalDirectivesModule
   ],
   exports: [
     WidgetContainerComponent

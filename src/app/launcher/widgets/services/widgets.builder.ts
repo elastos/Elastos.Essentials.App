@@ -7,6 +7,7 @@ import { WidgetState } from '../base/widgetcontainerstate';
 import { ActiveWalletWidget } from '../builtin/active-wallet/active-wallet.widget';
 import { BackupIdentityWidget } from '../builtin/backup-identity/backup-identity.widget';
 import { ContactsWidget } from '../builtin/contacts/contacts.widget';
+import { DiscoverDAppsWidget } from '../builtin/discover-dapps/discover-dapps.widget';
 import { EasyBridgeWidget } from '../builtin/easy-bridge/easy-bridge.widget';
 import { ElastosVotingWidget } from '../builtin/elastos-voting/elastos-voting.widget';
 import { HiveWidget } from '../builtin/hive/hive.widget';
@@ -78,8 +79,9 @@ export class WidgetsBuilder {
                 case "contacts": widgetComponentClass = ContactsWidget; break;
                 case "red-packets": widgetComponentClass = RedPacketsWidget; break;
                 case "hive": widgetComponentClass = HiveWidget; break;
+                case "discover-dapps": widgetComponentClass = DiscoverDAppsWidget; break;
                 default:
-                    Logger.log("widgets", `Unhandled builtin widget type ${widgetState.builtInType}`);
+                    Logger.warn("widgets", `Unhandled builtin widget type ${widgetState.builtInType}`);
             }
 
             let component = holder.instance.container.createComponent<typeof widgetComponentClass>(widgetComponentClass);

@@ -32,7 +32,7 @@ export class ElastosVotingWidget implements Widget {
   onWidgetInit(): Promise<void> {
     this.runnableApps = {
       type: 'launcher.elastos-voting',
-      shouldBeDisplayed: () => this.walletNetworkService.isActiveNetworkElastos(),
+      shouldBeDisplayed: () => this.walletNetworkService.isActiveNetworkElastos(), // Deprecated - unused
       apps: [
         {
           id: 'dpos',

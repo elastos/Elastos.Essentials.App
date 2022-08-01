@@ -10,7 +10,8 @@ export type BuiltInWidgetType =
   "easy-bridge" |
   "contacts" |
   "red-packets" |
-  "hive";
+  "hive" |
+  "discover-dapps";
 
 export type WidgetState = {
   id?: string; // Unique widget ID generated when first created. Used to uniquely identity (eg deletions) this widget.
