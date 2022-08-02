@@ -633,8 +633,10 @@ export class GlobalPublicationService {
     /**
      * Publish the given DID Request.
      */
-    public publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
-        return this.manager.publishDIDFromRequest(didString, payloadObject, memo, showBlockingLoader, parentIntentId);
+    public async publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {
+      // TODO: Identiy will showLoading when publish did. we can improve it.
+      await this.globalNativeService.hideLoading();
+      return this.manager.publishDIDFromRequest(didString, payloadObject, memo, showBlockingLoader, parentIntentId);
     }
 
     /**
@@ -651,8 +653,7 @@ export class GlobalPublicationService {
                 // Callback called by the DID SDK when trying to publish a DID.
                 Logger.log("publicationservice", "Create ID transaction callback is being called", payload, memo);
                 const payloadAsJson = JSON.parse(payload);
-                // TODO: Identiy will showLoading when publish did. we can improve it.
-                await this.globalNativeService.hideLoading();
+
                 await this.publishDIDFromRequest(didString, payloadAsJson, memo, showBlockingLoader, parentIntentId);
                 resolve();
             });
@@ -694,8 +695,6 @@ export class GlobalPublicationService {
                             // Callback called by the DID SDK when trying to publish a DID.
                             Logger.log("publicationservice", "Create ID transaction callback is being called", payload, memo);
                             const payloadAsJson = JSON.parse(payload);
-                            // TODO: Identiy will showLoading when publish did. we can improve it.
-                            await publicationService.globalNativeService.hideLoading();
                             await publicationService.publishDIDFromRequest(didString, payloadAsJson, memo, showBlockingLoader, parentIntentId);
                             resolve();
                         }

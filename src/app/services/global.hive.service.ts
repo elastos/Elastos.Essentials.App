@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SubscriptionInfo, Vault, VaultInfo, VaultSubscription } from '@elastosfoundation/hive-js-sdk';
+import { AppContext, SubscriptionInfo, Vault, VaultInfo, VaultSubscription } from '@elastosfoundation/hive-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from "rxjs";
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
@@ -103,6 +103,12 @@ export class GlobalHiveService extends GlobalService {
   }
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    this.vaultStatus.next({
+      checkState: VaultStatusState.NOT_CHECKED,
+      vaultInfo: null,
+      publishedInfo: null
+    });
+
     // Wait a moment then check active user's vault status and get things ready to use.
     runDelayed(() => {
       void this.retrieveVaultStatus();
@@ -298,12 +304,6 @@ export class GlobalHiveService extends GlobalService {
 
     let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
 
-    this.vaultStatus.next({
-      checkState: VaultStatusState.NOT_CHECKED,
-      vaultInfo: null,
-      publishedInfo: null
-    });
-
     // Check if we can find an existing vault provider address on DID chain for this user.
     Logger.log("GlobalHiveService", "Retrieving vault of current user's DID " + signedInDID);
     try {
@@ -386,11 +386,11 @@ export class GlobalHiveService extends GlobalService {
       }
 
       let publicationStarted = await this.publishVaultProviderToIDChain(providerName, vaultAddress);
-
-      // TODO: How to update the vault status?
-      // It will take a few minutes to take effect.
-      // if (publicationStarted)
-      //   await this.retrieveVaultStatus()
+      if (publicationStarted) {
+        // Force update the provider address.
+        await AppContext.getProviderAddress(this.didSessions.getSignedInIdentity().didString, null, true);
+        void this.retrieveVaultStatus();
+      }
 
       return publicationStarted;
     }

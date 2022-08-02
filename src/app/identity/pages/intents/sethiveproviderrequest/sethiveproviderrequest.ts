@@ -5,8 +5,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { SetHiveProviderIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
+import { Native } from 'src/app/identity/services/native';
 import { Logger } from 'src/app/logger';
-import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AuthService } from '../../../services/auth.service';
@@ -38,7 +38,7 @@ export class SetHiveProviderRequestPage {
     public profileService: ProfileService,
     public theme: GlobalThemeService,
     private intentService: IntentReceiverService,
-    private globalHiveService: GlobalHiveService,
+    private native: Native,
     private globalPublicationService: GlobalPublicationService
   ) {
   }
@@ -75,6 +75,8 @@ export class SetHiveProviderRequestPage {
     void AuthService.instance.checkPasswordThenExecute(async () => {
       let password = AuthService.instance.getCurrentUserPassword();
 
+      await this.native.showLoading();
+
       // Create the main application profile credential
       await this.addOrUpdateService(password);
 
@@ -94,6 +96,7 @@ export class SetHiveProviderRequestPage {
           void this.sendIntentResponse('error');
         }
       });
+
       await this.didService.getActiveDid().getLocalDIDDocument().publish(AuthService.instance.getCurrentUserPassword(), this.receivedIntent.intentId);
     }, () => {
       // Cancelled
@@ -102,6 +105,8 @@ export class SetHiveProviderRequestPage {
 
   async sendIntentResponse(status: string, navigateBack = true) {
     this.intentService.clearOnGoingIntentId();
+
+    await this.native.hideLoading();
 
     this.alreadySentIntentResponce = true;
     // Send the intent response as everything is completed
