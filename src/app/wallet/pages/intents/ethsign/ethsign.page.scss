@@ -217,6 +217,15 @@
     }
 }
 
+.warning {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  color: darkorange
+}
+
 .dark-container {
     background-image: url("/assets/wallet/background/darkmode/intent.svg");
 

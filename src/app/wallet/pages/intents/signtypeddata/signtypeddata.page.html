@@ -1,6 +1,9 @@
 <ion-content class="ion-text-center">
   <app-titlebar title=""></app-titlebar>
-  <ion-grid class="container" [class.dark-container]="theme.darkMode">
+  <div class="warning" *ngIf="!evmSubWallet">
+    <p>{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
+  </div>
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="evmSubWallet">
     <!-- CARD HEADER -->
     <div>
       <ion-card>

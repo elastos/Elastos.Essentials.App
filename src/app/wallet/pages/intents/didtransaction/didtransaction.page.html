@@ -6,8 +6,11 @@
             <ion-card-title>{{ 'wallet.didtransaction-publish-identity' | translate }}</ion-card-title>
             <ion-card-subtitle>{{ 'wallet.didtransaction-transaction-fee' | translate }}</ion-card-subtitle>
         </ion-card>
-        <div class="msg-container">
+        <div class="msg-container" *ngIf="networkWallet">
             <p>{{ 'wallet.didtransaction-intro' | translate }}</p>
+        </div>
+        <div class="msg-container" *ngIf="!networkWallet">
+            <p class="warning">{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
         </div>
 
         <ion-row class="item-row ripple ion-activatable" *ngIf="fee">

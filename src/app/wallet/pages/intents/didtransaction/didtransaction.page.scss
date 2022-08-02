@@ -103,13 +103,17 @@
     .msg-container {
         padding: 20px 20px 5px;
 
-        p {
+        p, .warning {
             font-size: 16px;
             font-weight: 600;
             line-height: 1.25;
             text-align: center;
             color: #2e2f4e;
             margin: 0 30px;
+        }
+
+        .warning {
+          color: darkorange
         }
     }
 

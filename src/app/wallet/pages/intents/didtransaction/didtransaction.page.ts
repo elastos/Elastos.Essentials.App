@@ -33,6 +33,7 @@ import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { IdentityTransactionBuilder } from 'src/app/wallet/model/networks/elastos/evms/eid/tx-builders/identity.txbuilder';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -47,7 +48,7 @@ import { WalletService } from '../../../services/wallet.service';
 export class DidTransactionPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    private networkWallet: AnyNetworkWallet;
+    public networkWallet: AnyNetworkWallet;
     private sourceSubwallet: ElastosEVMSubWallet;
     private identityTxBuilder: IdentityTransactionBuilder;
     private intentTransfer: IntentTransfer;
@@ -63,6 +64,7 @@ export class DidTransactionPage implements OnInit {
 
     public showEditGasPrice = false;
 
+    public currentNetworkName = ''
 
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -98,7 +100,7 @@ export class DidTransactionPage implements OnInit {
     }
 
     ionViewDidEnter() {
-      switch (this.networkWallet.masterWallet.type) {
+      switch (this.networkWallet && this.networkWallet.masterWallet.type) {
         case WalletType.MULTI_SIG_EVM_GNOSIS:
         case WalletType.MULTI_SIG_STANDARD:
           // TODO: reject esctransaction if multi sign (show error popup)
@@ -119,11 +121,14 @@ export class DidTransactionPage implements OnInit {
         this.subWalletId = this.coinTransferService.subWalletId;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
+        if (this.networkWallet) {
+          this.sourceSubwallet = this.networkWallet.getSubWallet(this.subWalletId) as ElastosEVMSubWallet;
+          this.identityTxBuilder = new IdentityTransactionBuilder(this.sourceSubwallet.networkWallet);
 
-        this.sourceSubwallet = this.networkWallet.getSubWallet(this.subWalletId) as ElastosEVMSubWallet;
-        this.identityTxBuilder = new IdentityTransactionBuilder(this.sourceSubwallet.networkWallet);
-
-        void this.estimateGas();
+          void this.estimateGas();
+        } else {
+          this.currentNetworkName = WalletNetworkService.instance.activeNetwork.value.name;
+        }
     }
 
     /**
@@ -164,7 +169,7 @@ export class DidTransactionPage implements OnInit {
     }
 
     goTransaction() {
-        if (this.feeDisplay)
+        if (this.networkWallet && this.feeDisplay)
             void this.checkValue();
     }
 

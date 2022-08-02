@@ -39,6 +39,7 @@ import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -53,8 +54,8 @@ import { WalletService } from '../../../services/wallet.service';
 export class EscTransactionPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private networkWallet: AnyNetworkWallet = null;
-  private evmSubWallet: AnyMainCoinEVMSubWallet = null;
+  public networkWallet: AnyNetworkWallet = null;
+  public evmSubWallet: AnyMainCoinEVMSubWallet = null;
   private intentTransfer: IntentTransfer;
   public balance: BigNumber; // ELA
   public gasPrice: string;
@@ -68,6 +69,8 @@ export class EscTransactionPage implements OnInit {
   private ethTransactionSpeedupSub: Subscription;
 
   private alreadySentIntentResponce = false;
+
+  public currentNetworkName = ''
 
   // Titlebar
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -107,7 +110,7 @@ export class EscTransactionPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    switch (this.networkWallet.masterWallet.type) {
+    switch (this.networkWallet && this.networkWallet.masterWallet.type) {
       case WalletType.MULTI_SIG_EVM_GNOSIS:
       case WalletType.MULTI_SIG_STANDARD:
         // TODO: reject esctransaction if multi sign (show error popup)
@@ -130,12 +133,16 @@ export class EscTransactionPage implements OnInit {
   }
 
   async init() {
+    Logger.log("wallet", "ESC Transaction params", this.coinTransferService.payloadParam);
+    this.currentNetworkName = WalletNetworkService.instance.activeNetwork.value.name;
+
     this.intentTransfer = this.coinTransferService.intentTransfer;
     this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
-
-    Logger.log("wallet", "ESC Transaction params", this.coinTransferService.payloadParam);
+    if (!this.networkWallet) return;
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
+    if (!this.evmSubWallet) return;
+
     await this.evmSubWallet.updateBalance()
     this.balance = await this.evmSubWallet.getDisplayBalance();
     this.gasPrice = this.coinTransferService.payloadParam.gasPrice;

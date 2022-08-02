@@ -70,7 +70,7 @@ export const it = {
         "change-wallet": "Cambia portafoglio",
         "wallets": "Portafogli",
         "explore-your-wallets": "Esplora i tuoi portafogli",
-        "wallet-unsupported-on-network": "This wallet is unsupported on the {{ network }} network. Please select another network or wallet.",
+        "wallet-unsupported-on-network": "This wallet is unsupported on the {{ network }} network",
         "wallet-connect-to-ledger": "Please connect the Ledger Nano X",
 
         /********************************************** General Settings Screen ***********************************************/

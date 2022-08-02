@@ -70,7 +70,7 @@ export const zh = {
                 "change-wallet": "切换钱包",
                 "wallets": "您的钱包",
                 "explore-your-wallets": "探索您的钱包",
-                "wallet-unsupported-on-network": "此钱包不支持 {{ network }} 网络，请选择其它网络或钱包。",
+                "wallet-unsupported-on-network": "此钱包不支持 {{ network }} 网络",
                 "wallet-connect-to-ledger": '请连接 Ledger Nano X',
 
                 /********************************************** General Settings Screen ***********************************************/

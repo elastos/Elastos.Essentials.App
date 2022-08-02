@@ -1,7 +1,10 @@
 <ion-content class="ion-text-center">
   <app-titlebar title="text-vote-crcouncil"></app-titlebar>
-  <ion-spinner *ngIf="!transactionInfo"></ion-spinner>
-  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="transactionInfo">
+  <div class="warning" *ngIf="!evmSubWallet">
+    <p>{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
+  </div>
+  <ion-spinner *ngIf="!transactionInfo && evmSubWallet"></ion-spinner>
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="transactionInfo && networkWallet">
     <!-- CARD HEADER -->
     <div [ngSwitch]="transactionInfo.type">
       <ion-card *ngSwitchCase="'erc20_token_approve'">

@@ -35,6 +35,7 @@ import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subw
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
@@ -51,7 +52,7 @@ export class PersonalSignPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private networkWallet: AnyNetworkWallet = null;
-  private evmSubWallet: AnyMainCoinEVMSubWallet = null;
+  public evmSubWallet: AnyMainCoinEVMSubWallet = null;
   public showEditGasPrice = false;
   public hasOpenETHSCChain = false;
 
@@ -59,6 +60,8 @@ export class PersonalSignPage implements OnInit {
   private payloadToBeSigned: string;
 
   private alreadySentIntentResponce = false;
+
+  public currentNetworkName = ''
 
   // Titlebar
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -100,7 +103,7 @@ export class PersonalSignPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    switch (this.networkWallet.masterWallet.type) {
+    switch (this.networkWallet && this.networkWallet.masterWallet.type) {
       case WalletType.MULTI_SIG_EVM_GNOSIS:
       case WalletType.MULTI_SIG_STANDARD:
         // TODO: reject esctransaction if multi sign (show error popup)
@@ -118,7 +121,11 @@ export class PersonalSignPage implements OnInit {
   }
 
   async init() {
+    this.currentNetworkName = WalletNetworkService.instance.activeNetwork.value.name;
+
     this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
+    if (!this.networkWallet) return;
+
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
 
     const navigation = this.router.getCurrentNavigation();
