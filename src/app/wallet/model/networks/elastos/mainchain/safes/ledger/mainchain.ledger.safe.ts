@@ -1,3 +1,6 @@
+import { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, NormalProposalOwnerInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo } from "@elastosfoundation/wallet-js-sdk";
+import { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
+import { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
 import { ELATransactionCoder } from "src/app/helpers/ela/ela.transaction.coder";
 import { ELATransactionFactory } from "src/app/helpers/ela/ela.transaction.factory";
 import { ELATransactionSigner } from "src/app/helpers/ela/ela.transaction.signer";
@@ -49,28 +52,28 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
       return Promise.resolve([this.elaAddress]);
     }
     else {
-      return Promise.resolve(null);
+      return null;
     }
   }
 
-  public getOwnerAddress(): Promise<string> {
+  public getOwnerAddress(): string {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public getOwnerDepositAddress(): Promise<string> {
+  public getOwnerDepositAddress(): string {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public getOwnerPublicKey(): Promise<string> {
+  public getOwnerPublicKey(): string {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public getPublicKeys(start: number, count: number, internal: boolean): Promise<string[]> {
+  public getPublicKeys(start: number, count: number, internal: boolean): string[] {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public async createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
@@ -84,242 +87,242 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
 
   public createVoteTransaction(inputs: UtxoForSDK[], voteContent: VoteContent[], fee: string, memo: string): Promise<any> {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public createDepositTransaction(inputs: UtxoForSDK[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public CRCouncilMemberClaimNodeDigest(payload: string) {
+  public CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalOwnerDigest(payload: string) {
+  public proposalOwnerDigest(payload: NormalProposalOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalCRCouncilMemberDigest(payload: string) {
+  public proposalCRCouncilMemberDigest(payload: NormalProposalOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createProposalTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createProposalChangeOwnerTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createProposalChangeOwnerTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public terminateProposalOwnerDigest(payload: string) {
+  public terminateProposalOwnerDigest(payload: TerminateProposalOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public terminateProposalCRCouncilMemberDigest(payload: string) {
+  public terminateProposalCRCouncilMemberDigest(payload: TerminateProposalOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createTerminateProposalTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createTerminateProposalTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalSecretaryGeneralElectionDigest(payload: string) {
+  public proposalSecretaryGeneralElectionDigest(payload: SecretaryElectionInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload: string) {
+  public proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload: SecretaryElectionInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createSecretaryGeneralElectionTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createSecretaryGeneralElectionTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalChangeOwnerDigest(payload: string) {
+  public proposalChangeOwnerDigest(payload: ChangeProposalOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalChangeOwnerCRCouncilMemberDigest(payload: string) {
+  public proposalChangeOwnerCRCouncilMemberDigest(payload: ChangeProposalOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalTrackingSecretaryDigest(payload: string) {
+  public proposalTrackingSecretaryDigest(payload: CRCProposalTrackingInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createProposalTrackingTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createProposalTrackingTransaction(inputs: UtxoForSDK[], payload: CRCProposalTrackingInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalReviewDigest(payload: string) {
+  public proposalReviewDigest(payload: CRCProposalReviewInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createProposalReviewTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createProposalReviewTransaction(inputs: UtxoForSDK[], payload: CRCProposalReviewInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalTrackingOwnerDigest(payload: string) {
+  public proposalTrackingOwnerDigest(payload: CRCProposalTrackingInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public proposalWithdrawDigest(payload: string) {
+  public proposalWithdrawDigest(payload: CRCProposalWithdrawInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createProposalWithdrawTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createProposalWithdrawTransaction(inputs: UtxoForSDK[], payload: CRCProposalWithdrawInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public reserveCustomIDOwnerDigest(payload: string) {
+  public reserveCustomIDOwnerDigest(payload: ReserveCustomIDOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public reserveCustomIDCRCouncilMemberDigest(payload: string) {
+  public reserveCustomIDCRCouncilMemberDigest(payload: ReserveCustomIDOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createReserveCustomIDTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createReserveCustomIDTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public receiveCustomIDOwnerDigest(payload: string) {
+  public receiveCustomIDOwnerDigest(payload: ReceiveCustomIDOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public receiveCustomIDCRCouncilMemberDigest(payload: string) {
+  public receiveCustomIDCRCouncilMemberDigest(payload: ReceiveCustomIDOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createReceiveCustomIDTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createReceiveCustomIDTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public changeCustomIDFeeOwnerDigest(payload: string) {
+  public changeCustomIDFeeOwnerDigest(payload: ChangeCustomIDFeeOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public changeCustomIDFeeCRCouncilMemberDigest(payload: string) {
+  public changeCustomIDFeeCRCouncilMemberDigest(payload: ChangeCustomIDFeeOwnerInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createChangeCustomIDFeeTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createChangeCustomIDFeeTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public registerSidechainOwnerDigest(payload: string) {
+  public registerSidechainOwnerDigest(payload: RegisterSidechainProposalInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public registerSidechainCRCouncilMemberDigest(payload: string) {
+  public registerSidechainCRCouncilMemberDigest(payload: RegisterSidechainProposalInfo) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createRegisterSidechainTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createRegisterSidechainTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createRegisterProducerTransaction(inputs: UtxoForSDK[], payload: string, amount: string, fee: string, memo: string) {
+  public createRegisterProducerTransaction(inputs: UtxoForSDK[], payload: ProducerInfoJson, amount: string, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createCancelProducerTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createCancelProducerTransaction(inputs: UtxoForSDK[], payload: CancelProducerInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createUpdateProducerTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createUpdateProducerTransaction(inputs: UtxoForSDK[], payload: ProducerInfoJson, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any> {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public generateCancelProducerPayload(publicKey: string, payPasswd: string): Promise<any> {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public createRetrieveDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public getCRDepositAddress() {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public generateCRInfoPayload(publicKey: string, did: string, nickname: string, url: string, location: number) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public generateUnregisterCRPayload(CID: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createRegisterCRTransaction(inputs: UtxoForSDK[], payload: string, amount: string, fee: string, memo: string) {
+  public createRegisterCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, amount: string, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createUnregisterCRTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createUnregisterCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createUpdateCRTransaction(inputs: UtxoForSDK[], payload: string, fee: string, memo: string) {
+  public createUpdateCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public createRetrieveCRDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
-  public createCRCouncilMemberClaimNodeTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+  public createCRCouncilMemberClaimNodeTransaction(inputs: UtxoForSDK[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
     // TODO: Do not support.
-    return Promise.resolve(null);
+    return null;
   }
 
   public async signTransaction(subWallet: AnySubWallet, tx: any, transfer: Transfer): Promise<SignTransactionResult> {

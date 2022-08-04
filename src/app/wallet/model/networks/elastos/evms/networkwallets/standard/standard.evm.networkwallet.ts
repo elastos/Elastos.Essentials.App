@@ -3,9 +3,9 @@ import { StandardEVMNetworkWallet } from "../../../../evms/networkwallets/standa
 
 export abstract class ElastosStandardEVMNetworkWallet extends StandardEVMNetworkWallet<ElastosMainChainWalletNetworkOptions> {
   public async initialize(): Promise<void> {
-    // NOTE : already done by StandardEVMNetworkWallet. But should move to safes 
-    //if (!await SPVService.instance.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
-    //  return;
+    // NOTE : already done by StandardEVMNetworkWallet. But should move to safes
+    //if (!await WalletJSSDKHelper.maybeCreateStandardWalletFromJSWallet(this.masterWallet))
+    // return;
 
     await super.initialize();
   }

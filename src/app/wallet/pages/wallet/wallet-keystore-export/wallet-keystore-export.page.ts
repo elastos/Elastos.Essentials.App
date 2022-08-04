@@ -8,7 +8,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
+import { WalletJSSDKHelper } from 'src/app/wallet/model/networks/elastos/wallet.jssdk.helper';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { WalletAccessService } from 'src/app/wallet/services/walletaccess.service';
 import { WalletEditionService } from 'src/app/wallet/services/walletedition.service';
@@ -28,7 +28,7 @@ export class KeystoreExportPage implements OnInit {
     public keystorePasswordRepeat = '';
     public masterWalletId = '';
     public hasMnemonic = true;
-    public keystore = '';
+    public keystore;
 
     constructor(
         public router: Router,
@@ -87,7 +87,7 @@ export class KeystoreExportPage implements OnInit {
 
     async export() {
         if (this.checkPassword()) {
-            this.keystore = await this.walletManager.spvBridge.exportWalletWithKeystore(jsToSpvWalletId(this.masterWalletId), this.keystorePassword, this.payPassword);
+            this.keystore = await WalletJSSDKHelper.exportKeystore(this.masterWalletId, this.keystorePassword, this.payPassword);
         }
     }
 

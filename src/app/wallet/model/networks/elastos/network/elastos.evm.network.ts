@@ -1,4 +1,4 @@
-import { SPVNetworkConfig } from "../../../../services/wallet.service";
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { CoinID } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
@@ -65,5 +65,5 @@ export abstract class ElastosEVMNetwork<WalletNetworkOptionsType extends WalletN
 
   //public abstract getMainChainID(): number;
 
-  public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig);
+  public abstract updateSPVNetworkConfig(onGoingConfig: ConfigInfo);
 }

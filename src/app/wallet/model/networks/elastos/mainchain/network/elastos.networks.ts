@@ -1,3 +1,4 @@
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { StandardCoinName } from "src/app/wallet/model/coin";
@@ -5,7 +6,6 @@ import type { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledg
 import type { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import type { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
 import { ElastosMainChainWalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
-import type { SPVNetworkConfig } from "../../../../../services/wallet.service";
 import { NetworkAPIURLType } from "../../../base/networkapiurltype";
 import type { AnyNetworkWallet } from "../../../base/networkwallets/networkwallet";
 import { ElastosNetworkBase } from "../../network/elastos.base.network";
@@ -66,7 +66,7 @@ export class ElastosMainChainMainNetNetwork extends ElastosMainChainNetworkBase 
     return -1;
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
+  public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
     onGoingConfig['ELA'] = {};
     onGoingConfig['IDChain'] = {};
   }
@@ -103,7 +103,7 @@ export class ElastosMainChainTestNetNetwork extends ElastosMainChainNetworkBase 
     return -1;
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
+  public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
     onGoingConfig['ELA'] = {};
     onGoingConfig['IDChain'] = {};
   }

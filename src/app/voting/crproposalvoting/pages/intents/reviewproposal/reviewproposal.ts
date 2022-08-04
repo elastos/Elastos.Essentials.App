@@ -127,7 +127,7 @@ export class ReviewProposalPage {
             Logger.log(App.CRPROPOSAL_VOTING, "Got review proposal payload.", payload);
 
             // Get digest
-            var digest = await this.voteService.sourceSubwallet.proposalReviewDigest(JSON.stringify(payload));
+            var digest = await this.voteService.sourceSubwallet.proposalReviewDigest(payload);
             digest = Util.reverseHexToBE(digest);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review proposal digest.", digest);
 
@@ -146,7 +146,7 @@ export class ReviewProposalPage {
             //Create transaction and send
             payload.Signature = ret.result.signature;
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
-            const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
+            const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(payload, '');
             await this.globalNative.hideLoading();
             await this.crOperations.signAndSendRawTransaction(rawTx);
         }

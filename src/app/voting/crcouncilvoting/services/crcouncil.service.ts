@@ -535,9 +535,8 @@ export class CRCouncilService {
         }
 
         try {
-            let payloadString = await this.voteService.sourceSubwallet.generateUnregisterCRPayload(this.candidateInfo.cid);
-            if (payloadString) {
-                let payload = JSON.parse(payloadString);
+            let payload : any = this.voteService.sourceSubwallet.generateUnregisterCRPayload(this.candidateInfo.cid);
+            if (payload) {
                 let signature = await this.getSignature(payload.Digest);
                 if (signature) {
                     payload.Signature = signature;
@@ -545,7 +544,7 @@ export class CRCouncilService {
                     await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
                     Logger.log('RegisterUpdatePage', 'generateUnregisterCRPayload', payload);
-                    const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(JSON.stringify(payload), "");
+                    const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(payload, "");
                     await this.globalNative.hideLoading();
 
                     let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");

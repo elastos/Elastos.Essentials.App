@@ -14,7 +14,6 @@ import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.st
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/tx-providers/transaction.types';
-import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Vote } from '../model/history.model';
 import { DPosNode } from '../model/nodes.model';
@@ -185,7 +184,8 @@ export class NodesService {
 
     async getStoredVotes() {
         this._votes = [];
-        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'dposvoting', jsToSpvWalletId(this.voteService.masterWalletId) + '-votes', []).then(data => {
+
+        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'dposvoting', this.voteService.masterWalletId + '-votes', []).then(async data => {
             if (data && data.length > 0) {
                 // filter invalid votes.
                 this._votes = data.filter(c => { return c.tx; });
@@ -198,7 +198,7 @@ export class NodesService {
     async setStoredVotes() {
         this.sortVotes();
         Logger.log('dposvoting', 'Vote history updated', this._votes);
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dposvoting", jsToSpvWalletId(this.voteService.masterWalletId) + '-votes', this._votes);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dposvoting", this.voteService.masterWalletId + '-votes', this._votes);
     }
 
     // getStoredNodes() {
@@ -239,7 +239,7 @@ export class NodesService {
         var ownerPublicKey = '';
         //The wallet imported by private key has no ELA subwallet.
         if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
-            ownerPublicKey = await this.voteService.sourceSubwallet.getOwnerPublicKey();
+            ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
         }
         this.dposInfo = {
             nickname: "",

@@ -1,3 +1,4 @@
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
@@ -5,7 +6,6 @@ import { ERC20Coin, StandardCoinName } from "src/app/wallet/model/coin";
 import type { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import type { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { PrivateKeyType, WalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
-import type { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { NetworkAPIURLType } from "../../../../base/networkapiurltype";
 import type { AnyNetworkWallet } from "../../../../base/networkwallets/networkwallet";
 import type { UniswapCurrencyProvider } from "../../../../evms/uniswap.currencyprovider";
@@ -126,8 +126,8 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
     return availableCoins;
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
-    onGoingConfig['ETHSC'] = { ChainID: 20, NetworkID: 20 };
+  public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
+    onGoingConfig['ETHSC'] = { chainID: '20', NetworkID: '20' };
   }
 }
 
@@ -164,7 +164,7 @@ export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBas
     return availableCoins;
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
-    onGoingConfig['ETHSC'] = { ChainID: 21, NetworkID: 21 };
+  public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
+    onGoingConfig['ETHSC'] = { chainID: '21', NetworkID: '21' };
   }
 }

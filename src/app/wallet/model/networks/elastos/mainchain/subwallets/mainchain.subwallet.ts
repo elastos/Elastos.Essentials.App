@@ -1,3 +1,8 @@
+import { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, EncodedTx, NormalProposalOwnerInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo } from '@elastosfoundation/wallet-js-sdk';
+import { PublickeysInfo } from '@elastosfoundation/wallet-js-sdk/typings/account/SubAccount';
+import { CancelProducerInfo } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer';
+import { ProducerInfoJson } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo';
+import { UnregisterCRPayload } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/UnregisterCR';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
@@ -484,7 +489,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     // CR
-    public CRCouncilMemberClaimNodeDigest(payload: string): Promise<string> {
+    public CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo): string {
         Logger.log('wallet', 'CRCouncilMemberClaimNodeDigest:', payload);
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).CRCouncilMemberClaimNodeDigest(payload);
@@ -885,15 +890,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return this.ownerAddress;
     }
 
-    public getOwnerDepositAddress(): Promise<string> {
+    public getOwnerDepositAddress(): string {
         return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerDepositAddress();
     }
 
-    public getOwnerPublicKey(): Promise<string> {
+    public getOwnerPublicKey(): string {
         return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerPublicKey();
     }
 
-    public getPublicKeys(start: number, count: number, internal: boolean): Promise<string[]> {
+    public getPublicKeys(start: number, count: number, internal: boolean): string[] | PublickeysInfo {
         return (this.networkWallet.safe as any as ElastosMainChainSafe).getPublicKeys(start, count, internal);
     }
 
@@ -1247,15 +1252,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     //proposal transaction functions
     //
 
-    public proposalOwnerDigest(payload: string): Promise<string> {
+    public proposalOwnerDigest(payload: NormalProposalOwnerInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalOwnerDigest(payload);
     }
 
-    public proposalCRCouncilMemberDigest(payload: string): Promise<string> {
+    public proposalCRCouncilMemberDigest(payload: NormalProposalOwnerInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalCRCouncilMemberDigest(payload);
     }
 
-    public async createProposalTransaction(payload: string, memo = ""): Promise<string> {
+    public async createProposalTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1267,7 +1272,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public async createProposalChangeOwnerTransaction(payload: string, memo = ""): Promise<string> {
+    public async createProposalChangeOwnerTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1279,15 +1284,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public terminateProposalOwnerDigest(payload: string): Promise<string> {
+    public terminateProposalOwnerDigest(payload: TerminateProposalOwnerInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).terminateProposalOwnerDigest(payload);
     }
 
-    public terminateProposalCRCouncilMemberDigest(payload: string): Promise<string> {
+    public terminateProposalCRCouncilMemberDigest(payload: TerminateProposalOwnerInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).terminateProposalCRCouncilMemberDigest(payload);
     }
 
-    public async createTerminateProposalTransaction(payload: string, memo = ""): Promise<string> {
+    public async createTerminateProposalTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1299,15 +1304,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public proposalSecretaryGeneralElectionDigest(payload: string): Promise<string> {
+    public proposalSecretaryGeneralElectionDigest(payload: SecretaryElectionInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalSecretaryGeneralElectionDigest(payload);
     }
 
-    public proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload: string): Promise<string> {
+    public proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload: SecretaryElectionInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload);
     }
 
-    public async createSecretaryGeneralElectionTransaction(payload: string, memo = ""): Promise<string> {
+    public async createSecretaryGeneralElectionTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1319,19 +1324,19 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public proposalChangeOwnerDigest(payload: string): Promise<string> {
+    public proposalChangeOwnerDigest(payload: ChangeProposalOwnerInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalChangeOwnerDigest(payload);
     }
 
-    public proposalChangeOwnerCRCouncilMemberDigest(payload: string): Promise<string> {
+    public proposalChangeOwnerCRCouncilMemberDigest(payload: ChangeProposalOwnerInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalChangeOwnerCRCouncilMemberDigest(payload);
     }
 
-    public proposalTrackingSecretaryDigest(payload: string): Promise<string> {
+    public proposalTrackingSecretaryDigest(payload: CRCProposalTrackingInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalTrackingSecretaryDigest(payload);
     }
 
-    public async createProposalTrackingTransaction(payload: string, memo = ""): Promise<string> {
+    public async createProposalTrackingTransaction(payload: CRCProposalTrackingInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1343,11 +1348,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public proposalReviewDigest(payload: string): Promise<string> {
+    public proposalReviewDigest(payload: CRCProposalReviewInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalReviewDigest(payload);
     }
 
-    public async createProposalReviewTransaction(payload: string, memo = ""): Promise<string> {
+    public async createProposalReviewTransaction(payload: CRCProposalReviewInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1359,15 +1364,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public proposalTrackingOwnerDigest(payload: string): Promise<string> {
+    public proposalTrackingOwnerDigest(payload: CRCProposalTrackingInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalTrackingOwnerDigest(payload);
     }
 
-    public proposalWithdrawDigest(payload: string): Promise<string> {
+    public proposalWithdrawDigest(payload: CRCProposalWithdrawInfo): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).proposalWithdrawDigest(payload);
     }
 
-    public async createProposalWithdrawTransaction(payload: string, memo = ""): Promise<string> {
+    public async createProposalWithdrawTransaction(payload: CRCProposalWithdrawInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1379,15 +1384,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public reserveCustomIDOwnerDigest(payload: string) {
+    public reserveCustomIDOwnerDigest(payload: ReserveCustomIDOwnerInfo) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).reserveCustomIDOwnerDigest(payload);
     }
 
-    public reserveCustomIDCRCouncilMemberDigest(payload: string) {
+    public reserveCustomIDCRCouncilMemberDigest(payload: ReserveCustomIDOwnerInfo) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).reserveCustomIDCRCouncilMemberDigest(payload);
     }
 
-    public async createReserveCustomIDTransaction(payload: string, memo = ""): Promise<string> {
+    public async createReserveCustomIDTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1399,15 +1404,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public receiveCustomIDOwnerDigest(payload: string) {
+    public receiveCustomIDOwnerDigest(payload: ReceiveCustomIDOwnerInfo) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).receiveCustomIDOwnerDigest(payload);
     }
 
-    public receiveCustomIDCRCouncilMemberDigest(payload: string) {
+    public receiveCustomIDCRCouncilMemberDigest(payload: ReceiveCustomIDOwnerInfo) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).receiveCustomIDCRCouncilMemberDigest(payload);
     }
 
-    public async createReceiveCustomIDTransaction(payload: string, memo = ""): Promise<string> {
+    public async createReceiveCustomIDTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1419,15 +1424,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public changeCustomIDFeeOwnerDigest(payload: string) {
+    public changeCustomIDFeeOwnerDigest(payload: ChangeCustomIDFeeOwnerInfo) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).changeCustomIDFeeOwnerDigest(payload);
     }
 
-    public changeCustomIDFeeCRCouncilMemberDigest(payload: string) {
+    public changeCustomIDFeeCRCouncilMemberDigest(payload: ChangeCustomIDFeeOwnerInfo) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).changeCustomIDFeeCRCouncilMemberDigest(payload);
     }
 
-    public async createChangeCustomIDFeeTransaction(payload: string, memo = ""): Promise<string> {
+    public async createChangeCustomIDFeeTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1439,15 +1444,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public registerSidechainOwnerDigest(payload: string) {
+    public registerSidechainOwnerDigest(payload: RegisterSidechainProposalInfo) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).registerSidechainOwnerDigest(payload);
     }
 
-    public registerSidechainCRCouncilMemberDigest(payload: string) {
+    public registerSidechainCRCouncilMemberDigest(payload: RegisterSidechainProposalInfo) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).registerSidechainCRCouncilMemberDigest(payload);
     }
 
-    public async createRegisterSidechainTransaction(payload: string, memo = ""): Promise<string> {
+    public async createRegisterSidechainTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1462,7 +1467,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     //
     //dpos registration transaction functions
     //
-    public async createRegisterProducerTransaction(payload: string, amount: number, memo = ""): Promise<string> {
+    public async createRegisterProducerTransaction(payload: ProducerInfoJson, amount: number, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(amount + 20000);
         if (!au.utxo) return;
 
@@ -1475,7 +1480,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public async createCancelProducerTransaction(payload: string, memo = ""): Promise<string> {
+    public async createCancelProducerTransaction(payload: CancelProducerInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1487,7 +1492,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public async createUpdateProducerTransaction(payload: string, memo = ""): Promise<string> {
+    public async createUpdateProducerTransaction(payload: ProducerInfoJson, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1499,7 +1504,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any> {
+    public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateProducerPayload(
             publicKey,
             nodePublicKey,
@@ -1511,15 +1516,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public generateCancelProducerPayload(publicKey: string, payPasswd: string): Promise<any> {
+    public generateCancelProducerPayload(publicKey: string, payPasswd: string): Promise<CancelProducerInfo> {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateCancelProducerPayload(
             publicKey,
             payPasswd
         );
     }
 
-    public createRetrieveDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<string> {
-        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveDepositTransaction(
+    public async createRetrieveDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<EncodedTx> {
+        return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveDepositTransaction(
             utxo,
             Util.accMul(amount, Config.SELA).toString(),
             '10000',
@@ -1530,11 +1535,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     //
     //CR registration transaction functions
     //
-    public getCRDepositAddress(): Promise<string> {
+    public getCRDepositAddress(): string {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).getCRDepositAddress();
     }
 
-    public generateCRInfoPayload(publicKey: string, did: string, nickname: string, url: string, location: number): Promise<any> {
+    public generateCRInfoPayload(publicKey: string, did: string, nickname: string, url: string, location: number) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateCRInfoPayload(
             publicKey,
             did,
@@ -1544,11 +1549,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public generateUnregisterCRPayload(cid: string): Promise<string> {
+    public generateUnregisterCRPayload(cid: string): UnregisterCRPayload {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateUnregisterCRPayload(cid);
     }
 
-    public async createRegisterCRTransaction(payload: string, amount: number, memo = ""): Promise<string> {
+    public async createRegisterCRTransaction(payload: CRInfoJson, amount: number, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(amount + 20000);
         if (!au.utxo) return;
 
@@ -1561,7 +1566,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public async createUnregisterCRTransaction(payload: string, memo = ""): Promise<string> {
+    public async createUnregisterCRTransaction(payload: CRInfoJson, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1573,7 +1578,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public async createUpdateCRTransaction(payload: string, memo = ""): Promise<string> {
+    public async createUpdateCRTransaction(payload: CRInfoJson, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
@@ -1585,8 +1590,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public createRetrieveCRDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<string> {
-        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveCRDepositTransaction(
+    public async createRetrieveCRDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<EncodedTx> {
+        return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveCRDepositTransaction(
             utxo,
             Util.accMul(amount, Config.SELA).toString(),
             '10000',
@@ -1594,7 +1599,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public async createCRCouncilMemberClaimNodeTransaction(payload: string, memo = ""): Promise<string> {
+    public async createCRCouncilMemberClaimNodeTransaction(payload: CRCouncilMemberClaimNodeInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 

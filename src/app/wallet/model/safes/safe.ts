@@ -38,12 +38,12 @@ export abstract class Safe {
    *
    * @param usage Most of the time, networks have only one kind of address so they don't need to handle this. But some networks (eg: iotex) use several address formats and need to return different address styles depending on situations.
    */
-  public abstract getAddresses(startIndex: number, count: number, internalAddresses: boolean, usage: AddressUsage | string): Promise<string[]>; // TODO
+  public abstract getAddresses(startIndex: number, count: number, internalAddresses: boolean, usage: AddressUsage | string): Promise<string[]>; // TODO remove Promise<>
 
   /**
    * Returns wallet's extended public key (xpub...) string.
    */
-  public getExtendedPublicKey(): Promise<string> {
+  public getExtendedPublicKey() {
     return null; // Default implementation: ext pub key not provided for now.
   }
 

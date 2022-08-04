@@ -21,17 +21,18 @@
  */
 
 import { Injectable, NgZone } from '@angular/core';
+import { MasterWalletManager } from '@elastosfoundation/wallet-js-sdk';
+import { ConfigInfo } from '@elastosfoundation/wallet-js-sdk/typings/config';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { mnemonicToSeedSync } from "bip39";
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
-import { JSONObject } from 'src/app/model/json';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
-import { GlobalNetworksService, LRW_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { AESEncrypt } from '../../helpers/crypto/aes';
 import { CoinType } from '../model/coin';
@@ -40,6 +41,7 @@ import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterw
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
 import { ElastosMainChainWalletNetworkOptions, LedgerAccountOptions, PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
 import type { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
+import { WalletJSSDKHelper } from '../model/networks/elastos/wallet.jssdk.helper';
 import { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
 import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
@@ -54,7 +56,7 @@ import { WalletNetworkService } from './network.service';
 import { OfflineTransactionsService } from './offlinetransactions.service';
 import { PopupProvider } from './popup.service';
 import { SafeService } from './safe.service';
-import { jsToSpvWalletId, SPVService } from './spv.service';
+import { SPVService } from './spv.service';
 import { LocalStorage } from './storage.service';
 
 class SubwalletTransactionStatus {
@@ -83,9 +85,6 @@ export enum WalletStateOperation {
     BECAME_ACTIVE
 }
 
-// {'ELA':{}, 'ETHSC': {chainid ... }, etc}
-export type SPVNetworkConfig = { [networkName: string]: JSONObject };
-
 @Injectable({
     providedIn: 'root'
 })
@@ -106,7 +105,9 @@ export class WalletService {
 
     public needToPromptTransferToIDChain = false; // Whether it's time to ask user to transfer some funds to the ID chain for better user experience or not.
 
+    // TODO delete it
     public spvBridge: SPVService = null;
+    public masterWalletMangerJS: MasterWalletManager = null;
 
     private networkTemplate: string;
 
@@ -142,6 +143,7 @@ export class WalletService {
         this.masterWallets = {};
         this.networkWallets = {};
 
+        // TODO delte spvBridge
         this.spvBridge = new SPVService(this.native, this.events, this.popupProvider);
 
         const hasWallets = await this.initWallets();
@@ -189,13 +191,15 @@ export class WalletService {
 
         try {
             this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
+            let sdkNetwork = this.networkTemplate;
+            if (this.networkTemplate === "LRW") {
+              sdkNetwork = "PrvNet";
+            }
 
             // Update the SPV SDK with the right network configuration
-            await this.prepareSPVNetworkConfiguration();
+            let netConfig = this.prepareSPVNetworkConfiguration();
 
-            let signedInEntry = await this.didSessions.getSignedInIdentity();
-            let rootPath = signedInEntry.didStoragePath;
-            await this.spvBridge.init(rootPath);
+            this.masterWalletMangerJS = await WalletJSSDKHelper.loadMasterWalletManager(sdkNetwork, netConfig);
 
             Logger.log('wallet', "Loading master wallets list");
             const idList = await this.localStorage.getWalletsList(this.networkTemplate);
@@ -265,7 +269,7 @@ export class WalletService {
                             // Usually occurs when a new network is first supported, eg. EVM, BTC.
                             const payPassword = await this.authService.getWalletPassword(masterWallet.id);
                             if (payPassword) {
-                                await this.spvBridge.verifyPayPassword(jsToSpvWalletId(masterWallet.id), payPassword);
+                                await WalletJSSDKHelper.verifyPayPassword(masterWallet.id, payPassword);
                                 try {
                                     networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
                                 }
@@ -300,22 +304,18 @@ export class WalletService {
         }
     }
 
-    private async prepareSPVNetworkConfiguration(): Promise<void> {
-        let spvsdkNetwork = this.networkTemplate;
-
-        if (this.networkTemplate === LRW_TEMPLATE) {
-            spvsdkNetwork = "PrvNet";
-        }
-
+    private prepareSPVNetworkConfiguration() {
         // Ask each network to fill its configuration for the SPVSDK.
         // For EVM networks, this means adding something like {'ETHxx': {ChainID: 123, NetworkID: 123}}
-        let networkConfig: SPVNetworkConfig = {};
+        let networkConfig: ConfigInfo = {};
         for (let network of this.networkService.getAvailableNetworks()) {
             network.updateSPVNetworkConfig(networkConfig, this.networkTemplate);
         }
 
         Logger.log('wallet', "Setting SPV network config to ", this.networkTemplate, networkConfig);
-        await this.spvBridge.setNetwork(spvsdkNetwork, JSON.stringify(networkConfig));
+        return networkConfig;
+
+        // await this.spvBridge.setNetwork(spvsdkNetwork, JSON.stringify(networkConfig));
         // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
     }
 

@@ -31,12 +31,12 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { WalletJSSDKHelper } from 'src/app/wallet/model/networks/elastos/wallet.jssdk.helper';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -168,7 +168,7 @@ export class EthSignPage implements OnInit {
       return;
     }
 
-    let privateKeyHexNoprefix = await this.walletManager.spvBridge.exportETHSCPrivateKey(jsToSpvWalletId(this.networkWallet.masterWallet.id), this.evmSubWallet.id, payPassword);
+    let privateKeyHexNoprefix = await WalletJSSDKHelper.exportETHSCPrivateKey(this.networkWallet.masterWallet.id, this.evmSubWallet.id, payPassword);
 
     let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");
 

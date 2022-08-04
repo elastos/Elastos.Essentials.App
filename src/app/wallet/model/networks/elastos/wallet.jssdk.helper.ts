@@ -1,6 +1,7 @@
-import { MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
+import { EthSidechainSubWallet, MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
+import moment from "moment";
 import { Logger } from "src/app/logger";
-import { GlobalNetworksService, MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { MasterWallet, StandardMasterWallet } from "../../masterwallets/masterwallet";
@@ -13,34 +14,43 @@ import { JSSDKLocalStorage } from "./localstorage.jssdk";
  * Helper class to manage interactions with the Elastos Wallet JS SDK (@elastosfoundation/wallet-js-sdk).
  */
 export class WalletJSSDKHelper {
-  private static loadMasterWalletManager(): Promise<MasterWalletManager> {
-    const netType = GlobalNetworksService.instance.activeNetworkTemplate.value === MAINNET_TEMPLATE ? "MainNet" : "TestNet";
-    const browserStorage = new JSSDKLocalStorage(DIDSessionsStore.signedInDIDString);
-    //const browserStorage = new BrowserLocalStorage(DIDSessionsStore.signedInDIDString);
-    const netConfig = { NetType: netType, ELA: {} };
+  private static masterWalletManager: MasterWalletManager = null;
 
-    return MasterWalletManager.create(
+  public static async loadMasterWalletManager(netType: string, netConfig: ConfigInfo): Promise<MasterWalletManager> {
+    if (this.masterWalletManager) return this.masterWalletManager;
+
+    const browserStorage = new JSSDKLocalStorage(DIDSessionsStore.signedInDIDString);
+
+    this.masterWalletManager = await MasterWalletManager.create(
       browserStorage,
       netType,
       netConfig
     );
+    // Load all masterWallets
+    await this.masterWalletManager.getAllMasterWallets();
+    return this.masterWalletManager;
   }
 
   public static async loadMasterWalletFromJSWallet(masterWallet: MasterWallet): Promise<SDKMasterWallet> {
-    let masterWalletManager = await this.loadMasterWalletManager();
-    return await masterWalletManager.getMasterWallet(masterWallet.id);
+    return await this.masterWalletManager.getMasterWallet(masterWallet.id);
+  }
+
+  public static resetMasterWalletManager() {
+    this.masterWalletManager = null;
+  }
+
+  public static generateMnemonic(language: string) {
+    return this.masterWalletManager.generateMnemonic(language);
   }
 
   public static async maybeCreateStandardWalletFromJSWallet(masterWallet: StandardMasterWallet): Promise<boolean> {
-    Logger.log("wallet", "Creating Elastos Wallet JS SDK wallet entity for standard wallet ", masterWallet.id);
+    Logger.warn("wallet", "Creating Elastos Wallet JS SDK wallet entity for standard wallet ", masterWallet.id);
 
     let elastosNetworkOptions = masterWallet.getNetworkOptions("elastos") as ElastosMainChainWalletNetworkOptions;
-
-    let masterWalletManager = await this.loadMasterWalletManager();
-
-    let walletExists = await masterWalletManager.getAllMasterWalletID().indexOf(masterWallet.id) >= 0;
+    let walletExists = this.masterWalletManager.getAllMasterWalletID().indexOf(masterWallet.id) >= 0;
     if (walletExists) {
       // Wallet already exists, do nothing
+      Logger.warn("wallet", "Wallet already exists, do nothing");
       return true;
     }
 
@@ -54,7 +64,7 @@ export class WalletJSSDKHelper {
       return false;
     }
 
-    const sdkMasterWallet = await masterWalletManager.importWalletWithSeed(
+    const sdkMasterWallet = await this.masterWalletManager.importWalletWithSeed(
       masterWallet.id,
       seed,
       payPassword, // Multisig pay password, not signing wallet
@@ -63,6 +73,7 @@ export class WalletJSSDKHelper {
       ""
     );
 
+    // TODO delete it?
     await sdkMasterWallet.createSubWallet("ELA");
 
     return true;
@@ -75,10 +86,8 @@ export class WalletJSSDKHelper {
 
     console.log("masterWallet.signersExtPubKeys", masterWallet.signersExtPubKeys)
 
-    let masterWalletManager = await this.loadMasterWalletManager();
-
-    let walletExists = masterWalletManager.getAllMasterWalletID().indexOf(masterWallet.id) >= 0;
-    //let existingWallet = masterWalletManager.getMasterWallet(masterWallet.id);
+    let walletExists = this.masterWalletManager.getAllMasterWalletID().indexOf(masterWallet.id) >= 0;
+    //let existingWallet = await this.masterWalletManager.getMasterWallet(masterWallet.id);
     if (walletExists) {
       // Wallet already exists, do nothing
       return true;
@@ -107,7 +116,7 @@ export class WalletJSSDKHelper {
     let seed = await signingWallet.getSeed(signingWalletPayPassword);
 
     if (await signingWallet.getSeed(signingWalletPayPassword)) {
-      const sdkMasterWallet = await masterWalletManager.createMultiSignMasterWalletWithSeed(
+      const sdkMasterWallet = await this.masterWalletManager.createMultiSignMasterWalletWithSeed(
         masterWallet.id,
         seed,
         payPassword, // Multisig pay password, not signing wallet
@@ -116,6 +125,7 @@ export class WalletJSSDKHelper {
         elastosNetworkOptions.singleAddress
       );
 
+      // TODO delete it?
       await sdkMasterWallet.createSubWallet("ELA");
 
       return true;
@@ -124,5 +134,69 @@ export class WalletJSSDKHelper {
       // NOTE: private key wallets not supported. Already checked above.
       return false;
     }
+  }
+
+  public static async importWalletWithMnemonic(masterWalletId: string,
+                                              mnemonic: string,
+                                              phrasePassword: string,
+                                              payPassword,
+                                              singleAddress: boolean) {
+    return await this.masterWalletManager.importWalletWithMnemonic(masterWalletId, mnemonic, phrasePassword, payPassword, singleAddress, moment().valueOf());
+  }
+
+  public static async exportWalletWithMnemonic(masterWalletId: string, payPassWord: string) {
+    return (await this.getMasterWallet(masterWalletId)).exportMnemonic(payPassWord);
+  }
+
+  public static async exportWalletWithSeed(masterWalletId: string, payPassWord: string) {
+    return (await this.getMasterWallet(masterWalletId)).exportSeed(payPassWord);
+  }
+
+  public static async exportKeystore(masterWalletId : string, backupPassword: string, payPassword: string) {
+    let masterWallet = await this.getMasterWallet(masterWalletId);
+    return await masterWallet.exportKeystore(backupPassword, payPassword);
+  }
+
+  public static async exportETHSCPrivateKey(masterWalletId : string, subWalletId: string, payPassword: string) {
+    let masterWallet = await this.getMasterWallet(masterWalletId);
+    if (masterWallet) {
+      let subWallet = <EthSidechainSubWallet>masterWallet.getSubWallet(subWalletId);
+      return subWallet.exportPrivateKey(payPassword)
+    }
+
+    return '';
+  }
+
+  public static async createSubWallet(masterWalletId, subwalletId) {
+    return (await this.getMasterWallet(masterWalletId)).createSubWallet(subwalletId);
+  }
+
+  public static async destroySubWallet(masterWalletId, subWalletId) {
+    let masterWallet = await this.getMasterWallet(masterWalletId);
+    if (masterWallet) {
+      await masterWallet.destroyWallet(subWalletId);
+    }
+  }
+
+  public static async destroyWallet(masterWalletId) {
+    return await this.masterWalletManager.destroyWallet(masterWalletId)
+  }
+
+  // Call this when delete identiy
+  public static async deleteAllWallet() {
+    let allMasterWallets = this.masterWalletManager.getAllMasterWalletID();
+    Logger.log('wallet', 'WalletJSSDKHelper deleteAllWallet count:', allMasterWallets.length);
+    for (let i = 0; i < allMasterWallets.length; i++) {
+      await this.masterWalletManager.destroyWallet(allMasterWallets[i])
+    }
+  }
+
+  public static getMasterWallet(masterWalletId: string) {
+    return this.masterWalletManager.getMasterWallet(masterWalletId);
+  }
+
+  public static async verifyPayPassword(masterWalletId: string, payPassword: string) {
+    let masterWallet = await this.getMasterWallet(masterWalletId);
+    return await masterWallet.verifyPayPassword(payPassword);
   }
 }

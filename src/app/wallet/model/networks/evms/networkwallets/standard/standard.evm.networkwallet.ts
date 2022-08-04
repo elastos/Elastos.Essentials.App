@@ -1,9 +1,8 @@
-import { SPVHelperService } from 'src/app/wallet/services/spv.helper.service';
-import { jsToSpvWalletId, SPVService } from '../../../../../services/spv.service';
 import { StandardMasterWallet } from '../../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../../masterwallets/wallet.types';
+import { WalletJSSDKHelper } from '../../../elastos/wallet.jssdk.helper';
 import type { EVMNetwork } from '../../evm.network';
-import { EVMSPVSDKSafe } from '../../safes/evm.spvsdk.safe';
+import { EVMWalletJSSafe } from '../../safes/evm.walletjs.safe';
 import { MainCoinEVMSubWallet } from '../../subwallets/evm.subwallet';
 import { EVMNetworkWallet } from '../evm.networkwallet';
 
@@ -18,7 +17,7 @@ export abstract class StandardEVMNetworkWallet<WalletNetworkOptionsType extends 
         super(
             masterWallet,
             network,
-            new EVMSPVSDKSafe(masterWallet, network.getEVMSPVConfigName()),
+            new EVMWalletJSSafe(masterWallet, network.getEVMSPVConfigName()),
             displayToken,
             mainSubWalletFriendlyName,
             averageBlocktime
@@ -26,7 +25,7 @@ export abstract class StandardEVMNetworkWallet<WalletNetworkOptionsType extends 
     }
 
     public async initialize(): Promise<void> {
-        if (!await SPVHelperService.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
+        if (!await WalletJSSDKHelper.maybeCreateStandardWalletFromJSWallet(this.masterWallet))
             return;
 
         await super.initialize();
@@ -40,6 +39,6 @@ export abstract class StandardEVMNetworkWallet<WalletNetworkOptionsType extends 
         );
         await this.mainTokenSubWallet.initialize();
         this.subWallets[this.network.getEVMSPVConfigName()] = this.mainTokenSubWallet;
-        await SPVService.instance.createSubWallet(jsToSpvWalletId(this.masterWallet.id), this.network.getEVMSPVConfigName());
+        await WalletJSSDKHelper.createSubWallet(this.masterWallet.id, this.network.getEVMSPVConfigName());
     }
 }

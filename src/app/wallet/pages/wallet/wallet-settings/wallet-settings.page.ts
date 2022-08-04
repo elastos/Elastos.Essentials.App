@@ -110,7 +110,7 @@ export class WalletSettingsPage implements OnInit {
     ) {
     }
 
-    async ngOnInit() {
+    ngOnInit() {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
         if (!this.masterWalletId) {
             this.masterWalletId = this.walletManager.getActiveMasterWallet().id;
@@ -148,7 +148,7 @@ export class WalletSettingsPage implements OnInit {
             });
         }
 
-        if (this.networkWallet && await this.networkWallet.getExtendedPublicKey()) {
+        if (this.networkWallet && this.networkWallet.getExtendedPublicKey()) {
             this.settings.push({
                 type: 'wallet-ext-pub-keys',
                 navCallback: () => {
