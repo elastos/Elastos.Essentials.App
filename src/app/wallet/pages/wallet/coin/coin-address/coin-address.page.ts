@@ -6,7 +6,9 @@ import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
+import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
 
@@ -23,7 +25,9 @@ export class CoinAddressPage {
 
     public addressList = [];
     public masterWalletId: string;
+    private networkWallet: AnyNetworkWallet;
     public subWalletId: string;
+    private subWallet: AnySubWallet = null;
     public curCount = 0;
     private maxCount = 0;
 
@@ -45,7 +49,11 @@ export class CoinAddressPage {
             // General Values
             this.masterWalletId = navigation.extras.state.masterWalletId;
             this.subWalletId = navigation.extras.state.subWalletId;
-            this.maxCount = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId).getAddressCount(false);
+
+            this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
+            this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
+
+            this.maxCount = this.subWallet.getAddressCount(false);
             void this.getAddressList(null);
         }
     }
@@ -55,7 +63,7 @@ export class CoinAddressPage {
     }
 
     async getAddressList(infiniteScroll: any) {
-        const allAddresses = await this.walletManager.spvBridge.getAddresses(jsToSpvWalletId(this.masterWalletId), this.subWalletId, this.curCount, AddressCount, false);
+        const allAddresses = await this.networkWallet.safe.getAddresses(this.curCount, AddressCount, false, AddressUsage.DEFAULT);
         let disabled = true;
         if (allAddresses) {
             if (this.curCount !== 0) {

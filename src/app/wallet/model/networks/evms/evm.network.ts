@@ -1,9 +1,9 @@
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { erc20CoinsSerializer } from "src/app/wallet/services/evm/erc20coin.service";
 import { LocalStorage } from "src/app/wallet/services/storage.service";
-import { SPVNetworkConfig } from "../../../services/wallet.service";
 import { Coin, CoinID, CoinType, ERC20Coin } from "../../coin";
 import { BridgeProvider } from "../../earn/bridgeprovider";
 import { EarnProvider } from "../../earn/earnprovider";
@@ -327,10 +327,10 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     return this.chainID;
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string) {
+  public updateSPVNetworkConfig(onGoingConfig: ConfigInfo, networkTemplate: string) {
     onGoingConfig[this.getEVMSPVConfigName()] = {
-      ChainID: this.getMainChainID(networkTemplate),
-      NetworkID: this.getMainChainID(networkTemplate)
+      chainID: this.getMainChainID(networkTemplate).toString(),
+      NetworkID: this.getMainChainID(networkTemplate).toString()
     };
   }
 

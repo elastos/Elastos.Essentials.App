@@ -147,7 +147,7 @@ export class UpdatMilestonePage {
     private async getMilestoneDigest(): Promise<string> {
         let payload = this.getMilestonePayload(this.onGoingCommand);
         Logger.log(App.CRPROPOSAL_VOTING, "milestone payload", payload);
-        let digest = await this.voteService.sourceSubwallet.proposalTrackingOwnerDigest(JSON.stringify(payload));
+        let digest = await this.voteService.sourceSubwallet.proposalTrackingOwnerDigest(payload);
         let ret = Util.reverseHexToBE(digest);
 
         Logger.log(App.CRPROPOSAL_VOTING, "Got milestone digest.", ret);

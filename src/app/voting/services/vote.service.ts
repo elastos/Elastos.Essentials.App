@@ -450,8 +450,10 @@ export class VoteService {
 
     async getWalletFirstPublicKey() {
         let ret = await this.sourceSubwallet.getPublicKeys(0, 1, false);
-        if (ret && ret.length == 1) {
+        if (ret) {
+          if (ret instanceof Array) {
             return ret[0]
+          } else return ret;
         }
     }
 

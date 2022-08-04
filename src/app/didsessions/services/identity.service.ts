@@ -23,6 +23,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { WalletJSSDKHelper } from 'src/app/wallet/model/networks/elastos/wallet.jssdk.helper';
 import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
 import { CredentialAvatar, DID } from '../model/did.model';
 import { DIDStore } from '../model/didstore.model';
@@ -510,6 +511,9 @@ export class IdentityService {
                   Logger.log('didsessions', "Unable to retrieve DID store password from password manager");
                   return false;
               } */
+
+            // Delete all wallets.
+            await WalletJSSDKHelper.deleteAllWallet();
 
             // Delete the did store, as for now, 1 DID = 1 DID store
             await this.deleteDIDStore(identity.didStoreId);

@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { StandardCoinName } from '../../../../model/coin';
@@ -25,6 +26,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     public networkWallet: AnyNetworkWallet = null;
     private masterWalletId = '1';
     public subWalletId: string;
+    private subWallet: AnySubWallet = null;
     public tokenName = '';
     public qrcode: string = null;
     public isSingleAddress = false;
@@ -60,8 +62,8 @@ export class CoinReceivePage implements OnInit, OnDestroy {
         this.masterWalletId = this.coinTransferService.masterWalletId;
         this.subWalletId = this.coinTransferService.subWalletId;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
-        const subWallet = this.networkWallet.getSubWallet(this.subWalletId);
-        this.tokenName = subWallet.getDisplayTokenName();
+        this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
+        this.tokenName = this.subWallet.getDisplayTokenName();
 
         await this.getAddress();
         this.isSingleAddressSubwallet();
@@ -82,8 +84,8 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     async getAddress() {
-        this.qrcode = await this.networkWallet.getSubWallet(this.subWalletId).getCurrentReceiverAddress(AddressUsage.RECEIVE_FUNDS);
-        Logger.log('wallet', 'qrcode', this.qrcode);
+        this.qrcode = await this.subWallet.getCurrentReceiverAddress(AddressUsage.RECEIVE_FUNDS);
+        Logger.log('wallet', 'Address', this.qrcode);
     }
 
     showAddressList() {

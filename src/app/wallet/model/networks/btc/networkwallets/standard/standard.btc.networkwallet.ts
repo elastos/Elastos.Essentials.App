@@ -1,8 +1,7 @@
 import { WalletNetworkOptions } from "src/app/wallet/model/masterwallets/wallet.types";
-import { SPVHelperService } from "src/app/wallet/services/spv.helper.service";
-import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../../../coin";
 import { StandardMasterWallet } from "../../../../masterwallets/masterwallet";
+import { WalletJSSDKHelper } from "../../../elastos/wallet.jssdk.helper";
 import { AnyNetwork } from "../../../network";
 import { BTCSPVSDKSafe } from "../../safes/btc.spvsdk.safe";
 import { BTCSubWallet } from "../../subwallets/btc.subwallet";
@@ -21,14 +20,14 @@ export class StandardBTCNetworkWallet<WalletNetworkOptionsType extends WalletNet
     }
 
     public async initialize(): Promise<void> {
-        if (!await SPVHelperService.maybeCreateStandardSPVWalletFromJSWallet(this.masterWallet))
+        if (!await WalletJSSDKHelper.maybeCreateStandardWalletFromJSWallet(this.masterWallet))
             return;
 
         await super.initialize();
     }
 
     protected async prepareStandardSubWallets(): Promise<void> {
-        await SPVService.instance.createSubWallet(jsToSpvWalletId(this.masterWallet.id), StandardCoinName.BTC);
+        await WalletJSSDKHelper.createSubWallet(this.masterWallet.id, StandardCoinName.BTC);
         this.subWallets[StandardCoinName.BTC] = new BTCSubWallet(this, this.network.getRPCUrl());
         await this.subWallets[StandardCoinName.BTC].initialize();
     }

@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { CRInfoJson } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
@@ -151,7 +152,7 @@ export class RegisterUpdatePage implements OnInit {
         }
     }
 
-    async getCRInfoPayload(): Promise<string> {
+    async getCRInfoPayload(): Promise<CRInfoJson> {
         if (!this.info.ownerpublickey) {
             this.info.ownerpublickey = await Util.getSelfPublicKey();
         }
@@ -161,7 +162,7 @@ export class RegisterUpdatePage implements OnInit {
         }
 
         Logger.log('RegisterUpdatePage', 'Info', this.info);
-        const payload = await this.voteService.sourceSubwallet.generateCRInfoPayload(
+        const payload: any = this.voteService.sourceSubwallet.generateCRInfoPayload(
             this.info.ownerpublickey, this.info.did, this.info.nickname, this.info.url, this.info.location);
 
         if (payload) {
@@ -169,7 +170,7 @@ export class RegisterUpdatePage implements OnInit {
             if (signature) {
                 payload.Signature = signature;
                 Logger.log('RegisterUpdatePage', 'generateCRInfoPayload', payload);
-                return JSON.stringify(payload);
+                return payload;
             }
         }
 

@@ -5,7 +5,7 @@ import { WalletAddressInfo } from "src/app/wallet/model/networks/base/networkwal
 import { AnySubWallet } from "src/app/wallet/model/networks/base/subwallets/subwallet";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { TransactionProvider } from "src/app/wallet/model/tx-providers/transaction.provider";
-import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
+import { WalletJSSDKHelper } from "../../../../wallet.jssdk.helper";
 import { ElastosStandardEVMNetworkWallet } from "../../../networkwallets/standard/standard.evm.networkwallet";
 import { ElastosEVMSubWallet } from "../../../subwallets/standard/elastos.evm.subwallet";
 import { EidSubWallet } from "../../subwallets/standard/eid.evm.subwallet";
@@ -27,7 +27,7 @@ export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardEV
 
   protected async prepareStandardSubWallets(): Promise<void> {
     try {
-      await SPVService.instance.createSubWallet(jsToSpvWalletId(this.masterWallet.id), StandardCoinName.ETHDID);
+      await WalletJSSDKHelper.createSubWallet(this.masterWallet.id, StandardCoinName.ETHDID);
       this.subWallets[StandardCoinName.ETHDID] = new EidSubWallet(this);
     }
     catch (err) {

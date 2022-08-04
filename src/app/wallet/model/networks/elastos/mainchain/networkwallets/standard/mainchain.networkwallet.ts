@@ -1,5 +1,4 @@
 import { Logger } from "src/app/logger";
-import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { StandardCoinName } from "../../../../../coin";
 import { StandardMasterWallet } from "../../../../../masterwallets/masterwallet";
 import { TransactionProvider } from "../../../../../tx-providers/transaction.provider";
@@ -9,7 +8,8 @@ import { AnyNetwork } from "../../../../network";
 import { ElastosEVMSubWallet } from "../../../evms/subwallets/standard/elastos.evm.subwallet";
 import { ElastosStandardNetworkWallet } from "../../../networkwallets/standard/elastos.networkwallet";
 import { WalletHelper } from "../../../wallet.helper";
-import { MainChainSPVSDKSafe } from "../../safes/mainchain.spvsdk.safe";
+import { WalletJSSDKHelper } from "../../../wallet.jssdk.helper";
+import { MainChainWalletJSSafe } from "../../safes/mainchain.walletjs.safe";
 import { MainChainSubWallet } from "../../subwallets/mainchain.subwallet";
 import { ElastosMainChainTransactionProvider } from "../../tx-providers/elastos.mainchain.tx.provider";
 
@@ -18,7 +18,7 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
     super(
       masterWallet,
       network,
-      new MainChainSPVSDKSafe(masterWallet, StandardCoinName.ELA),
+      new MainChainWalletJSSafe(masterWallet, StandardCoinName.ELA),
       "ELA"
     );
   }
@@ -29,7 +29,7 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
 
   protected async prepareStandardSubWallets(): Promise<void> {
     try {
-      await SPVService.instance.createSubWallet(jsToSpvWalletId(this.masterWallet.id), StandardCoinName.ELA);
+      await WalletJSSDKHelper.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
       this.subWallets[StandardCoinName.ELA] = new MainChainSubWallet(this);
       await this.subWallets[StandardCoinName.ELA].initialize();
     }

@@ -1,5 +1,5 @@
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { Logger } from "src/app/logger";
-import type { SPVNetworkConfig } from "../../services/wallet.service";
 import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
 import type { SwapProvider } from "../earn/swapprovider";
@@ -92,7 +92,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
     return [];
   }
 
-  public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);
+  public abstract updateSPVNetworkConfig(onGoingConfig: ConfigInfo, networkTemplate: string);
 
   // Ex: ETHHECO, ETHSC, etc
   public getEVMSPVConfigName(): string {

@@ -1,9 +1,9 @@
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { AnySubWallet } from "src/app/wallet/model/networks/base/subwallets/subwallet";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
-import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { StandardCoinName } from "../../../../../../coin";
 import { TransactionProvider } from "../../../../../../tx-providers/transaction.provider";
 import { WalletAddressInfo } from "../../../../../base/networkwallets/networkwallet";
@@ -32,7 +32,7 @@ export class ElastosSmartChainLedgerNetworkWallet extends ElastosLedgerEVMNetwor
     try {
       // TODO: No ETHSC in LRW
       // Remove it if there is ETHSC in LRW.
-      let networkConfig: SPVNetworkConfig = {};
+      let networkConfig: ConfigInfo = {};
       this.network.updateSPVNetworkConfig(networkConfig, GlobalNetworksService.instance.getActiveNetworkTemplate())
       if (networkConfig['ETHSC']) {
         this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;

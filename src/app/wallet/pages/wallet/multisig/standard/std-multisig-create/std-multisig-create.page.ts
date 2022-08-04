@@ -181,7 +181,7 @@ export class StandardMultiSigCreatePage implements OnInit {
         // Load the elastos mainchain network wallet for this master wallet, to get its xpub and check a few things
         let elastosMainchainNetwork = this.networkService.getNetworkByKey(ElastosMainChainNetworkBase.networkKey);
         let sourceNetworkWallet = await elastosMainchainNetwork.createNetworkWallet(this.signingWallet, false);
-        this.signingWalletXPub = await sourceNetworkWallet.getExtendedPublicKey();
+        this.signingWalletXPub = sourceNetworkWallet.getExtendedPublicKey();
 
         if (!this.signingWalletXPub) {
             // Happens if user didn't enter the master password to get the wallet xpub

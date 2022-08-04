@@ -329,7 +329,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     /**
      * Returns wallet's extended public key (xpub...) string.
      */
-    public getExtendedPublicKey(): Promise<string> {
+    public getExtendedPublicKey() {
         return this.safe.getExtendedPublicKey();
     }
 

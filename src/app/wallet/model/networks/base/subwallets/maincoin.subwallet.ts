@@ -1,10 +1,11 @@
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { CurrencyService } from '../../../../services/currency.service';
-import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
 import { CoinType, NativeCoin } from '../../../coin';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
+import { AddressUsage } from '../../../safes/addressusage';
 import { GenericTransaction } from '../../../tx-providers/transaction.types';
+import { WalletJSSDKHelper } from '../../elastos/wallet.jssdk.helper';
 import type { AnyNetworkWallet } from '../networkwallets/networkwallet';
 import { SubWallet } from './subwallet';
 
@@ -23,7 +24,7 @@ export abstract class MainCoinSubWallet<TransactionType extends GenericTransacti
 
     public async destroy() {
         try {
-            await SPVService.instance.destroySubWallet(jsToSpvWalletId(this.masterWallet.id), this.id);
+            await WalletJSSDKHelper.destroySubWallet(this.masterWallet.id, this.id);
         }
         catch (e) {
             Logger.error('wallet', 'destroySubWallet error:', this.id, e)
@@ -40,8 +41,8 @@ export abstract class MainCoinSubWallet<TransactionType extends GenericTransacti
      */
     // TODO: move to network wallet then to the "safe"
     public async createAddress(): Promise<string> {
-        Logger.warn("wallet", "createAddress() is deprecated, stop using it!");
-        return await SPVService.instance.createAddress(jsToSpvWalletId(this.masterWallet.id), this.id);
+      let addresses = await this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.DEFAULT);
+      return (addresses && addresses[0]) ? addresses[0] : null;
     }
 
     public abstract getFriendlyName(): string;

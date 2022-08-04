@@ -3,8 +3,8 @@ import { Logger } from 'src/app/logger';
 import { AESDecrypt, AESEncrypt } from '../../../helpers/crypto/aes';
 import { WalletNetworkService } from '../../services/network.service';
 import { SafeService, StandardWalletSafe } from '../../services/safe.service';
-import { jsToSpvWalletId, SPVService } from '../../services/spv.service';
 import { LocalStorage } from '../../services/storage.service';
+import { WalletJSSDKHelper } from '../networks/elastos/wallet.jssdk.helper';
 import { AnyNetwork } from '../networks/network';
 import { PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from './wallet.types';
 
@@ -148,10 +148,7 @@ export class StandardMasterWallet extends MasterWallet {
     public async destroy() {
         // Destroy the wallet in the wallet plugin - A bit dirty, should be in sub-classes that use SPV,
         // for for convenience for now as most wallets are "native SPV", we keep it here.
-        let spvWalletId = jsToSpvWalletId(this.id);
-        if (spvWalletId !== null) {
-            await SPVService.instance.destroyWallet(spvWalletId);
-        }
+        await WalletJSSDKHelper.destroyWallet(this.id);
     }
 
     protected deserialize(serialized: SerializedStandardMasterWallet) {

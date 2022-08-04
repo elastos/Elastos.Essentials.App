@@ -139,7 +139,7 @@ export class ReviewMilestonePage {
             Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone payload.", payload);
 
             //Get digest
-            var digest = await this.voteService.sourceSubwallet.proposalTrackingSecretaryDigest(JSON.stringify(payload));
+            var digest = await this.voteService.sourceSubwallet.proposalTrackingSecretaryDigest(payload);
             digest = Util.reverseHexToBE(digest);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone digest.", digest);
 
@@ -160,7 +160,7 @@ export class ReviewMilestonePage {
 
             //Create transaction and send
             payload.SecretaryGeneralSignature = ret.result.signature;
-            const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(JSON.stringify(payload), '');
+            const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(payload, '');
             await this.globalNative.hideLoading();
             await this.crOperations.signAndSendRawTransaction(rawTx);
         }

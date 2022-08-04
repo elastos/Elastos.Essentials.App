@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { CRCProposalInfo, EncodedTx } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
@@ -107,7 +108,7 @@ export class CreateProposalPage {
         return payload;
     }
 
-    private async getDigest(payload: string): Promise<any> {
+    private async getDigest(payload: any): Promise<any> {
         let digest: string;
         switch (this.suggestionDetail.type) {
             case "normal":
@@ -140,7 +141,7 @@ export class CreateProposalPage {
         return Util.reverseHexToBE(digest);
     }
 
-    private async creatTransactionFunction(payload: string, memo: string): Promise<string> {
+    private async creatTransactionFunction(payload: CRCProposalInfo, memo: string): Promise<EncodedTx> {
         switch (this.suggestionDetail.type) {
             case "normal":
                 return await this.voteService.sourceSubwallet.createProposalTransaction(payload, memo);
@@ -190,7 +191,7 @@ export class CreateProposalPage {
 
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             //Create transaction
-            let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
+            let rawTx = await this.creatTransactionFunction(payload, '');
             Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
             await this.globalNative.hideLoading();
 

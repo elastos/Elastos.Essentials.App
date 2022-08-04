@@ -53,7 +53,6 @@ export class MnemonicWritePage implements OnInit {
     }
 
     ngOnInit() {
-        Logger.log('wallet', 'Empty input list created', this.inputList);
     }
 
     ionViewWillEnter() {

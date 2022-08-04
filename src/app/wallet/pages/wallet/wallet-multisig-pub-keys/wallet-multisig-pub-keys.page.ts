@@ -68,8 +68,8 @@ export class MultiSigPubKeysPage implements OnInit, OnDestroy {
         this.native.toast("wallet.multi-sig-extended-public-key-copied");
     }
 
-    async getExtendedPublicKey() {
-        this.displayedKey = await this.networkWallet.getExtendedPublicKey();
+    getExtendedPublicKey() {
+        this.displayedKey = this.networkWallet.getExtendedPublicKey();
         Logger.log("wallet", "Extended public key:", this.displayedKey);
     }
 

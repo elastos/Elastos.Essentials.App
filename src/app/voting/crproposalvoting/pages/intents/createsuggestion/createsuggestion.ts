@@ -110,7 +110,7 @@ export class CreateSuggestionPage {
             Logger.log(App.CRPROPOSAL_VOTING, 'get payload', payload);
 
             //Get digest
-            let digest = await this.getDigest(JSON.stringify(payload));
+            let digest = await this.getDigest(payload);
             Logger.log(App.CRSUGGESTION, "Got proposal digest.", digest);
 
             //Sign Suggestion Digest As JWT
@@ -164,7 +164,7 @@ export class CreateSuggestionPage {
         return result.responseJWT;
     }
 
-    private async getDigest(payload: string): Promise<any> {
+    private async getDigest(payload: any): Promise<any> {
         let digest: string;
         switch (this.suggestionDetail.type) {
             case "normal":

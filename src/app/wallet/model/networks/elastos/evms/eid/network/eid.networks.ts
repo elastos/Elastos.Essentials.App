@@ -1,3 +1,4 @@
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
@@ -5,7 +6,6 @@ import { StandardCoinName } from "src/app/wallet/model/coin";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { WalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
-import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { NetworkAPIURLType } from "../../../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../../../base/networkwallets/networkwallet";
 import { ElastosEVMNetwork } from "../../../network/elastos.evm.network";
@@ -70,8 +70,8 @@ export class ElastosIdentityChainMainNetNetwork extends ElastosIdentityChainNetw
       return null;
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
-    onGoingConfig['ETHDID'] = { ChainID: 22, NetworkID: 22 };
+  public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
+    onGoingConfig['ETHDID'] = { chainID: '22', NetworkID: '22' };
   }
 }
 
@@ -97,7 +97,7 @@ export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetw
       return null;
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
-    onGoingConfig['ETHDID'] = { ChainID: 23, NetworkID: 23 };
+  public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
+    onGoingConfig['ETHDID'] = { chainID: '23', NetworkID: '23' };
   }
 }

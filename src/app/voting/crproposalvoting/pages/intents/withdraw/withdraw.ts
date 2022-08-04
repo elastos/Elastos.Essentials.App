@@ -93,7 +93,7 @@ export class WithdrawPage {
             Logger.log(App.CRPROPOSAL_VOTING, "Got payload.", payload);
 
             //Get digest
-            var digest = await this.voteService.sourceSubwallet.proposalWithdrawDigest(JSON.stringify(payload));
+            var digest = await this.voteService.sourceSubwallet.proposalWithdrawDigest(payload);
             digest = Util.reverseHexToBE(digest);
             Logger.log(App.CRPROPOSAL_VOTING, "Got proposal digest.", digest);
 
@@ -112,7 +112,7 @@ export class WithdrawPage {
             //Create transaction and send
             payload.Signature = ret.result.signature;
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
-            const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(JSON.stringify(payload), '');
+            const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(payload, '');
             await this.globalNative.hideLoading();
             await this.crOperations.signAndSendRawTransaction(rawTx);
         }

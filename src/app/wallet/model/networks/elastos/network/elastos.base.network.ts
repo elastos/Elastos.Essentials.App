@@ -1,4 +1,4 @@
-import { SPVNetworkConfig } from "../../../../services/wallet.service";
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
 import { SwapProvider } from "../../../earn/swapprovider";
@@ -37,5 +37,5 @@ export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends Wallet
     return "5D37C0";
   }
 
-  public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig);
+  public abstract updateSPVNetworkConfig(onGoingConfig: ConfigInfo);
 }

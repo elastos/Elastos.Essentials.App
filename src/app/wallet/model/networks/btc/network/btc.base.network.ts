@@ -1,5 +1,5 @@
+import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { Logger } from "src/app/logger";
-import type { SPVNetworkConfig } from "../../../../services/wallet.service";
 import type { CoinID } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
@@ -72,7 +72,7 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
     return [WalletCreateType.MNEMONIC, WalletCreateType.KEYSTORE];
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig) {
+  public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
     onGoingConfig['BTC'] = {};
   }
 
