@@ -1,31 +1,35 @@
 import { DragDrop, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
+import { HttpClient } from '@angular/common/http';
 import { ComponentRef, Injectable, TemplateRef, ViewContainerRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { randomHex } from 'web3-utils';
+import { PluginConfig } from '../base/plugin.types';
 import { WidgetContainerComponent } from '../base/widget-container/widget-container.component';
 import { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
 import { Widget } from '../base/widget.interface';
-import { BuiltInWidgetType, WidgetContainerState, WidgetState } from '../base/widgetcontainerstate';
+import { BuiltInWidgetType, DisplayCategories, WidgetContainerState, WidgetState } from '../base/widgetcontainerstate';
+import { PluginWidget } from '../plugins/plugin-widget/plugin.widget';
 import { WidgetsBuilder } from './widgets.builder';
 
 const PERSISTENCE_CONTEXT = "launcher-widget";
 
 const builtInWidgets: WidgetState[] = [
-    { category: "builtin", builtInType: "identity" },
-    { category: "builtin", builtInType: "active-wallet" },
-    { category: "builtin", builtInType: "signout" },
-    { category: "builtin", builtInType: "elastos-voting" },
-    { category: "builtin", builtInType: "recent-apps" },
-    { category: "builtin", builtInType: "wallet-connect" },
-    { category: "builtin", builtInType: "easy-bridge" },
-    { category: "builtin", builtInType: "contacts" },
-    { category: "builtin", builtInType: "red-packets" },
-    { category: "builtin", builtInType: "hive" },
-    { category: "builtin", builtInType: "discover-dapps" },
-    { category: "builtin", builtInType: "new-red-packets" },
-    { category: "builtin", builtInType: "backup-identity" },
+    { category: "builtin", builtInType: "identity", displayCategories: [DisplayCategories.IDENTITY] },
+    { category: "builtin", builtInType: "active-wallet", displayCategories: [DisplayCategories.FINANCE] },
+    { category: "builtin", builtInType: "signout", displayCategories: [DisplayCategories.IDENTITY] },
+    { category: "builtin", builtInType: "elastos-voting", displayCategories: [DisplayCategories.ELASTOS] },
+    { category: "builtin", builtInType: "recent-apps", displayCategories: [DisplayCategories.BROWSER] },
+    { category: "builtin", builtInType: "wallet-connect", displayCategories: [DisplayCategories.FINANCE] },
+    { category: "builtin", builtInType: "easy-bridge", displayCategories: [DisplayCategories.FINANCE] },
+    { category: "builtin", builtInType: "contacts", displayCategories: [DisplayCategories.COMMUNITY] },
+    { category: "builtin", builtInType: "red-packets", displayCategories: [DisplayCategories.COMMUNITY] },
+    { category: "builtin", builtInType: "hive", displayCategories: [DisplayCategories.ELASTOS] },
+    { category: "builtin", builtInType: "discover-dapps", displayCategories: [DisplayCategories.BROWSER] },
+    { category: "builtin", builtInType: "new-red-packets", displayCategories: [DisplayCategories.COMMUNITY] },
+    { category: "builtin", builtInType: "backup-identity", displayCategories: [DisplayCategories.IDENTITY] },
 ];
 
 export type WidgetInstance = {
@@ -50,7 +54,9 @@ export class WidgetsService {
 
     constructor(
         private globalStorageService: GlobalStorageService,
-        private dragDrop: DragDrop
+        private dragDrop: DragDrop,
+        private http: HttpClient,
+        private globalNative: GlobalNativeService
     ) {
         WidgetsService.instance = this;
         // TMP DEBUG
@@ -172,7 +178,7 @@ export class WidgetsService {
     /**
      * Creates a new widget state with a unique ID, based on a widget state config/
      */
-    private createWidgetState(widgetStateConfig: WidgetState): WidgetState {
+    public createWidgetState(widgetStateConfig: WidgetState): WidgetState {
         // Clone the template state to make sure we don't edit its fields.
         let newWidgetState: WidgetState = Object.assign({}, widgetStateConfig);
 
@@ -183,9 +189,12 @@ export class WidgetsService {
     }
 
     private createBuiltInWidgetState(builtInType: BuiltInWidgetType): WidgetState {
+        let registeredBuiltInWidgetState = builtInWidgets.find(w => w.builtInType === builtInType);
+
         return this.createWidgetState({
             category: "builtin",
-            builtInType
+            builtInType,
+            displayCategories: registeredBuiltInWidgetState.displayCategories
         });
     }
 
@@ -218,6 +227,29 @@ export class WidgetsService {
         let state = await this.loadContainerState(widgetInstance.container.name);
         state.widgets = state.widgets.filter(w => w.id !== widgetId);
         await this.saveContainerState(widgetInstance.container.name, state);
+    }
+
+    /**
+     * Updates a plugin widget with new data, usually after a new JSON content refresh.
+     * Persistent model is updated, and UI as well.
+     */
+    public async updatePluginWidgetConfig(widgetId: string, newConfig: PluginConfig<any>): Promise<void> {
+        // Retrieve the current model instance
+        let widgetInstance = this.componentsInstances.find(w => w.widgetId === widgetId);
+
+        // Update to disk, if this widget is a currently added widget in a real container.
+        // (contrary to widgets shown in the widget chooser)
+        if (widgetInstance.container.name) {
+            let state = await this.loadContainerState(widgetInstance.container.name);
+
+            let storedWidget = state.widgets.find(w => w.id === widgetId);
+            storedWidget.plugin.json = newConfig;
+
+            await this.saveContainerState(widgetInstance.container.name, state);
+        }
+
+        // Refresh the plugin component content with the new data (UI only)
+        (<PluginWidget>widgetInstance.widget).config = newConfig;
     }
 
     /**

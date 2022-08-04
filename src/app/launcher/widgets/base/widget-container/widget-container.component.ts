@@ -2,6 +2,7 @@ import { DragDrop, DragRef, DropListRef } from '@angular/cdk/drag-drop';
 import { Component, ComponentRef, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewRef } from '@angular/core';
 import { WidgetInstance, WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
 import { GlobalThemeService } from '../../../../services/global.theme.service';
+import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsUIService } from '../../services/widgets.ui.service';
 import { WidgetHolderComponent } from '../widget-holder/widget-holder.component';
 import { WidgetState } from '../widgetcontainerstate';
@@ -30,6 +31,7 @@ export class WidgetContainerComponent implements OnInit {
   constructor(
     public theme: GlobalThemeService,
     private widgetsService: WidgetsService,
+    private widgetsPluginsService: WidgetPluginsService,
     private widgetsUIService: WidgetsUIService,
     private dragDrop: DragDrop
   ) { }
@@ -117,5 +119,18 @@ export class WidgetContainerComponent implements OnInit {
 
   public inLiveMode(): boolean {
     return this.mode === "live";
+  }
+
+  /**
+   * Removes all widgets from the widget list but without touching the model.
+   * This is used by the widget choose to toggle various widget category filters.
+   */
+  public emptyAllWidgets() {
+    // TODO: we probably need to ask the widget service to de-init the widget coponents here!
+
+    this.container.clear();
+    this.widgetslist.clear();
+    this.cdkList = null;
+    this.dragRefs = [];
   }
 }

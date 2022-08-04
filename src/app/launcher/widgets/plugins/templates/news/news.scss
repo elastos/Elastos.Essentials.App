@@ -1,0 +1,46 @@
+@import "../../../widgets.scss";
+@import "../../../plugins.scss";
+
+.template-root {
+  .right-col {
+    transition: all 0.5s ease;
+
+    .icon {
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      width: 100px;
+      opacity: 0.3;
+    }
+
+    .title {
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 100;
+    }
+
+    .info {
+      font-size: 14px;
+      margin: 10px;
+      z-index: 100;
+      height: 70px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .action {
+      ion-button {
+        height: 32px;
+      }
+    }
+
+    .no-action {
+      height: 40px; // Even if no button, use the same space to not let the widget size change
+    }
+
+    &.transitionning {
+      opacity: 0;
+    }
+  }
+}

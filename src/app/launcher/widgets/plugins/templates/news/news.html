@@ -1,0 +1,16 @@
+<div class="widget-background template-root" [class.darkContainer]="theme.darkMode">
+  <div class="project" (click)="onProjectLogoClicked()">
+    <img [cache]="config.logo">
+  </div>
+  <div class="right-col" [class.transitionning]="transitionning">
+    <div class="icon" *ngIf="getIcon()">
+      <img [cache]="getIcon()" />
+    </div>
+    <div class="title">{{ getTitle() }}</div>
+    <div class="info" (click)="onInfoClicked()">{{ getInfo() }}</div>
+    <div class="action" *ngIf="hasAction()">
+      <ion-button (click)="onActionButtonClicked()">{{ getActionTitle() }}</ion-button>
+    </div>
+    <div class="no-action" *ngIf="!hasAction()"></div>
+  </div>
+</div>

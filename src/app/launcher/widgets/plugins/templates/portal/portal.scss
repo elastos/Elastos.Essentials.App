@@ -1,0 +1,38 @@
+@import "../../../widgets.scss";
+@import "../../../plugins.scss";
+
+.template-root {
+  .right-col {
+    .header {
+      font-size: 12px;
+      font-weight: bold;
+      text-align: left;
+      margin-left: 10px;
+    }
+
+    ion-button {
+      height: 36px;
+      width: 100%;
+      font-size: 12px;
+      overflow: hidden;
+      --padding-start: 5px;
+      --padding-end: 5px;
+      margin: 0;
+
+      .inner {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+        white-space: normal;
+
+        img {
+          max-height: 24px;
+          width: 24px;
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+}

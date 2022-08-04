@@ -17,6 +17,8 @@ import { RecentAppsWidget } from '../builtin/recent-apps/recent-apps.widget';
 import { RedPacketsWidget } from '../builtin/red-packets/red-packets.widget';
 import { SignOutWidget } from '../builtin/signout/signout.widget';
 import { WalletConnectWidget } from '../builtin/wallet-connect/wallet-connect.widget';
+import { PluginWidget } from '../plugins/plugin-widget/plugin.widget';
+import { WidgetPluginsService } from './plugin.service';
 
 export class WidgetsBuilder {
     constructor(
@@ -88,12 +90,21 @@ export class WidgetsBuilder {
             widgetComponentInstance = component.instance;
             widgetComponentInstance.forSelection = forSelection; // Let the widget know where it will be used so it can adjust some UI
 
+            holder.instance.attachWidgetComponent(widgetComponentInstance);
+
             return { dragRef, widgetComponentInstance, widgetHolderComponentRef: holder };
         }
         else {
-            // NOT IMPLEMENTED YET
-        }
+            // Plugin
+            let component = holder.instance.container.createComponent<PluginWidget>(PluginWidget);
+            widgetComponentInstance = component.instance;
+            const pluginWidgetComponentInstance = <PluginWidget>widgetComponentInstance;
+            pluginWidgetComponentInstance.forSelection = forSelection; // Let the widget know where it will be used so it can adjust some UI
+            pluginWidgetComponentInstance.setPluginconfig(WidgetPluginsService.instance.getPluginWidgetStateConfig(widgetState));
 
-        return null;
+            holder.instance.attachWidgetComponent(pluginWidgetComponentInstance);
+
+            return { dragRef, widgetComponentInstance, widgetHolderComponentRef: holder };
+        }
     }
 }

@@ -5,13 +5,30 @@
   <!-- <div class="touch-disabler" (touchstart)="disablerTouchStart($event)" *ngIf="selecting"></div> -->
 
   <!-- Note: need to hide, not use *ngIf, to let the drag handle exist when the holder is created -->
-  <div class="edition" [class.reduced]="!editing">
+  <div class="edition" [class.reduced]="!editing || selecting">
     <ion-row>
       <ion-col size="6" class="item" (click)="deleteWidget()">
         <ion-icon name="trash-outline"></ion-icon>
       </ion-col>
       <ion-col size="6" class="item" #dragHandle>
         <ion-icon name="move-outline"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <!-- Shown when a dapp plugin is being added only -->
+  <div class="adding-plugin-edition" [class.reduced]="!selecting || widgetState.category !== 'app-plugin'">
+    <ion-row>
+      <ion-col size="12" class="item" (click)="deleteCustomPluginFromAddableList()">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <div class="plugin-control" [class.reduced]="!editing || widgetState.category !== 'app-plugin'">
+    <ion-row>
+      <ion-col size="12" class="item" (click)="refreshPluginContent()">
+        <ion-icon name="refresh-outline"></ion-icon>
       </ion-col>
     </ion-row>
   </div>

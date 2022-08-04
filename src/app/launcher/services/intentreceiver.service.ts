@@ -70,6 +70,9 @@ export class IntentReceiverService {
             case "onboard":
                 this.handleOnBoardIntent(intent);
                 break;
+            case "picklauncherwidget":
+                this.handlePickWidgetIntent(intent);
+                break;
             default:
                 return;
         }
@@ -99,5 +102,13 @@ export class IntentReceiverService {
         });
 
         void this.globalIntentService.sendIntentResponse({}, intent.intentId, false);
+    }
+
+    private handlePickWidgetIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        void this.globalNav.navigateTo(App.LAUNCHER, "/intents/picklauncherwidget", {
+            state: {
+                intent
+            }
+        });
     }
 }

@@ -14,7 +14,7 @@ typings/
 origin_platforms/
 platforms/
 origin_plugins/
-plugins/
+/plugins/
 scripts/cache/
 src/assets/generated/
 resources/ios/icon/

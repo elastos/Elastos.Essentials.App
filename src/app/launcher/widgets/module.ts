@@ -5,7 +5,6 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
 import { GlobalDirectivesModule } from "src/app/helpers/directives/module";
-import { WidgetChooserComponent } from "./base/widget-chooser/widget-chooser.component";
 import { WidgetContainerComponent } from './base/widget-container/widget-container.component';
 import { WidgetHolderComponent } from './base/widget-holder/widget-holder.component';
 import { ActiveWalletWidget } from "./builtin/active-wallet/active-wallet.widget";
@@ -21,12 +20,14 @@ import { RecentAppsWidget } from "./builtin/recent-apps/recent-apps.widget";
 import { RedPacketsWidget } from "./builtin/red-packets/red-packets.widget";
 import { SignOutWidget } from "./builtin/signout/signout.widget";
 import { WalletConnectWidget } from "./builtin/wallet-connect/wallet-connect.widget";
+import { PluginWidget } from "./plugins/plugin-widget/plugin.widget";
+import { NewsTemplate } from "./plugins/templates/news/news";
+import { PortalTemplate } from "./plugins/templates/portal/portal";
 @NgModule({
   declarations: [
     // Base
     WidgetContainerComponent,
     WidgetHolderComponent,
-    WidgetChooserComponent,
 
     // Widgets
     IdentityWidget,
@@ -41,7 +42,12 @@ import { WalletConnectWidget } from "./builtin/wallet-connect/wallet-connect.wid
     ContactsWidget,
     RedPacketsWidget,
     HiveWidget,
-    DiscoverDAppsWidget
+    DiscoverDAppsWidget,
+
+    // Plugins 
+    PluginWidget,
+    PortalTemplate,
+    NewsTemplate
   ],
   imports: [
     CommonModule,

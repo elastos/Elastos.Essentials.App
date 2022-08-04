@@ -15,6 +15,7 @@ import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.serv
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
+import { WidgetPluginsService } from '../../widgets/services/plugin.service';
 import { WidgetsService } from '../../widgets/services/widgets.service';
 import { NotificationsPage } from '../notifications/notifications.page';
 
@@ -55,6 +56,7 @@ export class HomePage implements OnInit {
     private globalStartupService: GlobalStartupService,
     private globalNavService: GlobalNavService,
     private widgetsService: WidgetsService,
+    private widgetPluginsService: WidgetPluginsService // init
   ) {
   }
 
@@ -143,9 +145,6 @@ export class HomePage implements OnInit {
             break;
         }
       });
-
-
-      console.log("widgetsslides", this.widgetsSlides)
     }
 
     this.widgetsEditionModeSub = this.widgetsService.editionMode.subscribe(editionMode => {
