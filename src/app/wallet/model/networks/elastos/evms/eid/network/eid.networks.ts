@@ -51,7 +51,7 @@ export class ElastosIdentityChainMainNetNetwork extends ElastosIdentityChainNetw
   constructor() {
     super(
       "elastosidchain",
-      "Elastos identity chain",
+      "Elastos Identity Chain",
       "assets/wallet/coins/ela-turquoise.svg",
       MAINNET_TEMPLATE,
       22
@@ -71,13 +71,13 @@ export class ElastosIdentityChainMainNetNetwork extends ElastosIdentityChainNetw
 }
 
 /**
- * Elastos identity chain
+ * Elastos Identity Chain
  */
 export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetworkBase {
   constructor() {
     super(
       "elastosidchain",
-      "Elastos identity chain Testnet",
+      "Elastos Identity Chain Testnet",
       "assets/wallet/coins/ela-turquoise.svg",
       TESTNET_TEMPLATE,
       23

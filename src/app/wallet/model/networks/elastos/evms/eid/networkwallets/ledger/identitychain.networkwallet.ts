@@ -15,7 +15,7 @@ export class ElastosIdentityChainLedgerNetworkWallet extends ElastosLedgerEVMNet
       masterWallet,
       network,
       "ELA",
-      "Elastos ID chain"
+      "Elastos ID Chain"
     );
   }
 
