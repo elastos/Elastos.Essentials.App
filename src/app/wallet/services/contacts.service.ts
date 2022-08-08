@@ -9,6 +9,7 @@ export type Contact = {
   cryptoname: string;
   type: string;
   addresses: CryptoAddress[];
+  address?: string; // Version < 2.6.0
 };
 
 export type CryptoAddress = {
@@ -62,6 +63,17 @@ export class ContactsService {
         needUpdate = true;
       }
 
+      // The data is {cryptoname:"", address:"xxx"} in version < 2.6.0, only for type CryptoName.
+      if (!contact.type && contact.address) {
+        contact.type = 'CryptoName';
+        contact.addresses = [{
+          type: 'ela.address',
+          address: contact.address
+        }]
+
+        delete(contact.address);
+      }
+
       let results: CryptoAddressResolvers.Address[] = null;
       switch (contact.type) {
         case 'CryptoName':
@@ -77,7 +89,7 @@ export class ContactsService {
         break;
       }
 
-      if (results) {
+      if (results && results.length > 0) {
         for (let i = 0; i < results.length; i++) {
           const addressFind = contact.addresses.find((ad) => ad.type === results[i].addressType);
           if (!addressFind) {
@@ -91,6 +103,9 @@ export class ContactsService {
             }
           }
         }
+      } else {
+        // Maybe we should not remove the contact if it is due to network problems.
+        // this.contacts.splice(index, 1);
       }
     }
 
