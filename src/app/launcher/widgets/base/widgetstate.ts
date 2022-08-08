@@ -36,6 +36,7 @@ export type WidgetState = {
   plugin?: {
     url?: string; // JSON content remote address, where we can refresh the content
     json?: JSONObject; // Fetched content from the url, validated as JSON. Cache.
+    lastFetched: number; // Timestamp at which the JSON content was last fetched. So we know when to refresh it.
   }
 }
 

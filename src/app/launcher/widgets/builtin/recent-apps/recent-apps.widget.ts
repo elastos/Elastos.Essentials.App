@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { BrowsedAppInfo } from 'src/app/dappbrowser/model/browsedappinfo';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
@@ -16,7 +16,7 @@ import { Widget } from '../../base/widget.interface';
   templateUrl: './recent-apps.widget.html',
   styleUrls: ['./recent-apps.widget.scss'],
 })
-export class RecentAppsWidget implements Widget {
+export class RecentAppsWidget implements Widget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
 
   private recentAppsSub: Subscription = null; // Susbcription to recently used dApps (browser)
@@ -31,7 +31,7 @@ export class RecentAppsWidget implements Widget {
     private appBackGroundService: GlobalAppBackgroundService
   ) { }
 
-  onWidgetInit(): Promise<void> {
+  ngOnInit() {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.recentAppsSub = this.browserService.recentApps.subscribe(async () => {
       this.recentApps = await this.browserService.getRecentAppsWithInfo();
@@ -39,7 +39,7 @@ export class RecentAppsWidget implements Widget {
     return;
   }
 
-  onWidgetDeinit(): Promise<void> {
+  ngOnDestroy() {
     if (this.recentAppsSub) {
       this.recentAppsSub.unsubscribe();
       this.recentAppsSub = null;

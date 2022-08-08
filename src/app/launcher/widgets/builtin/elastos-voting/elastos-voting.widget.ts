@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AppmanagerService, RunnableAppCategory } from 'src/app/launcher/services/appmanager.service';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
@@ -14,7 +14,7 @@ import { Widget } from '../../base/widget.interface';
   templateUrl: './elastos-voting.widget.html',
   styleUrls: ['./elastos-voting.widget.scss'],
 })
-export class ElastosVotingWidget implements Widget {
+export class ElastosVotingWidget implements Widget, OnInit {
   public forSelection: boolean; // Initialized by the widget service
 
   public runnableApps: RunnableAppCategory = null;
@@ -29,7 +29,7 @@ export class ElastosVotingWidget implements Widget {
     private crCouncilVotingInitService: CRCouncilVotingInitService,
   ) { }
 
-  onWidgetInit(): Promise<void> {
+  ngOnInit() {
     this.runnableApps = {
       type: 'launcher.elastos-voting',
       shouldBeDisplayed: () => this.walletNetworkService.isActiveNetworkElastos(), // Deprecated - unused

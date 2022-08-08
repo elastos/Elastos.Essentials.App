@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from 'src/app/model/app.enum';
@@ -14,7 +14,7 @@ import { WidgetsService } from '../../services/widgets.service';
   templateUrl: './new-red-packets.widget.html',
   styleUrls: ['./new-red-packets.widget.scss'],
 })
-export class NewRedPacketsWidget implements Widget {
+export class NewRedPacketsWidget implements Widget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
 
@@ -28,7 +28,7 @@ export class NewRedPacketsWidget implements Widget {
     private nav: GlobalNavService,
   ) { }
 
-  onWidgetInit(): Promise<void> {
+  ngOnInit() {
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
     WidgetsService.instance.editionMode.subscribe(editing => {
       this.editing = editing;
@@ -38,17 +38,13 @@ export class NewRedPacketsWidget implements Widget {
       // Keep only the packets not grabbed by the user yet
       this.publicRedPackets = publicPackets.filter(p => !this.packetService.packetAlreadyGrabbed(p.hash));
     });
-
-    return;
   }
 
-  onWidgetDeinit(): Promise<void> {
+  ngOnDestroy() {
     if (this.publicRedPacketsSubscription) {
       this.publicRedPacketsSubscription.unsubscribe();
       this.publicRedPacketsSubscription = null;
     }
-
-    return;
   }
 
   public viewPublicRedPackets() {

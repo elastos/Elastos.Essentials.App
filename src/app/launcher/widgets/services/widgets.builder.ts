@@ -3,7 +3,7 @@ import { ComponentRef, TemplateRef, ViewContainerRef } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
 import { Widget } from '../base/widget.interface';
-import { WidgetState } from '../base/widgetcontainerstate';
+import { WidgetState } from '../base/widgetstate';
 import { ActiveWalletWidget } from '../builtin/active-wallet/active-wallet.widget';
 import { BackupIdentityWidget } from '../builtin/backup-identity/backup-identity.widget';
 import { ContactsWidget } from '../builtin/contacts/contacts.widget';
@@ -18,7 +18,6 @@ import { RedPacketsWidget } from '../builtin/red-packets/red-packets.widget';
 import { SignOutWidget } from '../builtin/signout/signout.widget';
 import { WalletConnectWidget } from '../builtin/wallet-connect/wallet-connect.widget';
 import { PluginWidget } from '../plugins/plugin-widget/plugin.widget';
-import { WidgetPluginsService } from './plugin.service';
 
 export class WidgetsBuilder {
     constructor(
@@ -100,7 +99,7 @@ export class WidgetsBuilder {
             widgetComponentInstance = component.instance;
             const pluginWidgetComponentInstance = <PluginWidget>widgetComponentInstance;
             pluginWidgetComponentInstance.forSelection = forSelection; // Let the widget know where it will be used so it can adjust some UI
-            pluginWidgetComponentInstance.setPluginconfig(WidgetPluginsService.instance.getPluginWidgetStateConfig(widgetState));
+            pluginWidgetComponentInstance.attachWidgetState(widgetState);
 
             holder.instance.attachWidgetComponent(pluginWidgetComponentInstance);
 

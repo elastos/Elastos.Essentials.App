@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
@@ -13,7 +13,7 @@ import { Widget } from '../../base/widget.interface';
   templateUrl: './hive.widget.html',
   styleUrls: ['./hive.widget.scss'],
 })
-export class HiveWidget implements Widget {
+export class HiveWidget implements Widget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
 
   public app: RunnableApp = {
@@ -46,7 +46,7 @@ export class HiveWidget implements Widget {
     private hiveManagerInitService: HiveManagerInitService
   ) { }
 
-  onWidgetInit(): Promise<void> {
+  ngOnInit() {
     // Wait to know user's hive vault status to show the hive storage widget
     this.vaultStatusSub = this.globalHiveService.vaultStatus.subscribe((vaultStatus) => {
       if (vaultStatus && vaultStatus.vaultInfo) {
@@ -68,7 +68,7 @@ export class HiveWidget implements Widget {
     return;
   }
 
-  onWidgetDeinit(): Promise<void> {
+  ngOnDestroy() {
     if (this.vaultStatusSub) {
       this.vaultStatusSub.unsubscribe();
       this.vaultStatusSub = null;

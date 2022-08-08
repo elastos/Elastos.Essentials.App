@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { WidgetState } from '../base/widgetcontainerstate';
+import { WidgetState } from '../base/widgetstate';
 
 @Injectable({
     providedIn: 'root'

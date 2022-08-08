@@ -30,8 +30,4 @@ export class ContactsWidget implements Widget {
     public appService: AppmanagerService,
     private contactsInitService: ContactsInitService
   ) { }
-
-  onWidgetInit(): Promise<void> {
-    return;
-  }
 }

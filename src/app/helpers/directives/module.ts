@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { ImgFallbackDirective } from './img-fallback.directive';
 import { ImageCacheDirective } from './img-temp-cache.directive';
 import { NgxHideOnScrollModule } from './ngx-hide-on-scroll/ngx-hide-on-scroll.module';
@@ -19,6 +20,8 @@ import { NgxHideOnScrollModule } from './ngx-hide-on-scroll/ngx-hide-on-scroll.m
   ],
   entryComponents: [
   ],
-  providers: []
+  providers: [
+    HTTP
+  ]
 })
 export class GlobalDirectivesModule { }

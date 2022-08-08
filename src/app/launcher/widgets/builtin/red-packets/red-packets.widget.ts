@@ -28,8 +28,4 @@ export class RedPacketsWidget implements Widget {
     private translate: TranslateService,
     public appService: AppmanagerService
   ) { }
-
-  onWidgetInit(): Promise<void> {
-    return;
-  }
 }

@@ -161,7 +161,7 @@ export class HomePage implements OnInit {
 
     //Logger.log("launcher", "Launcher home screen will enter completed")
 
-    void this.widgetsService.onLauncherHomeViewWillEnter();
+    //void this.widgetsService.onLauncherHomeViewWillEnter();
   }
 
   ionViewDidEnter() {
@@ -187,7 +187,7 @@ export class HomePage implements OnInit {
       this.popover = null;
     }
 
-    void this.widgetsService.onLauncherHomeViewWillLeave();
+    //void this.widgetsService.onLauncherHomeViewWillLeave();
   }
 
   async showNotifications() {

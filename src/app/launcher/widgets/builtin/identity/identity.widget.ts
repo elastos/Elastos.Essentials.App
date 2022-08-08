@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import moment from 'moment';
 import { OptionsComponent } from 'src/app/launcher/components/options/options.component';
@@ -14,7 +14,7 @@ import { Widget } from '../../base/widget.interface';
   templateUrl: './identity.widget.html',
   styleUrls: ['./identity.widget.scss'],
 })
-export class IdentityWidget implements Widget {
+export class IdentityWidget implements Widget, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
 
   private popover: HTMLIonPopoverElement = null;
@@ -26,9 +26,8 @@ export class IdentityWidget implements Widget {
     private popoverCtrl: PopoverController
   ) { }
 
-  onWidgetDeinit(): Promise<void> {
+  ngOnDestroy() {
     console.log("IDENTITY TODO DISMISS POPOVER ON EXIT")
-    return;
   }
 
   public getSignedInIdentity(): IdentityEntry {

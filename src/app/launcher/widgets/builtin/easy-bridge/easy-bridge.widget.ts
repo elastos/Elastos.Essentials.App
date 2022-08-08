@@ -28,8 +28,4 @@ export class EasyBridgeWidget implements Widget {
     private translate: TranslateService,
     public appService: AppmanagerService
   ) { }
-
-  onWidgetInit(): Promise<void> {
-    return;
-  }
 }

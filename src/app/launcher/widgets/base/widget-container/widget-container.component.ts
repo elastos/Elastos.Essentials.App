@@ -5,7 +5,7 @@ import { GlobalThemeService } from '../../../../services/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsUIService } from '../../services/widgets.ui.service';
 import { WidgetHolderComponent } from '../widget-holder/widget-holder.component';
-import { WidgetState } from '../widgetcontainerstate';
+import { WidgetState } from '../widgetstate';
 
 @Component({
   selector: 'widget-container',
@@ -28,6 +28,8 @@ export class WidgetContainerComponent implements OnInit {
   private dragRefs: DragRef[] = [];
   public editing = false;
 
+  private holdersInstances: ComponentRef<WidgetHolderComponent>[] = []; // List of all widget holders initiated in this contained. Used to destroy those references when the container gets destroyed
+
   constructor(
     public theme: GlobalThemeService,
     private widgetsService: WidgetsService,
@@ -47,8 +49,9 @@ export class WidgetContainerComponent implements OnInit {
         // Container state is loaded, generate the widgets
         this.dragRefs = [];
         for (let widget of state.widgets) {
-          let { dragRef } = await this.widgetsService.restoreWidget(this, widget, this.widgetslist, this.container, this.widgetsBoundaries, this.dragPlaceholder);
+          let { dragRef, widgetHolderComponentRef } = await this.widgetsService.restoreWidget(this, widget, this.widgetslist, this.container, this.widgetsBoundaries, this.dragPlaceholder);
           this.dragRefs.push(dragRef);
+          this.holdersInstances.push(widgetHolderComponentRef);
         }
 
         this.cdkList.withItems(this.dragRefs);
@@ -95,9 +98,10 @@ export class WidgetContainerComponent implements OnInit {
   public addWidget() {
     void this.widgetsUIService.selectWidget().then(async selectedWidgetState => {
       if (selectedWidgetState) {
-        let { dragRef } = await this.widgetsService.addWidget(selectedWidgetState, this, this.widgetslist, this.container, this.widgetsBoundaries, this.dragPlaceholder);
+        let { dragRef, widgetHolderComponentRef } = await this.widgetsService.addWidget(selectedWidgetState, this, this.widgetslist, this.container, this.widgetsBoundaries, this.dragPlaceholder);
 
         this.dragRefs.push(dragRef);
+        this.holdersInstances.push(widgetHolderComponentRef);
         this.cdkList.withItems(this.dragRefs);
       }
     });

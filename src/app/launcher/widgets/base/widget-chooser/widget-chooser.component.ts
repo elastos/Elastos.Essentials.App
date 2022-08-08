@@ -1,7 +1,8 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
@@ -11,7 +12,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from '../../../../services/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetContainerComponent } from '../widget-container/widget-container.component';
-import { DisplayCategories as DisplayCategory, WidgetState } from '../widgetcontainerstate';
+import { DisplayCategories as DisplayCategory, WidgetState } from '../widgetstate';
 
 /* TODO:
 download json by the widget service
@@ -31,7 +32,7 @@ type Category = {
   templateUrl: './widget-chooser.component.html',
   styleUrls: ['./widget-chooser.component.scss'],
 })
-export class WidgetChooserComponent implements OnInit {
+export class WidgetChooserComponent implements OnInit, OnDestroy {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private widgetContainer: WidgetContainerComponent;
@@ -62,6 +63,8 @@ export class WidgetChooserComponent implements OnInit {
 
   private alreadySentIntentResponse = false;
 
+  private pluginsListSub: Subscription = null;
+
   constructor(
     public theme: GlobalThemeService,
     private widgetsService: WidgetsService,
@@ -89,10 +92,17 @@ export class WidgetChooserComponent implements OnInit {
     ];
     this.selectedCategory = this.categories[0];
 
-    this.widgetPluginsService.onAvailableCustomPluginsListChanged.subscribe(() => {
+    this.pluginsListSub = this.widgetPluginsService.onAvailableCustomPluginsListChanged.subscribe(() => {
       // Refresh the available custom dapps list when a custom widget is added or removed
       void this.prepareWidgetsList();
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.pluginsListSub) {
+      this.pluginsListSub.unsubscribe();
+      this.pluginsListSub = null;
+    }
   }
 
   ionViewWillEnter() {

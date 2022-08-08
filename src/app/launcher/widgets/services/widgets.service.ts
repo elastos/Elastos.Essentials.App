@@ -1,6 +1,7 @@
 import { DragDrop, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { ComponentRef, Injectable, TemplateRef, ViewContainerRef } from '@angular/core';
+import moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -10,7 +11,7 @@ import { PluginConfig } from '../base/plugin.types';
 import { WidgetContainerComponent } from '../base/widget-container/widget-container.component';
 import { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
 import { Widget } from '../base/widget.interface';
-import { BuiltInWidgetType, DisplayCategories, WidgetContainerState, WidgetState } from '../base/widgetcontainerstate';
+import { BuiltInWidgetType, DisplayCategories, WidgetContainerState, WidgetState } from '../base/widgetstate';
 import { PluginWidget } from '../plugins/plugin-widget/plugin.widget';
 import { WidgetsBuilder } from './widgets.builder';
 
@@ -110,7 +111,7 @@ export class WidgetsService {
      * Restores a widget that was previously saved.
      * Called when the widgets container is instantiated.
      */
-    public async restoreWidget(widgetContainer: WidgetContainerComponent, widget: WidgetState, widgetslist: ViewContainerRef, container: ViewContainerRef, boundaries: ViewContainerRef, dragPlaceholder: TemplateRef<any>): Promise<{ dragRef: DragRef, widgetHolderComponentRef: ComponentRef<WidgetHolderComponent> }> {
+    public async restoreWidget(widgetContainer: WidgetContainerComponent, widget: WidgetState, widgetslist: ViewContainerRef, container: ViewContainerRef, boundaries: ViewContainerRef, dragPlaceholder: TemplateRef<any>): Promise<{ dragRef: DragRef, widgetHolderComponentRef: ComponentRef<WidgetHolderComponent>, widgetComponentInstance: Widget }> {
         let { dragRef, widgetComponentInstance, widgetHolderComponentRef } = await WidgetsBuilder.appendWidgetFromState(widgetContainer.name, widget, widgetslist, container, boundaries, dragPlaceholder, this.dragDrop);
         this.componentsInstances.push({
             widgetId: widget.id,
@@ -122,10 +123,10 @@ export class WidgetsService {
         // When this method is called, the launcher viewWillEnter() can be already called or not called yet.
         // If the launcher is already entered: initialize the component.
         // If not, the component will be initialized later when home enters.
-        if (this.launcherHomeViewIsActive)
-            await widgetComponentInstance.onWidgetInit?.();
+        //if (this.launcherHomeViewIsActive)
+        //await widgetHolderComponentRef.instance.onWidgetInit?.();
 
-        return { dragRef, widgetHolderComponentRef };
+        return { dragRef, widgetHolderComponentRef, widgetComponentInstance };
     }
 
     /**
@@ -157,7 +158,7 @@ export class WidgetsService {
             holderComponentRef: widgetHolderComponentRef,
             container: widgetContainer
         });
-        await widgetComponentInstance.onWidgetInit?.();
+        //await widgetComponentInstance.onWidgetInit?.();
 
         // Live mode, not preview? Then save the sate
         if (!forSelection) {
@@ -209,19 +210,28 @@ export class WidgetsService {
     }
 
     /**
-     * Deletes a widget from the model and sends an event to let the widget container know that
-     * a removal from UI is needed too
+     * Removes a widget from a widget container but not from the the persistance state.
      */
-    public async deleteWidget(widgetId: string) {
+    public async removeWidget(widgetId: string): Promise<{ widgetInstance: WidgetInstance }> {
         // Find the widget
         let widgetIndex = this.componentsInstances.findIndex(w => w.widgetId === widgetId);
         let widgetInstance = this.componentsInstances[widgetIndex];
 
-        // Deinit the widget
-        await widgetInstance.widget.onWidgetDeinit?.();
+        // Deinit the holder and the widget
+        await widgetInstance.holderComponentRef.instance.onWidgetDeinit?.();
 
         // Delete from UI
         await widgetInstance.container.onWidgetDeletion(widgetInstance, widgetInstance.holderComponentRef.hostView);
+
+        return { widgetInstance };
+    }
+
+    /**
+     * Deletes a widget from the model and sends an event to let the widget container know that
+     * a removal from UI is needed too
+     */
+    public async deleteWidget(widgetId: string) {
+        const { widgetInstance } = await this.removeWidget(widgetId);
 
         // Delete from state / model
         let state = await this.loadContainerState(widgetInstance.container.name);
@@ -243,7 +253,11 @@ export class WidgetsService {
             let state = await this.loadContainerState(widgetInstance.container.name);
 
             let storedWidget = state.widgets.find(w => w.id === widgetId);
+            storedWidget.plugin.lastFetched = moment().unix(); // Last updated: now
             storedWidget.plugin.json = newConfig;
+
+            // Update the widget holder with new value
+            (<PluginWidget>widgetInstance.widget).attachWidgetState(storedWidget);
 
             await this.saveContainerState(widgetInstance.container.name, state);
         }
@@ -255,22 +269,22 @@ export class WidgetsService {
     /**
      * Lifecycle - launcher home is entering. We initialize widgets from here as well
      */
-    public async onLauncherHomeViewWillEnter() {
+    /* public async onLauncherHomeViewWillEnter() {
         for (let instance of this.componentsInstances) {
-            await instance.widget.onWidgetInit?.();
+            await instance.holderComponentRef.instance.onWidgetInit?.();
         }
         this.launcherHomeViewIsActive = true;
-    }
+    } */
 
     /**
      * Lifecycle - launcher home is leaving. We deinit widgets from here as well
      */
-    public async onLauncherHomeViewWillLeave() {
+    /* public async onLauncherHomeViewWillLeave() {
         this.launcherHomeViewIsActive = false;
         for (let instance of this.componentsInstances) {
-            await instance.widget.onWidgetDeinit?.();
+            await instance.holderComponentRef.instance.onWidgetDeinit?.();
         }
-    }
+    } */
 
     private generateDefaultContainerState(widgetContainerName: string): WidgetContainerState {
         let widgets: WidgetState[] = [];

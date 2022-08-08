@@ -21,6 +21,7 @@ import { RedPacketsWidget } from "./builtin/red-packets/red-packets.widget";
 import { SignOutWidget } from "./builtin/signout/signout.widget";
 import { WalletConnectWidget } from "./builtin/wallet-connect/wallet-connect.widget";
 import { PluginWidget } from "./plugins/plugin-widget/plugin.widget";
+import { GalleryTemplate } from "./plugins/templates/gallery/gallery";
 import { NewsTemplate } from "./plugins/templates/news/news";
 import { PortalTemplate } from "./plugins/templates/portal/portal";
 @NgModule({
@@ -47,7 +48,8 @@ import { PortalTemplate } from "./plugins/templates/portal/portal";
     // Plugins 
     PluginWidget,
     PortalTemplate,
-    NewsTemplate
+    NewsTemplate,
+    GalleryTemplate
   ],
   imports: [
     CommonModule,

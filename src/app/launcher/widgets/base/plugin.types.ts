@@ -1,20 +1,21 @@
 
-type RefreshOn = "networkchange";
+export enum RefreshOn {
+  NETWORK_CHANGE = "networkchange"
+};
+
+export type GalleryContentItemAction = {
+  icon: string; // url or base64
+  url: string; // "url to open when clicking the action button"
+};
+
 type GalleryContentItem = {
   title?: string; // "Super monkey"
   picture: string; // url or base64
-  info?: string; // "23 ELA",
-  actions?: [ // List of small action icons
-    {
-      icon: string; // url or base64
-      url: string; // "url to open when clicking the action button"
-    }
-  ]
+  subinfo?: string; // "23 ELA",
+  actions?: GalleryContentItemAction[] // List of small action icons
 };
 
-type GalleryContent = {
-  //"columns": 2, // Number of item columns
-  autoscroll?: 10; // Number of seconds between slide scrolls, if the number of items is larger than what can be displayed
+export type GalleryContent = {
   items: GalleryContentItem[];
 }
 
@@ -29,7 +30,7 @@ export type PortalContent = {
   items: PortalContentItem[];
 };
 
-export type NewsContentItem = {
+type NewsContentItem = {
   title: string;
   info: string;
   icon: string; // url or base64
@@ -50,7 +51,7 @@ export type PluginConfig<T> = {
   logo: string; // url or base64 of the dapp
   sublogo?: string; // Optional url or base64 to distinguish the context for users, in case dapps have multiple widgets
   url?: string; // Optional url opened when the project logo is touched - normally, the main dapp url
-  refresh?: number; // Number of seconds between new calls to the widget url to refresh content - eg: 120. Default: refresh only when restarting
+  refresh?: number; // Number of seconds between new calls to the widget url to refresh content - eg: 120. Default: 1 day
   refreshon?: RefreshOn[]; // List of events that trigger a new api call to refresh content, in addition to the standard timed refresh
   contenttype: ContentType; // Specifies the format of items in the "content" list below
   content: T;

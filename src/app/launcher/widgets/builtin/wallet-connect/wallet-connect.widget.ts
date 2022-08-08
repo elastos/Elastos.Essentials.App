@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import WalletConnect from '@walletconnect/client';
 import { Subscription } from 'rxjs';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
@@ -14,7 +14,7 @@ import { WidgetsService } from '../../services/widgets.service';
   templateUrl: './wallet-connect.widget.html',
   styleUrls: ['./wallet-connect.widget.scss'],
 })
-export class WalletConnectWidget implements Widget {
+export class WalletConnectWidget implements Widget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
 
@@ -29,7 +29,7 @@ export class WalletConnectWidget implements Widget {
     private globalWalletConnectService: GlobalWalletConnectService
   ) { }
 
-  onWidgetInit(): Promise<void> {
+  ngOnInit() {
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
     WidgetsService.instance.editionMode.subscribe(editing => {
       this.editing = editing;
@@ -41,16 +41,13 @@ export class WalletConnectWidget implements Widget {
         Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors, this.walletConnectConnectors.length);
       });
     });
-
-    return
   }
 
-  onWidgetDeinit(): Promise<void> {
+  ngOnDestroy() {
     if (this.walletConnectSub) {
       this.walletConnectSub.unsubscribe();
       this.walletConnectSub = null;
     }
-    return;
   }
 
   /**

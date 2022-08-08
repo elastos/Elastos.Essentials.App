@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonSlides, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
@@ -17,7 +17,6 @@ import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { Widget } from '../../base/widget.interface';
 
 // The networkWallet is null if the masterWallet is not supported on the active netowrk.
 type MasterWalletWithNetworkWallet = {
@@ -30,7 +29,7 @@ type MasterWalletWithNetworkWallet = {
   templateUrl: './active-wallet.widget.html',
   styleUrls: ['./active-wallet.widget.scss'],
 })
-export class ActiveWalletWidget implements Widget {
+export class ActiveWalletWidget implements OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
 
   @ViewChild('walletsSlider') walletsSlider: IonSlides;
@@ -64,7 +63,7 @@ export class ActiveWalletWidget implements Widget {
     public currencyService: CurrencyService
   ) { }
 
-  onWidgetInit(): Promise<void> {
+  ngOnInit(): Promise<void> {
     // Wait for wallet service to be initialized (existing wallets loaded) so we can display some balance
     // on the wallet widget.
     this.walletServiceSub = this.walletService.walletServiceStatus.subscribe((initializationComplete) => {
@@ -88,7 +87,7 @@ export class ActiveWalletWidget implements Widget {
     return;
   }
 
-  onWidgetDeinit(): Promise<void> {
+  ngOnDestroy(): Promise<void> {
     console.log("ACTIVE WALLET TODO DISMISS POPOVER ON EXIT");
 
     if (this.walletServiceSub) {

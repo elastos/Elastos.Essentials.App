@@ -3,15 +3,15 @@ import { Subject } from 'rxjs';
 import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
 import { GlobalThemeService } from '../../../../services/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
-import { Widget } from '../widget.interface';
-import { WidgetState } from '../widgetcontainerstate';
+import { Widget, WidgetLifeCycle } from '../widget.interface';
+import { WidgetState } from '../widgetstate';
 
 @Component({
   selector: 'widget-holder',
   templateUrl: './widget-holder.component.html',
   styleUrls: ['./widget-holder.component.scss'],
 })
-export class WidgetHolderComponent implements OnInit {
+export class WidgetHolderComponent implements OnInit, WidgetLifeCycle {
   public root: ElementRef;
 
   @ViewChild('container', { static: true, read: ViewContainerRef })
@@ -40,6 +40,14 @@ export class WidgetHolderComponent implements OnInit {
   ngOnInit() {
     this.widgetsService.editionMode.subscribe(editionMode => this.editing = editionMode);
   }
+
+  /* onWidgetInit(): Promise<void> {
+    return this.widgetComponent.onWidgetInit?.();
+  }
+
+  onWidgetDeinit(): Promise<void> {
+    return this.widgetComponent.onWidgetDeinit?.();
+  } */
 
   public attachWidgetInfo(widgetState: WidgetState) {
     this.widgetState = widgetState;

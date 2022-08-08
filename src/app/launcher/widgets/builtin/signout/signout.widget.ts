@@ -19,10 +19,6 @@ export class SignOutWidget implements Widget {
     private appBackGroundService: GlobalAppBackgroundService
   ) { }
 
-  onWidgetInit(): Promise<void> {
-    return
-  }
-
   public getSignedInIdentity(): IdentityEntry {
     return this.didService.signedIdentity;
   }
