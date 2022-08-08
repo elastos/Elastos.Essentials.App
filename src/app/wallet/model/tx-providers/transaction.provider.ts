@@ -95,10 +95,10 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    */
   public getTransactions(subWallet: SubWallet<GenericTransaction, any>, transactionListType = TransactionListType.NORMAL): Promise<TransactionType[]> {
     if (transactionListType === TransactionListType.NORMAL) {
-      return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet, transactionListType);
+      return this.getSubWalletTransactionProvider(subWallet)?.getTransactions(subWallet, transactionListType);
     } else {
       if (subWallet.supportInternalTransactions()) {
-        return this.getSubWalletInternalTransactionProvider(subWallet).getTransactions(subWallet, transactionListType);
+        return this.getSubWalletInternalTransactionProvider(subWallet)?.getTransactions(subWallet, transactionListType);
       } else {
         return null;
       }
@@ -106,11 +106,11 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   }
 
   public getOfflineTransactions(subWallet: SubWallet<GenericTransaction, any>): Promise<AnyOfflineTransaction[]> {
-    return this.getSubWalletTransactionProvider(subWallet).getOfflineTransactions();
+    return this.getSubWalletTransactionProvider(subWallet)?.getOfflineTransactions();
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
-    return this.getSubWalletTransactionProvider(subWallet).canFetchMoreTransactions(subWallet);
+    return this.getSubWalletTransactionProvider(subWallet)?.canFetchMoreTransactions(subWallet);
   }
 
   /**
@@ -165,14 +165,15 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     if (!afterTransaction) {
       // Compute the current last transaction to start fetching after that one.
       let currentTransactions = await this.getTransactions(subWallet);
-      afterTransaction = currentTransactions[currentTransactions.length - 1];
+      if (currentTransactions)
+        afterTransaction = currentTransactions[currentTransactions.length - 1];
     }
 
     // Fetching
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(true);
 
     // Fetch
-    await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet, afterTransaction);
+    await this.getSubWalletTransactionProvider(subWallet)?.fetchTransactions(subWallet, afterTransaction);
 
     // Not fetching
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);

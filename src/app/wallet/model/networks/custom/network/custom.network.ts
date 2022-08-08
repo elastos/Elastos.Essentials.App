@@ -40,7 +40,7 @@ export class CustomNetwork extends EVMNetwork {
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     switch (type) {
       case NetworkAPIURLType.RPC: return this.mainRpcUrl;
-      default: throw new Error(`BSCNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
+      default: throw new Error(`CustomNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
     }
   }
 }
