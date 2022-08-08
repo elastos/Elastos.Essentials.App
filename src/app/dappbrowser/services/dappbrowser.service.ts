@@ -14,6 +14,7 @@ import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
@@ -108,6 +109,7 @@ export class DappBrowserService implements GlobalService {
         public httpClient: HttpClient,
         public zone: NgZone,
         private platform: Platform,
+        private prefs: GlobalPreferencesService,
         private globalStorageService: GlobalStorageService,
         private globalIntentService: GlobalIntentService,
         public globalPopupService: GlobalPopupService,
@@ -130,16 +132,16 @@ export class DappBrowserService implements GlobalService {
         return;
     }
 
-    public getBrowseMode(): DAppsBrowseMode {
-        // TMP TRUE
-        if (/* true ||  */this.platform.platforms().indexOf('ios') >= 0)
-            return DAppsBrowseMode.EXTERNAL_BROWSER;
-        else
+    public async getBrowseMode(): Promise<DAppsBrowseMode> {
+        if (await this.prefs.getUseBuiltInBrowser(DIDSessionsStore.signedInDIDString))
             return DAppsBrowseMode.IN_APP;
+        else
+            return DAppsBrowseMode.EXTERNAL_BROWSER;
     }
 
-    public canBrowseInApp(): boolean {
-        return this.getBrowseMode() === DAppsBrowseMode.IN_APP;
+    public async canBrowseInApp(): Promise<boolean> {
+        let browseMode = await this.getBrowseMode();
+        return browseMode === DAppsBrowseMode.IN_APP;
     }
 
     public setClient(dabClient: DappBrowserClient) {
@@ -213,7 +215,7 @@ export class DappBrowserService implements GlobalService {
             return;
         }
 
-        if (this.getBrowseMode() == DAppsBrowseMode.IN_APP) {
+        if (await this.canBrowseInApp()) {
             // We cano use the "standard" way to open dapps in app.
             return this.open(url, title, target);
         }
@@ -263,7 +265,7 @@ export class DappBrowserService implements GlobalService {
             if (WalletService.instance.activeNetworkWallet.value) {
                 let subwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
                 if (subwallet)
-                  this.userAddress = await subwallet.getCurrentReceiverAddress();
+                    this.userAddress = await subwallet.getCurrentReceiverAddress();
             }
         }
         else {

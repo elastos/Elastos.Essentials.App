@@ -105,6 +105,11 @@ export const it = {
 
         /*********** Privacy page **********/
         'privacy': 'Privacy',
+
+        'privacy-built-in-browser-title': 'Built-in browser',
+        'privacy-use-builtin-browser': 'The Essentials built-in browser will be used to open dApps',
+        'privacy-use-external-browser': 'dApps will be opened in external browser applications',
+
         'identity-publishing': 'Pubblicazione dell\'identità',
         'publish-identity-medium-assist': 'Pubblica rapidamente le identità tramite il servizio ASSIST di terze parti',
         'publish-identity-medium-wallet': 'Pubblica identità usando il mio portafoglio',

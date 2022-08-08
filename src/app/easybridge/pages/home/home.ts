@@ -479,6 +479,6 @@ export class HomePage {
   }
 
   public openGlideFinance() {
-    void this.dAppBrowserService.open("https://glidefinance.io", "Glide Finance");
+    void this.dAppBrowserService.openForBrowseMode("https://glidefinance.io", "Glide Finance");
   }
 }

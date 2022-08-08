@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -45,6 +46,8 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
     public dabRunning = false;
     public noInAppNoticeDismissed = true; // Whether user has previously dismissed the "ios / no in app browser" box or not.
+    public canBrowseInApp = false;
+    public isIOS = false;
 
     private favoritesSubscription: Subscription = null;
     private networkSubscription: Subscription = null;
@@ -58,6 +61,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
         public zone: NgZone,
+        private platform: Platform,
         private globalStartupService: GlobalStartupService,
         private globalIntentService: GlobalIntentService,
         private globalStorageService: GlobalStorageService,
@@ -66,10 +70,13 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         private walletNetworkUIService: WalletNetworkUIService,
         private favoritesService: FavoritesService
     ) {
-        this.initDapps();
+        void this.init();
     }
 
-    initDapps() {
+    private async init() {
+        this.isIOS = this.platform.platforms().indexOf('android') < 0;
+        this.canBrowseInApp = await this.dappbrowserService.canBrowseInApp();
+
         this.allDApps = [
             {
                 icon: '/assets/browser/dapps/feeds.png',
@@ -288,7 +295,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             },
         ];
 
-        this.updateFavoritesAndApps();
+        void this.updateFavoritesAndApps();
     }
 
     async ionViewWillEnter() {
@@ -300,13 +307,13 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
         this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
             if (favorites) {
-              this.updateFavoritesAndApps();
+                void this.updateFavoritesAndApps();
             }
         });
 
         this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
             if (network) {
-              this.updateFavoritesAndApps();
+                void this.updateFavoritesAndApps();
             }
         });
 
@@ -333,13 +340,13 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
-    private updateFavoritesAndApps() {
-      // Build dapps and favorites only when the active network and favorites are ininialized.
-      if (this.favoritesService.favoritesSubject.value && this.walletNetworkService.activeNetwork.value) {
-        this.buildFilteredFavorites();
-        this.buildFilteredDApps();
-        this.buildFilteredDAppsWithFavorites();
-      }
+    private async updateFavoritesAndApps() {
+        // Build dapps and favorites only when the active network and favorites are ininialized.
+        if (this.favoritesService.favoritesSubject.value && this.walletNetworkService.activeNetwork.value) {
+            this.buildFilteredFavorites();
+            await this.buildFilteredDApps();
+            this.buildFilteredDAppsWithFavorites();
+        }
     }
 
     public setTheme(darkMode: boolean) {
@@ -381,16 +388,17 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     private buildFilteredFavorites() {
         let allFavorites = this.favoritesService.getFavorites();
         if (allFavorites) {
-          this.favorites = allFavorites.filter(f => {
-              return f.networks.length == 0 || f.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
-          });
+            this.favorites = allFavorites.filter(f => {
+                return f.networks.length == 0 || f.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
+            });
         }
     }
 
-    private buildFilteredDApps() {
+    private async buildFilteredDApps() {
+        const canBrowseInApp = await this.dappbrowserService.canBrowseInApp();
         this.dApps = this.allDApps.filter(app => {
             // If we need to run apps externally, but WC is not connected by apps, we don't show them.
-            if (!this.dappbrowserService.canBrowseInApp() && !app.walletConnectSupported)
+            if (!canBrowseInApp && !app.walletConnectSupported)
                 return false;
 
             // Show active network only

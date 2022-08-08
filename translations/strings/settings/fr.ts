@@ -105,6 +105,11 @@ export const fr = {
 
         /*********** Privacy page **********/
         'privacy': 'Vie privée',
+
+        'privacy-built-in-browser-title': 'Navigateur intégré',
+        'privacy-use-builtin-browser': 'Le navigateur intégré d\'Essentials sera utilisé pour ouvrir les dApps',
+        'privacy-use-external-browser': 'Les dApps seront ouvertes dans un navigateur externe',
+
         'identity-publishing': 'Publication d\'identité',
         'publish-identity-medium-assist': 'Publier les identités rapidement via le service tiers ASSIST',
         'publish-identity-medium-wallet': 'Publier les identités en utilisant mon portefeuille',

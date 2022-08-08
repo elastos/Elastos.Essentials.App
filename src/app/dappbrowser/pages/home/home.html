@@ -9,7 +9,7 @@
             </ion-col>
         </ion-row>
 
-        <ion-row class="no-in-app-notice-row" *ngIf="!dappbrowserService.canBrowseInApp() && !noInAppNoticeDismissed">
+        <ion-row class="no-in-app-notice-row" *ngIf="!canBrowseInApp && !noInAppNoticeDismissed && isIOS">
             <ion-col size="2" class="icon">
                 <img src="/assets/settings/icon/walletconnect.svg">
             </ion-col>

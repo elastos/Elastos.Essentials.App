@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { GlobalStorageService } from './global.storage.service';
 
@@ -17,17 +18,22 @@ export class GlobalPreferencesService {
 
   public preferenceListener = new Subject<Preference<any>>();
 
-  constructor(private storage: GlobalStorageService) {
+  constructor(private storage: GlobalStorageService, private platform: Platform) {
     GlobalPreferencesService.instance = this;
   }
 
   private getDefaultPreferences(): AllPreferences {
+    // By default, because of app store policy reasons, android uses the built in browser,
+    // while ios uses external browsers to open urls.
+    const useBuiltInBrowser = this.platform.platforms().indexOf('android') >= 0 ? true : false;
+
     return {
       "locale.language": "native system",
       "developer.mode": false,
       "developer.install.verifyDigest": false,
       "developer.backgroundservices.startonboot": true,
       "developer.screencapture": false,
+      "privacy.browser.usebuiltin": useBuiltInBrowser,
       "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
       "privacy.credentialtoolbox.stats": true, // Publish anonymous stats about credentials usage, to the external credential toolbox service, or not
       "ui.darkmode": true,
@@ -124,6 +130,14 @@ export class GlobalPreferencesService {
     catch (err) {
       return false;
     }
+  }
+
+  public getUseBuiltInBrowser(did: string): Promise<boolean> {
+    return this.getPreference<boolean>(did, "privacy.browser.usebuiltin");
+  }
+
+  public setUseBuiltInBrowser(did: string, useBuiltIn: boolean): Promise<void> {
+    return this.setPreference(did, "privacy.browser.usebuiltin", useBuiltIn);
   }
 
   public getPublishIdentityMedium(did: string): Promise<string> {

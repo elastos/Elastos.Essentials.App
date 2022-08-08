@@ -17,6 +17,7 @@ import { SettingsService } from '../../services/settings.service';
 export class PrivacyPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
+  public useBuiltInBrowser = false; // Whether to launch urls in the built in browser, or in an external browser
   public publishIdentityMedium = 'assist'; // assist or wallet
   public sendCredentialToolboxStats = true;
 
@@ -33,11 +34,29 @@ export class PrivacyPage implements OnInit {
 
   async ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.privacy'));
+    await this.fetchUseBuiltInBrowser();
     await this.fetchPublishIdentityMedium();
     await this.fetchCredentialToolboxStats();
   }
 
   ionViewWillLeave() {
+  }
+
+  private async fetchUseBuiltInBrowser(): Promise<void> {
+    this.useBuiltInBrowser = await this.prefs.getUseBuiltInBrowser(DIDSessionsStore.signedInDIDString);
+  }
+
+  public getUseBuiltInBrowserTitle(): string {
+    if (this.useBuiltInBrowser) {
+      return this.translate.instant('settings.privacy-use-builtin-browser');
+    } else {
+      return this.translate.instant('settings.privacy-use-external-browser');
+    }
+  }
+
+  async toggleUseBuiltInBrowser(): Promise<void> {
+    this.useBuiltInBrowser = !this.useBuiltInBrowser;
+    await this.prefs.setUseBuiltInBrowser(DIDSessionsStore.signedInDIDString, this.useBuiltInBrowser);
   }
 
   private async fetchPublishIdentityMedium(): Promise<void> {
