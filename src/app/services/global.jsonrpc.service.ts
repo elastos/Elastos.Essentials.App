@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import PQueue from 'p-queue';
 import { Logger } from 'src/app/logger';
 import { sleep } from '../helpers/sleep.helper';
@@ -38,7 +38,7 @@ export class GlobalJsonRPCService {
 
     private limitators: Map<string, RPCLimitator> = new Map();
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HTTP) {
         GlobalJsonRPCService.instance = this;
         /* this.registerLimitator("default", {
             minRequestsInterval: 100 // Let's be gentle, apply a max of 10 requests per second even if nothing is specified by default.
@@ -77,8 +77,8 @@ export class GlobalJsonRPCService {
      * By default, this API parses the result and returns the result data from the parsed JSON for convenience.
      * It's though possible to get the raw result (only parsed as json) by setting returnRawResult to true. (Used by our Essentials Web3 provider).
      */
-    httpPost(rpcApiUrl: string, param: any, limitatorName = "default", timeout = 10000, returnRawResult = false, highPriority = false): Promise<any> {
-        if (!rpcApiUrl) {
+    httpPost(url: string, params: any, limitatorName = "default", timeout = 10000, returnRawResult = false, highPriority = false): Promise<any> {
+        if (!url) {
             return null;
         }
 
@@ -86,20 +86,23 @@ export class GlobalJsonRPCService {
 
         let promiseResult = limitator.queue.add(() => {
             return new Promise((resolve, reject) => {
-                var request = new XMLHttpRequest();
+                const options = {
+                    method: 'post',
+                    data: params,
+                    serializer: "json",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    responseType: "text", // Force text response, we want to parse manually
+                    timeout: timeout != -1 ? timeout / 1000 : undefined, // http plugin timeout is in seconds
+                    followRedirect: true
+                };
 
-                request.open('POST', rpcApiUrl, true);
-                request.setRequestHeader('Content-Type', 'application/json');
-                if (timeout != -1) {
-                    request.timeout = timeout;
-                }
-
-                request.onreadystatechange = function () {
-                    if (request.readyState === 4 && request.timeout !== 1) {
-                        let resultString = request.responseText;
-
+                this.http.sendRequest(url, <any>options).then((res) => {
+                    if (res && res.data) {
                         try {
-                            let result = JSON.parse(resultString);
+                            let result = JSON.parse(res.data);
                             if (returnRawResult) {
                                 resolve(result);
                             }
@@ -108,7 +111,7 @@ export class GlobalJsonRPCService {
                                     resolve(result);
                                 } else {
                                     if (result.error) {
-                                        Logger.error("GlobalJsonRPCService", 'httpPost result.error :', result, ', rpc url:', rpcApiUrl);
+                                        Logger.error("GlobalJsonRPCService", 'httpPost result.error :', result, ', rpc url:', url);
                                         reject(result.error);
                                     }
                                     else if (result.code && !(result.code == 200 || result.code == 1) && result.message) {
@@ -123,30 +126,21 @@ export class GlobalJsonRPCService {
                             //Logger.warn("GlobalJsonRPCService", 'httpPost exception:', e, resultString);
                             let paramsAsString = "invalid format";
                             try {
-                                paramsAsString = JSON.stringify(param);
+                                paramsAsString = JSON.stringify(params);
                             }
                             catch (e) { }
 
-                            reject("Invalid JSON response returned by the JSON RPC for url: " + rpcApiUrl + ", with params: " + paramsAsString);
+                            reject("Invalid JSON response returned by the JSON RPC for url: " + url + ", with params: " + paramsAsString);
                         }
                     }
-                };
-
-                request.ontimeout = function () {
-                    Logger.error("GlobalJsonRPCService", 'httpPost timeout, rpc url:', rpcApiUrl);
-                    reject("Timeout");
-                };
-
-                request.onerror = function (error) {
-                    Logger.error("GlobalJsonRPCService", 'httpPost onerror:', error, ', rpc url:', rpcApiUrl);
-                    reject(error);
-                }
-
-                try {
-                    request.send(JSON.stringify(param));
-                } catch (error) {
-                    reject("Connection error");
-                }
+                    else {
+                        Logger.error('GlobalJsonRPCService', 'http get response with error:', res, ' url:', url);
+                        reject("http get response with error");
+                    }
+                }, (err) => {
+                    Logger.error('GlobalJsonRPCService', 'http get error:', err, ' url:', url);
+                    reject(err);
+                });
             });
         }, {
             // Some requests can have high priority to make sure that we send publish transaction requests
@@ -164,8 +158,24 @@ export class GlobalJsonRPCService {
 
         let promiseResult = limitator.queue.add(() => {
             return new Promise((resolve, reject) => {
-                this.http.get<any>(url).subscribe((res) => {
-                    resolve(res);  // Unblock the calling method
+                const options = {
+                    method: 'get',
+                    serializer: "json",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    responseType: "json",
+                    followRedirect: true
+                };
+
+                this.http.sendRequest(url, <any>options).then((res) => {
+                    if (res && res.data)
+                        resolve(res.data);  // Unblock the calling method
+                    else {
+                        Logger.error('GlobalJsonRPCService', 'http get response with error:', res, ' url:', url);
+                        reject("http get response with error");
+                    }
                 }, (err) => {
                     Logger.error('GlobalJsonRPCService', 'http get error:', err, ' url:', url);
                     reject(err);
@@ -183,8 +193,24 @@ export class GlobalJsonRPCService {
 
         let promiseResult = limitator.queue.add(() => {
             return new Promise((resolve, reject) => {
-                this.http.delete<any>(url).subscribe((res) => {
-                    resolve(res);  // Unblock the calling method
+                const options = {
+                    method: 'delete',
+                    serializer: "json",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    responseType: "json",
+                    followRedirect: true
+                };
+
+                this.http.sendRequest(url, <any>options).then((res) => {
+                    if (res && !res.error)
+                        resolve(res.data);  // Unblock the calling method
+                    else {
+                        Logger.error('GlobalJsonRPCService', 'http delete response with error:', res, ' url:', url);
+                        reject("http delete response with error");
+                    }
                 }, (err) => {
                     Logger.error('GlobalJsonRPCService', 'http delete error:', err, ' url:', url);
                     reject(err);

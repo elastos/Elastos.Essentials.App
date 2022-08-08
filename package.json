@@ -42,6 +42,7 @@
     "@awesome-cordova-plugins/core": "5.37.3",
     "@awesome-cordova-plugins/file": "5.37.3",
     "@awesome-cordova-plugins/firebase-x": "^5.37.3",
+    "@awesome-cordova-plugins/http": "^5.44.0",
     "@awesome-cordova-plugins/ionic-webview": "5.37.3",
     "@awesome-cordova-plugins/keyboard": "5.37.3",
     "@awesome-cordova-plugins/screen-orientation": "5.37.3",
@@ -94,6 +95,7 @@
     "bitcoin-address-validation": "^2.2.1",
     "bitcoinjs-lib": "^6.0.1",
     "bs58check": "^2.1.2",
+    "cordova-plugin-advanced-http": "^3.3.1",
     "create-hash": "^1.2.0",
     "create-hmac": "^1.1.7",
     "crypto-browserify": "3.12.0",
@@ -252,7 +254,8 @@
         "IOS_INIT_ON_LOAD": "true",
         "BLUETOOTH_USAGE_DESCRIPTION": "The bluetooth is used to connect ledger."
       },
-      "elastos-essentials-plugin-wallet": {}
+      "elastos-essentials-plugin-wallet": {},
+      "cordova-plugin-advanced-http": {}
     },
     "platforms": [
       "android",
