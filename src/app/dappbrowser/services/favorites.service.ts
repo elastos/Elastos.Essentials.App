@@ -19,7 +19,7 @@ import { BrowserFavorite } from '../model/favorite';
     providedIn: 'root'
 })
 export class FavoritesService {
-    public favoritesSubject: BehaviorSubject<BrowserFavorite[]> = new BehaviorSubject(null);
+    public favoritesSubject: BehaviorSubject<BrowserFavorite[]> = new BehaviorSubject([]);
 
     constructor(
         public translate: TranslateService,
