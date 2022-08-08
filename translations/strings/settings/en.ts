@@ -92,7 +92,7 @@ export const en = {
         'connect': 'Connect',
         'wallet-connect-no-session': 'No active session',
         'wallet-connect-no-session-info': 'There is currently no session with a third party app through Wallet Connect. Find the Wallet Connect button on your external app and scan the provided QR code using Elastos Essentials\' scanner to start.',
-        'wallet-connect-no-address': "No active wallet, or active network is not compatible with Ethereum (but you can continue).",
+        'wallet-connect-no-address': "No active wallet, or active network is not compatible with Ethereum. This is not an error, but please make sure you are on the expected network. Some dApps may disconnect your Wallet Connect session because of this.",
 
         /********** Startup Screen Page **********/
         'startupscreen': 'Startup Screen',

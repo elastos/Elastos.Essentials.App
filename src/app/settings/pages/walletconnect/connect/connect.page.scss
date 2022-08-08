@@ -3,7 +3,7 @@
 .container {
     min-height: 100%;
     padding: 20px 10px;
-  
+
     ion-card {
         position: relative;
         margin: 30px 10px;
@@ -44,14 +44,14 @@
             margin: 0 15px;
         }
     }
-  
+
     .section {
         margin-bottom: 30px;
 
         .section-title-row {
             margin-bottom: 10px;
             margin-left: 5px;
-        
+
             p {
                 margin: 0;
                 font-size: 13px;
@@ -62,32 +62,38 @@
                 color: #818181;
             }
         }
-    
+
         .section-item-row {
             border-radius: 17px;
             padding: 7.5px 10px;
             margin-bottom: 7.5px;
             box-shadow: 0 3px 15px 0 #ededf0;
             background-color: #ffffff;
-        
+
+            &.wrong-network {
+                background: #6e23d0 !important;
+                color: white;
+            }
+
             ion-col {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: flex-start;
                 overflow: hidden;
-        
-                h1, p {
+
+                h1,
+                p {
                     margin: 0;
                 }
-        
+
                 h1 {
                     font-size: 14px;
                     font-weight: 600;
                     letter-spacing: 0.7px;
                     text-align: left;
                 }
-        
+
                 p {
                     font-size: 13px;
                     font-weight: 400;
@@ -129,7 +135,7 @@
         }
     }
 }
-  
+
 .dark-container {
     ion-card {
         background: #2e2f4e;
@@ -147,13 +153,13 @@
     .section {
         .section-title-row {
             p {
-                color: #8888b0
+                color: #8888b0;
             }
         }
 
         .section-item-row {
             box-shadow: 0 3px 15px 0 #151626;
-            background-color: #2b2c49;        
+            background-color: #2b2c49;
         }
     }
 
@@ -161,4 +167,3 @@
         box-shadow: 0 3px 15px 0 #151626;
     }
 }
-  

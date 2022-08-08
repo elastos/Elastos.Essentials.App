@@ -92,7 +92,7 @@ export const zh = {
           'connect': '连接',
           'wallet-connect-no-session': '没有活动的会话',
           'wallet-connect-no-session-info': '当前没有通过 Wallet Connect 与第三方应用程序的会话。请在外部应用程序上找到 Wallet Connect 按钮，然后使用 Elastos Essentials 的扫描仪扫描此二维码以建立会话连接。',
-          'wallet-connect-no-address': "没有活跃的钱包，或者活跃的网络与以太坊不兼容（但您可以继续）。",
+          'wallet-connect-no-address': "No active wallet, or active network is not compatible with Ethereum. This is not an error, but please make sure you are on the expected network. Some dApps may disconnect your Wallet Connect session because of this.",
 
           /********** Startup Screen Page **********/
           'startupscreen': '启动页面',
