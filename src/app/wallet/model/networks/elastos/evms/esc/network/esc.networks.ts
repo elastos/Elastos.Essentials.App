@@ -62,7 +62,7 @@ export abstract class ElastosSmartChainNetworkBase extends ElastosEVMNetwork<Wal
 }
 
 /**
- * Elastos smart chain
+ * Elastos Smart Chain
  */
 export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBase {
   private uniswapCurrencyProvider: ElastosMainnetUniswapCurrencyProvider = null;
@@ -70,7 +70,7 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
   constructor() {
     super(
       ElastosSmartChainNetworkBase.NETWORK_KEY,
-      "Elastos smart chain",
+      "Elastos Smart Chain",
       "assets/wallet/coins/ela-gray.svg",
       MAINNET_TEMPLATE,
       20,
@@ -130,7 +130,7 @@ export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBas
   constructor() {
     super(
       ElastosSmartChainNetworkBase.NETWORK_KEY,
-      "Elastos smart chain Testnet",
+      "Elastos Smart Chain Testnet",
       "assets/wallet/coins/ela-gray.svg",
       TESTNET_TEMPLATE,
       21,

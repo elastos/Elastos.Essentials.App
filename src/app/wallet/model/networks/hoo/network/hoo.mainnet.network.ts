@@ -10,7 +10,7 @@ export class HooMainNetNetwork extends HooBaseNetwork {
   constructor() {
     super(
       "hoosmartchain",
-      "Hoo smart chain",
+      "Hoo Smart Chain",
       "assets/wallet/networks/hoo.png",
       "HOO",
       "HOO",
