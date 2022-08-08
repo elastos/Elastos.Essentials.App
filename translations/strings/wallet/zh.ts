@@ -41,7 +41,7 @@ export const zh = {
                 "not-a-valid-address": "地址无效",
                 "transaction-pending": "前一个交易正在确认中，请等待此交易确认后再执行",
                 "share-erc20-token": "查看这个Elastos ERC20币种",
-                "privatekey": "私钥",
+                "privatekey": "EVM 私钥",
 
                 /************
                 * Home Page *
@@ -329,8 +329,8 @@ export const zh = {
                 ************************/
                 "wallet-settings-title": "钱包设置",
                 "wallet-settings-backup-wallet": "备份钱包",
-                "wallet-settings-backup-wallet-subtitle": "查看要导出和备份的助记词及私钥",
-                "wallet-settings-backup-wallet-export": "导出助记词及私钥",
+                "wallet-settings-backup-wallet-subtitle": "查看要导出和备份的助记词及 EVM 私钥",
+                "wallet-settings-backup-wallet-export": "导出助记词及 EVM 私钥",
                 "wallet-settings-backup-wallet-keystore": "导出 Keystore",
                 "wallet-settings-change-name": "更改名称",
                 "wallet-settings-change-name-subtitle": "自定义钱包名称",
@@ -562,7 +562,7 @@ export const zh = {
                 "text-wallet-passphrase-validator-repeat": "两次输入的助记词密码不一致",
                 "text-wallet-passphrase-validator-min-length": "助记词密码最少8位",
                 "import-wallet-by-mnemonic": "通过助记词导入钱包",
-                "import-wallet-by-privatekey": "通过私钥/Keystore导入钱包",
+                "import-wallet-by-privatekey": "通过 EVM 私钥导入钱包",
 
                 /*****************
                 * Mnemonic Pages *
@@ -618,8 +618,8 @@ export const zh = {
                 *********************************/
                 'import-wallet-by-privatekey-info': '私钥:只支持兼容 EVM 的钱包私钥',
                 'import-wallet-by-keystore-info': 'Keystore: 只支持 ELA Keystore',
-                'paste-privatekey': '请粘贴或输入私钥/Keystore',
-                'wrong-privatekey-msg': '请输入正确的私钥/Keystore',
+                'paste-privatekey': '请粘贴或输入私钥',
+                'wrong-privatekey-msg': '请输入正确的私钥',
                 'import-private-key-sucess': '已通过私钥成功导入钱包',
                 'import-keystore-sucess': '已通过Keystore成功导入钱包',
                 'keystore-backup-password': '请输入 Keystore 密码',

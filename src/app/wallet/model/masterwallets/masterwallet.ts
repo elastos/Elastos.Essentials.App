@@ -1,11 +1,12 @@
+import { defaultPath, HDNode } from 'ethers/lib/utils';
 import { Logger } from 'src/app/logger';
-import { AESDecrypt } from '../../../helpers/crypto/aes';
+import { AESDecrypt, AESEncrypt } from '../../../helpers/crypto/aes';
 import { WalletNetworkService } from '../../services/network.service';
 import { SafeService, StandardWalletSafe } from '../../services/safe.service';
 import { jsToSpvWalletId, SPVService } from '../../services/spv.service';
 import { LocalStorage } from '../../services/storage.service';
 import { AnyNetwork } from '../networks/network';
-import { SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from './wallet.types';
+import { PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from './wallet.types';
 
 export const defaultWalletName = (): string => {
     return 'Anonymous wallet';
@@ -222,8 +223,19 @@ export class StandardMasterWallet extends MasterWallet {
      * wallet pay password is provided.
      */
     public async getPrivateKey(decryptedWithPayPassword?: string): Promise<string> {
-        if (!this.getSafe().privateKey)
-            return null;
+        if (!this.getSafe().privateKey) {
+          // The privateKey is undefine if the wallet is created by mnemonic.
+          let seed = await this.getSeed(decryptedWithPayPassword);
+          let privateKey = await this.getEVMPrivateKeyFromSeed(seed);
+          if (!privateKey) return null;
+
+          this.getSafe().privateKey = await AESEncrypt(privateKey, decryptedWithPayPassword);
+          this.getSafe().privateKeyType = PrivateKeyType.EVM;
+
+          // Save privateKey
+          await this.save();
+          return privateKey;
+        }
 
         if (!decryptedWithPayPassword)
             return await this.getSafe().privateKey;
@@ -233,5 +245,12 @@ export class StandardMasterWallet extends MasterWallet {
 
     private getSafe(): StandardWalletSafe {
         return SafeService.instance.getStandardWalletSafe(this.id);
+    }
+
+    private async getEVMPrivateKeyFromSeed(seed: string) {
+      const Wallet = (await import("ethers")).Wallet;
+      const seedByte = Buffer.from(seed, 'hex');
+      let hdWalelt = new Wallet(HDNode.fromSeed(seedByte).derivePath(defaultPath));
+      return hdWalelt.privateKey;
     }
 }

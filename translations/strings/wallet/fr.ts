@@ -41,7 +41,7 @@ export const fr = {
         "not-a-valid-address": "Adresse invalide",
         "transaction-pending": "Une transaction est déjà en cours. Veuillez attendre la confirmation de la première transaction.",
         "share-erc20-token": "Adresse de jeton ERC20 partagée",
-        "privatekey": "Clé privée",
+        "privatekey": "Clé privée EVM",
 
         /************
         * Home Page *
@@ -330,7 +330,7 @@ export const fr = {
         "wallet-settings-title": "Paramètres Portefeuille",
         "wallet-settings-backup-wallet": "Sauvegarde",
         "wallet-settings-backup-wallet-subtitle": "Visualisez votre mnémonique pour le sauvegarder en lieu sûr.",
-        "wallet-settings-backup-wallet-export": "Exporter clé papier et clé privée",
+        "wallet-settings-backup-wallet-export": "Exporter clé papier et clé privée EVM",
         "wallet-settings-backup-wallet-keystore": "Exporter le keystore",
         "wallet-settings-change-name": "Renommer",
         "wallet-settings-change-name-subtitle": "Organisez vos portefeuilles en leur donnant un nom personnalisé.",
@@ -561,7 +561,7 @@ export const fr = {
         "text-wallet-passphrase-validator-repeat": "Les deux phrases secrètes saisies sont différentes",
         "text-wallet-passphrase-validator-min-length": "La phrase secrète doit avoir au moins 8 caractères",
         "import-wallet-by-mnemonic": "Import par mots secrets",
-        "import-wallet-by-privatekey": "Import par clé privée ou un keystore",
+        "import-wallet-by-privatekey": "Import par clé privée EVM",
 
         /*****************
         * Mnemonic Pages *
@@ -617,7 +617,7 @@ export const fr = {
         *********************************/
         'import-wallet-by-privatekey-info': 'Clé privée: Seules les clés privées des portefeuilles EVM (type Ethereum) sont supportées.',
         'import-wallet-by-keystore-info': 'Keystore: seul les keystore elastos sont supportés',
-        'paste-privatekey': 'Coller ou saisir la clé privée ou un keystore',
+        'paste-privatekey': 'Coller ou saisir la clé privée',
         'wrong-privatekey-msg': 'Veuillez saisir une clé privée valide',
         'import-private-key-sucess': 'Portefeuille importé depuis une clé privée',
         'import-keystore-sucess': 'Portefeuille importé depuis un keystore',

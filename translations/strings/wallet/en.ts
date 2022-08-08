@@ -41,7 +41,7 @@ export const en = {
         "not-a-valid-address": "Not a valid address",
         "transaction-pending": "There is already an on going transaction. Please wait for the transaction to be confirmed.",
         "share-erc20-token": "Check out this Elastos ERC20 Token",
-        "privatekey": "Private Key",
+        "privatekey": "EVM Private Key",
 
         /************
         * Home Page *
@@ -330,8 +330,8 @@ export const en = {
         ************************/
         "wallet-settings-title": "Wallet Settings",
         "wallet-settings-backup-wallet": "Backup Wallet",
-        "wallet-settings-backup-wallet-subtitle": "View mnemonics to export and backup",
-        "wallet-settings-backup-wallet-export": "Export mnemonic and private key",
+        "wallet-settings-backup-wallet-subtitle": "View mnemonics and EVM private key to export and backup",
+        "wallet-settings-backup-wallet-export": "Export mnemonic and EVM private key",
         "wallet-settings-backup-wallet-keystore": "Export Keystore",
         "wallet-settings-change-name": "Change Name",
         "wallet-settings-change-name-subtitle": "Organize your wallet with a custom name",
@@ -562,7 +562,7 @@ export const en = {
         "text-wallet-passphrase-validator-repeat": "The two input mnemonic passphrases are inconsistent",
         "text-wallet-passphrase-validator-min-length": "The mnemonic passphrase must be at least 8 characters",
         "import-wallet-by-mnemonic": "Import Wallet by mnemonic",
-        "import-wallet-by-privatekey": "Import Wallet by private key or Keystore",
+        "import-wallet-by-privatekey": "Import Wallet by EVM private key",
 
         /*****************
         * Mnemonic Pages *
@@ -619,7 +619,7 @@ export const en = {
         *********************************/
         'import-wallet-by-privatekey-info': 'Private key: Only EVM compatible wallet private keys are supported',
         'import-wallet-by-keystore-info': 'Keystore: Only ELA keystore is supported',
-        'paste-privatekey': 'Paste or Enter Private Key or Keystore',
+        'paste-privatekey': 'Paste or Enter Private Key',
         'wrong-privatekey-msg': 'Please enter the correct private key',
         'import-private-key-sucess': 'Wallet imported from Private key',
         'import-keystore-sucess': 'Wallet imported from keystore',

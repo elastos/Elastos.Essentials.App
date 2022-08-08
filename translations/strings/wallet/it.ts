@@ -41,7 +41,7 @@ export const it = {
         "not-a-valid-address": "Non è un indirizzo valido",
         "transaction-pending": "C'è già una transazione in corso. Attendi la conferma della transazione.",
         "share-erc20-token": "Dai un'occhiata a questo token ERC20 Elastos",
-        "privatekey": "Chiave Privata",
+        "privatekey": "Chiave Privata EVM",
 
         /************
         * Home Page *
@@ -330,7 +330,7 @@ export const it = {
         "wallet-settings-title": "Impostazioni del portafoglio",
         "wallet-settings-backup-wallet": "Backup del Portafoglio",
         "wallet-settings-backup-wallet-subtitle": "Visualizza il tuo mnemonico per salvarlo in un luogo sicuro.",
-        "wallet-settings-backup-wallet-export": "Esporta mnemonico e chiave privata",
+        "wallet-settings-backup-wallet-export": "Esporta mnemonico e chiave privata EVM",
         "wallet-settings-backup-wallet-keystore": "Esporta Keystore",
         "wallet-settings-change-name": "Cambia nome",
         "wallet-settings-change-name-subtitle": "Organizza i tuoi portafogli assegnando loro un nome personalizzato.",
@@ -561,7 +561,7 @@ export const it = {
         "text-wallet-passphrase-validator-repeat": "Le due passphrase inserite sono diverse",
         "text-wallet-passphrase-validator-min-length": "La passphrase deve essere lunga almeno 8 caratteri",
         "import-wallet-by-mnemonic": "Importa il portafoglio tramite Mnemonico",
-        "import-wallet-by-privatekey": "Importa il portafoglio tramite Chiave Privata",
+        "import-wallet-by-privatekey": "Importa il portafoglio tramite Chiave Privata EVM",
 
         /*****************
         * Mnemonic Pages *
