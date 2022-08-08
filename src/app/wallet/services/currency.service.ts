@@ -295,6 +295,7 @@ export class CurrencyService {
   public async fetchMainTokenValue(quantity: BigNumber, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
     let cacheKey = network.key + network.getMainTokenSymbol();
     let currentTime = Date.now() / 1000;
+    let priceUpdated = false;
 
     //void this.pricesCache.delete(); // DEV
     //return;
@@ -306,6 +307,7 @@ export class CurrencyService {
       this.pricesCache.set(cacheKey, {
         usdValue: parseFloat(tokenStats)
       }, currentTime);
+      priceUpdated = true;
     }
     else {
       Logger.log("wallet", "No currency in trinity API for", network.getMainTokenSymbol(), ". Trying other methods");
@@ -316,17 +318,17 @@ export class CurrencyService {
           this.pricesCache.set(cacheKey, {
             usdValue
           }, currentTime);
+          priceUpdated = true;
         } else {
           Logger.log("wallet", "Can't get", network.getMainTokenSymbol(), "price from uniswap");
         }
       }
       else {
-        this.pricesCache.set(cacheKey, {
-          usdValue: 0
-        }, currentTime);
+        this.pricesCache.remove(cacheKey);
       }
     }
-    void this.pricesCache.save();
+    if (priceUpdated)
+      void this.pricesCache.save();
   }
 
   // ERC20 tokens

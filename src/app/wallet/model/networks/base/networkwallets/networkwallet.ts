@@ -245,14 +245,17 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      * Then convert back to native currency value
      */
     public getDisplayBalance(): BigNumber {
-        let usdBalance = this.getDisplayBalanceInCurrency('USD');
+        let nativeTokenUSDPrice = CurrencyService.instance.getMainTokenValue(new BigNumber(1), this.network, 'USD');
 
         // Convert USD balance back to native token
-        let nativeTokenUSDPrice = CurrencyService.instance.getMainTokenValue(new BigNumber(1), this.network, 'USD');
-        if (nativeTokenUSDPrice)
-            return usdBalance.dividedBy(nativeTokenUSDPrice);
-        else
-            return new BigNumber(0);
+        if (nativeTokenUSDPrice) {
+          let usdBalance = this.getDisplayBalanceInCurrency('USD');
+          return usdBalance.dividedBy(nativeTokenUSDPrice);
+        }
+        else {
+            // Only return the balance of the main token If the main token has no price.
+            return this.getMainEvmSubWallet().getBalance();
+        }
     }
 
     // The higher the price, the more decimal places.
