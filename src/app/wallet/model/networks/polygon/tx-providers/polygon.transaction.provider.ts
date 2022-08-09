@@ -1,7 +1,7 @@
 import { AnyMainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
 import { EtherscanEVMSubWalletInternalTransactionProvider } from "../../evms/tx-providers/etherscan.evm.subwallet.internaltx.provider";
 import { EtherscanEVMSubWalletProvider } from "../../evms/tx-providers/etherscan.evm.subwallet.provider";
-import { EtherscanEVMSubWalletTokenProvider } from "../../evms/tx-providers/etherscan.token.subwallet.provider";
+import { EtherscanEVMSubWalletTokenProvider, FetchMode } from "../../evms/tx-providers/etherscan.token.subwallet.provider";
 import { EVMTransactionProvider } from "../../evms/tx-providers/evm.transaction.provider";
 
 const POLYGON_SCAN_API_KEY_1 = "WSCT85BZ4QVSBQGVPH24DAH9Q49U3K2X7V";
@@ -14,7 +14,7 @@ export class PolygonTransactionProvider extends EVMTransactionProvider {
   }
 
   protected createEVMTokenSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet, POLYGON_SCAN_API_KEY_2);
+    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet, FetchMode.FetchMode_TokenTx_NftTx, POLYGON_SCAN_API_KEY_2);
   }
 
   protected createEVMSubWalletInternalTransactionProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {

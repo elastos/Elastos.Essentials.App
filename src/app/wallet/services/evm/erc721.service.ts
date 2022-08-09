@@ -285,7 +285,7 @@ export class ERC721Service {
             return Object.keys(ownedTokenIds);
         }
         catch (e) {
-            Logger.warn("wallet", "Failed to get ERC1155 events", e);
+            Logger.warn("wallet", "Failed to get ERC721 events", e);
             return null;
         }
     }

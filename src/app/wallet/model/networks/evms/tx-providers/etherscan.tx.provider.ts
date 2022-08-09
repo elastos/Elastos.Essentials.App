@@ -1,7 +1,7 @@
 import { AnyMainCoinEVMSubWallet } from "../subwallets/evm.subwallet";
 import { EtherscanEVMSubWalletInternalTransactionProvider } from "./etherscan.evm.subwallet.internaltx.provider";
 import { EtherscanEVMSubWalletProvider } from "./etherscan.evm.subwallet.provider";
-import { EtherscanEVMSubWalletTokenProvider } from "./etherscan.token.subwallet.provider";
+import { EtherscanEVMSubWalletTokenProvider, FetchMode } from "./etherscan.token.subwallet.provider";
 import { EVMTransactionProvider } from "./evm.transaction.provider";
 
 /**
@@ -14,7 +14,7 @@ export class EtherscanTransactionProvider extends EVMTransactionProvider {
   }
 
   protected createEVMTokenSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet);
+    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet, FetchMode.FetchMode_TokenTx_NftTx_1155Tx);
   }
 
   protected createEVMSubWalletInternalTransactionProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
