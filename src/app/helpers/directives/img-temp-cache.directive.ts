@@ -75,6 +75,13 @@ export class ImageCacheDirective implements AfterViewInit {
       reader.onloadend = () => {
         //console.log('Got data for cache: ', this._cache, reader.result);
 
+        // If the picture cache url changes during a fetch, just forget the fetch result.
+        // Otherwise, this would overwrite the picture with a wrong content.
+        if (this._cache !== url) {
+          Logger.warn("directives", "Image cache url ahs changed while receiving the previous content. Skipping content.");
+          return;
+        }
+
         localStorage.setItem(this._cache, reader.result.toString());
         this.el.nativeElement.src = reader.result;
 

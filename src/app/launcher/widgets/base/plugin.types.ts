@@ -45,7 +45,21 @@ export type NewsContent = {
   items: NewsContentItem[];
 }
 
-type ContentType = "portal" | "gallery" | "news";
+export type TokenPriceToken = {
+  icon?: string;
+  symbol: string; // eg "Glide",
+  network?: string; // eg "Elastos Smart Chain",
+  url?: string; // Token page url, if any
+  priceusd: number; // eg 0.056,
+  volume24husd?: number; // eg 104562,
+  change24hpercent?: number; // eg 4.86
+};
+
+export type TokenPriceContent = {
+  token: TokenPriceToken;
+}
+
+type ContentType = "portal" | "gallery" | "news" | "tokenprice";
 
 export type PluginConfig<T> = {
   logo: string; // url or base64 of the dapp

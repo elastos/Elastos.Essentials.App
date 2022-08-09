@@ -68,20 +68,12 @@ export class GalleryTemplate {
     return this.config.content.items[this.activePageIndex * 2 + itemIndexInPage].actions || [];
   }
 
-  /* public hasAction(): boolean {
-    return !!this.config.content.items[this.activePageIndex].action;
-  }
-
-  public getActionTitle(): string {
-    return this.config.content.items[this.activePageIndex].action.title;
-  }
-
   public onProjectLogoClicked() {
     if (!this.config.url)
       return;
 
     void this.dappBrowserService.openForBrowseMode(this.config.url);
-  }*/
+  }
 
   public onActionButtonClicked(event: MouseEvent, action: GalleryContentItemAction) {
     event.stopImmediatePropagation();

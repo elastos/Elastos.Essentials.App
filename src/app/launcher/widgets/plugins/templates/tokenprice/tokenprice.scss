@@ -1,0 +1,60 @@
+@import "../../../widgets.scss";
+@import "../../../plugins.scss";
+
+.template-root {
+  padding: 0px 10px;
+
+  .token-icon {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    opacity: 0.5;
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    margin-right: 5px;
+  }
+
+  .project {
+    width: 13vw;
+    height: 100%;
+    position: absolute;
+  }
+
+  .positive {
+    color: #44cc44;
+  }
+
+  .negative {
+    color: #cc4444;
+  }
+
+  ion-col {
+    padding: 0;
+    align-items: center;
+    display: flex;
+  }
+
+  .main-row {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .second-row {
+    font-size: 12px;
+
+    .change {
+      margin-right: 5px;
+    }
+  }
+
+  ion-row {
+    .left {
+      text-align: left;
+    }
+
+    .right {
+      text-align: right;
+    }
+  }
+}

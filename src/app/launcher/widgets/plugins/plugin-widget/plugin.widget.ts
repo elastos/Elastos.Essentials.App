@@ -40,7 +40,7 @@ export class PluginWidget implements Widget, OnInit, OnDestroy {
       if (activeNetwork) {
         if (this.config.refreshon && this.config.refreshon.includes(RefreshOn.NETWORK_CHANGE)) {
           // Widget asks to refresh content on network change, so we refresh.
-          void this.widgetsPluginsService.refreshPluginContent(this.widgetState);
+          void this.widgetsPluginsService.refreshPluginContent(this.widgetState, true);
         }
       }
     });
@@ -69,8 +69,6 @@ export class PluginWidget implements Widget, OnInit, OnDestroy {
    * even if the refresh time specified in the widget is higher.
    */
   private async checkRightTimeToRefreshWidgetContent(): Promise<void> {
-    console.log("checkRightTimeToRefreshWidgetContent");
-
     if (this.config) {
       await this.widgetsPluginsService.refreshPluginContentIfRightTime(this.widgetState);
     }

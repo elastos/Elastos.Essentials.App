@@ -24,6 +24,7 @@ import { PluginWidget } from "./plugins/plugin-widget/plugin.widget";
 import { GalleryTemplate } from "./plugins/templates/gallery/gallery";
 import { NewsTemplate } from "./plugins/templates/news/news";
 import { PortalTemplate } from "./plugins/templates/portal/portal";
+import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
 @NgModule({
   declarations: [
     // Base
@@ -49,7 +50,8 @@ import { PortalTemplate } from "./plugins/templates/portal/portal";
     PluginWidget,
     PortalTemplate,
     NewsTemplate,
-    GalleryTemplate
+    GalleryTemplate,
+    TokenPriceTemplate
   ],
   imports: [
     CommonModule,

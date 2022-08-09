@@ -55,10 +55,17 @@
         .action {
           background: white;
           height: 28px;
+          width: 28px;
           border-radius: 50%;
           margin: 0 5px;
           transition: all 0.2s ease;
           box-shadow: 0 0 3px #000;
+
+          img {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+          }
 
           &:active {
             opacity: 0.5;
@@ -72,7 +79,7 @@
       font-size: 14px;
       z-index: 100;
       margin-top: 10px;
-      height: 14px;
+      height: 16px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

@@ -91,7 +91,12 @@ export class WidgetPluginsService {
         if (!this.ensureNonEmptyString(inputConfig.logo))
             return this.erroredValidationResult("logo field is missing or not a valid picture url or base64");
 
-        if (!this.ensureEnumString(inputConfig.contenttype, ["portal", "gallery", "news"]))
+        if (!this.ensureEnumString(inputConfig.contenttype, [
+            "portal",
+            "gallery",
+            "news",
+            "tokenprice"
+        ]))
             return this.erroredValidationResult("contenttype field is missing or unsupported");
 
         if (!this.ensureObject(inputConfig.content))
