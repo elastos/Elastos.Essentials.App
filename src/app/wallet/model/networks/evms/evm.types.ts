@@ -32,7 +32,8 @@ export type EthTransaction = GenericTransaction & {
   Direction?: TransactionDirection;
   isERC20TokenTransfer?: boolean;
   hide?: boolean;
-  isRedPacket?: boolean
+  isRedPacket?: boolean;
+  isCrossChain?: boolean;
 };
 
 // TODO: move to elastos network

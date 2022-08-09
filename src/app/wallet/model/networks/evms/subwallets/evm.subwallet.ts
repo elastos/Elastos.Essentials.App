@@ -163,6 +163,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       erc20TokenTransactionInfo = await this.getERC20TokenTransactionInfo(transaction)
     }
 
+    let isCrossChain = this.isCrossChain(transaction);
+
     const transactionInfo: TransactionInfo = {
       amount: new BigNumber(-1),
       confirmStatus: parseInt(transaction.confirmations),
@@ -181,7 +183,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       timestamp,
       txid: transaction.hash,
       type: null,
-      isCrossChain: false,
+      isCrossChain: isCrossChain,
       erc20TokenSymbol: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenSymbol : null,
       erc20TokenValue: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenValue : null,
       erc20TokenContractAddress: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenContractAddress : null,
@@ -216,6 +218,10 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     } else if (direction === TransactionDirection.MOVED) {
       transactionInfo.type = TransactionType.TRANSFER;
       transactionInfo.symbol = '';
+    }
+
+    if (isCrossChain) {
+      transactionInfo.type = TransactionType.TRANSFER;
     }
 
     // Not blocking retrieval of extended transaction information
@@ -279,7 +285,11 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
           return './assets/wallet/buttons/receive.png';
         }
       case TransactionDirection.SENT:
-        return './assets/wallet/buttons/send.png';
+        if (transaction.isCrossChain) {
+          return './assets/wallet/buttons/transfer.png';
+        } else {
+          return './assets/wallet/buttons/send.png';
+        }
     }
   }
 
@@ -370,6 +380,17 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     } else {
       return "wallet.coin-op-contract-call";
     }
+  }
+
+  private isCrossChain(transaction: EthTransaction) {
+    let toAddressLowerCase = transaction.to.toLowerCase();
+    if (toAddressLowerCase === this.withdrawContractAddress) {
+      transaction.isCrossChain = true;
+      return true;
+    }
+
+    // Check from address?
+    return false;
   }
 
   protected async getBalanceByWeb3(): Promise<BigNumber> {

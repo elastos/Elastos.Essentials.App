@@ -239,6 +239,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             case RawTransactionType.WithdrawFromSideChain:
             case RawTransactionType.TransferCrossChainAsset:
                 transactionInfo.isCrossChain = true;
+                transactionInfo.type = TransactionType.TRANSFER;
                 break;
             default:
                 break;
