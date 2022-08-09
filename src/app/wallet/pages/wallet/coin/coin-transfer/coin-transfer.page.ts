@@ -624,7 +624,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         // Make sure we have a destination address
         if (!this.toAddress) {
-            this.conditionalShowToast('Destination address is missing', showToast);
+            this.conditionalShowToast('wallet.not-a-valid-address', showToast);
             return false;
         }
 
@@ -642,7 +642,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (!this.sendMax && (this.amount < 0.0002))
                 return false; // TODO: toast
 
-            // TODO: What the hell is this code supposed to do ? :)
+            // Condition: amountWEI % 10000000000 == 0 (the unit is WEI)
             const amountString = this.amount.toString();
             const dotIndex = amountString.indexOf('.');
             if ((dotIndex + 9) < amountString.length) {
