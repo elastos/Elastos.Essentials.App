@@ -30,7 +30,7 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
    */
   public async discoverTokens(): Promise<void> {
     let tokenSubWallet = this.subWallet;
-    const address = await tokenSubWallet.getTokenAddress();
+    const address = await tokenSubWallet.getAccountAddress();
 
     try {
       let tokenList = await GlobalElastosAPIService.instance.getERC20TokenList(StandardCoinName.ETHSC, address);

@@ -56,6 +56,7 @@ export type EthTokenTransaction = EthTransaction & {
   tokenSymbol: string;
   tokenName: string;
   tokenDecimal: string;
+  tokenID?: string; // For NFTs
 }
 
 // Show the erc20 token info if the ETHSC transaction is a erc20 token transfer.
@@ -67,7 +68,7 @@ export type ERC20TokenTransactionInfo = {
 }
 
 /**
- * Information about ERC20 Token
+ * Information about ERC20 or NFT Token
  */
 export type ERCTokenInfo = {
   type: TokenType;
@@ -75,8 +76,9 @@ export type ERCTokenInfo = {
   name: string;
   decimals: string;
   contractAddress: string;
-  balance: string;
+  balance: string; // Number of ERC20 coins owned, or number of NFT assets of this NFT type (having the same contract address)
   hasOutgoTx: boolean;
+  tokenIDs?: string[]; // For NFTs - list of all tokens IDs owned, for this NFT contract address
 }
 
 // To speedup eth transactions.

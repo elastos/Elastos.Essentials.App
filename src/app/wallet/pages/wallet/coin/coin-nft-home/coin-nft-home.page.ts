@@ -159,7 +159,7 @@ export class CoinNFTHomePage implements OnInit {
     refreshAssets() {
         this.refreshingAssets = true;
         this.networkWallet.refreshNFTAssets(this.nft).subscribe({
-            next: () => {
+            next: (assets) => {
                 this.assets = this.nft.getAssets();
             },
             complete: () => {
@@ -208,6 +208,8 @@ export class CoinNFTHomePage implements OnInit {
      * Opens the NFT asset details screen
      */
     showAssetDetails(asset: NFTAsset) {
+        console.log("coin home", this.nft, this.networkWallet.nfts, asset)
+
         this.native.go('/wallet/coin-nft-details', {
             masterWalletId: this.networkWallet.id,
             nftContractAddress: this.nft.contractAddress,

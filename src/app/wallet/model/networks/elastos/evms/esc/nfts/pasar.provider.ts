@@ -21,7 +21,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
 
     try {
       const uri = await erc1155Contract.methods.uri(asset.id).call() as string;
-      console.log("uri", uri);
+      //console.log("uri", uri);
 
       // Pasar URIs have formats such as "feeds:json:QmQcxY1YXNRTETzE4aDPcZpKBtRHJyyAjsBFgXavXtRvRh"
       if (uri && (uri.startsWith("feeds:json:") || uri.startsWith("pasar:json:"))) {
@@ -49,7 +49,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
         let jsonMetadataResponse = await fetch(metadataUrl);
         if (jsonMetadataResponse && jsonMetadataResponse.ok) {
           let jsonMetadata = await jsonMetadataResponse.json();
-          console.log("pasar nft json:", jsonMetadata);
+          //console.log("pasar nft json:", jsonMetadata);
 
           // Display pasar NFT ids in HEX to match pasar, instead of decimal
           asset.displayableId = `0x${new BigNumber(asset.id).toString(16)}`;
@@ -77,7 +77,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
             }
           }
 
-          console.log("Asset", asset);
+          //console.log("Asset", asset);
         }
 
       }

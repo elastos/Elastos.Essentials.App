@@ -159,7 +159,7 @@ export class HomePage {
       return false;
     }
 
-    this.evmWalletAddress = await elastosNetworkWallet.getMainEvmSubWallet().getTokenAddress(AddressUsage.EVM_CALL);
+    this.evmWalletAddress = await elastosNetworkWallet.getMainEvmSubWallet().getAccountAddress(AddressUsage.EVM_CALL);
 
     return true;
   }

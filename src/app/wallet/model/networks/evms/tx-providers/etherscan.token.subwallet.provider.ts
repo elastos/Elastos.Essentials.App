@@ -13,13 +13,13 @@ import { EtherscanHelper } from "./etherscan.helper";
 
 const MAX_RESULTS_PER_FETCH = 30
 
-export  enum FetchMode {
+export enum FetchMode {
   FetchMode_TokenTx = 0, // Account api only support tokentx action.
   FetchMode_TokenTx_NftTx = 1, // Account api support tokentx and tokennfttx actions.
   FetchMode_TokenTx_NftTx_1155Tx = 2 // Account api support tokentx, tokennfttx and token1155tx actions.
 }
 
-enum AcountAction {
+enum AccountAction {
   ERC20 = 'tokentx',
   ERC721 = 'tokennfttx',
   ERC1152 = 'token1155tx'
@@ -78,27 +78,27 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
 
   public async fetchAllTokensTransactions(): Promise<void> {
     let tokenSubWallet = this.subWallet;
-    const address = await tokenSubWallet.getTokenAddress();
+    const address = await tokenSubWallet.getAccountAddress();
     let totalTokens = [];
 
-    let tokenTransactions = await this.getTokenTransferEventsByAction(address, AcountAction.ERC20, 0);
+    let tokenTransactions = await this.getTokenTransferEventsByAction(address, AccountAction.ERC20, 0);
     if (tokenTransactions) {
-      let tokens = await this.getERCTokensFromTransferEvents(tokenTransactions, TokenType.ERC_20);
+      let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, TokenType.ERC_20);
       totalTokens = [...totalTokens, ...tokens];
     }
 
     if (this.fetchMode > FetchMode.FetchMode_TokenTx) {
-      tokenTransactions = await this.getTokenTransferEventsByAction(address, AcountAction.ERC721, 0);
+      tokenTransactions = await this.getTokenTransferEventsByAction(address, AccountAction.ERC721, 0);
       if (tokenTransactions) {
-        let tokens = await this.getERCTokensFromTransferEvents(tokenTransactions, TokenType.ERC_721);
+        let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, TokenType.ERC_721);
         totalTokens = [...totalTokens, ...tokens];
       }
     }
 
     if (this.fetchMode > FetchMode.FetchMode_TokenTx_NftTx) {
-      tokenTransactions = await this.getTokenTransferEventsByAction(address, AcountAction.ERC1152, 0);
+      tokenTransactions = await this.getTokenTransferEventsByAction(address, AccountAction.ERC1152, 0);
       if (tokenTransactions) {
-        let tokens = await this.getERCTokensFromTransferEvents(tokenTransactions, TokenType.ERC_1155);
+        let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, TokenType.ERC_1155);
         totalTokens = [...totalTokens, ...tokens];
       }
     }
@@ -108,53 +108,66 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
   }
 
   /**
-   * Can not get the token list directly, So get the token list by token transfer events.
+   * Can not get the token list directly, So get the token list by token transfer events that were found
+   * in transactions.
+   *
+   * Output for NFTs: ONE ERCTokenInfo entry per NFT contract.
    */
-  private async getERCTokensFromTransferEvents(transferEvents: EthTokenTransaction[], tokenType: TokenType) {
+  private async getTokensInfoFromTransferEvents(transferEvents: EthTokenTransaction[], tokenType: TokenType): Promise<ERCTokenInfo[]> {
     let ercTokens: ERCTokenInfo[] = [];
-    let ercTokenContractAddresss = [];
-    let ercTokenHasOutgoTxContractAddresss = [];
+    let tokenWithOutgoingTxContractAddresses = [];
 
-    const accountAddress = await this.subWallet.getTokenAddress();
+    const accountAddress = await this.subWallet.getAccountAddress();
+
+    // Check every transfer
     for (let i = 0, len = transferEvents.length; i < len; i++) {
-      if (-1 === ercTokenContractAddresss.indexOf(transferEvents[i].contractAddress)) {
-        let hasOutgoTx = false;
-        if (transferEvents[i].from) {
-          hasOutgoTx = accountAddress === transferEvents[i].from.toLowerCase();
-        }
-        if (hasOutgoTx) {
-          ercTokenHasOutgoTxContractAddresss.push(transferEvents[i].contractAddress);
-        }
-        ercTokenContractAddresss.push(transferEvents[i].contractAddress);
-        let token: ERCTokenInfo = {
+      // Check if this transfer is a outgoing transfer from user's wallet
+      let hasOutgoingTx = false;
+      if (transferEvents[i].from && transferEvents[i].from.toLowerCase() === accountAddress)
+        hasOutgoingTx = true;
+
+      // If this is a outgoing transfer and the outgoing contract address is not added yet, save it to our temporary outgoing tokens list
+      if (-1 === tokenWithOutgoingTxContractAddresses.indexOf(transferEvents[i].contractAddress) && hasOutgoingTx)
+        tokenWithOutgoingTxContractAddresses.push(transferEvents[i].contractAddress);
+
+      let tokenInfo = ercTokens.find(t => t.contractAddress === transferEvents[i].contractAddress);
+      if (!tokenInfo) {
+        // If the token contract was not handled yet, save its info to our local list of all contracts
+        tokenInfo = {
           balance: '',
           contractAddress: transferEvents[i].contractAddress,
           decimals: transferEvents[i].tokenDecimal,
           name: transferEvents[i].tokenName,
           symbol: transferEvents[i].tokenSymbol,
           type: tokenType,
-          hasOutgoTx: hasOutgoTx,
+          hasOutgoTx: hasOutgoingTx,
         }
-        ercTokens.push(token);
-      } else {
-        let hasOutgoTx = false;
-        if (transferEvents[i].from) {
-          hasOutgoTx = accountAddress === transferEvents[i].from.toLowerCase();
-        }
-        if (hasOutgoTx && (-1 === ercTokenHasOutgoTxContractAddresss.indexOf(transferEvents[i].contractAddress))) {
-          ercTokenHasOutgoTxContractAddresss.push(transferEvents[i].contractAddress);
-          const index = ercTokens.findIndex(token => token.contractAddress == transferEvents[i].contractAddress);
-          ercTokens[index].hasOutgoTx = true;
-        }
+
+        ercTokens.push(tokenInfo);
+      }
+
+      // Append NFT token ID if needed
+      if (transferEvents[i].tokenID) {
+        if (!tokenInfo.tokenIDs)
+          tokenInfo.tokenIDs = [];
+
+        if (!tokenInfo.tokenIDs.includes(transferEvents[i].tokenID))
+          tokenInfo.tokenIDs.push(transferEvents[i].tokenID);
       }
     }
-    //Logger.log('wallet', ' ERC20 Tokens:', ercTokens)
+
+    // Mark all tokens with outgoing transfers
+    ercTokens.forEach(t => {
+      if (tokenWithOutgoingTxContractAddresses.includes(t.contractAddress))
+        t.hasOutgoTx = true;
+    })
+
     return ercTokens;
   }
 
-  private async getTokenTransferEventsByAction(address: string, action : AcountAction, startblock: number, endblock = 9999999999): Promise<EthTokenTransaction[]> {
+  private async getTokenTransferEventsByAction(address: string, action: AccountAction, startblock: number, endblock = 9999999999): Promise<EthTokenTransaction[]> {
     let tokensEventUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN)
-       + '?module=account&action=' + action + '&address=' + address
+      + '?module=account&action=' + action + '&address=' + address
       + '&startblock=' + startblock + '&endblock=' + endblock;
 
     if (this.apiKey)

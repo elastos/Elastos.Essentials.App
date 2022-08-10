@@ -101,7 +101,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return WalletUtil.isEVMAddress(address);
   }
 
-  public async getTokenAddress(usage: (AddressUsage | string) = AddressUsage.EVM_CALL): Promise<string> {
+  public async getAccountAddress(usage: (AddressUsage | string) = AddressUsage.EVM_CALL): Promise<string> {
     if (!this.ethscAddress) {
       this.ethscAddress = (await this.getCurrentReceiverAddress(usage)).toLowerCase();
     }
@@ -308,7 +308,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       }
     }
 
-    const address = await this.getTokenAddress();
+    const address = await this.getAccountAddress();
     if (address === targetAddress) {
       return TransactionDirection.RECEIVED;
     } else {
@@ -394,7 +394,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   protected async getBalanceByWeb3(): Promise<BigNumber> {
-    const address = await this.getTokenAddress();
+    const address = await this.getAccountAddress();
     try {
       const balanceString = await (await this.getWeb3()).eth.getBalance(address);
       return new BigNumber(balanceString);
@@ -411,7 +411,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   public async updateBalance(): Promise<void> {
     // this.balance = await this.getBalanceByWeb3();
-    const address = await this.getTokenAddress();
+    const address = await this.getAccountAddress();
     const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key);
     if (balance) {
       this.balance = balance;
@@ -487,7 +487,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public async getNonce() {
-    const address = await this.getTokenAddress();
+    const address = await this.getAccountAddress();
     try {
       return GlobalEthereumRPCService.instance.getETHSCNonce(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key);
     }
@@ -505,7 +505,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   // value is hexadecimal string, eg: "0x1000"
   private async estimateGasForPaymentTransaction(to: string, value: string) {
     try {
-      const address = await this.getTokenAddress();
+      const address = await this.getAccountAddress();
       return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, to, value, this.networkWallet.network.key);
     }
     catch (err) {

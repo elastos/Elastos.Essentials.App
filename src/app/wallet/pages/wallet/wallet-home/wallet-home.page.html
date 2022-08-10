@@ -204,7 +204,8 @@
                     </ion-col>
                     <ion-col size="8" class="middle-col">
                         <h1>{{ nft.name }}</h1>
-                        <div class="bottom-col"><span class="synced">ELASTOS {{nft.type}} NFT</span></div>
+                        <div class="bottom-col"><span class="synced">{{ currentNetwork.name }} {{nft.type}} NFT</span>
+                        </div>
                     </ion-col>
                     <ion-col size="2" class="right-col">
                         <h1>{{ nft.balance >= 0 ? nft.balance : "" }}</h1>

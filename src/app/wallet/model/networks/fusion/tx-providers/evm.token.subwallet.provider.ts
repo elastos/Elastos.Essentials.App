@@ -9,11 +9,11 @@ import { FusionHelper, FusionTokenType } from "./fusion.helper";
 const MAX_RESULTS_PER_FETCH = 30;
 
 // TODO: we need call fetchAllTokenTransactions for each token type
-let tokenTypeMapList = [{fusionTokenType : FusionTokenType.ERC20, ercTokenType : TokenType.ERC_20},
-                    {fusionTokenType : FusionTokenType.FRC758, ercTokenType : TokenType.ERC_20},
-                    {fusionTokenType : FusionTokenType.FRC759, ercTokenType : TokenType.ERC_20},
-                    {fusionTokenType : FusionTokenType.ERC721, ercTokenType : TokenType.ERC_721},
-                    {fusionTokenType : FusionTokenType.ERC1155, ercTokenType : TokenType.ERC_1155},];
+let tokenTypeMapList = [{ fusionTokenType: FusionTokenType.ERC20, ercTokenType: TokenType.ERC_20 },
+{ fusionTokenType: FusionTokenType.FRC758, ercTokenType: TokenType.ERC_20 },
+{ fusionTokenType: FusionTokenType.FRC759, ercTokenType: TokenType.ERC_20 },
+{ fusionTokenType: FusionTokenType.ERC721, ercTokenType: TokenType.ERC_721 },
+{ fusionTokenType: FusionTokenType.ERC1155, ercTokenType: TokenType.ERC_1155 },];
 
 
 export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenProvider<AnyMainCoinEVMSubWallet> {
@@ -57,14 +57,14 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
     Logger.warn('wallet', ' FusionEvmTokenSubWalletProvider fetchAllTokensTransactions')
     const accountAddress = await this.subWallet.getCurrentReceiverAddress();
 
-    for (let i =0; i < tokenTypeMapList.length; i++) {
+    for (let i = 0; i < tokenTypeMapList.length; i++) {
       let result = await FusionHelper.fetchAllTokenTransactions(
         this.subWallet,
         accountAddress,
         tokenTypeMapList[i].fusionTokenType,
         1,
         100);
-      if (result.transactions && result.transactions.length >0) {
+      if (result.transactions && result.transactions.length > 0) {
         let tokens = await this.getERCTokensFromTransactions(result.transactions, tokenTypeMapList[i].ercTokenType);
         if (tokens.length > 0) {
           await this.provider.onTokenInfoFound(tokens);
@@ -76,12 +76,12 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
   /**
    * Can not get the token list directly, So get the token list by token transactions.
    */
-   private async getERCTokensFromTransactions(transactions: EthTokenTransaction[], tokenType: TokenType) {
+  private async getERCTokensFromTransactions(transactions: EthTokenTransaction[], tokenType: TokenType) {
     let ercTokens: ERCTokenInfo[] = [];
     let ercTokenContractAddresss = [];
     let ercTokenHasOutgoTxContractAddresss = [];
 
-    const accountAddress = await this.subWallet.getTokenAddress();
+    const accountAddress = await this.subWallet.getAccountAddress();
     for (let i = 0, len = transactions.length; i < len; i++) {
       if (-1 === ercTokenContractAddresss.indexOf(transactions[i].contractAddress)) {
         let hasOutgoTx = false;

@@ -37,7 +37,7 @@ export abstract class EVMNetworkWallet<MasterWalletType extends MasterWallet, Wa
         return [
             {
                 title: this.mainTokenSubWallet.getFriendlyName(),
-                address: await this.mainTokenSubWallet.getTokenAddress()
+                address: await this.mainTokenSubWallet.getAccountAddress()
             }
         ];
     }

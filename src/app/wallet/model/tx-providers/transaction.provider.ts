@@ -229,9 +229,11 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    * do a preliminary filter.
    *
    * This method will add new coins to the coin list and notify user that new tokens have arrived if needed.
+   *
+   * NOTE: This method must be called only once (per refresh) with all tokens together, because it resets the NFTs list.
    */
   public async onTokenInfoFound(tokens: ERCTokenInfo[]) {
-    let newAllCoinsList: ERCTokenInfo[] = [];
+    let allNewCoinsList: ERCTokenInfo[] = [];
     let newERC20CoinsList: string[] = [];
     const timestamp = (new Date()).valueOf();
 
@@ -261,7 +263,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
                 if (await network.addCustomERC20Coin(newCoin)) {
                   // Find new coin.
                   newERC20CoinsList.push(token.symbol);
-                  newAllCoinsList.push(token);
+                  allNewCoinsList.push(token);
                   if (token.hasOutgoTx) {
                     try {
                       // Create the sub Wallet (ex: IDChain)
@@ -281,23 +283,21 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
         }
       }
       else if (token.type === "ERC-721") {
-        if (!this.networkWallet.containsNFT(token.contractAddress)) {
-          await this.networkWallet.createNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance));
-          // TODO: let user know, should be a different notification than for ERC20 and the click
-          // should bring to wallet home, not to coins list
-        }
+        // We can possibly have a balance, but not the tokens IDs list. So we update the balance to show the right
+        // number on UI first, and we will fetch tokens IDs later when use enters coin-home
+        //
+        // NOTE: We get ONE token info entry uniquely per NFT contract, not several.
+        await this.networkWallet.upsertNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs);
       }
       else if (token.type === "ERC-1155") {
-        if (!this.networkWallet.containsNFT(token.contractAddress)) {
-          await this.networkWallet.createNFT(NFTType.ERC1155, token.contractAddress, Number.parseInt(token.balance));
-          // TODO: let user know, should be a different notification than for ERC20 and the click
-          // should bring to wallet home, not to coins list
-        }
+        await this.networkWallet.upsertNFT(NFTType.ERC1155, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs);
       }
       else {
         Logger.warn('wallet', 'Unhandled token type:', token);
       }
     }
+
+    // TODO: let user know about new NFTs if any (notif)
 
     // Found new coins - notify user
     if (newERC20CoinsList.length > 0) {
@@ -305,7 +305,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     }
 
     // Emit the new token event for other listeners
-    newAllCoinsList.map(coin => {
+    allNewCoinsList.map(coin => {
       this.newTokenReceived.next(coin);
     });
   }

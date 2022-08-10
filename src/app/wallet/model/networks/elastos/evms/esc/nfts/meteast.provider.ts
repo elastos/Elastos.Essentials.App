@@ -33,7 +33,7 @@ export class ElastosMeteastERC721Provider extends ERC721Provider {
         let jsonMetadataResponse = await fetch(metadataUrl);
         if (jsonMetadataResponse && jsonMetadataResponse.ok) {
           let jsonMetadata = await jsonMetadataResponse.json();
-          console.log("meteast nft json:", jsonMetadata);
+          //console.log("meteast nft json:", jsonMetadata);
 
           // Display NFT ids in HEX to match meteast, instead of decimal
           asset.displayableId = `0x${new BigNumber(asset.id).toString(16)}`;
@@ -54,7 +54,7 @@ export class ElastosMeteastERC721Provider extends ERC721Provider {
             }
           }
 
-          console.log("Asset", asset);
+          //console.log("Asset", asset);
         }
 
       }

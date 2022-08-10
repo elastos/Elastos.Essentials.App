@@ -202,7 +202,7 @@ export class ERC20CoinService {
      * @return true if the allowance could successfully be upgraded to a valid level, false otherwise.
      */
     public async approveSpendingIfNeeded(mainCoinSubWallet: AnyMainCoinEVMSubWallet, erc20ContractAddress: string, erc20TokenDecimals: number, allowedAddress: string, chainAmount: BigNumber): Promise<boolean> {
-        let accountAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
+        let accountAddress = await mainCoinSubWallet.getAccountAddress(AddressUsage.EVM_CALL);
         let network = mainCoinSubWallet.networkWallet.network;
 
         const tokenContract = await this.getErc20Contract(network, erc20ContractAddress, accountAddress);
@@ -236,7 +236,7 @@ export class ERC20CoinService {
     }
 
     public async setSpendingApproval(mainCoinSubWallet: AnyMainCoinEVMSubWallet, erc20ContractAddress: string, erc20TokenDecimals: number, allowedAddress: string, chainAmount: BigNumber) {
-        let accountAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
+        let accountAddress = await mainCoinSubWallet.getAccountAddress(AddressUsage.EVM_CALL);
         let network = mainCoinSubWallet.networkWallet.network;
 
         // Allowance is not enough (0 or too low), increase it

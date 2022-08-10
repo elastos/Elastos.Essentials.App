@@ -118,82 +118,93 @@ export class ERC721Service {
     }
 
     /**
-     * Finds all assets owned by a given user for a given NFT contract.
-     *
-     * Returns null if owner assets can't be retrieved (i.e. not a enumerable contract, non standard contract, etc)
+     * Refreshes all assets owned by a given user for a given NFT contract.
+     * - If assetIDs list is not given (we don't know the list of NFT asset ids from the TX providers), then we first try to fetch
+     *   info about the NFTs.
+     * - Then based on the list of all asset IDs, we refresh their content and convert that into NFTAsset items that contain enhanced information.
      */
-    public fetchAllAssets(network: EVMNetwork, accountAddress: string, contractAddress: string): Observable<FetchAssetsEvent> {
+    public refreshAllAssets(network: EVMNetwork, accountAddress: string, contractAddress: string, assetIDs: string[] = null): Observable<FetchAssetsEvent> {
         let subject = new BehaviorSubject<FetchAssetsEvent>({ assets: [] });
         let observable = subject.asObservable();
 
         Logger.log("wallet", "Starting to fetch ERC721 NFTs for contract " + contractAddress);
 
         void (async () => {
-            let assetsCouldBeRetrieved = false;
             const erc721Contract = new (await this.getWeb3()).eth.Contract(this.erc721ABI, contractAddress, { from: accountAddress });
 
-            // Make sure this is a enumerable NFT - If not, we can't get the assets.
-            // Problem: some contracts don't even implement supportsInterface().
-            /* const nftokenEnumerableInterface = await erc721Contract.methods.supportsInterface('0x780e9d63').call();
-            if (!nftokenEnumerableInterface) {
-                Logger.warn("wallet", "ERC721 contract is not enumerable");
-                return [];
-            } */
+            let assetsCouldBeRetrieved = false;
+            if (assetIDs && assetIDs.length > 0) { // If the array is empty, this also means "not provided"
+                // The assets list was given to us already
+                assetsCouldBeRetrieved = true;
+            }
+            else {
+                // Make sure this is a enumerable NFT - If not, we can't get the assets.
+                // Problem: some contracts don't even implement supportsInterface().
+                /* const nftokenEnumerableInterface = await erc721Contract.methods.supportsInterface('0x780e9d63').call();
+                if (!nftokenEnumerableInterface) {
+                    Logger.warn("wallet", "ERC721 contract is not enumerable");
+                    return [];
+                } */
 
-            // Retrieve how many assets are owned by this account
-            const assetsNumber = await erc721Contract.methods.balanceOf(accountAddress).call();
-            Logger.log("wallet", "ERC721 assets number:", assetsNumber);
+                // Retrieve how many assets are owned by this account
+                const assetsNumber = await erc721Contract.methods.balanceOf(accountAddress).call();
+                Logger.log("wallet", "ERC721 assets number:", assetsNumber);
 
-            // Iterate over tokenOfOwnerByIndex() to get more info. If an exception occurs this probably
-            // means that tokenOfOwnerByIndex() is not implemented (not an enumerable ERC721).
-            let assets: NFTAsset[] = [];
-            try {
-                let tokenIDs = [];
-                // Some contracts implement getOwnerTokens() (crypto kitties) which directly returns the
-                // tokens ids without a loop. This is legacy from when ERC721Enumerable was not defined.
+                // Iterate over tokenOfOwnerByIndex() to get more info. If an exception occurs this probably
+                // means that tokenOfOwnerByIndex() is not implemented (not an enumerable ERC721).
                 try {
-                    tokenIDs = await erc721Contract.methods.getOwnerTokens(accountAddress).call();
-                    assetsCouldBeRetrieved = true;
-                }
-                catch (e) {
-                    // Still no such method? Try the transfer event discovery way
-                    tokenIDs = await this.fetchTokenIDsFromTransferEvents(accountAddress, contractAddress);
-                    if (tokenIDs)
+                    let tokenIDs = [];
+                    // Some contracts implement getOwnerTokens() (crypto kitties) which directly returns the
+                    // tokens ids without a loop. This is legacy from when ERC721Enumerable was not defined.
+                    try {
+                        tokenIDs = await erc721Contract.methods.getOwnerTokens(accountAddress).call();
                         assetsCouldBeRetrieved = true;
-                    else {
-                        // Try the standard enumeration (ERC721Enumerable)
-                        tokenIDs = [];
-                        for (let i = 0; i < assetsNumber; i++) {
-                            const tokenID = await erc721Contract.methods.tokenOfOwnerByIndex(accountAddress, i).call();
+                    }
+                    catch (e) {
+                        // Still no such method? Try the transfer event discovery way
+                        tokenIDs = await this.fetchTokenIDsFromTransferEvents(accountAddress, contractAddress);
+                        if (tokenIDs)
                             assetsCouldBeRetrieved = true;
+                        else {
+                            // Try the standard enumeration (ERC721Enumerable)
+                            tokenIDs = [];
+                            for (let i = 0; i < assetsNumber; i++) {
+                                const tokenID = await erc721Contract.methods.tokenOfOwnerByIndex(accountAddress, i).call();
+                                assetsCouldBeRetrieved = true;
 
-                            if (tokenID != null && tokenID != undefined)
-                                tokenIDs.push(tokenID);
+                                if (tokenID != null && tokenID != undefined)
+                                    tokenIDs.push(tokenID);
+                            }
                         }
                     }
+                    Logger.log("wallet", "Fetched ERC721 token IDs:", tokenIDs);
+
+                    assetIDs = tokenIDs;
                 }
-                Logger.log("wallet", "ERC721 token IDs:", tokenIDs);
+                catch (e) {
+                    // Silent catch
+                    console.warn(e); // TMP
+                }
 
-                for (let i = 0; i < tokenIDs.length; i++) {
-                    let tokenID = tokenIDs[i];
-                    void this.fetchTokenID(network, erc721Contract, contractAddress, accountAddress, tokenID).then(asset => {
-                        assets.push(asset);
-                        subject.next({ assets });
-
-                        if (assets.length === tokenIDs.length)
-                            subject.complete();
-                    });
+                // If assets list couldn't be fetched, return null so that the caller knows this
+                // doesn't mean we have "0" asset.
+                if (!assetsCouldBeRetrieved) {
+                    subject.complete();
+                    return;
                 }
             }
-            catch (e) {
-                // Silent catch
-                console.warn(e); // TMP
-            }
 
-            // If assets list couldn't be fetched, return null so that the caller knows this
-            // doesn't mean we have "0" asset.
-            if (!assetsCouldBeRetrieved) {
-                subject.complete();
+            // Now that we have the assets IDs list, refresh them
+            let assets: NFTAsset[] = [];
+            for (let i = 0; i < assetIDs.length; i++) {
+                let tokenID = assetIDs[i];
+                void this.fetchTokenID(network, erc721Contract, contractAddress, accountAddress, tokenID).then(asset => {
+                    assets.push(asset);
+                    subject.next({ assets });
+
+                    if (assets.length === assetIDs.length)
+                        subject.complete();
+                });
             }
         })();
 
@@ -232,7 +243,7 @@ export class ERC721Service {
     /**
      * Method to discover ERC721 tokens owned by a user based on Transfer logs.
      */
-    public async fetchTokenIDsFromTransferEvents(accountAddress: string, contractAddress: string): Promise<any[]> {
+    public async fetchTokenIDsFromTransferEvents(accountAddress: string, contractAddress: string): Promise<string[]> {
         // User's wallet address on 32 bytes
         let paddedAccountAddress = '0x' + accountAddress.substr(2).padStart(64, "0"); // 64 = 32 bytes * 2 chars per byte // 20 bytes to 32 bytes
 
@@ -414,8 +425,13 @@ export class ERC721Service {
         if (!anyUrl)
             return anyUrl;
 
-        if (anyUrl.startsWith("ipfs"))
+        if (anyUrl.startsWith("ipfs")) {
+            // Some token URI (rarible) use this format: ipfs://ipfs/abcde.
+            // So we remove the duplicate ipfs/ as we are adding our own just after.
+            anyUrl = anyUrl.replace("ipfs://ipfs/", "ipfs://");
+
             return `https://ipfs.trinity-tech.io/ipfs/${anyUrl.replace("ipfs://", "")}`;
+        }
 
         // Replace IPFS gateways potentially harcoded by NFTs, with the ipfs.io gateway, to reduce
         // rate limiting api call errors (like on pinata).

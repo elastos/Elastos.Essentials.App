@@ -198,7 +198,7 @@ export class UniswapService {
   public async executeSwapTrade(mainCoinSubWallet: AnyMainCoinEVMSubWallet, sourceSwapToken: BridgeableToken, trade: Trade<any, any, TradeType.EXACT_INPUT>): Promise<string> {
     let network = <EVMNetwork>WalletNetworkService.instance.getNetworkByChainId(sourceSwapToken.chainId);
 
-    let walletAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
+    let walletAddress = await mainCoinSubWallet.getAccountAddress(AddressUsage.EVM_CALL);
 
     let currencyProvider = network.getUniswapCurrencyProvider();
     if (!currencyProvider)

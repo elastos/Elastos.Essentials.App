@@ -249,8 +249,8 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
         // Convert USD balance back to native token
         if (nativeTokenUSDPrice) {
-          let usdBalance = this.getDisplayBalanceInCurrency('USD');
-          return usdBalance.dividedBy(nativeTokenUSDPrice);
+            let usdBalance = this.getDisplayBalanceInCurrency('USD');
+            return usdBalance.dividedBy(nativeTokenUSDPrice);
         }
         else {
             // Only return the balance of the main token If the main token has no price.
@@ -443,7 +443,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      *
      * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
-    public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<void> {
+    public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<NFT> {
         if (nftType === NFTType.ERC721) {
             let resolvedInfo = await ERC721Service.instance.getCoinInfo(contractAddress);
             if (resolvedInfo) {
@@ -452,6 +452,8 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
                 this.nfts.push(nft);
 
                 await this.save();
+
+                return nft;
             }
         }
         else if (nftType === NFTType.ERC1155) {
@@ -462,8 +464,28 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
                 this.nfts.push(nft);
 
                 await this.save();
+
+                return nft;
             }
         }
+
+        return null;
+    }
+
+    /**
+     * Creates a new NFT but only if it doesn't exist yet.
+     */
+    public async upsertNFT(nftType: NFTType, contractAddress: string, balance: number, tokenIDs: string[]): Promise<NFT> {
+        let nft = this.nfts.find(nft => nft.contractAddress === contractAddress);
+        if (!nft) {
+            nft = await this.createNFT(nftType, contractAddress, balance);
+        }
+
+        nft.balance = balance;
+        nft.assetIDs = tokenIDs;
+        await this.save();
+
+        return nft;
     }
 
     /**
@@ -476,13 +498,36 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         Logger.log("wallet", "Updating wallet NFT", nft);
         let walletNFT = this.getNFTByAddress(nft.contractAddress);
         if (walletNFT) {
+            walletNFT.assetIDs = nft.assets.map(a => a.id);
             walletNFT.assets = nft.assets;
             walletNFT.balance = nft.balance;
             walletNFT.name = nft.name;
         }
 
+        Logger.log("wallet", "Updating wallet walletNFT", walletNFT);
+
         return this.save();
     }
+
+    /**
+     * If not existing yet, adds the given asset ID into the NFT.
+     */
+    /*  public upsertNFTAssetID(nft: NFT, assetID: string): Promise<void> {
+         if (assetID === undefined || assetID === null)
+             return;
+ 
+         if (!nft.assetIDs)
+             nft.assetIDs = [];
+ 
+         if (nft.assetIDs.find(id => id === assetID))
+             return; // Already exists
+ 
+         // Add
+         nft.assetIDs.push(assetID);
+ 
+         // Update the number of assets in this NFT
+         nft.balance = nft.assetIDs.length;
+     } */
 
     /**
      * TODO: MOVE TO EVM NETWORK WALLETS ONLY
@@ -515,7 +560,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         void (async () => {
             let accountAddress = await this.getMainEvmSubWallet().getCurrentReceiverAddress();
             if (nft.type == NFTType.ERC721) {
-                ERC721Service.instance.fetchAllAssets(<EVMNetwork>this.network, accountAddress, nft.contractAddress).subscribe({
+                ERC721Service.instance.refreshAllAssets(<EVMNetwork>this.network, accountAddress, nft.contractAddress, nft.assetIDs).subscribe({
                     next: event => {
                         nft.assets = event.assets; // can be null (couldn't fetch assets) or empty (0 assets)
                         subject.next(nft.assets);
@@ -532,7 +577,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
                 });
             }
             else if (nft.type == NFTType.ERC1155) {
-                ERC1155Service.instance.fetchAllAssets(accountAddress, nft.contractAddress).subscribe({
+                ERC1155Service.instance.refreshAllAssets(accountAddress, nft.contractAddress, nft.assetIDs).subscribe({
                     next: event => {
                         nft.assets = event.assets; // can be null (couldn't fetch assets) or empty (0 assets)
                         subject.next(nft.assets);
@@ -558,8 +603,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      */
     public async save() {
         const extendedInfo = this.getExtendedWalletInfo();
-        Logger.log('wallet', "Saving network wallet extended info", this, extendedInfo);
-
+        //Logger.log('wallet', "Saving network wallet extended info", this, extendedInfo);
         await LocalStorage.instance.setExtendedNetworkWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key, extendedInfo);
     }
 
@@ -647,7 +691,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
     // Stake assets
     private async getUniqueIdentifierOnStake() {
-        let tokenAddress = await this.getMainEvmSubWallet().getTokenAddress();
+        let tokenAddress = await this.getMainEvmSubWallet().getAccountAddress();
         let chainId = (<EVMNetwork>this.network).getMainChainID();
         return 'stakingassets-' + tokenAddress + '-' + chainId + '-' + this.masterWallet.id;
     }
@@ -665,7 +709,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     public async fetchStakingAssets() {
         const tenMinutesago = moment().add(-10, 'minutes').valueOf();
         if (!this.stakingInfo || (this.stakingInfo.timestamp < tenMinutesago)) {
-            let tokenAddress = await this.getMainEvmSubWallet().getTokenAddress();
+            let tokenAddress = await this.getMainEvmSubWallet().getAccountAddress();
             let chainId = (<EVMNetwork>this.network).getMainChainID();
             let stakingData = await DefiService.instance.getStakingAssets(tokenAddress, chainId);
             if (stakingData) {

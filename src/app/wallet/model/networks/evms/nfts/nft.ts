@@ -6,7 +6,8 @@ import { NFTResolvedInfo } from "./resolvedinfo";
  */
 export class NFT {
   public name: string;
-  public assets: NFTAsset[] = [];
+  public assetIDs?: string[]; // List of NFT ids owned by the user for this contract.
+  public assets: NFTAsset[] = []; // List of advanced asset items that contain fetched details about those NFT assets.
 
   constructor(public type: NFTType, public contractAddress: string, public balance: number) { }
 
@@ -15,7 +16,8 @@ export class NFT {
       name: this.name,
       contractAddress: this.contractAddress,
       type: this.type,
-      balance: this.balance
+      balance: this.balance,
+      assetIDs: this.assetIDs
     };
   }
 
@@ -29,6 +31,7 @@ export class NFT {
 
     let nft = new NFT(serializedNFTJson.type, serializedNFTJson.contractAddress, serializedNFTJson.balance);
     nft.name = serializedNFTJson.name;
+    nft.assetIDs = serializedNFTJson.assetIDs;
     return nft;
   }
 
@@ -54,4 +57,5 @@ export type SerializedNFT = {
   contractAddress: string;
   name: string;
   balance: number; // Most recently known amount of tokens owned inside this NFT contract
+  assetIDs?: string[]; // List of NFT asset IDs owned for this NFT contract. Set only if the TX provider is able to discover it.
 }

@@ -114,71 +114,92 @@ export class ERC1155Service {
     }
 
     /**
-     * Finds all assets owned by a given user for a given NFT contract.
-     *
-     * Returns null if owner assets can't be retrieved (i.e. not a enumerable contract, non standard contract, etc)
+     * Refreshes all assets owned by a given user for a given NFT contract.
+     * - If assetIDs list is not given (we don't know the list of NFT asset ids from the TX providers), then we first try to fetch
+     *   info about the NFTs.
+     * - Then based on the list of all asset IDs, we refresh their content and convert that into NFTAsset items that contain enhanced information.
      */
-    public fetchAllAssets(accountAddress: string, contractAddress: string): Observable<FetchAssetsEvent> {
+    public refreshAllAssets(accountAddress: string, contractAddress: string, assetIDs: string[] = null): Observable<FetchAssetsEvent> {
         let subject = new BehaviorSubject<FetchAssetsEvent>({ assets: [] });
         let observable = subject.asObservable();
-
-        console.log("fetchAllAssets", contractAddress);
 
         void (async () => {
             let assets: NFTAsset[] = [];
             let assetsCouldBeRetrieved = false;
 
-            // User's wallet address on 32 bytes
-            let paddedAccountAddress = '0x' + accountAddress.substr(2).padStart(64, "0"); // 64 = 32 bytes * 2 chars per byte // 20 bytes to 32 bytes
+            const erc1155Contract = new (await this.getWeb3()).eth.Contract(this.erc1155ABI, contractAddress, { from: accountAddress });
 
-            try {
-                // Get transfer logs from the EVM node
-                // More info at: https://docs.alchemy.com/alchemy/guides/eth_getlogs#what-are-event-signatures
-                const erc1155Contract = new (await this.getWeb3()).eth.Contract(this.erc1155ABI, contractAddress, { from: accountAddress });
-                let transferSingleEventTopic = this.web3.utils.sha3("TransferSingle(address,address,address,uint256,uint256)");
-                let transferInEvents = await erc1155Contract.getPastEvents('TransferSingle', {
-                    // All blocks
-                    fromBlock: 0, toBlock: 'latest',
-                    // transfer event signature + 3rd parameter should be the account address. (meaning "received the NFT")
-                    topics: [
-                        transferSingleEventTopic,
-                        null,
-                        null,
-                        paddedAccountAddress // Received by us
-                    ]
-                }) as any as ERC1155Transfer[];
+            if (assetIDs && assetIDs.length > 0) { // If the array is empty, this also means "not provided"
+                // The assets list was given to us already
+                assetsCouldBeRetrieved = true;
+            }
+            else {
+                // User's wallet address on 32 bytes
+                let paddedAccountAddress = '0x' + accountAddress.substr(2).padStart(64, "0"); // 64 = 32 bytes * 2 chars per byte // 20 bytes to 32 bytes
 
-                // Also get transfer out events, so we can know which tokens are still in our possession
-                let transferOutEvents = await erc1155Contract.getPastEvents('TransferSingle', {
-                    // All blocks
-                    fromBlock: 0, toBlock: 'latest',
-                    // transfer event signature + 2nd parameter should be the account address. (meaning "sent the NFT")
-                    topics: [
-                        transferSingleEventTopic,
-                        null,
-                        paddedAccountAddress // Sent by us
-                    ]
-                }) as any as ERC1155Transfer[];
+                try {
+                    // Get transfer logs from the EVM node
+                    // More info at: https://docs.alchemy.com/alchemy/guides/eth_getlogs#what-are-event-signatures
+                    let transferSingleEventTopic = this.web3.utils.sha3("TransferSingle(address,address,address,uint256,uint256)");
+                    let transferInEvents = await erc1155Contract.getPastEvents('TransferSingle', {
+                        // All blocks
+                        fromBlock: 0, toBlock: 'latest',
+                        // transfer event signature + 3rd parameter should be the account address. (meaning "received the NFT")
+                        topics: [
+                            transferSingleEventTopic,
+                            null,
+                            null,
+                            paddedAccountAddress // Received by us
+                        ]
+                    }) as any as ERC1155Transfer[];
 
-                // Based on all transfers (in/out), rebuild the history of NFT ownerships until we can get
-                // The list of tokens that we still own
-                let allTransferEvents = [...transferInEvents, ...transferOutEvents];
+                    // Also get transfer out events, so we can know which tokens are still in our possession
+                    let transferOutEvents = await erc1155Contract.getPastEvents('TransferSingle', {
+                        // All blocks
+                        fromBlock: 0, toBlock: 'latest',
+                        // transfer event signature + 2nd parameter should be the account address. (meaning "sent the NFT")
+                        topics: [
+                            transferSingleEventTopic,
+                            null,
+                            paddedAccountAddress // Sent by us
+                        ]
+                    }) as any as ERC1155Transfer[];
 
-                // Sort by date ASC
-                allTransferEvents = allTransferEvents.sort((a, b) => a.blockNumber - b.blockNumber);
+                    // Based on all transfers (in/out), rebuild the history of NFT ownerships until we can get
+                    // The list of tokens that we still own
+                    let allTransferEvents = [...transferInEvents, ...transferOutEvents];
 
-                // Retrace history from old blocks to recent blocks
-                let ownedTokenIds: { [tokenId: string]: boolean } = {};
-                allTransferEvents.forEach(transferEvent => {
-                    // User account as sender? Remove the token from the list
-                    if (transferEvent.returnValues[1].toLowerCase() === accountAddress.toLowerCase())
-                        delete ownedTokenIds[transferEvent.returnValues[3]];
+                    // Sort by date ASC
+                    allTransferEvents = allTransferEvents.sort((a, b) => a.blockNumber - b.blockNumber);
 
-                    // User account as received? Add the token to the list
-                    if (transferEvent.returnValues[2].toLowerCase() === accountAddress.toLowerCase())
-                        ownedTokenIds[transferEvent.returnValues[3]] = true;
-                });
+                    // Retrace history from old blocks to recent blocks
+                    let ownedTokenIds: { [tokenId: string]: boolean } = {};
+                    allTransferEvents.forEach(transferEvent => {
+                        // User account as sender? Remove the token from the list
+                        if (transferEvent.returnValues[1].toLowerCase() === accountAddress.toLowerCase())
+                            delete ownedTokenIds[transferEvent.returnValues[3]];
 
+                        // User account as received? Add the token to the list
+                        if (transferEvent.returnValues[2].toLowerCase() === accountAddress.toLowerCase())
+                            ownedTokenIds[transferEvent.returnValues[3]] = true;
+                    });
+
+                    assetsCouldBeRetrieved = true;
+
+                    assetIDs = Object.keys(ownedTokenIds);
+                }
+                catch (e) {
+                    Logger.warn("wallet", "Failed to get ERC1155 events", e);
+                }
+            }
+
+            // If assets list couldn't be fetched, return null so that the caller knows this
+            // doesn't mean we have "0" asset.
+            if (!assetsCouldBeRetrieved || !assetIDs) {
+                subject.complete();
+                return;
+            }
+            else {
                 // Check if we have a NFT provider available to provide more info about this
                 let activeNetwork = this.networkService.activeNetwork.value;
                 let erc1155Provider: ERC1155Provider;
@@ -188,7 +209,7 @@ export class ERC1155Service {
                 // Iterate over transferEvents() to get more info.
                 try {
                     let checkCount = 0;
-                    for (let tokenId of Object.keys(ownedTokenIds)) {
+                    for (let tokenId of assetIDs) {
                         let asset = new NFTAsset();
                         asset.id = tokenId;
                         asset.displayableId = asset.id;
@@ -206,27 +227,16 @@ export class ERC1155Service {
                             assets.push(asset);
                             subject.next({ assets });
 
-                            if (checkCount === Object.keys(ownedTokenIds).length)
+                            if (checkCount === assetIDs.length)
                                 subject.complete();
                         });
                     }
 
-                    assetsCouldBeRetrieved = true;
                 }
                 catch (e) {
                     // Silent catch
                     console.warn(e); // TMP
                 }
-            }
-            catch (e) {
-                Logger.warn("wallet", "Failed to get ERC1155 events", e);
-            }
-
-            // If assets list couldn't be fetched, return null so that the caller knows this
-            // doesn't mean we have "0" asset.
-            if (!assetsCouldBeRetrieved) {
-                subject.complete();
-                return observable;
             }
         })();
 

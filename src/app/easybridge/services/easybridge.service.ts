@@ -251,7 +251,7 @@ export class EasyBridgeService {
   }
 
   private async coinTransfer(mainCoinSubWallet: AnyMainCoinEVMSubWallet, context: BridgeContext, amount: BigNumber): Promise<{ txId: string, destinationBlockBefore: number }> {
-    let accountAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
+    let accountAddress = await mainCoinSubWallet.getAccountAddress(AddressUsage.EVM_CALL);
 
     console.log("Bridging", context.sourceToken, context, amount.toString(), accountAddress);
 
@@ -342,7 +342,7 @@ export class EasyBridgeService {
     sourceToken: BridgeableToken,
     destinationToken: BridgeableToken, fromBlock: number): Promise<string> {
 
-    let accountAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
+    let accountAddress = await mainCoinSubWallet.getAccountAddress(AddressUsage.EVM_CALL);
     let bridgeContext = this.computeBridgeContext(sourceToken, destinationToken);
 
     const destProvider = await this.evmService.getWeb3(bridgeContext.destinationNetwork, true);
@@ -479,7 +479,7 @@ export class EasyBridgeService {
 
     Logger.log("easybridge", "Checking and calling faucet");
 
-    let walletAddress = await mainCoinSubWallet.getTokenAddress(AddressUsage.EVM_CALL);
+    let walletAddress = await mainCoinSubWallet.getAccountAddress(AddressUsage.EVM_CALL);
 
     try {
       const responseGet = await fetch(`${BRIDGE_FAUCET_API}/faucet/${walletAddress}`);

@@ -329,10 +329,10 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     async updateCurrentWalletInfo() {
-      if (this.networkWallet) {
-        await this.networkWallet.update();
-        // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
-      }
+        if (this.networkWallet) {
+            await this.networkWallet.update();
+            // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
+        }
     }
 
     startUpdateInterval() {
@@ -422,7 +422,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
      * Open tin.network in a browser view
      */
     public async openStakedAssetsProvider() {
-        let walletAddress = await this.networkWallet.getMainEvmSubWallet().getTokenAddress()
+        let walletAddress = await this.networkWallet.getMainEvmSubWallet().getAccountAddress()
         this.defiService.openStakedAssetsProvider(walletAddress);
     }
 
@@ -451,6 +451,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     public getAddressFromLedger() {
-      this.native.go("/wallet/ledger/scan", { device: (this.masterWallet as LedgerMasterWallet).deviceID, type: LedgerConnectType.AddAccount});
+        this.native.go("/wallet/ledger/scan", { device: (this.masterWallet as LedgerMasterWallet).deviceID, type: LedgerConnectType.AddAccount });
     }
 }
