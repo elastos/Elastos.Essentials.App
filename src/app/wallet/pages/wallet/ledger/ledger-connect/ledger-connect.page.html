@@ -42,9 +42,9 @@
             </ion-row>
 
             <!-- Error: Connection error-->
-            <ion-row class="error-row" *ngIf="connectError">
+            <!-- <ion-row class="error-row" *ngIf="connectError">
               <div>{{ 'wallet.ledger-connect-error' | translate }}</div>
-            </ion-row>
+            </ion-row> -->
 
             <!-- Connection in progress -->
             <ion-row *ngIf="connecting" class="scanning">
@@ -77,7 +77,7 @@
             </ion-row>
 
             <ion-row class="btn-row" *ngIf="shouldShowGetAddressButton()">
-                <ion-button color="dark" (click)="refreshAddresses()">
+                <ion-button color="dark" (click)="refreshAddressesWithTimeout()">
                   {{ 'wallet.ledger-get-addresses' | translate }}
                 </ion-button>
             </ion-row>

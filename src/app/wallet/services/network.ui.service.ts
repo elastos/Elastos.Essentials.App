@@ -22,7 +22,6 @@
 
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkChooserComponent, NetworkChooserComponentOptions, NetworkChooserFilter } from '../components/network-chooser/network-chooser.component';
 import { AnyNetwork } from '../model/networks/network';
@@ -62,7 +61,6 @@ export class WalletNetworkUIService {
         return new Promise(resolve => {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
             modal.onWillDismiss().then(async (params) => {
-                Logger.log('wallet', 'New network selected:', params);
                 if (params.data && params.data.selectedNetworkKey) {
                     void this.networkService.setActiveNetwork(this.networkService.getNetworkByKey(params.data.selectedNetworkKey));
                     resolve(true);
@@ -93,7 +91,6 @@ export class WalletNetworkUIService {
         return new Promise(resolve => {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
             modal.onWillDismiss().then(async (params) => {
-                Logger.log('wallet', 'Network selected:', params);
                 if (params.data && params.data.selectedNetworkKey) {
                     let network = this.networkService.getNetworkByKey(params.data.selectedNetworkKey);
                     resolve(network);

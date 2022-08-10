@@ -322,6 +322,13 @@ export const fr = {
         "ledger-get-addresses": "Get addresses",
         "ledger-choose-address-type": "Choose Address Type",
 
+        /**********************
+        * Ledger error *
+        ***********************/
+        "ledger-error-app-not-start": "Please open the {{appname}} application on the Ledger Nano X",
+        "ledger-error-operation-cancelled": "Operation cancelled",
+        "ledger-error-unknown": "Unknown error",
+
         /********************************************** Wallet Settings Screens ***********************************************/
 
         /***********************

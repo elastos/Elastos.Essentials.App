@@ -148,9 +148,7 @@ export class LedgerSignComponent implements OnInit {
       // CustomError -- message: An action was already pending on the Ledger device. Please deny or reconnect. name: TransportRaceCondition
       // TransportStausError -- statusCode: 28160(0x6e00)  -- open the wrong app
       // TransportStausError -- statusCode: 27013(0x6985)  -- user canceled the transaction
-      // TransportErro -- id: TransportLocked name: TransportError message: Ledger Device is busy (lock getAddress)
-
-      if (e.statusCode == 27013) return;
+      // TransportError -- id: TransportLocked name: TransportError message: Ledger Device is busy (lock getAddress)
 
       // if the ledger is disconnected, we need connect ledger again.
       if (e instanceof DisconnectedDeviceDuringOperation || e.id === 'TransportLocked' || e.name === 'TransportRaceCondition') {
@@ -158,12 +156,27 @@ export class LedgerSignComponent implements OnInit {
         return;
       }
 
-      if (e.message) {
-        // TODO: Display user-friendly messages.
-        this.native.toast_trans(e.message);
-      } else {
-        this.native.toast_trans('wallet.ledger-prompt');
+      let message = '';
+      switch (e.statusCode) {
+        case 0x6511:
+        case 0x6e00:
+          message = this.translate.instant('wallet.ledger-error-app-not-start', { appname: this.ledgerNanoAppname })
+          break;
+        case 0x6985:
+          message = 'wallet.ledger-error-operation-cancelled';
+          break;
+        case 0xe0002:
+          message = 'wallet.ledger-error-unknown';
+          break;
+        default:
+          if (e.message) {
+            message = e.message;
+          } else {
+            message = 'wallet.ledger-prompt';
+          }
       }
+
+      this.native.toast_trans(message);
     }
   }
 

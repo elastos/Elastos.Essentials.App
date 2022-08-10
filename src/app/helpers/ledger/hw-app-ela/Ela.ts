@@ -1,5 +1,6 @@
 
 import type Transport from "@ledgerhq/hw-transport";
+import { TransportStatusError } from "@ledgerhq/hw-transport";
 import { Logger } from "src/app/logger";
 import { ELAAddressHelper } from "../../ela/ela.address";
 
@@ -91,14 +92,8 @@ export default class Ela {
         Logger.log(TAG, ' getAddress: publicKey', publicKey)
       } else {
         // 6E00, 6E01
-        if (responseStr.startsWith('6E')) {
-          message = 'App Not Open On Ledger Device';
-        } else {
-          message = 'Unknown Error ';
-        }
-
-        Logger.warn(TAG, ' getAddress: error message', message)
-        throw new Error(message);
+        let statusCode = parseInt(responseStr.substring(0, 3));
+        throw new TransportStatusError(statusCode);
       }
 
       let address = await ELAAddressHelper.getAddressFromPublicKey(publicKey);

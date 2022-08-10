@@ -322,6 +322,13 @@ export const zh = {
                 "ledger-get-addresses": "获取地址",
                 "ledger-choose-address-type": "选择地址类型",
 
+                /**********************
+                * Ledger error *
+                ***********************/
+                "ledger-error-app-not-start": "请在 Ledger Nano X 上启动 {{appname}} 应用程序",
+                "ledger-error-operation-cancelled": "操作已取消",
+                "ledger-error-unknown": "未知错误",
+
                 /********************************************** Wallet Settings Screens ***********************************************/
 
                 /***********************
