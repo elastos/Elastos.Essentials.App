@@ -92,7 +92,7 @@ export const zh = {
           'connect': '连接',
           'wallet-connect-no-session': '没有活动的会话',
           'wallet-connect-no-session-info': '当前没有通过 Wallet Connect 与第三方应用程序的会话。请在外部应用程序上找到 Wallet Connect 按钮，然后使用 Elastos Essentials 的扫描仪扫描此二维码以建立会话连接。',
-          'wallet-connect-no-address': "No active wallet, or active network is not compatible with Ethereum. This is not an error, but please make sure you are on the expected network. Some dApps may disconnect your Wallet Connect session because of this.",
+          'wallet-connect-no-address': '没有活跃的钱包，或者活跃的网络与以太坊不兼容。这不是错误，但请确保您在预期的网络上。 否则，某些 dApp 可能会断开您的 Wallet Connect 会话。',
 
           /********** Startup Screen Page **********/
           'startupscreen': '启动页面',
@@ -106,9 +106,9 @@ export const zh = {
           /*********** Privacy page **********/
           'privacy': '隐私',
 
-          'privacy-built-in-browser-title': 'Built-in browser',
-          'privacy-use-builtin-browser': 'The Essentials built-in browser will be used to open dApps',
-          'privacy-use-external-browser': 'dApps will be opened in external browser applications',
+          'privacy-built-in-browser-title': '内置浏览器',
+          'privacy-use-builtin-browser': '将用 Essentials 内置浏览器打开 dApp',
+          'privacy-use-external-browser': '将在外部浏览器中打开 dApp',
 
           'identity-publishing': '发布身份',
           'publish-identity-medium-assist': '使用名为 ASSIST 的第三方服务快速发布身份',
