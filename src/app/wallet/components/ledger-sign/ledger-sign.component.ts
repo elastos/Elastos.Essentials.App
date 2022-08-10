@@ -146,8 +146,9 @@ export class LedgerSignComponent implements OnInit {
       // CustomError -- statusCode 25873(0x6511) name: DisconnectedDeviceDuringOperation -- the app is not started.
       // CustomError -- message: DisconnectedDeviceDuringOperation name:DisconnectedDeviceDuringOperation
       // CustomError -- message: An action was already pending on the Ledger device. Please deny or reconnect. name: TransportRaceCondition
-      // TransportStausError -- statusCode: 28160(0x6e00)  -- open the wrong app
-      // TransportStausError -- statusCode: 27013(0x6985)  -- user canceled the transaction
+      // TransportStatusError -- statusCode: 28160(0x6e00)  -- open the wrong app
+      // TransportStatusError -- statusCode: 27013(0x6985)  -- user canceled the transaction
+      // TransportStatusError -- statusCode: 27010(0x6982)  -- Ledger device: Security not satisfied (dongle locked or have invalid access rights) (0x6982)
       // TransportError -- id: TransportLocked name: TransportError message: Ledger Device is busy (lock getAddress)
 
       // if the ledger is disconnected, we need connect ledger again.
@@ -165,7 +166,7 @@ export class LedgerSignComponent implements OnInit {
         case 0x6985:
           message = 'wallet.ledger-error-operation-cancelled';
           break;
-        case 0xe0002:
+        case 0xe002:
           message = 'wallet.ledger-error-unknown';
           break;
         default:
@@ -181,11 +182,12 @@ export class LedgerSignComponent implements OnInit {
   }
 
   async confirm() {
+    if (!this.transport || this.signing) return;
+
     try {
       Logger.log('wallet', 'LedgerSignComponent signing')
       this.signing = true;
       await this.signTransaction();
-      this.signing = false;
       if (this.signSucceeded) {
         void this.disconnect();
         void this.modalCtrl.dismiss({
@@ -194,6 +196,8 @@ export class LedgerSignComponent implements OnInit {
       }
     } catch (err) {
       Logger.warn("wallet", "LedgerSignComponent sign failed:", err)
+    } finally {
+      this.signing = false;
     }
   }
 

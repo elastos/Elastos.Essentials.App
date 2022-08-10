@@ -81,6 +81,14 @@
         font-family: 'Inter' !important;
       }
     }
+
+    .disable {
+      background: lightgrey;
+
+      ion-label {
+        color: darkgray;
+      }
+    }
   }
 }
 
@@ -102,6 +110,14 @@
 
       ion-label {
         color: #fdfeff;
+      }
+    }
+
+    .disable {
+      background: #515051;
+
+      ion-label {
+        color: darkgrey;
       }
     }
   }

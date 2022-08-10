@@ -28,7 +28,7 @@
           <ion-label>{{ 'common.cancel' | translate }}</ion-label>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
-        <ion-col class="btn ripple ion-activatable" size="5.5" (click)="confirm()" [disabled]="!transport">
+        <ion-col class="btn ripple ion-activatable" [class.disable]="!transport || signing" size="5.5" (click)="confirm()">
           <ion-label>{{ 'common.continue' | translate }}</ion-label>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
