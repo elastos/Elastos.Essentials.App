@@ -65,7 +65,7 @@ export type PluginConfig<T> = {
   logo: string; // url or base64 of the dapp
   sublogo?: string; // Optional url or base64 to distinguish the context for users, in case dapps have multiple widgets
   url?: string; // Optional url opened when the project logo is touched - normally, the main dapp url
-  refresh?: number; // Number of seconds between new calls to the widget url to refresh content - eg: 120. Default: 1 day
+  refresh?: number; // Number of seconds between new calls to the widget url to refresh content - eg: 120. Default: 1 day. Min: 30 seconds
   refreshon?: RefreshOn[]; // List of events that trigger a new api call to refresh content, in addition to the standard timed refresh
   contenttype: ContentType; // Specifies the format of items in the "content" list below
   content: T;
