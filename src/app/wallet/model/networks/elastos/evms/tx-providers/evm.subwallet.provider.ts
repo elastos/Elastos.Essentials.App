@@ -49,6 +49,10 @@ export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<El
     txListUrl += '&offset=' + MAX_RESULTS_PER_FETCH;
     txListUrl += '&sort=desc';
     txListUrl += '&address=' + accountAddress;
+    // Some scan apis such as hecoinfo need start and end block to be defined. So far, using a large block scope doesn't seem to be an issue,
+    // but this could change in the future for other chains or for heco itself... in which case we may have to fetch transactions blocks by blocks.
+    txListUrl += '&startblock=' + 0;
+    txListUrl += '&endblock=' + 1000000000; // Very highe block number fo ensure we get everything
 
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl, subWallet.networkWallet.network.key);
