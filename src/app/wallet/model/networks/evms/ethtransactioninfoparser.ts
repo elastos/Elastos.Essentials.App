@@ -6,6 +6,7 @@ import { ERC1155Service } from "src/app/wallet/services/evm/erc1155.service";
 import { ERC721Service } from "src/app/wallet/services/evm/erc721.service";
 import type { TransactionReceipt } from "web3-core";
 import { ERC20CoinInfo, ERC20CoinService } from "../../../services/evm/erc20coin.service";
+import { TransactionType } from "../../tx-providers/transaction.types";
 import type { AnyNetwork } from "../network";
 import { EthTransaction } from "./evm.types";
 import { NFTResolvedInfo } from "./nfts/resolvedinfo";
@@ -38,6 +39,14 @@ export type EthContractOperation = {
 export type ApproveERC20Operation = EthContractOperation & {
   tokenName: string;
   symbol: string;
+}
+
+export type SwapExactTokensOperation = EthContractOperation & {
+  tokenName: string;
+  symbol: string;
+  amountIn: string; // WEI
+  amountOut: string; // WEI
+  type: TransactionType
 }
 
 export type EthContractEvent = {
@@ -225,9 +234,19 @@ export class ETHTransactionInfoParser {
         try {
           let params = this.extractTransactionParamValues(["function swapExactTokensForETH(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
+          let amountIn = this.bigNumberTransactionParamAt(params, 0).toString()
+          let amountOut = this.bigNumberTransactionParamAt(params, 1).toString()
           let fromTokenAddress = tokensPath[0]; // First entry of tokensPath is the source ERC20 token.
           let fromCoinInfo = await this.getERC20TokenInfoOrThrow(fromTokenAddress);
-          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: this.network.getMainTokenSymbol() } };
+          let operation: SwapExactTokensOperation = {
+            description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: this.network.getMainTokenSymbol() },
+            tokenName: fromCoinInfo.coinName,
+            symbol: fromCoinInfo.coinSymbol,
+            amountIn: amountIn,
+            amountOut: amountOut,
+            type: TransactionType.RECEIVED
+          }
+          txInfo.operation = operation;
         }
         catch (e) {
           txInfo.operation = { description: "wallet.ext-tx-info-type-swap-tokens" };
@@ -238,10 +257,20 @@ export class ETHTransactionInfoParser {
         txInfo.type = ETHOperationType.SWAP;
         try {
           let params = this.extractTransactionParamValues(["function swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
+          let amountIn = this.bigNumberTransactionParamAt(params, 0).toString()
+          let amountOut = this.bigNumberTransactionParamAt(params, 1).toString()
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
           let fromTokenAddress = tokensPath[0]; // First entry of tokensPath is the source ERC20 token.
           let fromCoinInfo = await this.getERC20TokenInfoOrThrow(fromTokenAddress);
-          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: this.network.getMainTokenSymbol() } };
+          let operation: SwapExactTokensOperation = {
+            description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: this.network.getMainTokenSymbol() },
+            tokenName: fromCoinInfo.coinName,
+            symbol: fromCoinInfo.coinSymbol,
+            amountIn: amountIn,
+            amountOut: amountOut,
+            type: TransactionType.RECEIVED
+          }
+          txInfo.operation = operation;
         }
         catch (e) {
           txInfo.operation = { description: "wallet.ext-tx-info-type-swap-tokens" };
@@ -439,6 +468,20 @@ export class ETHTransactionInfoParser {
     let value = params[index];
     if (!(typeof value === "string"))
       throw new Error("Target parameter is not a string");
+
+    return value;
+  }
+
+  /**
+   * Returns the indexTH param value, making sure that this is a object type.
+   */
+   private bigNumberTransactionParamAt(params: any[], index: number): object {
+    if (params.length <= index)
+      throw new Error("Not enough values in params array");
+
+    let value = params[index];
+    if (!(typeof value === "object"))
+      throw new Error("Target parameter is not a object");
 
     return value;
   }

@@ -19,7 +19,7 @@ import { AddressUsage } from '../../../safes/addressusage';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
-import { ETHOperationType, ETHTransactionInfoParser } from '../ethtransactioninfoparser';
+import { ETHOperationType, ETHTransactionInfoParser, SwapExactTokensOperation } from '../ethtransactioninfoparser';
 import type { EVMNetwork } from '../evm.network';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction } from '../evm.types';
 import { EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
@@ -191,7 +191,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       subOperations: []
     };
 
-    transactionInfo.amount = new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes);
+    transactionInfo.amount = await this.getTransactionAmount(transaction);
+
     // There is no gasUsed and gasPrice, only gas (fee) on fusion network.
     // There is only gasUesd, no gasPride for some internal transactions.
     if (transaction.gasUsed?.length > 0 && transaction.gasPrice?.length > 0) {
@@ -239,6 +240,22 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     });
 
     return transactionInfo;
+  }
+
+  protected async getTransactionAmount(transaction: EthTransaction): Promise<BigNumber> {
+    // Use extended info is there is some
+    let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
+    if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
+      if (extInfo.evm.txInfo.type === ETHOperationType.SWAP) {
+        let operation = extInfo.evm.txInfo.operation as SwapExactTokensOperation;
+        if (operation.type === TransactionType.RECEIVED) {
+          // Get the amount from extended info.
+          return new BigNumber(operation.amountOut).dividedBy(this.tokenAmountMulipleTimes);
+        }
+      }
+    }
+
+    return new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes);
   }
 
   protected async getTransactionName(transaction: EthTransaction): Promise<string> {
@@ -305,6 +322,13 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
         case ETHOperationType.DEPOSIT: return TransactionDirection.SENT;
         case ETHOperationType.GET_REWARDS: return TransactionDirection.RECEIVED;
         case ETHOperationType.STAKE: return TransactionDirection.SENT;
+        case ETHOperationType.SWAP: {
+          let operation = extInfo.evm.txInfo.operation as SwapExactTokensOperation;
+          if (operation.type === TransactionType.RECEIVED) {
+            return TransactionDirection.RECEIVED
+          }
+          return TransactionDirection.SENT;
+        }
       }
     }
 
