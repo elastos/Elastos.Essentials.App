@@ -137,6 +137,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // Addresses resolved from typed user friendly names (ex: user types "rong" -> resolved to rong's ela address)
     public suggestedAddresses: CryptoAddressResolvers.Address[] = [];
+    private resolverNameTimeout = null;
 
     private addressUpdateSubscription: Subscription = null;
 
@@ -655,7 +656,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     private isAddressValid(toAddress: string) {
         let targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
-        return targetSubwallet.isAddressValid(this.toAddress);
+        return targetSubwallet.isAddressValid(toAddress);
     }
 
     async startTransaction() {
@@ -756,7 +757,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * Callback called whenever the "send to" address changes.
      * At that time, we cantry to call some APIs to retrieve an address by
      */
-    onSendToAddressInput(enteredText: string) {
+    async onSendToAddressInput(enteredText: string) {
         this.suggestedAddresses = [];
         this.addressName = null;
 
@@ -764,27 +765,36 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             return;
         }
 
-        // // Quick and dirty way to not try to resolve a name when it's actually an address already, not name.
-        // // Could be improved later.
-        // if (enteredText.length > 20) {
-        //     return;
-        // }
-
         // Cryptoname
         if (enteredText.length >= 3) {
-            // eslint-disable-next-line no-async-foreach/no-async-foreach, @typescript-eslint/no-misused-promises
-            this.nameResolvingService.getResolvers().forEach(async resolver => {
-                // resolvers can answer at any time, asynchronously
-                const results = await resolver.resolve(enteredText, this.fromSubWallet); // Use fromSubWallet just to know the network (toSubWallet is not always set)
-                Logger.log('wallet', "Name resolver got results from", resolver.getName(), results);
-                this.suggestedAddresses = this.suggestedAddresses.concat(results);
+            // Quick and dirty way to not try to resolve a name when it's actually an address already, not name.
+            if (enteredText.length > 30) {
+              let addressValid = await this.isAddressValid(enteredText);
+              if (addressValid) return;
+            }
 
-                if (this.suggestedAddresses.length > 0) {
-                    // Scroll screen to bottom to let the suggested resolved name appear on screen
-                    void this.contentArea.scrollToBottom(500);
-                }
-            });
+            if (this.resolverNameTimeout) {
+              clearTimeout(this.resolverNameTimeout)
+            }
+            this.resolverNameTimeout = setTimeout(() => {
+                this.resolverName(enteredText);
+            }, 800);
         }
+    }
+
+    private resolverName(name: string) {
+      // eslint-disable-next-line no-async-foreach/no-async-foreach, @typescript-eslint/no-misused-promises
+      this.nameResolvingService.getResolvers().forEach(async resolver => {
+        // resolvers can answer at any time, asynchronously
+        const results = await resolver.resolve(name, this.fromSubWallet); // Use fromSubWallet just to know the network (toSubWallet is not always set)
+        Logger.log('wallet', "Name resolver got results from", resolver.getName(), results);
+        this.suggestedAddresses = this.suggestedAddresses.concat(results);
+
+        if (this.suggestedAddresses.length > 0) {
+            // Scroll screen to bottom to let the suggested resolved name appear on screen
+            void this.contentArea.scrollToBottom(500);
+        }
+      });
     }
 
     /**
