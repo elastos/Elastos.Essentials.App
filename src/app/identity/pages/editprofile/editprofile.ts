@@ -12,6 +12,7 @@ import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { Logger } from "src/app/logger";
 import { HiveInsufficientSpaceException } from "src/app/model/exceptions/hiveinsufficientspaceexception";
 import { GlobalEvents } from "src/app/services/global.events.service";
+import { GlobalFirebaseService } from "src/app/services/global.firebase.service";
 import { GlobalHiveService } from "src/app/services/global.hive.service";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
 import { GlobalLanguageService } from "src/app/services/global.language.service";
@@ -263,7 +264,7 @@ export class EditProfilePage {
           let scriptName = "getMainIdentityAvatar" + randomPictureID;
           await (await this.globalHiveService.getActiveUserVaultServices()).getScriptingService().registerScript(scriptName, new AggregatedExecutable(
             "getMainIdentityAvatar",
-            [new Executable('download', ExecutableType.FILE_DOWNLOAD, {path: avatarFileName})]
+            [new Executable('download', ExecutableType.FILE_DOWNLOAD, { path: avatarFileName })]
           ), null, true, true);
 
           let currentUserDID = this.didService.getActiveDid().getDIDString();
@@ -362,6 +363,7 @@ export class EditProfilePage {
   async next() {
     await this.save();
     Logger.log("identity", "Profile saved, now exiting the edition screen");
+    GlobalFirebaseService.instance.logEvent("identity_profile_edited");
     void this.globalNav.navigateBack();
   }
 

@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { UXService } from '../../../services/ux.service';
@@ -45,6 +46,8 @@ export class ProposalListPage implements OnInit {
     ) {
         this.proposalType = this.route.snapshot.params.proposalType as ProposalStatus;
         Logger.log('CRProposal', this.proposalType, 'Proposal type');
+
+        GlobalFirebaseService.instance.logEvent("voting_proposals_list_enter");
     }
 
     ngOnInit() {
@@ -55,7 +58,7 @@ export class ProposalListPage implements OnInit {
     }
 
     ionViewWillLeave() {
-      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     async init() {

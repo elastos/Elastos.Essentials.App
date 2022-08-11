@@ -177,7 +177,7 @@ export class WalletNetworkService {
         await this.localStorage.set('activenetwork', network.key);
 
         // Stats
-        void this.globalFirebaseService.logEvent("switch-network-" + network.key);
+        void this.globalFirebaseService.logEvent("switch_network_" + network.key);
 
         await this.notifyNetworkChange(network);
     }

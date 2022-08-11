@@ -10,6 +10,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
@@ -94,7 +95,9 @@ export class NewPacketPage {
     public packetService: PacketService,
     private themeService: ThemeService,
     private networksService: NetworksService
-  ) { }
+  ) {
+    GlobalFirebaseService.instance.logEvent("redpacket_new_enter");
+  }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.new-red-packet-title"));

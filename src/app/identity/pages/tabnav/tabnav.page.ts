@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { IonTabs } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
+import { GlobalFirebaseService } from "src/app/services/global.firebase.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 
 @Component({
@@ -14,7 +15,9 @@ export class TabnavPage implements OnInit {
   constructor(
     public theme: GlobalThemeService,
     public translate: TranslateService,
-  ) { }
+  ) {
+    GlobalFirebaseService.instance.logEvent("identity_nav_enter");
+  }
 
   public selectedTab: string;
 

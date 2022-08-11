@@ -13,6 +13,7 @@ import { WrongPasswordException } from 'src/app/model/exceptions/wrongpasswordex
 import { GlobalDIDSessionsService, SignInOptions } from 'src/app/services/global.didsessions.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
@@ -200,10 +201,11 @@ export class IdentityService {
             // Automatically find and use the best elastos API provider
             let findProvider = await this.globalElastosAPIService.autoDetectTheBestProvider();
             if (!findProvider) {
-              await this.uxService.toast_trans("common.network-or-server-error");
-              return;
+                await this.uxService.toast_trans("common.network-or-server-error");
+                return;
             }
 
+            GlobalFirebaseService.instance.logEvent("create_did");
 
             this.identityBeingCreated.mnemonic = await this.generateMnemonic();
 
@@ -340,9 +342,11 @@ export class IdentityService {
         // Automatically find and use the best elastos API provider
         let findProvider = await this.globalElastosAPIService.autoDetectTheBestProvider();
         if (!findProvider) {
-          await this.uxService.toast_trans("common.network-or-server-error");
-          return;
+            await this.uxService.toast_trans("common.network-or-server-error");
+            return;
         }
+
+        GlobalFirebaseService.instance.logEvent("did_import");
 
         let didStore = await DIDStore.create();
         Logger.warn('didsessions', 'Getting didStore', didStore);
@@ -369,7 +373,7 @@ export class IdentityService {
                 await didStore.synchronize(storePassword);
             }
             catch (e) {
-              Logger.warn('didsessions', "Synchronizing exception", e);
+                Logger.warn('didsessions', "Synchronizing exception", e);
                 // Special case - "invalid signature" during synchronize - bug of getdids.com DIDs.
                 // Recommend user to create a new DID
                 if (e) {

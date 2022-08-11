@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -46,6 +47,8 @@ export class SuggestionListPage implements OnInit {
     ) {
         this.suggestionStatus = this.route.snapshot.params.suggestionType as SuggestionStatus;
         Logger.log(App.CRSUGGESTION, 'Suggestion status:', this.suggestionStatus);
+
+        GlobalFirebaseService.instance.logEvent("voting_suggestions_list_enter");
     }
 
     ngOnInit() {
@@ -59,7 +62,7 @@ export class SuggestionListPage implements OnInit {
     }
 
     ionViewWillLeave() {
-      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     async init() {
@@ -144,7 +147,7 @@ export class SuggestionListPage implements OnInit {
         if (this.suggestions.length === suggestionsLength) {
             void this.uxService.genericToast(this.translate.instant('crproposalvoting.all-suggestions-are-loaded'));
         }
-	    else {
+        else {
             if (this.searchInput) {
                 this.searchPage++;
             } else {

@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Packet } from '../../model/packets.model';
@@ -44,7 +45,9 @@ export class HomePage {
     public packetService: PacketService,
     private translate: TranslateService,
     private walletService: WalletService
-  ) { }
+  ) {
+    GlobalFirebaseService.instance.logEvent("redpackets_home_enter");
+  }
 
   async ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.red-packets"));
@@ -100,7 +103,7 @@ export class HomePage {
   }
 
   ionViewWillLeave() {
-    if(this.openedPacketsSubscriptions) {
+    if (this.openedPacketsSubscriptions) {
       this.openedPacketsSubscriptions.unsubscribe();
       this.openedPacketsSubscriptions = null;
     }

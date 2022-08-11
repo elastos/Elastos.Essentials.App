@@ -30,6 +30,7 @@ import { JSONObject } from 'src/app/model/json';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { AESEncrypt } from '../../helpers/crypto/aes';
@@ -358,6 +359,8 @@ export class WalletService {
         if (masterId && (this.masterWallets[masterId])) {
             this.activeMasterWalletId = masterId;
             await this.localStorage.saveCurMasterId(this.networkTemplate, { masterId: masterId });
+
+            GlobalFirebaseService.instance.logEvent("wallet_set_active_wallet"); // Will send event for both startup inits and manual user switch
         }
     }
 
@@ -381,13 +384,13 @@ export class WalletService {
     }
 
     public getActiveMasterWalletIndex(): number {
-      if (!this.activeNetworkWallet.value)
-          return -1;
+        if (!this.activeNetworkWallet.value)
+            return -1;
 
-      return this.getMasterWalletsList().findIndex(w => {
-          return w.id === this.activeNetworkWallet.value.id
-      });
-  }
+        return this.getMasterWalletsList().findIndex(w => {
+            return w.id === this.activeNetworkWallet.value.id
+        });
+    }
 
     public getNetworkWalletFromMasterWalletId(masterId: string): AnyNetworkWallet {
         return Object.values(this.networkWallets).find(w => w.id === masterId);
@@ -718,7 +721,7 @@ export class WalletService {
         // Stop background updates.
         let networkwallet = this.getNetworkWalletFromMasterWalletId(id);
         if (networkwallet) {
-          await networkwallet.stopBackgroundUpdates();
+            await networkwallet.stopBackgroundUpdates();
         }
 
         try {

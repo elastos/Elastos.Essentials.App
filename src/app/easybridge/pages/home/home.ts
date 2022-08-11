@@ -85,7 +85,9 @@ export class HomePage {
     private erc20CoinService: ERC20CoinService,
     private dAppBrowserService: DappBrowserService,
     private evmService: EVMService,
-  ) { }
+  ) {
+    GlobalFirebaseService.instance.logEvent("easybridge_home_enter");
+  }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('easybridge.home-title'));

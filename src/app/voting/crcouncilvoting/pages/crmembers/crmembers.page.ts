@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { App } from "src/app/model/app.enum";
+import { GlobalFirebaseService } from "src/app/services/global.firebase.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -33,8 +34,9 @@ export class CRMembersPage implements OnInit {
         private walletManager: WalletService,
         public voteService: VoteService,
         public translate: TranslateService
-    ) { }
-
+    ) {
+        GlobalFirebaseService.instance.logEvent("voting_crmembers_enter");
+    }
 
     ngOnInit() {
     }

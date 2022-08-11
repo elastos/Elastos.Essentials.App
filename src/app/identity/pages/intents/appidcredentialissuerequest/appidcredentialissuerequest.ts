@@ -5,6 +5,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { ApplicationDIDInfo, GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AppIdCredIssueIdentityIntent } from '../../../model/identity.intents';
@@ -58,6 +59,7 @@ export class AppIdCredentialIssueRequestPage {
         private globalApplicationDidService: GlobalApplicationDidService,
         private globalHiveService: GlobalHiveService
     ) {
+        GlobalFirebaseService.instance.logEvent("intent_appid_cred_issue_enter");
     }
 
     ionViewWillEnter() {

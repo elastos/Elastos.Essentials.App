@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { App } from "src/app/model/app.enum";
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -35,6 +36,7 @@ export class MenuPage implements OnInit {
     private prefsService: GlobalPreferencesService,
     private settingsService: SettingsService
   ) {
+    GlobalFirebaseService.instance.logEvent("settings_menu_enter");
     void this.init();
   }
 

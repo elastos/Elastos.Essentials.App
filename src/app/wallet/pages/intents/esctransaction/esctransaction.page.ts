@@ -28,6 +28,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Config } from 'src/app/wallet/config/Config';
@@ -91,6 +92,7 @@ export class EscTransactionPage implements OnInit {
   }
 
   ngOnInit() {
+    GlobalFirebaseService.instance.logEvent("wallet_esc_transaction_enter");
   }
 
   ionViewWillEnter() {
@@ -115,9 +117,9 @@ export class EscTransactionPage implements OnInit {
       case WalletType.MULTI_SIG_STANDARD:
         // TODO: reject esctransaction if multi sign (show error popup)
         void this.cancelOperation();
-      break;
+        break;
       default:
-      break;
+        break;
     }
   }
 

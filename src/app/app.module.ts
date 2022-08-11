@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy } from '@angular/router';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { FirebaseX } from "@awesome-cordova-plugins/firebase-x/ngx";
+
 import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';

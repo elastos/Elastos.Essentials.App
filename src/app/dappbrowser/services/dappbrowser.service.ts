@@ -11,6 +11,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
@@ -216,10 +217,14 @@ export class DappBrowserService implements GlobalService {
         }
 
         if (await this.canBrowseInApp()) {
+            GlobalFirebaseService.instance.logEvent("browser_open_url_in_app");
+
             // We cano use the "standard" way to open dapps in app.
             return this.open(url, title, target);
         }
         else {
+            GlobalFirebaseService.instance.logEvent("browser_open_url_outside");
+
             void this.globalIntentService.sendIntent('openurl', { url });
 
             // In external mode, while we open the app in the external browser, we also fetch its

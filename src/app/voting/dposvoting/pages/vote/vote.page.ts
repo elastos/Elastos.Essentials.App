@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -66,6 +67,8 @@ export class VotePage implements OnInit {
         if (navigation.extras.state && navigation.extras.state.refreash) {
             void this.nodesService.init();
         }
+
+        GlobalFirebaseService.instance.logEvent("voting_dpos_vote_enter");
     }
 
     async ngOnInit() {

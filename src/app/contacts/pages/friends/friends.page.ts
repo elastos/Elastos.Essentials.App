@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { defaultContacts } from '../../config/config';
@@ -52,6 +53,7 @@ export class FriendsPage implements OnInit {
     private events: GlobalEvents,
     private globalNav: GlobalNavService
   ) {
+    GlobalFirebaseService.instance.logEvent("contacts_friends_enter");
   }
 
   ngOnInit() {

@@ -10,6 +10,7 @@ import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -41,6 +42,8 @@ export class PickIdentityPage {
     private didSessions: GlobalDIDSessionsService,
     private nativeService: GlobalNativeService,
   ) {
+    GlobalFirebaseService.instance.logEvent("didsessions_pick_enter");
+
     this.events.subscribe("identityadded", newIdentity => {
       Logger.log('didsessions', "PickIdentiy - Identity added, reloading content");
       void this.loadIdentities();
@@ -82,7 +85,7 @@ export class PickIdentityPage {
   }
 
   setTitle() {
-    switch ( this.globalNetworksService.activeNetworkTemplate.value) {
+    switch (this.globalNetworksService.activeNetworkTemplate.value) {
       case MAINNET_TEMPLATE:
         this.titleBar.setTitle(this.translate.instant("didsessions.pick-identity"));
         break;

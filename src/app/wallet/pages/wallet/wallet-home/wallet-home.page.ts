@@ -28,6 +28,7 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
@@ -116,7 +117,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private globalStartupService: GlobalStartupService,
         private events: GlobalEvents,
         private zone: NgZone,
-    ) { }
+    ) {
+        GlobalFirebaseService.instance.logEvent("wallet_home_enter");
+    }
 
     ngOnInit() {
         this.showRefresher();

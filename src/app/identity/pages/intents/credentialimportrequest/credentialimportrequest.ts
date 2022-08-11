@@ -7,6 +7,7 @@ import { CredImportIdentityIntent } from 'src/app/identity/model/identity.intent
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -100,6 +101,7 @@ export class CredentialImportRequestPage {
     private globalApplicationDidService: GlobalApplicationDidService,
     private globalPublicationService: GlobalPublicationService
   ) {
+    GlobalFirebaseService.instance.logEvent("intent_cred_import_enter");
   }
 
   ionViewWillEnter() {

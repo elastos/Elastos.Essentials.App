@@ -34,6 +34,7 @@ import { Logger } from 'src/app/logger';
 import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
@@ -504,6 +505,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 action: this.action,
                 intentId: this.intentId
             });
+
+            GlobalFirebaseService.instance.logEvent("wallet_coin_transfer_send");
 
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
 

@@ -16,6 +16,7 @@ import { JSONObject } from 'src/app/model/json';
 import { GlobalCredentialToolboxService } from 'src/app/services/credential-toolbox/global.credential-toolbox.service';
 import { GlobalCredentialTypesService } from 'src/app/services/credential-types/global.credential.types.service';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
@@ -145,6 +146,7 @@ export class RequestCredentialsPage {
     private globalApplicationDidService: GlobalApplicationDidService,
     private credentialsToolboxService: GlobalCredentialToolboxService
   ) {
+    GlobalFirebaseService.instance.logEvent("intent_req_cred_enter");
   }
 
   ionViewWillEnter() {

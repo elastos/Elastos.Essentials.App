@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Logger } from '../logger';
 import { IdentityEntry } from '../model/didsessions/identityentry';
+import { GlobalFirebaseService } from './global.firebase.service';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalNativeService } from './global.native.service';
 import { Direction, GlobalNavService } from './global.nav.service';
@@ -155,6 +156,8 @@ export class GlobalDIDSessionsService {
    */
   public async signIn(entry: IdentityEntry, options?: SignInOptions): Promise<void> {
     Logger.log('DIDSessionsService', "Signing in with DID", entry.didString, entry.name);
+
+    GlobalFirebaseService.instance.logEvent("did_sign_in");
 
     if (entry.didStoragePath == null) {
       await internalManager.changeOldPath(entry.didStoreId, entry.didString);

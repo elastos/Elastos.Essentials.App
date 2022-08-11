@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
@@ -56,6 +57,8 @@ export class FavoritesService {
             Logger.error("dappbrowser", "Can't add empty info to favorites!");
             return;
         }
+
+        GlobalFirebaseService.instance.logEvent("browser_add_favorite");
 
         // Create the favorite
         let favorites = this.favoritesSubject.value;

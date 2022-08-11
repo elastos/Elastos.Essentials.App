@@ -6,6 +6,7 @@ import { TitleBarIconSlot, TitleBarNavigationMode } from 'src/app/components/tit
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -46,6 +47,8 @@ export class OnboardIntentPage implements OnInit {
     private globalNav: GlobalNavService,
     private globalApplicationDidService: GlobalApplicationDidService
   ) {
+    GlobalFirebaseService.instance.logEvent("intent_launcher_onboard_enter");
+
     const navigation = this.router.getCurrentNavigation();
     if (navigation.extras.state) {
       let intent = <EssentialsIntentPlugin.ReceivedIntent>navigation.extras.state.intent;
