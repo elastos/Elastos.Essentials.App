@@ -104,6 +104,7 @@ export class CoinHomePage implements OnInit {
 
     private updateInterval = null;
     private updateTmeout = null;
+    private updateTransactionsTimesamp = 0;
 
     public popover: any = null;
 
@@ -237,12 +238,17 @@ export class CoinHomePage implements OnInit {
     }
 
     async updateTransactions() {
+        // Avoid updating transactions too frequently.
+        if (moment().valueOf() < this.updateTransactionsTimesamp + 10000) {
+          return;
+        }
         this.start = 0;
         this.offlineTransactions = [];
         this.todaysTransactions = 0;
         await this.getOfflineTransactions();
         await this.getAllTx();
         await this.checkInternalTransactions();
+        this.updateTransactionsTimesamp = moment().valueOf();
     }
 
     async updateWalletInfo() {
@@ -520,6 +526,7 @@ export class CoinHomePage implements OnInit {
 
     public setTransactionListType(transactionlistType: TransactionListType) {
         this.transactionListType = transactionlistType;
+        this.updateTransactionsTimesamp = 0;
         void this.initData(false);
     }
 
