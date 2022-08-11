@@ -40,19 +40,19 @@
     align-items: center;
 
     .btn {
-        height: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 8px;
-        background-color: #f8f8ff;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      background-color: #f0f0f0;
 
-        ion-label {
-          font-size: 15px;
-          font-weight: 500;
-          color: #161740;
-          font-family: "Inter" !important;
-        }
+      ion-label {
+        font-size: 15px;
+        font-weight: 500;
+        color: #161740;
+        font-family: "Inter" !important;
+      }
     }
   }
 }
