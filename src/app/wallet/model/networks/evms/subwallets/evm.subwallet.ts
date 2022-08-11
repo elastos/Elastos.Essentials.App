@@ -444,13 +444,9 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
         Logger.warn('wallet', 'createPaymentTransaction can not estimate gas');
         return null;
       }
-      if (amount.eq(-1)) {
-        // TODO: User will lost small amount if use 'estimateGas * 1.5'.
-        gasLimit = estimateGas.toString();
-      } else {
-        // '* 1.5':Make sue the gaslimit is big enough.
-        gasLimit = Util.ceil(estimateGas * 1.5).toString();
-      }
+
+      // '* 1.5':Make sue the gaslimit is big enough.
+      gasLimit = Util.ceil(estimateGas * 1.5).toString();
     }
 
     if (amount.eq(-1)) {//-1: send all.

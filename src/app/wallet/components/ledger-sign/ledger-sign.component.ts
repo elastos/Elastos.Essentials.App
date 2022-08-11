@@ -163,6 +163,9 @@ export class LedgerSignComponent implements OnInit {
         case 0x6e00:
           message = this.translate.instant('wallet.ledger-error-app-not-start', { appname: this.ledgerNanoAppname })
           break;
+        case 0x6982:
+          message = this.translate.instant('wallet.ledger-prompt', { appname: this.ledgerNanoAppname })
+          break;
         case 0x6985:
           message = 'wallet.ledger-error-operation-cancelled';
           break;
@@ -173,7 +176,7 @@ export class LedgerSignComponent implements OnInit {
           if (e.message) {
             message = e.message;
           } else {
-            message = 'wallet.ledger-prompt';
+            message = this.translate.instant('wallet.ledger-prompt', { appname: this.ledgerNanoAppname })
           }
       }
 
