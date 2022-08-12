@@ -443,39 +443,46 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      *
      * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
-    public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<NFT> {
+    private async createNFT(nftType: NFTType, contractAddress: string, balance: number, name: string = null): Promise<NFT> {
+        let nft = new NFT(nftType, contractAddress, balance);
+        if (name)
+            nft.name = name;
+
         if (nftType === NFTType.ERC721) {
-            let resolvedInfo = await ERC721Service.instance.getCoinInfo(contractAddress);
-            if (resolvedInfo) {
-                let nft = new NFT(nftType, contractAddress, balance);
-                nft.setResolvedInfo(resolvedInfo);
-                this.nfts.push(nft);
-
-                await this.save();
-
-                return nft;
+            if (!name) {
+                // No name given (not found by the tx provider)? resolve it ourselves
+                let resolvedInfo = await ERC721Service.instance.getCoinInfo(contractAddress);
+                if (resolvedInfo) {
+                    nft.setResolvedInfo(resolvedInfo);
+                }
+                else {
+                    nft.name = "Unnamed";
+                }
             }
         }
         else if (nftType === NFTType.ERC1155) {
-            let resolvedInfo = await ERC1155Service.instance.getCoinInfo(contractAddress);
-            if (resolvedInfo) {
-                let nft = new NFT(nftType, contractAddress, balance);
-                nft.setResolvedInfo(resolvedInfo);
-                this.nfts.push(nft);
-
-                await this.save();
-
-                return nft;
+            if (!name) {
+                // No name given (not found by the tx provider)? resolve it ourselves
+                let resolvedInfo = await ERC1155Service.instance.getCoinInfo(contractAddress);
+                if (resolvedInfo) {
+                    nft.setResolvedInfo(resolvedInfo);
+                }
+                else {
+                    nft.name = "Unnamed";
+                }
             }
         }
 
-        return null;
+        this.nfts.push(nft);
+        await this.save();
+        return nft;
     }
 
     /**
      * Creates a new NFT but only if it doesn't exist yet.
+     * If it exists, updates it with recent information as well.
      */
-    public async upsertNFT(nftType: NFTType, contractAddress: string, balance: number, tokenIDs: string[]): Promise<NFT> {
+    public async upsertNFT(nftType: NFTType, contractAddress: string, balance: number, tokenIDs: string[], name: string = null): Promise<NFT> {
         let nft = this.nfts.find(nft => nft.contractAddress === contractAddress);
         if (!nft) {
             nft = await this.createNFT(nftType, contractAddress, balance);
@@ -483,6 +490,8 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
         nft.balance = balance;
         nft.assetIDs = tokenIDs;
+        if (name)
+            nft.name = name;
         await this.save();
 
         return nft;
@@ -515,16 +524,16 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     /*  public upsertNFTAssetID(nft: NFT, assetID: string): Promise<void> {
          if (assetID === undefined || assetID === null)
              return;
- 
+
          if (!nft.assetIDs)
              nft.assetIDs = [];
- 
+
          if (nft.assetIDs.find(id => id === assetID))
              return; // Already exists
- 
+
          // Add
          nft.assetIDs.push(assetID);
- 
+
          // Update the number of assets in this NFT
          nft.balance = nft.assetIDs.length;
      } */

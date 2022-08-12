@@ -215,6 +215,7 @@ export class PrepareDIDPage {
   }
 
   private fetchPublishedDID(): Promise<DIDPlugin.DIDDocument> {
+    debugger;
     Logger.log("didsessions", "Checking if identity is published for ", this.identityService.identityBeingCreated.did.getDIDString());
     return new Promise<DIDPlugin.DIDDocument>((resolve, reject) => {
       didManager.resolveDidDocument(this.identityService.identityBeingCreated.did.getDIDString(), true, (doc) => {
@@ -298,7 +299,7 @@ export class PrepareDIDPage {
       await sleep(5000);
 
       // Resolve the published DID to make sure everything is all right
-      Logger.log("didsessions", "Verifying is the identity is well published", this.publishedDID);
+      Logger.log("didsessions", "Verifying if the identity is well published", this.publishedDID);
       if (await this.needToPublishIdentity()) {
         Logger.warn("didsessions", "Identity is supposed to be published and ready but cannot be resolved");
         this.publishError = this.translate.instant("didsessions.error-can-not-publish");

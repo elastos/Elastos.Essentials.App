@@ -287,10 +287,10 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
         // number on UI first, and we will fetch tokens IDs later when use enters coin-home
         //
         // NOTE: We get ONE token info entry uniquely per NFT contract, not several.
-        await this.networkWallet.upsertNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs);
+        await this.networkWallet.upsertNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs, token.name);
       }
       else if (token.type === "ERC-1155") {
-        await this.networkWallet.upsertNFT(NFTType.ERC1155, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs);
+        await this.networkWallet.upsertNFT(NFTType.ERC1155, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs, token.name);
       }
       else {
         Logger.warn('wallet', 'Unhandled token type:', token);
