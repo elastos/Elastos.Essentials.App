@@ -224,6 +224,10 @@ export class CoinHomePage implements OnInit {
     }
 
     async initData(updateAll = false) {
+        // Initial transactions from cache.
+        await this.updateTransactions();
+        this.updateTransactionsTimesamp = 0; // Force to update transactions after fetch new transactions.
+
         this.shouldShowLoadingSpinner = true;
         if (updateAll) {
             // Must one by one.
@@ -232,23 +236,21 @@ export class CoinHomePage implements OnInit {
         } else {
             void this.subWallet.fetchNewestTransactions(this.transactionListType);
         }
-
-        // Initial transactions updated (from cache) before getting newly fetched ones
-        void this.updateTransactions();
     }
 
     async updateTransactions() {
         // Avoid updating transactions too frequently.
-        if (moment().valueOf() < this.updateTransactionsTimesamp + 10000) {
+        let currentTimesamp = moment().valueOf();
+        if (currentTimesamp < this.updateTransactionsTimesamp + 10000) {
           return;
         }
+        this.updateTransactionsTimesamp = currentTimesamp;
         this.start = 0;
         this.offlineTransactions = [];
         this.todaysTransactions = 0;
         await this.getOfflineTransactions();
         await this.getAllTx();
         await this.checkInternalTransactions();
-        this.updateTransactionsTimesamp = moment().valueOf();
     }
 
     async updateWalletInfo() {

@@ -128,12 +128,12 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
     // Fetch
     if (transactionListType === TransactionListType.NORMAL) {
-      let provider = await this.getSubWalletTransactionProvider(subWallet);
+      let provider = this.getSubWalletTransactionProvider(subWallet);
       if (!provider) {
         Logger.warn("wallet", "fetchNewestTransactions(): no transaction provider");
       }
       else
-        provider.fetchTransactions(subWallet);
+        await provider.fetchTransactions(subWallet);
     } else {
       if (subWallet.supportInternalTransactions()) {
         let provider = this.getSubWalletInternalTransactionProvider(subWallet);
