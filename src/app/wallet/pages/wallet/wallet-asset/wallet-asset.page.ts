@@ -129,7 +129,7 @@ export class WalletAssetPage implements OnDestroy {
             this.totalSubwalletCount = 0;
         }
 
-        let networks = this.networkService.getAvailableNetworks();
+        let networks = this.networkService.getDisplayableNetworks();
         let masterWalletList = this.walletManager.getMasterWalletsList();
 
         for (let i = 0; i < networks.length && !this.exitPage; i++) {

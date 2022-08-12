@@ -1,12 +1,11 @@
 import BigNumber from 'bignumber.js';
-import moment from 'moment';
 import Queue from 'promise-queue';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { CurrencyService } from '../../../../services/currency.service';
-import { DefiService, StakingData } from '../../../../services/evm/defi.service';
+import { StakingData } from '../../../../services/evm/defi.service';
 import { ERC1155Service } from '../../../../services/evm/erc1155.service';
 import { ERC721Service } from '../../../../services/evm/erc721.service';
 import { LocalStorage } from '../../../../services/storage.service';
@@ -716,25 +715,26 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
     // In order to reduce resource consumption, the update interval is 10 minutes.
     public async fetchStakingAssets() {
-        const tenMinutesago = moment().add(-10, 'minutes').valueOf();
-        if (!this.stakingInfo || (this.stakingInfo.timestamp < tenMinutesago)) {
-            let tokenAddress = await this.getMainEvmSubWallet().getAccountAddress();
-            let chainId = (<EVMNetwork>this.network).getMainChainID();
-            let stakingData = await DefiService.instance.getStakingAssets(tokenAddress, chainId);
-            if (stakingData) {
-                stakingData.sort((a, b) => {
-                    if (b.amountUSD > a.amountUSD) return 1;
-                    else return -1;
-                })
-                this.stakingInfo = {
-                    timestamp: moment().valueOf(),
-                    stakingData: stakingData
-                }
-                await this.saveStakingAssets(this.stakingInfo);
-                this.stakedAssetsUpdate.next(this.stakingInfo.stakingData);
-            }
-        }
-        return this.stakingInfo;
+        // Do not fetch staking assets for now, the server is not reliable.
+        // const tenMinutesago = moment().add(-10, 'minutes').valueOf();
+        // if (!this.stakingInfo || (this.stakingInfo.timestamp < tenMinutesago)) {
+        //     let tokenAddress = await this.getMainEvmSubWallet().getAccountAddress();
+        //     let chainId = (<EVMNetwork>this.network).getMainChainID();
+        //     let stakingData = await DefiService.instance.getStakingAssets(tokenAddress, chainId);
+        //     if (stakingData) {
+        //         stakingData.sort((a, b) => {
+        //             if (b.amountUSD > a.amountUSD) return 1;
+        //             else return -1;
+        //         })
+        //         this.stakingInfo = {
+        //             timestamp: moment().valueOf(),
+        //             stakingData: stakingData
+        //         }
+        //         await this.saveStakingAssets(this.stakingInfo);
+        //         this.stakedAssetsUpdate.next(this.stakingInfo.stakingData);
+        //     }
+        // }
+        return await this.stakingInfo;
     }
 
     public getStakingAssets() {
