@@ -215,7 +215,6 @@ export class PrepareDIDPage {
   }
 
   private fetchPublishedDID(): Promise<DIDPlugin.DIDDocument> {
-    debugger;
     Logger.log("didsessions", "Checking if identity is published for ", this.identityService.identityBeingCreated.did.getDIDString());
     return new Promise<DIDPlugin.DIDDocument>((resolve, reject) => {
       didManager.resolveDidDocument(this.identityService.identityBeingCreated.did.getDIDString(), true, (doc) => {
