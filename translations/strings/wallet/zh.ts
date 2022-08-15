@@ -92,7 +92,7 @@ export const zh = {
                 "settings-manage-networks-subtitle": "显示和隐藏网络，添加自定义网络",
                 "settings-add-wallet-standard-wallet": "标准钱包",
                 "settings-add-wallet-multi-sig-wallet": "多签钱包",
-                "settings-add-wallet-hardware-wallet": "连接硬件钱包",
+                "settings-add-wallet-hardware-wallet": "硬件钱包",
                 "settings-add-wallet-new-wallet": "新钱包",
                 "settings-add-wallet-mnemonic": "助记词",
 

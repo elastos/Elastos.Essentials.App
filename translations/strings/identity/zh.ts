@@ -177,10 +177,10 @@ export const zh = {
         // page: hivebackupcredissue
         'hivebackup-title': 'Hive 备份身份验证',
         'hivebackup-subtitle': 'Hive 备份身份验证',
-        'hivebackup-intro': '此应用程序正在请求访问权限，以便将您的 hive vault 存储空间备份到另一个 hive vault 或从 hive vault 服务恢复。',
+        'hivebackup-intro': '此应用程序正在请求访问权限，以便将您的 Hive Vault 存储空间备份到另一个 Hive Vault 或从 Hive Vault 服务恢复。',
         'hivebackup-sourcenodedid': '源 Hive 节点',
         'hivebackup-targetnodedid': '目标 Hive 节点',
-        'hivebackup-targetnodeurl': '目标 hive url',
+        'hivebackup-targetnodeurl': '目标 Hive URL',
 
         // page: signrequest
         'sign-data': '数据签名',

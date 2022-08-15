@@ -92,7 +92,7 @@ export const fr = {
         "settings-manage-networks-subtitle": "Affichez et cachez certains réseaux, et ajoutez des réseaux personnalisés",
         "settings-add-wallet-standard-wallet": "Portefeuille Standard",
         "settings-add-wallet-multi-sig-wallet": "Portefeuille Multi Signatures",
-        "settings-add-wallet-hardware-wallet": "Connecter un portefeuille physique",
+        "settings-add-wallet-hardware-wallet": "Portefeuille physique",
         "settings-add-wallet-new-wallet": "Nouveau portefeuille",
         "settings-add-wallet-mnemonic": "Mnémonique / clé papier",
 

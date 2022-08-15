@@ -92,7 +92,7 @@ export const it = {
         "settings-manage-networks-subtitle": "Show and hide networks, add custom ones",
         "settings-add-wallet-standard-wallet": "Standard Wallet",
         "settings-add-wallet-multi-sig-wallet": "Multi Signature Wallet",
-        "settings-add-wallet-hardware-wallet": "Connect H/W Wallet",
+        "settings-add-wallet-hardware-wallet": "Hardware Wallet",
         "settings-add-wallet-new-wallet": "New Wallet",
         "settings-add-wallet-mnemonic": "Mnemonic / Paper key",
 

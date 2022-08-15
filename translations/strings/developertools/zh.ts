@@ -42,7 +42,7 @@ export const zh = {
         'touch-to-change': '点击图标可进行更改',
         'set-app-icon': '请设置图标',
         'app-unnamed': '未命名',
-        'failed-to-upload-picture-to-hive': '无法将应用图标上传到 Hive vault',
+        'failed-to-upload-picture-to-hive': '无法将应用图标上传到 Hive Vault',
 
         // Placeholders
         'appName-placeholder': '在此处设置应用名称',
