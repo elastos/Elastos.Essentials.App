@@ -164,6 +164,9 @@ export class GlobalEthereumRPCService {
     }
 
     public async eth_estimateGas(rpcApiUrl: string, from: string, to: string, value: string, limitatorName = "default"): Promise<number> {
+        // In case of user inputs the 'to' address without '0x'
+        if (!to.startsWith('0x')) to = '0x' + to;
+
         const param = {
             method: 'eth_estimateGas',
             params: [{
@@ -175,14 +178,8 @@ export class GlobalEthereumRPCService {
             id: '1'
         };
 
-        try {
-            // Estimate gas: always high priority, probably to publish transactions
-            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName, 5000, false, true);
-            return parseInt(result);
-        }
-        catch (err) {
-            Logger.error('RPCService', 'eth_estimateGas: http post error:', err);
-            return -1;
-        }
+        // Estimate gas: always high priority, probably to publish transactions
+        let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName, 5000, false, true);
+        return parseInt(result);
     }
 }

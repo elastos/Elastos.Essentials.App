@@ -524,14 +524,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   // value is hexadecimal string, eg: "0x1000"
   private async estimateGasForPaymentTransaction(to: string, value: string) {
-    try {
-      const address = await this.getAccountAddress();
-      return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, to, value, this.networkWallet.network.key);
-    }
-    catch (err) {
-      Logger.error('wallet', 'estimateGasForPaymentTransaction failed, ', this.id, ' error:', err);
-    }
-    return -1;
+    const address = await this.getAccountAddress();
+    return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, to, value, this.networkWallet.network.key);
   }
 
   /**
