@@ -328,6 +328,7 @@ export const zh = {
                 "ledger-error-app-not-start": "请在 Ledger Nano X 上启动 {{appname}} 应用程序",
                 "ledger-error-operation-cancelled": "操作已取消",
                 "ledger-error-unknown": "未知错误",
+                "ledger-error-contractdata": "请在 Ethereum 应用程序的设置中启用盲签名或合约数据",
 
                 /********************************************** Wallet Settings Screens ***********************************************/
 

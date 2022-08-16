@@ -12,16 +12,20 @@ export class ENSResolver extends Resolver {
 
     constructor() {
         super();
-        this.initENS();
+        void this.initENS();
     }
 
-    private initENS() {
+    private async initENS() {
         // ENS is deployed on the Ethereum main network and on several test networks.
         let providerUrl = EthereumAPI.getApiUrl(EthereumAPIType.RPC, 'mainnet');
         const provider = new ethers.providers.JsonRpcProvider(providerUrl)
 
         this.ENSInstance = new ENS()
-        void this.ENSInstance.setProvider(provider)
+        try {
+            await this.ENSInstance.setProvider(provider)
+        } catch (e) {
+            Logger.warn('wallet', ' ENSInstance.setProvider error', e)
+        }
     }
 
     public getName(): string {

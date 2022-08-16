@@ -329,6 +329,7 @@ export const en = {
         "ledger-error-app-not-start": "Please open the {{appname}} application on the Ledger Nano X",
         "ledger-error-operation-cancelled": "Operation cancelled",
         "ledger-error-unknown": "Unknown error",
+        "ledger-error-contractdata": "Please enable Blind signing or Contract data in the Ethereum app Settings",
 
         /********************************************** Wallet Settings Screens ***********************************************/
 

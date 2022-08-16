@@ -186,11 +186,12 @@ export class LedgerSignComponent implements OnInit {
       await (this.safe as LedgerSafe).signTransactionByLedger(this.transport);
       this.signSucceeded = true;
     } catch (e) {
-      Logger.log("wallet", "LedgerSignComponent signTransactionByLedger error: ", e);
+      Logger.warn("wallet", "LedgerSignComponent signTransactionByLedger error: ", e);
 
       // CustomError -- statusCode 25873(0x6511) name: DisconnectedDeviceDuringOperation -- the app is not started.
       // CustomError -- message: DisconnectedDeviceDuringOperation name:DisconnectedDeviceDuringOperation
       // CustomError -- message: An action was already pending on the Ledger device. Please deny or reconnect. name: TransportRaceCondition
+      // CustomError -- name: EthAppPleaseEnableContractData message: Please enable Blind signing or Contract data in the Ethereum app Settings
       // TransportStatusError -- statusCode: 28160(0x6e00)  -- open the wrong app
       // TransportStatusError -- statusCode: 27013(0x6985)  -- user canceled the transaction
       // TransportStatusError -- statusCode: 27010(0x6982)  -- Ledger device: Security not satisfied (dongle locked or have invalid access rights) (0x6982)
@@ -219,7 +220,11 @@ export class LedgerSignComponent implements OnInit {
           break;
         default:
           if (e.message) {
-            message = e.message;
+            if (e.name === 'EthAppPleaseEnableContractData') {
+                message = this.translate.instant('wallet.ledger-error-contractdata');
+            } else {
+                message = e.message;
+            }
           } else {
             message = this.translate.instant('wallet.ledger-prompt', { appname: this.ledgerNanoAppname })
           }
