@@ -138,7 +138,7 @@ export class GlobalJsonRPCService {
                         reject("http get response with error");
                     }
                 }, (err) => {
-                    Logger.error('GlobalJsonRPCService', 'http get error:', err, ' url:', url);
+                    Logger.error('GlobalJsonRPCService', 'http post error:', err, ' url:', url);
                     reject(err);
                 });
             });

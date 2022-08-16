@@ -85,7 +85,8 @@ export type BTCTxData = {
   inputs: BTCUtxoForLedger[],
   outputs: BTCOutputData[],
   changeAddress: string,
-  feePerKB: string
+  feePerKB: string,
+  fee?: number // SATOSHI
 }
 
 /**

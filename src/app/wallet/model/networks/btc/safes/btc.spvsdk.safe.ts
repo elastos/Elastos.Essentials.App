@@ -11,15 +11,20 @@ export class BTCSPVSDKSafe extends SPVSDKSafe implements BTCSafe {
       jsToSpvWalletId(this.masterWallet.id), 0, 1, false);
   }
 
-  public async createBTCPaymentTransaction(inputs: any, outputs: any, changeAddress: string, feePerKB: string): Promise<any> {
+  public async createBTCPaymentTransaction(inputs: any, outputs: any, changeAddress: string, feePerKB: string, fee: number): Promise<any> {
     return await SPVService.instance.createBTCTransaction(
       jsToSpvWalletId(this.masterWallet.id), JSON.stringify(inputs), JSON.stringify(outputs), changeAddress, feePerKB);
   }
 
   public async signTransaction(subWallet: AnySubWallet, rawTransaction: string, transfer: Transfer): Promise<SignTransactionResult> {
+    let signTransactionResult: SignTransactionResult = {
+        signedTransaction: null
+    }
     let txResult = await super.signTransaction(subWallet, rawTransaction, transfer);
+    if (txResult.signedTransaction) {
+        signTransactionResult.signedTransaction = JSON.parse(txResult.signedTransaction).Data;
+    }
 
-    let obj = JSON.parse(txResult.signedTransaction);
-    return { signedTransaction: obj.Data };
+    return signTransactionResult;
   }
 }

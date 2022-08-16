@@ -204,7 +204,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             }
         }
 
-        if (!getEnoughUTXO) {
+        if (!getEnoughUTXO && (amount != -1)) {
             Logger.warn('wallet', 'Utxo is not enough for ', amount, utxoArrayForSDK)
         }
         return utxoArrayForSDK;
@@ -222,21 +222,29 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         // Fees are related to input and output.
         let fee = Util.accMul(feerate, Config.SATOSHI);
 
+        let utxo: BTCUtxoForLedger[] = [];
         let toAmount = 0;
         if (amount.eq(-1)) {
+            utxo = await this.getAvailableUtxo(-1);
+            if (!utxo) return;
+
+            let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 1, feerate)
+            fee = Util.accMul(feeBTC, Config.SATOSHI);
+
             toAmount = Math.floor(this.balance.minus(fee).toNumber());
         } else {
             toAmount = Util.accMul(amount.toNumber(), Config.SATOSHI);
+            utxo = await this.getAvailableUtxo(toAmount + fee);
+            if (!utxo) return;
+
+            let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 2, feerate)
+            fee = Util.accMul(feeBTC, Config.SATOSHI);
         }
 
         let outputs = [{
             "Address": toAddress,
             "Amount": toAmount.toString()
         }]
-
-        // let utxo: BTCUtxoForLedger[] = [];
-        let utxo: BTCUtxoForLedger[] = await this.getAvailableUtxo(toAmount + fee);
-        if (!utxo) return;
 
         if (this.masterWallet.type === WalletType.LEDGER) {
             for (let i = 0; i < utxo.length; i++) {
@@ -258,7 +266,8 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             utxo,
             outputs,
             this.legacyAddress,
-            feerate.toString());
+            feerate.toString(),
+            fee);
     }
 
     public async publishTransaction(transaction: string): Promise<string> {

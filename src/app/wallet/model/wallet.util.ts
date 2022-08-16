@@ -176,4 +176,13 @@ export class WalletUtil {
       }
     }
   }
+
+  // TODO: How to get accurate fee?
+  public static estimateBTCFee(inputCount: number, outputCount: number, feePerKB: number) {
+    // Native Segwit
+    // Legacy
+    let estimateSize = inputCount * 148 + outputCount * 34 + 10;
+    let estimateFee = estimateSize * feePerKB / 1000;
+    return estimateFee;
+  }
 }

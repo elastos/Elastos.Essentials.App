@@ -6,8 +6,6 @@ import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { bitcoin, testnet } from "bitcoinjs-lib/src/networks";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
-import { Util } from "src/app/model/util";
-import { Config } from "src/app/wallet/config/Config";
 import { BTCOutputData, BTCTxData, BTCUtxoForLedger } from "src/app/wallet/model/btc.types";
 import { LedgerAccountType } from "src/app/wallet/model/ledger.types";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
@@ -54,12 +52,13 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
     }
   }
 
-  public createBTCPaymentTransaction(inputs: BTCUtxoForLedger[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string): Promise<any> {
+  public createBTCPaymentTransaction(inputs: BTCUtxoForLedger[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {
     let txData: BTCTxData = {
       inputs: inputs,
       outputs: outputs,
       changeAddress: changeAddress,
-      feePerKB: feePerKB
+      feePerKB: feePerKB,
+      fee: fee
     }
     return Promise.resolve(txData);
   }
@@ -70,11 +69,8 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
       totalAmount += parseInt(txData.inputs[i].Amount);
     }
 
-    // TODO: Calculate the size of the transaction.
-    let fees = Util.accMul(parseFloat(txData.feePerKB), Config.SATOSHI);
-
-    let changeAmount = totalAmount - parseInt(txData.outputs[0].Amount) - fees;
-    Logger.log('wallet', 'BTC transaction:changeAmount:', changeAmount, ' fees:', fees, ' totalAmount:', totalAmount)
+    let changeAmount = totalAmount - parseInt(txData.outputs[0].Amount) - txData.fee;
+    Logger.log('wallet', 'BTC transaction:changeAmount:', changeAmount, ' fees:', txData.fee, ' totalAmount:', totalAmount)
 
     let network = bitcoin;
     if (networkStr === 'testnet') {
