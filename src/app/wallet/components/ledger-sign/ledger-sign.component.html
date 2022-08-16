@@ -8,9 +8,19 @@
         <ion-label>{{ 'wallet.ledger-confirm-on-ledger-prompt' | translate }}</ion-label>
       </ion-row>
 
+      <!-- Error: No bluetooth -->
+      <ion-row class="retry-row" *ngIf="!isBluetoothEnable">
+        <div>{{ 'wallet.ledger-scan-bluetooth-not-enable' | translate }}</div>
+        <ion-button color="primary" (click)="showBluetoothSetting()" *ngIf="supportOpeningBluetoothSetting">
+            <ion-label>{{ 'wallet.ledger-scan-open-bluetooth-setting' | translate }}</ion-label>
+        </ion-button>
+      </ion-row>
+
       <ion-row *ngIf="connecting">
         <h2> {{ 'wallet.ledger-connecting' | translate }}</h2>
       </ion-row>
+
+      <ion-spinner *ngIf="connecting" class="spinner"></ion-spinner>
 
       <ion-row class="row device-row" *ngIf="transport">
         <ion-col size="5">
@@ -20,8 +30,6 @@
             {{ transport.device.name }}
         </ion-col>
       </ion-row>
-
-      <ion-spinner *ngIf="connecting" class="spinner"></ion-spinner>
 
       <ion-row  class="btn-row">
         <ion-col class="btn ripple ion-activatable" size="5.5" (click)="cancelOperation()">

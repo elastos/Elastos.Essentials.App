@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController, NavParams, Platform } from '@ionic/angular';
 import { DisconnectedDeviceDuringOperation } from '@ledgerhq/errors';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BLECentralPluginBridge } from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BLECentralPluginBridge';
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
@@ -26,10 +27,16 @@ export type LedgerSignComponentOptions = {
 export class LedgerSignComponent implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
+  private bleManager: BLECentralPluginBridge = null;
+
+  public scanning = false;
+  public isBluetoothEnable = true;
+  public supportOpeningBluetoothSetting = true;
+
   public ledgerDeviceId = null;
   public safe: Safe = null;
   public transport: BluetoothTransport = null;
-  public connecting = true;
+  public connecting = false;
   public signing = false;
   private signSucceeded = false;
 
@@ -41,17 +48,51 @@ export class LedgerSignComponent implements OnInit {
   constructor(
     private navParams: NavParams,
     public native: Native,
+    private platform: Platform,
     public translate: TranslateService,
     public theme: GlobalThemeService,
     private modalCtrl: ModalController,
   ) {
+    if (this.platform.platforms().indexOf('ios') >= 0) {
+        this.supportOpeningBluetoothSetting = false;
+    }
   }
 
   ngOnInit() {
     this.ledgerDeviceId = this.navParams.data.deviceId;
     this.safe = this.navParams.data.safe;
     this.initLedgerAppName();
-    void this.connectDevice();
+    void this.initBLE();
+  }
+
+  ngOnDestroy() {
+    if (this.bleManager) {
+      void this.bleManager.stopStateNotifications();
+    }
+
+    this.closeTimeout()
+  }
+
+  async initBLE() {
+    this.bleManager = new BLECentralPluginBridge();
+    if (this.bleManager) {
+      await this.bleManager.stopStateNotifications();
+      this.bleManager.startStateNotifications(async (state) => {
+        switch(state) {
+          case "on":
+            // BluetoothTransport.listen will call startStateNotifications, so we need to call stopStateNotifications.
+            await this.bleManager.stopStateNotifications();
+            this.isBluetoothEnable = true;
+            void this.connectDevice();
+            break;
+          case 'off':
+            this.isBluetoothEnable = false;
+            break;
+        }
+      }, (error)=> {
+        Logger.warn('wallet', "startStateNotifications error " + error)
+      });
+    }
   }
 
   private async doConnect() {
@@ -115,6 +156,10 @@ export class LedgerSignComponent implements OnInit {
       await this.transport.close();
       this.transport = null;
     }
+  }
+
+  showBluetoothSetting() {
+    void this.bleManager.showBluetoothSettings();
   }
 
   initLedgerAppName() {

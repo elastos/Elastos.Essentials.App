@@ -53,10 +53,8 @@ export class LedgerScanPage implements OnInit {
 
     private ledgerConnectType: LedgerConnectType = LedgerConnectType.CreateWallet;
 
-    public errorMessge = '';
     private ErrorMessage_ListenTimeout = "No Ledger device found (timeout)";
     private ErrorMessage_NoDeviceFound = "No Ledger device found";
-    private ErrorMessage_BluetoothNoEnable = "Bluetooth is not enable";
 
     constructor(
         private platform: Platform,
@@ -105,7 +103,6 @@ export class LedgerScanPage implements OnInit {
             case 'off':
               this.isBluetoothEnable = false;
               this.device = null;
-              this.errorMessge = this.ErrorMessage_BluetoothNoEnable;
               break;
           }
         }, (error)=> {
@@ -126,7 +123,6 @@ export class LedgerScanPage implements OnInit {
     }
 
     doScan() {
-        this.errorMessge = null;
         this.device = null;
 
         void this.zone.run(async () => {
@@ -141,8 +137,6 @@ export class LedgerScanPage implements OnInit {
               if (ret) {
                   this.device = ret;
               }
-          } else {
-              this.errorMessge = this.ErrorMessage_BluetoothNoEnable;
           }
         });
     }
