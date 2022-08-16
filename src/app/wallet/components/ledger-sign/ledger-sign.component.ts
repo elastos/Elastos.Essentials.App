@@ -207,6 +207,8 @@ export class LedgerSignComponent implements OnInit {
       switch (e.statusCode) {
         case 0x650f:
         case 0x6511:
+        case 0x6b0c:
+        case 0x6d00:
         case 0x6e00:
           message = this.translate.instant('wallet.ledger-error-app-not-start', { appname: this.ledgerNanoAppname })
           break;

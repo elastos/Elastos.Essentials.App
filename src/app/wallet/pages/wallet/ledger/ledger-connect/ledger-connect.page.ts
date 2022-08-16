@@ -218,6 +218,8 @@ export class LedgerConnectPage implements OnInit {
             this.gettingAddresses = false;
             this.failedToGetAddress = true;
 
+            Logger.warn('wallet', ' getAddresses exception', e)
+
             // CustomError -- statusCode 25873(0x6511) name: DisconnectedDeviceDuringOperation -- the app is not started.
             // CustomError -- message: DisconnectedDeviceDuringOperation name:DisconnectedDeviceDuringOperation
             // CustomError -- message: An action was already pending on the Ledger device. Please deny or reconnect. name: TransportRaceCondition
@@ -236,6 +238,8 @@ export class LedgerConnectPage implements OnInit {
             switch (e.statusCode) {
               case 0x650f:
               case 0x6511:
+              case 0x6b0c:
+              case 0x6d00:
               case 0x6e00:
                 message = this.translate.instant('wallet.ledger-error-app-not-start', { appname: this.ledgerNanoAppname })
                 break;
