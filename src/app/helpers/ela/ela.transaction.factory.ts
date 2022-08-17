@@ -67,7 +67,7 @@ export class ELATransactionFactory {
     const signature = await ELATransactionSigner.getSignature(tx, privateKey);
     const encodedSignedTx = ELATransactionSigner.addSignatureToTx(tx, publicKey, signature);
 
-    Logger.log('wallet', 'createSignedSendToTx.signedTx ' + JSON.stringify(tx));
+    // Logger.log('wallet', 'createSignedSendToTx.signedTx ' + JSON.stringify(tx));
 
     Logger.log('wallet', 'createSignedSendToTx.encodedSignedTx ' + JSON.stringify(encodedSignedTx));
     return encodedSignedTx;
@@ -119,7 +119,7 @@ export class ELATransactionFactory {
     }
 
     const address = await ELAAddressHelper.getAddressFromPublicKey(publicKey);
-    Logger.warn('wallet', ' createUnsignedSendToTxSats address:', address, ' publicKey:', publicKey)
+
     const tx: TX_Content = {
       TxType: 2,
       LockTime: 0,
@@ -153,11 +153,10 @@ export class ELATransactionFactory {
     // const sendAmountAndFeeAmountSats = sendAmountSats.plus(feeAmountSats).plus(FEE_SATS);
     const sendAmountAndFeeAmountSats = sendAmountSats.plus(feeAmountSats);
     // const sendAmountAndFeeAmountSats = sendAmountSats.plus(FEE_SATS);
-    Logger.warn('wallet', ' feeAmountStr', feeAmountStr, ' sendAmountAndFeeAmountSats:', sendAmountAndFeeAmountSats.toString())
+
     let inputValueSats = new BigNumber(0, 10);
     const usedUtxos = new Set();
 
-    Logger.warn('wallet', ' createUnsignedSendToTxSats unspentTransactionOutputs:', unspentTransactionOutputs)
     unspentTransactionOutputs.forEach((utxo) => {
       const utxoInput = {
         TxId: utxo.TxHash.toUpperCase(),
@@ -173,9 +172,8 @@ export class ELATransactionFactory {
         usedUtxos.add(utxoInputStr);
       }
     });
-    Logger.warn('wallet', ' inputValueSats', inputValueSats.toString())
+
     const changeValueSats = inputValueSats.minus(sendAmountAndFeeAmountSats);
-    Logger.warn('wallet', ' sendAmountAndFeeAmountSats ', sendAmountAndFeeAmountSats.toString(), ' changeValueSats:', changeValueSats.toString())
     const sendOutput = {
       AssetID: elaAssetId,
       Value: sendAmountSats.toString(10),
@@ -305,7 +303,7 @@ export class ELATransactionFactory {
     const signature = await ELATransactionSigner.getSignature(tx, privateKey);
     const encodedSignedTx = ELATransactionSigner.addSignatureToTx(tx, publicKey, signature);
 
-    Logger.log('wallet', 'createSignedSendToTx.signedTx ' + JSON.stringify(tx));
+    // Logger.log('wallet', 'createSignedSendToTx.signedTx ' + JSON.stringify(tx));
 
     Logger.log('wallet', 'createSignedSendToTx.encodedSignedTx ' + JSON.stringify(encodedSignedTx));
     return encodedSignedTx;
