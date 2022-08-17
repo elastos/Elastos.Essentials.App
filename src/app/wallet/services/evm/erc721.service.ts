@@ -381,7 +381,7 @@ export class ERC721Service {
 
             try {
                 let metadata: any = await this.http.get(tokenURI).toPromise();
-                Logger.log("wallet", "Got NFT metadata", metadata);
+                Logger.log("wallet", "Got NFT metadata", metadata, "from", tokenURI);
 
                 // Name
                 if ("properties" in metadata && "name" in metadata.properties)
