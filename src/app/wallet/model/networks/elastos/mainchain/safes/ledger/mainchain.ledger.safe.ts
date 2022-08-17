@@ -74,12 +74,12 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
   }
 
   public async createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
-    Logger.warn('wallet', 'MainChainLedgerSafe createPaymentTransaction inputs:', inputs, ' outputs:', outputs, ' fee:', fee, ' memo:', memo)
+    Logger.log('wallet', 'MainChainLedgerSafe createPaymentTransaction inputs:', inputs, ' outputs:', outputs, ' fee:', fee, ' memo:', memo)
 
-    let tx = ELATransactionFactory.createUnsignedSendToTx(inputs, outputs[0].Address, outputs[0].Amount,
+    let tx = await ELATransactionFactory.createUnsignedSendToTx(inputs, outputs[0].Address, outputs[0].Amount,
       this.publicKey, fee, '', memo);
-    Logger.warn('wallet', 'createPaymentTransaction:', JSON.stringify(tx))
-    return await tx;
+    Logger.log('wallet', 'createPaymentTransaction:', JSON.stringify(tx))
+    return tx;
   }
 
   public createVoteTransaction(inputs: UtxoForSDK[], voteContent: VoteContent[], fee: string, memo: string): Promise<any> {

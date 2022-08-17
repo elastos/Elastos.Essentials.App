@@ -92,7 +92,7 @@ export default class Ela {
         Logger.log(TAG, ' getAddress: publicKey', publicKey)
       } else {
         // 6E00, 6E01
-        let statusCode = parseInt(responseStr.substring(0, 3));
+        let statusCode = parseInt(responseStr.substring(0, 4), 16);
         throw new TransportStatusError(statusCode);
       }
 
@@ -146,16 +146,20 @@ export default class Ela {
           if (lastResponse == '6D08') {
             message += ' Tx Too Large for Ledger';
           }
+
+          // 6E00, 6E01
+          let statusCode = parseInt(lastResponse.substring(0, 4), 16);
+          throw new TransportStatusError(statusCode);
         }
       }
-      // Logger.log(TAG, 'signature:', signature);
+
       return Promise.resolve({
         success: success,
         message: message,
         signature: signature,
       });
     } catch (error) {
-      Logger.error(TAG, ' getAddress: error', error)
+      Logger.error(TAG, ' signTransaction: error', error)
       // TODO
       throw error;
     }
