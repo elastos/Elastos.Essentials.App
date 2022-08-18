@@ -181,6 +181,8 @@ export class WalletService {
 
         this.masterWallets = {};
         this.networkWallets = {};
+
+        WalletJSSDKHelper.resetMasterWalletManager();
     }
 
     /**

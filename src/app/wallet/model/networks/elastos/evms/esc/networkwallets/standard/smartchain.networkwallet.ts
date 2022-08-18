@@ -7,7 +7,6 @@ import { StandardCoinName } from "../../../../../../coin";
 import { StandardMasterWallet } from "../../../../../../masterwallets/masterwallet";
 import { TransactionProvider } from "../../../../../../tx-providers/transaction.provider";
 import { WalletAddressInfo } from "../../../../../base/networkwallets/networkwallet";
-import { WalletJSSDKHelper } from "../../../../wallet.jssdk.helper";
 import { ElastosStandardEVMNetworkWallet } from "../../../networkwallets/standard/standard.evm.networkwallet";
 import { ElastosEVMSubWallet } from "../../../subwallets/standard/elastos.evm.subwallet";
 import { EscSubWallet } from "../../subwallets/esc.evm.subwallet";
@@ -27,7 +26,7 @@ export class ElastosSmartChainStandardNetworkWallet extends ElastosStandardEVMNe
     return new ElastosSmartChainTransactionProvider(this);
   }
 
-  protected async prepareStandardSubWallets(): Promise<void> {
+  protected prepareStandardSubWallets(): Promise<void> {
     this.mainTokenSubWallet = new EscSubWallet(this);
 
     try {
@@ -36,17 +35,13 @@ export class ElastosSmartChainStandardNetworkWallet extends ElastosStandardEVMNe
       let networkConfig: ConfigInfo = {};
       this.network.updateSPVNetworkConfig(networkConfig, GlobalNetworksService.instance.getActiveNetworkTemplate())
       if (networkConfig['ETHSC']) {
-        await WalletJSSDKHelper.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
         this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
-      } else {
-        this.mainTokenSubWallet = this.subWallets[StandardCoinName.ETHDID] as ElastosEVMSubWallet;
       }
-
-      // Logger.log("wallet", "Elastos standard subwallets preparation completed");
     }
     catch (err) {
       Logger.error("wallet", "Can not Create Elastos EVM subwallets ", err);
     }
+    return Promise.resolve();
   }
 
   public async getAddresses(): Promise<WalletAddressInfo[]> {

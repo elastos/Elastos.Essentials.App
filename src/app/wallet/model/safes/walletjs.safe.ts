@@ -36,7 +36,6 @@ export class WalletJSSafe extends Safe {
     // TODO: can't create eth subwallet.
     this.sdkMasterWallet = await WalletJSSDKHelper.getMasterWallet(this.masterWallet.id);
     this.sdkSubWallet = await <SubWallet>this.sdkMasterWallet.getSubWallet(this.chainId);
-    Logger.warn('wallet', 'WalletJSSafe', this)
   }
 
   public async getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {

@@ -1,9 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import type { TxData } from "@ethereumjs/tx";
-import { lazyWeb3Import } from "src/app/helpers/import.helper";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
-import { Util } from "src/app/model/util";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
@@ -52,18 +50,8 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
         }
     }
 
-    public async createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
-        const Web3 = await lazyWeb3Import();
-        let web3 = new Web3();
-        const txData: TxData = {
-            nonce: web3.utils.toHex(nonce),
-            gasLimit: web3.utils.toHex(gasLimit),
-            gasPrice: web3.utils.toHex(gasPrice),
-            to: toAddress,
-            value: web3.utils.toHex(web3.utils.toWei(Util.getDecimalString(amount))),
-        }
-        Logger.log('wallet', 'EVMLedgerSafe::createTransferTransaction:', txData);
-        return Promise.resolve(txData);
+    public createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
+        return EVMService.instance.createUnsignedTransferTransaction(toAddress, amount, gasPrice, gasLimit, nonce);
     }
 
     public createContractTransaction(contractAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
