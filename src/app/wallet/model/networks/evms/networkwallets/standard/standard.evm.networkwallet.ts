@@ -39,6 +39,5 @@ export abstract class StandardEVMNetworkWallet<WalletNetworkOptionsType extends 
         );
         await this.mainTokenSubWallet.initialize();
         this.subWallets[this.network.getEVMSPVConfigName()] = this.mainTokenSubWallet;
-        await WalletJSSDKHelper.createSubWallet(this.masterWallet.id, this.network.getEVMSPVConfigName());
     }
 }

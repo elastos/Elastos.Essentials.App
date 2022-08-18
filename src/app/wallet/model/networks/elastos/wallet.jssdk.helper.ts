@@ -27,7 +27,8 @@ export class WalletJSSDKHelper {
       netConfig
     );
     // Load all masterWallets
-    await this.masterWalletManager.getAllMasterWallets();
+    let allMasterWallet = await this.masterWalletManager.getAllMasterWallets();
+    Logger.log('wallet', ' All Master Wallet ', allMasterWallet)
     return this.masterWalletManager;
   }
 
@@ -36,6 +37,7 @@ export class WalletJSSDKHelper {
   }
 
   public static resetMasterWalletManager() {
+    this.masterWalletManager.destroy();
     this.masterWalletManager = null;
   }
 
@@ -50,9 +52,12 @@ export class WalletJSSDKHelper {
     let walletExists = this.masterWalletManager.getAllMasterWalletID().indexOf(masterWallet.id) >= 0;
     if (walletExists) {
       // Wallet already exists, do nothing
-      Logger.warn("wallet", "Wallet already exists, do nothing");
+      Logger.log("wallet", "Wallet already exists, do nothing");
       return true;
     }
+
+    // EVM wallet imported by private key.
+    if (!masterWallet.hasMnemonicSupport()) return true;
 
     let payPassword = await AuthService.instance.getWalletPassword(masterWallet.id);
     if (!payPassword)
@@ -179,6 +184,7 @@ export class WalletJSSDKHelper {
   }
 
   public static async destroyWallet(masterWalletId) {
+    Logger.log('wallet', 'WalletJSSDKHelper destroyWallet', masterWalletId);
     return await this.masterWalletManager.destroyWallet(masterWalletId)
   }
 
