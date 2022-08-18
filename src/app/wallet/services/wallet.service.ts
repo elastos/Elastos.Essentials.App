@@ -428,7 +428,7 @@ export class WalletService {
             if (!WalletNetworkService.instance.activeNetwork.value)
                 return [];
 
-            return Object.values(this.networkWallets).filter(nw => nw.masterWallet.supportsNetwork(nw.network));
+            return Object.values(this.networkWallets).filter(nw => nw?.masterWallet.supportsNetwork(nw.network));
         }
     }
 

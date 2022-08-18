@@ -226,6 +226,7 @@ export class LedgerConnectPage implements OnInit {
             // TransportStatusError -- statusCode: 28160(0x6e00)  -- open the wrong app
             // TransportStatusError -- statusCode: 27013(0x6985)  -- user canceled the transaction
             // TransportStatusError -- statusCode: 27010(0x6982)  -- Ledger device: Security not satisfied (dongle locked or have invalid access rights) (0x6982)
+            // TransportStatusError -- statusCode: 32772(0x8004)  -- Ledger device: UNKNOWN_ERROR (0x8004)
             // TransportError -- id: TransportLocked name: TransportError message: Ledger Device is busy (lock getAddress)
 
             // if the ledger is disconnected, we need connect ledger again.
@@ -242,6 +243,7 @@ export class LedgerConnectPage implements OnInit {
               case 0x6d00:
               case 0x6e00:
               case 0x6e01:
+              case 0x8004:
                 message = this.translate.instant('wallet.ledger-error-app-not-start', { appname: this.ledgerNanoAppname })
                 break;
               case 0x6982:
