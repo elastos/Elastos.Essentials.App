@@ -7,6 +7,6 @@ export class UnstoppableDomainsAddress extends Address {
     }
 
     public getDisplayName() {
-        return "Unst. Domains: " + this.name;
+        return "Unst. Domains: " + this.name + ' ' + this.addressType;
     }
 }
