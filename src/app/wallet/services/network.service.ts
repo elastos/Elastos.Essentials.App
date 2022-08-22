@@ -137,9 +137,9 @@ export class WalletNetworkService {
     }
 
     /**
- * Returns the list of available networks, but only for networks that user has chosen
- * to make visible in settings.
- */
+     * Returns the list of available networks, but only for networks that user has chosen
+     * to make visible in settings.
+     */
     public getDisplayableNetworks(): AnyNetwork[] {
         return this.getAvailableNetworks().filter(n => this.getNetworkVisible(n));
     }

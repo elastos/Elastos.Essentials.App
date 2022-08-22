@@ -24,6 +24,7 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
     super(
       BTCNetworkBase.networkKey,
       displayName,
+      displayName,
       "assets/wallet/networks/btc.svg",
       networkTemplate,
       earnProviders,

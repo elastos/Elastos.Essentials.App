@@ -2,15 +2,19 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { CurrencyService } from '../../../../services/currency.service';
 import { jsToSpvWalletId, SPVService } from '../../../../services/spv.service';
-import { CoinType } from '../../../coin';
+import { CoinType, NativeCoin } from '../../../coin';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { GenericTransaction } from '../../../tx-providers/transaction.types';
 import type { AnyNetworkWallet } from '../networkwallets/networkwallet';
 import { SubWallet } from './subwallet';
 
 export abstract class MainCoinSubWallet<TransactionType extends GenericTransaction, WalletNetworkOptionsType extends WalletNetworkOptions> extends SubWallet<TransactionType, WalletNetworkOptionsType> {
+    private coin: NativeCoin;
+
     constructor(networkWallet: AnyNetworkWallet, id: string) {
         super(networkWallet, id, CoinType.STANDARD);
+
+        this.coin = new NativeCoin(networkWallet.network, id, networkWallet.network.getMainTokenSymbol(), networkWallet.network.getMainTokenSymbol());
     }
 
     public getUniqueIdentifierOnNetwork(): string {
@@ -25,6 +29,10 @@ export abstract class MainCoinSubWallet<TransactionType extends GenericTransacti
             Logger.error('wallet', 'destroySubWallet error:', this.id, e)
         }
         await super.destroy();
+    }
+
+    public getCoin(): NativeCoin {
+        return this.coin;
     }
 
     /**

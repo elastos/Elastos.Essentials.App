@@ -63,7 +63,7 @@ export class CoinErc20DetailsPage implements OnInit {
       }
 
       this.contractAddress = this.coin.getContractAddress();
-      this.titleBar.setTitle(this.coin.getName());
+      this.titleBar.setTitle(this.coin.getSymbol());
     }
   }
 

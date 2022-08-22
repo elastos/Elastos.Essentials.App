@@ -64,9 +64,9 @@ export class UniswapCurrencyService {
     let wrappedNativeCoin = currencyProvider.getWrappedNativeCoin();
 
     const { Token } = await lazyUniswapSDKCoreImport();
-    let evaluatedToken = new Token(chainId, erc20coin.getContractAddress(), erc20coin.getDecimals(), erc20coin.getID(), erc20coin.getName());
-    let stableCoinUSDToken = new Token(chainId, referenceUSDcoin.getContractAddress(), referenceUSDcoin.getDecimals(), referenceUSDcoin.getID(), referenceUSDcoin.getName());
-    let wrappedNativeCoinToken = new Token(chainId, wrappedNativeCoin.getContractAddress(), wrappedNativeCoin.getDecimals(), wrappedNativeCoin.getID(), wrappedNativeCoin.getName());
+    let evaluatedToken = new Token(chainId, erc20coin.getContractAddress(), erc20coin.getDecimals(), erc20coin.getID(), erc20coin.getSymbol());
+    let stableCoinUSDToken = new Token(chainId, referenceUSDcoin.getContractAddress(), referenceUSDcoin.getDecimals(), referenceUSDcoin.getID(), referenceUSDcoin.getSymbol());
+    let wrappedNativeCoinToken = new Token(chainId, wrappedNativeCoin.getContractAddress(), wrappedNativeCoin.getDecimals(), wrappedNativeCoin.getID(), wrappedNativeCoin.getSymbol());
 
     let tradingPairs: Pair[] = [];
 

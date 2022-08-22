@@ -10,6 +10,7 @@ export class FuseMainNetNetwork extends FuseBaseNetwork {
     super(
       "fuse",
       "Fuse",
+      "Fuse",
       "assets/wallet/networks/fuse.png",
       "FUSE",
       "FUSE",
@@ -17,7 +18,7 @@ export class FuseMainNetNetwork extends FuseBaseNetwork {
       122,
     );
 
-    this.uniswapCurrencyProvider = new FuseMainnetUniswapCurrencyProvider();
+    this.uniswapCurrencyProvider = new FuseMainnetUniswapCurrencyProvider(this);
     this.averageBlocktime = 5;
   }
 

@@ -1,0 +1,167 @@
+<ion-content [class.dark-container]="theme.darkMode">
+  <app-titlebar></app-titlebar>
+
+  <ion-grid *ngIf="!initializing" class="container ion-padding transfer-container">
+    <!-- Active wallet -->
+    <div class="wallet-name">{{ 'easybridge.active-wallet' | translate }}: <b>{{ getWalletName() }}</b></div>
+
+    <!-- Source tokens -->
+    <div class="fetch-tokens-heading">
+      <div class="heading" [class.highlighted]="!selectedSourceToken">{{ 'easybridge.source-token' | translate }}
+      </div>
+      <ion-spinner *ngIf="fetchingTokens">{{ 'easybridge.searching-tokens' | translate }}</ion-spinner>
+    </div>
+    <div class="source-tokens">
+      <!-- No token selected yet -->
+      <div class="source-token" (click)="pickSourceToken()" *ngIf="!selectedSourceToken">
+        <div class="left"> </div>
+        <div class="right">
+          Pick a token
+        </div>
+      </div>
+
+      <!-- Source token is selected -->
+      <div *ngIf="selectedSourceToken" class="source-token selected" (click)="pickSourceToken()">
+        <div class="left">
+          <img [src]="getTokenLogo(selectedSourceToken.token)" class="network-logo" />
+        </div>
+        <div class="right">
+          <div class="amount-symbol">
+            {{ getDisplayableAmount(selectedSourceToken.amount) }}
+            <span class="token-symbol">{{ selectedSourceToken.token.symbol }}</span>
+          </div>
+          <div class="token-name">
+            {{ selectedSourceToken.token.name }}
+          </div>
+        </div>
+      </div>
+
+      <!-- <div *ngIf="!fetchingTokens && sourceTokens.length === 0">
+        {{ 'easybridge.no-source-funds' | translate }}
+      </div> -->
+    </div>
+
+    <!-- Destination tokens -->
+    <div>
+      <div class="heading" [class.highlighted]="!selectedDestinationToken">{{ 'easybridge.destination-token' |
+        translate }}</div>
+      <div class="destination-tokens">
+        <!-- No token selected yet-->
+        <div class="destination-token" (click)="pickDestinationToken()" *ngIf="!selectedDestinationToken">
+          <div class="left"> </div>
+          <div class="right">
+            Pick a token
+          </div>
+        </div>
+
+        <!-- Destination token is selected -->
+        <div *ngIf="selectedDestinationToken" class="destination-token selected" (click)="pickDestinationToken()">
+          <div class="left">
+            <img [src]="getTokenLogo(selectedDestinationToken.token)" class="network-logo" />
+          </div>
+          <div class="right">
+            <div class="amount-symbol token-symbol">
+              {{ selectedDestinationToken.token.getSymbol() }}
+            </div>
+            <div class="token-name">
+              {{ selectedDestinationToken.token.getDescription() }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transfer amount -->
+    <div *ngIf="selectedSourceToken && selectedDestinationToken">
+      <div class="heading" [class.highlighted]="!transferAmount">{{ 'easybridge.transfer-amount' | translate }}</div>
+
+      <div class="amount-container">
+        <ion-input #transferamount class="transfer-input" type="number" name="transferAmount" ngDefaultControl
+          placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="transferAmount"
+          [disabled]="!this.canEditFields || transferIsBeingComputed"
+          (ionFocus)="transferAmountFocused($event, transferamount)" (ionBlur)="transferAmountChanged()"> </ion-input>
+        <span class="token-symbol">{{
+          selectedSourceToken.token.symbol }}</span>
+      </div>
+
+      <div *ngIf="transferAmount && userAmountBelowMinAmount()">
+        {{ 'easybridge.below-min-bridge-amount' | translate : {minTx: activeTransfer.bridgeStep.minTx, symbol:
+        selectedSourceToken.token.symbol } }}
+      </div>
+    </div>
+
+    <!-- Computing -->
+    <div *ngIf="transferIsBeingComputed" class="card computing-container">
+      <ion-spinner></ion-spinner>
+      {{ 'easybridge.computing-transfer-info' | translate }}
+    </div>
+
+    <!-- Transfer info -->
+    <div *ngIf="selectedDestinationToken && activeTransfer && canTransfer()" class="card transfer-summary">
+      <div class="heading">{{ 'easybridge.transfer-summary' | translate }}</div>
+      <ion-row>
+        <ion-col size="5">
+          {{ 'easybridge.bridge-fees' | translate }}
+        </ion-col>
+        <ion-col size="7" *ngIf="hasBridgeFees()">
+          {{ getDisplayableBridgeFees() }}% ({{ getDisplayableBridgeFeesAmount() }} {{
+          selectedSourceToken.token.symbol }})
+        </ion-col>
+        <ion-col size="7" *ngIf="!hasBridgeFees()">
+          {{ 'easybridge.free' | translate }}
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="activeTransfer.swapStep">
+        <ion-col size="5">
+          {{ 'easybridge.swap-price-impact' | translate }}
+        </ion-col>
+        <ion-col size="7">
+          {{ getDisplayableSwapPriceImpact() }} %
+        </ion-col>
+      </ion-row>
+
+      <!-- Swap info, only if a swap is required -->
+      <ion-row *ngIf="activeTransfer.swapStep">
+        <ion-col size="5">
+          {{ 'easybridge.swap-fees' | translate }}
+        </ion-col>
+        <ion-col size="7">
+          {{ getDisplayableSwapFees() }}%
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="5">
+          {{ 'easybridge.received-amount' | translate }}
+        </ion-col>
+        <ion-col size="7">
+          <b>~ {{ getDisplayableAmount(activeTransfer.amount) }}
+            {{selectedDestinationToken.token.symbol}}</b>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ion-grid>
+
+  <div class="footer">
+    <!-- Steps summary -->
+    <div *ngIf="selectedDestinationToken && activeTransfer" class="transfer-progress">
+      <div class="heading">{{ 'easybridge.transfer-progress' | translate }}</div>
+      <div class="progress-step">({{ getTransferProgressIndex() + 1 }} / {{ getTotalNumberOfSteps() }})</div>
+      <div class="progress-message">{{ getTransferProgressMessage() }}</div>
+    </div>
+
+    <!-- Errors -->
+    <div *ngIf="lastError" class="last-error">
+      <img src="assets/easybridge/icons/orange-warning.svg" /> {{ lastError }}
+    </div>
+
+    <div class="buttons">
+      <!-- Transfer -->
+      <ion-button (click)="transfer()" [disabled]="!canTransfer()">{{
+        getTransferButtonText() }}
+      </ion-button>
+    </div>
+  </div>
+
+</ion-content>

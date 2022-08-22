@@ -115,6 +115,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return;
     }
 
+    public getCoin(): ERC20Coin {
+        return this.coin;
+    }
+
     public getAvailableEarnProviders(): EarnProvider[] {
         return EarnService.instance.getAvailableEarnProviders(this);
     }
@@ -169,7 +173,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         if (!coin) {
             return ''; // Just in case
         }
-        return coin.getName();
+        return coin.getSymbol();
     }
 
     public isAddressValid(address: string): Promise<boolean> {
@@ -292,8 +296,9 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         await this.updateBalance();
     }
 
-    public async updateBalance() {
-        if (this.backGroundUpdateStoped) return;
+    public async updateBalance(): Promise<void> {
+        // BPI REMOVED - This method should update when we call it. The backGroundUpdateStoped logic must be done somewhere else.
+        // if (this.backGroundUpdateStoped) return;
 
         //Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
         if (typeof (this.tokenDecimals) == "undefined" || this.tokenDecimals === null) {
@@ -314,7 +319,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
                 // Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.getRawBalance().toFixed());
             }
         } catch (error) {
-            Logger.log('wallet', 'ERC20 Token (', this.coin.getName(), this.id, ') updateBalance error:', error);
+            Logger.log('wallet', 'ERC20 Token (', this.coin.getSymbol(), this.id, ') updateBalance error:', error);
         }
     }
 

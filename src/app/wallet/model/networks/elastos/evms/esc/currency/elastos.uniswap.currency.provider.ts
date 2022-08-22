@@ -1,10 +1,14 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../../../coin";
 import { UniswapCurrencyProvider } from "../../../../evms/uniswap.currencyprovider";
+import { AnyNetwork } from "../../../../network";
 
 export class ElastosMainnetUniswapCurrencyProvider extends UniswapCurrencyProvider {
-  private referenceUSDCoin = new ERC20Coin("USDC", "USD Coin on Elastos", "0xa06be0f5950781ce28d965e5efc6996e88a8c141", 6, MAINNET_TEMPLATE, false, true);
-  private wrappedNativeCoin = new ERC20Coin("WELA", "Wrapped ELA", "0x517e9e5d46c1ea8ab6f78677d6114ef47f71f6c4", 18, MAINNET_TEMPLATE, false, true);
+  private referenceUSDCoin = new ERC20Coin(this.network, "USDC", "USD Coin on Elastos", "0xa06be0f5950781ce28d965e5efc6996e88a8c141", 6, false, true);
+  private wrappedNativeCoin = new ERC20Coin(this.network, "WELA", "Wrapped ELA", "0x517e9e5d46c1ea8ab6f78677d6114ef47f71f6c4", 18, false, true);
+
+  constructor(private network: AnyNetwork) {
+    super();
+  }
 
   private usualSwapCoins = [
     this.referenceUSDCoin

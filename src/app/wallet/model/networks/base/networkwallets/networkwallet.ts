@@ -366,6 +366,11 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      */
     public async createNonStandardSubWallet(coin: Coin): Promise<void> {
         try {
+            if (this.subWallets[coin.getID()]) {
+                Logger.warn("wallet", `Subwallet for coin ${coin.getID()} already exists. Not adding again.`);
+                return;
+            }
+
             let newSubWallet = await SubWalletBuilder.newFromCoin(this, coin);
             this.subWallets[coin.getID()] = newSubWallet;
 

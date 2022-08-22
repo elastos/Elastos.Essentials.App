@@ -52,6 +52,7 @@ export class ElastosIdentityChainMainNetNetwork extends ElastosIdentityChainNetw
     super(
       "elastosidchain",
       "Elastos Identity Chain",
+      "EID",
       "assets/wallet/coins/ela-turquoise.svg",
       MAINNET_TEMPLATE,
       22
@@ -78,6 +79,7 @@ export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetw
     super(
       "elastosidchain",
       "Elastos Identity Chain Testnet",
+      "EID Testnet",
       "assets/wallet/coins/ela-turquoise.svg",
       TESTNET_TEMPLATE,
       23

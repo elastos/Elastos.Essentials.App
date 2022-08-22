@@ -6,6 +6,7 @@ export class AvalancheCChainTestNetNetwork extends AvalancheCChainBaseNetwork {
     super(
       "avalanchecchain",
       "Avalanche FUJI C-Chain",
+      "Avalanche FUJI C",
       "assets/wallet/networks/avalance.png",
       "AVAX",
       "Avalanche Token",

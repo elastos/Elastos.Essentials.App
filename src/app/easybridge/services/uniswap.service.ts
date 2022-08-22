@@ -62,7 +62,7 @@ export class UniswapService {
 
     const { Token } = await lazyUniswapSDKCoreImport();
     //let stableCoinUSDToken = new Token(chainId, referenceUSDcoin.getContractAddress(), referenceUSDcoin.getDecimals(), referenceUSDcoin.getID(), referenceUSDcoin.getName());
-    let wrappedNativeCoinToken = new Token(chainId, wrappedNativeCoin.getContractAddress(), wrappedNativeCoin.getDecimals(), wrappedNativeCoin.getID(), wrappedNativeCoin.getName());
+    let wrappedNativeCoinToken = new Token(chainId, wrappedNativeCoin.getContractAddress(), wrappedNativeCoin.getDecimals(), wrappedNativeCoin.getID(), wrappedNativeCoin.getSymbol());
 
     // NOTE: For this service, source is always a token as we just used the bridge to get tokens and that's not native ELA,
     // so we don't deal with native currencies here for now (very basic swap)
@@ -89,7 +89,7 @@ export class UniswapService {
       let tokensForPairs: Token[] = [
         sourceUniswapToken,
         destinationUniswapToken,
-        ...currencyProvider.getUsualSwapCoinsForPairs().map(t => new Token(chainId, t.getContractAddress(), t.getDecimals(), t.getID(), t.getName()))
+        ...currencyProvider.getUsualSwapCoinsForPairs().map(t => new Token(chainId, t.getContractAddress(), t.getDecimals(), t.getID(), t.getSymbol()))
       ];
 
       // Combine all tokens with others into pairs

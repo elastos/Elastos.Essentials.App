@@ -6,6 +6,7 @@ export class HooTestNetNetwork extends HooBaseNetwork {
     super(
       "hoosmartchain",
       "Hoo Smart Chain Testnet",
+      "HSC Testnet",
       "assets/wallet/networks/hoo.png",
       "HOO",
       "HOO",

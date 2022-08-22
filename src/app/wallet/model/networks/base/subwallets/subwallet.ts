@@ -7,7 +7,7 @@ import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { OutgoingTransactionState, TransactionService } from 'src/app/wallet/services/transaction.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import type { Transfer } from '../../../../services/cointransfer.service';
-import { CoinID, CoinType, StandardCoinName } from '../../../coin';
+import { Coin, CoinID, CoinType, StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
@@ -79,6 +79,8 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
   public isStandardSubWallet(): boolean {
     return false;
   }
+
+  public abstract getCoin(): Coin;
 
   public supportsCrossChainTransfers(): boolean {
     return false;
@@ -239,7 +241,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    * Requests a wallet to update its balance. Usually called when we receive an event from the SPV SDK,
    * saying that a new balance amount is available.
    */
-  public abstract updateBalance();
+  public abstract updateBalance(): Promise<void>;
 
   /**
    * Shortcut for getDisplayAmount(balance)

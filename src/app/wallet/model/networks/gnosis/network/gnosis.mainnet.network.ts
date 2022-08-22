@@ -10,6 +10,7 @@ export class GnosisMainNetNetwork extends GnosisBaseNetwork {
     super(
       "gnosis",
       "Gnosis",
+      "Gnosis",
       "assets/wallet/networks/gnosis.png",
       "xDAI",
       "xDAI",
@@ -17,7 +18,7 @@ export class GnosisMainNetNetwork extends GnosisBaseNetwork {
       100,
     );
 
-    this.uniswapCurrencyProvider = new GnosisMainnetUniswapCurrencyProvider();
+    this.uniswapCurrencyProvider = new GnosisMainnetUniswapCurrencyProvider(this);
     this.averageBlocktime = 5;
   }
 

@@ -8,6 +8,7 @@ export class TelosMainNetNetwork extends TelosBaseNetwork {
     super(
       "telos",
       "Telos EVM",
+      "Telos EVM",
       "assets/wallet/networks/telos.png",
       "TLOS",
       "Telos",

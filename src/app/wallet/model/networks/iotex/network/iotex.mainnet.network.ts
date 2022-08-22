@@ -16,6 +16,7 @@ export class IoTeXMainNetNetwork extends IoTeXBaseNetwork {
     super(
       "iotex",
       "IoTeX",
+      "IoTeX",
       "assets/wallet/networks/iotex.svg",
       "IOTX",
       "IOTX",

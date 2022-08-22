@@ -18,5 +18,6 @@ export enum App {
     RED_PACKETS = "redpackets",
     SECURITY = "security",
     MIGRATOR = "migrator",
-    EASY_BRIDGE = "easy_bridge"
+    EASY_BRIDGE = "easy_bridge",
+    MULTI_SWAP = "multi_swap",
 }

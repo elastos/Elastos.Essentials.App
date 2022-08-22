@@ -6,7 +6,8 @@ export class FusionTestNetNetwork extends FusionBaseNetwork {
   constructor() {
     super(
       "fusion",
-      "Fusion TestNet",
+      "Fusion Testnet",
+      "Fusion Testnet",
       "assets/wallet/networks/fusion.png",
       "FSN",
       "FSN",

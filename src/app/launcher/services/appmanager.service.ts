@@ -165,6 +165,15 @@ export class AppmanagerService {
                 shouldBeDisplayed: () => true,
                 apps: [
                     {
+                        id: 'multiswap',
+                        routerContext: App.MULTI_SWAP,
+                        name: 'Multi Swap',
+                        description: "",
+                        icon: '/assets/launcher/apps/app-icons/easybridge.svg',
+                        hasWidget: false,
+                        routerPath: '/multiswap/home'
+                    },
+                    {
                         id: 'easybridge',
                         routerContext: App.EASY_BRIDGE,
                         name: this.translate.instant('launcher.app-easybridge'),

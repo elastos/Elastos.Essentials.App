@@ -13,6 +13,7 @@ export class AvalancheCChainMainNetNetwork extends AvalancheCChainBaseNetwork {
     super(
       "avalanchecchain",
       "Avalanche C-Chain",
+      "Avalanche C",
       "assets/wallet/networks/avalance.png",
       "AVAX",
       "Avalanche Token",
@@ -30,7 +31,7 @@ export class AvalancheCChainMainNetNetwork extends AvalancheCChainBaseNetwork {
       ]
     );
 
-    this.uniswapCurrencyProvider = new AvalancheMainnetUniswapCurrencyProvider();
+    this.uniswapCurrencyProvider = new AvalancheMainnetUniswapCurrencyProvider(this);
     this.averageBlocktime = 5 // 2;
   }
 

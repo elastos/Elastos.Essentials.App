@@ -14,6 +14,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
   constructor(
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
+    public shortName: string, // Humane readable network name but as short as possible for small UI locations - eg: "ESC" instead of "Elastos Smart Chain"
     public logo: string, // Path to the network icon
     public networkTemplate: string, // For which network template is this network available
     public earnProviders: EarnProvider[] = [],
@@ -44,8 +45,8 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
     // We don't create networkWallet if the master wallet does not support the active network.
     // eg. the ledger wallet has no ela address or evm address.
     if (!masterWallet.supportsNetwork(this)) {
-        Logger.warn("wallet", "Wallet ", masterWallet.name, " does not support network", this.name)
-        return null;
+      Logger.warn("wallet", "Wallet ", masterWallet.name, " does not support network", this.name)
+      return null;
     }
     let wallet = await this.newNetworkWallet(masterWallet);
     if (wallet) {
@@ -111,6 +112,10 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    */
   public isEVMNetwork(): boolean {
     return false;
+  }
+
+  public equals(network: AnyNetwork): boolean {
+    return this.key === network.key;
   }
 }
 

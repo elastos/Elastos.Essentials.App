@@ -6,6 +6,7 @@ export class ArbitrumTestNetNetwork extends ArbitrumBaseNetwork {
     super(
       "arbitrum",
       "Arbitrum One Testnet",
+      "Arbitrum Testnet",
       "assets/wallet/networks/arbitrum.svg",
       "AETH",
       "Arbitrum ETH",

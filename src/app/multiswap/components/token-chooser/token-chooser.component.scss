@@ -1,0 +1,275 @@
+@import "src/app/wallet/root.scss";
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.tokens-container {
+  border-radius: 11px;
+  padding: 5px;
+  background-color: #ffffff;
+  box-shadow: 0 3px 15px 0 #ededf0;
+  height: 100vh;
+
+  .header-row {
+    padding: 10px;
+
+    ion-col {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      ion-label {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+
+        h1,
+        p {
+          margin: 0;
+        }
+
+        h1 {
+          font-size: 22px;
+          font-weight: 500;
+          line-height: 0.8;
+          text-align: left;
+          margin: 0 0 10px;
+        }
+
+        p {
+          height: 11px;
+          font-size: 10px;
+          font-weight: 500;
+          letter-spacing: 1px;
+          text-align: left;
+          color: #000000;
+          opacity: 0.7;
+        }
+      }
+
+      .arrow-icon {
+        transform: rotate(180deg);
+      }
+    }
+
+    .settings-col {
+      justify-content: flex-end;
+
+      img {
+        height: 20px;
+      }
+
+      .fetching {
+        // Spinner
+        height: 20px;
+        margin-right: 10px;
+      }
+    }
+
+    .search-bar {
+      border: solid 1px #666;
+      border-radius: 8px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+
+      ion-icon {
+        height: 15px;
+        margin: 0 10px;
+      }
+
+      ion-input {
+        height: 40px;
+        --padding-top: 0px;
+        --padding-bottom: 0px;
+      }
+    }
+  }
+
+  .nets-tokens {
+    height: 100%;
+
+    .networks {
+      overflow-y: scroll;
+      height: 100%;
+      padding-bottom: 20vh;
+
+      .network-row {
+        border-radius: 17px;
+        margin-bottom: 7.5px;
+        background-color: transparent;
+        border: 1px solid #ededf0;
+
+        ion-col {
+          display: flex;
+          align-items: center;
+        }
+
+        .left-col {
+          justify-content: flex-start;
+          display: flex;
+          flex-direction: column;
+          min-height: 60px;
+          justify-content: center;
+
+          img {
+            width: 35px;
+            height: 35px;
+          }
+
+          .name {
+            font-size: 12px;
+            font-weight: 400;
+            text-align: center;
+          }
+        }
+
+        .right-col {
+          justify-content: flex-end;
+
+          ion-icon {
+            width: 15px;
+            height: 12px;
+            visibility: hidden;
+          }
+        }
+
+        &.selected-network {
+          background-color: #ededf0;
+        }
+      }
+    }
+
+    .tokens {
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      height: 100%;
+      align-items: flex-start;
+      padding-bottom: 20vh;
+
+      .fetching-custom-token {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .simple-text-info {
+        width: 100%;
+        margin: 10px;
+        white-space: pre-wrap;
+        text-align: center;
+      }
+
+      .token {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 10px;
+        align-items: center;
+        border: solid 2px transparent;
+        background: white;
+        display: flex;
+        flex-direction: row;
+        overflow: visible;
+
+        .left {
+          margin-right: 5px;
+          width: 20%;
+
+          .network-logo {
+            height: 30px;
+            object-fit: contain;
+          }
+        }
+
+        .right {
+          display: flex;
+          flex-direction: column;
+          align-self: flex-start;
+          align-items: flex-start;
+          width: 80%;
+          overflow: hidden;
+
+          .amount-symbol {
+            margin-bottom: 5px;
+            font-weight: bold;
+
+            .token-balance {
+              margin-right: 3px;
+              font-weight: 400;
+            }
+
+            .token-symbol {
+            }
+          }
+
+          .token-name {
+            opacity: 50%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.dark-container {
+  background-color: #212021;
+  box-shadow: 0px 123px 89px #000000ad;
+  color: #fff;
+
+  .header-row {
+    ion-col {
+      ion-label {
+        h1,
+        p {
+          color: #ffffff;
+        }
+      }
+    }
+  }
+
+  .nets-tokens {
+    .networks {
+      .network-row {
+        border: 1px solid #464446;
+        background-color: transparent;
+        box-shadow: none;
+        color: white;
+
+        .left-col {
+          .name {
+            color: #ccc;
+          }
+        }
+
+        &.selected-network {
+          background-color: #312f31;
+        }
+      }
+    }
+
+    .tokens {
+      .token {
+        background: #212021;
+
+        .right {
+          .amount-symbol {
+            .token-balance {
+              color: #ddd;
+            }
+          }
+        }
+      }
+    }
+  }
+}

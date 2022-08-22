@@ -25,6 +25,7 @@ import BigNumber from 'bignumber.js';
 import Queue from 'promise-queue';
 import { sleep } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
+import { JsonSerializer } from 'typescript-json-serializer';
 import { Contract } from 'web3-eth-contract';
 import { ERC20Coin } from '../../model/coin';
 import type { EVMNetwork } from '../../model/networks/evms/evm.network';
@@ -37,6 +38,8 @@ import { Transfer } from '../cointransfer.service';
 import { WalletNetworkService } from '../network.service';
 import { WalletPrefsService } from '../pref.service';
 import { EVMService } from './evm.service';
+
+export const erc20CoinsSerializer = new JsonSerializer();
 
 export type ERC20CoinInfo = {
     coinName: string;
@@ -121,7 +124,10 @@ export class ERC20CoinService {
 
     public async getERC20Coin(network: AnyNetwork, address: string): Promise<ERC20Coin> {
         const coinInfo = await this.getCoinInfo(network, address);
-        const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinName, address, coinInfo.coinDecimals, this.prefs.getNetworkTemplate(), false);
+        if (!coinInfo)
+            return null;
+
+        const newCoin = new ERC20Coin(network, coinInfo.coinSymbol, coinInfo.coinName, address, coinInfo.coinDecimals, false);
         return newCoin;
     }
 
