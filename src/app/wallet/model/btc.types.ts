@@ -1,4 +1,4 @@
-import { GenericTransaction, TransactionDirection, UtxoForSDK } from "./tx-providers/transaction.types";
+import { GenericTransaction, TransactionDirection } from "./tx-providers/transaction.types";
 
 export type BalanceHistory = {
     received: string;
@@ -68,21 +68,19 @@ export type BTCUTXO = {
     height: number;
     vout: number;
     confirmations: number;
-}
-
-export type BTCUtxoForLedger = UtxoForSDK & {
-  utxoHex?: string
+    scriptPubKey?: string;
+    utxoHex?: string
 }
 
 // BTC payment transaction
 
 export type BTCOutputData = {
   Address: string,
-  Amount : string
+  Amount : number
 }
 
 export type BTCTxData = {
-  inputs: BTCUtxoForLedger[],
+  inputs: BTCUTXO[],
   outputs: BTCOutputData[],
   changeAddress: string,
   feePerKB: string,

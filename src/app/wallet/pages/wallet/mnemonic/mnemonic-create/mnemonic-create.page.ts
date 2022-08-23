@@ -1,5 +1,6 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MasterWallet } from '@elastosfoundation/wallet-js-sdk';
 import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -59,7 +60,7 @@ export class MnemonicCreatePage implements OnInit {
 
     async init() {
         this.masterWalletId = this.walletManager.createMasterWalletID();
-        this.mnemonicStr = await this.walletManager.spvBridge.generateMnemonic(this.prefs.getMnemonicLang());
+        this.mnemonicStr = await MasterWallet.generateMnemonic(this.prefs.getMnemonicLang());
         void this.native.hideLoading();
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/);
         this.zone.run(() => {

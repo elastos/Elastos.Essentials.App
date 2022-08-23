@@ -1,3 +1,5 @@
+import { BTCOutputData, BTCUTXO } from "../../../btc.types";
+
 export interface BTCSafe {
-  createBTCPaymentTransaction(inputs: any, outputs: any, changeAddress: string, feePerKB: string, fee: number): Promise<string>;
+  createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<string>;
 }

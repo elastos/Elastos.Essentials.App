@@ -18,10 +18,6 @@ export class StandardBTCNetworkWallet<WalletNetworkOptionsType extends WalletNet
         );
     }
 
-    public async initialize(): Promise<void> {
-        await super.initialize();
-    }
-
     protected async prepareStandardSubWallets(): Promise<void> {
         this.subWallets[StandardCoinName.BTC] = new BTCSubWallet(this, this.network.getRPCUrl());
         await this.subWallets[StandardCoinName.BTC].initialize();

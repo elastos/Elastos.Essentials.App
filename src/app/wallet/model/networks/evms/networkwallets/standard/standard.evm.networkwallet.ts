@@ -23,10 +23,6 @@ export abstract class StandardEVMNetworkWallet<WalletNetworkOptionsType extends 
         );
     }
 
-    public async initialize(): Promise<void> {
-        await super.initialize();
-    }
-
     protected async prepareStandardSubWallets(): Promise<void> {
         this.mainTokenSubWallet = new MainCoinEVMSubWallet(
             this,

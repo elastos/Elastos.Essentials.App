@@ -7,13 +7,13 @@ import { ELATransactionSigner } from "src/app/helpers/ela/ela.transaction.signer
 import Ela from "src/app/helpers/ledger/hw-app-ela/Ela";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
+import { VoteContent } from "src/app/wallet/model/elastos.types";
 import { LedgerAccountType } from "src/app/wallet/model/ledger.types";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { LedgerSafe } from "src/app/wallet/model/safes/ledger.safe";
 import { SignTransactionResult } from "src/app/wallet/model/safes/safe.types";
 import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { VoteContent } from "src/app/wallet/services/spv.service";
 import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
 import { AnySubWallet } from "../../../../base/subwallets/subwallet";
 import { ElastosMainChainSafe } from "../mainchain.safe";

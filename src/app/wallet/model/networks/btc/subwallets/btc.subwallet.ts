@@ -5,12 +5,12 @@ import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../config/Config';
-import { BTCTransaction, BTCUTXO, BTCUtxoForLedger } from '../../../btc.types';
+import { BTCOutputData, BTCTransaction, BTCUTXO } from '../../../btc.types';
 import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
-import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, UtxoForSDK } from '../../../tx-providers/transaction.types';
+import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
@@ -180,19 +180,13 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     //satoshi
     public async getAvailableUtxo(amount: number) {
         let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.rpcApiUrl, this.legacyAddress);
-        let utxoArrayForSDK: UtxoForSDK[] = [];
+        let utxoArrayForSDK: BTCUTXO[] = [];
         let getEnoughUTXO = false;
         if (utxoArray) {
             let totalAmount = 0;
             // Use the old utxo first.
             for (let i = utxoArray.length - 1; i >= 0; i--) {
-                let utxoForSDK: UtxoForSDK = {
-                    Address: this.legacyAddress,
-                    Amount: utxoArray[i].value,
-                    Index: utxoArray[i].vout,
-                    TxHash: utxoArray[i].txid
-                }
-                utxoArrayForSDK.push(utxoForSDK);
+                utxoArrayForSDK.push(utxoArray[i]);
 
                 totalAmount += parseInt(utxoArray[i].value);
                 if ((amount != -1) && (totalAmount >= amount)) {
@@ -221,7 +215,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         // Fees are related to input and output.
         let fee = Util.accMul(feerate, Config.SATOSHI);
 
-        let utxo: BTCUtxoForLedger[] = [];
+        let utxo: BTCUTXO[] = [];
         let toAmount = 0;
         if (amount.eq(-1)) {
             utxo = await this.getAvailableUtxo(-1);
@@ -240,14 +234,14 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             fee = Util.accMul(feeBTC, Config.SATOSHI);
         }
 
-        let outputs = [{
+        let outputs: BTCOutputData[] = [{
             "Address": toAddress,
-            "Amount": toAmount.toString() // TODO: USE number
+            "Amount": toAmount
         }]
 
         for (let i = 0; i < utxo.length; i++) {
             if (!utxo[i].utxoHex) {
-                let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, utxo[i].TxHash);
+                let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, utxo[i].txid);
                 if (rawtransaction) {
                     utxo[i].utxoHex = rawtransaction.hex;
                 } else {

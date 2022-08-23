@@ -4,10 +4,10 @@ import { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/tra
 import { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
 import { json } from "@elastosfoundation/wallet-js-sdk/typings/types";
 import { Logger } from "src/app/logger";
+import { PubKeyInfo, VoteContent } from "src/app/wallet/model/elastos.types";
 import { WalletJSSafe } from "src/app/wallet/model/safes/walletjs.safe";
 import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { PubKeyInfo, VoteContent } from "src/app/wallet/services/spv.service";
 import { SignTransactionResult } from "../../../../safes/safe.types";
 import { AnySubWallet } from "../../../base/subwallets/subwallet";
 import { ElastosMainChainSafe } from "./mainchain.safe";
@@ -303,7 +303,8 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
       nickname,
       url,
       IPAddress,
-      location,
+      location.toString(),
+      0, // stakeUntil:The block height when your staking expires. It is required in DPoS 2.0 version.
       payPasswd
     );
   }
@@ -335,7 +336,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
       did,
       nickname,
       url,
-      location
+      location.toString()
     );
   }
 
@@ -452,7 +453,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
       return pubKeyInfo.xPubKeyHDPM; // BIP45 !
     }
     catch (e) {
-      Logger.error("wallet", "SPVSDK safe getExtendedPublicKey() error:", e);
+      Logger.error("wallet", "walletjs safe getExtendedPublicKey() error:", e);
     }
   }
 }

@@ -11,9 +11,9 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
+import { VoteContent, VoteType } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { VoteContent, VoteType } from 'src/app/wallet/services/spv.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 

@@ -4,7 +4,7 @@ import { Logger } from "src/app/logger";
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { BTCTxData } from "../../../btc.types";
+import { BTCOutputData, BTCTxData, BTCUTXO } from "../../../btc.types";
 import { BTCAddressType } from "../../../ledger/btc.ledgerapp";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
@@ -99,7 +99,7 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         return Promise.resolve([this.btcAddress]);
     }
 
-    public async createBTCPaymentTransaction(inputs: any, outputs: any, changeAddress: string, feePerKB: string, fee: number): Promise<any> {
+    public async createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {
         let txData: BTCTxData = {
             inputs: inputs,
             outputs: outputs,
@@ -122,9 +122,8 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
         let totalAmount = 0;
         rawTransaction.inputs.forEach(input => {
-            totalAmount += parseInt(input.Amount);
-            // totalAmount += input.Amount;
-            psbt.addInput({hash:input.TxHash, index:input.Index, nonWitnessUtxo: Buffer.from(input.utxoHex, 'hex')});
+            totalAmount += parseInt(input.value);
+            psbt.addInput({hash:input.txid, index:input.vout, nonWitnessUtxo: Buffer.from(input.utxoHex, 'hex')});
             // For witnessUtxo
             // psbt.addInput({hash:input.TxHash, index:input.Index, witnessUtxo: {
             //     script: Buffer.from(input.scriptPubKey.hex, 'hex'),
@@ -133,11 +132,11 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         })
 
         rawTransaction.outputs.forEach(output => {
-            psbt.addOutput({address:output.Address, value:parseInt(output.Amount)});
+            psbt.addOutput({address:output.Address, value: output.Amount});
         })
 
         // change
-        let changeAmount = totalAmount - parseInt(rawTransaction.outputs[0].Amount) - rawTransaction.fee;
+        let changeAmount = totalAmount - rawTransaction.outputs[0].Amount - rawTransaction.fee;
         psbt.addOutput({address: this.btcAddress, value: changeAmount});
         Logger.log('wallet', 'BTCWalletJSSafe changeAmount ', changeAmount)
 
