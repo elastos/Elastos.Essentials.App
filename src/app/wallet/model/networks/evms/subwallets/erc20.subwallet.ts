@@ -299,7 +299,6 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     public async updateBalance(): Promise<void> {
         // BPI REMOVED - This method should update when we call it. The backGroundUpdateStoped logic must be done somewhere else.
         // if (this.backGroundUpdateStoped) return;
-
         //Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
         if (typeof (this.tokenDecimals) == "undefined" || this.tokenDecimals === null) {
             Logger.error("wallet", "Token decimals unknown for token " + this.coin.getID());

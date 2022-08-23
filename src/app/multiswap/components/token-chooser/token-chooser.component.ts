@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild } fr
 import { ModalController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
+import { filter, take } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -17,6 +18,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletPrefsService } from "src/app/wallet/services/pref.service";
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { UIToken } from '../../model/uitoken';
+import { TokenChooserService } from '../../services/tokenchooser.service';
 
 /**
  * Filter method to return only some networks to show in the chooser.
@@ -33,6 +35,13 @@ export type TokenChooserComponentOptions = {
    * - In destination mode, tokens list is more complex and included tokens not owned by the user.
    */
   mode: "source" | "destination";
+
+  /**
+   * Normally passed together with the destination mode, if the source token is known.
+   * This allows showing the wrapped version of that source token in destination tokens
+   * choice list.
+   */
+  sourceToken?: Coin;
 
   /**
    * Whether to show the "all" networks button. If false, user needs to pick a
@@ -87,7 +96,8 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
     private erc20CoinService: ERC20CoinService,
     private changeDetector: ChangeDetectorRef,
     private modalCtrl: ModalController,
-    private prefs: WalletPrefsService
+    private prefs: WalletPrefsService,
+    private tokenChooserService: TokenChooserService
   ) {
   }
 
@@ -125,7 +135,7 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
         this.networkWallets.push(<AnyEVMNetworkWallet>networkWallet);
 
         // Start updating tokens as each wallet gets ready
-        this.updateNetworkWalletTokens(networkWallet);
+        void this.updateNetworkWalletTokens(networkWallet);
 
         return networkWallet;
       }));
@@ -152,33 +162,42 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
    * Prepares all tokens we want to display for the given network wallet.
    * NOTE: The list of tokens is different in source and destination modes.
    */
-  private updateNetworkWalletTokens(networkWallet: AnyNetworkWallet) {
+  private async updateNetworkWalletTokens(networkWallet: AnyNetworkWallet) {
     const network = networkWallet.network;
 
     // Only ERC20 support for now
     let subWallets = networkWallet.getSubWalletsByType(CoinType.ERC20);
 
+    // Get wallet address
+    let walletAddress = await networkWallet.getMainEvmSubWallet().getAccountAddress();
+
     // Native network coin
     const standardSubWallet = networkWallet.getSubWalletsByType(CoinType.STANDARD)[0];
     let nativeUIToken = this.newUITokenFromCoin(standardSubWallet.getCoin());
+    this.fetchCoinBalance(nativeUIToken, walletAddress, networkWallet);
     this.allTokens.push(nativeUIToken);
 
-    // [destination mode only] Wrapped version of source token
-    // TODO
+    // [destination mode only] Wrapped (or reverse) version of the source token
+    if (this.options.mode === "destination" && this.options.sourceToken) {
+      let pairedToken = this.findPairedToken(this.options.sourceToken, network);
+      if (pairedToken) {
+        let pairedUIToken = this.newUITokenFromCoin(pairedToken);
+        this.fetchCoinBalance(pairedUIToken, walletAddress, networkWallet);
+        this.allTokens.push(pairedUIToken);
+      }
+    }
 
     // Tokens displayed by the user
-    this.totalTokensToFetch += subWallets.length;
     for (let subWallet of <ERC20SubWallet[]>subWallets) {
       // Add token first, with undefined balance. It gets updated asynchronously
       let uiToken = this.newUITokenFromCoin(subWallet.getCoin());
+
+      // Skip if already added
+      if (this.allTokens.find(t => t.token.equals(uiToken.token)))
+        continue;
+
       this.allTokens.push(uiToken);
-
-      void subWallet.updateBalance().then(() => {
-        uiToken.amount = subWallet.getBalance();
-        this.refreshDisplayableTokens();
-
-        this.totalTokensFetched++;
-      });
+      this.fetchCoinBalance(uiToken, walletAddress, networkWallet);
     }
 
     // [destination mode only] All curated tokens provided by the network
@@ -195,6 +214,8 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
         if (this.allTokens.find(t => t.token.equals(coin)))
           continue;
 
+        this.fetchCoinBalance(uiToken, walletAddress, networkWallet);
+
         this.allTokens.push(uiToken);
       }
     }
@@ -202,13 +223,33 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
     this.refreshDisplayableTokens();
   }
 
-  /*
-  - TODO: how to share fetched balances with the swap screen?
-      - token balance service with cache that gets cleared when entering the swap screen?
-      - why not using the mechanism already in the network wallet subwallets...?
-   */
-
   ngOnDestroy() { }
+
+  private fetchCoinBalance(uiToken: UIToken, walletAddress: string, networkWallet: AnyNetworkWallet) {
+    this.totalTokensToFetch++;
+
+    this.tokenChooserService.getCoinBalance(uiToken.token, walletAddress, networkWallet).pipe(filter(val => val !== null), take(1)).subscribe(balance => {
+      if (balance !== null) {
+        uiToken.amount = balance;
+        this.refreshDisplayableTokens();
+
+        this.totalTokensFetched++;
+      }
+    });
+  }
+
+  /**
+   * From a source coin on a source network, find its cousin on the destination network.
+   * eg: source is USDC on ESC, return USDC on ETH
+   *
+   * NOTE: returns only ERC20 tokens, not native (as native is already added)
+   */
+  private findPairedToken(sourceCoin: Coin, destinationNetwork: AnyNetwork): Coin {
+    if (!(destinationNetwork instanceof EVMNetwork))
+      return null;
+
+    return destinationNetwork.getBuiltInERC20Coins().find(t => t.getSymbol() === sourceCoin.getSymbol());
+  }
 
   private newUITokenFromCoin(coin: Coin): UIToken {
     let uiToken: UIToken = {
@@ -227,7 +268,7 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
   }
 
   selectNetwork(network: EVMNetwork) {
-    Logger.log("token-chooser", "Network selected", network);
+    //Logger.log("token-chooser", "Network selected", network);
 
     this.currentNetwork = network;
 
@@ -274,7 +315,7 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
   }
 
   public getDisplayableAmount(readableBalance: BigNumber): string {
-    return readableBalance.toFixed(5);
+    return readableBalance.toFixed(2);
   }
 
   public getTokenLogo(token: UIToken): string {

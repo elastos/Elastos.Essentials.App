@@ -24,12 +24,13 @@ import { TokenChooserComponent, TokenChooserComponentOptions, TokenChooserCompon
 import { Transfer } from '../../model/transfer';
 import { UIToken } from '../../model/uitoken';
 import { ChaingeSwapService } from '../../services/chaingeswap.service';
+import { TokenChooserService } from '../../services/tokenchooser.service';
 
 /**
  * Migrator main page
  */
 @Component({
-  selector: 'page-easybridge-home',
+  selector: 'page-multiswap-home',
   templateUrl: 'home.html',
   styleUrls: ['./home.scss'],
 })
@@ -78,7 +79,8 @@ export class HomePage {
     private erc20CoinService: ERC20CoinService,
     private dAppBrowserService: DappBrowserService,
     private evmService: EVMService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private tokenChooserService: TokenChooserService
   ) {
     GlobalFirebaseService.instance.logEvent("easybridge_home_enter");
   }
@@ -100,7 +102,7 @@ export class HomePage {
     } */
   }
 
-  private init(): Promise<void> {
+  private async init(): Promise<void> {
     Logger.log("easybridge", "Home page - initializing context");
 
     // Load the on going transfer from disk if there is one.
@@ -130,6 +132,12 @@ export class HomePage {
         };
       }
     } */
+
+    await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.networkService.activeNetwork.value);
+
+    // Reset all balances from the chooser service so that we fetch them all every time we enter the swap screen (but not
+    // while remaining in this screen).
+    this.tokenChooserService.resetAllBalances();
 
     this.initializing = false;
 
@@ -238,8 +246,12 @@ export class HomePage {
    * Opens the token chooser to select the soure token.
    */
   public async pickSourceToken() {
-    this.selectedSourceToken = await this.pickToken(true);
-    Logger.log("multiswap", "Picked source token", this.selectedSourceToken);
+    const selectedToken = await this.pickToken(true);
+
+    if (selectedToken) {
+      this.selectedSourceToken = selectedToken;
+      Logger.log("multiswap", "Picked source token", this.selectedSourceToken);
+    }
 
     /* if (this.tokenSubwallet && this.tokenSubwallet.id !== params.data.selectedSubwallet.id) {
       // The token is a different one, reset the amounts to avoid mistakes
@@ -251,13 +263,18 @@ export class HomePage {
   }
 
   public async pickDestinationToken() {
-    this.selectedDestinationToken = await this.pickToken(false);
-    Logger.log("multiswap", "Picked destination token", this.selectedDestinationToken);
+    const selectedToken = await this.pickToken(false);
+
+    if (selectedToken) {
+      this.selectedDestinationToken = selectedToken;
+      Logger.log("multiswap", "Picked destination token", this.selectedDestinationToken);
+    }
   }
 
   private async pickToken(forSource: boolean): Promise<UIToken> {
     let options: TokenChooserComponentOptions = {
-      mode: forSource ? "source" : "destination"
+      mode: forSource ? "source" : "destination",
+      sourceToken: forSource || !this.selectedSourceToken ? null : this.selectedSourceToken.token
     };
 
     let modal = await this.modalCtrl.create({

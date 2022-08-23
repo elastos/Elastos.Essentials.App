@@ -40,7 +40,7 @@ ion-content {
     }
 
     .wallet-name {
-        margin-bottom: 20px;
+        margin-bottom: 0px;
     }
 
     .fetch-tokens-heading {
@@ -48,8 +48,10 @@ ion-content {
         flex-direction: row;
     }
 
-    .source-tokens, .destination-tokens {
-        .source-token, .destination-token {
+    .source-tokens,
+    .destination-tokens {
+        .source-token,
+        .destination-token {
             padding: 15px;
             margin-bottom: 5px;
             border-radius: 10px;
@@ -68,7 +70,7 @@ ion-content {
             }
 
             &.selected {
-                border-color: #9368F0;
+                border-color: #9368f0;
             }
 
             &.gone {
@@ -81,7 +83,6 @@ ion-content {
                     font-weight: bold;
 
                     .token-symbol {
-
                     }
                 }
 
@@ -94,25 +95,34 @@ ion-content {
 
     .amount-container {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 5px;
         background: white;
 
-        .transfer-input {
-            font-size: 14px;
-            font-weight: 400;
-            text-align: left;
-            border-radius: 10px;
-            font-size: 18px;
-            text-align: right;
+        .input-row {
+            display: flex;
+            align-items: center;
+
+            .transfer-input {
+                font-size: 14px;
+                font-weight: 400;
+                text-align: left;
+                border-radius: 10px;
+                font-size: 18px;
+                text-align: right;
+            }
+
+            .token-symbol {
+                margin-top: 2px;
+                font-weight: bold;
+            }
         }
 
-        .token-symbol {
-            margin-top: 2px;
-            font-weight: bold;
+        .balance-row {
+            margin-top: 10px;
         }
     }
 
@@ -174,7 +184,8 @@ ion-content {
             font-weight: 600;
         }
 
-        .progress-step, .progress-message {
+        .progress-step,
+        .progress-message {
             margin-top: 10px;
         }
 
@@ -192,22 +203,30 @@ ion-content {
     .amount-container {
         background: #212021;
 
-        .transfer-input {
-            color: white;
+        .input-row {
+            .transfer-input {
+                color: white;
+            }
+        }
+
+        .balance-row {
+            color: #ccc;
         }
     }
 
-    .source-tokens, .destination-tokens {
-        .source-token, .destination-token {
+    .source-tokens,
+    .destination-tokens {
+        .source-token,
+        .destination-token {
             background: #212021;
         }
     }
 
     .transfer-summary {
-        color: #ACB1B6;
+        color: #acb1b6;
 
         .heading {
-            color: #FFF;
+            color: #fff;
         }
     }
 
@@ -216,7 +235,7 @@ ion-content {
         box-shadow: 0 -10px 20px rgba(255, 255, 255, 0.1);
 
         .transfer-progress {
-            color: #ACB1B6;
+            color: #acb1b6;
 
             .heading {
                 color: white;

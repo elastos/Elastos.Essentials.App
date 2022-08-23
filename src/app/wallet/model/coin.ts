@@ -85,6 +85,13 @@ export class Coin {
     public equals(coin: Coin): boolean {
         return !!coin && this.id === coin.id && this.network.equals(coin.network);
     }
+
+    /**
+     * Unique string representing this coin over all coins on all networks and network templates.
+     */
+    public key(): string {
+        return this.network.key + this.network.networkTemplate + this.id;
+    }
 }
 
 /**

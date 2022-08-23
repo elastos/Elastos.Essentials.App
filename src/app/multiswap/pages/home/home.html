@@ -27,11 +27,10 @@
         </div>
         <div class="right">
           <div class="amount-symbol">
-            {{ getDisplayableAmount(selectedSourceToken.amount) }}
-            <span class="token-symbol">{{ selectedSourceToken.token.symbol }}</span>
+            <span class="token-symbol">{{ selectedSourceToken.token.getSymbol() }}</span>
           </div>
           <div class="token-name">
-            {{ selectedSourceToken.token.name }}
+            {{ selectedSourceToken.token.getDescription() }}
           </div>
         </div>
       </div>
@@ -76,18 +75,24 @@
       <div class="heading" [class.highlighted]="!transferAmount">{{ 'easybridge.transfer-amount' | translate }}</div>
 
       <div class="amount-container">
-        <ion-input #transferamount class="transfer-input" type="number" name="transferAmount" ngDefaultControl
-          placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="transferAmount"
-          [disabled]="!this.canEditFields || transferIsBeingComputed"
-          (ionFocus)="transferAmountFocused($event, transferamount)" (ionBlur)="transferAmountChanged()"> </ion-input>
-        <span class="token-symbol">{{
-          selectedSourceToken.token.symbol }}</span>
+        <div class="input-row">
+          <ion-input #transferamount class="transfer-input" type="number" name="transferAmount" ngDefaultControl
+            placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="transferAmount"
+            [disabled]="!this.canEditFields || transferIsBeingComputed"
+            (ionFocus)="transferAmountFocused($event, transferamount)" (ionBlur)="transferAmountChanged()"> </ion-input>
+          <span class="token-symbol">{{
+            selectedSourceToken.token.getSymbol() }}</span>
+        </div>
+        <div class="balance-row">
+          Balance: {{ getDisplayableAmount(selectedSourceToken.amount) }} <b>{{ selectedSourceToken.token.getSymbol()
+            }}</b>
+        </div>
       </div>
 
-      <div *ngIf="transferAmount && userAmountBelowMinAmount()">
+      <!-- <div *ngIf="transferAmount && userAmountBelowMinAmount()">
         {{ 'easybridge.below-min-bridge-amount' | translate : {minTx: activeTransfer.bridgeStep.minTx, symbol:
-        selectedSourceToken.token.symbol } }}
-      </div>
+        selectedSourceToken.token.getSymbol() } }}
+      </div> -->
     </div>
 
     <!-- Computing -->
@@ -105,7 +110,7 @@
         </ion-col>
         <ion-col size="7" *ngIf="hasBridgeFees()">
           {{ getDisplayableBridgeFees() }}% ({{ getDisplayableBridgeFeesAmount() }} {{
-          selectedSourceToken.token.symbol }})
+          selectedSourceToken.token.getSymbol() }})
         </ion-col>
         <ion-col size="7" *ngIf="!hasBridgeFees()">
           {{ 'easybridge.free' | translate }}
@@ -137,7 +142,7 @@
         </ion-col>
         <ion-col size="7">
           <b>~ {{ getDisplayableAmount(activeTransfer.amount) }}
-            {{selectedDestinationToken.token.symbol}}</b>
+            {{selectedDestinationToken.token.getSymbol() }}</b>
         </ion-col>
       </ion-row>
     </div>
