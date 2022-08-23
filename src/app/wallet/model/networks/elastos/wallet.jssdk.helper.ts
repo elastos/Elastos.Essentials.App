@@ -1,5 +1,4 @@
 import { EthSidechainSubWallet, MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
-import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import moment from "moment";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
@@ -16,11 +15,11 @@ import { JSSDKLocalStorage } from "./localstorage.jssdk";
 export class WalletJSSDKHelper {
   private static masterWalletManager: MasterWalletManager = null;
 
-  public static async loadMasterWalletManager(netType: string, netConfig: ConfigInfo): Promise<MasterWalletManager> {
+  public static async loadMasterWalletManager(netType: string): Promise<MasterWalletManager> {
     if (this.masterWalletManager) return this.masterWalletManager;
 
     const browserStorage = new JSSDKLocalStorage(DIDSessionsStore.signedInDIDString);
-
+    const netConfig = { NetType: netType, ELA: {} };
     this.masterWalletManager = await MasterWalletManager.create(
       browserStorage,
       netType,
@@ -37,8 +36,10 @@ export class WalletJSSDKHelper {
   }
 
   public static resetMasterWalletManager() {
-    this.masterWalletManager.destroy();
-    this.masterWalletManager = null;
+    if (this.masterWalletManager) {
+        this.masterWalletManager.destroy();
+        this.masterWalletManager = null;
+    }
   }
 
   public static generateMnemonic(language: string) {
@@ -78,7 +79,6 @@ export class WalletJSSDKHelper {
       ""
     );
 
-    // TODO delete it?
     await sdkMasterWallet.createSubWallet("ELA");
 
     return true;
@@ -130,7 +130,6 @@ export class WalletJSSDKHelper {
         elastosNetworkOptions.singleAddress
       );
 
-      // TODO delete it?
       await sdkMasterWallet.createSubWallet("ELA");
 
       return true;
