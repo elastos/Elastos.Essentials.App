@@ -11,10 +11,6 @@ import { WalletJSSDKHelper } from "../networks/elastos/wallet.jssdk.helper";
 import { Safe } from "./safe";
 import { SignTransactionErrorType, SignTransactionResult } from "./safe.types";
 
-/**
- * Temporary safe to experiment the new architecture, and keep using SPVSDK commands.
- * Later on, SPVSDKSafes must be replaced with StandardSafes (signatures managed by essentials JS).
- */
 export class WalletJSSafe extends Safe {
   protected sdkMasterWallet: MasterWallet = null;
   protected sdkSubWallet: SubWallet = null;
@@ -33,7 +29,6 @@ export class WalletJSSafe extends Safe {
   async initSubWallet() {
     if (this.sdkSubWallet) return;
 
-    // TODO: can't create eth subwallet.
     this.sdkMasterWallet = await WalletJSSDKHelper.getMasterWallet(this.masterWallet.id);
     this.sdkSubWallet = await <SubWallet>this.sdkMasterWallet.getSubWallet(this.chainId);
   }

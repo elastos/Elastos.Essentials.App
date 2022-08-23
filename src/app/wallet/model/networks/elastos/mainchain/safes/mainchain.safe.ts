@@ -3,8 +3,8 @@ import { PublickeysInfo } from "@elastosfoundation/wallet-js-sdk/typings/account
 import { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
 import { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
 import { UnregisterCRPayload } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/UnregisterCR";
+import { VoteContent } from "src/app/wallet/model/elastos.types";
 import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
-import { VoteContent } from "src/app/wallet/services/spv.service";
 
 export interface ElastosMainChainSafe {
   getOwnerAddress(): string;

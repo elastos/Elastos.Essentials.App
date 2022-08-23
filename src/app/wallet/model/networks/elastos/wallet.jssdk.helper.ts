@@ -1,4 +1,4 @@
-import { EthSidechainSubWallet, MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
+import { MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
 import moment from "moment";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
@@ -152,23 +152,13 @@ export class WalletJSSDKHelper {
     return (await this.getMasterWallet(masterWalletId)).exportMnemonic(payPassWord);
   }
 
-  public static async exportWalletWithSeed(masterWalletId: string, payPassWord: string) {
-    return (await this.getMasterWallet(masterWalletId)).exportSeed(payPassWord);
-  }
+//   public static async exportWalletWithSeed(masterWalletId: string, payPassWord: string) {
+//     return (await this.getMasterWallet(masterWalletId)).exportSeed(payPassWord);
+//   }
 
   public static async exportKeystore(masterWalletId : string, backupPassword: string, payPassword: string) {
     let masterWallet = await this.getMasterWallet(masterWalletId);
     return await masterWallet.exportKeystore(backupPassword, payPassword);
-  }
-
-  public static async exportETHSCPrivateKey(masterWalletId : string, subWalletId: string, payPassword: string) {
-    let masterWallet = await this.getMasterWallet(masterWalletId);
-    if (masterWallet) {
-      let subWallet = <EthSidechainSubWallet>masterWallet.getSubWallet(subWalletId);
-      return subWallet.exportPrivateKey(payPassword)
-    }
-
-    return '';
   }
 
   public static async createSubWallet(masterWalletId, subwalletId) {

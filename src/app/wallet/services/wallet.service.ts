@@ -104,9 +104,10 @@ export class WalletService {
 
     public needToPromptTransferToIDChain = false; // Whether it's time to ask user to transfer some funds to the ID chain for better user experience or not.
 
-    // TODO delete it
-    public spvBridge: SPVService = null;
     public masterWalletMangerJS: MasterWalletManager = null;
+
+    // TODO: Remove it if spvservice is not required at all.
+    public spvBridge: SPVService = null;
 
     private networkTemplate: string;
 
@@ -142,7 +143,6 @@ export class WalletService {
         this.masterWallets = {};
         this.networkWallets = {};
 
-        // TODO delte spvBridge
         this.spvBridge = new SPVService(this.native, this.events, this.popupProvider);
 
         const hasWallets = await this.initWallets();
@@ -170,9 +170,6 @@ export class WalletService {
 
     async stop() {
         Logger.log('wallet', "Wallet service is stopping");
-        if (this.spvBridge)
-            await this.spvBridge.destroy();
-
         await this.terminateActiveNetworkWallets();
         this.activeNetworkWallet.next(null);
 

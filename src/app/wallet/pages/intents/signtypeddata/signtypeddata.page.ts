@@ -28,9 +28,9 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { WalletJSSDKHelper } from 'src/app/wallet/model/networks/elastos/wallet.jssdk.helper';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
@@ -157,7 +157,7 @@ export class SignTypedDataPage implements OnInit {
       return;
     }
 
-    let privateKeyHexNoprefix = await WalletJSSDKHelper.exportETHSCPrivateKey(this.networkWallet.masterWallet.id, this.evmSubWallet.id, payPassword);
+    let privateKeyHexNoprefix = await (this.networkWallet.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
 
     let dataToSign = JSON.parse(this.payloadToBeSigned);
     let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");

@@ -6,6 +6,7 @@ import { md5 } from "src/app/helpers/crypto/md5";
 import { Logger } from "src/app/logger";
 import { JSONObject } from "src/app/model/json";
 import { GlobalNavService } from "src/app/services/global.nav.service";
+import { PubKeyInfo, VoteContent } from "src/app/wallet/model/elastos.types";
 import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
 import { MultiSigSafe } from "src/app/wallet/model/safes/multisig.safe";
 import { SignTransactionErrorType, SignTransactionResult } from 'src/app/wallet/model/safes/safe.types';
@@ -14,7 +15,6 @@ import { CoinTxInfoParams } from "src/app/wallet/pages/wallet/coin/coin-tx-info/
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { OfflineTransactionsService } from "src/app/wallet/services/offlinetransactions.service";
-import { PubKeyInfo, VoteContent } from "src/app/wallet/services/spv.service";
 import { Native } from "../../../../../../services/native.service";
 import { Safe } from "../../../../../safes/safe";
 import { AnyNetworkWallet } from '../../../../base/networkwallets/networkwallet';

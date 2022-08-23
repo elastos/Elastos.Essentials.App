@@ -2,7 +2,7 @@
 import { Logger } from 'src/app/logger';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { CRProposalStatus } from '../../../../../model/voting/cyber-republic/CRProposalStatus';
-import { Candidates, VoteContent, VoteType } from '../../../../services/spv.service';
+import { Candidates, VoteContent, VoteType } from '../../../elastos.types';
 
 type InvalidCRCCandidate = string;
 type InvalidDelegateCandidate = string;
