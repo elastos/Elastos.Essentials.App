@@ -1,6 +1,5 @@
 import { StandardMasterWallet } from '../../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../../masterwallets/wallet.types';
-import { WalletJSSDKHelper } from '../../../elastos/wallet.jssdk.helper';
 import type { EVMNetwork } from '../../evm.network';
 import { EVMWalletJSSafe } from '../../safes/evm.walletjs.safe';
 import { MainCoinEVMSubWallet } from '../../subwallets/evm.subwallet';
@@ -25,9 +24,6 @@ export abstract class StandardEVMNetworkWallet<WalletNetworkOptionsType extends 
     }
 
     public async initialize(): Promise<void> {
-        if (!await WalletJSSDKHelper.maybeCreateStandardWalletFromJSWallet(this.masterWallet))
-            return;
-
         await super.initialize();
     }
 

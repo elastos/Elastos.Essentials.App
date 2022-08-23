@@ -22,7 +22,6 @@
 
 import { Injectable, NgZone } from '@angular/core';
 import { MasterWalletManager } from '@elastosfoundation/wallet-js-sdk';
-import { ConfigInfo } from '@elastosfoundation/wallet-js-sdk/typings/config';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { mnemonicToSeedSync } from "bip39";
@@ -198,10 +197,7 @@ export class WalletService {
               sdkNetwork = "PrvNet";
             }
 
-            // Update the SPV SDK with the right network configuration
-            let netConfig = this.prepareSPVNetworkConfiguration();
-
-            this.masterWalletMangerJS = await WalletJSSDKHelper.loadMasterWalletManager(sdkNetwork, netConfig);
+            this.masterWalletMangerJS = await WalletJSSDKHelper.loadMasterWalletManager(sdkNetwork);
 
             Logger.log('wallet', "Loading master wallets list");
             const idList = await this.localStorage.getWalletsList(this.networkTemplate);
@@ -304,21 +300,6 @@ export class WalletService {
             if (networkWallet)
                 await networkWallet.stopBackgroundUpdates();
         }
-    }
-
-    private prepareSPVNetworkConfiguration() {
-        // Ask each network to fill its configuration for the SPVSDK.
-        // For EVM networks, this means adding something like {'ETHxx': {ChainID: 123, NetworkID: 123}}
-        let networkConfig: ConfigInfo = {};
-        for (let network of this.networkService.getAvailableNetworks()) {
-            network.updateSPVNetworkConfig(networkConfig, this.networkTemplate);
-        }
-
-        Logger.log('wallet', "Setting SPV network config to ", this.networkTemplate, networkConfig);
-        return networkConfig;
-
-        // await this.spvBridge.setNetwork(spvsdkNetwork, JSON.stringify(networkConfig));
-        // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
     }
 
     public getActiveMasterWallet() {

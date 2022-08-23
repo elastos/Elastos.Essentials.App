@@ -4,8 +4,8 @@ import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
+import { Safe } from "../../../safes/safe";
 import { SignTransactionResult } from "../../../safes/safe.types";
-import { WalletJSSafe } from "../../../safes/walletjs.safe";
 import { WalletUtil } from "../../../wallet.util";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
@@ -14,10 +14,14 @@ import { EVMSafe } from "./evm.safe";
 /**
  * Safe specialized for EVM networks, with additional methods.
  */
-export class EVMWalletJSSafe extends WalletJSSafe implements EVMSafe {
+export class EVMWalletJSSafe extends Safe implements EVMSafe {
   private mnemonicWallet = null;
   private account = null;
   private evmAddress = null;
+
+  constructor(protected masterWallet: StandardMasterWallet, protected chainId: string) {
+    super(masterWallet);
+  }
 
   public async initialize(networkWallet: AnyNetworkWallet): Promise<void> {
     await super.initialize(networkWallet);

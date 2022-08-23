@@ -1,9 +1,8 @@
 import { WalletNetworkOptions } from "src/app/wallet/model/masterwallets/wallet.types";
 import { StandardCoinName } from "../../../../coin";
 import { StandardMasterWallet } from "../../../../masterwallets/masterwallet";
-import { WalletJSSDKHelper } from "../../../elastos/wallet.jssdk.helper";
 import { AnyNetwork } from "../../../network";
-import { BTCSPVSDKSafe } from "../../safes/btc.spvsdk.safe";
+import { BTCWalletJSSafe } from "../../safes/btc.walletjs.safe";
 import { BTCSubWallet } from "../../subwallets/btc.subwallet";
 import { BTCNetworkWallet } from "../btc.networkwallet";
 
@@ -15,19 +14,15 @@ export class StandardBTCNetworkWallet<WalletNetworkOptionsType extends WalletNet
         super(
             masterWallet,
             network,
-            new BTCSPVSDKSafe(masterWallet, "BTC"),
+            new BTCWalletJSSafe(masterWallet, "BTC"),
         );
     }
 
     public async initialize(): Promise<void> {
-        if (!await WalletJSSDKHelper.maybeCreateStandardWalletFromJSWallet(this.masterWallet))
-            return;
-
         await super.initialize();
     }
 
     protected async prepareStandardSubWallets(): Promise<void> {
-        await WalletJSSDKHelper.createSubWallet(this.masterWallet.id, StandardCoinName.BTC);
         this.subWallets[StandardCoinName.BTC] = new BTCSubWallet(this, this.network.getRPCUrl());
         await this.subWallets[StandardCoinName.BTC].initialize();
     }

@@ -10,7 +10,6 @@ import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
-import { WalletType } from '../../../masterwallets/wallet.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, UtxoForSDK } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
@@ -243,20 +242,18 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
         let outputs = [{
             "Address": toAddress,
-            "Amount": toAmount.toString()
+            "Amount": toAmount.toString() // TODO: USE number
         }]
 
-        if (this.masterWallet.type === WalletType.LEDGER) {
-            for (let i = 0; i < utxo.length; i++) {
-                if (!utxo[i].utxoHex) {
-                    let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, utxo[i].TxHash);
-                    if (rawtransaction) {
-                        utxo[i].utxoHex = rawtransaction.hex;
-                    } else {
-                        // TODO:
-                        Logger.log('wallet', 'GlobalBTCRPCService getrawtransaction error');
-                        return null;
-                    }
+        for (let i = 0; i < utxo.length; i++) {
+            if (!utxo[i].utxoHex) {
+                let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, utxo[i].TxHash);
+                if (rawtransaction) {
+                    utxo[i].utxoHex = rawtransaction.hex;
+                } else {
+                    // TODO:
+                    Logger.log('wallet', 'GlobalBTCRPCService getrawtransaction error');
+                    return null;
                 }
             }
         }
