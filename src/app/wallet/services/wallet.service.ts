@@ -189,12 +189,8 @@ export class WalletService {
 
         try {
             this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
-            let sdkNetwork = this.networkTemplate;
-            if (this.networkTemplate === "LRW") {
-              sdkNetwork = "PrvNet";
-            }
 
-            this.masterWalletMangerJS = await WalletJSSDKHelper.loadMasterWalletManager(sdkNetwork);
+            this.masterWalletMangerJS = await WalletJSSDKHelper.loadMasterWalletManager();
 
             Logger.log('wallet', "Loading master wallets list");
             const idList = await this.localStorage.getWalletsList(this.networkTemplate);

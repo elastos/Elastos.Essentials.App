@@ -1,6 +1,7 @@
 import { MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
 import moment from "moment";
 import { Logger } from "src/app/logger";
+import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { MasterWallet, StandardMasterWallet } from "../../masterwallets/masterwallet";
@@ -15,14 +16,19 @@ import { JSSDKLocalStorage } from "./localstorage.jssdk";
 export class WalletJSSDKHelper {
   private static masterWalletManager: MasterWalletManager = null;
 
-  public static async loadMasterWalletManager(netType: string): Promise<MasterWalletManager> {
+  public static async loadMasterWalletManager(): Promise<MasterWalletManager> {
     if (this.masterWalletManager) return this.masterWalletManager;
 
+    let networkTemplate = await GlobalNetworksService.instance.getActiveNetworkTemplate();
+    if (networkTemplate === "LRW") {
+        networkTemplate = "PrvNet";
+    }
+
     const browserStorage = new JSSDKLocalStorage(DIDSessionsStore.signedInDIDString);
-    const netConfig = { NetType: netType, ELA: {} };
+    const netConfig = { NetType: networkTemplate, ELA: {} };
     this.masterWalletManager = await MasterWalletManager.create(
       browserStorage,
-      netType,
+      networkTemplate,
       netConfig
     );
     // Load all masterWallets
@@ -179,6 +185,8 @@ export class WalletJSSDKHelper {
 
   // Call this when delete identiy
   public static async deleteAllWallet() {
+    // The MasterWalletManager is not created if the user does not signin.
+    await this.loadMasterWalletManager();
     let allMasterWallets = this.masterWalletManager.getAllMasterWalletID();
     Logger.log('wallet', 'WalletJSSDKHelper deleteAllWallet count:', allMasterWallets.length);
     for (let i = 0; i < allMasterWallets.length; i++) {
