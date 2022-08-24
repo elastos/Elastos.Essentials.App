@@ -1,4 +1,5 @@
 import { json } from "@elastosfoundation/wallet-js-sdk/typings/types";
+import { defaultPath, HDNode } from "ethers/lib/utils";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -6,7 +7,6 @@ import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
 import { SignTransactionResult } from "../../../safes/safe.types";
-import { WalletUtil } from "../../../wallet.util";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EVMSafe } from "./evm.safe";
@@ -15,7 +15,7 @@ import { EVMSafe } from "./evm.safe";
  * Safe specialized for EVM networks, with additional methods.
  */
 export class EVMWalletJSSafe extends Safe implements EVMSafe {
-  private mnemonicWallet = null;
+  private jsWallet = null;
   private account = null;
   private evmAddress = null;
 
@@ -32,8 +32,8 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
     if (!this.evmAddress) {
       await this.initJSWallet()
 
-      if (this.mnemonicWallet) {
-        this.evmAddress = this.mnemonicWallet.address;
+      if (this.jsWallet) {
+        this.evmAddress = this.jsWallet.address;
       } else if (this.account) {
         this.evmAddress = this.account.address;
       }
@@ -44,16 +44,16 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
   }
 
   private async initJSWallet() {
-    if (this.mnemonicWallet || this.account) return;
+    if (this.jsWallet || this.account) return;
 
     // No data - need to compute
     let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id);
     if (!payPassword)
       return; // Can't continue without the wallet password - cancel the initialization
 
-    let mnemonic = await (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
-    if (mnemonic) {
-      this.mnemonicWallet = await this.getWalletFromMnemonic(mnemonic);
+    let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
+    if (seed) {
+      this.jsWallet = await this.getWalletFromSeed(seed);
     }
     else {
       // No mnemonic - check if we have a private key instead
@@ -88,8 +88,8 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
 
     await this.initJSWallet();
 
-    if (this.mnemonicWallet) {
-        signedTx = await this.mnemonicWallet.signTransaction(rawTransaction)
+    if (this.jsWallet) {
+        signedTx = await this.jsWallet.signTransaction(rawTransaction)
     } else if (this.account) {
         let signdTransaction = await this.account.signTransaction(rawTransaction)
         signedTx = signdTransaction.rawTransaction;
@@ -97,9 +97,8 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
     return { signedTransaction: signedTx };
   }
 
-  private async getWalletFromMnemonic(mnemonic: string) {
-    let wordlist = await WalletUtil.getMnemonicWordlist(mnemonic);
+  private async getWalletFromSeed(seed: string) {
     const Wallet = (await import("ethers")).Wallet;
-    return Wallet.fromMnemonic(mnemonic, null, wordlist);
+    return new Wallet(HDNode.fromSeed(Buffer.from(seed, "hex")).derivePath(defaultPath));
   }
 }
