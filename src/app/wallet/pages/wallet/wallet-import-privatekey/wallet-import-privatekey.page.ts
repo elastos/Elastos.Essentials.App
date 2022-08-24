@@ -9,6 +9,7 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { PrivateKeyType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
+import { isPrivate } from 'tiny-secp256k1';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -92,6 +93,16 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
   }
 
   async onImport() {
+    if (!this.contentIsJsonObj) {
+        if (this.privatekey.startsWith('0x')) {
+            this.privatekey = this.privatekey.substring(2);
+        }
+        if (!isPrivate(Buffer.from(this.privatekey, 'hex'))) {
+            this.native.toast_trans('wallet.wrong-privatekey-msg');
+            return;
+        }
+    }
+
     const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
     if (payPassword) {
       try {
@@ -103,6 +114,7 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
         }
       } catch (err) {
         Logger.error('wallet', 'Wallet importWalletWithPrivateKey error:', err);
+        await this.authService.deleteWalletPassword(this.masterWalletId);
       }
       finally {
         await this.native.hideLoading();
@@ -111,10 +123,6 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
   }
 
   async importWalletWithPrivateKey(payPassword: string) {
-    if (this.privatekey.startsWith('0x')) {
-      this.privatekey = this.privatekey.substring(2);
-    }
-
     await this.walletManager.newStandardWalletWithPrivateKey(
       this.masterWalletId,
       this.walletCreateService.name,
