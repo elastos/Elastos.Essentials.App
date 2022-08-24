@@ -35,8 +35,8 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
 
       let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
       if (seed) {
-          let jsWallet = await this.getWalletFromSeed(seed);
-          this.evmAddress = jsWallet.address;
+        let jsWallet = await this.getWalletFromSeed(seed);
+        this.evmAddress = jsWallet.address;
       }
       else {
         // No mnemonic - check if we have a private key instead
