@@ -62,6 +62,12 @@ export class WalletUtil {
         decimalplace = 3;
       }
     }
+
+    // If the amount is less than 1, more decimal parts are displayed.
+    if (!balance.isGreaterThan(1)) {
+        decimalplace += 2;
+    }
+
     let minBalanceToShow = 1 / Math.pow(10, decimalplace);
     const decimalBalance = balance.modulo(1);
     if (decimalBalance.gt(minBalanceToShow)) {

@@ -63,6 +63,10 @@ export abstract class MainCoinSubWallet<TransactionType extends GenericTransacti
             if (CurrencyService.instance.selectedCurrency && CurrencyService.instance.selectedCurrency.decimalplace) {
                 decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
             }
+            // If the amount is less than 1, more decimal parts are displayed.
+            if (!amount.isGreaterThan(1)) {
+                decimalplace += 2;
+            }
             return amount.decimalPlaces(decimalplace);
         } else {
             return amount;
