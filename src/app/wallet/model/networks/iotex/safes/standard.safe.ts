@@ -1,5 +1,6 @@
 import type { TxData } from "@ethereumjs/tx";
 import { from } from "@iotexproject/iotex-address-ts";
+import { defaultPath, HDNode } from "ethers/lib/utils";
 import { Logger } from "src/app/logger";
 import { Util } from "src/app/model/util";
 import { AuthService } from "src/app/wallet/services/auth.service";
@@ -9,7 +10,6 @@ import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/maste
 import { AddressUsage } from "../../../safes/addressusage";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { StandardSafe } from "../../../safes/standard.safe";
-import { WalletUtil } from "../../../wallet.util";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EVMSafe } from "../../evms/safes/evm.safe";
@@ -33,10 +33,10 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
       if (!payPassword)
         return; // Can't continue without the wallet password - cancel the initialization
 
-      let mnemonic = await (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
-      if (mnemonic) {
-        let mnemonicWallet = await this.getWalletFromMnemonic(mnemonic);
-        this.evmAddress = mnemonicWallet.address;
+      let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
+      if (seed) {
+          let jsWallet = await this.getWalletFromSeed(seed);
+          this.evmAddress = jsWallet.address;
       }
       else {
         // No mnemonic - check if we have a private key instead
@@ -94,10 +94,10 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
 
     // TODO: handle wallets imported by private key
     let privateKey = null;
-    let mnemonic = await (this.masterWallet as StandardMasterWallet).getMnemonic(payPassword);
-    if (mnemonic) {
-      let mnemonicWallet = await this.getWalletFromMnemonic(mnemonic)
-      privateKey = mnemonicWallet.privateKey;
+    let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
+    if (seed) {
+      let jsWallet = await this.getWalletFromSeed(seed)
+      privateKey = jsWallet.privateKey;
     } else {
       // No mnemonic - check if we have a private key instead
       privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
@@ -113,9 +113,8 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
     return signTransactionResult;
   }
 
-  private async getWalletFromMnemonic(mnemonic: string) {
-    let wordlist = await WalletUtil.getMnemonicWordlist(mnemonic);
+  private async getWalletFromSeed(seed: string) {
     const Wallet = (await import("ethers")).Wallet;
-    return Wallet.fromMnemonic(mnemonic, null, wordlist);
+    return new Wallet(HDNode.fromSeed(Buffer.from(seed, "hex")).derivePath(defaultPath));
   }
 }
