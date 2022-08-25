@@ -37,7 +37,7 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
 
     try {
       let { transactions, canFetchMore } = await FusionHelper.fetchTokenTransactions(
-        this.subWallet,
+        erc20SubWallet,
         contractAddress,
         accountAddress,
         page,
@@ -54,7 +54,7 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
 
   // eslint-disable-next-line require-await
   public async fetchAllTokensTransactions(): Promise<void> {
-    Logger.warn('wallet', ' FusionEvmTokenSubWalletProvider fetchAllTokensTransactions')
+    Logger.log('wallet', ' FusionEvmTokenSubWalletProvider fetchAllTokensTransactions')
     const accountAddress = await this.subWallet.getCurrentReceiverAddress();
 
     for (let i = 0; i < tokenTypeMapList.length; i++) {

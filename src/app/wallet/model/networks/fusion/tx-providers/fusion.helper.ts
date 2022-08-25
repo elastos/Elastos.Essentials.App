@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import moment from "moment";
 import { Logger } from "src/app/logger";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
-import { Config } from "src/app/wallet/config/Config";
 import { TransactionDirection } from "../../../tx-providers/transaction.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
@@ -91,7 +90,7 @@ export class FusionHelper {
       let canFetchMore = result.list.length < pageSize;
 
       return {
-        transactions: <EthTransaction[]>this.convertFusionTransaction2EthTransaction(originTransactions, accountAddress),
+        transactions: <EthTransaction[]>this.convertFusionTransaction2EthTransaction(originTransactions, accountAddress, subWallet.tokenAmountMulipleTimes),
         canFetchMore
       };
     } catch (e) {
@@ -100,7 +99,7 @@ export class FusionHelper {
     }
   }
 
-  private static convertFusionTransaction2EthTransaction(fusionTransaction: FusionTransaction[], accountAddress: string) {
+  private static convertFusionTransaction2EthTransaction(fusionTransaction: FusionTransaction[], accountAddress: string, tokenAmountMulipleTimes: BigNumber) {
     let transactions: EthTransaction[] = [];
     for (let i = 0; i < fusionTransaction.length; i++) {
       let ethTransaction: EthTransaction = {
@@ -111,7 +110,7 @@ export class FusionHelper {
         cumulativeGasUsed: '',
         from: fusionTransaction[i].tx_from,
         to: fusionTransaction[i].tx_to,
-        gas: new BigNumber(fusionTransaction[i].tx_fee).multipliedBy(Config.WEI).toString(10),
+        gas: new BigNumber(fusionTransaction[i].tx_fee).multipliedBy(tokenAmountMulipleTimes).toString(10),
         gasPrice: '',
         gasUsed: '',
         hash: fusionTransaction[i].tx_hash,
@@ -119,7 +118,7 @@ export class FusionHelper {
         nonce: '',
         timeStamp: '' + moment.utc(fusionTransaction[i].tx_time_utc).unix(),
         transactionIndex: '',
-        value: new BigNumber(fusionTransaction[i].tx_value).multipliedBy(Config.WEI).toString(10),
+        value: new BigNumber(fusionTransaction[i].tx_value).multipliedBy(tokenAmountMulipleTimes).toString(10),
         Direction: (fusionTransaction[i].tx_to === accountAddress) ? TransactionDirection.RECEIVED : TransactionDirection.SENT,
         isERC20TokenTransfer: false,
         txreceipt_status: '',
@@ -149,7 +148,7 @@ export class FusionHelper {
       let canFetchMore = result.list.length < pageSize;
 
       return {
-        transactions: <EthTransaction[]>this.convertFusionTokenTransaction2EthTransaction(originTransactions, accountAddress, contractAddress),
+        transactions: <EthTransaction[]>this.convertFusionTokenTransaction2EthTransaction(originTransactions, accountAddress, contractAddress, subWallet.tokenAmountMulipleTimes),
         canFetchMore
       };
     } catch (e) {
@@ -177,7 +176,7 @@ export class FusionHelper {
       let originTransactions = result.list as FusionTokenTransaction[];
       let canFetchMore = result.list.length < pageSize;
       return {
-        transactions: <EthTokenTransaction[]>this.convertFusionTokenTransaction2EthTransaction(originTransactions, accountAddress),
+        transactions: <EthTokenTransaction[]>this.convertFusionTokenTransaction2EthTransaction(originTransactions, accountAddress, null, subWallet.tokenAmountMulipleTimes),
         canFetchMore
       };
     } catch (e) {
@@ -186,7 +185,7 @@ export class FusionHelper {
     }
   }
 
-  private static convertFusionTokenTransaction2EthTransaction(fusionTransaction: FusionTokenTransaction[], accountAddress: string, contractAddress: string = null) {
+  private static convertFusionTokenTransaction2EthTransaction(fusionTransaction: FusionTokenTransaction[], accountAddress: string, contractAddress: string = null, tokenAmountMulipleTimes: BigNumber) {
     let transactions: EthTokenTransaction[] = [];
     for (let i = 0; i < fusionTransaction.length; i++) {
       let ethTransaction: EthTokenTransaction = {
@@ -205,7 +204,7 @@ export class FusionHelper {
         nonce: '',
         timeStamp: '' + moment.utc(fusionTransaction[i].tx_time_utc).unix(),
         transactionIndex: '',
-        value: new BigNumber(fusionTransaction[i].value).multipliedBy(Config.WEI).toString(10),
+        value: new BigNumber(fusionTransaction[i].value).multipliedBy(tokenAmountMulipleTimes).toString(10),
         Direction: (fusionTransaction[i].to === accountAddress) ? TransactionDirection.RECEIVED : TransactionDirection.SENT,
         isERC20TokenTransfer: true,
         txreceipt_status: '',
