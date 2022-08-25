@@ -44,7 +44,6 @@ import { ElastosSmartChainNetworkBase } from 'src/app/wallet/model/networks/elas
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
-import { EVMNetworkWallet } from 'src/app/wallet/model/networks/evms/networkwallets/evm.networkwallet';
 import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { NFTAsset } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
@@ -686,12 +685,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (!isAddressValid) {
                 this.native.toast_trans('wallet.not-a-valid-address');
                 return;
-            }
-
-            let targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
-            if (targetSubwallet.networkWallet instanceof EVMNetworkWallet) {
-                // In case of user inputs the 'to' address without '0x'
-                if (!this.toAddress.startsWith('0x')) this.toAddress = '0x' + this.toAddress;
             }
 
             if (this.transferType === TransferType.PAY) {
