@@ -56,6 +56,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     private externalAddressCount = 110; // Addresses for user.
     private internalAddressCount = 105;
 
+    // TODO: If there are too many utxos, the transaction may fail to be sent.
+    // Therefore, the maximum number of utxos to be consolidated is set to 10000.
+    private Max_Consolidate_Utxos = 10000;
+
     private addressWithBalanceArray: AdressWithBalance[] = [];
 
     private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
@@ -446,7 +450,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         let utxoArrayForSDK = [];
         let totalAmount = 0;
-        for (let i = 0, len = utxoArray.length; i < len; i++) {
+        let maxUtxoCount = utxoArray.length > this.Max_Consolidate_Utxos ? this.Max_Consolidate_Utxos : utxoArray.length;
+        for (let i = 0; i < maxUtxoCount; i++) {
             let utxoAmountSELA = Util.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
             let utxoForSDK: UtxoForSDK = {
                 Address: utxoArray[i].address,

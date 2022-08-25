@@ -195,6 +195,10 @@ export class WalletSettingsPage implements OnInit {
         this.titleBar.setTitle(this.translate.instant("wallet.wallet-settings-title"));
     }
 
+    ionViewWillLeave() {
+        void this.native.hideLoading();
+    }
+
     async onDelete() {
         try {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
