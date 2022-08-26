@@ -16,7 +16,7 @@ export abstract class StandardEVMNetworkWallet<WalletNetworkOptionsType extends 
         super(
             masterWallet,
             network,
-            new EVMWalletJSSafe(masterWallet, network.getEVMSPVConfigName()),
+            new EVMWalletJSSafe(masterWallet, network.getMainChainID()),
             displayToken,
             mainSubWalletFriendlyName,
             averageBlocktime

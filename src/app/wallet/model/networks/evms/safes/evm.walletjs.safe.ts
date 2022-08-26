@@ -15,11 +15,10 @@ import { EVMSafe } from "./evm.safe";
  * Safe specialized for EVM networks, with additional methods.
  */
 export class EVMWalletJSSafe extends Safe implements EVMSafe {
-  private jsWallet = null;
   private account = null;
   private evmAddress = null;
 
-  constructor(protected masterWallet: StandardMasterWallet, protected chainId: string) {
+  constructor(protected masterWallet: StandardMasterWallet, protected chainId: number) {
     super(masterWallet);
   }
 
@@ -32,9 +31,7 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
     if (!this.evmAddress) {
       await this.initJSWallet()
 
-      if (this.jsWallet) {
-        this.evmAddress = this.jsWallet.address;
-      } else if (this.account) {
+      if (this.account) {
         this.evmAddress = this.account.address;
       }
 
@@ -44,23 +41,26 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
   }
 
   private async initJSWallet() {
-    if (this.jsWallet || this.account) return;
+    if (this.account) return;
 
     // No data - need to compute
     let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id);
     if (!payPassword)
       return; // Can't continue without the wallet password - cancel the initialization
 
+    let privateKey = null;
     let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
     if (seed) {
-      this.jsWallet = await this.getWalletFromSeed(seed);
+      let jsWallet = await this.getWalletFromSeed(seed);
+      privateKey = jsWallet.privateKey;
     }
     else {
       // No mnemonic - check if we have a private key instead
-      let privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
-      if (privateKey) {
-        this.account = (await EVMService.instance.getWeb3(this.networkWallet.network)).eth.accounts.privateKeyToAccount(privateKey);
-      }
+      privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+    }
+
+    if (privateKey) {
+      this.account = (await EVMService.instance.getWeb3(this.networkWallet.network)).eth.accounts.privateKeyToAccount(privateKey);
     }
   }
 
@@ -88,9 +88,7 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
 
     await this.initJSWallet();
 
-    if (this.jsWallet) {
-        signedTx = await this.jsWallet.signTransaction(rawTransaction)
-    } else if (this.account) {
+    if (this.account) {
         let signdTransaction = await this.account.signTransaction(rawTransaction)
         signedTx = signdTransaction.rawTransaction;
     }

@@ -1,8 +1,6 @@
-import type { TxData } from "@ethereumjs/tx";
 import { from } from "@iotexproject/iotex-address-ts";
 import { defaultPath, HDNode } from "ethers/lib/utils";
 import { Logger } from "src/app/logger";
-import { Util } from "src/app/model/util";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
@@ -67,17 +65,7 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
   }
 
   async createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
-    // TODO: Make this code shareable, in the EVMService
-    let web3 = await EVMService.instance.getWeb3(this.network);
-    const txData: TxData = {
-      nonce: web3.utils.toHex(nonce),
-      gasLimit: web3.utils.toHex(gasLimit),
-      gasPrice: web3.utils.toHex(gasPrice),
-      to: toAddress,
-      value: web3.utils.toHex(web3.utils.toWei(Util.getDecimalString(amount))),
-    }
-    Logger.log('wallet', 'IoTeXStandardSafe::createTransferTransaction:', txData);
-    return Promise.resolve(txData);
+    return EVMService.instance.createUnsignedTransferTransaction(toAddress, amount, gasPrice, gasLimit, nonce);
   }
 
   public async signTransaction(subWallet: AnySubWallet, rawTx: any, transfer: Transfer): Promise<SignTransactionResult> {
