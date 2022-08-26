@@ -3,7 +3,9 @@ import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
+import { WalletAlreadyExistException } from 'src/app/model/exceptions/walletalreadyexist.exception';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
@@ -46,7 +48,6 @@ export class WalletImportPage implements OnInit {
     private walletIsCreating = false; // Just in case, Ignore user action when the wallet is creating.
 
     public inputList: string[] = [];
-    private inputStr = "";
 
     constructor(
         public walletService: WalletService,
@@ -64,7 +65,6 @@ export class WalletImportPage implements OnInit {
     }
 
     ngOnInit() {
-        Logger.log('wallet', 'Input list created', this.inputList);
     }
 
     ionViewWillEnter() {
@@ -128,9 +128,15 @@ export class WalletImportPage implements OnInit {
             }
             catch (err) {
                 Logger.error('wallet', 'Wallet import error:', err);
-                // Spvsdk throw exception if the master wallet already exists.
+                // Wallet js sdk throw exception if the master wallet already exists.
                 // So we should delete the wallet info from local storage.
                 await this.localStorage.deleteMasterWallet(this.masterWalletId);
+                let reworkedEx = WalletExceptionHelper.reworkedWalletJSException(err);
+                if (reworkedEx instanceof WalletAlreadyExistException) {
+                    await PopupProvider.instance.ionicAlert("common.error", "wallet.Error-20005");
+                } else {
+                    await PopupProvider.instance.ionicAlert("common.error", err.reason);
+                }
             }
             await this.native.hideLoading();
             this.walletIsCreating = false;
