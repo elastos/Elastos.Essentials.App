@@ -4,7 +4,9 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import * as bs58check from "bs58check";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
+import { WalletAlreadyExistException } from 'src/app/model/exceptions/walletalreadyexist.exception';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -14,6 +16,7 @@ import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { Native } from 'src/app/wallet/services/native.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { LocalStorage } from 'src/app/wallet/services/storage.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
@@ -130,6 +133,12 @@ export class StandardMultiSigCreatePage implements OnInit {
         } catch (e) {
             Logger.error('wallet', 'MultiSigStandardWallet create error:', e);
             await this.walletService.destroyMasterWallet(walletId)
+            let reworkedEx = WalletExceptionHelper.reworkedWalletJSException(e);
+            if (reworkedEx instanceof WalletAlreadyExistException) {
+                await PopupProvider.instance.ionicAlert("common.error", "wallet.Error-20005");
+            } else {
+                await PopupProvider.instance.ionicAlert("common.error", e.reason);
+            }
         }
     }
 
