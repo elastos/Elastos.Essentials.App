@@ -23,19 +23,13 @@ export class WalletJSSafe extends Safe {
     if (!await WalletJSSDKHelper.maybeCreateStandardWalletFromJSWallet(this.masterWallet))
       return;
 
+    this.sdkMasterWallet = await WalletJSSDKHelper.getMasterWallet(this.masterWallet.id);
+    this.sdkSubWallet = await <SubWallet>this.sdkMasterWallet.getSubWallet(this.chainId);
+
     await super.initialize(networkWallet);
   }
 
-  async initSubWallet() {
-    if (this.sdkSubWallet) return;
-
-    this.sdkMasterWallet = await WalletJSSDKHelper.getMasterWallet(this.masterWallet.id);
-    this.sdkSubWallet = await <SubWallet>this.sdkMasterWallet.getSubWallet(this.chainId);
-  }
-
   public async getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
-    await this.initSubWallet();
-
     return await <string[]>this.sdkSubWallet.getAddresses(
       startIndex,
       count,
