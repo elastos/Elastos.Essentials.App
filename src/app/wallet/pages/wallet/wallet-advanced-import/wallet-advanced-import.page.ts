@@ -2,10 +2,14 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
+import { WalletAlreadyExistException } from 'src/app/model/exceptions/walletalreadyexist.exception';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { ElastosMainChainWalletNetworkOptions, WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { LocalStorage } from 'src/app/wallet/services/storage.service';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -24,6 +28,7 @@ export class WalletAdvancedImportPage implements OnInit {
   public mnemonicWords = new Array<any>();
 
   constructor(
+    public localStorage: LocalStorage,
     private walletService: WalletService,
     private walletCreationService: WalletCreationService,
     private authService: AuthService,
@@ -75,6 +80,15 @@ export class WalletAdvancedImportPage implements OnInit {
         } catch (err) {
           Logger.error('wallet', 'Wallet import error:', err);
           await this.native.hideLoading();
+          // Wallet js sdk throw exception if the master wallet already exists.
+          // So we should delete the wallet info from local storage.
+          await this.localStorage.deleteMasterWallet(this.masterWalletId);
+          let reworkedEx = WalletExceptionHelper.reworkedWalletJSException(err);
+          if (reworkedEx instanceof WalletAlreadyExistException) {
+            await PopupProvider.instance.ionicAlert("common.error", "wallet.Error-20005");
+          } else {
+            await PopupProvider.instance.ionicAlert("common.error", err.reason);
+          }
         }
       }
     } else {
