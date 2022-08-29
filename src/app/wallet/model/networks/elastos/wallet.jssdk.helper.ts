@@ -31,9 +31,6 @@ export class WalletJSSDKHelper {
       networkTemplate,
       netConfig
     );
-    // Load all masterWallets
-    let allMasterWallet = await this.masterWalletManager.getAllMasterWallets();
-    Logger.log('wallet', ' All Master Wallet ', allMasterWallet)
     return this.masterWalletManager;
   }
 
