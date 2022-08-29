@@ -29,6 +29,7 @@ import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { sleep } from 'src/app/helpers/sleep.helper';
 import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
@@ -733,6 +734,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 void this.transaction();
             }
         });
+
+        // Wait for the keyboard to close if needed, otherwise the popup is not centered.
+        await sleep(500);
+
         return await this.native.popup.present();
     }
 
@@ -772,12 +777,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (enteredText.length >= 3) {
             // Quick and dirty way to not try to resolve a name when it's actually an address already, not name.
             if (enteredText.length > 30) {
-              let addressValid = await this.isAddressValid(enteredText);
-              if (addressValid) return;
+                let addressValid = await this.isAddressValid(enteredText);
+                if (addressValid) return;
             }
 
             if (this.resolverNameTimeout) {
-              clearTimeout(this.resolverNameTimeout)
+                clearTimeout(this.resolverNameTimeout)
             }
             this.resolverNameTimeout = setTimeout(() => {
                 this.resolverName(enteredText);
@@ -786,18 +791,18 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     private resolverName(name: string) {
-      // eslint-disable-next-line no-async-foreach/no-async-foreach, @typescript-eslint/no-misused-promises
-      this.nameResolvingService.getResolvers().forEach(async resolver => {
-        // resolvers can answer at any time, asynchronously
-        const results = await resolver.resolve(name, this.fromSubWallet); // Use fromSubWallet just to know the network (toSubWallet is not always set)
-        Logger.log('wallet', "Name resolver got results from", resolver.getName(), results);
-        this.suggestedAddresses = this.suggestedAddresses.concat(results);
+        // eslint-disable-next-line no-async-foreach/no-async-foreach, @typescript-eslint/no-misused-promises
+        this.nameResolvingService.getResolvers().forEach(async resolver => {
+            // resolvers can answer at any time, asynchronously
+            const results = await resolver.resolve(name, this.fromSubWallet); // Use fromSubWallet just to know the network (toSubWallet is not always set)
+            Logger.log('wallet', "Name resolver got results from", resolver.getName(), results);
+            this.suggestedAddresses = this.suggestedAddresses.concat(results);
 
-        if (this.suggestedAddresses.length > 0) {
-            // Scroll screen to bottom to let the suggested resolved name appear on screen
-            void this.contentArea.scrollToBottom(500);
-        }
-      });
+            if (this.suggestedAddresses.length > 0) {
+                // Scroll screen to bottom to let the suggested resolved name appear on screen
+                void this.contentArea.scrollToBottom(500);
+            }
+        });
     }
 
     /**
