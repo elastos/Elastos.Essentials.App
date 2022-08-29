@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
@@ -43,6 +44,7 @@ export class NotificationsPage implements OnInit {
     public translate: TranslateService,
     private tipsService: TipsService,
     private events: GlobalEvents,
+    private browserService: DappBrowserService,
     // In-app Services
     private hiveManagerInitService: HiveManagerInitService,
     private dposVotingInitService: DPoSVotingInitService,
@@ -136,7 +138,10 @@ export class NotificationsPage implements OnInit {
           void this.globalNav.navigateTo(App.IDENTITY, '/identity/myprofile/home');
           break;
         case App.SETTINGS:
-          void this.globalNav.navigateTo(App.SETTINGS, '/settings/menu');
+          if (url)
+            void this.globalNav.navigateTo(App.SETTINGS, url);
+          else
+            void this.globalNav.navigateTo(App.SETTINGS, '/settings/menu');
           break;
         case App.WALLET:
           if (url) {

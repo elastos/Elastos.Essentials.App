@@ -46,6 +46,10 @@ export const zh = {
           'contact': '联系',
           'new-version-available-notif-title': '发现新版本！',
           'new-version-available-notif-info': 'Elastos Essentials 有新的版本 ({{ latestVersion }})，请尽快更新以获取最新的功能和问题修复！',
+          'checking-updates': 'Checking updates...',
+          'version-up-to-date': 'Your version is up to date.',
+          'check-version-error': 'Failed to get latest version info. Please try again later.',
+          'new-version-available': 'v{{ version }} available, touch to update.',
 
           /********** Developer Page **********/
           'developer-options': '开发者选项',

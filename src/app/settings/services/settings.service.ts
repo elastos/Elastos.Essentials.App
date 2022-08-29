@@ -44,7 +44,7 @@ export class SettingsService {
   init() {
     this.getRuntimeVersion();
 
-    runDelayed(() => this.checkLatestVersion(), 10000);
+    runDelayed(() => this.checkLatestVersionAndNotify(), 10000);
   }
 
   public async changePassword() {
@@ -76,17 +76,27 @@ export class SettingsService {
     });
   }
 
-  /**
-   * Checks on the essentials api if we are using the most recent version. If not, a notification is sent
-   * to the user to remind him to update.
-   */
-  private async checkLatestVersion() {
+  public async fetchVersionInfo(): Promise<CheckedVersion> {
     Logger.log("settings", "Checking is there is a newer application version available");
 
     let platform = this.platform.platforms().indexOf('android') >= 0 ? "android" : "ios";
     let requestUrl = `${environment.EssentialsAPI.serviceUrl}/updates/checkversion?version=${this.version}&platform=${platform}`;
     try {
-      let checkedVersion = <CheckedVersion>await this.jsonRPCService.httpGet(requestUrl);
+      return <CheckedVersion>await this.jsonRPCService.httpGet(requestUrl);
+    }
+    catch (e) {
+      Logger.error('settings', 'fetchVersionInfo() error:', e)
+      return null;
+    }
+  }
+
+  /**
+   * Checks on the essentials api if we are using the most recent version. If not, a notification is sent
+   * to the user to remind him to update.
+   */
+  private async checkLatestVersionAndNotify() {
+    try {
+      let checkedVersion = await this.fetchVersionInfo();
       if (checkedVersion) {
         if (!checkedVersion.shouldUpdate)
           Logger.log("settings", "The application is up to date");
@@ -104,7 +114,8 @@ export class SettingsService {
             key: 'app-update-available',
             title: this.translate.instant('settings.new-version-available-notif-title'),
             message: this.translate.instant('settings.new-version-available-notif-info', { latestVersion: checkedVersion.latestVersion }),
-            app: App.SETTINGS
+            app: App.SETTINGS,
+            url: "/settings/about"
           });
 
           notifiedVersions.push(checkedVersion.latestVersion);

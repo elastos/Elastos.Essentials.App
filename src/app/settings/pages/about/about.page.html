@@ -2,22 +2,38 @@
   <app-titlebar></app-titlebar>
   <ion-grid [class.dark-container]="theme.darkMode">
     <ion-card>
-      <img [src]="!theme.darkMode ? '/assets/settings/icon/light_mode/elalogo.svg' : '/assets/settings/icon/dark_mode/elalogo.svg'">
+      <img
+        [src]="!theme.darkMode ? '/assets/settings/icon/light_mode/elalogo.svg' : '/assets/settings/icon/dark_mode/elalogo.svg'">
       <ion-card-title>{{ 'settings.version' | translate }} {{ version }}</ion-card-title>
+
+      <div class="version-check" *ngIf="checkingVersion">
+        <ion-spinner name="crescent"></ion-spinner>
+        {{ 'settings.checking-updates' | translate }}
+      </div>
+
+      <div class="version-new" (click)="openAppUpdateUrl()" *ngIf="!checkingVersion && newerVersion">
+        <div class="dot"></div> {{ 'settings.new-version-available' | translate:{version: newerVersion} }}
+      </div>
+
+      <div class="version-up-to-date" *ngIf="!checkingVersion && !newerVersion && !checkVersionError">
+        {{ 'settings.version-up-to-date' | translate }}
+      </div>
+
+      <div class="version-up-to-date" *ngIf="!checkingVersion && checkVersionError">
+        {{ 'settings.check-version-error' | translate }}
+      </div>
     </ion-card>
 
     <ion-list>
-      <ion-row
-        class="section-row"
-        [class.removeBorder]="section === sections[sections.length - 1]"
-        *ngFor="let section of sections"
-      >
+      <ion-row class="section-row" [class.removeBorder]="section === sections[sections.length - 1]"
+        *ngFor="let section of sections">
         <ion-col size="12">
           <ion-label>{{ section.type | translate }}</ion-label>
         </ion-col>
         <ion-col class="bottom-col" size="12" *ngFor="let item of section.links">
-            <h4><span>&#8226;</span>&nbsp; {{ item.title | translate }}</h4> <hr>
-            <p (click)="openLink(item)">{{ item.link }}</p>
+          <h4><span>&#8226;</span>&nbsp; {{ item.title | translate }}</h4>
+          <hr>
+          <p (click)="openLink(item)">{{ item.link }}</p>
         </ion-col>
       </ion-row>
     </ion-list>

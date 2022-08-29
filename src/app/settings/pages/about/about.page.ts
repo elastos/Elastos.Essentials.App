@@ -32,18 +32,35 @@ export class AboutPage implements OnInit {
         { title: 'Elastos Discord', link: 'https://discord.gg/FGdF7CRAZr' },
       ],
     },
-  ]
+  ];
+
+  public checkingVersion = true;
+  public checkVersionError = false;
+  public newerVersion: string = null; // eg: 2.6.1 - null if user has the latest version
 
   constructor(
     public settings: SettingsService,
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    private globalIntentService: GlobalIntentService,
-
+    private globalIntentService: GlobalIntentService
   ) { }
 
   ngOnInit() {
     this.version = this.settings.version;
+
+    // Check version
+    void this.settings.fetchVersionInfo().then(checkedVersion => {
+      this.checkingVersion = false;
+
+      if (!checkedVersion)
+        this.checkVersionError = true;
+      else {
+        if (checkedVersion.shouldUpdate)
+          this.newerVersion = checkedVersion.latestVersion;
+        else
+          this.newerVersion = null;
+      }
+    });
   }
 
   ionViewWillEnter() {
@@ -59,5 +76,10 @@ export class AboutPage implements OnInit {
     } else {
       void this.globalIntentService.sendIntent('openurl', { url: item.link });
     }
+  }
+
+  public openAppUpdateUrl() {
+    // Open in external browser
+    void this.globalIntentService.sendIntent('openurl', { url: "https://edownload.elastos.net" });
   }
 }
