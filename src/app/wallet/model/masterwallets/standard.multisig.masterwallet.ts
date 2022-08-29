@@ -1,3 +1,4 @@
+import { WalletJSSDKHelper } from "../networks/elastos/wallet.jssdk.helper";
 import { AnyNetwork } from "../networks/network";
 import { MasterWallet } from "./masterwallet";
 import { SerializedStandardMultiSigMasterWallet } from "./wallet.types";
@@ -14,6 +15,11 @@ export class StandardMultiSigMasterWallet extends MasterWallet {
     masterWallet.deserialize(serialized);
 
     return masterWallet;
+  }
+
+  public async destroy() {
+    // Destroy the wallet in the wallet js sdk
+    await WalletJSSDKHelper.destroyWallet(this.id);
   }
 
   protected deserialize(serialized: SerializedStandardMultiSigMasterWallet) {
