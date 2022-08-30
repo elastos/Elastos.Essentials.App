@@ -103,7 +103,7 @@ class _Logger implements GlobalService {
      */
     public setCollectDevLogs(enabled: boolean) {
         this.collectDevLogs = enabled;
-        this.devLogs = [];
+        //this.devLogs = []; // NOTE: do not empty the logs every time because sometimes the UI triggers this methods a bit too much or temporarily with false, and we don't want to delete everything
     }
 
     /**
