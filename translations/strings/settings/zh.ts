@@ -60,6 +60,8 @@ export const zh = {
           'off': '关',
           'developer-tools': '开发者工具',
           'developer-screen-capture': '允许屏幕截图',
+          'developer-logs': 'Capture logs',
+          'developer-export-logs': 'Export captured logs',
 
           /********** Select-net Page **********/
           'choose-network': '选择网络',

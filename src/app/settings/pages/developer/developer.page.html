@@ -10,6 +10,7 @@
         <img src="assets/settings/default/right-arrow.svg">
       </ion-col>
     </ion-row>
+
     <!-- Screen recording -->
     <ion-row class="section-row" *ngIf="isAndroid()">
       <ion-col size="9" class="left-col">
@@ -20,6 +21,29 @@
         </ion-toggle>
       </ion-col>
     </ion-row>
+
+    <!-- Development logs -->
+    <ion-row class="section-row">
+      <ion-col size="9" class="left-col">
+        <h1>{{ 'settings.developer-logs' | translate }}</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <ion-toggle [(ngModel)]="captureLogs" (ionChange)="onAllowCaptureLogsChanged()" mode="ios">
+        </ion-toggle>
+      </ion-col>
+    </ion-row>
+
+    <!-- Export development logs -->
+    <ion-row class="section-row ion-activatable ripple" *ngIf="captureLogs" (click)="exportLogs()">
+      <ion-col size="9" class="left-col">
+        <h1>{{ 'settings.developer-export-logs' | translate }}</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <ion-icon mode="ios" name="copy"></ion-icon>
+      </ion-col>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+
     <!-- Essentials development tests -->
     <!--     <ion-row class="section-row" (click)="go('/settings/devtests')">
       <ion-col size="9" class="left-col">

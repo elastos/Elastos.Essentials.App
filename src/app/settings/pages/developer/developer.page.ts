@@ -1,11 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalSecurityService } from 'src/app/services/global.security.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 
@@ -18,6 +23,7 @@ export class DeveloperPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public allowScreenCapture = false;
+  public captureLogs = false;
 
   constructor(
     private platform: Platform,
@@ -25,7 +31,10 @@ export class DeveloperPage implements OnInit {
     public theme: GlobalThemeService,
     public developer: DeveloperService,
     public translate: TranslateService,
+    private clipboard: Clipboard,
+    private native: GlobalNativeService,
     private globalSecurityService: GlobalSecurityService,
+    private globalsPrefsService: GlobalPreferencesService,
     private nav: GlobalNavService,
   ) { }
 
@@ -35,6 +44,7 @@ export class DeveloperPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('settings.developer-options'));
 
     this.allowScreenCapture = await this.globalSecurityService.getScreenCaptureAllowed();
+    this.captureLogs = await this.globalsPrefsService.getCollectLogs(DIDSessionsStore.signedInDIDString);
   }
 
   ionViewWillLeave() {
@@ -54,6 +64,17 @@ export class DeveloperPage implements OnInit {
 
   public onAllowScreenCaptureChanged() {
     void this.globalSecurityService.setScreenCaptureAllowed(this.allowScreenCapture);
+  }
+
+  public onAllowCaptureLogsChanged() {
+    void this.globalsPrefsService.setCollectLogs(DIDSessionsStore.signedInDIDString, this.captureLogs);
+  }
+
+  public exportLogs() {
+    let devLogs = Logger.getDevLogs();
+
+    void this.clipboard.copy(JSON.stringify(devLogs));
+    this.native.genericToast('common.copied-to-clipboard', 2000, "success");
   }
 
   public isAndroid(): boolean {

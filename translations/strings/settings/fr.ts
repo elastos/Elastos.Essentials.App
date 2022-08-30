@@ -60,6 +60,8 @@ export const fr = {
         'off': 'INACTIF',
         'developer-tools': 'Outils de développement',
         'developer-screen-capture': 'Autoriser la capture de l\'écran',
+        'developer-logs': 'Capturer les logs',
+        'developer-export-logs': 'Exporter les logs capturés',
 
         /********** Select-net Page **********/
         'choose-network': 'Choix du réseau',

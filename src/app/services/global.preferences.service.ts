@@ -33,6 +33,7 @@ export class GlobalPreferencesService {
       "developer.install.verifyDigest": false,
       "developer.backgroundservices.startonboot": true,
       "developer.screencapture": false,
+      "developer.collectLogs": false,
       "privacy.browser.usebuiltin": useBuiltInBrowser,
       "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
       "privacy.credentialtoolbox.stats": true, // Publish anonymous stats about credentials usage, to the external credential toolbox service, or not
@@ -154,5 +155,13 @@ export class GlobalPreferencesService {
 
   public setSendStatsToCredentialToolbox(did: string, sendStats: boolean): Promise<void> {
     return this.setPreference(did, "privacy.credentialtoolbox.stats", sendStats);
+  }
+
+  public getCollectLogs(did: string): Promise<boolean> {
+    return this.getPreference<boolean>(did, "developer.collectLogs");
+  }
+
+  public setCollectLogs(did: string, collectLogs: boolean): Promise<void> {
+    return this.setPreference(did, "developer.collectLogs", collectLogs);
   }
 }

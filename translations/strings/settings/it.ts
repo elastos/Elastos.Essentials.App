@@ -60,6 +60,8 @@ export const it = {
         'off': 'OFF',
         'developer-tools': 'Strumenti per sviluppatori',
         'developer-screen-capture': 'Allow screen capture',
+        'developer-logs': 'Capture logs',
+        'developer-export-logs': 'Export captured logs',
 
         /********** Select-net Page **********/
         'choose-network': 'Scegli rete',
