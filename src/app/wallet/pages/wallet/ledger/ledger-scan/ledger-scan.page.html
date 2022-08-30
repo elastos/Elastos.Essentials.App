@@ -26,7 +26,7 @@
         </ion-row>
 
         <!-- Found device -->
-        <ion-row class="device-row ripple ion-activatable" *ngIf="device" (click)="connectLedger()">
+        <ion-row class="device-row ripple ion-activatable" *ngIf="device">
             <div class='title'>{{ 'wallet.ledger-scan-available-devices' | translate }}</div>
         </ion-row>
         <ion-row class="device-row ripple ion-activatable" *ngIf="device" (click)="connectLedger()">

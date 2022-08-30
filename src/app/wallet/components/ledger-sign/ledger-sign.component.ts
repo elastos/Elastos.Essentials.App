@@ -99,6 +99,7 @@ export class LedgerSignComponent implements OnInit {
     try {
       if (this.transport) {
         await this.transport.close();
+        await BluetoothTransport.disconnect(this.transport.id)
         this.transport = null;
         this.ledgerConnectStatus.next(false);
       }
@@ -126,9 +127,10 @@ export class LedgerSignComponent implements OnInit {
     }, 3000);
   }
 
-  private reConnectDecice() {
+  private async reConnectDecice() {
     if (this.transport) {
-      void this.transport.close();
+      await this.transport.close();
+      await BluetoothTransport.disconnect(this.transport.id)
       this.transport = null;
       this.ledgerConnectStatus.next(false);
     }
@@ -154,6 +156,7 @@ export class LedgerSignComponent implements OnInit {
   async disconnect() {
     if (this.transport) {
       await this.transport.close();
+      await BluetoothTransport.disconnect(this.transport.id)
       this.transport = null;
     }
   }
@@ -215,6 +218,7 @@ export class LedgerSignComponent implements OnInit {
           message = this.translate.instant('wallet.ledger-error-app-not-start', { appname: this.ledgerNanoAppname })
           break;
         case 0x6982:
+        case 0x6a82:
           message = this.translate.instant('wallet.ledger-prompt', { appname: this.ledgerNanoAppname })
           break;
         case 0x6985:

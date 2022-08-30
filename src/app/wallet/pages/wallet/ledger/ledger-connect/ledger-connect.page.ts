@@ -23,7 +23,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DisconnectedDeviceDuringOperation } from '@ledgerhq/errors';
-import Transport from '@ledgerhq/hw-transport';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { MenuSheetMenu } from 'src/app/components/menu-sheet/menu-sheet.component';
@@ -69,7 +68,7 @@ export class LedgerConnectPage implements OnInit {
 
     public device = null;
     private ledgerConnectType: LedgerConnectType = null;
-    public transport: Transport = null;
+    public transport: BluetoothTransport = null;
     public connecting = false;
     public connectError = false;
     public gettingAddresses = false;
@@ -134,9 +133,10 @@ export class LedgerConnectPage implements OnInit {
         this.connectDevice();
     }
 
-    ionViewWillLeave() {
+    async ionViewWillLeave() {
         if (this.transport) {
-            void this.transport.close();
+            await this.transport.close();
+            await BluetoothTransport.disconnect(this.transport.id)
         }
         this.closeConnectTimeout();
         this.closeGetAddressTimeout()
@@ -146,6 +146,7 @@ export class LedgerConnectPage implements OnInit {
         try {
             if (this.transport) {
                 await this.transport.close();
+                await BluetoothTransport.disconnect(this.transport.id)
                 this.transport = null;
                 this.ledgerConnectStatus.next(false);
             }
@@ -175,11 +176,12 @@ export class LedgerConnectPage implements OnInit {
         }, 3000);
     }
 
-    private reConnectDecice() {
+    private async reConnectDecice() {
       if (this.transport) {
-        void this.transport.close();
-        this.transport = null;
-        this.ledgerConnectStatus.next(false);
+          await this.transport.close();
+          await BluetoothTransport.disconnect(this.transport.id)
+          this.transport = null;
+          this.ledgerConnectStatus.next(false);
       }
 
       this.connectDevice();
@@ -201,18 +203,28 @@ export class LedgerConnectPage implements OnInit {
     }
 
     private async refreshAddresses() {
+        Logger.log('wallet', 'LedgerConnectPage refreshAddresses')
+
         // Every time we change the app on ledger, we need to reconnect ledger.
         if (this.failedToGetAddress) {
           await this.reConnectDecice();
           this.createLedgerApp();
         }
 
+        this.addresses = [];
         this.gettingAddresses = true;
         try {
-            this.addresses = await this.ledgerApp.getAddresses(this.addressType, 0, 5, false);
+            // We only get 5 addresses.
+            for (let i = 0; i < 5 && this.gettingAddresses; i++) {
+                let addresses = await this.ledgerApp.getAddresses(this.addressType, i, 1, false);
+                this.addresses = [...this.addresses, ...addresses];
+
+                if (i === 0) {
+                    this.closeGetAddressTimeout();
+                }
+            }
             this.gettingAddresses = false;
             this.failedToGetAddress = false;
-            this.closeGetAddressTimeout();
         }
         catch (e) {
             this.gettingAddresses = false;
@@ -227,6 +239,7 @@ export class LedgerConnectPage implements OnInit {
             // TransportStatusError -- statusCode: 27013(0x6985)  -- user canceled the transaction
             // TransportStatusError -- statusCode: 27010(0x6982)  -- Ledger device: Security not satisfied (dongle locked or have invalid access rights) (0x6982)
             // TransportStatusError -- statusCode: 32772(0x8004)  -- Ledger device: UNKNOWN_ERROR (0x8004)
+            // TransportStatusError -- statusCode: 27266(0x6a82)  -- Ledger device: UNKNOWN_ERROR (0x6a82)
             // TransportError -- id: TransportLocked name: TransportError message: Ledger Device is busy (lock getAddress)
 
             // if the ledger is disconnected, we need connect ledger again.
@@ -247,6 +260,7 @@ export class LedgerConnectPage implements OnInit {
                 message = this.translate.instant('wallet.ledger-error-app-not-start', { appname: this.ledgerNanoAppname })
                 break;
               case 0x6982:
+              case 0x6a82:
                 message = this.translate.instant('wallet.ledger-prompt', { appname: this.ledgerNanoAppname })
                 break;
               case 0x6985:
@@ -272,6 +286,7 @@ export class LedgerConnectPage implements OnInit {
 
       void this.refreshAddresses();
 
+      Logger.log('ledger', ' Set Timeout for getting addresses:', this.getAddressTimeoutValue);
       this.getAddressTimeout = setTimeout(() => {
           Logger.warn('ledger', ' Timeout, Get address again');
           void this.refreshAddresses();
@@ -308,6 +323,9 @@ export class LedgerConnectPage implements OnInit {
         // Reset addresses
         this.addresses = [];
 
+        // Stop getting addresses.
+        this.gettingAddresses = false;
+
         // We should create a new transport if we changed the network or changed the active app on ledger.
         await this.reConnectDecice();
 
@@ -330,21 +348,21 @@ export class LedgerConnectPage implements OnInit {
             } else {
                 this.ledgerNanoAppname = "Bitcoin Test"
             }
-            this.getAddressTimeoutValue = 25000; // Getting BTC address is slower.
+            this.getAddressTimeoutValue = 10000; // Getting BTC address is slower.
             break;
         case ElastosMainChainNetworkBase.networkKey:
             this.shouldPickAddressType = false;
             this.addressType = ELAAddressType.M2305;
             this.ledgerApp = new ELALedgerApp(this.transport);
             this.ledgerNanoAppname = "Elastos"
-            this.getAddressTimeoutValue = 10000;
+            this.getAddressTimeoutValue = 5000;
             break;
         default: // Consider all other networks as EVMs - auto select the only type
             this.shouldPickAddressType = false;
             this.addressType = EVMAddressType.EVM_STANDARD;
             this.ledgerApp = new EVMLedgerApp(this.transport);
             this.ledgerNanoAppname = "Ethereum"
-            this.getAddressTimeoutValue = 10000;
+            this.getAddressTimeoutValue = 5000;
       }
     }
 
@@ -401,6 +419,9 @@ export class LedgerConnectPage implements OnInit {
 
     public async selectAddress(account: AnyLedgerAccount) {
         Logger.log(TAG, 'Selected account/address:', account)
+
+        // Stop getting addresses
+        this.gettingAddresses = false;
 
         // switch network if the picked network isn't the active network.
         if (this.selectedNetwork != WalletNetworkService.instance.activeNetwork.value) {
@@ -477,17 +498,5 @@ export class LedgerConnectPage implements OnInit {
         } while (nameValid);
 
         this.walletName = walletName;
-    }
-
-    public reset() {
-      if (this.transport) {
-        void this.transport.close();
-        this.transport = null;
-      }
-      this.closeConnectTimeout();
-    }
-
-    public connect() {
-      this.connectDevice();
     }
 }
