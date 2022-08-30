@@ -46,10 +46,10 @@ export const zh = {
           'contact': '联系',
           'new-version-available-notif-title': '发现新版本！',
           'new-version-available-notif-info': 'Elastos Essentials 有新的版本 ({{ latestVersion }})，请尽快更新以获取最新的功能和问题修复！',
-          'checking-updates': 'Checking updates...',
-          'version-up-to-date': 'Your version is up to date.',
-          'check-version-error': 'Failed to get latest version info. Please try again later.',
-          'new-version-available': 'v{{ version }} available, touch to update.',
+          'checking-updates': '正在检查更新...',
+          'version-up-to-date': '已是最新版本.',
+          'check-version-error': '无法获取最新版本信息，请稍后再试',
+          'new-version-available': '发现新版本 v{{ version }}，点击更新',
 
           /********** Developer Page **********/
           'developer-options': '开发者选项',
@@ -60,8 +60,8 @@ export const zh = {
           'off': '关',
           'developer-tools': '开发者工具',
           'developer-screen-capture': '允许屏幕截图',
-          'developer-logs': 'Capture logs',
-          'developer-export-logs': 'Export captured logs',
+          'developer-logs': '捕获日志',
+          'developer-export-logs': '导出捕获的日志',
 
           /********** Select-net Page **********/
           'choose-network': '选择网络',
