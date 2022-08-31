@@ -102,9 +102,7 @@ export class GlobalELAUtxoService extends GlobalService {
     }
 
     if (utxosCount > Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
-      const message = GlobalLanguageService.instance.translate('wallet.notification-too-many-utxos',
-        { walletname: this.activeNetworkWallet.masterWallet.name, count: utxosCount });
-      this.sendNotification(message);
+      this.sendNotification(utxosCount);
     } else {
       this.deletePreviousNotification();
     }
@@ -126,19 +124,20 @@ export class GlobalELAUtxoService extends GlobalService {
     return normalUxtos;
   }
 
-  private sendNotification(message: string) {
+  private sendNotification(utxosCount: number) {
     const notification = {
       app: App.WALLET,
-      key: 'consolidateutxo-' + this.activeNetworkWallet.masterWallet.id,
+      key: 'consolidateutxo-' + this.mainChainSubwallet.masterWallet.id,
       title: GlobalLanguageService.instance.translate('wallet.wallet-settings-consolidate-utxos'),
-      message: message,
+      message: GlobalLanguageService.instance.translate('wallet.notification-too-many-utxos',
+      { walletname: this.mainChainSubwallet.masterWallet.name, count: utxosCount }),
       url: '/wallet/wallet-settings'
     };
     void GlobalNotificationsService.instance.sendNotification(notification);
   }
 
   private deletePreviousNotification() {
-    let key = 'consolidateutxo-' + this.activeNetworkWallet.masterWallet.id;
+    let key = 'consolidateutxo-' + this.mainChainSubwallet.masterWallet.id;
     let notifications = GlobalNotificationsService.instance.getNotifications();
     let utxoNotifications = notifications.filter(notification => notification.key === key);
     if (utxoNotifications.length > 0)
