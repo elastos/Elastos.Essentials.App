@@ -1,5 +1,5 @@
 <!-- Identity -->
-<ion-row *ngIf="getSignedInIdentity()" class="id-row" [class.darkContainer]="theme.darkMode">
+<ion-row *ngIf="getSignedInIdentity()" class="root id-row" [class.darkContainer]="theme.darkMode">
   <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">
     <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
       <img

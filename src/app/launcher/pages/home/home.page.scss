@@ -8,7 +8,9 @@ ion-content {
 
 /************************************** ALL THEMES **************************************/
 .container {
-    padding: 10px 0px;
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: 50px; // Footer
 
     ion-slide {
         display: flex;
@@ -21,6 +23,34 @@ ion-content {
         // screen height to be able to swipe from anywhere on the screen.
         // hack: only 90vh to not make slide content scroll under the title bar...
         min-height: 90vh;
+    }
+}
+
+.home-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    height: 50px;
+    display: flex;
+    place-content: space-between;
+    align-items: center;
+
+    .edit,
+    .add {
+        margin: 20px;
+    }
+
+    .nav {
+        display: flex;
+
+        .dot {
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            margin: 5px;
+        }
     }
 }
 
@@ -114,7 +144,7 @@ ion-content {
 
 /************************************** DARK THEME **************************************/
 .dark-container {
-    background: #121212;
+    background: #000;
 
     .id-row {
         .mid-col {
@@ -168,6 +198,20 @@ ion-content {
                             opacity: 1;
                         }
                     }
+                }
+            }
+        }
+    }
+
+    .home-footer {
+        background: #000;
+
+        .nav {
+            .dot {
+                background: #868686;
+
+                &.active {
+                    background: #fff;
                 }
             }
         }

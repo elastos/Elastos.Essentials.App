@@ -26,7 +26,7 @@ export class HiveSyncWidget implements Widget, OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    void this.globalHiveService.getSyncDataToHiveWasPrompted().then(sync => this.needToPromptHiveSync = !sync);
+    void this.globalHiveService.getSyncDataToHiveWasPrompted().then(prompted => this.needToPromptHiveSync = !prompted);
 
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
     WidgetsService.instance.editionMode.subscribe(editing => {

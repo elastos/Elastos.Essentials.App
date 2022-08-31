@@ -5,6 +5,8 @@
 export enum BuiltInIcon {
     /** Elastos default icon */
     ELASTOS = "elastos",
+    /** House */
+    HOME = "home",
     /** Go back */
     BACK = "back",
     /** Close cross */

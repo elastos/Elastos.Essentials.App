@@ -1,3 +1,7 @@
+import {
+  animate, state,
+  style, transition, trigger
+} from '@angular/animations';
 import { DragDrop, DragRef, DropListRef } from '@angular/cdk/drag-drop';
 import { Component, ComponentRef, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewRef } from '@angular/core';
 import { WidgetInstance, WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
@@ -6,11 +10,27 @@ import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsUIService } from '../../services/widgets.ui.service';
 import { WidgetHolderComponent } from '../widget-holder/widget-holder.component';
 import { WidgetState } from '../widgetstate';
-
 @Component({
   selector: 'widget-container',
   templateUrl: './widget-container.component.html',
   styleUrls: ['./widget-container.component.scss'],
+  animations: [
+    // the fade-in/fade-out animation.
+    trigger('simpleFadeAnimation', [
+      // the "in" style determines the "resting" state of the element when it is visible.
+      state('in', style({ opacity: 1 })),
+
+      // fade in when created. this could also be written as transition('void => *')
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate(500)
+      ]),
+
+      // fade out when destroyed. this could also be written as transition('void => *')
+      /* transition(':leave',
+        animate(400, style({ opacity: 0 }))) */
+    ])
+  ]
 })
 export class WidgetContainerComponent implements OnInit {
   @ViewChild('widgetslist', { static: true, read: ViewContainerRef }) widgetslist: ViewContainerRef;
@@ -123,6 +143,10 @@ export class WidgetContainerComponent implements OnInit {
 
   public inLiveMode(): boolean {
     return this.mode === "live";
+  }
+
+  public exitEdition() {
+    this.widgetsService.exitEditionMode();
   }
 
   /**

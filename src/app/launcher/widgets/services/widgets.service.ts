@@ -79,6 +79,10 @@ export class WidgetsService {
         this.editionMode.next(!currentEditionMode);
     }
 
+    public enterEditionMode() {
+        this.editionMode.next(true);
+    }
+
     public exitEditionMode() {
         this.editionMode.next(false);
     }

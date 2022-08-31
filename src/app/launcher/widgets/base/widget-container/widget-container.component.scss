@@ -6,6 +6,24 @@
   justify-content: center;
   flex-direction: column;
 
+  .edition-controls {
+    display: flex;
+    align-self: center;
+    margin: 10px;
+
+    .exit-edition {
+      border-radius: 50px;
+      width: 100px;
+      background: #acacac;
+      padding: 6px;
+      transition: all 0.3s ease;
+
+      &:active {
+        opacity: 0.5;
+      }
+    }
+  }
+
   .info {
     font-size: 12px;
     margin: 20px;
@@ -33,4 +51,6 @@
 }
 
 .darkContainer {
+  .edition-controls {
+  }
 }

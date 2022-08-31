@@ -1,13 +1,21 @@
 <div class="root" [class.darkContainer]="theme.darkMode">
+
+  <!-- Button to exit the edition mode -->
+  <div class="edition-controls" [@simpleFadeAnimation]="'in'" *ngIf="inLiveMode() && editing">
+    <div class="exit-edition" (click)="exitEdition()">
+      <img src="/assets/launcher/icons/check.svg" />
+    </div>
+  </div>
+
   <!-- Info about edition mode -->
-  <div *ngIf="inLiveMode() && editing" class="info">
+  <!-- <div *ngIf="inLiveMode() && editing" class="info" [@simpleFadeAnimation]="'in'">
     Note: some widgets show only in edition mode and disappear in standard mode. No worries, they will apper when they
     think they have to!
   </div>
 
   <div class="add-widget" (click)="addWidget()" *ngIf="inLiveMode() && editing">
     + Add widget
-  </div>
+  </div> -->
 
   <div #widgetsboundaries id="widgetsboundaries">
     <div #widgetslist class="widgets-list">

@@ -161,7 +161,8 @@ export class TitleBarComponent {
         // Replace built-in icon path placeholders with real picture path
         switch (this.icons[iconSlot].iconPath) {
             case BuiltInIcon.ELASTOS:
-                return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/elastos.svg' : 'assets/components/titlebar/darkmode/elastos.svg';
+            case BuiltInIcon.HOME:
+                return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/elastos.svg' : 'assets/components/titlebar/darkmode/home.svg';
             case BuiltInIcon.BACK:
                 return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/back.svg' : 'assets/components/titlebar/darkmode/back.svg';
             case BuiltInIcon.CLOSE:
@@ -175,6 +176,7 @@ export class TitleBarComponent {
             case BuiltInIcon.SETTINGS:
                 return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/settings.svg' : 'assets/components/titlebar/darkmode/settings.svg';
             case BuiltInIcon.HELP:
+                // TODO
                 return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/help.svg' : 'assets/components/titlebar/darkmode/help.svg';
             case BuiltInIcon.HORIZONTAL_MENU:
                 return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/horizontal_menu.svg' : 'assets/components/titlebar/darkmode/horizontal_menu.svg';

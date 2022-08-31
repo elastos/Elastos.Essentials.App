@@ -1,5 +1,9 @@
+.root {
+  margin: 10px 0;
+}
+
 .widget-background {
-  border-radius: 25px;
+  border-radius: 15px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -8,6 +12,7 @@
   opacity: 1;
   background-color: #ffffff;
   box-shadow: 0 3px 15px 0 #ededf0;
+  margin: 10px 0;
 
   .title-col {
     text-align: left;

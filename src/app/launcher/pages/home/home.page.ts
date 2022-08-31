@@ -1,20 +1,21 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { IonSlides, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
+import { WidgetContainerComponent } from '../../widgets/base/widget-container/widget-container.component';
 import { WidgetPluginsService } from '../../widgets/services/plugin.service';
 import { WidgetsService } from '../../widgets/services/widgets.service';
 import { NotificationsPage } from '../notifications/notifications.page';
@@ -22,11 +23,14 @@ import { NotificationsPage } from '../notifications/notifications.page';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  styleUrls: ['home.page.scss']
 })
 export class HomePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('widgetsslides', { static: true }) widgetsSlides: IonSlides;
+  @ViewChildren(WidgetContainerComponent) widgetContainersList: QueryList<WidgetContainerComponent>;
+
+  private widgetContainers: WidgetContainerComponent[] = [];
 
   private popover: HTMLIonPopoverElement = null;
   private modal: any = null;
@@ -39,6 +43,8 @@ export class HomePage implements OnInit {
     spaceBetween: 10,
     initialSlide: 1
   };
+  public activeScreenIndex = 1;
+  public editingWidgets = false;
 
   constructor(
     public toastCtrl: ToastController,
@@ -75,11 +81,11 @@ export class HomePage implements OnInit {
        this.globalNotifications.sendNotification(notification);
      }, 2000); */
 
-    this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
-    this.titleBar.setNavigationMode(null);
+    //this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "edit-widgets",
-      iconPath: BuiltInIcon.EDIT
+      key: "home",
+      iconPath: BuiltInIcon.HOME
     });
     this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
       key: "notifications",
@@ -87,8 +93,9 @@ export class HomePage implements OnInit {
     });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       switch (icon.key) {
-        case 'edit-widgets':
-          void this.toggleEditWidgets();
+        case 'home':
+          this.widgetsService.exitEditionMode(); // Exit edition mode if needed
+          void this.widgetsSlides.slideTo(1); // re-center on the middle screen
           return;
         case 'notifications':
           void this.showNotifications();
@@ -109,33 +116,22 @@ export class HomePage implements OnInit {
     }
 
     this.themeSubscription = this.theme.activeTheme.subscribe(theme => {
-      if (theme === AppTheme.DARK) {
-        this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
-          key: "scan",
-          iconPath: "/assets/launcher/icons/dark_mode/scan.svg"
-        });
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-          key: "settings",
-          iconPath: "/assets/launcher/icons/dark_mode/settings.svg"
-        });
-      }
-      else {
-        this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
-          key: "scan",
-          iconPath: "/assets/launcher/icons/scan.svg"
-        });
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-          key: "settings",
-          iconPath: "/assets/launcher/icons/settings.svg"
-        });
-      }
+      this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
+        key: "scan",
+        iconPath: BuiltInIcon.SCAN
+      });
+      this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+        key: "settings",
+        iconPath: BuiltInIcon.SETTINGS
+      });
     });
 
     if (this.didService.signedIdentity) { // Should not happen, just in case - for ionic hot reload
       this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
         switch (template) {
           case MAINNET_TEMPLATE:
-            this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
+            //this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
+            this.titleBar.setTitle(null);
             break;
           case TESTNET_TEMPLATE:
             this.titleBar.setTitle('TEST NET Active');
@@ -148,6 +144,8 @@ export class HomePage implements OnInit {
     }
 
     this.widgetsEditionModeSub = this.widgetsService.editionMode.subscribe(editionMode => {
+      this.editingWidgets = editionMode;
+
       // Lock the slider during edition to avoid horizontal scrolling
       void this.widgetsSlides.lockSwipes(editionMode);
 
@@ -168,6 +166,9 @@ export class HomePage implements OnInit {
     Logger.log("launcher", "Launcher home screen did enter");
 
     this.globalStartupService.setStartupScreenReady();
+
+    //console.log(this.widgetContainers)
+    this.widgetContainers = this.widgetContainersList.toArray();
   }
 
   ionViewWillLeave() {
@@ -200,7 +201,19 @@ export class HomePage implements OnInit {
     await this.modal.present();
   }
 
-  private toggleEditWidgets() {
+  public toggleEditWidgets() {
     this.widgetsService.toggleEditionMode();
+  }
+
+  public addWidget() {
+    // Enter edition mode
+    this.widgetsService.enterEditionMode();
+
+    // Pick a widget
+    this.widgetContainers[this.activeScreenIndex].addWidget();
+  }
+
+  public async onSlideChange() {
+    this.activeScreenIndex = await this.widgetsSlides.getActiveIndex();
   }
 }
