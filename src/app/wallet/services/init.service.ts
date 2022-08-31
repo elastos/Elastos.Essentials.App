@@ -7,6 +7,7 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { CryptoNameResolver } from '../model/address-resolvers';
+import { ELADomainResolver } from '../model/address-resolvers/resolvers/ELADomainAddressResolver';
 import { ENSResolver } from '../model/address-resolvers/resolvers/ENSAddressResolver';
 import { IdrissResolver } from '../model/address-resolvers/resolvers/IdrissAddressResolver';
 import { UnstoppableDomainsAddressResolver } from '../model/address-resolvers/resolvers/UnstoppableDomainsAddressResolver';
@@ -198,6 +199,7 @@ export class WalletInitService extends GlobalService {
     this.nameResolvingService.registerNameResolver(new UnstoppableDomainsAddressResolver(this.httpClient));
     this.nameResolvingService.registerNameResolver(new IdrissResolver());
     this.nameResolvingService.registerNameResolver(new ENSResolver());
+    this.nameResolvingService.registerNameResolver(new ELADomainResolver());
   }
 
   public async stop(): Promise<void> {

@@ -55,6 +55,12 @@
       "path": [
         "./node_modules/path-browserify"
       ],
+      "http": [
+        "./node_modules/agent-base"
+      ],
+      "https": [
+        "./node_modules/agent-base"
+      ],
       "elliptic": [
         "./node_modules/elliptic"
       ],

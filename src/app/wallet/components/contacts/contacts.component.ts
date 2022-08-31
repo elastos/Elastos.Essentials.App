@@ -8,6 +8,7 @@ type CryptoAddressInfo = {
   cryptoname: string;
   type: string;
   address: string;
+  resolver: string;
 }
 
 @Component({
@@ -48,7 +49,8 @@ export class ContactsComponent implements OnInit {
           this.supportedCryptoAddresses.push({
             cryptoname: this.contactsService.contacts[index].cryptoname,
             type: addresses[i].type,
-            address: addresses[i].address
+            address: addresses[i].address,
+            resolver: this.contactsService.contacts[index].type
           })
         }
       }
