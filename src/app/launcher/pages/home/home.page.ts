@@ -448,6 +448,9 @@ export class HomePage implements OnInit {
     if (decimalplace == -1) {
       decimalplace = this.currencyService.selectedCurrency.decimalplace;
     }
+    if (!balance.isGreaterThan(1)) {
+        decimalplace = 8;
+    }
     return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toFixed();
   }
 

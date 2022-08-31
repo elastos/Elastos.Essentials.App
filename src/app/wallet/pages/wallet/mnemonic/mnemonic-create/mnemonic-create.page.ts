@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { TitleBarForegroundMode } from '../../../../../components/titlebar/titlebar.types';
@@ -59,7 +58,7 @@ export class MnemonicCreatePage implements OnInit {
     }
 
     async init() {
-        this.masterWalletId = Util.uuid(6, 16);
+        this.masterWalletId = this.walletManager.createMasterWalletID();
         this.mnemonicStr = await this.walletManager.spvBridge.generateMnemonic(this.prefs.getMnemonicLang());
         void this.native.hideLoading();
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/);

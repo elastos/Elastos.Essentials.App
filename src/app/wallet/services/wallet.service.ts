@@ -673,10 +673,10 @@ export class WalletService {
         let masterWallet = this.masterWallets[wallet.id];
         let networkWallet = await activeNetwork.createNetworkWallet(masterWallet);
 
-        this.networkWallets[wallet.id] = networkWallet; // It's ok to be a null network wallet
-
         if (!networkWallet) {
             Logger.warn("wallet", "Failed to create network wallet", masterWallet, activeNetwork);
+        } else {
+            this.networkWallets[wallet.id] = networkWallet;
         }
 
         // Notify that this network wallet is the active one

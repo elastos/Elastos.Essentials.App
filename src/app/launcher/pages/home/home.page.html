@@ -88,11 +88,11 @@
                 </div>
                 <div *ngIf="masterWalletMap.networkWallet">
                   <div class="total">{{ 'wallet.total-amount' | translate }}</div>
-                  <div *ngIf="!currencyService.useCurrency" class="balance">
+                  <div *ngIf="!currencyService.useCurrency" class="balance" [class.smallFont]="getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalance(), masterWalletMap.networkWallet.getDecimalPlaces()).length > 8">
                     {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalance(), masterWalletMap.networkWallet.getDecimalPlaces()) }}
                     {{ masterWalletMap.networkWallet.getDisplayTokenName() }}
                   </div>
-                  <div *ngIf="currencyService.useCurrency" class="balance">
+                  <div *ngIf="currencyService.useCurrency" class="balance" [class.smallFont]="getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalanceInActiveCurrency()).length > 8">
                     {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalanceInActiveCurrency()) }}
                     {{ currencyService.selectedCurrency.symbol }}
                   </div>

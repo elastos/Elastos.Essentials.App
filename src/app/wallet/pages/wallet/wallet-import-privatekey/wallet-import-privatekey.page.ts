@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { PrivateKeyType } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -42,7 +41,7 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
     private intentService: IntentService,
     public element: ElementRef
   ) {
-    this.masterWalletId = Util.uuid(6, 16);
+    this.masterWalletId = this.walletManager.createMasterWalletID();
   }
 
   ngOnInit() {
