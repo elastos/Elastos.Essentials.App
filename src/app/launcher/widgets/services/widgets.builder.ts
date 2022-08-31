@@ -10,6 +10,7 @@ import { ContactsWidget } from '../builtin/contacts/contacts.widget';
 import { DiscoverDAppsWidget } from '../builtin/discover-dapps/discover-dapps.widget';
 import { EasyBridgeWidget } from '../builtin/easy-bridge/easy-bridge.widget';
 import { ElastosVotingWidget } from '../builtin/elastos-voting/elastos-voting.widget';
+import { HiveSyncWidget } from '../builtin/hive-sync/hive-sync.widget';
 import { HiveWidget } from '../builtin/hive/hive.widget';
 import { IdentityWidget } from '../builtin/identity/identity.widget';
 import { NewRedPacketsWidget } from '../builtin/new-red-packets/new-red-packets.widget';
@@ -74,6 +75,7 @@ export class WidgetsBuilder {
                 case "elastos-voting": widgetComponentClass = ElastosVotingWidget; break;
                 case "recent-apps": widgetComponentClass = RecentAppsWidget; break;
                 case "backup-identity": widgetComponentClass = BackupIdentityWidget; break;
+                case "hive-sync": widgetComponentClass = HiveSyncWidget; break;
                 case "wallet-connect": widgetComponentClass = WalletConnectWidget; break;
                 case "new-red-packets": widgetComponentClass = NewRedPacketsWidget; break;
                 case "easy-bridge": widgetComponentClass = EasyBridgeWidget; break;

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { JSONObject } from '@elastosfoundation/did-js-sdk';
 import { Vault } from '@elastosfoundation/hive-js-sdk';
+import { Subscription } from 'rxjs';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Contact } from '../models/contact.model';
 import { FriendsService } from './friends.service';
 
@@ -19,18 +20,23 @@ export class BackupService {
 
   public restoredContacts: Contact[] = [];
 
+  private contactSub: Subscription = null;
+  private deleteContactSub: Subscription = null;
+  private useHiveSyncSub: Subscription = null;
+
   constructor(
     private events: GlobalEvents,
     private globalHiveService: GlobalHiveService,
-    private globalStorage: GlobalStorageService,
     private friendsService: FriendsService,
+    private prefs: GlobalPreferencesService
   ) { }
 
   async init() {
-    this.events.subscribe("backup:contact", (contact) => {
+    this.contactSub = this.events.subscribe("backup:contact", (contact) => {
       void this.upsertDatabaseEntry('contacts', contact.id, contact);
     });
-    this.events.subscribe("backup:deleteContact", (contact) => {
+
+    this.deleteContactSub = this.events.subscribe("backup:deleteContact", (contact) => {
       void this.deleteDatabaseEntry('contacts', contact.id);
     });
 
@@ -41,7 +47,6 @@ export class BackupService {
         return;
       }
 
-
       // did:elastos:iaMPKSkYLJYmbBTuT3JfF9E8cFtLWky5vk - Test
       this.vaultServices = await this.globalHiveService.getActiveUserVaultServices();
       if (!this.vaultServices) {
@@ -51,7 +56,7 @@ export class BackupService {
 
       Logger.log("contacts", "User vault retrieved. Now creating a new backup restore helper instance", this.vaultServices);
 
-      this.backupRestoreHelper = new HiveDataSync(this.vaultServices, true);
+      this.backupRestoreHelper = new HiveDataSync(this.vaultServices, false, true);
 
       this.restoredContacts = [];
       this.backupRestoreHelper.addSyncContext("contacts",
@@ -75,14 +80,42 @@ export class BackupService {
         }
       );
 
-      //await this.backupRestoreHelper.wipeLocalContextData("contacts"); // TMP DEBUG
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      this.useHiveSyncSub = this.prefs.useHiveSync.subscribe(async useHiveSync => {
+        Logger.log("contacts", "Use hive sync status changed:", useHiveSync);
 
-      Logger.log("contacts", "Starting backup restore sync");
-      await this.backupRestoreHelper.sync();
+        this.backupRestoreHelper.setSynchronizationEnabled(useHiveSync);
+        if (useHiveSync) {
+          Logger.log("contacts", "Starting backup restore sync");
+          await this.backupRestoreHelper.sync();
+        }
+        else {
+          this.backupRestoreHelper.stop();
+        }
+      });
+
+      //await this.backupRestoreHelper.wipeLocalContextData("contacts"); // TMP DEBUG
     } catch (e) {
       // We could get a hive exception here
       Logger.error("contacts", "Catched exception during backup service initialization:");
       Logger.error("contacts", e);
+    }
+  }
+
+  public stop() {
+    if (this.contactSub) {
+      this.contactSub.unsubscribe();
+      this.contactSub = null;
+    }
+
+    if (this.deleteContactSub) {
+      this.deleteContactSub.unsubscribe();
+      this.deleteContactSub = null;
+    }
+
+    if (this.useHiveSyncSub) {
+      this.useHiveSyncSub.unsubscribe();
+      this.useHiveSyncSub = null;
     }
   }
 

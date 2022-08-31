@@ -1,0 +1,60 @@
+@import "../../widgets.scss";
+
+.backup-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  border-radius: 25px;
+  padding: 0px 10px;
+
+  ion-col {
+    display: flex;
+  }
+
+  .left-col {
+    justify-content: center;
+    align-items: flex-start;
+
+    img {
+      margin-top: 10px;
+      height: 20px;
+      width: 23px;
+    }
+  }
+
+  .mid-col {
+    justify-content: center;
+    align-items: center;
+    padding-right: 0;
+    padding-left: 0;
+
+    ion-label {
+      text-align: left;
+
+      h1,
+      p {
+        color: #ffffff;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      p {
+        font-size: 9px;
+        font-weight: 400;
+        line-height: 15px;
+      }
+    }
+  }
+
+  .buttons-row {
+    ion-button {
+      width: 50%;
+    }
+  }
+}

@@ -7,6 +7,7 @@ export type BuiltInWidgetType =
   "elastos-voting" |
   "recent-apps" |
   "backup-identity" |
+  "hive-sync" |
   "wallet-connect" |
   "new-red-packets" |
   "easy-bridge" |

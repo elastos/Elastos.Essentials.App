@@ -130,6 +130,17 @@
   }
 }
 
+// Custom style for all buttons used inside widgets - different than the app style
+ion-button {
+  height: 36px;
+
+  // Light mode
+  --background: #eee;
+  --background-activated: #ddd;
+  color: #000;
+  font-size: 14px;
+}
+
 .darkContainer {
   .widget-background,
   &.widget-background {
@@ -172,5 +183,11 @@
         }
       }
     }
+  }
+
+  ion-button {
+    --background: #333133;
+    --background-activated: #555355;
+    color: #fff;
   }
 }

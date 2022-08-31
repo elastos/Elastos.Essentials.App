@@ -12,7 +12,10 @@ import { runDelayed } from '../helpers/sleep.helper';
 import { IdentityEntry } from '../model/didsessions/identityentry';
 import { JSONObject } from '../model/json';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
+import { GlobalPopupService } from './global.popup.service';
+import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
+import { GlobalStorageService } from './global.storage.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -65,6 +68,9 @@ export class GlobalHiveService extends GlobalService {
     private globalIntentService: GlobalIntentService,
     private didSessions: GlobalDIDSessionsService,
     private globalNetworksService: GlobalNetworksService,
+    private storage: GlobalStorageService,
+    private prefs: GlobalPreferencesService,
+    private popup: GlobalPopupService
   ) {
     super();
 
@@ -480,5 +486,34 @@ export class GlobalHiveService extends GlobalService {
     }
     // Other cases: return nothing.
     return null;
+  }
+
+  /**
+   * Tells whether we have already asked user if he wants to sync his data (credentials, contacts) to hi
+   * hive vault.
+   */
+  public getSyncDataToHiveWasPrompted(): Promise<boolean> {
+    return this.storage.getSetting(DIDSessionsStore.signedInDIDString, "hiveservice", "syncdataprompted", false);
+  }
+
+  public setSyncDataToHiveWasPrompted() {
+    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "hiveservice", "syncdataprompted", true);
+  }
+
+  /**
+   * Shows a popup with more information about what it means to activate hive data synchronization.
+   * Including the fact that personal data is stored on the chosen vault provider.
+   */
+  public async showHiveSyncInfoPopup(): Promise<boolean> {
+    let confirmed = await this.popup.showConfirmationPopup(
+      this.translate.instant('launcher.hive-sync-popup-title'),
+      this.translate.instant('launcher.hive-sync-popup-info'),
+      this.translate.instant('common.activate'));
+
+    if (confirmed) {
+      await this.prefs.setUseHiveSync(DIDSessionsStore.signedInDIDString, true);
+    }
+
+    return confirmed;
   }
 }

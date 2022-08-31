@@ -83,6 +83,13 @@ export const zh = {
         'app-easybridge': '获得 ELA ！',
         'app-easybridge-description': '在2分钟内将代币从其他链兑换为 Elastos 代币',
 
+        /******** Widgets *********/
+        'data-sync-title': 'Data synchronization',
+        'data-sync-intro': 'Would you like to backup and restore data from/to your Hive vault?',
+        'data-sync-no': 'No, thanks',
+        'hive-sync-popup-title': 'Hive sync',
+        'hive-sync-popup-info': 'Some personal data such as your private DID information or your contacts list will be saved and restored (now or after a reinstallation) from your hive vault, on a remote server that you have chosen using the Hive manager.',
+
         /*********** Tips generic ************/
         'tip-of-the-day': '每日提示',
         'previous-tip': '上一步',

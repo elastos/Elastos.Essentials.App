@@ -1,6 +1,19 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.dark-container]="theme.darkMode">
+    <!-- Hive data sync -->
+    <ion-row class="section">
+      <ion-col size="10.5" class="title-col">
+        <h1>{{ 'settings.hive-data-sync' | translate }}</h1>
+        <h2>{{ getHiveDataSyncTitle() }}</h2>
+      </ion-col>
+      <ion-col size="1.5" class="right-col">
+        <div (click)="toggleHiveDataSync()">
+          <ion-toggle *ngIf="useHiveDataSync" checked mode="ios"></ion-toggle>
+          <ion-toggle *ngIf="!useHiveDataSync" mode="ios"></ion-toggle>
+        </div>
+      </ion-col>
+    </ion-row>
     <!-- Publish identity -->
     <ion-row class="section">
       <ion-col size="10.5" class="title-col">

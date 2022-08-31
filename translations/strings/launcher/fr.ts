@@ -83,6 +83,13 @@ export const fr = {
         'app-easybridge': 'Obtenez des ELA!',
         'app-easybridge-description': 'Convertissez vos jetons sur d\'autres chaînes vers des ELA en moins de 2 minutes',
 
+        /******** Widgets *********/
+        'data-sync-title': 'Synchro Données',
+        'data-sync-intro': 'Souhaitez-vous sauvegarder et restorer vos données vers/depuis votre stockage Hive?',
+        'data-sync-no': 'Non, merci',
+        'hive-sync-popup-title': 'Synchro Hive',
+        'hive-sync-popup-info': 'Certaines informations personnelles telles que votre profil DID ou vos contacts seront sauvées et restorées (dès maintenant, ou apres une réinstallation) depuis votre stockage Hive, sur le serveur distant que vous avez choisi via le gestionnaire de stockage Hive.',
+
         /*********** Tips generic ************/
         'tip-of-the-day': 'Astuce du jour',
         'previous-tip': 'Préc.',

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { IdentityEntry } from '../model/didsessions/identityentry';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
 
 export type AllPreferences = { [key: string]: any };
@@ -12,13 +14,28 @@ export type Preference<T> = {
 @Injectable({
   providedIn: 'root'
 })
-export class GlobalPreferencesService {
+export class GlobalPreferencesService implements GlobalService {
   public static instance: GlobalPreferencesService;  // Convenient way to get this service from non-injected classes
 
+  // Generic subject, call only when a preference is actually modified
   public preferenceListener = new Subject<Preference<any>>();
+
+  // Specific subjects, called when signing in and when preferences change.
+  public useHiveSync = new BehaviorSubject<boolean>(false); // Whether to sync Essentials user data with the hive vault or not
 
   constructor(private storage: GlobalStorageService) {
     GlobalPreferencesService.instance = this;
+    GlobalServiceManager.getInstance().registerService(this);
+  }
+
+  async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    // Emit a few subjects.
+    this.useHiveSync.next(await this.getUseHiveSync(signedInIdentity.didString));
+  }
+
+  onUserSignOut(): Promise<void> {
+    this.useHiveSync.next(false);
+    return;
   }
 
   private getDefaultPreferences(): AllPreferences {
@@ -30,6 +47,7 @@ export class GlobalPreferencesService {
       "developer.screencapture": false,
       "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
       "privacy.credentialtoolbox.stats": true, // Publish anonymous stats about credentials usage, to the external credential toolbox service, or not
+      "privacy.hive.sync": false, // Whether to allow data to be synchronized with the hive vault or not (credentials, contacts, etc)
       "ui.darkmode": true,
       "ui.startupscreen": "home",
       "network.template": "MainNet",
@@ -140,5 +158,14 @@ export class GlobalPreferencesService {
 
   public setSendStatsToCredentialToolbox(did: string, sendStats: boolean): Promise<void> {
     return this.setPreference(did, "privacy.credentialtoolbox.stats", sendStats);
+  }
+
+  public getUseHiveSync(did: string): Promise<boolean> {
+    return this.getPreference<boolean>(did, "privacy.hive.sync");
+  }
+
+  public async setUseHiveSync(did: string, useHiveSync: boolean): Promise<void> {
+    await this.setPreference(did, "privacy.hive.sync", useHiveSync);
+    this.useHiveSync.next(useHiveSync);
   }
 }

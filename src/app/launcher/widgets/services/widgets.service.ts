@@ -31,6 +31,7 @@ const builtInWidgets: WidgetState[] = [
     { category: "builtin", builtInType: "discover-dapps", displayCategories: [DisplayCategories.BROWSER] },
     { category: "builtin", builtInType: "new-red-packets", displayCategories: [DisplayCategories.COMMUNITY] },
     { category: "builtin", builtInType: "backup-identity", displayCategories: [DisplayCategories.IDENTITY] },
+    { category: "builtin", builtInType: "hive-sync", displayCategories: [DisplayCategories.IDENTITY] },
 ];
 
 export type WidgetInstance = {
@@ -297,9 +298,10 @@ export class WidgetsService {
                 break;
             case "main":
                 widgets.push(this.createBuiltInWidgetState("identity"));
+                widgets.push(this.createBuiltInWidgetState("new-red-packets"));
                 widgets.push(this.createBuiltInWidgetState("backup-identity"));
                 widgets.push(this.createBuiltInWidgetState("active-wallet"));
-                widgets.push(this.createBuiltInWidgetState("new-red-packets"));
+                widgets.push(this.createBuiltInWidgetState("hive-sync"));
 
                 widgets.push(this.createBuiltInWidgetState("discover-dapps"));
                 widgets.push(this.createBuiltInWidgetState("easy-bridge"));

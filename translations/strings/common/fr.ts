@@ -33,6 +33,7 @@ export const fr = {
         'save-changes': 'Enregistrer',
         'max': 'MAX',
         'leave': 'Leave',
+        'activate': 'Activer',
 
         // Navigation
         'settings': 'Paramètres',

@@ -13,6 +13,7 @@ import { ContactsWidget } from "./builtin/contacts/contacts.widget";
 import { DiscoverDAppsWidget } from "./builtin/discover-dapps/discover-dapps.widget";
 import { EasyBridgeWidget } from "./builtin/easy-bridge/easy-bridge.widget";
 import { ElastosVotingWidget } from "./builtin/elastos-voting/elastos-voting.widget";
+import { HiveSyncWidget } from "./builtin/hive-sync/hive-sync.widget";
 import { HiveWidget } from "./builtin/hive/hive.widget";
 import { IdentityWidget } from './builtin/identity/identity.widget';
 import { NewRedPacketsWidget } from "./builtin/new-red-packets/new-red-packets.widget";
@@ -39,6 +40,7 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     RecentAppsWidget,
     WalletConnectWidget,
     BackupIdentityWidget,
+    HiveSyncWidget,
     NewRedPacketsWidget,
     EasyBridgeWidget,
     ContactsWidget,

@@ -83,6 +83,13 @@ export const en = {
         'app-easybridge': 'Get ELA!',
         'app-easybridge-description': 'Convert tokens from other chains to Elastos tokens in less than 2 minutes',
 
+        /******** Widgets *********/
+        'data-sync-title': 'Data synchronization',
+        'data-sync-intro': 'Would you like to backup and restore data from/to your Hive vault?',
+        'data-sync-no': 'No, thanks',
+        'hive-sync-popup-title': 'Hive sync',
+        'hive-sync-popup-info': 'Some personal data such as your private DID information or your contacts list will be saved and restored (now or after a reinstallation) from your hive vault, on a remote server that you have chosen using the Hive manager.',
+
         /*********** Tips generic ************/
         'tip-of-the-day': 'Tip of the day',
         'previous-tip': 'Previous',

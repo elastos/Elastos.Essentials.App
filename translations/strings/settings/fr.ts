@@ -105,6 +105,11 @@ export const fr = {
 
         /*********** Privacy page **********/
         'privacy': 'Vie privée',
+
+        'hive-data-sync': 'Synchronisation des données',
+        'privacy-use-hive-data-sync': 'Utiliser mon stockage Elastos Hive pour sauver et restorer mes données personnelles telles que mon profil DID ou mes contacts',
+        'privacy-dont-use-hive-data-sync': 'Ne pas utiliser mon stockage Elastos Hive pour sauver et restorer mes données personnelles',
+
         'identity-publishing': 'Publication d\'identité',
         'publish-identity-medium-assist': 'Publier les identités rapidement via le service tiers ASSIST',
         'publish-identity-medium-wallet': 'Publier les identités en utilisant mon portefeuille',

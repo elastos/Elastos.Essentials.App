@@ -19,6 +19,7 @@ export class PrivacyPage implements OnInit {
 
   public publishIdentityMedium = 'assist'; // assist or wallet
   public sendCredentialToolboxStats = true;
+  public useHiveDataSync = false;
 
   constructor(
     public settings: SettingsService,
@@ -31,10 +32,11 @@ export class PrivacyPage implements OnInit {
 
   ngOnInit() { }
 
-  async ionViewWillEnter() {
+  ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.privacy'));
-    await this.fetchPublishIdentityMedium();
-    await this.fetchCredentialToolboxStats();
+    void this.fetchPublishIdentityMedium();
+    void this.fetchCredentialToolboxStats();
+    void this.fetchHiveDataSync();
   }
 
   ionViewWillLeave() {
@@ -81,5 +83,22 @@ export class PrivacyPage implements OnInit {
 
   open(router: string) {
     void this.nav.navigateTo(App.SETTINGS, router);
+  }
+
+  private async fetchHiveDataSync(): Promise<void> {
+    this.useHiveDataSync = await this.prefs.getUseHiveSync(DIDSessionsStore.signedInDIDString);
+  }
+
+  public getHiveDataSyncTitle() {
+    if (this.useHiveDataSync) {
+      return this.translate.instant('settings.privacy-use-hive-data-sync');
+    } else {
+      return this.translate.instant('settings.privacy-dont-use-hive-data-sync');
+    }
+  }
+
+  public async toggleHiveDataSync() {
+    this.useHiveDataSync = !this.useHiveDataSync;
+    await this.prefs.setUseHiveSync(DIDSessionsStore.signedInDIDString, this.useHiveDataSync);
   }
 }

@@ -3,6 +3,13 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
+export type ConfirmationPopupComponentParams = {
+  type: "danger" | "custom";
+  customIcon?: string; // For custom type, path to the logo
+  title: string;
+  text: string;
+  confirmationButtonText?: string;
+}
 
 @Component({
   selector: 'app-confirmation-popup',
@@ -13,9 +20,11 @@ export class ConfirmationPopupComponent implements OnInit {
 
   @Output() cancelEvent = new EventEmitter<boolean>();
 
-  public type: 'danger'; // TODO: warning, info...
+  public type: 'danger';
+  public customIcon?: string;
   public title: string;
   public text: string;
+  public confirmationButtonText?: string;
 
   constructor(
     private popover: PopoverController,
@@ -26,8 +35,10 @@ export class ConfirmationPopupComponent implements OnInit {
 
   ngOnInit() {
     this.type = this.navParams.get('type') || 'danger';
+    this.customIcon = this.navParams.get('customIcon');
     this.title = this.navParams.get('title');
     this.text = this.navParams.get('text');
+    this.confirmationButtonText = this.navParams.get('confirmationButtonText') || this.translate.instant('common.confirm');
   }
 
   confirm() {

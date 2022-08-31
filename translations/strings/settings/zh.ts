@@ -105,6 +105,11 @@ export const zh = {
 
           /*********** Privacy page **********/
           'privacy': '隐私',
+
+          'hive-data-sync': 'Data synchronization',
+          'privacy-use-hive-data-sync': 'Use my Elastos Hive vault storage to save and restore personal data such as DID credentials or contacts list',
+          'privacy-dont-use-hive-data-sync': 'Don\'t use my Elastos Hive vault storage to save and restore personal data',
+
           'identity-publishing': '发布身份',
           'publish-identity-medium-assist': '使用名为 ASSIST 的第三方服务快速发布身份',
           'publish-identity-medium-wallet': '使用您的钱包自行发布身份',
