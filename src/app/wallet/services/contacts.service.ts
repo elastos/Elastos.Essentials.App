@@ -56,6 +56,7 @@ export class ContactsService {
     let cryptoNameResolver = NameResolvingService.instance.getResolverByName('CryptoName');
     let idrissAddressResolver = NameResolvingService.instance.getResolverByName('Idriss');
     let usDomainResolver = NameResolvingService.instance.getResolverByName('Unstoppable Domains');
+    let ELADomainResolver = NameResolvingService.instance.getResolverByName('ELADomain');
     for (let index = 0; index < contacts.length; index++) {
       let contact = contacts[index];
       if (contact.cryptoname.startsWith('CryptoName: ')) {
@@ -84,6 +85,9 @@ export class ContactsService {
         break;
         case 'Unstoppable Domains':
           results = await usDomainResolver.resolve(contact.cryptoname, null);
+        break;
+        case 'ELADomain':
+            results = await ELADomainResolver.resolve(contact.cryptoname, null);
         break;
         default:
         break;
