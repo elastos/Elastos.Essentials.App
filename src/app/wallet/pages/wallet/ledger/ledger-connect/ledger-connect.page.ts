@@ -143,6 +143,7 @@ export class LedgerConnectPage implements OnInit {
     }
 
     private async doConnect() {
+        Logger.log('wallet', 'LedgerConnectPage doConnect')
         try {
             if (this.transport) {
                 await this.transport.close();
@@ -171,32 +172,34 @@ export class LedgerConnectPage implements OnInit {
         void this.doConnect();
 
         this.connectDeviceTimeout = setTimeout(() => {
-            Logger.warn('ledger', ' Timeout, Connect device again');
+            Logger.warn('wallet', 'LedgerConnectPage connect timeout, Connect device again');
             void this.connectDevice();
         }, 3000);
     }
 
     private async reConnectDecice() {
-      if (this.transport) {
-          await this.transport.close();
-          await BluetoothTransport.disconnect(this.transport.id)
-          this.transport = null;
-          this.ledgerConnectStatus.next(false);
-      }
+        Logger.log('wallet', 'LedgerConnectPage reConnectDecice')
+        if (this.transport) {
+            await this.transport.close();
+            await BluetoothTransport.disconnect(this.transport.id)
+            this.transport = null;
+            this.ledgerConnectStatus.next(false);
+        }
 
-      this.connectDevice();
-      return new Promise<void>((resolve) => {
-        let ledgerStatusSubscription: Subscription = this.ledgerConnectStatus.subscribe( (connected)=> {
-          if (connected) {
-            ledgerStatusSubscription.unsubscribe();
-            resolve();
-          }
-        })
-      });
+        this.connectDevice();
+        return new Promise<void>((resolve) => {
+            let ledgerStatusSubscription: Subscription = this.ledgerConnectStatus.subscribe( (connected)=> {
+            if (connected) {
+                ledgerStatusSubscription.unsubscribe();
+                resolve();
+            }
+            })
+        });
     }
 
     private closeConnectTimeout() {
         if (this.connectDeviceTimeout) {
+            Logger.warn('ledger', 'closeConnectTimeout');
             clearTimeout(this.connectDeviceTimeout);
             this.connectDeviceTimeout = null;
         }
@@ -216,6 +219,7 @@ export class LedgerConnectPage implements OnInit {
         try {
             // We only get 5 addresses.
             for (let i = 0; i < 5 && this.gettingAddresses; i++) {
+                Logger.log('wallet', 'LedgerConnectPage call getAddresses ', i)
                 let addresses = await this.ledgerApp.getAddresses(this.addressType, i, 1, false);
                 this.addresses = [...this.addresses, ...addresses];
 
@@ -230,7 +234,7 @@ export class LedgerConnectPage implements OnInit {
             this.gettingAddresses = false;
             this.failedToGetAddress = true;
 
-            Logger.warn('wallet', ' getAddresses exception', e)
+            Logger.warn('wallet', 'LedgerConnectPage getAddresses exception', e)
 
             // CustomError -- statusCode 25873(0x6511) name: DisconnectedDeviceDuringOperation -- the app is not started.
             // CustomError -- message: DisconnectedDeviceDuringOperation name:DisconnectedDeviceDuringOperation
@@ -294,10 +298,11 @@ export class LedgerConnectPage implements OnInit {
     }
 
     private closeGetAddressTimeout() {
-      if (this.getAddressTimeout) {
-          clearTimeout(this.getAddressTimeout);
-          this.getAddressTimeout = null;
-      }
+        if (this.getAddressTimeout) {
+            Logger.warn('ledger', 'closeGetAddressTimeout');
+            clearTimeout(this.getAddressTimeout);
+            this.getAddressTimeout = null;
+        }
     }
 
     hasGotAddress() {
@@ -490,12 +495,12 @@ export class LedgerConnectPage implements OnInit {
 
     private getDefaultLedgerWalletName() {
         let index = 1;
-        let nameValid = false;
+        let nameExists = false;
         let walletName = ''
         do {
             walletName = 'Ledger' + index++;
-            nameValid = this.walletService.walletNameExists(walletName);
-        } while (nameValid);
+            nameExists = this.walletService.walletNameExists(walletName);
+        } while (nameExists);
 
         this.walletName = walletName;
     }
