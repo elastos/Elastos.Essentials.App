@@ -57,7 +57,8 @@ type ERC721Transfer = {
  * List of popular IPFS gateways that we want to replace with our preferred gateway instead.
  */
 const IPFSGatewayPrefixesToReplace = [
-    "https://gateway.pinata.cloud/ipfs"
+    "https://gateway.pinata.cloud/ipfs",
+    "https://ipfs.io/ipfs"
 ]
 
 @Injectable({
@@ -382,6 +383,10 @@ export class ERC721Service {
             try {
                 let metadata: any = await this.http.get(tokenURI).toPromise();
                 Logger.log("wallet", "Got NFT metadata", metadata, "from", tokenURI);
+
+                if (metadata.data) {
+                    metadata = metadata.data;
+                }
 
                 // Name
                 if ("properties" in metadata && "name" in metadata.properties)
