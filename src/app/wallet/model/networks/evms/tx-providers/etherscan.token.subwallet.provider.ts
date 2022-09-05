@@ -123,7 +123,7 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
     for (let i = 0, len = transferEvents.length; i < len; i++) {
       // Check if this transfer is a outgoing transfer from user's wallet
       let hasOutgoingTx = false;
-      if (transferEvents[i].from && transferEvents[i].from.toLowerCase() === accountAddress)
+      if (transferEvents[i].to && transferEvents[i].to.toLowerCase() !== accountAddress)
         hasOutgoingTx = true;
 
       // If this is a outgoing transfer and the outgoing contract address is not added yet, save it to our temporary outgoing tokens list
@@ -151,8 +151,16 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
         if (!tokenInfo.tokenIDs)
           tokenInfo.tokenIDs = [];
 
-        if (!tokenInfo.tokenIDs.includes(transferEvents[i].tokenID))
-          tokenInfo.tokenIDs.push(transferEvents[i].tokenID);
+        if (hasOutgoingTx) {
+            // User account as sender? Remove the token from the list
+            let index = tokenInfo.tokenIDs.findIndex( tID => tID == transferEvents[i].tokenID)
+            tokenInfo.tokenIDs.splice(index, 1);
+        } else {
+            // User account as received? Add the token to the list
+            if (!tokenInfo.tokenIDs.includes(transferEvents[i].tokenID)) {
+                tokenInfo.tokenIDs.push(transferEvents[i].tokenID);
+            }
+        }
       }
     }
 
