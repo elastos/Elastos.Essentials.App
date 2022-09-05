@@ -67,6 +67,13 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
       if (result.transactions && result.transactions.length > 0) {
         let tokens = await this.getERCTokensFromTransactions(result.transactions, tokenTypeMapList[i].ercTokenType);
         if (tokens.length > 0) {
+            // only for FRC759?
+            for (let index = 0; index < tokens.length; index++) {
+                let parentToken = await FusionHelper.getParentToken(this.subWallet, tokens[index].contractAddress)
+                if (parentToken) {
+                    tokens.push(parentToken);
+                }
+            }
           await this.provider.onTokenInfoFound(tokens);
         }
       }

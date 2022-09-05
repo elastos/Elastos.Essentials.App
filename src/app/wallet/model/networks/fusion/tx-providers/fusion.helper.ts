@@ -2,10 +2,12 @@ import BigNumber from "bignumber.js";
 import moment from "moment";
 import { Logger } from "src/app/logger";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
+import { TokenType } from "../../../coin";
 import { TransactionDirection } from "../../../tx-providers/transaction.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
-import { EthTokenTransaction, EthTransaction } from "../../evms/evm.types";
+import { ERCTokenInfo, EthTokenTransaction, EthTransaction } from "../../evms/evm.types";
+import { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
 
 export type FusionTransaction = {
   tx_hash: string;
@@ -70,6 +72,31 @@ export enum FusionTokenType {
   ERC721 = 6,
   ERC1155 = 7,
 }
+
+type FusionToken = {
+    name: string;
+    symbol: string;
+    address: string;
+}
+export type FusionTokenInfo = {
+    type: number;
+    name: string;
+    symbol: string;
+    decimal: number;
+    totalSupply: string; // unit is ETHER
+    circulationSupply: string; // unit is ETHER
+    desc: any;
+    url: any;
+    address: string;
+    txs: number;
+    holders: number;
+
+    other_tokens: {
+        parent?: FusionToken;
+        subs: FusionToken[];
+        options: FusionToken[];
+    };
+  }
 
 export class FusionHelper {
   public static async fetchTransactions(subWallet: AnySubWallet, accountAddress: string, page: number, pageSize: number): Promise<{ transactions: EthTransaction[], canFetchMore?: boolean }> {
@@ -223,5 +250,33 @@ export class FusionHelper {
 
     let result: FusionTransactionDetail = await GlobalJsonRPCService.instance.httpGet(txListUrl, subWallet.networkWallet.network.key);
     return result;
+  }
+
+  // FRC759: find the parent token.
+  public static async getParentToken(subWallet: AnySubWallet, contractAddress: string) {
+    let txListUrl = subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN) + '/token/' + contractAddress;
+
+    let result: FusionTokenInfo = await GlobalJsonRPCService.instance.httpGet(txListUrl, subWallet.networkWallet.network.key);
+
+    if (result.other_tokens.parent) {
+        // Maybe we should hide the sub token, because the user can't transfer the sub token.
+        let parent = subWallet.networkWallet.getSubWallet(result.other_tokens.parent.address) as ERC20SubWallet;
+        if (!parent) {
+            let token : ERCTokenInfo = {
+                type: TokenType.ERC_20,
+                symbol: result.other_tokens.parent.symbol,
+                name: result.other_tokens.parent.name,
+                decimals: result.decimal.toString(),
+                contractAddress: result.other_tokens.parent.address,
+                balance: null,
+                hasOutgoTx: false
+            }
+            return token;
+        } else {
+            // TODO: add this subwallet to parent subwallet?
+            // let sub = subWallet.networkWallet.getSubWallet(contractAddress) as ERC20SubWallet;
+        }
+    }
+    return null;
   }
 }
