@@ -47,6 +47,9 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     private fetchTokenValueTimer: any = null;
     private redPacketServerAddress = null;
 
+    // For fusion FRC759:
+    public hasParentWallet = false;
+
     public static async newFromCoin(networkWallet: EVMNetworkWallet<MasterWallet, WalletNetworkOptions>, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = await networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
         return subWallet;
@@ -600,5 +603,10 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
     public getSwapInputCurrency(): string {
         return this.coin.getContractAddress();
+    }
+
+    // For FRC759 token on fusion network, We can only transfer parent token.
+    public setHasParentWallet(hasParentWallet: boolean) {
+        this.hasParentWallet = hasParentWallet;
     }
 }

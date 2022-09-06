@@ -274,7 +274,8 @@ export class FusionHelper {
             return token;
         } else {
             // TODO: add this subwallet to parent subwallet?
-            // let sub = subWallet.networkWallet.getSubWallet(contractAddress) as ERC20SubWallet;
+            let sub = subWallet.networkWallet.getSubWallet(contractAddress) as ERC20SubWallet;
+            sub?.setHasParentWallet(true);
         }
     }
     return null;
