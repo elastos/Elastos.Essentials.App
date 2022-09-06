@@ -504,7 +504,9 @@ export class CoinHomePage implements OnInit {
 
     // For FRC759 token on fusion network, We can only transfer parent token.
     coinCanBeSent() {
-      return !((this.networkWallet.network.key === 'fusion') && (this.subWallet instanceof ERC20SubWallet) && ((this.subWallet as ERC20SubWallet).hasParentWallet))
+      return !((this.networkWallet.network.key === 'fusion')
+                && (this.subWallet instanceof ERC20SubWallet)
+                && ((this.subWallet as ERC20SubWallet).hasParentWallet))
     }
 
     /**

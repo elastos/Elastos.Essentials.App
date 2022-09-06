@@ -77,17 +77,44 @@ export class CovalentSubWalletTokenProvider<SubWalletType extends MainCoinEVMSub
       let foundTokenInfo: ERCTokenInfo[] = [];
 
       tokenBalances.forEach(tb => {
-        // Discover only ERC20
-        if (tb.supports_erc && tb.supports_erc.indexOf("erc20") >= 0) {
-          foundTokenInfo.push({
-            type: TokenType.ERC_20,
-            symbol: tb.contract_ticker_symbol,
-            name: tb.contract_name,
-            decimals: `${tb.contract_decimals}`,
-            contractAddress: tb.contract_address,
-            balance: tb.balance,
-            hasOutgoTx: false // ??
-          });
+        // For nft: the supports_erc = ['erc20', 'erc721'].
+        if (tb.supports_erc && (tb.supports_erc.indexOf("erc20") >= 0)) {
+            let tokenInfo = foundTokenInfo.find(t => t.contractAddress === tb.contract_address);
+            if (!tokenInfo) {
+                let type = TokenType.ERC_20
+                // Nft
+                if (tb.type === 'nft') {
+                    if (tb.supports_erc.indexOf('erc721') >= 0) {
+                        type = TokenType.ERC_721;
+                    } else if (tb.supports_erc.indexOf('erc1155') >= 0) {
+                        type = TokenType.ERC_1155;
+                    }
+                }
+                // If the token contract was not handled yet, save its info to our local list of all contracts
+                tokenInfo = {
+                    type: type,
+                    symbol: tb.contract_ticker_symbol,
+                    name: tb.contract_name,
+                    decimals: `${tb.contract_decimals}`,
+                    contractAddress: tb.contract_address,
+                    balance: tb.balance,
+                    hasOutgoTx: false // ??
+                };
+
+                foundTokenInfo.push(tokenInfo);
+            }
+
+            // Append NFT token ID if needed
+            if (tb.nft_data) {
+              if (!tokenInfo.tokenIDs)
+                tokenInfo.tokenIDs = [];
+
+                tb.nft_data.forEach( nft => {
+                    if (!tokenInfo.tokenIDs.includes(nft.token_id)) {
+                        tokenInfo.tokenIDs.push(nft.token_id);
+                    }
+                })
+            }
         }
       });
 

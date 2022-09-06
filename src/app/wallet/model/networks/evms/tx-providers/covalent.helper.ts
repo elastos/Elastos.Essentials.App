@@ -28,6 +28,20 @@ export type CovalentTransaction = {
   transfers?: CovalentTransfer[] // Token Transaction
 }
 
+export type CovalentTokenBalanceNFTItem = {
+    token_id: string;
+    token_balance: string;
+    token_url: string;
+    supports_erc?: string[]; // eg: ["erc20"]
+    token_price_wei: string; // eg: null
+    token_quote_rate_eth: string; // eg: null
+    original_owner: string;
+    external_data: string; // eg: null
+    owner: string;
+    owner_address: string; // eg: null
+    burned: string; // eg: null
+}
+
 export type CovalentTokenBalanceItem = {
   balance: string; // eg: "0"
   balance_24h: string; // eg: "0"
@@ -37,7 +51,7 @@ export type CovalentTokenBalanceItem = {
   contract_ticker_symbol: string; // eg: "IOTX"
   last_transferred_at: string; // eg: null
   logo_url: string; // eg: "https://www.covalenthq.com/static/images/icons/display-icons/iotex-logo.svg"
-  nft_data: any; // eg: null
+  nft_data: CovalentTokenBalanceNFTItem[]; // eg: null
   quote: number; // eg: 0
   quote_24h: number; // eg: 0
   quote_rate: number; // eg: 0.0729151
@@ -186,7 +200,7 @@ export class CovalentHelper {
     tokenBalancesUrl += '/address/' + accountAddress;
     tokenBalancesUrl += '/balances_v2/';
     tokenBalancesUrl += '?key=' + API_KEY;
-    tokenBalancesUrl += '&format=JSON';
+    tokenBalancesUrl += '&format=JSON&nft=true&no-nft-fetch=false';
 
     try {
       let result: CovalentResult<CovalentTokenBalanceItem> = await GlobalJsonRPCService.instance.httpGet(tokenBalancesUrl, subWallet.networkWallet.network.key);
