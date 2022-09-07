@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { AppmanagerService } from 'src/app/launcher/services/appmanager.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GalleryContent, GalleryContentItemAction, PluginConfig } from '../../../base/plugin.types';
+import { GalleryContent, PluginConfig } from '../../../base/plugin.types';
 
 const ROTATION_TIME_SEC = 10;
 
@@ -15,7 +15,7 @@ export class GalleryTemplate {
   @Input("config")
   public config: PluginConfig<GalleryContent> = null;
 
-  public transitionning = false;
+  public transitioning = false;
   public pageIndexes = [0, 1];
 
   private activePageIndex = 0;
@@ -33,14 +33,14 @@ export class GalleryTemplate {
     let numberOfPages = Math.ceil(this.config.content.items.length / 2);
     if (numberOfPages > 1) {
       // Fade out
-      this.transitionning = true;
+      this.transitioning = true;
 
       // Change data while invisible
       setTimeout(() => {
         this.activePageIndex = (this.activePageIndex + 1) % numberOfPages;
 
         // fade in
-        this.transitionning = false;
+        this.transitioning = false;
       }, 500);
     }
 
@@ -64,10 +64,6 @@ export class GalleryTemplate {
     return this.config.content.items[this.activePageIndex * 2 + itemIndexInPage].picture;
   }
 
-  public getActions(itemIndexInPage: number): GalleryContentItemAction[] {
-    return this.config.content.items[this.activePageIndex * 2 + itemIndexInPage].actions || [];
-  }
-
   public onProjectLogoClicked() {
     if (!this.config.url)
       return;
@@ -75,11 +71,13 @@ export class GalleryTemplate {
     void this.dappBrowserService.openForBrowseMode(this.config.url);
   }
 
-  public onActionButtonClicked(event: MouseEvent, action: GalleryContentItemAction) {
+  public onItemClicked(event: MouseEvent, itemIndexInPage: number) {
     event.stopImmediatePropagation();
 
-    if (action.url)
-      void this.dappBrowserService.openForBrowseMode(action.url);
+    let url = this.config.content.items[this.activePageIndex * 2 + itemIndexInPage].url || null;
+
+    if (url)
+      void this.dappBrowserService.openForBrowseMode(url);
   }
 
   /**

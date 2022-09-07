@@ -15,7 +15,7 @@ export class NewsTemplate {
   @Input("config")
   public config: PluginConfig<NewsContent> = null;
 
-  public transitionning = false;
+  public transitioning = false;
 
   private activeNewsIndex = 0;
   private rotationTimeout: any = null;
@@ -30,14 +30,14 @@ export class NewsTemplate {
 
   private updateActiveNews() {
     // Fade out
-    this.transitionning = true;
+    this.transitioning = true;
 
     // Change data while invisible
     setTimeout(() => {
       this.activeNewsIndex = (this.activeNewsIndex + 1) % this.config.content.items.length;
 
       // fade in
-      this.transitionning = false;
+      this.transitioning = false;
     }, 500);
 
     this.rotationTimeout = setTimeout(() => { this.updateActiveNews(); }, ROTATION_TIME_SEC * 1000);

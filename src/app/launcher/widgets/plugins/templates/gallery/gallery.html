@@ -1,34 +1,25 @@
-<div class="widget-background template-root" [class.darkContainer]="theme.darkMode" (click)="onBackgroundClicked()">
+<div class="widget widget-background template-root" [class.darkContainer]="theme.darkMode"
+  (click)="onBackgroundClicked()">
   <div class="project" (click)="onProjectLogoClicked()">
-    <img [cache]="config.logo">
+    <img class="logo" [cache]="config.logo">
+    <div class="name">Project Name</div>
+    <div class="title">Widget title</div>
   </div>
-  <div class="right-col" [class.transitionning]="transitionning">
+  <div class="right-col" [class.transitioning]="transitioning">
     <ion-row>
       <ion-col size="6" *ngFor="let i of pageIndexes" class="page-col">
-        <div class="item" *ngIf="hasItemAt(i)">
+        <div class="item ion-activatable ripple" *ngIf="hasItemAt(i)" (click)="onItemClicked($event, i)">
           <div class="picture">
             <img [cache]="getIcon(i)" />
-          </div>
-          <div class="actions">
-            <div class="action" *ngFor="let action of getActions(i)" (click)="onActionButtonClicked($event, action)">
-              <img [cache]="action.icon" />
-            </div>
           </div>
           <div class="subinfo" *ngIf="getSubInfo(i)">
             {{ getSubInfo(i) }}
           </div>
+          <ion-ripple-effect></ion-ripple-effect>
         </div>
         <div class="title" *ngIf="hasItemAt(i)">{{ getTitle(i) }}</div>
         <div class="no-title" *ngIf="!hasItemAt(i)"></div>
       </ion-col>
     </ion-row>
-    <!-- <div class="icon" *ngIf="getIcon()">
-      <img [cache]="getIcon()" />
-    </div> -->
-    <!--  <div class="info" (click)="onInfoClicked()">{{ getInfo() }}</div>
-    <div class="action" *ngIf="hasAction()">
-      <ion-button (click)="onActionButtonClicked()">{{ getActionTitle() }}</ion-button>
-    </div>
-    <div class="no-action" *ngIf="!hasAction()"></div> -->
   </div>
 </div>

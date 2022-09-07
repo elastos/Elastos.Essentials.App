@@ -3,16 +3,11 @@ export enum RefreshOn {
   NETWORK_CHANGE = "networkchange"
 };
 
-export type GalleryContentItemAction = {
-  icon: string; // url or base64
-  url: string; // "url to open when clicking the action button"
-};
-
 type GalleryContentItem = {
   title?: string; // "Super monkey"
   picture: string; // url or base64
   subinfo?: string; // "23 ELA",
-  actions?: GalleryContentItemAction[] // List of small action icons
+  url?: string; // url to open when clicking the action button
 };
 
 export type GalleryContent = {
@@ -63,7 +58,8 @@ type ContentType = "portal" | "gallery" | "news" | "tokenprice";
 
 export type PluginConfig<T> = {
   logo: string; // url or base64 of the dapp
-  sublogo?: string; // Optional url or base64 to distinguish the context for users, in case dapps have multiple widgets
+  projectName: string; // Short project name, displayed on most widgets
+  title?: string; // Short title to describe the widget
   url?: string; // Optional url opened when the project logo is touched - normally, the main dapp url
   refresh?: number; // Number of seconds between new calls to the widget url to refresh content - eg: 120. Default: 1 day. Min: 30 seconds
   refreshon?: RefreshOn[]; // List of events that trigger a new api call to refresh content, in addition to the standard timed refresh

@@ -2,6 +2,51 @@
   margin: 10px 0;
 }
 
+.widget {
+  display: block;
+  height: auto;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+
+  // Left column for most widgets
+  .project {
+    width: 100px;
+    display: flex;
+    float: left;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    .logo {
+      border-radius: 15px;
+      width: 52px;
+    }
+
+    // Project name
+    .name {
+      font-weight: bold;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    // Widget title
+    .title {
+      font-size: 10px;
+    }
+  }
+
+  .right-col {
+    width: auto;
+    display: flex;
+    min-height: 80px; // Don't let the floating project logo overflow
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
+
 .widget-background {
   border-radius: 15px;
   display: flex;
@@ -147,6 +192,12 @@ ion-button {
 }
 
 .darkContainer {
+  .project {
+    .title {
+      color: #acacac;
+    }
+  }
+
   .widget-background,
   &.widget-background {
     background: #212021;
