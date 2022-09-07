@@ -11,6 +11,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { MasterWallet, StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elastos/mainchain/network/elastos.networks';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { AuthService } from 'src/app/wallet/services/auth.service';
@@ -75,7 +76,9 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     private async tryToAutoSelectedSigningWallet() {
-        let masterWallet = this.walletService.getMasterWalletsList()
+        let masterWallet = this.walletService.getMasterWalletsListByNetwork('elastos').filter( mw => {
+            return mw.type == WalletType.STANDARD;
+        })
 
         // Auto select the only available wallet
         if (masterWallet && masterWallet.length === 1)
