@@ -14,26 +14,37 @@ import { EtherscanHelper } from "./etherscan.helper";
 const MAX_RESULTS_PER_FETCH = 30
 
 export enum FetchMode {
-  FetchMode_TokenTx = 0, // Account api only support tokentx action.
-  FetchMode_TokenTx_NftTx = 1, // Account api support tokentx and tokennfttx actions.
-  FetchMode_TokenTx_NftTx_1155Tx = 2 // Account api support tokentx, tokennfttx and token1155tx actions.
+  /**
+   * Account api only support tokentx action but we can't know the tokens types (20, 721?) from it.
+   * But the scan API has a "tokenlist" action though, and we use this one.
+   * Newer scan APIs do NOT have 'tokenlist'.
+   */
+  Compatibility1 = 0,
+  /**
+   * Account api supports tokentx and tokennfttx actions, but not token1155tx.
+   */
+  Compatibility2 = 1,
+  /**
+   * Account api support tokentx, tokennfttx and token1155tx actions.
+   */
+  Compatibility3 = 2
 }
 
 enum AccountAction {
-  ERC20 = 'tokentx',
-  ERC721 = 'tokennfttx',
-  ERC1152 = 'token1155tx'
+  TOKENTX = 'tokentx',
+  TOKEN_NFT_TX = 'tokennfttx',
+  TOKEN_1155_TX = 'token1155tx'
 }
 
 export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEVMSubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
   protected canFetchMore = true;
 
-  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, private fetchMode: FetchMode = FetchMode.FetchMode_TokenTx, private apiKey?: string) {
+  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, private fetchMode: FetchMode = FetchMode.Compatibility1, private apiKey?: string) {
     super(provider, subWallet);
 
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
-    provider.refreshEvery(() => this.fetchAllTokensTransactions(), 30000);
+    provider.refreshEvery(() => this.discoverTokens(), 30000);
   }
 
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
@@ -76,30 +87,67 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
     await this.saveTransactions(transactions);
   }
 
-  public async fetchAllTokensTransactions(): Promise<void> {
+  public async discoverTokens(): Promise<void> {
     let tokenSubWallet = this.subWallet;
     const address = await tokenSubWallet.getAccountAddress();
-    let totalTokens = [];
+    let totalTokens: ERCTokenInfo[] = [];
 
-    let tokenTransactions = await this.getTokenTransferEventsByAction(address, AccountAction.ERC20, 0);
-    if (tokenTransactions) {
-      let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, TokenType.ERC_20);
-      totalTokens = [...totalTokens, ...tokens];
-    }
+    if (this.fetchMode === FetchMode.Compatibility1) {
+      // Mode 1: use 'tokenlist' and nothing else. All tokens are mixed.
+      const tokenListUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN) +
+        '?module=account&action=tokenlist&address=' + address;
 
-    if (this.fetchMode > FetchMode.FetchMode_TokenTx) {
-      tokenTransactions = await this.getTokenTransferEventsByAction(address, AccountAction.ERC721, 0);
-      if (tokenTransactions) {
-        let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, TokenType.ERC_721);
-        totalTokens = [...totalTokens, ...tokens];
+      try {
+        let result = await GlobalJsonRPCService.instance.httpGet(tokenListUrl);
+        let rawResults: ERCTokenInfo[] = result.result;
+
+        // From here, we got a list of contract address / type / balance (erc 20, 721, 1155) but NO token IDs for NFTs,,,
+        // In order to not force the NFT services to call getPastEvents() to discover token IDs (as there are limitations in blocks
+        // count such as max 50k or 10k at a time), we call tokentx here for each contract, to retrieve more details about the NFTs,
+        // including the token IDs. Token IDs will be stored and NFT display can then be fast later.
+
+        for (let rawResult of rawResults) {
+          if (rawResult.type === TokenType.ERC_20) {
+            // ERC20, nothing more to do, just add it directly to the list
+            totalTokens.push(rawResult);
+          }
+          else {
+            // NFTs - call tokentx with contract address then call getTokensInfoFromTransferEvents() then append to the list
+            let tokenTransactions = await this.getTokenTransferEventsByContractAddress(address, rawResult.contractAddress, AccountAction.TOKENTX, 0);
+            if (tokenTransactions) {
+              let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, rawResult.type);
+              totalTokens = [...totalTokens, ...tokens];
+            }
+          }
+        }
+      } catch (e) {
+        Logger.warn("wallet", "discoverTokens() tokenlist exception", e);
+        return;
       }
     }
+    else {
+      // More recent modes - scan apis have partial or full split of all kinds of ERC tokens.
 
-    if (this.fetchMode > FetchMode.FetchMode_TokenTx_NftTx) {
-      tokenTransactions = await this.getTokenTransferEventsByAction(address, AccountAction.ERC1152, 0);
+      let tokenTransactions = await this.getTokenTransferEventsByAction(address, AccountAction.TOKENTX, 0);
       if (tokenTransactions) {
-        let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, TokenType.ERC_1155);
+        let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, TokenType.ERC_20);
         totalTokens = [...totalTokens, ...tokens];
+      }
+
+      if (this.fetchMode > FetchMode.Compatibility1) {
+        tokenTransactions = await this.getTokenTransferEventsByAction(address, AccountAction.TOKEN_NFT_TX, 0);
+        if (tokenTransactions) {
+          let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, TokenType.ERC_721);
+          totalTokens = [...totalTokens, ...tokens];
+        }
+      }
+
+      if (this.fetchMode > FetchMode.Compatibility2) {
+        tokenTransactions = await this.getTokenTransferEventsByAction(address, AccountAction.TOKEN_1155_TX, 0);
+        if (tokenTransactions) {
+          let tokens = await this.getTokensInfoFromTransferEvents(tokenTransactions, TokenType.ERC_1155);
+          totalTokens = [...totalTokens, ...tokens];
+        }
       }
     }
 
@@ -152,14 +200,14 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
           tokenInfo.tokenIDs = [];
 
         if (hasOutgoingTx) {
-            // User account as sender? Remove the token from the list
-            let index = tokenInfo.tokenIDs.findIndex( tID => tID == transferEvents[i].tokenID)
-            tokenInfo.tokenIDs.splice(index, 1);
+          // User account as sender? Remove the token from the list
+          let index = tokenInfo.tokenIDs.findIndex(tID => tID == transferEvents[i].tokenID)
+          tokenInfo.tokenIDs.splice(index, 1);
         } else {
-            // User account as received? Add the token to the list
-            if (!tokenInfo.tokenIDs.includes(transferEvents[i].tokenID)) {
-                tokenInfo.tokenIDs.push(transferEvents[i].tokenID);
-            }
+          // User account as received? Add the token to the list
+          if (!tokenInfo.tokenIDs.includes(transferEvents[i].tokenID)) {
+            tokenInfo.tokenIDs.push(transferEvents[i].tokenID);
+          }
         }
       }
     }
@@ -186,6 +234,26 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
       return result.result as EthTokenTransaction[];
     } catch (e) {
       Logger.error('wallet', 'getTokenTransferEventsByAction error:', e)
+      return [];
+    }
+  }
+
+  private async getTokenTransferEventsByContractAddress(address: string, contractAddress: string, action: AccountAction, startblock: number, endblock = 9999999999): Promise<EthTokenTransaction[]> {
+    let tokensEventUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN)
+      + '?module=account&action=' + action + '&address=' + address
+      + '&contractaddress=' + contractAddress
+      + '&startblock=' + startblock + '&endblock=' + endblock;
+
+    if (this.apiKey)
+      tokensEventUrl += '&apikey=' + this.apiKey;
+
+    //console.log(tokensEventUrl)
+
+    try {
+      let result = await GlobalJsonRPCService.instance.httpGet(tokensEventUrl, this.subWallet.networkWallet.network.key);
+      return result.result as EthTokenTransaction[];
+    } catch (e) {
+      Logger.error('wallet', 'getTokenTransferEventsByContractAddress error:', e)
       return [];
     }
   }

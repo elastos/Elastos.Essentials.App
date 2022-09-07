@@ -14,7 +14,7 @@ export class PolygonTransactionProvider extends EVMTransactionProvider {
   }
 
   protected createEVMTokenSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet, FetchMode.FetchMode_TokenTx_NftTx, POLYGON_SCAN_API_KEY_2);
+    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet, FetchMode.Compatibility2, POLYGON_SCAN_API_KEY_2);
   }
 
   protected createEVMSubWalletInternalTransactionProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {

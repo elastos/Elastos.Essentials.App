@@ -11,7 +11,7 @@ export class BSCTransactionProvider extends EVMTransactionProvider {
   }
 
   protected createEVMTokenSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet, FetchMode.FetchMode_TokenTx_NftTx, BSC_SCAN_API_KEY);
+    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet, FetchMode.Compatibility2, BSC_SCAN_API_KEY);
   }
 
   protected createEVMSubWalletInternalTransactionProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
