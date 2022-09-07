@@ -50,7 +50,7 @@
     "@awesome-cordova-plugins/status-bar": "5.37.3",
     "@elastosfoundation/did-js-sdk": "^2.2.3",
     "@elastosfoundation/hive-js-sdk": "2.7.4",
-    "@elastosfoundation/wallet-js-sdk": "^0.0.9-alpha",
+    "@elastosfoundation/wallet-js-sdk": "^0.0.10-alpha",
     "@ensdomains/ensjs": "^3.0.0-alpha.11",
     "@ethereumjs/common": "^2.6.4",
     "@ethereumjs/tx": "^3.5.1",

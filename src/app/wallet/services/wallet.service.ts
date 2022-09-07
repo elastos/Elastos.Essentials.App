@@ -385,6 +385,18 @@ export class WalletService {
         return Object.values(this.masterWallets).length;
     }
 
+    /**
+     * Gets the list of master wallets that supports the specified network, sorted alphabetically.
+     */
+     public getMasterWalletsListByNetwork(networkKey: string): MasterWallet[] {
+        let network = this.networkService.getNetworkByKey(networkKey)
+        return Object.values(this.masterWallets).filter((wallet) => {
+            return wallet.supportsNetwork(network)
+        }).sort((a, b) => {
+            return a.name > b.name ? 1 : -1;
+        });
+    }
+
     public walletNameExists(name: string): boolean {
         const existingWallet = Object.values(this.masterWallets).find((wallet) => {
             return wallet.name === name;
