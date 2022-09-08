@@ -38,4 +38,8 @@ export class GnosisBaseNetwork extends EVMNetwork {
     else
       throw new Error(`GnosisBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "007c59";
+  }
 }

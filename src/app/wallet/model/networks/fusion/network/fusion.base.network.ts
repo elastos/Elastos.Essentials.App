@@ -36,4 +36,8 @@ export class FusionBaseNetwork extends EVMNetwork {
     else
       throw new Error(`FusionBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "1d9ad7";
+  }
 }

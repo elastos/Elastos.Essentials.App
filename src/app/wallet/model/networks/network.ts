@@ -44,8 +44,8 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
     // We don't create networkWallet if the master wallet does not support the active network.
     // eg. the ledger wallet has no ela address or evm address.
     if (!masterWallet.supportsNetwork(this)) {
-        Logger.warn("wallet", "Wallet ", masterWallet.name, " does not support network", this.name)
-        return null;
+      Logger.warn("wallet", "Wallet ", masterWallet.name, " does not support network", this.name)
+      return null;
     }
     let wallet = await this.newNetworkWallet(masterWallet);
     if (wallet) {
@@ -111,6 +111,16 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    */
   public isEVMNetwork(): boolean {
     return false;
+  }
+
+  /**
+   * Returns the main color that matches the network "culture". Usually, this is a color extracted
+   * from the main network icon. This color is used for example on some widgets, to highlight the current active network.
+   * The returned color is a hex code without the leading #. EG: "FF34E6".
+   * Networks without a specific color can return null, and a default essentials color will be used.
+   */
+  public getMainColor(): string {
+    return null;
   }
 }
 

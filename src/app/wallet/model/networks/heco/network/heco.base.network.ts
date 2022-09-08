@@ -38,4 +38,8 @@ export class HecoBaseNetwork extends EVMNetwork {
     else
       throw new Error(`HecoBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "00943e";
+  }
 }

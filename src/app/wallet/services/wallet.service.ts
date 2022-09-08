@@ -239,7 +239,7 @@ export class WalletService {
         await this.terminateActiveNetworkWallets();
 
         if (activatedNetwork) {
-            Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork);
+            Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork, "with active master ID:", this.activeMasterWalletId);
 
             this.networkWallets = {};
             let masterWalletsList = this.getMasterWalletsList()
@@ -381,13 +381,13 @@ export class WalletService {
     }
 
     public getActiveMasterWalletIndex(): number {
-      if (!this.activeNetworkWallet.value)
-          return -1;
+        if (!this.activeNetworkWallet.value)
+            return -1;
 
-      return this.getMasterWalletsList().findIndex(w => {
-          return w.id === this.activeNetworkWallet.value.id
-      });
-  }
+        return this.getMasterWalletsList().findIndex(w => {
+            return w.id === this.activeNetworkWallet.value.id
+        });
+    }
 
     public getNetworkWalletFromMasterWalletId(masterId: string): AnyNetworkWallet {
         return Object.values(this.networkWallets).find(w => w.id === masterId);

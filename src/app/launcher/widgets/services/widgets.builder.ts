@@ -4,6 +4,7 @@ import { Logger } from 'src/app/logger';
 import { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
 import { Widget } from '../base/widget.interface';
 import { WidgetState } from '../base/widgetstate';
+import { ActiveNetworkCoinPriceWidget } from '../builtin/active-network-coin-price/active-network-coin-price.widget';
 import { ActiveWalletWidget } from '../builtin/active-wallet/active-wallet.widget';
 import { BackupIdentityWidget } from '../builtin/backup-identity/backup-identity.widget';
 import { ContactsWidget } from '../builtin/contacts/contacts.widget';
@@ -71,6 +72,7 @@ export class WidgetsBuilder {
             switch (widgetState.builtInType) {
                 case "identity": widgetComponentClass = IdentityWidget; break;
                 case "active-wallet": widgetComponentClass = ActiveWalletWidget; break;
+                case "active-network-coin-price": widgetComponentClass = ActiveNetworkCoinPriceWidget; break;
                 case "signout": widgetComponentClass = SignOutWidget; break;
                 case "elastos-voting": widgetComponentClass = ElastosVotingWidget; break;
                 case "recent-apps": widgetComponentClass = RecentAppsWidget; break;

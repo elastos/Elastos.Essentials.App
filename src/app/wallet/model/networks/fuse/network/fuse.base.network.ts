@@ -38,4 +38,8 @@ export class FuseBaseNetwork extends EVMNetwork {
     else
       throw new Error(`FuseBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "bafca2";
+  }
 }

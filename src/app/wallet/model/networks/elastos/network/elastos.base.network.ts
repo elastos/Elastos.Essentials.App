@@ -31,5 +31,9 @@ export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends Wallet
     return 'ELA';
   }
 
+  public getMainColor(): string {
+    return "5D37C0";
+  }
+
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig);
 }

@@ -38,4 +38,8 @@ export class IoTeXBaseNetwork extends EVMNetwork {
     else
       throw new Error(`IoTeXBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "00d4d5";
+  }
 }

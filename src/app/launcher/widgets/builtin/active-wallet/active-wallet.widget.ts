@@ -134,7 +134,6 @@ export class ActiveWalletWidget implements OnInit, OnDestroy {
     return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toFixed();
   }
 
-
   private async updateWidgetMainWallet() {
     // Deprecated
     let activeWallet = this.walletService.activeNetworkWallet.value;

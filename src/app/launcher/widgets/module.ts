@@ -7,6 +7,7 @@ import { SharedComponentsModule } from "src/app/components/sharedcomponents.modu
 import { GlobalDirectivesModule } from "src/app/helpers/directives/module";
 import { WidgetContainerComponent } from './base/widget-container/widget-container.component';
 import { WidgetHolderComponent } from './base/widget-holder/widget-holder.component';
+import { ActiveNetworkCoinPriceWidget } from "./builtin/active-network-coin-price/active-network-coin-price.widget";
 import { ActiveWalletWidget } from "./builtin/active-wallet/active-wallet.widget";
 import { BackupIdentityWidget } from "./builtin/backup-identity/backup-identity.widget";
 import { ContactsWidget } from "./builtin/contacts/contacts.widget";
@@ -47,6 +48,7 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     RedPacketsWidget,
     HiveWidget,
     DiscoverDAppsWidget,
+    ActiveNetworkCoinPriceWidget,
 
     // Plugins 
     PluginWidget,
