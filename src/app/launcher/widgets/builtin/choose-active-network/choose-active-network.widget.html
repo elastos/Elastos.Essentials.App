@@ -1,0 +1,19 @@
+<ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode">
+  <ion-row class="header-row">
+    <ion-col size="12" class="title-col">
+      {{ 'launcher.switch-network' | translate }}
+    </ion-col>
+  </ion-row>
+  <ion-row class="networks-row">
+    <ion-row class="networks">
+      <ion-col size="3" class="network" *ngFor="let network of lastUsedNetworks" (click)="selectNetwork(network)">
+        <img [src]="network.logo" [class.active]="isNetworkActive(network)"
+          src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
+        <div class="title" [class.active]="isNetworkActive(network)">{{network.name}}</div>
+      </ion-col>
+    </ion-row>
+    <div class="grid">
+      <img src="/assets/launcher/icons/dark_mode/grid.svg" (click)="pickNetwork()" />
+    </div>
+  </ion-row>
+</ion-row>

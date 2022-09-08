@@ -89,6 +89,7 @@ export const zh = {
         'data-sync-no': 'No, thanks',
         'hive-sync-popup-title': 'Hive sync',
         'hive-sync-popup-info': 'Some personal data such as your private DID information or your contacts list will be saved and restored (now or after a reinstallation) from your hive vault, on a remote server that you have chosen using the Hive manager.',
+        'switch-network': 'Switch network',
 
         /*********** Tips generic ************/
         'tip-of-the-day': '每日提示',

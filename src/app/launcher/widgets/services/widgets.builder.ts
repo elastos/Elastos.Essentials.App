@@ -7,6 +7,7 @@ import { WidgetState } from '../base/widgetstate';
 import { ActiveNetworkCoinPriceWidget } from '../builtin/active-network-coin-price/active-network-coin-price.widget';
 import { ActiveWalletWidget } from '../builtin/active-wallet/active-wallet.widget';
 import { BackupIdentityWidget } from '../builtin/backup-identity/backup-identity.widget';
+import { ChooseActiveNetworkWidget } from '../builtin/choose-active-network/choose-active-network.widget';
 import { ContactsWidget } from '../builtin/contacts/contacts.widget';
 import { DiscoverDAppsWidget } from '../builtin/discover-dapps/discover-dapps.widget';
 import { EasyBridgeWidget } from '../builtin/easy-bridge/easy-bridge.widget';
@@ -73,6 +74,7 @@ export class WidgetsBuilder {
                 case "identity": widgetComponentClass = IdentityWidget; break;
                 case "active-wallet": widgetComponentClass = ActiveWalletWidget; break;
                 case "active-network-coin-price": widgetComponentClass = ActiveNetworkCoinPriceWidget; break;
+                case "choose-active-network": widgetComponentClass = ChooseActiveNetworkWidget; break;
                 case "signout": widgetComponentClass = SignOutWidget; break;
                 case "elastos-voting": widgetComponentClass = ElastosVotingWidget; break;
                 case "recent-apps": widgetComponentClass = RecentAppsWidget; break;

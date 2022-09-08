@@ -21,6 +21,7 @@ const builtInWidgets: WidgetState[] = [
     { category: "builtin", builtInType: "identity", displayCategories: [DisplayCategories.IDENTITY] },
     { category: "builtin", builtInType: "active-wallet", displayCategories: [DisplayCategories.FINANCE] },
     { category: "builtin", builtInType: "active-network-coin-price", displayCategories: [DisplayCategories.FINANCE] },
+    { category: "builtin", builtInType: "choose-active-network", displayCategories: [DisplayCategories.FINANCE] },
     { category: "builtin", builtInType: "signout", displayCategories: [DisplayCategories.IDENTITY] },
     { category: "builtin", builtInType: "elastos-voting", displayCategories: [DisplayCategories.ELASTOS] },
     { category: "builtin", builtInType: "recent-apps", displayCategories: [DisplayCategories.BROWSER] },
@@ -299,6 +300,7 @@ export class WidgetsService {
             case "left":
                 widgets.push(this.createBuiltInWidgetState("active-network-coin-price"));
                 widgets.push(this.createBuiltInWidgetState("recent-apps"));
+                widgets.push(this.createBuiltInWidgetState("choose-active-network"));
                 widgets.push(this.createBuiltInWidgetState("wallet-connect"));
                 widgets.push(this.createBuiltInWidgetState("signout"));
                 break;

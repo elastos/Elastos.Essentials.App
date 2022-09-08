@@ -35,6 +35,10 @@ export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<Ela
       singleAddress: true
     }
   }
+
+  public getMainColor(): string {
+    return "444444";
+  }
 }
 
 /**

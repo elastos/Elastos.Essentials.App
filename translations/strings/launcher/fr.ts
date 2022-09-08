@@ -89,6 +89,7 @@ export const fr = {
         'data-sync-no': 'Non, merci',
         'hive-sync-popup-title': 'Synchro Hive',
         'hive-sync-popup-info': 'Certaines informations personnelles telles que votre profil DID ou vos contacts seront sauvées et restorées (dès maintenant, ou apres une réinstallation) depuis votre stockage Hive, sur le serveur distant que vous avez choisi via le gestionnaire de stockage Hive.',
+        'switch-network': 'Changer de réseau',
 
         /*********** Tips generic ************/
         'tip-of-the-day': 'Astuce du jour',

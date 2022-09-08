@@ -174,6 +174,8 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new HooTestNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
+
+    this.networkService.notifyAllNetworksRegistered();
   }
 
   private async createAndRegisterNetwork(network: AnyNetwork, isDefault = false): Promise<void> {

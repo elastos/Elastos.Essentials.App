@@ -10,6 +10,7 @@ import { WidgetHolderComponent } from './base/widget-holder/widget-holder.compon
 import { ActiveNetworkCoinPriceWidget } from "./builtin/active-network-coin-price/active-network-coin-price.widget";
 import { ActiveWalletWidget } from "./builtin/active-wallet/active-wallet.widget";
 import { BackupIdentityWidget } from "./builtin/backup-identity/backup-identity.widget";
+import { ChooseActiveNetworkWidget } from "./builtin/choose-active-network/choose-active-network.widget";
 import { ContactsWidget } from "./builtin/contacts/contacts.widget";
 import { DiscoverDAppsWidget } from "./builtin/discover-dapps/discover-dapps.widget";
 import { EasyBridgeWidget } from "./builtin/easy-bridge/easy-bridge.widget";
@@ -49,6 +50,7 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     HiveWidget,
     DiscoverDAppsWidget,
     ActiveNetworkCoinPriceWidget,
+    ChooseActiveNetworkWidget,
 
     // Plugins 
     PluginWidget,
