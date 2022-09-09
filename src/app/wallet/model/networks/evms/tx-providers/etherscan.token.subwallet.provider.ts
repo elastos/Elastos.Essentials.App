@@ -194,6 +194,7 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
         ercTokens.push(tokenInfo);
       }
 
+      // The transferEvents must be sort by date ASC
       // Append NFT token ID if needed
       if (transferEvents[i].tokenID) {
         if (!tokenInfo.tokenIDs)
@@ -202,7 +203,8 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
         if (hasOutgoingTx) {
           // User account as sender? Remove the token from the list
           let index = tokenInfo.tokenIDs.findIndex(tID => tID == transferEvents[i].tokenID)
-          tokenInfo.tokenIDs.splice(index, 1);
+          if (index >= 0)
+            tokenInfo.tokenIDs.splice(index, 1);
         } else {
           // User account as received? Add the token to the list
           if (!tokenInfo.tokenIDs.includes(transferEvents[i].tokenID)) {
@@ -224,7 +226,7 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
   private async getTokenTransferEventsByAction(address: string, action: AccountAction, startblock: number, endblock = 9999999999): Promise<EthTokenTransaction[]> {
     let tokensEventUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN)
       + '?module=account&action=' + action + '&address=' + address
-      + '&startblock=' + startblock + '&endblock=' + endblock;
+      + '&startblock=' + startblock + '&endblock=' + endblock + '&sort=asc';
 
     if (this.apiKey)
       tokensEventUrl += '&apikey=' + this.apiKey;
@@ -242,7 +244,7 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
     let tokensEventUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN)
       + '?module=account&action=' + action + '&address=' + address
       + '&contractaddress=' + contractAddress
-      + '&startblock=' + startblock + '&endblock=' + endblock;
+      + '&startblock=' + startblock + '&endblock=' + endblock + '&sort=asc';
 
     if (this.apiKey)
       tokensEventUrl += '&apikey=' + this.apiKey;
