@@ -1,5 +1,6 @@
 <!-- Identity -->
-<ion-row *ngIf="getSignedInIdentity()" class="root id-row" [class.darkContainer]="theme.darkMode">
+<ion-row *ngIf="getSignedInIdentity()" class="widget widget-background root id-row"
+  [class.darkContainer]="theme.darkMode">
   <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">
     <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
       <img
@@ -12,7 +13,7 @@
   </ion-col>
 
   <ion-col size="7.25" class="mid-col" (click)="showMyIdentity()">
-    <h1>{{ getDateFromNow().toUpperCase() }}</h1>
+    <h1>{{ getDateFromNow() }}</h1>
     <h2>{{ getSignedInIdentity().name }}</h2>
   </ion-col>
   <ion-col offset="0.75" size="1.25" class="right-col" (click)="showOptions($event)">

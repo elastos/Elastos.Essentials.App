@@ -1,6 +1,8 @@
 @import "../../widgets.scss";
 
 .id-row {
+  flex-direction: row;
+
   ion-col {
     display: flex;
   }
@@ -32,7 +34,6 @@
       display: block;
       font-size: 6vw;
       font-weight: 500;
-      letter-spacing: -0.5px;
       overflow: hidden;
       text-overflow: ellipsis;
       word-wrap: break-word;
@@ -60,7 +61,10 @@
 
 .darkContainer {
   .mid-col {
-    h1,
+    h1 {
+      color: #acacac;
+    }
+
     h2 {
       color: #ffffff;
     }
