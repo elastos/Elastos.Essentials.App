@@ -479,7 +479,13 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
       // ETHTransactionManager handle this error if the subwallet is StandardEVMSubWallet.
       // Maybe need to speed up.
       //if (!(this instanceof MainCoinEVMSubWallet)) { // BPI: Removed because of circular dependency - should move to safe, maybe. To be checked
-      await PopupProvider.instance.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
+      let message = ''
+      if (err.message && err.message.includes('slot TxInputsReferKeys verify tx error')) { // For ELA main chain.
+        message = 'wallet.transaction-pending';
+      } else {
+        message = err.message ? err.message : '';
+      }
+      await PopupProvider.instance.ionicAlert('wallet.transaction-fail', message);
       //}
 
       return {
