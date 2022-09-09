@@ -34,7 +34,7 @@ export class RecentAppsWidget implements Widget, OnInit, OnDestroy {
   ngOnInit() {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.recentAppsSub = this.browserService.recentApps.subscribe(async () => {
-      this.recentApps = await this.browserService.getRecentAppsWithInfo();
+      this.recentApps = await (await this.browserService.getRecentAppsWithInfo()).slice(0, 4); // Max 4 apps shown
     });
     return;
   }

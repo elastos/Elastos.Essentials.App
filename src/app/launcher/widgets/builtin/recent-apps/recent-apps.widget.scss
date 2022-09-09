@@ -1,76 +1,55 @@
 @import "../../widgets.scss";
 
-.dapps-row {
-  padding-top: 10px !important;
+.recent-apps-row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-content: flex-start;
+  align-items: center;
+  place-content: space-between;
 
-  .title-col {
-    padding: 0px;
-  }
-  .more-col {
+  .recent-apps {
     display: flex;
-    align-items: center;
-    font-size: 10px;
-    justify-content: flex-end;
-
-    img {
-      margin-left: 5px;
-      height: 10px;
-    }
-  }
-
-  .apps-col {
-    display: flex;
-    flex-wrap: wrap;
-    height: 66px;
-    max-height: 66px; // For webviews on ios ~~ 15.4.1+ that just don't care about "height".
-    flex-direction: column;
-    align-content: flex-start;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    white-space: nowrap;
-    width: 100%;
+    width: auto;
+    flex: 1;
 
     .recent-app {
-      width: 70px;
-      margin-right: 10px;
-      overflow: hidden;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      position: relative;
+      flex-direction: column;
 
       img {
-        max-width: 100%;
-        height: 40px;
-        margin-bottom: 5px;
+        height: 50px;
+        width: 50px;
+        width: 50px;
+        object-fit: contain;
+        background: #ccc;
         border-radius: 10px;
-      }
-
-      .network {
-        position: absolute;
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        right: 10px;
-        bottom: 10px;
-        border: solid 1px rgba(255, 255, 255, 0.5);
+        padding: 8px;
       }
 
       .title {
-        text-align: center;
-        font-size: 9px;
-        white-space: nowrap;
+        margin-top: 5px;
+        margin-bottom: 0;
+        font-size: 12px;
       }
     }
   }
 
-  &.darkContainer {
-    .more-col {
-      color: #acacac;
-    }
+  .grid {
+    width: 30px;
+  }
+}
 
-    .apps-col {
+.darkContainer {
+  .recent-apps-row {
+    .recent-apps {
       .recent-app {
+        img {
+          background: #333133;
+        }
+
         .title {
           color: #acacac;
         }

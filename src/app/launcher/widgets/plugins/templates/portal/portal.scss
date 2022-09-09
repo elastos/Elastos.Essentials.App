@@ -34,4 +34,16 @@
       }
     }
   }
+
+  &.darkContainer {
+    .right-col {
+      ion-button {
+        .inner {
+          img {
+            background: #535153;
+          }
+        }
+      }
+    }
+  }
 }
