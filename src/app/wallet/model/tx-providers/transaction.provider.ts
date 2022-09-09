@@ -5,7 +5,7 @@ import { GlobalLanguageService } from "src/app/services/global.language.service"
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
 import { ERC20CoinService } from "../../services/evm/erc20coin.service";
-import { ERC20Coin, StandardCoinName, TokenAddress } from "../coin";
+import { ERC20Coin, StandardCoinName, TokenAddress, TokenType } from "../coin";
 import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../networks/base/subwallets/subwallet";
 import { EVMNetwork } from "../networks/evms/evm.network";
@@ -239,10 +239,19 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
     let network = <EVMNetwork>this.networkWallet.network;
     let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
+
+    // Clean up NFTs that have been sent
+    let nfts = tokens.filter((token) => {
+        return (token.type === TokenType.ERC_721) || (token.type === TokenType.ERC_1155);
+    });
+    if (nfts.length > 0) {
+        this.networkWallet.cleanUpNFT(nfts);
+    }
+
     // For each ERC token discovered by the wallet SDK, we check its type and handle it.
     for (let index = 0; index < tokens.length; index++) {
       const token = tokens[index];
-      if (token.type === "ERC-20") {
+      if (token.type === TokenType.ERC_20) {
         if (token.symbol && token.name) {
           if (!this.networkWallet.getSubWallet(token.symbol) && !network.isCoinDeleted(token.contractAddress)) {
             try {
@@ -282,14 +291,14 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
           Logger.warn('wallet', 'Token has no name or symbol:', token);
         }
       }
-      else if (token.type === "ERC-721") {
+      else if (token.type === TokenType.ERC_721) {
         // We can possibly have a balance, but not the tokens IDs list. So we update the balance to show the right
         // number on UI first, and we will fetch tokens IDs later when use enters coin-home
         //
         // NOTE: We get ONE token info entry uniquely per NFT contract, not several.
         await this.networkWallet.upsertNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs, token.name);
       }
-      else if (token.type === "ERC-1155") {
+      else if (token.type === TokenType.ERC_1155) {
         await this.networkWallet.upsertNFT(NFTType.ERC1155, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs, token.name);
       }
       else {
