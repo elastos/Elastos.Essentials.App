@@ -341,7 +341,8 @@ export class TitleBarComponent {
             this.foregroundMode = TitleBarForegroundMode.DARK;
         } else {
             document.body.classList.add("dark");
-            this.theme.backgroundColor = '#121212';
+            //this.theme.backgroundColor = '#121212';
+            this.theme.backgroundColor = '#000';
             this.theme.color = '#ffffff';
             this.foregroundMode = TitleBarForegroundMode.LIGHT;
         }

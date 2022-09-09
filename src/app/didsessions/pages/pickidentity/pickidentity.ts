@@ -54,9 +54,9 @@ export class PickIdentityPage {
 
   ionViewWillEnter() {
     if (!this.theme.darkMode) {
-      this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
+      this.titleBar.setForegroundMode(TitleBarForegroundMode.DARK);
     } else {
-      this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
+      this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     }
 
     this.setTitle();
@@ -82,7 +82,7 @@ export class PickIdentityPage {
   }
 
   setTitle() {
-    switch ( this.globalNetworksService.activeNetworkTemplate.value) {
+    switch (this.globalNetworksService.activeNetworkTemplate.value) {
       case MAINNET_TEMPLATE:
         this.titleBar.setTitle(this.translate.instant("didsessions.pick-identity"));
         break;

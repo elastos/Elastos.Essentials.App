@@ -109,9 +109,9 @@ export class HomePage implements OnInit {
     });
 
     if (this.theme.darkMode) {
-      this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
+      this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     } else {
-      this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
+      this.titleBar.setForegroundMode(TitleBarForegroundMode.DARK);
     }
 
     this.themeSubscription = this.theme.activeTheme.subscribe(theme => {
