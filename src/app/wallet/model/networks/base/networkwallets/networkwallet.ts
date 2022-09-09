@@ -19,6 +19,7 @@ import { TimeBasedPersistentCache } from '../../../timebasedpersistentcache';
 import { TransactionProvider } from '../../../tx-providers/transaction.provider';
 import { WalletSortType } from '../../../walletaccount';
 import { EVMNetwork } from '../../evms/evm.network';
+import { ERCTokenInfo } from '../../evms/evm.types';
 import { NFT, NFTType, SerializedNFT } from '../../evms/nfts/nft';
 import { NFTAsset } from '../../evms/nfts/nftasset';
 import { MainCoinEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
@@ -515,6 +516,15 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         Logger.log("wallet", "Updating wallet walletNFT", walletNFT);
 
         return this.save();
+    }
+
+    // Clean up NFTs that have been sent.
+    public cleanUpNFT(nftTokes: ERCTokenInfo[]) {
+        this.nfts = this.nfts.filter( nft => {
+            return nftTokes.findIndex( n => {
+                return n.contractAddress === nft.contractAddress
+            }) >= 0
+        })
     }
 
     /**
