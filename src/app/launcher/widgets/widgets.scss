@@ -39,7 +39,6 @@
   .right-col {
     width: auto;
     display: flex;
-    min-height: 80px; // Don't let the floating project logo overflow
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -74,7 +73,7 @@
     }
 
     .app-row {
-      padding: 10px 0;
+      padding: 0;
 
       ion-col {
         display: flex;
@@ -124,6 +123,8 @@
 
       .right-col {
         justify-content: flex-end;
+        align-self: center;
+        align-items: flex-end;
       }
 
       .widget-col {
