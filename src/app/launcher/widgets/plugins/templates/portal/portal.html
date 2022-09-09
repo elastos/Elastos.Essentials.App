@@ -1,9 +1,10 @@
-<div class="widget-background template-root" [class.darkContainer]="theme.darkMode">
+<div class="widget widget-background template-root" [class.darkContainer]="theme.darkMode">
   <div class="project" (click)="onProjectLogoClicked()">
-    <img [cache]="config.logo">
+    <img class="logo" [cache]="config.logo">
+    <div class="name">Project Name</div>
+    <div class="title">Widget title</div>
   </div>
   <div class="right-col">
-    <div class="header">{{ config.content.header }}</div>
     <ion-row>
       <ion-col size="6">
         <ion-button *ngIf="config.content.items[0]" (click)="onActionClicked(0)">

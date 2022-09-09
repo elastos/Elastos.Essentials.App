@@ -3,34 +3,33 @@
 
 .template-root {
   .right-col {
-    .header {
-      font-size: 12px;
-      font-weight: bold;
-      text-align: left;
-      margin-left: 10px;
-    }
-
     ion-button {
-      height: 36px;
+      height: 40px;
       width: 100%;
       font-size: 12px;
+      font-weight: bold;
       overflow: hidden;
       --padding-start: 5px;
       --padding-end: 5px;
       margin: 0;
 
       .inner {
-        width: 100%;
+        width: auto;
         display: flex;
         flex-direction: row;
         align-items: center;
-        text-align: left;
-        white-space: normal;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         img {
           max-height: 24px;
           width: 24px;
           margin-right: 5px;
+          background: #ccc;
+          border-radius: 50%;
+          padding: 1px;
         }
       }
     }

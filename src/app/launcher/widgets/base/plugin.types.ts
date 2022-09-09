@@ -21,7 +21,6 @@ type PortalContentItem = {
 };
 
 export type PortalContent = {
-  header: string; // Simple visual string on top of the items
   items: PortalContentItem[];
 };
 
