@@ -1,26 +1,24 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <ion-grid [class.dark-container]="theme.darkMode"  *ngIf="initialComputationDone">
-        <div *ngIf="notificationService.notifications.length > 0">
-            <ion-item-sliding *ngFor="let notification of notificationService.notifications">
-                <ion-item
-                    class="notif-item ion-activatable ripple"
-                    [class.removeBorder]="notificationService.notifications.length !== 1 && notificationService.notifications.indexOf(notification) === notificationService.notifications.length - 1"
-                    lines="none"
-                >
+    <ion-grid [class.dark-container]="theme.darkMode">
+        <div *ngIf="notifications.length > 0">
+            <ion-item-sliding *ngFor="let notification of notifications">
+                <ion-item class="notif-item ion-activatable ripple"
+                    [class.removeBorder]="notifications.length !== 1 && notifications.indexOf(notification) === notifications.length - 1"
+                    lines="none">
                     <ion-row class="notif-row">
                         <ion-col class="name-col" size="7.5">
-                            <img [src]="getNotificationIcon(notification)"/>
-                            <h2>{{ getNotificationHeader(notification) | translate }}</h2>
+                            <img [src]="notificationService.getNotificationIcon(notification)" />
+                            <h2>{{ notificationService.getNotificationHeader(notification) | translate }}</h2>
                         </ion-col>
                         <ion-col class="date-col" size="4.5" (click)="close(notification)">
-                            <p>{{ getNotificationDate(notification) }}</p>
+                            <p>{{ notificationService.getNotificationDate(notification) }}</p>
                         </ion-col>
                         <ion-col size="12" class="title-col" (click)="start(notification)">
-                            <p>{{ getNotificationTitle(notification) | translate }}</p>
+                            <p>{{ notificationService.getNotificationTitle(notification) | translate }}</p>
                         </ion-col>
                         <ion-col size="12" class="message-col" (click)="start(notification)">
-                            <p>{{ getNotificationMessage(notification) | translate }}</p>
+                            <p>{{ notificationService.getNotificationMessage(notification) | translate }}</p>
                         </ion-col>
                         <ion-ripple-effect></ion-ripple-effect>
                     </ion-row>
@@ -29,11 +27,12 @@
                     <ion-item-option class="notifications-swipe-button" expandable>&nbsp;</ion-item-option>
                 </ion-item-options>
             </ion-item-sliding>
-            <ion-row *ngIf="notificationService.notifications.length > 1" class="close-all-row ion-margin-top" (click)="closeAllNotifications()">
+            <ion-row *ngIf="notifications.length > 1" class="close-all-row ion-margin-top"
+                (click)="closeAllNotifications()">
                 {{ 'launcher.close-notifs' | translate }}
             </ion-row>
         </div>
-        <div *ngIf="notificationService.notifications.length === 0" class="empty-container">
+        <div *ngIf="notifications.length === 0" class="empty-container">
             <h1>{{ 'launcher.no-empty' | translate }}</h1>
             <p>{{ 'launcher.no-notif' | translate }}</p>
         </div>

@@ -86,7 +86,7 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
 
   private prepare() {
     if (this.activeNetwork) {
-      let coinPrice = this.currencyService.getMainTokenValue(new BigNumber(1), this.activeNetwork)
+      let coinPrice = this.currencyService.getMainTokenValue(new BigNumber(1), this.activeNetwork, 'USD'); // TODO: Use user currency from wallet settings
       if (coinPrice && !coinPrice.isNaN()) {
         this.coinDisplayPrice = coinPrice.decimalPlaces(this.currencyService.selectedCurrency.decimalplace, BigNumber.ROUND_DOWN).toFixed();;
       }

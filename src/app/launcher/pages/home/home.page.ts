@@ -1,6 +1,6 @@
-import { Component, NgZone, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
-import { IonSlides, ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { IonSlides, ModalController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -15,11 +15,10 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
+import { NotificationManagerService } from '../../services/notificationmanager.service';
 import { WidgetContainerComponent } from '../../widgets/base/widget-container/widget-container.component';
 import { WidgetPluginsService } from '../../widgets/services/plugin.service';
 import { WidgetsService } from '../../widgets/services/widgets.service';
-import { NotificationsPage } from '../notifications/notifications.page';
-
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -48,7 +47,6 @@ export class HomePage implements OnInit {
 
   constructor(
     public toastCtrl: ToastController,
-    private popoverCtrl: PopoverController,
     public translate: TranslateService,
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,
@@ -56,17 +54,18 @@ export class HomePage implements OnInit {
     public appService: AppmanagerService,
     public didService: DIDManagerService,
     private modalCtrl: ModalController,
-    private zone: NgZone,
     public walletUIService: UiService,
     private globalNetworksService: GlobalNetworksService,
     private globalStartupService: GlobalStartupService,
     private globalNavService: GlobalNavService,
     private widgetsService: WidgetsService,
+    private launcherNotificationsService: NotificationManagerService,
     private widgetPluginsService: WidgetPluginsService // init
   ) {
   }
 
   ngOnInit() {
+    this.launcherNotificationsService.init();
   }
 
   ionViewWillEnter() {
@@ -192,13 +191,9 @@ export class HomePage implements OnInit {
   }
 
   async showNotifications() {
-    this.modal = await this.modalCtrl.create({
-      component: NotificationsPage,
-      cssClass: 'running-modal',
-      mode: 'ios',
+    this.modal = await this.launcherNotificationsService.showNotifications(() => {
+      this.modal = null;
     });
-    this.modal.onDidDismiss().then(() => { this.modal = null; });
-    await this.modal.present();
   }
 
   public toggleEditWidgets() {

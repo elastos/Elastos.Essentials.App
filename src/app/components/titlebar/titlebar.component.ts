@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { GlobalNotificationsService, Notification } from 'src/app/services/global.notifications.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode, TitleBarSlotItem, TitleBarTheme } from './titlebar.types';
@@ -28,6 +28,8 @@ export class TitleBarComponent {
 
     public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };
     public foregroundMode: TitleBarForegroundMode;
+
+    private notifications: Notification[] = [];
 
     public icons: TitleBarSlotItem[] = [
         TitleBarComponent.makeDefaultIcon(), // outer left
@@ -57,6 +59,10 @@ export class TitleBarComponent {
 
         // Set the default navigation mode (used by most apps)
         this.setNavigationMode(TitleBarNavigationMode.BACK);
+
+        this.globalNotifications.notifications.subscribe(notifications => {
+            this.notifications = notifications;
+        })
     }
 
     private static makeDefaultIcon(): TitleBarSlotItem {
@@ -343,6 +349,6 @@ export class TitleBarComponent {
 
     needToShowRedDot() {
         return (this.icons[1].iconPath === BuiltInIcon.NOTIFICATIONS)
-            && (this.globalNotifications.notifications.length > 0);
+            && (this.notifications.length > 0);
     }
 }

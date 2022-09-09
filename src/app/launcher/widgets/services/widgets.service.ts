@@ -34,6 +34,7 @@ const builtInWidgets: WidgetState[] = [
     { category: "builtin", builtInType: "new-red-packets", displayCategories: [DisplayCategories.COMMUNITY] },
     { category: "builtin", builtInType: "backup-identity", displayCategories: [DisplayCategories.IDENTITY] },
     { category: "builtin", builtInType: "hive-sync", displayCategories: [DisplayCategories.IDENTITY] },
+    { category: "builtin", builtInType: "notifications", displayCategories: [DisplayCategories.COMMUNITY] },
 ];
 
 export type WidgetInstance = {
@@ -305,6 +306,7 @@ export class WidgetsService {
                 widgets.push(this.createBuiltInWidgetState("signout"));
                 break;
             case "main":
+                widgets.push(this.createBuiltInWidgetState("notifications"));
                 widgets.push(this.createBuiltInWidgetState("identity"));
                 widgets.push(this.createBuiltInWidgetState("new-red-packets"));
                 widgets.push(this.createBuiltInWidgetState("backup-identity"));

@@ -16,7 +16,8 @@ export type BuiltInWidgetType =
   "hive" |
   "discover-dapps" |
   "active-network-coin-price" |
-  "choose-active-network";
+  "choose-active-network" |
+  "notifications";
 
 export enum DisplayCategories {
   ELASTOS = "elastos",

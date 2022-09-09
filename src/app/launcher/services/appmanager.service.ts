@@ -1,21 +1,17 @@
 import { Injectable, NgZone } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MenuController, ModalController, PopoverController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { Tip } from '../model/tip.model';
-import { NotificationsPage } from '../pages/notifications/notifications.page';
 import { TipsPage } from '../pages/tips/tips.page';
-import { DIDManagerService } from './didmanager.service';
 
 export type RunnableApp = {
     id: string;
@@ -58,15 +54,10 @@ export class AppmanagerService {
         public popoverController: PopoverController,
         private modalController: ModalController,
         public menuCtrl: MenuController,
-        private translate: TranslateService,
         private events: GlobalEvents,
-        private didService: DIDManagerService,
         private native: GlobalNativeService,
         private storage: GlobalStorageService,
-        private language: GlobalLanguageService,
         private globalNav: GlobalNavService,
-        // In-app Services
-        private hiveManagerInitService: HiveManagerInitService,
     ) { }
 
     public init() {
@@ -97,7 +88,7 @@ export class AppmanagerService {
     }
 
     async getVisit() {
-        let visit = await this.storage.getSetting<boolean>(this.didService.signedIdentity.didString, "launcher", 'visit', false);
+        let visit = await this.storage.getSetting<boolean>(DIDSessionsStore.signedInDIDString, "launcher", 'visit', false);
         if (visit || visit === true) {
             this.firstVisit = false;
         } else {
@@ -149,8 +140,7 @@ export class AppmanagerService {
     }
 
     async presentNotifications() {
-        /* TODO @chad - rework - no more "app infos"
-        await this.notification.fillAppInfoToNotification(this.installService.appInfos);*/
+        const NotificationsPage = (await import('../pages/notifications/notifications.page')).NotificationsPage; // Cirdcular deps + perf
         const modal = await this.modalController.create({
             component: NotificationsPage,
             cssClass: 'running-modal',
@@ -191,6 +181,68 @@ export class AppmanagerService {
                 Logger.log('launcher', 'dismissAllModals dismiss error')
                 return;
             }
+        }
+    }
+
+    getAppTitle(app: App) {
+        switch (app) {
+            case App.CONTACTS:
+                return 'launcher.app-contacts';
+            case App.CRCOUNCIL_VOTING:
+                return 'launcher.app-cr-council';
+            case App.CRPROPOSAL_VOTING:
+                return 'launcher.app-cr-proposal';
+            case App.SCANNER:
+                return 'launcher.app-scanner';
+            case App.DPOS_VOTING:
+                return 'launcher.app-dpos-voting';
+            case App.DPOS_REGISTRATION:
+                return 'launcher.app-dpos-registration';
+            case App.HIVE_MANAGER:
+                return 'launcher.app-hive';
+            case App.IDENTITY:
+                return 'launcher.app-identity';
+            case App.SETTINGS:
+                return 'launcher.app-settings';
+            case App.WALLET:
+                return 'launcher.app-wallet';
+            case App.DEVELOPER_TOOLS:
+                return 'launcher.app-dev-tools';
+            default:
+                return 'launcher.system-notification';
+        }
+    }
+
+    getAppIcon(app: App) {
+        switch (app) {
+            case App.CONTACTS:
+                return 'assets/contacts/images/logo.png';
+            case App.CRCOUNCIL_VOTING:
+                return 'assets/crcouncilvoting/images/logo.png';
+            case App.CRPROPOSAL_VOTING:
+                return 'assets/crproposalvoting/images/logo.png';
+            case App.SCANNER:
+                return 'assets/scanner/imgs/logo.png';
+            case App.DEVELOPER_TOOLS:
+                return 'assets/developertools/images/logo.png';
+            case App.DPOS_VOTING:
+                return 'assets/dposvoting/images/logo.png';
+            case App.DPOS_REGISTRATION:
+                return 'assets/dposregistration/images/logo.png';
+            case App.HIVE_MANAGER:
+                return 'assets/hivemanager/images/logo.png';
+            case App.IDENTITY:
+                return 'assets/identity/images/logo.png';
+            case App.SETTINGS:
+                return 'assets/settings/icon/logo.png';
+            case App.WALLET:
+                return 'assets/wallet/images/logo.png';
+            default:
+                if (this.theme.darkMode) {
+                    return "assets/launcher/icons/dark_mode/elalogo.svg";
+                } else {
+                    return "assets/launcher/icons/elalogo.svg";
+                }
         }
     }
 }

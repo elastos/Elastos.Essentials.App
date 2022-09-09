@@ -143,6 +143,10 @@ export class CurrencyService {
     return displayableCurrencies;
   }
 
+  public getDisplayableCurrencyBySymbol(symbol: string): DisplayableCurrency {
+    return displayableCurrencies.find(dc => dc.symbol === symbol);
+  }
+
   private async loadAllTokenSymbol() {
     this.networkMainTokenPrice = await this.globalStorage.getSetting(null, "wallet", "maintokenprice", {});
 

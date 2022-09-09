@@ -59,11 +59,13 @@
         margin: 5px;
         border-radius: 5px;
         text-align: center;
-        padding: 10px 5px;
+        padding: 15px 5px;
         transition: all 0.3s ease;
+        font-weight: 600;
+        font-size: 14px;
 
         &.active {
-          background: #777;
+          background: #000;
         }
       }
     }
@@ -89,5 +91,16 @@
 
   .footer {
     background: #111;
+
+    ion-row {
+      ion-col {
+        .cat-selector {
+          &.active {
+            background: #fff;
+            color: #000;
+          }
+        }
+      }
+    }
   }
 }

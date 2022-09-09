@@ -16,6 +16,7 @@ import { HiveSyncWidget } from '../builtin/hive-sync/hive-sync.widget';
 import { HiveWidget } from '../builtin/hive/hive.widget';
 import { IdentityWidget } from '../builtin/identity/identity.widget';
 import { NewRedPacketsWidget } from '../builtin/new-red-packets/new-red-packets.widget';
+import { NotificationsWidget } from '../builtin/notifications/notifications.widget';
 import { RecentAppsWidget } from '../builtin/recent-apps/recent-apps.widget';
 import { RedPacketsWidget } from '../builtin/red-packets/red-packets.widget';
 import { SignOutWidget } from '../builtin/signout/signout.widget';
@@ -87,6 +88,7 @@ export class WidgetsBuilder {
                 case "red-packets": widgetComponentClass = RedPacketsWidget; break;
                 case "hive": widgetComponentClass = HiveWidget; break;
                 case "discover-dapps": widgetComponentClass = DiscoverDAppsWidget; break;
+                case "notifications": widgetComponentClass = NotificationsWidget; break;
                 default:
                     Logger.warn("widgets", `Unhandled builtin widget type ${widgetState.builtInType}`);
             }

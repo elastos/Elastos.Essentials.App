@@ -45,6 +45,7 @@ export class GlobalPreferencesService implements GlobalService {
       "developer.install.verifyDigest": false,
       "developer.backgroundservices.startonboot": true,
       "developer.screencapture": false,
+      "developer.core.mode": false, // Core developer mode, to access dev/tests screens
       "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
       "privacy.credentialtoolbox.stats": true, // Publish anonymous stats about credentials usage, to the external credential toolbox service, or not
       "privacy.hive.sync": false, // Whether to allow data to be synchronized with the hive vault or not (credentials, contacts, etc)
@@ -142,6 +143,18 @@ export class GlobalPreferencesService implements GlobalService {
     catch (err) {
       return false;
     }
+  }
+
+  /**
+   * Developer mode is for external developers that are using essentials to build their dapps.
+   * Core developer mode is for essentials developers or testers.
+   */
+  public coreDeveloperModeEnabled(did: string): Promise<boolean> {
+    return this.getPreference<boolean>(did, "developer.core.mode");
+  }
+
+  public setCoreDeveloperModeEnabled(did: string, enabled: boolean): Promise<void> {
+    return this.setPreference(did, "developer.core.mode", enabled);
   }
 
   public getPublishIdentityMedium(did: string): Promise<string> {
