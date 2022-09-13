@@ -387,7 +387,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
             confirmStatus: parseInt(transaction.confirmations),
             datetime,
             direction: direction,
-            fee: transaction.gas,
+            fee: null,
             height: parseInt(transaction.blockNumber),
             memo: '',
             name: await this.getTransactionName(transaction),
@@ -406,7 +406,9 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         };
 
         // Use Config.WEI: because the gas is ETHSC.
-        transactionInfo.fee = (new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI)).toString();
+        if (transaction.gasUsed?.length > 0 && transaction.gasPrice?.length > 0) {
+            transactionInfo.fee = (new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI)).toFixed();
+        }
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = TransactionStatus.CONFIRMED;
