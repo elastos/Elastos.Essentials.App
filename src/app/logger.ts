@@ -59,7 +59,7 @@ class _Logger implements GlobalService {
     }
 
     onUserSignOut(): Promise<void> {
-        if (!this.prefSub) {
+        if (this.prefSub) {
             this.prefSub.unsubscribe();
             this.prefSub = null;
         }
