@@ -54,6 +54,10 @@ export class ElastosMainChainStandardMultiSigNetworkWallet extends StandardMulti
     return null;
   }
 
+  public getMainTokenSubWallet(): AnySubWallet {
+    return this.subWallets[StandardCoinName.ELA];
+  }
+
   public getMultiSigSubWallet(): AnySubWallet {
     return this.subWallets[StandardCoinName.ELA];
   }

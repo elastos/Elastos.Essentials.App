@@ -4,6 +4,7 @@ import { StandardCoinName } from "../../../../../coin";
 import { StandardMasterWallet } from "../../../../../masterwallets/masterwallet";
 import { TransactionProvider } from "../../../../../tx-providers/transaction.provider";
 import { WalletAddressInfo } from "../../../../base/networkwallets/networkwallet";
+import { AnySubWallet } from "../../../../base/subwallets/subwallet";
 import { AnyNetwork } from "../../../../network";
 import { ElastosEVMSubWallet } from "../../../evms/subwallets/standard/elastos.evm.subwallet";
 import { ElastosStandardNetworkWallet } from "../../../networkwallets/standard/elastos.networkwallet";
@@ -54,6 +55,10 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
     return null;
+  }
+
+  public getMainTokenSubWallet(): AnySubWallet {
+    return this.subWallets[StandardCoinName.ELA];
   }
 
   /**

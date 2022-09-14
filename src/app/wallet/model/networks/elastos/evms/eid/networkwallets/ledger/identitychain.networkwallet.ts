@@ -2,6 +2,7 @@ import { Logger } from "src/app/logger";
 import { StandardCoinName } from "src/app/wallet/model/coin";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { WalletAddressInfo } from "src/app/wallet/model/networks/base/networkwallets/networkwallet";
+import { AnySubWallet } from "src/app/wallet/model/networks/base/subwallets/subwallet";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { TransactionProvider } from "src/app/wallet/model/tx-providers/transaction.provider";
 import { ElastosLedgerEVMNetworkWallet } from "../../../networkwallets/ledger/ledger.evm.networkwallet";
@@ -49,6 +50,10 @@ export class ElastosIdentityChainLedgerNetworkWallet extends ElastosLedgerEVMNet
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
     return null;
+  }
+
+  public getMainTokenSubWallet(): AnySubWallet {
+    return this.subWallets[StandardCoinName.ETHDID];
   }
 
   public getAverageBlocktime(): number {

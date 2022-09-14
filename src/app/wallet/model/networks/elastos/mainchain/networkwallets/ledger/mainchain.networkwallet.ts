@@ -3,6 +3,7 @@ import { StandardCoinName } from "../../../../../coin";
 import { LedgerMasterWallet } from "../../../../../masterwallets/ledger.masterwallet";
 import { TransactionProvider } from "../../../../../tx-providers/transaction.provider";
 import { WalletAddressInfo } from "../../../../base/networkwallets/networkwallet";
+import { AnySubWallet } from "../../../../base/subwallets/subwallet";
 import { AnyNetwork } from "../../../../network";
 import { ElastosEVMSubWallet } from "../../../evms/subwallets/standard/elastos.evm.subwallet";
 import { ElastosLedgerNetworkWallet } from "../../../networkwallets/ledger/elastos.networkwallet";
@@ -49,6 +50,10 @@ export class ElastosMainChainLedgerNetworkWallet extends ElastosLedgerNetworkWal
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
     return null;
+  }
+
+  public getMainTokenSubWallet(): AnySubWallet {
+    return this.subWallets[StandardCoinName.ELA];
   }
 
   public getAverageBlocktime(): number {

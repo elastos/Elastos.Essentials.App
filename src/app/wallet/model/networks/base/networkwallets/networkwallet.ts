@@ -253,8 +253,12 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
             return usdBalance.dividedBy(nativeTokenUSDPrice);
         }
         else {
-            // Only return the balance of the main token If the main token has no price.
-            return this.getMainEvmSubWallet().getBalance();
+            if (this.getMainTokenSubWallet()) {
+                // Only return the balance of the main token If the main token has no price.
+                return this.getMainTokenSubWallet().getBalance();
+            } else {
+                return new BigNumber(NaN);
+            }
         }
     }
 
@@ -347,12 +351,17 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     }
 
     /**
-     * Returns the main subwallet inside this network wallet, responsible for refreshing the list of
+     * Returns the main evm subwallet inside this network wallet, responsible for refreshing the list of
      * ERC20 tokens, NFTs, etc. For elastos, this is the ESC sidechain (no EID support for now).
      *
      * TODO: MOVE TO EVM NETWORK WALLETS ONLY
      */
     public abstract getMainEvmSubWallet(): MainCoinEVMSubWallet<WalletNetworkOptionsType>;
+
+    /**
+     * Returns the main subwallet inside this network wallet.
+     */
+    public abstract getMainTokenSubWallet(): AnySubWallet;
 
     /**
      * For network wallets that support multi-signature operations, this method returns the target

@@ -4,6 +4,7 @@ import { WalletNetworkOptions } from "../../../masterwallets/wallet.types";
 import { Safe } from "../../../safes/safe";
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
 import { NetworkWallet, WalletAddressInfo } from "../../base/networkwallets/networkwallet";
+import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { MainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
 import { AnyNetwork } from "../../network";
 import { BTCTransactionProvider } from "../tx-providers/btc.transaction.provider";
@@ -39,6 +40,10 @@ export abstract class BTCNetworkWallet <MasterWalletType extends MasterWallet, W
 
     public getMainEvmSubWallet(): MainCoinEVMSubWallet<any> {
         return null;
+    }
+
+    public getMainTokenSubWallet(): AnySubWallet {
+        return this.subWallets[StandardCoinName.BTC];
     }
 
     public getAverageBlocktime(): number {
