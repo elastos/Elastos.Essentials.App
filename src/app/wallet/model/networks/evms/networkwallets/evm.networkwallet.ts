@@ -5,6 +5,7 @@ import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { AddressUsage } from '../../../safes/addressusage';
 import { Safe } from '../../../safes/safe';
 import { NetworkWallet, WalletAddressInfo } from '../../base/networkwallets/networkwallet';
+import { AnySubWallet } from '../../base/subwallets/subwallet';
 import type { EVMNetwork } from '../evm.network';
 import { MainCoinEVMSubWallet } from '../subwallets/evm.subwallet';
 
@@ -55,6 +56,10 @@ export abstract class EVMNetworkWallet<MasterWalletType extends MasterWallet, Wa
     }
 
     public getMainEvmSubWallet(): MainCoinEVMSubWallet<WalletNetworkOptionsType> {
+        return this.mainTokenSubWallet;
+    }
+
+    public getMainTokenSubWallet(): AnySubWallet {
         return this.mainTokenSubWallet;
     }
 

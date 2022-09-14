@@ -1,5 +1,6 @@
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
+import { AnySubWallet } from "src/app/wallet/model/networks/base/subwallets/subwallet";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
@@ -63,6 +64,10 @@ export class ElastosSmartChainStandardNetworkWallet extends ElastosStandardEVMNe
   }
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
+    return this.mainTokenSubWallet;
+  }
+
+  public getMainTokenSubWallet(): AnySubWallet {
     return this.mainTokenSubWallet;
   }
 

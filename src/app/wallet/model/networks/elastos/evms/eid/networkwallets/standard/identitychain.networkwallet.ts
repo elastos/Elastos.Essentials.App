@@ -2,6 +2,7 @@ import { Logger } from "src/app/logger";
 import { StandardCoinName } from "src/app/wallet/model/coin";
 import { StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { WalletAddressInfo } from "src/app/wallet/model/networks/base/networkwallets/networkwallet";
+import { AnySubWallet } from "src/app/wallet/model/networks/base/subwallets/subwallet";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { TransactionProvider } from "src/app/wallet/model/tx-providers/transaction.provider";
 import { jsToSpvWalletId, SPVService } from "src/app/wallet/services/spv.service";
@@ -50,6 +51,10 @@ export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardEV
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
     return null;
+  }
+
+  public getMainTokenSubWallet(): AnySubWallet {
+    return this.subWallets[StandardCoinName.ETHDID];
   }
 
   public getAverageBlocktime(): number {

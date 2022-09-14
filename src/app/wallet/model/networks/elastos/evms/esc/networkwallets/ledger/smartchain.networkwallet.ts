@@ -1,6 +1,7 @@
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
+import { AnySubWallet } from "src/app/wallet/model/networks/base/subwallets/subwallet";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { StandardCoinName } from "../../../../../../coin";
@@ -63,6 +64,10 @@ export class ElastosSmartChainLedgerNetworkWallet extends ElastosLedgerEVMNetwor
   }
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
+    return this.mainTokenSubWallet;
+  }
+
+  public getMainTokenSubWallet(): AnySubWallet {
     return this.mainTokenSubWallet;
   }
 
