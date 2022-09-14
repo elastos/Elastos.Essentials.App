@@ -22,6 +22,7 @@
 
 import { Injectable } from '@angular/core';
 import { NFT } from '../model/networks/evms/nfts/nft';
+import { NetworkInfo } from '../pages/wallet/coin/coin-select/coin-select.page';
 
 export class Transfer {
     masterWalletId: string = null;
@@ -101,6 +102,9 @@ export class CoinTransferService {
     public subWalletId: string;
     // To subwallet (only for recharging funds)
     public toSubWalletId: string;
+    // To Network infomation (only for recharging funds), the multi-sign wallet doesn't support sidechain,
+    // so we can't get the to subwallet, user only select the destination Network.
+    public networkInfo: NetworkInfo;
 
     /******************
     * Intent Values *

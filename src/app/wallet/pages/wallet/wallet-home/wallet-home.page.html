@@ -1,7 +1,7 @@
 <ion-content class="lightmode" [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
 
-    <ion-content>
+    <ion-content *ngIf="masterWallet">
         <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
             <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="crescent">
             </ion-refresher-content>

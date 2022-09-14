@@ -21,5 +21,16 @@
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
+
+        <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode" *ngFor="let item of destNetworks" (click)="onSelect(item)">
+            <ion-col size="2" class="left-col">
+                <img [src]="item.logo">
+            </ion-col>
+            <ion-col [size]="10" class="middle-col">
+                <h1>{{ item.TokenSymbol }}</h1>
+                <p>{{ item.friendName }}</p>
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
     </ion-grid>
 </ion-content>

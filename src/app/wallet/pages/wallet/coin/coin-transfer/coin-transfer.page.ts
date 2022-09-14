@@ -50,6 +50,7 @@ import { NFTAsset } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { ERC1155Service } from 'src/app/wallet/services/evm/erc1155.service';
 import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
@@ -71,6 +72,7 @@ import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
+import { NetworkInfo } from '../coin-select/coin-select.page';
 
 @Component({
     selector: 'app-coin-transfer',
@@ -101,6 +103,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // Display recharge wallets
     public fromSubWallet: AnySubWallet;
     public toSubWallet: AnySubWallet = null;
+    public destNetworkInfo: NetworkInfo = null;
 
     // User can set gas price and limit.
     private gasPrice: string = null;
@@ -276,11 +279,14 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 // Setup page display
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", { coinName: this.coinTransferService.toSubWalletId }));
                 this.toSubWallet = await this.getELASubwalletByID(this.coinTransferService.toSubWalletId as StandardCoinName);
-
+                if (this.toSubWallet) {
+                    this.toAddress = await this.toSubWallet.getCurrentReceiverAddress();
+                } else {
+                    this.destNetworkInfo = this.coinTransferService.networkInfo;
+                }
                 // Setup params for recharge transaction
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createRechargeTransaction;
-                this.toAddress = await this.toSubWallet.getCurrentReceiverAddress();
 
                 Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
                 Logger.log('wallet', 'Transferring To..', this.toSubWallet);
@@ -659,6 +665,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     private isAddressValid(toAddress: string) {
+        if (this.transferType === TransferType.RECHARGE) {
+            if (!this.toSubWallet) {
+                return WalletUtil.isEVMAddress(toAddress);
+            }
+        }
         let targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
         return targetSubwallet.isAddressValid(toAddress);
     }
@@ -983,7 +994,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         let network = WalletNetworkService.instance.getNetworkByKey(networkKey);
         let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
-        return networkWallet.getSubWallet(id);
+        return networkWallet?.getSubWallet(id);
     }
 
     public isTransferTypeSendNFT(): boolean {

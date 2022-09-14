@@ -51,6 +51,27 @@
                 </ion-col>
                 <div class="arrow-down"></div>
             </ion-row>
+            <ion-row class="item-row" *ngIf="!toSubWallet && destNetworkInfo">
+                <ion-col size="2.3" class="left-col">
+                    <img [src]="destNetworkInfo.logo">
+                </ion-col>
+                <ion-col size="9.7" class="middle-col">
+                    <h1>{{ destNetworkInfo.tokenSymbol }}</h1>
+                    <p>{{ destNetworkInfo.friendName }}</p>
+                </ion-col>
+            </ion-row>
+            <ion-row class="item-row" *ngIf="!toSubWallet">
+                <ion-col size="11">
+                    <ion-input type="url" clearInput placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
+                        autocomplete="off" autocorrect="off" [(ngModel)]="toAddress" name="toAddress" ngDefaultControl
+                        (input)='onSendToAddressInput($event.target.value)'>
+                    </ion-input>
+                </ion-col>
+                <ion-col size="1" class="right-col" (click)="showOptions($event)">
+                    <img
+                        [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
+                </ion-col>
+            </ion-row>
             <ion-row class="main-title-row">
                 <ion-col size="12">
                     <p>{{ 'wallet.transfer-amount' | translate }}</p>
