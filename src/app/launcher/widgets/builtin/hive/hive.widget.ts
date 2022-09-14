@@ -6,14 +6,14 @@ import { AppmanagerService, RunnableApp } from 'src/app/launcher/services/appman
 import { App } from 'src/app/model/app.enum';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Widget } from '../../base/widget.interface';
+import { IWidget } from '../../base/iwidget';
 
 @Component({
   selector: 'widget-hive',
   templateUrl: './hive.widget.html',
   styleUrls: ['./hive.widget.scss'],
 })
-export class HiveWidget implements Widget, OnInit, OnDestroy {
+export class HiveWidget implements IWidget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
 
   public app: RunnableApp = {

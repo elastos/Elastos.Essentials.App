@@ -19,6 +19,8 @@ import { HiveSyncWidget } from "./builtin/hive-sync/hive-sync.widget";
 import { HiveWidget } from "./builtin/hive/hive.widget";
 import { IdentityWidget } from './builtin/identity/identity.widget';
 import { NewRedPacketsWidget } from "./builtin/new-red-packets/new-red-packets.widget";
+import { NewsConfiguratorComponentsModule } from "./builtin/news/components/configurator/module";
+import { NewsWidget } from "./builtin/news/news.widget";
 import { NotificationsWidget } from "./builtin/notifications/notifications.widget";
 import { RecentAppsWidget } from "./builtin/recent-apps/recent-apps.widget";
 import { RedPacketsWidget } from "./builtin/red-packets/red-packets.widget";
@@ -26,7 +28,6 @@ import { SignOutWidget } from "./builtin/signout/signout.widget";
 import { WalletConnectWidget } from "./builtin/wallet-connect/wallet-connect.widget";
 import { PluginWidget } from "./plugins/plugin-widget/plugin.widget";
 import { GalleryTemplate } from "./plugins/templates/gallery/gallery";
-import { NewsTemplate } from "./plugins/templates/news/news";
 import { PortalTemplate } from "./plugins/templates/portal/portal";
 import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
 @NgModule({
@@ -53,11 +54,11 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     ActiveNetworkCoinPriceWidget,
     ChooseActiveNetworkWidget,
     NotificationsWidget,
+    NewsWidget,
 
-    // Plugins 
+    // Plugins
     PluginWidget,
     PortalTemplate,
-    NewsTemplate,
     GalleryTemplate,
     TokenPriceTemplate
   ],
@@ -67,7 +68,8 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     TranslateModule,
     DragDropModule,
     SharedComponentsModule,
-    GlobalDirectivesModule
+    GlobalDirectivesModule,
+    NewsConfiguratorComponentsModule
   ],
   exports: [
     WidgetContainerComponent

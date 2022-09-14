@@ -5,7 +5,6 @@ import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { LastUsedNetworks, WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { IWidget } from '../../base/iwidget';
-import { WidgetState } from '../../base/widgetstate';
 
 @Component({
   selector: 'choose-active-network',
@@ -48,9 +47,6 @@ export class ChooseActiveNetworkWidget implements IWidget, OnInit, OnDestroy {
       this.lastUsedNetworksSub.unsubscribe();
       this.lastUsedNetworksSub = null;
     }
-  }
-
-  attachWidgetState(widgetState: WidgetState) {
   }
 
   /**

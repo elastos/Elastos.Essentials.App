@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { AppmanagerService } from 'src/app/launcher/services/appmanager.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GalleryContent, PluginConfig } from '../../../base/plugin.types';
+import { GalleryContent, PluginConfig } from '../../../base/pluginconfig';
 
 const ROTATION_TIME_SEC = 10;
 

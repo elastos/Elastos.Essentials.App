@@ -3,14 +3,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppmanagerService, RunnableApp } from 'src/app/launcher/services/appmanager.service';
 import { App } from 'src/app/model/app.enum';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Widget } from '../../base/widget.interface';
+import { IWidget } from '../../base/iwidget';
 
 @Component({
   selector: 'widget-red-packets',
   templateUrl: './red-packets.widget.html',
   styleUrls: ['./red-packets.widget.scss'],
 })
-export class RedPacketsWidget implements Widget {
+export class RedPacketsWidget implements IWidget {
   public forSelection: boolean; // Initialized by the widget service
 
   public app: RunnableApp = {

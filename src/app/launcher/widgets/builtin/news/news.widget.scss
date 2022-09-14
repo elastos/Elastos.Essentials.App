@@ -1,0 +1,112 @@
+@import "../../widgets.scss";
+
+.header-row {
+  margin-bottom: 5px;
+
+  .title-col {
+    padding: 0px;
+    display: flex;
+    align-items: center;
+
+    .badge {
+      background: #d62929;
+      border-radius: 20px;
+      padding: 2px 6px;
+      margin-left: 5px;
+      text-align: center;
+    }
+  }
+
+  .more-col {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    justify-content: flex-end;
+
+    img {
+      margin-left: 5px;
+      height: 10px;
+    }
+  }
+}
+
+.news-row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-content: flex-start;
+  align-items: center;
+  place-content: space-between;
+  font-size: 12px;
+
+  .newss {
+    display: flex;
+    width: auto;
+    flex: 1;
+    transition: all 0.5s ease;
+
+    .news {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      font-size: 12px;
+      text-align: left;
+
+      .header {
+        display: flex;
+        align-items: center;
+        align-self: flex-start;
+
+        .icon {
+          width: 18px;
+          height: 18px;
+          object-fit: cover;
+          margin-right: 5px;
+          border-radius: 50%;
+        }
+
+        .sender {
+          font-weight: bold;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .title {
+        font-weight: bold;
+        margin: 12px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 100%;
+      }
+
+      .message {
+      }
+    }
+
+    &.transitioning {
+      opacity: 0;
+    }
+  }
+
+  .grid {
+    width: 30px;
+  }
+}
+
+.darkContainer {
+  .notifications-row {
+    .notifications {
+      .notification {
+        .message {
+          color: #acacac;
+        }
+      }
+    }
+  }
+}

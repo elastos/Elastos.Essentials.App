@@ -111,7 +111,7 @@ export class WalletInitService extends GlobalService {
     this.registerNameResolvers();
 
     // Do not await.
-    void this.currencyService.init();
+    await this.currencyService.init(); // Currency cache must be ready for other services
     void this.uniswapCurrencyService.init();
     void this.contactsService.init();
     void this.ethTransactionService.init();

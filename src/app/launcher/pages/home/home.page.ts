@@ -17,7 +17,7 @@ import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
 import { NotificationManagerService } from '../../services/notificationmanager.service';
 import { WidgetContainerComponent } from '../../widgets/base/widget-container/widget-container.component';
-import { WidgetPluginsService } from '../../widgets/services/plugin.service';
+import { WidgetsServiceEvents } from '../../widgets/services/widgets.events';
 import { WidgetsService } from '../../widgets/services/widgets.service';
 @Component({
   selector: 'app-home',
@@ -59,9 +59,11 @@ export class HomePage implements OnInit {
     private globalStartupService: GlobalStartupService,
     private globalNavService: GlobalNavService,
     private widgetsService: WidgetsService,
-    private launcherNotificationsService: NotificationManagerService,
-    private widgetPluginsService: WidgetPluginsService // init
+    private launcherNotificationsService: NotificationManagerService
   ) {
+    this.widgetsService.registerContainer("left");
+    this.widgetsService.registerContainer("main");
+    this.widgetsService.registerContainer("right");
   }
 
   ngOnInit() {
@@ -142,7 +144,7 @@ export class HomePage implements OnInit {
       });
     }
 
-    this.widgetsEditionModeSub = this.widgetsService.editionMode.subscribe(editionMode => {
+    this.widgetsEditionModeSub = WidgetsServiceEvents.editionMode.subscribe(editionMode => {
       this.editingWidgets = editionMode;
 
       // Lock the slider during edition to avoid horizontal scrolling

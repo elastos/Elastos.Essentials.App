@@ -1,15 +1,10 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
-import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -28,9 +23,7 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
 
   public forSelection: boolean; // Initialized by the widget service
 
-  private popover: HTMLIonPopoverElement = null;
   public activeNetwork: AnyNetwork = null;
-  private activeStandardSubwallet: AnySubWallet = null;
   public coinDisplayPrice: string = null;
 
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
@@ -39,13 +32,9 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
 
   constructor(
     public theme: GlobalThemeService,
-    private nav: GlobalNavService,
-    private popoverCtrl: PopoverController,
     public walletService: WalletService,
     private walletNetworkUIService: WalletNetworkUIService,
-    private walletInitService: WalletInitService,
     public walletNetworkService: WalletNetworkService,
-    private globalNative: GlobalNativeService,
     public translate: TranslateService,
     public currencyService: CurrencyService
   ) { }
@@ -88,7 +77,7 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
     if (this.activeNetwork) {
       let coinPrice = this.currencyService.getMainTokenValue(new BigNumber(1), this.activeNetwork, 'USD'); // TODO: Use user currency from wallet settings
       if (coinPrice && !coinPrice.isNaN()) {
-        this.coinDisplayPrice = coinPrice.decimalPlaces(this.currencyService.selectedCurrency.decimalplace, BigNumber.ROUND_DOWN).toFixed();;
+        this.coinDisplayPrice = coinPrice.decimalPlaces(this.currencyService.selectedCurrency.decimalplace, BigNumber.ROUND_DOWN).toFixed();
       }
 
       if (this.coinPriceRoot) {

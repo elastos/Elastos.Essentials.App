@@ -3,7 +3,8 @@ import { Subject } from 'rxjs';
 import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
 import { GlobalThemeService } from '../../../../services/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
-import { Widget, WidgetLifeCycle } from '../widget.interface';
+import { WidgetsServiceEvents } from '../../services/widgets.events';
+import { IWidget } from '../iwidget';
 import { WidgetState } from '../widgetstate';
 
 @Component({
@@ -11,7 +12,7 @@ import { WidgetState } from '../widgetstate';
   templateUrl: './widget-holder.component.html',
   styleUrls: ['./widget-holder.component.scss'],
 })
-export class WidgetHolderComponent implements OnInit, WidgetLifeCycle {
+export class WidgetHolderComponent implements OnInit {
   public root: ElementRef;
 
   @ViewChild('container', { static: true, read: ViewContainerRef })
@@ -21,7 +22,8 @@ export class WidgetHolderComponent implements OnInit, WidgetLifeCycle {
   public dragHandle: ElementRef;
 
   private widgetState: WidgetState = null;
-  private widgetComponent: Widget = null;
+  private widgetComponent: IWidget = null;
+  private configureIconListener: () => void = null;
 
   public editing = false;
   public selecting = false;
@@ -38,7 +40,7 @@ export class WidgetHolderComponent implements OnInit, WidgetLifeCycle {
   }
 
   ngOnInit() {
-    this.widgetsService.editionMode.subscribe(editionMode => this.editing = editionMode);
+    WidgetsServiceEvents.editionMode.subscribe(editionMode => this.editing = editionMode);
   }
 
   /* onWidgetInit(): Promise<void> {
@@ -56,7 +58,7 @@ export class WidgetHolderComponent implements OnInit, WidgetLifeCycle {
   /**
    * Attaches the widget component instance displayed inside this holder.
    */
-  public attachWidgetComponent(widgetComponent: Widget) {
+  public attachWidgetComponent(widgetComponent: IWidget) {
     this.widgetComponent = widgetComponent;
   }
 
@@ -81,7 +83,7 @@ export class WidgetHolderComponent implements OnInit, WidgetLifeCycle {
    * Reloads the plugin JSON data from its remote url and refreshes this widget
    */
   public async refreshPluginContent() {
-    await this.widgetsPluginsService.refreshPluginContent(this.widgetState);
+    await this.widgetsService.refreshWidgetPluginContent(this.widgetState);
   }
 
   /**
@@ -91,5 +93,17 @@ export class WidgetHolderComponent implements OnInit, WidgetLifeCycle {
    */
   public deleteCustomPluginFromAddableList() {
     void this.widgetsPluginsService.removeDAppPluginFromAvailableWidgets(this.widgetState);
+  }
+
+  /**
+   * Sets a listener for the "configure" icon. If this listener is set, the icon appears,
+   * otherwise it remains hidden.
+   */
+  public setOnConfigureIconClickedListener(listener: () => void) {
+    this.configureIconListener = listener;
+  }
+
+  onConfigureClicked() {
+    this.configureIconListener();
   }
 }

@@ -1,4 +1,3 @@
-import { JSONObject } from "src/app/model/json";
 
 export type BuiltInWidgetType =
   "identity" |
@@ -28,6 +27,8 @@ export enum DisplayCategories {
   DAPPS = "dapps"
 }
 
+export type PluginType = "standard" | "news";
+
 export type WidgetState = {
   id?: string; // Unique widget ID generated when first created. Used to uniquely identity (eg deletions) this widget.
   category: "builtin" | "app-plugin"; // builtin: fully custom Essentials widget. "app-plugin": template based plugin widget for external dApps.
@@ -38,9 +39,9 @@ export type WidgetState = {
 
   // Extended widget state for plugin widgets from external dApps.
   plugin?: {
-    url?: string; // JSON content remote address, where we can refresh the content
-    json?: JSONObject; // Fetched content from the url, validated as JSON. Cache.
-    lastFetched: number; // Timestamp at which the JSON content was last fetched. So we know when to refresh it.
+    url?: string; // JSON content remote address, where we can refresh the content. For all plugin widgets except the news plugin.
+    pluginType: PluginType; // Special annotation to remember the widget type, which is special for news widgets (one widget, multiple widget sources)
+    //json?: JSONObject; // Fetched content from the url, validated as JSON. Cache.
   }
 }
 

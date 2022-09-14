@@ -24,15 +24,11 @@ export type PortalContent = {
   items: PortalContentItem[];
 };
 
-type NewsContentItem = {
+export type NewsContentItem = {
   title: string;
   info: string;
-  icon: string; // url or base64
-  // badge: number; // later - replace the icon with a badge count (number of unread emails, etc)
-  action: { // Action button below the info
-    title: string,
-    url: string;
-  }
+  timevalue: number; // unix timestamp (secs) used to order news by date
+  action: string; // url opened when clicking the news
 }
 
 export type NewsContent = {
@@ -57,7 +53,7 @@ type ContentType = "portal" | "gallery" | "news" | "tokenprice";
 
 export type PluginConfig<T> = {
   logo: string; // url or base64 of the dapp
-  projectName: string; // Short project name, displayed on most widgets
+  projectname: string; // Short project name, displayed on most widgets
   title?: string; // Short title to describe the widget
   url?: string; // Optional url opened when the project logo is touched - normally, the main dapp url
   refresh?: number; // Number of seconds between new calls to the widget url to refresh content - eg: 120. Default: 1 day. Min: 30 seconds

@@ -6,15 +6,15 @@ import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
-import { Widget } from '../../base/widget.interface';
-import { WidgetsService } from '../../services/widgets.service';
+import { IWidget } from '../../base/iwidget';
+import { WidgetsServiceEvents } from '../../services/widgets.events';
 
 @Component({
   selector: 'widget-wallet-connect',
   templateUrl: './wallet-connect.widget.html',
   styleUrls: ['./wallet-connect.widget.scss'],
 })
-export class WalletConnectWidget implements Widget, OnInit, OnDestroy {
+export class WalletConnectWidget implements IWidget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
 
@@ -31,7 +31,7 @@ export class WalletConnectWidget implements Widget, OnInit, OnDestroy {
 
   ngOnInit() {
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
-    WidgetsService.instance.editionMode.subscribe(editing => {
+    WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
 

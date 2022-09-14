@@ -5,35 +5,26 @@
   <!-- <div class="touch-disabler" (touchstart)="disablerTouchStart($event)" *ngIf="selecting"></div> -->
 
   <!-- Note: need to hide, not use *ngIf, to let the drag handle exist when the holder is created -->
-  <div class="edition" [class.reduced]="!editing || selecting">
-    <ion-row>
-      <ion-col size="6" class="item" (click)="deleteWidget()">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-col>
-      <ion-col size="6" class="item" #dragHandle>
-        <ion-icon name="move-outline"></ion-icon>
-      </ion-col>
-    </ion-row>
-  </div>
-
-  <!-- Shown when a dapp plugin is being added only -->
-  <div class="adding-plugin-edition" [class.reduced]="!selecting || widgetState.category !== 'app-plugin'">
-    <ion-row>
-      <ion-col size="12" class="item" (click)="deleteCustomPluginFromAddableList()">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-col>
-    </ion-row>
-  </div>
-
-  <div class="plugin-control" [class.reduced]="!editing || widgetState.category !== 'app-plugin'">
-    <ion-row>
-      <ion-col size="12" class="item" (click)="refreshPluginContent()">
-        <ion-icon name="refresh-outline"></ion-icon>
-      </ion-col>
-    </ion-row>
-  </div>
-
-  <div class="selection" *ngIf="selecting" (click)="selectWidget()">
-    <ion-icon name="plus-outline"></ion-icon> Select
+  <div class="edition" [class.reduced]="!editing">
+    <div class="item" (click)="refreshPluginContent()" *ngIf="widgetState && widgetState.category === 'app-plugin'">
+      <img src="/assets/launcher/widgets/reload.svg" />
+    </div>
+    <div class="item" *ngIf="!selecting && configureIconListener" (click)="onConfigureClicked()">
+      <img src="/assets/launcher/widgets/configure.svg" />
+    </div>
+    <div class="item" #dragHandle [class.reduced]="selecting">
+      <!-- Use CSS to hide, not ngIf to synchronously get the dragHandle ref -->
+      <img src="/assets/launcher/widgets/move.svg" />
+    </div>
+    <div class="item" (click)="deleteWidget()" *ngIf="!selecting">
+      <img src="/assets/launcher/widgets/trash.svg" />
+    </div>
+    <div class="item" (click)="deleteCustomPluginFromAddableList()"
+      *ngIf="selecting && widgetState.category === 'app-plugin'">
+      <img src="/assets/launcher/widgets/trash.svg" />
+    </div>
+    <div class="item" (click)="selectWidget()" *ngIf="selecting">
+      <img src="/assets/launcher/widgets/check.svg" />
+    </div>
   </div>
 </div>

@@ -4,15 +4,15 @@ import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
-import { Widget } from '../../base/widget.interface';
-import { WidgetsService } from '../../services/widgets.service';
+import { IWidget } from '../../base/iwidget';
+import { WidgetsServiceEvents } from '../../services/widgets.events';
 
 @Component({
   selector: 'widget-hive-sync',
   templateUrl: './hive-sync.widget.html',
   styleUrls: ['./hive-sync.widget.scss'],
 })
-export class HiveSyncWidget implements Widget, OnInit, OnDestroy {
+export class HiveSyncWidget implements IWidget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
 
@@ -29,7 +29,7 @@ export class HiveSyncWidget implements Widget, OnInit, OnDestroy {
     void this.globalHiveService.getSyncDataToHiveWasPrompted().then(prompted => this.needToPromptHiveSync = !prompted);
 
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
-    WidgetsService.instance.editionMode.subscribe(editing => {
+    WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
   }

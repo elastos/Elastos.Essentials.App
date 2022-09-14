@@ -9,6 +9,7 @@ import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.servic
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from '../../../../services/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetContainerComponent } from '../widget-container/widget-container.component';
@@ -60,6 +61,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
   public widgetUrl = "";
   public addingCustomWidget = false;
   public customWidgetState: WidgetState = null; // Fetched widget state after adding a custom widget by user.
+  public hasCustomWidgets = false;
 
   private alreadySentIntentResponse = false;
 
@@ -73,6 +75,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
     private router: Router,
     private zone: NgZone,
     private clipboard: Clipboard,
+    private native: GlobalNativeService,
     private globalIntentService: GlobalIntentService
   ) { }
 
@@ -149,17 +152,26 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
     }
     else {
       // dApps widgets
-      let customPluginsList = await this.widgetPluginsService.loadCustomPluginsList();
+      let customPluginsList = await this.widgetPluginsService.getAvailableCustomWidgets();
       filteredWidgets = Object.values(customPluginsList);
+
+      this.hasCustomWidgets = filteredWidgets.length > 0;
     }
 
     for (let widget of filteredWidgets) {
-      let { widgetHolderComponentRef } = await this.widgetContainer.addPreviewWidget(widget);
-      widgetHolderComponentRef.instance.onWidgetSelected.subscribe(widgetState => {
-        // User has picked this widget from the selection list, we can dismiss and return the result.
-        this.dismiss(widgetState);
-      });
+      let result = await this.widgetContainer.addPreviewWidget(widget);
+      if (result) {
+        let { widgetHolderComponentRef } = result;
+        widgetHolderComponentRef.instance.onWidgetSelected.subscribe(widgetState => {
+          // User has picked this widget from the selection list, we can dismiss and return the result.
+          this.dismiss(widgetState);
+        });
+      }
     }
+  }
+
+  public shouldShowNoDAppWidgetRecommendation() {
+    return this.selectedCategory.key === DisplayCategory.DAPPS && !this.hasCustomWidgets;
   }
 
   private enterAddCustomWidgetMode() {
@@ -183,7 +195,15 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
     if (!this.widgetUrl || !this.widgetUrl.toLowerCase().startsWith("http"))
       return;
 
-    this.customWidgetState = await this.widgetPluginsService.fetchWidgetPlugin(this.widgetUrl);
+    let fetchResult = await this.widgetsService.fetchWidgetPluginAndCreate(this.widgetUrl);
+    if (fetchResult.newsSourceAdded) {
+      // News source added, show a toast and automatically exit the chooser without adding a new news widget
+      this.native.genericToast("News source added to your existing news widget!", 4000);
+      this.dismiss(null);
+      return;
+    }
+
+    this.customWidgetState = fetchResult.widgetState;
     Logger.log("widgets", "Fetched widget state:", this.customWidgetState);
 
     // Give time to the UI to make the preview container visible before trying to access it
@@ -191,14 +211,18 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       void this.zone.run(async () => {
         // Create the custom widget in the preview container
-        let { widgetHolderComponentRef } = await this.previewContainer.addPreviewWidget(this.customWidgetState);
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises, require-await
-        widgetHolderComponentRef.instance.onWidgetSelected.subscribe(async widgetState => {
-          // User has picked this widget from the selection list, we can dismiss and return the result.
-          // But we first save this widget in the available custom plugins list for alter reuse
-          await this.widgetPluginsService.saveDAppPluginAsAvailableWidget(widgetState);
-          this.dismiss(widgetState);
-        });
+        let result = await this.previewContainer.addPreviewWidget(this.customWidgetState);
+        if (result) {
+          let { widgetHolderComponentRef } = result;
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises, require-await
+          widgetHolderComponentRef.instance.onWidgetSelected.subscribe(async widgetState => {
+            // User has picked this widget from the selection list, we can dismiss and return the result.
+            // But we first save this widget in the available custom plugins list for alter reuse
+            // await this.widgetPluginsService.saveDAppPluginAsAvailableWidget(widgetState);
+            // TODO: delete the 3 above lines,
+            this.dismiss(widgetState);
+          });
+        }
       });
     }, 1000);
   }

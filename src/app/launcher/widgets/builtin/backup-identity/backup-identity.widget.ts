@@ -3,15 +3,16 @@ import { DIDManagerService } from 'src/app/launcher/services/didmanager.service'
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Widget } from '../../base/widget.interface';
-import { WidgetsService } from '../../services/widgets.service';
+import { IWidget } from '../../base/iwidget';
+import { WidgetState } from '../../base/widgetstate';
+import { WidgetsServiceEvents } from '../../services/widgets.events';
 
 @Component({
   selector: 'widget-backup-identity',
   templateUrl: './backup-identity.widget.html',
   styleUrls: ['./backup-identity.widget.scss'],
 })
-export class BackupIdentityWidget implements Widget, OnInit, OnDestroy {
+export class BackupIdentityWidget implements IWidget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
 
@@ -28,12 +29,15 @@ export class BackupIdentityWidget implements Widget, OnInit, OnDestroy {
     this.identityNeedsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
 
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
-    WidgetsService.instance.editionMode.subscribe(editing => {
+    WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
   }
 
   ngOnDestroy(): void {
+  }
+
+  attachWidgetState(widgetState: WidgetState) {
   }
 
   backupIdentity() {

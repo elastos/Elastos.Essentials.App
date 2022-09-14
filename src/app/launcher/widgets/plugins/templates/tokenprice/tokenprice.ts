@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { AppmanagerService } from 'src/app/launcher/services/appmanager.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { PluginConfig, TokenPriceContent } from '../../../base/plugin.types';
+import { PluginConfig, TokenPriceContent } from '../../../base/pluginconfig';
 
 @Component({
   selector: 'tokenprice-template',

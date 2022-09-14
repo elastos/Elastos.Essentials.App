@@ -7,6 +7,7 @@ import { Component, ComponentRef, Input, OnInit, TemplateRef, ViewChild, ViewCon
 import { WidgetInstance, WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
 import { GlobalThemeService } from '../../../../services/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
+import { WidgetsServiceEvents } from '../../services/widgets.events';
 import { WidgetsUIService } from '../../services/widgets.ui.service';
 import { WidgetHolderComponent } from '../widget-holder/widget-holder.component';
 import { WidgetState } from '../widgetstate';
@@ -69,9 +70,12 @@ export class WidgetContainerComponent implements OnInit {
         // Container state is loaded, generate the widgets
         this.dragRefs = [];
         for (let widget of state.widgets) {
-          let { dragRef, widgetHolderComponentRef } = await this.widgetsService.restoreWidget(this, widget, this.widgetslist, this.container, this.widgetsBoundaries, this.dragPlaceholder);
-          this.dragRefs.push(dragRef);
-          this.holdersInstances.push(widgetHolderComponentRef);
+          let result = await this.widgetsService.restoreWidget(this, widget, this.widgetslist, this.container, this.widgetsBoundaries, this.dragPlaceholder);
+          if (result) {
+            let { dragRef, widgetHolderComponentRef } = result;
+            this.dragRefs.push(dragRef);
+            this.holdersInstances.push(widgetHolderComponentRef);
+          }
         }
 
         this.cdkList.withItems(this.dragRefs);
@@ -87,7 +91,7 @@ export class WidgetContainerComponent implements OnInit {
         });
       });
 
-      this.widgetsService.editionMode.subscribe(editing => {
+      WidgetsServiceEvents.editionMode.subscribe(editing => {
         this.cdkList.disabled = !editing;
         this.editing = editing;
       });

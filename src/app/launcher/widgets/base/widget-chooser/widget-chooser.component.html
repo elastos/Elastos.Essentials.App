@@ -4,6 +4,11 @@
   <!-- Widgets list to pick widgets -->
   <div class="widgets-container">
     <widget-container #widgetContainer mode="select" *ngIf="!addingCustomWidget"></widget-container>
+
+    <!-- No dApp widget to show yet -->
+    <ion-row class="msg-container" *ngIf="!addingCustomWidget && shouldShowNoDAppWidgetRecommendation()">
+      <p class="ion-text-center">Use the + button and scan widget QR codes from dApps to get more widgets.</p>
+    </ion-row>
   </div>
 
   <!-- Add custom widget mode -->

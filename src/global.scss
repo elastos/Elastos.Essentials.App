@@ -12,6 +12,7 @@
 
 @import "./theme/declared.scss";
 @import "./theme/ionic.scss";
+@import "./popups.scss";
 
 /********************** SHARED FONTS **********************/
 @font-face {
@@ -177,69 +178,8 @@
 /** Simple class to apply theme background **/
 .lightmode {
     background: #f5f5fd;
-
-    /*   ion-refresher {
-        background: #F5F5FD;
-        color: #121212;
-
-        ion-refresher-content {
-            background: #F5F5FD;
-            color: #121212;
-
-            .refresher-pulling {
-                background: #F5F5FD;
-                color: #121212;
-
-                .refresher-pulling-icon {
-                    background: #F5F5FD;
-                    border: #F5F5FD;
-                    color: #121212;
-                }
-            }
-
-            .refresher-refreshing {
-                background: #F5F5FD;
-                color: #121212;
-
-                .refresher-refreshing-icon {
-                    background: #F5F5FD;
-                    border: #F5F5FD;
-                    color: #121212;
-                }
-            }
-        }
-    } */
 }
 
 .darkmode {
     background: #121212;
-
-    /*  ion-refresher {
-        background: #121212;
-        color: white;
-
-        ion-refresher-content {
-            background: #121212;
-            color: white;
-
-            .refresher-pulling {
-                background: #121212;
-                color: white;
-
-                .refresher-pulling-icon {
-                    background: #121212;
-                    border: #121212;
-                    color: white;
-                }
-        }
-
-            .refresher-refreshing {
-                .refresher-refreshing-icon {
-                    background: #121212;
-                    border: #121212;
-                    color: white;
-                }
-            }
-        }
-    } */
 }

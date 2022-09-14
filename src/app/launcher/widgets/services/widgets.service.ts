@@ -2,18 +2,20 @@ import { DragDrop, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { ComponentRef, Injectable, TemplateRef, ViewContainerRef } from '@angular/core';
 import moment from 'moment';
-import { BehaviorSubject } from 'rxjs';
+import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { randomHex } from 'web3-utils';
-import { PluginConfig } from '../base/plugin.types';
+import { IWidget } from '../base/iwidget';
+import { PluginConfig } from '../base/pluginconfig';
 import { WidgetContainerComponent } from '../base/widget-container/widget-container.component';
 import { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
-import { Widget } from '../base/widget.interface';
-import { BuiltInWidgetType, DisplayCategories, WidgetContainerState, WidgetState } from '../base/widgetstate';
-import { PluginWidget } from '../plugins/plugin-widget/plugin.widget';
+import { BuiltInWidgetType, DisplayCategories, PluginType, WidgetContainerState, WidgetState } from '../base/widgetstate';
+import { WidgetsNewsService } from './news.service';
+import { WidgetPluginsService } from './plugin.service';
 import { WidgetsBuilder } from './widgets.builder';
+import { WidgetsServiceEvents } from './widgets.events';
 
 const PERSISTENCE_CONTEXT = "launcher-widget";
 
@@ -35,11 +37,12 @@ const builtInWidgets: WidgetState[] = [
     { category: "builtin", builtInType: "backup-identity", displayCategories: [DisplayCategories.IDENTITY] },
     { category: "builtin", builtInType: "hive-sync", displayCategories: [DisplayCategories.IDENTITY] },
     { category: "builtin", builtInType: "notifications", displayCategories: [DisplayCategories.COMMUNITY] },
+    { category: "app-plugin", displayCategories: [DisplayCategories.COMMUNITY], plugin: { pluginType: "news" } }
 ];
 
 export type WidgetInstance = {
     widgetId: string; // Reference widget ID
-    widget: Widget; // Widget component instance (Angular Component implementing our widget interface)
+    widget: IWidget; // Widget component instance (Angular Component implementing our widget interface)
     holderComponentRef: ComponentRef<any>; // Angular's UI element root for the widget HOLDER instance
     container: WidgetContainerComponent;
 }
@@ -50,18 +53,19 @@ export type WidgetInstance = {
 export class WidgetsService {
     public static instance: WidgetsService;
 
-    public editionMode = new BehaviorSubject(false);
-
     // List of widget components instantiated, so we can call the lifecycle on them
     private componentsInstances: WidgetInstance[] = [];
 
     private launcherHomeViewIsActive = false;
+    private containerNames: string[] = []; // List of containers used on the home screen
 
     constructor(
         private globalStorageService: GlobalStorageService,
         private dragDrop: DragDrop,
         private http: HttpClient,
-        private globalNative: GlobalNativeService
+        private globalNative: GlobalNativeService,
+        private pluginService: WidgetPluginsService,
+        private newsService: WidgetsNewsService
     ) {
         WidgetsService.instance = this;
         // TMP DEBUG
@@ -75,25 +79,37 @@ export class WidgetsService {
     }
 
     /**
+     * Home screen to let this service know the list of containers in use.
+     * This way, this service is able to search content in all existing containers.
+     */
+    public registerContainer(widgetContainerName: string) {
+        if (!this.containerNames.includes(widgetContainerName))
+            this.containerNames.push(widgetContainerName);
+    }
+
+    /**
      * Toggle widgets edition mode globally for all home screen sub-screens / all widgets.
      */
     public toggleEditionMode() {
-        const currentEditionMode = this.editionMode.value;
-        this.editionMode.next(!currentEditionMode);
+        const currentEditionMode = WidgetsServiceEvents.editionMode.value;
+        WidgetsServiceEvents.editionMode.next(!currentEditionMode);
     }
 
     public enterEditionMode() {
-        this.editionMode.next(true);
+        WidgetsServiceEvents.editionMode.next(true);
     }
 
     public exitEditionMode() {
-        this.editionMode.next(false);
+        WidgetsServiceEvents.editionMode.next(false);
     }
 
     /**
      * Loads widget container state from disk. i.e. list of widgets it contains.
      */
     public async loadContainerState(widgetContainerName: string): Promise<WidgetContainerState> {
+        if (!this.containerNames.includes(widgetContainerName))
+            throw new Error(`Trying to load container '${widgetContainerName}' but it's not registered. Call registerContainer() first.`);
+
         const key = "widget-container-state-" + widgetContainerName;
         let state = <WidgetContainerState>await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, PERSISTENCE_CONTEXT, key, null);
 
@@ -119,22 +135,28 @@ export class WidgetsService {
      * Restores a widget that was previously saved.
      * Called when the widgets container is instantiated.
      */
-    public async restoreWidget(widgetContainer: WidgetContainerComponent, widget: WidgetState, widgetslist: ViewContainerRef, container: ViewContainerRef, boundaries: ViewContainerRef, dragPlaceholder: TemplateRef<any>): Promise<{ dragRef: DragRef, widgetHolderComponentRef: ComponentRef<WidgetHolderComponent>, widgetComponentInstance: Widget }> {
-        let { dragRef, widgetComponentInstance, widgetHolderComponentRef } = await WidgetsBuilder.appendWidgetFromState(widgetContainer.name, widget, widgetslist, container, boundaries, dragPlaceholder, this.dragDrop);
-        this.componentsInstances.push({
-            widgetId: widget.id,
-            widget: widgetComponentInstance,
-            holderComponentRef: widgetHolderComponentRef,
-            container: widgetContainer
-        });
+    public async restoreWidget(widgetContainer: WidgetContainerComponent, widget: WidgetState, widgetslist: ViewContainerRef, container: ViewContainerRef, boundaries: ViewContainerRef, dragPlaceholder: TemplateRef<any>): Promise<{ dragRef: DragRef, widgetHolderComponentRef: ComponentRef<WidgetHolderComponent>, widgetComponentInstance: IWidget }> {
+        let result = await WidgetsBuilder.appendWidgetFromState(widgetContainer.name, widget, widgetslist, container, boundaries, dragPlaceholder, this.dragDrop);
+        if (result) {
+            let { dragRef, widgetComponentInstance, widgetHolderComponentRef } = result;
+            this.componentsInstances.push({
+                widgetId: widget.id,
+                widget: widgetComponentInstance,
+                holderComponentRef: widgetHolderComponentRef,
+                container: widgetContainer
+            });
 
-        // When this method is called, the launcher viewWillEnter() can be already called or not called yet.
-        // If the launcher is already entered: initialize the component.
-        // If not, the component will be initialized later when home enters.
-        //if (this.launcherHomeViewIsActive)
-        //await widgetHolderComponentRef.instance.onWidgetInit?.();
+            // When this method is called, the launcher viewWillEnter() can be already called or not called yet.
+            // If the launcher is already entered: initialize the component.
+            // If not, the component will be initialized later when home enters.
+            //if (this.launcherHomeViewIsActive)
+            //await widgetHolderComponentRef.instance.onWidgetInit?.();
 
-        return { dragRef, widgetHolderComponentRef, widgetComponentInstance };
+            return { dragRef, widgetHolderComponentRef, widgetComponentInstance };
+        }
+        else {
+            return null;
+        }
     }
 
     /**
@@ -150,7 +172,7 @@ export class WidgetsService {
 
         let newWidgetState = this.createWidgetState(widgetStateConfig);
 
-        let { dragRef, widgetComponentInstance, widgetHolderComponentRef } = await WidgetsBuilder.appendWidgetFromState(
+        let result = await WidgetsBuilder.appendWidgetFromState(
             widgetContainer.name,
             newWidgetState,
             list,
@@ -160,6 +182,10 @@ export class WidgetsService {
             insertAtTop ? 0 : undefined // Insert at the top if ndded
         );
 
+        if (!result)
+            return null;
+
+        let { dragRef, widgetComponentInstance, widgetHolderComponentRef } = result;
         this.componentsInstances.push({
             widgetId: newWidgetState.id,
             widget: widgetComponentInstance,
@@ -207,6 +233,18 @@ export class WidgetsService {
         });
     }
 
+    private createPluginWidgetState(pluginType: PluginType): WidgetState {
+        let registeredBuiltInWidgetState = builtInWidgets.find(w => w.category === "app-plugin" && w.plugin.pluginType === pluginType);
+
+        return this.createWidgetState({
+            category: "app-plugin",
+            displayCategories: registeredBuiltInWidgetState.displayCategories,
+            plugin: {
+                pluginType
+            }
+        });
+    }
+
     /**
      * Moves a widget in the model and saves the state to disk.
      * Calling UI component is reponsible for moving items on UI.
@@ -248,31 +286,140 @@ export class WidgetsService {
     }
 
     /**
+     * Asks the plugin service to fetch a widget and returns a created widget state ready to be used.
+     *
+     * For some special widgets like the news widget, the return value can different as the way to handle scanned
+     * "news" urls is different: eg: add the url as a news source but don't add a new widget, if there is already a news widget on the home screeb.
+     */
+    public async fetchWidgetPluginAndCreate(widgetUrl: string, silentError = false): Promise<{ widgetState?: WidgetState, newsSourceAdded?: boolean }> {
+        Logger.log("widgets", "Fetching widget plugin at:", widgetUrl);
+
+        try {
+            let pluginContent = await this.pluginService.fetchWidgetPlugin(widgetUrl);
+            if (!pluginContent)
+                return null;
+
+            let widgetState = this.createWidgetState({
+                category: "app-plugin",
+                displayCategories: [DisplayCategories.DAPPS],
+                plugin: {
+                    pluginType: "standard", // standard for now, updated just after
+                }
+            });
+
+            if (pluginContent.contenttype === "news") { // News widget
+                Logger.log("widgets", "Widget plugin is a news source");
+
+                // Append news source
+                await this.newsService.upsertNewsSource(widgetUrl, pluginContent.projectname, pluginContent);
+
+                // Check if there is already a news widget on the home screen. If not, return the widget state as for
+                // other widgets. If there is one, just append the news source but don't let the user create a new widget
+                let existingNewsWidget = await this.findInAllContainers(widgetState => widgetState.category === "app-plugin" && widgetState.plugin.pluginType === "news");
+                if (existingNewsWidget) {
+                    Logger.log("widgets", "News widget already exists, only adding the news source");
+                    return { newsSourceAdded: true };
+                }
+                else {
+                    widgetState.plugin.pluginType = "news";
+                    return { widgetState }; // Return a widget state so the caller can create a first news widget
+                }
+            }
+            else {
+                // Just in case, make sure the source was not an existing news source, in case a developer 
+                // previously used a news plugin type then changed it to something else.
+                await this.newsService.checkNewsSources();
+
+                // Save a single plugin url only for non news plugins. For news plugins, the url is added as news source
+                widgetState.plugin.url = widgetUrl;
+                return { widgetState };
+            }
+        }
+        catch (e) {
+            if (!silentError) {
+                this.globalNative.errToast("Invalid widget content returned, not JSON format? " + e);
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Unconditionally fetches the latest JSON content for the given widget.
+     * This means one (1 widget = 1 plugin) or more (news plugin type) plugins are refreshed.
+     */
+    public async refreshWidgetPluginContent(widgetState: WidgetState, silentError = false): Promise<void> {
+        let pluginSources: string[] = [];
+        if (widgetState.category === "app-plugin" && widgetState.plugin.pluginType === "news") {
+            // For news widgets, we check all plugin sources (multiple) for freshness.
+            pluginSources = this.newsService.getNewsSourceURLs();
+        }
+        else {
+            // All other plugin widget types have only one source to refresh.
+            pluginSources.push(widgetState.plugin.url);
+        }
+
+        for (let source of pluginSources) {
+            await this.pluginService.fetchWidgetPlugin(source);
+        }
+
+        await this.newsService.checkNewsSources();
+    }
+
+    /**
+     * Refreshes one of more sources depending on the given widget, but only if enough time has elapsed since the
+     * previous refresh, based on the delay specific in the widget configuration.
+     */
+    public async refreshWidgetPluginContentIfRightTime(widgetState: WidgetState): Promise<void> {
+        let pluginSources: string[] = [];
+        if (widgetState.category === "app-plugin" && widgetState.plugin.pluginType === "news") {
+            // For news widgets, we check all plugin sources (multiple) for freshness.
+            pluginSources = this.newsService.getNewsSourceURLs();
+        }
+        else {
+            // All other plugin widget types have only one source to refresh.
+            pluginSources.push(widgetState.plugin.url);
+        }
+
+        for (let source of pluginSources) {
+            const lastFetched = this.pluginService.getLastFetched(source);
+            let config = <PluginConfig<any>>await this.pluginService.getPluginContent(source);
+
+            const now = moment();
+            const refreshDelaySec = config.refresh || (1 * 24 * 60 * 60); // 1 day by default if not specified
+
+            if (now.subtract(refreshDelaySec, "seconds").isSameOrAfter(lastFetched)) {
+                // Right time to refresh
+                await this.pluginService.fetchWidgetPlugin(source);
+            }
+        }
+    }
+
+    /**
      * Updates a plugin widget with new data, usually after a new JSON content refresh.
      * Persistent model is updated, and UI as well.
      */
-    public async updatePluginWidgetConfig(widgetId: string, newConfig: PluginConfig<any>): Promise<void> {
-        // Retrieve the current model instance
-        let widgetInstance = this.componentsInstances.find(w => w.widgetId === widgetId);
+    /*  public async updatePluginWidgetConfig(widgetId: string, newConfig: PluginConfig<any>): Promise<void> {
+         // Retrieve the current model instance
+         let widgetInstance = this.componentsInstances.find(w => w.widgetId === widgetId);
 
-        // Update to disk, if this widget is a currently added widget in a real container.
-        // (contrary to widgets shown in the widget chooser)
-        if (widgetInstance.container.name) {
-            let state = await this.loadContainerState(widgetInstance.container.name);
+         // Update to disk, if this widget is a currently added widget in a real container.
+         // (contrary to widgets shown in the widget chooser)
+         if (widgetInstance.container.name) {
+             let state = await this.loadContainerState(widgetInstance.container.name);
 
-            let storedWidget = state.widgets.find(w => w.id === widgetId);
-            storedWidget.plugin.lastFetched = moment().unix(); // Last updated: now
-            storedWidget.plugin.json = newConfig;
+             let storedWidget = state.widgets.find(w => w.id === widgetId);
+             storedWidget.plugin.lastFetched = moment().unix(); // Last updated: now
+             storedWidget.plugin.json = newConfig;
 
-            // Update the widget holder with new value
-            (<PluginWidget>widgetInstance.widget).attachWidgetState(storedWidget);
+             // Update the widget holder with new value
+             (<PluginWidget>widgetInstance.widget).attachWidgetState(storedWidget);
 
-            await this.saveContainerState(widgetInstance.container.name, state);
-        }
+             await this.saveContainerState(widgetInstance.container.name, state);
+         }
 
-        // Refresh the plugin component content with the new data (UI only)
-        (<PluginWidget>widgetInstance.widget).config = newConfig;
-    }
+         // Refresh the plugin component content with the new data (UI only)
+         (<PluginWidget>widgetInstance.widget).config = newConfig;
+     } */
 
     /**
      * Lifecycle - launcher home is entering. We initialize widgets from here as well
@@ -319,6 +466,7 @@ export class WidgetsService {
 
                 break;
             case "right":
+                widgets.push(this.createPluginWidgetState("news"));
                 widgets.push(this.createBuiltInWidgetState("elastos-voting"));
                 widgets.push(this.createBuiltInWidgetState("contacts"));
                 widgets.push(this.createBuiltInWidgetState("hive"));
@@ -328,5 +476,15 @@ export class WidgetsService {
         return {
             widgets
         };
+    }
+
+    private async findInAllContainers(filter: (widgetState: WidgetState) => boolean): Promise<WidgetState> {
+        for (let containerName of this.containerNames) {
+            let containerState = await this.loadContainerState(containerName);
+            for (let widget of containerState.widgets) {
+                if (filter(widget))
+                    return widget;
+            }
+        }
     }
 }

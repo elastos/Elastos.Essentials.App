@@ -4,15 +4,15 @@ import { LauncherNotification, NotificationManagerService } from 'src/app/launch
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
-import { Widget } from '../../base/widget.interface';
-import { WidgetsService } from '../../services/widgets.service';
+import { IWidget } from '../../base/iwidget';
+import { WidgetsServiceEvents } from '../../services/widgets.events';
 
 @Component({
   selector: 'notifications',
   templateUrl: './notifications.widget.html',
   styleUrls: ['./notifications.widget.scss'],
 })
-export class NotificationsWidget implements Widget, OnInit, OnDestroy {
+export class NotificationsWidget implements IWidget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
 
@@ -31,7 +31,7 @@ export class NotificationsWidget implements Widget, OnInit, OnDestroy {
 
   ngOnInit() {
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
-    WidgetsService.instance.editionMode.subscribe(editing => {
+    WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
 

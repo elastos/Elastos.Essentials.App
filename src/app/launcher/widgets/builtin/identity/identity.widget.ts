@@ -7,14 +7,14 @@ import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Widget } from '../../base/widget.interface';
+import { IWidget } from '../../base/iwidget';
 
 @Component({
   selector: 'widget-identity',
   templateUrl: './identity.widget.html',
   styleUrls: ['./identity.widget.scss'],
 })
-export class IdentityWidget implements Widget, OnDestroy {
+export class IdentityWidget implements IWidget, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
 
   private popover: HTMLIonPopoverElement = null;

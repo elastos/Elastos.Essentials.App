@@ -9,14 +9,14 @@ import { GlobalAppBackgroundService } from 'src/app/services/global.appbackgroun
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { Widget } from '../../base/widget.interface';
+import { IWidget } from '../../base/iwidget';
 
 @Component({
   selector: 'widget-recent-apps',
   templateUrl: './recent-apps.widget.html',
   styleUrls: ['./recent-apps.widget.scss'],
 })
-export class RecentAppsWidget implements Widget, OnInit, OnDestroy {
+export class RecentAppsWidget implements IWidget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
 
   private recentAppsSub: Subscription = null; // Susbcription to recently used dApps (browser)

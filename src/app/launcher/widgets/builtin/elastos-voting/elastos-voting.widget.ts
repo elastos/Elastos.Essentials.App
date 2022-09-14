@@ -7,14 +7,14 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { Widget } from '../../base/widget.interface';
+import { IWidget } from '../../base/iwidget';
 
 @Component({
   selector: 'widget-elastos-voting',
   templateUrl: './elastos-voting.widget.html',
   styleUrls: ['./elastos-voting.widget.scss'],
 })
-export class ElastosVotingWidget implements Widget, OnInit {
+export class ElastosVotingWidget implements IWidget, OnInit {
   public forSelection: boolean; // Initialized by the widget service
 
   public runnableApps: RunnableAppCategory = null;

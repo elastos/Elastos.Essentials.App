@@ -1,0 +1,31 @@
+<ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode"
+  *ngIf="news.length > 0 || forSelection || editing" (click)="onBackgroundClicked()">
+  <ion-row class="header-row">
+    <ion-col size="12" class="title-col">
+      News
+      <div class="badge" *ngIf="news.length > 0">{{ news.length }}</div>
+    </ion-col>
+  </ion-row>
+
+  <!-- We have news to show -->
+  <ion-row class="news-row" *ngIf="news.length > 0">
+    <ion-row class="newss" [class.transitioning]="transitioning">
+      <ion-col size="4" class="news" *ngFor="let i of pageIndexes">
+        <div class="header" *ngIf="hasItemAt(i)">
+          <img class="icon" [cache]="getIcon(i)" />
+          <div class="sender">{{ getSender(i) }}</div>
+        </div>
+        <div class="title" *ngIf="hasItemAt(i)">{{ getTitle(i) }}</div>
+        <div class="message" *ngIf="hasItemAt(i)">{{ getMessage(i) }}</div>
+      </ion-col>
+    </ion-row>
+    <div class="grid">
+      <img src="/assets/launcher/icons/dark_mode/grid.svg" />
+    </div>
+  </ion-row>
+
+  <!-- No news to show (eg: preview) -->
+  <ion-row class="news-row" *ngIf="news.length === 0">
+    <p>No news to display. Add more news widgets from your favorite dApps.</p>
+  </ion-row>
+</ion-row>

@@ -1,7 +1,7 @@
 <div class="widget widget-background template-root" [class.darkContainer]="theme.darkMode">
   <div class="project" (click)="onProjectLogoClicked()">
     <img class="logo" [cache]="config.logo">
-    <div class="name" *ngIf="config.projectName">{{ config.projectName }}</div>
+    <div class="name" *ngIf="config.projectname">{{ config.projectname }}</div>
     <div class="title" *ngIf="config.title">{{ config.title }}</div>
   </div>
   <div class="right-col">

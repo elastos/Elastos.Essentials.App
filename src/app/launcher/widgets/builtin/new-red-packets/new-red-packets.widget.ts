@@ -6,15 +6,15 @@ import { Packet } from 'src/app/redpackets/model/packets.model';
 import { PacketService } from 'src/app/redpackets/services/packet.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Widget } from '../../base/widget.interface';
-import { WidgetsService } from '../../services/widgets.service';
+import { IWidget } from '../../base/iwidget';
+import { WidgetsServiceEvents } from '../../services/widgets.events';
 
 @Component({
   selector: 'widget-new-red-packets',
   templateUrl: './new-red-packets.widget.html',
   styleUrls: ['./new-red-packets.widget.scss'],
 })
-export class NewRedPacketsWidget implements Widget, OnInit, OnDestroy {
+export class NewRedPacketsWidget implements IWidget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
 
@@ -30,7 +30,7 @@ export class NewRedPacketsWidget implements Widget, OnInit, OnDestroy {
 
   ngOnInit() {
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
-    WidgetsService.instance.editionMode.subscribe(editing => {
+    WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
 

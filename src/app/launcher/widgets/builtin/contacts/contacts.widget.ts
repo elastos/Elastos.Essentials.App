@@ -4,14 +4,14 @@ import { ContactsInitService } from 'src/app/contacts/services/init.service';
 import { AppmanagerService, RunnableApp } from 'src/app/launcher/services/appmanager.service';
 import { App } from 'src/app/model/app.enum';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Widget } from '../../base/widget.interface';
+import { IWidget } from '../../base/iwidget';
 
 @Component({
   selector: 'widget-contacts',
   templateUrl: './contacts.widget.html',
   styleUrls: ['./contacts.widget.scss'],
 })
-export class ContactsWidget implements Widget {
+export class ContactsWidget implements IWidget {
   public forSelection: boolean; // Initialized by the widget service
 
   public app: RunnableApp = {
