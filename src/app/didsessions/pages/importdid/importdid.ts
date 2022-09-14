@@ -42,15 +42,6 @@ export class ImportDIDPage {
   private mnemonicLanguage: DIDPlugin.MnemonicLanguage;
   public readonly = false; // set true if import mnemonic form wallet app
 
-  // for keyboard
-  private rootContent: any;
-  private sentenceInput: any;
-  private showHandle: any;
-  private hideHandle: any;
-  private contentHight = 0;
-  private scrollHeight = -1;
-  public hideButton = false;
-
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
@@ -95,32 +86,9 @@ export class ImportDIDPage {
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.uxService.onTitleBarItemClicked(icon);
     });
-    this.adjustTextareaHeight();
-
-    // the rootContent clientHeight is wrong in android?
-    if (this.platform.platforms().indexOf('android') < 0) {
-      this.getElements();
-
-      window.addEventListener('native.keyboardshow', this.showHandle = (event: any) => {
-        if (this.scrollHeight == -1) {
-          this.scrollHeight = this.calcScrollHeight(event.keyboardHeight);
-        }
-        if (this.scrollHeight != 0) {
-          Logger.log('didsessions', 'scrollHeight:', this.scrollHeight)
-          this.rootContent.style.top = this.scrollHeight + 'px';
-        }
-      });
-      window.addEventListener('native.keyboardhide', this.hideHandle = () => {
-        this.rootContent.style.top = '0px';
-      });
-    }
   }
 
   ionViewWillLeave() {
-    if (this.platform.platforms().indexOf('android') < 0) {
-      window.removeEventListener('native.keyboardshow', this.showHandle);
-      window.removeEventListener('native.keyboardhide', this.hideHandle);
-    }
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     this.loadingIdentity = false;
 
@@ -133,26 +101,6 @@ export class ImportDIDPage {
     } else {
       return false;
     }
-  }
-
-  // TODO: the height of the textarea is not enough when get mnemonic from scanner.
-  private adjustTextareaHeight() {
-    // textarea: the element in the ion-textarea.
-    let textarea = this.element.nativeElement.querySelector("textarea");
-    if (textarea) {
-      textarea.style.height = '100px';
-    }
-  }
-
-  getElements() {
-    this.rootContent = document.getElementById('rootcontent')
-    this.sentenceInput = document.getElementById('sentenceInput')
-    this.contentHight = this.rootContent.clientHeight;
-  }
-
-  calcScrollHeight(keyboardHeight) {
-    let scrollHeight = this.contentHight - this.sentenceInput.offsetTop - this.sentenceInput.clientHeight - keyboardHeight;
-    return scrollHeight > 0 ? 0 : scrollHeight;
   }
 
   onMnemonicSentenceChanged() {
@@ -210,18 +158,6 @@ export class ImportDIDPage {
 
   inputMnemonicCompleted() {
     return this.mnemonicWords.length === 12;
-  }
-
-  onInputFocus() {
-    this.zone.run(() => {
-      this.hideButton = true;
-    });
-  }
-
-  onInputBlur() {
-    this.zone.run(() => {
-      this.hideButton = false;
-    });
   }
 
   public async startMnemonicInput() {

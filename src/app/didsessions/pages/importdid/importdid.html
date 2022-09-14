@@ -4,18 +4,6 @@
 
     <p>{{ 'didsessions.import-prompt' | translate }}</p>
 
-    <!-- <ion-textarea *ngIf="!readonly" id='sentenceInput' row=5 #addMnemonicWordInput
-        [placeholder]="'didsessions.enter-mnemonic'|translate" [(ngModel)]="mnemonicSentence"
-        (ionChange)="onMnemonicSentenceChanged()" (ionFocus)="onInputFocus()" (ionBlur)="onInputBlur()" mode="ios">
-      </ion-textarea> -->
-
-    <!-- <ion-row class="input-row">
-      <div *ngIf="!readonly" class="virtual-textarea" (click)="startMnemonicInput()">
-        {{mnemonicSentence}}
-        <div *ngIf="!mnemonicSentence">{{'didsessions.enter-mnemonic'|translate}}</div>
-      </div>
-    </ion-row> -->
-
     <div class="mnemonic-rows">
       <ion-row class="mnemonic-row" *ngFor="let i of [1,4,7,10]" (click)="startMnemonicInput()">
         <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i - 1])">
