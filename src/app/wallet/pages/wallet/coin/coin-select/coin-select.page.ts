@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
 import { CoinType, StandardCoinName } from '../../../../model/coin';
@@ -13,6 +14,16 @@ import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
+
+// The multi-sign wallet doesn't support sidechain, we directly return the specified information.
+// User need to select the destination Network.
+export type NetworkInfo = {
+    id: string;
+    chainId: number;
+    friendName: string;
+    logo: string;
+    tokenSymbol: string;
+}
 
 @Component({
     selector: 'app-coin-select',
@@ -26,6 +37,8 @@ export class CoinSelectPage implements OnInit {
     public networkWallet: AnyNetworkWallet;
     // Available subwallets to transfer to
     public subWallets: AnySubWallet[] = [];
+    // Available networks for multi-sin wallet cross transfer.
+    public destNetworks: NetworkInfo[] = [];
 
     // Helpers
     private SELA = Config.SELA;
@@ -60,6 +73,9 @@ export class CoinSelectPage implements OnInit {
             this.subWallets = [this.networkWallet.getSubWallet('ELA')];
         } else {
             this.subWallets = await this.getELASideChainSubwallets();
+            if (this.subWallets.length === 0) {
+                this.initELASideChainNetworks();
+            }
         }
     }
 
@@ -70,21 +86,49 @@ export class CoinSelectPage implements OnInit {
         this.native.go("/wallet/coin-transfer");
     }
 
+    onSelect(item: NetworkInfo) {
+        // Define destination network to transfer to and from
+        this.coinTransferService.toSubWalletId = item.id;
+        this.coinTransferService.networkInfo = item;
+
+        this.native.go("/wallet/coin-transfer");
+    }
+
     // for cross chain transaction.
     async getELASideChainSubwallets() {
         let subwallets: AnySubWallet[] = [];
 
         let idChain = WalletNetworkService.instance.getNetworkByKey('elastosidchain');
         let idNetworkWallet = await idChain.createNetworkWallet(this.networkWallet.masterWallet, false);
-        let idsubwallet = idNetworkWallet.getSubWallet(StandardCoinName.ETHDID);
-
-        subwallets.push(idsubwallet);
+        if (idNetworkWallet) {
+            let idsubwallet = idNetworkWallet.getSubWallet(StandardCoinName.ETHDID);
+            subwallets.push(idsubwallet);
+        }
 
         let escChain = WalletNetworkService.instance.getNetworkByKey('elastossmartchain');
         let escNetworkWallet = await escChain.createNetworkWallet(this.networkWallet.masterWallet, false);
-        let escsubwallet = escNetworkWallet.getSubWallet(StandardCoinName.ETHSC);
-
-        subwallets.push(escsubwallet);
+        if (escNetworkWallet) {
+            let escsubwallet = escNetworkWallet.getSubWallet(StandardCoinName.ETHSC);
+            subwallets.push(escsubwallet);
+        }
         return subwallets;
+    }
+
+    // For multi-sign wallet cross chain transaction.
+    initELASideChainNetworks() {
+        let idChain = WalletNetworkService.instance.getNetworkByKey('elastosidchain');
+        this.destNetworks.push({
+            id: StandardCoinName.ETHDID,
+            chainId: (<EVMNetwork>idChain).getMainChainID(),
+            friendName: 'Identity Chain',
+            logo: idChain.logo,
+            tokenSymbol: idChain.getMainTokenSymbol()})
+        let escChain = WalletNetworkService.instance.getNetworkByKey('elastossmartchain');
+        this.destNetworks.push({
+            id: StandardCoinName.ETHSC,
+            chainId: (<EVMNetwork>escChain).getMainChainID(),
+            friendName: 'Smart Chain',
+            logo: escChain.logo,
+            tokenSymbol: escChain.getMainTokenSymbol()})
     }
 }

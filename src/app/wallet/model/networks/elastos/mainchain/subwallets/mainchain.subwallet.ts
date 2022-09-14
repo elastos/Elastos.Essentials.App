@@ -72,8 +72,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public supportsCrossChainTransfers(): boolean {
-        // Not support cross chain transfers for muti-sig and ledger wallet.
-        return this.networkWallet.masterWallet.type == WalletType.STANDARD;
+        // Not support cross chain transfers for gnosis muti-sig and ledger wallet.
+        return (this.networkWallet.masterWallet.type == WalletType.STANDARD)
+            || (this.networkWallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD);
     }
 
     public async startBackgroundUpdates(): Promise<void> {

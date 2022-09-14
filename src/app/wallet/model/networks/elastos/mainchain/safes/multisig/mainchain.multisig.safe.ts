@@ -72,9 +72,11 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return Promise.resolve(null);
   }
 
-  public createDepositTransaction(inputs: UtxoForSDK[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string) {
-    // TODO: Do not support.
-    return Promise.resolve(null);
+  public async createDepositTransaction(inputs: UtxoForSDK[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string): Promise<any> {
+    const tx = this.elaSubWallet.createDepositTransaction(1, inputs, toSubwalletId, amount, toAddress, lockAddress, fee, memo);
+    Logger.log("wallet", "Created multisig deposit transaction", tx);
+
+    return await tx;
   }
 
   public CRCouncilMemberClaimNodeDigest(payload: string) {
