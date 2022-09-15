@@ -298,15 +298,15 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
         await this.checkNoInAppNoticeStatus();
 
-        this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
+        this.favoritesSubscription = this.favoritesService.favorites.subscribe(favorites => {
             if (favorites) {
-              this.updateFavoritesAndApps();
+                this.updateFavoritesAndApps();
             }
         });
 
         this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
             if (network) {
-              this.updateFavoritesAndApps();
+                this.updateFavoritesAndApps();
             }
         });
 
@@ -334,12 +334,12 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     }
 
     private updateFavoritesAndApps() {
-      // Build dapps and favorites only when the active network and favorites are ininialized.
-      if (this.favoritesService.favoritesSubject.value && this.walletNetworkService.activeNetwork.value) {
-        this.buildFilteredFavorites();
-        this.buildFilteredDApps();
-        this.buildFilteredDAppsWithFavorites();
-      }
+        // Build dapps and favorites only when the active network and favorites are ininialized.
+        if (this.favoritesService.favorites.value && this.walletNetworkService.activeNetwork.value) {
+            this.buildFilteredFavorites();
+            this.buildFilteredDApps();
+            this.buildFilteredDAppsWithFavorites();
+        }
     }
 
     public setTheme(darkMode: boolean) {
@@ -381,9 +381,9 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     private buildFilteredFavorites() {
         let allFavorites = this.favoritesService.getFavorites();
         if (allFavorites) {
-          this.favorites = allFavorites.filter(f => {
-              return f.networks.length == 0 || f.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
-          });
+            this.favorites = allFavorites.filter(f => {
+                return f.networks.length == 0 || f.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
+            });
         }
     }
 

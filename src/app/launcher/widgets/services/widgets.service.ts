@@ -27,6 +27,7 @@ const builtInWidgets: WidgetState[] = [
     { category: "builtin", builtInType: "signout", displayCategories: [DisplayCategories.IDENTITY] },
     { category: "builtin", builtInType: "elastos-voting", displayCategories: [DisplayCategories.ELASTOS] },
     { category: "builtin", builtInType: "recent-apps", displayCategories: [DisplayCategories.BROWSER] },
+    { category: "builtin", builtInType: "favorite-apps", displayCategories: [DisplayCategories.BROWSER] },
     { category: "builtin", builtInType: "wallet-connect", displayCategories: [DisplayCategories.FINANCE] },
     { category: "builtin", builtInType: "easy-bridge", displayCategories: [DisplayCategories.FINANCE] },
     { category: "builtin", builtInType: "contacts", displayCategories: [DisplayCategories.COMMUNITY] },
@@ -146,12 +147,6 @@ export class WidgetsService {
                 container: widgetContainer
             });
 
-            // When this method is called, the launcher viewWillEnter() can be already called or not called yet.
-            // If the launcher is already entered: initialize the component.
-            // If not, the component will be initialized later when home enters.
-            //if (this.launcherHomeViewIsActive)
-            //await widgetHolderComponentRef.instance.onWidgetInit?.();
-
             return { dragRef, widgetHolderComponentRef, widgetComponentInstance };
         }
         else {
@@ -263,11 +258,13 @@ export class WidgetsService {
         let widgetIndex = this.componentsInstances.findIndex(w => w.widgetId === widgetId);
         let widgetInstance = this.componentsInstances[widgetIndex];
 
-        // Deinit the holder and the widget
-        await widgetInstance.holderComponentRef.instance.onWidgetDeinit?.();
+        if (widgetInstance) { // Just in case of legacy wrong widget state info
+            // Deinit the holder and the widget
+            await widgetInstance.holderComponentRef.instance.onWidgetDeinit?.();
 
-        // Delete from UI
-        await widgetInstance.container.onWidgetDeletion(widgetInstance, widgetInstance.holderComponentRef.hostView);
+            // Delete from UI
+            await widgetInstance.container.onWidgetDeletion(widgetInstance, widgetInstance.holderComponentRef.hostView);
+        }
 
         return { widgetInstance };
     }
@@ -277,12 +274,14 @@ export class WidgetsService {
      * a removal from UI is needed too
      */
     public async deleteWidget(widgetId: string) {
-        const { widgetInstance } = await this.removeWidget(widgetId);
+        let { containerName } = await this.findInAllContainers(widgetState => widgetState.id === widgetId);
+
+        await this.removeWidget(widgetId);
 
         // Delete from state / model
-        let state = await this.loadContainerState(widgetInstance.container.name);
+        let state = await this.loadContainerState(containerName);
         state.widgets = state.widgets.filter(w => w.id !== widgetId);
-        await this.saveContainerState(widgetInstance.container.name, state);
+        await this.saveContainerState(containerName, state);
     }
 
     /**
@@ -315,8 +314,8 @@ export class WidgetsService {
 
                 // Check if there is already a news widget on the home screen. If not, return the widget state as for
                 // other widgets. If there is one, just append the news source but don't let the user create a new widget
-                let existingNewsWidget = await this.findInAllContainers(widgetState => widgetState.category === "app-plugin" && widgetState.plugin.pluginType === "news");
-                if (existingNewsWidget) {
+                let existingNewsWidgetInfo = await this.findInAllContainers(widgetState => widgetState.category === "app-plugin" && widgetState.plugin.pluginType === "news");
+                if (existingNewsWidgetInfo) {
                     Logger.log("widgets", "News widget already exists, only adding the news source");
                     return { newsSourceAdded: true };
                 }
@@ -326,7 +325,7 @@ export class WidgetsService {
                 }
             }
             else {
-                // Just in case, make sure the source was not an existing news source, in case a developer 
+                // Just in case, make sure the source was not an existing news source, in case a developer
                 // previously used a news plugin type then changed it to something else.
                 await this.newsService.checkNewsSources();
 
@@ -478,13 +477,15 @@ export class WidgetsService {
         };
     }
 
-    private async findInAllContainers(filter: (widgetState: WidgetState) => boolean): Promise<WidgetState> {
+    private async findInAllContainers(filter: (widgetState: WidgetState) => boolean): Promise<{ containerName: string, widgetState: WidgetState }> {
         for (let containerName of this.containerNames) {
             let containerState = await this.loadContainerState(containerName);
-            for (let widget of containerState.widgets) {
-                if (filter(widget))
-                    return widget;
+            for (let widgetState of containerState.widgets) {
+                if (filter(widgetState))
+                    return { containerName, widgetState };
             }
         }
+
+        return null;
     }
 }

@@ -1,0 +1,47 @@
+<ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode">
+  <ion-row *ngIf="favorites.length > 0">
+    <!-- Has favorites - category header -->
+    <ion-col size="12" class="title-col">
+      {{ 'dappbrowser.favorites' | translate}}
+    </ion-col>
+    <!--   <ion-col size="4" class="more-col" (click)="openDApps()">
+      {{ 'dappbrowser.all-dapps' | translate}}
+      <img
+        [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+    </ion-col> -->
+  </ion-row>
+
+  <!-- Has favorites - Apps list -->
+  <ion-row class="recent-apps-row" *ngIf="favorites.length > 0">
+    <ion-row class="recent-apps">
+      <ion-col size="3" class="recent-app" *ngFor="let app of favorites" (click)="openFavoriteApp(app)">
+        <img [src]="app.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
+        <div class="title">{{ getShortTitle(app)}}</div>
+      </ion-col>
+    </ion-row>
+    <div class="grid" (click)="openDApps()">
+      <img src="/assets/launcher/icons/dark_mode/grid.svg" />
+    </div>
+  </ion-row>
+
+  <!-- No favorites -->
+  <ion-col class="app-col no-app-col" size="12" (click)="openDApps()" *ngIf="favorites.length == 0">
+    <ion-row class="app-row">
+      <ion-col class="left-col" size="2">
+        <div class="icon-container" id="browser">
+          <img src="/assets/launcher/apps/app-icons/browser.svg">
+        </div>
+      </ion-col>
+      <ion-col class="mid-col" offset="0.2" size="8">
+        <ion-label>
+          <h1>{{ 'launcher.app-browser' | translate }}</h1>
+          <p>{{ 'launcher.app-browser-description' | translate }}</p>
+        </ion-label>
+      </ion-col>
+      <ion-col class="right-col" size="1.8">
+        <img
+          [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>

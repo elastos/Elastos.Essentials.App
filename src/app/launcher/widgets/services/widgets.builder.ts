@@ -73,6 +73,7 @@ export class WidgetsBuilder {
                 case "signout": widgetComponentClass = (await import("../builtin/signout/signout.widget")).SignOutWidget; break;
                 case "elastos-voting": widgetComponentClass = (await import("../builtin/elastos-voting/elastos-voting.widget")).ElastosVotingWidget; break;
                 case "recent-apps": widgetComponentClass = (await import("../builtin/recent-apps/recent-apps.widget")).RecentAppsWidget; break;
+                case "favorite-apps": widgetComponentClass = (await import("../builtin/favorite-apps/favorite-apps.widget")).FavoriteAppsWidget; break;
                 case "backup-identity": widgetComponentClass = (await import("../builtin/backup-identity/backup-identity.widget")).BackupIdentityWidget; break;
                 case "hive-sync": widgetComponentClass = (await import("../builtin/hive-sync/hive-sync.widget")).HiveSyncWidget; break;
                 case "wallet-connect": widgetComponentClass = (await import("../builtin/wallet-connect/wallet-connect.widget")).WalletConnectWidget; break;

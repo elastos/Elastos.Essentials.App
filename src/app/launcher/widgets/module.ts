@@ -15,6 +15,7 @@ import { ContactsWidget } from "./builtin/contacts/contacts.widget";
 import { DiscoverDAppsWidget } from "./builtin/discover-dapps/discover-dapps.widget";
 import { EasyBridgeWidget } from "./builtin/easy-bridge/easy-bridge.widget";
 import { ElastosVotingWidget } from "./builtin/elastos-voting/elastos-voting.widget";
+import { FavoriteAppsWidget } from "./builtin/favorite-apps/favorite-apps.widget";
 import { HiveSyncWidget } from "./builtin/hive-sync/hive-sync.widget";
 import { HiveWidget } from "./builtin/hive/hive.widget";
 import { IdentityWidget } from './builtin/identity/identity.widget';
@@ -57,6 +58,7 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     NotificationsWidget,
     NewsWidget,
     FullNewsPage,
+    FavoriteAppsWidget,
 
     // Plugins
     PluginWidget,

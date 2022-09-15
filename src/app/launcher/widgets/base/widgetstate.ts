@@ -5,6 +5,7 @@ export type BuiltInWidgetType =
   "signout" |
   "elastos-voting" |
   "recent-apps" |
+  "favorite-apps" |
   "backup-identity" |
   "hive-sync" |
   "wallet-connect" |
