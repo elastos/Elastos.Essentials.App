@@ -1,4 +1,5 @@
 import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -8,7 +9,6 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { PrivateKeyType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
-import { isPrivate } from 'tiny-secp256k1';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -35,6 +35,7 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
     private walletCreateService: WalletCreationService,
     private authService: AuthService,
     private native: Native,
+    private platform: Platform,
     public translate: TranslateService,
     public events: GlobalEvents,
     public zone: NgZone,
@@ -96,9 +97,13 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
         if (this.privatekey.startsWith('0x')) {
             this.privatekey = this.privatekey.substring(2);
         }
-        if (!isPrivate(Buffer.from(this.privatekey, 'hex'))) {
-            this.native.toast_trans('wallet.wrong-privatekey-msg');
-            return;
+        // TODO: exception on iOS: TypeError: Unexpected response MIME type. Expected 'application/wasm'
+        if (this.platform.platforms().indexOf('android') >= 0) {
+            const isPrivate = (await import('tiny-secp256k1')).isPrivate;
+            if (!isPrivate(Buffer.from(this.privatekey, 'hex'))) {
+                this.native.toast_trans('wallet.wrong-privatekey-msg');
+                return;
+            }
         }
     }
 
