@@ -30,7 +30,7 @@ export class NotificationsPage implements OnInit {
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
-  private modalAlreayDismiss = false;
+  private modalAlreadyDismissed = false;
 
   public notifications: LauncherNotification[] = [];
 
@@ -75,9 +75,9 @@ export class NotificationsPage implements OnInit {
   }
 
   async closeNotificationPage() {
-    if (!this.modalAlreayDismiss) {
+    if (!this.modalAlreadyDismissed) {
       await this.modalController.dismiss();
-      this.modalAlreayDismiss = true;
+      this.modalAlreadyDismissed = true;
     }
   }
 

@@ -1,7 +1,7 @@
 
 export enum RefreshOn {
   NETWORK_CHANGE = "networkchange"
-};
+}
 
 type GalleryContentItem = {
   title?: string; // "Super monkey"

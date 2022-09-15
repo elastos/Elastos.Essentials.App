@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { NewsConfiguratorComponent } from './configurator.component';
 
 @NgModule({
@@ -11,7 +12,8 @@ import { NewsConfiguratorComponent } from './configurator.component';
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule
+    TranslateModule,
+    GlobalDirectivesModule
   ],
   exports: [
     NewsConfiguratorComponent

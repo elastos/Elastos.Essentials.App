@@ -1,0 +1,27 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid [class.dark-container]="theme.darkMode">
+        <div *ngIf="news.length > 0">
+            <ion-item class="news-item ion-activatable ripple" lines="none" *ngFor="let new of news"
+                (click)="openNews(new)">
+                <ion-row class="news-row">
+                    <ion-col class="name-col" size="7.5">
+                        <img [src]="getIcon(new)" />
+                        <h2>{{ getSender(new) }}</h2>
+                    </ion-col>
+                    <ion-col class="date-col" size="4.5" (click)="close(notification)">
+                        <p>{{ getNotificationDate(new) }}
+                        </p>
+                    </ion-col>
+                    <ion-col size="12" class="title-col" (click)="start(notification)">
+                        <p>{{ getTitle(new) }}</p>
+                    </ion-col>
+                    <ion-col size="12" class="message-col" (click)="start(notification)">
+                        <p>{{ getMessage(new) }}</p>
+                    </ion-col>
+                </ion-row>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-item>
+        </div>
+    </ion-grid>
+</ion-content>

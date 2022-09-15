@@ -12,8 +12,9 @@
       background: #d62929;
       border-radius: 20px;
       padding: 2px 6px;
-      margin-left: 5px;
+      margin-left: 10px;
       text-align: center;
+      font-size: 12px;
     }
   }
 
@@ -59,6 +60,7 @@
         display: flex;
         align-items: center;
         align-self: flex-start;
+        width: 100%;
 
         .icon {
           width: 18px;
@@ -100,9 +102,9 @@
 }
 
 .darkContainer {
-  .notifications-row {
-    .notifications {
-      .notification {
+  .news-row {
+    .newss {
+      .news {
         .message {
           color: #acacac;
         }

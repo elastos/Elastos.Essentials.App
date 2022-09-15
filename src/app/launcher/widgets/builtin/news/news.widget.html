@@ -10,7 +10,7 @@
   <!-- We have news to show -->
   <ion-row class="news-row" *ngIf="news.length > 0">
     <ion-row class="newss" [class.transitioning]="transitioning">
-      <ion-col size="4" class="news" *ngFor="let i of pageIndexes">
+      <ion-col size="4" class="news" *ngFor="let i of pageIndexes" (click)="showFullNews($event)">
         <div class="header" *ngIf="hasItemAt(i)">
           <img class="icon" [cache]="getIcon(i)" />
           <div class="sender">{{ getSender(i) }}</div>
@@ -20,7 +20,7 @@
       </ion-col>
     </ion-row>
     <div class="grid">
-      <img src="/assets/launcher/icons/dark_mode/grid.svg" />
+      <img src="/assets/launcher/icons/dark_mode/grid.svg" (click)="showFullNews($event)" />
     </div>
   </ion-row>
 

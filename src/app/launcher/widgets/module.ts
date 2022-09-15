@@ -20,6 +20,7 @@ import { HiveWidget } from "./builtin/hive/hive.widget";
 import { IdentityWidget } from './builtin/identity/identity.widget';
 import { NewRedPacketsWidget } from "./builtin/new-red-packets/new-red-packets.widget";
 import { NewsConfiguratorComponentsModule } from "./builtin/news/components/configurator/module";
+import { FullNewsPage } from "./builtin/news/components/fullnews/fullnews.page";
 import { NewsWidget } from "./builtin/news/news.widget";
 import { NotificationsWidget } from "./builtin/notifications/notifications.widget";
 import { RecentAppsWidget } from "./builtin/recent-apps/recent-apps.widget";
@@ -55,6 +56,7 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     ChooseActiveNetworkWidget,
     NotificationsWidget,
     NewsWidget,
+    FullNewsPage,
 
     // Plugins
     PluginWidget,

@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
 import { Logger } from 'src/app/logger';
@@ -52,7 +52,8 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
     private widgetsNewsService: WidgetsNewsService,
     private widgetPluginsService: WidgetPluginsService,
     private dappBrowserService: DappBrowserService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private modalController: ModalController
   ) {
     this.rotationTimeout = setTimeout(() => { this.updateActiveNews(); }, ROTATION_TIME_SEC * 1000);
   }
@@ -91,6 +92,9 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
 
     // For each source, get its content.
     for (let source of newsSources) {
+      if (!source.enabled)
+        continue; // Skip this source if disabled
+
       let content = <PluginConfig<NewsContent>>await this.widgetPluginsService.getPluginContent(source.url);
 
       for (let news of content.content.items) {
@@ -108,7 +112,6 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
 
     this.news = allNews;
   }
-
 
   private updateActiveNews() {
     let numberOfPages = Math.ceil(this.news.length / this.pageIndexes.length);
@@ -197,6 +200,19 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
     modal.onWillDismiss().then(async (params) => {
       Logger.log('widgets', 'News configurator dismissed');
     });
+    void modal.present();
+  }
+
+  async showFullNews(event?: MouseEvent) {
+    event?.stopImmediatePropagation();
+
+    const FullNewsPage = (await import('./components/fullnews/fullnews.page')).FullNewsPage; // Cirdcular deps + perf
+    const modal = await this.modalController.create({
+      component: FullNewsPage,
+      cssClass: 'running-modal',
+      mode: 'ios',
+    });
+    void modal.onDidDismiss().then(() => { });
     void modal.present();
   }
 }

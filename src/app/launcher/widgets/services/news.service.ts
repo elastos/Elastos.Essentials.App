@@ -101,6 +101,15 @@ export class WidgetsNewsService implements GlobalService {
         this.sources.next(sources);
     }
 
+    public async setNewsSourceEnabled(url: string, enabled: boolean) {
+        let source = this.getSourceByUrl(url);
+        if (source) {
+            source.enabled = enabled;
+            await this.saveNewsSources(this.sources.value);
+            this.sources.next(this.sources.value);
+        }
+    }
+
     private getSourceByUrl(url: string): NewsSource {
         return this.sources.value.find(s => s.url === url);
     }
