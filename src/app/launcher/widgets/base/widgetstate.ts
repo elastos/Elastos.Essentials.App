@@ -17,7 +17,8 @@ export type BuiltInWidgetType =
   "discover-dapps" |
   "active-network-coin-price" |
   "choose-active-network" |
-  "notifications";
+  "notifications" |
+  "swap";
 
 export enum DisplayCategories {
   ELASTOS = "elastos",

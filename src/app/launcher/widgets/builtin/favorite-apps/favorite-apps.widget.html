@@ -15,7 +15,7 @@
   <ion-row class="recent-apps-row" *ngIf="favorites.length > 0">
     <ion-row class="recent-apps">
       <ion-col size="3" class="recent-app" *ngFor="let app of favorites" (click)="openFavoriteApp(app)">
-        <img [src]="app.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
+        <img [cache]="app.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
         <div class="title">{{ getShortTitle(app)}}</div>
       </ion-col>
     </ion-row>

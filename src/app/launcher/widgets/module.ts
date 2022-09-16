@@ -27,6 +27,7 @@ import { NotificationsWidget } from "./builtin/notifications/notifications.widge
 import { RecentAppsWidget } from "./builtin/recent-apps/recent-apps.widget";
 import { RedPacketsWidget } from "./builtin/red-packets/red-packets.widget";
 import { SignOutWidget } from "./builtin/signout/signout.widget";
+import { SwapWidget } from "./builtin/swap/swap.widget";
 import { WalletConnectWidget } from "./builtin/wallet-connect/wallet-connect.widget";
 import { PluginWidget } from "./plugins/plugin-widget/plugin.widget";
 import { GalleryTemplate } from "./plugins/templates/gallery/gallery";
@@ -59,6 +60,7 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     NewsWidget,
     FullNewsPage,
     FavoriteAppsWidget,
+    SwapWidget,
 
     // Plugins
     PluginWidget,
