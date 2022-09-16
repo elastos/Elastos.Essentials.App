@@ -1,34 +1,34 @@
-<div class="widget-background template-root ripple" [class.darkContainer]="theme.darkMode"
+<div class="widget widget-background template-root ripple" [class.darkContainer]="theme.darkMode"
   [class.ion-activatable]="config.content.token.url" (click)="openTokenUrl()">
-  <img [cache]="config.content.token.icon" class="token-icon" *ngIf="config.content.token.icon">
-  <div class="project" (click)="onProjectLogoClicked($event)">
-    <img [cache]="config.logo">
-  </div>
-  <div class="right-col">
-    <!-- Symbol, price row -->
-    <ion-row class="main-row">
-      <ion-col size="6" class="left">
-        {{ config.content.token.symbol }}
-      </ion-col>
-      <ion-col size="6" class="right" [class.positive]="changeIsPositive()" [class.negative]="changeIsNegative()">
-        {{ getDisplayPrice() }}
-      </ion-col>
-    </ion-row>
+  <!-- Project logo -->
+  <img class="project-logo" [cache]="config.logo" (click)="onProjectLogoClicked($event)">
 
-    <!-- Volume, change row -->
-    <ion-row class="second-row" *ngIf="hasSecondRow()">
-      <ion-col size="6" class="left">
-        <ng-container *ngIf="config.content.token.network">{{ config.content.token.network }}</ng-container>
-      </ion-col>
-      <ion-col size="6" class="right">
-        <span class="change" [class.positive]="changeIsPositive()" [class.negative]="changeIsNegative()"
-          *ngIf="config.content.token.change24hpercent">
-          {{ config.content.token.change24hpercent }}%
-        </span>
-        <ng-container *ngIf="config.content.token.volume24husd">{{ getDisplayVolume() }}</ng-container>
-      </ion-col>
-    </ion-row>
+  <!-- Project name, token symol, network name -->
+  <div class="info">
+    <div class="project-name">{{ config.projectname }}</div>
+    <div class="token-symbol">{{ config.content.token.symbol }}</div>
+    <div class="network" *ngIf="config.content.token.network">
+      {{ config.content.token.network }}
+    </div>
   </div>
+
+  <!-- Token icon -->
+  <img [cache]="config.content.token.icon" class="token-icon" *ngIf="config.content.token.icon">
+
+  <div class="pricing" [class.positive]="changeIsPositive()" [class.negative]="changeIsNegative()">
+    <!-- Price -->
+    <div class="price">{{ getDisplayPrice() }}</div>
+
+    <!-- Change -->
+    <span class="change" [class.positive]="changeIsPositive()" [class.negative]="changeIsNegative()"
+      *ngIf="config.content.token.change24hpercent">
+      {{ config.content.token.change24hpercent }}%
+    </span>
+  </div>
+
+  <!-- Right arrow -->
+  <img class="next" src="/assets/launcher/widgets/white-right-arrow.svg" />
 
   <ion-ripple-effect></ion-ripple-effect>
+
 </div>

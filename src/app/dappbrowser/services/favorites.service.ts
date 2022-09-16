@@ -99,6 +99,9 @@ export class FavoritesService {
     }
 
     private sortFavorites(favorites: BrowserFavorite[]): BrowserFavorite[] {
+        if (!favorites)
+            return [];
+
         // Copy the favorites
         let sortedFavorites: BrowserFavorite[] = Array.from(favorites);
 

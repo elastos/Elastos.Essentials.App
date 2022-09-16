@@ -32,7 +32,8 @@ export class FavoriteAppsWidget implements IWidget, OnInit, OnDestroy {
   ngOnInit() {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.favoritesSub = this.favoritesService.sortedFavorites.subscribe(favorites => {
-      this.favorites = favorites.slice(0, 4); // Max 4 apps shown
+      if (favorites)
+        this.favorites = favorites.slice(0, 4); // Max 4 apps shown
     });
 
     return;

@@ -2,17 +2,53 @@
 @import "../../../plugins.scss";
 
 .template-root {
-  padding: 0px 10px;
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+
+  .project-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-right: 5px;
+  }
 
   .token-icon {
-    position: absolute;
-    right: 0;
-    top: 10px;
-    opacity: 0.5;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     object-fit: contain;
-    margin-right: 5px;
+    margin: 0 5px;
+  }
+
+  .info {
+    text-align: left;
+    min-width: 0;
+    flex: 1;
+
+    .project-name {
+      font-size: 18px;
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .token-symbol {
+      font-weight: 600;
+      margin: 2px 0;
+    }
+
+    .token-symbol,
+    .network {
+      font-size: 12px;
+    }
+
+    .network {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
 
   .project {
@@ -21,23 +57,35 @@
     position: absolute;
   }
 
-  .positive {
-    color: #44cc44;
-  }
-
-  .negative {
-    color: #cc4444;
-  }
-
-  ion-col {
-    padding: 0;
-    align-items: center;
+  .pricing {
     display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .price {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .change {
+      font-size: 11px;
+      font-weight: 600;
+
+      &.positive {
+        color: #44cc44;
+      }
+
+      &.negative {
+        color: #cc4444;
+      }
+    }
   }
 
-  .main-row {
-    font-size: 20px;
-    font-weight: bold;
+  .next {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    margin: 0 10px;
   }
 
   .second-row {
@@ -55,6 +103,20 @@
 
     .right {
       text-align: right;
+    }
+  }
+}
+
+.darkContainer {
+  &.template-root {
+    .info {
+      .token-symbol {
+        color: #fff;
+      }
+
+      .network {
+        color: #acacac;
+      }
     }
   }
 }
