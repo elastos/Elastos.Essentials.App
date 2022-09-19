@@ -47,7 +47,7 @@ export const zh = {
           'new-version-available-notif-title': '发现新版本！',
           'new-version-available-notif-info': 'Elastos Essentials 有新的版本 ({{ latestVersion }})，请尽快更新以获取最新的功能和问题修复！',
           'checking-updates': '正在检查更新...',
-          'version-up-to-date': '已是最新版本.',
+          'version-up-to-date': '已是最新版本',
           'check-version-error': '无法获取最新版本信息，请稍后再试',
           'new-version-available': '发现新版本 v{{ version }}，点击更新',
 
