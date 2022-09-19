@@ -294,7 +294,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             case TransferType.WITHDRAW:
                 // Setup page display
-                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title"));
+                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", { coinName: this.subWalletId }));
 
                 this.toSubWallet = await this.getELASubwalletByID(StandardCoinName.ELA);
 
