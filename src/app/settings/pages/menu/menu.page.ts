@@ -62,10 +62,10 @@ export class MenuPage implements OnInit {
     await this.settingsService.changePassword();
   }
 
-  toggleDeveloperMode() {
-    void this.prefsService.setPreference(DIDSessionsStore.signedInDIDString, "developer.mode", this.prefs.developerMode);
+  async toggleDeveloperMode() {
+    await this.prefsService.setPreference(DIDSessionsStore.signedInDIDString, "developer.mode", this.prefs.developerMode);
     if (!this.prefs.developerMode) {
-      void this.developer.resetNet();
+      await this.developer.reset();
     }
   }
 
