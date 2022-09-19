@@ -96,15 +96,16 @@ export class GlobalELAUtxoService extends GlobalService {
     let utxosCount = -1;
     try {
       normalUxtos = await this.getNormalUtxos();
-      if (normalUxtos) utxosCount = normalUxtos.length;
+      if (normalUxtos) {
+        utxosCount = normalUxtos.length;
+        if (utxosCount > Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
+            this.sendNotification(utxosCount);
+        } else {
+            this.deletePreviousNotification();
+        }
+      }
     } catch (err) {
       Logger.warn('GlobalELAUtxoService', ' getNormalUtxos error', err)
-    }
-
-    if (utxosCount > Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
-      this.sendNotification(utxosCount);
-    } else {
-      this.deletePreviousNotification();
     }
   }
 

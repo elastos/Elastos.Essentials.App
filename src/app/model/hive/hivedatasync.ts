@@ -2,6 +2,7 @@ import { JSONObject } from '@elastosfoundation/did-js-sdk';
 import { AlreadyExistsException, FindOptions, InsertOptions, UpdateOptions, Vault } from '@elastosfoundation/hive-js-sdk';
 import Queue from 'promise-queue';
 import { Logger } from "src/app/logger";
+import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 
 export class SyncContext {
@@ -318,9 +319,10 @@ export class HiveDataSync {
         }
         catch (e) {
             if (e instanceof AlreadyExistsException) {
-                // SIlent catch, all good, collection exists
+                // Silent catch, all good, collection exists
             }
             else {
+                this.logWarn("createContextCollection exception", e)
                 throw e;
             }
         }
@@ -643,12 +645,23 @@ export class HiveDataSync {
 
     // Convenient promise-based way to save a setting in the app manager
     private saveSettingsEntry(key: string, value: any): Promise<void> {
-        return GlobalStorageService.instance.setSetting(this.userVault.getUserDid(), "hivedatasync", key, value);
+        return GlobalStorageService.instance.setSetting(this.userVault.getUserDid(), this.storageKeyForNetworkTemplate("hivedatasync"), key, value);
     }
 
     // Convenient promise-based way to get a setting from the app manager
     private loadSettingsEntry(key: string): Promise<any> {
-        return GlobalStorageService.instance.getSetting(this.userVault.getUserDid(), "hivedatasync", key, null);
+        return GlobalStorageService.instance.getSetting(this.userVault.getUserDid(), this.storageKeyForNetworkTemplate("hivedatasync"), key, null);
+    }
+
+    /**
+     * Returns the sandboxed storage session for the active network template.
+     * For backward compatibility, mainnet network template uses old style storage keys (no network suffix).
+     */
+    private storageKeyForNetworkTemplate(key: string) {
+        if (GlobalNetworksService.instance.activeNetworkTemplate.value === MAINNET_TEMPLATE)
+            return key;
+        else
+            return key + "_" + GlobalNetworksService.instance.activeNetworkTemplate.value;
     }
 
     private log(message: any, ...params: any) {
