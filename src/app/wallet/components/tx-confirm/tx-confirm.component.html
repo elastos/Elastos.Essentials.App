@@ -8,6 +8,7 @@
   <h4>{{ txInfo.transferFrom }}</h4>
 
   <h3>{{ 'wallet.to' | translate }}:</h3>
+  <h4 *ngIf="txInfo.toChainId">{{ txInfo.toChainId }}</h4>
   <h4>{{ txInfo.transferTo }}</h4>
 
   <h3 *ngIf="displayAmount">{{ 'wallet.amount' | translate }}:</h3>
