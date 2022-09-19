@@ -724,7 +724,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         const txInfo = {
             type: this.transferType,
             transferFrom: this.subWalletId,
-            transferTo: this.transferType === TransferType.RECHARGE ? this.coinTransferService.toSubWalletId : this.toAddress,
+            transferTo: this.toAddress,
+            toChainId: this.transferType === TransferType.RECHARGE ? this.coinTransferService.toSubWalletId : null,
             amount: this.amount,
             precision: this.fromSubWallet.tokenDecimals,
             memo: this.memo ? this.memo : null,
