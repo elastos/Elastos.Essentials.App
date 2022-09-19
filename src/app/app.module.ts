@@ -11,7 +11,7 @@ import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 //import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
 import { IonicStorageModule } from '@ionic/storage';
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -44,14 +44,17 @@ import { WalletInitModule } from './wallet/init.module';
 export class SentryErrorHandler implements ErrorHandler {
   private version = ''
   constructor(
-    //public native: GlobalNativeService,
+    private platform: Platform,
     private appVersion: AppVersion,
   ) {
-    this.appVersion.getVersionNumber().then(res => {
-      this.version = res;
-    }).catch(error => {
-      Logger.error('Sentry', 'getVersionNumber error:', error);
-    });
+    void this.platform.ready().then(async () => {
+        this.appVersion.getVersionNumber().then(res => {
+            this.version = res;
+            Logger.log('Sentry', 'Version:', res);
+        }).catch(error => {
+            Logger.error('Sentry', 'getVersionNumber error:', error);
+        });
+    })
   }
 
   /**
