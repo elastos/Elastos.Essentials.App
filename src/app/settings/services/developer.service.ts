@@ -3,7 +3,7 @@ import { LoadingController, ToastController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalSecurityService } from 'src/app/services/global.security.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
@@ -63,12 +63,10 @@ export class DeveloperService extends GlobalService {
     });
   }
 
-  // Reset to MainNet
-  async resetNet() {
-    if (this.selectedNetworkTemplate !== MAINNET_TEMPLATE) {
-      await this.globalNetworksService.setActiveNetworkTemplate(MAINNET_TEMPLATE);
-      void this.showToast('Network template has been reset to main net');
-    }
+  // Reset
+  async reset() {
+    await this.globalSecurityService.setScreenCaptureAllowed(false);
+    await this.prefs.setCollectLogs(DIDSessionsStore.signedInDIDString, false);
   }
 
   /* async configNetwork() {
