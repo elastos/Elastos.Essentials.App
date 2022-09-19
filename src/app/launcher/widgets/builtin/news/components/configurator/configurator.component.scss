@@ -6,7 +6,7 @@
   .title {
     font-size: 14px;
     font-weight: bold;
-    color: #acacac;
+    color: #000;
   }
 
   .selected {
@@ -30,13 +30,21 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      border: solid 2px #acacac;
+      border: solid 2px #787980;
       padding: 3px;
       display: flex;
 
+      img {
+        opacity: 0;
+      }
+
       &.selected {
-        background: white;
-        border: solid 2px white;
+        background: #dde2f1;
+        border: solid 2px #dde2f1;
+
+        img {
+          opacity: 1;
+        }
       }
     }
 
@@ -54,6 +62,7 @@
       text-overflow: ellipsis;
       margin: 0 5px;
       flex: 1;
+      font-weight: 600;
     }
 
     .delete {
@@ -71,6 +80,19 @@
 
     .selected {
       color: #acacac;
+    }
+  }
+
+  .sources-row {
+    .source {
+      .checkbox {
+        border: solid 2px #acacac;
+
+        &.selected {
+          background: #ffffff;
+          border: solid 2px #ffffff;
+        }
+      }
     }
   }
 }

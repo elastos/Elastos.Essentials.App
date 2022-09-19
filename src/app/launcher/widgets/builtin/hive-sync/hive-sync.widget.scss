@@ -5,8 +5,6 @@
   justify-content: space-between;
   align-items: center;
   color: white;
-  border-radius: 25px;
-  padding: 0px 10px;
 
   ion-col {
     display: flex;
@@ -17,7 +15,6 @@
     align-items: flex-start;
 
     img {
-      margin-top: 10px;
       height: 20px;
       width: 23px;
     }
@@ -53,6 +50,8 @@
   }
 
   .buttons-row {
+    margin-top: 10px;
+
     ion-button {
       width: 50%;
     }

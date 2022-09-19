@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, NgZone, Output } from '@angular/core';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { PopoverController } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -46,9 +46,11 @@ export class BrowserTitleBarComponent extends TitleBarComponent {
         public globalNav: GlobalNavService,
         public globalNotifications: GlobalNotificationsService,
         private networkService: WalletNetworkService,
+        zone: NgZone,
+        cdr: ChangeDetectorRef,
         public keyboard: Keyboard,
     ) {
-        super(themeService, popoverCtrl, globalNav, globalNotifications);
+        super(themeService, popoverCtrl, globalNav, zone, cdr, globalNotifications);
     }
 
     public setUrl(url: string) {

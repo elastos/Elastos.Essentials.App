@@ -15,9 +15,7 @@
   }
 
   &.selecting {
-    border-bottom: solid 1px #555;
-    //padding-top: 20px;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
   }
 
   .touch-disabler {
@@ -37,7 +35,7 @@
     flex-direction: row;
 
     .item {
-      background: #acacac;
+      background: #dde2f1;
       width: 40px;
       height: 40px;
       display: flex;
@@ -98,6 +96,16 @@
 
     &:active {
       background: rgba(0, 0, 0, 1);
+    }
+  }
+}
+
+.darkContainer {
+  .root {
+    .edition {
+      .item {
+        background: #acacac;
+      }
     }
   }
 }

@@ -6,6 +6,17 @@
   display: flex;
   justify-content: space-between;
 
+  .left-col {
+    padding: 0;
+    text-align: left;
+  }
+
+  .right-col {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+  }
+
   .project-logo {
     width: 48px;
     height: 48px;
@@ -27,7 +38,7 @@
     flex: 1;
 
     .project-name {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
       overflow: hidden;
       white-space: nowrap;
@@ -82,10 +93,10 @@
   }
 
   .next {
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     object-fit: contain;
-    margin: 0 10px;
+    margin-left: 10px;
   }
 
   .second-row {

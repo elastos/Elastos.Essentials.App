@@ -13,7 +13,8 @@
       </ion-col>
     </ion-row>
     <div class="grid">
-      <img src="/assets/launcher/icons/dark_mode/grid.svg" (click)="pickNetwork()" />
+      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/grid.svg' : '/assets/launcher/icons/grid.svg'"
+        (click)="pickNetwork()" />
     </div>
   </ion-row>
 </ion-row>

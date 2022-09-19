@@ -1,5 +1,4 @@
-<ion-row class="widget-background category-row contacts-row ion-activatable ripple"
-  [class.darkContainer]="theme.darkMode">
+<ion-row class="widget widget-background ion-activatable ripple" [class.darkContainer]="theme.darkMode">
   <ion-col class="app-col" size="12" (click)="appService.startApp(app)">
     <ion-row class="app-row">
       <ion-col class="left-col" size="2">
@@ -7,17 +6,17 @@
           <img [src]="app.iconDark && theme.darkMode ? app.iconDark : app.icon">
         </div>
       </ion-col>
-      <ion-col class="mid-col" offset="0.2" size="8">
+      <ion-col class="mid-col" size="8">
         <ion-label>
           <h1>{{ app.name }}</h1>
           <p>{{ app.description }}</p>
         </ion-label>
       </ion-col>
-      <ion-col class="right-col" size="1.8">
+      <ion-col class="right-col" size="2">
         <img
-          [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+          [src]="theme.darkMode ? '/assets/launcher/widgets/white-right-arrow.svg' : '/assets/launcher/widgets/black-right-arrow.svg'">
       </ion-col>
-      <ion-col class="widget-col" offset="2.2" size="9.8">
+      <ion-col class="widget-col" offset="2" size="10">
         <div *ngIf="hiveVaultLinked" class="hive-widget">
           <ion-progress-bar color="warning" [value]="hiveVaultStorageStats.usageRatio"></ion-progress-bar>
           <span>{{ hiveVaultStorageStats.percentUsage }}% / {{ hiveVaultStorageStats.maxStorage }} GB</span>

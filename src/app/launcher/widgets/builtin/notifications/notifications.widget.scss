@@ -10,6 +10,7 @@
 
     .badge {
       background: #d62929;
+      color: #fff;
       border-radius: 20px;
       padding: 2px 6px;
       margin-left: 10px;
@@ -67,7 +68,6 @@
         }
 
         .sender {
-          font-weight: bold;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;

@@ -20,7 +20,7 @@
       </ion-col>
     </ion-row>
     <div class="grid" (click)="openDApps()">
-      <img src="/assets/launcher/icons/dark_mode/grid.svg" />
+      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/grid.svg' : '/assets/launcher/icons/grid.svg'" />
     </div>
   </ion-row>
 

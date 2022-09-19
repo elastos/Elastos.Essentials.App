@@ -45,6 +45,7 @@ ion-content {
     display: flex;
     place-content: space-between;
     align-items: center;
+    background: #fff;
 
     .edit,
     .add {
@@ -59,13 +60,18 @@ ion-content {
             width: 10px;
             height: 10px;
             margin: 5px;
+            background: #bbb;
+
+            &.active {
+                background: #000;
+            }
         }
     }
 }
 
 /************************************** LIGHT THEME **************************************/
 .light-container {
-    background: #f5f5fd;
+    background: #ffffff;
 
     .id-row {
         .mid-col {

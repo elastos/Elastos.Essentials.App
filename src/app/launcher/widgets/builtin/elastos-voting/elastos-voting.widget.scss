@@ -1,11 +1,21 @@
 @import "../../widgets.scss";
 
 .elastos-voting-row {
-  .mid-col {
-    align-items: center;
+  .app-col {
+    margin-bottom: 10px;
 
-    ion-label {
-      text-align: left;
+    .app-row {
+      .mid-col {
+        align-items: center;
+
+        ion-label {
+          text-align: left;
+
+          h1 {
+            font-size: 14px;
+          }
+        }
+      }
     }
   }
 }

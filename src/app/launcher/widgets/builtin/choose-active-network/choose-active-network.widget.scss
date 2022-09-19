@@ -50,7 +50,7 @@
         object-fit: cover;
 
         &.active {
-          border: solid 2px white;
+          border: solid 2px #000;
         }
       }
 
@@ -84,6 +84,12 @@
       .network {
         .title {
           color: #acacac;
+        }
+
+        img {
+          &.active {
+            border: solid 2px #fff;
+          }
         }
       }
     }

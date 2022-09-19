@@ -14,8 +14,8 @@
     .exit-edition {
       border-radius: 50px;
       width: 100px;
-      background: #acacac;
       padding: 6px;
+      background: #f0f1ff;
       transition: all 0.3s ease;
 
       &:active {
@@ -50,7 +50,10 @@
   height: 10px;
 }
 
-/* .darkContainer {
+.darkContainer {
   .edition-controls {
+    .exit-edition {
+      background: #acacac;
+    }
   }
-} */
+}

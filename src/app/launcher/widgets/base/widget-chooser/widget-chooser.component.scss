@@ -1,5 +1,5 @@
 .widgets-container {
-  padding-bottom: 200px;
+  padding-bottom: 240px;
 }
 
 .msg-container {
@@ -15,11 +15,12 @@
   .input-row {
     border-radius: 16px;
     padding: 10px 15px;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    background-color: #ffffff;
+    background: #f0f1ff;
+    border: solid 1px #c9bfd6;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #000;
 
     ion-col {
       display: flex;
@@ -27,11 +28,11 @@
       align-items: center;
 
       ion-input {
-        background-color: #ffffff;
         font-size: 14px;
         font-weight: 400;
         letter-spacing: -0.34px;
         text-align: left;
+        --placeholder-opacity: 0.8;
       }
     }
 
@@ -50,12 +51,13 @@
 
 .footer {
   z-index: 20000;
+  background: #fff;
 
   ion-row {
     ion-col {
       .cat-selector {
-        background: #444;
-        color: #fff;
+        background: #f0f1ff;
+        color: #000;
         margin: 5px;
         border-radius: 5px;
         text-align: center;
@@ -66,6 +68,7 @@
 
         &.active {
           background: #000;
+          color: #fff;
         }
       }
     }
@@ -97,12 +100,27 @@
     }
   }
 
+  .add-widget-container {
+    .input-row {
+      color: #fff;
+
+      ion-col {
+        ion-input {
+          --placeholder-color: #fff;
+        }
+      }
+    }
+  }
+
   .footer {
     background: #111;
 
     ion-row {
       ion-col {
         .cat-selector {
+          background: #444;
+          color: #fff;
+
           &.active {
             background: #fff;
             color: #000;

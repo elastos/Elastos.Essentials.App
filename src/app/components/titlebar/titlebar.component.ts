@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, NgZone } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService, Notification } from 'src/app/services/global.notifications.service';
@@ -48,6 +48,8 @@ export class TitleBarComponent {
         public themeService: GlobalThemeService,
         protected popoverCtrl: PopoverController,
         public globalNav: GlobalNavService,
+        private zone: NgZone,
+        private cdr: ChangeDetectorRef,
         public globalNotifications: GlobalNotificationsService,
     ) {
         themeService.activeTheme.subscribe((activeTheme) => {
@@ -168,7 +170,7 @@ export class TitleBarComponent {
         switch (this.icons[iconSlot].iconPath) {
             case BuiltInIcon.ELASTOS:
             case BuiltInIcon.HOME:
-                return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/elastos.svg' : 'assets/components/titlebar/darkmode/home.svg';
+                return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/home.svg' : 'assets/components/titlebar/darkmode/home.svg';
             case BuiltInIcon.BACK:
                 return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/back.svg' : 'assets/components/titlebar/darkmode/back.svg';
             case BuiltInIcon.CLOSE:
@@ -334,18 +336,22 @@ export class TitleBarComponent {
     }
 
     public setTitleBarTheme(theme: AppTheme) {
-        if (theme === AppTheme.LIGHT) {
-            document.body.classList.remove("dark");
-            this.theme.backgroundColor = '#F5F5FD';
-            this.theme.color = '#000000'
-            this.foregroundMode = TitleBarForegroundMode.DARK;
-        } else {
-            document.body.classList.add("dark");
-            //this.theme.backgroundColor = '#121212';
-            this.theme.backgroundColor = '#000';
-            this.theme.color = '#ffffff';
-            this.foregroundMode = TitleBarForegroundMode.LIGHT;
-        }
+        this.zone.run(() => {
+            if (theme === AppTheme.LIGHT) {
+                document.body.classList.remove("dark");
+                this.theme.backgroundColor = '#ffffff';
+                this.theme.color = '#000000'
+                this.foregroundMode = TitleBarForegroundMode.DARK;
+            } else {
+                document.body.classList.add("dark");
+                //this.theme.backgroundColor = '#121212';
+                this.theme.backgroundColor = '#000';
+                this.theme.color = '#ffffff';
+                this.foregroundMode = TitleBarForegroundMode.LIGHT;
+            }
+        });
+
+        this.cdr.detectChanges();
     }
 
     needToShowRedDot() {

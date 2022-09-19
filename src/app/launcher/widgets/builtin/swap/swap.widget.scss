@@ -5,10 +5,22 @@
   flex-direction: row;
   align-items: center;
 
+  .left-col {
+    text-align: left;
+    padding: 0;
+  }
+
+  .right-col {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+  }
+
   .header {
     flex: 1;
     text-align: left;
-    padding: 0 10px;
+    align-self: flex-start;
+    padding: 0;
 
     .title {
       font-size: 18px;
@@ -25,13 +37,13 @@
     padding: 15px 20px;
     font-size: 14px;
     font-weight: bold;
+    background: #dde2f1;
   }
 }
 
 .tokens-row {
   display: flex;
   align-items: center;
-  margin-top: 20px;
   justify-content: space-between;
 
   .token {
@@ -49,6 +61,10 @@
       border-radius: 10px;
       margin-left: 10px;
       align-items: center;
+
+      .token-name {
+        font-size: 12px;
+      }
 
       .arrow {
         height: 10px;

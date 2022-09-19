@@ -190,7 +190,7 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
   }; */
 
     let modal = await this.popoverCtrl.create({
-      cssClass: 'popup-base news-widget-configurator-popup',
+      cssClass: 'popup-base news-widget-configurator-popup ' + (this.theme.darkMode ? 'darkContainer' : ''),
       mode: 'ios',
       component: NewsConfiguratorComponent,
       //componentProps: options,

@@ -1,6 +1,11 @@
 /** BASE **/
 .popup-base {
   backdrop-filter: blur(5px);
+  --ion-background-color: #dde2f1;
+
+  &.darkContainer {
+    --ion-background-color: #212021;
+  }
 }
 
 /** NEWS WIDGET POPUP **/

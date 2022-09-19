@@ -1,7 +1,7 @@
 @import "src/app/launcher/root.scss";
 
 ion-grid {
-    background: #f5f5fd;
+    background: #fff;
     min-height: 100%;
     margin: 0;
     padding: 15px 0;
@@ -17,12 +17,12 @@ ion-grid {
 
     .notif-item {
         --background: transparent;
+        background: #f0f1ff;
         --padding-start: 0px;
         --inner-padding-end: 0px;
         margin: 0 20px;
         margin-bottom: 10px;
         border: 0;
-        background: #212021;
         padding: 0;
         border-radius: 10px;
         overflow: hidden;
@@ -139,6 +139,8 @@ ion-grid {
     }
 
     .notif-item {
+        background: #212021;
+
         .notif-row {
             .name-col {
                 h2 {

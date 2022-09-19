@@ -90,7 +90,6 @@ export class ImageCacheDirective implements AfterViewInit {
       reader.readAsDataURL(response.data);
     }).catch(e => {
       Logger.warn("directives", "Failed to fetch picture for cache", url, e);
-      this.el.nativeElement.src = transparentPixelIconDataUrl();
     });
   }
 }

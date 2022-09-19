@@ -20,7 +20,7 @@
 
   <div class="home-footer">
     <div class="edit" (click)="toggleEditWidgets()">
-      <img src="/assets/launcher/icons/dark_mode/edit.svg" />
+      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/edit.svg' : '/assets/launcher/icons/edit.svg'" />
     </div>
     <div class="nav">
       <div class="dot" [class.active]="activeScreenIndex === 0"></div>
@@ -28,7 +28,7 @@
       <div class="dot" [class.active]="activeScreenIndex === 2"></div>
     </div>
     <div class="add" (click)="addWidget()">
-      <img src="/assets/launcher/icons/dark_mode/add.svg" />
+      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/add.svg' : '/assets/launcher/icons/add.svg'" />
     </div>
   </div>
 

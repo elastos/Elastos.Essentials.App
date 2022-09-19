@@ -6,7 +6,7 @@
                 (click)="openNews(new)">
                 <ion-row class="news-row">
                     <ion-col class="name-col" size="7.5">
-                        <img [src]="getIcon(new)" />
+                        <img [cache]="getIcon(new)" />
                         <h2>{{ getSender(new) }}</h2>
                     </ion-col>
                     <ion-col class="date-col" size="4.5" (click)="close(notification)">
