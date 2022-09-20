@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="20601" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.6.1.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<widget android-versionCode="20602" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.6.2.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>Essentials</name>
     <description>
         Elastos essentials
@@ -21,21 +21,22 @@
     <allow-navigation href="data:*" />
     <allow-navigation href="asset://*" />
     <allow-navigation href="ionic://*" />
-    <preference name="AndroidLaunchMode" value="singleTask" />
-    <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="LottieFullScreen" value="true" />
+    <preference name="LottieAnimationLocation" value="www/assets/essentials_anim.json" />
+    <preference name="LottieBackgroundColor" value="000000" />
+    <preference name="LottieCacheDisabled" value="true" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="KeyboardResizeMode" value="ionic" />
-    <preference name="SplashScreenDelay" value="1000" />
-    <preference name="SplashShowOnlyFirstTime" value="false" />
-    <preference name="ShowSplashScreenSpinner" value="false" />
-    <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="InternalIntentFilters" value="https://packet.fun https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net https://elink.elastos.net" />
     <preference name="IntentRedirecturlFilter" value="https://essentials.elastos.net" />
     <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc:" />
     <preference name="CustomSchemeFilters" value="wc:" />
-    <preference name="AndroidXEnabled" value="true" />
     <preference name="LoadUrlTimeoutValue" value="50000" />
     <platform name="android">
+        <preference name="AndroidLaunchMode" value="singleTask" />
+        <preference name="AndroidXEnabled" value="true" />
+        <preference name="GradlePluginKotlinEnabled" value="true" />
+        <preference name="LottieEnableHardwareAcceleration" value="true" />
         <preference name="android-targetSdkVersion" value="30" />
         <preference name="android-minSdkVersion" value="24" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
@@ -118,18 +119,6 @@
         <icon density="xhdpi" src="resources/android/icon/drawable-xhdpi-icon.png" />
         <icon density="xxhdpi" src="resources/android/icon/drawable-xxhdpi-icon.png" />
         <icon density="xxxhdpi" src="resources/android/icon/drawable-xxxhdpi-icon.png" />
-        <splash density="land-ldpi" src="resources/android/splash/drawable-land-ldpi-screen.png" />
-        <splash density="land-mdpi" src="resources/android/splash/drawable-land-mdpi-screen.png" />
-        <splash density="land-hdpi" src="resources/android/splash/drawable-land-hdpi-screen.png" />
-        <splash density="land-xhdpi" src="resources/android/splash/drawable-land-xhdpi-screen.png" />
-        <splash density="land-xxhdpi" src="resources/android/splash/drawable-land-xxhdpi-screen.png" />
-        <splash density="land-xxxhdpi" src="resources/android/splash/drawable-land-xxxhdpi-screen.png" />
-        <splash density="port-ldpi" src="resources/android/splash/drawable-port-ldpi-screen.png" />
-        <splash density="port-mdpi" src="resources/android/splash/drawable-port-mdpi-screen.png" />
-        <splash density="port-hdpi" src="resources/android/splash/drawable-port-hdpi-screen.png" />
-        <splash density="port-xhdpi" src="resources/android/splash/drawable-port-xhdpi-screen.png" />
-        <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png" />
-        <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
         <resource-file src="resources/android/notifications/drawable-mdpi/notification_icon.png" target="app/src/main/res/drawable-mdpi/notification_icon.png" />
         <resource-file src="resources/android/notifications/drawable-hdpi/notification_icon.png" target="app/src/main/res/drawable-hdpi/notification_icon.png" />
         <resource-file src="resources/android/notifications/drawable-xhdpi/notification_icon.png" target="app/src/main/res/drawable-xhdpi/notification_icon.png" />
@@ -142,7 +131,6 @@
         <allow-intent href="itms-apps:*" />
         <preference name="deployment-target" value="13.0" />
         <preference name="WKWebViewOnly" value="true" />
-        <preference name="AutoHideSplashScreen" value="true" />
         <feature name="CDVWKWebViewEngine">
             <param name="ios-package" value="CDVWKWebViewEngine" />
         </feature>
@@ -238,5 +226,4 @@
     <hook src="scripts/modify_xcode_project.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <hook src="scripts/firebaseDeploymentTargetFix.js" type="after_prepare" />
-    <allow-navigation href="https://0.0.0.0:8100" sessionid="a89a190a" />
 </widget>

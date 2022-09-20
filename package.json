@@ -45,8 +45,8 @@
     "@awesome-cordova-plugins/http": "^5.44.0",
     "@awesome-cordova-plugins/ionic-webview": "5.37.3",
     "@awesome-cordova-plugins/keyboard": "5.37.3",
+    "@awesome-cordova-plugins/lottie-splash-screen": "^5.45.0",
     "@awesome-cordova-plugins/screen-orientation": "5.37.3",
-    "@awesome-cordova-plugins/splash-screen": "5.37.3",
     "@awesome-cordova-plugins/status-bar": "5.37.3",
     "@elastosfoundation/did-js-sdk": "^2.2.3",
     "@elastosfoundation/hive-js-sdk": "2.7.4",
@@ -184,13 +184,13 @@
     "cordova-plugin-app-version": "0.1.12",
     "cordova-plugin-ble-central": "^1.4.2",
     "cordova-plugin-camera": "6.0.0",
-    "cordova-plugin-firebasex": "14.1.0-cli",
+    "cordova-plugin-firebasex": "14.2.1-cli",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "5.0.0",
+    "cordova-plugin-lottie-splashscreen": "^0.9.6",
     "cordova-plugin-printer": "0.8.0",
     "cordova-plugin-qrscanner": "3.0.1",
     "cordova-plugin-screen-orientation": "3.0.2",
-    "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-statusbar": "2.4.3",
     "cordova-sqlite-storage": "6.0.0",
     "dotenv": "^14.2.0",
@@ -235,7 +235,6 @@
       },
       "cordova-plugin-qrscanner": {},
       "cordova-plugin-screen-orientation": {},
-      "cordova-plugin-splashscreen": {},
       "elastos-essentials-plugin-fingerprint": {
         "FACEID_USAGE_DESCRIPTION": " "
       },
@@ -259,7 +258,8 @@
         "IOS_INIT_ON_LOAD": "true",
         "BLUETOOTH_USAGE_DESCRIPTION": "The bluetooth is used to connect ledger."
       },
-      "elastos-essentials-plugin-wallet": {}
+      "elastos-essentials-plugin-wallet": {},
+      "cordova-plugin-lottie-splashscreen": {}
     },
     "platforms": [
       "android",

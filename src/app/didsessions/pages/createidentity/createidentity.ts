@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { IonSlides, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { DrawerState } from 'ion-bottom-drawer';
@@ -49,7 +49,7 @@ export class CreateIdentityPage {
     private uxService: UXService,
     private translate: TranslateService,
     public theme: GlobalThemeService,
-    private splashScreen: SplashScreen,
+    private lottieSplashScreen: LottieSplashScreen,
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
@@ -82,7 +82,7 @@ export class CreateIdentityPage {
 
   ionViewDidEnter() {
     // We are ready, we can hide the splash screen
-    this.splashScreen.hide();
+    this.lottieSplashScreen.hide();
   }
 
   ionViewWillLeave() {
