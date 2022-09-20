@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
@@ -37,7 +37,7 @@ export class PickIdentityPage {
     public translate: TranslateService,
     private events: GlobalEvents,
     public popupProvider: PopupProvider,
-    private splashScreen: SplashScreen,
+    private lottieSplashScreen: LottieSplashScreen,
     private globalNetworksService: GlobalNetworksService,
     private didSessions: GlobalDIDSessionsService,
     private nativeService: GlobalNativeService,
@@ -77,7 +77,7 @@ export class PickIdentityPage {
 
   ionViewDidEnter() {
     // We are ready, we can hide the splash screen
-    this.splashScreen.hide();
+    this.lottieSplashScreen.hide();
   }
 
   ionViewWillLeave() {

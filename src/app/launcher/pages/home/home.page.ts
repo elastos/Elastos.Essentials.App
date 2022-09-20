@@ -1,5 +1,4 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { IonSlides, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import type WalletConnect from '@walletconnect/client';
@@ -99,7 +98,6 @@ export class HomePage implements OnInit {
     public translate: TranslateService,
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,
-    public splashScreen: SplashScreen,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
     private nav: GlobalNavService,
