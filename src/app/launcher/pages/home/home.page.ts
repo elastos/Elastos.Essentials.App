@@ -1,5 +1,4 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { IonSlides, ModalController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -52,7 +51,6 @@ export class HomePage implements OnInit {
     public translate: TranslateService,
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,
-    public splashScreen: SplashScreen,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
     private modalCtrl: ModalController,

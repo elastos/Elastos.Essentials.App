@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { FirebaseX } from "@awesome-cordova-plugins/firebase-x/ngx";
+import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-js';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
@@ -48,7 +48,7 @@ export class AppComponent {
 
   constructor(
     private platform: Platform,
-    public splashScreen: SplashScreen,
+    private lottieSplashScreen: LottieSplashScreen,
     private statusBar: StatusBar,
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,

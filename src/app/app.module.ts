@@ -8,8 +8,8 @@ import { FirebaseX } from "@awesome-cordova-plugins/firebase-x/ngx";
 
 import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
+import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 //import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
@@ -197,7 +197,7 @@ let providers: Provider[] = [
   AppVersion,
   Keyboard,
   ScreenOrientation,
-  SplashScreen,
+  LottieSplashScreen,
   StatusBar,
   FirebaseX,
   HTTP,

@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
@@ -44,7 +44,7 @@ import { DeveloperToolsRoutingModule } from './routing';
     DeleteComponent
   ],
   providers: [
-    SplashScreen,
+    LottieSplashScreen,
     Platform,
     Clipboard
   ]

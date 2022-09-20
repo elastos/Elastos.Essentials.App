@@ -32,6 +32,12 @@ const patch_dirs = [
     "plugin_id": "cordova-plugin-ionic-webview",
     "patch_dir": "patches/before_plugin_install_ionicwebview"
   },
+  {
+    "hook": "before_plugin_install",
+    "platform": "android",
+    "plugin_id": "cordova-plugin-lottie-splashscreen",
+    "patch_dir": "patches/before_plugin_install_lottie-splashscreen"
+  },
 ]
 // no need to configure below
 

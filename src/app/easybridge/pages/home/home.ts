@@ -1,5 +1,4 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { IonInput, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
@@ -75,7 +74,6 @@ export class HomePage {
     private translate: TranslateService,
     public theme: GlobalThemeService,
     private walletService: WalletService,
-    private splashScreen: SplashScreen,
     private networkService: WalletNetworkService,
     private easyBridgeService: EasyBridgeService,
     private uniswapService: UniswapService, // Init

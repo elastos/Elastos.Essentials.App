@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { Logger } from '../logger';
 import { App } from '../model/app.enum';
 import { WalletInitService } from '../wallet/services/init.service';
@@ -27,7 +27,7 @@ export class GlobalStartupService {
     private globalSecurityService: GlobalSecurityService,
     private didSessions: GlobalDIDSessionsService,
     private theme: GlobalThemeService,
-    private splashScreen: SplashScreen) {
+    private lottieSplashScreen: LottieSplashScreen) {
   }
 
   /**
@@ -88,7 +88,7 @@ export class GlobalStartupService {
    * Startup screen is ready (visible), so we can finalize some operations such as hiding the splash screen
    */
   public setStartupScreenReady() {
-    this.splashScreen.hide();
+    this.lottieSplashScreen.hide();
   }
 
   public getStartupScreen(did: string): Promise<string> {

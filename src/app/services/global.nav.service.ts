@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { NavController, PopoverController } from '@ionic/angular';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { App } from "src/app/model/app.enum";
@@ -47,7 +47,7 @@ export class GlobalNavService {
 
     constructor(
         private navCtrl: NavController,
-        private splashScreen: SplashScreen,
+        private lottieSplashScreen: LottieSplashScreen,
         private popoverCtrl: PopoverController,
         private zone: NgZone
     ) {
@@ -256,7 +256,7 @@ export class GlobalNavService {
 
     public async restartApp() {
         // navigator["app"].exitApp();
-        this.splashScreen.show();
+        this.lottieSplashScreen.show();
         await GlobalServiceManager.getInstance().emitUserSignOut();
         window.location.href = "/";
     }
