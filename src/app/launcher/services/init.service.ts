@@ -44,6 +44,7 @@ export class LauncherInitService extends GlobalService {
   public onUserSignOut(): Promise<void> {
     this.appManagerService.stop();
     this.intentReceiverService.stop();
+    this.tipsService.stop();
 
     return;
   }

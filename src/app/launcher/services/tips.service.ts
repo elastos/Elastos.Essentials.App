@@ -71,6 +71,8 @@ export class TipsService {
     },
   ]
 
+  private checkIfTimeToShowATipTimerout = null;
+
   constructor(
     private translate: TranslateService,
     private storage: GlobalStorageService,
@@ -83,9 +85,17 @@ export class TipsService {
     // await this.resetAllTipsAsNotViewed(); // DEBUG ONLY
 
     // Wait a moment while the launcher starts, then start showing tips if needed.
-    setTimeout(() => {
-      void this.checkIfTimeToShowATip();
+    this.checkIfTimeToShowATipTimerout = setTimeout(() => {
+        this.checkIfTimeToShowATipTimerout = null;
+        void this.checkIfTimeToShowATip();
     }, 1000);
+  }
+
+  public stop() {
+    if (this.checkIfTimeToShowATipTimerout) {
+        clearTimeout(this.checkIfTimeToShowATipTimerout);
+        this.checkIfTimeToShowATipTimerout = null;
+    }
   }
 
   private async checkIfTimeToShowATip() {
@@ -101,8 +111,9 @@ export class TipsService {
     }
 
     // No matter what, check again in X minutes
-    setTimeout(() => {
-      void this.checkIfTimeToShowATip();
+    this.checkIfTimeToShowATipTimerout = setTimeout(() => {
+        this.checkIfTimeToShowATipTimerout = null;
+        void this.checkIfTimeToShowATip();
     }, DURATION_BETWEEN_2_CHECKS_MS);
   }
 
