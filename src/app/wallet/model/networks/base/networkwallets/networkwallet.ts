@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { CurrencyService } from '../../../../services/currency.service';
 import { StakingData } from '../../../../services/evm/defi.service';
 import { ERC1155Service } from '../../../../services/evm/erc1155.service';
@@ -701,7 +702,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      */
     public saveContextInfo<T>(key: string, value: T): Promise<void> {
         let fullKey = GlobalNetworksService.instance.activeNetworkTemplate.value + "_" + this.network.key + "_" + this.masterWallet.id + "_" + key;
-        return GlobalStorageService.instance.setSetting<T>(DIDSessionsStore.signedInDIDString, "wallet", fullKey, value);
+        return GlobalStorageService.instance.setSetting<T>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", fullKey, value);
     }
 
     /**
@@ -709,7 +710,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      */
     public loadContextInfo<T>(key: string): Promise<T> {
         let fullKey = GlobalNetworksService.instance.activeNetworkTemplate.value + "_" + this.network.key + "_" + this.masterWallet.id + "_" + key;
-        return GlobalStorageService.instance.getSetting<T>(DIDSessionsStore.signedInDIDString, "wallet", fullKey, null);
+        return GlobalStorageService.instance.getSetting<T>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", fullKey, null);
     }
 
     public getTransactionDiscoveryProvider(): TransactionProvider<any> {

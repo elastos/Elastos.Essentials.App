@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { GlobalNetworksService, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalNetworksService, LRW_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { Config } from '../config/Config';
 
 @Injectable({
@@ -41,7 +41,7 @@ export class WalletPrefsService {
         Config.ETHSC_DEPOSIT_ADDRESS = Config.ETHSC_DEPOSIT_ADDRESS_TESTNET;
         Config.ETHSC_WITHDRAW_ADDRESS = Config.ETHSC_WITHDRAW_ADDRESS_TESTNET;
       break;
-      case "LRW":
+      case LRW_TEMPLATE:
         Config.ETHDID_DEPOSIT_ADDRESS = Config.ETHDID_DEPOSIT_ADDRESS_LRW;
         Config.ETHDID_WITHDRAW_ADDRESS = Config.ETHDID_WITHDRAW_ADDRESS_LRW;
         Config.ETHDID_CONTRACT_ADDRESS = Config.ETHDID_CONTRACT_ADDRESS_LRW;

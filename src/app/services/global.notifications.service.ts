@@ -6,6 +6,7 @@ import { IdentityEntry } from "../model/didsessions/identityentry";
 import { GlobalStorageService } from "../services/global.storage.service";
 import { GlobalService, GlobalServiceManager } from "./global.service.manager";
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from "./stores/networktemplate.store";
 
 /**
  * Object used to generate a notification.
@@ -59,7 +60,7 @@ export class GlobalNotificationsService extends GlobalService {
     }
 
     public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-        this.notifications = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, "notifications", "notifications", []);
+        this.notifications = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "notifications", "notifications", []);
         Logger.log("notifications", "Loaded existed notifications", this.notifications);
     }
 
@@ -134,7 +135,7 @@ export class GlobalNotificationsService extends GlobalService {
      * Saves current notifications array to persistent storage.
      */
     private saveNotifications() {
-        void this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, "notifications", "notifications", this.notifications);
+        void this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "notifications", "notifications", this.notifications);
     }
 
     public setNotificationListener(onNotification: (notification: Notification) => void) {

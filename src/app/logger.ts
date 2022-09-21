@@ -3,6 +3,7 @@ import { Subscription } from "rxjs";
 import { IdentityEntry } from "./model/didsessions/identityentry";
 import { GlobalPreferencesService } from "./services/global.preferences.service";
 import { GlobalService, GlobalServiceManager } from "./services/global.service.manager";
+import { NetworkTemplateStore } from "./services/stores/networktemplate.store";
 
 type DevLogType = "log" | "warn" | "error" | "test";
 type DevLogEntry = {
@@ -47,7 +48,7 @@ class _Logger implements GlobalService {
     async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
         this.devLogs = [];
 
-        let collectLogs = await GlobalPreferencesService.instance.getCollectLogs(signedInIdentity.didString);
+        let collectLogs = await GlobalPreferencesService.instance.getCollectLogs(signedInIdentity.didString, NetworkTemplateStore.networkTemplate);
         this.setCollectDevLogs(collectLogs);
 
         // Subscribe here, not int init(), because prefs service is not ready there.

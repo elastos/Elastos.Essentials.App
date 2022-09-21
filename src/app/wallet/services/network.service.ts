@@ -25,9 +25,10 @@ import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
-import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import type { MasterWallet } from '../model/masterwallets/masterwallet';
 import type { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { AnyNetwork } from '../model/networks/network';
@@ -88,7 +89,7 @@ export class WalletNetworkService {
     public async registerNetwork(network: AnyNetwork, useAsDefault = false): Promise<void> {
         this.networks.push(network);
 
-        let savedNetworkKey = await this.localStorage.get(this.storageKeyForNetworkTemplate('activenetwork')) as string;
+        let savedNetworkKey = await this.localStorage.get('activenetwork') as string;
         const savedNetwork = await this.getNetworkByKey(savedNetworkKey);
         if (this.globalNetworksService.activeNetworkTemplate.value === network.networkTemplate) {
             if (!savedNetwork && useAsDefault) {
@@ -174,7 +175,7 @@ export class WalletNetworkService {
         Logger.log("wallet", "Setting active network to", network);
 
         // Save choice to local storage
-        await this.localStorage.set(this.storageKeyForNetworkTemplate('activenetwork'), network.key);
+        await this.localStorage.set('activenetwork', network.key);
 
         // Stats
         void this.globalFirebaseService.logEvent("switch_network_" + network.key);
@@ -233,11 +234,11 @@ export class WalletNetworkService {
     }
 
     public async loadNetworkVisibilities(): Promise<void> {
-        this.networkVisibilities = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, "wallet", "network-visibilities", {});
+        this.networkVisibilities = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "network-visibilities", {});
     }
 
     public saveNetworkVisibilities(): Promise<void> {
-        return this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, "wallet", "network-visibilities", this.networkVisibilities);
+        return this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "network-visibilities", this.networkVisibilities);
     }
 
     public getNetworkVisible(network: AnyNetwork): boolean {
@@ -251,16 +252,5 @@ export class WalletNetworkService {
     public setNetworkVisible(network: AnyNetwork, visible: boolean): Promise<void> {
         this.networkVisibilities[network.key] = visible;
         return this.saveNetworkVisibilities();
-    }
-
-    /**
-     * Returns the sandboxed storage session for the active network template.
-     * For backward compatibility, mainnet network template uses old style storage keys (no network suffix).
-     */
-    private storageKeyForNetworkTemplate(key: string) {
-        if (this.globalNetworksService.activeNetworkTemplate.value === MAINNET_TEMPLATE)
-            return key;
-        else
-            return key + "_" + this.globalNetworksService.activeNetworkTemplate.value;
     }
 }

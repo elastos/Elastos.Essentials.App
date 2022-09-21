@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from './stores/networktemplate.store';
 
 // Network templates are dynamic but for convenience, assume we always have mainnet and testnet ones.
 export const MAINNET_TEMPLATE = "MainNet";
 export const TESTNET_TEMPLATE = "TestNet";
+export const LRW_TEMPLATE = "LRW"; // Long Run Weather - Environment to test Cyber Republic features.
+
 
 /**
  * Service reponsible for managing network templates (Main nets, Test nets, Long run weather, custom setup, etc)
@@ -22,7 +25,7 @@ export class GlobalNetworksService {
     private availableNetworkTemplate = [
         MAINNET_TEMPLATE, // All operations use main nets for all chains
         TESTNET_TEMPLATE, // All operations use a test net for all chains
-        "LRW" // Long Run Weather - Environment to test Cyber Republic features
+        LRW_TEMPLATE // Long Run Weather - Environment to test Cyber Republic features
     ]
 
     constructor(private prefs: GlobalPreferencesService) {
@@ -30,7 +33,8 @@ export class GlobalNetworksService {
     }
 
     public async init(): Promise<void> {
-        this.activeNetworkTemplate.next(await this.prefs.getPreference(null, "network.template", true) as string);
+        this.activeNetworkTemplate.next(await this.prefs.getPreference(null, null, "network.template", true) as string);
+        NetworkTemplateStore.networkTemplate = this.activeNetworkTemplate.value;
     }
 
     public async setActiveNetworkTemplate(networkTemplate: string): Promise<void> {
@@ -39,9 +43,10 @@ export class GlobalNetworksService {
         }
 
         // Save choice to persistent storage - global for all users
-        await this.prefs.setPreference(null, "network.template", networkTemplate, true);
+        await this.prefs.setPreference(null, null, "network.template", networkTemplate, true);
         // Notify listeners
         this.activeNetworkTemplate.next(networkTemplate);
+        NetworkTemplateStore.networkTemplate = this.activeNetworkTemplate.value;
     }
 
     public getActiveNetworkTemplate(): string {

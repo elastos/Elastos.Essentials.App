@@ -13,6 +13,7 @@ import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
@@ -571,12 +572,12 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     }
 
     private async checkNoInAppNoticeStatus(): Promise<void> {
-        this.noInAppNoticeDismissed = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", "noinappnoticedismissed", false);
+        this.noInAppNoticeDismissed = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dappbrowser", "noinappnoticedismissed", false);
     }
 
     public dismissNoInAppNotice() {
         this.noInAppNoticeDismissed = true;
-        this.noInAppNoticeDismissed = void this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", "noinappnoticedismissed", true);
+        this.noInAppNoticeDismissed = void this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dappbrowser", "noinappnoticedismissed", true);
     }
 
     public getRecentApps(): BrowsedAppInfo[] {

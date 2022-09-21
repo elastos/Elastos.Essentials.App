@@ -144,7 +144,7 @@ export class CurrencyService {
   }
 
   private async loadAllTokenSymbol() {
-    this.networkMainTokenPrice = await this.globalStorage.getSetting(null, "wallet", "maintokenprice", {});
+    this.networkMainTokenPrice = await this.globalStorage.getSetting(null, null, "wallet", "maintokenprice", {});
 
     let networks = this.walletNetworkService.getAvailableNetworks();
     for (let i = 0; i < networks.length; i++) {
@@ -155,7 +155,7 @@ export class CurrencyService {
   }
 
   private async saveMainTokenPrice(): Promise<void> {
-    await this.globalStorage.setSetting(null, "wallet", "maintokenprice", this.networkMainTokenPrice);
+    await this.globalStorage.setSetting(null, null, "wallet", "maintokenprice", this.networkMainTokenPrice);
   }
 
   /**
@@ -163,12 +163,12 @@ export class CurrencyService {
    */
   private async loadExchangeRates(): Promise<void> {
     let defaultRates: ExchangeRateCache = {};
-    this.exchangeRates = await this.globalStorage.getSetting(null, "wallet", "exchangerates", defaultRates);
+    this.exchangeRates = await this.globalStorage.getSetting(null, null, "wallet", "exchangerates", defaultRates);
     this.exchangeRates['USD'] = 1;
   }
 
   private async saveExchangeRates(): Promise<void> {
-    await this.globalStorage.setSetting(null, "wallet", "exchangerates", this.exchangeRates);
+    await this.globalStorage.setSetting(null, null, "wallet", "exchangerates", this.exchangeRates);
   }
 
   async getSavedCurrency(): Promise<void> {

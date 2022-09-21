@@ -17,6 +17,7 @@ import { GlobalStorageService } from './global.storage.service';
 import { GlobalSwitchNetworkService } from './global.switchnetwork.service';
 import { GlobalThemeService } from './global.theme.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from './stores/networktemplate.store';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -489,7 +490,7 @@ class DIDPublishingManager {
     }
 
     private async loadPersistentInfo(): Promise<PersistentInfo> {
-        let infoAsString = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'publicationservice', "persistentInfo", null);
+        let infoAsString = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'publicationservice', "persistentInfo", null);
         if (!infoAsString)
             return this.createNewPersistentInfo();
 
@@ -511,7 +512,7 @@ class DIDPublishingManager {
 
     public async savePersistentInfo(persistentInfo: PersistentInfo) {
         this.persistentInfo = persistentInfo;
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'publicationservice', "persistentInfo", JSON.stringify(persistentInfo));
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'publicationservice', "persistentInfo", JSON.stringify(persistentInfo));
     }
 
     public async savePersistentInfoAndEmitStatus(persistentInfo: PersistentInfo) {
@@ -554,7 +555,7 @@ class DIDPublishingManager {
         if (!DIDSessionsStore.signedInDIDString)
             return 'assist'; // No signed in user? We may be in a DID creation flow. Anyway, use assist in this case.
 
-        return await this.prefs.getPublishIdentityMedium(DIDSessionsStore.signedInDIDString);
+        return await this.prefs.getPublishIdentityMedium(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
     }
 
     public async publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false, parentIntentId?: number): Promise<void> {

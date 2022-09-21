@@ -28,6 +28,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { SwapProvider } from '../../model/earn/swapprovider';
 import type { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
 import type { ERC20SubWallet } from '../../model/networks/evms/subwallets/erc20.subwallet';
@@ -132,7 +133,7 @@ export class SwapService {
         for (let provider of network.swapProviders) {
             for (let tokenListUrl of provider.swappableTokenLists) {
                 let listCacheKey = network.key + tokenListUrl;
-                let cacheEntry = await this.storage.getSetting<TokenListCacheEntry>(activeUserDID, "wallet", listCacheKey, null);
+                let cacheEntry = await this.storage.getSetting<TokenListCacheEntry>(activeUserDID, NetworkTemplateStore.networkTemplate, "wallet", listCacheKey, null);
                 if (!cacheEntry || moment.unix(cacheEntry.fetchTime).add(TOKEN_LIST_CACHE_REFRESH_MIN_TIME, "seconds").isBefore(currentTime)) {
                     // No cache, or expired cache: fetch the tokens list
                     Logger.log("wallet", "Fetching swap tokens list for", provider.baseProvider.name, "on network", network.name, tokenListUrl);
@@ -147,7 +148,7 @@ export class SwapService {
                             }
 
                             Logger.log("wallet", "Saving swap tokens list to cache", cacheEntry);
-                            await this.storage.setSetting(activeUserDID, "wallet", listCacheKey, cacheEntry);
+                            await this.storage.setSetting(activeUserDID, NetworkTemplateStore.networkTemplate, "wallet", listCacheKey, cacheEntry);
                         }
                     }
                     catch (e) {

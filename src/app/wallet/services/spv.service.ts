@@ -4,6 +4,7 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { Config } from '../config/Config';
 import type { StandardCoinName } from '../model/coin';
 import type { WalletAccountType } from '../model/walletaccount';
@@ -125,7 +126,7 @@ export class SPVService {
     }
 
     private async loadMasterWalletIDMapping(): Promise<void> {
-        this.masterWalletIdMapping = await GlobalStorageService.instance.getSetting(DIDSessionsStore.signedInDIDString, "wallet", "jsspvwalletidmapping", []);
+        this.masterWalletIdMapping = await GlobalStorageService.instance.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "jsspvwalletidmapping", []);
     }
 
     /**
@@ -144,7 +145,7 @@ export class SPVService {
     }
 
     private async saveMasterWalletIDMapping(): Promise<void> {
-        await GlobalStorageService.instance.setSetting(DIDSessionsStore.signedInDIDString, "wallet", "jsspvwalletidmapping", this.masterWalletIdMapping);
+        await GlobalStorageService.instance.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "jsspvwalletidmapping", this.masterWalletIdMapping);
     }
 
     public async removeMasterWalletIDMapping(spvWalletId: string) {

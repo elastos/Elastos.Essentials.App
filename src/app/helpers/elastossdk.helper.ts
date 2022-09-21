@@ -3,6 +3,7 @@ import { Vault } from "@elastosfoundation/hive-js-sdk";
 import { Logger } from "../logger";
 import { HiveDataSync } from "../model/hive/hivedatasync";
 import { GlobalStorageService } from "../services/global.storage.service";
+import { NetworkTemplateStore } from "../services/stores/networktemplate.store";
 import { DIDSessionsStore } from './../services/stores/didsessions.store';
 import { InternalHiveAuthHelper } from "./hive.authhelper";
 
@@ -11,15 +12,15 @@ export class EssentialsDIDKeyValueStore implements Interfaces.IKeyValueStorage {
     }
 
     set<T>(key: string, value: T): Promise<void> {
-        return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "connectivitysdk", key, value);
+        return this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "connectivitysdk", key, value);
     }
 
     get<T>(key: string, defaultValue: T): Promise<T> {
-        return this.storage.getSetting(DIDSessionsStore.signedInDIDString, "connectivitysdk", key, defaultValue);
+        return this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "connectivitysdk", key, defaultValue);
     }
 
     unset(key: string): Promise<void> {
-        return this.storage.deleteSetting(DIDSessionsStore.signedInDIDString, "connectivitysdk", key);
+        return this.storage.deleteSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "connectivitysdk", key);
     }
 }
 

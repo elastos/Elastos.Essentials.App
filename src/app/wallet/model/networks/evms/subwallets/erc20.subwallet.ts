@@ -9,6 +9,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { BridgeService } from 'src/app/wallet/services/evm/bridge.service';
 import { EarnService } from 'src/app/wallet/services/evm/earn.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
@@ -190,7 +191,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     private async fetchTokenDecimals(): Promise<void> {
         // Check cache
         let tokenCacheKey = this.masterWallet.id + this.coin.getContractAddress();
-        this.tokenDecimals = await GlobalStorageService.instance.getSetting(DIDSessionsStore.signedInDIDString, "wallet", tokenCacheKey, null);
+        this.tokenDecimals = await GlobalStorageService.instance.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", tokenCacheKey, null);
 
         if (this.tokenDecimals === null) {
             try {
@@ -198,7 +199,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
                 const contractAddress = this.coin.getContractAddress();
                 const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
                 this.tokenDecimals = await erc20Contract.methods.decimals().call();
-                await GlobalStorageService.instance.setSetting(DIDSessionsStore.signedInDIDString, "wallet", tokenCacheKey, this.tokenDecimals);
+                await GlobalStorageService.instance.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", tokenCacheKey, this.tokenDecimals);
 
                 Logger.log('wallet', "Got ERC20 token decimals", this.id, "Decimals: ", this.tokenDecimals, ". Saving to disk");
             } catch (error) {

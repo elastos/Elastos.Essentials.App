@@ -3,6 +3,7 @@ import { DappBrowserService } from "src/app/dappbrowser/services/dappbrowser.ser
 import { Logger } from "src/app/logger";
 import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { GlobalStorageService } from "../../global.storage.service";
+import { NetworkTemplateStore } from "../../stores/networktemplate.store";
 import { DIDSessionsStore } from './../../stores/didsessions.store';
 
 export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
@@ -11,7 +12,7 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
 
   // Convert favorites
   let favorites: BrowserFavorite[] = await GlobalStorageService.instance.getSetting(
-    DIDSessionsStore.signedInDIDString,
+    DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate,
     "dappbrowser", "favorites", []);
 
   let changeCount = 0;
@@ -28,5 +29,5 @@ export const migrate = async (identityEntry: IdentityEntry): Promise<void> => {
 
   Logger.log("migrations", `Migrated ${changeCount} favorites from elastos to elastossmartchain network`);
 
-  await GlobalStorageService.instance.setSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", "favorites", favorites);
+  await GlobalStorageService.instance.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dappbrowser", "favorites", favorites);
 }

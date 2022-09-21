@@ -13,6 +13,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { DPosNode } from '../../model/nodes.model';
 import { NodesService } from '../../services/nodes.service';
@@ -145,7 +146,7 @@ export class VotePage implements OnInit {
 
         if (castedNodeKeys.length > 0) {
             Logger.log('dposvoting', 'castedNodeKeys:', castedNodeKeys);
-            void this.storage.setSetting(DIDSessionsStore.signedInDIDString, "dposvoting", "nodes", castedNodeKeys);
+            void this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dposvoting", "nodes", castedNodeKeys);
             let votesSent = false;
 
             try {

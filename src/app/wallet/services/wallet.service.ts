@@ -31,7 +31,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
-import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { GlobalNetworksService, LRW_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { AESEncrypt } from '../../helpers/crypto/aes';
 import { CoinType } from '../model/coin';
@@ -303,7 +303,7 @@ export class WalletService {
     private async prepareSPVNetworkConfiguration(): Promise<void> {
         let spvsdkNetwork = this.networkTemplate;
 
-        if (this.networkTemplate === "LRW") {
+        if (this.networkTemplate === LRW_TEMPLATE) {
             spvsdkNetwork = "PrvNet";
         }
 

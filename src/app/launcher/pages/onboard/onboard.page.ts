@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 
 @Component({
@@ -73,7 +74,7 @@ export class OnboardPage implements OnInit {
   }
 
   async exit() {
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "launcher", "visit", true);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "visit", true);
     void this.router.navigate(['launcher/home']);
   }
 }

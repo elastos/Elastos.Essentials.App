@@ -9,6 +9,7 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 import { PopupService } from './popup.service';
 
@@ -50,12 +51,12 @@ export class HiveService {
   }
 
   private async getLastPublishedTime(): Promise<Date> {
-    let lastPublishedTime = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "publicationrequesttime", 0);
+    let lastPublishedTime = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', "publicationrequesttime", 0);
     return new Date(lastPublishedTime);
   }
 
   private async saveLastPublishedTime(): Promise<void> {
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "publicationrequesttime", Date.now());
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', "publicationrequesttime", Date.now());
   }
 
   public async getPricingPlans(): Promise<PricingPlan[]> {
@@ -229,7 +230,7 @@ export class HiveService {
       // Remove the pending order from our temporary list.
       pendingPaidOrders.splice(orderIndex, 1);
       Logger.log("HiveManager", "Removing the order from pending paid orders list because it's finalized. New pendingPaidOrders: ", pendingPaidOrders);
-      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
+      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
     }
   }
 
@@ -237,7 +238,7 @@ export class HiveService {
    * List of orders that have been actually paid by the user but not sent to the hive node.
    */
   public async getPaidIncompleteOrders(): Promise<PaidIncompleteOrder[]> {
-    let pendingPaidOrders = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "pendingPaidOrders", []) as PaidIncompleteOrder[];
+    let pendingPaidOrders = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', "pendingPaidOrders", []) as PaidIncompleteOrder[];
     if (!pendingPaidOrders) {
       return [];
     }
@@ -259,7 +260,7 @@ export class HiveService {
       vaultAddress: vaultAddress,
       planName: order.getPricingName()
     });
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
   }
 
   private sortOrdersByMostRecentFirst(orders: Order[]): Order[] {

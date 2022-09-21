@@ -23,7 +23,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalNetworksService, LRW_TEMPLATE, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -198,7 +198,7 @@ export class HomePage implements OnInit {
           case TESTNET_TEMPLATE:
             this.titleBar.setTitle('TEST NET Active');
             break;
-          case 'LRW':
+          case LRW_TEMPLATE:
             this.titleBar.setTitle('CR Private Net Active');
             break;
         }

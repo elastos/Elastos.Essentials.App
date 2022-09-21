@@ -12,6 +12,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { defaultContacts } from '../config/config';
 import { Avatar } from '../models/avatar';
 import { Contact } from '../models/contact.model';
@@ -117,10 +118,10 @@ export class FriendsService extends GlobalService {
   * If so, add a few default fake contacts.
   *******************************************************/
   async checkFirstVisitOperations() {
-    let visit = await this.storage.getSetting<boolean>(DIDSessionsStore.signedInDIDString, "contacts", 'visited', false);
+    let visit = await this.storage.getSetting<boolean>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", 'visited', false);
     if (!visit) {
       await this.addDefaultContacts();
-      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'contacts', 'visited', true)
+      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'contacts', 'visited', true)
     }
   }
 
@@ -144,7 +145,7 @@ export class FriendsService extends GlobalService {
   *******************************/
   async getStoredContacts(): Promise<Contact[]> {
     Logger.log("contacts", "Getting stored contacts for DID ", DIDSessionsStore.signedInDIDString);
-    let contacts = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "contacts", "contacts", []);
+    let contacts = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", "contacts", []);
     Logger.log("Contacts", 'Stored contacts fetched', contacts);
     this.contactsFetched = true;
 
@@ -300,7 +301,7 @@ export class FriendsService extends GlobalService {
 
         if (carrierAddress) {
           this.contacts[this.contacts.indexOf(targetContact)].notificationsCarrierAddress = carrierAddress;
-          await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "contacts", "contacts", this.contacts);
+          await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", "contacts", this.contacts);
           void this.globalNav.navigateRoot('contacts', '/contacts/friends/' + targetContact.id);
           void this.native.genericToast(promptName + this.translate.instant('contacts.did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.indexOf(targetContact)]);
@@ -985,7 +986,7 @@ export class FriendsService extends GlobalService {
   *********************************************************/
   async toggleFav(contact: Contact) {
     contact.isFav = !contact.isFav;
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "contacts", "contacts", this.contacts);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", "contacts", this.contacts);
   }
 
   /********************************************************
@@ -1057,7 +1058,7 @@ export class FriendsService extends GlobalService {
   }
 
   async saveContactsState() {
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "contacts", "contacts", this.contacts);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", "contacts", this.contacts);
     this.sortContacts();
   }
 }

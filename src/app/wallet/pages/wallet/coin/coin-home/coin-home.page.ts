@@ -36,6 +36,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
 import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -599,11 +600,11 @@ export class CoinHomePage implements OnInit {
      */
     public async toggleShowAllActions(): Promise<void> {
         this.shouldShowAllActions = !this.shouldShowAllActions;
-        await await this.globalStorage.setSetting(DIDSessionsStore.signedInDIDString, "wallet", "coinhome-show-all-actions", this.shouldShowAllActions);
+        await await this.globalStorage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "coinhome-show-all-actions", this.shouldShowAllActions);
     }
 
     public async loadShowAllActions(): Promise<void> {
-        this.shouldShowAllActions = await this.globalStorage.getSetting(DIDSessionsStore.signedInDIDString, "wallet", "coinhome-show-all-actions", true);
+        this.shouldShowAllActions = await this.globalStorage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "coinhome-show-all-actions", true);
     }
 
     /**

@@ -18,6 +18,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus, Utxo, UtxoType } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -212,7 +213,7 @@ export class CRCouncilService {
     }
 
     async getSelectedCandidates(): Promise<any> {
-        let data = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'crcouncil', 'votes', []);
+        let data = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', []);
         Logger.log('crcouncil', 'Selected Candidates', data);
         return data;
     }

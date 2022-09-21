@@ -7,7 +7,9 @@ import { ElastosMainChainWalletNetworkOptions, PrivateKeyType, SerializedStandar
 import { AuthService as WalletAuthService } from "src/app/wallet/services/auth.service";
 import { SPVService } from "src/app/wallet/services/spv.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
+import { LRW_TEMPLATE } from "../../global.networks.service";
 import { GlobalStorageService } from "../../global.storage.service";
+import { NetworkTemplateStore } from "../../stores/networktemplate.store";
 import { DIDSessionsStore } from './../../stores/didsessions.store';
 
 /**
@@ -36,7 +38,7 @@ export const migrateSPVNetworkTemplate = async (networkTemplate: string, identit
 
   let spvNetworkTemplate = "";
   switch (networkTemplate) {
-    case "LRW":
+    case LRW_TEMPLATE:
       spvNetworkTemplate = "PrvNet";
       break;
     default:
@@ -85,7 +87,7 @@ export const migrateSPVNetworkTemplate = async (networkTemplate: string, identit
     }
 
     let legacyExtendedWalletInfoKey = "extended-wallet-infos-" + spvWalletId;
-    let rawExtendedInfo = await GlobalStorageService.instance.getSetting(DIDSessionsStore.signedInDIDString, "wallet", legacyExtendedWalletInfoKey, null);
+    let rawExtendedInfo = await GlobalStorageService.instance.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", legacyExtendedWalletInfoKey, null);
 
     if (!rawExtendedInfo) {
       Logger.warn("migrations", "No extended info found for wallet, not migrating!", spvWalletId);

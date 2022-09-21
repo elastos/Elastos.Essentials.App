@@ -11,6 +11,7 @@ import { IdentityEntry } from '../model/didsessions/identityentry';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from './stores/networktemplate.store';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -126,11 +127,11 @@ export class GlobalLanguageService extends GlobalService {
 
     this.systemLanguage = this.translationService.getBrowserLang();
     if (DIDSessionsStore.signedInDIDString) {
-      let languageFromPref: string = await this.prefs.getPreference(DIDSessionsStore.signedInDIDString, "locale.language");
+      let languageFromPref: string = await this.prefs.getPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "locale.language");
       if (!languageFromPref || languageFromPref == "native system") {
         // Use the language that the user selected in didsession.
         if (this.selectedLanguage) {
-          await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "locale.language", this.selectedLanguage, true);
+          await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "locale.language", this.selectedLanguage, true);
         }
       } else {
         this.selectedLanguage = languageFromPref;
@@ -181,7 +182,7 @@ export class GlobalLanguageService extends GlobalService {
 
     // Save current choice to disk
     Logger.log('LanguageService', "Saving global language code:", code);
-    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "locale.language", code, true);
+    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "locale.language", code, true);
 
     // Notify listeners of language changes
     this.activeLanguage.next(code);

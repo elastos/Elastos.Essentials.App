@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Logger } from '../logger';
+import { MAINNET_TEMPLATE } from './global.networks.service';
 
 export type Preference<T> = {
   key: string;
@@ -19,10 +20,13 @@ export class GlobalStorageService {
     GlobalStorageService.ionicStorage = storage;
   }
 
-  private getFullStorageKey(did: string | null, context, key): string {
+  private getFullStorageKey(did: string | null, networkTemplate: string | null, context, key): string {
     let fullKey = "";
-    if (did)
-      fullKey += did + "_";
+    if (did) {
+      // For backward compatibility, mainnet network template uses old style storage keys (no network suffix).
+      let networkKey = networkTemplate === MAINNET_TEMPLATE ? '' : ':' + networkTemplate;
+      fullKey += did + networkKey + "_";
+    }
     fullKey += context + "_" + key;
     return fullKey;
   }
@@ -30,12 +34,13 @@ export class GlobalStorageService {
   /**
    * Deletes all settings for a specific DID.
    */
-  public async deleteDIDSettings(did: string): Promise<void> {
+  public async deleteDIDSettings(did: string, networkTemplate: string): Promise<void> {
     // Delete all settings that start with the DID string
     let existingKeys: string[] = await this.storage.keys();
     let deletedEntries = 0;
+    let networkKey = networkTemplate === MAINNET_TEMPLATE ? '' : ':' + networkTemplate;
     for (let key of existingKeys) {
-      if (key.startsWith(did + "_")) {
+      if (key.startsWith(did + networkKey + "_")) {
         await this.storage.remove(key);
         deletedEntries++;
       }
@@ -44,16 +49,16 @@ export class GlobalStorageService {
     Logger.log("StorageService", "Deleted " + deletedEntries + " settings entries for DID " + did);
   }
 
-  public setSetting<T>(did: string | null, context: string, key: string, value: T): Promise<void> {
-    let fullKey = this.getFullStorageKey(did, context, key);
+  public setSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, value: T): Promise<void> {
+    let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
     //Logger.log("STORAGEDEBUG", "setSetting", context, key, value);
     return this.storage.set(fullKey, JSON.stringify(value)).then((res) => {
     }, (err) => {
     });
   }
 
-  public async getSetting<T>(did: string | null, context: string, key: string, defaultValue: T): Promise<T> {
-    let fullKey = this.getFullStorageKey(did, context, key);
+  public async getSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, defaultValue: T): Promise<T> {
+    let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
 
     try {
       let res = await this.storage.get(fullKey);
@@ -70,8 +75,8 @@ export class GlobalStorageService {
     }
   }
 
-  public deleteSetting(did: string | null, context: string, key: string): Promise<void> {
-    let fullKey = this.getFullStorageKey(did, context, key);
+  public deleteSetting(did: string | null, networkTemplate: string | null, context: string, key: string): Promise<void> {
+    let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
     return this.storage.remove(fullKey);
   }
 }

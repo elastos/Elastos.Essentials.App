@@ -6,6 +6,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { HelpComponent } from '../components/help/help.component';
 import { CreatedDApp } from '../model/customtypes';
 import { StorageDApp } from '../model/storagedapp.model';
@@ -37,7 +38,7 @@ export class DAppService {
     private async loadDApps(): Promise<void> {
         Logger.log("developertools", "Loading local dapps list");
 
-        let dappsJson = await this.storage.getSetting<any[]>(DIDSessionsStore.signedInDIDString, "developertools", "dapps", null);
+        let dappsJson = await this.storage.getSetting<any[]>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developertools", "dapps", null);
         //Logger.log("developertools", "Loaded dapps json:", dappsJson);
         this.dapps = [];
         if (dappsJson) {
@@ -56,7 +57,7 @@ export class DAppService {
 
     private async storeDApp(dapp: StorageDApp): Promise<void> {
         this.dapps.push(dapp);
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "developertools", "dapps", this.dapps);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developertools", "dapps", this.dapps);
     }
 
     public async updateDapp(dapp: StorageDApp): Promise<void> {
@@ -316,10 +317,10 @@ export class DAppService {
     }
 
     async deleteApp(app: StorageDApp): Promise<void> {
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "developertools", "dapps", this.dapps = this.dapps.filter(dapp => dapp.didStoreId !== app.didStoreId));
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developertools", "dapps", this.dapps = this.dapps.filter(dapp => dapp.didStoreId !== app.didStoreId));
     }
 
     public deleteApps(): Promise<void> {
-        return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "developertools", "dapps", []);
+        return this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developertools", "dapps", []);
     }
 }

@@ -7,6 +7,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 
@@ -47,7 +48,7 @@ export class MenuPage implements OnInit {
     this.hasConfigSections = true;
 
     // Retrieve current settings
-    let prefs = await this.prefsService.getPreferences(DIDSessionsStore.signedInDIDString);
+    let prefs = await this.prefsService.getPreferences(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
     this.prefs.developerMode = prefs["developer.mode"];
   }
 
@@ -63,7 +64,7 @@ export class MenuPage implements OnInit {
   }
 
   async toggleDeveloperMode() {
-    await this.prefsService.setPreference(DIDSessionsStore.signedInDIDString, "developer.mode", this.prefs.developerMode);
+    await this.prefsService.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developer.mode", this.prefs.developerMode);
     if (!this.prefs.developerMode) {
       await this.developer.reset();
     }

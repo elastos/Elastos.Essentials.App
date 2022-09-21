@@ -11,6 +11,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalSecurityService } from 'src/app/services/global.security.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 
@@ -44,7 +45,7 @@ export class DeveloperPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('settings.developer-options'));
 
     this.allowScreenCapture = await this.globalSecurityService.getScreenCaptureAllowed();
-    this.captureLogs = await this.globalsPrefsService.getCollectLogs(DIDSessionsStore.signedInDIDString);
+    this.captureLogs = await this.globalsPrefsService.getCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
   }
 
   ionViewWillLeave() {
@@ -67,7 +68,7 @@ export class DeveloperPage implements OnInit {
   }
 
   public onAllowCaptureLogsChanged() {
-    void this.globalsPrefsService.setCollectLogs(DIDSessionsStore.signedInDIDString, this.captureLogs);
+    void this.globalsPrefsService.setCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.captureLogs);
   }
 
   public exportLogs() {
