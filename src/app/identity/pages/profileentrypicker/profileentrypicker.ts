@@ -4,7 +4,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { BasicCredentialEntry } from '../../model/basiccredentialentry.model';
 import { BasicCredentialInfo } from '../../model/basiccredentialinfo.model';
 import { BasicCredentialsService } from '../../services/basiccredentials.service';

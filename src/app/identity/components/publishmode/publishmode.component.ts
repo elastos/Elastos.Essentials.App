@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ModalController } from '@ionic/angular';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
   selector: 'app-publishmode',
@@ -13,7 +13,7 @@ export class PublishModeComponent implements OnInit {
     private modalCtrl: ModalController
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   useAssist() {
     void this.modalCtrl.dismiss({

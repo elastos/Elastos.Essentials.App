@@ -8,8 +8,8 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { SessionRequestParams } from 'src/app/model/walletconnect/types';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DeveloperService } from '../../../services/developer.service';
 import { SettingsService } from '../../../services/settings.service';

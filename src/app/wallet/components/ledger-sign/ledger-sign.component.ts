@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { LedgerSafe } from '../../model/safes/ledger.safe';
 import { Safe } from '../../model/safes/safe';
 import { Native } from '../../services/native.service';

@@ -27,7 +27,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { MenuSheetMenu } from '../../../components/menu-sheet/menu-sheet.component';
 import { ImportWalletType } from '../../model/masterwallets/wallet.types';
 import { Native } from '../../services/native.service';
@@ -126,8 +126,8 @@ export class SettingsPage implements OnInit {
     }
 
     ionViewDidEnter() {
-      // Hide splash screen if the wallet is the startup screen.
-      this.globalStartupService.setStartupScreenReady();
+        // Hide splash screen if the wallet is the startup screen.
+        this.globalStartupService.setStartupScreenReady();
     }
 
     public go(item: SettingsEntry) {
@@ -216,6 +216,6 @@ export class SettingsPage implements OnInit {
         this.walletCreationService.reset();
         this.walletCreationService.isMulti = false;
         this.walletCreationService.type = 2; // import
-        this.native.go("/wallet/wallet-create", { importType: type});
+        this.native.go("/wallet/wallet-create", { importType: type });
     }
 }

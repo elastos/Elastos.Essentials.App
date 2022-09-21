@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { WidgetsNewsService } from 'src/app/launcher/widgets/services/news.service';
 import { WidgetPluginsService } from 'src/app/launcher/widgets/services/plugin.service';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 type DisplayableSource = {
   icon: string;

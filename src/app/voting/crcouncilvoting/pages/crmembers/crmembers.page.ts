@@ -5,7 +5,7 @@ import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuIte
 import { App } from "src/app/model/app.enum";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from "src/app/voting/services/vote.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { CRCouncilService } from "../../services/crcouncil.service";

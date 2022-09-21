@@ -17,8 +17,8 @@ import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import type { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
@@ -747,18 +747,18 @@ export class DappBrowserService implements GlobalService {
         else {
             // Do nothing if already on the right network
             if ((WalletNetworkService.instance.activeNetwork.value as EVMNetwork).getMainChainID() === chainId) {
-                Logger.log("walletconnect", "Already on the right network");
+                Logger.log("dappbrowser", "Already on the right network");
                 this.sendWeb3IABResponse(message.data.id, {}); // Successfully switched
                 return;
             }
 
             let networkSwitched = await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
             if (networkSwitched) {
-                Logger.log("walletconnect", "Successfully switched to the new network");
+                Logger.log("dappbrowser", "Successfully switched to the new network");
                 this.sendWeb3IABResponse(message.data.id, {}); // Successfully switched
             }
             else {
-                Logger.log("walletconnect", "Network switch cancelled");
+                Logger.log("dappbrowser", "Network switch cancelled");
                 this.sendWeb3IABError(message.data.id, {
                     code: -1,
                     message: "Cancelled operation"

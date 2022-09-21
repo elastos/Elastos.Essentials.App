@@ -10,7 +10,7 @@ import { DIDDocumentsService } from 'src/app/identity/services/diddocuments.serv
 import { PopupProvider } from 'src/app/identity/services/popup';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
 import { DID } from '../../../model/did.model';
 import { DIDDocument } from '../../../model/diddocument.model';

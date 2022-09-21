@@ -6,15 +6,16 @@
 
     .app-row {
       .mid-col {
-        align-items: center;
+        align-self: center;
 
-        ion-label {
-          text-align: left;
-
-          h1 {
-            font-size: 14px;
-          }
+        .title {
+          font-size: 14px;
         }
+      }
+
+      &.add-border {
+        padding-bottom: 10px;
+        border-bottom: solid 1px rgba(255, 255, 255, 0.2);
       }
     }
   }

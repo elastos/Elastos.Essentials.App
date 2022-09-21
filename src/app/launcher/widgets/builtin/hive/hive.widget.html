@@ -7,10 +7,8 @@
         </div>
       </ion-col>
       <ion-col class="mid-col" size="8">
-        <ion-label>
-          <h1>{{ app.name }}</h1>
-          <p>{{ app.description }}</p>
-        </ion-label>
+        <div class="title">{{ app.name }}</div>
+        <div class="secondary-text subtitle">{{ app.description }}</div>
       </ion-col>
       <ion-col class="right-col" size="2">
         <img
@@ -19,7 +17,8 @@
       <ion-col class="widget-col" offset="2" size="10">
         <div *ngIf="hiveVaultLinked" class="hive-widget">
           <ion-progress-bar color="warning" [value]="hiveVaultStorageStats.usageRatio"></ion-progress-bar>
-          <span>{{ hiveVaultStorageStats.percentUsage }}% / {{ hiveVaultStorageStats.maxStorage }} GB</span>
+          <span class="secondary-text">{{ hiveVaultStorageStats.percentUsage }}% / {{ hiveVaultStorageStats.maxStorage
+            }} GB</span>
         </div>
       </ion-col>
     </ion-row>

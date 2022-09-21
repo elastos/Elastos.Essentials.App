@@ -6,7 +6,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DID } from '../../model/did.model';
 import { IdentityService } from '../../services/identity.service';
 import { UXService } from '../../services/ux.service';

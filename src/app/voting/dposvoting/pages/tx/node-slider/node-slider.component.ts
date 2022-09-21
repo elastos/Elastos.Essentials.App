@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DPosNode } from '../../../model/nodes.model';
 import { NodesService } from '../../../services/nodes.service';
 

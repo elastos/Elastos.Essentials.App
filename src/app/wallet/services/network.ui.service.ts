@@ -23,7 +23,7 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { NetworkChooserComponent, NetworkChooserComponentOptions, NetworkChooserFilter } from '../components/network-chooser/network-chooser.component';
 import { AnyNetwork } from '../model/networks/network';
 import { WalletNetworkService } from './network.service';

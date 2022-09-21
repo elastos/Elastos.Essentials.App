@@ -7,7 +7,7 @@ import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { ContactAvatar } from 'src/app/services/contactnotifier.service';
 import { GlobalNotificationsService, Notification } from 'src/app/services/global.notifications.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AppmanagerService } from './appmanager.service';
 
 export const enum LauncherNotificationType {

@@ -9,7 +9,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Direction, GlobalNavService } from 'src/app/services/global.nav.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { OptionsComponent } from '../components/options/options.component';
 import { WarningComponent } from '../components/warning/warning.component';
 
@@ -76,9 +76,9 @@ export class UXService {
       case 'settings':
         this.go('/didsessions/settings');
         break;
-      case 'theme':
+      /* case 'theme':
         void this.theme.toggleTheme();
-        break;
+        break; */
       case 'scan':
         this.go('/didsessions/scan');
         break;
@@ -124,7 +124,7 @@ export class UXService {
     this.options = await this.popoverCtrl.create({
       mode: 'ios',
       component: OptionsComponent,
-      cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'options-component' : 'dark-options-component',
+      cssClass: !this.theme.activeTheme.value.config.usesDarkMode ? 'options-component' : 'dark-options-component',
       componentProps: {
         identityEntry: identityEntry
       },

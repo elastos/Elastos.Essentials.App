@@ -6,7 +6,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Native } from 'src/app/identity/services/native';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { jsToSpvWalletId } from 'src/app/wallet/services/spv.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';

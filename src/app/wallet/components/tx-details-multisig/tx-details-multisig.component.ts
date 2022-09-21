@@ -2,7 +2,7 @@ import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { StandardMultiSigMasterWallet } from '../../model/masterwallets/standard.multisig.masterwallet';
 import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
 import { MultiSigSafe } from '../../model/safes/multisig.safe';

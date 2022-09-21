@@ -8,8 +8,8 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Tip } from '../model/tip.model';
 import { TipsPage } from '../pages/tips/tips.page';
 

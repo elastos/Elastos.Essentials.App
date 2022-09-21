@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppmanagerService, RunnableAppCategory } from 'src/app/launcher/services/appmanager.service';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from 'src/app/model/app.enum';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';

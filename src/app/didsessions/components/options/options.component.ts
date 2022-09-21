@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
   selector: 'app-options',

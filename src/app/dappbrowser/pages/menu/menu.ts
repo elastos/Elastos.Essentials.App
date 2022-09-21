@@ -10,7 +10,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -75,8 +75,8 @@ export class MenuPage {
 
     ionViewWillLeave() {
         if (this.browsedAppInfoSub) {
-          this.browsedAppInfoSub.unsubscribe();
-          this.browsedAppInfoSub = null;
+            this.browsedAppInfoSub.unsubscribe();
+            this.browsedAppInfoSub = null;
         }
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }

@@ -34,8 +34,8 @@ import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { LedgerAccountType } from 'src/app/wallet/model/ledger.types';
 import { BTCAddressType, BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.ledgerapp';
 import { ELAAddressType, ELALedgerApp } from 'src/app/wallet/model/ledger/ela.ledgerapp';
@@ -55,8 +55,8 @@ import { WalletService } from 'src/app/wallet/services/wallet.service';
 const TAG = 'ledger';
 
 export enum LedgerConnectType {
-  CreateWallet = 'create',// Get address to create wallet
-  AddAccount = 'add',     // Add address to existing wallet
+    CreateWallet = 'create',// Get address to create wallet
+    AddAccount = 'add',     // Add address to existing wallet
 }
 
 @Component({
@@ -176,21 +176,21 @@ export class LedgerConnectPage implements OnInit {
 
     //
     private async reConnectDecice() {
-      if (this.transport) {
-        await this.transport.close();
-        this.transport = null;
-        this.ledgerConnectStatus.next(false);
-      }
+        if (this.transport) {
+            await this.transport.close();
+            this.transport = null;
+            this.ledgerConnectStatus.next(false);
+        }
 
-      this.connectDevice();
-      return new Promise<void>((resolve) => {
-        let ledgerStatusSubscription: Subscription = this.ledgerConnectStatus.subscribe( (connected)=> {
-          if (connected) {
-            ledgerStatusSubscription.unsubscribe();
-            resolve();
-          }
-        })
-      });
+        this.connectDevice();
+        return new Promise<void>((resolve) => {
+            let ledgerStatusSubscription: Subscription = this.ledgerConnectStatus.subscribe((connected) => {
+                if (connected) {
+                    ledgerStatusSubscription.unsubscribe();
+                    resolve();
+                }
+            })
+        });
     }
 
     private closeTimeout() {
@@ -203,8 +203,8 @@ export class LedgerConnectPage implements OnInit {
     private async refreshAddresses() {
         // Every time we change the app on ledger, we need to reconnect ledger.
         if (this.failedToGetAddress) {
-          await this.reConnectDecice();
-          this.createLedgerApp();
+            await this.reConnectDecice();
+            this.createLedgerApp();
         }
 
         this.gettingAddresses = true;
@@ -227,15 +227,15 @@ export class LedgerConnectPage implements OnInit {
 
             // if the ledger is disconnected, we need connect ledger again.
             if (e instanceof DisconnectedDeviceDuringOperation || e.id === 'TransportLocked' || e.name === 'TransportRaceCondition') {
-              void this.refreshAddresses();
-              return;
+                void this.refreshAddresses();
+                return;
             }
 
             if (e.message) {
-              // TODO: Display user-friendly messages.
-              this.native.toast_trans(e.message);
+                // TODO: Display user-friendly messages.
+                this.native.toast_trans(e.message);
             } else {
-              this.native.toast_trans('wallet.ledger-prompt');
+                this.native.toast_trans('wallet.ledger-prompt');
             }
         }
     }
@@ -264,42 +264,42 @@ export class LedgerConnectPage implements OnInit {
         this.addresses = [];
 
         if (this.preNetwork && (this.preNetwork != this.selectedNetwork)) {
-          await this.reConnectDecice();
+            await this.reConnectDecice();
         }
         this.preNetwork = this.selectedNetwork;
 
         this.createLedgerApp();
 
         if (!this.shouldPickAddressType)
-          void this.refreshAddresses();
+            void this.refreshAddresses();
     }
 
     private createLedgerApp() {
-      // Prepare the address type selection, or auto-select it.
-      switch (this.selectedNetwork.key) {
-        case BTCNetworkBase.networkKey:
-            this.shouldPickAddressType = true;
-            this.addressType = BTCAddressType.SEGWIT;
-            this.ledgerApp = new BTCLedgerApp(this.transport);
-            let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
-            if (network === MAINNET_TEMPLATE) {
-                this.ledgerNanoAppname = "Bitcoin"
-            } else {
-                this.ledgerNanoAppname = "Bitcoin Test"
-            }
-            break;
-        case ElastosMainChainNetworkBase.networkKey:
-            this.shouldPickAddressType = false;
-            this.addressType = ELAAddressType.M2305;
-            this.ledgerApp = new ELALedgerApp(this.transport);
-            this.ledgerNanoAppname = "Elastos"
-            break;
-        default: // Consider all other networks as EVMs - auto select the only type
-            this.shouldPickAddressType = false;
-            this.addressType = EVMAddressType.EVM_STANDARD;
-            this.ledgerApp = new EVMLedgerApp(this.transport);
-            this.ledgerNanoAppname = "Ethereum"
-      }
+        // Prepare the address type selection, or auto-select it.
+        switch (this.selectedNetwork.key) {
+            case BTCNetworkBase.networkKey:
+                this.shouldPickAddressType = true;
+                this.addressType = BTCAddressType.SEGWIT;
+                this.ledgerApp = new BTCLedgerApp(this.transport);
+                let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
+                if (network === MAINNET_TEMPLATE) {
+                    this.ledgerNanoAppname = "Bitcoin"
+                } else {
+                    this.ledgerNanoAppname = "Bitcoin Test"
+                }
+                break;
+            case ElastosMainChainNetworkBase.networkKey:
+                this.shouldPickAddressType = false;
+                this.addressType = ELAAddressType.M2305;
+                this.ledgerApp = new ELALedgerApp(this.transport);
+                this.ledgerNanoAppname = "Elastos"
+                break;
+            default: // Consider all other networks as EVMs - auto select the only type
+                this.shouldPickAddressType = false;
+                this.addressType = EVMAddressType.EVM_STANDARD;
+                this.ledgerApp = new EVMLedgerApp(this.transport);
+                this.ledgerNanoAppname = "Ethereum"
+        }
     }
 
     private buildBTCAddressTypeMenuItems(): MenuSheetMenu[] {
@@ -356,15 +356,15 @@ export class LedgerConnectPage implements OnInit {
     public async selectAddress(account: AnyLedgerAccount) {
         Logger.log(TAG, 'Selected account/address:', account)
         if (this.ledgerConnectType == LedgerConnectType.CreateWallet) {
-          await this.createLedgerWallet(account);
+            await this.createLedgerWallet(account);
         } else {
-          let masterWallet = this.walletService.getActiveMasterWallet();
-          let accountOpt: LedgerAccountOptions = { type: account.type, accountID: account.address, accountPath: account.path, publicKey: account.publicKey };
-          (masterWallet as LedgerMasterWallet).addAccountOptions(accountOpt);
-          void masterWallet.save();
+            let masterWallet = this.walletService.getActiveMasterWallet();
+            let accountOpt: LedgerAccountOptions = { type: account.type, accountID: account.address, accountPath: account.path, publicKey: account.publicKey };
+            (masterWallet as LedgerMasterWallet).addAccountOptions(accountOpt);
+            void masterWallet.save();
 
-          await this.walletService.activateMasterWallet(masterWallet);
-          this.native.setRootRouter("/wallet/wallet-home");
+            await this.walletService.activateMasterWallet(masterWallet);
+            this.native.setRootRouter("/wallet/wallet-home");
         }
     }
 
@@ -433,14 +433,14 @@ export class LedgerConnectPage implements OnInit {
     }
 
     public reset() {
-      if (this.transport) {
-        void this.transport.close();
-        this.transport = null;
-      }
-      this.closeTimeout();
+        if (this.transport) {
+            void this.transport.close();
+            this.transport = null;
+        }
+        this.closeTimeout();
     }
 
     public connect() {
-      this.connectDevice();
+        this.connectDevice();
     }
 }

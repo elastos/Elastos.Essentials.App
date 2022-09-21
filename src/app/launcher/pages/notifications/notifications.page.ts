@@ -9,7 +9,7 @@ import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { AppmanagerService } from '../../services/appmanager.service';

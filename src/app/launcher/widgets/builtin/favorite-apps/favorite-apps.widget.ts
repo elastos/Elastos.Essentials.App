@@ -6,7 +6,7 @@ import { FavoritesService } from 'src/app/dappbrowser/services/favorites.service
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
 
 @Component({

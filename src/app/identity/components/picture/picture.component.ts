@@ -6,7 +6,7 @@ import { pictureMimeType } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { LocalStorage } from '../../services/localstorage';
 import { ProfileService } from '../../services/profile.service';
 

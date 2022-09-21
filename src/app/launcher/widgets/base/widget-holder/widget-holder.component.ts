@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { Subject } from 'rxjs';
 import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
-import { GlobalThemeService } from '../../../../services/global.theme.service';
+import { GlobalThemeService } from '../../../../services/theming/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 import { IWidget } from '../iwidget';

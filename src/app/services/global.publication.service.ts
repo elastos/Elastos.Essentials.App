@@ -15,8 +15,8 @@ import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './glo
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalSwitchNetworkService } from './global.switchnetwork.service';
-import { GlobalThemeService } from './global.theme.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { GlobalThemeService } from './theming/global.theme.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 

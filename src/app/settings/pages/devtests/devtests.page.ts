@@ -4,7 +4,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { App } from 'src/app/model/app.enum';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { SettingsService } from '../../services/settings.service';
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;

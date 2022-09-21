@@ -5,9 +5,10 @@
 .widget {
   display: block;
   height: auto;
-  padding: 10px;
+  padding: 20px 10px;
   position: relative;
   overflow: hidden;
+  color: #000;
 
   // Left column for most widgets
   .project {
@@ -48,28 +49,34 @@
 
 .widget-background {
   border-radius: 15px;
+  //border-top-right-radius: 15px;
+  //border-bottom-right-radius: 15px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   opacity: 1;
-  background-color: #f0f1ff;
-  margin: 5px 0;
+  //background-color: #f0f1ff;
+  //background: rgba(0, 0, 0, 10%);
+  background: var(--essentials-box-color);
+  margin: 8px 0;
+  //border-left: solid 3px rgb(63, 132, 214);
+  //box-shadow: 0 5px 8px rgba(63, 132, 214, 40%);
+  //border-right: solid 5px #8a3fd6;
+  //background: linear-gradient(90deg, rgb(214, 63, 63) 0%, rgba(0, 0, 0, 0.5) 100%);
 
   .title-col {
     text-align: left;
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 5px;
+    //color: #000;
+    //border-bottom: solid 2px rgb(63, 132, 214);
   }
 
   // Weird, should not be put in the generic widget background. Inherited from the previous launcher screen style
   .app-col {
     padding: 0;
-
-    .add-border {
-      border-bottom: 1px solid #eaeaea;
-    }
 
     .app-row {
       padding: 0;
@@ -91,7 +98,7 @@
           width: 48px;
           height: 48px;
           opacity: 1;
-          background: #dde2f1;
+          background: var(--ion-background-color);
 
           img {
             width: 55%;
@@ -102,25 +109,18 @@
 
       .mid-col {
         justify-content: flex-start;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
 
-        ion-label {
-          text-align: left;
+        .title {
+          font-size: 18px;
+          font-weight: 600;
+        }
 
-          h1 {
-            color: #000000;
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0;
-          }
-
-          p {
-            color: #000000;
-            opacity: 0.7;
-            font-size: 12px;
-            font-weight: 500;
-            margin-top: 3px;
-          }
+        .subtitle {
+          font-size: 12px;
+          margin-top: 3px;
         }
       }
 
@@ -191,8 +191,12 @@ ion-button {
   height: 36px;
 
   // Light mode
-  --background: #dde2f1;
-  --background-activated: #ddd;
+  //--background: #dde2f1;
+  //--background-activated: #ddd;
+  //--background: rgba(255, 255, 255, 0.2);
+  --background: var(--essentials-box-color);
+  --background-activated: var(--ion-background-color);
+  //--background-activated: rgba(255, 255, 255, 0.4);
   color: #000;
   font-size: 14px;
 }
@@ -200,47 +204,25 @@ ion-button {
 .darkContainer {
   .project {
     .title {
-      color: #acacac;
+      //color: #acacac;
     }
+  }
+
+  .widget,
+  &.widget {
+    //color: #fff;
+    color: var(--ion-text-color);
+    --color: var(--ion-text-color);
   }
 
   .widget-background,
   &.widget-background {
-    background: #212021;
-    box-shadow: none;
-
     .app-col {
-      .add-border {
-        border-bottom: 1px solid #464646;
-      }
-
       .app-row {
         .left-col {
           .icon-container {
-            box-shadow: 0px 0px 1px #000000e2;
-            background: #363636;
-          }
-        }
-
-        .mid-col {
-          ion-label {
-            h1 {
-              color: #ffffff;
-            }
-
-            p {
-              color: #acacac;
-              opacity: 1;
-            }
-          }
-        }
-
-        .widget-col {
-          .hive-widget {
-            span {
-              color: #7c7c7c;
-              opacity: 1;
-            }
+            //box-shadow: 0px 0px 1px #000000e2;
+            //background: #363636;
           }
         }
       }
@@ -248,8 +230,8 @@ ion-button {
   }
 
   ion-button {
-    --background: #333133;
-    --background-activated: #555355;
+    //--background: #333133;
+    //--background-activated: #555355;
     color: #fff;
   }
 }

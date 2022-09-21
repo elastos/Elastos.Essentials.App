@@ -144,9 +144,34 @@
     src: url("assets/fonts/raleway/Raleway-Black.ttf") format("truetype");
 }
 
+@font-face {
+    font-family: "CircularStd";
+    font-weight: 300;
+    font-style: normal;
+    src: url("assets/fonts/circular/CircularStd-Light.otf");
+}
+@font-face {
+    font-family: "CircularStd";
+    font-weight: 400;
+    font-style: normal;
+    src: url("assets/fonts/circular/CircularStd-Book.otf");
+}
+@font-face {
+    font-family: "CircularStd";
+    font-weight: 500;
+    font-style: normal;
+    src: url("assets/fonts/circular/CircularStd-Medium.otf");
+}
+@font-face {
+    font-family: "CircularStd";
+    font-weight: 600;
+    font-style: normal;
+    src: url("assets/fonts/circular/CircularStd-Bold.otf");
+}
+
 /** Global font family **/
 * {
-    font-family: "Montserrat" !important;
+    font-family: "CircularStd" !important;
 }
 
 /** Remove 'box' outline on clicked items **/
@@ -175,11 +200,8 @@
     color: #f04141;
 }
 
-/** Simple class to apply theme background **/
-.lightmode {
-    background: #f5f5fd;
-}
-
-.darkmode {
-    background: #121212;
+.secondary-text {
+    font-weight: 300;
+    font-size: 12px;
+    opacity: 1;
 }

@@ -19,7 +19,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { GlobalThemeService } from "../../../services/global.theme.service";
+import { GlobalThemeService } from "../../../services/theming/global.theme.service";
 import { TokenChooserComponent } from '../../../wallet/components/token-chooser/token-chooser.component';
 import { Packet, PacketDistributionType, PacketToCreate, PacketType, PacketVisibility, TokenType } from '../../model/packets.model';
 import { NetworksService } from '../../services/networks.service';

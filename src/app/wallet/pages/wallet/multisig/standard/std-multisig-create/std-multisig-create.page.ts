@@ -7,7 +7,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { MasterWallet, StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elastos/mainchain/network/elastos.networks';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
@@ -66,9 +66,9 @@ export class StandardMultiSigCreatePage implements OnInit {
     }
 
     ionViewWillLeave() {
-        this.theme.activeTheme.subscribe((activeTheme) => {
+        /* this.theme.activeTheme.subscribe((activeTheme) => {
             this.titleBar.setTitleBarTheme(activeTheme);
-        });
+        }); */
     }
 
     private async tryToAutoSelectedSigningWallet() {

@@ -4,7 +4,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
 
 @Component({

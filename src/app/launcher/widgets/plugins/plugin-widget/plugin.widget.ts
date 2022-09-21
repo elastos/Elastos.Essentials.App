@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AppmanagerService } from 'src/app/launcher/services/appmanager.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { IWidget } from '../../base/iwidget';
 import { PluginConfig, RefreshOn } from '../../base/pluginconfig';

@@ -10,7 +10,7 @@ import { Logger } from "src/app/logger";
 import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { DIDDocument } from "../../model/diddocument.model";

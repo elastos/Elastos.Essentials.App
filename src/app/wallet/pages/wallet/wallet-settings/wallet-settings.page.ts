@@ -6,7 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { TxSuccessComponent } from 'src/app/wallet/components/tx-success/tx-success.component';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { StandardCoinName } from 'src/app/wallet/model/coin';

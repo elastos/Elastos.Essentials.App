@@ -20,11 +20,11 @@ export const fr = {
         'startupscreen-intro-setting': 'Choix de l\'écran à afficher au démarrage d\'Essentials',
 
         // Subtitles
-        'advanced-setting': 'PARAMETRES AVANCES',
-        'change-lang': 'MODIFIER LA LANGUE GLOBALE',
-        'change-pw': 'CHANGER LE MOT DE PASSER',
-        'manage-pw': 'GERER VOS MOTS DE PASSE',
-        'about-elastos': 'EN SAVOIR PLUS',
+        'advanced-setting': 'Paramètres avancés',
+        'change-lang': 'Modifier la langue globale',
+        'change-pw': 'Changer le mot de passe',
+        'manage-pw': 'Gérer la langue globale',
+        'about-elastos': 'En savoir plus',
         'wallet-connect-sessions-intro-setting': 'Gérer les sessions actives',
         'privacy-intro-setting': 'Plus d\'options de vie privée',
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { MenuSheetComponent, MenuSheetMenu } from '../components/menu-sheet/menu-sheet.component';
 
 @Injectable({
@@ -100,7 +100,7 @@ export class GlobalNativeService {
     }
 
     public async showLoading(message = 'common.please-wait') {
-        let isDarkMode = this.theme.activeTheme.value == AppTheme.DARK;
+        let isDarkMode = this.theme.activeTheme.value.config.usesDarkMode;
         if (this.loadingCtrlCreating) { // Just in case.
             return;
         }

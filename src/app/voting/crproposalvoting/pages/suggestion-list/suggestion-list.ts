@@ -8,7 +8,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from '../../../services/ux.service';
 import { SuggestionSearchResult, SuggestionStatus } from '../../model/suggestion-model';
 import { SuggestionService } from '../../services/suggestion.service';
@@ -59,7 +59,7 @@ export class SuggestionListPage implements OnInit {
     }
 
     ionViewWillLeave() {
-      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     async init() {
@@ -144,7 +144,7 @@ export class SuggestionListPage implements OnInit {
         if (this.suggestions.length === suggestionsLength) {
             void this.uxService.genericToast(this.translate.instant('crproposalvoting.all-suggestions-are-loaded'));
         }
-	    else {
+        else {
             if (this.searchInput) {
                 this.searchPage++;
             } else {

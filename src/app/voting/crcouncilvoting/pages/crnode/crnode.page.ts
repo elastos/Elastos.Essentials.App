@@ -5,7 +5,7 @@ import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -80,7 +80,7 @@ export class CRNodePage implements OnInit {
         }
 
         if (!await this.voteService.checkWalletAvailableForVote()) {
-          return;
+            return;
         }
 
         try {

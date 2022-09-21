@@ -2,7 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DeleteComponent } from '../components/delete/delete.component';
 import { OptionsComponent } from '../components/options/options.component';
 import { QRCodeComponent } from '../components/qrcode/qrcode.component';

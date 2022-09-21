@@ -6,7 +6,7 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';

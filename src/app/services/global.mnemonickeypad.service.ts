@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { MnemonicKeypadComponent } from '../components/mnemonic-keypad/mnemonic-keypad.component';
-import { GlobalThemeService } from './global.theme.service';
 import { ChineseMnemonicSuggestionProvider } from './mnemonickeypad/chinese.provider';
 import { EnglishMnemonicSuggestionProvider } from './mnemonickeypad/english.provider';
 import { FrenchMnemonicSuggestionProvider } from './mnemonickeypad/french.provider';
 import { ItalianMnemonicSuggestionProvider } from './mnemonickeypad/italian.provider';
+import { GlobalThemeService } from './theming/global.theme.service';
 
 export type Preference<T> = {
   key: string;

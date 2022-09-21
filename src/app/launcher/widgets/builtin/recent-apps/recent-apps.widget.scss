@@ -24,7 +24,7 @@
         width: 50px;
         width: 50px;
         object-fit: contain;
-        background: #dde2f1;
+        background: var(--ion-background-color);
         border-radius: 10px;
         padding: 8px;
       }
@@ -32,7 +32,7 @@
       .title {
         margin-top: 5px;
         margin-bottom: 0;
-        font-size: 12px;
+        font-size: 11px;
       }
     }
   }
@@ -47,11 +47,11 @@
     .recent-apps {
       .recent-app {
         img {
-          background: #333133;
+          //background: #333133;
         }
 
         .title {
-          color: #acacac;
+          //color: #acacac;
         }
       }
     }

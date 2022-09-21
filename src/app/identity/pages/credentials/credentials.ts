@@ -6,7 +6,7 @@ import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalCredentialTypesService } from "src/app/services/credential-types/global.credential.types.service";
 import { GlobalEvents } from "src/app/services/global.events.service";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { GlobalThemeService } from "src/app/services/theming/global.theme.service";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { DIDDocument } from "../../model/diddocument.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";

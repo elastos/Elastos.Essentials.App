@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 

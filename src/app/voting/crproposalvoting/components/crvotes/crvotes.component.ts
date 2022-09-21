@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
     selector: 'crvotes',
@@ -30,7 +30,7 @@ export class CrVotesComponent implements OnInit {
         }
 
         this.ratio = (value.approve * 100 / 12).toFixed(1);
-     }
+    }
 
     public votes = [];
     public ratio = "0";
@@ -41,5 +41,5 @@ export class CrVotesComponent implements OnInit {
 
     ngOnInit() {
 
-     }
+    }
 }

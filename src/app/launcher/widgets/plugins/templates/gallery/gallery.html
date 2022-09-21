@@ -3,7 +3,7 @@
   <div class="project" (click)="onProjectLogoClicked()">
     <img class="logo" [cache]="config.logo">
     <div class="name" *ngIf="config.projectname">{{ config.projectname }}</div>
-    <div class="title" *ngIf="config.title">{{ config.title }}</div>
+    <div class="secondary-text title" *ngIf="config.title">{{ config.title }}</div>
   </div>
   <div class="right-col" [class.transitioning]="transitioning">
     <ion-row>

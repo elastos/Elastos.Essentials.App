@@ -8,7 +8,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { UXService } from '../../../services/ux.service';
@@ -44,7 +44,7 @@ export class ProposalDetailPage implements OnDestroy {
     commandName: string;
     buttonLabel: string;
     public Config = Config;
-    public crvotes = {approve: 0, reject: 0, abstain: 0};
+    public crvotes = { approve: 0, reject: 0, abstain: 0 };
     public proposalHash: string;
     private commandReturnSub: Subscription = null;
 
@@ -77,10 +77,10 @@ export class ProposalDetailPage implements OnDestroy {
     }
 
     ngOnDestroy() {
-      if (this.commandReturnSub) {
-        this.commandReturnSub.unsubscribe();
-        this.commandReturnSub = null;
-      }
+        if (this.commandReturnSub) {
+            this.commandReturnSub.unsubscribe();
+            this.commandReturnSub = null;
+        }
     }
 
     async init() {
@@ -118,14 +118,14 @@ export class ProposalDetailPage implements OnDestroy {
                         }
                         else if (this.isOwner && this.proposal.status == 'finished' && budget.status == 'Withdrawable') {
                             let milestone = this.proposal.milestone[i];
-                            milestone.lastTracking = {command: 'withdraw', stage: budget.stage};
+                            milestone.lastTracking = { command: 'withdraw', stage: budget.stage };
                         }
                     }
                 }
             }
 
             //Get cr votes
-            this.crvotes = {approve: 0, reject: 0, abstain: 0};
+            this.crvotes = { approve: 0, reject: 0, abstain: 0 };
             if (this.proposal.crVotes) {
                 for (let vote of this.proposal.crVotes) {
                     switch (vote.result) {
@@ -167,7 +167,7 @@ export class ProposalDetailPage implements OnDestroy {
 
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposal-details'));
         this.proposalDetailFetched = true;
-        this.proposaltype =  this.crOperations.getProposalTypeForChangeProposal(this.proposal);
+        this.proposaltype = this.crOperations.getProposalTypeForChangeProposal(this.proposal);
         this.remainingTime = await this.proposalService.getRemainingTime(this.proposal);
     }
 
@@ -177,17 +177,17 @@ export class ProposalDetailPage implements OnDestroy {
 
         if (this.isOwner) {
             if (budget.status == 'Withdrawable') {
-                milestone.lastTracking = {command: 'withdraw'};
+                milestone.lastTracking = { command: 'withdraw' };
             }
             else if (budget.status != "Withdrawn") {
                 if (!milestone.tracking || milestone.tracking.length < 1) {
-                    milestone.lastTracking = {command: 'apply'};
+                    milestone.lastTracking = { command: 'apply' };
                 }
                 else {
                     milestone.lastTracking = milestone.tracking[0];
 
                     if (budget.status == 'Unfinished' && milestone.lastTracking.apply
-                                && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
+                        && milestone.lastTracking.review && milestone.lastTracking.review.opinion == 'reject') {
                         milestone.lastTracking.command = 'apply';
                     }
                 }
@@ -242,7 +242,7 @@ export class ProposalDetailPage implements OnDestroy {
             componentProps: {
                 lastTracking: lastTracking,
             },
-            cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'milestone-options-component' : 'milestone-options-component-dark',
+            cssClass: !this.theme.activeTheme.value.config.usesDarkMode ? 'milestone-options-component' : 'milestone-options-component-dark',
             translucent: false,
             event: ev,
         });
@@ -365,8 +365,8 @@ export class ProposalDetailPage implements OnDestroy {
                 value: this.proposal.proposalHash,
                 active: true
             },
-             //SideChain Info
-             {
+            //SideChain Info
+            {
                 title: this.translate.instant('crproposalvoting.side-chain-name'),
                 type: 'innerHtml',
                 value: this.proposal.sideChainName,

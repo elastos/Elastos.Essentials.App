@@ -15,7 +15,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
 import { PopupService } from '../../services/popup.service';
 import { DIDSessionsStore } from './../../../services/stores/didsessions.store';

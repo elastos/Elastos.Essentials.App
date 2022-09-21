@@ -1,17 +1,17 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FriendsService } from '../../services/friends.service';
 
-import { Avatar } from '../../models/avatar';
-import { NativeService } from '../../services/native.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Logger } from 'src/app/logger';
+import { App } from "src/app/model/app.enum";
 import { ContactNotifierService } from 'src/app/services/contactnotifier.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
-import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { Avatar } from '../../models/avatar';
+import { NativeService } from '../../services/native.service';
 
 @Component({
   selector: 'app-confirm',
@@ -47,7 +47,7 @@ export class ConfirmPage implements OnInit {
         Logger.log('contacts', "Confirm params", params)
         Logger.log('contacts', "Avatar:", this.avatar);
 
-        if(params.isPublished === 'true') {
+        if (params.isPublished === 'true') {
           this.isPublished = true;
         } else {
           this.isPublished = false;
@@ -71,20 +71,20 @@ export class ConfirmPage implements OnInit {
     const contactAlreadyAdded = await this.friendsService.addContact();
 
     this.zone.run(() => {
-      if(contactAlreadyAdded) {
+      if (contactAlreadyAdded) {
         void this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
       } else {
-        if(!this.name) {
+        if (!this.name) {
           this.friendsService.showCustomization(this.friendsService.pendingContact, true);
         } else {
-          void this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends/'+this.id);
+          void this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends/' + this.id);
         }
       }
     });
   }
 
   async denyContact() {
-    if(this.friendsService.contactNotifierInviationId) {
+    if (this.friendsService.contactNotifierInviationId) {
       Logger.log('contacts', 'Rejecting contact notifier invitation', this.friendsService.contactNotifierInviationId);
       await this.contactNotifier.rejectInvitation(this.friendsService.contactNotifierInviationId);
       this.friendsService.contactNotifierInviationId = null;

@@ -5,7 +5,7 @@ import FastAverageColor from 'fast-average-color';
 import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DIDDocument } from '../../model/diddocument.model';
 import { VerifiableCredential } from '../../model/verifiablecredential.model';
 import { CredentialsService } from '../../services/credentials.service';

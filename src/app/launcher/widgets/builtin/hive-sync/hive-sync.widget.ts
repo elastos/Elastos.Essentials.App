@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 

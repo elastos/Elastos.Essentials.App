@@ -13,8 +13,8 @@ import { ApplicationDIDInfo, GlobalApplicationDidService } from 'src/app/service
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DeleteComponent } from '../../components/delete/delete.component';
 import { DIDSession } from '../../model/didsession.model';
 import { StorageDApp } from '../../model/storagedapp.model';

@@ -4,11 +4,13 @@ import {
 } from '@angular/animations';
 import { DragDrop, DragRef, DropListRef } from '@angular/cdk/drag-drop';
 import { Component, ComponentRef, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewRef } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { WidgetInstance, WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
-import { GlobalThemeService } from '../../../../services/global.theme.service';
+import { GlobalThemeService } from '../../../../services/theming/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 import { WidgetsUIService } from '../../services/widgets.ui.service';
+import { ColorChooserComponent } from '../color-chooser/color-chooser.component';
 import { WidgetHolderComponent } from '../widget-holder/widget-holder.component';
 import { WidgetState } from '../widgetstate';
 @Component({
@@ -56,7 +58,8 @@ export class WidgetContainerComponent implements OnInit {
     private widgetsService: WidgetsService,
     private widgetsPluginsService: WidgetPluginsService,
     private widgetsUIService: WidgetsUIService,
-    private dragDrop: DragDrop
+    private dragDrop: DragDrop,
+    private modalCtrl: ModalController
   ) { }
 
   ngOnInit() {
@@ -164,5 +167,35 @@ export class WidgetContainerComponent implements OnInit {
     this.widgetslist.clear();
     this.cdkList = null;
     this.dragRefs = [];
+  }
+
+  public openColorChooser() {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+    return new Promise(async resolve => {
+      const modal = await this.modalCtrl.create({
+        component: ColorChooserComponent,
+        componentProps: {},
+        backdropDismiss: true, // Closeable
+        cssClass: 'popup-base color-chooser-component ' + (this.theme.darkMode ? 'darkContainer' : '')
+      });
+
+      void modal.onDidDismiss().then((response: { data?: boolean }) => {
+        resolve(!!response.data); // true or undefined
+      });
+
+      void modal.present();
+    });
+  }
+
+  public toggleThemeVariant() {
+    void this.theme.toggleThemeVariant();
+  }
+
+  public getActiveThemeColorName(): string {
+    return this.theme.getThemeTitle(this.theme.activeTheme.value.config);
+  }
+
+  public getActiveThemeVariantName(): string {
+    return this.theme.activeTheme.value.variant; // TODO: translation
   }
 }

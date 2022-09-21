@@ -20,11 +20,11 @@ export const en = {
         'startupscreen-intro-setting': 'Choose which screen to show when Essentials starts',
 
         // Subtitles
-        'advanced-setting': 'ADVANCED SETTINGS',
-        'change-lang': 'CHANGE GLOBAL LANGUAGE',
-        'manage-pw': 'MANAGE PASSWORD',
-        'change-pw': 'CHANGE PASSWORD',
-        'about-elastos': 'DETAILS ABOUT ELASTOS ESSENTIALS',
+        'advanced-setting': 'Advanced settings',
+        'change-lang': 'Change global language',
+        'manage-pw': 'Manage password',
+        'change-pw': 'Change password',
+        'about-elastos': 'About Essentials',
         'wallet-connect-sessions-intro-setting': 'Manage active sessions',
         'privacy-intro-setting': 'Customize your privacy level',
 

@@ -27,7 +27,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
@@ -138,24 +138,24 @@ export class DidTransactionPage implements OnInit {
     }
 
     public editGasPrice() {
-      this.showEditGasPrice = !this.showEditGasPrice;
+        this.showEditGasPrice = !this.showEditGasPrice;
     }
 
     async estimateGas() {
-      this.gasPrice = await this.identityTxBuilder.getGasPrice();
-      this.gasLimit = await this.identityTxBuilder.estimateGas(JSON.stringify(this.coinTransferService.didrequest));
-      await this.updateGasInfo()
+        this.gasPrice = await this.identityTxBuilder.getGasPrice();
+        this.gasLimit = await this.identityTxBuilder.estimateGas(JSON.stringify(this.coinTransferService.didrequest));
+        await this.updateGasInfo()
     }
 
     public async updateGasprice(event) {
-      this.gasPrice = new BigNumber(this.gasPriceGwei).multipliedBy(Config.GWEI).toString();
-      await this.updateGasInfo()
+        this.gasPrice = new BigNumber(this.gasPriceGwei).multipliedBy(Config.GWEI).toString();
+        await this.updateGasInfo()
     }
 
     private updateGasInfo() {
-      this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(1);
-      this.fee = new BigNumber(this.gasLimit).multipliedBy(new BigNumber(this.gasPrice));
-      this.feeDisplay = this.fee.dividedBy(this.sourceSubwallet.tokenAmountMulipleTimes).toString();
+        this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(1);
+        this.fee = new BigNumber(this.gasLimit).multipliedBy(new BigNumber(this.gasPrice));
+        this.feeDisplay = this.fee.dividedBy(this.sourceSubwallet.tokenAmountMulipleTimes).toString();
     }
 
     goTransaction() {

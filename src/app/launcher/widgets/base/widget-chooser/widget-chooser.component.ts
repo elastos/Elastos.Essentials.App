@@ -10,7 +10,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalThemeService } from '../../../../services/global.theme.service';
+import { GlobalThemeService } from '../../../../services/theming/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetContainerComponent } from '../widget-container/widget-container.component';
 import { DisplayCategories as DisplayCategory, WidgetState } from '../widgetstate';

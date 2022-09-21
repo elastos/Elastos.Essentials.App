@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { IonTabs } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { Logger } from "src/app/logger";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { GlobalThemeService } from "src/app/services/theming/global.theme.service";
 
 @Component({
   selector: "app-tabnav",

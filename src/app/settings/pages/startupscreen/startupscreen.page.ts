@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 type StartupScreen = {
   key: string;

@@ -45,7 +45,8 @@ ion-content {
     display: flex;
     place-content: space-between;
     align-items: center;
-    background: #fff;
+    //background: #fff;
+    background: var(--ion-background-color);
 
     .edit,
     .add {
@@ -60,7 +61,8 @@ ion-content {
             width: 10px;
             height: 10px;
             margin: 5px;
-            background: #bbb;
+            //background: #bbb;
+            background: rgba(255, 255, 255, 0.5);
 
             &.active {
                 background: #000;
@@ -71,7 +73,7 @@ ion-content {
 
 /************************************** LIGHT THEME **************************************/
 .light-container {
-    background: #ffffff;
+    //background: #ffffff;
 
     .id-row {
         .mid-col {
@@ -159,7 +161,7 @@ ion-content {
 
 /************************************** DARK THEME **************************************/
 .dark-container {
-    background: #000;
+    //background: #000;
 
     .id-row {
         .mid-col {
@@ -219,11 +221,11 @@ ion-content {
     }
 
     .home-footer {
-        background: #000;
+        //background: #000;
 
         .nav {
             .dot {
-                background: #868686;
+                //background: #ccc;
 
                 &.active {
                     background: #fff;

@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { SwitchNetworkComponent } from '../components/switch-network/switch-network.component';
 import { AnyNetwork } from '../wallet/model/networks/network';
 import { WalletNetworkService } from '../wallet/services/network.service';
-import { GlobalThemeService } from './global.theme.service';
+import { GlobalThemeService } from './theming/global.theme.service';
 
 @Injectable({
   providedIn: 'root'

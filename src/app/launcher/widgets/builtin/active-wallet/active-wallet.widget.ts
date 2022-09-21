@@ -8,7 +8,7 @@ import { reducedWalletAddress } from 'src/app/helpers/wallet.helper';
 import { WalletAddressChooserComponent } from 'src/app/launcher/components/wallet-address-chooser/wallet-address-chooser.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
@@ -194,7 +194,7 @@ export class ActiveWalletWidget implements OnInit, OnDestroy {
       componentProps: {
         addresses
       },
-      cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'launcher-address-chooser-component' : 'launcher-address-chooser-component-dark',
+      cssClass: !this.theme.activeTheme.value.config.usesDarkMode ? 'launcher-address-chooser-component' : 'launcher-address-chooser-component-dark',
       event: event,
       translucent: false
     });

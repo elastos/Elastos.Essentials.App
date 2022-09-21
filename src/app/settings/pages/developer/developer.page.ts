@@ -6,8 +6,8 @@ import { App } from "src/app/model/app.enum";
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalSecurityService } from 'src/app/services/global.security.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 

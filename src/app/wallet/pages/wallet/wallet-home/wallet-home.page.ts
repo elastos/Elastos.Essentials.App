@@ -29,7 +29,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
 import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -329,10 +329,10 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     async updateCurrentWalletInfo() {
-      if (this.networkWallet) {
-        await this.networkWallet.update();
-        // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
-      }
+        if (this.networkWallet) {
+            await this.networkWallet.update();
+            // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
+        }
     }
 
     startUpdateInterval() {
@@ -451,6 +451,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     public getAddressFromLedger() {
-      this.native.go("/wallet/ledger/scan", { device: (this.masterWallet as LedgerMasterWallet).deviceID, type: LedgerConnectType.AddAccount});
+        this.native.go("/wallet/ledger/scan", { device: (this.masterWallet as LedgerMasterWallet).deviceID, type: LedgerConnectType.AddAccount });
     }
 }

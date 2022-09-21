@@ -50,23 +50,13 @@
         object-fit: cover;
 
         &.active {
-          border: solid 2px #000;
+          border: solid 2px var(--ion-text-color);
         }
-      }
-
-      .network {
-        position: absolute;
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        right: 10px;
-        bottom: 10px;
-        border: solid 1px rgba(255, 255, 255, 0.5);
       }
 
       .title {
         text-align: center;
-        font-size: 9px;
+        font-size: 11px;
 
         &.active {
           font-weight: bold;
@@ -77,21 +67,5 @@
 
   .grid {
     width: 30px;
-  }
-
-  &.darkContainer {
-    .networks {
-      .network {
-        .title {
-          color: #acacac;
-        }
-
-        img {
-          &.active {
-            border: solid 2px #fff;
-          }
-        }
-      }
-    }
   }
 }

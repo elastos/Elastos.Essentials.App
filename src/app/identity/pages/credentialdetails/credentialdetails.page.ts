@@ -18,7 +18,7 @@ import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { GlobalThemeService } from "src/app/services/theming/global.theme.service";
 import { DIDDocument } from "../../model/diddocument.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { CredentialsService } from "../../services/credentials.service";

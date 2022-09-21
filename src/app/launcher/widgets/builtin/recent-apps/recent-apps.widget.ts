@@ -7,7 +7,7 @@ import { DIDManagerService } from 'src/app/launcher/services/didmanager.service'
 import { App } from 'src/app/model/app.enum';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { IWidget } from '../../base/iwidget';
 

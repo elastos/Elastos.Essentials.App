@@ -23,7 +23,7 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { LedgerSignComponent, LedgerSignComponentOptions } from '../components/ledger-sign/ledger-sign.component';
 import { WalletChooserComponent, WalletChooserComponentOptions, WalletChooserFilter } from '../components/wallet-chooser/wallet-chooser.component';
 import { MasterWallet } from '../model/masterwallets/masterwallet';

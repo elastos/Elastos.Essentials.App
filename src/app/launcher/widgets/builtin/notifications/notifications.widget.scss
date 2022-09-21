@@ -71,11 +71,12 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          font-weight: 600;
         }
       }
 
       .title {
-        font-weight: bold;
+        font-weight: 500;
         margin: 12px 0;
         overflow: hidden;
         white-space: nowrap;
@@ -98,7 +99,7 @@
     .notifications {
       .notification {
         .message {
-          color: #acacac;
+          //color: #acacac;
         }
       }
     }

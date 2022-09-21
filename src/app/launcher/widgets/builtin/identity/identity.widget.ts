@@ -6,7 +6,7 @@ import { DIDManagerService } from 'src/app/launcher/services/didmanager.service'
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
 
 @Component({
@@ -52,7 +52,7 @@ export class IdentityWidget implements IWidget, OnDestroy {
       component: OptionsComponent,
       componentProps: {
       },
-      cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'launcher-options-component' : 'launcher-options-component-dark',
+      cssClass: !this.theme.activeTheme.value.config.usesDarkMode ? 'launcher-options-component' : 'launcher-options-component-dark',
       event: ev,
       translucent: false
     });

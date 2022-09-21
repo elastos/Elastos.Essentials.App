@@ -3,7 +3,7 @@ import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalSecurityService } from 'src/app/services/global.security.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
   selector: 'app-rootedwarning',

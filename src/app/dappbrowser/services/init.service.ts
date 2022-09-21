@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { FavoritesService } from './favorites.service';
 import { IntentReceiverService } from './intentreceiver.service';
 

@@ -1,17 +1,16 @@
 @import "src/app/launcher/root.scss";
 
 ion-grid {
-    background: #fff;
     min-height: 100%;
     margin: 0;
     padding: 15px 0;
 
     .news-item {
         --background: transparent;
-        background: #f0f1ff;
+        background: var(--essentials-box-color);
         --padding-start: 0px;
         --inner-padding-end: 0px;
-        margin: 0 20px;
+        margin: 0 10px;
         margin-bottom: 10px;
         border: 0;
         padding: 0;
@@ -37,8 +36,7 @@ ion-grid {
                 h2 {
                     margin: 0;
                     font-size: 14px;
-                    font-weight: 600;
-                    color: #000000;
+                    font-weight: 500;
                 }
             }
 
@@ -51,7 +49,6 @@ ion-grid {
                     margin: 0 10px;
                     font-size: 10px;
                     font-weight: 500;
-                    color: #000000;
                     text-align: right;
                 }
             }
@@ -66,7 +63,6 @@ ion-grid {
                     font-size: 14px;
                     letter-spacing: 0.14px;
                     text-align: left;
-                    color: #000000;
                     margin: 0;
                 }
             }
@@ -82,41 +78,7 @@ ion-grid {
             .message-col {
                 p {
                     line-height: 1.6;
-                    font-weight: 400;
-                }
-            }
-        }
-    }
-}
-
-.dark-container {
-    background: #121212;
-
-    .news-item {
-        background: #212021;
-
-        .news-row {
-            .name-col {
-                h2 {
-                    color: #ffffff;
-                }
-            }
-
-            .date-col {
-                p {
-                    color: #acacac;
-                }
-            }
-
-            .title-col {
-                p {
-                    color: #ffffff;
-                }
-            }
-
-            .message-col {
-                p {
-                    color: #acacac;
+                    opacity: 0.5;
                 }
             }
         }

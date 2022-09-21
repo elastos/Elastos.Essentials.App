@@ -12,7 +12,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DIDMnemonicHelper } from '../../helpers/didmnemonic.helper';
 
 

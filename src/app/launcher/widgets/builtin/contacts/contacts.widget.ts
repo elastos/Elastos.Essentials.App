@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ContactsInitService } from 'src/app/contacts/services/init.service';
 import { AppmanagerService, RunnableApp } from 'src/app/launcher/services/appmanager.service';
 import { App } from 'src/app/model/app.enum';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
 
 @Component({

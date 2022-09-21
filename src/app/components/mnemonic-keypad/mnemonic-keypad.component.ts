@@ -3,7 +3,7 @@ import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { ModalController, NavParams } from '@ionic/angular';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalMnemonicKeypadService, MnemonicLanguage } from 'src/app/services/global.mnemonickeypad.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 type MnemonicKeypadComponentOptions = {
   restartWithWords: string[];

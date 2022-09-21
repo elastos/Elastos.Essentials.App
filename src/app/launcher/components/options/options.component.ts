@@ -3,7 +3,7 @@ import { PopoverController } from '@ionic/angular';
 import { App } from 'src/app/model/app.enum';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from '../../../services/global.theme.service';
+import { GlobalThemeService } from '../../../services/theming/global.theme.service';
 import { DIDManagerService } from '../../services/didmanager.service';
 
 

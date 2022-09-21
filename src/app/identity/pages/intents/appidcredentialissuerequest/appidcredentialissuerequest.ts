@@ -6,7 +6,7 @@ import { GlobalConfig } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { ApplicationDIDInfo, GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AppIdCredIssueIdentityIntent } from '../../../model/identity.intents';
 import { AppIDService } from '../../../services/appid.service';
 import { AuthService } from '../../../services/auth.service';

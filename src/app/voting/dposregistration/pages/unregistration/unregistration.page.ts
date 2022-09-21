@@ -11,7 +11,7 @@ import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/glo
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DPoSRegistrationInfo, NodesService } from 'src/app/voting/dposvoting/services/nodes.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
@@ -193,7 +193,7 @@ export class DPosUnRegistrationPage implements OnInit {
         }
 
         if (!await this.voteService.checkWalletAvailableForVote()) {
-          return;
+            return;
         }
 
         const payPassword = await this.authService.getWalletPassword(this.masterWalletId);

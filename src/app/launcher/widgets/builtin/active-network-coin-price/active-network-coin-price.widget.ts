@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -83,7 +83,9 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
       if (this.coinPriceRoot) {
         let networkColor = this.activeNetwork.getMainColor(); // RRGGBB
         let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
-        let gradient = `linear-gradient(90deg, #${gradientColor}99 0%, #${gradientColor}33 100%)`;
+        //let gradient = `linear-gradient(90deg, #${gradientColor}99 0%, #${gradientColor}33 100%)`;
+        let gradient = `linear-gradient(90deg, #${gradientColor}FF 0%, #${gradientColor}40 100%)`;
+        // TODO TRY: color/1 to color more dark/1
         this.coinPriceRoot.nativeElement.style.background = gradient;
       }
     }

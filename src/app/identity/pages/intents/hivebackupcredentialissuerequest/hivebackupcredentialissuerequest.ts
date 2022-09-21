@@ -8,7 +8,7 @@ import { UXService } from 'src/app/identity/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { ApplicationDIDInfo, GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { HiveBackupCredIssueIdentityIntent } from '../../../model/identity.intents';
 import { DIDService } from '../../../services/did.service';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';

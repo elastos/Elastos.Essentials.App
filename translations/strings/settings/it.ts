@@ -20,11 +20,11 @@ export const it = {
         'startupscreen-intro-setting': 'Scegli la schermata da visualizzare all\'avvio di Essentials',
 
         // Subtitles
-        'advanced-setting': 'IMPOSTAZIONI AVANZATE',
-        'change-lang': 'CAMBIA LINGUA GLOBALE',
-        'manage-pw': 'GESTISCI PASSWORD',
-        'change-pw': 'CAMBIA PASSWORD',
-        'about-elastos': 'PER SAPERNE DI PIÙ',
+        'advanced-setting': 'Impostazioni avanzate',
+        'change-lang': 'Cambia lingua globale',
+        'manage-pw': 'Gestisci password',
+        'change-pw': 'Cambia password',
+        'about-elastos': 'Per saperne di più',
         'wallet-connect-sessions-intro-setting': 'Gestisci sessioni attive',
         'privacy-intro-setting': 'Più opzioni sulla privacy',
 

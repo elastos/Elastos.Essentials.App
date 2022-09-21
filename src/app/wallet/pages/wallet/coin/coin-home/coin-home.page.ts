@@ -34,8 +34,8 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
 import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -227,7 +227,7 @@ export class CoinHomePage implements OnInit {
         if (updateAll) {
             // Must one by one.
             await this.subWallet.fetchNewestTransactions(TransactionListType.NORMAL),
-            await this.subWallet.fetchNewestTransactions(TransactionListType.INTERNAL)
+                await this.subWallet.fetchNewestTransactions(TransactionListType.INTERNAL)
         } else {
             void this.subWallet.fetchNewestTransactions(this.transactionListType);
         }
@@ -624,7 +624,7 @@ export class CoinHomePage implements OnInit {
             return this.translate.instant(extTxInfo.evm.txInfo.operation.description, extTxInfo.evm.txInfo.operation.descriptionTranslationParams);
  */
         if (transfer && transfer.name)
-          return this.translate.instant(transfer.name);
+            return this.translate.instant(transfer.name);
     }
 
     public getContractEvents(transfer: TransactionInfo): EthContractEvent[] {

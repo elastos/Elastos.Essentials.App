@@ -4,14 +4,14 @@ import { IonSlides, ModalController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
@@ -33,8 +33,10 @@ export class HomePage implements OnInit {
 
   private popover: HTMLIonPopoverElement = null;
   private modal: any = null;
+
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private themeSubscription: Subscription = null; // Subscription to theme change
+  private themeColorSubscription: Subscription = null;
   private widgetsEditionModeSub: Subscription = null;
 
   public widgetsSlidesOpts = {
@@ -110,11 +112,11 @@ export class HomePage implements OnInit {
       }
     });
 
-    if (this.theme.darkMode) {
+    /* if (this.theme.darkMode) {
       this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     } else {
       this.titleBar.setForegroundMode(TitleBarForegroundMode.DARK);
-    }
+    } */
 
     this.themeSubscription = this.theme.activeTheme.subscribe(theme => {
       this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {

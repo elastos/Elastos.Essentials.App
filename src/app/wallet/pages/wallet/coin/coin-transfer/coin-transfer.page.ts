@@ -35,7 +35,7 @@ import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
@@ -527,7 +527,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 showContacts: this.showContactsOption,
                 showCryptonames: this.showCryptonamesOption,
             },
-            cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'options-component' : 'options-component-dark',
+            cssClass: !this.theme.activeTheme.value.config.usesDarkMode ? 'options-component' : 'options-component-dark',
             event: ev,
             translucent: false
         });

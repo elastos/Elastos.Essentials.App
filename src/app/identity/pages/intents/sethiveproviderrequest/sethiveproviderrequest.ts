@@ -8,7 +8,7 @@ import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.
 import { Logger } from 'src/app/logger';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AuthService } from '../../../services/auth.service';
 import { DIDService } from '../../../services/did.service';
 import { ProfileService } from '../../../services/profile.service';

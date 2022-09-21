@@ -12,7 +12,7 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';

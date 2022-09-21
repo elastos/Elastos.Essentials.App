@@ -10,16 +10,42 @@
     display: flex;
     align-self: center;
     margin: 10px;
+    width: 100%;
+    align-items: center;
+    place-content: center;
+    position: relative;
+
+    .change-color {
+      position: absolute;
+      left: 0;
+      padding-left: 5px;
+    }
 
     .exit-edition {
       border-radius: 50px;
       width: 100px;
       padding: 6px;
-      background: #f0f1ff;
+      background: var(--essentials-box-color);
       transition: all 0.3s ease;
 
       &:active {
         opacity: 0.5;
+      }
+    }
+
+    .change-variant {
+      position: absolute;
+      right: 0;
+      padding-right: 5px;
+    }
+
+    .change-color,
+    .change-variant {
+      font-size: 14px;
+      display: flex;
+      font-weight: 500;
+      img {
+        margin-right: 5px;
       }
     }
   }
@@ -45,15 +71,7 @@
 
 // Placeholder showing the insertion position while dragging
 .drag-placeholder {
-  background: orange;
+  background: var(--ion-text-color);
   opacity: 0.5;
   height: 10px;
-}
-
-.darkContainer {
-  .edition-controls {
-    .exit-edition {
-      background: #acacac;
-    }
-  }
 }

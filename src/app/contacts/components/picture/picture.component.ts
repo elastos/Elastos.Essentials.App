@@ -1,13 +1,13 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { NavParams, ModalController } from '@ionic/angular';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { ModalController, NavParams } from '@ionic/angular';
 
 import { AppService } from '../../services/app.service';
 
-import { Avatar } from '../../models/avatar';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { Avatar } from '../../models/avatar';
 
 @Component({
   selector: 'app-picture',
@@ -32,7 +32,7 @@ export class PictureComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(JSON.parse(this.navParams.get('avatar')) !== null) {
+    if (JSON.parse(this.navParams.get('avatar')) !== null) {
       Logger.log('contacts', 'Contact has picture');
       this.oldAvatar = JSON.parse(this.navParams.get('avatar'));
       this.avatar = JSON.parse(this.navParams.get('avatar'));
@@ -60,7 +60,7 @@ export class PictureComponent implements OnInit {
       quality: 90,
       destinationType: 0,
       encodingType: 0,
-      mediaType:0,
+      mediaType: 0,
       correctOrientation: true,
       sourceType: sourceType,
       targetWidth: 256,
@@ -78,7 +78,7 @@ export class PictureComponent implements OnInit {
   }
 
   submit(useImg: boolean): void {
-    if(useImg) {
+    if (useImg) {
       void this.modalCtrl.dismiss({
         useImg: true,
         avatar: this.avatar

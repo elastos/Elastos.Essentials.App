@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CurrencyService } from '../../../services/currency.service';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { CurrencyService } from '../../../services/currency.service';
 
 @Component({
   selector: 'app-currency-select',

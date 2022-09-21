@@ -8,7 +8,7 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 export type OnBoardIntentParams = {
   feature: "easybridge" | unknown;

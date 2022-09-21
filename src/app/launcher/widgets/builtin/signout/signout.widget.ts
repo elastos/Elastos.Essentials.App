@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
 
 @Component({

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { AppmanagerService } from 'src/app/launcher/services/appmanager.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { PluginConfig, PortalContent } from '../../../base/pluginconfig';
 
 @Component({

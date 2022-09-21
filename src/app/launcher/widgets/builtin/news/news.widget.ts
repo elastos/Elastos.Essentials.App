@@ -3,7 +3,7 @@ import { ModalController, PopoverController } from '@ionic/angular';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
 import { NewsContent, NewsContentItem, PluginConfig } from '../../base/pluginconfig';
 import { WidgetHolderComponent } from '../../base/widget-holder/widget-holder.component';

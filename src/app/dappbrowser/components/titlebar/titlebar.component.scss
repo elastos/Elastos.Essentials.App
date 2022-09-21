@@ -1,35 +1,9 @@
 @import "src/app/components/titlebar/titlebar.component.scss";
 
 :host {
-    background: var(--ion-background-color, #fff);
-
-    .lightContainer {
-        ion-col {
-            ion-input {
-                background: #ffffff;
-                box-shadow: 0 3px 15px 0 #ededf0;
-            }
-        }
-    }
-
-    .darkContainer {
-        ion-row {
-            ion-col {
-                // .img-btn-mark {
-                //     background-color: #313131;
-                // }
-
-                ion-input {
-                    background-color: #212021;
-                    box-shadow: none;
-                }
-            }
-        }
-    }
-
     ion-header {
         ion-row {
-            height:100%;
+            height: 100%;
 
             display: flex;
             justify-content: center;
@@ -47,12 +21,8 @@
                     align-items: center;
                 }
 
-                // .img-btn-mark {
-                //     background-color: #e5e8f1;
-                //     border-radius: 5px;
-                // }
-
                 ion-input {
+                    background: var(--essentials-box-color);
                     height: 37px;
                     border-radius: 5px;
                     font-size: 14px;

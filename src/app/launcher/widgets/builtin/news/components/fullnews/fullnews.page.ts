@@ -10,7 +10,7 @@ import { NewsContent, NewsContentItem, PluginConfig } from 'src/app/launcher/wid
 import { NewsSource, WidgetsNewsService } from 'src/app/launcher/widgets/services/news.service';
 import { WidgetPluginsService } from 'src/app/launcher/widgets/services/plugin.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 /**
  * Mix of raw news source config with real news content.

@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { AppmanagerService } from 'src/app/launcher/services/appmanager.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { PluginConfig, TokenPriceContent } from '../../../base/pluginconfig';
 
 @Component({

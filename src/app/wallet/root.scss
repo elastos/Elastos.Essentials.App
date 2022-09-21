@@ -171,8 +171,9 @@ ion-footer {
     border-radius: 17px;
     padding: 7.5px 10px 7.5px 0;
     margin-bottom: 7.5px;
-    background-color: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
+    //background-color: #ffffff;
+    //box-shadow: 0 3px 15px 0 #ededf0;
+    background: var(--essentials-box-color);
 
     .left-col {
         display: flex;
@@ -280,8 +281,9 @@ ion-footer {
 }
 
 .dark-subwallet-row {
-    background-color: #212021;
-    box-shadow: none;
+    //background-color: #212021;
+    //box-shadow: none;
+    background: var(--essentials-box-color);
 
     .left-col {
         .icon-container {

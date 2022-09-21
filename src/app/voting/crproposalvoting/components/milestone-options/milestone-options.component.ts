@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CROperationsService } from '../../services/croperations.service';
 
 
@@ -35,11 +35,11 @@ export class MileStoneOptionsComponent implements OnInit {
             this.crOperations.handleProposalDetailPageCommand(commandName);
         }
         else if (commandName == "updatemilestone") {
-            this.crOperations.handleProposalDetailPageCommand(commandName, {stage: this.lastTracking.stage});
+            this.crOperations.handleProposalDetailPageCommand(commandName, { stage: this.lastTracking.stage });
         }
         else if (commandName == "reviewmilestone") {
             this.crOperations.handleProposalDetailPageCommand(commandName,
-                    {stage: this.lastTracking.stage, messageHash: this.lastTracking.apply.messageHash});
+                { stage: this.lastTracking.stage, messageHash: this.lastTracking.apply.messageHash });
         }
 
     }

@@ -5,7 +5,7 @@ import { App } from 'src/app/model/app.enum';
 import { Packet } from 'src/app/redpackets/model/packets.model';
 import { PacketService } from 'src/app/redpackets/services/packet.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 

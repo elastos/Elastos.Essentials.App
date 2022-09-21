@@ -8,7 +8,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Contact } from '../../models/contact.model';
 import { DApp } from '../../models/dapp.model';
 import { AppService } from '../../services/app.service';
@@ -59,7 +59,7 @@ export class FriendDetailsPage implements OnInit {
     public theme: GlobalThemeService,
     private clipboard: Clipboard,
     private globalNavService: GlobalNavService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
@@ -70,7 +70,7 @@ export class FriendDetailsPage implements OnInit {
 
       const targetContact = this.friendsService.getContact(paramMap.get('friendId'));
       this.friendsService.contacts.map((contact) => {
-        if(contact.id === targetContact.id) {
+        if (contact.id === targetContact.id) {
           this.contact = contact;
         }
       });
@@ -83,7 +83,7 @@ export class FriendDetailsPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('contacts.contact-profile'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK } );
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.appService.onTitleBarItemClicked(icon);
     });

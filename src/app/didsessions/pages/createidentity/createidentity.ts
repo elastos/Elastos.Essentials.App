@@ -11,7 +11,7 @@ import { Styling } from 'src/app/didsessions/services/styling';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 
 @Component({
