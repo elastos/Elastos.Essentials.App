@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Logger } from '../logger';
-import { MAINNET_TEMPLATE } from './global.networks.service';
 
 export type Preference<T> = {
   key: string;
@@ -24,7 +23,7 @@ export class GlobalStorageService {
     let fullKey = "";
     if (did) {
       // For backward compatibility, mainnet network template uses old style storage keys (no network suffix).
-      let networkKey = networkTemplate === MAINNET_TEMPLATE ? '' : ':' + networkTemplate;
+      let networkKey = networkTemplate === 'MainNet' ? '' : ':' + networkTemplate;
       fullKey += did + networkKey + "_";
     }
     fullKey += context + "_" + key;
@@ -38,7 +37,7 @@ export class GlobalStorageService {
     // Delete all settings that start with the DID string
     let existingKeys: string[] = await this.storage.keys();
     let deletedEntries = 0;
-    let networkKey = networkTemplate === MAINNET_TEMPLATE ? '' : ':' + networkTemplate;
+    let networkKey = networkTemplate === 'MainNet' ? '' : ':' + networkTemplate;
     for (let key of existingKeys) {
       if (key.startsWith(did + networkKey + "_")) {
         await this.storage.remove(key);
