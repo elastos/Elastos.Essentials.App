@@ -49,8 +49,8 @@ export class GlobalPreferencesService {
   /**
    * Tells if a given preference was saved to persistent storage or if we may use the default value instead.
    */
-  public async preferenceIsSet(did: string, key: string) {
-    let diskPreferences = await this.storage.getSetting<AllPreferences>(did, "prefservice", "preferences", {});
+  public async preferenceIsSet(did: string, networkTemplate: string, key: string) {
+    let diskPreferences = await this.storage.getSetting<AllPreferences>(did, networkTemplate, "prefservice", "preferences", {});
     return key in diskPreferences;
   }
 
@@ -59,14 +59,14 @@ export class GlobalPreferencesService {
    *
    * @param key Unique key identifying the preference data.
    */
-  public async getPreference<T>(did: string, key: string, allowNullDID = false): Promise<T> {
+  public async getPreference<T>(did: string, networkTemplate: string, key: string, allowNullDID = false): Promise<T> {
     if (did == null && !allowNullDID)
       throw new Error("Getting a global preference (no DID set) without allowNullDID set to false is forbidden! key= " + key);
 
     if (!(key in this.getDefaultPreferences()))
       throw new Error("Preference " + key + " is not a registered preference!");
 
-    let preferences = await this.getPreferences(did, allowNullDID);
+    let preferences = await this.getPreferences(did, networkTemplate, allowNullDID);
     if (!(key in preferences))
       throw new Error("Preference " + key + " is not a registered preference!");
 
@@ -78,11 +78,11 @@ export class GlobalPreferencesService {
   /**
    * Get all system preferences.
    */
-  public async getPreferences(did: string, allowNullDID = false): Promise<AllPreferences> {
+  public async getPreferences(did: string, networkTemplate: string, allowNullDID = false): Promise<AllPreferences> {
     if (did == null && !allowNullDID)
       throw new Error("Getting global preferences (no DID set) without allowNullDID set to false is forbidden!");
 
-    let diskPreferences = await this.storage.getSetting<AllPreferences>(did, "prefservice", "preferences", {});
+    let diskPreferences = await this.storage.getSetting<AllPreferences>(did, networkTemplate, "prefservice", "preferences", {});
 
     //Logger.log('PreferenceService', "DISK PREFS", did, diskPreferences)
 
@@ -96,14 +96,14 @@ export class GlobalPreferencesService {
    * @param key   Unique key identifying the preference data.
    * @param value The data to be stored. If null is passed, the preference is restored to system default value.
    */
-  public async setPreference(did: string, key: string, value: any, allowNullDID = false): Promise<void> {
+  public async setPreference(did: string, networkTemplate: string, key: string, value: any, allowNullDID = false): Promise<void> {
     if (!(key in this.getDefaultPreferences()))
       throw new Error("Preference " + key + " is not a registered preference!");
 
-    let preferences = await this.getPreferences(did, allowNullDID);
+    let preferences = await this.getPreferences(did, networkTemplate, allowNullDID);
     preferences[key] = value;
 
-    await this.storage.setSetting<AllPreferences>(did, "prefservice", "preferences", preferences);
+    await this.storage.setSetting<AllPreferences>(did, networkTemplate, "prefservice", "preferences", preferences);
 
     // Notify listeners about a preference change
     this.preferenceListener.next({ key, value });
@@ -113,16 +113,16 @@ export class GlobalPreferencesService {
    * Delete all system preferences.
    * Call this when the did is deleted.
    */
-  public async deletePreferences(did: string, allowNullDID = false) {
+  public async deletePreferences(did: string, networkTemplate: string, allowNullDID = false) {
     if (did == null && !allowNullDID)
       throw new Error("Getting global preferences (no DID set) without allowNullDID set to false is forbidden!");
 
-    await this.storage.deleteSetting(did, "prefservice", "preferences");
+    await this.storage.deleteSetting(did, networkTemplate, "prefservice", "preferences");
   }
 
-  public async developerModeEnabled(did: string): Promise<boolean> {
+  public async developerModeEnabled(did: string, networkTemplate: string): Promise<boolean> {
     try {
-      let devMode = await this.getPreference(did, "developer.mode");
+      let devMode = await this.getPreference(did, networkTemplate, "developer.mode");
       if (devMode)
         return true;
       else
@@ -133,35 +133,35 @@ export class GlobalPreferencesService {
     }
   }
 
-  public getUseBuiltInBrowser(did: string): Promise<boolean> {
-    return this.getPreference<boolean>(did, "privacy.browser.usebuiltin");
+  public getUseBuiltInBrowser(did: string, networkTemplate: string): Promise<boolean> {
+    return this.getPreference<boolean>(did, networkTemplate, "privacy.browser.usebuiltin");
   }
 
-  public setUseBuiltInBrowser(did: string, useBuiltIn: boolean): Promise<void> {
-    return this.setPreference(did, "privacy.browser.usebuiltin", useBuiltIn);
+  public setUseBuiltInBrowser(did: string, networkTemplate: string, useBuiltIn: boolean): Promise<void> {
+    return this.setPreference(did, networkTemplate, "privacy.browser.usebuiltin", useBuiltIn);
   }
 
-  public getPublishIdentityMedium(did: string): Promise<string> {
-    return this.getPreference<string>(did, "privacy.identity.publication.medium");
+  public getPublishIdentityMedium(did: string, networkTemplate: string): Promise<string> {
+    return this.getPreference<string>(did, networkTemplate, "privacy.identity.publication.medium");
   }
 
-  public setPublishIdentityMedium(did: string, medium: 'assist' | 'wallet'): Promise<void> {
-    return this.setPreference(did, "privacy.identity.publication.medium", medium);
+  public setPublishIdentityMedium(did: string, networkTemplate: string, medium: 'assist' | 'wallet'): Promise<void> {
+    return this.setPreference(did, networkTemplate, "privacy.identity.publication.medium", medium);
   }
 
-  public getSendStatsToCredentialToolbox(did: string): Promise<boolean> {
-    return this.getPreference<boolean>(did, "privacy.credentialtoolbox.stats");
+  public getSendStatsToCredentialToolbox(did: string, networkTemplate: string): Promise<boolean> {
+    return this.getPreference<boolean>(did, networkTemplate, "privacy.credentialtoolbox.stats");
   }
 
-  public setSendStatsToCredentialToolbox(did: string, sendStats: boolean): Promise<void> {
-    return this.setPreference(did, "privacy.credentialtoolbox.stats", sendStats);
+  public setSendStatsToCredentialToolbox(did: string, networkTemplate: string, sendStats: boolean): Promise<void> {
+    return this.setPreference(did, networkTemplate, "privacy.credentialtoolbox.stats", sendStats);
   }
 
-  public getCollectLogs(did: string): Promise<boolean> {
-    return this.getPreference<boolean>(did, "developer.collectLogs");
+  public getCollectLogs(did: string, networkTemplate: string): Promise<boolean> {
+    return this.getPreference<boolean>(did, networkTemplate, "developer.collectLogs");
   }
 
-  public setCollectLogs(did: string, collectLogs: boolean): Promise<void> {
-    return this.setPreference(did, "developer.collectLogs", collectLogs);
+  public setCollectLogs(did: string, networkTemplate: string, collectLogs: boolean): Promise<void> {
+    return this.setPreference(did, networkTemplate, "developer.collectLogs", collectLogs);
   }
 }

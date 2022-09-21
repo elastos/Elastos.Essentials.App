@@ -21,6 +21,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import type { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
@@ -134,7 +135,7 @@ export class DappBrowserService implements GlobalService {
     }
 
     public async getBrowseMode(): Promise<DAppsBrowseMode> {
-        if (await this.prefs.getUseBuiltInBrowser(DIDSessionsStore.signedInDIDString))
+        if (await this.prefs.getUseBuiltInBrowser(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate))
             return DAppsBrowseMode.IN_APP;
         else
             return DAppsBrowseMode.EXTERNAL_BROWSER;
@@ -1018,7 +1019,7 @@ export class DappBrowserService implements GlobalService {
             return appInfo;
 
         let key = "appinfo-" + appInfo.url; // Use the url as access key
-        await this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", key, appInfo);
+        await this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dappbrowser", key, appInfo);
 
         // Add to recently browsed apps list as well
         await this.addAppToRecent(appInfo.url);
@@ -1028,7 +1029,7 @@ export class DappBrowserService implements GlobalService {
 
     public async getBrowsedAppInfo(url: string): Promise<BrowsedAppInfo> {
         let key = "appinfo-" + url; // Use the url as access key
-        let appInfo = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, "dappbrowser", key, null);
+        let appInfo = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dappbrowser", key, null);
         return appInfo;
     }
 
@@ -1059,11 +1060,11 @@ export class DappBrowserService implements GlobalService {
     }
 
     private async saveRecentApps() {
-        await this.globalStorageService.setSetting<string[]>(DIDSessionsStore.signedInDIDString, "dappbrowser", "recentapps", this.recentApps.value);
+        await this.globalStorageService.setSetting<string[]>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dappbrowser", "recentapps", this.recentApps.value);
     }
 
     private async loadRecentApps() {
-        this.recentApps.next(await this.globalStorageService.getSetting<string[]>(DIDSessionsStore.signedInDIDString, "dappbrowser", "recentapps", []));
+        this.recentApps.next(await this.globalStorageService.getSetting<string[]>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dappbrowser", "recentapps", []));
     }
 
     public async getRecentAppsWithInfo(): Promise<BrowsedAppInfo[]> {

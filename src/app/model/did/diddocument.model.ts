@@ -1,6 +1,7 @@
 import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DIDURL } from './didurl.model';
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -154,7 +155,7 @@ export class DIDDocument {
     public async getUpdated(): Promise<Date> {
         if (!this.pluginDidDocument.getUpdated()) {
             // No updated date provided in the DID document: fallback to our own locally saved "updated"
-            let storedDateString = await GlobalStorageService.instance.getSetting(this.didString, 'diddocument', "updated", null);
+            let storedDateString = await GlobalStorageService.instance.getSetting(this.didString, NetworkTemplateStore.networkTemplate, 'diddocument', "updated", null);
             return new Date(storedDateString);
         }
         return new Date();
@@ -166,7 +167,7 @@ export class DIDDocument {
      * it with remote document date later on.
      */
     private async markUpdated() {
-        await GlobalStorageService.instance.setSetting(this.didString, 'diddocument', "updated", (new Date()).toISOString());
+        await GlobalStorageService.instance.setSetting(this.didString, NetworkTemplateStore.networkTemplate, 'diddocument', "updated", (new Date()).toISOString());
     }
 
     setCounter() {

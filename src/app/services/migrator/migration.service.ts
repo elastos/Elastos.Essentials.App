@@ -6,6 +6,7 @@ import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { GlobalTranslationService } from "src/app/services/global.translation.service";
 import { GlobalNavService } from "../global.nav.service";
 import { GlobalStorageService } from "../global.storage.service";
+import { NetworkTemplateStore } from "../stores/networktemplate.store";
 import { DIDSessionsStore } from './../stores/didsessions.store';
 import { Migration } from "./migration";
 import { BrowserFavoritesElastosNetworkSplitMigration } from "./migrations/browserfavoriteselastosnet.migration";
@@ -105,7 +106,7 @@ export class MigrationService {
 
   private saveLastCheckedMigrationId(did: string, id: number): Promise<void> {
     Logger.log("migrations", "Marking DID with last checked migration ID " + id);
-    return this.storage.setSetting(did, "migrations", "lastCheckedMigrationId", id);
+    return this.storage.setSetting(did, NetworkTemplateStore.networkTemplate, "migrations", "lastCheckedMigrationId", id);
   }
 
   /**
@@ -117,7 +118,7 @@ export class MigrationService {
 
     // Old users (before migrations where introduced) don't have lastCheckedMigrationId so we consider they are
     // at ID 0, meaning that all migrations must be ran for them.
-    let lastCheckedMigrationId = await this.storage.getSetting(did, "migrations", "lastCheckedMigrationId", 0);
+    let lastCheckedMigrationId = await this.storage.getSetting(did, NetworkTemplateStore.networkTemplate, "migrations", "lastCheckedMigrationId", 0);
 
     if (LATEST_MIGRATION_ID > lastCheckedMigrationId)
       Logger.log("migrations", `Migration is required: LATEST_MIGRATION_ID ${LATEST_MIGRATION_ID} > lastCheckedMigrationId ${lastCheckedMigrationId}`);
@@ -133,7 +134,7 @@ export class MigrationService {
    * Called by the migration UI to start the actual migrations.
    */
   public async runMigrations(statsCallback: StatsCallback, migrationCallback: MigrationCallback): Promise<boolean> {
-    let lastCheckedMigrationId = await this.storage.getSetting(this.identityToMigrate.didString, "migrations", "lastCheckedMigrationId", 0);
+    let lastCheckedMigrationId = await this.storage.getSetting(this.identityToMigrate.didString, NetworkTemplateStore.networkTemplate, "migrations", "lastCheckedMigrationId", 0);
 
     let migrationsToRun = this.MIGRATIONS.filter(migration => migration.uniquelyIncrementedId > lastCheckedMigrationId);
     statsCallback(migrationsToRun.length);

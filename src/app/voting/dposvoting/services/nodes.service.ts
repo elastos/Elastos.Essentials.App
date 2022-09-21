@@ -10,6 +10,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/tx-providers/transaction.types';
@@ -166,7 +167,7 @@ export class NodesService {
 
     // Storage
     getVisit() {
-        void this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'dposvoting', 'visited', false).then(data => {
+        void this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'dposvoting', 'visited', false).then(data => {
             if (data || data === true) {
                 this.firstVisit = false;
             }
@@ -184,7 +185,7 @@ export class NodesService {
 
     async getStoredVotes() {
         this._votes = [];
-        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'dposvoting', jsToSpvWalletId(this.voteService.masterWalletId) + '-votes', []).then(data => {
+        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'dposvoting', jsToSpvWalletId(this.voteService.masterWalletId) + '-votes', []).then(data => {
             if (data && data.length > 0) {
                 // filter invalid votes.
                 this._votes = data.filter(c => { return c.tx; });
@@ -197,7 +198,7 @@ export class NodesService {
     async setStoredVotes() {
         this.sortVotes();
         Logger.log('dposvoting', 'Vote history updated', this._votes);
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "dposvoting", jsToSpvWalletId(this.voteService.masterWalletId) + '-votes', this._votes);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dposvoting", jsToSpvWalletId(this.voteService.masterWalletId) + '-votes', this._votes);
     }
 
     // getStoredNodes() {

@@ -14,6 +14,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
@@ -206,7 +207,7 @@ export class AppmanagerService {
     }
 
     async getVisit() {
-        let visit = await this.storage.getSetting<boolean>(this.didService.signedIdentity.didString, "launcher", 'visit', false);
+        let visit = await this.storage.getSetting<boolean>(this.didService.signedIdentity.didString, NetworkTemplateStore.networkTemplate, "launcher", 'visit', false);
         if (visit || visit === true) {
             this.firstVisit = false;
         } else {

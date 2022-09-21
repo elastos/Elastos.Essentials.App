@@ -8,6 +8,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalSecurityService } from 'src/app/services/global.security.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 
 // TODO: config rpc for private net?
 type privateConfig = {
@@ -55,7 +56,7 @@ export class DeveloperService extends GlobalService {
 
   async getCurrentConfigurations() {
     let networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
-    let mode = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, "developer.backgroundservices.startonboot");
+    let mode = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developer.backgroundservices.startonboot");
 
     this.zone.run(() => {
       this.selectedNetworkTemplate = networkTemplate;
@@ -66,7 +67,7 @@ export class DeveloperService extends GlobalService {
   // Reset
   async reset() {
     await this.globalSecurityService.setScreenCaptureAllowed(false);
-    await this.prefs.setCollectLogs(DIDSessionsStore.signedInDIDString, false);
+    await this.prefs.setCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, false);
   }
 
   /* async configNetwork() {
@@ -111,7 +112,7 @@ export class DeveloperService extends GlobalService {
   } */
 
   private async setPreference(key: string, value: any): Promise<void> {
-    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, key, value);
+    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, key, value);
   }
 
   async showToast(header: string, msg?: string, duration = 4000) {

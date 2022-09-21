@@ -27,6 +27,7 @@ import { GlobalStorageService } from './global.storage.service';
 import { GlobalSwitchNetworkService } from './global.switchnetwork.service';
 import { GlobalTranslationService } from './global.translation.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from './stores/networktemplate.store';
 
 /**
  * Indicates from where a request to initiate a new WC session came from
@@ -804,7 +805,7 @@ export class GlobalWalletConnectService extends GlobalService {
       // Let the user know that the request was received but could not be handled
       this.native.genericToast("settings.wallet-connect-error", 2000);
 
-      if (await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString))
+      if (await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate))
         this.native.genericToast("settings.raw-request" + intentUrl, 2000);
 
       return false;
@@ -908,7 +909,7 @@ export class GlobalWalletConnectService extends GlobalService {
 
   private async loadSessions(): Promise<WalletConnectSession[]> {
     Logger.log("walletconnect", "Loading storage sessions for user ", DIDSessionsStore.signedInDIDString);
-    let sessions = await this.storage.getSetting<WalletConnectSession[]>(DIDSessionsStore.signedInDIDString, "walletconnect", "sessions", []);
+    let sessions = await this.storage.getSetting<WalletConnectSession[]>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", "sessions", []);
     return sessions;
   }
 
@@ -922,7 +923,7 @@ export class GlobalWalletConnectService extends GlobalService {
     else
       sessions[existingSessionIndex] = session; // replace
 
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "walletconnect", "sessions", sessions);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", "sessions", sessions);
   }
 
   private async deleteSession(session: WalletConnectSession) {
@@ -932,7 +933,7 @@ export class GlobalWalletConnectService extends GlobalService {
     if (existingSessionIndex >= 0)
       sessions.splice(existingSessionIndex, 1);
 
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "walletconnect", "sessions", sessions);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", "sessions", sessions);
   }
 
   // message: Bytes | string

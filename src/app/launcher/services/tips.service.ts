@@ -6,6 +6,7 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { Tip } from '../model/tip.model';
 import { TipAudience } from '../model/tipaudience.model';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
@@ -151,7 +152,7 @@ export class TipsService {
 
   private async rightTimeToShowATip(): Promise<boolean> {
     try {
-      let value = await this.storage.getSetting<string>(DIDSessionsStore.signedInDIDString, "launcher", "latest-sent-tip-time", null);
+      let value = await this.storage.getSetting<string>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "latest-sent-tip-time", null);
       if (!value)
         return true; // Nothing saved yet: so it's a right time to show a tip.
 
@@ -171,7 +172,7 @@ export class TipsService {
 
   private async saveSentTipTime() {
     try {
-      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "launcher", "latest-sent-tip-time", new Date().toISOString());
+      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "latest-sent-tip-time", new Date().toISOString());
     }
     catch (err) {
       // Kind of blocking issue, but let's resolve anyway...
@@ -198,7 +199,7 @@ export class TipsService {
 
   private async userWantsToSeeTips(): Promise<boolean> {
     try {
-      let value = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, "help.dailytips.show");
+      let value = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "help.dailytips.show");
       return value;
     }
     catch (err) {
@@ -228,12 +229,12 @@ export class TipsService {
   }
 
   private saveViewedTips(tips: Tip[]): Promise<void> {
-    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "launcher", "viewed-tips", tips);
+    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "viewed-tips", tips);
   }
 
   private async loadViewedTips(): Promise<Tip[]> {
     try {
-      let tips = await this.storage.getSetting<Tip[]>(DIDSessionsStore.signedInDIDString, "launcher", "viewed-tips", []);
+      let tips = await this.storage.getSetting<Tip[]>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "viewed-tips", []);
       return tips;
     }
     catch (err) {
@@ -243,7 +244,7 @@ export class TipsService {
 
   private async developerModeEnabled(): Promise<boolean> {
     try {
-      let devMode = await this.prefs.getPreference(DIDSessionsStore.signedInDIDString, "developer.mode");
+      let devMode = await this.prefs.getPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developer.mode");
       if (devMode)
         return true;
       else

@@ -6,6 +6,7 @@ import { Logger } from "src/app/logger";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { GlobalTranslationService } from "src/app/services/global.translation.service";
+import { NetworkTemplateStore } from "src/app/services/stores/networktemplate.store";
 import { Trade } from "src/app/thirdparty/custom-uniswap-v2-sdk/src";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
 import { EVMNetworkWallet } from "src/app/wallet/model/networks/evms/networkwallets/evm.networkwallet";
@@ -161,7 +162,8 @@ export class Transfer implements SerializedTransfer {
    * Loads the on going transfer from persistence if there is one.
    */
   public static async loadExistingTransfer(): Promise<Transfer> {
-    let serializedTransfer = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString, "easybridge", "activetransfer", null);
+    let serializedTransfer = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString,
+        NetworkTemplateStore.networkTemplate, "easybridge", "activetransfer", null);
     if (!serializedTransfer)
       return null;
 
@@ -199,11 +201,13 @@ export class Transfer implements SerializedTransfer {
       userAgreed: this.userAgreed
     };
 
-    return GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString, "easybridge", "activetransfer", serializedTransfer);
+    return GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString,
+        NetworkTemplateStore.networkTemplate, "easybridge", "activetransfer", serializedTransfer);
   }
 
   public reset() {
-    return GlobalStorageService.instance.deleteSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString, "easybridge", "activetransfer");
+    return GlobalStorageService.instance.deleteSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString,
+        NetworkTemplateStore.networkTemplate, "easybridge", "activetransfer");
   }
 
   /**

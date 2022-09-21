@@ -6,10 +6,6 @@ import { Platform } from '@ionic/angular';
 import { BehaviorSubject, filter } from 'rxjs';
 import { Logger } from '../logger';
 
-// Network templates are dynamic but for convenience, assume we always have mainnet and testnet ones.
-export const MAINNET_TEMPLATE = "MainNet";
-export const TESTNET_TEMPLATE = "TestNet";
-
 /**
  * Manages interactions with Firebase, including device token creation and reception of push messages.
  *

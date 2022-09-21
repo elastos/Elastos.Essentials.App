@@ -12,7 +12,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalNetworksService, LRW_TEMPLATE, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
@@ -92,7 +92,7 @@ export class PickIdentityPage {
       case TESTNET_TEMPLATE:
         this.titleBar.setTitle('TEST NET Active');
         break;
-      case 'LRW':
+      case LRW_TEMPLATE:
         this.titleBar.setTitle('CR Private Net Active');
         break;
     }

@@ -2,6 +2,7 @@ import type { WalletStorage } from "@elastosfoundation/wallet-js-sdk";
 import { LocalStoreInfo } from "@elastosfoundation/wallet-js-sdk/typings/persistence/LocalStore";
 import { JSONObject } from "@elastosfoundation/wallet-js-sdk/typings/types";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
+import { NetworkTemplateStore } from "src/app/services/stores/networktemplate.store";
 
 /**
  * Custom Elastos wallet JS SDK storage to sandbox wallet storages by DID.
@@ -10,11 +11,11 @@ export class JSSDKLocalStorage implements WalletStorage {
   constructor(private signedInDID: string) { }
 
   loadStore(masterWalletID: string): Promise<LocalStoreInfo> {
-    return GlobalStorageService.instance.getSetting(this.signedInDID, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID, null);
+    return GlobalStorageService.instance.getSetting(this.signedInDID, NetworkTemplateStore.networkTemplate, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID, null);
   }
 
   removeStore(masterWalletID: string): Promise<void> {
-    return GlobalStorageService.instance.deleteSetting(this.signedInDID, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID);
+    return GlobalStorageService.instance.deleteSetting(this.signedInDID, NetworkTemplateStore.networkTemplate, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID);
   }
 
   public async saveStore(masterWalletID: string, j: JSONObject): Promise<void> {
@@ -24,14 +25,14 @@ export class JSSDKLocalStorage implements WalletStorage {
       await this.saveMasterWalletIDs(storeIDs);
     }
 
-    return GlobalStorageService.instance.setSetting(this.signedInDID, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID, j);
+    return GlobalStorageService.instance.setSetting(this.signedInDID, NetworkTemplateStore.networkTemplate, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID, j);
   }
 
   public getMasterWalletIDs(): Promise<string[]> {
-    return GlobalStorageService.instance.getSetting(this.signedInDID, "wallet", "elastoswalletjssdkstorage-stores", []);
+    return GlobalStorageService.instance.getSetting(this.signedInDID, NetworkTemplateStore.networkTemplate, "wallet", "elastoswalletjssdkstorage-stores", []);
   }
 
   private saveMasterWalletIDs(walletIDs: string[]): Promise<void> {
-    return GlobalStorageService.instance.setSetting(this.signedInDID, "wallet", "elastoswalletjssdkstorage-stores", walletIDs);
+    return GlobalStorageService.instance.setSetting(this.signedInDID, NetworkTemplateStore.networkTemplate, "wallet", "elastoswalletjssdkstorage-stores", walletIDs);
   }
 }

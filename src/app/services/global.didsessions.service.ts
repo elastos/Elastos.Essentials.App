@@ -12,6 +12,7 @@ import { GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
 import { MigrationService } from './migrator/migration.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from './stores/networktemplate.store';
 
 declare let internalManager: InternalPlugin.InternalManager;
 
@@ -47,8 +48,8 @@ export class GlobalDIDSessionsService {
   public async init(): Promise<void> {
     Logger.log("DIDSessionsService", "Initializating the DID Sessions service");
 
-    this.identities = await this.storage.getSetting<IdentityEntry[]>(null, "didsessions", this.storageKeyForNetworkTemplate("identities"), []);
-    let lastSignedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
+    this.identities = await this.storage.getSetting<IdentityEntry[]>(null, null, "didsessions", this.storageKeyForNetworkTemplate("identities"), []);
+    let lastSignedInIdentity = await this.storage.getSetting<IdentityEntry>(null, null, "didsessions", "signedinidentity", null);
     if (lastSignedInIdentity) {
       let identity = this.identities.find(entry => lastSignedInIdentity.didString == entry.didString);
       if (identity) {
@@ -58,11 +59,11 @@ export class GlobalDIDSessionsService {
   }
 
   public saveDidSessionsToDisk(): Promise<void> {
-    return this.storage.setSetting(null, "didsessions", this.storageKeyForNetworkTemplate("identities"), this.identities);
+    return this.storage.setSetting(null, null, "didsessions", this.storageKeyForNetworkTemplate("identities"), this.identities);
   }
 
   public saveSignedInIdentityToDisk(): Promise<void> {
-    return this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
+    return this.storage.setSetting(null, null, "didsessions", "signedinidentity", this.signedInIdentity);
   }
 
   /**
@@ -231,10 +232,10 @@ export class GlobalDIDSessionsService {
    * Tells whether the user has backed up his identity or not.
    */
   public activeIdentityWasBackedUp(): Promise<boolean> {
-    return this.storage.getSetting(this.getSignedInIdentity().didString, "didsessions", "identitybackedup", false);
+    return this.storage.getSetting(this.getSignedInIdentity().didString, NetworkTemplateStore.networkTemplate, "didsessions", "identitybackedup", false);
   }
 
   public async markActiveIdentityBackedUp(): Promise<void> {
-    await this.storage.setSetting(this.getSignedInIdentity().didString, "didsessions", "identitybackedup", true);
+    await this.storage.setSetting(this.getSignedInIdentity().didString, NetworkTemplateStore.networkTemplate, "didsessions", "identitybackedup", true);
   }
 }

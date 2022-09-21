@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonSlides, Platform } from '@ionic/angular';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DIDSessionsStore } from './../../../../services/stores/didsessions.store';
 
 
@@ -65,7 +66,7 @@ export class HomePage implements OnInit {
     }
 
     goToVote() {
-        void this.storage.setSetting(DIDSessionsStore.signedInDIDString, "dposvoting", "visited", true);
+        void this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dposvoting", "visited", true);
         void this.router.navigate(['menu/vote']);
     }
 }

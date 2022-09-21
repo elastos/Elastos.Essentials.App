@@ -6,6 +6,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 
@@ -43,7 +44,7 @@ export class PrivacyPage implements OnInit {
   }
 
   private async fetchUseBuiltInBrowser(): Promise<void> {
-    this.useBuiltInBrowser = await this.prefs.getUseBuiltInBrowser(DIDSessionsStore.signedInDIDString);
+    this.useBuiltInBrowser = await this.prefs.getUseBuiltInBrowser(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
   }
 
   public getUseBuiltInBrowserTitle(): string {
@@ -56,11 +57,11 @@ export class PrivacyPage implements OnInit {
 
   async toggleUseBuiltInBrowser(): Promise<void> {
     this.useBuiltInBrowser = !this.useBuiltInBrowser;
-    await this.prefs.setUseBuiltInBrowser(DIDSessionsStore.signedInDIDString, this.useBuiltInBrowser);
+    await this.prefs.setUseBuiltInBrowser(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.useBuiltInBrowser);
   }
 
   private async fetchPublishIdentityMedium(): Promise<void> {
-    this.publishIdentityMedium = await this.prefs.getPublishIdentityMedium(DIDSessionsStore.signedInDIDString);
+    this.publishIdentityMedium = await this.prefs.getPublishIdentityMedium(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
   }
 
   public getPublishIdentityTitle(): string {
@@ -78,11 +79,11 @@ export class PrivacyPage implements OnInit {
     else {
       this.publishIdentityMedium = "assist";
     }
-    await this.prefs.setPublishIdentityMedium(DIDSessionsStore.signedInDIDString, this.publishIdentityMedium as any);
+    await this.prefs.setPublishIdentityMedium(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.publishIdentityMedium as any);
   }
 
   private async fetchCredentialToolboxStats(): Promise<void> {
-    this.sendCredentialToolboxStats = await this.prefs.getSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString);
+    this.sendCredentialToolboxStats = await this.prefs.getSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
   }
 
   public getCredentialToolboxTitle(): string {
@@ -95,7 +96,7 @@ export class PrivacyPage implements OnInit {
 
   async toggleCredentialToolboxStats(): Promise<void> {
     this.sendCredentialToolboxStats = !this.sendCredentialToolboxStats;
-    await this.prefs.setSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString, this.sendCredentialToolboxStats);
+    await this.prefs.setSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.sendCredentialToolboxStats);
   }
 
   open(router: string) {

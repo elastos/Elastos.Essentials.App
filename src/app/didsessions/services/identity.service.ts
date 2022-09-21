@@ -22,6 +22,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
 import { CredentialAvatar, DID } from '../model/did.model';
 import { DIDStore } from '../model/didstore.model';
@@ -517,10 +518,10 @@ export class IdentityService {
             await this.didSessions.deleteIdentityEntry(identity.didString);
 
             // Delete all preferences
-            await this.prefs.deletePreferences(identity.didString);
+            await this.prefs.deletePreferences(identity.didString, NetworkTemplateStore.networkTemplate);
 
             // Delete all settings
-            await this.storage.deleteDIDSettings(identity.didString);
+            await this.storage.deleteDIDSettings(identity.didString, NetworkTemplateStore.networkTemplate);
 
             // Notify listeners of this deletion
             this.zone.run(() => {

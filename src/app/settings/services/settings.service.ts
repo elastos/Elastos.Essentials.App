@@ -103,7 +103,7 @@ export class SettingsService {
         else {
           Logger.log("settings", `The application is not up to date. Current version: ${checkedVersion.userVersion}, latest version: ${checkedVersion.latestVersion}`);
 
-          let notifiedVersions = await this.storage.getSetting(null, "settings", "notified-app-updates", []);
+          let notifiedVersions = await this.storage.getSetting(null, null, "settings", "notified-app-updates", []);
 
           if (notifiedVersions.includes(checkedVersion.latestVersion)) {
             // Already notified to user earlier, do nothing
@@ -119,7 +119,7 @@ export class SettingsService {
           });
 
           notifiedVersions.push(checkedVersion.latestVersion);
-          await this.storage.setSetting(null, "settings", "notified-app-updates", notifiedVersions);
+          await this.storage.setSetting(null, null, "settings", "notified-app-updates", notifiedVersions);
         }
       }
     }

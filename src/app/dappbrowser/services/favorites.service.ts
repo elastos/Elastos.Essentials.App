@@ -9,6 +9,7 @@ import { GlobalFirebaseService } from 'src/app/services/global.firebase.service'
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { BrowsedAppInfo } from '../model/browsedappinfo';
 import { BrowserFavorite } from '../model/favorite';
@@ -40,7 +41,7 @@ export class FavoritesService {
 
     private async loadFavorites(): Promise<void> {
         let favorites = await this.globalStorageService.getSetting(
-            DIDSessionsStore.signedInDIDString,
+            DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate,
             "dappbrowser", "favorites", []);
 
         Logger.log("dappbrowser", "Loaded favorites:", favorites);
@@ -90,7 +91,7 @@ export class FavoritesService {
 
     private async saveFavoritesToDisk(): Promise<void> {
         await this.globalStorageService.setSetting(
-            DIDSessionsStore.signedInDIDString,
+            DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate,
             "dappbrowser", "favorites", this.favoritesSubject.value);
     }
 

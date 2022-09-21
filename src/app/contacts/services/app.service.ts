@@ -4,6 +4,7 @@ import { App } from "src/app/model/app.enum";
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { FriendsService } from './friends.service';
 import { PopupService } from './popup.service';
 
@@ -52,6 +53,6 @@ export class AppService {
   ************************ Misc ***************************
   *********************************************************/
   async deleteStorage(): Promise<void> {
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'contacts', 'visited', false)
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'contacts', 'visited', false)
   }
 }

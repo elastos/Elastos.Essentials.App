@@ -5,6 +5,7 @@ import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { environment } from 'src/environments/environment';
 import { TokenType } from '../model/packets.model';
 import { NotifyPaymentStatus } from '../model/payments.model';
@@ -58,13 +59,13 @@ export class PaymentService implements GlobalService {
    * Loads on going payments state from disk
    */
   private async loadState(): Promise<void> {
-    this.state = await this.storage.getSetting<PaymentsState>(DIDSessionsStore.signedInDIDString, "redpackets", "paymentstate", {
+    this.state = await this.storage.getSetting<PaymentsState>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "redpackets", "paymentstate", {
       payments: []
     });
   }
 
   private saveState(): Promise<void> {
-    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, "redpackets", "paymentstate", this.state);
+    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "redpackets", "paymentstate", this.state);
   }
 
   /**

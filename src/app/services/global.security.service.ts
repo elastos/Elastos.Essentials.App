@@ -5,6 +5,7 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from './stores/networktemplate.store';
 
 declare let internalManager: InternalPlugin.InternalManager;
 
@@ -37,11 +38,11 @@ export class GlobalSecurityService implements GlobalService {
    * confirmed the warning manually.
    */
   public rootedDeviceWarningWasDismissed(): Promise<boolean> {
-    return this.storage.getSetting(null, "security", "rooteddevicewarningdismissed", false);
+    return this.storage.getSetting(null, null, "security", "rooteddevicewarningdismissed", false);
   }
 
   public setRootedDeviceWarningDismissed(): Promise<void> {
-    return this.storage.setSetting(null, "security", "rooteddevicewarningdismissed", true);
+    return this.storage.setSetting(null, null, "security", "rooteddevicewarningdismissed", true);
   }
 
   /**
@@ -59,7 +60,7 @@ export class GlobalSecurityService implements GlobalService {
    * Enables or disables screenshots/video capture for the current user DID session.
    */
   public async setScreenCaptureAllowed(allowScreenCapture: boolean): Promise<void> {
-    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "developer.screencapture", allowScreenCapture);
+    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developer.screencapture", allowScreenCapture);
     return internalManager.setScreenCapture(allowScreenCapture);
   }
 
@@ -67,7 +68,7 @@ export class GlobalSecurityService implements GlobalService {
    * Tells if the current user has allowed screenshots/video capture.
    */
   public getScreenCaptureAllowed(): Promise<boolean> {
-    return this.prefs.getPreference(DIDSessionsStore.signedInDIDString, "developer.screencapture");
+    return this.prefs.getPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developer.screencapture");
   }
 
   private async restoreScreenCapture(): Promise<void> {

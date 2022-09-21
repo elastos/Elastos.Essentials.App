@@ -17,6 +17,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
 import { PopupService } from '../../services/popup.service';
 import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
@@ -113,7 +114,7 @@ export class PickProviderPage implements OnInit {
       }
     ];
 
-    this.developerMode = await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString);
+    this.developerMode = await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
 
     if (this.developerMode) {
       // Add a special menu item to be able to switch to another vault without transfer

@@ -17,6 +17,7 @@ import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from './stores/networktemplate.store';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -241,7 +242,7 @@ export class GlobalElastosAPIService extends GlobalService {
         });
 
         // Retrieve user's preferred provider from preferences
-        let providerName = await this.prefs.getPreference(signedInIdentity.didString, "elastosapi.provider") as string;
+        let providerName = await this.prefs.getPreference(signedInIdentity.didString, NetworkTemplateStore.networkTemplate, "elastosapi.provider") as string;
         let provider = this.getProviderByName(providerName);
         if (!provider) {
             // This saved provider doesn't exist any more maybe. Use the default provider.
@@ -288,7 +289,7 @@ export class GlobalElastosAPIService extends GlobalService {
      */
     public async useProvider(provider: ElastosAPIProvider): Promise<void> {
         Logger.log("elastosapi", "Setting provider to " + provider.key);
-        await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "elastosapi.provider", provider.name);
+        await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "elastosapi.provider", provider.name);
         this.activeProvider.next(provider);
     }
 

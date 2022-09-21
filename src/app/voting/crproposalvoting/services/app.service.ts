@@ -5,6 +5,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { ProposalSearchResult } from '../model/proposal-search-result';
 import { ProposalStatus } from '../model/proposal-status';
 import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
@@ -22,19 +23,19 @@ export class AppService {
   ) { }
 
   public async getTimeCheckedForProposals() {
-    const lastCheckedTime = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "crproposal", "timeCheckedForProposals", null);
+    const lastCheckedTime = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "crproposal", "timeCheckedForProposals", null);
     Logger.log('crproposal', 'Background service: Time-checked for proposals', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
     const today = new Date();
     if (lastCheckedTime) {
       if (!moment(lastCheckedTime).isSame(today, 'd')) {
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "crproposal", "timeCheckedForProposals", today);
         void this.checkForNewProposals(today);
       } else {
         Logger.log('crproposal', 'Background service: Proposals already checked today');
       }
     } else {
-      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
+      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "crproposal", "timeCheckedForProposals", today);
       void this.checkForNewProposals(today);
     }
   }
@@ -80,8 +81,8 @@ export class AppService {
       void this.notifications.sendNotification(notification);
     }
 
-    const lastCheckedProposal = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, "crproposal", "lastProposalChecked", null);
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, "crproposal", "lastProposalChecked", proposals[0].id);
+    const lastCheckedProposal = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "crproposal", "lastProposalChecked", null);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "crproposal", "lastProposalChecked", proposals[0].id);
     Logger.log('crproposal', 'Background service: Last proposal checked by id', lastCheckedProposal);
 
     // Send notification new proposals since user last visited Elastos Essentials

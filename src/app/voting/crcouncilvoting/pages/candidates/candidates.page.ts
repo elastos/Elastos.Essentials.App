@@ -12,6 +12,7 @@ import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from "src/app/services/stores/didsessions.store";
+import { NetworkTemplateStore } from "src/app/services/stores/networktemplate.store";
 import { VoteService } from "src/app/voting/services/vote.service";
 import { Candidate } from "../../model/candidates.model";
 import { CRCouncilService } from "../../services/crcouncil.service";
@@ -174,7 +175,7 @@ export class CandidatesPage implements OnInit {
     }
 
     async deleteStorage(): Promise<void> {
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'crcouncil', 'votes', []);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', []);
     }
 
     async onShowCandidateInfo(did: string) {

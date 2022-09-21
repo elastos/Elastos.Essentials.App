@@ -6,6 +6,7 @@ import { IdentityEntry } from "../model/didsessions/identityentry";
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from './stores/networktemplate.store';
 
 export enum AppTheme {
   LIGHT,
@@ -61,13 +62,13 @@ export class GlobalThemeService extends GlobalService {
     // If no theme preference is set for the user, we use the currently active theme.
     // During identity creation, user may have changed the theme in DID Sessions, so we want to save this
     // info to the newly created DID context.
-    if (!await this.prefs.preferenceIsSet(DIDSessionsStore.signedInDIDString, "ui.darkmode")) {
+    if (!await this.prefs.preferenceIsSet(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "ui.darkmode")) {
       useDarkMode = (this.activeTheme.value === AppTheme.DARK);
       // Save the preference
-      await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "ui.darkmode", useDarkMode);
+      await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "ui.darkmode", useDarkMode);
     }
     else {
-      useDarkMode = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, "ui.darkmode");
+      useDarkMode = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "ui.darkmode");
     }
 
     void passwordManager.setDarkMode(useDarkMode);
@@ -87,7 +88,7 @@ export class GlobalThemeService extends GlobalService {
   public async toggleTheme() {
     if (DIDSessionsStore.signedInDIDString) {
       // A user is signed in, update his preferences
-      await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
+      await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
     }
     else {
       // No signed in user, directly change the theme.

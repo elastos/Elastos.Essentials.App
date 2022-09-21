@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { ManagedProvider } from '../model/managedprovider';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
@@ -28,7 +29,7 @@ export class AdminService {
   }
 
   public async getManagedProviders(): Promise<ManagedProvider[]> {
-    let providers = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "admin-managedproviders", []) as ManagedProvider[];
+    let providers = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', "admin-managedproviders", []) as ManagedProvider[];
     if (!providers) {
       providers = [];
     } else {
@@ -44,7 +45,7 @@ export class AdminService {
 
   public async saveManagedProviders(providers: ManagedProvider[]): Promise<void> {
     Logger.log('HiveManager', "Saving all providers:", providers);
-    return await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', "admin-managedproviders", providers);
+    return await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', "admin-managedproviders", providers);
   }
 
   public async getManagedProviderById(id: string): Promise<ManagedProvider> {

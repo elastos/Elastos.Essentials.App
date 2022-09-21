@@ -10,6 +10,7 @@ import { GlobalSecurityService } from './global.security.service';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalThemeService } from './global.theme.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
+import { NetworkTemplateStore } from './stores/networktemplate.store';
 
 /**
  * Service that handles user defined startup screen and related startup flow details.
@@ -91,10 +92,10 @@ export class GlobalStartupService {
   }
 
   public getStartupScreen(did: string): Promise<string> {
-    return this.prefs.getPreference<string>(did, "ui.startupscreen");
+    return this.prefs.getPreference<string>(did, NetworkTemplateStore.networkTemplate, "ui.startupscreen");
   }
 
   public setStartupScreen(did: string, screenKey: string): Promise<void> {
-    return this.prefs.setPreference(did, "ui.startupscreen", screenKey);
+    return this.prefs.setPreference(did, NetworkTemplateStore.networkTemplate, "ui.startupscreen", screenKey);
   }
 }

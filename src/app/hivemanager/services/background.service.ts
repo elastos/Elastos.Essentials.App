@@ -7,6 +7,7 @@ import { App } from "src/app/model/app.enum";
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 import { HiveService } from './hive.service';
 
@@ -45,19 +46,19 @@ export class BackgroundService {
     } */
 
     async getTimeCheck() {
-        const lastCheckedTime = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', 0);
+        const lastCheckedTime = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', 'timeCheckedForExpiration', 0);
         Logger.log("HiveManager", 'Background service: Time-checked for expiration', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
         const today = new Date();
         if (lastCheckedTime) {
             if (!moment(lastCheckedTime).isSame(today, 'd')) {
-                await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
+                await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', 'timeCheckedForExpiration', today);
                 this.checkPlanExpiration(today);
             } else {
                 Logger.log("hivemanager", 'Background service: Plan expiration already checked today');
             }
         } else {
-            await this.storage.setSetting(DIDSessionsStore.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
+            await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', 'timeCheckedForExpiration', today);
             this.checkPlanExpiration(today);
         }
     }
