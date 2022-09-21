@@ -12,7 +12,6 @@ export class ENSResolver extends Resolver {
 
     constructor() {
         super();
-        void this.initENS();
     }
 
     private async initENS() {
@@ -36,6 +35,10 @@ export class ENSResolver extends Resolver {
         let addresses: Address[] = [];
 
         Logger.log('wallet', "Searching name " + name + " on ENS...");
+
+        if (!this.ENSInstance) {
+            await this.initENS();
+        }
 
         try {
             let result = await this.ENSInstance.getProfile(name, {
