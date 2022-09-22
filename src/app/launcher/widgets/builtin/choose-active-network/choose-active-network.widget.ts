@@ -58,7 +58,21 @@ export class ChooseActiveNetworkWidget implements IWidget, OnInit, OnDestroy {
    * for the widget.
    */
   private prepareLastUsedNetworks(lastUsedNetworks: LastUsedNetworks) {
+    // Use a defqult list of networks we want to show in the recently used networks list,
+    // in case user hasn't used any network yet. Ze do this in order to not hqve qn empty list,
+    // but always 4 entries.
+    // By display priority order.
+    const defaultNetworks: AnyNetwork[] = [
+      this.walletNetworkService.getNetworkByKey("elastossmartchain"),
+      this.walletNetworkService.getNetworkByKey("ethereum"),
+      this.walletNetworkService.getNetworkByKey("btc"),
+      this.walletNetworkService.getNetworkByKey("bsc")
+    ].filter(n => !!n); // Filter undefined networks to make sure we are ready
+
     this.lastUsedNetworks = lastUsedNetworks.list.map(lun => lun.network).slice(0, 4); // Keep only the last 4 entries
+
+    // Complete user's last used networks with default networks, if we don't have 4 yet.
+    this.lastUsedNetworks = [...this.lastUsedNetworks, ...defaultNetworks.slice(0, 4 - this.lastUsedNetworks.length)];
 
     // Among the most recent 4 networks, sort networks alphabetically to avoid changing their positions on the
     // UI every time as this looks clunky

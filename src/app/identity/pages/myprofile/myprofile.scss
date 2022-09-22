@@ -84,8 +84,7 @@
         align-items: center;
 
         ion-label {
-          font-weight: 500;
-          font-size: 13px;
+          font-size: 14px;
         }
 
         .published {
@@ -137,7 +136,6 @@
         font-weight: 600;
         letter-spacing: 0.7px;
         text-align: left;
-        color: #ffffff;
         margin: 0;
       }
 
@@ -145,7 +143,6 @@
         font-size: 13px;
         font-weight: 500;
         text-align: left;
-        color: #ffffff;
         margin: 0;
       }
     }
@@ -180,41 +177,32 @@
         margin-bottom: 10px;
         padding: 15px 10px;
         border-radius: 20px;
+        background: var(--essentials-box-color);
 
         img {
           width: 35px;
         }
 
         h2 {
-          margin: 2px 2px 3px 2px;
+          margin: 10px 2px 3px 2px;
           font-size: 17px;
           font-weight: 600;
-          color: white;
         }
 
         span {
-          font-size: 12px;
-          font-weight: 500;
-          letter-spacing: 0.6px;
-          color: white;
+          font-size: 14px;
+          font-weight: 300;
           text-align: center;
         }
       }
 
       .publish {
         background-image: url("/assets/identity/svg/background-blue.svg");
-      }
 
-      .share {
-        background-image: url("/assets/identity/svg/background-black.svg");
-      }
-
-      .edit {
-        background-image: url("/assets/identity/svg/background-black.svg");
-      }
-
-      .export {
-        background-image: url("/assets/identity/svg/background-black.svg");
+        span,
+        h2 {
+          color: #ffffff;
+        }
       }
     }
   }
@@ -224,39 +212,5 @@
   .status-grid {
     border-top: 1.5px solid #464646;
     border-bottom: 1.5px solid #464646;
-  }
-
-  .options-grid {
-    h1 {
-      color: white;
-    }
-
-    .options-row {
-      ion-col {
-        h2,
-        span {
-          color: black;
-        }
-      }
-
-      .publish {
-        span,
-        h2 {
-          color: #ffffff;
-        }
-      }
-
-      .share {
-        background-image: url("/assets/identity/svg/background-dark.svg");
-      }
-
-      .edit {
-        background-image: url("/assets/identity/svg/background-dark.svg");
-      }
-
-      .export {
-        background-image: url("/assets/identity/svg/background-dark.svg");
-      }
-    }
   }
 }

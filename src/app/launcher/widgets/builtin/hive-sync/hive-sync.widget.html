@@ -1,5 +1,5 @@
 <!-- Prompt to sync Essentials with hive vault -->
-<ion-row class="widget widget-background backup-row ion-activatable ripple" [class.darkContainer]="theme.darkMode"
+<ion-row class="widget widget-background sync-row ion-activatable ripple" [class.darkContainer]="theme.darkMode"
   *ngIf="needToPromptHiveSync || forSelection || editing">
   <ion-col class="app-col" size="12">
     <ion-row class="app-row">
@@ -9,10 +9,8 @@
         </div>
       </ion-col>
       <ion-col class="mid-col" size="10">
-        <ion-label>
-          <h1>{{ 'launcher.data-sync-title' | translate }}</h1>
-          <p>{{ 'launcher.data-sync-intro' | translate }}</p>
-        </ion-label>
+        <div class="title">{{ 'launcher.data-sync-title' | translate }}</div>
+        <div class="secondary-text">{{ 'launcher.data-sync-intro' | translate }}</div>
       </ion-col>
       <ion-col class="buttons-row">
         <ion-button (click)="refuseSync()">{{ 'launcher.data-sync-no' | translate }}</ion-button>

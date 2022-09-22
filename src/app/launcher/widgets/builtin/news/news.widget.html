@@ -1,28 +1,30 @@
 <ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode"
   *ngIf="news.length > 0 || forSelection || editing" (click)="onBackgroundClicked()">
   <ion-row class="header-row">
-    <ion-col size="12" class="title-col">
+    <ion-col size="10" class="title-col">
       News
       <div class="badge" *ngIf="news.length > 0">{{ news.length }}</div>
+    </ion-col>
+    <ion-col size="2" class="grid">
+      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/grid.svg' : '/assets/launcher/icons/grid.svg'"
+        (click)="showFullNews($event)" />
     </ion-col>
   </ion-row>
 
   <!-- We have news to show -->
   <ion-row class="news-row" *ngIf="news.length > 0">
     <ion-row class="newss" [class.transitioning]="transitioning">
-      <ion-col size="4" class="news" *ngFor="let i of pageIndexes" (click)="showFullNews($event)">
-        <div class="header" *ngIf="hasItemAt(i)">
-          <img class="icon" [cache]="getIcon(i)" />
-          <div class="sender">{{ getSender(i) }}</div>
+      <ion-col size="12" *ngFor="let i of pageIndexes" (click)="showFullNews($event)">
+        <div class="news" *ngIf="hasItemAt(i)">
+          <div class="header">
+            <img class="icon" [cache]="getIcon(i)" />
+            <div class="sender">{{ getSender(i) }}</div>
+          </div>
+          <div class="title">{{ getTitle(i) }}</div>
+          <div class="secondary-text message">{{ getMessage(i) }}</div>
         </div>
-        <div class="title" *ngIf="hasItemAt(i)">{{ getTitle(i) }}</div>
-        <div class="message" *ngIf="hasItemAt(i)">{{ getMessage(i) }}</div>
       </ion-col>
     </ion-row>
-    <div class="grid">
-      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/grid.svg' : '/assets/launcher/icons/grid.svg'"
-        (click)="showFullNews($event)" />
-    </div>
   </ion-row>
 
   <!-- No news to show (eg: preview) -->

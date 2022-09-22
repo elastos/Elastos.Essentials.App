@@ -3,11 +3,10 @@
 .logout-row {
   flex-direction: row;
 
-  &.darkContainer {
-    .left-col {
-      .icon-container {
-        box-shadow: 0px 0px 1px #000000e2;
-        background: #363636;
+  .app-col {
+    .app-row {
+      .mid-col {
+        justify-content: center;
       }
     }
   }

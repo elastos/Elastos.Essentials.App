@@ -1,5 +1,9 @@
 @import "../../widgets.scss";
 
+.widget {
+  padding: 10px 10px;
+}
+
 .header-row {
   margin-bottom: 5px;
   padding: 5px;
@@ -10,8 +14,7 @@
     align-items: center;
 
     .badge {
-      background: #d62929;
-      color: #fff;
+      background: var(--ion-background-color);
       border-radius: 20px;
       padding: 2px 6px;
       margin-left: 10px;
@@ -53,10 +56,13 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       position: relative;
-      font-size: 12px;
+      font-size: 14px;
       text-align: left;
+      background: var(--ion-background-color);
+      border-radius: 10px;
+      padding: 10px;
 
       .header {
         display: flex;
@@ -82,7 +88,7 @@
 
       .title {
         font-weight: 500;
-        margin: 12px 0;
+        margin: 6px 0;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -101,17 +107,5 @@
 
   .grid {
     width: 30px;
-  }
-}
-
-.darkContainer {
-  .news-row {
-    .newss {
-      .news {
-        .message {
-          //color: #acacac;
-        }
-      }
-    }
   }
 }

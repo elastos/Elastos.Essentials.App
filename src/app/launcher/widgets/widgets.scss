@@ -194,7 +194,8 @@ ion-button {
   //--background: #dde2f1;
   //--background-activated: #ddd;
   //--background: rgba(255, 255, 255, 0.2);
-  --background: var(--essentials-box-color);
+  //--background: var(--essentials-box-color);
+  --background: var(--ion-background-color);
   --background-activated: var(--ion-background-color);
   //--background-activated: rgba(255, 255, 255, 0.4);
   color: #000;

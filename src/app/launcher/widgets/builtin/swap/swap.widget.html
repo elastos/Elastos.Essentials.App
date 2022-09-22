@@ -17,7 +17,8 @@
 
   <ion-row class="tokens-row">
     <ng-container *ngTemplateOutlet="token"></ng-container>
-    <img class="exchange" src="/assets/launcher/widgets/swap.svg" />
+    <img class="exchange"
+      [src]="theme.darkMode ? '/assets/launcher/widgets/white-swap.svg' : '/assets/launcher/widgets/swap.svg'" />
     <ng-container *ngTemplateOutlet="token"></ng-container>
   </ion-row>
 </ion-row>
@@ -27,7 +28,8 @@
     <img class="network-logo" />
     <div class="selector ion-activatable ripple">
       <div class="token-name">Glide</div>
-      <img class="arrow" src="/assets/launcher/widgets/down-arrow.svg" />
+      <img class="arrow"
+        [src]="theme.darkMode ? '/assets/launcher/widgets/white-down-arrow.svg' : '/assets/launcher/widgets/down-arrow.svg'" />
       <ion-ripple-effect></ion-ripple-effect>
     </div>
   </div>

@@ -4,13 +4,12 @@
     <ion-row class="app-row">
       <ion-col class="left-col" size="2">
         <div class="icon-container">
-          <img src="/assets/launcher/apps/app-icons/logout.svg">
+          <img
+            [src]="theme.darkMode ? '/assets/launcher/apps/app-icons/white-logout.svg' : '/assets/launcher/apps/app-icons/logout.svg'">
         </div>
       </ion-col>
       <ion-col class="mid-col" size="8">
-        <ion-label>
-          <h1>{{ 'common.sign-out' | translate }}</h1>
-        </ion-label>
+        <div class="title">{{ 'common.sign-out' | translate }}</div>
       </ion-col>
       <ion-col class="right-col" size="2">
         <img

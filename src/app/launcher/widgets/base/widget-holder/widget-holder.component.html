@@ -7,24 +7,27 @@
   <!-- Note: need to hide, not use *ngIf, to let the drag handle exist when the holder is created -->
   <div class="edition" [class.reduced]="!editing">
     <div class="item" (click)="refreshPluginContent()" *ngIf="widgetState && widgetState.category === 'app-plugin'">
-      <img src="/assets/launcher/widgets/reload.svg" />
+      <img
+        [src]="theme.darkMode ? '/assets/launcher/widgets/white-reload.svg' : '/assets/launcher/widgets/reload.svg'" />
     </div>
     <div class="item" *ngIf="!selecting && configureIconListener" (click)="onConfigureClicked()">
-      <img src="/assets/launcher/widgets/configure.svg" />
+      <img
+        [src]="theme.darkMode ? '/assets/launcher/widgets/white-configure.svg' : '/assets/launcher/widgets/configure.svg'" />
     </div>
     <div class="item" #dragHandle [class.reduced]="selecting">
       <!-- Use CSS to hide, not ngIf to synchronously get the dragHandle ref -->
-      <img src="/assets/launcher/widgets/move.svg" />
+      <img [src]="theme.darkMode ? '/assets/launcher/widgets/white-move.svg' : '/assets/launcher/widgets/move.svg'" />
     </div>
     <div class="item" (click)="deleteWidget()" *ngIf="!selecting">
-      <img src="/assets/launcher/widgets/trash.svg" />
+      <img [src]="theme.darkMode ? '/assets/launcher/widgets/white-trash.svg' : '/assets/launcher/widgets/trash.svg'" />
     </div>
     <div class="item" (click)="deleteCustomPluginFromAddableList()"
       *ngIf="selecting && widgetState.category === 'app-plugin'">
-      <img src="/assets/launcher/widgets/trash.svg" />
+      <img
+        [src]="theme.darkMode ? '/assets/launcher/widgets/white-motrashve.svg' : '/assets/launcher/widgets/trash.svg'" />
     </div>
     <div class="item" (click)="selectWidget()" *ngIf="selecting">
-      <img src="/assets/launcher/widgets/check.svg" />
+      <img [src]="theme.darkMode ? '/assets/launcher/widgets/white-check.svg' : '/assets/launcher/widgets/check.svg'" />
     </div>
   </div>
 </div>

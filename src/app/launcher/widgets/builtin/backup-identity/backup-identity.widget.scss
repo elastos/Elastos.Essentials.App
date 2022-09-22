@@ -3,6 +3,7 @@
 .backup-row {
   padding: 10px 10px 10px 10px;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   color: white;
@@ -32,6 +33,8 @@
     padding-left: 0;
 
     ion-label {
+      text-align: left;
+
       h1,
       p {
         color: #ffffff;

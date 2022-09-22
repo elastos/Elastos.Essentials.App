@@ -47,7 +47,8 @@
       display: flex;
       align-items: center;
 
-      h1, p {
+      h1,
+      p {
         margin: 0;
       }
     }
@@ -66,7 +67,6 @@
 
       p {
         font-size: 13px;
-        font-weight: 500;
         letter-spacing: 0.65px;
       }
     }
@@ -108,8 +108,7 @@
       margin-left: 25px;
       height: 80px;
       width: calc(100% - 30px);
-      background-color: white;
-      box-shadow: 0 3px 15px 0 #ededf0;
+      background-color: var(--essentials-box-color);
 
       .baloon {
         position: absolute;
@@ -120,7 +119,7 @@
         height: 73px;
         margin: 5px 10px 10px -25px;
       }
-      
+
       .icon {
         position: absolute;
         top: 0;
@@ -138,7 +137,8 @@
       left: 0;
       z-index: 100;
 
-      .hive-title, .hive-address {
+      .hive-title,
+      .hive-address {
         // font-family: 'Inter' !important;
         text-align: left;
       }
@@ -166,7 +166,7 @@
   }
 
   .profile-row {
-    border-top: 1.5px solid #EAEAEA;
+    border-top: 1.5px solid #eaeaea;
     padding: 20px 0px 5px 5px;
 
     ion-col {
@@ -204,7 +204,7 @@
         height: 10px;
       }
     }
-  
+
     .cred-container {
       padding: 10px 0px;
       width: 100%;
@@ -218,7 +218,6 @@
 
           ion-label {
             font-size: 14px;
-            font-weight: 500;
             line-height: 1.29;
             text-align: left;
           }
@@ -226,22 +225,22 @@
       }
     }
   }
-  
+
   .issuer-cred {
     margin-top: 15px;
     padding: 0px 15px;
     color: #cfd1f7;
-  
+
     .issuer-cred-header {
       display: block;
       font-weight: bold;
     }
-  
+
     .issuer-cred-values {
       margin-top: 5px;
       font-size: 11px;
     }
-  
+
     .issuer-cred-values img {
       object-fit: cover;
       border-radius: 50%;
@@ -250,30 +249,17 @@
       float: left;
       margin-right: 10px;
     }
-  
+
     .issuer-cred-name {
       margin-left: 10px;
       font-weight: bold;
       display: block;
     }
-  }  
+  }
 }
 
 .darkContainer {
   .profile-row {
-    border-top: 1.5px solid #464646;
-  }
-
-  .hive-row {
-    .hive-background {
-      background-color: #212021;
-      box-shadow: none;
-    }
-
-    .hive-foreground {
-      .hive-title, .hive-address {
-        color: #ffffff;
-      }
-    }
+    border-top: 1.5px solid var(--essentials-box-color);
   }
 }

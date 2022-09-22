@@ -1,10 +1,9 @@
 @import "../../widgets.scss";
 
-.backup-row {
+.sync-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
 
   ion-col {
     display: flex;
@@ -25,28 +24,6 @@
     align-items: center;
     padding-right: 0;
     padding-left: 0;
-
-    ion-label {
-      text-align: left;
-
-      h1,
-      p {
-        color: #ffffff;
-        margin: 0;
-      }
-
-      h1 {
-        font-size: 12px;
-        font-weight: 500;
-        margin-bottom: 6px;
-      }
-
-      p {
-        font-size: 9px;
-        font-weight: 400;
-        line-height: 15px;
-      }
-    }
   }
 
   .buttons-row {

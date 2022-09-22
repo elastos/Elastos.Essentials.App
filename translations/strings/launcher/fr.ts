@@ -91,6 +91,19 @@ export const fr = {
         'hive-sync-popup-info': 'Certaines informations personnelles telles que votre profil DID ou vos contacts seront sauvées et restorées (dès maintenant, ou apres une réinstallation) depuis votre stockage Hive, sur le serveur distant que vous avez choisi via le gestionnaire de stockage Hive.',
         'switch-network': 'Changer de réseau',
 
+        /******** Theming *********/
+        'theme-name-black': 'Noir',
+        'theme-name-white': 'Blanc',
+        'theme-name-red': 'Rouge',
+        'theme-name-yellow': 'Jaune',
+        'theme-name-purple': 'Pourpre',
+        'theme-name-blue': 'Bleu',
+        'theme-name-green': 'Vert',
+        'theme-name-orange': 'Orange',
+        'theme-name-pink': 'Rose',
+        'theme-variant-dark': 'Sombre',
+        'theme-variant-light': 'Clair',
+
         /*********** Tips generic ************/
         'tip-of-the-day': 'Astuce du jour',
         'previous-tip': 'Préc.',

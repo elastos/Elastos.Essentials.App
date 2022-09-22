@@ -8,6 +8,7 @@
   .left-col {
     text-align: left;
     padding: 0;
+    display: flex;
   }
 
   .right-col {
@@ -29,17 +30,15 @@
 
     .subtitle {
       font-size: 12px;
-      //color: #787980;
     }
   }
 
   .button {
     border-radius: 10px;
-    padding: 15px 20px;
+    padding: 10px 20px;
     font-size: 14px;
     font-weight: bold;
-    //background: #dde2f1;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--ion-background-color);
   }
 }
 
@@ -64,8 +63,7 @@
       border-radius: 10px;
       margin-left: 10px;
       align-items: center;
-      //background: #dde2f1;
-      background: rgba(255, 255, 255, 0.2);
+      background: var(--ion-background-color);
 
       .token-name {
         font-size: 12px;
@@ -74,6 +72,7 @@
       .arrow {
         height: 10px;
         margin-left: 10px;
+        opacity: 0.7;
       }
     }
   }
@@ -81,27 +80,6 @@
   .exchange {
     width: 20px;
     height: 20px;
-  }
-}
-
-.darkContainer {
-  .top-row {
-    .header {
-      .subtitle {
-        //color: #acacac;
-      }
-    }
-
-    .button {
-      //background: #333133;
-    }
-  }
-
-  .tokens-row {
-    .token {
-      .selector {
-        // background: #333133;
-      }
-    }
+    opacity: 0.7;
   }
 }

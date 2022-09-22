@@ -55,7 +55,8 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
     private popoverCtrl: PopoverController,
     private modalController: ModalController
   ) {
-    this.rotationTimeout = setTimeout(() => { this.updateActiveNews(); }, ROTATION_TIME_SEC * 1000);
+    // NOTE: no auto rotation for now, this makes the UI move up/down depending on news count on each page
+    //this.rotationTimeout = setTimeout(() => { this.updateActiveNews(); }, ROTATION_TIME_SEC * 1000);
   }
 
   ngOnInit() {
@@ -128,7 +129,7 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
       }, 500);
     }
 
-    this.rotationTimeout = setTimeout(() => { this.updateActiveNews(); }, ROTATION_TIME_SEC * 1000);
+    //this.rotationTimeout = setTimeout(() => { this.updateActiveNews(); }, ROTATION_TIME_SEC * 1000);
   }
 
   public hasItemAt(itemIndexInPage: number): boolean {

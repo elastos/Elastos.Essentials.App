@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { IdentityEntry } from "../../model/didsessions/identityentry";
 import { GlobalPreferencesService } from '../global.preferences.service';
@@ -31,7 +32,8 @@ export class GlobalThemeService extends GlobalService {
 
   constructor(
     private prefs: GlobalPreferencesService,
-    private platform: Platform
+    private platform: Platform,
+    private translate: TranslateService
   ) {
     super();
 
@@ -51,6 +53,9 @@ export class GlobalThemeService extends GlobalService {
 
   public init() {
     GlobalServiceManager.getInstance().registerService(this);
+
+    // Apply a default theme, when no user is signed in
+    void this.applyThemeConfig(this.activeTheme.value.config, this.activeTheme.value.variant);
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
@@ -195,6 +200,6 @@ export class GlobalThemeService extends GlobalService {
   }
 
   public getThemeTitle(theme: ThemeConfig): string {
-    return theme.key; // TODO: translation based on key
+    return this.translate.instant('launcher.theme-name-' + theme.key);
   }
 }

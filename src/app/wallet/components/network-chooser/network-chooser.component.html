@@ -14,7 +14,7 @@
                         [src]="theme.darkMode ? 'assets/components/titlebar/darkmode/settings.svg' : 'assets/components/titlebar/settings.svg'" />
                 </ion-col>
             </ion-row>
-            <ion-row *ngFor="let network of networksToShowInList" class="network-row"
+            <ion-row *ngFor="let network of networksToShowInList" class="network-row ion-activatable ripple"
                 [class.selected-network]="currentNetwork && network.key === currentNetwork.key"
                 (click)="selectNetwork(network)">
                 <ion-col size="10" class="left-col">
@@ -24,6 +24,7 @@
                 <ion-col size="2" class="right-col">
                     <ion-icon name="checkmark"></ion-icon>
                 </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
         </div>
     </div>

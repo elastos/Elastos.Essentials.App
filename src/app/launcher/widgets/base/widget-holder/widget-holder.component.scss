@@ -35,7 +35,9 @@
     flex-direction: row;
 
     .item {
-      background: #dde2f1;
+      //background: #dde2f1;
+      background: var(--essentials-box-color);
+      border: solid 1px var(--ion-text-color);
       width: 30px;
       height: 30px;
       display: flex;
@@ -51,7 +53,7 @@
       }
 
       &:active {
-        background: #ffffff;
+        opacity: 0.5;
       }
 
       &.reduced {

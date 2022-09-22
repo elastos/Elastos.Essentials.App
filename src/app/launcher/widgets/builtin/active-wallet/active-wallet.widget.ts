@@ -39,6 +39,7 @@ export class ActiveWalletWidget implements OnInit, OnDestroy {
   public networkWalletsList: AnyNetworkWallet[] = [];
   public activeNetwork: AnyNetwork = null;
   private activeWalletAddresses: { [walletId: string]: WalletAddressInfo[] } = {};
+  public backgroundGradient: string = null;
 
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
   private networkWalletSub: Subscription = null; // Subscription to wallet service to know when a wallet is created, deleted
@@ -172,6 +173,11 @@ export class ActiveWalletWidget implements OnInit, OnDestroy {
     for (let networkWallet of this.networkWalletsList) {
       this.activeWalletAddresses[networkWallet.id] = await networkWallet.getAddresses();
     }
+
+    // Background gradient color
+    let networkColor = this.activeNetwork.getMainColor(); // RRGGBB
+    let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
+    this.backgroundGradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
   }
 
 

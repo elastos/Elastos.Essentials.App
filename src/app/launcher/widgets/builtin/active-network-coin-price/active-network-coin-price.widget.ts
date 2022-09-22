@@ -84,7 +84,7 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
         let networkColor = this.activeNetwork.getMainColor(); // RRGGBB
         let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
         //let gradient = `linear-gradient(90deg, #${gradientColor}99 0%, #${gradientColor}33 100%)`;
-        let gradient = `linear-gradient(90deg, #${gradientColor}FF 0%, #${gradientColor}40 100%)`;
+        let gradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
         // TODO TRY: color/1 to color more dark/1
         this.coinPriceRoot.nativeElement.style.background = gradient;
       }

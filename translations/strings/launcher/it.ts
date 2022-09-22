@@ -91,6 +91,19 @@ export const it = {
         'hive-sync-popup-info': 'Some personal data such as your private DID information or your contacts list will be saved and restored (now or after a reinstallation) from your hive vault, on a remote server that you have chosen using the Hive manager.',
         'switch-network': 'Switch network',
 
+        /******** Theming *********/
+        'theme-name-black': 'Black',
+        'theme-name-white': 'White',
+        'theme-name-red': 'Red',
+        'theme-name-yellow': 'Yellow',
+        'theme-name-purple': 'Purple',
+        'theme-name-blue': 'Blue',
+        'theme-name-green': 'Green',
+        'theme-name-orange': 'Orange',
+        'theme-name-pink': 'Pink',
+        'theme-variant-dark': 'Dark',
+        'theme-variant-light': 'Light',
+
         /*********** Tips generic ************/
         'tip-of-the-day': 'Consiglio del giorno',
         'previous-tip': 'Precedente',

@@ -62,10 +62,11 @@ ion-content {
             height: 10px;
             margin: 5px;
             //background: #bbb;
-            background: rgba(255, 255, 255, 0.5);
+            background: var(--ion-text-color);
+            opacity: 0.5;
 
             &.active {
-                background: #000;
+                opacity: 1;
             }
         }
     }
@@ -195,7 +196,7 @@ ion-content {
                     }
                 }
 
-                .mid-col {
+                /* .mid-col {
                     ion-label {
                         h1 {
                             color: #ffffff;
@@ -215,21 +216,7 @@ ion-content {
                             opacity: 1;
                         }
                     }
-                }
-            }
-        }
-    }
-
-    .home-footer {
-        //background: #000;
-
-        .nav {
-            .dot {
-                //background: #ccc;
-
-                &.active {
-                    background: #fff;
-                }
+                } */
             }
         }
     }

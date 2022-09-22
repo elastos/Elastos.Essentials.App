@@ -8,14 +8,15 @@
     padding-top: 20px;
     padding-bottom: 20px;
     margin-right: 20px;
-    border-bottom: 1.5px solid #EAEAEA;
+    border-bottom: 1.5px solid #eaeaea;
 
     ion-col {
       padding: 0;
     }
 
     .title-col {
-      h1, h2 {
+      h1,
+      h2 {
         margin: 0;
       }
 
@@ -28,9 +29,6 @@
       h2 {
         font-size: 11px;
         font-weight: 700;
-        letter-spacing: 2.4px;
-        text-transform: uppercase;
-        color: #000000;
         opacity: 0.7;
       }
     }
@@ -63,7 +61,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-        
+
           p {
             font-size: 10px;
             font-weight: 700;
@@ -77,7 +75,7 @@
       .light-toggled {
         .dark-mode {
           margin-left: 5px;
-          width: 45%
+          width: 45%;
         }
 
         .light-mode {
@@ -85,7 +83,7 @@
           border-radius: 17px;
           box-shadow: 0px 10px 20px 0 #f5e4aa;
           background-color: #fdd034;
-          
+
           p {
             color: #ffffff !important;
           }
@@ -130,9 +128,9 @@
       h1 {
         // font-weight: 500;
       }
-      
+
       h2 {
-        color: #9D9D9D;
+        color: #9d9d9d;
         opacity: 1;
       }
     }

@@ -1,27 +1,29 @@
 <ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode"
   *ngIf="notifications.length > 0 || forSelection || editing" (click)="showNotifications()">
   <ion-row class="header-row">
-    <ion-col size="12" class="title-col">
+    <ion-col size="10" class="title-col">
       {{ 'launcher.notifications' | translate }}
       <div class="badge" *ngIf="totalNotifications > 0">{{ totalNotifications }}</div>
+    </ion-col>
+    <ion-col size="2" class="grid">
+      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/grid.svg' : '/assets/launcher/icons/grid.svg'" />
     </ion-col>
   </ion-row>
 
   <!-- We have notifications to show -->
   <ion-row class="notifications-row" *ngIf="totalNotifications > 0">
     <ion-row class="notifications">
-      <ion-col size="4" class="notification" *ngFor="let notification of notifications">
-        <div class="header">
-          <img class="icon" [src]="notificationService.getNotificationIcon(notification)" />
-          <div class="sender">{{ notificationService.getNotificationHeader(notification) }}</div>
+      <ion-col size="12" *ngFor="let notification of notifications">
+        <div class="notification">
+          <div class="header">
+            <img class="icon" [src]="notificationService.getNotificationIcon(notification)" />
+            <div class="sender">{{ notificationService.getNotificationHeader(notification) }}</div>
+          </div>
+          <div class="title">{{ notification.title }}</div>
+          <div class="secondary-text message">{{ getNotificationMessage(notification) }}</div>
         </div>
-        <div class="title">{{ notification.title }}</div>
-        <div class="secondary-text message">{{ getNotificationMessage(notification) }}</div>
       </ion-col>
     </ion-row>
-    <div class="grid">
-      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/grid.svg' : '/assets/launcher/icons/grid.svg'" />
-    </div>
   </ion-row>
 
   <!-- No notification to show (eg: preview) -->

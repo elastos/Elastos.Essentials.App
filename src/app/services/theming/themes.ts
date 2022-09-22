@@ -2,18 +2,26 @@ import { ThemeConfig } from "./theme";
 
 export const availableThemes: ThemeConfig[] = [
   {
-    key: "blue",
+    key: "white",
     variants: {
-      "light": { color: "#172F4C" },
-      "dark": { color: "#395980" }
+      "light": { color: "#F2F2F2", boxColor: "#FFFFFF" },
+      "dark": { color: "#FFFFFF", boxColor: "rgba(0,0,0,0.05)" }
     },
-    usesDarkMode: true
+    usesDarkMode: false
   },
   {
     key: "black",
     variants: {
       "light": { color: "#000000" },
       "dark": { color: "#212021", boxColor: "#000000" }
+    },
+    usesDarkMode: true
+  },
+  {
+    key: "blue",
+    variants: {
+      "light": { color: "#172F4C" },
+      "dark": { color: "#395980" }
     },
     usesDarkMode: true
   },
@@ -26,20 +34,43 @@ export const availableThemes: ThemeConfig[] = [
     usesDarkMode: true
   },
   {
-    key: "white",
+    key: "purple",
     variants: {
-      "light": { color: "#F2F2F2", boxColor: "#FFFFFF" },
-      "dark": { color: "#FFFFFF", boxColor: "rgba(0,0,0,0.05)" }
+      "light": { color: "#30224C" },
+      "dark": { color: "#533991" }
+    },
+    usesDarkMode: true
+  },
+  {
+    key: "yellow",
+    variants: {
+      "light": { color: "#BF9C3B" },
+      "dark": { color: "#F2C64B" }
     },
     usesDarkMode: false
   },
-
-
-  //{ key: "purple", color: "#30224C", usesDarkMode: true },
-
-  /*   { key: "green", color: "#44B93A", usesDarkMode: true },
-   */
-  /*   { key: "yellow", color: "#DFC01C", usesDarkMode: false }, */
-  /*   { key: "orange", color: "#D6873F", usesDarkMode: true },
-    { key: "pink", color: "#FFAAAA", usesDarkMode: false },*/
+  {
+    key: "orange",
+    variants: {
+      "light": { color: "#BF733B" },
+      "dark": { color: "#F2914B" }
+    },
+    usesDarkMode: true
+  },
+  {
+    key: "green",
+    variants: {
+      "light": { color: "#224C33" },
+      "dark": { color: "#398055" }
+    },
+    usesDarkMode: true
+  },
+  {
+    key: "pink",
+    variants: {
+      "light": { color: "#B05CB2" },
+      "dark": { color: "#E376E5" }
+    },
+    usesDarkMode: true
+  },
 ];

@@ -5,6 +5,7 @@ import {
 import { DragDrop, DragRef, DropListRef } from '@angular/cdk/drag-drop';
 import { Component, ComponentRef, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewRef } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { WidgetInstance, WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
 import { GlobalThemeService } from '../../../../services/theming/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
@@ -59,7 +60,8 @@ export class WidgetContainerComponent implements OnInit {
     private widgetsPluginsService: WidgetPluginsService,
     private widgetsUIService: WidgetsUIService,
     private dragDrop: DragDrop,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private translate: TranslateService
   ) { }
 
   ngOnInit() {
@@ -196,6 +198,6 @@ export class WidgetContainerComponent implements OnInit {
   }
 
   public getActiveThemeVariantName(): string {
-    return this.theme.activeTheme.value.variant; // TODO: translation
+    return this.translate.instant('launcher.theme-variant-' + this.theme.activeTheme.value.variant);
   }
 }
