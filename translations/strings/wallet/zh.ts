@@ -321,6 +321,7 @@ export const zh = {
                 "ledger-getting-addresses": "正在获取地址",
                 "ledger-get-addresses": "获取地址",
                 "ledger-choose-address-type": "选择地址类型",
+                "ledger-reconnect": "点击以重新连接",
 
                 /**********************
                 * Ledger error *
