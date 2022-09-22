@@ -27,6 +27,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { MenuSheetMenu } from 'src/app/components/menu-sheet/menu-sheet.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BLECentralPluginBridge } from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BLECentralPluginBridge';
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
@@ -66,6 +67,7 @@ export enum LedgerConnectType {
 export class LedgerConnectPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
+    private bleManager: BLECentralPluginBridge = null;
     public device = null;
     private ledgerConnectType: LedgerConnectType = null;
     public transport: BluetoothTransport = null;
@@ -73,6 +75,7 @@ export class LedgerConnectPage implements OnInit {
     public connectError = false;
     public gettingAddresses = false;
     private failedToGetAddress = false;
+    public isBluetoothEnable = true;
 
     public addresses: AnyLedgerAccount[] = [];
     // for test
@@ -126,6 +129,7 @@ export class LedgerConnectPage implements OnInit {
             this.ledgerConnectType = navigation.extras.state.type;
             Logger.log(TAG, 'LedgerConnectPage device:', this.device)
         }
+        this.bleManager = new BLECentralPluginBridge();
     }
 
     ionViewWillEnter() {
@@ -153,9 +157,16 @@ export class LedgerConnectPage implements OnInit {
             }
             this.connecting = true;
             this.connectError = false;
-            this.transport = await BluetoothTransport.open(this.device.id);
-            this.closeConnectTimeout();
-            this.ledgerConnectStatus.next(true);
+            this.isBluetoothEnable = await this.bleManager.isEnabled();
+            if (this.isBluetoothEnable) {
+                this.transport = await BluetoothTransport.open(this.device.id);
+                this.closeConnectTimeout();
+                this.ledgerConnectStatus.next(true);
+            } else {
+                this.connectError = true;
+                this.closeConnectTimeout();
+                this.closeGetAddressTimeout();
+            }
         }
         catch (e) {
             Logger.error('ledger', ' initLedger error:', e);

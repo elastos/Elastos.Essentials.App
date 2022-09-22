@@ -321,6 +321,7 @@ export const it = {
         "ledger-getting-addresses": "Getting address",
         "ledger-get-addresses": "Get addresses",
         "ledger-choose-address-type": "Choose Address Type",
+        "ledger-reconnect": "Touch to connect",
 
         /**********************
         * Ledger error *

@@ -37,6 +37,11 @@
                 </ion-col>
             </ion-row>
 
+            <ion-row *ngIf="!isBluetoothEnable" class="prompt-row" (click)="doConnect()">
+                <ion-label>{{ 'wallet.ledger-scan-bluetooth-not-enable' | translate }}</ion-label>
+                <p>{{ 'wallet.ledger-reconnect' | translate }}</p>
+            </ion-row>
+
             <ion-row *ngIf="ledgerNanoAppname" class="prompt-row">
                 <ion-label>{{ 'wallet.ledger-prompt' | translate:{ appname: ledgerNanoAppname } }}</ion-label>
             </ion-row>
