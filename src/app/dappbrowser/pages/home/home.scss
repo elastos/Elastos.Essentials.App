@@ -153,12 +153,17 @@
         .right-col {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
 
             img {
                 width: 30px;
                 height: 30px;
                 padding: 8px;
+                opacity: 0.6;
+
+                &.active {
+                    opacity: 1;
+                }
             }
         }
     }

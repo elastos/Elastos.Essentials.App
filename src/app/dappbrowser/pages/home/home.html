@@ -55,7 +55,7 @@
                     <img *ngIf="!recentAppIsInFavorites(recentApp)"
                         [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav-no-border.svg' : 'assets/browser/icons/dark_mode/icon-fav-no-border.svg'"
                         (click)="toggleRecentAppFavorite($event, recentApp)" />
-                    <img *ngIf="recentAppIsInFavorites(recentApp)"
+                    <img *ngIf="recentAppIsInFavorites(recentApp)" class="active"
                         [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav-no-border-active.svg' : 'assets/browser/icons/dark_mode/icon-fav-no-border-active.svg'"
                         (click)="toggleRecentAppFavorite($event, recentApp)" />
                 </ion-col>
@@ -95,7 +95,8 @@
                 <ion-col class="right-col" size="2">
                     <img class="next"
                         [src]="!theme.darkMode ? '/assets/browser/icons/right-arrow.svg' : '/assets/browser/icons/dark_mode/right-arrow.svg'">
-                    <img class="settings" src="/assets/browser/icons/settings.svg"
+                    <img class="settings"
+                        [src]="!theme.darkMode ? '/assets/browser/icons/settings.svg' : '/assets/browser/icons/dark_mode/settings.svg'"
                         (click)="openFavoriteSettings($event, favorite)" />
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
