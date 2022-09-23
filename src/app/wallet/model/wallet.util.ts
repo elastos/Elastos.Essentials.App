@@ -121,6 +121,7 @@ export class WalletUtil {
           switch (prefix) {
             case ELAAddressPrefix.PrefixStandard:
             case ELAAddressPrefix.PrefixMultiSign:
+            case ELAAddressPrefix.PrefixCRExpenses:
               return true;
             default:
               return false;
