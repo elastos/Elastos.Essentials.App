@@ -69,38 +69,42 @@ export class WidgetContainerComponent implements OnInit {
       if (!this.name)
         throw new Error("Widget container must have a 'name'.");
 
-      this.cdkList = this.dragDrop.createDropList(this.widgetslist.element);
-
-      void this.widgetsService.loadContainerState(this.name).then(async state => {
-        // Container state is loaded, generate the widgets
-        this.dragRefs = [];
-        for (let widget of state.widgets) {
-          let result = await this.widgetsService.restoreWidget(this, widget, this.widgetslist, this.container, this.widgetsBoundaries, this.dragPlaceholder);
-          if (result) {
-            let { dragRef, widgetHolderComponentRef } = result;
-            this.dragRefs.push(dragRef);
-            this.holdersInstances.push(widgetHolderComponentRef);
-          }
-        }
-
-        this.cdkList.withItems(this.dragRefs);
-        this.cdkList.disabled = true; // Initially disabled. Only allow moving items when in edition mode
-
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.cdkList.dropped.subscribe(async event => {
-          // Move on UI model
-          this.container.move(this.container.get(event.previousIndex), event.currentIndex)
-
-          // Move in state machine
-          await this.widgetsService.moveWidget(this.name, event.previousIndex, event.currentIndex);
-        });
-      });
+      this.loadContainer();
 
       WidgetsServiceEvents.editionMode.subscribe(editing => {
         this.cdkList.disabled = !editing;
         this.editing = editing;
       });
     }
+  }
+
+  private loadContainer() {
+    this.cdkList = this.dragDrop.createDropList(this.widgetslist.element);
+
+    void this.widgetsService.loadContainerState(this.name).then(async state => {
+      // Container state is loaded, generate the widgets
+      this.dragRefs = [];
+      for (let widget of state.widgets) {
+        let result = await this.widgetsService.restoreWidget(this, widget, this.widgetslist, this.container, this.widgetsBoundaries, this.dragPlaceholder);
+        if (result) {
+          let { dragRef, widgetHolderComponentRef } = result;
+          this.dragRefs.push(dragRef);
+          this.holdersInstances.push(widgetHolderComponentRef);
+        }
+      }
+
+      this.cdkList.withItems(this.dragRefs);
+      this.cdkList.disabled = true; // Initially disabled. Only allow moving items when in edition mode
+
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      this.cdkList.dropped.subscribe(async event => {
+        // Move on UI model
+        this.container.move(this.container.get(event.previousIndex), event.currentIndex)
+
+        // Move in state machine
+        await this.widgetsService.moveWidget(this.name, event.previousIndex, event.currentIndex);
+      });
+    });
   }
 
   /**
@@ -199,5 +203,12 @@ export class WidgetContainerComponent implements OnInit {
 
   public getActiveThemeVariantName(): string {
     return this.translate.instant('launcher.theme-variant-' + this.theme.activeTheme.value.variant);
+  }
+
+  public async restoreAllWidgets() {
+    await this.widgetsService.resetAllWidgets();
+
+    this.emptyAllWidgets();
+    this.loadContainer();
   }
 }

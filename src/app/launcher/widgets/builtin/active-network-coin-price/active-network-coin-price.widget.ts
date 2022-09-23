@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
+import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -35,6 +36,7 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
     public walletService: WalletService,
     private walletNetworkUIService: WalletNetworkUIService,
     public walletNetworkService: WalletNetworkService,
+    private walletInitService: WalletInitService,
     public translate: TranslateService,
     public currencyService: CurrencyService
   ) { }
@@ -100,5 +102,9 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
 
   public pickNetwork() {
     void this.walletNetworkUIService.chooseActiveNetwork();
+  }
+
+  public openWallet() {
+    this.walletInitService.start()
   }
 }

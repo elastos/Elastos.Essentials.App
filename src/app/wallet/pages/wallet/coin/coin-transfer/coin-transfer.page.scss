@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 /********************** Container **********************/
 .container {
@@ -24,8 +24,7 @@
             border-radius: 17px;
             padding: 7.5px 10px 7.5px 0;
             margin-bottom: 32px;
-            box-shadow: 0 3px 15px 0 #ededf0;
-            background-color: #ffffff;
+            background-color: var(--essentials-box-color);
 
             .left-col {
                 display: flex;
@@ -33,7 +32,8 @@
                 align-items: center;
                 padding-left: 10px;
 
-                ion-img, img {
+                ion-img,
+                img {
                     position: relative;
                     z-index: 10;
                     width: 50px;
@@ -42,14 +42,16 @@
                 }
             }
 
-            .middle-col, .right-col {
+            .middle-col,
+            .right-col {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: flex-start;
                 overflow: hidden;
 
-                h1, p {
+                h1,
+                p {
                     margin: 0;
                 }
 
@@ -78,8 +80,6 @@
                 }
 
                 p {
-                    color: #000000;
-                    opacity: 0.7;
                     text-align: right;
                 }
 
@@ -113,13 +113,13 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                background-color: #ffffff;
+                background-color: transparent;
                 border-radius: 16px;
                 padding-right: 20px;
             }
 
             ion-input {
-                background-color: #ffffff;
+                background-color: transparent;
                 height: 50px;
                 font-size: 19px;
                 font-weight: 600;
@@ -128,7 +128,6 @@
             }
 
             p {
-                color: #732dcf;
                 font-size: 13px;
                 font-weight: 700;
             }
@@ -181,8 +180,7 @@
         .item-row {
             border-radius: 16px;
             padding: 10px 15px;
-            box-shadow: 0 3px 15px 0 #ededf0;
-            background-color: #ffffff;
+            background-color: var(--essentials-box-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -193,7 +191,6 @@
                 align-items: center;
 
                 ion-input {
-                    background-color: #ffffff;
                     font-size: 14px;
                     font-weight: 400;
                     letter-spacing: -0.34px;
@@ -201,9 +198,9 @@
                 }
 
                 ion-icon {
-                  padding-top: 4px;
-                  width: 30px;
-                  height: 30px;
+                    padding-top: 4px;
+                    width: 30px;
+                    height: 30px;
                 }
 
                 .scan-btn {
@@ -221,7 +218,8 @@
                     }
                 }
 
-                h2, .amount-input {
+                h2,
+                .amount-input {
                     width: 100%;
                     margin: 0;
                     font-size: 19px;
@@ -234,8 +232,6 @@
                     padding-top: 4px;
                     font-size: 12px;
                     font-weight: 400;
-                    color: #000000;
-                    opacity: 0.7;
                 }
             }
 
@@ -260,7 +256,8 @@
                 align-items: flex-end;
                 overflow: hidden;
 
-                .amount-input, p {
+                .amount-input,
+                p {
                     text-align: right;
                 }
 
@@ -283,7 +280,6 @@
             align-items: center;
 
             #max-btn {
-                color: #732dcf;
                 font-size: 11px;
                 font-weight: 700;
             }
@@ -317,7 +313,8 @@
                 align-items: center;
                 padding: 10px 5px;
 
-                span, ion-icon {
+                span,
+                ion-icon {
                     color: #3880ff;
                 }
 
@@ -340,7 +337,7 @@
             padding: 15px;
             margin-top: 10px;
             margin-bottom: 32px;
-            background: #FFF;
+            background: #fff;
             width: 100%;
 
             .asset-icon {
@@ -354,14 +351,12 @@
             .info-block {
                 display: flex;
                 flex-direction: column;
-                margin-top:15px;
+                margin-top: 15px;
 
                 .info-title {
-                    color: #3C3C3C;
                 }
 
                 .info-value {
-                    color: #161740;
                     font-size: 13px;
                     font-weight: 600;
                     line-height: 1.4;
@@ -381,12 +376,12 @@
     }
 
     .note {
-      padding: 0 30px;
+        padding: 0 30px;
 
-      p {
-        font-size: 12px;
-        font-weight: 700;
-      }
+        p {
+            font-size: 12px;
+            font-weight: 700;
+        }
     }
 
     .ela-coinbase-warning {
@@ -402,75 +397,6 @@
     }
 }
 
-/********************** Dark Container **********************/
-.dark-container {
-    // Recharge Container
-    .recharge-container {
-        .item-row {
-            background-color: #212021;
-            box-shadow: none;
-
-            .arrow-down {
-                background-color: #212021;
-            }
-
-            .right-col {
-                p {
-                    color: #9D9D9D;
-                }
-            }
-        }
-
-        .input-row {
-            ion-col {
-                background-color: #212021;
-
-                ion-input {
-                    background-color: #212021;
-                }
-            }
-        }
-    }
-    // Send Container
-    .send-container {
-        .item-row {
-            background-color: #212021;
-            box-shadow: none;
-
-            ion-col {
-                ion-input {
-                    background-color: #212021;
-                }
-
-                p {
-                    color: #ACACAC;
-                    opacity: 1;
-                }
-            }
-        }
-
-        .nft-info {
-            background: #212121;
-
-            .info-block {
-                .info-title {
-                    color: #C9C9C9;
-                }
-
-                .info-value {
-                    color: #FFF;
-                }
-            }
-        }
-    }
-
-    .node {
-      p {
-        color: #ACACAC;
-      }
-  }
-}
-
 /********************** Pay Intent Container **********************/
 .pay-container {
     height: 100%;
@@ -481,63 +407,69 @@
     padding: 40px 0px;
 
     .header-img {
-      width: 67.2px;
-      height: 67.2px;
-      object-fit: contain;
+        width: 67.2px;
+        height: 67.2px;
+        object-fit: contain;
     }
 
     div {
-      text-align: left;
-      padding: 0 30px;
-      width: 100%;
+        text-align: left;
+        padding: 0 30px;
+        width: 100%;
     }
 
     .amount-container {
         padding: 0 20px;
     }
 
-    h1, h2, h3, h4, p{
-      margin: 0;
-      width: 100%;
+    h1,
+    h2,
+    h3,
+    h4,
+    p {
+        margin: 0;
+        width: 100%;
     }
 
-    h1, h2 {
-      text-align: center;
+    h1,
+    h2 {
+        text-align: center;
     }
 
-    h3, h4 {
-      text-align: left;
-      font-size: 14px;
+    h3,
+    h4 {
+        text-align: left;
+        font-size: 14px;
     }
 
     // Screen title
     h1 {
-      padding-top: 10px;
-      padding-bottom: 5px;
-      font-size: 11px;
-      font-weight: 600;
+        padding-top: 10px;
+        padding-bottom: 5px;
+        font-size: 11px;
+        font-weight: 600;
     }
 
     // Screen subtitle
     h2 {
-      padding-top: 20px;
-      padding-bottom: 20px;
-      font-size: 22px;
-      font-weight: 700;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        font-size: 22px;
+        font-weight: 700;
     }
 
     // Item type
     h3 {
-      padding-top: 5px;
-      padding-bottom: 5px;
-      font-weight: 700;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        font-weight: 700;
     }
 
     // Item value
     h4 {
-      padding-top: 0;
-      padding-bottom: 15px;
-      font-weight: 400;
+        padding-top: 0;
+        padding-bottom: 15px;
+        font-weight: 400;
     }
 
     // Balance
@@ -553,12 +485,13 @@
         border-radius: 16px;
         padding: 10px;
         box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #ffffff;
         display: flex;
         justify-content: space-between;
         align-items: center;
 
-        h2, h5, .amount-input {
+        h2,
+        h5,
+        .amount-input {
             width: 100%;
             margin: 0;
             font-size: 19px;
@@ -600,7 +533,9 @@
             align-items: flex-end;
             overflow: hidden;
 
-            .amount-input, p, h5 {
+            .amount-input,
+            p,
+            h5 {
                 text-align: right;
             }
 
@@ -639,67 +574,10 @@
                 align-items: center;
                 border-radius: 8px;
 
-                    ion-label {
-                        font-size: 17px;
-                        font-weight: 500;
-                    }
-                }
-
-                .cancel {
-                    box-shadow: 0 3px 15px 0 #ededf0;
-                    background-color: #ffffff;
-
-                    ion-label {
-                        color: #000000;
-                    }
-                }
-
-                .confirm {
-                    box-shadow: 0 3px 15px 0 #ededf0;
-                    background-color: #6e23d0;
-
-                    ion-label {
-                        color: #ffffff;
-                }
-            }
-        }
-    }
-}
-
-/********************** Pay Intent Dark Container **********************/
-.dark-pay-container {
-    h4 {
-        color: #9D9D9D;
-    }
-
-    .item-row {
-        background-color: #212021;
-        box-shadow: none;
-
-        .amount-input {
-            color: #ffffff;
-        }
-
-        .left-col {
-            ion-input {
-                background-color: #212021;
-            }
-        }
-    }
-
-    .footer-container {
-        .btn-row {
-            .cancel {
-                box-shadow: 0 3px 6px 0 #151626;
-                background-color: #202039;
-
                 ion-label {
-                    color: #ffffff;
+                    font-size: 17px;
+                    font-weight: 500;
                 }
-            }
-
-            .confirm {
-                box-shadow: 0 3px 15px 0 #151626;
             }
         }
     }
@@ -740,27 +618,9 @@
             align-items: center;
             border-radius: 8px;
 
-                ion-label {
-                    font-size: 17px;
-                    font-weight: 500;
-                }
-            }
-
-            .cancel {
-                box-shadow: 0 3px 15px 0 #ededf0;
-                background-color: #ffffff;
-
-                ion-label {
-                    color: #000000;
-                }
-            }
-
-            .confirm {
-                box-shadow: 0 3px 15px 0 #ededf0;
-                background-color: #6e23d0;
-
-                ion-label {
-                    color: #ffffff;
+            ion-label {
+                font-size: 17px;
+                font-weight: 500;
             }
         }
     }
@@ -783,4 +643,3 @@
         }
     }
 }
-

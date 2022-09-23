@@ -117,74 +117,22 @@
                     </ion-col>
                     <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 7.5 : 5" class="middle-col">
                         <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
-                        <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
+                        <p class="secondary-text">{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
                     </ion-col>
                     <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 2.5 : 5" class="right-col">
                         <h1>{{ uiService.getFixedBalance(subWallet.getDisplayBalance()) }}</h1>
-                        <p *ngIf="subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance())">
+                        <p class="secondary-text"
+                            *ngIf="subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance())">
                             {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance()) }}
                             {{ currencyService.selectedCurrency.symbol }}
                         </p>
                     </ion-col>
                     <ion-col offset="2" size="10" class="bottom-col">
-                        <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{
+                        <span *ngIf="subWallet.type === CoinType.ERC20" class="secondary-text">{{
                             subWallet.getDisplayableERC20TokenInfo() }}</span>
                     </ion-col>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-row>
-
-                <!-- STAKED ASSETS -->
-                <!-- Hide the assets overview for now. The server is not reliable. -->
-
-                <!-- <ion-row class="list-title-row staked-assets-row" *ngIf="isEVMNetworkWallet">
-                    <ion-col size="6">
-                        <h1>{{ 'wallet.staking-assets' | translate }}</h1>
-                    </ion-col>
-                    <ion-col size="6" class="service-provider ripple ion-activatable"
-                        (click)="openStakedAssetsProvider()">
-                        <div class="cell">By</div>
-                        <div class="cell">
-                            <img
-                                [src]="theme.darkMode ? 'assets/wallet/earn/darkmode/tinnetwork.png' : 'assets/wallet/earn/tinnetwork.png'" />
-                        </div>
-                        <div class="cell">
-                            <img class="go"
-                                [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/right-arrow.svg' : 'assets/wallet/icons/right-arrow.svg'" />
-                        </div>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </ion-col>
-                </ion-row>
-
-                <ion-row class="reload-staked-assets" (click)="onRefreshStakingAssetClicked()"
-                *ngIf="isEVMNetworkWallet && !refreshingStakedAssets">
-                <img
-                    [src]="!theme.darkMode ? '/assets/browser/icons/icon-reload.svg' : 'assets/browser/icons/dark_mode/icon-reload.svg'" />
-                <ion-label>{{ 'wallet.staking-assets-refresh' | translate }}</ion-label>
-            </ion-row>
-
-            <ion-row class="reload-staked-assets" *ngIf="isEVMNetworkWallet && refreshingStakedAssets">
-                <ion-spinner name="crescent"></ion-spinner>
-                <ion-label>{{ 'wallet.staking-assets-refreshing' | translate }}</ion-label>
-            </ion-row>
-
-            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
-                *ngFor="let stakingAsset of stakingAssets" (click)="onStakingAssetClicked(stakingAsset)">
-                <ion-col size="2" class="left-col">
-                    <div class="icon-container">
-                        <img [src]="stakingAsset.farmIconUrl" [src-fallback]="getDefaultStakedAssetIcon()">
-                    </div>
-                </ion-col>
-                <ion-col [size]="5" class="middle-col">
-                    <h1>{{ stakingAsset.farmName }}</h1>
-                </ion-col>
-                <ion-col [size]="5" class="right-col">
-                    <h1>{{ usdToCurrencyAmount(stakingAsset.amountUSD, networkWallet.getDecimalPlaces()) }}</h1>
-                    <p>
-                        {{ currencyService.selectedCurrency.symbol }}
-                    </p>
-                </ion-col>
-                <ion-ripple-effect></ion-ripple-effect>
-            </ion-row> -->
 
                 <!-- NFTS -->
                 <ion-row *ngIf="networkWallet.getNFTs().length" class="list-title-row collectibles-title">
@@ -204,7 +152,9 @@
                     </ion-col>
                     <ion-col size="8" class="middle-col">
                         <h1>{{ nft.name }}</h1>
-                        <div class="bottom-col"><span class="synced">ELASTOS {{nft.type}} NFT</span></div>
+                        <div class="bottom-col">
+                            <p class="secondary-text">{{nft.type}} NFT</p>
+                        </div>
                     </ion-col>
                     <ion-col size="2" class="right-col">
                         <h1>{{ nft.balance >= 0 ? nft.balance : "" }}</h1>

@@ -1,8 +1,8 @@
 @import "../../widgets.scss";
 
 ion-slides {
-    //--bullet-background: red;
-    --bullet-background-active: var(--ion-text-color);
+    --bullet-background: var(--essentials-pagination-color);
+    --bullet-background-active: var(--essentials-pagination-active-color);
 }
 
 .widget {
@@ -53,6 +53,9 @@ ion-slides {
 
         .no-wallet {
             text-align: center;
+            background: var(--essentials-box-color);
+            border-radius: 10px;
+            padding: 20px;
         }
     }
 

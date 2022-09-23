@@ -142,9 +142,9 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     }
   }
 
-  ion-slides {
+  /* ion-slides {
     --bullet-background: #808080;
-  }
+  } */
 
   ion-datetime {
     --background: #ffffff;
@@ -282,9 +282,9 @@ body.dark {
     }
   }
 
-  ion-slides {
+  /* ion-slides {
     --bullet-background: #f5f5fd;
-  }
+  } */
 
   ion-datetime {
     --background: #121212;

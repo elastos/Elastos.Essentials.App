@@ -394,53 +394,6 @@ export class WidgetsService {
         }
     }
 
-    /**
-     * Updates a plugin widget with new data, usually after a new JSON content refresh.
-     * Persistent model is updated, and UI as well.
-     */
-    /*  public async updatePluginWidgetConfig(widgetId: string, newConfig: PluginConfig<any>): Promise<void> {
-         // Retrieve the current model instance
-         let widgetInstance = this.componentsInstances.find(w => w.widgetId === widgetId);
-
-         // Update to disk, if this widget is a currently added widget in a real container.
-         // (contrary to widgets shown in the widget chooser)
-         if (widgetInstance.container.name) {
-             let state = await this.loadContainerState(widgetInstance.container.name);
-
-             let storedWidget = state.widgets.find(w => w.id === widgetId);
-             storedWidget.plugin.lastFetched = moment().unix(); // Last updated: now
-             storedWidget.plugin.json = newConfig;
-
-             // Update the widget holder with new value
-             (<PluginWidget>widgetInstance.widget).attachWidgetState(storedWidget);
-
-             await this.saveContainerState(widgetInstance.container.name, state);
-         }
-
-         // Refresh the plugin component content with the new data (UI only)
-         (<PluginWidget>widgetInstance.widget).config = newConfig;
-     } */
-
-    /**
-     * Lifecycle - launcher home is entering. We initialize widgets from here as well
-     */
-    /* public async onLauncherHomeViewWillEnter() {
-        for (let instance of this.componentsInstances) {
-            await instance.holderComponentRef.instance.onWidgetInit?.();
-        }
-        this.launcherHomeViewIsActive = true;
-    } */
-
-    /**
-     * Lifecycle - launcher home is leaving. We deinit widgets from here as well
-     */
-    /* public async onLauncherHomeViewWillLeave() {
-        this.launcherHomeViewIsActive = false;
-        for (let instance of this.componentsInstances) {
-            await instance.holderComponentRef.instance.onWidgetDeinit?.();
-        }
-    } */
-
     private generateDefaultContainerState(widgetContainerName: string): WidgetContainerState {
         let widgets: WidgetState[] = [];
 
@@ -476,6 +429,15 @@ export class WidgetsService {
         return {
             widgets
         };
+    }
+
+    /**
+     * Restores all containers to their original content
+     */
+    public async resetAllWidgets() {
+        await this.saveContainerState("left", this.generateDefaultContainerState("left"));
+        await this.saveContainerState("main", this.generateDefaultContainerState("main"));
+        await this.saveContainerState("right", this.generateDefaultContainerState("right"));
     }
 
     private async findInAllContainers(filter: (widgetState: WidgetState) => boolean): Promise<{ containerName: string, widgetState: WidgetState }> {

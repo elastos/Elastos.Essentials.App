@@ -19,7 +19,7 @@ ion-grid {
 
     .menu-item {
         padding: 15px 10px;
-        background: white;
+        background: var(--essentials-box-color);
         border-radius: 13px;
         text-align: left;
         margin-bottom: 10px;
@@ -35,12 +35,6 @@ ion-grid {
             img {
                 margin-right: 10px;
             }
-        }
-    }
-
-    &.dark-container {
-        .menu-item {
-            background: #2C2C2C;
         }
     }
 }

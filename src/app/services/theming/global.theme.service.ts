@@ -26,8 +26,8 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 })
 export class GlobalThemeService extends GlobalService {
   public activeTheme = new BehaviorSubject<ActiveTheming>({
-    config: availableThemes[0],
-    variant: "light"
+    config: this.defaultThemeConfig().theme,
+    variant: this.defaultThemeConfig().themeVariant
   });
 
   constructor(
@@ -143,7 +143,7 @@ export class GlobalThemeService extends GlobalService {
   }
 
   private defaultThemeConfig(): { theme: ThemeConfig, themeVariant: "light" | "dark" } {
-    let blackTheme = availableThemes.find(theme => theme.key === "black");
+    let blackTheme = availableThemes.find(theme => theme.key === "white");
     return { theme: blackTheme, themeVariant: "light" };
   }
 
@@ -153,14 +153,20 @@ export class GlobalThemeService extends GlobalService {
   async applyThemeConfig(theme: ThemeConfig, themeVariant: "light" | "dark") {
     let variant = theme.variants[themeVariant];
 
+    // mainTextColor format must be #RRGGBB
+    let mainTextColor: string = null;
     if (theme.usesDarkMode) {
-      document.body.style.setProperty('--ion-text-color', variant.textColor || "#FFF");
+      mainTextColor = variant.textColor || "#FFFFFF";
     }
     else {
-      document.body.style.setProperty('--ion-text-color', variant.textColor || "#000");
+      mainTextColor = variant.textColor || "#000000";
     }
 
-    document.body.style.setProperty('--essentials-box-color', variant.boxColor || (themeVariant === "light" ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.3)'));
+    document.body.style.setProperty('--ion-text-color', mainTextColor);
+    document.body.style.setProperty('--essentials-box-color', variant.boxColor || (themeVariant === "light" ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'));
+    document.body.style.setProperty('--essentials-border-separator-color', `${mainTextColor}30`); // Semi transparent based on text color
+    document.body.style.setProperty('--essentials-pagination-color', `${mainTextColor}B0`); // Semi transparent based on text color
+    document.body.style.setProperty('--essentials-pagination-active-color', `${mainTextColor}`);
     document.body.style.setProperty('--ion-background-color', variant.color);
 
     await passwordManager.setDarkMode(theme.usesDarkMode);

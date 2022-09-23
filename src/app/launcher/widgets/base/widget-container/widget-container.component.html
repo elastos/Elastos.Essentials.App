@@ -38,6 +38,10 @@
       <ng-template #container></ng-template>
     </div>
   </div>
+
+  <div class="reset-container" (click)="restoreAllWidgets()" *ngIf="inLiveMode() && editing">
+    Restore all widgets to defaults
+  </div>
 </div>
 
 <!-- Placeholder showing the insertion position while dragging -->

@@ -50,7 +50,7 @@ export class GlobalPreferencesService implements GlobalService {
       "privacy.credentialtoolbox.stats": true, // Publish anonymous stats about credentials usage, to the external credential toolbox service, or not
       "privacy.hive.sync": false, // Whether to allow data to be synchronized with the hive vault or not (credentials, contacts, etc)
       "ui.darkmode": true, // True for dark mode, false for light mode - legacy way to use binary light or dark modes (before colors). Now used to change the overall white or dark modes for pictures, in colored themes
-      "ui.theme": "blue", // Key of the main overall theme. Changing this theme also impacts the darkmode value. color code name eg: "blue"
+      "ui.theme": "white", // Key of the main overall theme. Changing this theme also impacts the darkmode value. color code name eg: "blue"
       "ui.variant": "light", // light or dark. The variant changes the box colors mostly for now.
       "ui.startupscreen": "home",
       "network.template": "MainNet",

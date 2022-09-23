@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 .container {
     min-height: 100%;
@@ -10,7 +10,8 @@
         margin-bottom: 10px;
         margin-left: 5px;
 
-        h1, p {
+        h1,
+        p {
             margin: 0;
         }
 
@@ -25,13 +26,10 @@
 
         p {
             margin: 0;
-            height: 13px;
+            height: 14px;
             font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 1px;
+            font-weight: 400;
             text-align: left;
-            color: #000000;
-            opacity: 0.7;
         }
     }
 
@@ -52,7 +50,12 @@
             justify-content: flex-start;
             align-items: flex-start;
 
-            h1, h2, h3, h4, .bigFont, .smallFont {
+            h1,
+            h2,
+            h3,
+            h4,
+            .bigFont,
+            .smallFont {
                 padding: 0 10px;
                 margin: 0;
                 line-height: 1;
@@ -61,33 +64,26 @@
             h1 {
                 font-size: 16px;
                 font-weight: 600;
-                letter-spacing: 0.32px;
-                color: #ffffff;
                 margin-bottom: 7.5px;
             }
 
             h2 {
                 font-size: 9px;
                 font-weight: 600;
-                letter-spacing: 0.9px;
-                color: #fdfeff;
                 margin-bottom: 20px;
             }
 
             h3 {
                 font-size: 10px;
                 font-weight: 400;
-                letter-spacing: 0.8px;
-                color: #ffffff;
                 margin-bottom: 4px;
             }
 
-            h4, .bigFont, .smallFont {
+            h4,
+            .bigFont,
+            .smallFont {
                 font-size: 42px;
-                letter-spacing: 1.05px;
-                line-height: 0.85;
                 font-weight: 500;
-                color: #ffffff;
                 margin-bottom: 15px;
 
                 .dot {
@@ -135,35 +131,19 @@
             -ms-transform: translate(2px, -2px) rotate(-45deg);
             -o-transform: translate(2px, -2px) rotate(-45deg);
             // Default color
-            background-color: #242424
+            background-color: #242424;
         }
     }
 
     .black-card {
         background-image: url("/assets/wallet/cards/subcards/card-black.svg");
 
-        /* .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color:  #adadad;
-                }
-            }
-        } */
-
         .arrow-down {
-            background-color: #242424
+            background-color: #242424;
         }
     }
     .blue-card {
         background-image: url("/assets/wallet/cards/subcards/card-lightblue.svg");
-
-        /* .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color: #7defe5;
-                }
-            }
-        } */
 
         .arrow-down {
             background-color: #28d3c5;
@@ -172,28 +152,12 @@
     .gray-card {
         background-image: url("/assets/wallet/cards/subcards/card-coolgray.svg");
 
-        /* .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color: #63657c;
-                }
-            }
-        } */
-
         .arrow-down {
             background-color: #8487a1;
         }
     }
     .gray2-card {
         background-image: url("/assets/wallet/cards/subcards/card-warmgray.svg");
-
-        /* .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color:  #dddddd;
-                }
-            }
-        } */
 
         .arrow-down {
             background-color: #989797;
@@ -203,14 +167,11 @@
     .list-title-row {
         margin-bottom: 10px;
         border-radius: 17px;
-        color: #ACACAC;
 
         .title-col {
             h1 {
                 margin: 0;
                 font-weight: 500;
-                line-height: 0.8;
-                letter-spacing: -0.45px;
                 font-size: 18px;
                 text-align: left;
             }
@@ -219,7 +180,6 @@
         .active {
             font-size: 18px;
             font-weight: 600;
-            color: #212021;
         }
 
         .spinner-col {
@@ -228,7 +188,7 @@
             align-items: center;
 
             #fetching-more-spinner {
-                margin:20px;
+                margin: 20px;
             }
         }
     }
@@ -237,8 +197,7 @@
         border-radius: 17px;
         padding: 7.5px 10px 7.5px 0;
         margin-bottom: 7.5px;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #ffffff;
+        background-color: var(--essentials-box-color);
 
         .left-col {
             display: flex;
@@ -301,14 +260,16 @@
             }
         }
 
-        .middle-col, .right-col {
+        .middle-col,
+        .right-col {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
             overflow: hidden;
 
-            h1, p {
+            h1,
+            p {
                 margin: 0;
             }
 
@@ -326,22 +287,16 @@
             }
 
             .memo {
-                width:100%;
-                overflow:hidden;
+                width: 100%;
+                overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
-                -o-text-overflow:ellipsis;
+                -o-text-overflow: ellipsis;
             }
         }
 
         .right-col {
             align-items: flex-end;
-
-            p {
-                text-align: right;
-                color: #000000;
-                opacity: 0.7;
-            }
         }
     }
 
@@ -357,7 +312,8 @@
             height: 40px;
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             margin-top: 15px;
         }
 
@@ -389,11 +345,11 @@
 }
 
 .footer {
-    position:fixed;
-    bottom:0;
+    position: fixed;
+    bottom: 0;
     width: 100%;
     color: white;
-    background: #FFF;
+    background: #fff;
     transition: transform 0.3s ease-in-out; // Transition on hide/show.
 
     .card-btn-row {
@@ -415,18 +371,19 @@
                 justify-content: center;
                 padding: 10px 5px;
                 flex-direction: column;
-                background: #F5F7FE;
+                background: #f5f7fe;
 
                 img {
-                    width:24px;
-                    height:24px;
+                    width: 24px;
+                    height: 24px;
                     object-fit: contain;
                 }
 
                 .transfer {
                 }
 
-                .send, .receive {
+                .send,
+                .receive {
                 }
 
                 .btn-label {
@@ -437,7 +394,7 @@
                     line-height: 1.25;
                     letter-spacing: 0.8px;
                     text-align: center;
-                    color: #3C3C3C;
+                    color: #3c3c3c;
                     text-transform: uppercase;
                 }
             }
@@ -445,41 +402,14 @@
     }
 }
 
-.darkmode  {
-    .main-title-row {
-        p {
-            color: #9D9D9D;
-            opacity: 1;
-        }
-    }
-
-    .list-title-row {
-        color: #ACACAC;
-
-        .active {
-            color: #ffffff;
-        }
-    }
-
-    .item-row {
-        background-color: #212021;
-        box-shadow: none;
-
-        .right-col {
-            p {
-                color: #ACACAC;
-                opacity: 1;
-            }
-        }
-    }
-
+.darkmode {
     .footer {
         background: #212021;
 
         .card-btn-row {
             ion-col {
                 .btn-box {
-                    background: #3C3C3C;
+                    background: #3c3c3c;
 
                     .btn-label {
                         color: #fdfeff;

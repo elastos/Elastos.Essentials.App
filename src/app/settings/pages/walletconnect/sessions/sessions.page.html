@@ -3,16 +3,20 @@
   <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
     <ion-row class="section-row" *ngFor="let activeSession of activeSessions">
       <ion-col size="2" class="icon-col">
-        <img class="connector-logo" [src]="getSessionLogo(activeSession)" (error)="activeSession.peerMeta.icons[0]='assets/settings/icon/walletconnect.svg'"/>
+        <img class="connector-logo" [src]="getSessionLogo(activeSession)"
+          (error)="activeSession.peerMeta.icons[0]='assets/settings/icon/walletconnect.svg'" />
       </ion-col>
       <ion-col size="8" class="left-col">
         <div class="name">{{ getSessionName(activeSession) }}</div>
-        <div class="description" *ngIf="activeSession.peerMeta && activeSession.peerMeta.description">{{ activeSession.peerMeta.description }}</div>
-        <div class="url" *ngIf="activeSession.peerMeta && activeSession.peerMeta.url">{{ activeSession.peerMeta.url }}</div>
+        <div class="description" *ngIf="activeSession.peerMeta && activeSession.peerMeta.description">{{
+          activeSession.peerMeta.description }}</div>
+        <div class="url" *ngIf="activeSession.peerMeta && activeSession.peerMeta.url">{{ activeSession.peerMeta.url }}
+        </div>
         <div class="sessionid">{{ getSessionID(activeSession) }}</div>
       </ion-col>
       <ion-col size="2" class="right-col" (click)="killSession(activeSession)">
-        <img src="/assets/contacts/images/delete.svg">
+        <img
+          [src]="theme.darkMode ? '/assets/settings/icon/delete-white.svg' : '/assets/settings/icon/delete-black.svg'">
       </ion-col>
     </ion-row>
     <div class="no-session" *ngIf="activeSessions && activeSessions.length == 0">

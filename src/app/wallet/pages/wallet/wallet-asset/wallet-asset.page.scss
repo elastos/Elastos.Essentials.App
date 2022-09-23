@@ -71,6 +71,7 @@ ion-slide,
     }
     .subwallet-row {
         padding: 7px;
+        background-color: var(--essentials-box-color);
 
         .left-title,
         .stake-title {
@@ -101,7 +102,6 @@ ion-slide,
             }
 
             .net-count {
-                color: #9b9b9b;
                 font-size: 12px;
             }
         }
@@ -125,7 +125,7 @@ ion-slide,
     .network-row {
         border-radius: 10px;
         padding: 7px;
-        background-color: rgba(47, 45, 47, 0.05);
+        background: var(--ion-background-color);
 
         .left-title {
             display: flex;
@@ -194,17 +194,6 @@ ion-slide,
     }
 }
 
-.dark-slides {
-    ion-slide {
-        .main-title-row {
-            p {
-                color: #9d9d9d;
-                opacity: 1;
-            }
-        }
-    }
-}
-
 .dark-slide {
     .card-label-row {
         .overview-img {
@@ -212,31 +201,5 @@ ion-slide,
                 background-image: radial-gradient(circle, rgba(128, 82, 255, 0.5) 0%, rgba(128, 82, 255, 0) 70%);
             }
         }
-    }
-
-    .main-title-row {
-        p {
-            color: #9d9d9d;
-            opacity: 1;
-        }
-    }
-
-    .network-row {
-        background-color: #151515;
-        box-shadow: none;
-
-        .left-title {
-            h1 {
-                color: #9d9d9d;
-            }
-        }
-
-        .subwallet-row {
-            background-color: #151515;
-        }
-    }
-
-    .dark-subwallet-row {
-        background-color: rgba(33, 32, 33, 1);
     }
 }

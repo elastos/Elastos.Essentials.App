@@ -57,8 +57,8 @@ export class LanguagePage implements OnInit {
   }
 
   private updateTitleBarIcons() {
-    let themeIconPath = !this.theme.activeTheme.value.config.usesDarkMode ? 'assets/didsessions/icon/palette.svg' : 'assets/didsessions/icon/dark_mode/palette.svg';
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "theme", iconPath: themeIconPath });
+    //let themeIconPath = !this.theme.activeTheme.value.config.usesDarkMode ? 'assets/didsessions/icon/palette.svg' : 'assets/didsessions/icon/dark_mode/palette.svg';
+    //this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "theme", iconPath: themeIconPath });
   }
 
   async checkForIdentities() {

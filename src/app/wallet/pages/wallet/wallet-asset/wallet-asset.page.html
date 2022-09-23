@@ -43,7 +43,8 @@
                     </h1>
                 </ion-col>
                 <ion-col size="1" class='img' (click)="netWallet.show = ! netWallet.show">
-                    <img class="arrow-icon" src="assets/wallet/icons/down-arrow-grey.svg">
+                    <img class="arrow-icon"
+                        [src]="theme.darkMode ? 'assets/wallet/icons/down-arrow-white.svg' : 'assets/wallet/icons/down-arrow.svg'">
                 </ion-col>
 
                 <!-- Networks list in a wallet -->
