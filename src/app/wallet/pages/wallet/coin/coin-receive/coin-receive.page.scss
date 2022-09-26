@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 .container {
     display: flex;
@@ -17,13 +17,16 @@
 
     .qrcode-container {
         border-radius: 21px;
-        background-color: #ffffff;
+        background-color: var(--essentials-box-color);
         padding: 20px;
         margin: 20px;
         zoom: 1.2;
     }
 
-    h1, h2, h3, p {
+    h1,
+    h2,
+    h3,
+    p {
         margin: 0;
         font-weight: 400;
     }
@@ -40,12 +43,12 @@
         font-weight: 500;
         text-align: center;
         border-radius: 17px;
-        background-color: #ffffff;
-        box-shadow: 0 3px 15px 0 #ededf0;
+        background-color: var(--essentials-box-color);
         padding: 20px;
     }
 
-    h3, p {
+    h3,
+    p {
         font-size: 12px;
         font-weight: 300;
         letter-spacing: 0.6px;
@@ -54,13 +57,6 @@
 
     h3 {
         padding-bottom: 5px;
-        text-decoration: underline
-    }
-}
-
-.dark-container {
-    h2 {
-        background-color: #212021;
-        box-shadow: none;
+        text-decoration: underline;
     }
 }

@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 .container {
   display: flex;
@@ -22,8 +22,7 @@
     margin: 15px 0 30px;
     border-radius: 16px;
     padding: 10px 10px 10px 15px;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    background-color: #ffffff;
+    background-color: var(--essentials-box-color);
 
     ion-col {
       display: flex;
@@ -31,7 +30,6 @@
       align-items: center;
 
       ion-input {
-        background-color: #ffffff;
         font-size: 14px;
         font-weight: 400;
         letter-spacing: -0.34px;
@@ -48,9 +46,9 @@
         height: 45px;
 
         img {
-            width: 60%;
-            height: 60%;
-            object-fit: contain;
+          width: 60%;
+          height: 60%;
+          object-fit: contain;
         }
       }
     }
@@ -66,7 +64,8 @@
     justify-content: flex-start;
     align-items: center;
 
-    h2, h3 {
+    h2,
+    h3 {
       margin: 0;
     }
 
@@ -74,7 +73,6 @@
       font-size: 12px;
       font-weight: 500;
       margin-bottom: 1px;
-      color: #372153;
     }
 
     h3 {
@@ -85,25 +83,6 @@
 
     #symbol {
       letter-spacing: 4px;
-    }
-  }
-}
-
-.darkContainer {
-  .scan-row {
-    background-color: #212021;
-    box-shadow: none;
-
-    ion-col {
-      ion-input {
-        background-color: #212021;
-      }
-    }
-  }
-
-  .coin-row {
-    h2 {
-      color: #9D9D9D;
     }
   }
 }

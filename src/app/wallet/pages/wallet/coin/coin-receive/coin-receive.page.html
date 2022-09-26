@@ -3,7 +3,7 @@
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <img [src]="!theme.darkMode ? this.networkWallet.network.logo : this.networkWallet.network.logo" />
         <div *ngIf="qrcode" class="qrcode-container">
-            <qrcode [qrdata]="qrcode" [width]="200"></qrcode>
+            <qrcode class="qrcode" [qrdata]="qrcode" [width]="200"></qrcode>
         </div>
         <h1>{{ 'wallet.coin-receive-ela-address' | translate: { coinName: tokenName } }}</h1>
         <h2 *ngIf="qrcode" (click)="copyAddress()">
