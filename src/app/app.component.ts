@@ -118,6 +118,8 @@ export class AppComponent {
       await this.credentialToolboxService.init();
       void this.globalFirebaseService.init();
       void this.globalELAUtxoService.init();
+      // Init after globalNetworksService.init()
+      void this.globalBTCService.init();
 
       // "DApps" initializations
       await this.globalAppBackgroundService.init();

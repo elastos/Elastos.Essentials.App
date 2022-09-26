@@ -4,24 +4,51 @@ import BigNumber from 'bignumber.js';
 import { Logger } from '../logger';
 import { AddressResult, BalanceHistory, BTCTransaction, BTCUTXO } from '../wallet/model/btc.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class GlobalBTCRPCService {
     public static instance: GlobalBTCRPCService = null;
-    // Pay for it after evaluation
-    private apikeys = ['JCBiDqxUbHK2yjVPndSwYg70aANmzkOF',
-        'raIkl0N79nXd6jZOF1zyLiBMVwbJqfc2',
-        '4XZngRNFoTDc7l8GIKx3YmUWvtBSwydb',
-        '49DAE10rcXPU7LRkKfyiuGtFgvBMIJjQ',
-        'zvEsonX2uFPTLy7liqWApZhb9Uce8Omk']
+    // // Pay for it after evaluation
+    // private apikeys = ['JCBiDqxUbHK2yjVPndSwYg70aANmzkOF',
+    //     'raIkl0N79nXd6jZOF1zyLiBMVwbJqfc2',
+    //     '4XZngRNFoTDc7l8GIKx3YmUWvtBSwydb',
+    //     '49DAE10rcXPU7LRkKfyiuGtFgvBMIJjQ',
+    //     'zvEsonX2uFPTLy7liqWApZhb9Uce8Omk']
 
-    private apikey = 'JCBiDqxUbHK2yjVPndSwYg70aANmzkOF';
+    private apikey_testnet = 'raIkl0N79nXd6jZOF1zyLiBMVwbJqfc2';
+    private apikey_mainnet = '';
+    private apikey = '';
 
     constructor(private http: HttpClient, private globalJsonRPCService: GlobalJsonRPCService) {
         GlobalBTCRPCService.instance = this;
-        this.apikey = this.apikeys[Math.floor(Math.random() * 5)];
+    }
+
+    init() {
+        this.http.get("assets/wallet/data/apikey-nownode.json").subscribe({
+            next: (value) => {
+                if ((value instanceof Array) && (value.length > 0)) {
+                    this.apikey_mainnet = value[Math.floor(Math.random() * value.length)];
+
+                    let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
+                    if (network !== MAINNET_TEMPLATE) {
+                        this.apikey = this.apikey_testnet;
+                    } else {
+                        this.apikey = this.apikey_mainnet;
+                    }
+
+                } else {
+                    throw new Error("Can't find the api keys, the value is " + value)
+                }
+            },
+            complete: () => {
+            },
+            error: (e) => {
+                throw e;
+            }
+        })
     }
 
     public async balancehistory(rpcApiUrl: string, address: string): Promise<BigNumber> {
@@ -136,6 +163,7 @@ export class GlobalBTCRPCService {
                 'api-key': this.apikey,
             }
         }
+
         return new Promise((resolve, reject) => {
             this.http.get<any>(url, options).subscribe((res) => {
                 resolve(res);
