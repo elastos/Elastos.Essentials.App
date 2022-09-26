@@ -59,6 +59,10 @@ export abstract class ElastosSmartChainNetworkBase extends ElastosEVMNetwork<Wal
       PrivateKeyType.EVM
     ];
   }
+
+  public getMainColor(): string {
+    return '9394af';
+  }
 }
 
 /**

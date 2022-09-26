@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, NgZone } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNotificationsService, Notification } from 'src/app/services/global.notifications.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode, TitleBarSlotItem, TitleBarTheme } from './titlebar.types';
 
@@ -12,7 +12,6 @@ import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, Ti
     styleUrls: ['./titlebar.component.scss'],
 })
 export class TitleBarComponent {
-
     public menu: any = null;
 
     @Input()
@@ -24,10 +23,18 @@ export class TitleBarComponent {
 
     public visibile = true;
     public menuVisible = false;
+
     private navigationMode: TitleBarNavigationMode;
 
-    public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };
+    // Remember if the background was set automatically (theme events) or by the screen.
+    // When a value is set externally (by the screen) we don't update it on theme changes.
+    private backgroundColorWasExternallySet = false;
+    private foregroundModeWasExternallySet = false;
+
+    public theme: TitleBarTheme = { backgroundColor: null, color: "000000" };
     public foregroundMode: TitleBarForegroundMode;
+
+    private notifications: Notification[] = [];
 
     public icons: TitleBarSlotItem[] = [
         TitleBarComponent.makeDefaultIcon(), // outer left
@@ -46,10 +53,16 @@ export class TitleBarComponent {
         public themeService: GlobalThemeService,
         protected popoverCtrl: PopoverController,
         public globalNav: GlobalNavService,
+        private zone: NgZone,
+        private cdr: ChangeDetectorRef,
         public globalNotifications: GlobalNotificationsService,
     ) {
         themeService.activeTheme.subscribe((activeTheme) => {
-            this.setTitleBarTheme(activeTheme);
+            if (!this.backgroundColorWasExternallySet)
+                this.setBackgroundColor(activeTheme.config.variants[activeTheme.variant].color, false);
+
+            if (!this.foregroundModeWasExternallySet)
+                this.setForegroundMode(activeTheme.config.usesDarkMode ? TitleBarForegroundMode.LIGHT : TitleBarForegroundMode.DARK, false);
         });
 
         // Set home navigation for all apps
@@ -57,6 +70,10 @@ export class TitleBarComponent {
 
         // Set the default navigation mode (used by most apps)
         this.setNavigationMode(TitleBarNavigationMode.BACK);
+
+        this.globalNotifications.notifications.subscribe(notifications => {
+            this.notifications = notifications;
+        })
     }
 
     private static makeDefaultIcon(): TitleBarSlotItem {
@@ -79,22 +96,39 @@ export class TitleBarComponent {
     }
 
     /**
-     * Sets the status bar background color.
+     * Sets the status bar background and foreground colors.
      *
-     * @param hexColor Hex color code with format "#RRGGBB"
+     * @param backgroundColor Hex color code with format "#RRGGBB"
      */
-    public setTheme(backgroundColor: string, foregroundMode: TitleBarForegroundMode) {
-        this.setBackgroundColor(backgroundColor);
-        this.setForegroundMode(foregroundMode);
+    public setTheme(backgroundColor: string, foregroundMode: TitleBarForegroundMode, externallySet = true) {
+        this.setBackgroundColor(backgroundColor, externallySet);
+        this.setForegroundMode(foregroundMode, externallySet);
     }
+
+    /* public setTitleBarTheme(theme: GlobalThemeMode) {
+        this.zone.run(() => {
+            if (theme === GlobalThemeMode.LIGHT) {
+                document.body.classList.remove("dark");
+                this.theme.backgroundColor = '#ffffff';
+                this.theme.color = '#000000'
+                this.foregroundMode = TitleBarForegroundMode.DARK;
+            } else {
+                document.body.classList.add("dark");
+                this.theme.backgroundColor = '#000';
+                this.theme.color = '#ffffff';
+                this.foregroundMode = TitleBarForegroundMode.LIGHT;
+            }
+        });
+    } */
 
     /**
      * Sets the status bar background color.
      *
      * @param hexColor Hex color code with format "#RRGGBB"
      */
-    public setBackgroundColor(hexColor: string) {
+    public setBackgroundColor(hexColor: string, externallySet = true) {
         this.theme.backgroundColor = hexColor;
+        this.backgroundColorWasExternallySet = externallySet;
     }
 
     /**
@@ -103,8 +137,9 @@ export class TitleBarComponent {
      *
      * @param foregroundMode A @TitleBarForegroundMode mode, LIGHT or DARK.
      */
-    public setForegroundMode(foregroundMode: TitleBarForegroundMode) {
+    public setForegroundMode(foregroundMode: TitleBarForegroundMode, externallySet = true) {
         this.foregroundMode = foregroundMode;
+        this.foregroundModeWasExternallySet = externallySet;
 
         if (foregroundMode == TitleBarForegroundMode.LIGHT)
             this.theme.color = "#FFFFFF";
@@ -161,7 +196,8 @@ export class TitleBarComponent {
         // Replace built-in icon path placeholders with real picture path
         switch (this.icons[iconSlot].iconPath) {
             case BuiltInIcon.ELASTOS:
-                return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/elastos.svg' : 'assets/components/titlebar/darkmode/elastos.svg';
+            case BuiltInIcon.HOME:
+                return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/home.svg' : 'assets/components/titlebar/darkmode/home.svg';
             case BuiltInIcon.BACK:
                 return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/back.svg' : 'assets/components/titlebar/darkmode/back.svg';
             case BuiltInIcon.CLOSE:
@@ -175,6 +211,7 @@ export class TitleBarComponent {
             case BuiltInIcon.SETTINGS:
                 return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/settings.svg' : 'assets/components/titlebar/darkmode/settings.svg';
             case BuiltInIcon.HELP:
+                // TODO
                 return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/help.svg' : 'assets/components/titlebar/darkmode/help.svg';
             case BuiltInIcon.HORIZONTAL_MENU:
                 return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/horizontal_menu.svg' : 'assets/components/titlebar/darkmode/horizontal_menu.svg';
@@ -325,22 +362,8 @@ export class TitleBarComponent {
         return await this.menu.present();
     }
 
-    public setTitleBarTheme(theme: AppTheme) {
-        if (theme === AppTheme.LIGHT) {
-            document.body.classList.remove("dark");
-            this.theme.backgroundColor = '#F5F5FD';
-            this.theme.color = '#000000'
-            this.foregroundMode = TitleBarForegroundMode.DARK;
-        } else {
-            document.body.classList.add("dark");
-            this.theme.backgroundColor = '#121212';
-            this.theme.color = '#ffffff';
-            this.foregroundMode = TitleBarForegroundMode.LIGHT;
-        }
-    }
-
     needToShowRedDot() {
         return (this.icons[1].iconPath === BuiltInIcon.NOTIFICATIONS)
-            && (this.globalNotifications.notifications.length > 0);
+            && (this.notifications.length > 0);
     }
 }

@@ -7,7 +7,7 @@ import { areaList } from 'src/app/model/area.list';
 import { Util } from 'src/app/model/util';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DPoSRegistrationInfo, NodesService } from 'src/app/voting/dposvoting/services/nodes.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
@@ -203,7 +203,7 @@ export class DPosRegistrationPage implements OnInit {
         Logger.log('dposregistration', 'Calling update()', this.dposInfo);
 
         if (!await this.voteService.checkWalletAvailableForVote()) {
-          return;
+            return;
         }
 
         const payPassword = await this.authService.getWalletPassword(this.masterWalletId);

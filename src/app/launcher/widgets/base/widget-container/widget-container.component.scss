@@ -1,0 +1,82 @@
+@import "src/app/launcher/root.scss";
+
+.root {
+  padding: 0px 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  .edition-controls {
+    display: flex;
+    align-self: center;
+    margin: 10px;
+    width: 100%;
+    align-items: center;
+    place-content: center;
+    position: relative;
+
+    .change-color {
+      position: absolute;
+      left: 0;
+      padding-left: 5px;
+    }
+
+    .exit-edition {
+      border-radius: 50px;
+      width: 100px;
+      padding: 6px;
+      background: var(--essentials-box-color);
+      transition: all 0.3s ease;
+
+      &:active {
+        opacity: 0.5;
+      }
+    }
+
+    .change-variant {
+      position: absolute;
+      right: 0;
+      padding-right: 5px;
+    }
+
+    .change-color,
+    .change-variant {
+      font-size: 14px;
+      display: flex;
+      font-weight: 500;
+      img {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .info {
+    font-size: 12px;
+    margin: 20px;
+  }
+
+  .widgets-list {
+    min-height: 60px;
+    //overflow: hidden;
+    display: block;
+  }
+
+  .add-widget {
+    font-size: 12px;
+    margin: 20px;
+    margin-bottom: 40px;
+    opacity: 0.7;
+  }
+
+  .reset-container {
+    margin: 20px;
+    font-size: 12px;
+  }
+}
+
+// Placeholder showing the insertion position while dragging
+.drag-placeholder {
+  background: var(--ion-text-color);
+  opacity: 0.5;
+  height: 10px;
+}

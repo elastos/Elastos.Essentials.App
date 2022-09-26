@@ -3,7 +3,7 @@ import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { ModalController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { FriendsService } from '../../services/friends.service';
 import { NativeService } from '../../services/native.service';
 

@@ -12,8 +12,8 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService, WalletConnectSessionRequestSource } from 'src/app/services/global.walletconnect.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IntentService } from '../../services/intent.service';
 
 // The worker JS file from qr-scanner must be copied manually from

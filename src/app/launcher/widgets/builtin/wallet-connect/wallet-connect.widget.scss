@@ -1,0 +1,60 @@
+@import "../../widgets.scss";
+
+.wallet-connect-row {
+  margin-top: 10px;
+  overflow: visible;
+
+  .icon {
+    height: 36px;
+    margin-top: -25px;
+  }
+
+  ion-label {
+    font-size: 14px;
+    margin: 10px;
+  }
+
+  .connections-row {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: flex-start;
+    align-items: center;
+    place-content: space-between;
+
+    .connections {
+      display: flex;
+      width: auto;
+      flex: 1;
+
+      .connector-col {
+        .connector {
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+
+          .connector-logo {
+            height: 50px;
+            width: 50px;
+            width: 50px;
+            object-fit: contain;
+            background: var(--ion-background-color);
+            border-radius: 10px;
+            padding: 8px;
+          }
+
+          p {
+            margin-top: 5px;
+            margin-bottom: 0;
+            font-size: 12px;
+          }
+        }
+      }
+    }
+
+    .grid {
+      width: 30px;
+    }
+  }
+}

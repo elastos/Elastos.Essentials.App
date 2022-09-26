@@ -42,6 +42,10 @@ export abstract class ElastosIdentityChainNetworkBase extends ElastosEVMNetwork<
       network: this.key
     }
   }
+
+  public getMainColor(): string {
+    return "20e3d2";
+  }
 }
 
 /**

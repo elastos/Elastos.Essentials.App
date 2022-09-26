@@ -38,4 +38,8 @@ export class FantomBaseNetwork extends EVMNetwork {
     else
       throw new Error(`FantomBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "25b6ea";
+  }
 }

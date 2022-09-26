@@ -1,0 +1,85 @@
+@import "../../widgets.scss";
+
+.top-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .left-col {
+    text-align: left;
+    padding: 0;
+    display: flex;
+  }
+
+  .right-col {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+  }
+
+  .header {
+    flex: 1;
+    text-align: left;
+    align-self: flex-start;
+    padding: 0;
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 12px;
+    }
+  }
+
+  .button {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    background: var(--ion-background-color);
+  }
+}
+
+.tokens-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+
+  .token {
+    display: flex;
+    align-items: center;
+
+    .network-logo {
+      width: 20px;
+      height: 20px;
+    }
+
+    .selector {
+      display: flex;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-left: 10px;
+      align-items: center;
+      background: var(--ion-background-color);
+
+      .token-name {
+        font-size: 12px;
+      }
+
+      .arrow {
+        height: 10px;
+        margin-left: 10px;
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .exchange {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+  }
+}

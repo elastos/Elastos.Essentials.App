@@ -14,27 +14,23 @@
             margin: 0 0 10px;
             font-size: 18px;
             font-weight: 500;
-            letter-spacing: 0.9px;
             text-align: left;
         }
 
         p {
             margin: 0 20px 0 0;
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 2px;
+            font-size: 12px;
+            font-weight: 300;
             text-align: left;
         }
 
         .search-container {
             ion-input {
-                background: rgba(200, 200, 200, 0.3);
+                background: var(--essentials-box-color);
                 height: 40px;
-                --color: #000;
+                --color: var(--ion-text-color);
                 font-size: 15px;
                 border-radius: 50px !important;
-                letter-spacing: -0.8px;
-                box-shadow: 0 0.1px 0.5px 0 rgba(0, 0, 0, 0.16);
                 --padding-start: 20px;
                 text-align: left;
             }
@@ -47,18 +43,6 @@
 
             ion-toggle {
                 zoom: 0.65;
-            }
-        }
-    }
-}
-
-.dark-container {
-    .list-title-row {
-        .search-container {
-            ion-input {
-                background: rgba(200, 200, 200, 0.2);
-
-                --color: #fff;
             }
         }
     }

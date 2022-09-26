@@ -1,0 +1,73 @@
+@import "../../widgets.scss";
+
+.id-row {
+  flex-direction: row;
+
+  ion-col {
+    display: flex;
+  }
+
+  .left-col {
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0;
+
+    ion-avatar {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  .mid-col {
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    padding: 0;
+
+    h1,
+    h2 {
+      margin: 0;
+      text-align: left;
+    }
+
+    h2 {
+      display: block;
+      font-size: 18px;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-wrap: break-word;
+      //color: #000;
+    }
+
+    .secondary-text {
+      font-size: 12px;
+      margin-bottom: 1px;
+      //color: #787980;
+    }
+  }
+
+  .right-col {
+    justify-content: center;
+    align-items: flex-end;
+    border-radius: 100%;
+
+    img {
+      width: 3px;
+      height: 18.6px;
+    }
+  }
+}
+
+.darkContainer {
+  .mid-col {
+    .secondary-text {
+      //color: #acacac;
+    }
+
+    h2 {
+      //color: #ffffff;
+    }
+  }
+}

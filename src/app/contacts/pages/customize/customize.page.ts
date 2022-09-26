@@ -8,13 +8,13 @@ import { FriendsService } from '../../services/friends.service';
 
 import { PictureComponent } from '../../components/picture/picture.component';
 
-import { Avatar } from '../../models/avatar';
-import { AppService } from '../../services/app.service';
-import { PopupService } from '../../services/popup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { Avatar } from '../../models/avatar';
+import { AppService } from '../../services/app.service';
+import { PopupService } from '../../services/popup.service';
 
 @Component({
   selector: 'app-customize',
@@ -23,7 +23,7 @@ import { Logger } from 'src/app/logger';
 })
 export class CustomizePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
-  @ViewChild('input', {static: false}) input: IonInput;
+  @ViewChild('input', { static: false }) input: IonInput;
 
   public realName: string;
 
@@ -60,14 +60,14 @@ export class CustomizePage implements OnInit {
 
         // If contact's name is a real name or they don't have a name at all,
         // show blank input, else show their custom name
-        if(
+        if (
           !params.name && params.customName && params.customName === 'Anonymous Contact' ||
           !params.name && !params.customName ||
           params.name && !params.customName
         ) {
           this.name = '';
         }
-        if(
+        if (
           !params.name && params.customName && params.customName !== 'Anonymous Contact' ||
           params.name && params.customName && params.customName !== 'Anonymous Contact'
         ) {
@@ -75,7 +75,7 @@ export class CustomizePage implements OnInit {
         }
 
         // If contact was just added and has no name, prompt customize intro
-        if(params.contactAddedWithNoName === 'true') {
+        if (params.contactAddedWithNoName === 'true') {
           this.contactAddedWithNoName = true;
         } else {
           this.contactAddedWithNoName = false;
@@ -103,13 +103,13 @@ export class CustomizePage implements OnInit {
   }
 
   nameChanged(name) {
-    if(!name) {
+    if (!name) {
       this.customName = '';
     }
   }
 
   noteChanged(note) {
-    if(!note) {
+    if (!note) {
       this.customNote = '';
     }
   }
@@ -123,8 +123,8 @@ export class CustomizePage implements OnInit {
     });
     this.popupService.avatarModal.onDidDismiss().then((params) => {
       this.popupService.avatarModal = null;
-      if(params.data) {
-        if(params.data.useImg && params.data.avatar) {
+      if (params.data) {
+        if (params.data.useImg && params.data.avatar) {
           this.avatar = params.data.avatar
         } else {
           this.avatar = null;
@@ -135,7 +135,7 @@ export class CustomizePage implements OnInit {
   }
 
   customizeContact() {
-    if(!this.realName && !this.customName ) {
+    if (!this.realName && !this.customName) {
       this.customName = this.translate.instant('contacts.anonymous-contact');
     }
 

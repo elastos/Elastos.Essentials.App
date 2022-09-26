@@ -1,0 +1,21 @@
+<ion-grid [class.darkContainer]="theme.darkMode">
+
+  <div class="title-row">
+    <span class="title">Receive updates from:</span> <span class="selected">{{ getSelectedSourcesCount() }}
+      selected</span>
+  </div>
+
+  <ion-row class="sources-row">
+    <ion-col size="6" *ngFor="let source of sources">
+      <ion-row class="source">
+        <div class="checkbox" [class.selected]="source.enabled" (click)="toggleSourceEnabled(source)">
+          <img src="/assets/launcher/widgets/check.svg" />
+        </div>
+        <img class="project-logo" [cache]="source.icon" />
+        <div class="name">{{source.name}}</div>
+        <img class="delete" src="/assets/launcher/widgets/close.svg" (click)="deleteSource(source)" />
+      </ion-row>
+    </ion-col>
+  </ion-row>
+
+</ion-grid>

@@ -1,0 +1,48 @@
+<ion-content [class.darkContainer]="theme.darkMode">
+  <app-titlebar></app-titlebar>
+
+  <!-- Widgets list to pick widgets -->
+  <div class="widgets-container">
+    <widget-container #widgetContainer mode="select" *ngIf="!addingCustomWidget"></widget-container>
+
+    <!-- No dApp widget to show yet -->
+    <ion-row class="msg-container" *ngIf="!addingCustomWidget && shouldShowNoDAppWidgetRecommendation()">
+      <p class="ion-text-center">Use the + button and scan widget QR codes from dApps to get more widgets.</p>
+    </ion-row>
+  </div>
+
+  <!-- Add custom widget mode -->
+  <ion-grid class="add-widget-container" *ngIf="addingCustomWidget">
+    <ion-row class="input-row">
+      <ion-col size="9">
+        <ion-input type="url" #input autosize clearInput autocomplete="off" autocorrect="off"
+          placeholder="Paste a widget url" [(ngModel)]="widgetUrl" mode="ios" name="didInput" ngDefaultControl
+          (input)='onSendToAddressInput($event.target.value)'></ion-input>
+      </ion-col>
+      <ion-col size="1" class="right-col" (click)="paste()">
+        <ion-icon mode="ios" name="clipboard-outline"></ion-icon>
+      </ion-col>
+      <ion-col ossfet="1" size="1" class="right-col" (click)="scan()">
+        <img
+          [src]="!theme.darkMode ? '/assets/components/titlebar/scan.svg' : '/assets/components/titlebar/darkmode/scan.svg'">
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="msg-container" *ngIf="!customWidgetState">
+      <p class="ion-text-center">Scan a QR code or type / paste a Essentials widget url to add it to your home screen.
+      </p>
+    </ion-row>
+
+    <!-- Preview container -->
+    <widget-container #previewContainer mode="select" *ngIf="customWidgetState"></widget-container>
+  </ion-grid>
+
+  <div class="footer" *ngIf="!addingCustomWidget">
+    <ion-row>
+      <ion-col size="6" *ngFor="let category of categories">
+        <div class="cat-selector" [class.active]="category === selectedCategory" (click)="selectCategory(category)">{{
+          category.title }}</div>
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-content>

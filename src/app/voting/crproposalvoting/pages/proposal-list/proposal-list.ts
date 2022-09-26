@@ -8,7 +8,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from '../../../services/ux.service';
 import { ProposalSearchResult } from '../../model/proposal-search-result';
 import { ProposalStatus } from '../../model/proposal-status';

@@ -39,4 +39,8 @@ export abstract class AvalancheCChainBaseNetwork extends EVMNetwork {
     else
       throw new Error(`AvalancheCChainBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "e84142";
+  }
 }

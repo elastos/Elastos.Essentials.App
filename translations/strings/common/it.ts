@@ -33,6 +33,7 @@ export const it = {
         'save-changes': 'Salva modifiche',
         'max': 'MAX',
         'leave': 'Leave',
+        'activate': 'Activate',
 
         // Navigation
         'settings': 'Impostazioni',

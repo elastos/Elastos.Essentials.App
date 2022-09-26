@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Order } from '@elastosfoundation/hive-js-sdk';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AppService } from '../../services/app.service';
 import { HiveService } from '../../services/hive.service';
 import { UiService } from '../../services/ui.service';

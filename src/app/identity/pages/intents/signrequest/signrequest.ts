@@ -5,7 +5,7 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 import { SignIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AuthService } from '../../../services/auth.service';
 import { DIDService } from '../../../services/did.service';
 import { PopupProvider } from '../../../services/popup';
@@ -52,7 +52,7 @@ export class SignRequestPage {
 
   ngOnDestroy() {
     if (!this.alreadySentIntentResponce) {
-        void this.rejectRequest(false);
+      void this.rejectRequest(false);
     }
   }
 

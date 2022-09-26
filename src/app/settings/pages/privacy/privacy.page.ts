@@ -4,9 +4,9 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { App } from "src/app/model/app.enum";
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 
@@ -21,6 +21,7 @@ export class PrivacyPage implements OnInit {
   public useBuiltInBrowser = false; // Whether to launch urls in the built in browser, or in an external browser
   public publishIdentityMedium = 'assist'; // assist or wallet
   public sendCredentialToolboxStats = true;
+  public useHiveDataSync = false;
 
   constructor(
     public settings: SettingsService,
@@ -38,6 +39,7 @@ export class PrivacyPage implements OnInit {
     await this.fetchUseBuiltInBrowser();
     await this.fetchPublishIdentityMedium();
     await this.fetchCredentialToolboxStats();
+    void this.fetchHiveDataSync();
   }
 
   ionViewWillLeave() {
@@ -101,5 +103,22 @@ export class PrivacyPage implements OnInit {
 
   open(router: string) {
     void this.nav.navigateTo(App.SETTINGS, router);
+  }
+
+  private async fetchHiveDataSync(): Promise<void> {
+    this.useHiveDataSync = await this.prefs.getUseHiveSync(DIDSessionsStore.signedInDIDString);
+  }
+
+  public getHiveDataSyncTitle() {
+    if (this.useHiveDataSync) {
+      return this.translate.instant('settings.privacy-use-hive-data-sync');
+    } else {
+      return this.translate.instant('settings.privacy-dont-use-hive-data-sync');
+    }
+  }
+
+  public async toggleHiveDataSync() {
+    this.useHiveDataSync = !this.useHiveDataSync;
+    await this.prefs.setUseHiveSync(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.useHiveDataSync);
   }
 }

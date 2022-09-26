@@ -5,7 +5,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { SuggestionDetail } from 'src/app/voting/crproposalvoting/model/suggestion-model';
 import { SuggestionService } from 'src/app/voting/crproposalvoting/services/suggestion.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -126,7 +126,7 @@ export class CreateSuggestionPage {
             await this.suggestionService.postSignSuggestionCommandResponse(signedJWT);
 
             if ((this.suggestionDetail.type == "changeproposalowner" || this.suggestionDetail.type == "secretarygeneral")
-                    && !this.suggestionDetail.signature) {
+                && !this.suggestionDetail.signature) {
                 this.crOperations.handleSuccessReturn("sign");    // First sign
             }
             else {

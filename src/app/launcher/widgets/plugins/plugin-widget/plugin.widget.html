@@ -1,0 +1,11 @@
+<ion-row [class.darkContainer]="theme.darkMode" class="plugin-widget">
+  <ng-container *ngIf="config">
+    <ng-container [ngSwitch]="config.contenttype">
+      <portal-template *ngSwitchCase="'portal'" [config]="config"></portal-template>
+      <news-template *ngSwitchCase="'news'" [config]="config"></news-template>
+      <gallery-template *ngSwitchCase="'gallery'" [config]="config"></gallery-template>
+      <tokenprice-template *ngSwitchCase="'tokenprice'" [config]="config"></tokenprice-template>
+      <div *ngSwitchDefault>Unsupported widget type {{ config.contenttype }}. Please upgrade Essentials.</div>
+    </ng-container>
+  </ng-container>
+</ion-row>

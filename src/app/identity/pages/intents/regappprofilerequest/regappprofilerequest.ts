@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DIDURL } from '../../../model/didurl.model';
 import { DIDDocumentPublishEvent } from '../../../model/eventtypes.model';
 import { RegAppProfileIdentityIntent } from '../../../model/identity.intents';

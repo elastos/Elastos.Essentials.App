@@ -1,7 +1,5 @@
 import { DID, Interfaces, logger, storage } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { Vault } from "@elastosfoundation/hive-js-sdk";
 import { Logger } from "../logger";
-import { HiveDataSync } from "../model/hive/hivedatasync";
 import { GlobalStorageService } from "../services/global.storage.service";
 import { NetworkTemplateStore } from "../services/stores/networktemplate.store";
 import { DIDSessionsStore } from './../services/stores/didsessions.store';
@@ -61,13 +59,5 @@ export class ElastosSDKHelper {
     public newHiveAuthHelper(): InternalHiveAuthHelper {
         let authHelper = new InternalHiveAuthHelper();
         return authHelper;
-    }
-
-    /**
-     * @param context Isolation context to be able to handle multiple auth tokens, etc. Usually, the "app module name"
-     */
-    public newHiveDataSync(userVault: Vault, showDebugLogs = false): HiveDataSync {
-        let dataSync = new HiveDataSync(userVault, showDebugLogs);
-        return dataSync;
     }
 }

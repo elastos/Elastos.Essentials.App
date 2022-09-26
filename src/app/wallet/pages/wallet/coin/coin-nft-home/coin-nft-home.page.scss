@@ -270,8 +270,7 @@
         border-radius: 17px;
         padding: 7.5px 10px 7.5px 0;
         margin-bottom: 7.5px;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #ffffff;
+        background-color: var(--essentials-box-color);
 
         .asset-description {
             padding-left: 15px;
@@ -370,7 +369,6 @@
 
             p {
                 text-align: right;
-                color: #8888b0;
             }
         }
     }
@@ -416,12 +414,5 @@
         font-weight: 500;
         letter-spacing: 0.7px;
         text-align: center;
-    }
-}
-
-.dark-container {
-    .item-row {
-        box-shadow: 0 3px 15px 0 #151626;
-        background-color: #212121;
     }
 }

@@ -9,6 +9,8 @@ import { SharedComponentsModule } from '../../../components/sharedcomponents.mod
 import { GlobalDirectivesModule } from '../../../helpers/directives/module';
 import { OptionsComponentsModule } from '../../components/options/module';
 import { WalletAddressChooserComponentsModule } from '../../components/wallet-address-chooser/module';
+import { NewsConfiguratorComponentsModule } from '../../widgets/builtin/news/components/configurator/module';
+import { WidgetModule } from '../../widgets/module';
 import { HomePage } from './home.page';
 
 @NgModule({
@@ -25,6 +27,8 @@ import { HomePage } from './home.page';
     WalletAddressChooserComponentsModule,
     OptionsComponentsModule,
     NetworkChooserComponentModule,
+    NewsConfiguratorComponentsModule,
+    WidgetModule,
     RouterModule.forChild([{ path: '', component: HomePage }])
   ],
   providers: [],

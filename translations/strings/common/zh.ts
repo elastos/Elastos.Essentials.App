@@ -34,6 +34,7 @@ export const zh = {
         'save-changes': '保存',
         'max': '全部',
         'leave': '离开',
+        'activate': 'Activate',
 
         // Navigation
         'settings': '设置',

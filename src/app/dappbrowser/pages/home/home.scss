@@ -28,7 +28,6 @@
             h2,
             h3 {
                 font-size: 18px;
-                color: #000000;
                 opacity: 0.7;
                 font-weight: 600;
             }
@@ -49,7 +48,6 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            color: #1c1c1c;
 
             .network-logo,
             .toggle {
@@ -107,8 +105,7 @@
         border-radius: 17px;
         font-weight: 500;
         padding: 10px;
-        background-color: #ffffff;
-        box-shadow: 0 3px 15px 0 #ededf0;
+        background-color: var(--essentials-box-color);
 
         .left-col {
             align-items: center;
@@ -149,7 +146,6 @@
 
             .description {
                 font-size: 10px;
-                color: #000000;
                 opacity: 0.7;
             }
         }
@@ -157,12 +153,17 @@
         .right-col {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
 
             img {
                 width: 30px;
                 height: 30px;
                 padding: 8px;
+                opacity: 0.6;
+
+                &.active {
+                    opacity: 1;
+                }
             }
         }
     }
@@ -178,13 +179,8 @@
         ion-col {
             h2,
             h3 {
-                color: #9d9d9d;
                 opacity: 1;
             }
-        }
-
-        .network-col {
-            color: #acacac;
         }
     }
 
@@ -193,12 +189,8 @@
     }
 
     .dapp-row {
-        background-color: #212021;
-        box-shadow: none;
-
         .middle-col {
             .description {
-                color: #acacac;
                 opacity: 1;
             }
         }

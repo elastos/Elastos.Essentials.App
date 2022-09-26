@@ -1,0 +1,24 @@
+<!-- Wallet Connect -->
+<div class="widget widget-background wallet-connect-row" [class.darkContainer]="theme.darkMode"
+  *ngIf="someWalletConnectSessionsCanBeDisplayed() || forSelection || editing" (click)="showWalletConnectSessions()">
+  <img class="icon" src="assets/settings/icon/walletconnect.svg">
+  <ion-label>{{ 'launcher.active-wallet-connect-sessions' | translate }}</ion-label>
+
+  <!-- List of connections -->
+  <div class="connections-row">
+    <ion-row class="connections">
+      <ion-col *ngFor="let connector of walletConnectConnectors" class="connector-col" size="4">
+        <div class="connector"
+          *ngIf="connector.connected && connector.peerMeta && connector.peerMeta.icons && connector.peerMeta.icons.length > 0">
+          <img class="connector-logo" [src]="connector.peerMeta.icons[0]"
+            (error)="connector.peerMeta.icons[0]='assets/settings/icon/walletconnect.svg'" />
+          <p>{{ connector.peerMeta.name }}</p>
+        </div>
+      </ion-col>
+    </ion-row>
+    <div class="grid">
+      <img src="/assets/launcher/icons/dark_mode/grid.svg" (click)="pickNetwork()" />
+    </div>
+  </div>
+
+</div>

@@ -111,21 +111,21 @@
         </ion-col>
         <ion-col size="5.8" class="edit ripple ion-activatable" (click)="profileService.editProfile()">
           <img
-            src="{{ this.theme.darkMode ? '/assets/identity/svg/edit-button-dark.svg' : '/assets/identity/svg/edit-button.svg' }}" />
+            src="{{ this.theme.darkMode ? '/assets/identity/svg/edit-button.svg' : '/assets/identity/svg/edit-button-dark.svg' }}" />
           <h2>{{ 'identity.edit' | translate}}</h2>
           <span>{{ 'identity.edit-description' | translate }}</span>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
         <ion-col size="5.8" class="share ripple ion-activatable" (click)="profileService.shareIdentity()">
           <img
-            src="{{ this.theme.darkMode ? '/assets/identity/svg/share-button-dark.svg' : '/assets/identity/svg/share-button.svg' }}" />
+            src="{{ this.theme.darkMode ? '/assets/identity/svg/share-button.svg' : '/assets/identity/svg/share-button-dark.svg' }}" />
           <h2>{{ 'common.share' | translate}}</h2>
           <span>{{ 'identity.share-description' | translate }} </span>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
         <ion-col size="5.8" class="export ripple ion-activatable" (click)="exportMnemonic()">
           <img
-            src="{{ this.theme.darkMode ? '/assets/identity/svg/export.svg' : '/assets/identity/svg/export-dark.svg' }}" />
+            src="{{ this.theme.darkMode ? '/assets/identity/svg/export-dark.svg' : '/assets/identity/svg/export.svg' }}" />
           <h2>{{ 'identity.export-mnemonics' | translate}}</h2>
           <span>{{ 'identity.export-mnemonics-description' | translate}}</span>
           <ion-ripple-effect></ion-ripple-effect>

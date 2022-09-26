@@ -5,9 +5,9 @@ import { App } from "src/app/model/app.enum";
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 

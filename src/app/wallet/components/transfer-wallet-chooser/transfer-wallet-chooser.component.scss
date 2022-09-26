@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 .container {
   min-height: 100%;
@@ -10,21 +10,10 @@
 
     p {
       margin: 0;
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 500;
       line-height: 1;
-      letter-spacing: -0.33px;
       text-align: left;
-      color: #000000;
-      opacity: 0.7;
-    }
-  }
-}
-
-.dark-container {
-  .main-title-row {
-    p {
-      color: #9D9D9D;
     }
   }
 }

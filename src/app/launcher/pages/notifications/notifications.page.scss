@@ -1,7 +1,6 @@
 @import "src/app/launcher/root.scss";
 
 ion-grid {
-    background: #F5F5FD;
     min-height: 100%;
     margin: 0;
     padding: 15px 0;
@@ -10,20 +9,25 @@ ion-grid {
         display: flex;
         justify-content: center;
         align-items: center;
-        color: #ACACAC;
         font-size: 13px;
         font-weight: 500;
+        opacity: 0.5;
     }
 
     .notif-item {
         --background: transparent;
+        background: var(--essentials-box-color);
         --padding-start: 0px;
         --inner-padding-end: 0px;
-        margin: 0 20px;
-        border-bottom: 1px solid #EAEAEA;
+        margin: 0 10px;
+        margin-bottom: 10px;
+        border: 0;
+        padding: 0;
+        border-radius: 10px;
+        overflow: hidden;
 
         .notif-row {
-            padding: 10px 0;
+            padding: 10px;
 
             .name-col {
                 display: flex;
@@ -40,9 +44,8 @@ ion-grid {
 
                 h2 {
                     margin: 0;
-                    font-size: 16px;
-                    font-weight: 600;
-                    color: #000000;
+                    font-size: 14px;
+                    font-weight: 500;
                 }
             }
 
@@ -52,16 +55,15 @@ ion-grid {
                 align-items: center;
 
                 p {
-                    margin: 0;
+                    margin: 10px 0;
                     font-size: 10px;
                     font-weight: 500;
-                    color: #000000;
-                    opacity: 0.7;
                     text-align: right;
                 }
             }
 
-            .title-col, .message-col {
+            .title-col,
+            .message-col {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -70,7 +72,6 @@ ion-grid {
                     font-size: 14px;
                     letter-spacing: 0.14px;
                     text-align: left;
-                    color: #000000;
                     margin: 0;
                 }
             }
@@ -87,6 +88,7 @@ ion-grid {
                 p {
                     line-height: 1.6;
                     font-weight: 400;
+                    opacity: 0.5;
                 }
             }
         }
@@ -103,8 +105,8 @@ ion-grid {
         justify-content: center;
         align-items: center;
 
-        h1, p {
-            color: #000000;
+        h1,
+        p {
             opacity: 0.7;
             margin: 0;
         }
@@ -124,54 +126,3 @@ ion-grid {
         }
     }
 }
-
-.dark-container {
-    background: #121212;
-
-    .close-all-row {
-        color: #ACACAC;
-    }
-
-    .notif-item {
-        border-bottom: 1px solid #464646;
-
-        .notif-row {
-
-            .name-col {
-                h2 {
-                    color: #ffffff;
-                }
-            }
-
-            .date-col {
-                p {
-                    color: #9D9D9D;
-                }
-            }
-
-            .title-col {
-                p {
-                    color: #ffffff;
-                }
-            }
-
-            .message-col {
-                p {
-                    color: #ffffff;
-                }
-            }
-        }
-    }
-
-    .removeBorder {
-        border-bottom: none;
-    }
-
-    .empty-container {
-        h1, p {
-            color: #ACACAC;
-        }
-    }
-}
-
-

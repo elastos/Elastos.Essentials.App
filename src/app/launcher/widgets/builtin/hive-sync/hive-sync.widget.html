@@ -1,0 +1,22 @@
+<!-- Prompt to sync Essentials with hive vault -->
+<ion-row class="widget widget-background sync-row ion-activatable ripple" [class.darkContainer]="theme.darkMode"
+  *ngIf="needToPromptHiveSync || forSelection || editing">
+  <ion-col class="app-col" size="12">
+    <ion-row class="app-row">
+      <ion-col class="left-col" size="2">
+        <div class="icon-container">
+          <img src="/assets/launcher/icons/hive-cross.svg">
+        </div>
+      </ion-col>
+      <ion-col class="mid-col" size="10">
+        <div class="title">{{ 'launcher.data-sync-title' | translate }}</div>
+        <div class="secondary-text">{{ 'launcher.data-sync-intro' | translate }}</div>
+      </ion-col>
+      <ion-col class="buttons-row">
+        <ion-button (click)="refuseSync()">{{ 'launcher.data-sync-no' | translate }}</ion-button>
+        <ion-button (click)="continue()">{{ 'common.continue' | translate }}</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+  <ion-ripple-effect></ion-ripple-effect>
+</ion-row>

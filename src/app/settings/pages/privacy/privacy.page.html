@@ -15,11 +15,25 @@
       </ion-col>
     </ion-row>
 
+    <!-- Hive data sync -->
+    <ion-row class="section">
+      <ion-col size="10.5" class="title-col">
+        <h1>{{ 'settings.hive-data-sync' | translate }}</h1>
+        <h2 class="secondary-text">{{ getHiveDataSyncTitle() }}</h2>
+      </ion-col>
+      <ion-col size="1.5" class="right-col">
+        <div (click)="toggleHiveDataSync()">
+          <ion-toggle *ngIf="useHiveDataSync" checked mode="ios"></ion-toggle>
+          <ion-toggle *ngIf="!useHiveDataSync" mode="ios"></ion-toggle>
+        </div>
+      </ion-col>
+    </ion-row>
+
     <!-- Publish identity -->
     <ion-row class="section">
       <ion-col size="10.5" class="title-col">
         <h1>{{ 'settings.identity-publishing' | translate }}</h1>
-        <h2>{{ getPublishIdentityTitle() }}</h2>
+        <h2 class="secondary-text">{{ getPublishIdentityTitle() }}</h2>
       </ion-col>
       <ion-col size="1.5" class="right-col">
         <div (click)="togglePublishIdentityMedium()">
@@ -33,7 +47,7 @@
     <ion-row class="section" (click)="open('/settings/privacy/elastosapiprovider')">
       <ion-col size="11" class="title-col">
         <h1>{{ 'settings.elastos-api-provider' | translate }}</h1>
-        <h2>{{ 'settings.elastos-api-provider-des' | translate }}</h2>
+        <h2 class="secondary-text">{{ 'settings.elastos-api-provider-des' | translate }}</h2>
       </ion-col>
       <ion-col size="1" class="right-col">
         <img
@@ -45,7 +59,7 @@
     <ion-row class="section">
       <ion-col size="10.5" class="title-col">
         <h1>{{ 'settings.privacy-toolbox-stats' | translate }}</h1>
-        <h2>{{ getCredentialToolboxTitle() }}</h2>
+        <h2 class="secondary-text">{{ getCredentialToolboxTitle() }}</h2>
       </ion-col>
       <ion-col size="1.5" class="right-col">
         <div (click)="toggleCredentialToolboxStats()">

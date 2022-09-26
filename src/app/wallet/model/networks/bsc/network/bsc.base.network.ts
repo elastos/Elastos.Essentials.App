@@ -38,4 +38,8 @@ export class BSCBaseNetwork extends EVMNetwork {
     else
       throw new Error(`BSCNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "F9B703";
+  }
 }

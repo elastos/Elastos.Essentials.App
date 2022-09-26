@@ -240,7 +240,7 @@ export class WalletService {
         await this.terminateActiveNetworkWallets();
 
         if (activatedNetwork) {
-            Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork);
+            Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork, "with active master ID:", this.activeMasterWalletId);
 
             this.networkWallets = {};
             let masterWalletsList = this.getMasterWalletsList()

@@ -1,0 +1,36 @@
+@import "../../widgets.scss";
+
+.sync-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  ion-col {
+    display: flex;
+  }
+
+  .left-col {
+    justify-content: center;
+    align-items: flex-start;
+
+    img {
+      height: 20px;
+      width: 23px;
+    }
+  }
+
+  .mid-col {
+    justify-content: center;
+    align-items: center;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .buttons-row {
+    margin-top: 10px;
+
+    ion-button {
+      width: 50%;
+    }
+  }
+}

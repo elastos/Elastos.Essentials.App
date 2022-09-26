@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { App } from "src/app/model/app.enum";
 import { Logger } from "../logger";
 import { IdentityEntry } from "../model/didsessions/identityentry";
@@ -45,8 +45,9 @@ export class GlobalNotificationsService extends GlobalService {
     public static instance: GlobalNotificationsService = null;
 
     public newNotifications = 0;
-    public notifications: Notification[] = [];
-    private notificationsListener: Subject<Notification> = new Subject();
+    private _notifications: Notification[] = [];
+
+    public notifications = new BehaviorSubject<Notification[]>([]);
 
     constructor(
         private globalStorageService: GlobalStorageService,
@@ -60,8 +61,9 @@ export class GlobalNotificationsService extends GlobalService {
     }
 
     public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-        this.notifications = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "notifications", "notifications", []);
-        Logger.log("notifications", "Loaded existed notifications", this.notifications);
+        this._notifications = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "notifications", "notifications", []);
+        Logger.log("notifications", "Loaded existed notifications", this._notifications);
+        this.notifications.next(this._notifications);
     }
 
     public async onUserSignOut(): Promise<void> {
@@ -79,8 +81,8 @@ export class GlobalNotificationsService extends GlobalService {
     */
     public sendNotification(request: NotificationRequest): Promise<void> {
         const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-        const notificationsLength = this.notifications.length;
-        this.notifications = this.notifications.filter(notification => notification.key !== request.key);
+        const notificationsLength = this._notifications.length;
+        this._notifications = this._notifications.filter(notification => notification.key !== request.key);
         let notification: Notification = {
             key: request.key,
             title: request.title,
@@ -90,8 +92,8 @@ export class GlobalNotificationsService extends GlobalService {
             url: request.url ? request.url : null,
             sent_date: Date.now()
         };
-        this.notifications.push(notification);
-        this.notifications.sort((a, b) => {
+        this._notifications.push(notification);
+        this._notifications.sort((a, b) => {
             if (a.sent_date > b.sent_date)
                 return -1;
             else if (a.sent_date < b.sent_date)
@@ -103,11 +105,11 @@ export class GlobalNotificationsService extends GlobalService {
 
         Logger.log('Notifications', "Sending notification", notification);
 
-        if (this.notifications.length > notificationsLength) {
+        if (this._notifications.length > notificationsLength) {
             this.newNotifications++;
         }
 
-        this.notificationsListener.next(notification);
+        this.notifications.next(this._notifications);
 
         return null;
     }
@@ -118,7 +120,7 @@ export class GlobalNotificationsService extends GlobalService {
      * @returns Unread notifications.
      */
     public getNotifications(): Notification[] {
-        return this.notifications;
+        return this._notifications;
     }
 
     /**
@@ -127,20 +129,16 @@ export class GlobalNotificationsService extends GlobalService {
      * @param notificationId Notification ID
      */
     public clearNotification(notificationId: string) {
-        this.notifications = this.notifications.filter(notification => notification.notificationId !== notificationId);
+        this._notifications = this._notifications.filter(notification => notification.notificationId !== notificationId);
         this.saveNotifications();
+
+        this.notifications.next(this._notifications);
     }
 
     /**
      * Saves current notifications array to persistent storage.
      */
     private saveNotifications() {
-        void this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "notifications", "notifications", this.notifications);
-    }
-
-    public setNotificationListener(onNotification: (notification: Notification) => void) {
-        this.notificationsListener.subscribe((notification) => {
-            onNotification(notification);
-        });
+        void this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "notifications", "notifications", this._notifications);
     }
 }

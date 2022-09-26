@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
 
 @Component({
@@ -18,9 +18,11 @@ export class ProposalTitleBarComponent extends TitleBarComponent {
         public popoverCtrl: PopoverController,
         public globalNav: GlobalNavService,
         public globalNotifications: GlobalNotificationsService,
+        zone: NgZone,
+        cdr: ChangeDetectorRef,
         private crOperations: CROperationsService,
     ) {
-        super(themeService, popoverCtrl, globalNav, globalNotifications);
+        super(themeService, popoverCtrl, globalNav, zone, cdr, globalNotifications);
     }
 
     outerLeftIconClicked() {

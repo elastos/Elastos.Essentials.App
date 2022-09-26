@@ -1,0 +1,78 @@
+<!-- Wallets -->
+<div class="widget" [class.darkContainer]="theme.darkMode" *ngIf="walletNetworkService.activeNetwork.value">
+  <!-- External header -->
+  <ion-row class="header-row">
+    <ion-col size="6" class="title-col" (click)="openWallet()">
+      <ion-label>{{ 'launcher.active-wallet' | translate }}</ion-label>
+    </ion-col>
+    <ion-col size="6" class="network-col" (click)="pickNetwork()">
+      {{ walletNetworkService.activeNetwork.value.name }}
+      <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
+    </ion-col>
+  </ion-row>
+
+  <!-- Widget with background -->
+  <ion-row class="wallets-row">
+    <ion-col size="12" class="wallets-col">
+      <div *ngIf="masterWalletWithNetworkWalletList.length == 0" (click)="openWallet()" class="no-wallet">
+        {{ 'launcher.touch-to-create-wallet' | translate }}
+      </div>
+
+      <!-- Wallets list - horizontal slide -->
+      <ion-slides pager={true} [style]="masterWalletWithNetworkWalletList.length === 0 ? 'display:gone':''"
+        #walletsSlider [options]="walletsSlideOpts" (ionSlideDidChange)="onWalletWidgetSlideChanged()">
+        <ion-slide *ngFor="let masterWalletMap of masterWalletWithNetworkWalletList">
+          <div class="wallet-widget-row ripple ion-activatable" [style.background]="backgroundGradient">
+            <img class="melted-logo" [src]="walletNetworkService.activeNetwork.value.logo">
+            <ion-row class="card-label-row" (click)="openWallet()">
+              <!-- Wallet name and balance -->
+              <div class="main-content">
+                <div class="wallet-name">{{ masterWalletMap.masterWallet.name }}</div>
+                <!-- Balance -->
+                <div *ngIf="masterWalletMap.networkWallet && !currencyService.useCurrency" class="balance">
+                  {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalance(),
+                  masterWalletMap.networkWallet.getDecimalPlaces()) }}
+                  {{ masterWalletMap.networkWallet.getDisplayTokenName() }}
+                </div>
+                <div *ngIf="masterWalletMap.networkWallet && currencyService.useCurrency" class="balance">
+                  {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalanceInActiveCurrency()) }}
+                  {{ currencyService.selectedCurrency.symbol }}
+                </div>
+
+                <!-- Not supported -->
+                <div *ngIf="!masterWalletMap.networkWallet" class="unsupported-wallet">
+                  {{ 'wallet.unsupported-on-network' | translate:{network:
+                  walletNetworkService.activeNetwork.value.name} }}
+                </div>
+              </div>
+
+              <!-- Single address - directly copy -->
+              <div class="single-address"
+                *ngIf="masterWalletMap.networkWallet && getWalletAddresses(masterWalletMap.networkWallet).length === 1"
+                (click)="copySingleAddressToClipboard($event, getWalletAddresses(masterWalletMap.networkWallet)[0].address)">
+                <div class="title">{{ 'launcher.address' | translate }}</div>
+                <div class="bottom">
+                  <div class="address">
+                    {{getReducedWalletAddress(getWalletAddresses(masterWalletMap.networkWallet)[0].address)}}
+                  </div>
+                  <img
+                    [src]="theme.darkMode ? 'assets/launcher/icons/dark_mode/copy.svg' : 'assets/launcher/icons/copy.svg'">
+                </div>
+              </div>
+
+              <!-- Several addresses - need to open a popup to select -->
+              <div class="addresses"
+                *ngIf="masterWalletMap.networkWallet &&getWalletAddresses(masterWalletMap.networkWallet).length > 1"
+                (click)="pickWalletAddress($event, masterWalletMap.networkWallet)">
+                {{ 'launcher.addresses' | translate }}
+                <img
+                  [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/down-arrow.svg' : 'assets/wallet/icons/down-arrow.svg'">
+              </div>
+            </ion-row>
+            <ion-ripple-effect></ion-ripple-effect>
+          </div>
+        </ion-slide>
+      </ion-slides>
+    </ion-col>
+  </ion-row>
+</div>

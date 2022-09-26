@@ -6,7 +6,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -58,19 +58,19 @@ export class ImpeachCRMemberPage {
 
     async goTransaction(): Promise<boolean> {
         switch (this.voteService.sourceSubwallet.masterWallet.type) {
-          case WalletType.STANDARD:
-            break;
-          case WalletType.LEDGER:
-            await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
-            return;
-          case WalletType.MULTI_SIG_STANDARD:
-          case WalletType.MULTI_SIG_EVM_GNOSIS:
-            await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
-            return;
-          default:
-            // Should not happen.
-            Logger.error('wallet', 'Not support, pls check the wallet type:', this.voteService.sourceSubwallet.masterWallet.type)
-            return;
+            case WalletType.STANDARD:
+                break;
+            case WalletType.LEDGER:
+                await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
+                return;
+            case WalletType.MULTI_SIG_STANDARD:
+            case WalletType.MULTI_SIG_EVM_GNOSIS:
+                await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
+                return;
+            default:
+                // Should not happen.
+                Logger.error('wallet', 'Not support, pls check the wallet type:', this.voteService.sourceSubwallet.masterWallet.type)
+                return;
         }
 
         // Request the wallet to publish our vote.

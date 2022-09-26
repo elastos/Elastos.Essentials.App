@@ -9,6 +9,7 @@ const routes: Routes = [
   { path: 'onboard', component: OnboardPage },
   { path: 'home', loadChildren: () => import("./pages/home/module").then(m => m.HomePageModule) },
   { path: 'intents/onboard', loadChildren: () => import("./pages/intents/onboard/module").then(m => m.OnboardIntentPageModule) },
+  { path: 'intents/picklauncherwidget', loadChildren: () => import("./widgets/base/widget-chooser/module").then(m => m.WidgetChooserComponentModule) },
 ];
 
 @NgModule({

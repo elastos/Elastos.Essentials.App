@@ -1,9 +1,8 @@
 @import "src/app/hivemanager/root.scss";
 
 ion-row {
-    background: white;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    border-radius: 20px;
+    background: var(--essentials-box-color);
+    border-radius: 15px;
     padding: 10px 15px 15px;
     margin: 5px 0 10px;
     width: 100%;
@@ -15,7 +14,9 @@ ion-row {
         border-bottom: 1px solid #8889b1;
         padding: 7.5px 0;
 
-        h1, h2, p {
+        h1,
+        h2,
+        p {
             margin: 0;
         }
 
@@ -42,15 +43,12 @@ ion-row {
 }
 
 .darkContainer {
-    background: #212021;
-    box-shadow: none;
-
     ion-col {
-        border-bottom: 1px solid #464646;
+        border-bottom: 1px solid var(--essentials-box-color);
     }
 }
 
-/* 
+/*
 .active-plan, .purchaseable-plan {
     // BPI: YES I know, i'm at the max of my CSS design skills ;-)
     background: white;
@@ -59,8 +57,6 @@ ion-row {
     margin: 10px;
     padding: 10px;
 }
-
-
 
 ion-title {
     position: absolute;

@@ -1,0 +1,129 @@
+@import "../../../widgets.scss";
+@import "../../../plugins.scss";
+
+.template-root {
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+
+  .left-col {
+    padding: 0;
+    text-align: left;
+  }
+
+  .right-col {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+  }
+
+  .project-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-right: 5px;
+  }
+
+  .token-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    margin: 0 5px;
+  }
+
+  .info {
+    text-align: left;
+    min-width: 0;
+    flex: 1;
+
+    .project-name {
+      font-size: 18px;
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .token-symbol {
+      font-weight: 600;
+      margin: 2px 0;
+    }
+
+    .token-symbol,
+    .network {
+      font-size: 12px;
+    }
+
+    .network {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .project {
+    width: 13vw;
+    height: 100%;
+    position: absolute;
+  }
+
+  .pricing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .price {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .change {
+      font-size: 14px;
+      font-weight: 300;
+
+      /* &.positive {
+        color: #44cc44;
+      }
+
+      &.negative {
+        color: #cc4444;
+      } */
+    }
+  }
+
+  .next {
+    width: 12px;
+    height: 12px;
+    object-fit: contain;
+    margin-left: 10px;
+  }
+
+  .second-row {
+    font-size: 12px;
+
+    .change {
+      margin-right: 5px;
+    }
+  }
+
+  ion-row {
+    .left {
+      text-align: left;
+    }
+
+    .right {
+      text-align: right;
+    }
+  }
+}
+
+.darkContainer {
+  &.template-root {
+    .info {
+      .token-symbol {
+        color: #fff;
+      }
+    }
+  }
+}

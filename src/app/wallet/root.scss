@@ -100,14 +100,12 @@ ion-footer {
             font-size: 16px;
             font-weight: 600;
             letter-spacing: 0.32px;
-            color: #ffffff;
         }
 
         h2 {
             font-size: 9px;
             font-weight: 600;
             letter-spacing: 0.9px;
-            color: #fdfeff;
             margin-bottom: 20px;
         }
 
@@ -115,7 +113,6 @@ ion-footer {
             font-size: 10px;
             font-weight: 400;
             letter-spacing: 0.8px;
-            color: #ffffff;
             margin-bottom: 4px;
         }
 
@@ -124,7 +121,6 @@ ion-footer {
             letter-spacing: 1.05px;
             line-height: 0.85;
             font-weight: 500;
-            color: #ffffff;
             margin-bottom: 15px;
 
             .dot {
@@ -171,8 +167,7 @@ ion-footer {
     border-radius: 17px;
     padding: 7.5px 10px 7.5px 0;
     margin-bottom: 7.5px;
-    background-color: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
+    background: var(--essentials-box-color);
 
     .left-col {
         display: flex;
@@ -233,13 +228,11 @@ ion-footer {
         h1 {
             font-size: 14px;
             font-weight: 600;
-            letter-spacing: 0.7px;
             text-align: left;
         }
 
         p {
             font-size: 13px;
-            font-weight: 400;
             padding: 3px 0 0;
             text-align: left;
         }
@@ -253,55 +246,10 @@ ion-footer {
     .right-col {
         justify-content: center;
         align-items: flex-end;
-
-        p {
-            color: #000000;
-            opacity: 0.7;
-        }
     }
 
     .bottom-col {
         padding-top: 0;
-
-        span {
-            font-weight: 700;
-            font-size: 9px;
-            letter-spacing: 0.9px;
-        }
-
-        .synced {
-            color: #b176ff;
-        }
-
-        .syncing {
-            color: #20e3d2;
-        }
-    }
-}
-
-.dark-subwallet-row {
-    background-color: #212021;
-    box-shadow: none;
-
-    .left-col {
-        .icon-container {
-            .ela-icon {
-                border: 2px solid #212021;
-            }
-        }
-    }
-
-    .middle-col {
-        p {
-            color: #acacac;
-        }
-    }
-
-    .right-col {
-        p {
-            color: #acacac;
-            opacity: 1;
-        }
     }
 }
 
@@ -311,10 +259,9 @@ ion-footer {
 ************************************/
 .setting-row {
     border-radius: 17px;
-    padding: 7.5px 5px;
-    margin-bottom: 7.5px;
-    background-color: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
+    padding: 7px 5px;
+    margin-bottom: 7px;
+    background-color: var(--essentials-box-color);
 
     h1,
     p {
@@ -324,15 +271,12 @@ ion-footer {
     h1 {
         font-size: 17px;
         font-weight: 500;
-        letter-spacing: 0.9px;
         text-align: left;
     }
 
     p {
         padding-top: 5px;
-        font-size: 9px;
-        font-weight: 500;
-        letter-spacing: 2px;
+        font-weight: 300;
         text-align: left;
     }
 
@@ -363,11 +307,6 @@ ion-footer {
     }
 }
 
-.dark-setting-row {
-    background-color: #212021;
-    box-shadow: none;
-}
-
 /************************************
   MNEMONIC LIST ROW
   pages ~ mnemonic-create, mnemonic-export
@@ -396,7 +335,6 @@ ion-footer {
             background: #42117d;
             border-radius: 100%;
             border: 2px solid #6a25c4;
-            color: #fdfeff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -406,9 +344,6 @@ ion-footer {
         ion-label {
             font-size: 12px;
             font-weight: 500;
-            line-height: 1.25;
-            letter-spacing: -0.29px;
-            color: #fdfeff;
         }
     }
 }
@@ -456,16 +391,6 @@ ion-footer {
         justify-content: center;
         align-items: center;
         border-radius: 17px;
-        box-shadow: 0 3px 15px 0 #ededf0;
-    }
-}
-
-.dark-refresh-row {
-    box-shadow: 0 3px 15px 0 #151626;
-    background-color: #2e2f4e;
-
-    .right-col {
-        box-shadow: 0 3px 15px 0 #151626;
     }
 }
 

@@ -1,0 +1,98 @@
+:host {
+  padding: 20px;
+}
+
+.title-row {
+  .title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+  }
+
+  .selected {
+    margin-left: 10px;
+    font-size: 11px;
+  }
+}
+
+.sources-row {
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  .source {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-right: 10px;
+    flex-flow: nowrap;
+
+    .checkbox {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: solid 2px #787980;
+      padding: 3px;
+      display: flex;
+
+      img {
+        opacity: 0;
+      }
+
+      &.selected {
+        background: #dde2f1;
+        border: solid 2px #dde2f1;
+
+        img {
+          opacity: 1;
+        }
+      }
+    }
+
+    .project-logo {
+      width: 20px;
+      height: 20px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-left: 5px;
+    }
+
+    .name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin: 0 5px;
+      flex: 1;
+      font-weight: 600;
+    }
+
+    .delete {
+      width: 10px;
+      height: 10px;
+    }
+  }
+}
+
+.darkContainer {
+  .title-row {
+    .title {
+      color: white;
+    }
+
+    .selected {
+      color: #acacac;
+    }
+  }
+
+  .sources-row {
+    .source {
+      .checkbox {
+        border: solid 2px #acacac;
+
+        &.selected {
+          background: #ffffff;
+          border: solid 2px #ffffff;
+        }
+      }
+    }
+  }
+}

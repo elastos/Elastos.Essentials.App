@@ -1,0 +1,19 @@
+<!-- Backup identity -->
+<ion-row class="widget widget-background backup-row" [class.darkContainer]="theme.darkMode"
+  *ngIf="identityNeedsBackup || forSelection || editing">
+  <ion-col class="left-col" size="1.75">
+    <img src="/assets/launcher/icons/finger-print.svg">
+  </ion-col>
+  <ion-col class="mid-col" size="6.25">
+    <ion-label>
+      <h1>{{ 'launcher.backup-title' | translate }}</h1>
+      <p>{{ 'launcher.backup-message' | translate }}</p>
+    </ion-label>
+  </ion-col>
+  <ion-col class="right-col" size="4">
+    <div class="ion-activatable ripple" (click)="backupIdentity()">
+      <h1>{{ 'launcher.backup-button' | translate }}</h1>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+  </ion-col>
+</ion-row>

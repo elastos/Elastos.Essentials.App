@@ -7,7 +7,7 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -105,13 +105,13 @@ export class UpdatMilestonePage {
             //Check opinion value
             if (!this.content || this.content == "") {
                 let blankMsg = this.translate.instant('crproposalvoting.opinion')
-                                + this.translate.instant('common.text-input-is-blank');
+                    + this.translate.instant('common.text-input-is-blank');
                 this.globalNative.genericToast(blankMsg);
                 return;
             }
 
             //Handle opinion
-            let data = {content: this.content}
+            let data = { content: this.content }
             let ret = await this.draftService.getDraft("message.json", data);
             this.onGoingCommand.data.messageHash = ret.hash;
             this.onGoingCommand.data.messageData = ret.data;

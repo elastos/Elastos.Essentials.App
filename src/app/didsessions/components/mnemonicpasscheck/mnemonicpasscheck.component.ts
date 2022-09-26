@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ModalController, NavParams, IonInput } from '@ionic/angular';
+import { IonInput, ModalController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
   selector: 'mnemonicpasscheck',
@@ -9,7 +9,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
   styleUrls: ['./mnemonicpasscheck.component.scss'],
 })
 export class MnemonicPassCheckComponent implements OnInit {
-  @ViewChild('pwd',{static:false}) pwd: IonInput;
+  @ViewChild('pwd', { static: false }) pwd: IonInput;
 
   public askedIfHasPassphrase: boolean = false;
   public password: string = "";
@@ -32,7 +32,7 @@ export class MnemonicPassCheckComponent implements OnInit {
   }
 
   setDelayedFocus(element) {
-    setTimeout(()=>{
+    setTimeout(() => {
       element.setFocus();
     }, 1000);
   }
@@ -43,7 +43,7 @@ export class MnemonicPassCheckComponent implements OnInit {
   hasPassphrase() {
     this.askedIfHasPassphrase = true;
 
-    setTimeout(()=>{
+    setTimeout(() => {
       this.pwd.setFocus();
     }, 500);
   }

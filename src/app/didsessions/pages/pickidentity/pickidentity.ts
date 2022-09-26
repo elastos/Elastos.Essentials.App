@@ -13,7 +13,7 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, LRW_TEMPLATE, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
   selector: 'page-pickidentity',
@@ -57,9 +57,9 @@ export class PickIdentityPage {
 
   ionViewWillEnter() {
     if (!this.theme.darkMode) {
-      this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
+      this.titleBar.setForegroundMode(TitleBarForegroundMode.DARK);
     } else {
-      this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
+      this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     }
 
     this.setTitle();

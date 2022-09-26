@@ -12,8 +12,8 @@ import { GlobalFirebaseService } from 'src/app/services/global.firebase.service'
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';

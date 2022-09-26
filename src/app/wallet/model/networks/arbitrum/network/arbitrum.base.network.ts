@@ -38,4 +38,8 @@ export class ArbitrumBaseNetwork extends EVMNetwork {
     else
       throw new Error(`BSCNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "96bedc";
+  }
 }

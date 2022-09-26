@@ -3,7 +3,7 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Contact } from '../../models/contact.model';
 import { DidService } from '../../services/did.service';
 import { FriendsService } from '../../services/friends.service';

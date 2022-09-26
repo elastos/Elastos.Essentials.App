@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import type WalletConnect from '@walletconnect/client';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DeveloperService } from '../../../services/developer.service';
 import { SettingsService } from '../../../services/settings.service';
 

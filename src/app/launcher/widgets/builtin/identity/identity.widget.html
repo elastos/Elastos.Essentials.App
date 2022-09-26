@@ -1,0 +1,24 @@
+<!-- Identity -->
+<ion-row *ngIf="getSignedInIdentity()" class="widget widget-background root id-row ion-activatable ripple"
+  [class.darkContainer]="theme.darkMode">
+  <ion-col size="2" class="left-col" (click)="showMyIdentity()">
+    <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
+      <img
+        [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+    </ion-avatar>
+    <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
+      <img
+        [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
+    </ion-avatar>
+  </ion-col>
+
+  <ion-col size="8" class="mid-col" (click)="showMyIdentity()">
+    <div class="secondary-text">{{ getDateFromNow() }}</div>
+    <h2>{{ getSignedInIdentity().name }}</h2>
+  </ion-col>
+  <ion-col size="2" class="right-col" (click)="showOptions($event)">
+    <img
+      [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
+  </ion-col>
+  <ion-ripple-effect></ion-ripple-effect>
+</ion-row>

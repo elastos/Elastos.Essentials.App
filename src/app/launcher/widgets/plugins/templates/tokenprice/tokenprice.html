@@ -1,0 +1,40 @@
+<ion-row class="widget widget-background template-root ripple" [class.darkContainer]="theme.darkMode"
+  [class.ion-activatable]="config.content.token.url" (click)="openTokenUrl()">
+
+  <ion-col size="2" class="left-col">
+    <!-- Project logo -->
+    <img class="project-logo" [cache]="config.logo" (click)="onProjectLogoClicked($event)">
+  </ion-col>
+
+  <ion-col size="10" class="right-col">
+    <!-- Project name, token symol, network name -->
+    <div class="info">
+      <div class="project-name">{{ config.projectname }}</div>
+      <div class="token-symbol">{{ config.content.token.symbol }}</div>
+      <div class="network secondary-text" *ngIf="config.content.token.network">
+        {{ config.content.token.network }}
+      </div>
+    </div>
+
+    <!-- Token icon -->
+    <img [cache]="config.content.token.icon" class="token-icon" *ngIf="config.content.token.icon">
+
+    <div class="pricing" [class.positive]="changeIsPositive()" [class.negative]="changeIsNegative()">
+      <!-- Price -->
+      <div class="price">{{ getDisplayPrice() }}</div>
+
+      <!-- Change -->
+      <span class="change" [class.positive]="changeIsPositive()" [class.negative]="changeIsNegative()"
+        *ngIf="config.content.token.change24hpercent">
+        {{ config.content.token.change24hpercent }}%
+      </span>
+    </div>
+
+    <!-- Right arrow -->
+    <img class="next"
+      [src]="theme.darkMode ? '/assets/launcher/widgets/white-right-arrow.svg' : '/assets/launcher/widgets/black-right-arrow.svg'" />
+  </ion-col>
+
+  <ion-ripple-effect></ion-ripple-effect>
+
+</ion-row>

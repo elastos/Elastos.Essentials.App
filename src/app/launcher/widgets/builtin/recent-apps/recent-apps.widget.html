@@ -1,0 +1,45 @@
+<ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode">
+  <ion-row *ngIf="recentApps.length > 0">
+    <!-- Has recent apps - category header -->
+    <ion-col size="12" class="title-col">
+      {{ 'dappbrowser.recent-apps' | translate}}
+    </ion-col>
+    <!--   <ion-col size="4" class="more-col" (click)="openDApps()">
+      {{ 'dappbrowser.all-dapps' | translate}}
+      <img
+        [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+    </ion-col> -->
+  </ion-row>
+
+  <!-- Has recent apps - Apps list -->
+  <ion-row class="recent-apps-row" *ngIf="recentApps.length > 0">
+    <ion-row class="recent-apps">
+      <ion-col size="3" class="recent-app" *ngFor="let app of recentApps" (click)="openRecentApp(app)">
+        <img [src]="app.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
+        <div class="title">{{ getShortRecentAppTitle(app)}}</div>
+      </ion-col>
+    </ion-row>
+    <div class="grid" (click)="openDApps()">
+      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/grid.svg' : '/assets/launcher/icons/grid.svg'" />
+    </div>
+  </ion-row>
+
+  <!-- No recent apps -->
+  <ion-col class="app-col no-app-col" size="12" (click)="openDApps()" *ngIf="recentApps.length == 0">
+    <ion-row class="app-row">
+      <ion-col class="left-col" size="2">
+        <div class="icon-container" id="browser">
+          <img src="/assets/launcher/apps/app-icons/browser.svg">
+        </div>
+      </ion-col>
+      <ion-col class="mid-col" size="8">
+        <div class="title">{{ 'launcher.app-browser' | translate }}</div>
+        <div class="secondary-text">{{ 'launcher.app-browser-description' | translate }}</div>
+      </ion-col>
+      <ion-col class="right-col" size="2">
+        <img
+          [src]="theme.darkMode ? '/assets/launcher/widgets/white-right-arrow.svg' : '/assets/launcher/widgets/black-right-arrow.svg'">
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>

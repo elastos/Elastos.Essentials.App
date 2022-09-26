@@ -1,12 +1,11 @@
-@import 'src/app/contacts/root.scss';
+@import "src/app/contacts/root.scss";
 
 .container {
   min-height: 100%;
   padding: 30px 35px;
 
   ion-input {
-    background: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
+    background: var(--essentials-box-color);
     height: 48px;
     border-radius: 8px;
     font-size: 13px;
@@ -33,13 +32,6 @@
       margin: 0;
       font-size: 12px;
       font-weight: 600;
-    };
-  }
-}
-
-.darkContainer {
-  ion-input {
-    background-color: #212021;
-    box-shadow: none;
+    }
   }
 }

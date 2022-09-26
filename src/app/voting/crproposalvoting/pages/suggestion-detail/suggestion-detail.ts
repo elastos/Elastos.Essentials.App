@@ -7,7 +7,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { UXService } from '../../../services/ux.service';
@@ -105,14 +105,14 @@ export class SuggestionDetailPage implements OnDestroy {
             let selfPublicKey = await Util.getSelfPublicKey();
 
             if (this.isCRMember && this.suggestion.status == 'signed'
-                    && !(this.suggestion.type == "secretarygeneral" && !this.suggestion.newSecretarySignature)
-                    && !(this.suggestion.type == "changeproposalowner" && !this.suggestion.newOwnerSignature)) {
+                && !(this.suggestion.type == "secretarygeneral" && !this.suggestion.newSecretarySignature)
+                && !(this.suggestion.type == "changeproposalowner" && !this.suggestion.newOwnerSignature)) {
                 this.commandName = "createproposal";
                 this.buttonLabel = "crproposalvoting.make-into-proposal";
             }
             else if (this.suggestion.status == 'unsigned' && (this.isSelf
-                    || (this.suggestion.type == "secretarygeneral" && Util.isSelfDid(this.suggestion.newSecretaryDID) && this.suggestion.signature)
-                    || (this.suggestion.type == "changeproposalowner" && selfPublicKey == this.suggestion.newOwnerPublicKey && this.suggestion.signature))) {
+                || (this.suggestion.type == "secretarygeneral" && Util.isSelfDid(this.suggestion.newSecretaryDID) && this.suggestion.signature)
+                || (this.suggestion.type == "changeproposalowner" && selfPublicKey == this.suggestion.newOwnerPublicKey && this.suggestion.signature))) {
                 this.commandName = "createsuggestion";
                 this.buttonLabel = "crproposalvoting.sign-suggestion";
             }

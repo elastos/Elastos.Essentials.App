@@ -8,8 +8,8 @@ import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
 import { JSONObject } from 'src/app/model/json';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDURL } from '../model/didurl.model';
 import { VerifiableCredential } from '../model/verifiablecredential.model';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
@@ -29,6 +29,7 @@ export class BackupService extends GlobalService {
   private credModifiedSub: Subscription = null;
   private credDeletedSub: Subscription = null;
   private didActivatedSub: Subscription = null;
+  private useHiveSyncSub: Subscription = null;
 
   private preparingOrPrepared = false;
 
@@ -38,7 +39,7 @@ export class BackupService extends GlobalService {
     private events: GlobalEvents,
     private didService: DIDService,
     private globalHiveService: GlobalHiveService,
-    private globalStorage: GlobalStorageService
+    private prefs: GlobalPreferencesService
   ) {
     super();
   }
@@ -109,6 +110,11 @@ export class BackupService extends GlobalService {
       this.backupRestoreHelper = null;
     }
 
+    if (this.useHiveSyncSub) {
+      this.useHiveSyncSub.unsubscribe();
+      this.useHiveSyncSub = null;
+    }
+
     this.preparingOrPrepared = false;
 
     return;
@@ -126,7 +132,7 @@ export class BackupService extends GlobalService {
 
     if (!this.signedIn) return; // In case the user sign out
 
-    void this.globalHiveService.getActiveUserVaultServices().then(async vaultServices => {
+    void this.globalHiveService.getActiveUserVaultServices().then(vaultServices => {
       try {
         this.userVault = vaultServices;
 
@@ -139,7 +145,7 @@ export class BackupService extends GlobalService {
 
         Logger.log("identitybackup", "User vault retrieved. Now creating a new backup restore helper instance", this.userVault);
 
-        this.backupRestoreHelper = new HiveDataSync(this.userVault, true);
+        this.backupRestoreHelper = new HiveDataSync(this.userVault, false, true);
 
         this.backupRestoreHelper.addSyncContext(BACKUP_CONTEXT,
           async (entry) => {
@@ -178,10 +184,19 @@ export class BackupService extends GlobalService {
           }
         );
 
-        //await this.backupRestoreHelper.wipeLocalContextData("contacts"); // TMP DEBUG
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.useHiveSyncSub = this.prefs.useHiveSync.subscribe(async useHiveSync => {
+          Logger.log("identitybackup", "Use hive sync status changed:", useHiveSync);
 
-        Logger.log("identitybackup", "Starting backup restore sync");
-        await this.backupRestoreHelper.sync();
+          this.backupRestoreHelper.setSynchronizationEnabled(useHiveSync);
+          if (useHiveSync) {
+            Logger.log("identitybackup", "Starting backup restore sync");
+            await this.backupRestoreHelper.sync();
+          }
+          else {
+            this.backupRestoreHelper.stop();
+          }
+        });
       } catch (e) {
         // We could get a hive exception here
         Logger.error("identitybackup", "Catched exception during backup service initialization:");

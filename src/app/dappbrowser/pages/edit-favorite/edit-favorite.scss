@@ -6,7 +6,7 @@
   align-items: center;
   padding: 30px 10px;
   border-radius: 28px;
-  background: #ffffff;
+  background: var(--essentials-box-color);
 
   .icon-container {
     background: white;
@@ -18,7 +18,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border: solid 3px #eaeaea;
+    border: solid 3px var(--essentials-border-separator-color);
 
     .icon {
     }
@@ -36,14 +36,13 @@
 
   .fav-button {
     padding: 10px;
-    background: #f0f3fc;
+    background: var(--ion-background-color);
     border-radius: 10px;
     margin-top: 20px;
     display: flex;
     align-items: center;
     font-size: 13px;
     font-weight: 400;
-    color: #3c3c3c;
 
     img {
       margin-right: 10px;
@@ -57,13 +56,12 @@
   h1 {
     font-weight: 600;
     font-size: 18px;
-    color: #3c3c3c;
   }
 
   p {
-    font-weight: 500;
+    font-weight: 300;
     font-size: 14px;
-    color: #9d9d9d;
+    margin-top: 0;
   }
 
   .networks-list {
@@ -79,39 +77,6 @@
         font-size: 14px;
         font-weight: 500;
       }
-    }
-  }
-}
-
-.dark-container {
-  .app-info {
-    background: #212021;
-
-    .icon-container {
-      border-color: transparent;
-    }
-
-    .title {
-      color: #ffffff;
-    }
-
-    .description {
-      color: #acacac;
-    }
-
-    .fav-button {
-      background: #3e3e3e;
-      color: #ffffff;
-    }
-  }
-
-  .networks {
-    h1 {
-      color: #e2e2e2;
-    }
-
-    p {
-      color: #9d9d9d;
     }
   }
 }

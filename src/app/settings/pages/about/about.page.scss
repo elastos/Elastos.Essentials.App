@@ -11,8 +11,7 @@ ion-grid {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    background-color: #ffffff;
+    background-color: var(--essentials-box-color);
     border-radius: 17px;
     padding: 15px 30px;
 
@@ -25,7 +24,6 @@ ion-grid {
       font-size: 20px;
       font-weight: 600;
       line-height: 1.29;
-      color: #2e2f4e;
       padding: 5px;
     }
 
@@ -61,7 +59,7 @@ ion-list {
   .section-row {
     margin: 10px 0;
     padding: 10px 0 15px;
-    border-bottom: 1px solid #eaeaea;
+    border-bottom: 1px solid var(--essentials-box-color);
 
     ion-label {
       font-size: 14px;
@@ -80,7 +78,7 @@ ion-list {
       h4,
       p {
         font-size: 12px !important;
-        font-weight: 500;
+        font-weight: 400;
         margin: 0;
       }
 
@@ -90,46 +88,13 @@ ion-list {
         }
       }
 
-      p {
-        color: #565bdb;
-      }
-
       p:active {
-        color: #428cff;
+        opacity: 0.5;
       }
     }
   }
 
   .removeBorder {
     border-bottom: none;
-  }
-}
-
-.dark-container {
-  ion-card {
-    background-color: #212021;
-    box-shadow: none;
-
-    ion-card-title {
-      color: #ffffff;
-    }
-
-    ion-card-subtitle {
-      color: #ffffff;
-    }
-  }
-
-  ion-list {
-    .section-row {
-      border-bottom: 1px solid #464646;
-
-      ion-label {
-        color: #9d9d9d;
-      }
-    }
-
-    .removeBorder {
-      border-bottom: none;
-    }
   }
 }

@@ -2,15 +2,8 @@
   <app-titlebar></app-titlebar>
   <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
     <ion-row>
-      <ion-input
-        #input
-        autosize
-        clearInput
-        placeholder="{{ 'contacts.enter-identity-placeholder' | translate }}"
-        [(ngModel)]="didInput"
-        mode="ios"
-        name="didInput" ngDefaultControl
-      ></ion-input>
+      <ion-input #input autosize clearInput placeholder="{{ 'contacts.enter-identity-placeholder' | translate }}"
+        [(ngModel)]="didInput" mode="ios" name="didInput" ngDefaultControl></ion-input>
     </ion-row>
     <ion-row class="btn-container">
       <ion-button color="success" (click)="addContact()">
@@ -22,5 +15,3 @@
     </ion-row>
   </ion-grid>
 </ion-content>
-
-

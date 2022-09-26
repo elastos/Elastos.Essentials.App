@@ -1,0 +1,25 @@
+<div class="widget widget-background template-root" [class.darkContainer]="theme.darkMode"
+  (click)="onBackgroundClicked()">
+  <div class="project" (click)="onProjectLogoClicked()">
+    <img class="logo" [cache]="config.logo">
+    <div class="name" *ngIf="config.projectname">{{ config.projectname }}</div>
+    <div class="secondary-text title" *ngIf="config.title">{{ config.title }}</div>
+  </div>
+  <div class="right-col" [class.transitioning]="transitioning">
+    <ion-row>
+      <ion-col size="6" *ngFor="let i of pageIndexes" class="page-col">
+        <div class="item ion-activatable ripple" *ngIf="hasItemAt(i)" (click)="onItemClicked($event, i)">
+          <div class="picture">
+            <img [cache]="getIcon(i)" />
+          </div>
+          <div class="subinfo" *ngIf="getSubInfo(i)">
+            {{ getSubInfo(i) }}
+          </div>
+          <ion-ripple-effect></ion-ripple-effect>
+        </div>
+        <div class="title" *ngIf="hasItemAt(i)">{{ getTitle(i) }}</div>
+        <div class="no-title" *ngIf="!hasItemAt(i)"></div>
+      </ion-col>
+    </ion-row>
+  </div>
+</div>

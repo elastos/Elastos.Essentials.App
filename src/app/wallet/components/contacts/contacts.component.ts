@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
 import { Contact, ContactsService } from '../../services/contacts.service';
 
@@ -18,8 +18,8 @@ type CryptoAddressInfo = {
 })
 export class ContactsComponent implements OnInit {
 
-  public supportedCryptoAddresses : CryptoAddressInfo[] = [];
-  private subWallet : AnySubWallet = null;
+  public supportedCryptoAddresses: CryptoAddressInfo[] = [];
+  private subWallet: AnySubWallet = null;
 
   constructor(
     public contactsService: ContactsService,
@@ -43,7 +43,7 @@ export class ContactsComponent implements OnInit {
   async getContacts(subWallet: AnySubWallet) {
     for (let index = 0; index < this.contactsService.contacts.length; index++) {
       let addresses = this.contactsService.contacts[index].addresses;
-      for (let i = 0; i <  addresses.length; i++) {
+      for (let i = 0; i < addresses.length; i++) {
         let valid = subWallet ? await subWallet.isAddressValid(addresses[i].address) : true;
         if (valid) {
           this.supportedCryptoAddresses.push({

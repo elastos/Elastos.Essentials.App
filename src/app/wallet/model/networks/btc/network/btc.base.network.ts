@@ -78,4 +78,8 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
   public supportedPrivateKeyTypes(): PrivateKeyType[] {
     return [PrivateKeyType.BTC_LEGACY, PrivateKeyType.BTC_SEGWIT];
   }
+
+  public getMainColor(): string {
+    return "ffad4a";
+  }
 }

@@ -4,8 +4,7 @@
     border-radius: 11px;
     padding: 5px;
     margin: 10px 15px;
-    background-color: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
+    background-color: var(--essentials-box-color);
 
     .displayed-network {
         ion-col {
@@ -130,34 +129,6 @@
     }
 }
 
-.dark-network-container {
-    background-color: #212021;
-    box-shadow: 0px 123px 89px #000000ad;
-
-    .network-options {
-        .header-row {
-            ion-col {
-                ion-label {
-                    h1,
-                    p {
-                        color: #ffffff;
-                    }
-                }
-            }
-        }
-
-        .network-row {
-            border: 1px solid #464446;
-            background-color: transparent;
-            box-shadow: none;
-        }
-
-        .selected-network {
-            background-color: #312f31;
-        }
-    }
-}
-
 .networkOptions-container {
     position: relative;
 }
@@ -182,6 +153,10 @@ ion-slide,
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 50px;
+
+    .card-row {
+        color: white;
+    }
 
     .main-title-row {
         margin-bottom: 10px;
@@ -273,7 +248,8 @@ ion-slide,
         justify-content: center;
         padding: 0;
 
-        img, ion-spinner {
+        img,
+        ion-spinner {
             height: 36px;
             width: 36px;
             padding-bottom: 5px;
@@ -321,7 +297,7 @@ ion-slide,
                 border-radius: 10px;
                 font-weight: 500;
                 margin-top: 10px;
-                background: rgba(200, 200, 200, 0.2);
+                background: var(--essentials-box-color);
 
                 .logos {
                     display: flex;
@@ -347,9 +323,9 @@ ion-slide,
     }
 
     .setting-row {
-      h1 {
-        font-size: 11px;
-      }
+        h1 {
+            font-size: 11px;
+        }
     }
 }
 
@@ -371,26 +347,6 @@ ion-slide,
             p {
                 color: #9d9d9d;
                 opacity: 1;
-            }
-        }
-    }
-}
-
-.dark-slide {
-    .main-title-row {
-        p {
-            color: #9d9d9d;
-            opacity: 1;
-        }
-    }
-
-    .subwallet-row {
-        .providers {
-            .view-transactions,
-            .earn-providers,
-            .swap-providers,
-            .bridge-providers {
-                background: rgba(100, 100, 100, 0.2);
             }
         }
     }

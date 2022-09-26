@@ -19,7 +19,7 @@ import { GlobalLanguageService } from "src/app/services/global.language.service"
 import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { GlobalThemeService } from "src/app/services/theming/global.theme.service";
 import { area } from "../../../../assets/identity/area/area";
 import { PictureComponent } from "../../components/picture/picture.component";
 import { BasicCredentialEntry } from "../../model/basiccredentialentry.model";

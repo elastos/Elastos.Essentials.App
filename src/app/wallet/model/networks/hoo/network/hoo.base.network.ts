@@ -38,4 +38,8 @@ export class HooBaseNetwork extends EVMNetwork {
     else
       throw new Error(`HooBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "00d5ad";
+  }
 }

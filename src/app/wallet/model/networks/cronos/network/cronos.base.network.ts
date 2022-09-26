@@ -38,4 +38,8 @@ export class CronosBaseNetwork extends EVMNetwork {
     else
       throw new Error(`CronosBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "002b79";
+  }
 }

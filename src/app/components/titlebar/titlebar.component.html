@@ -12,7 +12,9 @@
       </div>
     </ion-col>
     <ion-col size="7">
-      <ion-title [ngStyle]="{ 'color': theme.color }">{{ _title }}</ion-title>
+      <ion-title *ngIf="_title" [ngStyle]="{ 'color': theme.color }">{{ _title }}</ion-title>
+      <img class="logo" *ngIf="!_title"
+        [src]="themeService.darkMode ? '/assets/components/titlebar/darkmode/essentials-logo-horizontal.svg' : '/assets/components/titlebar/essentials-logo-horizontal.svg'">
     </ion-col>
     <ion-col size="1.25" [class.hidden]="!icons[2].visible">
       <img *ngIf="icons[2].visible" [src]="getIconPath(2)" (click)="innerRightIconClicked()">

@@ -9,7 +9,7 @@ import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } f
 import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
 import { DappBrowserClient, DappBrowserService } from '../../services/dappbrowser.service';

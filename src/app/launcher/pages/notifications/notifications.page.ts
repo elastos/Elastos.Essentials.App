@@ -2,18 +2,17 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
+import { AppmanagerService } from '../../services/appmanager.service';
 import {
   LauncherNotification,
   LauncherNotificationType, NotificationManagerService
@@ -31,9 +30,9 @@ export class NotificationsPage implements OnInit {
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
-  private modalAlreayDismiss = false;
+  private modalAlreadyDismissed = false;
 
-  public initialComputationDone = false;
+  public notifications: LauncherNotification[] = [];
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -42,24 +41,20 @@ export class NotificationsPage implements OnInit {
     private globalNav: GlobalNavService,
     public theme: GlobalThemeService,
     public translate: TranslateService,
+    private appManagerService: AppmanagerService,
     private tipsService: TipsService,
     private events: GlobalEvents,
-    private browserService: DappBrowserService,
-    // In-app Services
     private hiveManagerInitService: HiveManagerInitService,
     private dposVotingInitService: DPoSVotingInitService,
-    private walletInitService: WalletInitService,
+    private walletInitService: WalletInitService
   ) {
   }
 
   ngOnInit() {
+    this.notificationService.notifications.subscribe(notifications => this.notifications = notifications);
   }
 
   ionViewWillEnter() {
-    this.initialComputationDone = false;
-
-    this.notificationService.init();
-
     this.titleBar.setNavigationMode(null);
     this.titleBar.setTitle(this.translate.instant('launcher.notifications'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
@@ -69,12 +64,10 @@ export class NotificationsPage implements OnInit {
     });
 
     if (this.theme.darkMode) {
-      this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
+      this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     } else {
-      this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
+      this.titleBar.setForegroundMode(TitleBarForegroundMode.DARK);
     }
-
-    this.initialComputationDone = true;
   }
 
   ionViewWillLeave() {
@@ -82,9 +75,9 @@ export class NotificationsPage implements OnInit {
   }
 
   async closeNotificationPage() {
-    if (!this.modalAlreayDismiss) {
+    if (!this.modalAlreadyDismissed) {
       await this.modalController.dismiss();
-      this.modalAlreayDismiss = true;
+      this.modalAlreadyDismissed = true;
     }
   }
 
@@ -166,77 +159,14 @@ export class NotificationsPage implements OnInit {
       void this.tipsService.markTipAsViewed(tip);
     }
 
-    if (this.notificationService.notifications.length === 0) {
+    if (this.notifications.length === 0) {
       await this.closeNotificationPage();
     }
   }
 
   async closeAllNotifications() {
-    for (let notification of this.notificationService.notifications) {
+    for (let notification of this.notifications) {
       await this.close(notification);
-    }
-  }
-
-  getNotificationIcon(notification: LauncherNotification) {
-    if (notification.type === LauncherNotificationType.SYSTEM) {
-      if (this.theme.darkMode) {
-        return "assets/launcher/icons/dark_mode/elalogo.svg";
-      } else {
-        return "assets/launcher/icons/elalogo.svg";
-      }
-    } else if (notification.type === LauncherNotificationType.CONTACT) {
-      if (notification.contactAvatar && Object.keys(notification.contactAvatar).length !== 0) {
-        return 'data:' + notification.contactAvatar.contentType + ';base64,' + notification.contactAvatar.base64ImageData;
-      } else {
-        return "assets/launcher/icons/contact.png";
-      }
-    } else if (notification.type === LauncherNotificationType.NORMAL && notification.app) {
-      return this.notificationService.getAppIcon(notification.app);
-    } else {
-      if (this.theme.darkMode) {
-        return "assets/launcher/icons/dark_mode/elalogo.svg";
-      } else {
-        return "assets/launcher/icons/elalogo.svg";
-      }
-    }
-  }
-
-  getNotificationHeader(notification: LauncherNotification) {
-    if (notification.type === LauncherNotificationType.CONTACT) {
-      if (notification.contactName)
-        return notification.contactName;
-      else
-        return this.translate.instant('launcher.from-unknown-contact');
-    }
-    else if (notification.app) {
-      return this.translate.instant(this.notificationService.getAppTitle(notification.app));
-    }
-    else if (notification.type == LauncherNotificationType.TIP) {
-      return this.translate.instant('launcher.tip-of-the-day');
-    }
-    else {
-      return this.translate.instant('launcher.system-notification'); // Default if no title or if system
-    }
-  }
-
-  getNotificationTitle(notification: LauncherNotification) {
-    return notification.title;
-  }
-
-  getNotificationDate(notification: LauncherNotification) {
-    return moment(Number(notification.sent_date)).startOf('minutes').fromNow();
-  }
-
-  getNotificationMessage(notification: LauncherNotification) {
-    if (notification.type == LauncherNotificationType.TIP) {
-      let jsonMessage = JSON.parse(notification.message);
-      let translatedMessage: string = jsonMessage["message"];
-
-      // Truncate long message - remove html tags
-      return translatedMessage.replace(/<\/?[^>]+>/gi, "").substr(0, 100) + "...";
-    }
-    else {
-      return notification.message;
     }
   }
 }

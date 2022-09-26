@@ -24,12 +24,13 @@ import { GlobalNativeService } from './services/global.native.service';
 import { GlobalNavService } from './services/global.nav.service';
 import { GlobalNetworksService } from './services/global.networks.service';
 import { GlobalNotificationsService } from './services/global.notifications.service';
+import { GlobalPreferencesService } from './services/global.preferences.service';
 import { GlobalPublicationService } from './services/global.publication.service';
 import { GlobalSecurityService } from './services/global.security.service';
 import { GlobalStartupService } from './services/global.startup.service';
 import { GlobalStorageService } from './services/global.storage.service';
-import { GlobalThemeService } from './services/global.theme.service';
 import { GlobalWalletConnectService } from './services/global.walletconnect.service';
+import { GlobalThemeService } from './services/theming/global.theme.service';
 
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -59,6 +60,7 @@ export class AppComponent {
     private screenOrientation: ScreenOrientation,
     private notificationsService: GlobalNotificationsService,
     private publicationService: GlobalPublicationService,
+    private globalPreferencesService: GlobalPreferencesService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     private globalHiveService: GlobalHiveService,
     private walletConnect: GlobalWalletConnectService,
     private globalFirebaseService: GlobalFirebaseService,

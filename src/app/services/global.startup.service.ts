@@ -8,9 +8,9 @@ import { Direction, GlobalNavService } from './global.nav.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalSecurityService } from './global.security.service';
 import { GlobalStorageService } from './global.storage.service';
-import { GlobalThemeService } from './global.theme.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
 import { NetworkTemplateStore } from './stores/networktemplate.store';
+import { GlobalThemeService } from './theming/global.theme.service';
 
 /**
  * Service that handles user defined startup screen and related startup flow details.

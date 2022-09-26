@@ -18,7 +18,7 @@ import { GlobalCredentialTypesService } from 'src/app/services/credential-types/
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
 import { DID } from '../../../model/did.model';
 import { RequestCredentialsIntent } from '../../../model/identity.intents';

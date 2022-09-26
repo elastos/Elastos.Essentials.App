@@ -1,6 +1,7 @@
 <div class="container" [class.darkContainer]="theme.darkMode">
-  <ion-row class="delete-header">
-    <img src="/assets/contacts/images/warning.svg">
+  <ion-row class="header">
+    <img class="logo" *ngIf="type === 'danger'" src="/assets/contacts/images/warning.svg">
+    <img class="logo" *ngIf="type === 'custom'" [src]="customIcon">
     <h1 class="ion-padding-horizontal ion-text-center">{{ title }}</h1>
   </ion-row>
 
@@ -18,7 +19,7 @@
       <ion-ripple-effect></ion-ripple-effect>
     </ion-col>
     <ion-col class="btn ion-activatable ripple" size="5" (click)="confirm()">
-      <ion-label>{{ 'common.confirm' | translate }}</ion-label>
+      <ion-label>{{ confirmationButtonText }}</ion-label>
       <ion-ripple-effect></ion-ripple-effect>
     </ion-col>
   </ion-row>

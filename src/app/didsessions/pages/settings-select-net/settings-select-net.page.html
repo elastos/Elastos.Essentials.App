@@ -1,6 +1,6 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
+  <ion-grid class="container" [class.dark-subsetting-grid]="theme.darkMode">
     <!-- Network Lists -->
     <ion-row *ngFor="let networkTemplate of availableNetworkTemplates" class="section-row"
       (click)="selectNetworkTemplate(networkTemplate)">

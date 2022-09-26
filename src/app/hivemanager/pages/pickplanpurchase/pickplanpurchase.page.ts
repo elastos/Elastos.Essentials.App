@@ -6,7 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { App } from "src/app/model/app.enum";
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { HiveService } from '../../services/hive.service';
 
 @Component({

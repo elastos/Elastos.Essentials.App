@@ -116,7 +116,7 @@ export class WalletInitService extends GlobalService {
     this.registerNameResolvers();
 
     // Do not await.
-    void this.currencyService.init();
+    await this.currencyService.init(); // Currency cache must be ready for other services
     void this.uniswapCurrencyService.init();
     void this.contactsService.init();
     void this.ethTransactionService.init();
@@ -180,6 +180,8 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new HooTestNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
+
+    this.networkService.notifyAllNetworksRegistered();
   }
 
   private async createAndRegisterNetwork(network: AnyNetwork, isDefault = false): Promise<void> {

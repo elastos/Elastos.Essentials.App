@@ -1,0 +1,29 @@
+<ion-row class="widget widget-background elastos-voting-row category-row" [class.darkContainer]="theme.darkMode"
+  *ngIf="runnableApps">
+  <ion-col size="12" class="title-col">
+    <ion-label>{{ runnableApps.type | translate }}</ion-label>
+  </ion-col>
+  <ion-col *ngFor="let app of runnableApps.apps" class="app-col" size="12" (click)="appService.startApp(app)">
+    <ion-row class="app-row" [class.add-border]="app !== runnableApps.apps[runnableApps.apps.length -1]">
+      <ion-col class="left-col" size="2">
+        <div class="icon-container" [id]="app.id">
+          <img [src]="app.iconDark && theme.darkMode ? app.iconDark : app.icon">
+        </div>
+      </ion-col>
+      <ion-col class="mid-col" size="8">
+        <div class="title">{{ app.name }}</div>
+        <div class="secondary-text subtitle">{{ app.description }}</div>
+      </ion-col>
+      <ion-col class="right-col" size="2">
+        <img
+          [src]="theme.darkMode ? '/assets/launcher/widgets/white-right-arrow.svg' : '/assets/launcher/widgets/black-right-arrow.svg'">
+      </ion-col>
+      <!--  <ion-col *ngIf="app.hasWidget" class="widget-col" offset="2.2" size="9.8">
+        <div *ngIf="app.id === 'hive' && hiveVaultLinked" class="hive-widget">
+          <ion-progress-bar color="warning" [value]="hiveVaultStorageStats.usageRatio"></ion-progress-bar>
+          <span>{{ hiveVaultStorageStats.percentUsage }}% / {{ hiveVaultStorageStats.maxStorage }} GB</span>
+        </div>
+      </ion-col> -->
+    </ion-row>
+  </ion-col>
+</ion-row>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
   selector: 'app-success',
@@ -16,7 +16,7 @@ export class SuccessComponent implements OnInit {
     public translate: TranslateService
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   continue() {
     this.popoverCtrl.dismiss();

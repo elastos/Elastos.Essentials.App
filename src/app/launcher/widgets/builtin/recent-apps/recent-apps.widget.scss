@@ -1,0 +1,59 @@
+@import "../../widgets.scss";
+
+.recent-apps-row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-content: flex-start;
+  align-items: center;
+  place-content: space-between;
+
+  .recent-apps {
+    display: flex;
+    width: auto;
+    flex: 1;
+
+    .recent-app {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+
+      img {
+        height: 50px;
+        width: 50px;
+        width: 50px;
+        object-fit: contain;
+        background: var(--ion-background-color);
+        border-radius: 10px;
+        padding: 8px;
+      }
+
+      .title {
+        margin-top: 5px;
+        margin-bottom: 0;
+        font-size: 11px;
+      }
+    }
+  }
+
+  .grid {
+    width: 30px;
+  }
+}
+
+.darkContainer {
+  .recent-apps-row {
+    .recent-apps {
+      .recent-app {
+        img {
+          //background: #333133;
+        }
+
+        .title {
+          //color: #acacac;
+        }
+      }
+    }
+  }
+}

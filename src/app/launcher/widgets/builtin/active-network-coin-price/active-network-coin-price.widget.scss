@@ -1,0 +1,53 @@
+@import "../../widgets.scss";
+
+.widget {
+    height: 110px;
+    justify-content: flex-start;
+    padding: 0;
+}
+
+.melted-logo {
+    position: absolute;
+    left: -10px;
+    top: 15px;
+    opacity: 0.6;
+    height: 80px;
+}
+
+.network-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px 10px;
+
+    .name {
+        font-size: 11px;
+        font-weight: 300;
+        margin-right: 10px;
+    }
+
+    img {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.price-row {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    text-align: center;
+
+    .coin-name {
+        font-size: 14px;
+        opacity: 60%;
+    }
+
+    .price {
+        font-weight: bold;
+        font-size: 26px;
+    }
+}
+
+.darkContainer {
+}

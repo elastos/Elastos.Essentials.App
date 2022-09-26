@@ -1,0 +1,17 @@
+<!-- Wallets -->
+<div #coinPriceRoot class="widget widget-background ripple ion-activatable" [class.darkContainer]="theme.darkMode"
+  *ngIf="walletNetworkService.activeNetwork.value" (click)="openWallet()">
+
+  <img class="melted-logo" [src]="walletNetworkService.activeNetwork.value.logo">
+
+  <ion-row class="network-row" (click)="pickNetwork()">
+    <div class="name">{{ walletNetworkService.activeNetwork.value.name }}</div>
+    <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
+  </ion-row>
+  <ion-row class="price-row">
+    <div class="coin-name">{{ getNetworkWithCoin() }} </div>
+    <div class="price" *ngIf="coinDisplayPrice">${{ coinDisplayPrice }}</div>
+  </ion-row>
+
+  <ion-ripple-effect></ion-ripple-effect>
+</div>

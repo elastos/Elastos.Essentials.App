@@ -7,7 +7,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { AuthService } from '../../../../services/auth.service';
 import { IntentTransfer } from '../../../../services/cointransfer.service';

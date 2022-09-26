@@ -30,7 +30,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
 import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';

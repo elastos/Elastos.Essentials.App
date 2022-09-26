@@ -44,14 +44,25 @@
       <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
 
+    <!-- Core developer mode -->
+    <ion-row class="section-row">
+      <ion-col size="9" class="left-col">
+        <h1>Core developer mode</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <ion-toggle [(ngModel)]="coreDeveloperMode" (ionChange)="onCoreDeveloperModeChanged()" mode="ios">
+        </ion-toggle>
+      </ion-col>
+    </ion-row>
+
     <!-- Essentials development tests -->
-    <!--     <ion-row class="section-row" (click)="go('/settings/devtests')">
+    <ion-row class="section-row" (click)="go('/settings/devtests')" *ngIf="coreDeveloperMode">
       <ion-col size="9" class="left-col">
         <h1>Essentials Tests</h1>
       </ion-col>
       <ion-col size="3" class="right-col">
         <img src="assets/settings/default/right-arrow.svg">
       </ion-col>
-    </ion-row> -->
+    </ion-row>
   </ion-grid>
 </ion-content>

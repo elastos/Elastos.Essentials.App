@@ -1,0 +1,80 @@
+@import "../../widgets.scss";
+
+.backup-row {
+  padding: 10px 10px 10px 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  background-image: url("/assets/launcher/icons/backup-background.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  ion-col {
+    display: flex;
+  }
+
+  .left-col {
+    justify-content: center;
+    align-items: flex-start;
+
+    img {
+      margin-top: 10px;
+      height: 20px;
+      width: 23px;
+    }
+  }
+
+  .mid-col {
+    justify-content: center;
+    align-items: center;
+    padding-right: 0;
+    padding-left: 0;
+
+    ion-label {
+      text-align: left;
+
+      h1,
+      p {
+        color: #ffffff;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      p {
+        font-size: 9px;
+        font-weight: 400;
+        line-height: 15px;
+      }
+    }
+  }
+
+  .right-col {
+    justify-content: center;
+    align-items: flex-end;
+
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 9px;
+      background: #ffffff;
+      padding: 12px 10px;
+
+      h1 {
+        margin: 0;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: #791bf5;
+        text-transform: uppercase;
+      }
+    }
+  }
+}

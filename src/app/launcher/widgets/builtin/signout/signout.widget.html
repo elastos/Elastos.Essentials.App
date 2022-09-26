@@ -1,0 +1,21 @@
+<ion-row *ngIf="getSignedInIdentity()" class="widget widget-background logout-row ion-activatable ripple"
+  (click)="signOut()" [class.darkContainer]="theme.darkMode">
+  <ion-col class="app-col" size="12">
+    <ion-row class="app-row">
+      <ion-col class="left-col" size="2">
+        <div class="icon-container">
+          <img
+            [src]="theme.darkMode ? '/assets/launcher/apps/app-icons/white-logout.svg' : '/assets/launcher/apps/app-icons/logout.svg'">
+        </div>
+      </ion-col>
+      <ion-col class="mid-col" size="8">
+        <div class="title">{{ 'common.sign-out' | translate }}</div>
+      </ion-col>
+      <ion-col class="right-col" size="2">
+        <img
+          [src]="theme.darkMode ? '/assets/launcher/widgets/white-right-arrow.svg' : '/assets/launcher/widgets/black-right-arrow.svg'">
+      </ion-col>
+    </ion-row>
+  </ion-col>
+  <ion-ripple-effect></ion-ripple-effect>
+</ion-row>

@@ -1,21 +1,21 @@
-import { Component, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import QRCode from 'easyqrcodejs';
 
+import { IonSlides, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { UXService } from '../../services/ux.service';
-import { ModalController, IonSlides } from '@ionic/angular';
-import { PrintoptionsComponent } from '../../components/printoptions/printoptions.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { DIDService } from '../../services/did.service';
-import { AuthService } from '../../services/auth.service';
-import { PopupProvider } from '../../services/popup';
-import { DIDURL } from '../../model/didurl.model';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { PrintoptionsComponent } from '../../components/printoptions/printoptions.component';
+import { DIDURL } from '../../model/didurl.model';
+import { AuthService } from '../../services/auth.service';
+import { DIDService } from '../../services/did.service';
+import { PopupProvider } from '../../services/popup';
+import { UXService } from '../../services/ux.service';
 
 @Component({
   selector: 'page-backupdid',
@@ -211,9 +211,9 @@ export class BackupDIDPage {
               Logger.log('identity', "Document printed successfully?", wasPrinted);
               // TODO: print bug? wasPrinted is wrong.
               // if (wasPrinted) {
-                this.zone.run(()=>{
-                  void this.checkPrintCompleted();
-                });
+              this.zone.run(() => {
+                void this.checkPrintCompleted();
+              });
               // }
             }
           );
@@ -230,9 +230,9 @@ export class BackupDIDPage {
               Logger.log('identity', "Document printed successfully?", wasPrinted);
               // TODO: print bug? wasPrinted is wrong.
               // if (wasPrinted) {
-                this.zone.run(()=>{
-                  void this.checkPrintCompleted();
-                });
+              this.zone.run(() => {
+                void this.checkPrintCompleted();
+              });
               // }
             });
         } catch (e) {

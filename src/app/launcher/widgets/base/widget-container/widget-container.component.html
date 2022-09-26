@@ -1,0 +1,50 @@
+<div class="root" [class.darkContainer]="theme.darkMode">
+
+  <!-- Buttons to exit the edition mode -->
+  <div class="edition-controls" [@simpleFadeAnimation]="'in'" *ngIf="inLiveMode() && editing">
+    <!-- Active theme color -->
+    <div class="change-color" (click)="openColorChooser()">
+      <img
+        [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/change-color.svg' : '/assets/launcher/icons/change-color.svg'" />
+      {{ getActiveThemeColorName() }}
+    </div>
+
+    <!-- Validate edition button -->
+    <div class="exit-edition" (click)="exitEdition()">
+      <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/check.svg' : '/assets/launcher/icons/check.svg'" />
+    </div>
+
+    <!-- Active theme variant (light/dark) -->
+    <div class="change-variant" (click)="toggleThemeVariant()">
+      <img
+        [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/change-color.svg' : '/assets/launcher/icons/change-color.svg'" />
+      {{ getActiveThemeVariantName() }}
+    </div>
+  </div>
+
+  <!-- Info about edition mode -->
+  <!-- <div *ngIf="inLiveMode() && editing" class="info" [@simpleFadeAnimation]="'in'">
+    Note: some widgets show only in edition mode and disappear in standard mode. No worries, they will apper when they
+    think they have to!
+  </div>
+
+  <div class="add-widget" (click)="addWidget()" *ngIf="inLiveMode() && editing">
+    + Add widget
+  </div> -->
+
+  <div #widgetsboundaries id="widgetsboundaries">
+    <div #widgetslist class="widgets-list">
+      <!-- Use a template that disappears at runtime because createComponent() adds new children as SIBLING of #container, not inside... -->
+      <ng-template #container></ng-template>
+    </div>
+  </div>
+
+  <div class="reset-container" (click)="restoreAllWidgets()" *ngIf="inLiveMode() && editing">
+    Restore all widgets to defaults
+  </div>
+</div>
+
+<!-- Placeholder showing the insertion position while dragging -->
+<ng-template #dragplaceholder>
+  <div class="drag-placeholder"></div>
+</ng-template>

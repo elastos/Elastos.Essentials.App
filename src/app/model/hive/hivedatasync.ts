@@ -75,6 +75,7 @@ export class HiveDataSync {
     private opsQueue: Queue = null; // Queue of operations such as add, remove or sync to ensure sequencial order and too many syncs
     private requestToCancelOnGoingSync = false; // True when we are willing to cancel an on going sync, to make the sync process stop.
     private syncInQueue = false; // Whether a sync request is already in the operations queue or not, so we don't queue more than one at a time.
+    private syncEnabled = false;
 
     /**
      * As this backup helper relies on hive vaults, a vault instance of the currently user must be
@@ -82,7 +83,7 @@ export class HiveDataSync {
      *
      * Debug information can be displayed in console logs by setting showDebugLogs to true.
      */
-    constructor(private userVault: Vault, private showDebugLogs: boolean = false) {
+    constructor(private userVault: Vault, syncEnabled: boolean, private showDebugLogs: boolean = false) {
         if (!userVault) {
             throw new Error("The backup restore helper can't be used without a user vault. Please make sure the vault was correctly initialized.");
         }
@@ -90,6 +91,15 @@ export class HiveDataSync {
         this.userVault = userVault;
         this.showDebugLogs = showDebugLogs;
         this.opsQueue = new Queue(1); // Concurrency: 1 at a time
+        this.syncEnabled = syncEnabled;
+    }
+
+    /**
+     * If the sync is disabled, all local operations on this sync service are done as usually (so that the state is preserved
+     * in case the sync is enabled later), but no data is synchronized with the remote hive vault for now.
+     */
+    public setSynchronizationEnabled(syncEnabled: boolean) {
+        this.syncEnabled = syncEnabled;
     }
 
     /**
@@ -345,6 +355,11 @@ export class HiveDataSync {
      */
     public sync(remotelyModifiedEntriesOnly = true): Promise<boolean> {
         this.logDebug("Handling sync request");
+
+        if (!this.syncEnabled) {
+            this.logDebug("Synchronization is disabled, skipping sync.");
+            return;
+        }
 
         if (this.syncInQueue) {
             this.logDebug("Synchronization request not handle because another sync is already in the queue");

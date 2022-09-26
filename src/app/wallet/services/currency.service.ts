@@ -87,7 +87,7 @@ export class CurrencyService {
 
   private networkMainTokenPrice = {};
   private updateInterval = null;
-  private pricesFetchedSubject = new BehaviorSubject<boolean>(false);
+  public pricesFetchedSubject = new BehaviorSubject<boolean>(false);
 
   private exchangeRates: ExchangeRateCache = {};
   private pricesCache: TimeBasedPersistentCache<CachedTokenPrice>; // Cache that contains latest prices for all tokens (native and ERC)
@@ -141,6 +141,10 @@ export class CurrencyService {
 
   public getDisplayableCurrencies(): DisplayableCurrency[] {
     return displayableCurrencies;
+  }
+
+  public getDisplayableCurrencyBySymbol(symbol: string): DisplayableCurrency {
+    return displayableCurrencies.find(dc => dc.symbol === symbol);
   }
 
   private async loadAllTokenSymbol() {

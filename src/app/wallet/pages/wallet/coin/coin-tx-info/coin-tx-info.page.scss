@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 ion-grid {
     padding: 20px;
@@ -11,10 +11,10 @@ ion-grid {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #ffffff;
+        background-color: var(--essentials-box-color);
         border-radius: 17px;
         padding: 15px 30px;
+        box-shadow: none;
 
         .icon-container {
             width: 62.2px;
@@ -29,22 +29,20 @@ ion-grid {
             font-size: 20px;
             font-weight: 600;
             line-height: 1.29;
-            color: #000000;
             padding: 5px 5px 10px;
         }
 
         ion-card-subtitle {
             font-size: 26px;
             font-weight: 600;
-            line-height: 1.21;
-            letter-spacing: 0.7px;
             text-align: center;
             text-transform: none;
-            color: #000000;
+            --ion-card-color: var(--ion-text-color);
+            --color: var(--ion-text-color);
         }
 
         .smallFont {
-          font-size: 18px;
+            font-size: 18px;
         }
 
         p {
@@ -53,7 +51,6 @@ ion-grid {
             font-weight: 800;
             font-size: 12px;
             letter-spacing: 0.9px;
-            color: #2e2f4e;
         }
 
         .complete {
@@ -111,15 +108,4 @@ ion-grid {
     }
 }
 
-.dark-container {
-    ion-card {
-        background-color: #212021;
-        box-shadow: none;
-
-        ion-card-title, ion-card-subtitle {
-            color: #ffffff;
-        }
-    }
-}
-
-@import './item-rows.scss';
+@import "./item-rows.scss";

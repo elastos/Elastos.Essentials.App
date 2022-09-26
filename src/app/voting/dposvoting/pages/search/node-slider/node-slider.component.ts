@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DPosNode } from '../../../model/nodes.model';
 import { NodesService } from '../../../services/nodes.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-node-slider-search',
@@ -40,7 +40,7 @@ export class NodeSliderComponent implements OnInit {
   loadNext() {
     let lastNode: DPosNode = this.displayedArr.slice(-1)[0];
     let nextNodeIndex: number = this._nodes.indexOf(lastNode) + 1;
-    if(nextNodeIndex) {
+    if (nextNodeIndex) {
       this.displayedArr.push(this._nodes[nextNodeIndex]);
     }
     Logger.log('dposvoting', 'last node', lastNode);
@@ -60,7 +60,7 @@ export class NodeSliderComponent implements OnInit {
 
   getRewards(yearlyRewards: string): string {
     if (yearlyRewards) {
-      const dailyRewards: number =  parseFloat(yearlyRewards) / 365;
+      const dailyRewards: number = parseFloat(yearlyRewards) / 365;
       return dailyRewards.toFixed(2);
     } else {
       return '...';

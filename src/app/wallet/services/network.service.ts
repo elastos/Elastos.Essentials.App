@@ -21,6 +21,7 @@
  */
 
 import { Injectable } from '@angular/core';
+import moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
@@ -38,6 +39,16 @@ import { LocalStorage } from './storage.service';
 
 export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
 
+type RawLastUsedNetworks = { [networkKey: string]: number }
+
+export type LastUsedNetworks = {
+    raw: RawLastUsedNetworks; // map of network key -> last used timestamp
+    list: { // Based on the raw entries, ordered list of networks.
+        network: AnyNetwork;
+        timestamp: number;
+    }[];
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -50,6 +61,10 @@ export class WalletNetworkService {
     } = {};
 
     public activeNetwork = new BehaviorSubject<AnyNetwork>(null);
+    public lastUsedNetworks = new BehaviorSubject<LastUsedNetworks>({
+        raw: {},
+        list: []
+    });
 
     /** Notifies whenever the networks list changes (initial registration, custom networks added/removed) */
     public networksList = new BehaviorSubject<AnyNetwork[]>([]);
@@ -108,6 +123,13 @@ export class WalletNetworkService {
         });
 
         this.networksList.next(this.networks);
+    }
+
+    /**
+     * Called by the boot sequence when all networks are registered, so we know we have the whole networks list from here.
+     */
+    public notifyAllNetworksRegistered() {
+        void this.loadLastUsedNetworks();
     }
 
     /**
@@ -179,6 +201,9 @@ export class WalletNetworkService {
 
         // Stats
         void this.globalFirebaseService.logEvent("switch_network_" + network.key);
+
+        // Update the last used date
+        void this.updateLastUsedNetworkDate(network);
 
         await this.notifyNetworkChange(network);
     }
@@ -252,5 +277,50 @@ export class WalletNetworkService {
     public setNetworkVisible(network: AnyNetwork, visible: boolean): Promise<void> {
         this.networkVisibilities[network.key] = visible;
         return this.saveNetworkVisibilities();
+    }
+
+    /**
+     * Maintain the list of last used networks to be able to display them first in some
+     * lists of widgets like the active network chooser.
+     */
+    private async updateLastUsedNetworkDate(network: AnyNetwork) {
+        let rawLastUsedNetworks = this.lastUsedNetworks.value.raw;
+
+        rawLastUsedNetworks[network.key] = moment().unix();
+        await this.saveLastUsedNetworks(rawLastUsedNetworks);
+
+        this.lastUsedNetworks.next(this.newLastUsedNetworks(rawLastUsedNetworks));
+    }
+
+    private saveLastUsedNetworks(rawLastUsedNetworks: RawLastUsedNetworks) {
+        return this.globalStorageService.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "last-used-networks", rawLastUsedNetworks);
+    }
+
+    private async loadLastUsedNetworks() {
+        let rawLastUsedNetworks = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "last-used-networks", {});
+
+        this.lastUsedNetworks.next(this.newLastUsedNetworks(rawLastUsedNetworks));
+    }
+
+    private newLastUsedNetworks(rawLastUsedNetworks: RawLastUsedNetworks): LastUsedNetworks {
+        let sortedRawKeys = Object.keys(rawLastUsedNetworks).sort((a, b) => {
+            return rawLastUsedNetworks[b] - rawLastUsedNetworks[a];
+        });
+
+        let lastUsedNetworks: LastUsedNetworks = {
+            raw: rawLastUsedNetworks,
+            list: []
+        }
+        for (let networkKey of sortedRawKeys) {
+            let network = this.getNetworkByKey(networkKey);
+            if (network) {
+                lastUsedNetworks.list.push({
+                    network,
+                    timestamp: rawLastUsedNetworks[networkKey]
+                });
+            }
+        }
+
+        return lastUsedNetworks;
     }
 }

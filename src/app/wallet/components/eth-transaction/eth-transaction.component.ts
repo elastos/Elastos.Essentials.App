@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Config } from '../../config/Config';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import { ETHTransactionSpeedup, ETHTransactionStatusInfo, EVMService } from '../../services/evm/evm.service';

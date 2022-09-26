@@ -1,0 +1,110 @@
+@import "../../widgets.scss";
+
+.header-row {
+  margin-bottom: 5px;
+
+  .title-col {
+    padding: 0px;
+    display: flex;
+    align-items: center;
+
+    .badge {
+      //background: #d62929;
+      background: var(--ion-background-color);
+      border-radius: 20px;
+      padding: 2px 6px;
+      margin-left: 10px;
+      text-align: center;
+      font-size: 12px;
+    }
+  }
+
+  .more-col {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    justify-content: flex-end;
+
+    img {
+      margin-left: 5px;
+      height: 10px;
+    }
+  }
+}
+
+.notifications-row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-content: flex-start;
+  align-items: center;
+  place-content: space-between;
+  font-size: 12px;
+
+  .notifications {
+    display: flex;
+    width: auto;
+    flex: 1;
+
+    .notification {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      font-size: 14px;
+      text-align: left;
+      background: var(--ion-background-color);
+      border-radius: 10px;
+      padding: 10px;
+
+      .header {
+        display: flex;
+        align-items: center;
+        align-self: flex-start;
+        width: 100%;
+
+        .icon {
+          height: 18px;
+          margin-right: 5px;
+        }
+
+        .sender {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-weight: 600;
+        }
+      }
+
+      .title {
+        font-weight: 500;
+        margin: 6px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 100%;
+      }
+
+      .message {
+      }
+    }
+  }
+
+  .grid {
+    width: 30px;
+  }
+}
+
+.darkContainer {
+  .notifications-row {
+    .notifications {
+      .notification {
+        .message {
+          //color: #acacac;
+        }
+      }
+    }
+  }
+}

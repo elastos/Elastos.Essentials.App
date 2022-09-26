@@ -12,14 +12,12 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { DPosNode } from '../../model/nodes.model';
 import { NodesService } from '../../services/nodes.service';
 import { DIDSessionsStore } from './../../../../services/stores/didsessions.store';
-
-
 
 @Component({
     selector: 'app-vote',

@@ -1,0 +1,113 @@
+@import "src/app/launcher/root.scss";
+
+:host {
+  display: block;
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  &.editing {
+    //overflow: hidden;
+    margin-top: 20px; // More space above each widget to let the edition icons not be too close to above widgets
+  }
+
+  &.selecting {
+    padding-bottom: 10px;
+  }
+
+  .touch-disabler {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+  }
+
+  .edition,
+  .plugin-control,
+  .adding-plugin-edition {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+
+    .item {
+      //background: #dde2f1;
+      background: var(--essentials-box-color);
+      border: solid 1px var(--ion-text-color);
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: 5px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        padding: 7px;
+      }
+
+      &:active {
+        opacity: 0.5;
+      }
+
+      &.reduced {
+        display: none;
+      }
+    }
+
+    &.reduced {
+      width: 0px;
+      overflow: hidden;
+    }
+  }
+
+  .edition {
+    right: 0;
+    top: -14px;
+  }
+
+  .adding-plugin-edition {
+    right: 0;
+    top: 0px;
+  }
+
+  .plugin-control {
+    left: 0;
+    bottom: 0px;
+  }
+
+  .selection {
+    position: absolute;
+    left: 50%;
+    right: 0;
+    bottom: 0px;
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    margin: 10px;
+    box-shadow: 0 0 5px #888;
+    z-index: 20000;
+    transition: 0 0.3s ease;
+
+    &:active {
+      background: rgba(0, 0, 0, 1);
+    }
+  }
+}
+
+.darkContainer {
+  .root {
+    .edition {
+      .item {
+        background: #acacac;
+      }
+    }
+  }
+}

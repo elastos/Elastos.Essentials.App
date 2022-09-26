@@ -1,0 +1,159 @@
+@import "../../widgets.scss";
+
+ion-slides {
+    --bullet-background: var(--essentials-pagination-color);
+    --bullet-background-active: var(--essentials-pagination-active-color);
+}
+
+.widget {
+    padding: 10px 0;
+    .melted-logo {
+        position: absolute;
+        left: -10px;
+        top: 15px;
+        opacity: 0.6;
+        height: 80px;
+    }
+
+    .header-row {
+        align-items: center;
+
+        .title-col {
+            font-size: 16px;
+            font-weight: 600;
+            padding: 0 0 5px 5px;
+            text-align: left;
+
+            ion-label {
+                margin-left: 5px;
+            }
+        }
+
+        .network-col {
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-weight: 300;
+
+            .network-logo,
+            .toggle {
+                height: 16px;
+            }
+
+            .network-logo {
+                margin-left: 10px;
+            }
+        }
+    }
+
+    .wallets-col {
+        padding: 0;
+
+        .no-wallet {
+            text-align: center;
+            background: var(--essentials-box-color);
+            border-radius: 10px;
+            padding: 20px;
+        }
+    }
+
+    .wallet-widget-row {
+        position: relative;
+        border-radius: 14px;
+        padding: 5px 10px 10px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+        height: 110px;
+        .card-label-row {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            height: 100%;
+
+            .main-content {
+                margin-left: 70px;
+                text-align: left;
+
+                .wallet-name {
+                    font-weight: 400;
+                    font-size: 16px;
+                    text-align: left;
+                    opacity: 0.7;
+                }
+
+                .balance {
+                    font-size: 26px;
+                    font-weight: 600;
+                }
+            }
+
+            .single-address {
+                position: absolute;
+                right: 0px;
+                bottom: -4px;
+                font-size: 12px;
+                font-weight: 400;
+                padding-bottom: 1px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+
+                .title {
+                    font-weight: 600;
+                }
+
+                .bottom {
+                    display: flex;
+                    justify-content: center;
+                    font-size: 10px;
+
+                    img {
+                        margin-left: 5px;
+                    }
+                }
+            }
+
+            .addresses {
+                position: absolute;
+                right: 0px;
+                bottom: 0px;
+                font-size: 12px;
+                font-weight: 400;
+                display: flex;
+                justify-content: center;
+                padding-bottom: 1px;
+
+                img {
+                    margin-left: 3px;
+                }
+            }
+
+            .unsupported-wallet {
+                font-size: 14px;
+                font-weight: 600;
+            }
+        }
+
+        .arrow-down {
+            position: absolute;
+            z-index: 0;
+            bottom: -15px;
+            left: 10%;
+            height: 30px;
+            width: 30px;
+            transform: translate(2px, -2px) rotate(-45deg);
+            -webkit-transform: translate(2px, -2px) rotate(-45deg);
+            border-right: 2px solid transparent;
+            border-top: 2px solid transparent;
+            display: inline-block;
+            -moz-transform: translate(2px, -2px) rotate(-45deg);
+            -ms-transform: translate(2px, -2px) rotate(-45deg);
+            -o-transform: translate(2px, -2px) rotate(-45deg);
+        }
+    }
+}

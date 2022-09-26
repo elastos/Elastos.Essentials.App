@@ -9,9 +9,9 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalSecurityService } from 'src/app/services/global.security.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DeveloperService } from '../../services/developer.service';
 import { SettingsService } from '../../services/settings.service';
 
@@ -25,6 +25,7 @@ export class DeveloperPage implements OnInit {
 
   public allowScreenCapture = false;
   public captureLogs = false;
+  public coreDeveloperMode = false;
 
   constructor(
     private platform: Platform,
@@ -35,7 +36,7 @@ export class DeveloperPage implements OnInit {
     private clipboard: Clipboard,
     private native: GlobalNativeService,
     private globalSecurityService: GlobalSecurityService,
-    private globalsPrefsService: GlobalPreferencesService,
+    private globalPrefsService: GlobalPreferencesService,
     private nav: GlobalNavService,
   ) { }
 
@@ -45,7 +46,8 @@ export class DeveloperPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('settings.developer-options'));
 
     this.allowScreenCapture = await this.globalSecurityService.getScreenCaptureAllowed();
-    this.captureLogs = await this.globalsPrefsService.getCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    this.captureLogs = await this.globalPrefsService.getCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    this.coreDeveloperMode = await this.globalPrefsService.coreDeveloperModeEnabled(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
   }
 
   ionViewWillLeave() {
@@ -68,7 +70,7 @@ export class DeveloperPage implements OnInit {
   }
 
   public onAllowCaptureLogsChanged() {
-    void this.globalsPrefsService.setCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.captureLogs);
+    void this.globalPrefsService.setCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.captureLogs);
   }
 
   public exportLogs() {
@@ -76,6 +78,10 @@ export class DeveloperPage implements OnInit {
 
     void this.clipboard.copy(JSON.stringify(devLogs));
     this.native.genericToast('common.copied-to-clipboard', 2000, "success");
+  }
+
+  public onCoreDeveloperModeChanged() {
+    void this.globalPrefsService.setCoreDeveloperModeEnabled(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.coreDeveloperMode);
   }
 
   public isAndroid(): boolean {

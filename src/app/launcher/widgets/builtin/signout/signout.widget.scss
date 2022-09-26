@@ -1,0 +1,13 @@
+@import "../../widgets.scss";
+
+.logout-row {
+  flex-direction: row;
+
+  .app-col {
+    .app-row {
+      .mid-col {
+        justify-content: center;
+      }
+    }
+  }
+}

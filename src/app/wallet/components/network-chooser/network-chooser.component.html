@@ -4,17 +4,15 @@
         <div class="network-options">
             <ion-row class="header-row">
                 <ion-col size="9">
-                    <ion-label>
-                        <h1>{{ 'wallet.networks' | translate }}</h1>
-                        <p>{{ 'wallet.choose-active-network' | translate }}</p>
-                    </ion-label>
+                    <h1>{{ 'wallet.networks' | translate }}</h1>
+                    <p>{{ 'wallet.choose-active-network' | translate }}</p>
                 </ion-col>
                 <ion-col size="3" class="settings-col">
                     <img (click)="manageNetworks()"
                         [src]="theme.darkMode ? 'assets/components/titlebar/darkmode/settings.svg' : 'assets/components/titlebar/settings.svg'" />
                 </ion-col>
             </ion-row>
-            <ion-row *ngFor="let network of networksToShowInList" class="network-row"
+            <ion-row *ngFor="let network of networksToShowInList" class="network-row ion-activatable ripple"
                 [class.selected-network]="currentNetwork && network.key === currentNetwork.key"
                 (click)="selectNetwork(network)">
                 <ion-col size="10" class="left-col">
@@ -24,6 +22,7 @@
                 <ion-col size="2" class="right-col">
                     <ion-icon name="checkmark"></ion-icon>
                 </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
         </div>
     </div>

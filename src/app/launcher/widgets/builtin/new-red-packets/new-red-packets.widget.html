@@ -1,0 +1,16 @@
+<ion-row class="packets-row ion-activatable ripple" [class.darkContainer]="theme.darkMode"
+  *ngIf="publicRedPackets.length > 0 || forSelection || editing" (click)="viewPublicRedPackets()">
+  <div class="icon-col">
+    <img src="assets/redpackets/images/packets.png" />
+  </div>
+  <div class="main-col">
+    <div class="title">{{ 'redpackets.red-packets' | translate }}</div>
+    <div class="subtitle">
+      {{ 'launcher.n-red-packets-to-grab' | translate: { packets: publicRedPackets.length } }}
+    </div>
+  </div>
+  <div class="right-col">
+    <img src="assets/launcher/icons/right-arrow-white.svg" />
+  </div>
+  <ion-ripple-effect></ion-ripple-effect>
+</ion-row>

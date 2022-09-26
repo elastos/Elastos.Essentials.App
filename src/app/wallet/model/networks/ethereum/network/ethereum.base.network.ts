@@ -28,4 +28,8 @@ export class EthereumBaseNetwork extends EVMNetwork {
         return null;
     }
   }
+
+  public getMainColor(): string {
+    return "627eea";
+  }
 }

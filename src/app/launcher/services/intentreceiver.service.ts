@@ -12,7 +12,7 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
@@ -70,6 +70,9 @@ export class IntentReceiverService {
             case "onboard":
                 this.handleOnBoardIntent(intent);
                 break;
+            case "picklauncherwidget":
+                this.handlePickWidgetIntent(intent);
+                break;
             default:
                 return;
         }
@@ -99,5 +102,13 @@ export class IntentReceiverService {
         });
 
         void this.globalIntentService.sendIntentResponse({}, intent.intentId, false);
+    }
+
+    private handlePickWidgetIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        void this.globalNav.navigateTo(App.LAUNCHER, "/intents/picklauncherwidget", {
+            state: {
+                intent
+            }
+        });
     }
 }

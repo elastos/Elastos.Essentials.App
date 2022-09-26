@@ -6,7 +6,7 @@ import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/compon
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
   selector: 'app-language',
@@ -57,8 +57,8 @@ export class LanguagePage implements OnInit {
   }
 
   private updateTitleBarIcons() {
-    let themeIconPath = this.theme.activeTheme.value == AppTheme.LIGHT ? 'assets/didsessions/icon/palette.svg' : 'assets/didsessions/icon/dark_mode/palette.svg';
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "theme", iconPath: themeIconPath });
+    //let themeIconPath = !this.theme.activeTheme.value.config.usesDarkMode ? 'assets/didsessions/icon/palette.svg' : 'assets/didsessions/icon/dark_mode/palette.svg';
+    //this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "theme", iconPath: themeIconPath });
   }
 
   async checkForIdentities() {

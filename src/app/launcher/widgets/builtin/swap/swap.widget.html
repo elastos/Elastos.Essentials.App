@@ -1,0 +1,36 @@
+<ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode">
+  <ion-row class="top-row">
+    <ion-col size="2" class="left-col">
+      <img src="/assets/launcher/widgets/swap-widget-icon.svg" />
+    </ion-col>
+    <ion-col size="10" class="right-col">
+      <div class="header">
+        <div class="title">Swap tokens</div>
+        <div class="secondary-text subtitle">Swap your tokens across chains</div>
+      </div>
+      <div class="button ion-activatable ripple">
+        Swap
+        <ion-ripple-effect></ion-ripple-effect>
+      </div>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="tokens-row">
+    <ng-container *ngTemplateOutlet="token"></ng-container>
+    <img class="exchange"
+      [src]="theme.darkMode ? '/assets/launcher/widgets/white-swap.svg' : '/assets/launcher/widgets/swap.svg'" />
+    <ng-container *ngTemplateOutlet="token"></ng-container>
+  </ion-row>
+</ion-row>
+
+<ng-template #token>
+  <div class="token">
+    <img class="network-logo" />
+    <div class="selector ion-activatable ripple">
+      <div class="token-name">Glide</div>
+      <img class="arrow"
+        [src]="theme.darkMode ? '/assets/launcher/widgets/white-down-arrow.svg' : '/assets/launcher/widgets/down-arrow.svg'" />
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+  </div>
+</ng-template>

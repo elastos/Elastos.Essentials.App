@@ -13,9 +13,9 @@ export class TelosBaseNetwork extends EVMNetwork {
         let TelosNetworkWallet = (await import("../networkwallets/standard/telos.network.wallet")).TelosNetworkWallet;
         return new TelosNetworkWallet(<StandardMasterWallet>masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName);
       case WalletType.LEDGER:
-          let TelosLedgerNetworkWallet = (await import("../networkwallets/ledger/telos.ledger.network.wallet")).TelosLedgerNetworkWallet;
-          return new TelosLedgerNetworkWallet(<LedgerMasterWallet>masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName);
-        default:
+        let TelosLedgerNetworkWallet = (await import("../networkwallets/ledger/telos.ledger.network.wallet")).TelosLedgerNetworkWallet;
+        return new TelosLedgerNetworkWallet(<LedgerMasterWallet>masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName);
+      default:
         return null;
     }
   }
@@ -25,5 +25,9 @@ export class TelosBaseNetwork extends EVMNetwork {
       return TelosAPI.getApiUrl(TelosAPIType.RPC, this.networkTemplate);
     else
       throw new Error(`TelosBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
+  }
+
+  public getMainColor(): string {
+    return "5c3d9b";
   }
 }

@@ -7,7 +7,7 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
@@ -106,13 +106,13 @@ export class ReviewProposalPage {
             //Check opinion value
             if (!this.content || this.content == "") {
                 let blankMsg = this.translate.instant('crproposalvoting.opinion')
-                                + this.translate.instant('common.text-input-is-blank');
+                    + this.translate.instant('common.text-input-is-blank');
                 this.globalNative.genericToast(blankMsg);
                 return;
             }
 
             //Handle opinion
-            let data = {content: this.content}
+            let data = { content: this.content }
             let ret = await this.draftService.getDraft("opinion.json", data);
             this.onGoingCommand.data.opinionHash = ret.hash;
             this.onGoingCommand.data.opinionData = ret.data;

@@ -38,4 +38,8 @@ export class PolygonBaseNetwork extends EVMNetwork {
     else
       throw new Error(`PolygonBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
+
+  public getMainColor(): string {
+    return "8247e5";
+  }
 }

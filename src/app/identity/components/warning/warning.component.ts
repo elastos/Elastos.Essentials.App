@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { PopoverController, NavParams } from '@ionic/angular';
-import { DIDService } from '../../services/did.service';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { DIDService } from '../../services/did.service';
 
 @Component({
   selector: 'app-warning',
@@ -30,7 +30,7 @@ export class WarningComponent implements OnInit {
   }
 
   getDisplayableHeader() {
-    if(this.warning === 'publishIdentity') {
+    if (this.warning === 'publishIdentity') {
       return this.translate.instant('identity.publish-identity');
     } else {
       return this.translate.instant('identity.publish-visibility');
@@ -38,7 +38,7 @@ export class WarningComponent implements OnInit {
   }
 
   getDisplayableMessage() {
-    if(this.warning === 'publishIdentity') {
+    if (this.warning === 'publishIdentity') {
       return this.translate.instant('identity.publish-identity-prompt');
     } else {
       return this.translate.instant('identity.publish-visibility-prompt');

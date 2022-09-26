@@ -1,9 +1,14 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-grid [class.dark-container]="theme.darkMode">
-    <!-- Add any development test here-->
-    <ion-button (click)="someTest()">Test example</ion-button>
-    <br/>
-    <ion-button (click)="testIntent()">Test Intent</ion-button>
+  <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
+    <!-- Developer Tools -->
+    <ion-row class="section-row" (click)="sendNotification()">
+      <ion-col size="9" class="left-col">
+        <h1>Send notification</h1>
+      </ion-col>
+      <!-- <ion-col size="3" class="right-col">
+        <img src="assets/settings/default/right-arrow.svg">
+      </ion-col> -->
+    </ion-row>
   </ion-grid>
 </ion-content>

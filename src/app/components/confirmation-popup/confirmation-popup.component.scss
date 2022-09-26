@@ -1,17 +1,18 @@
-//@import 'src/app/contacts/root.scss';
-
 .container {
-  height: 302px;
   background: #ffffff;
-  border: 1.2px solid #f55555;
+  border: 1.2px solid #999;
   border-radius: 12px;
 
-  .delete-header {
-    height: 112px;
+  .header {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 20px;
+
+    .logo {
+      height: 40px;
+    }
 
     h1 {
       margin: 5px;
@@ -27,7 +28,8 @@
     justify-content: center;
     align-items: center;
     background: #f8f8ff;
-    height: 110px;
+    min-height: 110px;
+    padding: 10px;
     overflow: hidden;
 
     p {
@@ -66,7 +68,7 @@
 .darkContainer {
   background: #363636;
 
-  .delete-header {
+  .header {
     h1 {
       color: #fdfeff;
     }

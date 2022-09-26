@@ -17,7 +17,11 @@
     align-items: flex-start;
     padding: 10px 15px;
 
-    h1, h2, h3, h4, p {
+    h1,
+    h2,
+    h3,
+    h4,
+    p {
         width: 100%;
         margin: 0;
         padding: 0 10px;
@@ -57,9 +61,8 @@
         margin: 5px 0 0;
         padding: 20px 20px 20px 10px;
         width: 100%;
-        background-color: #ffffff;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        border-radius: 17px;
+        background-color: var(--essentials-box-color);
+        border-radius: 15px;
 
         p {
             margin: 0;
@@ -87,7 +90,7 @@
         --padding-bottom: 15px;
         width: 95%;
     }
-  }
+}
 
 .darkContainer {
     ion-input {
@@ -96,9 +99,6 @@
     }
 
     .bubble {
-        background: #212021;
-        box-shadow: none;
-
         .bubble-tail {
             border-top: 25px solid #212021;
         }

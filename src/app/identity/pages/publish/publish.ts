@@ -6,7 +6,7 @@ import { TitleBarComponent } from "src/app/components/titlebar/titlebar.componen
 import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
 import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { GlobalThemeService } from "src/app/services/theming/global.theme.service";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { AuthService } from "../../services/auth.service";
 import { BasicCredentialsService } from "../../services/basiccredentials.service";

@@ -306,15 +306,15 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
         await this.checkNoInAppNoticeStatus();
 
-        this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
+        this.favoritesSubscription = this.favoritesService.favorites.subscribe(favorites => {
             if (favorites) {
-                void this.updateFavoritesAndApps();
+                this.updateFavoritesAndApps();
             }
         });
 
         this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
             if (network) {
-                void this.updateFavoritesAndApps();
+                this.updateFavoritesAndApps();
             }
         });
 
@@ -341,11 +341,11 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
-    private async updateFavoritesAndApps() {
+    private updateFavoritesAndApps() {
         // Build dapps and favorites only when the active network and favorites are ininialized.
-        if (this.favoritesService.favoritesSubject.value && this.walletNetworkService.activeNetwork.value) {
+        if (this.favoritesService.favorites.value && this.walletNetworkService.activeNetwork.value) {
             this.buildFilteredFavorites();
-            await this.buildFilteredDApps();
+            this.buildFilteredDApps();
             this.buildFilteredDAppsWithFavorites();
         }
     }

@@ -4,7 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
   selector: 'app-did-publishing',
@@ -33,7 +33,7 @@ export class DIDPublishingComponent implements OnInit {
     this.publicationFailed = false;
 
     // Listen to publication event
-    this.publicationStatusSub = GlobalPublicationService.instance.publicationStatus.subscribe((status)=>{
+    this.publicationStatusSub = GlobalPublicationService.instance.publicationStatus.subscribe((status) => {
       if (status.status == DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION) {
         this.publishing = true;
       }

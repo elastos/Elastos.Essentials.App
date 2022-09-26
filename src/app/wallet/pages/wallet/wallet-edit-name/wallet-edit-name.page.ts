@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { MasterWallet } from '../../../model/masterwallets/masterwallet';
 import { Native } from '../../../services/native.service';

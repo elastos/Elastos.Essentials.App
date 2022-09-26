@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AlertController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
-import { ConfirmationPopupComponent } from '../components/confirmation-popup/confirmation-popup.component';
+import { ConfirmationPopupComponent, ConfirmationPopupComponentParams } from '../components/confirmation-popup/confirmation-popup.component';
 
 @Injectable({
     providedIn: 'root'
@@ -279,17 +279,21 @@ export class GlobalPopupService {
      * Resolves when the popup is closing. True if confirmed, false if cancelled.
      */
     private confirmationPopup: HTMLIonPopoverElement = null;
-    public showConfirmationPopup(title: string, text: string): Promise<boolean> {
+    public showConfirmationPopup(title: string, text: string, confirmationButtonText?: string): Promise<boolean> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async resolve => {
+            let componentProps: ConfirmationPopupComponentParams = {
+                type: "custom",
+                customIcon: "/assets/launcher/icons/hive-cross.svg",
+                title,
+                text,
+                confirmationButtonText
+            };
+
             this.confirmationPopup = await this.popoverCtrl.create({
                 cssClass: 'contacts-warning-component',
                 component: ConfirmationPopupComponent,
-                componentProps: {
-                    type: "danger", // TODO: others
-                    title,
-                    text,
-                }
+                componentProps
             });
             void this.confirmationPopup.onWillDismiss().then((response) => {
                 let confirmed = response.data as boolean;

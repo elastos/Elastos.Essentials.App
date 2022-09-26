@@ -1,14 +1,13 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { NavParams, ModalController } from '@ionic/angular';
-import { DomSanitizer } from '@angular/platform-browser';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ModalController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Tip } from '../../model/tip.model';
 import { TipAudience } from '../../model/tipaudience.model';
 import { TipsService } from '../../services/tips.service';
-import { Logger } from 'src/app/logger';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-tips',
@@ -76,7 +75,7 @@ export class TipsPage implements OnInit {
 
   public async showPreviousTip() {
     let currentTipIndex = this.allDisplayableTips.findIndex(tip => tip == this.currentlyShownTip);
-    let previousTipIndex = (currentTipIndex>0 ? currentTipIndex-1 : this.allDisplayableTips.length-1);
+    let previousTipIndex = (currentTipIndex > 0 ? currentTipIndex - 1 : this.allDisplayableTips.length - 1);
     this.currentlyShownTip = this.allDisplayableTips[previousTipIndex];
 
     // Mark tip as shown to not notify it any more
@@ -85,7 +84,7 @@ export class TipsPage implements OnInit {
 
   public async showNextTip() {
     let currentTipIndex = this.allDisplayableTips.findIndex(tip => tip == this.currentlyShownTip);
-    let nextTipIndex = (currentTipIndex+1)%this.allDisplayableTips.length;
+    let nextTipIndex = (currentTipIndex + 1) % this.allDisplayableTips.length;
     this.currentlyShownTip = this.allDisplayableTips[nextTipIndex];
 
     // Mark tip as shown to not notify it any more

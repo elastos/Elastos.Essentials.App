@@ -1,0 +1,16 @@
+<ion-content>
+  <ion-grid [class.darkContainer]="theme.darkMode">
+    <ion-row class="header">
+      <div class="title">Change background color</div>
+      <div class="selected" *ngI="activeTheme">Selected: {{ getThemeTitle(activeTheme.config) }}</div>
+    </ion-row>
+
+    <ion-row class="colors">
+      <ion-col size="6" class="color" *ngFor="let theme of themes" (click)="chooseTheme(theme)">
+        <div class="circle" [style]="{'background': getThemeColor(theme)}"></div>
+        <div class="name">{{ getThemeTitle(theme) }}</div>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>

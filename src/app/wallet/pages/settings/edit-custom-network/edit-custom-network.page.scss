@@ -5,8 +5,8 @@ ion-content {
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     padding: 20px;
-    background: white;
-    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1);
+    background: var(--essentials-box-color);
+    box-shadow: 0 0px 20px rgb(0 0 0 / 20%);
     display: flex;
     flex-direction: row !important;
     position: sticky;
@@ -24,15 +24,12 @@ ion-content {
   }
 
   .dark-container.footer {
-    background: #212021;
-    box-shadow: 0 -10px 20px rgba(255, 255, 255, 0.1);
-
     .transfer-progress {
-        color: #ACB1B6;
+      color: #acb1b6;
 
-        .heading {
-            color: white;
-        }
+      .heading {
+        color: white;
+      }
     }
 
     .cancel {
@@ -53,16 +50,9 @@ ion-content {
   }
 
   .item-row {
-    border-radius: 7px;
-    border: solid 1px #626262;
+    border-radius: 10px;
     margin-top: 3px;
     margin-bottom: 30px;
-    background: #f0f1ff;
-  }
-}
-
-.dark-container {
-  .item-row {
-    background: #2c2c2c;
+    background: var(--essentials-box-color);
   }
 }

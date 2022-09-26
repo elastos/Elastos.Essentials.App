@@ -9,7 +9,7 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from '../../../services/ux.service';
 import { SuggestionSearchResult, SuggestionStatus } from '../../model/suggestion-model';
 import { SuggestionService } from '../../services/suggestion.service';
