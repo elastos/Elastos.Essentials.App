@@ -1,6 +1,6 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../coin";
 import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
+import { AnyNetwork } from "../../network";
 
 /* 
     const REALM = new Token(chainId, '0x464fdb8affc9bac185a7393fd4298137866dcfb8', 18, 'REALM', 'REALM')
@@ -12,8 +12,12 @@ import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
     const BUSD = new Token(chainId, '0xe9e7cea3dedca5984780bafc599bd69add087d56', 18, 'BUSD', 'BUSD');
  */
 export class BscMainnetUniswapCurrencyProvider extends UniswapCurrencyProvider {
-  private referenceUSDCoin = new ERC20Coin("USDT", "Binance USDT", "0x55d398326f99059ff775485246999027b3197955", 18, MAINNET_TEMPLATE, false, true);
-  private wrappedNativeCoin = new ERC20Coin("WBNB", "Wrapped BNB", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", 18, MAINNET_TEMPLATE, false, true);
+  private referenceUSDCoin = new ERC20Coin(this.network, "USDT", "Binance USDT", "0x55d398326f99059ff775485246999027b3197955", 18, false, true);
+  private wrappedNativeCoin = new ERC20Coin(this.network, "WBNB", "Wrapped BNB", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", 18, false, true);
+
+  constructor(private network: AnyNetwork) {
+    super();
+  }
 
   public getFactoryAddress(): string {
     return "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"; // Pancake swap V2 factory

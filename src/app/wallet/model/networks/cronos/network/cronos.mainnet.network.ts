@@ -10,6 +10,7 @@ export class CronosMainNetNetwork extends CronosBaseNetwork {
     super(
       "cronos",
       "Cronos",
+      "Cronos",
       "assets/wallet/networks/cronos.png",
       "CRO",
       "CRO",
@@ -17,7 +18,7 @@ export class CronosMainNetNetwork extends CronosBaseNetwork {
       25,
     );
 
-    this.uniswapCurrencyProvider = new CronosMainnetUniswapCurrencyProvider();
+    this.uniswapCurrencyProvider = new CronosMainnetUniswapCurrencyProvider(this);
     this.averageBlocktime = 5;
   }
 

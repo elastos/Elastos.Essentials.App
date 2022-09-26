@@ -7,6 +7,7 @@ export class FusionMainNetNetwork extends FusionBaseNetwork {
     super(
       "fusion",
       "Fusion",
+      "Fusion",
       "assets/wallet/networks/fusion.png",
       "FSN",
       "FSN",

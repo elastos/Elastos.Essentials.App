@@ -364,7 +364,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     let toAddress = null, erc20TokenSymbol = null, erc20TokenValue = null;
     const erc20Coin = this.networkWallet.network.getERC20CoinByContractAddress(contractAddress);
     if (erc20Coin) {// erc20Coin is true normally.
-      erc20TokenSymbol = erc20Coin.getName();
+      erc20TokenSymbol = erc20Coin.getSymbol();
       // Get transaction from erc20 token subwallet.
       let erc20Subwallet: ERC20SubWallet = (this.networkWallet.getSubWallet(erc20Coin.getID()) as ERC20SubWallet);
       if (erc20Subwallet) {

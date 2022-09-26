@@ -14,6 +14,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
   constructor(
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
+    public shortName: string, // Humane readable network name but as short as possible for small UI locations - eg: "ESC" instead of "Elastos Smart Chain"
     public logo: string, // Path to the network icon
     public networkTemplate: string, // For which network template is this network available
     public earnProviders: EarnProvider[] = [],
@@ -121,6 +122,11 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    */
   public getMainColor(): string {
     return null;
+
+  }
+
+  public equals(network: AnyNetwork): boolean {
+    return this.key === network.key;
   }
 }
 

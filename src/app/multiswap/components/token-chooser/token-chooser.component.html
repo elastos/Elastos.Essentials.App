@@ -1,0 +1,115 @@
+<div>
+    <app-titlebar></app-titlebar>
+    <div class="tokens-container" [class.dark-container]="theme.darkMode">
+        <!-- Static header -->
+        <ion-row class="header-row">
+            <ion-col size="9">
+                <ion-label>
+                    <h1>Tokens</h1>
+                    <p>Pick a token to continue</p>
+                </ion-label>
+            </ion-col>
+            <ion-col size="3" class="settings-col">
+                <ion-spinner name="crescent" class="fetching" *ngIf="totalTokensToFetch != totalTokensFetched">
+                </ion-spinner>
+                <img (click)="cancelOperation()"
+                    [src]="theme.darkMode ? 'assets/components/titlebar/darkmode/close.svg' : 'assets/components/titlebar/close.svg'" />
+            </ion-col>
+
+            <!-- Search bar -->
+            <ion-col size="12">
+                <div class="search-bar">
+                    <ion-icon name="search"></ion-icon>
+                    <ion-input placeholder="Search name or paste address" [(ngModel)]="search" name="searchInput"
+                        ngDefaultControl (ngModelChange)="onSearchInputChanged($event)"></ion-input>
+                </div>
+            </ion-col>
+        </ion-row>
+
+        <!-- Lists -->
+        <ion-row class="nets-tokens">
+            <!-- Networks -->
+            <ion-col size="4" class="networks">
+                <!-- Special all entry -->
+                <ion-row class="network-row" *ngIf="isSourceMode()" [class.selected-network]="!currentNetwork"
+                    (click)="selectNetwork(null)">
+                    <ion-col class="left-col">
+                        <div class="name">All ({{totalTokensFetched}} / {{totalTokensToFetch}})</div>
+                    </ion-col>
+                </ion-row>
+
+                <!-- Networks list -->
+                <ion-row *ngFor="let network of networksToShowInList" class="network-row"
+                    [class.selected-network]="currentNetwork && network.key === currentNetwork.key"
+                    (click)="selectNetwork(network)">
+                    <ion-col class="left-col">
+                        <img [src]="network.logo">
+                        <div class="name">{{ network.shortName }}</div>
+                    </ion-col>
+                </ion-row>
+            </ion-col>
+
+            <!-- Tokens -->
+            <ion-col size="8" class="tokens">
+                <!-- Regular token display list mode -->
+                <ng-container *ngIf="!inCustomTokenMode">
+                    <!-- Not ready to show tokens -->
+                    <div *ngIf="!currentNetwork && isDestinationMode()">
+                        Pick a network to start
+                    </div>
+
+                    <!-- No token to display -->
+                    <div *ngIf="displayableTokens.length === 0" class="simple-text-info">
+                        No token for the current search or filter.
+                    </div>
+
+                    <!-- Tokens list -->
+                    <ng-container *ngFor="let token of displayableTokens">
+                        <ng-container [ngTemplateOutlet]="tokenpreview" [ngTemplateOutletContext]="{$implicit: token}">
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+
+                <!-- User is searching a token -->
+                <ng-container *ngIf="inCustomTokenMode">
+                    <!-- Fetching custom token by address -->
+                    <div *ngIf="fetchingERC20Token" class="fetching-custom-token">
+                        <ion-spinner name="crescent" class="fetching"></ion-spinner>
+                        Retrieving token from chain
+                    </div>
+
+                    <!-- Search is done - there could be a token found or not -->
+                    <ng-container *ngIf="!fetchingERC20Token">
+                        <!-- Token found on chain: show preview, user can select it -->
+                        <ng-container *ngIf="customToken" [ngTemplateOutlet]="tokenpreview"
+                            [ngTemplateOutletContext]="{$implicit: customToken}">
+                        </ng-container>
+
+                        <!-- No network selected: ask user to pick a network first -->
+                        <div *ngIf="!currentNetwork" class="simple-text-info">
+                            Please select token's target network.
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ion-col>
+        </ion-row>
+    </div>
+</div>
+
+<ng-template #tokenpreview let-token>
+    <div class="token ion-activatable ripple" (click)="selectToken(token)">
+        <div class="left">
+            <img [src]="getTokenLogo(token)" class="network-logo" />
+        </div>
+        <div class="right">
+            <div class="amount-symbol">
+                <span class="token-balance" *ngIf="token.amount">{{ getDisplayableAmount(token.amount)}}</span>
+                <span class="token-symbol">{{ token.token.getSymbol() }}</span>
+            </div>
+            <div class="token-name">
+                {{ token.token.getDescription() }}
+            </div>
+        </div>
+        <ion-ripple-effect></ion-ripple-effect>
+    </div>
+</ng-template>

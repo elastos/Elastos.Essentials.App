@@ -6,6 +6,7 @@ export class PolygonTestNetNetwork extends PolygonBaseNetwork {
     super(
       "polygon",
       "Polygon Mumbai (Goërli)",
+      "Polygon Mumbai",
       "assets/wallet/networks/polygon.png",
       "MATIC",
       "Polygon Coin",

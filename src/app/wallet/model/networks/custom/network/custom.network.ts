@@ -18,7 +18,7 @@ export class CustomNetwork extends EVMNetwork {
     rpcUrl: string,
     chainID: number
   ) {
-    super(key, name, logo, mainTokenSymbol, mainTokenFriendlyName, networkTemplate, chainID);
+    super(key, name, name, logo, mainTokenSymbol, mainTokenFriendlyName, networkTemplate, chainID);
     this.mainRpcUrl = rpcUrl;
   }
 

@@ -49,6 +49,7 @@ export class ElastosMainChainMainNetNetwork extends ElastosMainChainNetworkBase 
     super(
       ElastosMainChainNetworkBase.networkKey,
       "Elastos Main Chain",
+      "Elastos Main",
       "assets/wallet/networks/elastos.svg",
       MAINNET_TEMPLATE
     );
@@ -85,6 +86,7 @@ export class ElastosMainChainTestNetNetwork extends ElastosMainChainNetworkBase 
     super(
       ElastosMainChainNetworkBase.networkKey,
       "Elastos Main Chain Testnet",
+      "Elastos Main Testnet",
       "assets/wallet/networks/elastos.svg",
       TESTNET_TEMPLATE
     );

@@ -1,3 +1,6 @@
+import { JsonObject, JsonProperty } from "typescript-json-serializer";
+import { erc20CoinsSerializer } from "../services/evm/erc20coin.service";
+import { AnyNetwork } from "./networks/network";
 
 export type CoinID = string; // ELA, IDChain, ERC1, ERC2...
 
@@ -28,16 +31,32 @@ export enum TokenType {
     ERC_1155 = "ERC-1155"
 }
 
+@JsonObject()
 export class Coin {
+    @JsonProperty() private type: CoinType;
+    @JsonProperty() private id: CoinID;
+    @JsonProperty() private name: string; // Symbol
+    @JsonProperty() private description: string;
+    @JsonProperty() private removable: boolean; // Whether this coin is removable from the coins list manager or not.
+    @JsonProperty() public timestamp = 0;
+
     constructor(
-        private type: CoinType,
-        private id: CoinID,
-        private name: string,
-        private description: string,
-        private removable: boolean,
-        public networkTemplate: string,
-        public timestamp = 0 // 0: builtin coin
-    ) { }
+        public network: AnyNetwork,
+        type: CoinType,
+        id: CoinID,
+        name: string,
+        description: string,
+        removable: boolean, // Whether this coin is removable from the coins list manager or not.
+        timestamp = 0 // 0: builtin coin
+    ) {
+        // JSON serializer cannot work with decorators in constructor (runtime JS undefined errors)
+        this.type = type;
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.removable = removable;
+        this.timestamp = timestamp;
+    }
 
     public getType(): CoinType {
         return this.type;
@@ -47,8 +66,8 @@ export class Coin {
         return this.id;
     }
 
-    public getName(): string {
-        return this.name;
+    public getSymbol(): string {
+        return this.name; // get symbol returns name... legacy.
     }
 
     public getDescription(): string {
@@ -59,32 +78,60 @@ export class Coin {
         return this.removable;
     }
 
-    getCreatedTime(): number {
+    public getCreatedTime(): number {
         return this.timestamp;
     }
-}
 
-export class StandardCoin extends Coin {
-    constructor(id: CoinID, name: string, description: string) {
-        // Null network means that the coin is available on all networks
-        super(CoinType.STANDARD, id, name, description, true, null);
+    public equals(coin: Coin): boolean {
+        return !!coin && this.id === coin.id && this.network.equals(coin.network);
+    }
+
+    /**
+     * Unique string representing this coin over all coins on all networks and network templates.
+     */
+    public key(): string {
+        return this.network.key + this.network.networkTemplate + this.id;
     }
 }
 
+/**
+ * These are the coins used to pay for GAS. One per network.
+ */
+export class NativeCoin extends Coin {
+    constructor(network: AnyNetwork, id: CoinID, name: string, description: string) {
+        super(network, CoinType.STANDARD, id, name, description, false);
+    }
+}
+
+/**
+ * ERC20 tokens, for EVM networks.
+ */
+@JsonObject()
 export class ERC20Coin extends Coin {
+    @JsonProperty() public erc20ContractAddress: string;
+    @JsonProperty() public decimals: number;
+    @JsonProperty() private isCustom: boolean;
+    @JsonProperty() public initiallyShowInWallet = false;
+
     constructor(
-        name: string,
-        description: string,
-        private erc20ContractAddress: string,
-        public decimals: number,
-        networkTemplate: string,
-        private isCustom: boolean,
-        public initiallyShowInWallet = false, // Whether to show this coin as subwallet when a wallet is first used by the user
-        public timestamp = 0 // 0: builtin coin
+        network: AnyNetwork,
+        name: string, // Symbol
+        description: string, // Also known as "name" in EVM world.
+        erc20ContractAddress: string,
+        decimals: number,
+        isCustom: boolean,
+        initiallyShowInWallet = false, // Whether to show this coin as subwallet when a wallet is first used by the user
+        timestamp = 0 // 0: builtin coin
     ) {
         // The id is tokenSymbol in version 2.2.0, but the tokenSymbol isn't unique.
         // So we use contract address as id.
-        super(CoinType.ERC20, erc20ContractAddress, name, description, true, networkTemplate, timestamp);
+        super(network, CoinType.ERC20, erc20ContractAddress, name, description, true, timestamp);
+
+        // JSON serializer cannot work with decorators in constructor (runtime JS undefined errors)
+        this.erc20ContractAddress = erc20ContractAddress;
+        this.decimals = decimals;
+        this.isCustom = isCustom;
+        this.initiallyShowInWallet = initiallyShowInWallet;
 
         // Make contract addresses always lowercase for easier comparisons later one.
         if (erc20ContractAddress)
@@ -107,12 +154,12 @@ export class ERC20Coin extends Coin {
         return this.isCustom;
     }
 
-    static fromJson(jsonCoin: any): ERC20Coin {
-        let coin = new ERC20Coin(null, null, null, -1, null, null);
-        Object.assign(coin, jsonCoin);
+    static fromJson(jsonCoin: any, network: AnyNetwork): ERC20Coin {
+        let coin = erc20CoinsSerializer.deserializeObject(jsonCoin, ERC20Coin);
 
         // Backward compatibility: fix wrong decimal type (string instead of number)
         coin.decimals = parseInt("" + coin.decimals);
+        coin.network = network;
 
         return coin;
     }

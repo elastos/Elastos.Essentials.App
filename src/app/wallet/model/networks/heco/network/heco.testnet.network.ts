@@ -6,6 +6,7 @@ export class HECOTestNetNetwork extends HecoBaseNetwork {
     super(
       "heco",
       "Heco Testnet",
+      "Heco Testnet",
       "assets/wallet/networks/hecochain.png",
       "HT",
       "Huobi Token",

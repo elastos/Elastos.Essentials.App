@@ -6,6 +6,7 @@ export class FantomTestNetNetwork extends FantomBaseNetwork {
     super(
       "fantom",
       "Fantom Testnet",
+      "Fantom Testnet",
       "assets/wallet/networks/fantom.png",
       "FTM",
       "Fantom Token",

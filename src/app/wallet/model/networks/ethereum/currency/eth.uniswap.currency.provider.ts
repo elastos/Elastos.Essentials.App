@@ -1,10 +1,14 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../../coin";
 import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
+import { AnyNetwork } from "../../network";
 
 export class EthereumMainnetUniswapCurrencyProvider extends UniswapCurrencyProvider {
-  private referenceUSDCoin = new ERC20Coin("USDT", "USDT", "0xdac17f958d2ee523a2206206994597c13d831ec7", 6, MAINNET_TEMPLATE, false, true);
-  private wrappedNativeCoin = new ERC20Coin("WETH", "Wrapped ETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", 18, MAINNET_TEMPLATE, false, true);
+  private referenceUSDCoin = new ERC20Coin(this.network, "USDT", "USDT", "0xdac17f958d2ee523a2206206994597c13d831ec7", 6, false, true);
+  private wrappedNativeCoin = new ERC20Coin(this.network, "WETH", "Wrapped ETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", 18, false, true);
+
+  constructor(private network: AnyNetwork) {
+    super();
+  }
 
   public getFactoryAddress(): string {
     return "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"; // Uniswap V2 factory

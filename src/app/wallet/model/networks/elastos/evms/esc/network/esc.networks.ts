@@ -75,6 +75,7 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
     super(
       ElastosSmartChainNetworkBase.NETWORK_KEY,
       "Elastos Smart Chain",
+      "ESC",
       "assets/wallet/coins/ela-gray.svg",
       MAINNET_TEMPLATE,
       20,
@@ -98,7 +99,7 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
       ]
     );
 
-    this.uniswapCurrencyProvider = new ElastosMainnetUniswapCurrencyProvider();
+    this.uniswapCurrencyProvider = new ElastosMainnetUniswapCurrencyProvider(this);
   }
 
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
@@ -117,10 +118,10 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
   public getBuiltInERC20Coins(): ERC20Coin[] {
     let availableCoins: ERC20Coin[] = [];
 
-    availableCoins.push(new ERC20Coin("GLIDE", "Glide", "0xd39eC832FF1CaaFAb2729c76dDeac967ABcA8F27", 18, MAINNET_TEMPLATE, false, true));
-    availableCoins.push(new ERC20Coin("CREDA", "CreDA Protocol Token", "0xc136E6B376a9946B156db1ED3A34b08AFdAeD76d", 18, MAINNET_TEMPLATE, false, true));
-    availableCoins.push(new ERC20Coin("FILDA", "FilDA on ESC", "0x00E71352c91Ff5B820ab4dF08bb47653Db4e32C0", 18, MAINNET_TEMPLATE, false, true));
-    availableCoins.push(new ERC20Coin("ELK", "Elk", "0xeEeEEb57642040bE42185f49C52F7E9B38f8eeeE", 18, MAINNET_TEMPLATE, false, true));
+    availableCoins.push(new ERC20Coin(this, "GLIDE", "Glide", "0xd39eC832FF1CaaFAb2729c76dDeac967ABcA8F27", 18, false, true));
+    availableCoins.push(new ERC20Coin(this, "CREDA", "CreDA Protocol Token", "0xc136E6B376a9946B156db1ED3A34b08AFdAeD76d", 18, false, true));
+    availableCoins.push(new ERC20Coin(this, "FILDA", "FilDA on ESC", "0x00E71352c91Ff5B820ab4dF08bb47653Db4e32C0", 18, false, true));
+    availableCoins.push(new ERC20Coin(this, "ELK", "Elk", "0xeEeEEb57642040bE42185f49C52F7E9B38f8eeeE", 18, false, true));
 
     return availableCoins;
   }
@@ -135,6 +136,7 @@ export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBas
     super(
       ElastosSmartChainNetworkBase.NETWORK_KEY,
       "Elastos Smart Chain Testnet",
+      "ESC Testnet",
       "assets/wallet/coins/ela-gray.svg",
       TESTNET_TEMPLATE,
       21,

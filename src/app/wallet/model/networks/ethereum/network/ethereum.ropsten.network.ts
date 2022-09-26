@@ -9,6 +9,7 @@ export class EthereumRopstenNetwork extends EthereumBaseNetwork {
     super(
       "ethereum",
       "Ethereum Ropsten",
+      "Ropsten",
       "assets/wallet/networks/ethereum.png",
       "ETH",
       "ETH",

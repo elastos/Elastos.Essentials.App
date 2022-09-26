@@ -10,6 +10,7 @@ export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends Wallet
   constructor(
     key: string,
     displayName: string,
+    shortDisplayName: string,
     logo: string,
     networkTemplate: string,
     earnProviders?: EarnProvider[],
@@ -19,6 +20,7 @@ export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends Wallet
     super(
       key,
       displayName,
+      shortDisplayName,
       logo,
       networkTemplate,
       earnProviders,

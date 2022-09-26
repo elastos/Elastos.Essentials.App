@@ -15,6 +15,7 @@ export abstract class ElastosEVMNetwork<WalletNetworkOptionsType extends WalletN
   constructor(
     key: string,
     displayName: string,
+    shortDisplayName: string,
     logo: string,
     networkTemplate: string,
     chainID: number,
@@ -26,6 +27,7 @@ export abstract class ElastosEVMNetwork<WalletNetworkOptionsType extends WalletN
     super(
       key,
       displayName,
+      shortDisplayName,
       logo,
       "ELA",
       "ELA",

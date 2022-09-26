@@ -11,6 +11,7 @@ export class HooMainNetNetwork extends HooBaseNetwork {
     super(
       "hoosmartchain",
       "Hoo Smart Chain",
+      "HSC",
       "assets/wallet/networks/hoo.png",
       "HOO",
       "HOO",
@@ -18,7 +19,7 @@ export class HooMainNetNetwork extends HooBaseNetwork {
       70,
     );
 
-    this.uniswapCurrencyProvider = new HooMainnetUniswapCurrencyProvider();
+    this.uniswapCurrencyProvider = new HooMainnetUniswapCurrencyProvider(this);
     this.averageBlocktime = 5;
   }
 

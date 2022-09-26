@@ -40,6 +40,10 @@ export abstract class MasterWallet {
         // TODO: Delete all subwallets
     }
 
+    public equals(otherMasterWallet: MasterWallet): boolean {
+        return this.id === otherMasterWallet.id;
+    }
+
     public abstract serialize(): SerializedMasterWallet;
 
     /**
@@ -224,17 +228,17 @@ export class StandardMasterWallet extends MasterWallet {
      */
     public async getPrivateKey(decryptedWithPayPassword?: string): Promise<string> {
         if (!this.getSafe().privateKey) {
-          // The privateKey is undefine if the wallet is created by mnemonic.
-          let seed = await this.getSeed(decryptedWithPayPassword);
-          let privateKey = await this.getEVMPrivateKeyFromSeed(seed);
-          if (!privateKey) return null;
+            // The privateKey is undefine if the wallet is created by mnemonic.
+            let seed = await this.getSeed(decryptedWithPayPassword);
+            let privateKey = await this.getEVMPrivateKeyFromSeed(seed);
+            if (!privateKey) return null;
 
-          this.getSafe().privateKey = await AESEncrypt(privateKey, decryptedWithPayPassword);
-          this.getSafe().privateKeyType = PrivateKeyType.EVM;
+            this.getSafe().privateKey = await AESEncrypt(privateKey, decryptedWithPayPassword);
+            this.getSafe().privateKeyType = PrivateKeyType.EVM;
 
-          // Save privateKey
-          await this.save();
-          return privateKey;
+            // Save privateKey
+            await this.save();
+            return privateKey;
         }
 
         if (!decryptedWithPayPassword)
@@ -248,9 +252,9 @@ export class StandardMasterWallet extends MasterWallet {
     }
 
     private async getEVMPrivateKeyFromSeed(seed: string) {
-      const Wallet = (await import("ethers")).Wallet;
-      const seedByte = Buffer.from(seed, 'hex');
-      let hdWalelt = new Wallet(HDNode.fromSeed(seedByte).derivePath(defaultPath));
-      return hdWalelt.privateKey;
+        const Wallet = (await import("ethers")).Wallet;
+        const seedByte = Buffer.from(seed, 'hex');
+        let hdWalelt = new Wallet(HDNode.fromSeed(seedByte).derivePath(defaultPath));
+        return hdWalelt.privateKey;
     }
 }

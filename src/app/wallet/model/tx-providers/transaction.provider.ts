@@ -268,7 +268,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
                 } else {
                   tokenDecimal = parseInt(token.decimals);
                 }
-                const newCoin = new ERC20Coin(token.symbol, token.name, token.contractAddress, tokenDecimal, activeNetworkTemplate, true, false, timestamp);
+                const newCoin = new ERC20Coin(network, token.symbol, token.name, token.contractAddress, tokenDecimal, true, false, timestamp);
                 if (await network.addCustomERC20Coin(newCoin)) {
                   // Find new coin.
                   newERC20CoinsList.push(token.symbol);

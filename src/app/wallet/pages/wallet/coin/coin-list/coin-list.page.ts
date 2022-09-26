@@ -142,20 +142,20 @@ export class CoinListPage implements OnInit, OnDestroy {
         this.network = (<EVMNetwork>this.networkWallet.network);
         // TODO: Navigate to this page from a notification, and maybe the active network does not support ERC20 Coins.
         if (this.network.supportsERC20Coins()) {
-          this.updateSubscription = this.events.subscribe("error:update", () => {
-              this.currentCoin["open"] = false;
-          });
-          this.destroySubscription = this.events.subscribe("error:destroySubWallet", () => {
-              this.currentCoin["open"] = true;
-          });
-          this.coinAddSubscription = this.network.onCoinAdded.subscribe(() => {
-              void this.refreshCoinList();
-          });
-          this.coinDeleteSubscription = this.network.onCoinDeleted.subscribe(() => {
-              void this.refreshCoinList();
-          });
+            this.updateSubscription = this.events.subscribe("error:update", () => {
+                this.currentCoin["open"] = false;
+            });
+            this.destroySubscription = this.events.subscribe("error:destroySubWallet", () => {
+                this.currentCoin["open"] = true;
+            });
+            this.coinAddSubscription = this.network.onCoinAdded.subscribe(() => {
+                void this.refreshCoinList();
+            });
+            this.coinDeleteSubscription = this.network.onCoinDeleted.subscribe(() => {
+                void this.refreshCoinList();
+            });
 
-          await this.refreshCoinList();
+            await this.refreshCoinList();
         }
 
         void this.native.hideLoading();
@@ -178,7 +178,7 @@ export class CoinListPage implements OnInit, OnDestroy {
             return (coin.coin.getCreatedTime() > lastAccessTime)
         })
         if (newCoins) {
-          this.newCoinList = newCoins;
+            this.newCoinList = newCoins;
         }
 
         const timestamp = (new Date()).valueOf();
@@ -189,7 +189,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     private sortCoinList() {
         this.coinList.sort((a, b) => {
             if (a.isOpen == b.isOpen) {
-                return a.coin.getName() > b.coin.getName() ? 1 : -1;
+                return a.coin.getSymbol() > b.coin.getSymbol() ? 1 : -1;
             }
             if (a.isOpen) return -1;
             if (b.isOpen) return 1;
@@ -206,7 +206,7 @@ export class CoinListPage implements OnInit, OnDestroy {
         } else {
             const searchKey = this.searchKey.toLowerCase();
             const searchResult = this.coinList.filter((coin) => {
-                return coin.coin.getName().toLowerCase().indexOf(searchKey) !== -1;
+                return coin.coin.getSymbol().toLowerCase().indexOf(searchKey) !== -1;
             })
             return searchResult;
         }
@@ -252,7 +252,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     getCoinSubtitle(item: EditableCoinInfo) {
-        return this.network.getCoinByID(item.coin.getID()).getName();
+        return this.network.getCoinByID(item.coin.getID()).getSymbol();
     }
 
     getCoinIcon(item: EditableCoinInfo) {

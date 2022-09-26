@@ -1,6 +1,7 @@
 import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
+import { erc20CoinsSerializer } from "src/app/wallet/services/evm/erc20coin.service";
 import { LocalStorage } from "src/app/wallet/services/storage.service";
 import { SPVNetworkConfig } from "../../../services/wallet.service";
 import { Coin, CoinID, CoinType, ERC20Coin } from "../../coin";
@@ -30,7 +31,8 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
 
   constructor(
     public key: string, // unique identifier
-    public name: string, // Human readable network name - Elastos, HECO
+    name: string, // Human readable network name - Elastos, HECO
+    public shortName: string,
     public logo: string, // Path to the network icon
     protected mainTokenSymbol: string, // Symbol of the main EVM token: Ex: HT, BSC...
     protected mainTokenFriendlyName: string, // Ex: Huobi Token
@@ -43,7 +45,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     erc1155Providers: ERC1155Provider[] = [],
     erc721Providers: ERC721Provider[] = []
   ) {
-    super(key, name, logo, networkTemplate, earnProviders, swapProviders, bridgeProviders, erc1155Providers, erc721Providers);
+    super(key, name, shortName, logo, networkTemplate, earnProviders, swapProviders, bridgeProviders, erc1155Providers, erc721Providers);
   }
 
   public async init(): Promise<void> {
@@ -154,10 +156,10 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     this.availableCoins.push(erc20Coin);
 
     // Save to permanent storage
-    await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, existingCoins);
+    await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, erc20CoinsSerializer.serializeObjectArray(existingCoins));
 
     this.deletedERC20Coins = this.deletedERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== coin.getContractAddress().toLowerCase());
-    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.localStorageKey, this.deletedERC20Coins);
+    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.localStorageKey, erc20CoinsSerializer.serializeObjectArray(this.deletedERC20Coins));
 
     this.onCoinAdded.next(erc20Coin.getID());
 
@@ -172,7 +174,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     Logger.log('wallet', 'availableCoins after deleting', this.availableCoins);
 
     this.deletedERC20Coins.push(erc20Coin);
-    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.localStorageKey, this.deletedERC20Coins);
+    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.localStorageKey, erc20CoinsSerializer.serializeObjectArray(this.deletedERC20Coins));
 
     this.onCoinDeleted.next(erc20Coin.getID());
   }
@@ -188,7 +190,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     for (let rawCoin of rawCoinList) {
       // Use the contract address as id.
       if ((rawCoin.id as string).startsWith('0x')) {
-        let coin = ERC20Coin.fromJson(rawCoin);
+        let coin = ERC20Coin.fromJson(rawCoin, this);
 
         // Legacy support: we didn't save coins decimals earlier. So we delete custom coins from disk if we don't have the info.
         // Users have to re-add them manually.
@@ -203,7 +205,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
 
     if (someCoinsWereRemoved) {
       // Some coins were "repaired", so we save our list.
-      await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, customCoins);
+      await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, erc20CoinsSerializer.serializeObjectArray(customCoins));
     }
 
     return customCoins;
@@ -217,7 +219,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
 
     let deletedERC20Coins: ERC20Coin[] = [];
     for (let rawCoin of rawCoinList) {
-      deletedERC20Coins.push(ERC20Coin.fromJson(rawCoin));
+      deletedERC20Coins.push(ERC20Coin.fromJson(rawCoin, network));
     }
 
     this.deletedERC20Coins = deletedERC20Coins;
