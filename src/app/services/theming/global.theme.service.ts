@@ -168,7 +168,15 @@ export class GlobalThemeService extends GlobalService {
     document.body.style.setProperty('--essentials-border-separator-color', `${mainTextColor}30`); // Semi transparent based on text color
     document.body.style.setProperty('--essentials-pagination-color', `${mainTextColor}B0`); // Semi transparent based on text color
     document.body.style.setProperty('--essentials-pagination-active-color', `${mainTextColor}`);
+
+    // Set ionic background color and variants
     document.body.style.setProperty('--ion-background-color', variant.color);
+    document.body.style.setProperty('--ion-color-step-50', variant.color);
+    document.body.style.setProperty('--ion-color-step-100', variant.color);
+    document.body.style.setProperty('--ion-color-step-150', variant.color);
+    document.body.style.setProperty('--ion-color-step-200', variant.color);
+    document.body.style.setProperty('--ion-color-step-250', variant.color);
+    // Are other needed up to 950 ?
 
     await passwordManager.setDarkMode(theme.usesDarkMode);
 
