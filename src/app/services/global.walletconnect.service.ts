@@ -141,12 +141,12 @@ export class GlobalWalletConnectService extends GlobalService {
           if (c.connected) {
             try {
               let chainId = activeWallet.network instanceof EVMNetwork ? activeWallet.network.getMainChainID() : 0;
-              let account = await this.getAccountFromNetworkWallet(activeWallet);
+              let account = activeWallet.network instanceof EVMNetwork ? await this.getAccountFromNetworkWallet(activeWallet) : null;
               Logger.log("walletconnect", `Updating connected session`, c, chainId, account);
 
               c.updateSession({
                 chainId: chainId,
-                accounts: [account]
+                accounts: account ? [account] : []
               });
             }
             catch (e) {

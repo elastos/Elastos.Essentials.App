@@ -3021,7 +3021,7 @@
           this.rpcUrls = {
           // List of chainId -> rpcUrl set by Essentials.
           };
-          console.log("Creating an Essentials DappBrowserWeb3Provider");
+          console.log("Creating an Essentials DappBrowserWeb3Provider", chainId, rpcUrl, address);
           this.chainId = chainId;
           this.setRPCApiEndpoint(chainId, rpcUrl);
           this.address = address;
