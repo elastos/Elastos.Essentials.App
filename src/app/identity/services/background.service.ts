@@ -48,7 +48,7 @@ export class BackgroundService extends GlobalService {
 
     // Initialize the active DID - don't block, using services must be reactive
     void this.didService.loadGlobalIdentity().then(() => {
-      // Wait a moment when Elastos Essentials starts, before starting a background sync.
+      // Wait a moment when Essentials starts, before starting a background sync.
       this.synchronizeTimeout = setTimeout(() => {
         void this.synchronizeActiveDIDAndRepeat();
       }, 30 * 1000); // 30 seconds

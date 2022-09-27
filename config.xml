@@ -2,7 +2,7 @@
 <widget android-versionCode="20602" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.6.2.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>Essentials</name>
     <description>
-        Elastos essentials
+        Essentials web3 wallet
     </description>
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.

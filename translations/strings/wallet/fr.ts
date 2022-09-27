@@ -643,7 +643,7 @@ export const fr = {
         'wallet-coin-earn-title': 'Services d\'épargne',
         'wallet-coin-swap-title': 'Services d\'échanges',
         'wallet-coin-bridge-title': 'Services inter-réseaux',
-        'providers-disclaimer': 'Les services listés sur cette page sont des <b>services tiers non liés à Elastos Essentials</b>. Faites vos propres vérifications sur ces plateformes avant de les utiliser.',
+        'providers-disclaimer': 'Les services listés sur cette page sont des <b>services tiers non liés à Essentials</b>. Faites vos propres vérifications sur ces plateformes avant de les utiliser.',
         'finance-platforms': 'Plateformes Financières',
         'finance-platforms-intro': 'Les plateformes suivantes peuvent gérer ce jeton pour éventuellement faire des bénéfices.',
         'get-more-tokens': 'Plus de Jetons',

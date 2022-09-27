@@ -6,7 +6,7 @@ let elastosLogo = fs.readFileSync(__dirname + "/elastos_ansi.txt").toString()
 console.log(elastosLogo);
 
 console.log();
-console.log(colors.cyan("ELASTOS ESSENTIALS - WELCOME"));
+console.log(colors.cyan("ESSENTIALS - WELCOME"));
 console.log();
 console.log(colors.gray("Here are some useful ENV variables:"));
 

@@ -98,13 +98,13 @@ export const zh = {
       'publish-title': '将您的身份发布到公共链',
       'publish-intro': '这一步是强制性的，只需要几秒钟，请稍等...',
       'sign-in-title': '登录中',
-      'sign-in-intro': '进入 Elastos Essentials',
+      'sign-in-intro': '进入 Essentials',
       'hive-title': '为应用程序准备一些存储空间',
       'hive-intro': '正在为您随机选取一个 Elastos Hive 存储提供商并创建存储空间。稍后您也可以将数据移动到其他地方。',
       'wallet-title': '创建默认钱包',
       'wallet-intro': '使用与您的 DID 相同的助记词来创建默认钱包。您可以选择继续使用或删除此钱包。',
       'done-title': '全部完成！',
-      'done-intro': '您的身份现在已经完全准备好了，您可以开始使用 Elastos Essentials。'
+      'done-intro': '您的身份现在已经完全准备好了，您可以开始使用 Essentials。'
     },
 
     'error-hive-storage-failed': '无法完成配置Hive存储，请稍后手动重试。继续',

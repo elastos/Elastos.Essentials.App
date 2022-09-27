@@ -96,13 +96,13 @@ export const fr = {
       'publish-title': 'Publication de votre identité dans le registre public',
       'publish-intro': 'Cette étape est indispensable et prend quelques secondes, veuillez patienter.',
       'sign-in-title': 'Connexion',
-      'sign-in-intro': 'Entrée en cours dans Elastos Essentials',
+      'sign-in-intro': 'Entrée en cours dans Essentials',
       'hive-title': 'Espace de stockage pour les applis',
       'hive-intro': 'Un espace de stockage est créé sur un fournisseur de stockage Elastos Hive choisi au hasard. Vous pourrez déplacer vos données ailleurs à tout moment plus tard.',
       'wallet-title': 'Création d\'un portefeuille par défaut',
       'wallet-intro': 'Un portefeuille par défaut est créé en utilisant la même clé papier que votre identité. Vous pourrez choisir de l\'utiliser ou de le supprimer plus tard.',
       'done-title': 'C\'est terminé!',
-      'done-intro': 'Votre identité est maintenant prête. Vous pouvez commencer à utiliser Elastos Essentials.'
+      'done-intro': 'Votre identité est maintenant prête. Vous pouvez commencer à utiliser Essentials.'
     },
 
     'error-hive-storage-failed': 'Hive storage setup could not be completed, please try again manually later. Continuing.',

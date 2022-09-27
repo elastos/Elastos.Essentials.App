@@ -51,7 +51,7 @@ export const zh = {
         'nativecallbackurl-placeholder': '在此处设置您的 Intent 回调 URL（如果有）',
 
         // Components
-        'appIdentityHelpMessage': '您在 Elastos DID 链上的应用程序标识符独立于任何出版物或平台，例如 Elastos Essentials 或原生 Android / iOS。这只是证明所有权的一种方法，但也是必须执行的步骤。',
+        'appIdentityHelpMessage': '您在 Elastos DID 链上的应用程序标识符独立于任何出版物或平台，例如 Essentials 或原生 Android / iOS。这只是证明所有权的一种方法，但也是必须执行的步骤。',
         'nativeRedirectUrlHelpMessage': '原生应用需要将它们的 Scheme 基础 URL 保存在它们的公共 DID 文档中，以便保护应用间通信。例如：https://elastosapp.mysite.org. 重定向 URL 在移动设备上发送本地 Intent。由原生移动应用程序使用。',
         'nativeCustomSchemeHelpMessage': '原生应用程序（Android）应该提供一个简短的自定义 Scheme（例如：myapp），例如由 trinity 原生应用程序用来发送 Intent 响应。对于 trinity 原生应用，此自定义名称必须与 trinitynative.json 中配置的名称匹配。',
         'nativeCallbackUrlHelpMessage': '原生应用程序需要将 Intent Scheme 基础 URL 保存在其公共 DID 文档中，以确保应用程序间通信的安全。例如：https://elastosapp.mysite.org。回调 URL 将 HTTP POST 请求发送到远程 HTTP 服务器。由网站使用。',

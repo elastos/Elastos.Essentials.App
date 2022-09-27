@@ -643,7 +643,7 @@ export const zh = {
                 'wallet-coin-earn-title': 'Earn 供应商',
                 'wallet-coin-swap-title': 'Swap 供应商',
                 'wallet-coin-bridge-title': 'Bridge 供应商',
-                'providers-disclaimer': '此页面列出的是<b>与Elastos Essentials 无关的第三方服务</b>。在信任任何平台之前请自行验证。',
+                'providers-disclaimer': '此页面列出的是<b>与 Essentials 无关的第三方服务</b>。在信任任何平台之前请自行验证。',
                 'finance-platforms': '金融平台',
                 'finance-platforms-intro': '以下平台可以管理代币，让您赚取利息。',
                 'get-more-tokens': '获得更多代币',

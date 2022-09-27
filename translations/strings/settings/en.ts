@@ -45,7 +45,7 @@ export const en = {
                 'build': 'Build',
                 'contact': 'Contact',
                 'new-version-available-notif-title': 'New version is available!',
-                'new-version-available-notif-info': 'A new version of Elastos Essentials ({{ latestVersion }}) is available in your app store, update now to get the latest features and fixes!',
+                'new-version-available-notif-info': 'A new version of Essentials ({{ latestVersion }}) is available in your app store, update now to get the latest features and fixes!',
                 'checking-updates': 'Checking updates...',
                 'version-up-to-date': 'Your version is up to date.',
                 'check-version-error': 'Failed to get latest version info. Please try again later.',
@@ -80,7 +80,7 @@ export const en = {
                 'wallet-connect-prepare-to-connect': 'Initiating Wallet Connect',
                 'wallet-connect-popup': 'Operation completed, please return to the original app.',
                 'wallet-connect-session-disconnected': 'Wallet connect session disconnected',
-                'wallet-connect-error': 'An external application just tried to send a request that cannot be understood by Elastos Essentials.',
+                'wallet-connect-error': 'An external application just tried to send a request that cannot be understood by Essentials.',
                 'raw-request': 'Raw request: ',
                 'wallet-connect-request-loading': 'Getting ready to connect to an external app with Wallet Connect',
                 'wallet-connect-request-error1': 'It seems like the link with the application cannot be established. Please ',
@@ -97,7 +97,7 @@ export const en = {
                 'wallet-accounts': 'Wallet accounts',
                 'connect': 'Connect',
                 'wallet-connect-no-session': 'No active session',
-                'wallet-connect-no-session-info': 'There is currently no session with a third party app through Wallet Connect. Find the Wallet Connect button on your external app and scan the provided QR code using Elastos Essentials\' scanner to start.',
+                'wallet-connect-no-session-info': 'There is currently no session with a third party app through Wallet Connect. Find the Wallet Connect button on your external app and scan the provided QR code using Essentials\' scanner to start.',
                 'wallet-connect-no-address': "No active wallet, or active network is not compatible with Ethereum. This is not an error, but please make sure you are on the expected network. Some dApps may disconnect your Wallet Connect session because of this.",
 
                 /********** Startup Screen Page **********/

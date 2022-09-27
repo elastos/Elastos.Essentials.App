@@ -21,7 +21,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="elastos-essentials-plugin-dappbrowser" version="1.0.0">
 
     <name>DappBrowser</name>
-    <description>Elastos Essentials DappBrowser Plugin</description>
+    <description>Essentials DappBrowser Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,dapp,browser,dappbrowser</keywords>
 

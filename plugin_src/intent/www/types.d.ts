@@ -21,7 +21,7 @@
 */
 
 /**
-* This is an internal plugin for Elastos Essentials in order to manage internal and external
+* This is an internal plugin for Essentials in order to manage internal and external
 * inter-app communications through "intents".
 * <br><br>
 * Usage:
@@ -76,7 +76,7 @@ declare namespace EssentialsIntentPlugin {
          *
          * @param callback   The function to receive the intent.
          */
-        addIntentListener(callback: (msg: ReceivedIntent)=>void);
+        addIntentListener(callback: (msg: ReceivedIntent) => void);
 
         /**
          * Send a intent response by id.

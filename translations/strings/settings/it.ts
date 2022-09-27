@@ -8,7 +8,7 @@ export const it = {
                 /********** Menu Page **********/
                 // Titles
                 'capsule-setting': 'Impostazioni capsula',
-                'about-setting': 'Informazioni su Elastos Essentials',
+                'about-setting': 'Informazioni su Essentials',
                 'developer-setting': 'Opzioni sviluppatore',
                 'display-setting': 'Cambia il Tema',
                 'dev-mode': 'Modalità sviluppatore',
@@ -45,7 +45,7 @@ export const it = {
                 'build': 'Sviluppa',
                 'contact': 'Contatta',
                 'new-version-available-notif-title': 'New version is available!',
-                'new-version-available-notif-info': 'A new version of Elastos Essentials ({{ latestVersion }}) is available in your app store, update now to get the latest features and fixes!',
+                'new-version-available-notif-info': 'A new version of Essentials ({{ latestVersion }}) is available in your app store, update now to get the latest features and fixes!',
                 'checking-updates': 'Checking updates...',
                 'version-up-to-date': 'Your version is up to date.',
                 'check-version-error': 'Failed to get latest version info. Please try again later.',
@@ -80,7 +80,7 @@ export const it = {
                 'wallet-connect-prepare-to-connect': 'Preparazione di Wallet Connect',
                 'wallet-connect-popup': 'Operazione completata, si prega di tornare all\'app originale.',
                 'wallet-connect-session-disconnected': 'Sessione Wallet Connect disconnessa',
-                'wallet-connect-error': 'Un\'applicazione esterna ha appena inviato una richiesta non supportata da Elastos Essentials.',
+                'wallet-connect-error': 'Un\'applicazione esterna ha appena inviato una richiesta non supportata da Essentials.',
                 'raw-request': 'Richiesta non elaborata: ',
                 'wallet-connect-request-loading': 'Tentativo di connessione a un\'applicazione esterna tramite Wallet Connect',
                 'wallet-connect-request-error1': 'Sembra che il collegamento non possa essere effettuato. Per favore ',
@@ -97,7 +97,7 @@ export const it = {
                 'wallet-accounts': 'Conto del portafoglio',
                 'connect': 'Connetti',
                 'wallet-connect-no-session': 'Nessuna sessione attiva',
-                'wallet-connect-no-session-info': 'Al momento tramite Wallet Connect non c\'è alcuna connessione con dApp di terze parti. Trova il pulsante Wallet Connect nella dApp esterna e scansiona il codice QR fornito con lo Scanner di Elastos Essentials.',
+                'wallet-connect-no-session-info': 'Al momento tramite Wallet Connect non c\'è alcuna connessione con dApp di terze parti. Trova il pulsante Wallet Connect nella dApp esterna e scansiona il codice QR fornito con lo Scanner di Essentials.',
                 'wallet-connect-no-address': "No active wallet, or active network is not compatible with Ethereum. This is not an error, but please make sure you are on the expected network. Some dApps may disconnect your Wallet Connect session because of this.",
 
                 /********** Startup Screen Page **********/

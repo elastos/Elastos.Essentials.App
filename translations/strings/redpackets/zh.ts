@@ -31,7 +31,7 @@ export const zh = {
     'no-my-packet': '您还没有创建任何红包',
     'opened-packets': '已打开红包',
     'about-red-packets': '关于红包',
-    'about-red-packets-part-1': '红包在中国传统文化中用于庆祝特殊场合，以及在朋友之间分享快乐。Elastos Essentials 红包正是基于此想法而衍生出来的，不仅是为了庆祝，也是为了给加密社区创造娱乐。',
+    'about-red-packets-part-1': '红包在中国传统文化中用于庆祝特殊场合，以及在朋友之间分享快乐。Essentials 红包正是基于此想法而衍生出来的，不仅是为了庆祝，也是为了给加密社区创造娱乐。',
     'about-red-packets-part-2': '与“空投”相比，红包带来了更多的乐趣，因为这牵涉到运气和反应能力。',
 
     /*************

@@ -16,7 +16,7 @@ const DURATION_BETWEEN_2_CHECKS_MS = 5 * 60 * 1000; // 5 minutes
 
 /**
  * Service responsible for rotating tips displayed to users as notifications,
- * in order to better understand Elastos Essentials.
+ * in order to better understand Elstos Essentials.
  */
 @Injectable({
   providedIn: 'root'
@@ -86,15 +86,15 @@ export class TipsService {
 
     // Wait a moment while the launcher starts, then start showing tips if needed.
     this.checkIfTimeToShowATipTimerout = setTimeout(() => {
-        this.checkIfTimeToShowATipTimerout = null;
-        void this.checkIfTimeToShowATip();
+      this.checkIfTimeToShowATipTimerout = null;
+      void this.checkIfTimeToShowATip();
     }, 1000);
   }
 
   public stop() {
     if (this.checkIfTimeToShowATipTimerout) {
-        clearTimeout(this.checkIfTimeToShowATipTimerout);
-        this.checkIfTimeToShowATipTimerout = null;
+      clearTimeout(this.checkIfTimeToShowATipTimerout);
+      this.checkIfTimeToShowATipTimerout = null;
     }
   }
 
@@ -112,8 +112,8 @@ export class TipsService {
 
     // No matter what, check again in X minutes
     this.checkIfTimeToShowATipTimerout = setTimeout(() => {
-        this.checkIfTimeToShowATipTimerout = null;
-        void this.checkIfTimeToShowATip();
+      this.checkIfTimeToShowATipTimerout = null;
+      void this.checkIfTimeToShowATip();
     }, DURATION_BETWEEN_2_CHECKS_MS);
   }
 

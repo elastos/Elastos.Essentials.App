@@ -1,7 +1,7 @@
 export const zh = {
 
     'common': {
-        'elastos-essentials': 'Elastos Essentials',
+        'essentials': 'Essentials',
 
         // Generic actions
         'delete': '删除',
@@ -79,7 +79,7 @@ export const zh = {
         'language-setting': '选择语言',
 
         // Sharing
-        'share-friend': '在 Elastos Essentials 中添加我为好友',
+        'share-friend': '在 Essentials 中添加我为好友',
         'share-add-me-as-friend': '加我为好友',
         'copied-to-clipboard': '已复制',
 

@@ -31,7 +31,7 @@ export const en = {
     'no-my-packet': 'You haven\'t created any packet yet',
     'opened-packets': 'Opened packets',
     'about-red-packets': 'About Red Packets',
-    'about-red-packets-part-1': 'Traditionally used in China to celebrate special occasions and share happiness among friends, red packets are derived from this idea in Elastos Essentials to celebrate, but also to create entertainment for crypto communities.',
+    'about-red-packets-part-1': 'Traditionally used in China to celebrate special occasions and share happiness among friends, red packets are derived from this idea in Essentials to celebrate, but also to create entertainment for crypto communities.',
     'about-red-packets-part-2': 'Red packets introduce much more fun compared to “airdrops”, as luck and reactivity are involved.',
 
     /*************

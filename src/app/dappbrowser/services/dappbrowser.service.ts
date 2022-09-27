@@ -283,19 +283,19 @@ export class DappBrowserService implements GlobalService {
         Logger.log("dappbrowser", "Loading the IAB web3 provider");
         this.web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
         this.web3ProviderCode = this.web3ProviderCode + `
-        console.log('Elastos Essentials Web3 provider is being created');
+        console.log('Essentials Web3 provider is being created');
         window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.rpcUrl}', '${this.userAddress}');
         window.web3 = {
             currentProvider: window.ethereum
         };
-        console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3);`;
+        console.log('Essentials Web3 provider is injected', window.ethereum, window.web3);`;
 
         Logger.log("dappbrowser", "Loading the IAB elastos connector");
         this.elastosConnectorCode = await this.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
         this.elastosConnectorCode = this.elastosConnectorCode + "\
-        console.log('Elastos Essentials dapp browser connector is being created'); \
+        console.log('Essentials dapp browser connector is being created'); \
         window.elastos = new EssentialsDABConnector();\
-        console.log('Elastos Essentials dapp browser connector is injected', window.elastos);";
+        console.log('Essentials dapp browser connector is injected', window.elastos);";
 
         var options: any = {
             titlebarheight: 50,

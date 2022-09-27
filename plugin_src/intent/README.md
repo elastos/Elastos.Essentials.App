@@ -1,6 +1,6 @@
 ---
 title: IntentManager
-description:This is an internal plugin for Elastos Essentials in order to manage internal and external inter-app communications through "intents".
+description:This is an internal plugin for Essentials in order to manage internal and external inter-app communications through "intents".
 ---
 
 # elastos-essentials-plugin-intent

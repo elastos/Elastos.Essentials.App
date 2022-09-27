@@ -12,7 +12,7 @@ export const zh = {
         'home-no-other-dapp': '目前没有任何有趣的 dApp 可以推荐给这个网络或这个平台。请在上方手动输入网址并将其添加为收藏夹。',
         'ios-user-notice': 'iOS用户须知',
         'ios-user-notice-1': '苹果的 App Store 禁止内置浏览器访问加密货币功能。浏览 dApp 会将其重定向到外部浏览器。',
-        'ios-user-notice-2': '要将外部浏览器连接到您的钱包，请使用 <b>Wallet Connect</b>，然后选择 <b>Elastos Essentials</b>。',
+        'ios-user-notice-2': '要将外部浏览器连接到您的钱包，请使用 <b>Wallet Connect</b>，然后选择 <b>Essentials</b>。',
         'recent-apps': '最近的应用',
         'all-dapps': '所有dApp',
 

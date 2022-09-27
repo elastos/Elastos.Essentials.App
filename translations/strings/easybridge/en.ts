@@ -6,7 +6,7 @@ export const en = {
         "resume-transfer": "Resume transfer",
         "not-started": "Not started",
         "transfer-agreement-title": "Transfer agreement",
-        "transfer-agreement-content": "By continuing, you agree to let Elastos Essentials use third party exchanges and APIs, and give spending approval of tokens to the relevant bridge/swap contracts.",
+        "transfer-agreement-content": "By continuing, you agree to let Essentials use third party exchanges and APIs, and give spending approval of tokens to the relevant bridge/swap contracts.",
         "restoring-transfer": "Restoring on going transfer",
         "intro-1": "Easily start using dApps on Elastos today by bridging your assets from other chains.",
         "intro-2": "Also, for a quick start on ESC, you will receive <b>0.01 ELA</b> from a faucet service, as initial gas.",

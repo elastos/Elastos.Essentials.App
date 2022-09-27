@@ -1,8 +1,8 @@
 HOW TO TEST ON CR STAGING:
-- Configure Elastos Essentials to use privnet
+- Configure Essentials to use privnet
 - Use privnet DID resolver url: http://did1rpc.longrunweather.com:18080
 - Create a new DID Session DID with CR-01 test council member mnemonic
-- Sign in to the CR staging website https://staging.cyberrepublic.org/ by scanning the sign in QR code from Elastos Essentials
+- Sign in to the CR staging website https://staging.cyberrepublic.org/ by scanning the sign in QR code from Essentials
 - Start scanning various suggestion/proposal qrcodes to initiate various CR "command" from those qrcodes (createsuggestion, voteforproposal, etc)
 
 SCREENS SPEC:

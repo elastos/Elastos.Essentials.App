@@ -6,7 +6,7 @@ export const fr = {
         "resume-transfer": "Continuer le transfert",
         "not-started": "Pas encore commencé",
         "transfer-agreement-title": "Accord de transfert",
-        "transfer-agreement-content": "En continuant, vous autorisez Elastos Essentials à utiliser des services tiers et à donner l'autorisation de dépense de vos jetons à certains contrats d'échanges sur la chaîne de blocs.",
+        "transfer-agreement-content": "En continuant, vous autorisez Essentials à utiliser des services tiers et à donner l'autorisation de dépense de vos jetons à certains contrats d'échanges sur la chaîne de blocs.",
         "restoring-transfer": "Vérification du transfert en cours",
         "intro-1": "Commencez à utiliser les dApps Elastos dès aujourd'hui en transferrant facilement vos jetons depuis d'autres chaînes.",
         "intro-2": "De plus, pour commencer rapidement, vous recevrez <b>0.01 ELA</b> la première fois pour le gas initial.",

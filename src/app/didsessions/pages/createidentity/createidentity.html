@@ -1,28 +1,25 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-slides
-    #slide
-    pager="true"
-    [options]="slideOpts"
-    [class.hidden]="hidden"
-    (ionSlideWillChange)="getActiveSlide()"
-    class="ion-text-center"
-  >
+  <ion-slides #slide pager="true" [options]="slideOpts" [class.hidden]="hidden" (ionSlideWillChange)="getActiveSlide()"
+    class="ion-text-center">
     <ion-slide id="slide1">
-      <img [src]="!theme.darkMode ? 'assets/didsessions/onboard/elalogo.svg' : 'assets/didsessions/onboard/dark_mode/elalogo.svg'">
-      <h1>{{ 'common.elastos-essentials' | translate }}</h1>
+      <img
+        [src]="!theme.darkMode ? 'assets/didsessions/onboard/elalogo.svg' : 'assets/didsessions/onboard/dark_mode/elalogo.svg'">
+      <h1>{{ 'common.essentials' | translate }}</h1>
       <ion-label>{{ 'didsessions.welcome-message1' | translate }}</ion-label>
     </ion-slide>
 
     <ion-slide id="slide2">
       <img [src]="!theme.darkMode ? 'assets/didsessions/icon/ela.svg' : 'assets/didsessions/icon/dark_mode/ela.svg'">
-<!--       <lottie-player src="/assets/animations/device.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player> -->
+      <!--       <lottie-player src="/assets/animations/device.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player> -->
       <ion-label>{{ 'didsessions.welcome-message2' | translate }}</ion-label>
     </ion-slide>
 
     <ion-slide id="slide2">
-      <img [src]="!theme.darkMode ? 'assets/didsessions/onboard/did.svg' : 'assets/didsessions/onboard/dark_mode/did.svg'">
-      <ion-label>{{ 'didsessions.welcome-message3' | translate }} <br>{{ 'didsessions.welcome-message3.1' | translate }} <br>{{ 'didsessions.welcome-message3.2' | translate }}</ion-label>
+      <img
+        [src]="!theme.darkMode ? 'assets/didsessions/onboard/did.svg' : 'assets/didsessions/onboard/dark_mode/did.svg'">
+      <ion-label>{{ 'didsessions.welcome-message3' | translate }} <br>{{ 'didsessions.welcome-message3.1' | translate }}
+        <br>{{ 'didsessions.welcome-message3.2' | translate }}</ion-label>
     </ion-slide>
 
   </ion-slides>
@@ -39,4 +36,3 @@
     </div>
   </div>
 </ion-content>
-

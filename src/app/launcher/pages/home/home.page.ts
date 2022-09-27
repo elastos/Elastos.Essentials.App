@@ -82,7 +82,6 @@ export class HomePage implements OnInit {
        this.globalNotifications.sendNotification(notification);
      }, 2000); */
 
-    //this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
       key: "home",
@@ -131,7 +130,6 @@ export class HomePage implements OnInit {
       this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
         switch (template) {
           case MAINNET_TEMPLATE:
-            //this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
             this.titleBar.setTitle(null);
             break;
           case TESTNET_TEMPLATE:

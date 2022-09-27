@@ -644,7 +644,7 @@ export const en = {
                 'wallet-coin-earn-title': 'Earn Providers',
                 'wallet-coin-swap-title': 'Swap Providers',
                 'wallet-coin-bridge-title': 'Bridge Providers',
-                'providers-disclaimer': 'Services listed on this page are <b>third party services that are not related to Elastos Essentials</b>. Do your own verifications before trusting any platform.',
+                'providers-disclaimer': 'Services listed on this page are <b>third party services that are not related to Essentials</b>. Do your own verifications before trusting any platform.',
                 'finance-platforms': 'Finance Platforms',
                 'finance-platforms-intro': 'The following platforms can manage this coin to let you earn interests.',
                 'get-more-tokens': 'Get More Tokens',

@@ -6,7 +6,7 @@ export const zh = {
         "resume-transfer": "继续兑换",
         "not-started": "未开始",
         "transfer-agreement-title": "兑换协议",
-        "transfer-agreement-content": "继续即表示您同意 Elastos Essentials 使用第三方交易所和 API，并批准相关的桥接/交换合约的代币支出",
+        "transfer-agreement-content": "继续即表示您同意 Essentials 使用第三方交易所和 API，并批准相关的桥接/交换合约的代币支出",
         "restoring-transfer": "正在恢复兑换",
         "intro-1": "通过桥接其他链的资产，轻松开始在 Elastos 上使用 dApp。",
         "intro-2": "另外，为了在 ESC 上快速启动，您将从 Faucet 服务中获得 <b>0.01 ELA</b>， 作为初始 gas。",

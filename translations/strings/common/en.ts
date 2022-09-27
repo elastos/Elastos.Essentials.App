@@ -1,6 +1,6 @@
 export const en = {
     'common': {
-        'elastos-essentials': 'Elastos Essentials',
+        'essentials': 'Essentials',
 
         // Generic actions
         'delete': 'Delete',
@@ -78,7 +78,7 @@ export const en = {
         'language-setting': 'Select Your Language',
 
         // Sharing
-        'share-friend': 'Add my friend in Elastos Essentials',
+        'share-friend': 'Add my friend in Essentials',
         'share-add-me-as-friend': 'Add me as a friend',
         'copied-to-clipboard': 'Copied to clipboard',
 

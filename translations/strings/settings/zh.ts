@@ -24,7 +24,7 @@ export const zh = {
           'change-lang': '更改全局语言',
           'change-pw': '更改密码',
           'manage-pw': '管理您的密码',
-          'about-elastos': 'Elastos Essentials 详情',
+          'about-elastos': 'Essentials 详情',
           'wallet-connect-sessions-intro-setting': '管理活跃的会话',
           'privacy-intro-setting': '自定义您的隐私级别',
 
@@ -45,7 +45,7 @@ export const zh = {
           'build': '开发',
           'contact': '联系',
           'new-version-available-notif-title': '发现新版本！',
-          'new-version-available-notif-info': 'Elastos Essentials 有新的版本 ({{ latestVersion }})，请尽快更新以获取最新的功能和问题修复！',
+          'new-version-available-notif-info': 'Essentials 有新的版本 ({{ latestVersion }})，请尽快更新以获取最新的功能和问题修复！',
           'checking-updates': '正在检查更新...',
           'version-up-to-date': '已是最新版本',
           'check-version-error': '无法获取最新版本信息，请稍后再试',
@@ -80,7 +80,7 @@ export const zh = {
           'wallet-connect-prepare-to-connect': '启动钱包连接',
           'wallet-connect-popup': '操作完成，请返回原应用。',
           'wallet-connect-session-disconnected': '钱包连接会话断开',
-          'wallet-connect-error': '一个外部应用程序试图发送一个 Elastos Essentials 无法理解的请求。',
+          'wallet-connect-error': '一个外部应用程序试图发送一个 Essentials 无法理解的请求。',
           'raw-request': '原始请求: ',
           'wallet-connect-request-loading': '准备使用 Wallet Connect 连接到外部应用程序',
           'wallet-connect-request-error1': '似乎无法建立与应用程序的链接。 请从调用的应用程序',
@@ -97,7 +97,7 @@ export const zh = {
           'wallet-accounts': '钱包账户',
           'connect': '连接',
           'wallet-connect-no-session': '没有活跃的会话',
-          'wallet-connect-no-session-info': '当前没有通过 Wallet Connect 与第三方应用程序的会话。请在外部应用程序上找到 Wallet Connect 按钮，然后使用 Elastos Essentials 的扫描仪扫描此二维码以建立会话连接。',
+          'wallet-connect-no-session-info': '当前没有通过 Wallet Connect 与第三方应用程序的会话。请在外部应用程序上找到 Wallet Connect 按钮，然后使用 Essentials 的扫描仪扫描此二维码以建立会话连接。',
           'wallet-connect-no-address': '没有活跃的钱包，或者活跃的网络与以太坊不兼容。这不是错误，但请确保您在预期的网络上。 否则，某些 dApp 可能会断开您的 Wallet Connect 会话。',
 
           /********** Startup Screen Page **********/

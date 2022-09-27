@@ -43,7 +43,7 @@ export class AppService {
   private async checkForNewProposals(today: Date) {
     // Send notification if there are any new proposals only for today
     let newProposalsCount = 0;
-    let proposals : ProposalSearchResult[] = null;
+    let proposals: ProposalSearchResult[] = null;
     let newProposalsHash = '';
     try {
       proposals = await this.proposalService.fetchProposals(ProposalStatus.ALL, 1);
@@ -85,7 +85,7 @@ export class AppService {
     await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "crproposal", "lastProposalChecked", proposals[0].id);
     Logger.log('crproposal', 'Background service: Last proposal checked by id', lastCheckedProposal);
 
-    // Send notification new proposals since user last visited Elastos Essentials
+    // Send notification new proposals since user last visited Essentials
     if (lastCheckedProposal) {
       const targetProposal = proposals.find(proposal => proposal.id === lastCheckedProposal);
       const targetProposalIndex = proposals.indexOf(targetProposal);

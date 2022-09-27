@@ -643,7 +643,7 @@ export const it = {
                 'wallet-coin-earn-title': 'Servizi per Guadagnare',
                 'wallet-coin-swap-title': 'Servizi per Scambiare',
                 'wallet-coin-bridge-title': 'Servizi per Scambiare verso altre reti',
-                'providers-disclaimer': 'I servizi elencati in questa pagina sono <b>servizi di terze parti non correlati a Elastos Essentials</b>. Fai le tue verifiche prima di fidarti di qualsiasi piattaforma.',
+                'providers-disclaimer': 'I servizi elencati in questa pagina sono <b>servizi di terze parti non correlati a Essentials</b>. Fai le tue verifiche prima di fidarti di qualsiasi piattaforma.',
                 'finance-platforms': 'Piattaforme finanziarie',
                 'finance-platforms-intro': 'Le seguenti piattaforme possono gestire questo token per farti guadagnare interessi ed eventualmente realizzare un profitto.',
                 'get-more-tokens': 'Ottieni più token',
