@@ -87,13 +87,13 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     showAddressList() {
-        this.selectSubscription = this.events.subscribe('selectaddress', (address) => {
-            this.zone.run(() => {
-                this.qrcode = address;
+        if (!this.selectSubscription) {
+            this.selectSubscription = this.events.subscribe('selectaddress', (address) => {
+                this.zone.run(() => {
+                    this.qrcode = address;
+                });
             });
-            this.selectSubscription.unsubscribe();
-            this.selectSubscription = null;
-        });
+        }
         this.native.go(
             '/wallet/coin-address',
             {
