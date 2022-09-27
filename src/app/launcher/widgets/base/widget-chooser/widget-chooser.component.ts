@@ -196,6 +196,12 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
       return;
 
     let fetchResult = await this.widgetsService.fetchWidgetPluginAndCreate(this.widgetUrl);
+    if (!fetchResult) {
+      // Failed to fetch. An error toast has already been shown by the service.
+      this.dismiss(null);
+      return;
+    }
+
     if (fetchResult.newsSourceAdded) {
       // News source added, show a toast and automatically exit the chooser without adding a new news widget
       this.native.genericToast("News source added to your existing news widget!", 4000);

@@ -9,7 +9,7 @@
       <ion-col size="3" class="network" *ngFor="let network of lastUsedNetworks" (click)="selectNetwork(network)">
         <img [src]="network.logo" [class.active]="isNetworkActive(network)"
           src-fallback="/assets/launcher/apps/app-icons/browser.svg" />
-        <div class="title" [class.active]="isNetworkActive(network)">{{network.name}}</div>
+        <div class="title" [class.active]="isNetworkActive(network)">{{network.shortName}}</div>
       </ion-col>
     </ion-row>
     <div class="grid">
