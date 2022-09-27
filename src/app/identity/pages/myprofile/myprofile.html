@@ -12,7 +12,7 @@
       </ion-row>
       <ion-row class="title-row">
         <ion-col>
-          <p>{{ 'identity.welcome-back' | translate }}</p>
+          <p>{{ 'identity.my-identity' | translate }}</p>
           <h1 *ngIf="profile">{{ getProfileName() }}</h1>
         </ion-col>
       </ion-row>
@@ -34,7 +34,7 @@
       <ion-row>
         <ion-col size="1.5" class="left-info-col">
           <img
-            [src]="profileService.getUnchangedPublishedCredentials().length ? '/assets/identity/svg/credential-published.svg' : '/assets/identity/svg/publish-gray.svg'"
+            [src]="theme.darkMode ? '/assets/identity/svg/publish-credentials-white.svg' : '/assets/identity/svg/publish-credentials-black.svg'"
             class="published" />
         </ion-col>
         <ion-col size="10.5">
@@ -97,11 +97,6 @@
     </ion-row>
 
     <ion-grid class="options-grid">
-      <ion-row class="title-row">
-        <ion-col>
-          <p>{{ 'identity.current-options' | translate }}</p>
-        </ion-col>
-      </ion-row>
       <ion-row class="options-row">
         <ion-col size="5.8" class="publish ripple ion-activatable" (click)="profileService.publish()">
           <img src=" /assets/identity/svg/publish-button.svg" />

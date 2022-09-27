@@ -15,7 +15,7 @@ ion-footer {
     ion-button {
         height: 50px;
         width: 100%;
-        --background: linear-gradient(to bottom, #732dcf, #640fd4);
+        //--background: linear-gradient(to bottom, #732dcf, #640fd4);
         --border-radius: 8px;
         font-size: 14px;
         font-weight: 500;
@@ -54,7 +54,7 @@ ion-datetime {
 }
 
 /** Swipe notification **/
-.notifications-swipe-button{
+.notifications-swipe-button {
     --background: transparent;
 }
 
@@ -63,4 +63,3 @@ ion-datetime {
         padding-top: 5px;
     }
 }
-

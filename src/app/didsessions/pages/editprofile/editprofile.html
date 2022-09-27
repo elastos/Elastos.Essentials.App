@@ -4,13 +4,11 @@
     <ion-row>
       <ion-label>{{ 'didsessions.your-name' | translate }}</ion-label>
     </ion-row>
-    <ion-input [placeholder]="'didsessions.enter-name-here'|translate" #input [(ngModel)]="name" name="name" ngDefaultControl></ion-input>
+    <ion-input [placeholder]="'didsessions.enter-name-here'|translate" #input [(ngModel)]="name" name="name"
+      ngDefaultControl></ion-input>
 
     <div class="footer">
-      <ion-button [disabled]="creatingDid" (click)="next()">
-        {{ 'common.continue' | translate }}
-      </ion-button>
+      <ebutton [disabled]="creatingDid" (clicked)="next()" [title]="'common.continue' | translate"> </ebutton>
     </div>
   </ion-grid>
 </ion-content>
-

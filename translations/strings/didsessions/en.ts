@@ -37,11 +37,9 @@ export const en = {
     'got-it': 'Got it',
 
     // Create screen
-    'welcome-message1': 'Welcome to the modern internet, where you take control of your own digital identity in a secured sandbox environment.',
-    'welcome-message2': 'This will give you the ability to verify your identity and its credentials seamlessly across all applications without losing your privacy and data.',
-    'welcome-message3': "Let's start by creating",
-    'welcome-message3.1': "your first decentralized identity",
-    'welcome-message3.2': "or import one that you already own.",
+    'welcome-message1': 'Welcome to Web3, where you take control of your own digital identity',
+    'welcome-message2': 'With one mnemonic, manage your multi-network crypto wallets, your Web3 DID identity and your own storage space.',
+    'welcome-message3': "Let's start by creating a new identity or import an existing one. You will be all set for Web3 in 30 seconds!",
     'create-message': 'Create a brand new identity starting fresh or you can import an existing identity you already own',
     'new': 'New',
     'import': 'Import',

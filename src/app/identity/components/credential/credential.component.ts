@@ -29,7 +29,6 @@ export class CredentialComponent {
 
     public _credential: VerifiableCredential = null;
     public description: string = null;
-    public checkBoxColor = '#565bdb';
     public isExpired = false;
     private issuerDidDocument: DIDDocument = null;
     private issuerName: string = null;

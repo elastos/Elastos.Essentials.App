@@ -37,11 +37,9 @@ export const it = {
     'got-it': 'Fatto',
 
     // Create screen
-    'welcome-message1': 'Benvenuto nell\'Internet moderno, dove prendi il controllo della tua identità digitale in un ambiente sicuro.',
-    'welcome-message2': 'Ora puoi gestire la tua identità digitale e verificare quella degli altri, senza dover fornire tutti i tuoi dati a terzi, proteggendo così la tua Privacy.',
-    'welcome-message3': "Iniziamo creando",
-    'welcome-message3.1': "la tua prima identità decentralizzata",
-    'welcome-message3.2': "o importandone una esistente.",
+    'welcome-message1': 'Welcome to Web3, where you take control of your own digital identity',
+    'welcome-message2': 'With one mnemonic, manage your multi-network crypto wallets, your Web3 DID identity and your own storage space.',
+    'welcome-message3': "Let's start by creating a new identity or import an existing one. You will be all set for Web3 in 30 seconds!",
     'create-message': 'Crea una nuova identità oppure puoi importare un\'identità esistente che già possiedi',
     'new': 'Crea',
     'import': 'Importa',

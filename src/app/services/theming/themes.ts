@@ -68,7 +68,7 @@ export const availableThemes: ThemeConfig[] = [
   {
     key: "pink",
     variants: {
-      "light": { color: "#B05CB2" },
+      "light": { color: "#B05CB2", buttonBackgroundColor: "#000000", buttonTextColor: "#ffffff" },
       "dark": { color: "#E376E5" }
     },
     usesDarkMode: true

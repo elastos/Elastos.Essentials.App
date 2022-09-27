@@ -30,7 +30,7 @@ ion-content {
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 20px;
-        background: white;
+        background: var(--essentials-box-color);
     }
 
     .glide-container {
@@ -48,8 +48,10 @@ ion-content {
         flex-direction: row;
     }
 
-    .source-tokens, .destination-tokens {
-        .source-token, .destination-token {
+    .source-tokens,
+    .destination-tokens {
+        .source-token,
+        .destination-token {
             padding: 15px;
             margin-bottom: 5px;
             border-radius: 10px;
@@ -57,7 +59,7 @@ ion-content {
             flex-direction: row;
             align-items: center;
             border: solid 2px transparent;
-            background: white;
+            background: var(--essentials-box-color);
 
             .left {
                 margin-right: 15px;
@@ -68,7 +70,7 @@ ion-content {
             }
 
             &.selected {
-                border-color: #9368F0;
+                border-color: var(--ion-text-color);
             }
 
             &.gone {
@@ -79,10 +81,6 @@ ion-content {
                 .amount-symbol {
                     margin-bottom: 5px;
                     font-weight: bold;
-
-                    .token-symbol {
-
-                    }
                 }
 
                 .token-name {
@@ -99,7 +97,7 @@ ion-content {
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 5px;
-        background: white;
+        background: var(--essentials-box-color);
 
         .transfer-input {
             font-size: 14px;
@@ -149,8 +147,7 @@ ion-content {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    background: white;
-    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1);
+    background: var(--ion-background-color);
 
     .last-error {
         margin: 20px 0;
@@ -167,6 +164,10 @@ ion-content {
         display: flex;
         flex-direction: column;
         align-items: center;
+
+        ebutton {
+            width: 100%;
+        }
     }
 
     .transfer-progress {
@@ -174,53 +175,13 @@ ion-content {
             font-weight: 600;
         }
 
-        .progress-step, .progress-message {
+        .progress-step,
+        .progress-message {
             margin-top: 10px;
         }
 
         .progress-message {
             margin-bottom: 10px;
-        }
-    }
-}
-
-.dark-container {
-    .card {
-        background: #212021;
-    }
-
-    .amount-container {
-        background: #212021;
-
-        .transfer-input {
-            color: white;
-        }
-    }
-
-    .source-tokens, .destination-tokens {
-        .source-token, .destination-token {
-            background: #212021;
-        }
-    }
-
-    .transfer-summary {
-        color: #ACB1B6;
-
-        .heading {
-            color: #FFF;
-        }
-    }
-
-    .footer {
-        background: #212021;
-        box-shadow: 0 -10px 20px rgba(255, 255, 255, 0.1);
-
-        .transfer-progress {
-            color: #ACB1B6;
-
-            .heading {
-                color: white;
-            }
         }
     }
 }

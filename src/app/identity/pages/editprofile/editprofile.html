@@ -18,7 +18,8 @@
     <div *ngFor="let entry of profile.entries" class="credentials">
       <ion-row *ngIf="entryIsStandardText(entry)" class="ion-align-items-center main-row">
         <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
-          <img src="/assets/identity/svg/circle-with-minus.svg" />
+          <img
+            [src]="theme.darkMode ? '/assets/identity/svg/white-circle-with-minus.svg' : '/assets/identity/svg/black-circle-with-minus.svg'" />
         </ion-col>
         <ion-col size="8.75">
           <ion-grid>
@@ -43,7 +44,8 @@
 
       <ion-row *ngIf="entry.key === 'email'" class="ion-align-items-center main-row">
         <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
-          <img src="/assets/identity/svg/circle-with-minus.svg" />
+          <img
+            [src]="theme.darkMode ? '/assets/identity/svg/white-circle-with-minus.svg' : '/assets/identity/svg/black-circle-with-minus.svg'" />
         </ion-col>
         <ion-col size="8.75">
           <ion-grid>
@@ -69,7 +71,8 @@
 
       <ion-row *ngIf="entry.key === 'telephone'" class="ion-align-items-center main-row">
         <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
-          <img src="/assets/identity/svg/circle-with-minus.svg" />
+          <img
+            [src]="theme.darkMode ? '/assets/identity/svg/white-circle-with-minus.svg' : '/assets/identity/svg/black-circle-with-minus.svg'" />
         </ion-col>
         <ion-col size="8.75">
           <ion-grid>
@@ -94,7 +97,8 @@
 
       <ion-row *ngIf="entry.key === 'nationality'" class="ion-align-items-center main-row">
         <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
-          <img src="/assets/identity/svg/circle-with-minus.svg" />
+          <img
+            [src]="theme.darkMode ? '/assets/identity/svg/white-circle-with-minus.svg' : '/assets/identity/svg/black-circle-with-minus.svg'" />
         </ion-col>
         <ion-col size="8.75">
           <ion-grid>
@@ -118,7 +122,8 @@
 
       <ion-row *ngIf="entry.key === 'gender'" class="ion-align-items-center main-row">
         <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
-          <img src="/assets/identity/svg/circle-with-minus.svg" />
+          <img
+            [src]="theme.darkMode ? '/assets/identity/svg/white-circle-with-minus.svg' : '/assets/identity/svg/black-circle-with-minus.svg'" />
         </ion-col>
         <ion-col size="8.75">
           <ion-grid>
@@ -149,7 +154,8 @@
 
       <ion-row *ngIf="entry.key === 'birthDate'" class="ion-align-items-center main-row">
         <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
-          <img src="/assets/identity/svg/circle-with-minus.svg" />
+          <img
+            [src]="theme.darkMode ? '/assets/identity/svg/white-circle-with-minus.svg' : '/assets/identity/svg/black-circle-with-minus.svg'" />
         </ion-col>
         <ion-col size="8.75">
           <ion-grid>
@@ -185,7 +191,8 @@
 
       <ion-row *ngIf="entry.key === 'avatar'" class="ion-align-items-center main-row">
         <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
-          <img src="/assets/identity/svg/circle-with-minus.svg" />
+          <img
+            [src]="theme.darkMode ? '/assets/identity/svg/white-circle-with-minus.svg' : '/assets/identity/svg/black-circle-with-minus.svg'" />
         </ion-col>
         <ion-col size="8.75">
           <ion-grid>
@@ -204,9 +211,7 @@
     </div>
 
     <ion-row class="btn-row">
-      <ion-button color="tertiary" (click)="addProfileEntry()">
-        {{ 'identity.add-field' | translate }}
-      </ion-button>
+      <ebutton (clicked)="addProfileEntry()" [title]="'identity.add-field' | translate"> </ebutton>
     </ion-row>
   </ion-grid>
 </ion-content>

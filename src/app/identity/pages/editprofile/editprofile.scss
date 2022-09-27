@@ -1,6 +1,5 @@
 @import "src/app/identity/root.scss";
 
-
 .container {
   .header-row {
     .avatar-col {
@@ -16,9 +15,6 @@
         object-fit: contain;
         display: flex;
         justify-content: center;
-        color: #ffffff;
-        background-image: url("/assets/identity/svg/empty-balloon.svg");
-        background-blend-mode: multiply;
         padding: 35px;
 
         ion-icon {
@@ -36,13 +32,13 @@
           overflow: hidden;
           width: 100%;
           height: 100%;
+          border: solid 5px var(--essentials-box-color);
         }
       }
 
       span {
         font-size: 13px;
         font-weight: 500;
-        color: #565bdb;
       }
     }
 
@@ -59,7 +55,7 @@
 
   .credentials {
     .main-row {
-      border-top: 1px solid #EAEAEA;
+      border-top: 1px solid var(--essentials-border-separator-color);
       padding-top: 1px;
       padding-bottom: 1px;
 
@@ -84,12 +80,13 @@
         justify-content: flex-start;
         align-items: center;
 
-        ion-label, span {
+        ion-label,
+        span {
           font-size: 13px;
           font-weight: 600;
           line-height: 1.62;
           text-align: left;
-          --color: #121212;
+          --color: var(--ion-text-color);
         }
 
         .avatar-label {
@@ -109,14 +106,13 @@
           font-size: 13px;
           font-weight: 500;
           text-align: left;
-          letter-spacing: -0.25px;
-          color: #121212;
           --padding-bottom: 3px;
           --padding-end: 5px;
           --padding-top: 3px;
         }
 
-        ion-input, ion-datetime {
+        ion-input,
+        ion-datetime {
           --padding-start: 0px;
         }
 
@@ -147,46 +143,8 @@
     width: 100%;
     margin-top: 20px;
 
-    ion-button {
-      height: 50px;
+    ebutton {
       width: 90%;
-      --background: linear-gradient(to bottom, #732dcf, #640fd4);
-      --border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1px;
-    }
-  }
-}
-
-.darkContainer {
-  .header-row {
-    .show-col {
-      span {
-        color: white;
-      }
-    }
-  }
-
-  .credentials {
-    .main-row {
-      border-top: 1px solid #464646;
-
-      .subject-col {
-        ion-label,
-        span {
-          --color: #ffffff;
-        }
-      }
-
-      .edit-col {
-        ion-label,
-        ion-select,
-        ion-datetime,
-        ion-input {
-          color: #ffffff;
-        }
-      }
     }
   }
 }

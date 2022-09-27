@@ -37,12 +37,9 @@ export const zh = {
     'got-it': '好的',
 
     // Create screen
-    'welcome-message1': '欢迎使用新一代互联网，您可以在安全的沙盒环境中控制自己的数字身份。',
-    'welcome-message2': '您可以在所有应用程序中无缝验证您的身份及其凭据，而且不会泄露您的隐私和数据。',
-    // 'welcome-message3': "首先，创建您的 分布式身份 或导入您已经拥有的身份。",
-    'welcome-message3': "让我们开始创建",
-    'welcome-message3.1': "您的第一个分布式身份",
-    'welcome-message3.2': "或导入您已经拥有的一个身份",
+    'welcome-message1': 'Welcome to Web3, where you take control of your own digital identity',
+    'welcome-message2': 'With one mnemonic, manage your multi-network crypto wallets, your Web3 DID identity and your own storage space.',
+    'welcome-message3': "Let's start by creating a new identity or import an existing one. You will be all set for Web3 in 30 seconds!",
     'create-message': '您可以创建一个全新的身份，也可以导入一个已有的身份',
     'new': '新建',
     'import': '导入',

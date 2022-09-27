@@ -1,0 +1,57 @@
+:host {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    padding: 4px 2px;
+    height: 60px;
+
+    &.full {
+        width: 100%;
+    }
+
+    .root {
+        background: var(--essentials-button-background-color);
+        color: var(--essentials-button-text-color);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        place-content: center;
+        height: 100%;
+        width: 100%;
+
+        &.cancel {
+            .title {
+                opacity: 50%;
+            }
+        }
+
+        &.disabled {
+            opacity: 50%;
+        }
+
+        .inner-content {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+
+            &.top-icon-container {
+                flex-direction: column;
+            }
+
+            .icon {
+                width: 14px;
+                height: 14px;
+            }
+
+            .left-icon {
+                margin-right: 5px;
+            }
+        }
+
+        ion-ripple-effect {
+            --ripple-color: var(--ion-text-color);
+        }
+    }
+}

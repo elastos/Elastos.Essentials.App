@@ -18,7 +18,7 @@
             class="status-grid">
             <ion-row>
                 <ion-col size="1">
-                    <img [src]="unchangedPublishedCredentials.length > 0 ? '/assets/identity/svg/credential-published.svg' : '/assets/identity/svg/publish-gray.svg'"
+                    <img [src]="theme.darkMode ? '/assets/identity/svg/publish-credentials-white.svg' : '/assets/identity/svg/publish-credentials-black.svg'"
                         class="published">
                 </ion-col>
                 <ion-col size="11">
@@ -61,9 +61,8 @@
             </div>
         </div>
         <ion-row class="btn-row">
-            <ion-button color="tertiary" (click)="profileService.showWarning('publishIdentity', '')">
-                {{ 'common.confirm' | translate }}
-            </ion-button>
+            <ebutton (clicked)="profileService.showWarning('publishIdentity', '')"
+                [title]="'common.confirm' | translate"></ebutton>
         </ion-row>
     </div>
 

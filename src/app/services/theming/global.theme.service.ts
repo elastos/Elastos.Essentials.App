@@ -168,6 +168,8 @@ export class GlobalThemeService extends GlobalService {
     document.body.style.setProperty('--essentials-border-separator-color', `${mainTextColor}30`); // Semi transparent based on text color
     document.body.style.setProperty('--essentials-pagination-color', `${mainTextColor}B0`); // Semi transparent based on text color
     document.body.style.setProperty('--essentials-pagination-active-color', `${mainTextColor}`);
+    document.body.style.setProperty('--essentials-button-background-color', variant.buttonBackgroundColor || mainTextColor);
+    document.body.style.setProperty('--essentials-button-text-color', variant.buttonTextColor || variant.color);
 
     // Set ionic background color and variants
     document.body.style.setProperty('--ion-background-color', variant.color);

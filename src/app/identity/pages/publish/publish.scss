@@ -24,26 +24,26 @@
                 line-height: 1;
                 letter-spacing: 0.6px;
                 text-align: left;
-            }        
+            }
         }
     }
 
     .status-grid {
         padding: 10px;
-        border-top: 1.5px solid #EAEAEA;
-        border-bottom: 1.5px solid #EAEAEA;
+        border-top: 1.5px solid var(--essentials-border-separator-color);
+        border-bottom: 1.5px solid var(--essentials-border-separator-color);
         margin: 10px 0;
-    
+
         ion-row {
             ion-col {
                 display: flex;
                 align-items: center;
-        
+
                 ion-label {
                     font-weight: 500;
                     font-size: 13px;
                 }
-        
+
                 .published {
                     width: 24.8px;
                     height: 19.6px;
@@ -65,12 +65,9 @@
             width: 72px;
             height: 72px;
             background-repeat: no-repeat;
-            background-image: url("/assets/identity/svg/icondiv.svg");
-            background-blend-mode: multiply;
             padding: 11px;
             display: flex;
             justify-content: center;
-            color: #ffffff;
 
             img {
                 margin-top: 9px;
@@ -91,8 +88,6 @@
             min-height: 75px;
             margin-left: 20px;
             border-radius: 18px;
-            box-shadow: 0 3px 15px 0 #ededf0;
-            background: white;
             display: flex;
             align-items: center;
 
@@ -105,14 +100,14 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
-                    align-items: flex-start; 
+                    align-items: flex-start;
 
                     .card-title {
                         font-size: 15px;
                         font-weight: 600;
                         text-align: left;
                     }
-    
+
                     .card-value {
                         font-size: 13px;
                         font-weight: 500;
@@ -126,10 +121,10 @@
                     display: flex;
                     justify-content: center;
                     align-items: center;
-    
+
                     ion-toggle {
                         zoom: 0.7;
-                    }            
+                    }
                 }
             }
         }
@@ -142,39 +137,8 @@
         width: 100%;
         margin-top: 20px;
 
-        ion-button {
+        ebutton {
             width: 90%;
         }
     }
 }
-
-.darkContainer {
-    .status-grid {
-        border-top: 1.5px solid #464646;
-        border-bottom: 1.5px solid #464646;
-    }
-
-    .credentials {
-        .card-internal {
-            background-color: #212021;
-            box-shadow: none;
-
-            .card-body {
-                .labels-col {
-                    .card-title {
-                        color: white;
-                    }
-            
-                    .card-value {
-                        color: #ACACAC;
-                        opacity: 1;
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-
-

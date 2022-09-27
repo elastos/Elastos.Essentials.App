@@ -16,9 +16,6 @@
         object-fit: contain;
         display: flex;
         justify-content: center;
-        color: #ffffff;
-        background-image: url("/assets/identity/svg/empty-balloon.svg");
-        background-blend-mode: multiply;
         padding: 35px;
 
         ion-icon {
@@ -36,6 +33,7 @@
           overflow: hidden;
           width: 100%;
           height: 100%;
+          border: solid 5px var(--essentials-box-color);
         }
       }
     }
@@ -74,8 +72,8 @@
 
   .status-grid {
     padding: 10px;
-    border-top: 1.5px solid #eaeaea;
-    border-bottom: 1.5px solid #eaeaea;
+    border-top: 1.5px solid var(--essentials-border-separator-color);
+    border-bottom: 1.5px solid var(--essentials-border-separator-color);
     margin-top: 5px;
 
     ion-row {
@@ -195,22 +193,6 @@
           text-align: center;
         }
       }
-
-      .publish {
-        background-image: url("/assets/identity/svg/background-blue.svg");
-
-        span,
-        h2 {
-          color: #ffffff;
-        }
-      }
     }
-  }
-}
-
-.darkContainer {
-  .status-grid {
-    border-top: 1.5px solid #464646;
-    border-bottom: 1.5px solid #464646;
   }
 }

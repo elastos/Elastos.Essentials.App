@@ -1,4 +1,4 @@
-@import 'src/app/didsessions/root.scss';
+@import "src/app/didsessions/root.scss";
 
 .container {
   display: flex;
@@ -9,7 +9,8 @@
 
   img {
     margin: 10px 0 40px;
-    width: 50px; height: 50px;
+    width: 50px;
+    height: 50px;
   }
 
   .item-row {
@@ -28,10 +29,10 @@
       }
 
       ion-label {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 500;
         letter-spacing: -0.33px;
-        color:var(--ion-text-color);
+        color: var(--ion-text-color);
       }
     }
 
@@ -43,7 +44,7 @@
       ion-icon {
         height: 20px;
         width: 20px;
-        color:var(--ion-text-color);
+        color: var(--ion-text-color);
       }
     }
 
@@ -58,18 +59,14 @@
   .item-row {
     .left-col {
       .selected {
-        color: #C073FC;
+        color: #c073fc;
       }
     }
 
     .right-col {
       .selected {
-        color: #C073FC;
+        color: #c073fc;
       }
     }
   }
 }
-
-
-
-

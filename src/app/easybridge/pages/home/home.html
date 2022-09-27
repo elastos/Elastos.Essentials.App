@@ -167,14 +167,12 @@
 
     <div class="buttons">
       <!-- First slide footer - next -->
-      <ion-button *ngIf="!initializing && showingIntro" (click)="showingIntro = false">{{ 'common.continue' | translate
-        }}
-      </ion-button>
+      <ebutton *ngIf="!initializing && showingIntro" (clicked)="showingIntro = false"
+        [title]="'common.continue' | translate"></ebutton>
 
       <!-- Transfer -->
-      <ion-button (click)="transfer()" [disabled]="!canTransfer()" *ngIf="!showingIntro && !isCompleted()">{{
-        getTransferButtonText() }}
-      </ion-button>
+      <ebutton (clicked)="transfer()" [disabled]="!canTransfer()" *ngIf="!showingIntro && !isCompleted()"
+        [title]="getTransferButtonText()"></ebutton>
 
       <!-- Reset -->
       <p (click)="reset()" [disabled]="!canReset()" *ngIf="!showingIntro && !isCompleted() && canReset()" class="reset">
@@ -182,8 +180,8 @@
       </p>
 
       <!-- Done -->
-      <ion-button (click)="done()" *ngIf="!showingIntro && isCompleted()">{{ 'easybridge.done' | translate }}
-      </ion-button>
+      <ebutton (clicked)="done()" *ngIf="!showingIntro && isCompleted()" [title]="'easybridge.done' | translate">
+      </ebutton>
     </div>
   </div>
 

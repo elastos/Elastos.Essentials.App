@@ -19,8 +19,7 @@
 
       ion-col {
         height: 40px;
-        background: #ffffff;
-        box-shadow: 0 3px 15px 0 #ededf0;
+        background: var(--essentials-box-color);
         border-radius: 8px;
         margin-bottom: 20px;
         display: flex;
@@ -34,9 +33,9 @@
           left: -11px;
           width: 22px;
           height: 22px;
-          background: #ffffff;
+          background: var(--essentials-box-color);
           border-radius: 100%;
-          border: 2px solid #f5f5fd;
+          border: 2px solid var(--essentials-border-separator-color);
           display: flex;
           justify-content: center;
           align-items: center;

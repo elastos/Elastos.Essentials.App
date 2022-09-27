@@ -205,3 +205,10 @@
     font-size: 12px;
     opacity: 0.8;
 }
+
+// For "primary" ion-buttons
+.ion-color-primary {
+    --ion-color-base: var(--ion-text-color) !important;
+    --ion-color-contrast: var(--ion-background-color) !important;
+    --ion-color-shade: red !important;
+}

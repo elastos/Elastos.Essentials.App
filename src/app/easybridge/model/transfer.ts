@@ -163,7 +163,7 @@ export class Transfer implements SerializedTransfer {
    */
   public static async loadExistingTransfer(): Promise<Transfer> {
     let serializedTransfer = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString,
-        NetworkTemplateStore.networkTemplate, "easybridge", "activetransfer", null);
+      NetworkTemplateStore.networkTemplate, "easybridge", "activetransfer", null);
     if (!serializedTransfer)
       return null;
 
@@ -194,20 +194,24 @@ export class Transfer implements SerializedTransfer {
       destinationToken: this.destinationToken,
       amount: this.amount,
       currentStep: this.currentStep,
-      bridgeStep: this.bridgeStep,
-      faucetStep: this.faucetStep,
-      swapStep: this.swapStep,
+      bridgeStep: Object.assign({}, this.bridgeStep),
+      faucetStep: Object.assign({}, this.faucetStep),
+      swapStep: Object.assign({}, this.swapStep),
       estimatedReceivedAmount: this.estimatedReceivedAmount,
       userAgreed: this.userAgreed
     };
 
+    // Ditry - Empty some fields to avoid recursive json serialization...
+    serializedTransfer.swapStep.swapFees = null;
+    serializedTransfer.swapStep.trade = null;
+
     return GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString,
-        NetworkTemplateStore.networkTemplate, "easybridge", "activetransfer", serializedTransfer);
+      NetworkTemplateStore.networkTemplate, "easybridge", "activetransfer", serializedTransfer);
   }
 
   public reset() {
     return GlobalStorageService.instance.deleteSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString,
-        NetworkTemplateStore.networkTemplate, "easybridge", "activetransfer");
+      NetworkTemplateStore.networkTemplate, "easybridge", "activetransfer");
   }
 
   /**

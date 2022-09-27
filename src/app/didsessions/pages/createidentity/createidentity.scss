@@ -1,4 +1,4 @@
-@import 'src/app/didsessions/root.scss';
+@import "src/app/didsessions/root.scss";
 
 ion-slides {
   height: calc(100% - (150px + 40px)); // Substract height of slides on approximate height of footer
@@ -13,33 +13,29 @@ ion-slide {
   height: 100%;
 
   ion-label {
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: -0.5px;
-    margin-top: 45px;
+    font-size: 20px;
+    margin-top: 60px;
+    font-weight: 300;
   }
 }
 
 #slide1 {
   img {
-    width: 80px;
-    height: 80px;
+    //width: 80px;
+    //height: 80px;
 
     animation: imgAnimate;
     animation-duration: 800ms;
     animation-fill-mode: forwards;
 
     @keyframes imgAnimate {
-      0% { width: 0px; height: 0px; }
-      100% { width: 120px; height: 120px; }
+      0% {
+        width: 0px;
+      }
+      100% {
+        width: 200px;
+      }
     }
-  }
-
-  h1 {
-    margin: 10px 0 0;
-    font-size: 28px;
-    font-weight: 600;
-    letter-spacing: -1px;
   }
 }
 
@@ -48,16 +44,26 @@ ion-slide {
     position: absolute;
     bottom: 50%;
     animation: imgAnimate2;
-    animation-duration: 1600ms;
-    animation-iteration-count:infinite;
+    animation-duration: 2600ms;
+    animation-iteration-count: infinite;
     animation-fill-mode: forwards;
 
     @keyframes imgAnimate2 {
-      0% { width: 115px; height: 115px; }
-      25% { width: 120px; height: 120px; }
-      50% { width: 115px; height: 115px; }
-      75% { width: 120px; height: 120px; }
-      100% { width: 115px; height: 115px; }
+      0% {
+        width: 190px;
+      }
+      25% {
+        width: 200px;
+      }
+      50% {
+        width: 190px;
+      }
+      75% {
+        width: 200px;
+      }
+      100% {
+        width: 190px;
+      }
     }
   }
 

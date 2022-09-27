@@ -2,6 +2,8 @@ export type ThemeVariant = {
   color: string; // Main background color, eg: #RRGGBB
   boxColor?: string; // Box background color
   textColor?: string;
+  buttonBackgroundColor?: string;
+  buttonTextColor?: string;
 };
 
 export type ThemeConfig = {
