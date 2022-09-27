@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
 import { GlobalDirectivesModule } from "src/app/helpers/directives/module";
+import { TokenChooserComponentModule } from "src/app/multiswap/components/token-chooser/module";
 import { ColorChooserComponent } from "./base/color-chooser/color-chooser.component";
 import { WidgetContainerComponent } from './base/widget-container/widget-container.component';
 import { WidgetHolderComponent } from './base/widget-holder/widget-holder.component';
@@ -77,7 +78,8 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     DragDropModule,
     SharedComponentsModule,
     GlobalDirectivesModule,
-    NewsConfiguratorComponentsModule
+    NewsConfiguratorComponentsModule,
+    TokenChooserComponentModule
   ],
   exports: [
     WidgetContainerComponent

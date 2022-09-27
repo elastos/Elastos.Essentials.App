@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonInput, ModalController, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
@@ -20,11 +21,16 @@ import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service'
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { TokenChooserComponent, TokenChooserComponentOptions, TokenChooserComponentResult } from '../../components/token-chooser/token-chooser.component';
 import { Transfer } from '../../model/transfer';
 import { UIToken } from '../../model/uitoken';
 import { ChaingeSwapService } from '../../services/chaingeswap.service';
+import { SwapUIService } from '../../services/swap.ui.service';
 import { TokenChooserService } from '../../services/tokenchooser.service';
+
+export type MultiSwapHomePageParams = {
+  sourceToken?: UIToken;
+  destinationToken?: UIToken;
+}
 
 /**
  * Migrator main page
@@ -80,9 +86,22 @@ export class HomePage {
     private dAppBrowserService: DappBrowserService,
     private evmService: EVMService,
     private modalCtrl: ModalController,
-    private tokenChooserService: TokenChooserService
+    private route: ActivatedRoute,
+    private router: Router,
+    private tokenChooserService: TokenChooserService,
+    private swapUIService: SwapUIService
   ) {
     GlobalFirebaseService.instance.logEvent("easybridge_home_enter");
+
+    route.queryParams.subscribe(params => {
+      if (this.router.getCurrentNavigation().extras.state) {
+        let state: MultiSwapHomePageParams = this.router.getCurrentNavigation().extras.state;
+
+        // Source and destination tokens can be provided by the caller, or not
+        this.selectedSourceToken = state.sourceToken;
+        this.selectedDestinationToken = state.destinationToken;
+      }
+    });
   }
 
   ionViewWillEnter() {
@@ -271,33 +290,8 @@ export class HomePage {
     }
   }
 
-  private async pickToken(forSource: boolean): Promise<UIToken> {
-    let options: TokenChooserComponentOptions = {
-      mode: forSource ? "source" : "destination",
-      sourceToken: forSource || !this.selectedSourceToken ? null : this.selectedSourceToken.token
-    };
-
-    let modal = await this.modalCtrl.create({
-      component: TokenChooserComponent,
-      componentProps: options
-    });
-
-    return new Promise(resolve => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
-      modal.onWillDismiss().then(async (params) => {
-        Logger.log('multiswap', 'Token selected:', params);
-        if (params.data) {
-          let result = <TokenChooserComponentResult>params.data;
-
-          resolve(result.pickedToken);
-        }
-        else {
-          resolve(null);
-        }
-      });
-      void modal.present();
-
-    });
+  private pickToken(forSource: boolean): Promise<UIToken> {
+    return this.swapUIService.pickToken(forSource, forSource || !this.selectedSourceToken ? null : this.selectedSourceToken.token)
   }
 
   public selectSourceToken(sourceToken: UIToken) {

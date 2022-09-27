@@ -16,18 +16,26 @@
   </ion-row>
 
   <ion-row class="tokens-row">
-    <ng-container *ngTemplateOutlet="token"></ng-container>
+    <ng-container [ngTemplateOutlet]="token" [ngTemplateOutletContext]="{$implicit: sourceToken, forSource: true}">
+    </ng-container>
     <img class="exchange"
       [src]="theme.darkMode ? '/assets/launcher/widgets/white-swap.svg' : '/assets/launcher/widgets/swap.svg'" />
-    <ng-container *ngTemplateOutlet="token"></ng-container>
+    <ng-container [ngTemplateOutlet]="token"
+      [ngTemplateOutletContext]="{$implicit: destinationToken, forSource: false}"></ng-container>
   </ion-row>
 </ion-row>
 
-<ng-template #token>
-  <div class="token">
-    <img class="network-logo" />
+<ng-template #token let-token let-forSource="forSource">
+  <div class="token" (click)="pickToken(forSource, token)">
+    <img class="network-logo" *ngIf="token" [src]="token.token.network.logo" />
+
     <div class="selector ion-activatable ripple">
-      <div class="token-name">Glide</div>
+      <!-- Token picked -->
+      <div class="token-name" *ngIf="token">{{ token.token.getSymbol() }}</div>
+
+      <!-- No token picked yet -->
+      <div class="no-token" *ngIf="!token">Pick token</div>
+
       <img class="arrow"
         [src]="theme.darkMode ? '/assets/launcher/widgets/white-down-arrow.svg' : '/assets/launcher/widgets/down-arrow.svg'" />
       <ion-ripple-effect></ion-ripple-effect>
