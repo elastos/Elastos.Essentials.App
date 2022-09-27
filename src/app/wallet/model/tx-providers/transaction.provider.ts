@@ -233,6 +233,8 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    * NOTE: This method must be called only once (per refresh) with all tokens together, because it resets the NFTs list.
    */
   public async onTokenInfoFound(tokens: ERCTokenInfo[]) {
+    if (!tokens || (tokens.length === 0)) return;
+
     let allNewCoinsList: ERCTokenInfo[] = [];
     let newERC20CoinsList: string[] = [];
     const timestamp = (new Date()).valueOf();
