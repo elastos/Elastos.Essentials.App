@@ -275,24 +275,20 @@ export class DappBrowserService implements GlobalService {
             }
         }
         else {
+            this.userAddress = null;
             this.activeChainID = 0;
         }
 
         // Prepare our web3 provider bridge and elastos connectors for injection
         Logger.log("dappbrowser", "Loading the IAB web3 provider");
-        if (this.userAddress) {
-            this.web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
-            this.web3ProviderCode = this.web3ProviderCode + `
-            console.log('Elastos Essentials Web3 provider is being created');
-            window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.rpcUrl}', '${this.userAddress}');
-            window.web3 = {
-                currentProvider: window.ethereum
-            };
-            console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3);`;
-        }
-        else {
-            this.web3ProviderCode = ''; // No wallet, no injection.
-        }
+        this.web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
+        this.web3ProviderCode = this.web3ProviderCode + `
+        console.log('Elastos Essentials Web3 provider is being created');
+        window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.rpcUrl}', '${this.userAddress}');
+        window.web3 = {
+            currentProvider: window.ethereum
+        };
+        console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3);`;
 
         Logger.log("dappbrowser", "Loading the IAB elastos connector");
         this.elastosConnectorCode = await this.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
@@ -426,7 +422,7 @@ export class DappBrowserService implements GlobalService {
         }
         else {
             this.rpcUrl = null;
-            this.activeChainID = 0;
+            this.activeChainID = -1;
         }
 
         Logger.log("dappbrowser", "Sending active network to dapp", activeNetwork.key, this.activeChainID, this.rpcUrl);
