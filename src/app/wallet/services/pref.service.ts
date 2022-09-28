@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Mnemonic } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { GlobalNetworksService, LRW_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
@@ -9,7 +10,7 @@ import { Config } from '../config/Config';
 })
 export class WalletPrefsService {
   public activeNetworkTemplate: string;
-  public mnemonicLang = WalletPlugin.MnemonicLanguage.English;
+  public mnemonicLang = Mnemonic.ENGLISH;
   private subscription: Subscription = null;
   private languageSubscription: Subscription = null;
 
@@ -63,13 +64,13 @@ export class WalletPrefsService {
 
   private setMnemonicLangByLanguage(lang) {
     if (lang === 'zh') {
-      this.setMnemonicLang(WalletPlugin.MnemonicLanguage.ChineseSimplified);
+      this.setMnemonicLang(Mnemonic.CHINESE_SIMPLIFIED);
     } else if (lang === 'fr') {
-      this.setMnemonicLang(WalletPlugin.MnemonicLanguage.French);
+      this.setMnemonicLang(Mnemonic.FRENCH);
     } else if (lang === 'it') {
-      this.setMnemonicLang(WalletPlugin.MnemonicLanguage.Italian);
+      this.setMnemonicLang(Mnemonic.ITALIAN);
     } else {
-      this.setMnemonicLang(WalletPlugin.MnemonicLanguage.English);
+      this.setMnemonicLang(Mnemonic.ENGLISH);
     }
   }
 
