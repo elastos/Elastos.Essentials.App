@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
-import { Contact, ContactsService } from '../../services/contacts.service';
+import { ContactsService } from '../../services/contacts.service';
 
 type CryptoAddressInfo = {
   cryptoname: string;
@@ -57,9 +57,31 @@ export class ContactsComponent implements OnInit {
     }
   }
 
-  selectContact(contact: Contact) {
+  selectContact(contact: CryptoAddressInfo) {
     void this.modalCtrl.dismiss({
       contact: contact
     });
+  }
+
+  getResolverLogo(contact: CryptoAddressInfo) {
+    let logo = '';
+    switch (contact.resolver) {
+        case 'ENS':
+            logo = 'assets/wallet/logos/ENS.svg';
+        break;
+        case 'ELADomain':
+            logo = 'assets/wallet/logos/eladomain.svg';
+        break;
+        case 'Idriss':
+            logo = 'assets/wallet/logos/idriss.png';
+        break;
+        case 'UnstoppableDomains':
+            logo = 'assets/wallet/logos/unstoppableDomains.png';
+        break;
+        default:
+            logo = 'assets/wallet/logos/cryptoname.png';
+        break;
+    }
+    return logo;
   }
 }
