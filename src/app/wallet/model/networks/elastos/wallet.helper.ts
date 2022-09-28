@@ -6,7 +6,7 @@ import { ElastosMainChainWalletNetworkOptions } from "../../masterwallets/wallet
 import { AddressUsage } from "../../safes/addressusage";
 import { ElastosTransaction, PaginatedTransactions } from "../../tx-providers/transaction.types";
 import { AnySubWallet, SubWallet } from "../base/subwallets/subwallet";
-import { MainChainSPVSDKSafe } from "./mainchain/safes/mainchain.spvsdk.safe";
+import { MainChainSubWallet } from "./mainchain/subwallets/mainchain.subwallet";
 
 export class WalletHelper {
     /**
@@ -17,7 +17,7 @@ export class WalletHelper {
     }
 
     public static async getOwnerAddress(subWallet: AnySubWallet): Promise<string> {
-        return await (subWallet.networkWallet.safe as MainChainSPVSDKSafe).getOwnerAddress();
+        return (subWallet as MainChainSubWallet).getOwnerAddress();
     }
 
     public static async getTransactionByAddress(subWallet: SubWallet<any, ElastosMainChainWalletNetworkOptions>, internalAddress: boolean, transactionLimit: number, timestamp = 0): Promise<PaginatedTransactions<ElastosTransaction>[]> {
@@ -26,7 +26,7 @@ export class WalletHelper {
 
         let maxAddressCount = subWallet.getAddressCount(internalAddress);
         let count = 150;
-        let addressArray = null;
+        let addressArray: string[] = null;
 
         do {
             if (startIndex + count > maxAddressCount) {
