@@ -3,11 +3,11 @@
 .container {
     min-height: 100%;
     padding: 20px;
-  
+
     .main-title-row {
         margin-bottom: 10px;
         margin-left: 5px;
-    
+
         p {
             margin: 0;
             font-size: 13px;
@@ -19,14 +19,36 @@
             opacity: 0.7;
         }
     }
-    
-    .subwallet-row {    
+
+    .subwallet-row {
         .left-col {
             align-items: center;
+            display: flex;
+            align-self: start;
+            flex-direction: column-reverse;
+
+            .icon-container {
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                background: #fff;
+                width: 40px;
+                height: 40px;
+                border-radius: 30%;
+                overflow: hidden;
+                border: solid 2px white;
+
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    border: 0;
+                    padding: 0;
+                }
+            }
         }
     }
 }
-  
+
 .dark-container {
     .main-title-row {
         p {
