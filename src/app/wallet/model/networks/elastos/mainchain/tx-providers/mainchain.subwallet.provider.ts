@@ -20,6 +20,8 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
   // for performance we only merge the transactions from timestampStart to timestampEnd.
   private timestampStart = 0;
   private timestampEnd = 0;
+  // Save the transactions not merged, these transactions will be merged when load more transactions.
+  private transactionsUnmerged: ElastosTransaction[] = [];
 
   protected getProviderTransactionInfo(transaction: ElastosTransaction): ProviderTransactionInfo {
     return {
@@ -180,8 +182,17 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
         // txhistory.time === 0: pending transaction.
         if ((txhistory.time === 0) || (txhistory.time >= this.timestampStart)) {
           transactions.push(txhistory);
+        } else {
+            this.transactionsUnmerged.push(txhistory)
         }
       }
+    }
+
+    for (let i = this.transactionsUnmerged.length - 1; i > 0; i--) {
+        if (this.transactionsUnmerged[i].time >= this.timestampStart) {
+            transactions.push(this.transactionsUnmerged[i]);
+            this.transactionsUnmerged.splice(i, 1)
+        }
     }
 
     let allSentTx = transactions.filter((tx) => {
