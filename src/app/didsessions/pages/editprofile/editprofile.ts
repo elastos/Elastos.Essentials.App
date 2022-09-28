@@ -72,7 +72,14 @@ export class EditProfilePage {
   async next() {
     this.creatingDid = true;
     if (this.checkParams()) {
-      await this.identityService.runNextStep(this.nextStepId, this.name);
+        try {
+            await this.identityService.runNextStep(this.nextStepId, this.name);
+        }
+        catch (e) {
+            // TODO: org.spongycastle.crypto.InvalidCipherTextException: pad block corrupted.
+            // It can work if try again.
+            Logger.warn('didsessions', 'Editprofile - runNextStep exception:', e);
+        }
     }
     this.creatingDid = false;
   }
