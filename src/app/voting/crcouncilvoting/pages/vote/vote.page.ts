@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -61,8 +60,8 @@ export class VotePage implements OnInit, OnDestroy {
     async ionViewWillEnter() {
         this.initialComputationDone = false;
 
-        this.titleBar.setBackgroundColor("#732CCE");
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+        //this.titleBar.setBackgroundColor("#732CCE");
+        //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.my-candidates'));
 
         this.totalEla = await this.voteService.getMaxVotes();

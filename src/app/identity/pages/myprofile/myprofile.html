@@ -98,7 +98,8 @@
     <ion-grid class="options-grid">
       <ion-row class="options-row">
         <ion-col size="5.8" class="publish ripple ion-activatable" (click)="profileService.publish()">
-          <img src=" /assets/identity/svg/publish-button.svg" />
+          <img
+            [src]="theme.darkMode ? '/assets/identity/svg/publish-button.svg' : '/assets/identity/svg/publish-button-dark.svg'" />
           <h2>{{ 'identity.publish' | translate}}</h2>
           <span>{{ 'identity.publish-description' | translate }}</span>
           <ion-ripple-effect></ion-ripple-effect>

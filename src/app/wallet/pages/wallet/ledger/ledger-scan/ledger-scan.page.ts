@@ -30,7 +30,7 @@ import { BLECentralPluginBridge } from 'src/app/helpers/ledger/hw-transport-cord
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Native } from 'src/app/wallet/services/native.service';
 import { LedgerConnectType } from '../ledger-connect/ledger-connect.page';
 

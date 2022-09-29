@@ -1,8 +1,7 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CoinType } from '../../model/coin';
@@ -38,8 +37,6 @@ export type NetworkChooserComponentOptions = {
   styleUrls: ['./network-chooser.component.scss'],
 })
 export class NetworkChooserComponent implements OnInit, OnDestroy {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-
   public CoinType = CoinType;
   public options: NetworkChooserComponentOptions = null;
   public currentNetwork: AnyNetwork;

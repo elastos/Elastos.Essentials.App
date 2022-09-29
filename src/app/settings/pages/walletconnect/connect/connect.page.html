@@ -57,9 +57,7 @@
       </ion-row>
     </div>
 
-    <div class="btn ion-activatable ripple" (click)="openSession()">
-      <ion-label>{{ 'settings.connect' | translate }}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
+    <ebutton (clicked)="openSession()" [title]="'settings.connect' | translate">
+    </ebutton>
   </ion-grid>
 </ion-content>

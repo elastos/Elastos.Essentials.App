@@ -11,9 +11,9 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
@@ -306,15 +306,17 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
         await this.checkNoInAppNoticeStatus();
 
-        this.favoritesSubscription = this.favoritesService.favorites.subscribe(favorites => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.favoritesSubscription = this.favoritesService.favorites.subscribe(async favorites => {
             if (favorites) {
-                this.updateFavoritesAndApps();
+                await this.updateFavoritesAndApps();
             }
         });
 
-        this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(async network => {
             if (network) {
-                this.updateFavoritesAndApps();
+                await this.updateFavoritesAndApps();
             }
         });
 
@@ -341,11 +343,11 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
-    private updateFavoritesAndApps() {
+    private async updateFavoritesAndApps() {
         // Build dapps and favorites only when the active network and favorites are ininialized.
         if (this.favoritesService.favorites.value && this.walletNetworkService.activeNetwork.value) {
             this.buildFilteredFavorites();
-            this.buildFilteredDApps();
+            await this.buildFilteredDApps();
             this.buildFilteredDAppsWithFavorites();
         }
     }

@@ -30,7 +30,7 @@ ion-content {
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 20px;
-        background: white;
+        background: var(--essentials-box-color);
     }
 
     .glide-container {
@@ -59,7 +59,7 @@ ion-content {
             flex-direction: row;
             align-items: center;
             border: solid 2px transparent;
-            background: white;
+            background: var(--essentials-box-color);
 
             .left {
                 margin-right: 15px;
@@ -70,7 +70,7 @@ ion-content {
             }
 
             &.selected {
-                border-color: #9368f0;
+                border-color: var(--ion-text-color);
             }
 
             &.gone {
@@ -100,7 +100,7 @@ ion-content {
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 5px;
-        background: white;
+        background: var(--essentials-box-color);
 
         .input-row {
             display: flex;
@@ -159,8 +159,7 @@ ion-content {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    background: white;
-    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1);
+    background: var(--ion-background-color);
 
     .last-error {
         margin: 20px 0;
@@ -191,55 +190,6 @@ ion-content {
 
         .progress-message {
             margin-bottom: 10px;
-        }
-    }
-}
-
-.dark-container {
-    .card {
-        background: #212021;
-    }
-
-    .amount-container {
-        background: #212021;
-
-        .input-row {
-            .transfer-input {
-                color: white;
-            }
-        }
-
-        .balance-row {
-            color: #ccc;
-        }
-    }
-
-    .source-tokens,
-    .destination-tokens {
-        .source-token,
-        .destination-token {
-            background: #212021;
-        }
-    }
-
-    .transfer-summary {
-        color: #acb1b6;
-
-        .heading {
-            color: #fff;
-        }
-    }
-
-    .footer {
-        background: #212021;
-        box-shadow: 0 -10px 20px rgba(255, 255, 255, 0.1);
-
-        .transfer-progress {
-            color: #acb1b6;
-
-            .heading {
-                color: white;
-            }
         }
     }
 }

@@ -611,4 +611,11 @@ export class CredentialAccessRequestPage {
       return item.value;
     }
   }
+
+  public getButtonTitle(): string {
+    if (this.publishStatusFetched && this.canDeliver && !this.publishingDidRequired)
+      return this.translate.instant('identity.accept');
+    else if (this.publishStatusFetched && (!this.canDeliver || this.publishingDidRequired))
+      return this.translate.instant('common.close');
+  }
 }

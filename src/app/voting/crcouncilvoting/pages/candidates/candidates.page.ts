@@ -3,7 +3,7 @@ import { ToastController } from "@ionic/angular";
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
 import { GlobalNativeService } from "src/app/services/global.native.service";
@@ -54,8 +54,8 @@ export class CandidatesPage implements OnInit {
     }
 
     async ionViewWillEnter() {
-        this.titleBar.setBackgroundColor("#732CCE");
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+        //this.titleBar.setBackgroundColor("#732CCE");
+        //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
 
         if (!this.candidatesFetched) {

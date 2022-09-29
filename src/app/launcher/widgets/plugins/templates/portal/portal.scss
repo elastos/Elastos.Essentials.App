@@ -3,47 +3,14 @@
 
 .template-root {
   .right-col {
-    ion-button {
-      height: 40px;
+    ebutton {
+      height: 44px;
+      min-height: 44px;
       width: 100%;
       font-size: 12px;
       font-weight: bold;
       overflow: hidden;
-      --padding-start: 5px;
-      --padding-end: 5px;
       margin: 0;
-
-      .inner {
-        width: auto;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        img {
-          max-height: 24px;
-          width: 24px;
-          margin-right: 5px;
-          background: #ccc;
-          border-radius: 50%;
-          padding: 1px;
-        }
-      }
-    }
-  }
-
-  &.darkContainer {
-    .right-col {
-      ion-button {
-        .inner {
-          img {
-            background: #535153;
-          }
-        }
-      }
     }
   }
 }

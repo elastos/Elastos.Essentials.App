@@ -3,7 +3,7 @@
 .network-container {
     border-radius: 11px;
     padding: 5px;
-    margin: 10px 15px;
+    margin: 10px 10px;
     background-color: var(--essentials-box-color);
 
     .displayed-network {
@@ -142,7 +142,7 @@ ion-slide {
 }
 
 .single-slide {
-    padding: 15px 20px;
+    padding: 15px 10px;
 }
 
 ion-slide,
@@ -153,10 +153,6 @@ ion-slide,
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 50px;
-
-    .card-row {
-        color: white;
-    }
 
     .main-title-row {
         margin-bottom: 10px;
@@ -279,7 +275,6 @@ ion-slide,
                 .change {
                     vertical-align: middle;
                     margin-left: 5px;
-                    color: #ffffff;
                 }
             }
         }

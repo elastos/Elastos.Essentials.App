@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { App } from "src/app/model/app.enum";
 import { GlobalFirebaseService } from "src/app/services/global.firebase.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
@@ -42,8 +42,8 @@ export class CRMembersPage implements OnInit {
     }
 
     async ionViewWillEnter() {
-        this.titleBar.setBackgroundColor("#732CCE");
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+        //this.titleBar.setBackgroundColor("#732CCE");
+        //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
 
         let available = await this.crCouncilService.getCRDepositcoinAvailable();

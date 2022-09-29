@@ -3,7 +3,7 @@
 .container {
     min-height: 100%;
     margin: 0;
-    padding: 15px 20px 30px;
+    padding: 15px 10px 30px;
     margin-bottom: 50px;
 
     .main-title-row {
@@ -36,13 +36,7 @@
     .card-row {
         position: relative;
         border-radius: 20px;
-        padding: 25px 10px 10px;
         margin-bottom: 32px;
-
-        // Default background
-        background-image: url("/assets/wallet/cards/subcards/card-black.svg");
-        background-repeat: no-repeat;
-        background-size: cover;
 
         .card-label-row {
             display: flex;
@@ -113,54 +107,6 @@
                     font-size: 20px;
                 }
             }
-        }
-
-        .arrow-down {
-            position: absolute;
-            z-index: 0;
-            bottom: -15px;
-            left: 12%;
-            height: 30px;
-            width: 30px;
-            transform: translate(2px, -2px) rotate(-45deg);
-            -webkit-transform: translate(2px, -2px) rotate(-45deg);
-            border-right: 2px solid transparent;
-            border-top: 2px solid transparent;
-            display: inline-block;
-            -moz-transform: translate(2px, -2px) rotate(-45deg);
-            -ms-transform: translate(2px, -2px) rotate(-45deg);
-            -o-transform: translate(2px, -2px) rotate(-45deg);
-            // Default color
-            background-color: #242424;
-        }
-    }
-
-    .black-card {
-        background-image: url("/assets/wallet/cards/subcards/card-black.svg");
-
-        .arrow-down {
-            background-color: #242424;
-        }
-    }
-    .blue-card {
-        background-image: url("/assets/wallet/cards/subcards/card-lightblue.svg");
-
-        .arrow-down {
-            background-color: #28d3c5;
-        }
-    }
-    .gray-card {
-        background-image: url("/assets/wallet/cards/subcards/card-coolgray.svg");
-
-        .arrow-down {
-            background-color: #8487a1;
-        }
-    }
-    .gray2-card {
-        background-image: url("/assets/wallet/cards/subcards/card-warmgray.svg");
-
-        .arrow-down {
-            background-color: #989797;
         }
     }
 
@@ -348,8 +294,6 @@
     position: fixed;
     bottom: 0;
     width: 100%;
-    color: white;
-    background: #fff;
     transition: transform 0.3s ease-in-out; // Transition on hide/show.
 
     .card-btn-row {
@@ -360,62 +304,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-
-            .btn-box {
-                position: relative;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                border-radius: 13px;
-                overflow: hidden !important;
-                justify-content: center;
-                padding: 10px 5px;
-                flex-direction: column;
-                background: #f5f7fe;
-
-                img {
-                    width: 24px;
-                    height: 24px;
-                    object-fit: contain;
-                }
-
-                .transfer {
-                }
-
-                .send,
-                .receive {
-                }
-
-                .btn-label {
-                    margin-bottom: 0;
-                    margin-top: 5px;
-                    font-size: 8px;
-                    font-weight: 600;
-                    line-height: 1.25;
-                    letter-spacing: 0.8px;
-                    text-align: center;
-                    color: #3c3c3c;
-                    text-transform: uppercase;
-                }
-            }
-        }
-    }
-}
-
-.darkmode {
-    .footer {
-        background: #212021;
-
-        .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background: #3c3c3c;
-
-                    .btn-label {
-                        color: #fdfeff;
-                    }
-                }
-            }
         }
     }
 }

@@ -12,8 +12,6 @@
 .tokens-container {
   border-radius: 11px;
   padding: 5px;
-  background-color: #ffffff;
-  box-shadow: 0 3px 15px 0 #ededf0;
   height: 100vh;
 
   .header-row {
@@ -24,7 +22,7 @@
       justify-content: space-between;
       align-items: flex-start;
 
-      ion-label {
+      &.title-col {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -49,7 +47,6 @@
           font-weight: 500;
           letter-spacing: 1px;
           text-align: left;
-          color: #000000;
           opacity: 0.7;
         }
       }
@@ -74,7 +71,7 @@
     }
 
     .search-bar {
-      border: solid 1px #666;
+      border: solid 1px var(--essentials-border-separator-color);
       border-radius: 8px;
       width: 100%;
       display: flex;
@@ -105,7 +102,7 @@
         border-radius: 17px;
         margin-bottom: 7.5px;
         background-color: transparent;
-        border: 1px solid #ededf0;
+        border: 1px solid var(--essentials-border-separator-color);
 
         ion-col {
           display: flex;
@@ -142,7 +139,7 @@
         }
 
         &.selected-network {
-          background-color: #ededf0;
+          background-color: var(--essentials-box-color);
         }
       }
     }
@@ -177,7 +174,6 @@
         border-radius: 10px;
         align-items: center;
         border: solid 2px transparent;
-        background: white;
         display: flex;
         flex-direction: row;
         overflow: visible;
@@ -215,58 +211,6 @@
 
           .token-name {
             opacity: 50%;
-          }
-        }
-      }
-    }
-  }
-}
-
-.dark-container {
-  background-color: #212021;
-  box-shadow: 0px 123px 89px #000000ad;
-  color: #fff;
-
-  .header-row {
-    ion-col {
-      ion-label {
-        h1,
-        p {
-          color: #ffffff;
-        }
-      }
-    }
-  }
-
-  .nets-tokens {
-    .networks {
-      .network-row {
-        border: 1px solid #464446;
-        background-color: transparent;
-        box-shadow: none;
-        color: white;
-
-        .left-col {
-          .name {
-            color: #ccc;
-          }
-        }
-
-        &.selected-network {
-          background-color: #312f31;
-        }
-      }
-    }
-
-    .tokens {
-      .token {
-        background: #212021;
-
-        .right {
-          .amount-symbol {
-            .token-balance {
-              color: #ddd;
-            }
           }
         }
       }

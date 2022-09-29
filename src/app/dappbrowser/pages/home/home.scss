@@ -39,7 +39,8 @@
 
             h3 {
                 margin: 0 0 15px 0;
-                font-size: 14px;
+                font-size: 16px;
+                font-weight: 300;
             }
         }
 
@@ -65,7 +66,7 @@
     }
 
     .no-in-app-notice-row {
-        background-color: #fff;
+        background-color: var(--essentials-box-color);
         padding: 5px;
 
         .icon {
@@ -117,12 +118,12 @@
                 align-items: center;
                 justify-content: center;
                 display: flex;
-                background: #fff;
+                background: var(--essentials-box-color);
                 width: 50px;
                 height: 50px;
                 border-radius: 30%;
                 overflow: hidden;
-                border: solid 2px white;
+                border: solid 2px var(--essentials-border-separator-color);
 
                 img {
                     max-width: 100%;
@@ -145,8 +146,8 @@
             }
 
             .description {
-                font-size: 10px;
-                opacity: 0.7;
+                font-size: 12px;
+                font-weight: 300;
             }
         }
 
@@ -171,29 +172,6 @@
     .no-dapp-row {
         text-align: center;
         margin: 10px;
-    }
-}
-
-.dark-container {
-    .header-row {
-        ion-col {
-            h2,
-            h3 {
-                opacity: 1;
-            }
-        }
-    }
-
-    .no-in-app-notice-row {
-        background-color: #212021;
-    }
-
-    .dapp-row {
-        .middle-col {
-            .description {
-                opacity: 1;
-            }
-        }
     }
 }
 

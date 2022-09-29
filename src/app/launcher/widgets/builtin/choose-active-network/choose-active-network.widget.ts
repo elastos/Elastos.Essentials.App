@@ -58,27 +58,45 @@ export class ChooseActiveNetworkWidget implements IWidget, OnInit, OnDestroy {
    * for the widget.
    */
   private prepareLastUsedNetworks(lastUsedNetworks: LastUsedNetworks) {
-    // Use a defqult list of networks we want to show in the recently used networks list,
-    // in case user hasn't used any network yet. Ze do this in order to not hqve qn empty list,
+    if (!lastUsedNetworks)
+      return;
+
+    this.lastUsedNetworks = [];
+
+    // Use a default list of networks we want to show in the recently used networks list,
+    // in case user hasn't used any network yet. We do this in order to not have an empty list,
     // but always 4 entries.
     // By display priority order.
     const defaultNetworks: AnyNetwork[] = [
       this.walletNetworkService.getNetworkByKey("elastossmartchain"),
       this.walletNetworkService.getNetworkByKey("ethereum"),
       this.walletNetworkService.getNetworkByKey("btc"),
-      this.walletNetworkService.getNetworkByKey("bsc")
+      this.walletNetworkService.getNetworkByKey("bsc"),
+      this.walletNetworkService.getNetworkByKey("elastos"),
+      this.walletNetworkService.getNetworkByKey("polygon"),
+      this.walletNetworkService.getNetworkByKey("iotex"),
+      this.walletNetworkService.getNetworkByKey("heco")
     ].filter(n => !!n); // Filter undefined networks to make sure we are ready
 
-    this.lastUsedNetworks = lastUsedNetworks.list.map(lun => lun.network).slice(0, 4); // Keep only the last 4 entries
+    let networksList = lastUsedNetworks.list.map(lun => lun.network).slice(0, 4); // Keep only the last 4 entries
 
     // Complete user's last used networks with default networks, if we don't have 4 yet.
-    this.lastUsedNetworks = [...this.lastUsedNetworks, ...defaultNetworks.slice(0, 4 - this.lastUsedNetworks.length)];
+    // Only append networks that are not already in the list.
+    let checkedIndex = 0;
+    while (networksList.length < 4) {
+      let existingIndex = networksList.findIndex(n => n.key === defaultNetworks[checkedIndex].key);
+      if (existingIndex < 0)
+        networksList.push(defaultNetworks[checkedIndex]);
+      checkedIndex++;
+    }
 
     // Among the most recent 4 networks, sort networks alphabetically to avoid changing their positions on the
     // UI every time as this looks clunky
-    this.lastUsedNetworks.sort((a, b) => {
+    networksList.sort((a, b) => {
       return a.name.localeCompare(b.key);
     });
+
+    this.lastUsedNetworks = networksList;
   }
 
   public selectNetwork(network: AnyNetwork) {

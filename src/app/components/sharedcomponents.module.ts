@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { GlobalDirectivesModule } from '../helpers/directives/module';
 import { ConfirmationPopupComponent } from './confirmation-popup/confirmation-popup.component';
 import { DIDPublishingComponent } from './did-publishing/did-publishing.component';
 import { EButtonComponent } from './ebutton/ebutton.component';
@@ -28,7 +29,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule
+    TranslateModule,
+    GlobalDirectivesModule
   ],
   exports: [
     TitleBarComponent,

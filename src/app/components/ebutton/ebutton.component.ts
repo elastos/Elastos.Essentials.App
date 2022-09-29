@@ -17,6 +17,9 @@ export class EButtonComponent implements OnInit {
   public disabled = false;
 
   @Input()
+  public uppercase = false;
+
+  @Input()
   public spinning = false;
 
   @Input("lefticon")
@@ -39,5 +42,13 @@ export class EButtonComponent implements OnInit {
   public onClicked() {
     if (!this.disabled)
       this.clicked.emit();
+  }
+
+  public leftIconShouldBeCached(): boolean {
+    return !!this.leftIcon && this.leftIcon.startsWith("http")
+  }
+
+  public topIconShouldBeCached(): boolean {
+    return !!this.topIcon && this.topIcon.startsWith("http")
   }
 }

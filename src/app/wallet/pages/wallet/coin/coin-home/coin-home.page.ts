@@ -616,6 +616,21 @@ export class CoinHomePage implements OnInit {
         return this.canEarnSwapOrBridge() && this.shouldShowAllActions !== null;
     }
 
+    public getActionToggleIcon(): string {
+        if (this.shouldShowAllActions) {
+            if (this.theme.darkMode)
+                return 'assets/wallet/icons/white-down-arrow-large.svg';
+            else
+                return 'assets/wallet/icons/black-down-arrow-large.svg';
+        }
+        else {
+            if (this.theme.darkMode)
+                return 'assets/wallet/icons/white-up-arrow-large.svg';
+            else
+                return 'assets/wallet/icons/black-up-arrow-large.svg';
+        }
+    }
+
     /**
      * Displayable list item title for offline transactions
      */

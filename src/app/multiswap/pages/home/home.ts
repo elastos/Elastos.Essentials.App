@@ -12,7 +12,7 @@ import { GlobalFirebaseService } from 'src/app/services/global.firebase.service'
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Coin } from 'src/app/wallet/model/coin';
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
@@ -105,7 +105,7 @@ export class HomePage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('easybridge.home-title'));
+    this.titleBar.setTitle(this.translate.instant('Swap tokens'));
   }
 
   ionViewDidEnter() {

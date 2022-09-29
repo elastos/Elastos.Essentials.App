@@ -1,40 +1,26 @@
 @import "src/app/voting/root.scss";
 
 * {
-    font-family: 'Raleway' !important;
+    font-family: "Raleway" !important;
 }
 
 ion-content {
-    --background: #FFF;
-}
-
-ion-content.dark-container {
-    --background: #000;
 }
 
 .footer {
-    background: #FFF;
 }
 
 .council-header {
     height: 55px;
-    display:flex;
+    display: flex;
     position: fixed;
     left: 0;
     right: 0;
     justify-content: center;
     align-items: center;
-    background: #732dcf;
     z-index: 10;
-    color: #ffffff;
     font-weight: 500;
     font-size: 14px;
     border-bottom-left-radius: 25px;
     border-bottom-right-radius: 25px;
-}
-
-.dark-container {
-    .footer {
-        background: #000;
-    }
 }
