@@ -4,7 +4,7 @@ import { Logger } from "src/app/logger";
 import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { EthereumAPI, EthereumAPIType } from '../../networks/ethereum/network/ethereum.api';
 import { Address } from '../addresses/Address';
-import { CryptoNameAddress } from '../addresses/CryptoNameAddress';
+import { ENSAddress } from '../addresses/ENSAddress';
 import { Resolver } from "./Resolver";
 
 export class ENSResolver extends Resolver {
@@ -51,7 +51,7 @@ export class ENSResolver extends Resolver {
                     let coinType = result.records.coinTypes[index];
                     let address = (coinType as any).addr;
                     if (coinType.type === 'addr' && address && (!subWallet || await subWallet.isAddressValid(address))) {
-                        addresses.push(new CryptoNameAddress(name, address, coinType.coin));
+                        addresses.push(new ENSAddress(name, address, coinType.coin));
                     }
                 }
             }

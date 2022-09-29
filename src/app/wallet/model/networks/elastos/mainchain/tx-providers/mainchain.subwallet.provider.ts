@@ -183,11 +183,17 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
         if ((txhistory.time === 0) || (txhistory.time >= this.timestampStart)) {
           transactions.push(txhistory);
         } else {
+            // Save transactions not unmerged.
+            // These transactions can only be displayed when users click more.
+            // eg. Address A has 100 transactions, Address B has 5 transactions, and there is no transaction of B in the first 50 transactions.
+            // The first time we get transactions, we get 50 transactions of A and 5 transactions of B.
+            // In the first merger, B's transaction is earlier, so it is not necessary to participate. So we save these transactions.
             this.transactionsUnmerged.push(txhistory)
         }
       }
     }
 
+    // Add transactions not merged with other addresses, then merge these transactions.
     for (let i = this.transactionsUnmerged.length - 1; i > 0; i--) {
         if (this.transactionsUnmerged[i].time >= this.timestampStart) {
             transactions.push(this.transactionsUnmerged[i]);
