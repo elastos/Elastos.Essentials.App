@@ -22,9 +22,7 @@
     <p *ngIf="!multiSigWallet">
       {{ 'wallet.multi-sig-tx-pick-wallet' | translate }}
     </p>
-    <ion-button color="secondary" (click)="pickMultiSigWallet()">
-      <ion-label>{{ 'wallet.multi-sig-tx-select-wallet' | translate }}</ion-label>
-    </ion-button>
+    <ebutton (clicked)="pickMultiSigWallet()" [title]="'wallet.multi-sig-tx-select-wallet' | translate"> </ebutton>
     <p *ngIf="multiSigWallet">
       <b>{{ 'wallet.multi-sig-tx-selected-wallet' | translate }}:</b> {{ multiSigWallet.name }}
     </p>

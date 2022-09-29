@@ -6,9 +6,9 @@
             <p>{{ 'hivemanager.pickplanpurchase.purchase-msg' | translate }}</p>
             <div class="bubble-tail"></div>
         </div>
-    
+
         <payment-plan [purchaseablePlan]="planToPurchase"></payment-plan>
 
-        <ion-button (click)="purchasePlan()">{{ 'hivemanager.pickplanpurchase.purchase-now' | translate }}</ion-button>
+        <ebutton (clicked)="purchasePlan()" [title]="'hivemanager.pickplanpurchase.purchase-now' | translate"></ebutton>
     </div>
 </ion-content>

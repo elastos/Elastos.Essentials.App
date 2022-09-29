@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
@@ -104,7 +104,7 @@ export class VotePage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
-        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+        //this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
         void this.setRegistrationIcon();
     }
 

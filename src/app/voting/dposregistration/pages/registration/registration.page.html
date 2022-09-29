@@ -56,26 +56,19 @@
 
         <ion-row class="btn-container">
             <ng-container *ngIf="!needConfirm">
-                <ion-button *ngIf="dposInfo.state == 'Unregistered'" color="success" (click)="checkValues()">
-                    {{ 'dposregistration.register' | translate }}
-                </ion-button>
-                <ion-button *ngIf="dposInfo.state == 'Active'" color="success" (click)="checkValues()">
-                    {{ 'dposregistration.update' | translate }}
-                </ion-button>
+                <ebutton *ngIf="dposInfo.state == 'Unregistered'" (clicked)="checkValues()"
+                    [title]="'dposregistration.register' | translate"> </ebutton>
+                <ebutton *ngIf="dposInfo.state == 'Active'" (clicked)="checkValues()"
+                    [title]="'dposregistration.update' | translate"> </ebutton>
             </ng-container>
 
             <ion-row class="btn-row" *ngIf="needConfirm">
                 <ion-col class="left-col">
-                    <ion-button color="light" (click)="needConfirm = false;">
-                        {{ 'common.cancel' | translate }}
-                    </ion-button>
-                    <ion-ripple-effect></ion-ripple-effect>
+                    <ebutton mode="cancel" (clicked)="needConfirm = false;" [title]="'common.cancel' | translate">
+                    </ebutton>
                 </ion-col>
                 <ion-col class="right-col" color="success">
-                    <ion-button color="success" (click)="confirm()">
-                        {{ 'common.confirm' | translate }}
-                    </ion-button>
-                    <ion-ripple-effect></ion-ripple-effect>
+                    <ebutton (clicked)="confirm()" [title]="'common.confirm' | translate "> </ebutton>
                 </ion-col>
             </ion-row>
 

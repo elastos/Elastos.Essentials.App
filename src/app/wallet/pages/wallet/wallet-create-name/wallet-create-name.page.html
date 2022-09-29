@@ -3,13 +3,12 @@
     <ion-list>
         <ion-item lines="none">
             <ion-label stacked>{{ 'wallet.addwallet-walletname-title' | translate }}</ion-label>
-            <ion-input type="text" placeholder="{{ 'wallet.addwallet-walletname-placeholder' | translate }}"
-            name="name" ngDefaultControl
-                [(ngModel)]="name"></ion-input>
+            <ion-input type="text" placeholder="{{ 'wallet.addwallet-walletname-placeholder' | translate }}" name="name"
+                ngDefaultControl [(ngModel)]="name"></ion-input>
         </ion-item>
     </ion-list>
 </ion-content>
 
 <ion-footer>
-    <ion-button class="confirm" color="secondary" (click)="import()">{{ 'wallet.text-next-step' | translate }}</ion-button>
+    <ebutton (click)="import()" [title]="'wallet.text-next-step' | translate"></ebutton>
 </ion-footer>

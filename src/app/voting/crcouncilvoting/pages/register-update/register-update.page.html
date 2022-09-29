@@ -12,8 +12,8 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'crcouncilvoting.name' | translate }}</h5>
-                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || info.state != 'Unregistered'" ngDefaultControl
-                        placeholder="{{'crcouncilvoting.required-placeholder' | translate}}"
+                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || info.state != 'Unregistered'"
+                        ngDefaultControl placeholder="{{'crcouncilvoting.required-placeholder' | translate}}"
                         [(ngModel)]="info.nickname">
                     </ion-input>
                 </ion-col>
@@ -44,26 +44,19 @@
 
         <ion-row class="btn-container">
             <ng-container *ngIf="!needConfirm">
-                <ion-button *ngIf="info.state == 'Unregistered'" color="success" (click)="checkValues()">
-                    {{ 'crcouncilvoting.register' | translate }}
-                </ion-button>
-                <ion-button *ngIf="info.state != 'Unregistered'" color="success" (click)="checkValues()">
-                    {{ 'crcouncilvoting.update' | translate }}
-                </ion-button>
+                <ebutton *ngIf="info.state == 'Unregistered'" (clicked)="checkValues()"
+                    [title]="'crcouncilvoting.register' | translate"> </ebutton>
+                <ebutton *ngIf="info.state != 'Unregistered'" (clicked)="checkValues()"
+                    [title]="'crcouncilvoting.update' | translate"> </ebutton>
             </ng-container>
 
             <ion-row class="btn-row" *ngIf="needConfirm">
                 <ion-col class="left-col">
-                    <ion-button color="light" (click)="needConfirm = false;">
-                        {{ 'common.cancel' | translate }}
-                    </ion-button>
-                    <ion-ripple-effect></ion-ripple-effect>
+                    <ebutton (clicked)="needConfirm = false;" [title]="'common.cancel' | translate"> </ebutton>
+                    x
                 </ion-col>
                 <ion-col class="right-col" color="success">
-                    <ion-button color="success" (click)="confirm()">
-                        {{ 'common.confirm' | translate }}
-                    </ion-button>
-                    <ion-ripple-effect></ion-ripple-effect>
+                    <ebutton (clicked)="confirm()" [title]="'common.confirm' | translate"> </ebutton>
                 </ion-col>
             </ion-row>
 

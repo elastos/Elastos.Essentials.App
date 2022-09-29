@@ -2,29 +2,15 @@
   <app-titlebar></app-titlebar>
   <ion-grid>
     <ion-row>
-      <ion-col 
-        *ngFor="let theme of themes"
-        size="3"
-        (click)="walletTheme = theme"
-      >
-        <div 
-          class="color"
-          [ngStyle]="{ 'background-color': theme.color }"
-        >
-          <div 
-            *ngIf="walletTheme.color === theme.color"
-            class="check" 
-            [ngStyle]="{
+      <ion-col *ngFor="let theme of themes" size="3" (click)="walletTheme = theme">
+        <div class="color" [ngStyle]="{ 'background-color': theme.color }">
+          <div *ngIf="walletTheme.color === theme.color" class="check" [ngStyle]="{
               'background-color': theme.color,
               'border': themeService.darkMode ? '4px solid #191a2f' : '4px solid #f8f8ff'
-            }"
-          >
-            <ion-icon 
-              name="checkmark"
-              [ngStyle]="{
+            }">
+            <ion-icon name="checkmark" [ngStyle]="{
                 'color': themeService.darkMode ? '#191a2f' : '#f8f8ff'
-              }"
-            >
+              }">
             </ion-icon>
           </div>
         </div>
@@ -32,9 +18,7 @@
     </ion-row>
 
     <ion-row class="btn-container">
-      <ion-button color="primary" (click)="confirm()">
-        <ion-label>{{ 'common.confirm' | translate }}</ion-label>
-      </ion-button>
+      <ebutton (clicked)="confirm()" [title]="'common.confirm' | translate"> </ebutton>
     </ion-row>
 
   </ion-grid>

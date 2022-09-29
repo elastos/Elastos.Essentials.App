@@ -60,9 +60,9 @@
             </ion-col>
         </ion-row>
 
-        <ion-button color="secondary" (click)="addCosignerEntry()" *ngIf="canAddCosigners()">
-            <ion-label>{{ 'wallet.multi-sig-add-cosigner' | translate }}</ion-label>
-        </ion-button>
+        <ebutton (clicked)="addCosignerEntry()" *ngIf="canAddCosigners()"
+            [title]="'wallet.multi-sig-add-cosigner' | translate">
+        </ebutton>
 
         <ion-row class="margin-top-15">
             <ion-col size="6" class="text-left align-self-center">
@@ -91,9 +91,8 @@
 
         <!-- Button -->
         <div class="footer">
-            <ion-button color="secondary" [disabled]='!allInputsValid()' (click)="onCreate()">
-                <ion-label>{{ 'common.continue' | translate }}</ion-label>
-            </ion-button>
+            <ebutton [disabled]='!allInputsValid()' (clicked)="onCreate()" [title]="'common.continue' | translate">
+            </ebutton>
         </div>
 
     </ion-grid>

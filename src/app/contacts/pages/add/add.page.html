@@ -6,9 +6,7 @@
         [(ngModel)]="didInput" mode="ios" name="didInput" ngDefaultControl></ion-input>
     </ion-row>
     <ion-row class="btn-container">
-      <ion-button color="success" (click)="addContact()">
-        {{ 'contacts.add-contact' | translate }}
-      </ion-button>
+      <ebutton (clicked)="addContact()" [title]="'contacts.add-contact' | translate"></ebutton>
     </ion-row>
     <ion-row class="msg-container">
       <p class="ion-text-center">{{ 'contacts.add-contact-prompt' | translate }}</p>

@@ -14,13 +14,14 @@
     <ion-row class="data-container">
       <p><span>{{ 'identity.visible' | translate }}</span>{{ 'identity.registerapp-msg' | translate }}</p>
       <p><span>{{ 'identity.private' | translate }}</span>{{ 'identity.registerapp-msg2' | translate }}</p>
-      <div><p>{{ 'identity.publish' | translate }}</p> <ion-toggle color="tertiary" [(ngModel)]="shouldPublishOnSidechain"></ion-toggle></div>
+      <div>
+        <p>{{ 'identity.publish' | translate }}</p>
+        <ion-toggle color="tertiary" [(ngModel)]="shouldPublishOnSidechain"></ion-toggle>
+      </div>
     </ion-row>
 
-    <ion-row class="btn-container" (click)="acceptRequest()">
-      <ion-button color="tertiary">
-        <ion-label>{{ 'identity.accept' | translate }}</ion-label>
-      </ion-button>
+    <ion-row class="btn-container">
+      <ebutton [title]="'identity.accept' | translate" (clicked)="acceptRequest()"> </ebutton>
     </ion-row>
 
   </ion-grid>

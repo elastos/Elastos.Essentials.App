@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -32,7 +31,7 @@ export class HistoryPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
-        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+        //this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
     }
 
     showVoteDetail(vote: Vote) {

@@ -3,9 +3,7 @@
     <ion-grid *ngIf="hideMnemonic && hasMnemonic" class="verify-container ion-no-padding ion-no-margin"
         [class.verify-dark-container]="theme.darkMode">
         <ion-row class="btn-container">
-            <ion-button color="secondary" (click)="onExport()">
-                <ion-label>{{ 'wallet.text-export-mnemonic' | translate }}</ion-label>
-            </ion-button>
+            <ebutton (clicked)="onExport()" [title]="'wallet.text-export-mnemonic' | translate"> </ebutton>
         </ion-row>
     </ion-grid>
 
@@ -26,14 +24,10 @@
             {{ evmPrivateKey }}
         </div>
         <ion-row *ngIf="!hideMnemonic && !isFromIntent" class="btn-container">
-            <ion-button color="secondary" (click)="return()">
-                <ion-label> {{ 'wallet.back-to-setting' | translate }}</ion-label>
-            </ion-button>
+            <ebutton (clicked)="return()" [title]="'wallet.back-to-setting' | translate "> </ebutton>
         </ion-row>
         <ion-row *ngIf="!hideMnemonic && isFromIntent" class="btn-container">
-            <ion-button color="secondary" (click)="onShare()">
-                <ion-label>{{ 'wallet.text-allow' | translate }}</ion-label>
-            </ion-button>
+            <ebutton (clicked)="onShare()" [title]="'wallet.text-allow' | translate"> </ebutton>
         </ion-row>
     </ion-grid>
 </ion-content>

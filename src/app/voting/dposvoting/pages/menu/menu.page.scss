@@ -1,57 +1,28 @@
-@import '../../root.scss';
+@import "../../root.scss";
 
 /*** LIGHT MODE ***/
 ion-tabs {
     ion-tab-bar {
         height: 9%;
-        background-color: #f5f5fd;
-    
+
         ion-tab-button {
-            --ripple-color: #732dcf;
+            //--ripple-color: #732dcf;
+            opacity: 0.6;
 
             ion-icon {
-                color: #bebeeb;
+                color: var(--ion-text-color);
                 font-size: 36px;
             }
-        
+
             ion-label {
-                font-size: 9px;
+                font-size: 10px;
                 font-weight: 600;
-                color: #bebeeb;
+                color: var(--ion-text-color);
             }
         }
 
         ion-tab-button.tab-selected {
-            ion-icon, ion-label {
-                color: #732dcf !important;
-                --ion-color-base: #732dcf !important;
-            }
-        }
-    }
-}
-
-/*** DARK MODE ***/
-.dark-tabs {
-    ion-tab-bar {
-        background: #121212;
-    
-        ion-tab-button {
-            --ripple-color: #ffffff;
-
-            ion-icon {
-                color: #666666;
-            }
-        
-            ion-label {
-                color: #666666;
-            }
-        }
-
-        ion-tab-button.tab-selected {
-            ion-icon, ion-label {
-                color: #ffffff !important;
-                --ion-color-base: #ffffff !important;
-            }
+            opacity: 1;
         }
     }
 }

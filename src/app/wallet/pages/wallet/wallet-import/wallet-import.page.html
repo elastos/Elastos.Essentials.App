@@ -18,9 +18,8 @@
             </ion-slide>
         </ion-slides>
         <ion-row class="btn-container">
-            <ion-button color="secondary" [disabled]="!allInputsFilled()" (click)="onImport()">
-                <ion-label>{{ 'wallet.import-wallet' | translate }}</ion-label>
-            </ion-button>
+            <ebutton [disabled]="!allInputsFilled()" (clicked)="onImport()"
+                [title]="'wallet.import-wallet' | translate"> </ebutton>
         </ion-row>
         <h1>{{ 'wallet.import-paste-from-keypad' | translate }}</h1>
     </ion-grid>

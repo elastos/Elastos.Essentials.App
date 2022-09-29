@@ -1,12 +1,7 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-slides
-    #slide
-    [options]="slideOpts"
-    (ionSlideWillChange)="getActiveSlide()"
-    class="ion-text-center"
-    [class.dark-slides]="theme.darkMode"
-  >
+  <ion-slides #slide [options]="slideOpts" (ionSlideWillChange)="getActiveSlide()" class="ion-text-center"
+    [class.dark-slides]="theme.darkMode">
     <ion-slide class="ion-text-center first-slide">
       <div class="qr-container" *ngIf="dataIsReady">
         <h1>{{ 'didsessions.decentralized-id' | translate }}</h1>
@@ -17,24 +12,25 @@
     </ion-slide>
     <ion-slide class="ion-text-center second-slide">
       <ion-row class="mnemonic-row">
-        <ion-col *ngFor="let mnemonic of mnemonicList" size="3.6" [class.bottom-row]="mnemonicList.indexOf(mnemonic) + 1 > 9">
+        <ion-col *ngFor="let mnemonic of mnemonicList" size="3.6"
+          [class.bottom-row]="mnemonicList.indexOf(mnemonic) + 1 > 9">
           <div class="mnemonic-index">{{ mnemonicList.indexOf(mnemonic) + 1 }}</div>
           <ion-label>{{ mnemonic }}</ion-label>
         </ion-col>
       </ion-row>
       <p>
-        {{ 'common.your-mnemonic-prompt1' | translate }}<b>{{ 'common.your-mnemonic-prompt2' | translate }}</b>{{ 'common.your-mnemonic-prompt3' | translate }}
+        {{ 'common.your-mnemonic-prompt1' | translate }}<b>{{ 'common.your-mnemonic-prompt2' | translate }}</b>{{
+        'common.your-mnemonic-prompt3' | translate }}
       </p>
     </ion-slide>
   </ion-slides>
 
   <div class="footer" *ngIf="slideIndex < 1">
-    <ion-button (click)="showPrintOptions()">{{ 'didsessions.print-qrcode' | translate }}</ion-button>
-    <ion-button (click)="nextSlide()">{{ 'didsessions.manual-verify' | translate }}</ion-button>
+    <ebutton (clicked)="showPrintOptions()" [title]="'didsessions.print-qrcode' | translate"></ebutton>
+    <ebutton (clicked)="nextSlide()" [title]="'didsessions.manual-verify' | translate"></ebutton>
   </div>
   <div class="footer" *ngIf="slideIndex === 1">
-    <ion-button (click)="prevSlide()">{{ 'common.back' | translate }}</ion-button>
-    <ion-button (click)="nextClicked()">{{ 'didsessions.verify-did' | translate }}</ion-button>
+    <ebutton (clicked)="prevSlide()" [title]="'common.back' | translate"></ebutton>
+    <ebutton (clicked)="nextClicked()" [title]="'didsessions.verify-did' | translate"></ebutton>
   </div>
 </ion-content>
-

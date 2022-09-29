@@ -13,8 +13,8 @@
         <div class="secondary-text">{{ 'launcher.data-sync-intro' | translate }}</div>
       </ion-col>
       <ion-col class="buttons-row">
-        <ion-button (click)="refuseSync()">{{ 'launcher.data-sync-no' | translate }}</ion-button>
-        <ion-button (click)="continue()">{{ 'common.continue' | translate }}</ion-button>
+        <ebutton (clicked)="refuseSync()" [title]="'launcher.data-sync-no' | translate"></ebutton>
+        <ebutton (clicked)="continue()" [title]="'common.continue' | translate"></ebutton>
       </ion-col>
     </ion-row>
   </ion-col>

@@ -3,8 +3,9 @@
     <!-- No provider -->
     <div *ngIf="!managedProvider" class="editContainer" [class.darkContainer]="theme.darkMode">
         <h1>{{ 'hivemanager.adminprovideredit.provider-name' | translate }}</h1>
-        <ion-input [(ngModel)]="createName" placeholder="{{'hivemanager.adminprovideredit.enter-name' | translate }}" clearInput name="name1" ngDefaultControl></ion-input>
-        <ion-button (click)="createAdminDID()">{{ 'hivemanager.adminprovideredit.create' | translate }}</ion-button>
+        <ion-input [(ngModel)]="createName" placeholder="{{'hivemanager.adminprovideredit.enter-name' | translate }}"
+            clearInput name="name1" ngDefaultControl></ion-input>
+        <ebutton (clicked)="createAdminDID()" [title]="'hivemanager.adminprovideredit.create' | translate"></ebutton>
     </div>
     <!-- Has provider -->
     <div *ngIf="managedProvider" class="editContainer" [class.darkContainer]="theme.darkMode">
@@ -14,7 +15,8 @@
                 <ion-icon (click)="updateName()" name="save"></ion-icon>
             </ion-col>
             <ion-col size="12">
-                <ion-input [(ngModel)]="managedProvider.name" (input)='onNameChanged($event.target.value)' clearInput name="name2" ngDefaultControl></ion-input>
+                <ion-input [(ngModel)]="managedProvider.name" (input)='onNameChanged($event.target.value)' clearInput
+                    name="name2" ngDefaultControl></ion-input>
             </ion-col>
         </ion-row>
         <ion-row>
@@ -30,7 +32,8 @@
             <ion-col size="12" style="margin-bottom: 5px;">
                 <h1>{{ 'hivemanager.adminprovideredit.admin-mnemonic' | translate }}</h1>
                 <div class="icon-container">
-                    <ion-icon *ngIf="!mnemonicShown" class="left-icon" name="eye-off" (click)="toggleMnemonic()"></ion-icon>
+                    <ion-icon *ngIf="!mnemonicShown" class="left-icon" name="eye-off" (click)="toggleMnemonic()">
+                    </ion-icon>
                     <ion-icon *ngIf="mnemonicShown" class="left-icon" name="eye" (click)="toggleMnemonic()"></ion-icon>
                     <ion-icon (click)="copy(adminDIDMnemonic)" name="copy"></ion-icon>
                 </div>
@@ -45,12 +48,14 @@
 <!-- Has provider -->
 <ion-footer *ngIf="managedProvider" class="ion-no-border" [class.dark-footer]="theme.darkMode">
     <div *ngIf="!adminDIDPublished; else onlyDeleteButton">
-        <ion-button color="danger" (click)="deleteVaultProvider()">{{ 'hivemanager.adminprovideredit.delete' | translate }}</ion-button>
-        <ion-button (click)="publishAdminDID()">{{ 'hivemanager.adminprovideredit.publish' | translate }}</ion-button>
+        <ion-button color="danger" (click)="deleteVaultProvider()">{{ 'hivemanager.adminprovideredit.delete' | translate
+            }}</ion-button>
+        <ebutton (clicked)="publishAdminDID()" [title]="'hivemanager.adminprovideredit.publish' | translate"></ebutton>
     </div>
     <ng-template #onlyDeleteButton>
         <div>
-            <ion-button class="onlyDeleteButton" color="danger" (click)="deleteVaultProvider()">{{ 'hivemanager.adminprovideredit.delete' | translate }}</ion-button>
+            <ion-button class="onlyDeleteButton" color="danger" (click)="deleteVaultProvider()">{{
+                'hivemanager.adminprovideredit.delete' | translate }}</ion-button>
         </div>
     </ng-template>
 </ion-footer>

@@ -1,45 +1,45 @@
 <ion-content>
-    <app-titlebar></app-titlebar>
-    <div class="ledger-container" [class.dark-ledger-container]="theme.darkMode">
-      <h1>{{ 'wallet.ledger-sign' | translate }}</h1>
+  <app-titlebar></app-titlebar>
+  <div class="ledger-container" [class.dark-ledger-container]="theme.darkMode">
+    <h1>{{ 'wallet.ledger-sign' | translate }}</h1>
 
-      <ion-row class="prompt-row">
-        <ion-label>{{ 'wallet.ledger-prompt' | translate:{ appname: ledgerNanoAppname } }}</ion-label>
-        <ion-label>{{ 'wallet.ledger-confirm-on-ledger-prompt' | translate }}</ion-label>
-      </ion-row>
+    <ion-row class="prompt-row">
+      <ion-label>{{ 'wallet.ledger-prompt' | translate:{ appname: ledgerNanoAppname } }}</ion-label>
+      <ion-label>{{ 'wallet.ledger-confirm-on-ledger-prompt' | translate }}</ion-label>
+    </ion-row>
 
-      <!-- Error: No bluetooth -->
-      <ion-row class="retry-row" *ngIf="!isBluetoothEnable">
-        <div>{{ 'wallet.ledger-scan-bluetooth-not-enable' | translate }}</div>
-        <ion-button color="primary" (click)="showBluetoothSetting()" *ngIf="supportOpeningBluetoothSetting">
-            <ion-label>{{ 'wallet.ledger-scan-open-bluetooth-setting' | translate }}</ion-label>
-        </ion-button>
-      </ion-row>
+    <!-- Error: No bluetooth -->
+    <ion-row class="retry-row" *ngIf="!isBluetoothEnable">
+      <div>{{ 'wallet.ledger-scan-bluetooth-not-enable' | translate }}</div>
+      <ebutton (clicked)="showBluetoothSetting()" [title]="'wallet.ledger-scan-open-bluetooth-setting' | translate"
+        *ngIf="supportOpeningBluetoothSetting"> </ebutton>
+    </ion-row>
 
-      <ion-row *ngIf="connecting">
-        <h2> {{ 'wallet.ledger-connecting' | translate }}</h2>
-      </ion-row>
+    <ion-row *ngIf="connecting">
+      <h2> {{ 'wallet.ledger-connecting' | translate }}</h2>
+    </ion-row>
 
-      <ion-spinner *ngIf="connecting" class="spinner"></ion-spinner>
+    <ion-spinner *ngIf="connecting" class="spinner"></ion-spinner>
 
-      <ion-row class="row device-row" *ngIf="transport">
-        <ion-col size="5">
-            <div class='title'>{{ 'wallet.ledger-device' | translate }}</div>
-        </ion-col>
-        <ion-col size="7" class="device-name flex flex-justify-content-end">
-            {{ transport.device.name }}
-        </ion-col>
-      </ion-row>
+    <ion-row class="row device-row" *ngIf="transport">
+      <ion-col size="5">
+        <div class='title'>{{ 'wallet.ledger-device' | translate }}</div>
+      </ion-col>
+      <ion-col size="7" class="device-name flex flex-justify-content-end">
+        {{ transport.device.name }}
+      </ion-col>
+    </ion-row>
 
-      <ion-row  class="btn-row">
-        <ion-col class="btn ripple ion-activatable" size="5.5" (click)="cancelOperation()">
-          <ion-label>{{ 'common.cancel' | translate }}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
-        <ion-col class="btn ripple ion-activatable" [class.disable]="!transport || signing" size="5.5" (click)="confirm()">
-          <ion-label>{{ 'common.continue' | translate }}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
-      </ion-row>
+    <ion-row class="btn-row">
+      <ion-col class="btn ripple ion-activatable" size="5.5" (click)="cancelOperation()">
+        <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+        <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+      <ion-col class="btn ripple ion-activatable" [class.disable]="!transport || signing" size="5.5"
+        (click)="confirm()">
+        <ion-label>{{ 'common.continue' | translate }}</ion-label>
+        <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+    </ion-row>
   </div>
 </ion-content>

@@ -9,10 +9,12 @@
           <h2 *ngIf="!publicationFailed">{{ 'identity.publish-wait2' | translate }}</h2>
           <h2 *ngIf="publicationFailed" class="error">{{ 'identity.publish-error2' | translate }}</h2>
         </ion-label>
-        
+
         <div *ngIf="!publicationFailed" class="visualProgress-container" [class.add-margin]="publicationSuccessful">
-          <lottie-player *ngIf="publishing" src="../../../assets/identity/animations/block-loader.json" background="transparent" speed="1" style="width: 160x; height: 160px;" autoplay loop></lottie-player>
-          <lottie-player *ngIf="publicationSuccessful" src="../../../assets/wallet/animations/success-1.json" background="transparent" speed="0.5" style="width: 80px; height: 80px;" autoplay></lottie-player>
+          <lottie-player *ngIf="publishing" src="../../../assets/identity/animations/block-loader.json"
+            background="transparent" speed="1" style="width: 160x; height: 160px;" autoplay loop></lottie-player>
+          <lottie-player *ngIf="publicationSuccessful" src="../../../assets/wallet/animations/success-1.json"
+            background="transparent" speed="0.5" style="width: 80px; height: 80px;" autoplay></lottie-player>
         </div>
 
       </ion-col>
@@ -20,10 +22,7 @@
   </ion-grid>
 
   <div *ngIf="publicationFailed" class="footer">
-    <ion-button color="tertiary" (click)="exitComponent()">
-      {{ 'common.close' | translate }}
-    </ion-button>
+    <ebutton (clicked)="exitComponent()" [title]="'common.close' | translate"> </ebutton>
   </div>
 
 </ion-content>
-

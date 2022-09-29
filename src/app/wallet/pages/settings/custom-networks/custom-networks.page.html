@@ -23,7 +23,7 @@
     </ion-grid>
 
     <div class="footer">
-        <ion-button class="confirm" color="secondary" (click)="addCustomNetwork()">{{ 'wallet.add-custom-network' |
-            translate }}</ion-button>
+        <ebutton (clicked)="addCustomNetwork()" [title]="'wallet.add-custom-network' |
+        translate"></ebutton>
     </div>
 </ion-content>

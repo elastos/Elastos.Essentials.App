@@ -7,11 +7,8 @@
                     <p>{{ masterWallet.name }}</p>
                 </ion-col>
             </ion-row>
-            <ion-row
-                class="subwallet-row ripple ion-activatable"
-                [class.dark-subwallet-row]="theme.darkMode"
-                (click)="walletSelected(masterWallet)"
-            >
+            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+                (click)="walletSelected(masterWallet)">
                 <ion-col size="2" class="left-col">
                     <img [src]="masterWallet.getSubWallet(subWalletId).getMainIcon()">
                 </ion-col>
@@ -21,13 +18,17 @@
                 </ion-col>
                 <ion-col size="5" class="right-col">
                     <h1>{{ uiService.getFixedBalance(masterWallet.getSubWallet(subWalletId).getDisplayBalance()) }}</h1>
-                    <p *ngIf="masterWallet.getSubWallet(subWalletId).getAmountInExternalCurrency(masterWallet.getSubWallet(subWalletId).getDisplayBalance())">
-                        {{ masterWallet.getSubWallet(subWalletId).getAmountInExternalCurrency(masterWallet.getSubWallet(subWalletId).getDisplayBalance()) }}
+                    <p
+                        *ngIf="masterWallet.getSubWallet(subWalletId).getAmountInExternalCurrency(masterWallet.getSubWallet(subWalletId).getDisplayBalance())">
+                        {{
+                        masterWallet.getSubWallet(subWalletId).getAmountInExternalCurrency(masterWallet.getSubWallet(subWalletId).getDisplayBalance())
+                        }}
                         {{ currencyService.selectedCurrency.symbol }}
                     </p>
                 </ion-col>
                 <ion-col offset="2" size="10" class="bottom-col">
-                    <span *ngIf="masterWallet.getSubWallet(subWalletId).type === CoinType.ERC20" class="synced">{{ 'wallet.ela-erc20' | translate }}</span>
+                    <span *ngIf="masterWallet.getSubWallet(subWalletId).type === CoinType.ERC20" class="synced">{{
+                        'wallet.ela-erc20' | translate }}</span>
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
@@ -39,12 +40,3 @@
         </div>
     </ion-grid>
 </ion-content>
-
-<!-- <ion-footer>
-    <ion-row class="btn-container">
-        <ion-button color="primary" (click)="cancelOperation()">
-            <ion-label>{{ 'cancel' | translate }}</ion-label>
-        </ion-button>
-    </ion-row>
-</ion-footer>
- -->

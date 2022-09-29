@@ -2,11 +2,14 @@
     <app-titlebar></app-titlebar>
     <div class="ion-text-center ion-padding-horizontal">
         <p *ngIf="!managedProviders.length">
-            {{ 'hivemanager.adminproviderlist.no-providers' | translate }} <br> {{ 'hivemanager.adminproviderlist.providers-msg2' | translate }}
+            {{ 'hivemanager.adminproviderlist.no-providers' | translate }} <br> {{
+            'hivemanager.adminproviderlist.providers-msg2' | translate }}
         </p>
         <p *ngIf="managedProviders.length">
-            {{ 'hivemanager.adminproviderlist.providers-msg' | translate }} <br> {{ 'hivemanager.adminproviderlist.providers-msg2' | translate }}
+            {{ 'hivemanager.adminproviderlist.providers-msg' | translate }} <br> {{
+            'hivemanager.adminproviderlist.providers-msg2' | translate }}
         </p>
-        <ion-button *ngFor="let provider of managedProviders" (click)="editProvider(provider)">{{ provider.name }}</ion-button>
+        <ebutton *ngFor="let provider of managedProviders" (clicked)="editProvider(provider)" [title]="provider.name">
+        </ebutton>
     </div>
 </ion-content>

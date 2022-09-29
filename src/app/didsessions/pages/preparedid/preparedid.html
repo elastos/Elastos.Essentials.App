@@ -20,18 +20,15 @@
       </ion-col>
     </ion-row>
 
-    <ion-slides
-      #slide
-      [options]="slideOpts"
-      [class.hidden]="hidden"
-    >
+    <ion-slides #slide [options]="slideOpts" [class.hidden]="hidden">
       <ion-slide class="ion-text-center">
         <div class="slide-card">
-          <img [src]="!theme.darkMode ? 'assets/didsessions/onboard/slide1.svg' : 'assets/didsessions/onboard/dark_mode/slide1.svg'">
+          <img
+            [src]="!theme.darkMode ? 'assets/didsessions/onboard/slide1.svg' : 'assets/didsessions/onboard/dark_mode/slide1.svg'">
           <h1>{{ 'didsessions.prepare.publish-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.publish-intro' | translate }}</p>
           <div class="error-box" *ngIf="publishError">
-            <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
+            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
             <span class="error">{{ publishError }}</span>
           </div>
         </div>
@@ -43,7 +40,7 @@
           <h1>{{ 'didsessions.prepare.sign-in-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.sign-in-intro' | translate }}</p>
           <div class="error-box" *ngIf="signInError">
-            <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
+            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
             <span class="error">{{ signInError }}</span>
           </div>
         </div>
@@ -55,7 +52,7 @@
           <h1>{{ 'didsessions.prepare.hive-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.hive-intro' | translate }}</p>
           <div class="error-box" *ngIf="hiveError">
-            <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
+            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
             <span class="error">{{ hiveError }}</span>
           </div>
         </div>
@@ -67,7 +64,7 @@
           <h1>{{ 'didsessions.prepare.wallet-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.wallet-intro' | translate }}</p>
           <div class="error-box" *ngIf="signInError">
-            <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
+            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
             <span class="error">{{ signInError }}</span>
           </div>
         </div>
@@ -78,22 +75,23 @@
           <img src="assets/didsessions/onboard/slide5.svg">
           <h1>{{ 'didsessions.prepare.done-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.done-intro' | translate }}</p>
-          <ion-button (click)="finalizePreparation()" *ngIf="!finalizingPreparation">
-            {{ 'common.continue' | translate }} &nbsp; <ion-icon name="arrow-forward"></ion-icon>
-          </ion-button>
+          <ebutton (clicked)="finalizePreparation()" *ngIf="!finalizingPreparation"
+            [title]="'common.continue' | translate"></ebutton>
         </div>
       </ion-slide>
 
     </ion-slides>
 
-    <ion-row *ngIf="(slideIndex < 4 || finalizingPreparation) && !(signInError || hiveError || publishError)" class="slide-circle-row">
+    <ion-row *ngIf="(slideIndex < 4 || finalizingPreparation) && !(signInError || hiveError || publishError)"
+      class="slide-circle-row">
       <ion-col size="12">
-        <lottie-player src="../../../assets/identity/animations/block-loader.json" background="transparent" speed="1" style="width: 160x; height: 160px;" autoplay loop></lottie-player>
+        <lottie-player src="../../../assets/identity/animations/block-loader.json" background="transparent" speed="1"
+          style="width: 160x; height: 160px;" autoplay loop></lottie-player>
         <span>{{ 'common.please-wait' | translate }}</span>
       </ion-col>
     </ion-row>
 
-<!--     <div class="progress-circle progress-1"><span>1</span></div>   -->
+    <!--     <div class="progress-circle progress-1"><span>1</span></div>   -->
 
   </ion-grid>
 

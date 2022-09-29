@@ -22,9 +22,7 @@
     </div>
 
     <ion-row *ngIf="inputMnemonicCompleted()" class="btn-row">
-      <ion-button (click)="promptStorePassword()">
-        {{ 'common.continue' | translate }}
-      </ion-button>
+      <ebutton (clicked)="promptStorePassword()" [title]="'common.continue' | translate"> </ebutton>
     </ion-row>
 
   </div>

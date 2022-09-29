@@ -8,7 +8,7 @@
     </div>
 
     <ion-card *ngFor="let app of dappService.getDApps()" (click)="openApp(app)">
-      <ion-card-subtitle>{{ app.name ? app.name : 'developertools.app-unnamed' | translate  }}</ion-card-subtitle>
+      <ion-card-subtitle>{{ app.name ? app.name : 'developertools.app-unnamed' | translate }}</ion-card-subtitle>
     </ion-card>
 
   </ion-grid>
@@ -18,14 +18,3 @@
     <ion-ripple-effect></ion-ripple-effect>
   </div>
 </ion-content>
-
-<!-- <ion-footer>
-  <ion-button (click)="this.dappService.deleteApps()">Delete Apps</ion-button>
-</ion-footer> -->
-
-<!-- <ion-footer no-border class="ion-padding ion-text-center">
-  <ion-button color="dark" (click)="newApp()">
-    <ion-label>New App</ion-label>
-  </ion-button>
-</ion-footer>
- -->

@@ -17,13 +17,13 @@
         </ion-row>
         <ion-row *ngIf="currentlyShownTip">
             <ion-col size="4">
-                <ion-button (click)="showPreviousTip()" expand="full">{{ 'launcher.previous-tip' | translate }}</ion-button>
+                <ebutton (clicked)="showPreviousTip()" [title]="'launcher.previous-tip' | translate"></ebutton>
             </ion-col>
             <ion-col size="4">
-                <ion-button (click)="showNextTip()" expand="full">{{ 'launcher.next-tip' | translate }}</ion-button>
+                <ebutton (clicked)="showNextTip()" [title]="'launcher.next-tip' | translate"></ebutton>
             </ion-col>
             <ion-col size="4">
-                <ion-button (click)="closePage()" expand="full">{{ 'common.close' | translate }}</ion-button>
+                <ebutton (clicked)="closePage()" [title]="'common.close' | translate"></ebutton>
             </ion-col>
         </ion-row>
     </ion-grid>

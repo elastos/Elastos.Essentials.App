@@ -16,10 +16,8 @@
       <p *ngIf="receivedIntent">{{ receivedIntent.params.data }}</p>
     </ion-row>
 
-    <ion-row class="btn-container" (click)="acceptRequest()">
-      <ion-button color="tertiary">
-        <ion-label>{{ 'identity.accept' | translate }}</ion-label>
-      </ion-button>
+    <ion-row class="btn-container">
+      <ebutton (clicked)="acceptRequest()" [title]="'identity.accept' | translate"> </ebutton>
     </ion-row>
 
   </ion-grid>

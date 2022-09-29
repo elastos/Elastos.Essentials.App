@@ -1,23 +1,22 @@
-@import '../../root.scss';
+@import "../../root.scss";
 
 .hidden {
-  display:none
+  display: none;
 }
 
 .container {
   min-height: 100%;
-  background: #A25BFE;
   margin: 0;
   padding-bottom: 20px;
   z-index: 0;
 
-//   .ion-slide {
-//     width: 100% !important;
-//   }
+  //   .ion-slide {
+  //     width: 100% !important;
+  //   }
 
-//   .swipper-wrapper {
-//     width: min-content !important; // Fix for iOS wrong width sometimes.
-//   }
+  //   .swipper-wrapper {
+  //     width: min-content !important; // Fix for iOS wrong width sometimes.
+  //   }
 
   ion-card-title {
     .img-container {
@@ -32,7 +31,6 @@
     }
 
     .title {
-      color: white;
       font-weight: 600;
       font-size: 26px;
       padding: 0;
@@ -40,7 +38,6 @@
     }
 
     .subtitle {
-      color: white;
       line-height: 1.5;
       font-size: 14px;
       font-weight: 500;
@@ -59,20 +56,18 @@
         align-items: center;
         width: 75%;
         background: transparent;
-        border: 3px solid white;
+        border: 3px solid var(--essentials-border-separator-color);
         border-radius: 20px;
         padding: 10px;
 
         ion-label {
           font-size: 14px;
           font-weight: 700;
-          color: white;
         }
       }
     }
 
     .arrow-container {
-      color: white;
       display: flex;
       align-items: center;
     }

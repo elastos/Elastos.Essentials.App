@@ -54,9 +54,8 @@
       </ion-row>
     </ion-list>
 
-    <ion-button color="dark" (click)="createApp()" *ngIf="!creationInProgress">
-      <ion-label>{{ 'developertools.create-app' | translate }}</ion-label>
-    </ion-button>
+    <ebutton (clicked)="createApp()" *ngIf="!creationInProgress" [title]="'developertools.create-app' | translate">
+    </ebutton>
 
     <ion-button color="dark" (click)="createApp()" *ngIf="creationInProgress">
       <ion-spinner></ion-spinner>
@@ -79,9 +78,7 @@
       </p>
     </ion-card>
 
-    <ion-button color="dark" (click)="endAppCreation()">
-      <ion-label>{{ 'common.done' | translate }}</ion-label>
-    </ion-button>
+    <ebutton (clicked)="endAppCreation()" [title]="'common.done' | translate"> </ebutton>
   </ion-grid>
 
 </ion-content>

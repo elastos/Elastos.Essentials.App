@@ -18,9 +18,8 @@
             </ion-slide>
         </ion-slides>
         <ion-row class="btn-container">
-            <ion-button color="secondary" [disabled]="!allInputsFilled()" (click)="onCreate()">
-                <ion-label>{{ 'wallet.create-wallet' | translate }}</ion-label>
-            </ion-button>
+            <ebutton [disabled]="!allInputsFilled()" (clicked)="onCreate()"
+                [title]="'wallet.create-wallet' | translate"> </ebutton>
         </ion-row>
     </ion-grid>
 </ion-content>

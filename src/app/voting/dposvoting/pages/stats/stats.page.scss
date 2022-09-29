@@ -1,4 +1,4 @@
-@import '../../root.scss';
+@import "../../root.scss";
 
 .container {
   min-height: 100%;
@@ -13,7 +13,7 @@
       --inner-padding-end: 0px;
       --padding-start: 0px;
       --background: transparent;
-      --border-color: #EAEAEA;
+      --border-color: var(--essentials-border-separator-color);
       margin: 0;
       padding: 0;
 
@@ -57,14 +57,6 @@
           }
         }
       }
-    }
-  }
-}
-
-.dark-container {
-  ion-list {
-    ion-item {
-      --border-color: #464646;
     }
   }
 }

@@ -5,12 +5,9 @@
   </ion-row>
 
   <ion-row class="btn-row">
-    <ion-button (click)="hasPassphrase()">
-      <ion-label>{{ 'didsessions.mnemonicpasscheck-have-passphrase' | translate }}</ion-label>
-    </ion-button>
-    <ion-button (click)="noPassphrase()">
-      <ion-label>{{ 'didsessions.mnemonicpasscheck-no-passphrase' | translate }}</ion-label>
-    </ion-button>
+    <ebutton (clicked)="hasPassphrase()" [title]="'didsessions.mnemonicpasscheck-have-passphrase' | translate">
+    </ebutton>
+    <ebutton (clicked)="noPassphrase()" [title]="'didsessions.mnemonicpasscheck-no-passphrase' | translate"> </ebutton>
   </ion-row>
 </div>
 
@@ -21,17 +18,18 @@
   </ion-row>
 
   <ion-row id="first-input-row" class="input-row">
-    <ion-input [placeholder]="'didsessions.text-password-input'|translate" #pwd [(ngModel)]="password" type="password" (keyup)="moveFocus(rptpwd, $event)" name="password" ngDefaultControl></ion-input>
+    <ion-input [placeholder]="'didsessions.text-password-input'|translate" #pwd [(ngModel)]="password" type="password"
+      (keyup)="moveFocus(rptpwd, $event)" name="password" ngDefaultControl></ion-input>
   </ion-row>
 
   <ion-row class="input-row">
-    <ion-input [placeholder]="'didsessions.repeat-password'|translate" #rptpwd [(ngModel)]="passwordConfirmation" type="password" name="passwordConfirmation" ngDefaultControl></ion-input>
-    <div class="password-failed-info" *ngIf="!passwordsMatch() && passwordConfirmation !== '' && password !== ''">{{ 'didsessions.wrong-password' | translate }}</div>
+    <ion-input [placeholder]="'didsessions.repeat-password'|translate" #rptpwd [(ngModel)]="passwordConfirmation"
+      type="password" name="passwordConfirmation" ngDefaultControl></ion-input>
+    <div class="password-failed-info" *ngIf="!passwordsMatch() && passwordConfirmation !== '' && password !== ''">{{
+      'didsessions.wrong-password' | translate }}</div>
   </ion-row>
 
   <ion-row class="btn-row">
-    <ion-button (click)="submit()">
-      <ion-label>{{ 'common.submit' | translate }}</ion-label>
-    </ion-button>
+    <ebutton (clicked)="submit()" [title]="'common.submit' | translate"> </ebutton>
   </ion-row>
 </div>

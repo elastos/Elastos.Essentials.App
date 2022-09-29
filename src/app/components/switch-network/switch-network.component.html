@@ -2,11 +2,8 @@
   <ion-grid class="ion-text-center" [class.dark-process-container]="theme.darkMode">
     <ion-row>
       <ion-col size="12">
-        <ion-label>
-          <h1>{{ 'wallet.network-switch-component-title' | translate }}</h1>
-          <br />
-          <p>{{ 'wallet.network-switch-component-intro' | translate }}</p>
-        </ion-label>
+        <h1>{{ 'wallet.network-switch-component-title' | translate }}</h1>
+        <p>{{ 'wallet.network-switch-component-intro' | translate }}</p>
 
         <ion-row class="networks">
           <ion-col size="5" class="network">
@@ -26,7 +23,6 @@
     </ion-row>
   </ion-grid>
 
-  <ion-button color="tertiary" (click)="switchNetwork()" expand="block">
-    {{ 'wallet.network-switch-component-confirm' | translate }}
-  </ion-button>
+  <ebutton (clicked)="switchNetwork()" [title]="'wallet.network-switch-component-confirm' | translate">
+  </ebutton>
 </ion-content>

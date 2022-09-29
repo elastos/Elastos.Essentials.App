@@ -5,12 +5,8 @@
                 <p>{{ 'wallet.cryptonames' | translate }}</p>
             </ion-col>
         </ion-row>
-        <ion-row
-            class="subwallet-row ripple ion-activatable"
-            [class.dark-subwallet-row]="theme.darkMode"
-            *ngFor="let contact of supportedCryptoAddresses"
-            (click)="selectContact(contact)"
-        >
+        <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+            *ngFor="let contact of supportedCryptoAddresses" (click)="selectContact(contact)">
             <ion-col size="2" class="left-col">
                 <div class="icon-container">
                     <img [src]="getResolverLogo(contact)">
@@ -27,8 +23,7 @@
 
 <ion-footer class="ion-no-border">
     <ion-row class="btn-container">
-        <ion-button color="primary" (click)="modalCtrl.dismiss()">
-            <ion-label>{{ 'common.cancel' | translate}}</ion-label>
-        </ion-button>
+        <ebutton (clicked)="modalCtrl.dismiss()" [title]="'common.cancel' | translate">
+        </ebutton>
     </ion-row>
 </ion-footer>

@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { NodesService } from '../../services/nodes.service';
 
@@ -20,7 +19,7 @@ export class StatsPage implements OnInit {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
-        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+        //this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
         if (!this.nodesService.statsFetched) {
             await this.nodesService.fetchStats();
         }

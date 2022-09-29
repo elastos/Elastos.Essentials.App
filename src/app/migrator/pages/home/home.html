@@ -3,16 +3,15 @@
 
   <ion-grid class="container ion-padding">
     <p *ngIf="!migrationStarted">{{ 'wallet.migrator-info' | translate }}</p>
-    <ion-button *ngIf="!migrationStarted" (click)="processToMigration()">{{ 'wallet.migrator-start' | translate }}
-    </ion-button>
+    <ebutton *ngIf="!migrationStarted" (clicked)="processToMigration()" [title]="'wallet.migrator-start' | translate">
+    </ebutton>
 
     <p *ngIf="currentMigrationTitle">{{ 'wallet.migrator-ongoing' | translate }} <b>{{ currentMigrationTitle }}</b></p>
     <ion-spinner *ngIf="migrationStarted && !migrationSuccessfullyEnded && !migrationFailed"></ion-spinner>
 
     <p *ngIf="migrationStarted && migrationSuccessfullyEnded">{{ 'wallet.migrator-success' | translate }}</p>
-    <ion-button *ngIf="migrationStarted && migrationSuccessfullyEnded" (click)="continueAfterSuccess()">
-      {{ 'common.continue' | translate }}
-    </ion-button>
+    <ebutton *ngIf="migrationStarted && migrationSuccessfullyEnded" (clicked)="continueAfterSuccess()"
+      [title]="'common.continue' | translate"></ebutton>
     <p *ngIf="migrationFailed">{{ 'wallet.migrator-fail' | translate }}</p>
     <p *ngIf="errorInfo"><b>{{ errorInfo }}</b></p>
   </ion-grid>

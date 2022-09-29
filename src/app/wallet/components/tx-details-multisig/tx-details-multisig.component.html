@@ -12,8 +12,8 @@
           <ion-row>
             <ion-col class="cosigner-name" size="8">{{ 'wallet.multi-signature-my-signature' | translate }}</ion-col>
             <ion-col size="4" *ngIf="!isSelfSigned">
-              <ion-button class="sign" (click)="sign()" *ngIf="!isSelfSigning">{{ 'wallet.multi-signature-sign' |
-                translate }}</ion-button>
+              <ebutton class="sign" (clicked)="sign()" *ngIf="!isSelfSigning" [title]="'wallet.multi-signature-sign' |
+              translate"></ebutton>
               <ion-spinner *ngIf="isSelfSigning"></ion-spinner>
             </ion-col>
             <ion-col class="cosigner-signed" size="4" *ngIf="isSelfSigned">
@@ -27,8 +27,8 @@
         </div>
       </div>
       <ion-row *ngIf="canPublish">
-        <ion-button (click)="publish()" *ngIf="!isPublishing">{{ 'wallet.multi-signature-publish' | translate }}
-        </ion-button>
+        <ebutton (clicked)="publish()" *ngIf="!isPublishing" [title]="'wallet.multi-signature-publish' | translate">
+        </ebutton>
         <ion-spinner *ngIf="isPublishing"></ion-spinner>
       </ion-row>
     </ion-row>

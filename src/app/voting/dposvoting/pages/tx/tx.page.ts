@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -50,7 +50,7 @@ export class TxPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
-        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+        //this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
         this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
         this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, { key: null, iconPath: BuiltInIcon.BACK });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {

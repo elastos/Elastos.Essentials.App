@@ -1,10 +1,9 @@
 <div class="container" [class.darkContainer]="theme.darkMode">
-  <lottie-player src="/assets/wallet/animations/success-1.json" background="transparent" speed="0.5" style="width: 100px; height: 100px;" autoplay></lottie-player>
-<!--   <lottie-player src="https://assets5.lottiefiles.com/temp/lf20_MqU2rh.json" background="transparent" speed="1.5" style="width: 100px; height: 100px;" autoplay></lottie-player> -->
+  <lottie-player src="/assets/wallet/animations/success-1.json" background="transparent" speed="0.5"
+    style="width: 100px; height: 100px;" autoplay></lottie-player>
+  <!--   <lottie-player src="https://assets5.lottiefiles.com/temp/lf20_MqU2rh.json" background="transparent" speed="1.5" style="width: 100px; height: 100px;" autoplay></lottie-player> -->
   <h1>{{ 'wallet.tx-success' | translate }}</h1>
   <ion-row class="btn-container">
-    <ion-button color="primary" (click)="continue()">
-      {{ 'common.continue' | translate }}
-    </ion-button>
+    <ebutton (clicked)="continue()" [title]="'common.continue' | translate"> </ebutton>
   </ion-row>
 </div>

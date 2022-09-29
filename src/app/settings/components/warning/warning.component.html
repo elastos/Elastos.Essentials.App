@@ -10,9 +10,7 @@
       </p>
     </ion-col>
   </ion-row>
-  <ion-row  class="btn-row">
-    <ion-button color="primary" (click)="confirm()">
-      {{ 'common.confirm' | translate }}
-    </ion-button>
+  <ion-row class="btn-row">
+    <ebutton (clicked)="confirm()" [title]="'common.confirm' | translate"></ebutton>
   </ion-row>
 </div>

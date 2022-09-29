@@ -2,21 +2,12 @@
     <app-titlebar></app-titlebar>
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
         <ion-row>
-            <ion-input
-                #input
-                autosize
-                clearInput
-                name="walletName" ngDefaultControl
-                [placeholder]="'wallet.wallet-edit-name-new-name' | translate"
-                [(ngModel)]="walletname"
-                mode="ios"
-            >
+            <ion-input #input autosize clearInput name="walletName" ngDefaultControl
+                [placeholder]="'wallet.wallet-edit-name-new-name' | translate" [(ngModel)]="walletname" mode="ios">
             </ion-input>
         </ion-row>
         <ion-row class="btn-container">
-            <ion-button color="primary" (click)="modify()">
-                <ion-label>{{ 'common.confirm' | translate }}</ion-label>
-            </ion-button>
+            <ebutton (clicked)="modify()" [title]="'common.confirm' | translate"> </ebutton>
         </ion-row>
     </ion-grid>
 </ion-content>

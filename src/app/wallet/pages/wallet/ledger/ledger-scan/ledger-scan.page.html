@@ -20,9 +20,9 @@
         <!-- Error: No bluetooth -->
         <ion-row class="retry-row" *ngIf="!isBluetoothEnable">
             <div>{{ 'wallet.ledger-scan-bluetooth-not-enable' | translate }}</div>
-            <ion-button color="primary" (click)="showBluetoothSetting()" *ngIf="supportOpeningBluetoothSetting">
-                <ion-label>{{ 'wallet.ledger-scan-open-bluetooth-setting' | translate }}</ion-label>
-            </ion-button>
+            <ebutton (clicked)="showBluetoothSetting()"
+                [title]="'wallet.ledger-scan-open-bluetooth-setting' | translate"
+                *ngIf="supportOpeningBluetoothSetting"> </ebutton>
         </ion-row>
 
         <!-- Found device -->

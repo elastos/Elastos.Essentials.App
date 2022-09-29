@@ -163,9 +163,7 @@
 
     <div class="buttons">
       <!-- Transfer -->
-      <ion-button (click)="transfer()" [disabled]="!canTransfer()">{{
-        getTransferButtonText() }}
-      </ion-button>
+      <ebutton (clicked)="transfer()" [disabled]="!canTransfer()" [title]="getTransferButtonText()"></ebutton>
     </div>
   </div>
 

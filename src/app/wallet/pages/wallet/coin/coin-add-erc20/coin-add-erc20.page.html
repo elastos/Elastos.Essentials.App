@@ -2,22 +2,18 @@
     <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.darkContainer]="theme.darkMode">
         <p>
-            {{ 'wallet.coin-adderc20-intro' | translate }} <br> 
+            {{ 'wallet.coin-adderc20-intro' | translate }} <br>
             {{ 'wallet.coin-adderc20-intro2' | translate }}
         </p>
         <ion-row class="scan-row">
             <ion-col size="12">
-                <ion-input
-                    #input
-                    autosize
-                    name="coinAddress" ngDefaultControl
-                    [placeholder]="'wallet.coin-adderc20-enteraddress' | translate"
-                    [(ngModel)]="coinAddress"
-                    (input)='onInputAddress($event.target.value)'
-                >
+                <ion-input #input autosize name="coinAddress" ngDefaultControl
+                    [placeholder]="'wallet.coin-adderc20-enteraddress' | translate" [(ngModel)]="coinAddress"
+                    (input)='onInputAddress($event.target.value)'>
                 </ion-input>
                 <div class="scan-btn ripple ion-activatable">
-                    <img (click)="scanCoinAddress()" [src]="!theme.darkMode ? 'assets/wallet/icons/scan.svg' : 'assets/wallet/icons/darkmode/scan.svg'"/>
+                    <img (click)="scanCoinAddress()"
+                        [src]="!theme.darkMode ? 'assets/wallet/icons/scan.svg' : 'assets/wallet/icons/darkmode/scan.svg'" />
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>
             </ion-col>
@@ -27,7 +23,7 @@
         <ion-row class="coin-row" *ngIf="fetchingCoinInfo">
             <ion-spinner name="crescent"></ion-spinner>
         </ion-row>
-    
+
         <!-- Coin Fetched -->
         <div *ngIf="coinInfoFetched && !fetchingCoinInfo">
             <ion-row class="coin-row">
@@ -37,17 +33,13 @@
                 <h3 id="symbol">{{ coinSymbol }}</h3>
             </ion-row>
         </div>
-    
+
     </ion-grid>
 </ion-content>
 
 <ion-footer class="ion-no-border" [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
-    <ion-button *ngIf="coinInfoFetched && !fetchingCoinInfo" color="primary" (click)="addCoin()">
-        <ion-label>{{ 'wallet.coin-adderc20-add' | translate }}</ion-label>
-    </ion-button>
-    <ion-button  *ngIf="!coinInfoFetched && !fetchingCoinInfo" color="primary" [disabled]="!coinAddress" (click)="checkCoinAddress()">
-        <ion-label>{{ 'wallet.coin-adderc20-search' | translate }}</ion-label>
-    </ion-button>
+    <ebutton *ngIf="coinInfoFetched && !fetchingCoinInfo" (clicked)="addCoin()"
+        [title]="'wallet.coin-adderc20-add' | translate"> </ebutton>
+    <ebutton *ngIf="!coinInfoFetched && !fetchingCoinInfo" [disabled]="!coinAddress" (clicked)="checkCoinAddress()"
+        [title]="'wallet.coin-adderc20-search' | translate"> </ebutton>
 </ion-footer>
-
-

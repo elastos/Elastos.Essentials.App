@@ -25,7 +25,5 @@
 </ion-content>
 
 <ion-footer class="ion-no-border" [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
-    <ion-button (click)="cancelOperation()">
-        <ion-label>{{ 'common.cancel' | translate }}</ion-label>
-    </ion-button>
+    <ebutton (clicked)="cancelOperation()" [title]="'common.cancel' | translate"> </ebutton>
 </ion-footer>

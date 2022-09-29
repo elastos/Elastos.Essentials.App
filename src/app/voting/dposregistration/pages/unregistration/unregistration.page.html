@@ -93,20 +93,14 @@
         </ion-list>
 
         <ion-row class="btn-container">
-            <ion-button *ngIf="dposInfo.state == 'Active'" color="success" (click)="unregister()">
-                {{ 'dposregistration.unregister' | translate }}
-            </ion-button>
+            <ebutton *ngIf="dposInfo.state == 'Active'" (clicked)="unregister()"
+                [title]="'dposregistration.unregister' | translate">
+            </ebutton>
             <ng-container *ngIf="dposInfo.state == 'Canceled'">
-                <!-- <ion-row>
-                    <ion-label>BlockHeight - CancelHeight: {{ blockHeight - cancelHeight }}</ion-label>
-                </ion-row> -->
-                <ion-button color="success" [attr.disabled]="available == 0" (click)="retrieve()">
-                    {{ 'dposregistration.retrieve' | translate }}
-                </ion-button>
+                <ebutton [attr.disabled]="available == 0" (clicked)="retrieve()"
+                    [title]="'dposregistration.retrieve' | translate">
+                </ebutton>
             </ng-container>
-            <!-- <ion-button  *ngIf="state == 'ReturnDeposit'" color="success" (click)="">
-                        {{ 'dposregistration.back' | translate }}
-                    </ion-button> -->
         </ion-row>
     </ion-grid>
 </ion-content>

@@ -7,38 +7,22 @@
   <div class="right-col">
     <ion-row>
       <ion-col size="6">
-        <ion-button *ngIf="config.content.items[0]" (click)="onActionClicked(0)">
-          <div class="inner">
-            <img [cache]="config.content.items[0].icon" *ngIf="config.content.items[0].icon" /> {{
-            config.content.items[0].title }}
-          </div>
-        </ion-button>
+        <ebutton *ngIf="config.content.items[0]" (clicked)="onActionClicked(0)"
+          [lefticon]="config.content.items[0].icon" [title]="config.content.items[0].title"></ebutton>
       </ion-col>
       <ion-col size="6">
-        <ion-button *ngIf="config.content.items[1]" (click)="onActionClicked(1)">
-          <div class="inner">
-            <img [cache]="config.content.items[1].icon" *ngIf="config.content.items[1].icon" /> {{
-            config.content.items[1].title }}
-          </div>
-        </ion-button>
+        <ebutton *ngIf="config.content.items[1]" (clicked)="onActionClicked(1)"
+          [lefticon]="config.content.items[1].icon" [title]="config.content.items[1].title"></ebutton>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col size="6">
-        <ion-button *ngIf="config.content.items[2]" (click)="onActionClicked(2)">
-          <div class="inner">
-            <img [cache]="config.content.items[2].icon" *ngIf="config.content.items[2].icon" /> {{
-            config.content.items[2].title }}
-          </div>
-        </ion-button>
+        <ebutton *ngIf="config.content.items[2]" (clicked)="onActionClicked(2)"
+          [lefticon]="config.content.items[2].icon" [title]="config.content.items[2].title"></ebutton>
       </ion-col>
       <ion-col size="6">
-        <ion-button *ngIf="config.content.items[3]" (click)="onActionClicked(3)">
-          <div class="inner">
-            <img [cache]="config.content.items[3].icon" *ngIf="config.content.items[3].icon" /> {{
-            config.content.items[3].title }}
-          </div>
-        </ion-button>
+        <ebutton *ngIf="config.content.items[3]" (clicked)="onActionClicked(3)"
+          [lefticon]="config.content.items[3].icon" [title]="config.content.items[3].title"></ebutton>
       </ion-col>
     </ion-row>
   </div>

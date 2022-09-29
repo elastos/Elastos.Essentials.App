@@ -54,9 +54,8 @@
         </div>
 
         <div *ngIf="candidatesFetched && crCouncilService.candidates.length > 0" class="footer">
-            <ion-button [disabled]="!crCouncilService.selectedCandidates.length" (click)="addCandidates()">
-                {{ 'crcouncilvoting.dist-votes' | translate }}
-            </ion-button>
+            <ebutton [disabled]="!crCouncilService.selectedCandidates.length" (clicked)="addCandidates()"
+                [title]="'crcouncilvoting.dist-votes' | translate"></ebutton>
         </div>
     </div>
 </ion-content>

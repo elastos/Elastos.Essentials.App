@@ -1,9 +1,13 @@
 <div class="root ion-activatable ripple" [class.cancel]="mode == 'cancel'" [class.disabled]="disabled"
     (click)="onClicked()">
-    <div class="inner-content" [class.left-icon-container]="leftIcon" [class.top-icon-container]="topIcon">
-        <img [src]="leftIcon" *ngIf="leftIcon" class="icon left-icon" />
-        <img [src]="topIcon" *ngIf="topIcon" class="icon letopft-icon" />
+    <div *ngIf="!spinning" class="inner-content" [class.left-icon-container]="leftIcon"
+        [class.top-icon-container]="topIcon">
+        <!-- TODO: cache for remote urls, src for local pictures ? -->
+        <img [cache]="leftIcon" *ngIf="leftIcon" class="icon left-icon" />
+        <img [cache]="topIcon" *ngIf="topIcon" class="icon letopft-icon" />
         <div class="title">{{ title }}</div>
     </div>
+    <ion-spinner *ngIf="spinning" name="crescent"></ion-spinner>
+
     <ion-ripple-effect *ngIf="!disabled"></ion-ripple-effect>
 </div>

@@ -40,14 +40,12 @@
 
     <ion-row *ngIf="publicationFailed">
       <ion-col class="btn cancel ion-activatable ripple" size="5.6">
-        <ion-button color="tertiary" (click)="cancel()">
-          {{ 'common.close' | translate }}
-        </ion-button>
+        <ebutton (clicked)="cancel()" [title]="'common.close' | translate">
+        </ebutton>
       </ion-col>
       <ion-col class="btn confirm ion-activatable ripple" size="5.6">
-        <ion-button color="tertiary" (click)="speedup()">
-          {{ 'wallet.eth-transaction-speedup' | translate }}
-        </ion-button>
+        <ebutton (clicked)="speedup()" [title]="'wallet.eth-transaction-speedup' | translate">
+        </ebutton>
       </ion-col>
     </ion-row>
   </ion-grid>

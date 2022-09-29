@@ -9,14 +9,13 @@
                 {{ 'wallet.mnemonic-warning3' | translate }}
             </p>
             <ion-row class="btn-container">
-                <ion-button color="secondary" (click)="nextSlide(slide)">
-                    <ion-label> {{ 'wallet.view-mnemonic' | translate }}</ion-label>
-                </ion-button>
+                <ebutton (clicked)="nextSlide(slide)" [title]="'wallet.view-mnemonic' | translate"> </ebutton>
             </ion-row>
         </ion-slide>
         <ion-slide class="ion-text-center mnemonic-container">
             <p>
-                {{ 'wallet.mnemonic-prompt1' | translate }}<b>{{ 'wallet.mnemonic-prompt2' | translate }}</b>{{ 'wallet.mnemonic-prompt3' | translate }}<br><br>
+                {{ 'wallet.mnemonic-prompt1' | translate }}<b>{{ 'wallet.mnemonic-prompt2' | translate }}</b>{{
+                'wallet.mnemonic-prompt3' | translate }}<br><br>
             </p>
             <ion-row class="mnemonic-row">
                 <ion-col size="3.6" *ngFor="let item of mnemonicList; let i = index">
@@ -25,9 +24,7 @@
                 </ion-col>
             </ion-row>
             <ion-row class="btn-container">
-                <ion-button color="secondary" (click)="goToMnemonicWrite()">
-                    <ion-label>{{ 'wallet.memory-written-down' | translate }}</ion-label>
-                </ion-button>
+                <ebutton (clicked)="goToMnemonicWrite()" [title]="'wallet.memory-written-down' | translate"> </ebutton>
             </ion-row>
         </ion-slide>
     </ion-slides>

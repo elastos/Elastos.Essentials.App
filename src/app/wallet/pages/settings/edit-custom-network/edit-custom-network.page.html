@@ -56,14 +56,16 @@
         <ion-grid>
             <ion-row>
                 <ion-col size="6">
-                    <ion-button class="cancel" *ngIf="!editionMode" (click)="cancel()">{{ 'common.cancel' | translate }}
-                    </ion-button>
-                    <ion-button class="cancel" *ngIf="editionMode" (click)="delete()">{{ 'common.delete' | translate }}
-                    </ion-button>
+                    <ebutton mode="cancel" *ngIf="!editionMode" (clicked)="cancel()"
+                        [title]="'common.cancel' | translate">
+                    </ebutton>
+                    <ebutton mode="cancel" *ngIf="editionMode" (clicked)="delete()"
+                        [title]="'common.delete' | translate">
+                    </ebutton>
                 </ion-col>
                 <ion-col size="6">
-                    <ion-button class="confirm" color="secondary" (click)="saveChanges()" [disabled]="!canSave()">{{
-                        'common.save-changes' | translate }}</ion-button>
+                    <ebutton (clicked)="saveChanges()" [disabled]="!canSave()"
+                        [title]="'common.save-changes' | translate"></ebutton>
                 </ion-col>
             </ion-row>
         </ion-grid>

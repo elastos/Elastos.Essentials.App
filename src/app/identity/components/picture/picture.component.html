@@ -2,23 +2,15 @@
 
 <ion-grid *ngIf="!dataUrlImage">
   <ion-row class="btn-row">
-    <ion-button color="tertiary" (click)="takePicture(1)">
-      <ion-label>{{ 'common.take-pictures' | translate }}</ion-label>
-    </ion-button>
-    <ion-button color="tertiary" (click)="takePicture(0)">
-      <ion-label>{{ 'common.photo-library' | translate }}</ion-label>
-    </ion-button>
+    <ebutton (clicked)="takePicture(1)" [title]="'common.take-pictures' | translate"> </ebutton>
+    <ebutton (clicked)="takePicture(0)" [title]="'common.photo-library' | translate"> </ebutton>
   </ion-row>
 </ion-grid>
 
 <ion-grid *ngIf="dataUrlImage">
   <img [src]="dataUrlImage">
   <ion-row class="btn-row submit">
-    <ion-button color="tertiary" (click)="submit(true)">
-      {{ 'common.use' | translate }}
-    </ion-button>
-    <ion-button color="tertiary" (click)="dataUrlImage = null">
-      {{ 'common.change' | translate }}
-    </ion-button>
+    <ebutton (clicked)="submit(true)" [title]="'common.use' | translate"> </ebutton>
+    <ebutton (clicked)="dataUrlImage = null" [title]="'common.change' | translate"> </ebutton>
   </ion-row>
 </ion-grid>

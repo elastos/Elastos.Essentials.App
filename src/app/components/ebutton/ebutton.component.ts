@@ -16,6 +16,9 @@ export class EButtonComponent implements OnInit {
   @Input()
   public disabled = false;
 
+  @Input()
+  public spinning = false;
+
   @Input("lefticon")
   public leftIcon: string = null;
 

@@ -34,9 +34,9 @@
 
   <div class="footer" *ngIf="config">
     <div class="buttons">
-      <ion-button *ngIf="!unsupportedFeature" (click)="mainFeatureAction()">{{ config.button }}</ion-button>
-      <ion-button *ngIf="unsupportedFeature" (click)="unsupportedFeatureAction()">{{ 'common.close' | translate }}
-      </ion-button>
+      <ebutton *ngIf="!unsupportedFeature" (clicked)="mainFeatureAction()" [title]="config.button"></ebutton>
+      <ebutton *ngIf="unsupportedFeature" (clicked)="unsupportedFeatureAction()" [title]="'common.close' | translate">
+      </ebutton>
     </div>
   </div>
 </ion-content>

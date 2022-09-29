@@ -5,8 +5,7 @@
   </ion-row>
 
   <ion-row class="btn-row">
-    <ion-button (click)="print(true, false)">{{ 'didsessions.only-qrcode' | translate }}</ion-button>
-    <ion-button (click)="print(true, true)">{{ 'didsessions.qrcode-and-mnemonic-words' | translate }}</ion-button>
+    <ebutton (clicked)="print(true, false)" [title]="'didsessions.only-qrcode' | translate"></ebutton>
+    <ebutton (clicked)="print(true, true)" [title]="'didsessions.qrcode-and-mnemonic-words' | translate"></ebutton>
   </ion-row>
 </div>
-

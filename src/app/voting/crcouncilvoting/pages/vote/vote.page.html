@@ -44,12 +44,10 @@
     </ion-grid>
 
     <div class="footer" ngxHideOnScroll>
-        <ion-button class="std-secondary-button" (click)="distributeEqually()">
-            {{ 'crcouncilvoting.dist-equally' | translate }}
-        </ion-button>
-        <ion-button class="std-action-button" [attr.disabled]="overflow" (click)="cast()">
-            <ion-label *ngIf="!votesCasted">{{ 'crcouncilvoting.cast-votes' | translate }}</ion-label>
-            <ion-label *ngIf="votesCasted">{{ 'crcouncilvoting.votes-casted' | translate }}</ion-label>
-        </ion-button>
+        <ebutton mode="cancel" (clicked)="distributeEqually()" [title]="'crcouncilvoting.dist-equally' | translate">
+        </ebutton>
+        <ebutton [disabled]="overflow" (clicked)="cast()"
+            [title]="(!votesCasted ? 'crcouncilvoting.cast-votes' : 'crcouncilvoting.votes-casted') | translate ">
+        </ebutton>
     </div>
 </ion-content>
