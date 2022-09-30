@@ -27,18 +27,15 @@
                                     src-fallback="/assets/crcouncilvoting/icon/avatar.png">
                             </ion-col>
                             <ion-col class="label-col" size="7">
-                                <ion-label>
-                                    <h4>{{ member.nickname }} </h4>
-                                    <p>
-                                        <ion-icon name="navigate"></ion-icon>
-                                        {{ 'crcouncilvoting.' + member.location | translate }}
-                                    </p>
-                                </ion-label>
+                                <h4>{{ member.nickname }} </h4>
+                                <p>
+                                    <ion-icon name="navigate"></ion-icon>
+                                    {{ 'crcouncilvoting.' + member.location | translate }}
+                                </p>
                             </ion-col>
                             <ion-col class="label-col" size="2.25">
-                                <ion-label *ngIf="member.state != 'Elected'">
-                                    <h5 class="state">{{'crcouncilvoting.'+ member.state | translate }}</h5>
-                                </ion-label>
+                                <h5 class="state" *ngIf="member.state != 'Elected'">{{'crcouncilvoting.'+
+                                    member.state | translate }}</h5>
                             </ion-col>
                         </ion-row>
                     </ion-grid>
@@ -55,12 +52,10 @@
                                     src-fallback="/assets/crcouncilvoting/icon/avatar.png">
                             </ion-col>
                             <ion-col class="label-col" size="7">
-                                <ion-label>
-                                    <h4>{{ secretary.didName }} </h4>
-                                    <p *ngIf="secretary.startDate">
-                                        {{ secretary.startDate }}
-                                    </p>
-                                </ion-label>
+                                <h4>{{ secretary.didName }} </h4>
+                                <p *ngIf="secretary.startDate">
+                                    {{ secretary.startDate }}
+                                </p>
                             </ion-col>
                         </ion-row>
                     </ion-grid>

@@ -1,11 +1,13 @@
 .container {
     padding: 10px 7.5px 10px 22.5px;
     margin-bottom: 2px;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    background-color: #ffffff;
+    background-color: var(--ion-background-color);
+    border-radius: 10px;
+    margin-bottom: 10px;
 
     ion-row {
-        .icon, .author {
+        .icon,
+        .author {
             display: flex;
             align-items: center;
             font-size: 14px;
@@ -20,19 +22,14 @@
 
         .reason {
             padding-top: 0;
-    
+
             pre {
                 font-weight: 400;
                 font-size: 12px;
                 white-space: pre-wrap;
                 word-wrap: break-word;
-                font-family: 'Inter' !important;
+                font-family: "Inter" !important;
             }
         }
     }
-}
-
-.darkContainer {
-    background: #212021;
-    box-shadow: none;
 }

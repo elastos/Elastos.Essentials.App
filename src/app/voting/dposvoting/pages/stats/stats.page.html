@@ -9,16 +9,16 @@
   </ion-refresher>
  -->
 
-    <ion-grid *ngIf="nodesService.statsFetched && nodesService._nodes.length; else loadingList" class="container ion-no-padding ion-no-margin"
-        [class.dark-container]="theme.darkMode">
+    <ion-grid *ngIf="nodesService.statsFetched && nodesService._nodes.length; else loadingList"
+        class="container ion-no-padding ion-no-margin" [class.dark-container]="theme.darkMode">
         <ion-list>
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!--  <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/validator.png">
-                        </ion-col>
-                        <ion-col size="5" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="7" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-last-validator' | translate }}</h4>
                             </ion-label>
@@ -33,10 +33,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!-- <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/voters.png">
-                        </ion-col>
-                        <ion-col size="5" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="7" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-total-voters' | translate }}</h4>
                             </ion-label>
@@ -51,10 +51,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!--  <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/vote.png">
-                        </ion-col>
-                        <ion-col size="5" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="7" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-total-votes' | translate }}</h4>
                             </ion-label>
@@ -69,10 +69,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!--  <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/security.png">
-                        </ion-col>
-                        <ion-col size="5" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="7" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-ela-staking' | translate }}</h4>
                             </ion-label>
@@ -87,10 +87,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!-- <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/percent.png">
-                        </ion-col>
-                        <ion-col size="7" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="9" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-voters-percent' | translate }}</h4>
                             </ion-label>
@@ -105,10 +105,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!-- <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/ratio.png">
-                        </ion-col>
-                        <ion-col size="7" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="9" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-active-nodes' | translate }}</h4>
                             </ion-label>
@@ -123,10 +123,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!-- <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/address.png">
-                        </ion-col>
-                        <ion-col size="7" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="9" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-active-addresses' | translate }}</h4>
                             </ion-label>
@@ -141,10 +141,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!-- <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/send.png">
-                        </ion-col>
-                        <ion-col size="7" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="9" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-txperhour' | translate }}</h4>
                             </ion-label>
@@ -159,10 +159,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!--  <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/mining.png">
-                        </ion-col>
-                        <ion-col size="7" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="9" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-percent-btchashrate' | translate }}</h4>
                             </ion-label>
@@ -177,10 +177,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!-- <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/block.png">
-                        </ion-col>
-                        <ion-col size="5" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="7" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-block-height' | translate }}</h4>
                             </ion-label>
@@ -195,10 +195,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!-- <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/rank.png">
-                        </ion-col>
-                        <ion-col size="7" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="9" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-coin-rank' | translate }}</h4>
                             </ion-label>
@@ -213,10 +213,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!--  <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/supply.png">
-                        </ion-col>
-                        <ion-col size="5" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="7" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-supply' | translate }}</h4>
                             </ion-label>
@@ -231,10 +231,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!-- <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/price.png">
-                        </ion-col>
-                        <ion-col size="7" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="9" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-ela-price' | translate }}</h4>
                             </ion-label>
@@ -249,10 +249,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!--  <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/bitcoin.png">
-                        </ion-col>
-                        <ion-col size="5" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="7" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-ela-price-btc' | translate }}</h4>
                             </ion-label>
@@ -267,10 +267,10 @@
             <ion-item>
                 <ion-grid class="ion-no-padding">
                     <ion-row class="ion-no-padding">
-                        <ion-col size="2" class="img-container">
+                        <!-- <ion-col size="2" class="img-container">
                             <img src="../assets/dposvoting/icon/volume.png">
-                        </ion-col>
-                        <ion-col size="5" class="stat-container">
+                        </ion-col> -->
+                        <ion-col size="7" class="stat-container">
                             <ion-label>
                                 <h4>{{ 'dposvoting.stats-total-volume' | translate }}</h4>
                             </ion-label>

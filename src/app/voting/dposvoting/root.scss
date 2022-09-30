@@ -44,9 +44,10 @@
 ************************************/
 .node-slides {
     position: fixed;
-    top: 25%;
-    left: 0px;
-    right: 0px;
+    top: calc(50vh - 200px);
+    left: 0;
+    right: 0;
+    background: var(--ion-background-color);
 
     ion-card {
         min-width: 97%;
@@ -217,6 +218,7 @@
                     --border-color: var(--ion-text-color) !important;
                     --border-color-checked: var(--ion-text-color) !important;
                     --background-checked: transparent !important;
+                    --checkmark-color: var(--ion-text-color) !important;
                 }
             }
 
@@ -233,9 +235,6 @@
                 p {
                     font-size: 10px;
                     opacity: 0.7;
-
-                    ion-icon {
-                    }
                 }
             }
         }

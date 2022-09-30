@@ -4,7 +4,7 @@
 .council-header {
     justify-content: center;
     align-items: center;
-    padding:10px;
+    padding: 10px;
 
     ion-col {
         align-self: center;
@@ -13,7 +13,6 @@
     div {
         font-weight: 500;
         font-size: 12px;
-        color: #ffffff;
         text-align: center;
         justify-content: center;
     }
@@ -36,7 +35,7 @@
         transition: all 0.3s ease;
 
         &:hover {
-            background-color: rgba(255,255,255,0.3);
+            background-color: rgba(255, 255, 255, 0.3);
         }
     }
 }
@@ -47,7 +46,7 @@
 
 .content {
     &.vote-open {
-        padding-top:55px;
+        padding-top: 55px;
         //--padding-bottom:55px; // Attempt to fix secondary ion-content (because of ion-refresher) cutting the bottom of the screen
     }
 }
@@ -61,8 +60,6 @@
 
         ion-item {
             margin: 2px 0;
-            box-shadow: 0 3px 15px 0 #ededf0;
-            --background: #ffffff;
             --padding-start: 0px;
 
             ion-grid {
@@ -97,32 +94,32 @@
 
             .label-col {
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
+                align-self: center;
+                flex-direction: column;
 
-                ion-label {
-                    h4,
-                    p {
-                        font-weight: 600;
-                    }
+                h4,
+                p {
+                    margin: 0;
+                }
 
-                    h4 {
-                        font-size: 14px;
-                        font-weight: 600;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                    }
+                h4 {
+                    font-size: 16px;
+                    font-weight: 600;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
 
-                    p {
-                        font-size: 10px !important;
-                        color: #353650;
-                    }
+                p {
+                    font-size: 12px !important;
+                    font-weight: 300;
+                }
 
-                    .state {
-                        font-size: 13px;
-                        font-weight: 600;
-                        color: #B91212;
-                    }
+                .state {
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #b91212;
                 }
             }
 
@@ -132,30 +129,10 @@
                 justify-content: flex-start;
 
                 ion-checkbox {
-                    --border-color: #732dcf;
-                    --border-color-checked: #732dcf;
+                    --border-color: var(--ion-text-color);
+                    --border-color-checked: var(--ion-text-color);
                     --border-width: 1.5px;
-                }
-            }
-        }
-    }
-}
-
-.dark-container {
-    .candidate-list {
-        ion-item {
-            --background: #212021;
-            box-shadow: none;
-
-            .label-col {
-                ion-label {
-                    p {
-                        color: #ffffff;
-                    }
-
-                    .state {
-                        color: #EA8F8F;
-                    }
+                    --checkmark-color: var(--ion-text-color);
                 }
             }
         }
@@ -190,7 +167,6 @@
 
     h1 {
         margin: 25px;
-        color: white;
         font-size: 18px;
         font-weight: 600;
     }

@@ -48,16 +48,11 @@
         <ion-footer *ngIf="!signingAndTransacting">
             <ion-row>
                 <ion-col class="left-col">
-                    <div class="btn-container align-center" id="cancel" (click)="cancel()">
-                        {{ 'common.cancel' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
+                    <ebutton mode="cancel" id="cancel" (clicked)="cancel()" [title]="'common.cancel' | translate">
+                    </ebutton>
                 </ion-col>
                 <ion-col class="right-col">
-                    <div class="btn-container align-center" id="confirm" (click)="goTransaction()">
-                        {{ 'common.confirm' | translate }}
-                    </div>
-                    <ion-ripple-effect></ion-ripple-effect>
+                    <ebutton id="confirm" (clicked)="goTransaction()" [title]="'common.confirm' | translate"></ebutton>
                 </ion-col>
             </ion-row>
         </ion-footer>

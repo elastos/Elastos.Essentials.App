@@ -1,14 +1,15 @@
 @import "../suggestion-detail/suggestion-detail.scss";
 
 ion-card-title {
-    font-size: 14px !important;
-    color: #8052FF;
+    font-size: 26px !important;
+    font-weight: 600;
 }
 
 ion-card-subtitle {
     margin-top: 10px;
     padding: 0 !important;
     font-size: 16px !important;
+    font-weight: 400;
 }
 
 crvotes {
@@ -34,8 +35,7 @@ crvotes {
 
         p {
             font-size: 11px;
-            font-weight:bold;
-            color: #3C3C3C;
+            font-weight: bold;
             text-align: center;
         }
     }
@@ -48,7 +48,7 @@ crvotes {
 
     .status-gap-container .inner {
         width: 1px;
-        background-color: #C9C9C9;
+        background-color: #c9c9c9;
     }
 }
 
@@ -56,7 +56,7 @@ crvotes {
     width: 100%;
     padding: 8px;
     background-color: #f6f6f6;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
     border-radius: 8px;
 
     .review-opinion {
@@ -87,7 +87,7 @@ crvotes {
 
         .timestamp {
             font-size: 10px;
-            color: #AAAAAA;
+            color: #aaaaaa;
         }
     }
 
@@ -102,36 +102,8 @@ crvotes {
     height: 15px;
 }
 
-.darkContainer {
-    ion-card-title {
-        color: #AB8CFF !important;
-    }
-
-    .status-container {
-        h5 {
-            color: #C9C9C9;
-        }
-
-        p {
-            color: #C9C9C9;
-        }
-
-        .status-gap-container .inner {
-            background-color: #767676;
-        }
-    }
-
-    .lastTrackingInfo {
-        background-color: #2f2d2f;
-
-        div {
-            .content {
-                color: #FFFFFF;
-            }
-
-            .timestamp {
-                color: #C9C9C9;
-            }
-        }
+.member-votes {
+    vote-result {
+        margin-bottom: 5px;
     }
 }

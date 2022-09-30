@@ -3,6 +3,10 @@
 ion-grid {
     padding: 0;
 
+    a {
+        color: var(--ion-text-color);
+    }
+
     ion-card {
         margin: 15px;
         display: flex;
@@ -10,8 +14,7 @@ ion-grid {
         justify-content: center;
         align-items: center;
         border-radius: 5px;
-        box-shadow: 0 0.1px 1px 0 rgba(0, 0, 0, 0.16);
-        background-color: #ffffff;
+        background-color: var(--essentials-box-color);
         padding: 20px 30px;
 
         ion-card-title {
@@ -30,7 +33,6 @@ ion-grid {
         ion-card-subtitle {
             font-size: 12px;
             font-weight: 600;
-            color: black;
             text-align: center;
             text-transform: none;
             padding: 10px 0 5px;
@@ -41,7 +43,6 @@ ion-grid {
             font-weight: 700;
             font-size: 10px;
             letter-spacing: 0.9px;
-            color: #666666;
         }
 
         .signed {
@@ -58,8 +59,7 @@ ion-grid {
     }
 
     .section-row {
-        box-shadow: 0 0.1px 1px 0 rgba(0, 0, 0, 0.16);
-        background-color: #ffffff;
+        background-color: var(--essentials-box-color);
         padding: 10px 10px 10px 22.5px;
         margin-bottom: 2px;
 
@@ -113,7 +113,7 @@ ion-grid {
     .tab-container {
         margin: 15px;
         border-radius: 5px;
-        background: #ececf3;
+        background: var(--ion-background-color);
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -124,6 +124,7 @@ ion-grid {
             display: flex;
             justify-content: center;
             align-items: center;
+            opacity: 0.5;
 
             p {
                 margin: 0;
@@ -131,7 +132,6 @@ ion-grid {
                 font-weight: 600;
                 letter-spacing: 1.05px;
                 text-align: center;
-                color: #8889b1;
 
                 span {
                     font-weight: 500;
@@ -145,13 +145,11 @@ ion-grid {
         }
 
         .tab-active {
-            background: #565bdb;
+            opacity: 1;
             border-radius: 5px;
             transform: scale(1.1);
-            box-shadow: 0px 15px 25px 0 #d9dbff;
 
             p {
-                color: #ffffff;
                 font-weight: 800;
             }
         }
@@ -194,7 +192,6 @@ ion-grid {
         height: 12px;
         border: solid 1px #7ab400;
         border-radius: 50%;
-        background-color: white;
         position: absolute;
         left: -20px;
         z-index: 10;
@@ -205,7 +202,6 @@ ion-grid {
         padding-top: 28px;
         width: 10px;
         height: 100%;
-        background-color: white;
         position: absolute;
         left: -20px;
         z-index: 5;
@@ -258,7 +254,7 @@ ion-grid {
             height: 152px;
             width: 237px;
             display: inline-block;
-            background-color: #f6f6f6;
+            background: var(--ion-background-color);
 
             p {
                 font-size: 14px;
@@ -334,75 +330,6 @@ ion-grid {
         width: 20px;
         height: 20px;
     }
-}
-
-.darkContainer {
-    ion-card {
-        color: white;
-        background: #212021;
-        box-shadow: none;
-
-        ion-card-title,
-        ion-card-subtitle {
-            color: #ffffff;
-        }
-    }
-
-    .section-row {
-        background: #212021;
-        box-shadow: none;
-    }
-
-    .tab-container {
-        background: #212021;
-        box-shadow: none;
-
-        .tab {
-            p {
-                color: #666666;
-            }
-        }
-
-        .tab-active {
-            box-shadow: 0px 0px 1px #000000e2;
-            background: #363636;
-
-            p {
-                color: #ffffff;
-            }
-        }
-    }
-
-    .milestone-container {
-        .vertical-line-container .inner {
-            background: #f9f586;
-        }
-
-        .content .entry .dot {
-            border: solid 1px #96fbc4;
-            background-color: #212021;
-        }
-
-        .content .entry .marker {
-            background-color: #212021;
-        }
-    }
-
-    .budget-container {
-        #budget-list {
-            #budget {
-                background-color: #2f2d2f;
-                p {
-                    color: white;
-                }
-
-                .stage {
-                    color: #96FBC4;
-                }
-            }
-        }
-    }
-
 }
 
 .invisible {

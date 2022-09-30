@@ -1,4 +1,9 @@
 @import "src/app/voting/root.scss";
+
+ion-card {
+    box-shadow: none;
+}
+
 /** General Spinner **/
 .spinner {
     position: fixed;
@@ -7,7 +12,7 @@
     left: 46.5%;
 
     ion-spinner {
-      transform: scale(2);
+        transform: scale(2);
     }
 }
 
@@ -20,47 +25,46 @@
 .propoasl-status {
     font-size: 13px !important;
     color: #666666 !important;
-
 }
 
 .voteragreed {
-    color: #00B83E !important;
+    color: #00b83e !important;
 }
 
 .finished {
-    color: #0BBFE7 !important;
+    color: #0bbfe7 !important;
 }
 
 .registered {
-    color: #3C3C3C !important;
+    color: #3c3c3c !important;
 }
 
 .cragreed {
-    color: #3C3C3C !important;
+    color: #3c3c3c !important;
 }
 
 .crcanceled {
-    color: #FF5757 !important;
+    color: #ff5757 !important;
 }
 
 .votercanceled {
-    color: #FF5757 !important;
+    color: #ff5757 !important;
 }
 
 .darkContainer {
     .voteragreed {
-        color: #20E9C5 !important;
+        color: #20e9c5 !important;
     }
 
     .finished {
-        color: #67CBE1 !important;
+        color: #67cbe1 !important;
     }
 
     .registered {
-        color: #C9C9C9 !important;
+        color: #c9c9c9 !important;
     }
 
     .cragreed {
-        color: #C9C9C9 !important;
+        color: #c9c9c9 !important;
     }
 }

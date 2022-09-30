@@ -75,6 +75,12 @@ export class WidgetContainerComponent implements OnInit {
         this.cdkList.disabled = !editing;
         this.editing = editing;
       });
+
+      this.widgetsService.onWidgetContainerContentReset.subscribe(containerName => {
+        if (containerName === this.name) {
+          this.onWidgetContentReset();
+        }
+      });
     }
   }
 
@@ -207,7 +213,10 @@ export class WidgetContainerComponent implements OnInit {
 
   public async restoreAllWidgets() {
     await this.widgetsService.resetAllWidgets();
+  }
 
+  // Content can be reseted while editing this container, but also another container.
+  private onWidgetContentReset() {
     this.emptyAllWidgets();
     this.loadContainer();
   }

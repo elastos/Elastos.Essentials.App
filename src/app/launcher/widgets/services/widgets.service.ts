@@ -2,6 +2,7 @@ import { DragDrop, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { ComponentRef, Injectable, TemplateRef, ViewContainerRef } from '@angular/core';
 import moment from 'moment';
+import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -61,6 +62,8 @@ export class WidgetsService {
 
     private launcherHomeViewIsActive = false;
     private containerNames: string[] = []; // List of containers used on the home screen
+
+    public onWidgetContainerContentReset = new Subject<string>(); // container name
 
     constructor(
         private globalStorageService: GlobalStorageService,
@@ -432,13 +435,18 @@ export class WidgetsService {
         };
     }
 
+    private async resetWidgets(containerName: string) {
+        await this.saveContainerState(containerName, this.generateDefaultContainerState(containerName));
+        this.onWidgetContainerContentReset.next(containerName);
+    }
+
     /**
      * Restores all containers to their original content
      */
     public async resetAllWidgets() {
-        await this.saveContainerState("left", this.generateDefaultContainerState("left"));
-        await this.saveContainerState("main", this.generateDefaultContainerState("main"));
-        await this.saveContainerState("right", this.generateDefaultContainerState("right"));
+        await this.resetWidgets("left");
+        await this.resetWidgets("main");
+        await this.resetWidgets("right");
     }
 
     private async findInAllContainers(filter: (widgetState: WidgetState) => boolean): Promise<{ containerName: string, widgetState: WidgetState }> {

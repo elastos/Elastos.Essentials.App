@@ -163,7 +163,6 @@ export class GlobalThemeService extends GlobalService {
       mainTextColor = variant.textColor || "#000000";
     }
 
-    document.body.style.setProperty('--ion-text-color', mainTextColor);
     document.body.style.setProperty('--essentials-box-color', variant.boxColor || (themeVariant === "light" ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'));
     document.body.style.setProperty('--essentials-border-separator-color', `${mainTextColor}30`); // Semi transparent based on text color
     document.body.style.setProperty('--essentials-pagination-color', `${mainTextColor}B0`); // Semi transparent based on text color
@@ -172,7 +171,11 @@ export class GlobalThemeService extends GlobalService {
     document.body.style.setProperty('--essentials-button-text-color', variant.buttonTextColor || variant.color);
 
     // Set ionic background color and variants
+    document.body.style.setProperty('--ion-text-color', mainTextColor);
+    document.body.style.setProperty('--ion-card-color', mainTextColor);
+    document.body.style.setProperty('--ion-item-color', mainTextColor);
     document.body.style.setProperty('--ion-background-color', variant.color);
+    document.body.style.setProperty('--ion-item-border-color', `${mainTextColor}30`); // Semi transparent based on text color
     document.body.style.setProperty('--ion-color-step-50', variant.color);
     document.body.style.setProperty('--ion-color-step-100', variant.color);
     document.body.style.setProperty('--ion-color-step-150', variant.color);

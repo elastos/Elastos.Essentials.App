@@ -11,14 +11,12 @@
                     </ion-avatar>
                 </ion-col>
 
-                <ion-col size="6.5" class="name-col mid-col align-center">
-                    <ion-label class="align-left">
-                        <h2 class="name">{{ member.didName }}</h2>
-                        <p class="location">
-                            <ion-icon src="/assets/crcouncilvoting/icon/location.svg"></ion-icon>
-                            {{ 'crcouncilvoting.' + member.location | translate }}
-                        </p>
-                    </ion-label>
+                <ion-col size="6.5" class="name-col">
+                    <h2 class="name">{{ member.didName }}</h2>
+                    <p class="location">
+                        <ion-icon src="/assets/crcouncilvoting/icon/location.svg"></ion-icon>
+                        {{ 'crcouncilvoting.' + member.location | translate }}
+                    </p>
                 </ion-col>
                 <ion-col size="2.75" class="right-col align-center align-right">
                     <p class="status" [class.elected]="member.status === 'Elected'"
@@ -111,13 +109,11 @@
         <div *ngIf="segmentValue=='record'">
             <ion-list *ngFor="let item of member.term">
                 <ion-row class="profile-data">
-                    <ion-col size="9.5">
-                        <ion-label>
-                            <h4>{{ item.title }}</h4>
-                            <p>
-                                {{ getItemDescription(item) }}
-                            </p>
-                        </ion-label>
+                    <ion-col size="9.5" class="title-col">
+                        <h4>{{ item.title }}</h4>
+                        <p>
+                            {{ getItemDescription(item) }}
+                        </p>
                     </ion-col>
                     <ion-col class="label-col" size="2.5">
                         <div class="voteResult align-center" [class.support]="item.voteResult === 'support'"

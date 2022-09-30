@@ -1,4 +1,3 @@
-
 ul {
     margin: 0;
     display: flex;
@@ -15,6 +14,7 @@ li {
         width: 9px;
         height: 15px;
         border-radius: 4px;
+        opacity: 0.8;
     }
 }
 
@@ -23,32 +23,22 @@ li + li {
 }
 
 .abstain {
-    background-color: #3B3B3B;
+    background-color: #3b3b3b;
 }
 
 .approve {
-    background-color: #00DE73;
+    background-color: #00de73;
 }
 
 .reject {
-    background-color: #FC3E36;
+    background-color: #fc3e36;
 }
 
 .blank {
-    background-color: #DFDFDF;
+    background-color: var(--essentials-box-color);
 }
 
 .ratio {
     font-size: 13px;
     padding-left: 6px;
-}
-
-.darkContainer {
-    .abstain {
-        background-color: #3C3C3C;
-    }
-
-    .blank {
-        background-color: #515151;
-    }
 }

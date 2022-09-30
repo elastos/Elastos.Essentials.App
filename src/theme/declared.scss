@@ -3,7 +3,15 @@
 /********************** ALERT CONTROLLER **********************/
 .alert {
   z-index: 100000 !important;
-  --ion-text-color: #000000;
+  --ion-color-step-600: var(--ion-text-color); // subtext color
+}
+
+ion-card-subtitle {
+  --ion-color-step-600: var(--ion-text-color);
+}
+
+a {
+  color: var(--ion-text-color);
 }
 
 /********************** OPTIONS POPUP **********************/

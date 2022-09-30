@@ -13,13 +13,10 @@
             <h1 id="amount">{{ voteAmount | number:'1.0-3' }} <span>ELA</span></h1>
             <h2>{{ 'wallet.vote-revote' | translate }}</h2>
         </div>
-        <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
-            <ion-label>{{ 'common.cancel' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
-        <div class="btn confirm ion-activatable ripple" (click)="goTransaction()">
-            <ion-label>{{ 'common.confirm' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
+
+        <!-- Buttons -->
+        <ebutton class="cancel" mode="cancel" (clicked)="cancelOperation()" [title]="'common.cancel' | translate">
+        </ebutton>
+        <ebutton class="confirm" (clicked)="goTransaction()" [title]="'common.confirm' | translate"></ebutton>
     </ion-grid>
 </ion-content>

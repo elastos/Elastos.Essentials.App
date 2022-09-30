@@ -6,12 +6,11 @@ ion-content {
 
         ion-input {
             height: 50px;
-            background: #ffffff;
+            background: var(--essentials-box-color);
             font-size: 15px;
             border-radius: 5px;
             letter-spacing: -0.5px;
             --padding-start: 15px;
-            box-shadow: 0 0.1px 0.5px 0 rgba(0, 0, 0, 0.16);
         }
     }
 
@@ -22,10 +21,10 @@ ion-content {
         .item-row {
             padding: 5px 0;
             margin-bottom: 2px;
-            background-color: #ffffff;
-            box-shadow: 0 0.1px 1px 0 rgba(0, 0, 0, 0.16);
+            background-color: var(--essentials-box-color);
 
-            h1, p {
+            h1,
+            p {
                 margin: 0;
                 text-align: left;
             }
@@ -99,22 +98,6 @@ ion-content {
             .right-col {
                 align-items: center;
             }
-        }
-    }
-}
-
-.darkContainer {
-    .search-row {
-        ion-input {
-            background: #212021;
-            box-shadow: none;
-        }
-    }
-
-    .container {
-        .item-row {
-            background: #212021;
-            box-shadow: none;
         }
     }
 }

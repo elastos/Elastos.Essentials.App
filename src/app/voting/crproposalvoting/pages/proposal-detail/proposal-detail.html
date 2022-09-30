@@ -11,11 +11,13 @@
                         uxService.formatDate(proposal.createdAt) }}</ion-card-subtitle>
                     <crvotes [crvotes]="crvotes"></crvotes>
                     <div class="status-container">
-                        <div *ngIf="remainingTime" class="status-info" >
+                        <div *ngIf="remainingTime" class="status-info">
                             <h5>{{ 'crproposalvoting.voting-ends-in' | translate }}</h5>
                             <p>{{ remainingTime }}</p>
                         </div>
-                        <div *ngIf="remainingTime" class="status-gap-container"><div class="inner"></div></div>
+                        <div *ngIf="remainingTime" class="status-gap-container">
+                            <div class="inner"></div>
+                        </div>
                         <!-- <div class="status-info" [ngStyle]="{'width':proposal.status !== 'cragreed' ? '95px !important' : '47% !important'}"></div> -->
                         <div class="status-info">
                             <h5>{{ 'crproposalvoting.status' | translate }}</h5>
@@ -28,7 +30,9 @@
                                 {{ 'crproposalvoting.' + proposal.status | translate }}
                             </p>
                         </div>
-                        <div class="status-gap-container"><div class="inner"></div></div>
+                        <div class="status-gap-container">
+                            <div class="inner"></div>
+                        </div>
                         <div class="status-info">
                             <h5>{{ 'crproposalvoting.type' | translate }}</h5>
                             <p>{{ 'crproposalvoting.proposaltype-' + proposaltype | translate }}</p>
@@ -70,24 +74,34 @@
                                                 <h5 class="milestone-goal">{{ entry.goal }}</h5>
                                                 <div class="lastTrackingInfo"
                                                     *ngIf="entry.lastTrackingInfo && entry.lastTrackingInfo.apply">
-                                                    <div *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.opinion">
-                                                        <p class="review-opinion" [class.approve]="entry.lastTrackingInfo.review.opinion === 'approve'"
-                                                                [class.reject]="entry.lastTrackingInfo.review.opinion === 'reject'">
-                                                            {{ 'crproposalvoting.' + entry.lastTrackingInfo.review.opinion | translate }}
+                                                    <div
+                                                        *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.opinion">
+                                                        <p class="review-opinion"
+                                                            [class.approve]="entry.lastTrackingInfo.review.opinion === 'approve'"
+                                                            [class.reject]="entry.lastTrackingInfo.review.opinion === 'reject'">
+                                                            {{ 'crproposalvoting.' +
+                                                            entry.lastTrackingInfo.review.opinion | translate }}
                                                         </p>
                                                     </div>
-                                                    <div *ngIf="entry.lastTrackingInfo.apply && entry.lastTrackingInfo.apply.content">
-                                                        <p class="content">{{ entry.lastTrackingInfo.apply.content }}</p>
+                                                    <div
+                                                        *ngIf="entry.lastTrackingInfo.apply && entry.lastTrackingInfo.apply.content">
+                                                        <p class="content">{{ entry.lastTrackingInfo.apply.content }}
+                                                        </p>
                                                         <h5 class="timestamp">
-                                                            {{ ('crproposalvoting.apply-date'  | translate) + ": " }}
-                                                            {{ uxService.formatDate(entry.lastTrackingInfo.apply.timestamp)}}
+                                                            {{ ('crproposalvoting.apply-date' | translate) + ": " }}
+                                                            {{
+                                                            uxService.formatDate(entry.lastTrackingInfo.apply.timestamp)}}
                                                         </h5>
                                                     </div>
-                                                    <div *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.content">
-                                                        <p class="content">{{ entry.lastTrackingInfo.review.content }}</p>
+                                                    <div
+                                                        *ngIf="entry.lastTrackingInfo.review && entry.lastTrackingInfo.review.content">
+                                                        <p class="content">{{ entry.lastTrackingInfo.review.content }}
+                                                        </p>
                                                         <h5 class="timestamp">
-                                                            {{ ('crproposalvoting.audit-date'  | translate) + ": " }}
-                                                            {{ uxService.formatDate(entry.lastTrackingInfo.review.timestamp) }}
+                                                            {{ ('crproposalvoting.audit-date' | translate) + ": " }}
+                                                            {{
+                                                            uxService.formatDate(entry.lastTrackingInfo.review.timestamp)
+                                                            }}
                                                         </h5>
                                                     </div>
                                                 </div>
@@ -181,7 +195,7 @@
                                 </ion-row>
                             </div>
 
-                            <div *ngSwitchCase="'member-votes'" class="item">
+                            <div *ngSwitchCase="'member-votes'" class="item member-votes">
                                 <div class="tab-container">
                                     <div class="tab" [class.tab-active]="activeTab === 1" (click)='activeTab = 1'>
                                         <p>{{ 'crproposalvoting.yes' | translate }} <span>({{
@@ -201,19 +215,16 @@
                                     </div>
                                 </div>
                                 <div *ngIf="activeTab === 1">
-                                    <div *ngFor="let vote of getVotesByType('approve')">
-                                        <vote-result [vote]="vote"></vote-result>
-                                    </div>
+                                    <vote-result *ngFor="let vote of getVotesByType('approve')" [vote]="vote">
+                                    </vote-result>
                                 </div>
                                 <div *ngIf="activeTab === 2">
-                                    <div *ngFor="let vote of getVotesByType('reject')">
-                                        <vote-result [vote]="vote"></vote-result>
-                                    </div>
+                                    <vote-result *ngFor="let vote of getVotesByType('reject')" [vote]="vote">
+                                    </vote-result>
                                 </div>
                                 <div *ngIf="activeTab === 3">
-                                    <div *ngFor="let vote of getVotesByType('abstain')">
-                                        <vote-result [vote]="vote"></vote-result>
-                                    </div>
+                                    <vote-result *ngFor="let vote of getVotesByType('abstain')" [vote]="vote">
+                                    </vote-result>
                                 </div>
                             </div>
 

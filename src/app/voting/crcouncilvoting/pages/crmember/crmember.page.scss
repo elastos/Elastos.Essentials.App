@@ -1,13 +1,5 @@
 @import "src/app/voting/root.scss";
 
-ion-row {
-    background-color: #ffffff;
-}
-
-ion-list {
-    background-color: #ffffff;
-}
-
 ion-col {
     margin: 0px;
 }
@@ -19,16 +11,23 @@ ion-col {
         height: 68px;
     }
 
-    .name {
-        font-family: Montserrat;
-        font-style: normal;
-        font-weight: 600;
-        font-size: 24px;
-        line-height: 29px;
-    }
+    .name-col {
+        flex-direction: column;
+        align-self: center;
+        align-items: flex-start;
 
-    .location {
-        color: #acacac;
+        .name {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 29px;
+            margin: 0;
+        }
+
+        .location {
+            opacity: 0.7;
+            margin: 0;
+        }
     }
 
     .status {
@@ -39,7 +38,6 @@ ion-col {
         height: 22;
         font-size: 10px;
         font-weight: 600;
-
     }
 
     .elected {
@@ -48,23 +46,23 @@ ion-col {
     }
 
     .impeached {
-        color: #FFFFFF;
-        background-color: #7B6700;
+        color: #ffffff;
+        background-color: #7b6700;
     }
 
     .returned {
-        color: #FFFFFF;
-        background-color: #7774FF;
+        color: #ffffff;
+        background-color: #7774ff;
     }
 
     .terminated {
-        color: #FFFFFF;
-        background-color: #BC1212;
+        color: #ffffff;
+        background-color: #bc1212;
     }
 
     .inactive {
         color: #808080;
-        background-color: #ECECEC;
+        background-color: #ececec;
     }
 
     .active {
@@ -73,13 +71,13 @@ ion-col {
     }
 
     .illegal {
-        color: #BC1212;
-        border: 1px solid #BC1212;
+        color: #bc1212;
+        border: 1px solid #bc1212;
     }
 
     .expired {
         color: #000000;
-        border: 1px solid #C4C4C4;
+        border: 1px solid #c4c4c4;
     }
 }
 
@@ -91,7 +89,7 @@ ion-col {
     // flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #f5f7fe;
+    background-color: var(--essentials-box-color);
 
     .progress-container {
         padding-left: 10px !important;
@@ -118,10 +116,6 @@ ion-col {
         }
     }
 
-    ion-row {
-        background-color: #f5f7fe;
-    }
-
     #impeachment-title {
         margin-top: 0px;
         font-weight: 600;
@@ -138,11 +132,11 @@ ion-segment {
     margin-top: 24px;
     padding: 7px 5px;
     height: 47px;
-    color: #ffffff;
-    background-color: #f5f7fe;
+    background: var(--essentials-box-color);
 
     ion-segment-button {
-        color: #732cce;
+        color: var(--ion-text-color);
+        background: var(--ion-background-color);
 
         font-weight: bold;
         font-size: 14px;
@@ -158,95 +152,26 @@ ion-segment {
 }
 
 .support {
-    color: #00B978;
+    color: #00b978;
     background-color: rgba(96, 206, 180, 0.15);
 }
 
 .reject {
-    color: #FF3838;
-    background-color: #FFEAEA;
+    color: #ff3838;
+    background-color: #ffeaea;
 }
 
 .abstention {
-    color: #FFFFFF;
+    color: #ffffff;
     background-color: #282828;
 }
 
 .undecided {
-    color: #CCCCCC;
+    color: #cccccc;
     background-color: rgba(96, 206, 180, 0.15);
 }
 
 .footer-space {
-    background-color: #ffffff;
     height: 113px;
     width: 100%;
-}
-
-.darkContainer {
-    ion-row {
-        background-color: #121212;
-    }
-
-    ion-list {
-        background-color: #121212;
-    }
-
-    .id-row {
-        .impeached {
-            background-color: #7B6800;
-        }
-
-        .inactive {
-            color: #545454;
-            background-color: #ECECEC;
-        }
-
-        .illegal {
-            color: #FF4A4A;
-            border: 1px solid #FF4A4A;
-        }
-
-        .expired {
-            color: #FFFFFF;
-            border: 1px solid #FFFFFF;
-        }
-    }
-
-    .impeachment-row {
-        background-color: #212021;
-        ion-row {
-            background-color: #212021;
-        }
-    }
-
-    ion-segment {
-        color: #474747;
-        background-color: #252525;
-
-        ion-segment-button {
-            color: #ffffff;
-        }
-    }
-
-    .support {
-        color: #27D89A;
-        background-color: rgba(116, 255, 222, 0.15);
-    }
-
-    .reject {
-        color: #FF7474;
-        background-color: #4E1616;
-    }
-
-    .undecided {
-        color: #F8F8F8;
-        background-color: #545454;
-    }
-
-    .footer-space {
-        background-color: #121212;
-    }
-
-
 }
