@@ -272,6 +272,6 @@ export class CredentialDeleteRequestPage {
   }
 
   getDappIcon() {
-    return 'assets/identity/icon/elastos-icon.svg';
+    return 'assets/shared/essentials-black-circle.svg';
   }
 }

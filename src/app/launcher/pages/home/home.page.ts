@@ -1,5 +1,5 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { IonSlides, ModalController, ToastController } from '@ionic/angular';
+import { IonContent, IonSlides, ModalController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -25,6 +25,7 @@ import { WidgetsService } from '../../widgets/services/widgets.service';
 })
 export class HomePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  @ViewChild(IonContent, { static: true }) ionContent: IonContent;
   @ViewChild('widgetsslides', { static: true }) widgetsSlides: IonSlides;
   @ViewChildren(WidgetContainerComponent) widgetContainersList: QueryList<WidgetContainerComponent>;
 
@@ -39,7 +40,7 @@ export class HomePage implements OnInit {
   private widgetsEditionModeSub: Subscription = null;
 
   public widgetsSlidesOpts = {
-    autoHeight: true,
+    // autoHeight: true,
     spaceBetween: 10,
     initialSlide: 1
   };
@@ -210,5 +211,6 @@ export class HomePage implements OnInit {
 
   public async onSlideChange() {
     this.activeScreenIndex = await this.widgetsSlides.getActiveIndex();
+    //void this.ionContent.scrollToTop(500);
   }
 }

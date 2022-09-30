@@ -659,7 +659,7 @@ export class RequestCredentialsPage {
     if (this.requestingAppIconUrl) {
       return this.sanitize(this.requestingAppIconUrl);
     } else {
-      return 'assets/identity/icon/elastos-icon.svg'
+      return 'assets/shared/essentials-black-circle.svg'
     }
   }
 

@@ -2,7 +2,7 @@
   <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="receivedIntent">
     <ion-card>
-      <img src="assets/identity/default/securityWarning.svg">
+      <img src="assets/shared/essentials-black-circle.svg">
       <ion-card-title>{{ 'identity.sign-data' | translate }}</ion-card-title>
       <ion-card-subtitle *ngIf="receivedIntent">{{ receivedIntent.params.appPackageId }}</ion-card-subtitle>
     </ion-card>

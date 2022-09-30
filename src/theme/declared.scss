@@ -6,6 +6,10 @@
   --ion-color-step-600: var(--ion-text-color); // subtext color
 }
 
+ion-card {
+  box-shadow: none;
+}
+
 ion-card-subtitle {
   --ion-color-step-600: var(--ion-text-color);
 }

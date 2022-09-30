@@ -334,11 +334,18 @@ export class CredentialImportRequestPage {
     if (this.requestingAppIconUrl) {
       return this.sanitize(this.requestingAppIconUrl);
     } else {
-      return 'assets/identity/icon/elastos-icon.svg'
+      return 'assets/shared/essentials-black-circle.svg'
     }
   }
 
   getDappName() {
     return this.requestingAppName;
+  }
+
+  getRightTargetDIDButtonTitle() {
+    if (!this.accepting && !this.forceToPublishCredentials)
+      return this.translate.instant('identity.accept');
+    else if (!this.accepting && this.forceToPublishCredentials)
+      return this.translate.instant('identity.accept-and-publish');
   }
 }

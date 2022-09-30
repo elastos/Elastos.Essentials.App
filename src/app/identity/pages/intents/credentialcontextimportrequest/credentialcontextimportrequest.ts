@@ -267,6 +267,6 @@ export class CredentialContextImportRequestPage {
   }
 
   getDappIcon() {
-    return 'assets/identity/icon/elastos-icon.svg';
+    return 'assets/shared/essentials-black-circle.svg';
   }
 }

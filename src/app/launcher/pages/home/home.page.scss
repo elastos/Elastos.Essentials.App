@@ -24,6 +24,7 @@ ion-content {
     ion-slide {
         display: flex;
         flex-direction: column;
+        justify-content: flex-start;
     }
 
     widget-container {

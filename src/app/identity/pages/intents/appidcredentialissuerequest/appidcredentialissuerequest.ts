@@ -169,6 +169,6 @@ export class AppIdCredentialIssueRequestPage {
     }
 
     public getAppIcon() {
-        return this.appIconDataUrl || "assets/identity/default/securityWarning.svg";
+        return this.appIconDataUrl || "assets/shared/essentials-black-circle.svg";
     }
 }

@@ -418,7 +418,7 @@ export class WidgetsService {
                 widgets.push(this.createBuiltInWidgetState("hive-sync"));
                 widgets.push(this.createBuiltInWidgetState("swap"));
                 widgets.push(this.createBuiltInWidgetState("discover-dapps"));
-                widgets.push(this.createBuiltInWidgetState("easy-bridge"));
+                //widgets.push(this.createBuiltInWidgetState("easy-bridge"));
                 widgets.push(this.createBuiltInWidgetState("red-packets"));
 
                 break;

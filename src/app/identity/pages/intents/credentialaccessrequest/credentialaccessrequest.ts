@@ -569,7 +569,7 @@ export class CredentialAccessRequestPage {
     if (this.requestDappIcon) {
       return this.sanitize(this.requestDappIcon);
     } else {
-      return 'assets/identity/icon/elastos-icon.svg'
+      return 'assets/shared/essentials-black-circle.svg'
     }
   }
 
