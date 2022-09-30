@@ -303,6 +303,7 @@ export const fr = {
         "ledger-scan": "Recherche Ledger",
         "ledger-scan-available-devices": "Appareils disponibles",
         "ledger-scan-scan-again": "Re-scanner",
+        "ledger-scan-paired-devices": "Appareil couplé",
         "ledger-scan-ledger-scanning": "Recherche en cours",
         "ledger-scan-bluetooth-not-enable": "Le bluetooth est éteint, veuillez l'allumer",
         "ledger-scan-open-bluetooth-setting": "Ouvrir les paramètres bluetooth",

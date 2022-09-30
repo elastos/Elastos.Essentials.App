@@ -46,21 +46,24 @@ export class BLECentralPluginBridge {
             });
     }
 
-    public connectedDevices(serviceUUIDs: string[]): Promise<BLECentralPlugin.PeripheralData[]> {
-        Logger.log(TAG, ' connectedDevices serviceUUIDs:', serviceUUIDs)
+    public bondedDevices(): Promise<BLECentralPlugin.PeripheralData[]> {
+        Logger.log(TAG, ' connectedDevices serviceUUIDs:')
         return new Promise((resolve, reject) => {
-            // TODO
-            // if (this.platform.platforms().indexOf('ios') >= 0) {
-                // ble.connectedPeripheralsWithServices(serviceUUIDs,
-                //     (data: BLECentralPlugin.PeripheralData[]) => { resolve(data); },
-                //     () => { resolve([]); });
-            // } else {
                 ble.bondedDevices(
                     (data: BLECentralPlugin.PeripheralData[]) => {
                         resolve(data);
                     },
                     () => { resolve([]); });
-            // }
+        });
+    }
+
+    // [Android] peripheralsWithIdentifiers is not supported on Android.
+    public connectedPeripheralsWithServices(serviceUUIDs: string[]): Promise<BLECentralPlugin.PeripheralData[]> {
+        Logger.log(TAG, ' connectedPeripheralsWithServices serviceUUIDs:', serviceUUIDs)
+        return new Promise((resolve, reject) => {
+            ble.connectedPeripheralsWithServices(serviceUUIDs,
+                (data: BLECentralPlugin.PeripheralData[]) => { resolve(data); },
+                () => { resolve([]); });
         });
     }
 

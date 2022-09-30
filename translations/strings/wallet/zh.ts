@@ -302,6 +302,7 @@ export const zh = {
                 ********************/
                 "ledger-scan": "搜索Ledger设备",
                 "ledger-scan-available-devices": "可用设备",
+                "ledger-scan-paired-devices": "已配对设备",
                 "ledger-scan-scan-again": "重新搜索",
                 "ledger-scan-ledger-scanning": "正在搜索设备",
                 "ledger-scan-bluetooth-not-enable": "蓝牙未开启，请先开启蓝牙",
