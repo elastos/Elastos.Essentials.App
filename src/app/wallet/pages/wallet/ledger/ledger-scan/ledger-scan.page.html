@@ -39,5 +39,19 @@
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
 
+        <ion-row class="device-row ripple ion-activatable" *ngIf="pairedDevices">
+            <div class='title'>{{ 'wallet.ledger-scan-paired-devices' | translate }}</div>
+        </ion-row>
+        <ion-row class="device-row ripple ion-activatable" *ngFor="let device of pairedDevices"
+            (click)="selectLedger(device)">
+            <ion-col size="11">
+                <ion-label>{{ device.name }}</ion-label>
+            </ion-col>
+            <ion-col size="1">
+                <img src="assets/wallet/icons/right-arrow-alt.svg" />
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+
     </ion-grid>
 </ion-content>

@@ -23,6 +23,7 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
+import { getBluetoothServiceUuids } from '@ledgerhq/devices';
 import { TransportError } from "@ledgerhq/hw-transport";
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -34,6 +35,8 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { Native } from 'src/app/wallet/services/native.service';
 import { LedgerConnectType } from '../ledger-connect/ledger-connect.page';
 
+declare let ble: BLECentralPlugin.BLECentralPluginStatic;
+
 const TAG = 'ledger';
 
 @Component({
@@ -44,12 +47,14 @@ const TAG = 'ledger';
 export class LedgerScanPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
+  public pairedDevices: BLECentralPlugin.PeripheralData[] = [];
   public device: BLECentralPlugin.PeripheralData = null;
   private bleManager: BLECentralPluginBridge = null;
 
   public scanning = false;
   public isBluetoothEnable = true;
   public supportOpeningBluetoothSetting = true;
+  private iosPlatform = false;
 
   private ledgerConnectType: LedgerConnectType = LedgerConnectType.CreateWallet;
 
@@ -66,6 +71,7 @@ export class LedgerScanPage implements OnInit {
   ) {
     if (this.platform.platforms().indexOf('ios') >= 0) {
       this.supportOpeningBluetoothSetting = false;
+      this.iosPlatform = true;
     }
 
     const navigation = this.router.getCurrentNavigation();
@@ -92,6 +98,14 @@ export class LedgerScanPage implements OnInit {
   async initBLE() {
     this.bleManager = new BLECentralPluginBridge();
     if (this.bleManager) {
+      if (this.iosPlatform) {
+        let uuids = getBluetoothServiceUuids();
+        this.pairedDevices = await this.bleManager.connectedPeripheralsWithServices(uuids);
+      } else {
+          this.pairedDevices = await this.bleManager.bondedDevices();
+      }
+      Logger.log(TAG, 'Paired device ', this.pairedDevices)
+
       await this.bleManager.stopStateNotifications();
       this.bleManager.startStateNotifications(async (state) => {
         switch (state) {
@@ -115,6 +129,13 @@ export class LedgerScanPage implements OnInit {
     Logger.log(TAG, "connectLedger:", this.device);
     if (this.device) {
       this.native.go("/wallet/ledger/connect", { device: this.device, type: this.ledgerConnectType });
+    }
+  }
+
+  selectLedger(device: BLECentralPlugin.PeripheralData) {
+    Logger.log(TAG, "selectLedger:", device);
+    if (device) {
+        this.native.go("/wallet/ledger/connect", { device: device, type: this.ledgerConnectType});
     }
   }
 
