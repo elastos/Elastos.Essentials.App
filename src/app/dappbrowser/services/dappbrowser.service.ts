@@ -573,6 +573,18 @@ export class DappBrowserService implements GlobalService {
     }
 
     private handleHtmlHeader(event: DappBrowserPlugin.DappBrowserEvent): Promise<Document> {
+        // Trick / Note:
+        // - When we first open the browser we create the web3 provider constructor JS code, and the cordova plugin decides what is the right
+        // time to inject it (different on android and ios.
+        // - When we reload the page, the browser re-injects this JS code as it was originally.
+        // - Though, the network can have been changed in the meantime from the status bar, by the user or programatically by the dapp.
+        // - Because of that, apps like ELK think we are on the wrong (old) network but we are not, and our provider is not up-to-date with the right
+        // chain id, so the app is stuck in a loop trying to request a network change that never happens.
+        // - So we "refresh" the real active network here when receiving the "head" event (not too early - loadstart doesn't work)
+        // so that our provider and the app are up to date.
+        void this.sendActiveNetworkToDApp(WalletNetworkService.instance.activeNetwork.value);
+        void this.sendActiveWalletToDApp(WalletService.instance.activeNetworkWallet.value);
+
         return this.extractHtmlInfoAndUpdatedBrowsedDApp(event.data, this.url);
     }
 
@@ -751,18 +763,18 @@ export class DappBrowserService implements GlobalService {
         else {
             // Do nothing if already on the right network
             if ((WalletNetworkService.instance.activeNetwork.value as EVMNetwork).getMainChainID() === chainId) {
-                Logger.log("walletconnect", "Already on the right network");
+                Logger.log("dappbrowser", "Already on the right network");
                 this.sendWeb3IABResponse(message.data.id, {}); // Successfully switched
                 return;
             }
 
             let networkSwitched = await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
             if (networkSwitched) {
-                Logger.log("walletconnect", "Successfully switched to the new network");
+                Logger.log("dappbrowser", "Successfully switched to the new network");
                 this.sendWeb3IABResponse(message.data.id, {}); // Successfully switched
             }
             else {
-                Logger.log("walletconnect", "Network switch cancelled");
+                Logger.log("dappbrowser", "Network switch cancelled");
                 this.sendWeb3IABError(message.data.id, {
                     code: -1,
                     message: "Cancelled operation"
