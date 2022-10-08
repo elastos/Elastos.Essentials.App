@@ -2,7 +2,7 @@
   <app-titlebar></app-titlebar>
 
   <ion-grid class="container" [class.light-container]="!theme.darkMode" [class.dark-container]="theme.darkMode">
-    <ion-slides #widgetsslides [options]="widgetsSlidesOpts" (ionSlideDidChange)="onSlideChange()"
+    <ion-slides #widgetsslides [options]="widgetsSlidesOpts" (ionSlideDidChange)="onSlideChange($event)"
       class="widgets-containers-slides">
       <ion-slide>
         <widget-container name="left"></widget-container>

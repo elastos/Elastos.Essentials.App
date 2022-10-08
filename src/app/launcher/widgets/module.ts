@@ -14,8 +14,10 @@ import { ActiveWalletWidget } from "./builtin/active-wallet/active-wallet.widget
 import { BackupIdentityWidget } from "./builtin/backup-identity/backup-identity.widget";
 import { ChooseActiveNetworkWidget } from "./builtin/choose-active-network/choose-active-network.widget";
 import { ContactsWidget } from "./builtin/contacts/contacts.widget";
+import { CyberRepublicWidget } from "./builtin/cyber-republic/cyber-republic.widget";
 import { DiscoverDAppsWidget } from "./builtin/discover-dapps/discover-dapps.widget";
 import { EasyBridgeWidget } from "./builtin/easy-bridge/easy-bridge.widget";
+import { ElastosStakingWidget } from "./builtin/elastos-staking/elastos-staking.widget";
 import { ElastosVotingWidget } from "./builtin/elastos-voting/elastos-voting.widget";
 import { FavoriteAppsWidget } from "./builtin/favorite-apps/favorite-apps.widget";
 import { HiveSyncWidget } from "./builtin/hive-sync/hive-sync.widget";
@@ -47,6 +49,8 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     ActiveWalletWidget,
     SignOutWidget,
     ElastosVotingWidget,
+    ElastosStakingWidget,
+    CyberRepublicWidget,
     RecentAppsWidget,
     WalletConnectWidget,
     BackupIdentityWidget,

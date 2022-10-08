@@ -10,11 +10,11 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { IWidget } from '../../base/iwidget';
 
 @Component({
-  selector: 'widget-elastos-voting',
-  templateUrl: './elastos-voting.widget.html',
-  styleUrls: ['./elastos-voting.widget.scss'],
+  selector: 'widget-cyber-republic',
+  templateUrl: './cyber-republic.widget.html',
+  styleUrls: ['./cyber-republic.widget.scss'],
 })
-export class ElastosVotingWidget implements IWidget, OnInit {
+export class CyberRepublicWidget implements IWidget, OnInit {
   public forSelection: boolean; // Initialized by the widget service
 
   public runnableApps: RunnableAppCategory = null;
@@ -31,28 +31,36 @@ export class ElastosVotingWidget implements IWidget, OnInit {
 
   ngOnInit() {
     this.runnableApps = {
-      type: 'launcher.elastos-voting',
+      type: 'launcher.cyber-republic',
       shouldBeDisplayed: () => this.walletNetworkService.isActiveNetworkElastos(), // Deprecated - unused
       apps: [
         {
-          id: 'dpos',
-          routerContext: App.DPOS_VOTING,
-          name: this.translate.instant('launcher.app-dpos-voting'),
-          description: this.translate.instant('launcher.app-dpos-description'),
-          icon: '/assets/launcher/apps/app-icons/dpos.svg',
+          id: 'crcouncil',
+          routerContext: App.CRCOUNCIL_VOTING,
+          name: this.translate.instant('launcher.app-cr-council'),
+          description: this.translate.instant('launcher.app-crcouncil-description'),
+          icon: '/assets/launcher/apps/app-icons/council.svg',
           hasWidget: false,
-          startCall: () => this.dposVotingInitService.start()
+          startCall: () => this.crCouncilVotingInitService.startCouncil()
         },
         {
-          id: 'dpos2',
-          routerContext: App.DPOS_VOTING,
-          name: this.translate.instant('launcher.app-dpos2-voting'),
-          description: this.translate.instant('launcher.app-dpos2-description'),
-          icon: '/assets/launcher/apps/app-icons/dpos.svg',
+          id: 'crproposal',
+          routerContext: App.CRPROPOSAL_VOTING,
+          name: this.translate.instant('launcher.app-cr-proposal'),
+          description: this.translate.instant('launcher.app-crproposal-description'),
+          icon: '/assets/launcher/apps/app-icons/proposal.svg',
           hasWidget: false,
-          startCall: async () => {
-            // TODO @dongxiao: open dpos 2.0
-          }
+          routerPath: '/crproposalvoting/proposals/all'
+        },
+        {
+          id: 'crsuggestion',
+          routerContext: App.CRPROPOSAL_VOTING,
+          name: this.translate.instant('launcher.app-cr-suggestion'),
+          description: this.translate.instant('launcher.app-crsuggestion-description'),
+          icon: '/assets/launcher/apps/app-icons/suggestion.svg',
+          iconDark: '/assets/launcher/apps/app-icons/suggestion_dark.svg',
+          hasWidget: false,
+          routerPath: '/crproposalvoting/suggestions/all'
         }
       ]
     };

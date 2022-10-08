@@ -14,11 +14,15 @@ ion-content {
     min-height: calc(
         100% - 50px
     ); // Remove titlebar and footer sizes - to be able to swipe empty areas of widget containers
-    display: flex; // Needed for let the slides scroll well to the to pwhen swiping
+    display: flex; // Needed for let the slides scroll well to the top when swiping
 
     ion-slides {
         //min-height: 100%;
         height: auto;
+
+        .swiper-wrapper {
+            height: auto !important;
+        }
     }
 
     ion-slide {

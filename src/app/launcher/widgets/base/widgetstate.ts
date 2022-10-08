@@ -4,6 +4,8 @@ export type BuiltInWidgetType =
   "active-wallet" |
   "signout" |
   "elastos-voting" |
+  "elastos-staking" |
+  "cyber-republic" |
   "recent-apps" |
   "favorite-apps" |
   "backup-identity" |

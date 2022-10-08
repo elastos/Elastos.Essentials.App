@@ -28,6 +28,8 @@ const builtInWidgets: WidgetState[] = [
     { category: "builtin", builtInType: "choose-active-network", displayCategories: [DisplayCategories.FINANCE] },
     { category: "builtin", builtInType: "signout", displayCategories: [DisplayCategories.IDENTITY] },
     { category: "builtin", builtInType: "elastos-voting", displayCategories: [DisplayCategories.ELASTOS] },
+    { category: "builtin", builtInType: "elastos-staking", displayCategories: [DisplayCategories.ELASTOS] },
+    { category: "builtin", builtInType: "cyber-republic", displayCategories: [DisplayCategories.ELASTOS] },
     { category: "builtin", builtInType: "recent-apps", displayCategories: [DisplayCategories.BROWSER] },
     { category: "builtin", builtInType: "favorite-apps", displayCategories: [DisplayCategories.BROWSER] },
     { category: "builtin", builtInType: "wallet-connect", displayCategories: [DisplayCategories.FINANCE] },
@@ -424,6 +426,8 @@ export class WidgetsService {
                 break;
             case "right":
                 widgets.push(this.createPluginWidgetState("news"));
+                widgets.push(this.createBuiltInWidgetState("cyber-republic"));
+                widgets.push(this.createBuiltInWidgetState("elastos-staking"));
                 widgets.push(this.createBuiltInWidgetState("elastos-voting"));
                 widgets.push(this.createBuiltInWidgetState("contacts"));
                 widgets.push(this.createBuiltInWidgetState("hive"));

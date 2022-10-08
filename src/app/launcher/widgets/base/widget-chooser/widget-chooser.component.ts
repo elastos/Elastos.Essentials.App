@@ -109,7 +109,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('add-a-widget-title'));
+    this.titleBar.setTitle(this.translate.instant('launcher.add-a-widget-title'));
 
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {

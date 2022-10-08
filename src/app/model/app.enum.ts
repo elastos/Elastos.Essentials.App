@@ -20,4 +20,5 @@ export enum App {
     MIGRATOR = "migrator",
     EASY_BRIDGE = "easy_bridge",
     MULTI_SWAP = "multi_swap",
+    ELASTOS_STAKING = "elastosstaking"
 }

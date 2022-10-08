@@ -40,7 +40,7 @@ export class HomePage implements OnInit {
   private widgetsEditionModeSub: Subscription = null;
 
   public widgetsSlidesOpts = {
-    // autoHeight: true,
+    autoHeight: true,
     spaceBetween: 10,
     initialSlide: 1
   };
@@ -209,8 +209,10 @@ export class HomePage implements OnInit {
     this.widgetContainers[this.activeScreenIndex].addWidget();
   }
 
-  public async onSlideChange() {
+  public async onSlideChange(evt) {
     this.activeScreenIndex = await this.widgetsSlides.getActiveIndex();
     //void this.ionContent.scrollToTop(500);
+
+    void this.widgetsSlides.update();
   }
 }
