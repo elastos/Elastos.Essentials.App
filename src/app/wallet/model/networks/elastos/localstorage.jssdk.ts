@@ -21,7 +21,7 @@ export class JSSDKLocalStorage implements WalletStorage {
         storeIDs.splice(index);
         await this.saveMasterWalletIDs(storeIDs);
     }
-    return GlobalStorageService.instance.deleteSetting(this.signedInDID,  NetworkTemplateStore.networkTemplate,, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID);
+    return GlobalStorageService.instance.deleteSetting(this.signedInDID,  NetworkTemplateStore.networkTemplate, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID);
   }
 
   public async saveStore(masterWalletID: string, j: JSONObject): Promise<void> {

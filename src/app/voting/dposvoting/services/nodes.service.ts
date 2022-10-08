@@ -14,9 +14,6 @@ import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.st
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/tx-providers/transaction.types';
-<<<<<<< HEAD
-=======
->>>>>>> CU-2mut6cc [wallet]Don't use spvsdk
 import { Vote } from '../model/history.model';
 import { DPosNode } from '../model/nodes.model';
 import { Block, Mainchain, Price, Voters } from '../model/stats.model';
