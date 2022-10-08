@@ -14,8 +14,6 @@
     }
 
     ion-input {
-        background-color: #ffffff;
-        box-shadow: 0 3px 15px 0 #ededf0;
         border-radius: 15px;
         font-size: 14px;
         font-weight: 400;
@@ -24,27 +22,28 @@
         --padding-top: 15px;
         --padding-bottom: 15px;
         margin-bottom: 20px;
+        background-color: var(--essentials-box-color);
     }
 
     ion-row {
         padding: 0;
         margin: 0 0 15px;
-        
+
         ion-col {
             padding: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
 
-            h2, ion-input {
+            h2,
+            ion-input {
                 margin: 0;
                 width: 100%;
                 font-size: 14px;
                 font-weight: 500;
                 text-align: center;
                 border-radius: 17px;
-                background-color: #ffffff;
-                box-shadow: 0 3px 15px 0 #ededf0;
+                background-color: var(--essentials-box-color);
                 padding: 20px;
             }
 
@@ -66,41 +65,20 @@
     }
 }
 
-.darkContainer {
-    ion-input {
-        background: #212021;
-        box-shadow: none;
-    }
-
-    ion-row {
-        ion-col {
-            h2, ion-input {
-                background: #212021;
-                box-shadow: none;
-            }
-        }
-    }
-}
-
 ion-footer {
     padding: 10px;
-    background: #ffffff;
 
     div {
         width: 100%;
         display: flex;
         justify-content: space-between;
 
-        ion-button {
+        ebutton {
             width: 48%;
         }
-    
+
         .onlyDeleteButton {
             width: 100%;
         }
     }
-}
-
-.dark-footer {
-    background: #121212;
 }

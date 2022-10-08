@@ -14,6 +14,11 @@ ion-card-subtitle {
   --ion-color-step-600: var(--ion-text-color);
 }
 
+ion-footer {
+  background-color: var(--ion-background-color);
+  box-shadow: 0 0 10px red;
+}
+
 a {
   color: var(--ion-text-color);
 }

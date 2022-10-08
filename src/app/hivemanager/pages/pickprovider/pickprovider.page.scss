@@ -17,6 +17,10 @@
     align-items: flex-start;
     padding: 10px 15px;
 
+    ebutton {
+        width: 100%;
+    }
+
     h1,
     h2,
     h3,
@@ -67,41 +71,17 @@
         p {
             margin: 0;
         }
-
-        .bubble-tail {
-            position: absolute;
-            width: 0;
-            height: 0;
-            left: 8.5px;
-            bottom: -21px;
-            border-left: 25px solid transparent;
-            border-right: 25px solid transparent;
-            border-top: 25px solid white;
-        }
     }
 
     ion-input {
         margin: 10px;
-        background: #f0f1ff;
+        background: var(--essentials-box-color);
         border-radius: 15px;
         font-size: 15px;
         --padding-start: 12px;
         --padding-top: 15px;
         --padding-bottom: 15px;
         width: 95%;
-    }
-}
-
-.darkContainer {
-    ion-input {
-        background: #212021;
-        box-shadow: none;
-    }
-
-    .bubble {
-        .bubble-tail {
-            border-top: 25px solid #212021;
-        }
     }
 }
 
