@@ -39,7 +39,7 @@
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
 
-        <ion-row class="device-row ripple ion-activatable" *ngIf="pairedDevices">
+        <ion-row class="device-row ripple ion-activatable" *ngIf="pairedDevices.length > 0">
             <div class='title'>{{ 'wallet.ledger-scan-paired-devices' | translate }}</div>
         </ion-row>
         <ion-row class="device-row ripple ion-activatable" *ngFor="let device of pairedDevices"

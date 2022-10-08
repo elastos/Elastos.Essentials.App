@@ -151,14 +151,19 @@ export class LedgerScanPage implements OnInit {
           this.isBluetoothEnable = await this.bleManager.isEnabled();
           if (this.isBluetoothEnable) {
               this.scanning = true;
-              let ret = await this.searchLedgerDevice(10000).catch((e) => {
-                  Logger.warn(TAG, ' searchLedgerDevice exception ', e)
-              })
-              this.scanning = false;
-
-              if (ret) {
-                  this.device = ret;
+              try {
+                  let ret = await this.searchLedgerDevice(10000);
+                  if (ret ) {
+                      if (this.pairedDevices.findIndex( d => d.id === ret.id) === -1) {
+                          this.device = ret;
+                      }
+                  }
               }
+              catch( e) {
+                Logger.warn(TAG, ' searchLedgerDevice exception ', e)
+              }
+
+              this.scanning = false;
           }
         });
     }
