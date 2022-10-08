@@ -86,12 +86,12 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
     }
 
     this.categories = [
-      { key: DisplayCategory.FINANCE, title: "Finance" },
-      { key: DisplayCategory.IDENTITY, title: "Identity" },
-      { key: DisplayCategory.BROWSER, title: "Browser" },
-      { key: DisplayCategory.ELASTOS, title: "Elastos tech" },
-      { key: DisplayCategory.COMMUNITY, title: "Community" },
-      { key: DisplayCategory.DAPPS, title: "dApps" }
+      { key: DisplayCategory.FINANCE, title: "widget-category-finance" },
+      { key: DisplayCategory.IDENTITY, title: "widget-category-identity" },
+      { key: DisplayCategory.BROWSER, title: "widget-category-browser" },
+      { key: DisplayCategory.ELASTOS, title: "widget-category-elastos-tech" },
+      { key: DisplayCategory.COMMUNITY, title: "widget-category-community" },
+      { key: DisplayCategory.DAPPS, title: "widget-category-dapps" }
     ];
     this.selectedCategory = this.categories[0];
 
@@ -109,7 +109,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('Add a widget'));
+    this.titleBar.setTitle(this.translate.instant('add-a-widget-title'));
 
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
@@ -204,7 +204,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
 
     if (fetchResult.newsSourceAdded) {
       // News source added, show a toast and automatically exit the chooser without adding a new news widget
-      this.native.genericToast("News source added to your existing news widget!", 4000);
+      this.native.genericToast("launcher.news-source-added", 4000);
       this.dismiss(null);
       return;
     }

@@ -2,7 +2,7 @@
   *ngIf="news.length > 0 || forSelection || editing" (click)="onBackgroundClicked()">
   <ion-row class="header-row">
     <ion-col size="10" class="title-col">
-      News
+      {{ 'launcher.news-title' | translate }}
       <div class="badge" *ngIf="news.length > 0">{{ news.length }}</div>
     </ion-col>
     <ion-col size="2" class="grid">
@@ -29,6 +29,6 @@
 
   <!-- No news to show (eg: preview) -->
   <ion-row class="news-row" *ngIf="news.length === 0">
-    <p>No news to display. Add more news widgets from your favorite dApps.</p>
+    <p>{{ 'launcher.no-news' | translate }}</p>
   </ion-row>
 </ion-row>

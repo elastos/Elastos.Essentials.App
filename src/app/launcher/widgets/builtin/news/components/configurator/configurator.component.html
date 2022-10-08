@@ -1,8 +1,9 @@
 <ion-grid [class.darkContainer]="theme.darkMode">
 
   <div class="title-row">
-    <span class="title">Receive updates from:</span> <span class="selected">{{ getSelectedSourcesCount() }}
-      selected</span>
+    <span class="title">{{ 'launcher.news-receive-updates-from' | translate }}</span>
+    <span class="selected">{{ 'launcher.n-news-sources-selected' | translate : {selected: getSelectedSourcesCount()}
+      }}</span>
   </div>
 
   <ion-row class="sources-row">

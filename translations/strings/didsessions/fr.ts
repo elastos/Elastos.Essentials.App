@@ -36,9 +36,9 @@ export const fr = {
     'got-it': 'Got it',
 
     // Create screen
-    'welcome-message1': 'Welcome to Web3, where you take control of your own digital identity',
-    'welcome-message2': 'With one mnemonic, manage your multi-network crypto wallets, your Web3 DID identity and your own storage space.',
-    'welcome-message3': "Let's start by creating a new identity or import an existing one. You will be all set for Web3 in 30 seconds!",
+    'welcome-message1': 'Bienvenue dans le Web3 qui vous donne le contrôle sur votre propre identité numérique',
+    'welcome-message2': 'Avec une clé papier, gérez vos portefeuilles crypto multi-réseaux, votre identité Web3 et votre espace de stockage.',
+    'welcome-message3': "Commençons par créer une identité ou par en importer une existante. Vous serez prêts pour le vrai Web3 dans 30 secondes!",
     'create-message': 'Créez une toute nouvelle identité ou importez une identité que vous possédez déjà',
     'new': 'Nouvelle',
     'import': 'Importer',

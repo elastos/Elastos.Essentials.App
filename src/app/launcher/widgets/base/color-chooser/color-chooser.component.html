@@ -1,8 +1,9 @@
 <ion-content>
   <ion-grid [class.darkContainer]="theme.darkMode">
     <ion-row class="header">
-      <div class="title">Change background color</div>
-      <div class="selected" *ngI="activeTheme">Selected: {{ getThemeTitle(activeTheme.config) }}</div>
+      <div class="title">{{ 'launcher.change-background-color' | translate }}</div>
+      <div class="selected" *ngI="activeTheme">{{ 'launcher.selected-theme' | translate }} {{
+        getThemeTitle(activeTheme.config) }}</div>
     </ion-row>
 
     <ion-row class="colors">

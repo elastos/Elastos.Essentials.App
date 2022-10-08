@@ -9,15 +9,15 @@ import { IonicStorageModule } from "@ionic/storage";
 import { TranslateModule } from "@ngx-translate/core";
 import { QRCodeModule } from "angularx-qrcode";
 import { IonBottomDrawerModule } from "ion-bottom-drawer";
-import { ComponentsModule } from "./components/components.module";
-import { OptionsComponent } from "./components/options/options.component";
-import { ShowQRCodeComponent } from "./components/showqrcode/showqrcode.component";
-import { SuccessComponent } from "./components/success/success.component";
-import { WarningComponent } from "./components/warning/warning.component";
-import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
-import { IdentityRoutingModule } from "./routing";
-import { LocalStorage } from "./services/localstorage";
-import { PopupProvider } from "./services/popup";
+import { ComponentsModule } from "../components/components.module";
+import { OptionsComponent } from "../components/options/options.component";
+import { ShowQRCodeComponent } from "../components/showqrcode/showqrcode.component";
+import { SuccessComponent } from "../components/success/success.component";
+import { WarningComponent } from "../components/warning/warning.component";
+import { TabsnavPageModule } from "../pages/tabnav/tabnav.module";
+import { IdentityRoutingModule } from "../routing";
+import { LocalStorage } from "./localstorage";
+import { PopupProvider } from "./popup";
 
 @NgModule({
   declarations: [

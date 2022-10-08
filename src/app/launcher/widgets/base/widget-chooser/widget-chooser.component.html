@@ -7,7 +7,7 @@
 
     <!-- No dApp widget to show yet -->
     <ion-row class="msg-container" *ngIf="!addingCustomWidget && shouldShowNoDAppWidgetRecommendation()">
-      <p class="ion-text-center">Use the + button and scan widget QR codes from dApps to get more widgets.</p>
+      <p class="ion-text-center">{{ 'launcher.use-plus-to-scan-widget' | translate }}</p>
     </ion-row>
   </div>
 
@@ -16,8 +16,8 @@
     <ion-row class="input-row">
       <ion-col size="9">
         <ion-input type="url" #input autosize clearInput autocomplete="off" autocorrect="off"
-          placeholder="Paste a widget url" [(ngModel)]="widgetUrl" mode="ios" name="didInput" ngDefaultControl
-          (input)='onSendToAddressInput($event.target.value)'></ion-input>
+          [placeholder]="'launcher.paste-widget-url' | translate" [(ngModel)]="widgetUrl" mode="ios" name="didInput"
+          ngDefaultControl (input)='onSendToAddressInput($event.target.value)'></ion-input>
       </ion-col>
       <ion-col size="1" class="right-col" (click)="paste()">
         <ion-icon mode="ios" name="clipboard-outline"></ion-icon>
@@ -29,8 +29,7 @@
     </ion-row>
 
     <ion-row class="msg-container" *ngIf="!customWidgetState">
-      <p class="ion-text-center">Scan a QR code or type / paste a Essentials widget url to add it to your home screen.
-      </p>
+      <p class="ion-text-center">{{ 'launcher.scan-widget-qr-code' | translate }}</p>
     </ion-row>
 
     <!-- Preview container -->
@@ -41,7 +40,7 @@
     <ion-row>
       <ion-col size="6" *ngFor="let category of categories">
         <div class="cat-selector" [class.active]="category === selectedCategory" (click)="selectCategory(category)">{{
-          category.title }}</div>
+          'launcher.'+category.title | translate }}</div>
       </ion-col>
     </ion-row>
   </div>

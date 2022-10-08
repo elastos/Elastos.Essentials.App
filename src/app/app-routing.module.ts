@@ -12,7 +12,7 @@ const routes: Routes = [
   { path: 'hivemanager', loadChildren: () => import('./hivemanager/module').then(x => x.HiveManagerModule), canActivate: [AuthGuardService] },
   { path: 'settings', loadChildren: () => import('./settings/module').then(x => x.SettingsModule), canActivate: [AuthGuardService] },
   { path: 'contacts', loadChildren: () => import('./contacts/module').then(x => x.ContactsModule), canActivate: [AuthGuardService] },
-  { path: 'identity', loadChildren: () => import('./identity/module').then(x => x.IdentityModule), canActivate: [AuthGuardService] },
+  { path: 'identity', loadChildren: () => import('./identity/services/module').then(x => x.IdentityModule), canActivate: [AuthGuardService] },
   { path: 'wallet', loadChildren: () => import('./wallet/module').then(x => x.WalletModule), canActivate: [AuthGuardService] },
   { path: 'dposvoting', loadChildren: () => import('./voting/dposvoting/module').then(x => x.DPoSVotingModule), canActivate: [AuthGuardService] },
   { path: 'dposregistration', loadChildren: () => import('./voting/dposregistration/module').then(x => x.DPoSRegistrationModule), canActivate: [AuthGuardService] },

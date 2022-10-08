@@ -4,8 +4,8 @@
         <!-- Static header -->
         <ion-row class="header-row">
             <ion-col size="9" class="title-col">
-                <h1>Tokens</h1>
-                <p class="secondary-text">Pick a token to continue</p>
+                <h1>{{ 'multiswap.chooser.tokens-title' | translate }}</h1>
+                <p class="secondary-text">{{ 'multiswap.chooser.pick-token-to-continue' | translate }}</p>
             </ion-col>
             <ion-col size="3" class="settings-col">
                 <ion-spinner name="crescent" class="fetching" *ngIf="totalTokensToFetch != totalTokensFetched">
@@ -18,8 +18,8 @@
             <ion-col size="12">
                 <div class="search-bar">
                     <ion-icon name="search"></ion-icon>
-                    <ion-input placeholder="Search name or paste address" [(ngModel)]="search" name="searchInput"
-                        ngDefaultControl (ngModelChange)="onSearchInputChanged()"></ion-input>
+                    <ion-input [placeholder]="'multiswap.chooser.search-name-address' | translate" [(ngModel)]="search"
+                        name="searchInput" ngDefaultControl (ngModelChange)="onSearchInputChanged()"></ion-input>
                 </div>
             </ion-col>
         </ion-row>
@@ -32,7 +32,8 @@
                 <ion-row class="network-row" *ngIf="isSourceMode()" [class.selected-network]="!currentNetwork"
                     (click)="selectNetwork(null)">
                     <ion-col class="left-col">
-                        <div class="name">All ({{totalTokensFetched}} / {{totalTokensToFetch}})</div>
+                        <div class="name">{{ 'multiswap.chooser.all-with-count' | translate : {fetched:
+                            totalTokensFetched, total: totalTokensToFetch} }}</div>
                     </ion-col>
                 </ion-row>
 
@@ -53,12 +54,12 @@
                 <ng-container *ngIf="!inCustomTokenMode">
                     <!-- Not ready to show tokens -->
                     <div *ngIf="!currentNetwork && isDestinationMode()">
-                        Pick a network to start
+                        {{ 'multiswap.chooser.pick-network-to-start' | translate }}
                     </div>
 
                     <!-- No token to display -->
                     <div *ngIf="displayableTokens.length === 0" class="simple-text-info">
-                        No token for the current search or filter.
+                        {{ 'multiswap.chooser.no-token-result' | translate }}
                     </div>
 
                     <!-- Tokens list -->
@@ -73,7 +74,7 @@
                     <!-- Fetching custom token by address -->
                     <div *ngIf="fetchingERC20Token" class="fetching-custom-token">
                         <ion-spinner name="crescent" class="fetching"></ion-spinner>
-                        Retrieving token from chain
+                        {{ 'multiswap.chooser.retrieving-token' | translate }}
                     </div>
 
                     <!-- Search is done - there could be a token found or not -->
@@ -85,7 +86,7 @@
 
                         <!-- No network selected: ask user to pick a network first -->
                         <div *ngIf="!currentNetwork" class="simple-text-info">
-                            Please select token's target network.
+                            {{ 'multiswap.chooser.select-token-network' | translate }}
                         </div>
                     </ng-container>
                 </ng-container>

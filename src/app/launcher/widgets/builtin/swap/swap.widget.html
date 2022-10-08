@@ -5,12 +5,12 @@
     </ion-col>
     <ion-col size="10" class="right-col">
       <div class="header">
-        <div class="title">Swap tokens</div>
-        <div class="secondary-text subtitle">Swap your tokens across chains</div>
+        <div class="title">{{ 'launcher.swap-tokens' | translate }}</div>
+        <div class="secondary-text subtitle">{{ 'launcher.swap-tokens-subtitle' | translate }}</div>
       </div>
       <!-- <ebutton title="Swap" class="button" (clicked)="onSwapClicked()"></ebutton> -->
       <div class="button ion-activatable ripple" (click)="onSwapClicked()">
-        Swap
+        {{ 'launcher.swap' | translate }}
         <ion-ripple-effect></ion-ripple-effect>
       </div>
     </ion-col>
@@ -35,7 +35,7 @@
       <div class="token-name" *ngIf="token">{{ token.token.getSymbol() }}</div>
 
       <!-- No token picked yet -->
-      <div class="no-token" *ngIf="!token">Pick token</div>
+      <div class="no-token" *ngIf="!token">{{ 'launcher.pick-token' | translate }}</div>
 
       <img class="arrow"
         [src]="theme.darkMode ? '/assets/launcher/widgets/white-down-arrow.svg' : '/assets/launcher/widgets/down-arrow.svg'" />
