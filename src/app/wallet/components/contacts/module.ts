@@ -13,7 +13,6 @@ import { ContactsComponent } from './contacts.component';
     CommonModule,
     SharedComponentsModule,
     IonicModule,
-    SharedComponentsModule,
     TranslateModule
   ],
   exports: [

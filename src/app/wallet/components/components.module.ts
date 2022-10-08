@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { QRCodeModule } from 'angularx-qrcode';
+import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
+
 import { HelpComponent } from './help/help.component';
 import { OptionsComponent } from './options/options.component';
 import { TxConfirmComponent } from './tx-confirm/tx-confirm.component';
@@ -23,6 +25,7 @@ import { WarningComponent } from './warning/warning.component';
     FormsModule,
     IonicModule,
     QRCodeModule,
+    SharedComponentsModule,
     TranslateModule,
   ],
   exports: [],
