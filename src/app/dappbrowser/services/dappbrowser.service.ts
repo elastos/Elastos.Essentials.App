@@ -573,6 +573,18 @@ export class DappBrowserService implements GlobalService {
     }
 
     private handleHtmlHeader(event: DappBrowserPlugin.DappBrowserEvent): Promise<Document> {
+        // Trick / Note:
+        // - When we first open the browser we create the web3 provider constructor JS code, and the cordova plugin decides what is the right
+        // time to inject it (different on android and ios.
+        // - When we reload the page, the browser re-injects this JS code as it was originally.
+        // - Though, the network can have been changed in the meantime from the status bar, by the user or programatically by the dapp.
+        // - Because of that, apps like ELK think we are on the wrong (old) network but we are not, and our provider is not up-to-date with the right
+        // chain id, so the app is stuck in a loop trying to request a network change that never happens.
+        // - So we "refresh" the real active network here when receiving the "head" event (not too early - loadstart doesn't work)
+        // so that our provider and the app are up to date.
+        void this.sendActiveNetworkToDApp(WalletNetworkService.instance.activeNetwork.value);
+        void this.sendActiveWalletToDApp(WalletService.instance.activeNetworkWallet.value);
+
         return this.extractHtmlInfoAndUpdatedBrowsedDApp(event.data, this.url);
     }
 
