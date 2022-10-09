@@ -1,18 +1,19 @@
 /** BASE **/
 .popup-base {
   backdrop-filter: blur(5px);
-  --ion-background-color: transparent !important;
+  //--ion-background-color: transparent !important; // KO for the news configurator if enabled
 
   // Real content inside the modal - apply backgorund on it to be able to user rounded corners as well if needed
   :first-child {
-    background: #f0f1ff;
+    //background: #f0f1ff;
+    background: var(--ion-background-color);
   }
 
-  &.darkContainer {
+  /* &.darkContainer {
     :first-child {
       background: #212021;
     }
-  }
+  } */
 }
 
 /** NEWS WIDGET POPUP **/
@@ -22,6 +23,6 @@
 
 /** LAUNCHER COLOR CHOOSER SHEET **/
 .color-chooser-component {
-  --height: 55%;
+  --height: 60%;
   align-items: flex-end; // bottom sheet
 }

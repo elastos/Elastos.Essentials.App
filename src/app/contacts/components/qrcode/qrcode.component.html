@@ -4,15 +4,10 @@
   <div>
     <qrcode [qrdata]="qrCodeString" [width]="200"></qrcode>
   </div>
-  <h2>{{ didString.slice(4,16) }}...{{ didString.slice(40,46) }}</h2>
+  <h2>{{ didString.slice(0,16) }}...{{ didString.slice(40,46) }}</h2>
 
   <ion-row class="footer">
-    <ion-button color="success" (click)="shareInvitationLink()">
-      <ion-label>{{ 'common.share' | translate }}</ion-label>
-    </ion-button>
-    <ion-button color="success" (click)="copyDIDToClipboard()">
-      <ion-label>{{ 'common.copy-to-clipboard' | translate }}</ion-label>
-    </ion-button>
+    <ebutton (clicked)="shareInvitationLink()" [title]="'common.share' | translate"></ebutton>
+    <ebutton (clicked)="copyDIDToClipboard()" [title]="'common.copy-to-clipboard' | translate"></ebutton>
   </ion-row>
-
 </ion-grid>

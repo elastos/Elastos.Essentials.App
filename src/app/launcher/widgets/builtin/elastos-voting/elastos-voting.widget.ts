@@ -37,8 +37,8 @@ export class ElastosVotingWidget implements IWidget, OnInit {
         {
           id: 'dpos2',
           routerContext: App.DPOS_VOTING,
-          name: this.translate.instant('launcher.app-dpos2-voting'),
-          description: this.translate.instant('launcher.app-dpos2-description'),
+          name: 'launcher.app-dpos2-voting',
+          description: 'launcher.app-dpos2-description',
           icon: '/assets/launcher/apps/app-icons/dpos.svg',
           hasWidget: false,
           startCall: async () => {
@@ -48,8 +48,8 @@ export class ElastosVotingWidget implements IWidget, OnInit {
         {
           id: 'dpos',
           routerContext: App.DPOS_VOTING,
-          name: this.translate.instant('launcher.app-dpos-voting'),
-          description: this.translate.instant('launcher.app-dpos-description'),
+          name: 'launcher.app-dpos-voting',
+          description: 'launcher.app-dpos-description',
           icon: '/assets/launcher/apps/app-icons/dpos.svg',
           hasWidget: false,
           startCall: () => this.dposVotingInitService.start()

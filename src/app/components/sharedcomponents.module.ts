@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 import { GlobalDirectivesModule } from '../helpers/directives/module';
 import { ConfirmationPopupComponent } from './confirmation-popup/confirmation-popup.component';
 import { DIDPublishingComponent } from './did-publishing/did-publishing.component';
@@ -30,7 +31,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     CommonModule,
     IonicModule,
     TranslateModule,
-    GlobalDirectivesModule
+    GlobalDirectivesModule,
+    InlineSVGModule
   ],
   exports: [
     TitleBarComponent,
@@ -42,7 +44,6 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     MnemonicKeypadComponent,
     MenuSheetComponent,
     EButtonComponent
-
   ],
   providers: [
     Clipboard

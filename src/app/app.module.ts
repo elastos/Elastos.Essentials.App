@@ -47,13 +47,13 @@ export class SentryErrorHandler implements ErrorHandler {
     private platform: Platform,
     private appVersion: AppVersion,
   ) {
-    void this.platform.ready().then(async () => {
-        this.appVersion.getVersionNumber().then(res => {
-            this.version = res;
-            Logger.log('Sentry', 'Version:', res);
-        }).catch(error => {
-            Logger.error('Sentry', 'getVersionNumber error:', error);
-        });
+    void this.platform.ready().then(() => {
+      this.appVersion.getVersionNumber().then(res => {
+        this.version = res;
+        Logger.log('Sentry', 'Version:', res);
+      }).catch(error => {
+        Logger.error('Sentry', 'getVersionNumber error:', error);
+      });
     })
   }
 
@@ -268,7 +268,7 @@ if (environment.production) {
       name: '__essentials.db',
       driverOrder: ['sqlite', 'indexeddb', 'localstorage', 'websql']
     }),
-    BrowserAnimationsModule,
+    BrowserAnimationsModule
   ],
   providers,
   bootstrap: [AppComponent],

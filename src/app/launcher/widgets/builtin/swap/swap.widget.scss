@@ -37,8 +37,8 @@
     border-radius: 10px;
     padding: 10px 20px;
     font-size: 14px;
-    font-weight: bold;
-    background: var(--ion-background-color);
+    background: var(--essentials-button-background-color);
+    color: var(--essentials-button-text-color);
   }
 }
 
@@ -51,29 +51,33 @@
   .token {
     display: flex;
     align-items: center;
+    flex: 1;
 
     .network-logo {
       width: 20px;
       height: 20px;
+      margin-right: 5px;
     }
 
     .selector {
       display: flex;
+      flex: 1;
       padding: 10px 15px;
       border-radius: 10px;
-      margin-left: 10px;
       align-items: center;
-      background: var(--ion-background-color);
+      justify-content: center;
+      background: var(--essentials-button-background-color);
+      color: var(--essentials-button-text-color);
 
       .token-name,
       .no-token {
-        font-size: 12px;
+        font-size: 13px;
       }
 
       .arrow {
         height: 10px;
         margin-left: 10px;
-        opacity: 0.7;
+        opacity: 0.8;
       }
     }
   }
@@ -82,5 +86,6 @@
     width: 20px;
     height: 20px;
     opacity: 0.7;
+    margin: 0 5px;
   }
 }

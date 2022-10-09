@@ -1,4 +1,4 @@
-@import 'src/app/contacts/root.scss';
+@import "src/app/contacts/root.scss";
 
 .container {
   min-height: 100%;
@@ -34,13 +34,8 @@
   .btn-container {
     padding-top: 30px;
 
-    ion-button {
-      height: 50px;
+    ebutton {
       width: 100%;
-      --border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1px;
     }
   }
 
@@ -51,9 +46,6 @@
       margin: 0;
       font-size: 12px;
       font-weight: 600;
-    };
+    }
   }
-}
-
-.darkContainer {
 }

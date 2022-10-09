@@ -1,22 +1,19 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-grid *ngIf="contact" class="container" [class.blur]="popupService.deletePopup" [class.darkContainer]="theme.darkMode">
+  <ion-grid *ngIf="contact" class="container" [class.blur]="popupService.deletePopup"
+    [class.darkContainer]="theme.darkMode">
     <div class="header">
       <img [src]="uxService.getAvatar(contact)" class="profile-img">
       <h1>{{ uxService.getDisplayableName(contact) }}</h1>
       <p> {{ uxService.getDisplayableBio(contact) }}</p>
       <ion-row class="btn-row">
-        <div class="ion-activatable ripple">
-          <img [src]="!theme.darkMode ? '/assets/contacts/buttons/scan.svg' : '/assets/contacts/buttons/darkmode/scan.svg'" (click)="popupService.showQRCode(contact)">
-          <ion-ripple-effect></ion-ripple-effect>
+        <div class="inline-svg" inlineSVG="/assets/identity/svg/qrcode.svg" (click)="popupService.showQRCode(contact)">
         </div>
-        <div class="ion-activatable ripple">
-          <img [src]="!theme.darkMode ? '/assets/contacts/buttons/edit.svg' : '/assets/contacts/buttons/darkmode/edit.svg'" (click)="friendsService.showCustomization(contact, false)">
-          <ion-ripple-effect></ion-ripple-effect>
+        <div class="inline-svg" inlineSVG="/assets/identity/svg/edit.svg"
+          (click)="friendsService.showCustomization(contact, false)">
         </div>
-        <div class="ion-activatable ripple">
-          <img [src]="!theme.darkMode ? '/assets/contacts/buttons/options.svg' : '/assets/contacts/buttons/darkmode/options.svg'" (click)="popupService.showOptions($event, contact, true)">
-          <ion-ripple-effect></ion-ripple-effect>
+        <div class="inline-svg" inlineSVG="/assets/identity/svg/horizontal_menu.svg"
+          (click)="popupService.showOptions($event, contact, true)">
         </div>
       </ion-row>
     </div>
@@ -88,7 +85,7 @@
       <ion-row class="profile-data" *ngIf="contact.credentials.interests">
         <ion-col>
           <h5>{{ 'common.interests' | translate }}</h5>
-          <h4>{{ contact.credentials.interests  }}</h4>
+          <h4>{{ contact.credentials.interests }}</h4>
         </ion-col>
       </ion-row>
 
@@ -182,11 +179,8 @@
         </ion-col>
       </ion-row>
 
-      <ion-row
-        *ngIf="contact.id !== 'did:elastos'"
-        class="profile-data"
-        [class.remove-border]="!contact.carrierAddress && !contact.notificationsCarrierAddress"
-        >
+      <ion-row *ngIf="contact.id !== 'did:elastos'" class="profile-data"
+        [class.remove-border]="!contact.carrierAddress && !contact.notificationsCarrierAddress">
         <ion-col size="11">
           <h5>{{ 'contacts.did' | translate }}</h5>
           <h4>
@@ -199,11 +193,8 @@
         </ion-col>
       </ion-row>
 
-      <ion-row
-        *ngIf="contact.carrierAddress"
-        class="profile-data"
-        [class.remove-border]="!contact.notificationsCarrierAddress"
-      >
+      <ion-row *ngIf="contact.carrierAddress" class="profile-data"
+        [class.remove-border]="!contact.notificationsCarrierAddress">
         <ion-col size="11">
           <h5>{{ 'contacts.carrier' | translate }}</h5>
           <h4>

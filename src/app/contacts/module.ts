@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { QRCodeModule } from 'angularx-qrcode';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { ComponentsModule } from './components/components.module';
 import { DeleteComponent } from './components/delete/delete.component';
@@ -44,7 +45,8 @@ import { ContactsRoutingModule } from './routing';
     SharedComponentsModule,
     FormsModule,
     IonicStorageModule.forRoot(),
-    TranslateModule
+    TranslateModule,
+    InlineSVGModule
   ],
   bootstrap: [],
   entryComponents: [

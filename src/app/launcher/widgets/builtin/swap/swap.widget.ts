@@ -29,14 +29,7 @@ export class SwapWidget implements IWidget {
   ) { }
 
   public onSwapClicked() {
-    let params: MultiSwapHomePageParams = {
-      sourceToken: this.sourceToken,
-      destinationToken: this.destinationToken
-    };
-
-    void this.nav.navigateTo(App.MULTI_SWAP, "/multiswap/home", {
-      state: params
-    });
+    this.navToSwapScreen();
   }
 
   public async pickToken(forSource: boolean, token: UIToken) {
@@ -46,5 +39,20 @@ export class SwapWidget implements IWidget {
       this.sourceToken = pickedToken;
     else
       this.destinationToken = pickedToken;
+
+    // Both source and dest just got selected? Automatically open the swap screen
+    if (this.sourceToken && this.destinationToken)
+      this.navToSwapScreen();
+  }
+
+  private navToSwapScreen() {
+    let params: MultiSwapHomePageParams = {
+      sourceToken: this.sourceToken,
+      destinationToken: this.destinationToken
+    };
+
+    void this.nav.navigateTo(App.MULTI_SWAP, "/multiswap/home", {
+      state: params
+    });
   }
 }

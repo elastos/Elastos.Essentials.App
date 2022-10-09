@@ -1,4 +1,4 @@
-@import 'src/app/contacts/root.scss';
+@import "src/app/contacts/root.scss";
 
 ion-grid {
   height: 95%;
@@ -27,11 +27,11 @@ ion-grid {
     bottom: 0;
     left: 0;
     right: 0;
-    transform:scale(1.7);
-    -ms-transform:scale(1.7); /* IE 9 */
-    -moz-transform:scale(1.7); /* Firefox */
-    -webkit-transform:scale(1.7); /* Safari and Chrome */
-    -o-transform:scale(1.7); /* Opera */
+    transform: scale(1.7);
+    -ms-transform: scale(1.7); /* IE 9 */
+    -moz-transform: scale(1.7); /* Firefox */
+    -webkit-transform: scale(1.7); /* Safari and Chrome */
+    -o-transform: scale(1.7); /* Opera */
   }
 
   .btn-row {
@@ -40,13 +40,8 @@ ion-grid {
     align-items: center;
     flex-direction: column;
 
-    ion-button {
-      height: 50px;
+    ebutton {
       width: 75%;
-      --border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1px;
     }
   }
 

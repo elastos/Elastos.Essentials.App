@@ -127,6 +127,7 @@
     "marked": "^3.0.8",
     "md5-file": "5.0.0",
     "moment": "2.29.2",
+    "ng-inline-svg-2": "^15.0.0",
     "node-wget-promise": "0.1.6",
     "p-queue": "^7.2.0",
     "path-browserify": "^1.0.1",

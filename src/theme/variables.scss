@@ -369,3 +369,8 @@ body {
     width: 100%;
   }
 }
+
+ion-toggle {
+  --background-checked: var(--essentials-button-background-color);
+  --handle-background-checked: var(--ion-background-color);
+}

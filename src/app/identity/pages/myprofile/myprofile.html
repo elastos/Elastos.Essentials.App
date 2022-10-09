@@ -98,29 +98,25 @@
     <ion-grid class="options-grid">
       <ion-row class="options-row">
         <ion-col size="5.8" class="publish ripple ion-activatable" (click)="profileService.publish()">
-          <img
-            [src]="theme.darkMode ? '/assets/identity/svg/publish-button.svg' : '/assets/identity/svg/publish-button-dark.svg'" />
+          <div class="inline-svg" inlineSVG="/assets/identity/svg/publish.svg"></div>
           <h2>{{ 'identity.publish' | translate}}</h2>
           <span>{{ 'identity.publish-description' | translate }}</span>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
         <ion-col size="5.8" class="edit ripple ion-activatable" (click)="profileService.editProfile()">
-          <img
-            src="{{ this.theme.darkMode ? '/assets/identity/svg/edit-button.svg' : '/assets/identity/svg/edit-button-dark.svg' }}" />
+          <div class="inline-svg" inlineSVG="/assets/identity/svg/edit.svg"></div>
           <h2>{{ 'identity.edit' | translate}}</h2>
           <span>{{ 'identity.edit-description' | translate }}</span>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
         <ion-col size="5.8" class="share ripple ion-activatable" (click)="profileService.shareIdentity()">
-          <img
-            src="{{ this.theme.darkMode ? '/assets/identity/svg/share-button.svg' : '/assets/identity/svg/share-button-dark.svg' }}" />
+          <div class="inline-svg" inlineSVG="/assets/identity/svg/share.svg"></div>
           <h2>{{ 'common.share' | translate}}</h2>
           <span>{{ 'identity.share-description' | translate }} </span>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
         <ion-col size="5.8" class="export ripple ion-activatable" (click)="exportMnemonic()">
-          <img
-            src="{{ this.theme.darkMode ? '/assets/identity/svg/export-dark.svg' : '/assets/identity/svg/export.svg' }}" />
+          <div class="inline-svg" inlineSVG="/assets/identity/svg/export.svg"></div>
           <h2>{{ 'identity.export-mnemonics' | translate}}</h2>
           <span>{{ 'identity.export-mnemonics-description' | translate}}</span>
           <ion-ripple-effect></ion-ripple-effect>

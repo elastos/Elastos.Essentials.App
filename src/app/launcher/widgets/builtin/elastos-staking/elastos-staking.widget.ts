@@ -33,8 +33,8 @@ export class ElastosStakingWidget implements IWidget, OnInit {
         {
           id: 'elastosstaking',
           routerContext: App.ELASTOS_STAKING,
-          name: this.translate.instant('launcher.app-elastos-staking'),
-          description: this.translate.instant('launcher.app-elastos-staking-description'),
+          name: 'launcher.app-elastos-staking',
+          description: 'launcher.app-elastos-staking-description',
           icon: '/assets/launcher/apps/app-icons/dpos.svg', // TODO: icon
           hasWidget: false,
           startCall: async () => {

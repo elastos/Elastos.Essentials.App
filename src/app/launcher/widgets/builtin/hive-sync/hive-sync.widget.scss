@@ -29,8 +29,10 @@
   .buttons-row {
     margin-top: 10px;
 
-    ion-button {
+    ebutton {
       width: 50%;
+      min-height: 0px;
+      height: 40px;
     }
   }
 }

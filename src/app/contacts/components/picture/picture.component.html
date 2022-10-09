@@ -3,39 +3,25 @@
 <ion-content>
   <ion-grid *ngIf="!avatar || !avatar.data">
     <ion-row class="btn-row">
-      <ion-button color="success" (click)="takePicture(1)">
-        {{ 'common.take-pictures' | translate }}
-      </ion-button>
-      <ion-button color="success" (click)="takePicture(0)">
-        {{ 'common.photo-library' | translate }}
-      </ion-button>
+      <ebutton (clicked)="takePicture(1)" [title]="'common.take-pictures' | translate"></ebutton>
+      <ebutton (clicked)="takePicture(0)" [title]="'common.photo-library' | translate"></ebutton>
     </ion-row>
   </ion-grid>
 
   <ion-grid *ngIf="avatar && avatar.data && !oldAvatar">
     <img [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
     <ion-row class="btn-row submit">
-      <ion-button color="success" (click)="submit(true)">
-        {{ 'common.use' | translate }}
-      </ion-button>
-      <ion-button color="success" (click)="avatar.data = null">
-        {{ 'common.change' | translate }}
-      </ion-button>
+      <ebutton (clicked)="submit(true)" [title]="'common.use' | translate"></ebutton>
+      <ebutton (clicked)="avatar.data = null" [title]="'common.change' | translate"></ebutton>
     </ion-row>
   </ion-grid>
 
   <ion-grid *ngIf="avatar && avatar.data && oldAvatar">
     <img [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
     <ion-row class="btn-row submit">
-      <ion-button color="success" (click)="submit(true)">
-        <ion-label>{{ 'common.use' | translate }}</ion-label>
-      </ion-button>
-      <ion-button color="success" (click)="avatar.data = null">
-        <ion-label>{{ 'common.change' | translate }}</ion-label>
-      </ion-button>
-      <ion-button color="success" (click)="submit(false)">
-        <ion-label>{{ 'common.delete' | translate }}</ion-label>
-      </ion-button>
+      <ebutton (clicked)="submit(true)" [title]="'common.use' | translate"></ebutton>
+      <ebutton (clicked)="avatar.data = null" [title]="'common.change' | translate"></ebutton>
+      <ebutton (clicked)="submit(false)" [title]="'common.delete' | translate"></ebutton>
     </ion-row>
   </ion-grid>
 </ion-content>

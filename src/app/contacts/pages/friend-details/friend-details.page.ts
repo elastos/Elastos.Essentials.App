@@ -18,11 +18,6 @@ import { NativeService } from '../../services/native.service';
 import { PopupService } from '../../services/popup.service';
 import { UxService } from '../../services/ux.service';
 
-
-
-
-
-
 type DisplayableAppInfo = {
   packageId: string,
   app: DApp,

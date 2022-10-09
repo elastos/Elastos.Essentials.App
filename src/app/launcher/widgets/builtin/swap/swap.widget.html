@@ -37,8 +37,9 @@
       <!-- No token picked yet -->
       <div class="no-token" *ngIf="!token">{{ 'launcher.pick-token' | translate }}</div>
 
-      <img class="arrow"
-        [src]="theme.darkMode ? '/assets/launcher/widgets/white-down-arrow.svg' : '/assets/launcher/widgets/down-arrow.svg'" />
+      <ion-icon name="chevron-down-outline"></ion-icon>
+      <!-- <img class="arrow"
+        [src]="!theme.darkMode ? '/assets/launcher/widgets/white-down-arrow.svg' : '/assets/launcher/widgets/down-arrow.svg'" /> -->
       <ion-ripple-effect></ion-ripple-effect>
     </div>
   </div>

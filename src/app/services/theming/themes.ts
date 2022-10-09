@@ -21,7 +21,7 @@ export const availableThemes: ThemeConfig[] = [
     key: "blue",
     variants: {
       "light": { color: "#172F4C" },
-      "dark": { color: "#395980" }
+      "dark": { color: "#395980", boxColor: "#172F4C" }
     },
     usesDarkMode: true
   },
@@ -44,10 +44,10 @@ export const availableThemes: ThemeConfig[] = [
   {
     key: "yellow",
     variants: {
-      "light": { color: "#BF9C3B" },
-      "dark": { color: "#F2C64B" }
+      "light": { color: "#BF9C3B", boxColor: "#F2C64B", buttonBackgroundColor: "#000000" },
+      "dark": { color: "#F2C64B", boxColor: "#BF9C3B", buttonBackgroundColor: "#000000" }
     },
-    usesDarkMode: false
+    usesDarkMode: true
   },
   {
     key: "orange",

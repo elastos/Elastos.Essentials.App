@@ -37,8 +37,8 @@ export class CyberRepublicWidget implements IWidget, OnInit {
         {
           id: 'crcouncil',
           routerContext: App.CRCOUNCIL_VOTING,
-          name: this.translate.instant('launcher.app-cr-council'),
-          description: this.translate.instant('launcher.app-crcouncil-description'),
+          name: 'launcher.app-cr-council',
+          description: 'launcher.app-crcouncil-description',
           icon: '/assets/launcher/apps/app-icons/council.svg',
           hasWidget: false,
           startCall: () => this.crCouncilVotingInitService.startCouncil()
@@ -46,8 +46,8 @@ export class CyberRepublicWidget implements IWidget, OnInit {
         {
           id: 'crproposal',
           routerContext: App.CRPROPOSAL_VOTING,
-          name: this.translate.instant('launcher.app-cr-proposal'),
-          description: this.translate.instant('launcher.app-crproposal-description'),
+          name: 'launcher.app-cr-proposal',
+          description: 'launcher.app-crproposal-description',
           icon: '/assets/launcher/apps/app-icons/proposal.svg',
           hasWidget: false,
           routerPath: '/crproposalvoting/proposals/all'
@@ -55,8 +55,8 @@ export class CyberRepublicWidget implements IWidget, OnInit {
         {
           id: 'crsuggestion',
           routerContext: App.CRPROPOSAL_VOTING,
-          name: this.translate.instant('launcher.app-cr-suggestion'),
-          description: this.translate.instant('launcher.app-crsuggestion-description'),
+          name: 'launcher.app-cr-suggestion',
+          description: 'launcher.app-crsuggestion-description',
           icon: '/assets/launcher/apps/app-icons/suggestion.svg',
           iconDark: '/assets/launcher/apps/app-icons/suggestion_dark.svg',
           hasWidget: false,
