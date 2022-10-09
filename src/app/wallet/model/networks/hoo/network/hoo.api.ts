@@ -10,7 +10,7 @@ export class HooAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case HooApiType.RPC: return 'https://http-mainnet2.hoosmartchain.com';
+          case HooApiType.RPC: return 'https://http-mainnet.hoosmartchain.com';
           case HooApiType.ETHERSCAN_API: return 'https://hooscan.com/api';
           default:
             throw new Error("Hoo API - Unknown api type " + type);
