@@ -61,7 +61,7 @@ export const zh = {
         'app-scanner-description': '扫描二维码',
         'app-settings': '设置',
         'app-settings-description': '管理 Essentials',
-        'app-dpos-voting': 'DPoS 超级节点投票',
+        'app-dpos-voting': 'DPoS 1.0 超级节点投票',
         'app-dpos-description': '参与亦来云生态体系建设',
         'app-cr-council': 'CR 委员会',
         'app-crcouncil-description': 'CR 委员会成员',
@@ -82,6 +82,12 @@ export const zh = {
         'app-redpackets-description': '分享快乐或宣传您的项目，发送红包!',
         'app-easybridge': '获得 ELA ！',
         'app-easybridge-description': '在2分钟内将代币从其他链兑换为 Elastos 代币',
+        'cyber-republic': 'Cyber Republic',
+        'elastos-staking': 'Elastos staking',
+        'app-elastos-staking': 'ELA staking',
+        'app-elastos-staking-description': 'Deposit your ELA tokens to later vote and earn rewards',
+        'app-dpos2-voting': 'DPoS 2.0 voting',
+        'app-dpos2-description': 'Vote for Elastos Supernodes',
 
         /******** Widgets *********/
         'data-sync-title': 'Data synchronization',

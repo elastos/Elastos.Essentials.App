@@ -4,6 +4,10 @@
   .app-col {
     margin-bottom: 10px;
 
+    &.deprecated {
+      opacity: 0.5;
+    }
+
     .app-row {
       .mid-col {
         align-self: center;

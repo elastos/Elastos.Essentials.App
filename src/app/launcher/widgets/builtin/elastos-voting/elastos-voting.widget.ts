@@ -35,15 +35,6 @@ export class ElastosVotingWidget implements IWidget, OnInit {
       shouldBeDisplayed: () => this.walletNetworkService.isActiveNetworkElastos(), // Deprecated - unused
       apps: [
         {
-          id: 'dpos',
-          routerContext: App.DPOS_VOTING,
-          name: this.translate.instant('launcher.app-dpos-voting'),
-          description: this.translate.instant('launcher.app-dpos-description'),
-          icon: '/assets/launcher/apps/app-icons/dpos.svg',
-          hasWidget: false,
-          startCall: () => this.dposVotingInitService.start()
-        },
-        {
           id: 'dpos2',
           routerContext: App.DPOS_VOTING,
           name: this.translate.instant('launcher.app-dpos2-voting'),
@@ -53,6 +44,15 @@ export class ElastosVotingWidget implements IWidget, OnInit {
           startCall: async () => {
             // TODO @dongxiao: open dpos 2.0
           }
+        },
+        {
+          id: 'dpos',
+          routerContext: App.DPOS_VOTING,
+          name: this.translate.instant('launcher.app-dpos-voting'),
+          description: this.translate.instant('launcher.app-dpos-description'),
+          icon: '/assets/launcher/apps/app-icons/dpos.svg',
+          hasWidget: false,
+          startCall: () => this.dposVotingInitService.start()
         }
       ]
     };

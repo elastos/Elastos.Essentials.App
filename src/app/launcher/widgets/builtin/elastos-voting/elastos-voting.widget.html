@@ -3,8 +3,8 @@
   <ion-col size="12" class="title-col">
     <ion-label>{{ runnableApps.type | translate }}</ion-label>
   </ion-col>
-  <ion-col *ngFor="let app of runnableApps.apps" class="app-col ripple ion-activatable" size="12"
-    (click)="appService.startApp(app)">
+  <ion-col *ngFor="let app of runnableApps.apps" class="app-col ripple ion-activatable"
+    [class.deprecated]="app.id == 'dpos'" size="12" (click)="appService.startApp(app)">
     <ion-row class="app-row" [class.add-border]="app !== runnableApps.apps[runnableApps.apps.length -1]">
       <ion-col class="left-col" size="2">
         <div class="icon-container" [id]="app.id">

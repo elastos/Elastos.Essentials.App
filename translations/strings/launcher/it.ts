@@ -61,7 +61,7 @@ export const it = {
         'app-scanner-description': 'Scansiona i tuoi codici QR',
         'app-settings': 'Impostazioni',
         'app-settings-description': 'Configura Essentials',
-        'app-dpos-voting': 'Votazione DPoS',
+        'app-dpos-voting': 'Votazione DPoS 1.0',
         'app-dpos-description': 'DPoS Supernodes',
         'app-cr-council': 'Consiglio CR',
         'app-crcouncil-description': 'Membri del consiglio della Cyber Republic',
@@ -82,6 +82,12 @@ export const it = {
         'app-redpackets-description': 'Share happiness or promote your project, send red packets!',
         'app-easybridge': 'Get ELA!',
         'app-easybridge-description': 'Convert tokens from other chains to Elastos tokens in less than 2 minutes',
+        'cyber-republic': 'Cyber Republic',
+        'elastos-staking': 'Elastos staking',
+        'app-elastos-staking': 'ELA staking',
+        'app-elastos-staking-description': 'Deposit your ELA tokens to later vote and earn rewards',
+        'app-dpos2-voting': 'DPoS 2.0 voting',
+        'app-dpos2-description': 'Vote for Elastos Supernodes',
 
         /******** Widgets *********/
         'data-sync-title': 'Data synchronization',

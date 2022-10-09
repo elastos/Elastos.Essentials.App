@@ -409,6 +409,7 @@ export class WidgetsService {
                 widgets.push(this.createBuiltInWidgetState("recent-apps"));
                 widgets.push(this.createBuiltInWidgetState("choose-active-network"));
                 widgets.push(this.createBuiltInWidgetState("wallet-connect"));
+                widgets.push(this.createPluginWidgetState("news"));
                 widgets.push(this.createBuiltInWidgetState("signout"));
                 break;
             case "main":
@@ -425,7 +426,6 @@ export class WidgetsService {
 
                 break;
             case "right":
-                widgets.push(this.createPluginWidgetState("news"));
                 widgets.push(this.createBuiltInWidgetState("cyber-republic"));
                 widgets.push(this.createBuiltInWidgetState("elastos-staking"));
                 widgets.push(this.createBuiltInWidgetState("elastos-voting"));
