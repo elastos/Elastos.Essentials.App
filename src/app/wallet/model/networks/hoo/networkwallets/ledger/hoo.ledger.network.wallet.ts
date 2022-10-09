@@ -1,9 +1,9 @@
 import { TransactionProvider } from "../../../../tx-providers/transaction.provider";
 import { LedgerEVMNetworkWallet } from "../../../evms/networkwallets/ledger/ledger.evm.networkwallet";
-import { EtherscanTransactionProvider } from "../../../evms/tx-providers/etherscan.tx.provider";
+import { HooTransactionProvider } from "../../tx-providers/heco.transaction.provider";
 
 export class HooLedgerNetworkWallet extends LedgerEVMNetworkWallet<any> {
   protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
-    return new EtherscanTransactionProvider(this);
+    return new HooTransactionProvider(this);
   }
 }
