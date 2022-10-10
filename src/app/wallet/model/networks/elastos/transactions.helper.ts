@@ -19,21 +19,21 @@ export class ElastosTransactionsHelper {
         case RawTransactionType.RechargeToSideChain:
         case RawTransactionType.WithdrawFromSideChain:
         case RawTransactionType.TransferCrossChainAsset:
-          return './assets/wallet/buttons/transfer.png';
+          return './assets/wallet/tx/transfer.svg';
         default:
-          return './assets/wallet/buttons/receive.png';
+          return './assets/wallet/tx/receive.svg';
       }
     } else if (transaction.type === TransactionDirection.SENT) {
       switch (transaction.txtype) {
         case RawTransactionType.RechargeToSideChain:
         case RawTransactionType.WithdrawFromSideChain:
         case RawTransactionType.TransferCrossChainAsset:
-          return './assets/wallet/buttons/transfer.png';
+          return './assets/wallet/tx/transfer.svg';
         default:
-          return './assets/wallet/buttons/send.png';
+          return './assets/wallet/tx/send.svg';
       }
     } else if (transaction.type === TransactionDirection.MOVED) {
-      return './assets/wallet/buttons/transfer.png';
+      return './assets/wallet/tx/transfer.svg';
     }
 
     // In case the transaction type is a cross chain transfer, we don't mind the direction, we show

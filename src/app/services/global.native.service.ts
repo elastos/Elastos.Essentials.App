@@ -47,14 +47,14 @@ export class GlobalNativeService {
         }).then(toast => toast.present());
     }
 
-    genericToast(msg: string, duration = 2000, color = "primary") {
+    genericToast(msg: string, duration = 2000) {
         const translation = this.translate.instant(msg);
         void this.toastCtrl.create({
             mode: 'ios',
             header: translation,
             duration: duration,
             position: 'bottom',
-            color: color
+            color: "primary"
         }).then(toast => toast.present());
     }
 

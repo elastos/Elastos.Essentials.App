@@ -13,8 +13,5 @@
 
   </ion-grid>
 
-  <div class="btn ion-activatable ripple" (click)="newApp()">
-    <ion-label>{{ 'developertools.new-app' | translate }}</ion-label>
-    <ion-ripple-effect></ion-ripple-effect>
-  </div>
+  <ebutton (clicked)="newApp()" [title]="'developertools.new-app' | translate"></ebutton>
 </ion-content>

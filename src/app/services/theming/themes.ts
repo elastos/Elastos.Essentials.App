@@ -28,8 +28,8 @@ export const availableThemes: ThemeConfig[] = [
   {
     key: "red",
     variants: {
-      "light": { color: "#4C1717" },
-      "dark": { color: "#802727" }
+      "light": { color: "#4C1717", boxColor: "#802727" },
+      "dark": { color: "#802727", boxColor: "#4C1717" }
     },
     usesDarkMode: true
   },

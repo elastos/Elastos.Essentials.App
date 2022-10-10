@@ -34,7 +34,7 @@ export class UXService {
     copyAddress(address: string) {
         Logger.log(App.VOTING, "Copy address to clipboard", address);
         void this.clipboard.copy(address);
-        this.globalNative.genericToast('common.copied-to-clipboard', 2000, "success");
+        this.globalNative.genericToast('common.copied-to-clipboard', 2000);
     }
 
     openLink(url: string) {

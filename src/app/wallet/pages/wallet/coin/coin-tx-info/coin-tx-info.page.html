@@ -6,7 +6,7 @@
         <ion-card [class.received]="(type === 1) && !isRedPacket" [class.redpacket]="(type === 1) && isRedPacket"
             [class.sent]="type === 2" [class.transferred]="type === 3" *ngIf="transactionInfo">
             <div class="icon-container">
-                <img [src]="payStatusIcon">
+                <div class="inline-svg" [inlineSVG]="payStatusIcon"></div>
             </div>
             <ion-card-title>{{ getTransactionTitle() }}</ion-card-title>
             <ion-card-subtitle *ngIf="displayAmount.length < 20">{{ symbol }}{{ displayAmount }}</ion-card-subtitle>

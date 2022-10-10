@@ -4,7 +4,7 @@ import { AggregatedExecutable, Executable, ExecutableType } from '@elastosfounda
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalConfig } from 'src/app/config/globalconfig';
 import { DIDHelper } from 'src/app/helpers/did.helper';
 import { pictureMimeType, rawImageToBase64DataUrl } from 'src/app/helpers/picture.helpers';
@@ -87,8 +87,6 @@ export class AppDetailsPage {
   async ionViewWillEnter() {
     // Update system status bar every time we re-enter this screen.
     this.titleBar.setTitle(this.translate.instant('developertools.manage-app'));
-    this.titleBar.setBackgroundColor("#181d20");
-    this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
       key: "appdetails-back",
       iconPath: BuiltInIcon.BACK
@@ -153,7 +151,7 @@ export class AppDetailsPage {
 
     // Must set the app icon
     if (!this.base64iconPath) {
-      return this.native.genericToast('developertools.set-app-icon', 2000, 'dark');
+      return this.native.genericToast('developertools.set-app-icon', 2000);
     }
 
     this.publishingDid = true;
@@ -308,7 +306,7 @@ export class AppDetailsPage {
 
   public async copyAppDIDToClipboard() {
     await this.native.copyClipboard(this.app.didString);
-    this.native.genericToast('developertools.app-did-copied', 2000, 'dark');
+    this.native.genericToast('developertools.app-did-copied', 2000);
   }
 
   private async fetchAppIcon() {

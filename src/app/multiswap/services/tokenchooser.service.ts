@@ -32,14 +32,14 @@ export class TokenChooserService {
     if (coin instanceof ERC20Coin) {
       // We don't use the subwallet, to be able to fetch erc20 tokens balances for coins not added in the wallet
       void this.erc20CoinService.fetchERC20TokenBalance(<EVMNetwork>coin.network, coin.getContractAddress(), walletAddress).then(balance => {
-        this.balances[coinKey].next(this.erc20CoinService.toHumanReadableAmount(balance, coin.decimals));
+        this.balances[coinKey]?.next(this.erc20CoinService.toHumanReadableAmount(balance, coin.decimals));
       });
     }
     else {
       // Native coin - the subwallet is always there.
       let mainCoinSubwallet = networkWallet.getSubWallet(coin.getID());
       void mainCoinSubwallet.updateBalance().then(() => {
-        this.balances[coinKey].next(mainCoinSubwallet.getBalance());
+        this.balances[coinKey]?.next(mainCoinSubwallet.getBalance());
       });
     }
 

@@ -1,22 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="Component_897_2" width="37.762" height="37.762" data-name="Component 897 – 2" viewBox="0 0 37.762 37.762">
-    <defs>
-        <style>
-            .cls-2,.cls-3{fill:none;stroke:#fff;stroke-width:1.5px}.cls-3{stroke-linecap:square}
-        </style>
-    </defs>
-    <g id="Component_882_18" data-name="Component 882 – 18">
-        <path id="Path_21720" fill="#fdab93" d="M18.881 0A18.881 18.881 0 1 1 0 18.881 18.881 18.881 0 0 1 18.881 0z" data-name="Path 21720"/>
-    </g>
-    <g id="Component_886_5" data-name="Component 886 – 5" transform="translate(10.751 17.277)">
-        <g id="Group_13399" data-name="Group 13399" transform="rotate(90 8.117 8.117)">
-            <path id="Line_13" d="M0 0L0 10.234" class="cls-2" data-name="Line 13" transform="translate(2.274)"/>
-            <path id="Line_14" d="M0 0L2.274 2.274" class="cls-3" data-name="Line 14" transform="translate(2.274)"/>
-            <path id="Line_15" d="M2.274 0L0 2.274" class="cls-3" data-name="Line 15"/>
-        </g>
-        <g id="Group_13400" data-name="Group 13400" transform="rotate(-90 2.275 2.275)">
-            <path id="Line_13-2" d="M0 0L0 10.234" class="cls-2" data-name="Line 13" transform="translate(2.274)"/>
-            <path id="Line_14-2" d="M0 0L2.274 2.274" class="cls-3" data-name="Line 14" transform="translate(2.274)"/>
-            <path id="Line_15-2" d="M2.274 0L0 2.274" class="cls-3" data-name="Line 15"/>
-        </g>
-    </g>
+<svg width="100%" height="100%" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.7" d="M4.03496 3.86827C6.19163 1.7116 9.1167 0.5 12.1667 0.5C14.4412 0.5 16.6646 1.17446 18.5557 2.4381C20.4469 3.70174 21.9209 5.49779 22.7913 7.59914C23.6617 9.70049 23.8894 12.0128 23.4457 14.2435C23.002 16.4743 21.9067 18.5234 20.2984 20.1317C18.6901 21.74 16.641 22.8353 14.4102 23.279C12.1794 23.7228 9.86718 23.495 7.76583 22.6246C5.66448 21.7542 3.86842 20.2802 2.60479 18.3891C1.34115 16.4979 0.666687 14.2745 0.666687 12C0.666687 8.95001 1.87829 6.02494 4.03496 3.86827Z" stroke="currentColor"/>
+<path d="M7.00006 10H17.0001L14.1429 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.0001 14H7.00006L9.8572 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

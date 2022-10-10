@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { CoinHomePage } from './coin-home.page';
@@ -17,6 +18,7 @@ import { CoinHomePage } from './coin-home.page';
         IonicModule,
         TranslateModule,
         GlobalDirectivesModule,
+        InlineSVGModule,
         RouterModule.forChild([{ path: '', component: CoinHomePage }])
     ],
     exports: [RouterModule],

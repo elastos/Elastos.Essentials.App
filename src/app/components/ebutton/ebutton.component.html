@@ -1,5 +1,5 @@
-<div class="root ion-activatable ripple" [class.cancel]="mode == 'cancel'" [class.disabled]="disabled"
-    (click)="onClicked()">
+<div class="root ion-activatable ripple" [class.cancel]="mode == 'cancel'" [class.danger]="mode == 'danger'"
+    [class.disabled]="disabled" (click)="onClicked()">
     <div *ngIf="!spinning" class="inner-content" [class.left-icon-container]="leftIcon"
         [class.top-icon-container]="topIcon">
 

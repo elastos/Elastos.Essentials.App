@@ -27,6 +27,11 @@
             }
         }
 
+        &.danger {
+            background: #ff4d4d;
+            color: white;
+        }
+
         &.disabled {
             opacity: 50%;
         }

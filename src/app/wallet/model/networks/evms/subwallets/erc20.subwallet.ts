@@ -459,12 +459,12 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
             if (transaction.isRedPacket) {
                 return './assets/redpackets/images/default-avatar.png';
             } else {
-                return './assets/wallet/buttons/receive.png';
+                return './assets/wallet/buttons/receive.svg';
             }
         } else if (direction === TransactionDirection.SENT) {
-            return './assets/wallet/buttons/send.png';
+            return './assets/wallet/tx/send.svg';
         } else if (direction === TransactionDirection.MOVED) {
-            return './assets/wallet/buttons/transfer.png';
+            return './assets/wallet/tx/transfer.svg';
         }
 
         return null;

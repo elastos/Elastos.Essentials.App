@@ -4,7 +4,7 @@
   <div>
     <qrcode [qrdata]="qrCodeString" [width]="200"></qrcode>
   </div>
-  <h2>{{ didString.slice(4,16) }}...{{ didString.slice(40,46) }}</h2>
+  <h2>{{ didString.slice(0,16) }}...{{ didString.slice(40,46) }}</h2>
 
   <ion-row class="footer">
     <ebutton (clicked)="shareInvitationLink()" [title]="'common.share' | translate"> </ebutton>

@@ -282,7 +282,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             height: 1, // unknown, not published yet
             memo: null, // TODO: extract from raw tx
             name: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.NOT_PUBLISHED),
-            payStatusIcon: "./assets/wallet/buttons/send.png",
+            payStatusIcon: "./assets/wallet/tx/send.svg",
             status: TransactionStatus.PENDING,
             statusName: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.PENDING),
             symbol: "", //this.networkWallet.displayToken,
@@ -313,19 +313,19 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     private getReceiverAddress(transaction: ElastosTransaction): string[] {
-      if (transaction.type === TransactionDirection.SENT) {
-          if (!transaction.outputs) {
-              return null;
-          }
-          let receiveAddresses = [];
-          for (let i = 0, len = transaction.outputs.length; i < len; i++) {
-            receiveAddresses.push(transaction.outputs[i])
-          }
-          return receiveAddresses.length > 0 ? receiveAddresses : null;
-      } else {
-          return null;
-      }
-  }
+        if (transaction.type === TransactionDirection.SENT) {
+            if (!transaction.outputs) {
+                return null;
+            }
+            let receiveAddresses = [];
+            for (let i = 0, len = transaction.outputs.length; i < len; i++) {
+                receiveAddresses.push(transaction.outputs[i])
+            }
+            return receiveAddresses.length > 0 ? receiveAddresses : null;
+        } else {
+            return null;
+        }
+    }
 
     public supportMemo() {
         return true;
@@ -585,7 +585,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     // Some pending transactions may be long ago transactions, which may not be updated when updating transaction records,
     // So we must first process the pending transactions after startup to confirm whether they are confirmed or invalid transactions.
     private async updatePendingTransaction() {
-      if (this.backGroundUpdateStoped) return;
+        if (this.backGroundUpdateStoped) return;
 
         let transaction = await this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
         let pendingTransactions = [];

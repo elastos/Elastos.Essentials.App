@@ -197,7 +197,7 @@ export class CoinNFTHomePage implements OnInit {
         if (this.hasRealAssetIcon(asset))
             return asset.imageURL;
         else
-            return "assets/wallet/coins/eth-purple.svg";
+            return "assets/wallet/tx/ethereum.svg";
     }
 
     receiveNFT() {

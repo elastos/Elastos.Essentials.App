@@ -11,7 +11,7 @@ export class EButtonComponent implements OnInit {
   public title = "";
 
   @Input()
-  public mode: "default" | "cancel" = "default";
+  public mode: "default" | "cancel" | "danger" = "default";
 
   @Input()
   public disabled = false;

@@ -533,10 +533,10 @@ export class CoinHomePage implements OnInit {
         void this.initData(false);
     }
 
-    public earn(event, subWallet: AnySubWallet) {
+    public earn(subWallet: AnySubWallet) {
         // Prevent from subwallet main div to get the click (do not open transactions list)
-        event.preventDefault();
-        event.stopPropagation();
+        //event.preventDefault();
+        //event.stopPropagation();
 
         this.native.go("/wallet/coin-earn", {
             masterWalletId: subWallet.networkWallet.masterWallet.id,
@@ -544,10 +544,10 @@ export class CoinHomePage implements OnInit {
         });
     }
 
-    public swap(event, subWallet: AnySubWallet) {
+    public swap(subWallet: AnySubWallet) {
         // Prevent from subwallet main div to get the click (do not open transactions list)
-        event.preventDefault();
-        event.stopPropagation();
+        //event.preventDefault();
+        //event.stopPropagation();
 
         this.native.go("/wallet/coin-swap", {
             masterWalletId: subWallet.networkWallet.masterWallet.id,
@@ -555,10 +555,10 @@ export class CoinHomePage implements OnInit {
         });
     }
 
-    public bridge(event, subWallet: AnySubWallet) {
+    public bridge(subWallet: AnySubWallet) {
         // Prevent from subwallet main div to get the click (do not open transactions list)
-        event.preventDefault();
-        event.stopPropagation();
+        //event.preventDefault();
+        //event.stopPropagation();
 
         this.native.go("/wallet/coin-bridge", {
             masterWalletId: subWallet.networkWallet.masterWallet.id,

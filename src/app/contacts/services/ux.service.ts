@@ -58,7 +58,7 @@ export class UxService {
     }
   }
 
-  public async getAddFriendShareableUrl(didString: string, carrierString?: string): Promise<string> {
+  public getAddFriendShareableUrl(didString: string, carrierString?: string): string {
     let addFriendUrl = "https://contact.elastos.net/addfriend?did=" + encodeURIComponent(didString);
     carrierString ? addFriendUrl += "&carrier=" + carrierString : addFriendUrl;
     return addFriendUrl;

@@ -39,17 +39,15 @@
         border-radius: 20px;
         padding: 25px 20px 15px;
         margin-bottom: 32px;
-
-        // Default background
-        background-image: url("/assets/wallet/cards/subcards/card-black.svg");
-        background-repeat: no-repeat;
-        background-size: cover;
+        background: var(--essentials-box-color);
 
         .card-label-row {
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: flex-start;
+            background: none;
+            z-index: 1; // Over the blurred logo
 
             h1,
             h2,
@@ -63,7 +61,6 @@
                 font-size: 16px;
                 font-weight: 600;
                 letter-spacing: 0.32px;
-                color: #ffffff;
                 margin-bottom: 7.5px;
             }
 
@@ -71,7 +68,6 @@
                 font-size: 9px;
                 font-weight: 600;
                 letter-spacing: 0.9px;
-                color: #fdfeff;
                 margin-bottom: 20px;
             }
 
@@ -79,7 +75,6 @@
                 font-size: 10px;
                 font-weight: 400;
                 letter-spacing: 0.8px;
-                color: #ffffff;
                 margin-bottom: 4px;
             }
 
@@ -88,7 +83,6 @@
                 letter-spacing: 1.05px;
                 line-height: 0.85;
                 font-weight: 500;
-                color: #ffffff;
                 margin-bottom: 15px;
 
                 .dot {
@@ -152,86 +146,6 @@
                     color: #fdfeff;
                 }
             }
-        }
-
-        .arrow-down {
-            position: absolute;
-            z-index: 0;
-            bottom: -15px;
-            left: 12%;
-            height: 30px;
-            width: 30px;
-            transform: translate(2px, -2px) rotate(-45deg);
-            -webkit-transform: translate(2px, -2px) rotate(-45deg);
-            border-right: 2px solid transparent;
-            border-top: 2px solid transparent;
-            display: inline-block;
-            -moz-transform: translate(2px, -2px) rotate(-45deg);
-            -ms-transform: translate(2px, -2px) rotate(-45deg);
-            -o-transform: translate(2px, -2px) rotate(-45deg);
-            // Default color
-            background-color: #242424;
-        }
-    }
-
-    .black-card {
-        background-image: url("/assets/wallet/cards/subcards/card-black.svg");
-
-        .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color: #adadad;
-                }
-            }
-        }
-
-        .arrow-down {
-            background-color: #242424;
-        }
-    }
-    .blue-card {
-        background-image: url("/assets/wallet/cards/subcards/card-lightblue.svg");
-
-        .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color: #7defe5;
-                }
-            }
-        }
-
-        .arrow-down {
-            background-color: #28d3c5;
-        }
-    }
-    .gray-card {
-        background-image: url("/assets/wallet/cards/subcards/card-coolgray.svg");
-
-        .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color: #63657c;
-                }
-            }
-        }
-
-        .arrow-down {
-            background-color: #8487a1;
-        }
-    }
-    .gray2-card {
-        background-image: url("/assets/wallet/cards/subcards/card-warmgray.svg");
-
-        .card-btn-row {
-            ion-col {
-                .btn-box {
-                    background-color: #dddddd;
-                }
-            }
-        }
-
-        .arrow-down {
-            background-color: #989797;
         }
     }
 
@@ -305,9 +219,12 @@
                 height: 40px;
                 object-fit: contain;
                 border-radius: 100%;
+                background: linear-gradient(305deg, rgba(255, 255, 255, 0.5) 0%, rgba(0, 0, 0, 0.1) 100%);
+                padding: 8px;
 
-                img {
-                    object-fit: contain;
+                .inline-svg {
+                    height: 24px;
+                    width: 24px;
                 }
             }
 

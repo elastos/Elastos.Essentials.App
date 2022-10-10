@@ -71,7 +71,7 @@ export class CreateAppPage {
       if (this.appName) {
         this.createdDApp = await this.dAppService.createDApp(this.appName);
       } else {
-        this.native.genericToast('developertools.provide-name', 2000, 'dark');
+        this.native.genericToast('developertools.provide-name', 2000);
       }
     } else {
       if (this.mnemonicToImport) {
@@ -81,7 +81,7 @@ export class CreateAppPage {
           this.mnemonicToImportPassphrase
         );
       } else {
-        this.native.genericToast('developertools.provide-mnemonic', 4000, 'dark');
+        this.native.genericToast('developertools.provide-mnemonic', 4000);
       }
     }
 

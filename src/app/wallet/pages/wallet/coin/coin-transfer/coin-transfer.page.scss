@@ -193,7 +193,6 @@
                 ion-input {
                     font-size: 14px;
                     font-weight: 400;
-                    letter-spacing: -0.34px;
                     text-align: left;
                 }
 
@@ -337,7 +336,7 @@
             padding: 15px;
             margin-top: 10px;
             margin-bottom: 32px;
-            background: #fff;
+            background: var(--essentials-box-color);
             width: 100%;
 
             .asset-icon {
@@ -622,24 +621,6 @@
                 font-size: 17px;
                 font-weight: 500;
             }
-        }
-    }
-}
-
-/********************** Pay Intent Dark Footer **********************/
-.dark-pay-footer {
-    .btn-row {
-        .cancel {
-            box-shadow: 0 3px 6px 0 #151626;
-            background-color: #202039;
-
-            ion-label {
-                color: #ffffff;
-            }
-        }
-
-        .confirm {
-            box-shadow: 0 3px 15px 0 #151626;
         }
     }
 }

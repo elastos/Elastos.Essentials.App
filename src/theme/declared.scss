@@ -16,7 +16,7 @@ ion-card-subtitle {
 
 ion-footer {
   background-color: var(--ion-background-color);
-  box-shadow: 0 0 10px red;
+  box-shadow: none;
 }
 
 a {
@@ -25,12 +25,12 @@ a {
 
 /********************** OPTIONS POPUP **********************/
 .options-component {
-  --background: #ffffff;
+  //--background: #ffffff;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
 .dark-options-component {
-  --background: #212021;
+  //--background: #212021;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
@@ -56,23 +56,23 @@ a {
 
 /********************** LAUNCHER **********************/
 .launcher-options-component {
-  --background: #ffffff;
+  //--background: #ffffff;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
 .launcher-options-component-dark {
-  --background: #212021;
+  //--background: #212021;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
 .launcher-address-chooser-component {
-  --background: #ffffff;
+  //--background: #ffffff;
   --width: 70vw;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
 .launcher-address-chooser-component-dark {
-  --background: #212021;
+  //--background: #212021;
   --width: 70vw;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
@@ -80,7 +80,7 @@ a {
 /********************** DIDSESSSIONS **********************/
 .didsessions-printoptions-component {
   --height: 300px;
-  --background: #ffffff;
+  //--background: #ffffff;
   align-items: flex-end;
 
   .modal-wrapper {
@@ -95,7 +95,7 @@ a {
 
 .didsessions-mnemonicpasscheck-component {
   --height: 350px;
-  --background: #ffffff;
+  //--background: #ffffff;
   align-items: flex-end;
 
   .modal-wrapper {
@@ -110,7 +110,7 @@ a {
 
 .didsessions-mnemonicpasscheck-component-dark {
   --height: 350px;
-  --background: #121212;
+  //--background: #121212;
   align-items: flex-end;
 
   .modal-wrapper {

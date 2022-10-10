@@ -62,7 +62,7 @@
             </ion-row>
             <ion-row class="item-row" *ngIf="!toSubWallet">
                 <ion-col size="11">
-                    <ion-input type="url" clearInput placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
+                    <ion-input type="url" placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
                         autocomplete="off" autocorrect="off" [(ngModel)]="toAddress" name="toAddress" ngDefaultControl
                         (input)='onSendToAddressInput($event.target.value)'>
                     </ion-input>
@@ -150,7 +150,7 @@
             <h1>{{ 'wallet.send-to' | translate }}</h1>
             <ion-row class="item-row">
                 <ion-col size="11">
-                    <ion-input type="url" clearInput placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
+                    <ion-input type="url" placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
                         autocomplete="off" autocorrect="off" [(ngModel)]="toAddress" name="toAddress" ngDefaultControl
                         (input)='onSendToAddressInput($event.target.value)'>
                     </ion-input>
@@ -188,7 +188,7 @@
             </h1>
             <ion-row *ngIf="!hideMemo && suggestedAddresses.length === 0" class="item-row memo-row">
                 <ion-col size="12" class="left-col">
-                    <ion-input type="text" clearInput name="memo" ngDefaultControl
+                    <ion-input type="text" name="memo" ngDefaultControl
                         placeholder="{{ 'wallet.tx-info-memo' | translate }}" [(ngModel)]="memo"
                         (ionFocus)="showKeyboard()" (ionBlur)="hideKeyboard()">
                     </ion-input>

@@ -1,6 +1,6 @@
 <div class="container" [class.darkContainer]="theme.darkMode">
 
-  <img [src]="txIcon">
+  <div class="inline-svg" [inlineSVG]="txIcon"></div>
   <h1>{{ txHeader }}</h1>
   <h2>{{ 'wallet.confirm-transaction-title' | translate }}</h2>
 
@@ -18,13 +18,11 @@
   <h4 *ngIf="txInfo.memo">{{ txInfo.memo }}</h4>
 
   <ion-row class="btn-row">
-    <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancel()">
-      <ion-label>{{ 'common.cancel' | translate}}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
+    <ion-col size="5.6">
+      <ebutton mode="cancel" (clicked)="cancel()" [title]="'common.cancel' | translate"></ebutton>
     </ion-col>
-    <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
-      <ion-label>{{ 'common.confirm' | translate}}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
+    <ion-col size="5.6">
+      <ebutton (clicked)="confirm()" [title]="'common.confirm' | translate"></ebutton>
     </ion-col>
   </ion-row>
 

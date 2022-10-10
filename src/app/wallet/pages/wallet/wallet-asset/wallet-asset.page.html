@@ -13,9 +13,7 @@
             <ion-row class="card-row">
                 <ion-row class="card-label-row">
                     <div class="overview-img">
-                        <img
-                            [src]="!theme.darkMode ? 'assets/wallet/icons/wallet-purple.png' : 'assets/wallet/icons/wallet-purple.png'">
-                        <div class="glow"></div>
+                        <div class="inline-svg" inlineSVG="/assets/wallet/settings/curcol-wallet.svg"></div>
                     </div>
                     <div class='title'>{{ 'wallet.total-amount' | translate }}</div>
                     <div class="bigFont" *ngIf="totalAmount.length <= 8">{{ totalAmount }}

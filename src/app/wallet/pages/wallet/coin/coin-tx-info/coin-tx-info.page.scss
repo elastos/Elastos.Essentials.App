@@ -23,6 +23,8 @@ ion-grid {
             display: flex;
             justify-content: center;
             align-items: center;
+            background: linear-gradient(305deg, rgba(255, 255, 255, 0.5) 0%, rgba(0, 0, 0, 0.1) 100%);
+            padding: 12px;
         }
 
         ion-card-title {
@@ -66,7 +68,7 @@ ion-grid {
 
     .received {
         .icon-container {
-            background-color: #119947;
+            //background-color: #119947;
 
             img {
                 width: 42px;
@@ -77,7 +79,7 @@ ion-grid {
 
     .sent {
         .icon-container {
-            background-color: #620ad4;
+            //background-color: #620ad4;
 
             img {
                 width: 42px;
@@ -88,7 +90,7 @@ ion-grid {
 
     .transferred {
         .icon-container {
-            background-color: #20e3d2;
+            //background-color: #20e3d2;
 
             img {
                 width: 28px;

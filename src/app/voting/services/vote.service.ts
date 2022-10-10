@@ -119,19 +119,19 @@ export class VoteService {
         this.masterWalletId = networkWallet.id;
 
         switch (networkWallet.masterWallet.type) {
-          case WalletType.STANDARD:
-            break;
-          case WalletType.LEDGER:
-            await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
-            return;
-          case WalletType.MULTI_SIG_STANDARD:
-          case WalletType.MULTI_SIG_EVM_GNOSIS:
-            await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
-            return;
-          default:
-            // Should not happen.
-            Logger.error('wallet', 'Not support, pls check the wallet type:', networkWallet.masterWallet.type)
-            return;
+            case WalletType.STANDARD:
+                break;
+            case WalletType.LEDGER:
+                await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
+                return;
+            case WalletType.MULTI_SIG_STANDARD:
+            case WalletType.MULTI_SIG_EVM_GNOSIS:
+                await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
+                return;
+            default:
+                // Should not happen.
+                Logger.error('wallet', 'Not support, pls check the wallet type:', networkWallet.masterWallet.type)
+                return;
         }
 
         this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
@@ -172,7 +172,7 @@ export class VoteService {
 
     public toastSuccessfully(subject: string) {
         let msg = this.translate.instant(subject) + this.translate.instant('voting.successfully');
-        this.globalNative.genericToast(msg, 2000, "success");
+        this.globalNative.genericToast(msg, 2000);
     }
 
 
@@ -451,9 +451,9 @@ export class VoteService {
     async getWalletFirstPublicKey() {
         let ret = await this.sourceSubwallet.getPublicKeys(0, 1, false);
         if (ret) {
-          if (ret instanceof Array) {
-            return ret[0]
-          } else return ret;
+            if (ret instanceof Array) {
+                return ret[0]
+            } else return ret;
         }
     }
 

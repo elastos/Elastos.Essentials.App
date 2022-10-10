@@ -77,7 +77,7 @@ export class DeveloperPage implements OnInit {
     let devLogs = Logger.getDevLogs();
 
     void this.clipboard.copy(JSON.stringify(devLogs));
-    this.native.genericToast('common.copied-to-clipboard', 2000, "success");
+    this.native.genericToast('common.copied-to-clipboard', 2000);
   }
 
   public onCoreDeveloperModeChanged() {

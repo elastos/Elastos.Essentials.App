@@ -280,16 +280,16 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
     if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
       switch (extInfo.evm.txInfo.type) {
-        case ETHOperationType.ERC20_TOKEN_APPROVE: return './assets/wallet/buttons/darkmode/approve-token.svg';
-        case ETHOperationType.SEND_NFT: return './assets/wallet/buttons/darkmode/send-nft.svg';
-        case ETHOperationType.SWAP: return './assets/wallet/buttons/darkmode/swap-tokens.svg';
-        case ETHOperationType.ADD_LIQUIDITY: return './assets/wallet/buttons/darkmode/add-liquidity.svg';
-        case ETHOperationType.REMOVE_LIQUIDITY: return './assets/wallet/buttons/darkmode/remove-liquidity.svg';
-        case ETHOperationType.BRIDGE: return './assets/wallet/buttons/darkmode/bridge.svg';
-        case ETHOperationType.WITHDRAW: return './assets/wallet/buttons/darkmode/withdraw.svg';
-        case ETHOperationType.DEPOSIT: return './assets/wallet/buttons/darkmode/deposit.svg';
-        case ETHOperationType.GET_REWARDS: return './assets/wallet/buttons/darkmode/get-rewards.svg';
-        case ETHOperationType.STAKE: return './assets/wallet/buttons/darkmode/stake.svg';
+        case ETHOperationType.ERC20_TOKEN_APPROVE: return '/assets/wallet/tx/approve-token.svg';
+        case ETHOperationType.SEND_NFT: return '/assets/wallet/tx/send-nft.svg';
+        case ETHOperationType.SWAP: return '/assets/wallet/tx/swap-tokens.svg';
+        case ETHOperationType.ADD_LIQUIDITY: return '/assets/wallet/tx/add-liquidity.svg';
+        case ETHOperationType.REMOVE_LIQUIDITY: return '/assets/wallet/tx/remove-liquidity.svg';
+        case ETHOperationType.BRIDGE: return '/assets/wallet/tx/bridge.svg';
+        case ETHOperationType.WITHDRAW: return '/assets/wallet/tx/withdraw.svg';
+        case ETHOperationType.DEPOSIT: return '/assets/wallet/tx/deposit.svg';
+        case ETHOperationType.GET_REWARDS: return '/assets/wallet/tx/get-rewards.svg';
+        case ETHOperationType.STAKE: return '/assets/wallet/tx/stake.svg';
       }
     }
 
@@ -299,13 +299,13 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
         if (transaction.isRedPacket) {
           return './assets/redpackets/images/default-avatar.png';
         } else {
-          return './assets/wallet/buttons/receive.png';
+          return './assets/wallet/tx/receive.svg';
         }
       case TransactionDirection.SENT:
         if (transaction.isCrossChain) {
-          return './assets/wallet/buttons/transfer.png';
+          return './assets/wallet/tx/transfer.svg';
         } else {
-          return './assets/wallet/buttons/send.png';
+          return './assets/wallet/tx/send.svg';
         }
     }
   }

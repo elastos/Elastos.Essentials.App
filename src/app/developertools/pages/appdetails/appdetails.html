@@ -14,7 +14,7 @@
   <ion-grid class="container" *ngIf="didStorePasswordIsValid">
 
     <div class="section-container flex-ai-centered std-padding" *ngIf="!appDIDDocumentStatusWasChecked">
-      <ion-spinner color="danger"></ion-spinner>
+      <ion-spinner></ion-spinner>
     </div>
     <div class="section-container" *ngIf="appDIDDocumentStatusWasChecked">
       <ion-list>
@@ -22,9 +22,11 @@
           <ion-col size="12" class="app-icon">
             <ion-img *ngIf="!fetchingIcon && !uploadingIcon" [src]="getAppIcon()"
               (click)="selectAndUploadAppIconFromLibrary()"></ion-img>
-            <p *ngIf="!fetchingIcon && !uploadingIcon && !base64iconPath" style="color:red" >{{ 'developertools.set-app-icon' | translate }}</p>
-            <p *ngIf="!fetchingIcon && !uploadingIcon && base64iconPath" style="color:black" >{{ 'developertools.touch-to-change' | translate }}</p>
-            <ion-spinner *ngIf="fetchingIcon || uploadingIcon" color="danger"></ion-spinner>
+            <p *ngIf="!fetchingIcon && !uploadingIcon && !base64iconPath">{{ 'developertools.set-app-icon' | translate
+              }}</p>
+            <p *ngIf="!fetchingIcon && !uploadingIcon && base64iconPath">{{ 'developertools.touch-to-change' | translate
+              }}</p>
+            <ion-spinner *ngIf="fetchingIcon || uploadingIcon"></ion-spinner>
           </ion-col>
           <ion-col size="12">
             <p>{{ 'common.title' | translate }}</p>
@@ -79,12 +81,16 @@
           <ion-col size="12">
             <p>{{ 'developertools.app-did-published?' | translate }}</p>
           </ion-col>
-          <ion-col size="12">
-            <ion-label *ngIf="!appDIDDocumentStatusWasChecked" style="color:grey">{{ 'developertools.checking' |
+          <ion-col size="12" class="status-icon">
+            <ion-label *ngIf="!appDIDDocumentStatusWasChecked">{{ 'developertools.checking' |
               translate }}</ion-label>
-            <ion-label *ngIf="appDIDDocumentStatusWasChecked && publishedAppInfo.didDocument" style="color:green">{{
+
+            <ion-label *ngIf="appDIDDocumentStatusWasChecked && publishedAppInfo.didDocument">{{
               'developertools.yes-published' | translate }}</ion-label>
-            <ion-label *ngIf="appDIDDocumentStatusWasChecked && !publishedAppInfo.didDocument" style="color:red">{{
+
+            <ion-icon *ngIf="appDIDDocumentStatusWasChecked && !publishedAppInfo.didDocument"
+              name="alert-circle-outline"></ion-icon>
+            <ion-label *ngIf="appDIDDocumentStatusWasChecked && !publishedAppInfo.didDocument">{{
               'developertools.no-published' | translate }}</ion-label>
           </ion-col>
         </ion-row>
@@ -92,10 +98,12 @@
           <ion-col size="12">
             <p>{{ 'developertools.dev-did-published?' | translate }}</p>
           </ion-col>
-          <ion-col size="12">
-            <ion-label detail="false" *ngIf="developerDIDDocument" style="color:green">{{ 'developertools.yes-published'
+          <ion-col size="12" class="status-icon">
+            <ion-label detail="false" *ngIf="developerDIDDocument">{{ 'developertools.yes-published'
               | translate }}</ion-label>
-            <ion-label detail="false" *ngIf="!developerDIDDocument" style="color:red">{{ 'developertools.no-published' |
+
+            <ion-icon *ngIf="!developerDIDDocument" name="alert-circle-outline"></ion-icon>
+            <ion-label detail="false" *ngIf="!developerDIDDocument">{{ 'developertools.no-published' |
               translate }}</ion-label>
           </ion-col>
         </ion-row>
@@ -103,10 +111,12 @@
           <ion-col size="12">
             <p>{{ 'developertools.app-attached-to-dev' | translate }}</p>
           </ion-col>
-          <ion-col size="12">
-            <ion-label detail="false" *ngIf="getOnChainAppDeveloperDID()" style="color:green">{{
+          <ion-col size="12" class="status-icon">
+            <ion-label detail="false" *ngIf="getOnChainAppDeveloperDID()">{{
               'developertools.yes-published' | translate }}</ion-label>
-            <ion-label detail="false" *ngIf="!getOnChainAppDeveloperDID()" style="color:red">{{
+
+            <ion-icon *ngIf="!getOnChainAppDeveloperDID()" name="alert-circle-outline"></ion-icon>
+            <ion-label detail="false" *ngIf="!getOnChainAppDeveloperDID()">{{
               'developertools.no-published' | translate }}</ion-label>
           </ion-col>
         </ion-row>
@@ -146,11 +156,11 @@
       </ion-list>
     </div>
 
-    <ion-button *ngIf="appDIDDocumentStatusWasChecked && appIdentityNeedsToBePublished()" color="dark"
-      (click)="publishAppIdentity()">
-      <ion-label *ngIf="!publishingDid">{{ 'developertools.publish-app-did' | translate }}</ion-label>
-      <ion-spinner *ngIf="publishingDid"></ion-spinner>
-    </ion-button>
+    <ebutton *ngIf="appDIDDocumentStatusWasChecked && appIdentityNeedsToBePublished() && !publishingDid"
+      (clicked)="publishAppIdentity()" [title]="'developertools.publish-app-did' | translate">
+    </ebutton>
+    <ion-spinner *ngIf="appDIDDocumentStatusWasChecked && appIdentityNeedsToBePublished() && publishingDid">
+    </ion-spinner>
 
     <p *ngIf="!appIdentityNeedsToBePublished()" class="up-to-date">{{ 'developertools.up-to-date' | translate }}</p>
   </ion-grid>

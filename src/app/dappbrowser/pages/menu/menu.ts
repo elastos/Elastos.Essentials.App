@@ -127,7 +127,7 @@ export class MenuPage {
 
     public copyUrl() {
         void this.clipboard.copy(this.browsedAppInfo.url);
-        this.globalNative.genericToast('common.copied-to-clipboard', 2000, "success");
+        this.globalNative.genericToast('common.copied-to-clipboard', 2000);
     }
 
     public shareUrl() {
@@ -171,6 +171,6 @@ export class MenuPage {
         await dappBrowser.clearData(this.browsedAppInfo.url);
         this.reloadPage();
 
-        this.globalNative.genericToast('dappbrowser.browser-data-cleared', 2000, "success");
+        this.globalNative.genericToast('dappbrowser.browser-data-cleared', 2000);
     }
 }

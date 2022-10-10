@@ -20,11 +20,11 @@ export class NativeService {
 
   /********* Toasts *********/
   genericToast(msg: string, duration = 3000) {
-    this.globalNative.genericToast(msg, duration, "success");
+    this.globalNative.genericToast(msg, duration);
   }
 
   shareToast() {
-    this.globalNative.genericToast('contacts.contact-copied-to-clipboard', 3000, "success");
+    this.globalNative.genericToast('contacts.contact-copied-to-clipboard', 3000);
   }
 
   didResolveErr(err: string) {
@@ -51,7 +51,7 @@ export class NativeService {
           text: this.translate.instant('common.ok'),
           handler: () => {
             this.zone.run(() => {
-                void this.globalIntentService.sendIntentResponse({}, intentId);
+              void this.globalIntentService.sendIntentResponse({}, intentId);
             });
           }
         }

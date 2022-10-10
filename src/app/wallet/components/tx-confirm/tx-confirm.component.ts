@@ -39,10 +39,10 @@ export class TxConfirmComponent implements OnInit {
 
     if (this.txInfo.type === 1) {
       this.txHeader = this.translate.instant('wallet.transfer-transaction-type');
-      this.txIcon = './assets/wallet/tx/transfer.svg';
+      this.txIcon = '/assets/wallet/tx/transfer.svg';
     } else {
       this.txHeader = this.translate.instant('wallet.send-transaction-type');
-      this.txIcon = './assets/wallet/tx/send.svg';
+      this.txIcon = '/assets/wallet/tx/send.svg';
     }
   }
 

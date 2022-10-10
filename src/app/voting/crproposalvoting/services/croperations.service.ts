@@ -410,7 +410,7 @@ export class CROperationsService {
     public handleSuccessReturn(command?: string) {
         this.goBack();
         command = command || this.onGoingCommand.command;
-        this.globalNative.genericToast('crproposalvoting.' + command + '-successfully', 2000, "success");
+        this.globalNative.genericToast('crproposalvoting.' + command + '-successfully', 2000);
     }
 
     public async popupErrorMessage(error: any) {

@@ -1,20 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="Component_1045_1" width="67.201" height="67.201" data-name="Component 1045 – 1" viewBox="0 0 67.201 67.201">
-    <defs>
-        <style>
-            .cls-3{stroke:#fff;fill:none;stroke-width:2px;stroke-linecap:square}
-        </style>
-    </defs>
-    <path id="Path_21720" d="M33.6 0A33.6 33.6 0 1 1 0 33.6 33.6 33.6 0 0 1 33.6 0z" data-name="Path 21720"/>
-    <g id="Component_1044_1" data-name="Component 1044 – 1" transform="translate(9.253 17.332)">
-        <g id="Group_13401" data-name="Group 13401" transform="translate(0 5.378)">
-            <text id="title" fill="#fff" stroke="#fff" stroke-width="0.3px" font-family="Montserrat-Light, Montserrat" font-size="39px" font-weight="300" letter-spacing="0.08em" transform="rotate(-90 33.237 -4.763)">
-                <tspan x="0" y="0">C</tspan>
-            </text>
-        </g>
-        <g id="Group_13402" data-name="Group 13402" transform="translate(20.441)">
-            <path id="Line_13" fill="none" stroke="#fff" stroke-width="2px" d="M0 0L0 18.212" data-name="Line 13" transform="translate(4.047)"/>
-            <path id="Line_14" d="M0 0L4.047 4.047" class="cls-3" data-name="Line 14" transform="translate(4.047)"/>
-            <path id="Line_15" d="M4.047 0L0 4.047" class="cls-3" data-name="Line 15"/>
-        </g>
-    </g>
+<svg width="100%" height="100%" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.70165 3.86827C6.85831 1.7116 9.78338 0.5 12.8334 0.5C15.1079 0.5 17.3313 1.17446 19.2224 2.4381C21.1136 3.70174 22.5876 5.49779 23.458 7.59914C24.3284 9.70049 24.5561 12.0128 24.1124 14.2435C23.6687 16.4743 22.5734 18.5234 20.9651 20.1317C19.3568 21.74 17.3077 22.8353 15.0769 23.279C12.8461 23.7228 10.5339 23.495 8.43251 22.6246C6.33116 21.7542 4.53511 20.2802 3.27147 18.3891C2.00784 16.4979 1.33337 14.2745 1.33337 12C1.33337 8.95001 2.54498 6.02494 4.70165 3.86827Z" stroke="currentColor"/>
+<path d="M15.8302 9.04195L7.87213 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16.5267 13.3428L16.5267 8.03741L11.2213 8.03741" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

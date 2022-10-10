@@ -4,12 +4,6 @@
   min-height: 100%;
   padding: 30px 20px;
 
-  ion-input {
-    background: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    --padding-start: 12px;
-  }
-
   .btn-container {
     margin-top: 25px;
   }
@@ -78,8 +72,7 @@
         border-radius: 10px;
         padding: 20px 10px;
         margin-bottom: 7.5px;
-        background-color: #ffffff;
-        box-shadow: 0 3px 15px 0 #ededf0;
+        background-color: var(--essentials-box-color);
 
         .logo {
           height: 30px;
@@ -89,7 +82,7 @@
         }
 
         .networks {
-          color: #aaa;
+          opacity: 0.8;
           display: flex;
           margin-top: 5px;
           align-items: center;
@@ -100,18 +93,6 @@
           }
         }
       }
-
-      .dark-provider {
-        background-color: #212021;
-        box-shadow: none;
-      }
     }
-  }
-}
-
-.darkContainer {
-  ion-input {
-    background-color: #212021;
-    box-shadow: none;
   }
 }

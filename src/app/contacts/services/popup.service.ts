@@ -78,7 +78,7 @@ export class PopupService {
       componentProps: {
         didString: contact.id,
         name: contact.customName ? contact.customName : contact.credentials.name,
-        qrCodeString: await this.uxService.getAddFriendShareableUrl(contact.id, contact.notificationsCarrierAddress),
+        qrCodeString: this.uxService.getAddFriendShareableUrl(contact.id, contact.notificationsCarrierAddress),
       },
       cssClass: !this.theme.darkMode ? 'contacts-qrcode-component' : 'contacts-qrcode-component-dark'
     });

@@ -37,20 +37,9 @@ ion-slide,
             margin-bottom: 20px;
             position: relative;
 
-            img {
-                width: 60px;
-                height: 60px;
-            }
-
-            .glow {
-                background-image: radial-gradient(circle, rgba(128, 82, 255, 0.2) 0%, rgba(128, 82, 255, 0) 70%);
-                width: 120px;
-                height: 120px;
-                border-radius: 100%;
-                position: absolute;
-                top: -10px;
-                z-index: -1;
-                left: -26px;
+            .inline-svg {
+                width: 50px;
+                height: 50px;
             }
         }
 

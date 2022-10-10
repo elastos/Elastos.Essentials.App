@@ -78,14 +78,14 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     protected async getTransactionName(transaction: BTCTransaction): Promise<string> {
-      switch (transaction.direction) {
-          case TransactionDirection.RECEIVED:
-              return await "wallet.coin-op-received-token";
-          case TransactionDirection.SENT:
-              return "wallet.coin-op-sent-token";
-          default:
-              return "Invalid";
-      }
+        switch (transaction.direction) {
+            case TransactionDirection.RECEIVED:
+                return await "wallet.coin-op-received-token";
+            case TransactionDirection.SENT:
+                return "wallet.coin-op-sent-token";
+            default:
+                return "Invalid";
+        }
     }
 
     public getAddressCount(internal: boolean): number {
@@ -148,11 +148,11 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     protected async getTransactionIconPath(transaction: BTCTransaction): Promise<string> {
         switch (transaction.direction) {
             case TransactionDirection.RECEIVED:
-                return './assets/wallet/buttons/receive.png';
+                return './assets/wallet/tx/receive.svg';
             case TransactionDirection.SENT:
-                return './assets/wallet/buttons/send.png';
+                return './assets/wallet/tx/send.svg';
             case TransactionDirection.MOVED:
-                return './assets/wallet/buttons/transfer.png';
+                return './assets/wallet/tx/transfer.svg';
         }
     }
 
@@ -207,8 +207,8 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
         let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
         if (!feerate) {
-          Logger.warn('wallet', 'BTCSubWallet: Can not get the feerate');
-          return null;
+            Logger.warn('wallet', 'BTCSubWallet: Can not get the feerate');
+            return null;
         }
 
         // TODO: Normally the data less than 1KB.

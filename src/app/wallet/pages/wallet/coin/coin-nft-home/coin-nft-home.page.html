@@ -5,13 +5,10 @@
         <ion-row class="main-title-row">
             <ion-col size="12">
                 <h1>{{ 'wallet.nft-overview' | translate}}</h1>
-                <!-- <p *ngIf="todaysTransactions > 20">{{ 'wallet.coin-new-transactions-today' | translate:{ '20+':
-                    todaysTransactions} }}}</p>
-                <p *ngIf="todaysTransactions <= 20">{{ 'wallet.coin-new-transactions-today' |
-                    translate:{todaysTransactions: todaysTransactions} }}</p> -->
             </ion-col>
         </ion-row>
-        <ion-row class="gray-card card-row">
+        <ion-row class="card-row">
+            <img class="blurred-network-logo" [src]="networkWallet.network.logo" />
             <ion-row class="card-label-row">
                 <h1>
                     <span>{{ nft.type }} NFT: {{ nft.name }}</span>
@@ -19,16 +16,6 @@
                 <h3 *ngIf="!refreshingAssets && nft.getAssets()"><b>{{ nft.getAssets().length }}</b> {{
                     'wallet.nft-assets-owned' | translate}}</h3>
             </ion-row>
-            <!-- <ion-row class="card-btn-row">
-                <ion-col offset="0.25" size="3">
-                    <div class="ion-activatable btn-box" (click)="receiveFunds()">
-                        <img class="receive" src="assets/wallet/buttons/receive.png">
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </div>
-                    <p class="btn-label">{{ 'wallet.coin-action-receive' | translate }}</p>
-                </ion-col>
-            </ion-row> -->
-            <div class="arrow-down"></div>
         </ion-row>
         <ion-row class="list-title-row">
             <h1>{{ 'wallet.nft-assets' | translate }}</h1>
@@ -41,7 +28,10 @@
                 (click)="showAssetDetails(asset)">
                 <ion-col size="3" class="left-col">
                     <div class="asset-icon">
-                        <img [src]="getAssetIcon(asset)">
+                        <div *ngIf="!hasRealAssetIcon(asset)" class="icon-container">
+                            <div class="inline-svg" [inlineSVG]="getAssetIcon(asset)"></div>
+                        </div>
+                        <img *ngIf="hasRealAssetIcon(asset)" [src]="getAssetIcon(asset)">
                     </div>
                 </ion-col>
                 <ion-col size="9" class="middle-col">
@@ -57,38 +47,5 @@
             <img src="assets/wallet/icons/warning.svg" />
             <h2>{{ 'wallet.nft-collectibles-cant-be-listed' | translate }}</h2>
         </div>
-
-        <!-- <ion-row class="list-title-row">
-                <h1>{{ 'wallet.coin-transactions' | translate }}</h1>
-        </ion-row> -->
-        <div *ngIf="transferList.length > 0">
-            <ion-row class="item-row ripple ion-activatable" *ngFor="let item of transferList" (click)="onItem(item)">
-                <ion-col size="2" class="left-col">
-                    <div class="icon-container" [class.purple]="item.type === 1" [class.black]="item.type === 2"
-                        [class.orange]="item.type === 3">
-                        <img [src]="item.payStatusIcon">
-                    </div>
-                </ion-col>
-                <ion-col [size]="item.amount.isZero() ? 7 : 5" class="middle-col">
-                    <h1>{{ item.name | translate }}</h1>
-                    <p>{{ item.datetime }}</p>
-                </ion-col>
-                <ion-col [size]="item.amount.isZero() ? 3 : 5" class="right-col">
-                    <h1>{{ item.symbol }}{{ uiService.getFixedBalance(item.amount) }}</h1>
-                    <p *ngIf="subWallet.getAmountInExternalCurrency(item.amount)">
-                        {{ item.symbol }}{{ subWallet.getAmountInExternalCurrency(item.amount) }}
-                        {{ currencyService.selectedCurrency.symbol }}
-                    </p>
-                </ion-col>
-                <ion-ripple-effect></ion-ripple-effect>
-            </ion-row>
-        </div>
-        <div class="empty-list" *ngIf="transactionsLoaded && (transferList.length === 0)">
-            <img src="assets/wallet/icons/warning.svg" />
-            <h1>{{ 'wallet.coin-no-transactions' | translate }}</h1>
-        </div>
-        <!-- <div class="more" (click)="clickMore()" *ngIf="isShowMore">
-            {{ 'wallet.click-to-load-more' | translate }}
-        </div> -->
     </ion-grid>
 </ion-content>

@@ -61,7 +61,7 @@
                 </ion-col> -->
             </ion-row>
 
-            <!-- List of transactions -->
+            <!-- List of transactions - offchain transactions -->
             <div *ngIf="transactionsLoaded && offlineTransactions.length > 0">
                 <ion-row class="item-row ripple ion-activatable" *ngFor="let offlineTx of offlineTransactions"
                     (click)="onOfflineTransactionItem(offlineTx)">
@@ -78,6 +78,7 @@
                 </ion-row>
             </div>
 
+            <!-- List of transactions - onchain transactions -->
             <div *ngIf="transactionsLoaded && transferList.length > 0">
                 <ion-row class="item-row ripple ion-activatable" *ngFor="let item of transferList"
                     (click)="onItem(item)">
@@ -85,7 +86,7 @@
                         <div class="icon-container" [class.green]="(item.type === 1) && !item.isRedPacket"
                             [class.redpacket]="(item.type === 1) && item.isRedPacket" [class.purple]="(item.type === 2)"
                             [class.orange]="item.type === 3">
-                            <img [src]="getPayStatusIcon(item)">
+                            <div class="inline-svg" [inlineSVG]="getPayStatusIcon(item)"></div>
                         </div>
                     </ion-col>
                     <ion-col [size]="item.amount.isZero() ? 7 : 5" class="middle-col">
@@ -147,17 +148,17 @@
         </ion-row>
         <ion-row class="card-btn-row" *ngIf="shouldShowAllActions && canEarnSwapOrBridge()">
             <ion-col size="4" *ngIf="canEarn()">
-                <ebutton class="btn-box" [uppercase]="true" (clicked)="earn($event, subWallet)"
+                <ebutton class="btn-box" [uppercase]="true" (clicked)="earn(subWallet)"
                     topicon="assets/wallet/buttons/curcol-earn.svg" [title]="'wallet.earn' | translate">
                 </ebutton>
             </ion-col>
             <ion-col size="4" *ngIf="canSwap()">
-                <ebutton class="btn-box" [uppercase]="true" (clicked)="swap($event, subWallet)"
+                <ebutton class="btn-box" [uppercase]="true" (clicked)="swap(subWallet)"
                     topicon="assets/wallet/buttons/curcol-swap.svg" [title]="'wallet.swap' | translate">
                 </ebutton>
             </ion-col>
             <ion-col size="4" *ngIf="canBridge()">
-                <ebutton class="btn-box" [uppercase]="true" (clicked)="bridge($event, subWallet)"
+                <ebutton class="btn-box" [uppercase]="true" (clicked)="bridge(subWallet)"
                     topicon="assets/wallet/buttons/curcol-bridge.svg" [title]="'wallet.bridge' | translate">
                 </ebutton>
             </ion-col>

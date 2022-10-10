@@ -47,6 +47,9 @@ export class IdentityWidget implements IWidget, OnDestroy {
   async showOptions(ev: any) {
     Logger.log('Launcher', 'Opening options');
 
+    ev.preventDefault();
+    ev.stopPropagation();
+
     this.popover = await this.popoverCtrl.create({
       mode: 'ios',
       component: OptionsComponent,
