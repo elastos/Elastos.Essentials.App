@@ -21,7 +21,7 @@ export class HiveWidget implements IWidget, OnInit, OnDestroy {
     routerContext: App.HIVE_MANAGER,
     name: this.translate.instant('launcher.app-hive'),
     description: this.translate.instant('launcher.app-hive-description'),
-    icon: '/assets/launcher/apps/app-icons/hive.svg',
+    icon: '/assets/launcher/icons/hive-cross.svg',
     hasWidget: true,
     startCall: () => this.hiveManagerInitService.start()
   };

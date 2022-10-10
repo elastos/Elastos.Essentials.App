@@ -363,6 +363,8 @@ export class ERC721Service {
         }
     */
     private async extractAssetMetadata(network: EVMNetwork, asset: NFTAsset, contract: Contract, contractAddress: string, accountAddress: string, tokenURI: string): Promise<void> {
+        Logger.log("wallet", "Trying to extract NFT metadata for token uri", tokenURI);
+
         let erc721Provider = network.getERC721Provider(contractAddress);
 
         if (erc721Provider) {
