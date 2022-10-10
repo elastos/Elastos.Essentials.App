@@ -86,7 +86,7 @@ module.exports = function(ctx) {
             loadFile: (uniDiff, callback) => {
               let oldFilePath = uniDiff.oldFileName.split('/').join(path.sep);
               let newFilePath = uniDiff.newFileName.split('/').join(path.sep);
-              if ((uniDiff.hunks[0].oldStart == 1) && (uniDiff.hunks[0].oldLines == 0)) {
+              if ((uniDiff.hunks[0].oldStart == 0) && (uniDiff.hunks[0].oldLines == 0)) {
                 // Create new file
                 let newFileDir = path.dirname(newFilePath);
                 if (!fs.existsSync(newFileDir)) {
