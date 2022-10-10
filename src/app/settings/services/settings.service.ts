@@ -6,13 +6,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { GlobalPasswordService } from 'src/app/services/globa.password.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { environment } from 'src/environments/environment';
 
-declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 type CheckedVersion = {
   platform: "android" | "ios";
@@ -38,6 +38,7 @@ export class SettingsService {
     private notifications: GlobalNotificationsService,
     private storage: GlobalStorageService,
     private translate: TranslateService,
+    private globalPasswordService: GlobalPasswordService,
     private jsonRPCService: GlobalJsonRPCService
   ) { }
 
@@ -51,7 +52,7 @@ export class SettingsService {
     Logger.log('Settings', 'changePassword');
 
     try {
-      const result = await passwordManager.changeMasterPassword();
+      const result = await this.globalPasswordService.changeMasterPassword();
       Logger.log('Settings', 'changePassword result', result);
       result ? this.native.genericToast('settings.change-pw-success') : this.native.genericToast('settings.change-pw-fail');
     } catch (err) {

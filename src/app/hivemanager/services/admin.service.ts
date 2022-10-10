@@ -4,6 +4,7 @@ import { DID as ConnDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { TranslateService } from '@ngx-translate/core';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
+import { GlobalPasswordService } from 'src/app/services/globa.password.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -12,7 +13,6 @@ import { ManagedProvider } from '../model/managedprovider';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 //declare let didManager: DIDPlugin.DIDManager;
-declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,7 @@ export class AdminService {
   constructor(
     private storage: GlobalStorageService,
     private globalPublicationService: GlobalPublicationService,
+    private globalPasswordService: GlobalPasswordService,
     private translate: TranslateService,
     public native: GlobalNativeService,
   ) { }
@@ -107,7 +108,7 @@ export class AdminService {
       displayName: "Vault provider admin DID",
       password: createdDIDInfo.storePassword
     };
-    let passwordSetResult = await passwordManager.setPasswordInfo(passwordInfo);
+    let passwordSetResult = await this.globalPasswordService.setPasswordInfo(passwordInfo);
 
     if (!passwordSetResult.value) {
       // Failed to save the password. Cancel DID creation
@@ -130,7 +131,7 @@ export class AdminService {
   public async getAdminDIDMnemonic(provider: ManagedProvider): Promise<string> {
     let didStore = await DIDStore.open(provider.did.storeId);
 
-    let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-" + provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
+    let passwordInfo = await this.globalPasswordService.getPasswordInfo("vaultprovideradmindid-" + provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
     return (await didStore.loadRootIdentity()).exportMnemonic(passwordInfo.password);
   }
 
@@ -152,7 +153,7 @@ export class AdminService {
    * Initiate a DID publication.
    */
   public async publishAdminDID(provider: ManagedProvider): Promise<void> {
-    let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-" + provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
+    let passwordInfo = await this.globalPasswordService.getPasswordInfo("vaultprovideradmindid-" + provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
     await this.native.showLoading(this.translate.instant('common.please-wait'));
     try {
       await this.globalPublicationService.publishJSDIDFromStore(

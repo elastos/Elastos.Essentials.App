@@ -7,6 +7,7 @@
 .header-row {
   margin-bottom: 5px;
   padding: 5px;
+  padding-right: 2px; // align the grid with other widgets
 
   .title-col {
     padding: 0px;
@@ -23,15 +24,14 @@
     }
   }
 
-  .more-col {
+  .grid {
+    width: 30px;
     display: flex;
-    align-items: center;
-    font-size: 10px;
     justify-content: flex-end;
 
     img {
-      margin-left: 5px;
-      height: 10px;
+      width: 15px;
+      height: 15px;
     }
   }
 }
@@ -103,9 +103,5 @@
     &.transitioning {
       opacity: 0;
     }
-  }
-
-  .grid {
-    width: 30px;
   }
 }

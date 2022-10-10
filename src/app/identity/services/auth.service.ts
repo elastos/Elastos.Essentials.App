@@ -3,10 +3,9 @@ import { ModalController } from '@ionic/angular';
 import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
 import { PasswordManagerCancellationException } from 'src/app/model/exceptions/passwordmanagercancellationexception';
+import { GlobalPasswordService } from 'src/app/services/globa.password.service';
 import { DIDService } from './did.service';
 import { PopupProvider } from './popup';
-
-declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 @Injectable({
     providedIn: 'root'
@@ -17,6 +16,7 @@ export class AuthService {
 
     constructor(public modalCtrl: ModalController,
         private didService: DIDService,
+        private globalPasswordService: GlobalPasswordService,
         private popupProvider: PopupProvider) {
         AuthService.instance = this;
     }
@@ -41,7 +41,7 @@ export class AuthService {
                     forceMasterPasswordPrompt: forceShowMasterPrompt
                 };
 
-                let passwordInfo = await passwordManager.getPasswordInfo("didstore-" + did, options) as PasswordManagerPlugin.GenericPasswordInfo;
+                let passwordInfo = await this.globalPasswordService.getPasswordInfo("didstore-" + did, options) as PasswordManagerPlugin.GenericPasswordInfo;
                 if (!passwordInfo) {
                     // Master password is right, but no data for the requested key...
                     Logger.error('identity', "Master password was right, but no password found for the requested key")

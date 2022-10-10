@@ -1,8 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
-
-declare let passwordManager: PasswordManagerPlugin.PasswordManager;
+import { GlobalPasswordService } from 'src/app/services/globa.password.service';
 
 @Injectable({
     providedIn: 'root'
@@ -10,18 +9,18 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 export class AuthService {
     public static instance: AuthService = null;
 
-    constructor() {
+    constructor(private globalPasswordService: GlobalPasswordService) {
         AuthService.instance = this;
     }
 
     public async createAndSaveWalletPassword(walletId: string): Promise<string> {
         const passwordKey = "wallet-" + walletId;
-        let oldPassword = await passwordManager.getPasswordInfo(passwordKey) as PasswordManagerPlugin.GenericPasswordInfo;
+        let oldPassword = await this.globalPasswordService.getPasswordInfo(passwordKey) as PasswordManagerPlugin.GenericPasswordInfo;
         if (oldPassword) { // In case of user click 'createMasterwallet' too quickly.
             return oldPassword.password;
         }
 
-        let password = await passwordManager.generateRandomPassword();
+        let password = await this.globalPasswordService.generateRandomPassword();
 
         return this.saveWalletPassword(walletId, password);
     }
@@ -37,7 +36,7 @@ export class AuthService {
             password: payPassword,
             // TODO: visible: false
         }
-        let result = await passwordManager.setPasswordInfo(passwordInfo);
+        let result = await this.globalPasswordService.setPasswordInfo(passwordInfo);
         if (result.value) {
             // Master password was created and wallet password could be saved
             return payPassword;
@@ -58,7 +57,7 @@ export class AuthService {
                     forceMasterPasswordPrompt: forceShowMasterPrompt
                 };
                 let key = "wallet-" + walletId;
-                let passwordInfo = await passwordManager.getPasswordInfo(key, options) as PasswordManagerPlugin.GenericPasswordInfo;
+                let passwordInfo = await this.globalPasswordService.getPasswordInfo(key, options) as PasswordManagerPlugin.GenericPasswordInfo;
                 if (!passwordInfo) {
                     // Master password is right, but no data for the requested key...
                     Logger.log('wallet', "Master password was right, but no password found for the requested key", key);
@@ -82,7 +81,7 @@ export class AuthService {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise<string>(async (resolve, reject) => {
             try {
-                const resultInfo = await passwordManager.deletePasswordInfo("wallet-" + walletId) as PasswordManagerPlugin.BooleanWithReason;
+                const resultInfo = await this.globalPasswordService.deletePasswordInfo("wallet-" + walletId) as PasswordManagerPlugin.BooleanWithReason;
                 if (resultInfo) {
                     if (resultInfo.value) {
                         resolve(null);

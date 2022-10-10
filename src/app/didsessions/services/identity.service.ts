@@ -10,6 +10,7 @@ import { BiometricAuthenticationFailedException } from 'src/app/model/exceptions
 import { BiometricLockedoutException } from 'src/app/model/exceptions/biometriclockedout.exception';
 import { PasswordManagerCancellationException } from 'src/app/model/exceptions/passwordmanagercancellationexception';
 import { WrongPasswordException } from 'src/app/model/exceptions/wrongpasswordexception.exception';
+import { GlobalPasswordService } from 'src/app/services/globa.password.service';
 import { GlobalDIDSessionsService, SignInOptions } from 'src/app/services/global.didsessions.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
@@ -33,7 +34,6 @@ import { UXService } from './ux.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
-declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 export type IdentityGroup = {
     didStoreId: string;
@@ -80,6 +80,7 @@ export class IdentityService {
         private globalElastosAPIService: GlobalElastosAPIService,
         private globalHiveService: GlobalHiveService,
         private globalStartupService: GlobalStartupService,
+        private globalPasswordService: GlobalPasswordService,
         private didSessions: GlobalDIDSessionsService
     ) {
         this.events.subscribe('signIn', (identity) => {
@@ -128,7 +129,7 @@ export class IdentityService {
                 promptPasswordIfLocked: true,
                 forceMasterPasswordPrompt: false
             };
-            let passwordInfo = await passwordManager.getPasswordInfo("didstore-" + identityEntry.didStoreId, options);
+            let passwordInfo = await this.globalPasswordService.getPasswordInfo("didstore-" + identityEntry.didStoreId, options);
             if (passwordInfo) {
                 let signInOptions: SignInOptions = null;
                 // TODO: while the code below is commented out, if a user change the language in did sessions, this will also
@@ -214,7 +215,7 @@ export class IdentityService {
             let didStore = await DIDStore.create();
 
             // Generate a random password
-            this.identityBeingCreated.storePass = await passwordManager.generateRandomPassword();
+            this.identityBeingCreated.storePass = await this.globalPasswordService.generateRandomPassword();
             let mnemonicLanguage = this.getMnemonicLang();
             let mnemonic = this.identityBeingCreated.mnemonic;
 
@@ -242,7 +243,7 @@ export class IdentityService {
                 password: storePassword,
                 // TODO: visible: false
             }
-            let result = await passwordManager.setPasswordInfo(passwordInfo);
+            let result = await this.globalPasswordService.setPasswordInfo(passwordInfo);
             if (result.value) {
                 await this.nativeService.showLoading(this.translate.instant('common.please-wait'));
                 // Master password was created and did store password could be saved
@@ -354,7 +355,7 @@ export class IdentityService {
         Logger.warn('didsessions', 'Getting didStore', didStore);
 
         // Generate a random password
-        let storePassword = await passwordManager.generateRandomPassword();
+        let storePassword = await this.globalPasswordService.generateRandomPassword();
         this.identityBeingCreated.storePass = storePassword;
 
         let mnemonic = this.identityBeingCreated.mnemonic;
