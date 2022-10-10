@@ -109,6 +109,9 @@
         }
 
         .input-row {
+            background: var(--essentials-box-color);
+            border-radius: 17px;
+
             ion-col {
                 display: flex;
                 justify-content: space-between;

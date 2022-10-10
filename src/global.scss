@@ -41,8 +41,9 @@
 }
 
 /** Global font family **/
-* {
+body {
     font-family: "CircularStd" !important;
+    --ion-font-family: "CircularStd" !important;
 }
 
 /** Remove 'box' outline on clicked items **/
