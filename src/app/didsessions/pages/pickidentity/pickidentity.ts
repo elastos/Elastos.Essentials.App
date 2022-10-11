@@ -100,6 +100,9 @@ export class PickIdentityPage {
 
   async loadIdentities() {
     this.groupedIdentities = await this.identityService.loadGroupedIdentities();
+
+    this.sortIdentities();
+
     this.changeDetector.detectChanges(); // Force angular to catch change in the array, in case of update
     Logger.log("didsessions", "Grouped identities:", this.groupedIdentities);
 
@@ -109,6 +112,24 @@ export class PickIdentityPage {
     }
 
     this.addAvatars();
+  }
+
+  /**
+   * Sort identities by alphabetical order
+   */
+  private sortIdentities() {
+    for (let groupedIdentity of this.groupedIdentities) {
+      // Inside grouped identities, sort entries
+      groupedIdentity.entries.sort((i1, i2) => {
+        return i1.name.localeCompare(i2.name);
+      });
+    }
+
+    // Take the first identity of each group and sort with order first identities of each group
+    // Assume each group as at least one identity.
+    this.groupedIdentities.sort((i1, i2) => {
+      return i1.entries[0].name.localeCompare(i2.entries[0].name);
+    });
   }
 
   addAvatars() {
