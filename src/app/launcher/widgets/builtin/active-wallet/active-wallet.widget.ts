@@ -179,9 +179,11 @@ export class ActiveWalletWidget implements OnInit, OnDestroy {
     }
 
     // Background gradient color
-    let networkColor = this.activeNetwork.getMainColor(); // RRGGBB
-    let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
-    this.backgroundGradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
+    if (this.activeNetwork) {
+      let networkColor = this.activeNetwork.getMainColor(); // RRGGBB
+      let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
+      this.backgroundGradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
+    }
   }
 
 
