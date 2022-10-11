@@ -187,6 +187,27 @@
                 <string>bluetooth-central</string>
             </array>
         </config-file>
+        <config-file parent="UTExportedTypeDeclarations" target="*-Info.plist">
+            <array>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.data</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>WebAssembly</string>
+                    <key>UTTypeIdentifier</key>
+                    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <string>wasm</string>
+                        <key>public.mime-type</key>
+                        <string>application/wasm</string>
+                    </dict>
+                </dict>
+            </array>
+        </config-file>
         <preference name="SwiftVersion" value="5.2" />
         <preference name="UseSwiftLanguageVersion" value="5.2" />
         <config-file parent="com.apple.developer.associated-domains" target="*-Debug.plist">
