@@ -5,6 +5,7 @@ import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
 import { IonicModule, LoadingController, Platform } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { ComponentsModule } from './components/components.module';
 import { ChooseImportedDIDPage } from './pages/chooseimporteddid/chooseimporteddid.page';
@@ -40,7 +41,8 @@ import { PopupProvider } from './services/popup';
     ComponentsModule,
     SharedComponentsModule,
     TranslateModule,
-    DIDSessionsRoutingModule
+    DIDSessionsRoutingModule,
+    InlineSVGModule
   ],
   entryComponents: [
   ],

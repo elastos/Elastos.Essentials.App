@@ -3,8 +3,7 @@
   [class.darkContainer]="theme.darkMode" (click)="showMyIdentity()">
   <ion-col size="2" class="left-col">
     <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-      <img
-        [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+      <div inlineSVG="assets/launcher/default/default-avatar.svg"></div>
     </ion-avatar>
     <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
       <img

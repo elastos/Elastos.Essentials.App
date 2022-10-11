@@ -17,7 +17,7 @@
     <ion-row class="redpacket-container redpacket-inline redpacket-user-profile-container">
       <div class="redpacket-user-profile-image">
         <ion-avatar *ngIf="!userAvatar" class="noAvatar">
-          <img [src]="'assets/launcher/default/default-avatar.svg'" alt="Avatar">
+          <div inlineSVG="assets/launcher/default/default-avatar.svg"></div>
         </ion-avatar>
         <ion-avatar *ngIf="userAvatar" class="hasAvatar">
           <img [src]="'data:' + userAvatar.contentType + ';base64,' + userAvatar.base64ImageData" alt="Avatar">
