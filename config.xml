@@ -27,9 +27,9 @@
     <preference name="LottieCacheDisabled" value="true" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="KeyboardResizeMode" value="ionic" />
-    <preference name="InternalIntentFilters" value="https://packet.fun https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net https://elink.elastos.net" />
+    <preference name="InternalIntentFilters" value="https://packet.fun https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net https://elink.elastos.net  https://did.web3essentials.io https://wallet.web3essentials.io https://hive.web3essentials.io https://contact.web3essentials.io https://scanner.web3essentials.io https://elink.web3essentials.io" />
     <preference name="IntentRedirecturlFilter" value="https://essentials.elastos.net" />
-    <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc:" />
+    <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc: https://wallet.web3essentials.io/wc:" />
     <preference name="CustomSchemeFilters" value="wc:" />
     <preference name="LoadUrlTimeoutValue" value="50000" />
     <platform name="android">
@@ -92,6 +92,50 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:host="elink.elastos.net" android:pathPattern="/.*" android:scheme="https" />
             </intent-filter>
+
+<intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="essentials.web3essentials.io" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="did.web3essentials.io" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="wallet.web3essentials.io" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="hive.web3essentials.io" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="contact.web3essentials.io" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="scanner.web3essentials.io" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="elink.web3essentials.io" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -155,6 +199,14 @@
                 <string>applinks:contact.elastos.net</string>
                 <string>applinks:scanner.elastos.net</string>
                 <string>applinks:elink.elastos.net</string>
+                <string>applinks:essentials.web3essentials.io</string>
+                <string>applinks:launcher.web3essentials.io</string>
+                <string>applinks:did.web3essentials.io</string>
+                <string>applinks:wallet.web3essentials.io</string>
+                <string>applinks:hive.web3essentials.io</string>
+                <string>applinks:contact.web3essentials.io</string>
+                <string>applinks:scanner.web3essentials.io</string>
+                <string>applinks:elink.web3essentials.io</string>
                 <string>applinks:packet.fun</string>
             </array>
         </config-file>
@@ -168,6 +220,14 @@
                 <string>applinks:contact.elastos.net</string>
                 <string>applinks:scanner.elastos.net</string>
                 <string>applinks:elink.elastos.net</string>
+                <string>applinks:essentials.web3essentials.io</string>
+                <string>applinks:launcher.web3essentials.io</string>
+                <string>applinks:did.web3essentials.io</string>
+                <string>applinks:wallet.web3essentials.io</string>
+                <string>applinks:hive.web3essentials.io</string>
+                <string>applinks:contact.web3essentials.io</string>
+                <string>applinks:scanner.web3essentials.io</string>
+                <string>applinks:elink.web3essentials.io</string>
                 <string>applinks:packet.fun</string>
             </array>
         </config-file>
