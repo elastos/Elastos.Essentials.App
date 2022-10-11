@@ -10,6 +10,8 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, LRW_TEMPLATE, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { AppmanagerService } from '../../services/appmanager.service';
@@ -18,6 +20,7 @@ import { NotificationManagerService } from '../../services/notificationmanager.s
 import { WidgetContainerComponent } from '../../widgets/base/widget-container/widget-container.component';
 import { WidgetsServiceEvents } from '../../widgets/services/widgets.events';
 import { WidgetsService } from '../../widgets/services/widgets.service';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -38,6 +41,8 @@ export class HomePage implements OnInit {
   private themeSubscription: Subscription = null; // Subscription to theme change
   private themeColorSubscription: Subscription = null;
   private widgetsEditionModeSub: Subscription = null;
+
+  private showSwipeIndicator = false; // Whether to show the swipe animation or not (first time only for new identities)
 
   public widgetsSlidesOpts = {
     autoHeight: true,
@@ -69,6 +74,10 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.launcherNotificationsService.init();
+
+    void this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "swipanimationshown", false).then(swipeAnimationShown => {
+      this.showSwipeIndicator = !swipeAnimationShown;
+    });
   }
 
   ionViewWillEnter() {
@@ -214,5 +223,13 @@ export class HomePage implements OnInit {
     //void this.ionContent.scrollToTop(500);
 
     void this.widgetsSlides.update();
+
+    // User has swiped at least once so he knows. We can hide the swipe indicator and remember this.
+    // Make sure to test the user reached the 0 index slide (left) because this event is received also when starting (main, 1)
+    if (this.showSwipeIndicator && this.activeScreenIndex == 0) {
+      this.showSwipeIndicator = false;
+
+      void this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "swipanimationshown", true);
+    }
   }
 }

@@ -8,12 +8,8 @@
         <widget-container name="left"></widget-container>
       </ion-slide>
       <ion-slide>
-        <!-- <ebutton title="Button"></ebutton>
-        <ebutton title="Button" mode="cancel"></ebutton>
-        <ebutton title="Button" [disabled]="true"></ebutton>
-        <ebutton title="Button" lefticon="/assets/launcher/icons/dark_mode/edit.svg"></ebutton>
-        <ebutton title="Button" topicon="/assets/launcher/icons/dark_mode/edit.svg"></ebutton> -->
-
+        <lottie-player *ngIf="showSwipeIndicator" src="/assets/launcher/animations/104585-swipe.json"
+          background="transparent" speed="0.8" style="width: 80px; height: 80px;" autoplay loop></lottie-player>
         <widget-container name="main"></widget-container>
       </ion-slide>
       <ion-slide>
