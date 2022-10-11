@@ -256,16 +256,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     getCoinIcon(item: EditableCoinInfo) {
-        switch (item.coin.getID()) {
-            case 'ELA':
-                return "assets/wallet/coins/ela-black.svg";
-            case 'IDChain':
-                return "assets/wallet/coins/ela-turquoise.svg";
-            case 'ETHSC':
-                return "assets/wallet/coins/ela-gray.svg";
-            default:
-                return "assets/wallet/coins/eth-purple.svg";
-        }
+        return "assets/wallet/tx/ethereum.svg";
     }
 
     // User wants to add a new ERC20 token of his own to the available list of tokens.
@@ -275,7 +266,7 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     public goToCoinDetails(item: EditableCoinInfo) {
         if (item.coin.getType() === CoinType.ERC20) {
-            this.native.go('/wallet/coin-erc20-details', { coin: item.coin });
+            this.native.go('/wallet/coin-erc20-details', { coinId: item.coin.getID() });
         }
     }
 }

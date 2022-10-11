@@ -1,28 +1,23 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.dark-container]="theme.darkMode">
-      <div class="icon-container">
-          <img src="assets/wallet/coins/eth-purple.svg">
-          <div class="ela-icon">
-              <img src="assets/wallet/coins/ela-black.svg"/>
-          </div>
-      </div>
-      <div class="coinTitle">{{ coin.getDescription() }}</div>
-      <div *ngIf="contractAddress" class="qrcode-container">
-          <qrcode [qrdata]="contractAddress" [width]="200"></qrcode>
-      </div>
-      <h1>{{ 'wallet.coin-erc20-details-address' | translate }}</h1>
-      <h2 *ngIf="contractAddress" (click)="copy()">
-          {{ contractAddress.slice(0,20) }}<br>{{ contractAddress.slice(20,50) }}
-      </h2>
-      <p>{{ 'wallet.coin-receive-tap-to-copy' | translate }}</p>
-      <div *ngIf="canDelete" class="btn cancel ion-activatable ripple" (click)="delete()">
-        <ion-label>{{ 'wallet.coin-erc20-details-delete' | translate }}</ion-label>
-        <ion-ripple-effect></ion-ripple-effect>
-      </div>
-      <div class="btn confirm ion-activatable ripple" [class.expand]="!canDelete" (click)="share()">
-        <ion-label>{{ 'wallet.coin-erc20-details-share' | translate }}</ion-label>
-        <ion-ripple-effect></ion-ripple-effect>
-      </div>
+    <div class="icon-container">
+      <div class="inline-svg" inlineSVG="assets/wallet/tx/ethereum.svg"></div>
+    </div>
+    <div class="coinTitle">{{ coin.getDescription() }}</div>
+    <div *ngIf="contractAddress" class="qrcode-container">
+      <qrcode [qrdata]="contractAddress" [width]="200"></qrcode>
+    </div>
+    <h1>{{ 'wallet.coin-erc20-details-address' | translate }}</h1>
+    <h2 *ngIf="contractAddress" (click)="copy()">
+      {{ contractAddress.slice(0,20) }}<br>{{ contractAddress.slice(20,50) }}
+    </h2>
+    <p>{{ 'wallet.coin-receive-tap-to-copy' | translate }}</p>
+
+    <ebutton *ngIf="canDelete" class="btn cancel" mode="danger" (clicked)="delete()"
+      [title]="'wallet.coin-erc20-details-delete' | translate"></ebutton>
+    <ebutton (clicked)="share()" class="btn confirm" [class.expand]="!canDelete"
+      [title]="'wallet.coin-erc20-details-share' | translate">
+    </ebutton>
   </ion-grid>
 </ion-content>

@@ -349,9 +349,9 @@ a {
 }
 
 .wallet-loader {
-  --spinner-color: white;
-  --background: #801fff;
-  color: white;
+  --spinner-color: var(--ion-text-color);
+  --background: var(--ion-background-color);
+  color: var(--ion-text-color);
 }
 
 .wallet-component-base {

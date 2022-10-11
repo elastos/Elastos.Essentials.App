@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 .container {
     display: flex;
@@ -11,32 +11,20 @@
 
     .icon-container {
         position: relative;
+        padding: 22px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 75px;
+        height: 75px;
+        object-fit: contain;
+        border-radius: 100%;
+        background: linear-gradient(305deg, rgba(255, 255, 255, 0.5) 0%, rgba(0, 0, 0, 0.1) 100%);
+        margin-bottom: 10px;
 
-        img {
+        .inline-svg {
             width: 75px;
             height: 75px;
-            object-fit: contain;
-        }
-
-        .ela-icon {
-            position: absolute;
-            z-index: 10;
-            top: -4px;
-            left: -2px;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #000000;
-            border: 3px solid #FAFAFA;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            img {
-                width: 28px;
-                height: 28px;
-                border-radius: 50%;
-            }
         }
     }
 
@@ -55,7 +43,9 @@
         zoom: 1.2;
     }
 
-    h1, h2, p {
+    h1,
+    h2,
+    p {
         margin: 0;
         font-weight: 400;
     }
@@ -72,8 +62,6 @@
         font-weight: 500;
         text-align: center;
         border-radius: 17px;
-        background-color: #ffffff;
-        box-shadow: 0 3px 15px 0 #ededf0;
         padding: 20px;
     }
 
@@ -85,30 +73,13 @@
     }
 
     .btn {
-        height: 47px;
         width: 46.5%;
         position: fixed;
         bottom: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 8px;
-
-        ion-label {
-            font-size: 17px;
-            font-weight: 500;
-        }
     }
 
     .cancel {
         left: 2%;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #ffffff;
-
-        ion-label {
-            // color: #ffffff;
-            color: #000000;
-        }
     }
 
     .expand {
@@ -119,37 +90,5 @@
 
     .confirm {
         right: 2%;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #6e23d0;
-
-        ion-label {
-            color: #ffffff;
-        }
-    }
-}
-
-.dark-container {
-    h2 {
-        background: #212021;
-        box-shadow: none;
-    }
-
-    .icon-container {
-        .ela-icon {
-            border: 3px solid #121212;
-        }
-    }
-
-    .cancel {
-        box-shadow: 0 3px 6px 0 #151626;
-        background-color: #202039;
-
-        ion-label {
-            color: #ffffff;
-        }
-    }
-
-    .confirm {
-        box-shadow: 0 3px 15px 0 #151626;
     }
 }
