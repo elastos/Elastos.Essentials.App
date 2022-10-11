@@ -865,7 +865,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // Intent response will return a contact's DID document under result.friends.document
     async openContacts() {
         let res = await this.globalIntentService.sendIntent(
-            "https://contact.elastos.net/pickfriend",
+            "https://contact.web3essentials.io/pickfriend",
             {
                 singleSelection: true,
                 filter: {

@@ -110,7 +110,7 @@ export class CoinAddERC20Page implements OnInit {
      * Opens the scanner to get the coin address
      */
     async scanCoinAddress() {
-        let res: { result: { scannedContent: string } } = await this.globalIntentService.sendIntent('https://scanner.elastos.net/scanqrcode', {});
+        let res: { result: { scannedContent: string } } = await this.globalIntentService.sendIntent('https://scanner.web3essentials.io/scanqrcode', {});
         if (res && res.result && res.result.scannedContent) {
             this.coinAddress = res.result.scannedContent;
             Logger.log('wallet', 'Got scanned content:', this.coinAddress);

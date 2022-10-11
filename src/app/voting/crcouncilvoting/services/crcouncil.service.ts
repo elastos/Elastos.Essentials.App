@@ -450,7 +450,7 @@ export class CRCouncilService {
 
     async getSignature(digest: string): Promise<string> {
         let reDigest = Util.reverseHexToBE(digest)
-        let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", { data: reDigest });
+        let ret = await this.globalIntentService.sendIntent("https://did.web3essentials.io/signdigest", { data: reDigest });
         Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", reDigest, ret);
         if (ret && ret.result && ret.result.signature) {
             return ret.result.signature;
@@ -527,7 +527,7 @@ export class CRCouncilService {
         }
 
         if (!await this.voteService.checkWalletAvailableForVote()) {
-          return;
+            return;
         }
 
         if (!await this.globalPopupService.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-unregister-warning', 'common.confirm', 'common.cancel')) {
@@ -535,7 +535,7 @@ export class CRCouncilService {
         }
 
         try {
-            let payload : any = this.voteService.sourceSubwallet.generateUnregisterCRPayload(this.candidateInfo.cid);
+            let payload: any = this.voteService.sourceSubwallet.generateUnregisterCRPayload(this.candidateInfo.cid);
             if (payload) {
                 let signature = await this.getSignature(payload.Digest);
                 if (signature) {
@@ -569,7 +569,7 @@ export class CRCouncilService {
         }
 
         if (!await this.voteService.checkWalletAvailableForVote()) {
-          return;
+            return;
         }
 
         let msg = this.translate.instant('crcouncilvoting.candidate-withdraw-warning-pre') + available +

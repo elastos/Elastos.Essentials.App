@@ -344,7 +344,7 @@ namespace WalletPublishing {
                 this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.NO_ON_GOING_PUBLICATION;
                 await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
 
-                let response = await this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", params, parentIntentId);
+                let response = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/didtransaction", params, parentIntentId);
 
                 Logger.log('publicationservice', "Got didtransaction intent response from the wallet.", response);
 

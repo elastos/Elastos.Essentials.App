@@ -48,12 +48,13 @@ export class IntentReceiverService {
     }
 
     /**
-     * From a full new-style action string such as https://did.elastos.net/credaccess,
+     * From a full new-style action string such as https://did.web3essentials.io/credaccess,
      * returns the short old-style action "credaccess" for convenience.
      */
     private getShortAction(fullAction: string): string {
-        let intentDomainRoot = "https://did.elastos.net/";
-        return fullAction.replace(intentDomainRoot, "");
+        let shortAction = fullAction.replace("https://did.elastos.net/", ""); // backward compatibility
+        shortAction = shortAction.replace("https://did.web3essentials.io/", ""); // new intent urls
+        return shortAction;
     }
 
     private async onReceiveIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {

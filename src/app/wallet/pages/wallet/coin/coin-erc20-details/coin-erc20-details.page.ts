@@ -94,7 +94,7 @@ export class CoinErc20DetailsPage implements OnInit {
     Logger.log('wallet', 'Sending "share" intent for', this.coin);
 
     const addCoinUrl =
-      "https://wallet.elastos.net/addcoin?contract=" +
+      "https://wallet.web3essentials.io/addcoin?contract=" +
       encodeURIComponent(this.contractAddress);
 
     void this.globalIntentService.sendIntent("share", {

@@ -59,7 +59,7 @@ export class UxService {
   }
 
   public getAddFriendShareableUrl(didString: string, carrierString?: string): string {
-    let addFriendUrl = "https://contact.elastos.net/addfriend?did=" + encodeURIComponent(didString);
+    let addFriendUrl = "https://contact.web3essentials.io/addfriend?did=" + encodeURIComponent(didString);
     carrierString ? addFriendUrl += "&carrier=" + carrierString : addFriendUrl;
     return addFriendUrl;
   }

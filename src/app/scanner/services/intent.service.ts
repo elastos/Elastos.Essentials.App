@@ -20,6 +20,16 @@ export class IntentService {
     ) {
     }
 
+    /**
+     * From a full new-style action string such as https://essentials.web3essentials.io/app
+     * returns the short old-style action "app" for convenience.
+     */
+    private getShortAction(fullAction: string): string {
+        let shortAction = fullAction.replace("https://scanner.elastos.net/", ""); // backward compatibility
+        shortAction = shortAction.replace("https://scanner.web3essentials.io/", ""); // new intent urls
+        return shortAction;
+    }
+
     public init() {
         /*Logger.log('Scanner', "Checking if there are pending intents");
         essentialsIntentManager.hasPendingIntent((hasPendingIntent: boolean)=>{
@@ -42,11 +52,12 @@ export class IntentService {
 
 
         // Listen to incoming intent events.
-        this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+        this.globalIntentService.intentListener.subscribe((receivedIntent) => {
             if (!receivedIntent)
                 return;
 
-            if (receivedIntent.action == "https://scanner.elastos.net/scanqrcode") {
+            let shortAction = this.getShortAction(receivedIntent.action);
+            if (shortAction == "scanqrcode") {
                 Logger.log('Scanner', "Received intent for scanner:", receivedIntent);
 
                 // Remember the received intent for later use
@@ -60,9 +71,9 @@ export class IntentService {
 
     private showScanScreen(fromIntentRequest: boolean) {
         const props: NavigationExtras = {
-          state: {
-            fromIntent: fromIntentRequest
-          }
+            state: {
+                fromIntent: fromIntentRequest
+            }
         }
 
         this.ngZone.run(() => {

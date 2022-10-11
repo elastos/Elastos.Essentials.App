@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import { Injectable, NgZone } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
@@ -43,14 +44,14 @@ export class IntentService {
           this.sendEmptyIntentRes();
         });
         break;
-      case "https://contact.elastos.net/addfriend":
+      case "https://contact.web3essentials.io/addfriend":
         Logger.log('contacts', 'addfriend intent', ret);
         this.zone.run(() => {
           void this.friendsService.addContactByIntent(ret.params.did, ret.params.carrier);
           this.sendEmptyIntentRes();
         });
         break;
-      case "https://contact.elastos.net/viewfriendinvitation":
+      case "https://contact.web3essentials.io/viewfriendinvitation":
         Logger.log('contacts', 'viewfriendinvitation intent', ret);
         this.zone.run(() => {
           this.friendsService.contactNotifierInviationId = ret.params.invitationid;
@@ -71,14 +72,14 @@ export class IntentService {
           this.sendEmptyIntentRes();
         });
         break;
-      case "https://contact.elastos.net/viewfriend":
+      case "https://contact.web3essentials.io/viewfriend":
         Logger.log('contacts', 'viewfriend intent', ret);
         this.zone.run(() => {
           this.friendsService.viewContact(ret.params.did);
           this.sendEmptyIntentRes();
         });
         break;
-      case "https://contact.elastos.net/pickfriend":
+      case "https://contact.web3essentials.io/pickfriend":
         Logger.log('contacts', 'pickfriend intent', ret);
         this.zone.run(() => {
           let params = ret.params;

@@ -149,7 +149,7 @@ export class VotePage implements OnInit {
 
             try {
                 let res = await this.globalIntentService.sendIntent(
-                    "https://wallet.elastos.net/dposvotetransaction",
+                    "https://wallet.web3essentials.io/dposvotetransaction",
                     { publickeys: (castedNodeKeys) });
 
                 Logger.log('dposvoting', 'Insent sent sucessfully', res);

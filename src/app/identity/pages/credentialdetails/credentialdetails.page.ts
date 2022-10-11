@@ -488,7 +488,7 @@ export class CredentialDetailsPage implements OnInit {
     claimsObject[fragment] = localValue;
 
     void this.globalIntentService.sendIntent(
-      "https://did.elastos.net/credverify",
+      "https://did.web3essentials.io/credverify",
       {
         claims: claimsObject,
       }

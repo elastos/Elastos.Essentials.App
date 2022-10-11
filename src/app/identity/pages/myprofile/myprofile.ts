@@ -279,7 +279,7 @@ export class MyProfilePage {
     Logger.log("identity", "Claims object: ")
     Logger.log("identity", claimsObject)
 
-    void this.globalIntentService.sendIntent("https://did.elastos.net/credverify", {
+    void this.globalIntentService.sendIntent("https://did.web3essentials.io/credverify", {
       claims: claimsObject
     });
   }

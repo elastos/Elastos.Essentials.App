@@ -76,7 +76,7 @@ export class IntentService {
     }
 
     async onReceiveIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
-        if (intent.action.indexOf("https://wallet.elastos.net/") != 0)
+        if (intent.action.indexOf("https://wallet.elastos.net/") != 0 && intent.action.indexOf("https://wallet.web3essentials.io/") != 0)
             return; // Not for us.
 
         this.activeWallet = this.walletManager.getActiveMasterWallet();
@@ -115,12 +115,13 @@ export class IntentService {
     }
 
     /**
-     * From a full new-style action string such as https://wallet.elastos.net/pay,
+     * From a full new-style action string such as https://wallet.web3essentials.io/pay,
      * returns the short old-style action "pay" for convenience.
      */
     private getShortAction(fullAction: string): string {
-        const intentDomainRoot = "https://wallet.elastos.net/";
-        return fullAction.replace(intentDomainRoot, "");
+        let shortAction = fullAction.replace("https://wallet.elastos.net/", ""); // backward compatibility
+        shortAction = shortAction.replace("https://wallet.web3essentials.io/", ""); // new intent urls
+        return shortAction;
     }
 
     /**
@@ -378,7 +379,7 @@ export class IntentService {
     }
 
     async scan(type: ScanType) {
-        let res = await this.globalIntentService.sendIntent('https://scanner.elastos.net/scanqrcode', {});
+        let res = await this.globalIntentService.sendIntent('https://scanner.web3essentials.io/scanqrcode', {});
         let content: string = res.result.scannedContent;
 
         // Some address star with "xxx:", eg "etherum:"

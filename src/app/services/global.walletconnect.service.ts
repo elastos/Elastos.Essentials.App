@@ -101,7 +101,7 @@ export class GlobalWalletConnectService extends GlobalService {
       // iOS receives:
       // - https://essentials.elastos.net/wc?uri=wc:xxxx for real connections
       // - optionally, https://essentials.elastos.net/wc to just "reappear", like on android - should not be handled
-      else if (receivedIntent.action === "https://essentials.elastos.net/wc") {
+      else if (receivedIntent.action === "https://essentials.elastos.net/wc" || receivedIntent.action === "https://essentials.web3essentials.io/wc") {
         if (receivedIntent.params && receivedIntent.params.uri) { // NOTE: urI
           // Make sure this raw url coming from outside is for us
           let rawUrl: string = receivedIntent.params.uri;
@@ -474,7 +474,7 @@ export class GlobalWalletConnectService extends GlobalService {
             txid: string,
             status: "published" | "cancelled"
           }
-        } = await this.globalIntentService.sendIntent("https://wallet.elastos.net/esctransaction", {
+        } = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/esctransaction", {
           payload: request
         });
         Logger.log("walletconnect", "Got esctransaction intent response", response);
@@ -526,7 +526,7 @@ export class GlobalWalletConnectService extends GlobalService {
       result: {
         added: boolean
       }
-    } = await this.globalIntentService.sendIntent("https://wallet.elastos.net/adderctoken", params);
+    } = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/adderctoken", params);
 
     if (response && response.result) {
       connector.approveRequest({
@@ -621,7 +621,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let existingNetwork = this.walletNetworkService.getNetworkByChainId(chainId);
     if (!existingNetwork) {
       // Network doesn't exist yet. Send an intent to the wallet and wait for the response.
-      let response: EditCustomNetworkIntentResult = await this.globalIntentService.sendIntent("https://wallet.elastos.net/addethereumchain", addParams);
+      let response: EditCustomNetworkIntentResult = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/addethereumchain", addParams);
 
       if (response && response.networkAdded) {
         networkWasAdded = true;
@@ -677,7 +677,7 @@ export class GlobalWalletConnectService extends GlobalService {
       payload: request.params[1],
       useV4
     };
-    let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/signtypeddata", rawData);
+    let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signtypeddata", rawData);
 
     if (response && response.result) {
       connector.approveRequest({
@@ -703,7 +703,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let rawData = {
       data
     };
-    let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/personalsign", rawData);
+    let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/personalsign", rawData);
 
     if (response && response.result) {
       connector.approveRequest({
@@ -744,7 +744,7 @@ export class GlobalWalletConnectService extends GlobalService {
       let rawData = {
         data: hex
       };
-      let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/insecureethsign", rawData);
+      let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/insecureethsign", rawData);
 
       if (response && response.result) {
         connector.approveRequest({

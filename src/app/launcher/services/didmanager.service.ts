@@ -46,7 +46,7 @@ export class DIDManagerService extends GlobalService {
     const carrierAddress = await this.contactNotifier.getCarrierAddress();
 
     const addFriendUrl =
-      "https://contact.elastos.net/addfriend?did=" +
+      "https://contact.web3essentials.io/addfriend?did=" +
       encodeURIComponent(this.signedIdentity.didString) +
       '&carrier=' + carrierAddress;
 

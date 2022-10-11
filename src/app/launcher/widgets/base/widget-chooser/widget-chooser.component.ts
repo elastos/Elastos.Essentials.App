@@ -185,7 +185,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
   }
 
   public async scan() {
-    let res: { result: { scannedContent: string } } = await this.globalIntentService.sendIntent("https://scanner.elastos.net/scanqrcode", {}, this.receivedIntent.intentId);
+    let res: { result: { scannedContent: string } } = await this.globalIntentService.sendIntent("https://scanner.web3essentials.io/scanqrcode", {}, this.receivedIntent.intentId);
 
     this.widgetUrl = res.result.scannedContent;
     void this.fetchWidget();

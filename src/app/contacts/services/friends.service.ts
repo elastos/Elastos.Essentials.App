@@ -245,12 +245,12 @@ export class FriendsService extends GlobalService {
   *********** Add Friend By Scan Button ***********
   *************************************************/
   async scanDID() {
-    let res = await this.globalIntentService.sendIntent("https://scanner.elastos.net/scanqrcode");
+    let res = await this.globalIntentService.sendIntent("https://scanner.web3essentials.io/scanqrcode");
     Logger.log('contacts', "Got scan result", res);
 
     // Scanned content could contain different things:
     // - A did: did:elastos:xxxx
-    // - A add friend url: https://contact.elastos.net/addfriend?did=xxx[&carrier=xxx]
+    // - A add friend url: https://contact.web3essentials.io/addfriend?did=xxx[&carrier=xxx]
     // - Something that we don't know
     let scannedContentHandled = false
     if (res && res.result && res.result.scannedContent) {
@@ -993,7 +993,7 @@ export class FriendsService extends GlobalService {
   ********************* Share Contact *********************
   *********************************************************/
   async shareContact(contact: Contact) {
-    let link = 'https://contact.elastos.net/addfriend?did=' + contact.id;
+    let link = 'https://contact.web3essentials.io/addfriend?did=' + contact.id;
     await this.clipboard.copy(link);
     void this.native.shareToast();
   }

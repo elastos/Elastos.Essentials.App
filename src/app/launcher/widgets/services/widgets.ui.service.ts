@@ -17,7 +17,7 @@ export class WidgetsUIService {
      * Lets user pick a widget in the list of all available widgets
      */
     public async selectWidget(): Promise<WidgetState> {
-        let res: { result: { widgetState: WidgetState } } = await this.globalIntentService.sendIntent("https://essentials.elastos.net/picklauncherwidget", {});
+        let res: { result: { widgetState: WidgetState } } = await this.globalIntentService.sendIntent("https://essentials.web3essentials.io/picklauncherwidget", {});
         return res.result.widgetState;
     }
 }

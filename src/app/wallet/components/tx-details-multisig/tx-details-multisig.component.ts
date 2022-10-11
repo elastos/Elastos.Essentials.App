@@ -153,7 +153,7 @@ export class TxDetailsMultiSigComponent implements OnInit {
   }
 
   public copyTransactionLinkToClipboard() {
-    let transactionLink = `https://wallet.elastos.net/multisigtx?t=${this.offlineTransaction.transactionKey}`;
+    let transactionLink = `https://wallet.web3essentials.io/multisigtx?t=${this.offlineTransaction.transactionKey}`;
     void this.native.copyClipboard(transactionLink);
     void this.native.toast_trans('wallet.multi-signature-transaction-link-copied');
   }

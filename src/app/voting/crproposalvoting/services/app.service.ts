@@ -63,7 +63,7 @@ export class AppService {
 
     if (newProposalsCount > 0) {
       let message = "";
-      let url = 'https://launcher.elastos.net/app'
+      let url = 'https://launcher.web3essentials.io/app'
       if (newProposalsCount === 1) {
         message = this.translate.instant('crproposalvoting.crc-proposals-today-msg');
         url += '?hash=' + newProposalsHash;
@@ -92,7 +92,7 @@ export class AppService {
 
       if (targetProposalIndex > 0) {
         let message = "";
-        let url = 'https://launcher.elastos.net/app'
+        let url = 'https://launcher.web3essentials.io/app'
         if (targetProposalIndex === 1) {
           message = this.translate.instant('crproposalvoting.new-crc-proposals-msg');
           url += '?hash=' + proposals[0].proposalHash;

@@ -438,7 +438,7 @@ export class ProfileService extends GlobalService {
   async getAddFriendShareableUrl(): Promise<string> {
     let carrierAddress = await this.contactNotifier.getCarrierAddress();
     let addFriendUrl =
-      "https://contact.elastos.net/addfriend?did=" +
+      "https://contact.web3essentials.io/addfriend?did=" +
       encodeURIComponent(this.didString);
     addFriendUrl += "&carrier=" + carrierAddress;
 

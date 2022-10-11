@@ -80,6 +80,6 @@ export class AboutPage implements OnInit {
 
   public openAppUpdateUrl() {
     // Open in external browser
-    void this.globalIntentService.sendIntent('openurl', { url: "https://edownload.elastos.net" });
+    void this.globalIntentService.sendIntent('openurl', { url: "https://edownload.web3essentials.io" });
   }
 }

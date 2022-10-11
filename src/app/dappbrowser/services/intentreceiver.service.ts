@@ -31,17 +31,18 @@ export class IntentReceiverService {
     }
 
     /**
-     * From a full new-style action string such as https://elink.elastos.net/credaccess,
+     * From a full new-style action string such as https://elink.web3essentials.io/credaccess,
      * returns the short old-style action "credaccess" for convenience.
      */
     private getShortAction(fullAction: string): string {
-        let intentDomainRoot = "https://elink.elastos.net/";
-        return fullAction.replace(intentDomainRoot, "");
+        let shortAction = fullAction.replace("https://elink.elastos.net/", ""); // backward compatibility
+        shortAction = shortAction.replace("https://elink.web3essentials.io/", ""); // new intent urls
+        return shortAction;
     }
 
     private onReceiveIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         switch (this.getShortAction(intent.action)) {
-            // https://elink.elastos.net/open?u=https://filda.io
+            // https://.../open?u=https://filda.io
             case "open":
                 Logger.log('dappbrowser', "Received open url intent request");
                 if (intent.params && intent.params.u) {

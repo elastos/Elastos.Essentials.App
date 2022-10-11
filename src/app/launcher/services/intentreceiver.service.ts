@@ -79,12 +79,13 @@ export class IntentReceiverService {
     }
 
     /**
-     * From a full new-style action string such as https://essentials.elastos.net/app
+     * From a full new-style action string such as https://essentials.web3essentials.io/app
      * returns the short old-style action "app" for convenience.
      */
     private getShortAction(fullAction: string): string {
-        const intentDomainRoot = "https://essentials.elastos.net/";
-        return fullAction.replace(intentDomainRoot, "");
+        let shortAction = fullAction.replace("https://essentials.elastos.net/", ""); // backward compatibility
+        shortAction = shortAction.replace("https://essentials.web3essentials.io/", ""); // new intent urls
+        return shortAction;
     }
 
     private handleOnBoardIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {

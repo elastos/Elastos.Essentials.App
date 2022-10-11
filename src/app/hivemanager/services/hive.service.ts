@@ -135,7 +135,7 @@ export class HiveService {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       try {
-        let data: { result: { txid: string } } = await this.globalIntentService.sendIntent("https://wallet.elastos.net/pay", {
+        let data: { result: { txid: string } } = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/pay", {
           amount: order.getElaAmount(),
           receiver: order.getElaAddress(),
           currency: "ELA"

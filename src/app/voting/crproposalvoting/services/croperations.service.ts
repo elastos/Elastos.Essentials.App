@@ -100,8 +100,12 @@ export class CROperationsService {
     }
 
     private async handleScannedContent(scannedContent: string) {
-        if (scannedContent.startsWith("https://did.elastos.net/crproposal/")) {
+        if (scannedContent.includes("https://did.elastos.net/crproposal/")) { // backward compatibility
             let jwt = scannedContent.replace("https://did.elastos.net/crproposal/", "");
+            await this.handleCRProposalJWTCommand(jwt);
+        }
+        else if (scannedContent.includes("https://did.web3essentials.io/crproposal/")) {
+            let jwt = scannedContent.replace("https://did.web3essentials.io/crproposal/", "");
             await this.handleCRProposalJWTCommand(jwt);
         }
         else {
@@ -110,9 +114,8 @@ export class CROperationsService {
     }
 
     private async handledReceivedIntent(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
-        if (receivedIntent.action == "https://did.elastos.net/crproposal") {
+        if (receivedIntent.action == "https://did.elastos.net/crproposal" || receivedIntent.action == "https://did.web3essentials.io/crproposal") {
             await this.handleCRProposalIntentRequest(receivedIntent);
-
         }
     }
 
@@ -364,7 +367,7 @@ export class CROperationsService {
     public async sendSignDigestIntent(params: any): Promise<any> {
         this.sendingSignDigest = true;
         try {
-            let ret = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", params, this.intentId);
+            let ret = await this.globalIntentService.sendIntent("https://did.web3essentials.io/signdigest", params, this.intentId);
             this.sendingSignDigest = false;
             Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
             if (!ret || !ret.result || !(ret.result.signature || ret.result[params.signatureFieldName])) {

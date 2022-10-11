@@ -682,7 +682,7 @@ export class DappBrowserService implements GlobalService {
                 txid: string,
                 status: "published" | "cancelled"
             }
-        } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/esctransaction", {
+        } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/esctransaction", {
             payload: {
                 params: [
                     message.data.object
@@ -712,7 +712,7 @@ export class DappBrowserService implements GlobalService {
      */
     private async handleSignTypedData(message: DABMessage): Promise<void> {
         let rawData: { payload: string, useV4: boolean } = message.data.object
-        let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/signtypeddata", rawData);
+        let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signtypeddata", rawData);
 
         this.sendWeb3IABResponse(
             message.data.id,
@@ -725,7 +725,7 @@ export class DappBrowserService implements GlobalService {
      */
     private async handlePersonalSign(message: DABMessage): Promise<void> {
         let rawData: { data: unknown } = message.data.object
-        let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/personalsign", rawData);
+        let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/personalsign", rawData);
 
         this.sendWeb3IABResponse(
             message.data.id,
@@ -738,7 +738,7 @@ export class DappBrowserService implements GlobalService {
      */
     private async handleInsecureEthSign(message: DABMessage): Promise<void> {
         let rawData: { data: unknown } = message.data.object
-        let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/insecureethsign", rawData);
+        let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/insecureethsign", rawData);
 
         this.sendWeb3IABResponse(
             message.data.id,
@@ -793,7 +793,7 @@ export class DappBrowserService implements GlobalService {
         let existingNetwork = WalletNetworkService.instance.getNetworkByChainId(chainId);
         if (!existingNetwork) {
             // Network doesn't exist yet. Send an intent to the wallet and wait for the response.
-            let response: EditCustomNetworkIntentResult = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/addethereumchain", addParams);
+            let response: EditCustomNetworkIntentResult = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/addethereumchain", addParams);
 
             if (response && response.networkAdded) {
                 networkWasAdded = true;
@@ -830,7 +830,7 @@ export class DappBrowserService implements GlobalService {
             let query = message.data.object as DID.GetCredentialsQuery;
 
             let res: { result: { presentation: DIDPlugin.VerifiablePresentation } };
-            res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/credaccess", query);
+            res = await GlobalIntentService.instance.sendIntent("https://did.web3essentials.io/credaccess", query);
 
             if (!res || !res.result || !res.result.presentation) {
                 console.warn("Missing presentation. The operation was maybe cancelled.");
@@ -853,7 +853,7 @@ export class DappBrowserService implements GlobalService {
             let request = message.data.object as DID.CredentialDisclosureRequest;
 
             let res: { result: { presentation: DIDPlugin.VerifiablePresentation } };
-            res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/requestcredentials", { request });
+            res = await GlobalIntentService.instance.sendIntent("https://did.web3essentials.io/requestcredentials", { request });
 
             if (!res || !res.result || !res.result.presentation) {
                 console.warn("Missing presentation. The operation was maybe cancelled.");
@@ -888,7 +888,7 @@ export class DappBrowserService implements GlobalService {
                 forceToPublishCredentials: request.options.forceToPublishCredentials,
                 customization: null
             };
-            res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/credimport", importParams);
+            res = await GlobalIntentService.instance.sendIntent("https://did.web3essentials.io/credimport", importParams);
 
             if (!res || !res.result || !res.result.importedcredentials) {
                 console.warn("Missing imported credentials result. The operation was maybe cancelled.");
@@ -911,7 +911,7 @@ export class DappBrowserService implements GlobalService {
             let query = message.data.object as { data: string, jwtExtra?: any, signatureFieldName?: string };
 
             let res: { result: DID.SignedData };
-            res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/didsign", query);
+            res = await GlobalIntentService.instance.sendIntent("https://did.web3essentials.io/didsign", query);
 
             if (!res || !res.result) {
                 console.warn("Missing signature data. The operation was maybe cancelled.");

@@ -25,6 +25,7 @@ export class AppService {
             switch (receivedIntent.action) {
                 // User is being asked to setup his vault storage.
                 case "https://hive.elastos.net/setupvaultprompt":
+                case "https://hive.web3essentials.io/setupvaultprompt":
                     void this.navigateTo("/hivemanager/pickprovider", receivedIntent);
                     break;
             }

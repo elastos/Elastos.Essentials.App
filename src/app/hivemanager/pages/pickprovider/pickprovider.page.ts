@@ -247,7 +247,7 @@ export class PickProviderPage implements OnInit {
        Logger.log('HiveManager', 'DID is not published!')
        let confirmed = await this.popup.ionicConfirm("hivemanager.alert.didpublish-title", "hivemanager.alert.didpublish-msg");
        if (confirmed) {
-         this.globalIntentService.sendIntent("https://did.elastos.net/promptpublishdid", null);
+         this.globalIntentService.sendIntent("https://did.web3essentials.io/promptpublishdid", null);
        }
        return;
      } */
