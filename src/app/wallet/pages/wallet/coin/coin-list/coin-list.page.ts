@@ -10,6 +10,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
 import { Coin, CoinType } from '../../../../model/coin';
 import { MasterWallet } from '../../../../model/masterwallets/masterwallet';
@@ -103,10 +104,13 @@ export class CoinListPage implements OnInit, OnDestroy {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.coin-list-title"));
 
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-            key: "add-erc20-coin",
-            iconPath: BuiltInIcon.ADD
-        });
+        // User can Launch this page by notification. We only show this icon when the network is evm network.
+        if (WalletNetworkService.instance.activeNetwork.value.isEVMNetwork()) {
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+                key: "add-erc20-coin",
+                iconPath: BuiltInIcon.ADD
+            });
+        }
 
         void this.init();
     }

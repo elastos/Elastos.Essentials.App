@@ -2,7 +2,7 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
 import { GlobalLanguageService } from "src/app/services/global.language.service";
-import { GlobalNetworksService } from "src/app/services/global.networks.service";
+
 import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
 import { ERC20CoinService } from "../../services/evm/erc20coin.service";
 import { ERC20Coin, StandardCoinName, TokenAddress, TokenType } from "../coin";
@@ -240,7 +240,6 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     const timestamp = (new Date()).valueOf();
 
     let network = <EVMNetwork>this.networkWallet.network;
-    let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
 
     // Clean up NFTs that have been sent
     let nfts = tokens.filter((token) => {
@@ -334,10 +333,10 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
     const notification = {
       app: App.WALLET,
-      key: 'newtokens',
+      key: 'newtokens-' + this.networkWallet.network.key,
       title: GlobalLanguageService.instance.translate('wallet.find-new-token'),
       message: message,
-      url: '/wallet/coin-list'
+      url: '/wallet/coin-list' + '?network=' + this.networkWallet.network.key,
     };
     void GlobalNotificationsService.instance.sendNotification(notification);
   }

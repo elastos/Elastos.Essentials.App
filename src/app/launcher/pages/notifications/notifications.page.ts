@@ -9,13 +9,15 @@ import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import {
-  LauncherNotification,
-  LauncherNotificationType, NotificationManagerService
+    LauncherNotification,
+    LauncherNotificationType, NotificationManagerService
 } from '../../services/notificationmanager.service';
 import { TipsService } from '../../services/tips.service';
 
@@ -137,12 +139,24 @@ export class NotificationsPage implements OnInit {
             void this.globalNav.navigateTo(App.SETTINGS, '/settings/menu');
           break;
         case App.WALLET:
-          if (url) {
-            void this.globalNav.navigateTo(App.WALLET, url);
-          } else {
-            this.walletInitService.start();
-          }
-          break;
+            if (url) {
+                let index = url.indexOf("?network=");
+                if (index > 0) {
+                    let networkKey = url.substring(index + 9);
+                    if (networkKey) {
+                        url = url.substring(0, index);
+                        if (WalletNetworkService.instance.activeNetwork.value.key !== networkKey) {
+                            let targetNetwork =
+                                WalletNetworkService.instance.getNetworkByKey(networkKey);
+                            await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
+                        }
+                    }
+                }
+                void this.globalNav.navigateTo(App.WALLET, url);
+            } else {
+                this.walletInitService.start();
+            }
+            break;
         default:
           Logger.log('Launcher', "Notifications.page.start - No routing available");
       }
