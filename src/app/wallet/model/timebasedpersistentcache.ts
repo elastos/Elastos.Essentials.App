@@ -15,6 +15,9 @@ export type CacheEntry<T> = {
  * - Items sorted by an optional time value (ex: for transactions list).
  * - A max number of items is kept on disk.
  * - Adds or overwrites existing items by key.
+ *
+ * NOTE: This cache uses browser local storage, not ionic storage, to be faster, as we accept the data
+ * can be lsot and rebuilt at any time.
  */
 export class TimeBasedPersistentCache<T extends JSONObject> {
   // List of items, sorted by time value.
@@ -115,20 +118,20 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
   public async save(): Promise<void> {
     // Keep at most maxItemsOnDisk items.
     let itemsToSave = this.items.slice(0, Math.min(this.items.length, this.maxItemsOnDisk));
-    await GlobalStorageService.instance.setSetting(this.storeGlobally ? null : DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "cache", this.name, itemsToSave);
+    await GlobalStorageService.instance.setSetting(this.storeGlobally ? null : DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "cache", this.name, itemsToSave, "browserlocalstorage");
   }
 
   /**
    * Loads the cache from disk.
    */
   public async load(): Promise<void> {
-    this.items = await GlobalStorageService.instance.getSetting(this.storeGlobally ? null : DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "cache", this.name, []);
+    this.items = await GlobalStorageService.instance.getSetting(this.storeGlobally ? null : DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "cache", this.name, [], "browserlocalstorage");
   }
 
   /**
    * Delete cache.
    */
   public async delete() {
-    await GlobalStorageService.instance.deleteSetting(this.storeGlobally ? null : DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "cache", this.name);
+    await GlobalStorageService.instance.deleteSetting(this.storeGlobally ? null : DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "cache", this.name, "browserlocalstorage");
   }
 }

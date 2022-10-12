@@ -7,6 +7,13 @@ export type Preference<T> = {
   value: T;
 }
 
+/**
+ * Support for 2 kind of storage:
+ * - By default, ionic storage, which is actually configured to used the cordova sqlite storage. Use this for data that require permanent presistance. But slow.
+ * - Browser local storage: for data that can be rebuilt and that can be lost sometimes. Faster than sqlite.
+ */
+export type StorageLocation = "ionic" | "browserlocalstorage";
+
 @Injectable({
   providedIn: 'root'
 })
@@ -37,6 +44,8 @@ export class GlobalStorageService {
 
   /**
    * Deletes all settings for a specific DID.
+   *
+   * NOTE: only works for ionic storage.
    */
   public async deleteDIDSettings(did: string, networkTemplate: string): Promise<void> {
     // Delete all settings that start with the DID string
@@ -54,28 +63,34 @@ export class GlobalStorageService {
     Logger.log("StorageService", "Deleted " + deletedEntries + " settings entries for DID " + did);
   }
 
-  public setSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, value: T): Promise<void> {
+  public setSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, value: T, location: StorageLocation = "ionic"): Promise<void> {
     let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
 
     this.cache[fullKey] = JSON.stringify(value);
 
     // Don't await to save time. We have the local memory cache
-    void this.storage.set(fullKey, JSON.stringify(value)).then((res) => { }, (err) => { });
+    if (location === "ionic")
+      void this.storage.set(fullKey, JSON.stringify(value)).then((res) => { }, (err) => { });
+    else if (location === "browserlocalstorage")
+      localStorage.setItem(fullKey, JSON.stringify(value));
 
     return;
   }
 
-  public async getSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, defaultValue: T): Promise<T> {
+  public async getSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, defaultValue: T, location: StorageLocation = "ionic"): Promise<T> {
     let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
-
-    console.log('getsetting', key)
 
     try {
       let res = this.cache[fullKey];
 
       // Not found in memory cache => query sqlite
       if (res === undefined) {
-        res = await this.storage.get(fullKey);
+        if (location === "ionic")
+          res = await this.storage.get(fullKey);
+        else if (location === "browserlocalstorage") {
+          res = localStorage.getItem(fullKey);
+        }
+
         this.cache[fullKey] = res;
       }
 
@@ -92,11 +107,16 @@ export class GlobalStorageService {
     }
   }
 
-  public deleteSetting(did: string | null, networkTemplate: string | null, context: string, key: string): Promise<void> {
+  public deleteSetting(did: string | null, networkTemplate: string | null, context: string, key: string, location: StorageLocation = "ionic"): Promise<void> {
     let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
 
     delete this.cache[fullKey];
 
-    return this.storage.remove(fullKey);
+    if (location === "ionic")
+      void this.storage.remove(fullKey);
+    else if (location === "browserlocalstorage")
+      localStorage.removeItem(fullKey);
+
+    return;
   }
 }
