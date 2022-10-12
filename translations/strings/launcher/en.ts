@@ -83,10 +83,10 @@ export const en = {
         'app-easybridge': 'Get ELA!',
         'app-easybridge-description': 'Convert tokens from other chains to Elastos tokens in less than 2 minutes',
         'cyber-republic': 'Cyber Republic',
-        'elastos-staking': 'Elastos staking',
-        'app-elastos-staking': 'ELA staking',
+        'elastos-staking': 'Elastos Staking',
+        'app-elastos-staking': 'ELA Staking',
         'app-elastos-staking-description': 'Deposit your ELA tokens to later vote and earn rewards',
-        'app-dpos2-voting': 'DPoS 2.0 voting',
+        'app-dpos2-voting': 'DPoS 2.0 Voting',
         'app-dpos2-description': 'Vote for Elastos Supernodes',
 
         /******** Widgets *********/

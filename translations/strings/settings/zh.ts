@@ -115,9 +115,9 @@ export const zh = {
           'privacy-built-in-browser-title': '内置浏览器',
           'privacy-use-builtin-browser': '将用 Essentials 内置浏览器打开 dApp',
           'privacy-use-external-browser': '将在外部浏览器中打开 dApp',
-          'hive-data-sync': 'Data synchronization',
-          'privacy-use-hive-data-sync': 'Use my Elastos Hive vault storage to save and restore personal data such as DID credentials or contacts list',
-          'privacy-dont-use-hive-data-sync': 'Don\'t use my Elastos Hive vault storage to save and restore personal data',
+          'hive-data-sync': '数据同步',
+          'privacy-use-hive-data-sync': '使用我的 Elastos Hive Vault 存储空间来保存和恢复个人数据，例如 DID 凭证或联系人列表',
+          'privacy-dont-use-hive-data-sync': '不使用我的 Elastos Hive Vault 存储空间来保存和恢复个人数据',
 
           'identity-publishing': '发布身份',
           'publish-identity-medium-assist': '使用名为 ASSIST 的第三方服务快速发布身份',

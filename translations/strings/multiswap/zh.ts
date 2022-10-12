@@ -2,14 +2,14 @@ export const zh = {
     'multiswap': {
         // Token chooser
         'chooser': {
-            'tokens-title': 'Tokens',
-            'pick-token-to-continue': 'Pick a token to continue',
-            'search-name-address': 'Search name or paste address',
-            'all-with-count': 'All ({{fetched}} / {{total}})',
-            'pick-network-to-start': 'Pick a network to start',
-            'no-token-result': 'No token for the current search or filter.',
-            'retrieving-token': 'Retrieving token from chain',
-            'select-token-network': 'Please select token\'s target network.'
+            'tokens-title': '代币',
+            'pick-token-to-continue': '选择一个代币继续',
+            'search-name-address': '搜索名称或粘贴地址',
+            'all-with-count': '全部 ({{fetched}} / {{total}})',
+            'pick-network-to-start': '选择一个网络开始',
+            'no-token-result': '当前搜索或筛选没有代币。',
+            'retrieving-token': '从链中检索代币',
+            'select-token-network': '请选择代币的目标网络。'
         }
     }
 }

@@ -37,9 +37,9 @@ export const zh = {
     'got-it': '好的',
 
     // Create screen
-    'welcome-message1': 'Welcome to Web3, where you take control of your own digital identity',
-    'welcome-message2': 'With one mnemonic, manage your multi-network crypto wallets, your Web3 DID identity and your own storage space.',
-    'welcome-message3': "Let's start by creating a new identity or import an existing one. You will be all set for Web3 in 30 seconds!",
+    'welcome-message1': '欢迎来到 Web3，在这里您可以控制自己的数字身份',
+    'welcome-message2': '使用一份助记词，管理您的多网络加密钱包、您的 Web3 DID 身份和您自己的存储空间。',
+    'welcome-message3': "让我们首先创建一个新身份或导入现有身份。您将在 30 秒内为 Web3 做好准备！",
     'create-message': '您可以创建一个全新的身份，也可以导入一个已有的身份',
     'new': '新建',
     'import': '导入',
