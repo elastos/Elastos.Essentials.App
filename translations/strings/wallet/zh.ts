@@ -40,7 +40,7 @@ export const zh = {
         "sync-completed": "已完成同步",
         "not-a-valid-address": "地址无效",
         "transaction-pending": "前一个交易正在确认中，请等待此交易确认后再执行",
-        "share-erc20-token": "查看这个Elastos ERC20币种",
+        "share-erc20-token": "查看这个ERC20币种",
         "privatekey": "EVM 私钥",
 
         /************

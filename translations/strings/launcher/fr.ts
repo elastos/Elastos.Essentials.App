@@ -118,6 +118,7 @@ export const fr = {
         'no-news': 'Aucune actualité à afficher. Ajoutez plus de widgets d\'actualités depuis vos dApps préférées.',
         'change-background-color': 'Changement de couleur',
         'selected-theme': 'Sélectionné:',
+        'restore-all-widgets': 'Restaurer tous les widgets aux valeurs par défaut',
 
         /******** Theming *********/
         'theme-name-black': 'Noir',

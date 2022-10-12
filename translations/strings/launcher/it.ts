@@ -118,6 +118,7 @@ export const it = {
         'no-news': 'No news to display. Add more news widgets from your favorite dApps.',
         'change-background-color': 'Change background color',
         'selected-theme': 'Selected:',
+        'restore-all-widgets': 'Restore all widgets to defaults',
 
         /******** Theming *********/
         'theme-name-black': 'Black',

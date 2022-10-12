@@ -40,7 +40,7 @@ export const it = {
         "sync-completed": "Sincronizzazione completata",
         "not-a-valid-address": "Non è un indirizzo valido",
         "transaction-pending": "C'è già una transazione in corso. Attendi la conferma della transazione.",
-        "share-erc20-token": "Dai un'occhiata a questo token ERC20 Elastos",
+        "share-erc20-token": "Dai un'occhiata a questo token ERC20",
         "privatekey": "Chiave Privata EVM",
 
         /************

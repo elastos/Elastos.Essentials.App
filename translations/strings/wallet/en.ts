@@ -40,7 +40,7 @@ export const en = {
         "sync-completed": "Sync completed",
         "not-a-valid-address": "Not a valid address",
         "transaction-pending": "There is already an on going transaction. Please wait for the transaction to be confirmed.",
-        "share-erc20-token": "Check out this Elastos ERC20 Token",
+        "share-erc20-token": "Check out this ERC20 Token",
         "privatekey": "EVM Private Key",
 
         /************
