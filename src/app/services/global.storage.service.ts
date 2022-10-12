@@ -14,6 +14,11 @@ export class GlobalStorageService {
   public static instance: GlobalStorageService;  // Convenient way to get this service from non-injected classes
   public static ionicStorage: Storage; // Convenient way to get ionic storage from non-injected classes
 
+  // Local memory cache to reduce the number of calls to the (slow) sqlite cordova plugin.
+  private cache: {
+    [key: string]: any
+  } = {};
+
   constructor(private storage: Storage) {
     GlobalStorageService.instance = this;
     GlobalStorageService.ionicStorage = storage;
@@ -40,6 +45,7 @@ export class GlobalStorageService {
     let networkKey = networkTemplate === 'MainNet' ? '' : ':' + networkTemplate;
     for (let key of existingKeys) {
       if (key.startsWith(did + networkKey + "_")) {
+        delete this.cache[key];
         await this.storage.remove(key);
         deletedEntries++;
       }
@@ -50,17 +56,29 @@ export class GlobalStorageService {
 
   public setSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, value: T): Promise<void> {
     let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
-    //Logger.log("STORAGEDEBUG", "setSetting", context, key, value);
-    return this.storage.set(fullKey, JSON.stringify(value)).then((res) => {
-    }, (err) => {
-    });
+
+    this.cache[fullKey] = JSON.stringify(value);
+
+    // Don't await to save time. We have the local memory cache
+    void this.storage.set(fullKey, JSON.stringify(value)).then((res) => { }, (err) => { });
+
+    return;
   }
 
   public async getSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, defaultValue: T): Promise<T> {
     let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
 
+    console.log('getsetting', key)
+
     try {
-      let res = await this.storage.get(fullKey);
+      let res = this.cache[fullKey];
+
+      // Not found in memory cache => query sqlite
+      if (res === undefined) {
+        res = await this.storage.get(fullKey);
+        this.cache[fullKey] = res;
+      }
+
       if (res === undefined || res === null)
         return defaultValue;
       else {
@@ -76,6 +94,9 @@ export class GlobalStorageService {
 
   public deleteSetting(did: string | null, networkTemplate: string | null, context: string, key: string): Promise<void> {
     let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
+
+    delete this.cache[fullKey];
+
     return this.storage.remove(fullKey);
   }
 }

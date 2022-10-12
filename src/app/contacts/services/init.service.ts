@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
@@ -29,7 +30,9 @@ export class ContactsInitService extends GlobalService {
     // Make sure to call intent service after friends services because contacts must be
     // initialized before handling any intent that would modify contacts.
     this.intentService.init();
-    void this.backupService.init();
+
+    // Contacts backup/restore uses hive and DIDs a lot, that's slow.
+    runDelayed(() => this.backupService.init(), 10000);
   }
 
   public onUserSignOut(): Promise<void> {

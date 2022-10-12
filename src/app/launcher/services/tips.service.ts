@@ -88,7 +88,7 @@ export class TipsService {
     this.checkIfTimeToShowATipTimerout = setTimeout(() => {
       this.checkIfTimeToShowATipTimerout = null;
       void this.checkIfTimeToShowATip();
-    }, 1000);
+    }, 10000);
   }
 
   public stop() {

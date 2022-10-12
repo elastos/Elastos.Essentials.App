@@ -102,7 +102,7 @@ export class WalletInitService extends GlobalService {
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    Logger.log("Wallet", "Wallet service is initializing");
+    Logger.log("Wallet", "Wallet init service is initializing");
 
     await this.prefs.init();
 
@@ -187,13 +187,19 @@ export class WalletInitService extends GlobalService {
   private async createAndRegisterNetwork(network: AnyNetwork, isDefault = false): Promise<void> {
     let networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
 
+    //Logger.log("wallet", "Register network in", network.key);
+
     // Initialize the network, only if the network belongs to the active network template
     if (network.networkTemplate === networkTemplate)
       await network.init();
 
+    //Logger.log("wallet", "Register network before register", network.key);
+
     // Register all networks, no matter if they are for the active network template or not,
     // as they are sometimes needed.
     await this.networkService.registerNetwork(network, isDefault);
+
+    //Logger.log("wallet", "Register network out", network.key);
   }
 
   private registerNameResolvers() {
@@ -235,7 +241,7 @@ export class WalletInitService extends GlobalService {
           subscription.unsubscribe();
         });
       } else {
-        Logger.log("wallet", "Wallet service is initializing, The Wallet will be displayed when the service is initialized.");
+        Logger.log("wallet", "Wallet init service is initializing, The Wallet will be displayed when the service is initialized.");
       }
     }
   }

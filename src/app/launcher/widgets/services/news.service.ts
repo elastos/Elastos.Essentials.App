@@ -35,8 +35,6 @@ export class WidgetsNewsService implements GlobalService {
     async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
         await this.loadNewsSources();
         this.sources.next(this.sources.value);
-
-        console.log("NEWS SOURCES", this.sources.value);
     }
 
     onUserSignOut(): Promise<void> {

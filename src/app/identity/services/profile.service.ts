@@ -6,6 +6,7 @@ import { BehaviorSubject, Subscription } from "rxjs";
 import { Avatar } from "src/app/contacts/models/avatar";
 import { CredentialAvatar } from "src/app/didsessions/model/did.model";
 import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
+import { runDelayed } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { ContactNotifierService } from "src/app/services/contactnotifier.service";
@@ -156,15 +157,19 @@ export class ProfileService extends GlobalService {
       if (activeDid) {
         let didString = activeDid.getDIDString();
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        DIDDocumentsService.instance.onlineDIDDocumentsStatus.get(didString).subscribe(async (status) => {
+        DIDDocumentsService.instance.onlineDIDDocumentsStatus.get(didString).subscribe((status) => {
           Logger.log("identity", "Profile service got DID Document status change event for DID " + didString);
           if (status.checked) {
             this.publishStatusFetched = true;
             this.publishedDIDDocument = status.document;
 
-            await this.checkIfLocalDIDDocumentNeedsToBeSynchronizedWithChain();
+            // Give time to the boot sequence to breath
+            runDelayed(async () => {
 
-            this.recomputeDocumentAndCredentials();
+              await this.checkIfLocalDIDDocumentNeedsToBeSynchronizedWithChain();
+
+              this.recomputeDocumentAndCredentials();
+            }, 5000);
           }
           else {
             this.publishStatusFetched = false;

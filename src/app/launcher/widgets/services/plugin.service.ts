@@ -250,7 +250,6 @@ export class WidgetPluginsService implements GlobalService {
         }
 
         await this.savePluginsState(this.state);
-        console.log("PLUGIN STATE SAVED", this.state)
     }
 
     /**
@@ -263,7 +262,6 @@ export class WidgetPluginsService implements GlobalService {
 
         const key = "plugins-state";
         this.state = <PluginsState>await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, PERSISTENCE_CONTEXT, key, defaultState);
-        console.log("PLUGIN STATE LOADED", this.state)
     }
 
     private async savePluginsState(state: PluginsState): Promise<void> {
