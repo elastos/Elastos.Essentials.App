@@ -16,7 +16,7 @@ export class BackupIdentityWidget implements IWidget, OnInit, OnDestroy {
   public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
 
-  public identityNeedsBackup = false;
+  public identityBackedUp = true;
 
   constructor(
     public theme: GlobalThemeService,
@@ -25,8 +25,9 @@ export class BackupIdentityWidget implements IWidget, OnInit, OnDestroy {
     private didSessions: GlobalDIDSessionsService
   ) { }
 
-  async ngOnInit() {
-    this.identityNeedsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
+  ngOnInit() {
+    // Watch identity backed up by user
+    this.didSessions.activeIdentityBackedUp.subscribe(identityBackedUp => this.identityBackedUp = identityBackedUp);
 
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
     WidgetsServiceEvents.editionMode.subscribe(editing => {

@@ -1,8 +1,8 @@
-@import 'src/app/didsessions/root.scss';
+@import "src/app/didsessions/root.scss";
 
 .container {
   height: calc(100% - (50px));
-  background: #F5F5FD;
+  background: var(--ion-background-color);
   padding: 0 20px 20px;
 
   .slide-bar-row {
@@ -16,7 +16,7 @@
         width: 100%;
         height: 2.5px !important;
         border-radius: 10px;
-        background: #7C3CD0;
+        background: var(--ion-text-color);
         opacity: 0.2;
       }
 
@@ -42,7 +42,7 @@
         letter-spacing: 2.4px;
         color: #656565;
       }
-    }  
+    }
   }
 
   ion-slides {
@@ -50,7 +50,7 @@
 
     ion-slide {
       padding: 10px;
-  
+
       .slide-card {
         display: flex;
         flex-direction: column;
@@ -58,7 +58,7 @@
         align-items: center;
         width: 100%;
         padding: 20px 20px 35px;
-        background: #FFFFFF;
+        background: var(--essentials-box-color);
         border-radius: 28px;
 
         img {
@@ -66,43 +66,30 @@
           height: 236px;
           padding: 20px 0;
         }
-  
+
         h1 {
           font-size: 20px;
           font-weight: 600;
           line-height: 28px;
           letter-spacing: 0.22px;
-          color: #121212;   
           padding: 0 10px;
           margin: 0 0 20px;
         }
-    
+
         p {
-          font-family: 'Inter' !important;
-          font-size: 12px;
+          font-family: "Inter" !important;
+          font-size: 16px;
           font-weight: 500;
           letter-spacing: 1.12px;
-          color: #606060;
+          opacity: 0.7;
           line-height: 22px;
           padding: 0 20px 20px;
           margin: 0;
         }
 
-        ion-button {
-          --background: transparent linear-gradient(213deg, #9A67EB 0%, #8052FF 100%) 0% 0% no-repeat padding-box;
-          --border-radius: 20px;
+        ebutton {
           margin: 20px 10px 0;
           width: 100%;
-          height: 52px;
-          font-size: 15px;
-          font-weight: 500;
-          letter-spacing: 0.16px;
-          color: #FFFFFF;
-          text-align: center;
-
-          ion-icon {
-            font-size: 15px;
-          }
         }
 
         .error-box {
@@ -114,64 +101,6 @@
             font-weight: 500;
             color: #f04141;
             display: block;
-          }
-        }
-      }
-    }
-  }
-}
-
-.dark-container {
-  background: #121212;
-
-  .slide-bar-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0 20px;
-
-    ion-col {
-      div {
-        background: #C073FC;
-      }
-    }
-  }
-
-  .slide-circle-row {
-    ion-col {
-      span {
-        color: #9A9A9A;
-      }
-    }  
-  }
-
-  ion-slides {
-    ion-slide {
-      .slide-card {
-        background: #212021;
-  
-        h1 {
-          color: #FFFFFF;
-        }
-    
-        p {
-          color: #9A9A9A;
-        }
-
-        ion-button {
-          --background: transparent linear-gradient(213deg, #9A67EB 0%, #8052FF 100%) 0% 0% no-repeat padding-box;
-          --border-radius: 20px;
-          margin: 20px 10px 0;
-          width: 100%;
-          height: 52px;
-          font-size: 15px;
-          font-weight: 500;
-          letter-spacing: 0.16px;
-          color: #FFFFFF;
-          text-align: center;
-
-          ion-icon {
-            font-size: 15px;
           }
         }
       }

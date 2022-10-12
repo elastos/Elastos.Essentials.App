@@ -1,8 +1,8 @@
-@import 'src/app/identity/root.scss';
+@import "src/app/identity/root.scss";
 
 .container {
   padding: 25px;
-  background: #ffffff;
+  background: var(--ion-background-color);
 
   .header-row {
     display: flex;
@@ -27,14 +27,8 @@
     padding-top: 20px;
     width: 100%;
 
-    ion-button {
-      height: 50px;
+    ebutton {
       width: 100%;
-      --background: linear-gradient(to bottom, #732dcf, #640fd4);
-      --border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1px;
     }
   }
 }

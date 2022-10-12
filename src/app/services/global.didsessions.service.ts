@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
+import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { IdentityEntry } from '../model/didsessions/identityentry';
 import { GlobalFirebaseService } from './global.firebase.service';
@@ -33,6 +34,8 @@ export class GlobalDIDSessionsService {
 
   private identities: IdentityEntry[] = null;
   private signedInIdentity: IdentityEntry | null = null;
+
+  public activeIdentityBackedUp = new BehaviorSubject<boolean>(true); // Whether the active identity is backed up or not. Tru by default whilte loading, to now show any false backup prompt to users.
 
   constructor(private storage: GlobalStorageService,
     private migrationService: MigrationService,
@@ -195,6 +198,8 @@ export class GlobalDIDSessionsService {
 
     await this.saveSignedInIdentityToDisk();
 
+    void this.activeIdentityWasBackedUp().then(wasBackedUp => this.activeIdentityBackedUp.next(wasBackedUp));
+
     Logger.log('DIDSessionsService', "Sign in completed");
   }
 
@@ -225,6 +230,9 @@ export class GlobalDIDSessionsService {
     // clear the last intent
     this.globalIntentService.clear();
 
+    // Reset backedup flag
+    this.activeIdentityBackedUp.next(true);
+
     await this.globalNavService.navigateDIDSessionHome();
   }
 
@@ -236,6 +244,7 @@ export class GlobalDIDSessionsService {
   }
 
   public async markActiveIdentityBackedUp(): Promise<void> {
+    this.activeIdentityBackedUp.next(true);
     await this.storage.setSetting(this.getSignedInIdentity().didString, NetworkTemplateStore.networkTemplate, "didsessions", "identitybackedup", true);
   }
 }
