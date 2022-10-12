@@ -525,6 +525,7 @@ export class GlobalHiveService extends GlobalService {
       this.translate.instant('common.activate'));
 
     if (confirmed) {
+      await this.setSyncDataToHiveWasPrompted();
       await this.prefs.setUseHiveSync(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, true);
     }
 
