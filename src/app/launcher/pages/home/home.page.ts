@@ -42,7 +42,7 @@ export class HomePage implements OnInit {
   private themeColorSubscription: Subscription = null;
   private widgetsEditionModeSub: Subscription = null;
 
-  private showSwipeIndicator = false; // Whether to show the swipe animation or not (first time only for new identities)
+  public showSwipeIndicator = false; // Whether to show the swipe animation or not (first time only for new identities)
 
   public widgetsSlidesOpts = {
     autoHeight: true,

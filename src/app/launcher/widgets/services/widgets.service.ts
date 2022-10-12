@@ -124,6 +124,7 @@ export class WidgetsService {
         if (!state) {
             // Generate and save a default configuration for the default container layout, if this is a well known default container name
             state = await this.generateDefaultContainerState(widgetContainerName);
+            await this.saveContainerState(widgetContainerName, state); // Important, to preserve widget ids (deletion issue)
         }
 
         return state;
