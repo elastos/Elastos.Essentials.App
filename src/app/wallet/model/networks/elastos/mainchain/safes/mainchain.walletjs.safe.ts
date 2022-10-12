@@ -420,6 +420,10 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     return (<MainchainSubWallet>this.sdkSubWallet).getOwnerDepositAddress();
   }
 
+  public getOwnerStakeAddress(): string {
+    return (<MainchainSubWallet>this.sdkSubWallet).getOwnerStakeAddress();
+  }
+
   public getOwnerPublicKey(): string {
     return (<MainchainSubWallet>this.sdkSubWallet).getOwnerPublicKey();
   }

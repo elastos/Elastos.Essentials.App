@@ -66,6 +66,11 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
+  public getOwnerStakeAddress(): string {
+    // TODO: Do not support.
+    return null;
+  }
+
   public getOwnerPublicKey(): string {
     // TODO: Do not support.
     return null;

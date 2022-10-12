@@ -9,6 +9,7 @@ import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transacti
 export interface ElastosMainChainSafe {
   getOwnerAddress(): string;
   getOwnerDepositAddress(): string;
+  getOwnerStakeAddress(): string;
   getOwnerPublicKey(): string;
   getPublicKeys(start: number, count: number, internal: boolean): string[] | PublickeysInfo;
   createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any>;

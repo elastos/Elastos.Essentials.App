@@ -894,6 +894,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerDepositAddress();
     }
 
+    public getOwnerStakeAddress(): string {
+        return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerStakeAddress();
+    }
+
     public getOwnerPublicKey(): string {
         return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerPublicKey();
     }
