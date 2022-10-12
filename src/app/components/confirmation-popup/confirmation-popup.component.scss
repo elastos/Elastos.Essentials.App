@@ -1,6 +1,6 @@
 .container {
-  background: #ffffff;
-  border: 1.2px solid #999;
+  background: var(--essentials-box-color);
+  border: 1.2px solid var(--ion-text-color);
   border-radius: 12px;
 
   .header {
@@ -18,8 +18,6 @@
       margin: 5px;
       font-size: 24px;
       font-weight: 700;
-      color: #161740;
-      font-family: "Inter" !important;
     }
   }
 
@@ -27,17 +25,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #f8f8ff;
     min-height: 110px;
     padding: 10px;
     overflow: hidden;
 
     p {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 16px;
+      font-weight: 300;
       text-align: center;
-      color: #161740;
-      font-family: "Inter" !important;
     }
   }
 
@@ -47,48 +42,8 @@
     justify-content: space-around;
     align-items: center;
 
-    .btn {
-      height: 45px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 8px;
-      background-color: #f8f8ff;
-
-      ion-label {
-        font-size: 15px;
-        font-weight: 500;
-        color: #161740;
-        font-family: "Inter" !important;
-      }
-    }
-  }
-}
-
-.darkContainer {
-  background: #363636;
-
-  .header {
-    h1 {
-      color: #fdfeff;
-    }
-  }
-
-  .message {
-    background: #212021;
-
-    p {
-      color: #fdfeff;
-    }
-  }
-
-  .btn-row {
-    .btn {
-      background: #212021;
-
-      ion-label {
-        color: #fdfeff;
-      }
+    ebutton {
+      width: 45%;
     }
   }
 }

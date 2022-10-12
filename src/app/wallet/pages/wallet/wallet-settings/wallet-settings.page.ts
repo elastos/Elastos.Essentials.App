@@ -73,14 +73,14 @@ export class WalletSettingsPage implements OnInit {
             icon: '/assets/wallet/settings/pen.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/pen.svg'
         },
-        {
+        /* {
             type: 'wallet-color',
             route: "/wallet/wallet-color",
             title: this.translate.instant("wallet.wallet-settings-change-theme"),
             subtitle: this.translate.instant("wallet.wallet-settings-change-theme-subtitle"),
             icon: '/assets/wallet/settings/picture.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
-        },
+        }, */
         /*       {
                   type: 'wallet-swap',
                   route: "/wallet/swap-test",
