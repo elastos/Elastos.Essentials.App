@@ -41,8 +41,6 @@ export const lazyWeb3UtilsImport = async (): Promise<{ sha3: typeof sha3 }> => {
 
 export const lazyEthersImport = async (): Promise<{
   Wallet: typeof Wallet,
-  HDNode: typeof HDNode,
-  defaultPath: typeof defaultPath,
   utils: typeof utils,
   providers: typeof providers,
   wordlists: typeof wordlists
@@ -52,13 +50,24 @@ export const lazyEthersImport = async (): Promise<{
 
   return {
     Wallet: importsCache["ethers"].Wallet,
-    HDNode: importsCache["ethers"].HDNode,
-    defaultPath: importsCache["ethers"].defaultPath,
     utils: importsCache["ethers"].utils,
     providers: importsCache["ethers"].providers,
     wordlists: importsCache["ethers"].wordlists
   }
 }
+
+export const lazyEthersLibUtilImport = async (): Promise<{
+    HDNode: typeof HDNode,
+    defaultPath: typeof defaultPath,
+  }> => {
+    if (!importsCache["ethers/lib/utils"])
+      importsCache["ethers/lib/utils"] = await import("ethers/lib/utils");
+
+    return {
+      HDNode: importsCache["ethers/lib/utils"].HDNode,
+      defaultPath: importsCache["ethers/lib/utils"].defaultPath,
+    }
+  }
 
 export const lazyEthersContractImport = async (): Promise<typeof Contract> => {
   if (!importsCache["@ethersproject/contracts"])

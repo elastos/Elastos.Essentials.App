@@ -1,4 +1,4 @@
-import { lazyEthersImport } from 'src/app/helpers/import.helper';
+import { lazyEthersImport, lazyEthersLibUtilImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import { AESDecrypt, AESEncrypt } from '../../../helpers/crypto/aes';
 import { WalletNetworkService } from '../../services/network.service';
@@ -249,10 +249,10 @@ export class StandardMasterWallet extends MasterWallet {
     }
 
     private async getEVMPrivateKeyFromSeed(seed: string) {
-        const Wallet = (await import("ethers")).Wallet;
-        const seedByte = Buffer.from(seed, 'hex');
+        const { Wallet } = await lazyEthersImport();
+        const { HDNode, defaultPath } = await lazyEthersLibUtilImport();
 
-        const { HDNode, defaultPath } = await lazyEthersImport();
+        const seedByte = Buffer.from(seed, 'hex');
 
         let hdWalelt = new Wallet(HDNode.fromSeed(seedByte).derivePath(defaultPath));
         return hdWalelt.privateKey;

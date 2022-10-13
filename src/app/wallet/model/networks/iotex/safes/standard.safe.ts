@@ -1,5 +1,5 @@
 import { from } from "@iotexproject/iotex-address-ts";
-import { lazyEthersImport } from "src/app/helpers/import.helper";
+import { lazyEthersImport, lazyEthersLibUtilImport } from "src/app/helpers/import.helper";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -102,7 +102,8 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
   }
 
   private async getWalletFromSeed(seed: string) {
-    const { Wallet, HDNode, defaultPath } = await lazyEthersImport();
+    const { Wallet } = await lazyEthersImport();
+    const { HDNode, defaultPath } = await lazyEthersLibUtilImport();
     return new Wallet(HDNode.fromSeed(Buffer.from(seed, "hex")).derivePath(defaultPath));
   }
 }
