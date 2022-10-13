@@ -37,7 +37,8 @@
                     </ion-col>
                 </ion-row>
 
-                <ion-row class="profile-data" *ngIf="onGoingCommand.type == 'proposal-detail-page' && trackingType != 'finalized'">
+                <ion-row class="profile-data"
+                    *ngIf="onGoingCommand.type == 'proposal-detail-page' && trackingType != 'finalized'">
                     <div>
                         <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
                         <ion-segment (ionChange)="segmentChanged($event)" [value]="trackingType">
@@ -70,16 +71,12 @@
                 <ion-footer>
                     <ion-row>
                         <ion-col class="left-col">
-                            <div class="btn-container align-center" id="cancel" (click)="cancel()">
-                                {{ 'common.cancel' | translate }}
-                            </div>
-                            <ion-ripple-effect></ion-ripple-effect>
+                            <ebutton mode="cancel" class="btn-container" id="cancel" (clicked)="cancel()"
+                                [title]="'common.cancel' | translate"> </ebutton>
                         </ion-col>
                         <ion-col class="right-col">
-                            <div class="btn-container align-center" id="confirm" (click)="signAndReviewMilestone()">
-                                {{ 'common.confirm' | translate }}
-                            </div>
-                            <ion-ripple-effect></ion-ripple-effect>
+                            <ebutton class="btn-container" id="confirm" (clicked)="signAndReviewMilestone()"
+                                [title]="'common.confirm' | translate"> </ebutton>
                         </ion-col>
                     </ion-row>
                 </ion-footer>
