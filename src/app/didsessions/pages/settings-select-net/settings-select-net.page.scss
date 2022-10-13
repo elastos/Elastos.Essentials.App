@@ -1,1 +1,28 @@
 @import "src/app/settings/root.scss";
+
+.container {
+  ion-row {
+    .left-col {
+      h1 {
+        font-size: 17px;
+        font-weight: 400;
+        margin: 10px;
+      }
+    }
+
+    .right-col {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      ion-icon {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    &:not(:last-child) {
+      border-bottom: solid 1px var(--essentials-border-separator-color);
+    }
+  }
+}

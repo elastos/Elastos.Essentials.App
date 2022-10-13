@@ -102,50 +102,8 @@
   .btn-row {
     padding: 10px 0;
 
-    ion-button {
-      height: 50px;
+    ebutton {
       width: 100%;
-      --background: linear-gradient(to bottom, #732dcf, #640fd4);
-      --border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1px;
-    }
-  }
-}
-
-.dark-container {
-  .mnemonic-rows {
-    .mnemonic-row {
-      ion-col {
-        background: #212021;
-        box-shadow: none;
-
-        .mnemonic-index {
-          background: #212021;
-          border: 2px solid #121212;
-        }
-      }
-
-      .selectedCol {
-        background: linear-gradient(to bottom, #732dcf, #640fd4);
-
-        .mnemonic-index {
-          background: linear-gradient(to bottom, #732dcf, #640fd4);
-        }
-      }
-    }
-  }
-
-  .input-row {
-    /* ion-textarea {
-      background: #212021;
-      box-shadow: none;
-    } */
-
-    .virtual-textarea {
-      background: #212021;
-      box-shadow: none;
     }
   }
 }

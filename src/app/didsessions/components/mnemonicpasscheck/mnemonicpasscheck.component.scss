@@ -1,4 +1,4 @@
-@import 'src/app/didsessions/root.scss';
+@import "src/app/didsessions/root.scss";
 
 .container {
   padding: 25px;
@@ -26,14 +26,8 @@
     padding-top: 20px;
     width: 100%;
 
-    ion-button {
-      height: 50px;
+    ebutton {
       width: 100%;
-      --background: linear-gradient(to bottom, #732dcf, #640fd4);
-      --border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1px;
     }
   }
 
@@ -49,7 +43,7 @@
     ion-input {
       height: 50px;
       width: 100%;
-      background: #f0f1ff;
+      background: var(--essentials-box-color);
       --padding-start: 12px;
       --padding-top: 13px;
       --padding-bottom: 13px;
@@ -59,25 +53,10 @@
     }
 
     .password-failed-info {
-      color: #FF6464;
-      font-weight:700;
+      color: #ff6464;
+      font-weight: 700;
       font-size: 10px;
       margin-top: 5px;
-    }
-  }
-}
-
-.dark-container {
-  .header-row {
-    h1 {
-      color: #fdfeff;
-    }
-  }
-
-  .input-row {
-    ion-input {
-      background: #212021;
-      color: #ffffff;
     }
   }
 }

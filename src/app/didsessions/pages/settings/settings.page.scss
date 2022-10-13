@@ -8,7 +8,7 @@
     padding-top: 20px;
     padding-bottom: 20px;
     margin-right: 20px;
-    border-bottom: 1.5px solid #eaeaea;
+    border-bottom: 1.5px solid var(--essentials-border-separator-color);
 
     ion-col {
       padding: 0;
@@ -117,26 +117,5 @@
   .dev-mode {
     border: none;
     margin-right: 5px;
-  }
-}
-
-.dark-container {
-  .section {
-    border-bottom: 1.5px solid #464646;
-
-    .title-col {
-      h1 {
-        // font-weight: 500;
-      }
-
-      h2 {
-        color: #9d9d9d;
-        opacity: 1;
-      }
-    }
-  }
-
-  .dev-mode {
-    border: none;
   }
 }
