@@ -21,6 +21,7 @@
  */
 
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import type { VoteContentInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
@@ -28,7 +29,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/elastos.types';
+import { Candidates, VoteType } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { Config } from '../../../config/Config';
 import { MainChainSubWallet } from '../../../model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
@@ -178,7 +179,7 @@ export class DPoSVotePage implements OnInit {
             candidates[this.coinTransferService.publickeys[i]] = this.voteAmountELA;
         }
 
-        let dposVoteContent: VoteContent = {
+        let dposVoteContent: VoteContentInfo = {
             Type: VoteType.Delegate,
             Candidates: candidates
         }

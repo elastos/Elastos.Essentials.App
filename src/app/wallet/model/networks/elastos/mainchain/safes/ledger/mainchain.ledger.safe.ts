@@ -1,18 +1,18 @@
-import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, NormalProposalOwnerInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo } from "@elastosfoundation/wallet-js-sdk";
+import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, VoteContentInfo, VotingInfo } from "@elastosfoundation/wallet-js-sdk";
 import type { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
 import type { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
+import type { UTXOInput } from "@elastosfoundation/wallet-js-sdk/typings/wallet/UTXO";
 import { ELATransactionCoder } from "src/app/helpers/ela/ela.transaction.coder";
 import { ELATransactionFactory } from "src/app/helpers/ela/ela.transaction.factory";
 import { ELATransactionSigner } from "src/app/helpers/ela/ela.transaction.signer";
 import Ela from "src/app/helpers/ledger/hw-app-ela/Ela";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
-import { VoteContent } from "src/app/wallet/model/elastos.types";
 import { LedgerAccountType } from "src/app/wallet/model/ledger.types";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { LedgerSafe } from "src/app/wallet/model/safes/ledger.safe";
 import { SignTransactionResult } from "src/app/wallet/model/safes/safe.types";
-import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
+import { Outputs } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
 import { AnySubWallet } from "../../../../base/subwallets/subwallet";
@@ -81,7 +81,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public async createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
+  public async createPaymentTransaction(inputs: UTXOInput[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
     Logger.log('wallet', 'MainChainLedgerSafe createPaymentTransaction inputs:', inputs, ' outputs:', outputs, ' fee:', fee, ' memo:', memo)
 
     let tx = await ELATransactionFactory.createUnsignedSendToTx(inputs, outputs[0].Address, outputs[0].Amount,
@@ -90,12 +90,12 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return tx;
   }
 
-  public createVoteTransaction(inputs: UtxoForSDK[], voteContent: VoteContent[], fee: string, memo: string): Promise<any> {
+  public createVoteTransaction(inputs: UTXOInput[], voteContent: VoteContentInfo[], fee: string, memo: string): Promise<any> {
     // TODO: Do not support.
     return null;
   }
 
-  public createDepositTransaction(inputs: UtxoForSDK[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string) {
+  public createDepositTransaction(inputs: UTXOInput[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -115,12 +115,12 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createProposalTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createProposalTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
 
-  public createProposalChangeOwnerTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createProposalChangeOwnerTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -135,7 +135,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createTerminateProposalTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createTerminateProposalTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -150,7 +150,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createSecretaryGeneralElectionTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createSecretaryGeneralElectionTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -170,7 +170,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createProposalTrackingTransaction(inputs: UtxoForSDK[], payload: CRCProposalTrackingInfo, fee: string, memo: string) {
+  public createProposalTrackingTransaction(inputs: UTXOInput[], payload: CRCProposalTrackingInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -180,7 +180,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createProposalReviewTransaction(inputs: UtxoForSDK[], payload: CRCProposalReviewInfo, fee: string, memo: string) {
+  public createProposalReviewTransaction(inputs: UTXOInput[], payload: CRCProposalReviewInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -195,7 +195,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createProposalWithdrawTransaction(inputs: UtxoForSDK[], payload: CRCProposalWithdrawInfo, fee: string, memo: string) {
+  public createProposalWithdrawTransaction(inputs: UTXOInput[], payload: CRCProposalWithdrawInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -210,7 +210,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createReserveCustomIDTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createReserveCustomIDTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -225,7 +225,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createReceiveCustomIDTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createReceiveCustomIDTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -240,7 +240,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createChangeCustomIDFeeTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createChangeCustomIDFeeTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -255,22 +255,22 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createRegisterSidechainTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createRegisterSidechainTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
 
-  public createRegisterProducerTransaction(inputs: UtxoForSDK[], payload: ProducerInfoJson, amount: string, fee: string, memo: string) {
+  public createRegisterProducerTransaction(inputs: UTXOInput[], payload: ProducerInfoJson, amount: string, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
 
-  public createCancelProducerTransaction(inputs: UtxoForSDK[], payload: CancelProducerInfo, fee: string, memo: string) {
+  public createCancelProducerTransaction(inputs: UTXOInput[], payload: CancelProducerInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
 
-  public createUpdateProducerTransaction(inputs: UtxoForSDK[], payload: ProducerInfoJson, fee: string, memo: string) {
+  public createUpdateProducerTransaction(inputs: UTXOInput[], payload: ProducerInfoJson, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -285,7 +285,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createRetrieveDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+  public createRetrieveDepositTransaction(inputs: UTXOInput[], amount: string, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
@@ -305,27 +305,58 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createRegisterCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, amount: string, fee: string, memo: string) {
+  public createRegisterCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, amount: string, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
 
-  public createUnregisterCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, fee: string, memo: string) {
+  public createUnregisterCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
 
-  public createUpdateCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, fee: string, memo: string) {
+  public createUpdateCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
 
-  public createRetrieveCRDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+  public createRetrieveCRDepositTransaction(inputs: UTXOInput[], amount: string, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }
 
-  public createCRCouncilMemberClaimNodeTransaction(inputs: UtxoForSDK[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
+  public createCRCouncilMemberClaimNodeTransaction(inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
+    // TODO: Do not support.
+    return null;
+  }
+
+  //Dpos 2.0
+  public createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, fee: string, memo: string): EncodedTx {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public createDPoSV2VoteTransaction(inputs: UTXOInput[], payload: VotingInfo, fee: string, memo: string): EncodedTx {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public getDPoSV2ClaimRewardDigest(payload: DPoSV2ClaimRewardInfo): string {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public createDPoSV2ClaimRewardTransaction(inputs: UTXOInput[], payload: DPoSV2ClaimRewardInfo, fee: string, memo: string): EncodedTx {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public unstakeDigest(payload: UnstakeInfo): string {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public createUnstakeTransaction(inputs: UTXOInput[], payload: UnstakeInfo, fee: string, memo: string): EncodedTx {
     // TODO: Do not support.
     return null;
   }

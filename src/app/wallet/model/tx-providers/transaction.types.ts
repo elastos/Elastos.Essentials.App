@@ -258,13 +258,6 @@ export type Utxo = {
   vout: number;
 }
 
-export type UtxoForSDK = {
-  Address: string;
-  Amount: string; //sela
-  Index: number;
-  TxHash: string;
-}
-
 export type Outputs = {
   Address: string,
   Amount: string

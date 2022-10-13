@@ -1,8 +1,9 @@
-import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, EncodedTx, NormalProposalOwnerInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo } from '@elastosfoundation/wallet-js-sdk';
+import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, VoteContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
 import type { PublickeysInfo } from '@elastosfoundation/wallet-js-sdk/typings/account/SubAccount';
 import type { CancelProducerInfo } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer';
 import type { ProducerInfoJson } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo';
 import type { UnregisterCRPayload } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/UnregisterCR';
+import type { UTXOInput } from '@elastosfoundation/wallet-js-sdk/typings/wallet/UTXO';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
@@ -13,7 +14,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/elastos.types';
+import { Candidates, VoteType } from 'src/app/wallet/model/elastos.types';
 import { ElastosMainChainWalletNetworkOptions, WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
@@ -24,7 +25,7 @@ import { StandardCoinName } from '../../../../coin';
 import { BridgeProvider } from '../../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../../earn/earnprovider';
 import { SwapProvider } from '../../../../earn/swapprovider';
-import { AnyOfflineTransaction, ElastosTransaction, Outputs, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../../../tx-providers/transaction.types';
+import { AnyOfflineTransaction, ElastosTransaction, Outputs, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoType } from '../../../../tx-providers/transaction.types';
 import { AnyNetworkWallet } from '../../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../../base/subwallets/maincoin.subwallet';
 import { ElastosTransactionsHelper } from '../../transactions.helper';
@@ -36,7 +37,7 @@ const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, Vote
 
 export type AvalaibleUtxos = {
     value: number;
-    utxo: UtxoForSDK[];
+    utxo: UTXOInput[];
 }
 
 type BalanceList = {
@@ -389,7 +390,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             memo);
     }
 
-    public async createVoteTransaction(voteContents: VoteContent[], memo = ""): Promise<string> {
+    public async createVoteTransaction(voteContents: VoteContentInfo[], memo = ""): Promise<string> {
         let au = await this.getAvailableUtxo(-1);
         if (!au.utxo) return;
 
@@ -459,13 +460,13 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let maxUtxoCount = utxoArray.length > this.Max_Consolidate_Utxos ? this.Max_Consolidate_Utxos : utxoArray.length;
         for (let i = 0; i < maxUtxoCount; i++) {
             let utxoAmountSELA = Util.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
-            let utxoForSDK: UtxoForSDK = {
+            let utxoInput: UTXOInput = {
                 Address: utxoArray[i].address,
                 Amount: utxoAmountSELA.toString(),
                 Index: utxoArray[i].vout,
                 TxHash: utxoArray[i].txid
             }
-            utxoArrayForSDK.push(utxoForSDK);
+            utxoArrayForSDK.push(utxoInput);
             totalAmount += utxoAmountSELA;
         }
 
@@ -720,19 +721,19 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             }
         }
 
-        let utxoArrayForSDK: UtxoForSDK[] = [];
+        let utxoArrayForSDK: UTXOInput[] = [];
         let getEnoughUTXO = false;
         let totalAmount = 0;
         if (utxoArray) {
             for (let i = 0, len = utxoArray.length; i < len; i++) {
                 let utxoAmountSELA = Util.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
-                let utxoForSDK: UtxoForSDK = {
+                let utxoInput: UTXOInput = {
                     Address: utxoArray[i].address,
                     Amount: utxoAmountSELA.toString(),
                     Index: utxoArray[i].vout,
                     TxHash: utxoArray[i].txid
                 }
-                utxoArrayForSDK.push(utxoForSDK);
+                utxoArrayForSDK.push(utxoInput);
                 totalAmount += utxoAmountSELA;
                 if ((amountSELA != -1) && (totalAmount >= amountSELA)) {
                     Logger.log('wallet', 'Get enough utxo for :', amountSELA);
@@ -757,18 +758,18 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         }
     }
 
-    public async getUtxoForSDK(utxoArray: Utxo[] = null): Promise<UtxoForSDK[]> {
+    public async getUtxoForSDK(utxoArray: Utxo[] = null): Promise<UTXOInput[]> {
         let utxoArrayForSDK = [];
         if (utxoArray) {
             for (let i = 0, len = utxoArray.length; i < len; i++) {
                 let utxoAmountSELA = Util.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
-                let utxoForSDK: UtxoForSDK = {
+                let utxoInput: UTXOInput = {
                     Address: utxoArray[i].address,
                     Amount: utxoAmountSELA.toString(),
                     Index: utxoArray[i].vout,
                     TxHash: utxoArray[i].txid
                 }
-                utxoArrayForSDK.push(utxoForSDK);
+                utxoArrayForSDK.push(utxoInput);
             }
         }
 
@@ -789,7 +790,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     // Transform vote contents from raw rpc to the format required by the SDK
     private transformVoteContentForSDK(voteContent: RawVoteContent[]) {
-        let votedContents: VoteContent[] = [];
+        let votedContents: VoteContentInfo[] = [];
 
         for (let i = 0, len = voteContent.length; i < len; i++) {
             let voteType: VoteType = voteTypeMap[voteContent[i].votetype];
@@ -801,7 +802,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 candidates[voteContent[i].candidates[j].candidate] = amountSELA.toString();
             }
 
-            let newVoteContent: VoteContent = { Type: voteType, Candidates: candidates }
+            let newVoteContent: VoteContentInfo = { Type: voteType, Candidates: candidates }
             votedContents.push(newVoteContent);
         }
 
@@ -811,11 +812,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     /**
      * Previously executed votes need to be added.
      */
-    private async mergeVoteContents(userVoteContents: VoteContent[]) {
+    private async mergeVoteContents(userVoteContents: VoteContentInfo[]) {
         let rawvotedContents = await this.getVotedContent();
         if (!rawvotedContents) return userVoteContents;
 
-        let votedContents: VoteContent[] = await this.transformVoteContentForSDK(rawvotedContents);
+        let votedContents: VoteContentInfo[] = await this.transformVoteContentForSDK(rawvotedContents);
 
         let newVoteContents = await this.invalidVoteCandidatesHelper.removeInvalidCandidates(userVoteContents, votedContents);
         Logger.log('wallet', 'newVoteContents :', newVoteContents);
@@ -1527,7 +1528,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public async createRetrieveDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<EncodedTx> {
+    public async createRetrieveDepositTransaction(utxo: UTXOInput[], amount: number, memo = ""): Promise<EncodedTx> {
         return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveDepositTransaction(
             utxo,
             Util.accMul(amount, Config.SELA).toString(),
@@ -1594,7 +1595,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public async createRetrieveCRDepositTransaction(utxo: UtxoForSDK[], amount: number, memo = ""): Promise<EncodedTx> {
+    public async createRetrieveCRDepositTransaction(utxo: UTXOInput[], amount: number, memo = ""): Promise<EncodedTx> {
         return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveCRDepositTransaction(
             utxo,
             Util.accMul(amount, Config.SELA).toString(),
@@ -1613,5 +1614,36 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             '10000',
             memo
         );
+    }
+
+    //Dpos 2.0
+    public createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, memo = ""): EncodedTx {
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createStakeTransaction(inputs, payload, lockAddress, amount, '10000', memo);
+    }
+
+    public createDPoSV2VoteTransaction(inputs: UTXOInput[], payload: VotingInfo, memo = ""): EncodedTx {
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2VoteTransaction(inputs, payload, '10000', memo);
+    }
+
+    public getDPoSV2ClaimRewardDigest(payload: DPoSV2ClaimRewardInfo): string {
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).getDPoSV2ClaimRewardDigest(payload);
+    }
+
+    public async createDPoSV2ClaimRewardTransaction(payload: DPoSV2ClaimRewardInfo, memo = ""): Promise<EncodedTx> {
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
+
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2ClaimRewardTransaction(au.utxo, payload, '10000', memo);
+    }
+
+    public unstakeDigest(payload: UnstakeInfo): string {
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).unstakeDigest(payload);
+    }
+
+    public async createUnstakeTransaction(payload: UnstakeInfo, memo = ""): Promise<EncodedTx> {
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
+
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUnstakeTransaction(au.utxo, payload, '10000', memo);
     }
 }

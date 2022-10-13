@@ -1,19 +1,20 @@
-import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, EncodedTx, MainchainSubWallet, NormalProposalOwnerInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo } from "@elastosfoundation/wallet-js-sdk";
+import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, MainchainSubWallet, NormalProposalOwnerInfo, PayloadStakeInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, VoteContentInfo, VotingInfo } from "@elastosfoundation/wallet-js-sdk";
 import type { PublickeysInfo } from "@elastosfoundation/wallet-js-sdk/typings/account/SubAccount";
 import type { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
 import type { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
 import type { json } from "@elastosfoundation/wallet-js-sdk/typings/types";
+import type { UTXOInput } from "@elastosfoundation/wallet-js-sdk/typings/wallet/UTXO";
 import { Logger } from "src/app/logger";
-import { PubKeyInfo, VoteContent } from "src/app/wallet/model/elastos.types";
+import { PubKeyInfo } from "src/app/wallet/model/elastos.types";
 import { WalletJSSafe } from "src/app/wallet/model/safes/walletjs.safe";
-import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
+import { Outputs } from "src/app/wallet/model/tx-providers/transaction.types";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { SignTransactionResult } from "../../../../safes/safe.types";
 import { AnySubWallet } from "../../../base/subwallets/subwallet";
 import { ElastosMainChainSafe } from "./mainchain.safe";
 
 export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainChainSafe {
-  public async createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string) {
+  public async createPaymentTransaction(inputs: UTXOInput[], outputs: Outputs[], fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createTransaction(
       inputs,
       outputs,
@@ -22,7 +23,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createVoteTransaction(inputs: UtxoForSDK[], voteContent: VoteContent[], fee: string, memo: string) {
+  public async createVoteTransaction(inputs: UTXOInput[], voteContent: VoteContentInfo[], fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createVoteTransaction(
       inputs,
       voteContent,
@@ -31,7 +32,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createDepositTransaction(inputs: UtxoForSDK[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string) {
+  public async createDepositTransaction(inputs: UTXOInput[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createDepositTransaction(
       1,
       inputs,
@@ -60,7 +61,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createProposalTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public async createProposalTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createProposalTransaction(
       inputs,
       payload,
@@ -69,7 +70,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createProposalChangeOwnerTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public async createProposalChangeOwnerTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createProposalChangeOwnerTransaction(
       inputs,
       payload,
@@ -90,7 +91,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createTerminateProposalTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public async createTerminateProposalTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createTerminateProposalTransaction(
       inputs,
       payload,
@@ -111,7 +112,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createSecretaryGeneralElectionTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public async createSecretaryGeneralElectionTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createSecretaryGeneralElectionTransaction(
       inputs,
       payload,
@@ -138,7 +139,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createProposalTrackingTransaction(inputs: UtxoForSDK[], payload: CRCProposalTrackingInfo, fee: string, memo: string) {
+  public async createProposalTrackingTransaction(inputs: UTXOInput[], payload: CRCProposalTrackingInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createProposalTrackingTransaction(
       inputs,
       payload,
@@ -153,7 +154,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createProposalReviewTransaction(inputs: UtxoForSDK[], payload: CRCProposalReviewInfo, fee: string, memo: string) {
+  public async createProposalReviewTransaction(inputs: UTXOInput[], payload: CRCProposalReviewInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createProposalReviewTransaction(
       inputs,
       payload,
@@ -174,7 +175,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createProposalWithdrawTransaction(inputs: UtxoForSDK[], payload: CRCProposalWithdrawInfo, fee: string, memo: string) {
+  public async createProposalWithdrawTransaction(inputs: UTXOInput[], payload: CRCProposalWithdrawInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createProposalWithdrawTransaction(
       inputs,
       payload,
@@ -195,7 +196,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createReserveCustomIDTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public async createReserveCustomIDTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createReserveCustomIDTransaction(
       inputs,
       payload,
@@ -216,7 +217,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createReceiveCustomIDTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public async createReceiveCustomIDTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createReceiveCustomIDTransaction(
       inputs,
       payload,
@@ -237,7 +238,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createChangeCustomIDFeeTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public async createChangeCustomIDFeeTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createChangeCustomIDFeeTransaction(
       inputs,
       payload,
@@ -258,7 +259,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createRegisterSidechainTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public async createRegisterSidechainTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createRegisterSidechainTransaction(
       inputs,
       payload,
@@ -268,7 +269,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
   }
 
   //dpos registration transaction functions
-  public async createRegisterProducerTransaction(inputs: UtxoForSDK[], payload: ProducerInfoJson, amount: string, fee: string, memo: string) {
+  public async createRegisterProducerTransaction(inputs: UTXOInput[], payload: ProducerInfoJson, amount: string, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createRegisterProducerTransaction(
       inputs,
       payload,
@@ -278,7 +279,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createCancelProducerTransaction(inputs: UtxoForSDK[], payload: CancelProducerInfo, fee: string, memo: string) {
+  public async createCancelProducerTransaction(inputs: UTXOInput[], payload: CancelProducerInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createCancelProducerTransaction(
       inputs,
       payload,
@@ -287,7 +288,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createUpdateProducerTransaction(inputs: UtxoForSDK[], payload: ProducerInfoJson, fee: string, memo: string) {
+  public async createUpdateProducerTransaction(inputs: UTXOInput[], payload: ProducerInfoJson, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createUpdateProducerTransaction(
       inputs,
       payload,
@@ -316,7 +317,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createRetrieveDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+  public async createRetrieveDepositTransaction(inputs: UTXOInput[], amount: string, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createRetrieveDepositTransaction(
       inputs,
       amount,
@@ -347,7 +348,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
   }
 
 
-  public async createRegisterCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, amount: string, fee: string, memo: string) {
+  public async createRegisterCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, amount: string, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createRegisterCRTransaction(
       inputs,
       payload,
@@ -357,7 +358,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createUnregisterCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, fee: string, memo: string) {
+  public async createUnregisterCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createUnregisterCRTransaction(
       inputs,
       payload,
@@ -366,7 +367,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createUpdateCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, fee: string, memo: string) {
+  public async createUpdateCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createUpdateCRTransaction(
       inputs,
       payload,
@@ -375,7 +376,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createRetrieveCRDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string) {
+  public async createRetrieveCRDepositTransaction(inputs: UTXOInput[], amount: string, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createRetrieveCRDepositTransaction(
       inputs,
       amount,
@@ -384,13 +385,38 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createCRCouncilMemberClaimNodeTransaction(inputs: UtxoForSDK[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
+  public async createCRCouncilMemberClaimNodeTransaction(inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createCRCouncilMemberClaimNodeTransaction(
       inputs,
       payload,
       fee,
       memo
     );
+  }
+
+  //Dpos 2.0
+  public createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, fee: string, memo: string): EncodedTx {
+    return (<MainchainSubWallet>this.sdkSubWallet).createStakeTransaction(inputs, payload, lockAddress, amount, fee, memo);
+  }
+
+  public createDPoSV2VoteTransaction(inputs: UTXOInput[], payload: VotingInfo, fee: string, memo: string): EncodedTx {
+    return (<MainchainSubWallet>this.sdkSubWallet).createDPoSV2VoteTransaction(inputs, payload, fee, memo);
+  }
+
+  public getDPoSV2ClaimRewardDigest(payload: DPoSV2ClaimRewardInfo): string {
+    return (<MainchainSubWallet>this.sdkSubWallet).getDPoSV2ClaimRewardDigest(payload);
+  }
+
+  public createDPoSV2ClaimRewardTransaction(inputs: UTXOInput[], payload: DPoSV2ClaimRewardInfo, fee: string, memo: string): EncodedTx {
+    return (<MainchainSubWallet>this.sdkSubWallet).createDPoSV2ClaimRewardTransaction(inputs, payload, fee, memo);
+  }
+
+  public unstakeDigest(payload: UnstakeInfo): string {
+    return (<MainchainSubWallet>this.sdkSubWallet).unstakeDigest(payload);
+  }
+
+  public createUnstakeTransaction(inputs: UTXOInput[], payload: UnstakeInfo, fee: string, memo: string): EncodedTx {
+    return (<MainchainSubWallet>this.sdkSubWallet).createUnstakeTransaction(inputs, payload, fee, memo);
   }
 
   public async signTransaction(subWallet: AnySubWallet, rawTransaction: json, transfer: Transfer): Promise<SignTransactionResult> {

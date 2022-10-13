@@ -1,8 +1,9 @@
 
+import type { VoteContentInfo } from '@elastosfoundation/wallet-js-sdk';
 import { Logger } from 'src/app/logger';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { CRProposalStatus } from '../../../../../model/voting/cyber-republic/CRProposalStatus';
-import { Candidates, VoteContent, VoteType } from '../../../elastos.types';
+import { Candidates, VoteType } from '../../../elastos.types';
 
 type InvalidCRCCandidate = string;
 type InvalidDelegateCandidate = string;
@@ -37,8 +38,8 @@ export type InvalidCandidateForVote = {
 export class InvalidVoteCandidatesHelper {
   constructor() { }
 
-  public async removeInvalidCandidates(votingContent: VoteContent[], oldVotedContent: VoteContent[]): Promise<VoteContent[]> {
-    let newVoteContents: VoteContent[] = [];
+  public async removeInvalidCandidates(votingContent: VoteContentInfo[], oldVotedContent: VoteContentInfo[]): Promise<VoteContentInfo[]> {
+    let newVoteContents: VoteContentInfo[] = [];
 
     let crcinvoting = await this.isCRCInVoting();
 

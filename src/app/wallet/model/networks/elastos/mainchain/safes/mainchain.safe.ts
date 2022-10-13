@@ -1,15 +1,15 @@
 import type {
-  ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
-  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson,
-  CRInfoPayload, NormalProposalOwnerInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
-  ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo
+    ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
+    CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson,
+    CRInfoPayload, DPoSV2ClaimRewardInfo, EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
+    ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
 import type { PublickeysInfo } from "@elastosfoundation/wallet-js-sdk/typings/account/SubAccount";
 import type { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
 import type { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
 import type { UnregisterCRPayload } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/UnregisterCR";
-import { VoteContent } from "src/app/wallet/model/elastos.types";
-import { Outputs, UtxoForSDK } from "src/app/wallet/model/tx-providers/transaction.types";
+import type { UTXOInput } from "@elastosfoundation/wallet-js-sdk/typings/wallet/UTXO";
+import { Outputs } from "src/app/wallet/model/tx-providers/transaction.types";
 
 export interface ElastosMainChainSafe {
   getOwnerAddress(): string;
@@ -17,26 +17,26 @@ export interface ElastosMainChainSafe {
   getOwnerStakeAddress(): string;
   getOwnerPublicKey(): string;
   getPublicKeys(start: number, count: number, internal: boolean): string[] | PublickeysInfo;
-  createPaymentTransaction(inputs: UtxoForSDK[], outputs: Outputs[], fee: string, memo: string): Promise<any>;
-  createVoteTransaction(inputs: UtxoForSDK[], voteContent: VoteContent[], fee: string, memo: string): Promise<any>;
-  createDepositTransaction(inputs: UtxoForSDK[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string): Promise<any>;
+  createPaymentTransaction(inputs: UTXOInput[], outputs: Outputs[], fee: string, memo: string): Promise<any>;
+  createVoteTransaction(inputs: UTXOInput[], voteContent: VoteContentInfo[], fee: string, memo: string): Promise<any>;
+  createDepositTransaction(inputs: UTXOInput[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string): Promise<any>;
 
   // CR
   CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo): string;
   proposalOwnerDigest(payload: NormalProposalOwnerInfo): string;
   proposalCRCouncilMemberDigest(payload: NormalProposalOwnerInfo): string;
 
-  createProposalTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
-  createProposalChangeOwnerTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
+  createProposalTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
+  createProposalChangeOwnerTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
 
   // Proposal Terminate Proposal
   terminateProposalOwnerDigest(payload: TerminateProposalOwnerInfo): string;
   terminateProposalCRCouncilMemberDigest(payload: TerminateProposalOwnerInfo): string;
-  createTerminateProposalTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
+  createTerminateProposalTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
 
   proposalSecretaryGeneralElectionDigest(payload: SecretaryElectionInfo): string;
   proposalSecretaryGeneralElectionCRCouncilMemberDigest(payload: SecretaryElectionInfo): string;
-  createSecretaryGeneralElectionTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
+  createSecretaryGeneralElectionTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
 
 
   proposalChangeOwnerDigest(payload: ChangeProposalOwnerInfo): string;
@@ -44,48 +44,56 @@ export interface ElastosMainChainSafe {
   proposalTrackingSecretaryDigest(payload: CRCProposalTrackingInfo): string;
 
 
-  createProposalTrackingTransaction(inputs: UtxoForSDK[], payload: CRCProposalTrackingInfo, fee: string, memo: string): Promise<any>;
+  createProposalTrackingTransaction(inputs: UTXOInput[], payload: CRCProposalTrackingInfo, fee: string, memo: string): Promise<any>;
   proposalReviewDigest(payload: CRCProposalReviewInfo): string;
-  createProposalReviewTransaction(inputs: UtxoForSDK[], payload: CRCProposalReviewInfo, fee: string, memo: string): Promise<any>;
+  createProposalReviewTransaction(inputs: UTXOInput[], payload: CRCProposalReviewInfo, fee: string, memo: string): Promise<any>;
   proposalTrackingOwnerDigest(payload: CRCProposalTrackingInfo): string;
 
   proposalWithdrawDigest(payload: CRCProposalWithdrawInfo): string;
 
-  createProposalWithdrawTransaction(inputs: UtxoForSDK[], payload: CRCProposalWithdrawInfo, fee: string, memo: string): Promise<any>;
+  createProposalWithdrawTransaction(inputs: UTXOInput[], payload: CRCProposalWithdrawInfo, fee: string, memo: string): Promise<any>;
 
   reserveCustomIDOwnerDigest(payload: ReserveCustomIDOwnerInfo): string;
   reserveCustomIDCRCouncilMemberDigest(payload: ReserveCustomIDOwnerInfo): string;
-  createReserveCustomIDTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
+  createReserveCustomIDTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
 
   receiveCustomIDOwnerDigest(payload: ReceiveCustomIDOwnerInfo): string;
   receiveCustomIDCRCouncilMemberDigest(payload: ReceiveCustomIDOwnerInfo): string;
-  createReceiveCustomIDTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
+  createReceiveCustomIDTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
 
   changeCustomIDFeeOwnerDigest(payload: ChangeCustomIDFeeOwnerInfo): string;
   changeCustomIDFeeCRCouncilMemberDigest(payload: ChangeCustomIDFeeOwnerInfo): string;
-  createChangeCustomIDFeeTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
+  createChangeCustomIDFeeTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
 
   registerSidechainOwnerDigest(payload: RegisterSidechainProposalInfo): string;
   registerSidechainCRCouncilMemberDigest(payload: RegisterSidechainProposalInfo): string;
-  createRegisterSidechainTransaction(inputs: UtxoForSDK[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
+  createRegisterSidechainTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string): Promise<any>;
 
   // Dpos registration transaction functions
-  createRegisterProducerTransaction(inputs: UtxoForSDK[], payload: ProducerInfoJson, amount: string, fee: string, memo: string): Promise<any>;
-  createCancelProducerTransaction(inputs: UtxoForSDK[], payload: CancelProducerInfo, fee: string, memo: string): Promise<any>;
-  createUpdateProducerTransaction(inputs: UtxoForSDK[], payload: ProducerInfoJson, fee: string, memo: string): Promise<any>;
+  createRegisterProducerTransaction(inputs: UTXOInput[], payload: ProducerInfoJson, amount: string, fee: string, memo: string): Promise<any>;
+  createCancelProducerTransaction(inputs: UTXOInput[], payload: CancelProducerInfo, fee: string, memo: string): Promise<any>;
+  createUpdateProducerTransaction(inputs: UTXOInput[], payload: ProducerInfoJson, fee: string, memo: string): Promise<any>;
 
   generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any>;
   generateCancelProducerPayload(publicKey: string, payPasswd: string): Promise<any>;
-  createRetrieveDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string): Promise<any>;
+  createRetrieveDepositTransaction(inputs: UTXOInput[], amount: string, fee: string, memo: string): Promise<any>;
 
   //CR registration transaction functions
   getCRDepositAddress(): string;
   generateCRInfoPayload(publicKey: string, did: string, nickname: string, url: string, location: number): CRInfoPayload;
   generateUnregisterCRPayload(CID: string): UnregisterCRPayload;
-  createRegisterCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, amount: string, fee: string, memo: string): Promise<any>;
-  createUnregisterCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, fee: string, memo: string): Promise<any>;
-  createUpdateCRTransaction(inputs: UtxoForSDK[], payload: CRInfoJson, fee: string, memo: string): Promise<any>;
-  createRetrieveCRDepositTransaction(inputs: UtxoForSDK[], amount: string, fee: string, memo: string): Promise<any>;
-  createCRCouncilMemberClaimNodeTransaction(inputs: UtxoForSDK[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string): Promise<any>;
+  createRegisterCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, amount: string, fee: string, memo: string): Promise<any>;
+  createUnregisterCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, fee: string, memo: string): Promise<any>;
+  createUpdateCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, fee: string, memo: string): Promise<any>;
+  createRetrieveCRDepositTransaction(inputs: UTXOInput[], amount: string, fee: string, memo: string): Promise<any>;
+  createCRCouncilMemberClaimNodeTransaction(inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string): Promise<any>;
+
+  //Dpos 2.0
+  createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, fee: string, memo: string): EncodedTx;
+  createDPoSV2VoteTransaction(inputs: UTXOInput[], payload: VotingInfo, fee: string, memo: string): EncodedTx;
+  getDPoSV2ClaimRewardDigest(payload: DPoSV2ClaimRewardInfo): string;
+  createDPoSV2ClaimRewardTransaction(inputs: UTXOInput[], payload: DPoSV2ClaimRewardInfo, fee: string, memo: string): EncodedTx;
+  unstakeDigest(payload: UnstakeInfo): string;
+  createUnstakeTransaction(inputs: UTXOInput[], payload: UnstakeInfo, fee: string, memo: string): EncodedTx;
 
 }
