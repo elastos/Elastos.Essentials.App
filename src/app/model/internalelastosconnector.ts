@@ -1,5 +1,6 @@
-import { VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
+import type { VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { lazyElastosDIDSDKImport } from "../helpers/import.helper";
 import { Logger } from "../logger";
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
@@ -39,6 +40,7 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
                     resolve(null);
                     return;
                 }
+                const { VerifiableCredential } = await lazyElastosDIDSDKImport();
                 let credential = VerifiableCredential.parse(res.result.credential);
                 resolve(credential);
             }

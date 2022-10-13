@@ -1,4 +1,4 @@
-import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
+import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { Logger } from "src/app/logger";
 import type { CoinID } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
@@ -13,7 +13,7 @@ import type { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
 import { Network } from "../../network";
 
 export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
-  public static networkKey: "btc" = "btc";
+  public static networkKey = "btc";
 
   constructor(
     displayName: string,

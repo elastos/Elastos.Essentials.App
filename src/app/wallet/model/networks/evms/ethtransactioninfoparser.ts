@@ -1,4 +1,4 @@
-import { utils } from "ethers";
+import { lazyEthersImport } from "src/app/helpers/import.helper";
 import { Logger } from "src/app/logger";
 import { GlobalEthereumRPCService } from "src/app/services/global.ethereum.service";
 import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
@@ -232,7 +232,7 @@ export class ETHTransactionInfoParser {
       case '0x18cbafe5': // swapExactTokensForETH(uint256,uint256,address[],address,uint256)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = this.extractTransactionParamValues(["function swapExactTokensForETH(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(["function swapExactTokensForETH(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
           let amountIn = this.bigNumberTransactionParamAt(params, 0).toString()
           let amountOut = this.bigNumberTransactionParamAt(params, 1).toString()
@@ -256,7 +256,7 @@ export class ETHTransactionInfoParser {
       case '0x791ac947': // swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = this.extractTransactionParamValues(["function swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(["function swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
           let amountIn = this.bigNumberTransactionParamAt(params, 0).toString()
           let amountOut = this.bigNumberTransactionParamAt(params, 1).toString()
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
@@ -280,7 +280,7 @@ export class ETHTransactionInfoParser {
       case '0x7ff36ab5': // swapExactETHForTokens(uint256,address[],address,uint256)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = this.extractTransactionParamValues(["function swapExactETHForTokens(uint256,address[],address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(["function swapExactETHForTokens(uint256,address[],address,uint256) public returns (bool success)"], txData);
           let tokensPath = this.arrayTransactionParamAt(params, 1, 2);
           let toTokenAddress = tokensPath[tokensPath.length - 1]; // Last entry of tokensPath is the destination ERC20 token.
           let toCoinInfo = await this.getERC20TokenInfoOrThrow(toTokenAddress);
@@ -294,7 +294,7 @@ export class ETHTransactionInfoParser {
       case '0xf253aaa7': // swapExactTokensForTokens(uint256 amountIn, uint256 amountOutMin, address[] path, address to, uint256 deadline, uint256[] time) returns (uint256[] amounts)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = this.extractTransactionParamValues(["function swapExactTokensForTokens(uint256,uint256,address[],address,uint256, uint256[]) public returns (uint256[] amounts)"], txData);
+          let params = await this.extractTransactionParamValues(["function swapExactTokensForTokens(uint256,uint256,address[],address,uint256, uint256[]) public returns (uint256[] amounts)"], txData);
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
           let fromTokenAddress = tokensPath[0]; // First entry of tokensPath is the source token.
           let toTokenAddress = tokensPath[tokensPath.length - 1]; // Last entry is the destination token.
@@ -311,7 +311,7 @@ export class ETHTransactionInfoParser {
       case '0x38ed1739': // swapExactTokensForTokens(uint256,uint256,address[],address,uint256)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = this.extractTransactionParamValues(["function swapExactTokensForTokens(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(["function swapExactTokensForTokens(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
           let fromTokenAddress = tokensPath[0]; // First entry of tokensPath is the source token.
           let toTokenAddress = tokensPath[tokensPath.length - 1]; // Last entry is the destination token.
@@ -328,7 +328,7 @@ export class ETHTransactionInfoParser {
       case '0xad58bdd1': // relayTokens(address,address,uint256)
         txInfo.type = ETHOperationType.BRIDGE;
         try {
-          let params = this.extractTransactionParamValues(["function relayTokens(address,address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(["function relayTokens(address,address,uint256) public returns (bool success)"], txData);
           let tokenAddress = this.stringTransactionParamAt(params, 0); // From
           let tokenInfo = await this.getERC20TokenInfoOrThrow(tokenAddress);
           txInfo.operation = { description: 'wallet.ext-tx-info-type-bridge-erc20', descriptionTranslationParams: { symbol: tokenInfo.coinSymbol }, };
@@ -341,7 +341,7 @@ export class ETHTransactionInfoParser {
       case '0xe8e33700': // addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)
         txInfo.type = ETHOperationType.ADD_LIQUIDITY;
         try {
-          let params = this.extractTransactionParamValues(["function addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(["function addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
           let tokenAAddress = this.stringTransactionParamAt(params, 0);
           let tokenBAddress = this.stringTransactionParamAt(params, 1);
           let tokenAInfo = await this.getERC20TokenInfoOrThrow(tokenAAddress);
@@ -356,7 +356,7 @@ export class ETHTransactionInfoParser {
       case '0xbaa2abde': // removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)
         txInfo.type = ETHOperationType.REMOVE_LIQUIDITY;
         try {
-          let params = this.extractTransactionParamValues(["function removeLiquidity(address,address,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(["function removeLiquidity(address,address,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
           let tokenAAddress = this.stringTransactionParamAt(params, 0);
           let tokenBAddress = this.stringTransactionParamAt(params, 1);
           let tokenAInfo = await this.getERC20TokenInfoOrThrow(tokenAAddress);
@@ -448,7 +448,8 @@ export class ETHTransactionInfoParser {
    * @param abi Eg: ["function approve(address, uint256) public returns (bool success)"]
    * @param txData Signed transaction string to be published or published on chain
    */
-  private extractTransactionParamValues(abi: string[], txData: string): any[] {
+  private async extractTransactionParamValues(abi: string[], txData: string): Promise<any[]> {
+    const { utils } = await lazyEthersImport();
     const iface = new utils.Interface(abi);
     let decodedData = iface.parseTransaction({ data: txData });
     if (!decodedData)
@@ -492,7 +493,7 @@ export class ETHTransactionInfoParser {
   /**
    * Returns the indexTH param value, making sure that this is a object type.
    */
-   private bigNumberTransactionParamAt(params: any[], index: number): object {
+  private bigNumberTransactionParamAt(params: any[], index: number): object {
     if (params.length <= index)
       throw new Error("Not enough values in params array");
 

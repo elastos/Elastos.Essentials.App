@@ -1,9 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DIDStore, DIDTransactionAdapter } from '@elastosfoundation/did-js-sdk';
+import type { DIDTransactionAdapter } from '@elastosfoundation/did-js-sdk';
 import { ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { DIDPublishingComponent } from '../components/did-publishing/did-publishing.component';
+import { lazyElastosDIDSDKImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
 import { JSONObject } from '../model/json';
 import { WalletNetworkService } from '../wallet/services/network.service';
@@ -684,6 +685,7 @@ export class GlobalPublicationService {
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise<void>(async (resolve, reject) => {
+            const { DIDStore } = await lazyElastosDIDSDKImport();
             let didStore = await DIDStore.open(storeId);
             let localDIDDocument = await didStore.loadDid(didString);
             if (localDIDDocument) {

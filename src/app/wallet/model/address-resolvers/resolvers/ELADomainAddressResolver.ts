@@ -3,38 +3,42 @@ import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { Address } from '../addresses/Address';
 import { ELADomainAddress } from '../addresses/ELADomainAddress';
 import { Resolver } from "./Resolver";
-const domainjs = require('eladomainjs');
 
 export class ELADomainResolver extends Resolver {
     private eladomainSDK = null;
 
     constructor() {
         super();
-
-        this.init();
-    }
-
-    private init() {
-        const config =
-            {
-            testnet:{
-                rpcUrl: "",
-                contractAddress: ""
-            },
-            mainnet:{
-                rpcUrl: "https://api.elastos.io/eth",
-                contractAddress: "0xA1019535E6b364523949EaF45F4B17521c1cb074"
-            },
-            defaultNetwork: "mainnet"
-        }
-        this.eladomainSDK = domainjs.SDK(config);
     }
 
     public getName(): string {
         return "ELADomain";
     }
 
+    private async lazyInit() {
+        if (this.eladomainSDK) // Already initialized
+            return;
+
+        const config =
+        {
+            testnet: {
+                rpcUrl: "",
+                contractAddress: ""
+            },
+            mainnet: {
+                rpcUrl: "https://api.elastos.io/eth",
+                contractAddress: "0xA1019535E6b364523949EaF45F4B17521c1cb074"
+            },
+            defaultNetwork: "mainnet"
+        }
+
+        const domainjs = (await import("eladomainjs")).default;
+        this.eladomainSDK = domainjs.SDK(config);
+    }
+
     public async resolve(name: string, subWallet: AnySubWallet): Promise<Address[]> {
+        await this.lazyInit();
+
         let addresses: Address[] = [];
 
         if (!name.endsWith('.ela')) {

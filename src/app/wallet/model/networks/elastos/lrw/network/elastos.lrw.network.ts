@@ -1,4 +1,4 @@
-import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
+import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { ERC20Coin, StandardCoinName } from "../../../../coin";
 import { NetworkAPIURLType } from "../../../base/networkapiurltype";

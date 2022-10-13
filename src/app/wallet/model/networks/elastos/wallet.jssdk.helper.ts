@@ -1,5 +1,6 @@
-import { MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
+import type { MasterWallet as SDKMasterWallet, MasterWalletManager } from "@elastosfoundation/wallet-js-sdk";
 import moment from "moment";
+import { lazyElastosWalletSDKImport } from "src/app/helpers/import.helper";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { AuthService } from "src/app/wallet/services/auth.service";
@@ -21,11 +22,13 @@ export class WalletJSSDKHelper {
 
     let networkTemplate = await GlobalNetworksService.instance.getActiveNetworkTemplate();
     if (networkTemplate === "LRW") {
-        networkTemplate = "PrvNet";
+      networkTemplate = "PrvNet";
     }
 
     const browserStorage = new JSSDKLocalStorage(DIDSessionsStore.signedInDIDString);
     const netConfig = { NetType: networkTemplate, ELA: {} };
+
+    const { MasterWalletManager } = await lazyElastosWalletSDKImport();
     this.masterWalletManager = await MasterWalletManager.create(
       browserStorage,
       networkTemplate,
@@ -40,8 +43,8 @@ export class WalletJSSDKHelper {
 
   public static resetMasterWalletManager() {
     if (this.masterWalletManager) {
-        this.masterWalletManager.destroy();
-        this.masterWalletManager = null;
+      this.masterWalletManager.destroy();
+      this.masterWalletManager = null;
     }
   }
 
@@ -144,10 +147,10 @@ export class WalletJSSDKHelper {
   }
 
   public static async importWalletWithMnemonic(masterWalletId: string,
-                                              mnemonic: string,
-                                              phrasePassword: string,
-                                              payPassword,
-                                              singleAddress: boolean) {
+    mnemonic: string,
+    phrasePassword: string,
+    payPassword,
+    singleAddress: boolean) {
     return await this.masterWalletManager.importWalletWithMnemonic(masterWalletId, mnemonic, phrasePassword, payPassword, singleAddress, moment().valueOf());
   }
 
@@ -155,11 +158,11 @@ export class WalletJSSDKHelper {
     return (await this.getMasterWallet(masterWalletId)).exportMnemonic(payPassWord);
   }
 
-//   public static async exportWalletWithSeed(masterWalletId: string, payPassWord: string) {
-//     return (await this.getMasterWallet(masterWalletId)).exportSeed(payPassWord);
-//   }
+  //   public static async exportWalletWithSeed(masterWalletId: string, payPassWord: string) {
+  //     return (await this.getMasterWallet(masterWalletId)).exportSeed(payPassWord);
+  //   }
 
-  public static async exportKeystore(masterWalletId : string, backupPassword: string, payPassword: string) {
+  public static async exportKeystore(masterWalletId: string, backupPassword: string, payPassword: string) {
     let masterWallet = await this.getMasterWallet(masterWalletId);
     return await masterWallet.exportKeystore(backupPassword, payPassword);
   }

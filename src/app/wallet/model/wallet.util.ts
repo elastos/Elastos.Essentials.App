@@ -23,16 +23,11 @@ import BigNumber from 'bignumber.js';
 import { Network, validate } from 'bitcoin-address-validation';
 
 import moment from 'moment';
+import { ELAAddressPrefix } from 'src/app/helpers/ela/ela.address';
+import { lazyElastosWalletSDKImport, lazyEthersImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { CurrencyService } from '../services/currency.service';
-// import { langFr as fr } from "@ethersproject/wordlists/lib/lang-fr";
-// import { langIt as it } from "@ethersproject/wordlists/lib/lang-it";
-// import { langZhCn as zh_cn } from "@ethersproject/wordlists/lib/lang-zh";
-// import { Address } from '@elastosfoundation/wallet-js-sdk/typings/walletcore/Address';
-import { Address } from '@elastosfoundation/wallet-js-sdk';
-import { wordlists } from 'ethers';
-import { ELAAddressPrefix } from 'src/app/helpers/ela/ela.address';
 
 export class WalletUtil {
   static isInvalidWalletName(text): boolean {
@@ -65,7 +60,7 @@ export class WalletUtil {
 
     // If the amount is less than 1, more decimal parts are displayed.
     if (!balance.isGreaterThan(1)) {
-        decimalplace = 8;
+      decimalplace = 8;
     }
 
     let minBalanceToShow = 1 / Math.pow(10, decimalplace);
@@ -112,9 +107,10 @@ export class WalletUtil {
     return timestamp < today ? moment.unix(timestamp).format("YYYY-MM-DD HH:mm") : moment.unix(timestamp).startOf('minutes').fromNow();
   }
 
-  public static isELAAddress(address: string) {
+  public static async isELAAddress(address: string): Promise<boolean> {
     try {
       if (address) {
+        const { Address } = await lazyElastosWalletSDKImport();
         let addressObj = Address.newFromAddressString(address.trim());
         if (addressObj.valid()) {
           let prefix = addressObj.programHash().prefix() as any;
@@ -150,6 +146,8 @@ export class WalletUtil {
     // wordlists['zh_cn'] = zh_cn;
     // wordlists['fr'] = fr;
     // wordlists['it'] = it;
+
+    const { wordlists } = await lazyEthersImport();
 
     // Avoid multiple consecutive spaces in the string
     let mnemonicArray = mnemonic.split(/[\u3000\s]+/);

@@ -107,7 +107,13 @@
               "moment/locale/zh-cn",
               "moment/locale/es",
               "moment/locale/it",
-              "jsonld"
+              "jsonld",
+              "@ethersproject/wordlists",
+              "create-hash",
+              "js-crypto-key-utils",
+              "graphql-request",
+              "dns-packet",
+              "@ensdomains/address-encoder"
             ]
           },
           "configurations": {

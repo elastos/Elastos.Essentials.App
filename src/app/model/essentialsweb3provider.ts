@@ -1,6 +1,6 @@
 import Queue from "promise-queue";
-import { AbstractProvider } from "web3-core";
-import { JsonRpcPayload, JsonRpcResponse } from "web3-core-helpers";
+import type { AbstractProvider } from "web3-core";
+import type { JsonRpcPayload, JsonRpcResponse } from "web3-core-helpers";
 import { GlobalJsonRPCService } from "../services/global.jsonrpc.service";
 
 // Concurrency queues to ensure that we don't send too many API calls to the same RPC URL at the same

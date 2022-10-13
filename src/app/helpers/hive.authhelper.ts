@@ -1,10 +1,11 @@
-import { DIDDocument, JWTParserBuilder, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
+import type { DIDDocument, VerifiableCredential } from "@elastosfoundation/did-js-sdk";
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { AppContext, AppContextProvider, Logger as HiveLogger, Vault, VaultSubscription } from "@elastosfoundation/hive-js-sdk";
+import type { AppContext, AppContextProvider, Vault, VaultSubscription } from "@elastosfoundation/hive-js-sdk";
 import moment from "moment";
 import Queue from 'promise-queue';
 import { GlobalConfig } from "../config/globalconfig";
 import { Logger } from "../logger";
+import { lazyElastosDIDSDKImport, lazyElastosHiveSDKImport } from "./import.helper";
 import { logAndReject } from "./promises";
 
 //declare let didManager: DIDPlugin.DIDManager;
@@ -16,6 +17,8 @@ import { logAndReject } from "./promises";
  * to show confirmation screens to user.
  */
 export class InternalHiveAuthHelper {
+  private initialized = false;
+
   private didAccess: DID.DIDAccess;
   private contextCreationQueue: Queue; // Semaphore queue to create only one context at a time. Hive SDK used to have some troubles with concurrent authentications
   private contextsCache: { [did: string]: AppContext } = {};
@@ -25,10 +28,24 @@ export class InternalHiveAuthHelper {
     this.contextCreationQueue = new Queue(1);
 
     // Hive SDK is too verbose by default, make it silent
-    HiveLogger.setDefaultLevel(HiveLogger.WARNING);
   }
 
-  public getAppContext(targetDid: string, onAuthError?: (e: Error) => void): Promise<AppContext> {
+  /**
+   * Lazy init to remove strong dependencies on the main app bundle.
+   */
+  private async lazyInit() {
+    if (this.initialized)
+      return;
+
+    const { Logger: HiveLogger } = await lazyElastosHiveSDKImport();
+    HiveLogger.setDefaultLevel(HiveLogger.WARNING);
+
+    this.initialized = true;
+  }
+
+  public async getAppContext(targetDid: string, onAuthError?: (e: Error) => void): Promise<AppContext> {
+    await this.lazyInit();
+
     return this.contextCreationQueue.add(async () => {
       let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
       let appDidString = appInstanceDIDInfo.did.toString();
@@ -37,7 +54,6 @@ export class InternalHiveAuthHelper {
       // Returned existing context for this DID if any.
       if (cacheKey in this.contextsCache)
         return this.contextsCache[cacheKey];
-
 
       Logger.log("hiveauthhelper", "Getting app instance DID document");
       let didDocument = await appInstanceDIDInfo.didStore.loadDid(appDidString);
@@ -69,6 +85,7 @@ export class InternalHiveAuthHelper {
         }
       }
 
+      const { AppContext } = await lazyElastosHiveSDKImport();
       let appContext = await AppContext.build(appContextProvider, targetDid, appDidString);
       this.contextsCache[cacheKey] = appContext;
 
@@ -78,6 +95,7 @@ export class InternalHiveAuthHelper {
 
   public async getSubscriptionService(targetDid: string, providerAddress: string = null, onAuthError?: (e: Error) => void): Promise<VaultSubscription> {
     let appContext = await this.getAppContext(targetDid, onAuthError);
+    const { VaultSubscription } = await lazyElastosHiveSDKImport();
     return new VaultSubscription(appContext, providerAddress);
   }
 
@@ -95,6 +113,8 @@ export class InternalHiveAuthHelper {
       // app instance DID.
       try {
         let appContext = await this.getAppContext(targetDid, onAuthError);
+
+        const { AppContext, Vault } = await lazyElastosHiveSDKImport();
         let providerAddress = await AppContext.getProviderAddress(targetDid);
         let vaultServices = new Vault(appContext, providerAddress);
 
@@ -148,6 +168,7 @@ export class InternalHiveAuthHelper {
     return new Promise(async (resolve, reject) => {
       // Parse, but verify on chain that this JWT is valid first
       try {
+        const { JWTParserBuilder } = await lazyElastosDIDSDKImport();
         let parseResult = await (new JWTParserBuilder()).setAllowedClockSkewSeconds(300).build().parse(authChallengeJwttoken);
         let body = parseResult.getBody();
 
@@ -183,6 +204,7 @@ export class InternalHiveAuthHelper {
 
         // Create the presentation that includes hive back end challenge (nonce) and the app id credential.
         Logger.log("hiveauthhelper", "Creating DID presentation response for Hive authentication challenge");
+        const { VerifiablePresentation } = await lazyElastosDIDSDKImport();
         let builder = await VerifiablePresentation.createFor(appInstanceDID.toString(), null, appInstanceDIDResult.didStore);
         let presentation = await builder.credentials(appIdCredential).realm(realm).nonce(nonce).seal(appInstanceDIDInfo.storePassword);
 
@@ -245,6 +267,7 @@ export class InternalHiveAuthHelper {
       // work with the 2 worlds so far.
       let AppIDService = (await import("../identity/services/appid.service")).AppIDService; // Lazy
       let cordovaCredential = await AppIDService.instance.generateApplicationIDCredential(appInstanceDID.toString(), GlobalConfig.ESSENTIALS_APP_DID);
+      const { VerifiableCredential } = await lazyElastosDIDSDKImport();
       let credential = VerifiableCredential.parse(await cordovaCredential.toString());
 
       // Save this issued credential for later use.

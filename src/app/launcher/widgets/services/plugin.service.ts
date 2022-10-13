@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { JSONObject } from '@elastosfoundation/did-js-sdk';
+import type { JSONObject } from '@elastosfoundation/did-js-sdk';
 import moment from 'moment';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';

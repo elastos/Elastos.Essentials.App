@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { CRCProposalInfo, EncodedTx } from '@elastosfoundation/wallet-js-sdk';
+import type { CRCProposalInfo, EncodedTx } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';

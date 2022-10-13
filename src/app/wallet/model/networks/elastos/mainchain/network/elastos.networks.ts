@@ -1,4 +1,4 @@
-import { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
+import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { StandardCoinName } from "src/app/wallet/model/coin";
@@ -11,6 +11,7 @@ import type { AnyNetworkWallet } from "../../../base/networkwallets/networkwalle
 import { ElastosNetworkBase } from "../../network/elastos.base.network";
 
 export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<ElastosMainChainWalletNetworkOptions> {
+  // eslint-disable-next-line @typescript-eslint/prefer-as-const
   public static networkKey: "elastos" = "elastos";
 
   public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import BigNumber from "bignumber.js";
 import { Observable, Subscriber } from "rxjs";
+import { lazyWeb3UtilsImport } from "src/app/helpers/import.helper";
 import { sleep } from "src/app/helpers/sleep.helper";
 import { Logger } from "src/app/logger";
 import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
@@ -12,8 +13,7 @@ import { ERC20CoinService } from "src/app/wallet/services/evm/erc20coin.service"
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
-import Web3 from "web3";
-import { Contract } from "web3-eth-contract";
+import type { Contract } from "web3-eth-contract";
 import { availableBridges } from "../config/bridges";
 import { bridgeableTokens } from "../config/bridgetokens";
 import { ChainInfo } from "../model/bridge";
@@ -352,17 +352,19 @@ export class EasyBridgeService {
 
     let paddedRecipientAddress = '0x' + accountAddress.substr(2).padStart(64, "0"); // 64 = 32 bytes * 2 chars per byte // 20 bytes to 32 bytes
 
+    const { sha3 } = await lazyWeb3UtilsImport();
+
     let returnValueAmountIndex: number; // Index of the received tokens amount in the event returned values
     if (sourceToken.isNative || sourceToken.isWrappedNative) {
       const mediatorAddress = sourceToken.isWrappedNative ? bridgeContext.reverseBridgeParamsOtherSide.contract : bridgeContext.bridgeParamsOtherSide.contract;
       sourceMediator = await this.getNativeSourceMediator(bridgeContext.destinationNetwork, mediatorAddress, accountAddress);
-      tokensBridgedEvent = Web3.utils.sha3("TokensBridged(address,uint256,bytes32)");
+      tokensBridgedEvent = sha3("TokensBridged(address,uint256,bytes32)");
       topics = [tokensBridgedEvent, paddedRecipientAddress];
       returnValueAmountIndex = 1;
     } else {
       const tokenDestinationMediator = this.foreignOrigin(bridgeContext.sourceToken.address, bridgeContext.sourceToken.chainId) ? bridgeContext.reverseBridgeParamsOtherSide.contract : bridgeContext.bridgeParamsOtherSide.contract;
       sourceMediator = await this.getTokenSourceMediator(bridgeContext.destinationNetwork, tokenDestinationMediator, accountAddress);
-      tokensBridgedEvent = Web3.utils.sha3("TokensBridged(address,address,uint256,bytes32)");
+      tokensBridgedEvent = sha3("TokensBridged(address,address,uint256,bytes32)");
       topics = [tokensBridgedEvent, null, paddedRecipientAddress];
       returnValueAmountIndex = 2;
     }

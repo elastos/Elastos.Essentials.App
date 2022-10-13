@@ -3,12 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { ComponentRef, Injectable, TemplateRef, ViewContainerRef } from '@angular/core';
 import moment from 'moment';
 import { Subject } from 'rxjs';
+import { unsafeRandomHex } from 'src/app/helpers/random.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
-import { randomHex } from 'web3-utils';
 import { IWidget } from '../base/iwidget';
 import { PluginConfig } from '../base/pluginconfig';
 import { WidgetContainerComponent } from '../base/widget-container/widget-container.component';
@@ -221,7 +221,7 @@ export class WidgetsService {
         let newWidgetState: WidgetState = Object.assign({}, widgetStateConfig);
 
         // Assign a unique ID
-        newWidgetState.id = randomHex(8);
+        newWidgetState.id = unsafeRandomHex(8);
 
         return newWidgetState;
     }

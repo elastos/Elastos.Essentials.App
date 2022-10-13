@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Mnemonic } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { lazyElastosWalletSDKImport } from 'src/app/helpers/import.helper';
 import { GlobalNetworksService, LRW_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { Config } from '../config/Config';
 
@@ -10,14 +10,14 @@ import { Config } from '../config/Config';
 })
 export class WalletPrefsService {
   public activeNetworkTemplate: string;
-  public mnemonicLang = Mnemonic.ENGLISH;
+  public mnemonicLang = "english"; // No direct dependency to the library //Mnemonic.ENGLISH;
   private subscription: Subscription = null;
   private languageSubscription: Subscription = null;
 
   constructor(
     private globalNetworksService: GlobalNetworksService,
     public translate: TranslateService,
-  ) {}
+  ) { }
 
   public async init() {
     this.activeNetworkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
@@ -27,9 +27,9 @@ export class WalletPrefsService {
       this.updateConfig(this.activeNetworkTemplate);
     })
 
-    this.setMnemonicLangByLanguage(this.translate.currentLang);
+    void this.setMnemonicLangByLanguage(this.translate.currentLang);
     this.languageSubscription = this.translate.onLangChange.subscribe(data => {
-      this.setMnemonicLangByLanguage(data.lang);
+      void this.setMnemonicLangByLanguage(data.lang);
     });
   }
 
@@ -41,7 +41,7 @@ export class WalletPrefsService {
         Config.ETHDID_CONTRACT_ADDRESS = Config.ETHDID_CONTRACT_ADDRESS_TESTNET;
         Config.ETHSC_DEPOSIT_ADDRESS = Config.ETHSC_DEPOSIT_ADDRESS_TESTNET;
         Config.ETHSC_WITHDRAW_ADDRESS = Config.ETHSC_WITHDRAW_ADDRESS_TESTNET;
-      break;
+        break;
       case LRW_TEMPLATE:
         Config.ETHDID_DEPOSIT_ADDRESS = Config.ETHDID_DEPOSIT_ADDRESS_LRW;
         Config.ETHDID_WITHDRAW_ADDRESS = Config.ETHDID_WITHDRAW_ADDRESS_LRW;
@@ -49,7 +49,7 @@ export class WalletPrefsService {
         // No ETHSC on LRW
         Config.ETHSC_DEPOSIT_ADDRESS = Config.ETHSC_DEPOSIT_ADDRESS_MAINNET;
         Config.ETHSC_WITHDRAW_ADDRESS = Config.ETHSC_WITHDRAW_ADDRESS_MAINNET;
-      break;
+        break;
       // case MAINNET_TEMPLATE:
       default:
         // MainNet config
@@ -58,11 +58,13 @@ export class WalletPrefsService {
         Config.ETHDID_CONTRACT_ADDRESS = Config.ETHDID_CONTRACT_ADDRESS_MAINNET;
         Config.ETHSC_DEPOSIT_ADDRESS = Config.ETHSC_DEPOSIT_ADDRESS_MAINNET;
         Config.ETHSC_WITHDRAW_ADDRESS = Config.ETHSC_WITHDRAW_ADDRESS_MAINNET;
-      break;
+        break;
     }
   }
 
-  private setMnemonicLangByLanguage(lang) {
+  private async setMnemonicLangByLanguage(lang) {
+    const { Mnemonic } = await lazyElastosWalletSDKImport();
+
     if (lang === 'zh') {
       this.setMnemonicLang(Mnemonic.CHINESE_SIMPLIFIED);
     } else if (lang === 'fr') {

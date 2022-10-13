@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Vault } from '@elastosfoundation/hive-js-sdk';
+import type { Vault } from '@elastosfoundation/hive-js-sdk';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { DID, DIDStore } from '@elastosfoundation/did-js-sdk';
 import { DID as ConnDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { TranslateService } from '@ngx-translate/core';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
+import { lazyElastosDIDSDKImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalPasswordService } from 'src/app/services/globa.password.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -129,6 +129,7 @@ export class AdminService {
   }
 
   public async getAdminDIDMnemonic(provider: ManagedProvider): Promise<string> {
+    const { DIDStore } = await lazyElastosDIDSDKImport();
     let didStore = await DIDStore.open(provider.did.storeId);
 
     let passwordInfo = await this.globalPasswordService.getPasswordInfo("vaultprovideradmindid-" + provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
@@ -145,6 +146,7 @@ export class AdminService {
       return false;
     }
 
+    const { DID } = await lazyElastosDIDSDKImport();
     let didDocument = await new DID(provider.did.didString).resolve(true);
     return (!!didDocument);
   }

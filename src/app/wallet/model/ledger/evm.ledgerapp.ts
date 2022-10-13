@@ -1,4 +1,4 @@
-import AppEth from "@ledgerhq/hw-app-eth";
+import type AppEth from "@ledgerhq/hw-app-eth";
 import Transport from "@ledgerhq/hw-transport";
 import { Logger } from "src/app/logger";
 import { LedgerAccountType } from "../ledger.types";
@@ -14,11 +14,19 @@ export class EVMLedgerApp extends LedgerApp<EVMAddressType> {
 
   constructor(protected transport: Transport) {
     super(transport);
+  }
 
-    this.ethApp = new AppEth(transport);
+  private async lazyInit() {
+    if (this.ethApp)
+      return;
+
+    const AppEth = (await import("@ledgerhq/hw-app-eth")).default;
+    this.ethApp = new AppEth(this.transport);
   }
 
   public async getAddresses(addressType: EVMAddressType, startIndex: number, count: number, internalAddresses: boolean): Promise<AnyLedgerAccount[]> {
+    await this.lazyInit();
+
     let addresses = [];
     for (let i = startIndex; i < startIndex + count; i++) {
       // const x = Math.floor(i / this.paths.length);

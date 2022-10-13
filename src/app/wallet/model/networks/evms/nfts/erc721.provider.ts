@@ -1,4 +1,4 @@
-import { Contract } from "web3-eth-contract";
+import type { Contract } from "web3-eth-contract";
 import { NFTAsset } from "./nftasset";
 
 export abstract class ERC721Provider {

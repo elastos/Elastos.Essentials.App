@@ -21,7 +21,7 @@
  */
 
 import { Injectable, NgZone } from '@angular/core';
-import { MasterWalletManager } from '@elastosfoundation/wallet-js-sdk';
+import type { MasterWalletManager } from '@elastosfoundation/wallet-js-sdk';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { mnemonicToSeedSync } from "bip39";

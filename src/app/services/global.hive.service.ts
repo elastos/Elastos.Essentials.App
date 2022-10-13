@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppContext, SubscriptionInfo, Vault, VaultInfo, VaultSubscription } from '@elastosfoundation/hive-js-sdk';
+import type { SubscriptionInfo, Vault, VaultInfo, VaultSubscription } from '@elastosfoundation/hive-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from "rxjs";
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { InternalHiveAuthHelper } from '../helpers/hive.authhelper';
+import { lazyElastosHiveSDKImport } from '../helpers/import.helper';
 import { rawImageToBase64DataUrl } from '../helpers/picture.helpers';
 import { runDelayed } from '../helpers/sleep.helper';
 import { IdentityEntry } from '../model/didsessions/identityentry';
@@ -395,6 +396,7 @@ export class GlobalHiveService extends GlobalService {
       let publicationStarted = await this.publishVaultProviderToIDChain(providerName, vaultAddress);
       if (publicationStarted) {
         // Force update the provider address.
+        const { AppContext } = await lazyElastosHiveSDKImport();
         await AppContext.getProviderAddress(this.didSessions.getSignedInIdentity().didString, null, true);
         void this.retrieveVaultStatus();
       }

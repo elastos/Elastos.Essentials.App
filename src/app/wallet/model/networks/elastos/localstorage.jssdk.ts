@@ -1,6 +1,6 @@
 import type { WalletStorage } from "@elastosfoundation/wallet-js-sdk";
-import { LocalStoreInfo } from "@elastosfoundation/wallet-js-sdk/typings/persistence/LocalStore";
-import { JSONObject } from "@elastosfoundation/wallet-js-sdk/typings/types";
+import type { LocalStoreInfo } from "@elastosfoundation/wallet-js-sdk/typings/persistence/LocalStore";
+import type { JSONObject } from "@elastosfoundation/wallet-js-sdk/typings/types";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { NetworkTemplateStore } from "src/app/services/stores/networktemplate.store";
 
@@ -16,12 +16,12 @@ export class JSSDKLocalStorage implements WalletStorage {
 
   async removeStore(masterWalletID: string): Promise<void> {
     let storeIDs = await this.getMasterWalletIDs();
-    let index = storeIDs.findIndex( id => id == masterWalletID)
+    let index = storeIDs.findIndex(id => id == masterWalletID)
     if (index !== -1) {
-        storeIDs.splice(index);
-        await this.saveMasterWalletIDs(storeIDs);
+      storeIDs.splice(index);
+      await this.saveMasterWalletIDs(storeIDs);
     }
-    return GlobalStorageService.instance.deleteSetting(this.signedInDID,  NetworkTemplateStore.networkTemplate, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID);
+    return GlobalStorageService.instance.deleteSetting(this.signedInDID, NetworkTemplateStore.networkTemplate, "wallet", "elastoswalletjssdkstorage-store-" + masterWalletID);
   }
 
   public async saveStore(masterWalletID: string, j: JSONObject): Promise<void> {

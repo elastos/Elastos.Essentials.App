@@ -1,5 +1,5 @@
-import { ENS } from '@ensdomains/ensjs';
-import { ethers } from 'ethers';
+import type { ENS } from '@ensdomains/ensjs';
+import { lazyEthersImport } from 'src/app/helpers/import.helper';
 import { Logger } from "src/app/logger";
 import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { EthereumAPI, EthereumAPIType } from '../../networks/ethereum/network/ethereum.api';
@@ -14,11 +14,17 @@ export class ENSResolver extends Resolver {
         super();
     }
 
-    private async initENS() {
+    private async lazyInitENS() {
+        if (this.ENSInstance)
+            return;
+
+        const { providers } = await lazyEthersImport();
+
         // ENS is deployed on the Ethereum main network and on several test networks.
         let providerUrl = EthereumAPI.getApiUrl(EthereumAPIType.RPC, 'mainnet');
-        const provider = new ethers.providers.JsonRpcProvider(providerUrl)
+        const provider = new providers.JsonRpcProvider(providerUrl)
 
+        const ENS = (await import('@ensdomains/ensjs')).ENS;
         this.ENSInstance = new ENS()
         try {
             await this.ENSInstance.setProvider(provider)
@@ -36,9 +42,7 @@ export class ENSResolver extends Resolver {
 
         Logger.log('wallet', "Searching name " + name + " on ENS...");
 
-        if (!this.ENSInstance) {
-            await this.initENS();
-        }
+        await this.lazyInitENS();
 
         try {
             let result = await this.ENSInstance.getProfile(name, {

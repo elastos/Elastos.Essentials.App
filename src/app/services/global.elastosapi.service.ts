@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { AppContext, DIDResolverAlreadySetupException } from '@elastosfoundation/hive-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { lazyElastosHiveSDKImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
 import { IdentityEntry } from '../model/didsessions/identityentry';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
@@ -336,15 +336,15 @@ export class GlobalElastosAPIService extends GlobalService {
         Logger.log("elastosapi", "Best provider found:", bestProvider);
 
         if (bestProvider) {
-          // Use this provider
-          this.activeProvider.next(bestProvider);
+            // Use this provider
+            this.activeProvider.next(bestProvider);
 
-          // Immediatelly let plugins know about this selected provider, because DID sessions
-          // need to set the right resolver urls even if no user is signed in.
-          await this.setResolverUrl();
-          return true;
+            // Immediatelly let plugins know about this selected provider, because DID sessions
+            // need to set the right resolver urls even if no user is signed in.
+            await this.setResolverUrl();
+            return true;
         } else {
-          return false;
+            return false;
         }
     }
 
@@ -424,6 +424,8 @@ export class GlobalElastosAPIService extends GlobalService {
                 reject(err);
             });
         });
+
+        const { AppContext, DIDResolverAlreadySetupException } = await lazyElastosHiveSDKImport();
 
         // Hive plugin
         try {

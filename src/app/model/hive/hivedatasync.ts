@@ -1,6 +1,7 @@
-import { JSONObject } from '@elastosfoundation/did-js-sdk';
-import { AlreadyExistsException, FindOptions, InsertOptions, UpdateOptions, Vault } from '@elastosfoundation/hive-js-sdk';
+import type { JSONObject } from '@elastosfoundation/did-js-sdk';
+import type { Vault } from '@elastosfoundation/hive-js-sdk';
 import Queue from 'promise-queue';
+import { lazyElastosHiveSDKImport } from 'src/app/helpers/import.helper';
 import { Logger } from "src/app/logger";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
@@ -287,6 +288,8 @@ export class HiveDataSync {
             data: localEntry.data
         };
 
+        const { UpdateOptions, InsertOptions } = await lazyElastosHiveSDKImport();
+
         // Check if the entry exists on the vault. TODO: we need an "upsert" method in the hive plugin...
         let vaultEntry = await this.getVaultDatabaseEntry(contextName, localEntry.key);
         if (vaultEntry) {
@@ -309,6 +312,8 @@ export class HiveDataSync {
     }
 
     private async getVaultDatabaseEntry(contextName: string, key: string): Promise<BackupRestoreEntry> {
+        const { FindOptions } = await lazyElastosHiveSDKImport();
+
         let collectionName = this.getCollectionNameForContext(contextName);
         this.logDebug("Fetching vault entry with key", key, "in collection", collectionName);
         let vaultEntry = (await this.userVault.getDatabaseService().findOne(collectionName, {
@@ -323,6 +328,8 @@ export class HiveDataSync {
     private async createContextCollection(contextName: string): Promise<void> {
         let collectionName = this.getCollectionNameForContext(contextName);
         this.logDebug("Making sure the collection " + collectionName + " exists");
+
+        const { AlreadyExistsException } = await lazyElastosHiveSDKImport();
 
         try {
             await this.userVault.getDatabaseService().createCollection(collectionName);
@@ -561,6 +568,8 @@ export class HiveDataSync {
             };
         }
 
+        const { FindOptions } = await lazyElastosHiveSDKImport();
+
         try {
             let entries = (await this.userVault.getDatabaseService().findMany(collectionName, filter, new FindOptions()) as any) as BackupRestoreEntry[];
 
@@ -583,6 +592,8 @@ export class HiveDataSync {
         this.logDebug("Fetching all vault entries for context", contextName);
 
         let collectionName = this.getCollectionNameForContext(contextName);
+
+        const { FindOptions } = await lazyElastosHiveSDKImport();
 
         try {
             let entries = (await this.userVault.getDatabaseService().findMany(collectionName, {}, new FindOptions()) as any) as BackupRestoreEntry[];

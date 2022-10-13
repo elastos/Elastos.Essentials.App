@@ -1,9 +1,9 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MasterWallet } from '@elastosfoundation/wallet-js-sdk';
 import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { lazyElastosWalletSDKImport } from 'src/app/helpers/import.helper';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { TitleBarForegroundMode } from '../../../../../components/titlebar/titlebar.types';
@@ -60,6 +60,8 @@ export class MnemonicCreatePage implements OnInit {
 
     async init() {
         this.masterWalletId = this.walletManager.createMasterWalletID();
+
+        const { MasterWallet } = await lazyElastosWalletSDKImport();
         this.mnemonicStr = await MasterWallet.generateMnemonic(this.prefs.getMnemonicLang());
         void this.native.hideLoading();
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/);

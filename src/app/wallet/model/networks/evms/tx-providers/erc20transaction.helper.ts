@@ -1,4 +1,4 @@
-import Web3 from "web3";
+import type Web3 from "web3";
 
 export class ERC20TransactionHelper {
   public static async fetchTokenTransactions(web3: Web3, accountAddress: string, contractAddress: string, fromBlock: number, toBlock: number): Promise<unknown> {

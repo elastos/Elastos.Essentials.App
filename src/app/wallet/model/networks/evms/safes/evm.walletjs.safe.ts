@@ -1,5 +1,5 @@
-import { json } from "@elastosfoundation/wallet-js-sdk/typings/types";
-import { defaultPath, HDNode } from "ethers/lib/utils";
+import type { json } from "@elastosfoundation/wallet-js-sdk/typings/types";
+import { lazyEthersImport } from "src/app/helpers/import.helper";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -89,14 +89,14 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
     await this.initJSWallet();
 
     if (this.account) {
-        let signdTransaction = await this.account.signTransaction(rawTransaction)
-        signedTx = signdTransaction.rawTransaction;
+      let signdTransaction = await this.account.signTransaction(rawTransaction)
+      signedTx = signdTransaction.rawTransaction;
     }
     return { signedTransaction: signedTx };
   }
 
   private async getWalletFromSeed(seed: string) {
-    const Wallet = (await import("ethers")).Wallet;
+    const { Wallet, HDNode, defaultPath } = await lazyEthersImport();
     return new Wallet(HDNode.fromSeed(Buffer.from(seed, "hex")).derivePath(defaultPath));
   }
 }

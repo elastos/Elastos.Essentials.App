@@ -1,8 +1,9 @@
-import { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, MainchainSubWallet as SDKMainchainSubWallet, MasterWallet as SDKMasterWallet, NormalProposalOwnerInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, WalletErrorException } from "@elastosfoundation/wallet-js-sdk";
-import { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
-import { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
+import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, MainchainSubWallet as SDKMainchainSubWallet, MasterWallet as SDKMasterWallet, NormalProposalOwnerInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo } from "@elastosfoundation/wallet-js-sdk";
+import type { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
+import type { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
 import moment from "moment";
 import { md5 } from "src/app/helpers/crypto/md5";
+import { lazyElastosWalletSDKImport } from "src/app/helpers/import.helper";
 import { Logger } from "src/app/logger";
 import { JSONObject } from "src/app/model/json";
 import { GlobalNavService } from "src/app/services/global.nav.service";
@@ -40,7 +41,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return super.initialize(networkWallet);
   }
 
-  public async  getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
+  public async getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
     return await <string[]>this.elaSubWallet.getAddresses(startIndex, count, internalAddresses);
   }
 
@@ -397,6 +398,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
       }
     }
     catch (e) {
+      const { WalletErrorException } = await lazyElastosWalletSDKImport();
       if (e instanceof WalletErrorException && e.code === 20046) { // AlreadySigned
         Logger.warn("wallet", "Transaction was already signed, returning the original transaction as 'signed'.", rawTx);
         return {
