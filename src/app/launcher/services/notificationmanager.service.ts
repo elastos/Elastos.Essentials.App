@@ -146,11 +146,7 @@ export class NotificationManagerService {
 
   getNotificationIcon(notification: LauncherNotification) {
     if (notification.type === LauncherNotificationType.SYSTEM) {
-      if (this.theme.darkMode) {
-        return "assets/launcher/icons/dark_mode/elalogo.svg";
-      } else {
-        return "assets/launcher/icons/elalogo.svg";
-      }
+      return "assets/shared/essentials-black-circle.svg";
     } else if (notification.type === LauncherNotificationType.CONTACT) {
       if (notification.contactAvatar && Object.keys(notification.contactAvatar).length !== 0) {
         return 'data:' + notification.contactAvatar.contentType + ';base64,' + notification.contactAvatar.base64ImageData;
@@ -160,11 +156,7 @@ export class NotificationManagerService {
     } else if (notification.type === LauncherNotificationType.NORMAL && notification.app) {
       return this.appManagerService.getAppIcon(notification.app);
     } else {
-      if (this.theme.darkMode) {
-        return "assets/launcher/icons/dark_mode/elalogo.svg";
-      } else {
-        return "assets/launcher/icons/elalogo.svg";
-      }
+      return "assets/shared/essentials-black-circle.svg";
     }
   }
 

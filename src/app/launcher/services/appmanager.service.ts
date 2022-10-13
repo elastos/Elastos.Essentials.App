@@ -239,11 +239,7 @@ export class AppmanagerService {
             case App.WALLET:
                 return 'assets/wallet/images/logo.png';
             default:
-                if (this.theme.darkMode) {
-                    return "assets/launcher/icons/dark_mode/elalogo.svg";
-                } else {
-                    return "assets/launcher/icons/elalogo.svg";
-                }
+                return "assets/shared/essentials-black-circle.svg";
         }
     }
 }

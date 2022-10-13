@@ -2,8 +2,7 @@
   <app-titlebar></app-titlebar>
   <ion-grid [class.dark-container]="theme.darkMode">
     <ion-card>
-      <img
-        [src]="!theme.darkMode ? '/assets/settings/icon/light_mode/elalogo.svg' : '/assets/settings/icon/dark_mode/elalogo.svg'">
+      <img src="assets/shared/essentials-black-circle.svg">
       <ion-card-title>{{ 'settings.version' | translate }} {{ version }}</ion-card-title>
 
       <div class="version-check" *ngIf="checkingVersion">

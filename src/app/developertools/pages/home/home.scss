@@ -1,7 +1,6 @@
 @import "src/app/developertools/root.scss";
 
 .container {
-  min-height: 100%;
   padding: 20px 15px;
   padding-bottom: 15%;
 
@@ -24,4 +23,8 @@
       text-transform: initial;
     }
   }
+}
+
+ebutton {
+  width: 90%;
 }

@@ -1,2 +1,13 @@
 @import "src/app/settings/root.scss";
 @import "../../shared.scss";
+
+.container {
+  ion-row {
+    .right-col {
+      ion-icon {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
