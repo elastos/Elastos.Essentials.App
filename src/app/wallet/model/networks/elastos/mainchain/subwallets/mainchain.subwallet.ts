@@ -681,25 +681,30 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
      *
      * @param amountSELA SELA
      */
-    public async getAvailableUtxo(amountSELA: number): Promise<AvalaibleUtxos> {
+    public async getAvailableUtxo(amountSELA: number, address = null): Promise<AvalaibleUtxos> {
         let utxoArray: Utxo[] = null;
         if (this.id === StandardCoinName.ELA) {
-            let addressesHasBalance = [];
-            for (let i = 0; i < this.addressWithBalanceArray.length; i++) {
-                addressesHasBalance.push(this.addressWithBalanceArray[i].address);
-            }
-            let votingUtxoArray = await this.getVotingUtxoByRPC(addressesHasBalance);
-            if ((amountSELA === -1) || (!this.balance.gt(amountSELA + this.votingAmountSELA))) {
-                // TODO: use getUtxosByAmount
-                utxoArray = await this.getAllUtxoByType(UtxoType.Mixed, addressesHasBalance);
-                // TODO: Notify user to vote?
+            if (address) { // for createStakeTransaction. Only use the utxos of the first external address.
+                let amountELA = amountSELA / Config.SELA
+                utxoArray = await this.getUtxosByAmount(address, amountELA.toString(), UtxoType.Normal);
             } else {
-                let addressList = this.getAddressListByAmount(amountSELA.toString(), votingUtxoArray);
-                if (addressList.length == 1) {
-                    let amountELA = amountSELA / Config.SELA
-                    utxoArray = await this.getUtxosByAmount(addressList[0], amountELA.toString(), UtxoType.Normal);
+                let addressesHasBalance = [];
+                for (let i = 0; i < this.addressWithBalanceArray.length; i++) {
+                    addressesHasBalance.push(this.addressWithBalanceArray[i].address);
+                }
+                let votingUtxoArray = await this.getVotingUtxoByRPC(addressesHasBalance);
+                if ((amountSELA === -1) || (!this.balance.gt(amountSELA + this.votingAmountSELA))) {
+                    // TODO: use getUtxosByAmount
+                    utxoArray = await this.getAllUtxoByType(UtxoType.Mixed, addressesHasBalance);
+                    // TODO: Notify user to vote?
                 } else {
-                    utxoArray = await this.getAllUtxoByType(UtxoType.Normal, addressesHasBalance);
+                    let addressList = this.getAddressListByAmount(amountSELA.toString(), votingUtxoArray);
+                    if (addressList.length == 1) {
+                        let amountELA = amountSELA / Config.SELA
+                        utxoArray = await this.getUtxosByAmount(addressList[0], amountELA.toString(), UtxoType.Normal);
+                    } else {
+                        utxoArray = await this.getAllUtxoByType(UtxoType.Normal, addressesHasBalance);
+                    }
                 }
             }
         } else {
@@ -1617,8 +1622,22 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     //Dpos 2.0
-    public createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, memo = ""): EncodedTx {
-        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createStakeTransaction(inputs, payload, lockAddress, amount, '10000', memo);
+    // amount: sela
+    public async createStakeTransaction(payload: PayloadStakeInfo, amount: number, memo = ""): Promise<EncodedTx> {
+        // Use the first external address.
+        let firstExternalAddress = await this.getCurrentReceiverAddress();
+
+        let au = await this.getAvailableUtxo(amount, firstExternalAddress);
+        if (!au.utxo) return;
+
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createStakeTransaction(
+            au.utxo,
+            payload,
+            Config.ELA_STAKED_LOCK_ADDRESS,
+            amount.toString(),
+            '10000',
+            memo
+        );
     }
 
     public async createDPoSV2VoteTransaction(payload: VotingInfo, memo = ""): Promise<EncodedTx> {
