@@ -176,10 +176,6 @@ export class WalletImportPage implements OnInit {
         this.native.toast_trans('wallet.import-text-word-sucess');
     }
 
-    goToAdvancedImport() {
-        this.native.go('/wallet/wallet-advanced-import');
-    }
-
     ionSlideDidChange() {
         void this.zone.run(async () => {
             this.slideIndex = await this.slider.getActiveIndex();

@@ -616,14 +616,6 @@ export const fr = {
         "keystore-password-validator-min-length": "Le mot de passe doit être d\'au moins 8 caractères",
 
         /********************************
-        * Advanced Mnemonic Import Page *
-        *********************************/
-        'advanced-import': 'Saisie rapide du mnémonique',
-        'advanced-import-intro': 'Vous pouvez coller vos 12 mots de mnémonique sur une seule ligne ici.',
-        'advanced-import-msg': '* Espace requis entre chaque mot',
-        'paste-mnemonic': 'Coller ou saisir les 12 mots du mnémonique',
-
-        /********************************
         * Import Wallet by private key Page *
         *********************************/
         'import-wallet-by-privatekey-info': 'Clé privée: Seules les clés privées des portefeuilles EVM (type Ethereum) sont supportées.',

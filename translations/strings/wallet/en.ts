@@ -617,14 +617,6 @@ export const en = {
         "keystore-password-validator-min-length": "The password must be at least 8 characters",
 
         /********************************
-        * Advanced Mnemonic Import Page *
-        *********************************/
-        'advanced-import': 'Fast mnemonic input',
-        'advanced-import-intro': 'You can paste and enter your 12 mnemonic phrases in one line.',
-        'advanced-import-msg': '* Spaces are required between words',
-        'paste-mnemonic': 'Paste or Enter 12 Mnemonics',
-
-        /********************************
         * Import Wallet by private key Page *
         *********************************/
         'import-wallet-by-privatekey-info': 'Private key: Only EVM compatible wallet private keys are supported',

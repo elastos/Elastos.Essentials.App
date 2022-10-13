@@ -30,7 +30,6 @@ const routes: Routes = [
     { path: 'wallet-home', loadChildren: () => import('./pages/wallet/wallet-home/module').then(m => m.WalletHomeModule) },
     { path: 'wallet-create', loadChildren: () => import('./pages/wallet/wallet-create/module').then(m => m.WalletCreateModule) },
     { path: 'wallet-import', loadChildren: () => import('./pages/wallet/wallet-import/module').then(m => m.WalletImportModule) },
-    { path: 'wallet-advanced-import', loadChildren: () => import('./pages/wallet/wallet-advanced-import/module').then(m => m.WalletAdvancedImportModule) },
     { path: 'wallet-import-privatekey', loadChildren: () => import('./pages/wallet/wallet-import-privatekey/module').then(m => m.WalletImportByPrivateKeyModule) },
     { path: 'wallet-keystore-export', loadChildren: () => import('./pages/wallet/wallet-keystore-export/module').then(m => m.KeystoreExportModule) },
     { path: 'wallet-manager', loadChildren: () => import('./pages/wallet/wallet-manager/module').then(m => m.WalletManagerModule) },

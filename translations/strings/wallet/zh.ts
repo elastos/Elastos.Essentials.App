@@ -616,14 +616,6 @@ export const zh = {
         "keystore-password-validator-min-length": "密码最少8位",
 
         /********************************
-        * Advanced Mnemonic Import Page *
-        *********************************/
-        'advanced-import': '快速输入助记词',
-        'advanced-import-intro': '您可以直接粘贴或输入您的12个助记词',
-        'advanced-import-msg': '* 助记词之间需要空格',
-        'paste-mnemonic': '粘贴或输入12个助记词',
-
-        /********************************
         * Import Wallet by private key Page *
         *********************************/
         'import-wallet-by-privatekey-info': '私钥:只支持兼容 EVM 的钱包私钥',
