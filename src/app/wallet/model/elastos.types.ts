@@ -57,3 +57,33 @@ export type VoteContent = {
     Type: VoteType,
     Candidates: Candidates,
 };
+
+
+// dpos 2.0
+export type VoteDetail = {
+    candidates: string,
+    votes: string,
+    locktime: number,
+};
+
+export type DposV2VoteInfo = {
+    StakeAddress: string,
+    TransactionHash: string,
+    BlockHeight: number,
+    PayloadVersion: number,
+    VoteType: number,
+    Info: VoteDetail[]
+};
+
+export type StakeInfo = {
+    stakeaddress: string,
+    totalvotesright: string,
+    usedvotesinfo: {
+        useddposvotes: VoteDetail[],
+        usedcrvotes: VoteDetail[],
+        usedcrcproposalvotes: VoteDetail[],
+        usdedcrimpeachmentvotes: VoteDetail[],
+        useddposv2votes: DposV2VoteInfo[],
+    },
+    remainvoteright: string[],
+};

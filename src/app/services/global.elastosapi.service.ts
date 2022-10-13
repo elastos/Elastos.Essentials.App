@@ -9,6 +9,7 @@ import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProp
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
 import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model';
 import { StandardCoinName } from '../wallet/model/coin';
+import { StakeInfo } from '../wallet/model/elastos.types';
 import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/networks/evms/evm.types';
 import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/tx-providers/transaction.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
@@ -390,7 +391,7 @@ export class GlobalElastosAPIService extends GlobalService {
                 resolve();
             } catch (e) {
                 Logger.warn("elastosapi", "Auto detect api call to " + testApiUrl + " failed with error:", e);
-                // Resolve later, to let othe rproviders answer faster
+                // Resolve later, to let othe providers answer faster
                 setTimeout(() => {
                     resolve();
                 }, 30000); // 30s
@@ -692,6 +693,27 @@ export class GlobalElastosAPIService extends GlobalService {
             return dposNodes;
         } catch (e) {
             Logger.warn("elastosapi", "fetchDposNodes exception", e);
+        }
+        return null;
+    }
+
+    // dpos 2.0
+    public async getVoteRights(stakeAddresses: string): Promise<StakeInfo> {
+        Logger.log('elastosapi', 'Get Vote Rights..');
+        const param = {
+            method: 'getvoterights',
+            params: {
+                stakeaddresses: stakeAddresses
+            },
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+
+        try {
+            const dposNodes = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return dposNodes;
+        } catch (e) {
+            Logger.warn("elastosapi", "getVoteRights exception", e);
         }
         return null;
     }

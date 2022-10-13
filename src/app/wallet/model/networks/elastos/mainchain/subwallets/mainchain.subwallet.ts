@@ -1621,8 +1621,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createStakeTransaction(inputs, payload, lockAddress, amount, '10000', memo);
     }
 
-    public createDPoSV2VoteTransaction(inputs: UTXOInput[], payload: VotingInfo, memo = ""): EncodedTx {
-        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2VoteTransaction(inputs, payload, '10000', memo);
+    public async createDPoSV2VoteTransaction(payload: VotingInfo, memo = ""): Promise<EncodedTx> {
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
+
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2VoteTransaction(au.utxo, payload, '10000', memo);
     }
 
     public getDPoSV2ClaimRewardDigest(payload: DPoSV2ClaimRewardInfo): string {
