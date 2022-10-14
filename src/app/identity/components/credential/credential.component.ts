@@ -74,9 +74,10 @@ export class CredentialComponent {
         if (credential) {
             this._credential = new VerifiableCredential(credential);
 
-            // Issuer icon placeholder while fetching the real icon
+            // ISSUER icon placeholder while fetching the real icon
             this.issuerIcon = this.theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg';
 
+            // Get ISSUER info
             void this.didDocumentsService.fetchOrAwaitDIDDocumentWithStatus(this._credential.pluginVerifiableCredential.getIssuer()).then(issuerDocumentStatus => {
                 if (issuerDocumentStatus.checked && issuerDocumentStatus.document) {
                     // Issuer document fetched and non null: store it and
@@ -120,7 +121,6 @@ export class CredentialComponent {
         });
         this._credential.prepareForDisplay();
         this.description = this._credential.getDisplayableDescription();
-
     }
 
     /**
@@ -151,6 +151,7 @@ export class CredentialComponent {
             image.src = "assets/identity/smallIcons/dark/finger-print.svg";
             this.iconElement.nativeElement.style.backgroundColor = "#00000080";
         };
+
         image.src = iconSrc;
     }
 

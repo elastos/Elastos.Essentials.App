@@ -540,7 +540,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let findTx = false;
         try {
             do {
-                console.log("mainchain subwallet checkAddresses ", startIndex);
                 findTx = false;
                 let addressArray = this.networkWallet.safe.getAddresses(startIndex, checkCount, internal, AddressUsage.DEFAULT);
                 const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);

@@ -1,7 +1,7 @@
 import { Avatar } from 'src/app/contacts/models/avatar';
 import { CredentialAvatar } from 'src/app/didsessions/model/did.model';
 import { evalObjectFieldPath } from 'src/app/helpers/objects';
-import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
+import { rawImageToBase64DataUrl } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
 import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
@@ -96,8 +96,8 @@ export class VerifiableCredential {
                             this.iconSrc = base64DataUrl;
                         }
                         else {
-                            Logger.log("identity", "Got empty picture data from hive");
-                            this.iconSrc = transparentPixelIconDataUrl();
+                            Logger.log("identity", "Got empty picture data from the hive cache service (real picture may come later)");
+                            this.iconSrc = null;
                         }
                         this.loadIconWithFallback();
                     });
@@ -136,6 +136,10 @@ export class VerifiableCredential {
      * a placeholder.
      */
     private loadIconWithFallback() {
+        if (this.iconSrc == null) {
+            this.iconSrc = "assets/identity/smallIcons/dark/finger-print.svg";
+        }
+
         let image = new Image();
         image.crossOrigin = 'anonymous';
 
