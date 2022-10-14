@@ -2,7 +2,7 @@
     <app-titlebar></app-titlebar>
     <ion-grid class="container">
         <ion-row class="card-row">
-            <img class="blurred-network-logo" *ngIf="networkWallet.network.logo" [src]="networkWallet.network.logo" />
+            <img class="blurred-network-logo" *ngIf="networkWallet?.network.logo" [src]="networkWallet.network.logo" />
             <ion-row class="card-label-row">
                 <ion-row class="top-row">
                     <ion-col size="12" class="left-col">
