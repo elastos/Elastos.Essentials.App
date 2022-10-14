@@ -15,8 +15,13 @@ export interface ElastosMainChainSafe {
   getOwnerAddress(): string;
   getOwnerDepositAddress(): string;
   getOwnerStakeAddress(): string;
+  getCodeofOwnerStakeAddress(): string;
   getOwnerPublicKey(): string;
   getPublicKeys(start: number, count: number, internal: boolean): string[] | PublickeysInfo;
+
+  signDigest(address: string, digest: string, passwd: string): Promise<string>;
+  verifyDigest(publicKey: string, digest: string, signature: string): boolean;
+
   createPaymentTransaction(inputs: UTXOInput[], outputs: Outputs[], fee: string, memo: string): Promise<any>;
   createVoteTransaction(inputs: UTXOInput[], voteContent: VoteContentInfo[], fee: string, memo: string): Promise<any>;
   createDepositTransaction(inputs: UTXOInput[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string): Promise<any>;
@@ -95,5 +100,4 @@ export interface ElastosMainChainSafe {
   createDPoSV2ClaimRewardTransaction(inputs: UTXOInput[], payload: DPoSV2ClaimRewardInfo, fee: string, memo: string): EncodedTx;
   unstakeDigest(payload: UnstakeInfo): string;
   createUnstakeTransaction(inputs: UTXOInput[], payload: UnstakeInfo, fee: string, memo: string): EncodedTx;
-
 }

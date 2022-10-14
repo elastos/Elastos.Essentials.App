@@ -450,12 +450,24 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     return (<MainchainSubWallet>this.sdkSubWallet).getOwnerStakeAddress();
   }
 
+  public getCodeofOwnerStakeAddress(): string {
+    return (<MainchainSubWallet>this.sdkSubWallet).getCodeofOwnerStakeAddress();
+  }
+
   public getOwnerPublicKey(): string {
     return (<MainchainSubWallet>this.sdkSubWallet).getOwnerPublicKey();
   }
 
   public getPublicKeys(start: number, count: number, internal: boolean): string[] | PublickeysInfo {
     return (<MainchainSubWallet>this.sdkSubWallet).getPublicKeys(start, count, internal);
+  }
+
+  public signDigest(address: string, digest: string, passwd: string): Promise<string> {
+    return (<MainchainSubWallet>this.sdkSubWallet).signDigest(address, digest, passwd);
+  }
+
+  public verifyDigest(publicKey: string, digest: string, signature: string): boolean {
+    return (<MainchainSubWallet>this.sdkSubWallet).verifyDigest(publicKey, digest, signature);
   }
 
   /**

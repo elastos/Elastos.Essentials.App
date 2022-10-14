@@ -60,11 +60,26 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return null;
   }
 
+  public getCodeofOwnerStakeAddress(): string {
+    // TODO: Do not support.
+    return null;
+  }
+
   public getOwnerPublicKey(): string {
     return null; // Not supported by multisig wallets.
   }
 
   public getPublicKeys(start: number, count: number, internal: boolean): string[] {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public signDigest(address: string, digest: string, passwd: string): Promise<string> {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public verifyDigest(publicKey: string, digest: string, signature: string): boolean {
     // TODO: Do not support.
     return null;
   }

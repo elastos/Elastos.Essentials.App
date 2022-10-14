@@ -903,12 +903,24 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerStakeAddress();
     }
 
+    public getCodeofOwnerStakeAddress(): string {
+        return (this.networkWallet.safe as any as ElastosMainChainSafe).getCodeofOwnerStakeAddress();
+    }
+
     public getOwnerPublicKey(): string {
         return (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerPublicKey();
     }
 
     public getPublicKeys(start: number, count: number, internal: boolean): string[] | PublickeysInfo {
         return (this.networkWallet.safe as any as ElastosMainChainSafe).getPublicKeys(start, count, internal);
+    }
+
+    public signDigest(address: string, digest: string, passwd: string): Promise<string> {
+        return(this.networkWallet.safe as any as ElastosMainChainSafe).signDigest(address, digest, passwd);
+    }
+
+    public verifyDigest(publicKey: string, digest: string, signature: string): boolean {
+        return (this.networkWallet.safe as any as ElastosMainChainSafe).verifyDigest(publicKey, digest, signature);
     }
 
     private async getBalanceByOwnerAddress(spendable = false) {
