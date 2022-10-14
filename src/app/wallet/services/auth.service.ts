@@ -61,8 +61,8 @@ export class AuthService {
                 if (!passwordInfo) {
                     // Master password is right, but no data for the requested key...
                     Logger.log('wallet', "Master password was right, but no password found for the requested key", key);
-
-                    resolve(null);
+                    // In case of: return undefined if the password is missing. so user can delete the useless wallet.
+                    resolve(undefined);
                 }
                 else {
                     // Master password was unlocked and found

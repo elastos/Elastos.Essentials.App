@@ -202,7 +202,8 @@ export class WalletSettingsPage implements OnInit {
     async onDelete() {
         try {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
-            if (payPassword) {
+            // In case of: The payPassword is undefined, if the password is missing.
+            if (payPassword || payPassword === undefined) {
                 void this.showDeletePrompt();
             }
         } catch (e) {

@@ -113,7 +113,9 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
         }
       } catch (err) {
         Logger.error('wallet', 'Wallet importWalletWithPrivateKey error:', err);
+        await this.walletManager.destroyMasterWallet(this.masterWalletId, false);
         await this.authService.deleteWalletPassword(this.masterWalletId);
+        this.native.toast_trans(err.message || err);
       }
       finally {
         await this.native.hideLoading();

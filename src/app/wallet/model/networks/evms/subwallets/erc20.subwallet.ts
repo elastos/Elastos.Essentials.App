@@ -157,9 +157,9 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return (addresses && addresses[0]) ? addresses[0] : null;
     }
 
-    public async getTokenAccountAddress(): Promise<string> {
+    public getTokenAccountAddress(): string {
         if (!this.tokenAddress) {
-            this.tokenAddress = (await this.getCurrentReceiverAddress()).toLowerCase();
+            this.tokenAddress = this.getCurrentReceiverAddress()?.toLowerCase();
         }
         return this.tokenAddress;
     }
@@ -199,7 +199,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
         if (this.tokenDecimals === null) {
             try {
-                const tokenAccountAddress = await this.getTokenAccountAddress();
+                const tokenAccountAddress = this.getTokenAccountAddress();
                 const contractAddress = this.coin.getContractAddress();
                 const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
                 this.tokenDecimals = await erc20Contract.methods.decimals().call();
@@ -284,7 +284,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     private async getERC20TransactionDirection(targetAddress: string): Promise<TransactionDirection> {
-        const address = await this.getTokenAccountAddress();
+        const address = this.getTokenAccountAddress();
         if (address === targetAddress.toLowerCase()) {
             return TransactionDirection.RECEIVED;
         } else {
@@ -314,7 +314,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         }
 
         try {
-            const tokenAccountAddress = await this.getTokenAccountAddress();
+            const tokenAccountAddress = this.getTokenAccountAddress();
             const contractAddress = this.coin.getContractAddress();
             const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
 
@@ -477,7 +477,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<any> {
         toAddress = this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
 
-        const tokenAccountAddress = await this.getTokenAccountAddress();
+        const tokenAccountAddress = this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.highPriorityWeb3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
         let gasPrice = gasPriceArg;
@@ -585,7 +585,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     private async getNonce() {
-        const address = await this.getTokenAccountAddress();
+        const address = this.getTokenAccountAddress();
         try {
             return GlobalEthereumRPCService.instance.getETHSCNonce(this.rpcApiUrl, address, this.networkWallet.network.key);
         }

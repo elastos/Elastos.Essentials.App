@@ -103,7 +103,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   public getAccountAddress(usage: (AddressUsage | string) = AddressUsage.EVM_CALL): string {
     if (!this.ethscAddress) {
-      this.ethscAddress = this.getCurrentReceiverAddress(usage).toLowerCase();
+      this.ethscAddress = this.getCurrentReceiverAddress(usage)?.toLowerCase();
     }
     return this.ethscAddress;
   }
