@@ -27,6 +27,7 @@ ion-content {
     ion-slides {
         margin: 0;
         width: 100%;
+        --ion-color-primary: #fffeff;
 
         ion-slide {
             width: 100%;
@@ -86,7 +87,7 @@ ion-content {
     .btn-container {
         margin-top: 50px;
 
-        ion-button {
+        ebutton {
             margin: 0 15px;
         }
     }

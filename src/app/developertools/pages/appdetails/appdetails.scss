@@ -16,6 +16,8 @@
   min-height: 100%;
   background: var(--essentials-box-color);
   padding: 10px;
+  display: flex;
+  flex-direction: column;
 
   p,
   h1,
@@ -138,6 +140,11 @@
   ebutton {
     margin-top: 30px;
     width: 100%;
+  }
+
+  ion-spinner {
+    margin-top: 30px;
+    align-self: center;
   }
 
   .up-to-date {

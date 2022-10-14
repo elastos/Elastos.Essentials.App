@@ -54,12 +54,8 @@
       </ion-row>
     </ion-list>
 
-    <ebutton (clicked)="createApp()" *ngIf="!creationInProgress" [title]="'developertools.create-app' | translate">
+    <ebutton (clicked)="createApp()" [spinning]="creationInProgress" [title]="'developertools.create-app' | translate">
     </ebutton>
-
-    <ion-button color="dark" (click)="createApp()" *ngIf="creationInProgress">
-      <ion-spinner></ion-spinner>
-    </ion-button>
   </ion-grid>
 
   <!-- App Created Screen -->

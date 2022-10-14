@@ -40,7 +40,7 @@ export class EButtonComponent implements OnInit {
   }
 
   public onClicked() {
-    if (!this.disabled)
+    if (!this.disabled && !this.spinning)
       this.clicked.emit();
   }
 

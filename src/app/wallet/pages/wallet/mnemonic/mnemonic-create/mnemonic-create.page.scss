@@ -1,10 +1,11 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
-ion-slides { 
+ion-slides {
     position: relative;
     min-height: 100%;
-    background-image: url('/assets/wallet/background/background.svg');
+    background-image: url("/assets/wallet/background/background.svg");
     object-fit: cover;
+    --ion-color-primary: var(--ion-text-color);
 
     ion-slide {
         display: flex;
@@ -21,9 +22,9 @@ ion-slides {
             text-align: center;
             color: #fdfeff;
         }
-    
+
         .btn-container {
-            margin-top: 75px;
+            margin-top: 0px;
         }
     }
 
@@ -32,10 +33,11 @@ ion-slides {
         padding: 30px 25px;
         margin-top: 75px;
 
-        h1, p {
+        h1,
+        p {
             padding: 0 25px;
         }
-    
+
         h1 {
             font-size: 38px;
             font-weight: 500;
@@ -48,27 +50,27 @@ ion-slides {
             width: 100%;
         }
     }
-    
+
     .mnemonic-container {
         justify-content: flex-start;
         padding: 10px 25px;
-       
+
         p {
             margin: 0;
             padding: 20px 25px 40px;
         }
 
-        .btn-container {
-            width: 95%;
+        .mnemonic-row {
+            ion-label {
+                color: #ffffff;
+            }
         }
     }
 }
 
-
-
 @media screen and (max-height: 670px) {
     ion-slides {
-        background-image: url('/assets/wallet/background/background.svg');
+        background-image: url("/assets/wallet/background/background.svg");
 
         .mnemonic-container {
             .mnemonic-row {
