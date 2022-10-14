@@ -50,14 +50,14 @@ export class ElastosSmartChainLedgerNetworkWallet extends ElastosLedgerEVMNetwor
     return;
   }
 
-  public async getAddresses(): Promise<WalletAddressInfo[]> {
+  public getAddresses(): WalletAddressInfo[] {
     let addresses = [];
 
     // No ETHSC in LRW.
     if (this.subWallets[StandardCoinName.ETHSC]) {
       addresses.push({
         title: this.subWallets[StandardCoinName.ETHSC].getFriendlyName(),
-        address: await this.subWallets[StandardCoinName.ETHSC].getCurrentReceiverAddress()
+        address: this.subWallets[StandardCoinName.ETHSC].getCurrentReceiverAddress()
       });
     }
     return addresses;

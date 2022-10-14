@@ -34,14 +34,14 @@ export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardEV
     return Promise.resolve();
   }
 
-  public async getAddresses(): Promise<WalletAddressInfo[]> {
+  public getAddresses(): WalletAddressInfo[] {
     let addresses = [];
 
     // No ETHDID in LRW.
     if (this.subWallets[StandardCoinName.ETHDID]) {
       addresses.push({
         title: this.subWallets[StandardCoinName.ETHDID].getFriendlyName(),
-        address: await this.subWallets[StandardCoinName.ETHDID].getCurrentReceiverAddress()
+        address: this.subWallets[StandardCoinName.ETHDID].getCurrentReceiverAddress()
       });
     }
 

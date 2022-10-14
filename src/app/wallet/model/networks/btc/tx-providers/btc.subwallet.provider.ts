@@ -50,7 +50,7 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
             }
             Logger.log('wallet', 'fetchTransactions page:', page);
 
-            let tokenAddress = await subWallet.getCurrentReceiverAddress();
+            let tokenAddress = subWallet.getCurrentReceiverAddress();
             let btcInfo = await GlobalBTCRPCService.instance.address(this.rpcApiUrl, tokenAddress, MAX_RESULTS_PER_FETCH, page);
             if (btcInfo) {
                 if (btcInfo.txids.length < MAX_RESULTS_PER_FETCH) {
@@ -83,7 +83,7 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
             if ((!tx) || tx.blockHeight == -1) {
                 let transaction = await subWallet.getTransactionDetails(txidList[i]);
                 if (transaction) {
-                    await this.updateTransactionInfo(subWallet, transaction);
+                    this.updateTransactionInfo(subWallet, transaction);
                     this.transactions.push(transaction);
                 }
             }
@@ -92,8 +92,8 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
         await this.saveTransactions(this.transactions);
     }
 
-    private async updateTransactionInfo(subWallet: BTCSubWallet, transaction: BTCTransaction) {
-        let tokenAddress = await subWallet.getCurrentReceiverAddress();
+    private updateTransactionInfo(subWallet: BTCSubWallet, transaction: BTCTransaction) {
+        let tokenAddress = subWallet.getCurrentReceiverAddress();
         let index = transaction.vin.findIndex(btcinobj => btcinobj.addresses.indexOf(tokenAddress) !== -1);
         let btcoutobjArray: BTCOutObj[] = [];
         if (index !== -1) {

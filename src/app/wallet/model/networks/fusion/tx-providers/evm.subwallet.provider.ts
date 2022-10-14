@@ -12,7 +12,7 @@ export class FusionEvmSubWalletProvider extends EtherscanEVMSubWalletProvider<An
   // NOTE: Currently fusion explorer api is quite weak our outdated. We are not able to easily get transactions
   // or maybe only the "FROM" transactions. To be tested more.
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    const accountAddress = await this.subWallet.getCurrentReceiverAddress();
+    const accountAddress = this.subWallet.getCurrentReceiverAddress();
 
     let page = 1;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list

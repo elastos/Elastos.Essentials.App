@@ -47,9 +47,9 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     }
   }
 
-  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
+  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
     if (this.elaAddress) {
-      return Promise.resolve([this.elaAddress]);
+      return [this.elaAddress];
     }
     else {
       return null;

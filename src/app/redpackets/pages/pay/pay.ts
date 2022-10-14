@@ -120,7 +120,7 @@ export class PayPage {
       // and:
       // - balance of native token > fee for one ERC20 transaction * 2 (to avoid gas price fluctuation issues)
 
-      let erc20SubWallet = await this.getERC20PaymentSubWallet();
+      let erc20SubWallet = this.getERC20PaymentSubWallet();
       if (!erc20SubWallet)
         return;
 
@@ -241,9 +241,9 @@ export class PayPage {
     return true;
   }
 
-  private async getNativePaymentSubWallet(): Promise<AnyMainCoinEVMSubWallet> {
+  private getNativePaymentSubWallet(): AnyMainCoinEVMSubWallet {
     // Now that we are on the right network, find the network wallet that has the right address
-    let evmSubWallet = await this.walletService.findStandardEVMSubWalletByAddress(this.packet.creatorAddress);
+    let evmSubWallet = this.walletService.findStandardEVMSubWalletByAddress(this.packet.creatorAddress);
     if (!evmSubWallet) {
       Logger.log("redpackets", "Can't find the wallet with which the packet was created. Unable to pay");
       return null;
@@ -251,8 +251,8 @@ export class PayPage {
     return evmSubWallet;
   }
 
-  private async getERC20PaymentSubWallet(): Promise<ERC20SubWallet> {
-    let erc20SubWallet = await this.walletService.findERC20SubWalletByContractAddress(this.packet.erc20ContractAddress, this.packet.creatorAddress);
+  private getERC20PaymentSubWallet(): ERC20SubWallet {
+    let erc20SubWallet = this.walletService.findERC20SubWalletByContractAddress(this.packet.erc20ContractAddress, this.packet.creatorAddress);
     if (!erc20SubWallet) {
       Logger.error("redpackets", "Can't find the ERC20 subwallet with which the packet was created. Unable to pay");
       return null;
@@ -270,7 +270,7 @@ export class PayPage {
     if (!await this.checkRightNetwork())
       return;
 
-    let evmSubWallet = await this.getNativePaymentSubWallet();
+    let evmSubWallet = this.getNativePaymentSubWallet();
     if (!evmSubWallet)
       return;
 
@@ -357,11 +357,11 @@ export class PayPage {
       return;
 
     // Now that we are on the right network, find the token subwallet
-    let erc20SubWallet = await this.getERC20PaymentSubWallet();
+    let erc20SubWallet = this.getERC20PaymentSubWallet();
     if (!erc20SubWallet)
       return;
 
-    let evmSubWallet = await this.getNativePaymentSubWallet();
+    let evmSubWallet = this.getNativePaymentSubWallet();
     if (!evmSubWallet)
       return;
 

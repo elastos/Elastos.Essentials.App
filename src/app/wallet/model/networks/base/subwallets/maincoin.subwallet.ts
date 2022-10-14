@@ -40,8 +40,8 @@ export abstract class MainCoinSubWallet<TransactionType extends GenericTransacti
      * @deprecated TODO: use getAddress(), and use createAddress() only for multi address wallets to really start using a NEW address
      */
     // TODO: move to network wallet then to the "safe"
-    public async createAddress(): Promise<string> {
-      let addresses = await this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.DEFAULT);
+    public createAddress(): string {
+      let addresses = this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.DEFAULT);
       return (addresses && addresses[0]) ? addresses[0] : null;
     }
 

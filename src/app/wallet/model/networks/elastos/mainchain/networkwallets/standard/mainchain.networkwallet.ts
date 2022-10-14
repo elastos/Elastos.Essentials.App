@@ -39,14 +39,14 @@ export class ElastosMainChainStandardNetworkWallet extends ElastosStandardNetwor
     }
   }
 
-  public async getAddresses(): Promise<WalletAddressInfo[]> {
+  public getAddresses(): WalletAddressInfo[] {
     let addresses = [];
 
     // No ELA when imported by private key.
     if (this.subWallets[StandardCoinName.ELA]) {
       addresses.push({
         title: this.subWallets[StandardCoinName.ELA].getFriendlyName(),
-        address: await this.subWallets[StandardCoinName.ELA].getCurrentReceiverAddress()
+        address: this.subWallets[StandardCoinName.ELA].getCurrentReceiverAddress()
       });
     }
 

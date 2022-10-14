@@ -63,7 +63,7 @@ export class CoinAddressPage {
     }
 
     async getAddressList(infiniteScroll: any) {
-        const allAddresses = await this.networkWallet.safe.getAddresses(this.curCount, AddressCount, false, AddressUsage.DEFAULT);
+        const allAddresses = this.networkWallet.safe.getAddresses(this.curCount, AddressCount, false, AddressUsage.DEFAULT);
         let disabled = true;
         if (allAddresses) {
             if (this.curCount !== 0) {

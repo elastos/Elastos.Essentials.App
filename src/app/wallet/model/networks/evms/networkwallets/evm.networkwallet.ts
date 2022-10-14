@@ -35,11 +35,11 @@ export abstract class EVMNetworkWallet<MasterWalletType extends MasterWallet, Wa
         return new EVMTransactionProvider(this);
     } */
 
-    public async getAddresses(): Promise<WalletAddressInfo[]> {
+    public getAddresses(): WalletAddressInfo[] {
         return [
             {
                 title: this.mainTokenSubWallet.getFriendlyName(),
-                address: await this.mainTokenSubWallet.getAccountAddress()
+                address: this.mainTokenSubWallet.getAccountAddress()
             }
         ];
     }

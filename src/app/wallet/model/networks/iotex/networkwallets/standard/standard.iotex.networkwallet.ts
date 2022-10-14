@@ -44,15 +44,15 @@ export class StandardIoTeXNetworkWallet<WalletNetworkOptionsType extends WalletN
         return new IoTeXChainTransactionProvider(this);
     }
 
-    public async getAddresses(): Promise<WalletAddressInfo[]> {
+    public getAddresses(): WalletAddressInfo[] {
         return [
             {
                 title: "EVM address",
-                address: await this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.EVM_CALL)
+                address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.EVM_CALL)
             },
             {
                 title: "IoTeX address",
-                address: await this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.IOTEX)
+                address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.IOTEX)
             }
         ];
     }

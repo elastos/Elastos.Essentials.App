@@ -17,11 +17,11 @@ export abstract class EVMTransactionBuilder extends TransactionBuilder {
     return gasPrice;
   }
 
-  public async getWalletAddress(): Promise<string> {
-    return (await this.networkWallet.getAddresses())[0].address;
+  public getWalletAddress(): string {
+    return this.networkWallet.getAddresses()[0].address;
   }
 
   public async getNonce(): Promise<number> {
-    return EVMService.instance.getNonce(this.networkWallet.network, await this.getWalletAddress());
+    return EVMService.instance.getNonce(this.networkWallet.network, this.getWalletAddress());
   }
 }

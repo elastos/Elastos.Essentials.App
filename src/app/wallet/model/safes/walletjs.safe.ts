@@ -29,8 +29,8 @@ export class WalletJSSafe extends Safe {
     await super.initialize(networkWallet);
   }
 
-  public async getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
-    return await <string[]>this.sdkSubWallet.getAddresses(
+  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
+    return <string[]>this.sdkSubWallet.getAddresses(
       startIndex,
       count,
       internalAddresses

@@ -36,7 +36,7 @@ export class ElastosMainChainStandardMultiSigNetworkWallet extends StandardMulti
     }
   }
 
-  public async getAddresses(): Promise<WalletAddressInfo[]> {
+  public getAddresses(): WalletAddressInfo[] {
     let addresses = [];
 
     /*  // No ELA when imported by private key.
@@ -47,7 +47,7 @@ export class ElastosMainChainStandardMultiSigNetworkWallet extends StandardMulti
        });
      } */
 
-    return await addresses;
+    return addresses;
   }
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {

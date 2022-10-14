@@ -43,9 +43,9 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
     }
   }
 
-  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
+  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
     if (this.address) {
-      return Promise.resolve([this.address]);
+      return [this.address];
     }
     else {
       throw new Error("BTCSafe: No btc address.");

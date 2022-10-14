@@ -202,8 +202,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
      * Returns the first payment address for this ELA wallet. This should be a constant address
      * for a given mnemonic.
      */
-    public async getRootPaymentAddress(): Promise<string> {
-        let allAddresses = await this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.DEFAULT);
+    public getRootPaymentAddress(): string {
+        let allAddresses = this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.DEFAULT);
         if (!allAddresses || allAddresses.length == 0)
             return null;
 
@@ -472,7 +472,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         let toAmount = totalAmount - 10000;// 10000: fee
 
-        let toAddress = await this.getCurrentReceiverAddress();
+        let toAddress = this.getCurrentReceiverAddress();
 
         Logger.log('wallet', 'createConsolidateTransaction toAmount:', toAmount);
 
@@ -542,7 +542,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             do {
                 console.log("mainchain subwallet checkAddresses ", startIndex);
                 findTx = false;
-                let addressArray = await this.networkWallet.safe.getAddresses(startIndex, checkCount, internal, AddressUsage.DEFAULT);
+                let addressArray = this.networkWallet.safe.getAddresses(startIndex, checkCount, internal, AddressUsage.DEFAULT);
                 const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
                 if (txRawList && txRawList.length > 0) {
                     findTx = true;
@@ -889,9 +889,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         // Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
     }
 
-    public async getOwnerAddress(): Promise<string> {
+    public getOwnerAddress(): string {
         if (!this.ownerAddress) {
-            this.ownerAddress = await (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerAddress();
+            this.ownerAddress = (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerAddress();
         }
         return this.ownerAddress;
     }
@@ -915,7 +915,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     private async getBalanceByOwnerAddress(spendable = false) {
         if (this.id != StandardCoinName.ELA) return;
 
-        let ownerAddress = await this.getOwnerAddress();
+        let ownerAddress = this.getOwnerAddress();
         if (!ownerAddress) return null;
 
         let addressArray = [ownerAddress];
@@ -948,7 +948,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 }
             }
 
-            addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress, AddressUsage.DEFAULT);
+            addressArray = this.networkWallet.safe.getAddresses(startIndex, count, internalAddress, AddressUsage.DEFAULT);
             startIndex += addressArray.length;
 
             try {
@@ -1188,12 +1188,12 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 }
             }
 
-            addressArray = await this.networkWallet.safe.getAddresses(startIndex, count, internalAddress, AddressUsage.DEFAULT);
+            addressArray = this.networkWallet.safe.getAddresses(startIndex, count, internalAddress, AddressUsage.DEFAULT);
 
             // The ownerAddress is different with the external address even in single address wallet.
             if ((startIndex === 0) && !internalAddress && (this.id === StandardCoinName.ELA)) {
                 // OwnerAddress: for register dpos node, CRC.
-                const ownerAddress = await this.getOwnerAddress();
+                const ownerAddress = this.getOwnerAddress();
                 if (ownerAddress) addressArray.push(ownerAddress);
             }
 
@@ -1625,7 +1625,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     // amount: sela
     public async createStakeTransaction(payload: PayloadStakeInfo, amount: number, memo = ""): Promise<EncodedTx> {
         // Use the first external address.
-        let firstExternalAddress = await this.getCurrentReceiverAddress();
+        let firstExternalAddress = this.getCurrentReceiverAddress();
 
         let au = await this.getAvailableUtxo(amount, firstExternalAddress);
         if (!au.utxo) return;

@@ -175,7 +175,7 @@ export class ActiveWalletWidget implements OnInit, OnDestroy {
     // Save wallet addresses locally for easy copy
     this.activeWalletAddresses = {};
     for (let networkWallet of this.networkWalletsList) {
-      this.activeWalletAddresses[networkWallet.id] = await networkWallet.getAddresses();
+      this.activeWalletAddresses[networkWallet.id] = networkWallet.getAddresses();
     }
 
     // Background gradient color

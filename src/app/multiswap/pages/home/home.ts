@@ -216,7 +216,7 @@ export class HomePage {
       return;
 
     try {
-      let walletAddress = await this.activeTransfer.getWalletAddress();
+      let walletAddress = this.activeTransfer.getWalletAddress();
       let sourceNetwork = <EVMNetwork>this.networkService.getNetworkByChainId(this.activeTransfer.sourceToken.chainId);
 
       let chainBalance: BigNumber;

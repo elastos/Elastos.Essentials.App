@@ -324,7 +324,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         });
     }
 
-    public abstract getAddresses(): Promise<WalletAddressInfo[]>;
+    public abstract getAddresses(): WalletAddressInfo[];
 
     /**
      * Returns wallet's extended public key (xpub...) string.
@@ -591,7 +591,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
         let observable = subject.asObservable();
 
         void (async () => {
-            let accountAddress = await this.getMainEvmSubWallet().getCurrentReceiverAddress();
+            let accountAddress = this.getMainEvmSubWallet().getCurrentReceiverAddress();
             if (nft.type == NFTType.ERC721) {
                 ERC721Service.instance.refreshAllAssets(<EVMNetwork>this.network, accountAddress, nft.contractAddress, nft.assetIDs).subscribe({
                     next: event => {

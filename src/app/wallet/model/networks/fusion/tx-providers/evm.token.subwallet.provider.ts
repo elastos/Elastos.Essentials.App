@@ -21,7 +21,7 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
   // NOTE: Currently fusion explorer api is quite weak our outdated. We are not able to easily get transactions
   // or maybe only the "FROM" transactions. To be tested more.
   public async fetchTransactions(erc20SubWallet: ERC20SubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    const accountAddress = await this.subWallet.getCurrentReceiverAddress();
+    const accountAddress = this.subWallet.getCurrentReceiverAddress();
     const contractAddress = erc20SubWallet.coin.getContractAddress().toLowerCase();
 
     let page = 1;
@@ -55,7 +55,7 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
   // eslint-disable-next-line require-await
   public async discoverTokens(): Promise<void> {
     Logger.log('wallet', ' FusionEvmTokenSubWalletProvider fetchAllTokensTransactions')
-    const accountAddress = await this.subWallet.getCurrentReceiverAddress();
+    const accountAddress = this.subWallet.getCurrentReceiverAddress();
 
     for (let i = 0; i < tokenTypeMapList.length; i++) {
       let result = await FusionHelper.fetchAllTokenTransactions(

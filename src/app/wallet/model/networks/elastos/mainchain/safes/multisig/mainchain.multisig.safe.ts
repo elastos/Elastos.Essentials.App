@@ -42,8 +42,8 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return super.initialize(networkWallet);
   }
 
-  public async getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
-    return await <string[]>this.elaSubWallet.getAddresses(startIndex, count, internalAddresses);
+  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
+    return <string[]>this.elaSubWallet.getAddresses(startIndex, count, internalAddresses);
   }
 
   public getOwnerAddress(): string {

@@ -280,7 +280,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", { coinName: this.coinTransferService.toSubWalletId }));
                 this.toSubWallet = await this.getELASubwalletByID(this.coinTransferService.toSubWalletId as StandardCoinName);
                 if (this.toSubWallet) {
-                    this.toAddress = await this.toSubWallet.getCurrentReceiverAddress();
+                    this.toAddress = this.toSubWallet.getCurrentReceiverAddress();
                 } else {
                     this.destNetworkInfo = this.coinTransferService.networkInfo;
                 }
@@ -301,7 +301,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 // Setup params for withdraw transaction
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createWithdrawTransaction;
-                this.toAddress = await this.toSubWallet.getCurrentReceiverAddress();
+                this.toAddress = this.toSubWallet.getCurrentReceiverAddress();
 
                 Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
                 Logger.log('wallet', 'Transferring To..', this.toSubWallet);

@@ -41,9 +41,9 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
         }
     }
 
-    public getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
+    public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
         if (this.evmAddress) {
-            return Promise.resolve([this.evmAddress]);
+            return [this.evmAddress];
         }
         else {
             throw new Error("EVMLedgerSafe: No evm address.");

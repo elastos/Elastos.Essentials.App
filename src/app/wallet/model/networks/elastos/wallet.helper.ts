@@ -16,8 +16,8 @@ export class WalletHelper {
         return Util.uuid(6, 16);
     }
 
-    public static async getOwnerAddress(subWallet: AnySubWallet): Promise<string> {
-        return await (subWallet.networkWallet.safe as MainChainWalletJSSafe).getOwnerAddress();
+    public static getOwnerAddress(subWallet: AnySubWallet): string {
+        return (subWallet.networkWallet.safe as MainChainWalletJSSafe).getOwnerAddress();
     }
 
     public static async getTransactionByAddress(subWallet: SubWallet<any, ElastosMainChainWalletNetworkOptions>, internalAddress: boolean, transactionLimit: number, timestamp = 0): Promise<PaginatedTransactions<ElastosTransaction>[]> {
@@ -35,11 +35,11 @@ export class WalletHelper {
                     break;
                 }
             }
-            addressArray = await subWallet.networkWallet.safe.getAddresses(
+            addressArray = subWallet.networkWallet.safe.getAddresses(
                 startIndex, count, internalAddress, AddressUsage.DEFAULT);
             if ((startIndex === 0) && !internalAddress && (subWallet.id === StandardCoinName.ELA)) {
                 // OwnerAddress: for register dpos node, CRC.
-                const ownerAddress = await WalletHelper.getOwnerAddress(subWallet);
+                const ownerAddress = WalletHelper.getOwnerAddress(subWallet);
                 if (ownerAddress) addressArray.push(ownerAddress);
             }
 

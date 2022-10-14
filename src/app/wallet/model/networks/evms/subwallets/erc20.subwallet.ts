@@ -151,9 +151,9 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return this.coin.getContractAddress().toLowerCase();
     }
 
-    public async createAddress(): Promise<string> {
+    public createAddress(): string {
         // Create on ETH always returns the same unique address.
-        let addresses = await this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.EVM_CALL);
+        let addresses = this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.EVM_CALL);
         return (addresses && addresses[0]) ? addresses[0] : null;
     }
 

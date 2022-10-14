@@ -655,7 +655,7 @@ export class Transfer implements SerializedTransfer {
     }
   }
 
-  public getWalletAddress(): Promise<string> {
+  public getWalletAddress(): string {
     return this.sourceNetworkSubWallet.getAccountAddress(AddressUsage.EVM_CALL);
   }
 

@@ -30,7 +30,7 @@ export class EtherscanEVMSubWalletInternalTransactionProvider<SubWalletType exte
   }
 
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    const accountAddress = await this.subWallet.getCurrentReceiverAddress();
+    const accountAddress = this.subWallet.getCurrentReceiverAddress();
 
     if (!this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN)) {
       // This network can't fetch internal transactions.

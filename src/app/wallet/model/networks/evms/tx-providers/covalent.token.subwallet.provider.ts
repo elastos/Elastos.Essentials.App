@@ -40,7 +40,7 @@ export class CovalentSubWalletTokenProvider<SubWalletType extends MainCoinEVMSub
   }
 
   public async fetchTransactions(erc20SubWallet: ERC20SubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    const accountAddress = await this.subWallet.getCurrentReceiverAddress();
+    const accountAddress = this.subWallet.getCurrentReceiverAddress();
 
     let page = 0; // Start with 0;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list

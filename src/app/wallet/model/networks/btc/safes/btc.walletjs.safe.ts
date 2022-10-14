@@ -95,8 +95,8 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         return address?.address;
     }
 
-    public getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
-        return Promise.resolve([this.btcAddress]);
+    public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
+        return [this.btcAddress];
     }
 
     public async createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {

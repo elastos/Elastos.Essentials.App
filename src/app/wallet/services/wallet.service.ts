@@ -424,11 +424,11 @@ export class WalletService {
      * Tries to find the standard "main" EVM subwallet that has the given address in the list of
      * all subwallets for the active network
      */
-    public async findStandardEVMSubWalletByAddress(address: string): Promise<MainCoinEVMSubWallet<any>> {
+    public findStandardEVMSubWalletByAddress(address: string): MainCoinEVMSubWallet<any> {
         for (let networkWallet of this.getNetworkWalletsList()) {
             let mainEVMSubWallet = networkWallet.getMainEvmSubWallet();
             if (mainEVMSubWallet) {
-                let walletAddress = await mainEVMSubWallet.getCurrentReceiverAddress();
+                let walletAddress = mainEVMSubWallet.getCurrentReceiverAddress();
                 if (walletAddress === address)
                     return mainEVMSubWallet;
             }
@@ -440,11 +440,11 @@ export class WalletService {
      * Tries to find the a ERC20 subwallet tfor a given token address in the list of
      * all subwallets for the active network
      */
-    public async findERC20SubWalletByContractAddress(tokenContractAddress: string, evmAddress: string): Promise<ERC20SubWallet> {
+    public findERC20SubWalletByContractAddress(tokenContractAddress: string, evmAddress: string): ERC20SubWallet {
         for (let networkWallet of this.getNetworkWalletsList()) {
             let mainEVMSubWallet = networkWallet.getMainEvmSubWallet();
             if (mainEVMSubWallet) {
-                let walletAddress = await mainEVMSubWallet.getCurrentReceiverAddress();
+                let walletAddress = mainEVMSubWallet.getCurrentReceiverAddress();
                 if (walletAddress === evmAddress) {
                     // Found the right network wallet. Now check its subwallets
                     let erc20SubWallets = networkWallet.getSubWalletsByType(CoinType.ERC20);

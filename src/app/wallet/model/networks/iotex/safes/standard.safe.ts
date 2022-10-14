@@ -53,11 +53,11 @@ export class IoTeXStandardSafe extends StandardSafe implements EVMSafe {
     this.iotexAddress = addr.string();
   }
 
-  public async getAddresses(startIndex: number, count: number, internalAddresses: boolean, usage: AddressUsage | string): Promise<string[]> {
+  public getAddresses(startIndex: number, count: number, internalAddresses: boolean, usage: AddressUsage | string): string[] {
     if (usage === AddressUsage.IOTEX || usage === AddressUsage.RECEIVE_FUNDS || usage === AddressUsage.SEND_FUNDS)
-      return await [this.iotexAddress];
+      return [this.iotexAddress];
     else
-      return await [this.evmAddress];
+      return [this.evmAddress];
   }
 
   createContractTransaction(contractAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {

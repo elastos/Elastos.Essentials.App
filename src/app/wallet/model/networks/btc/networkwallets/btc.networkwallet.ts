@@ -29,11 +29,11 @@ export abstract class BTCNetworkWallet <MasterWalletType extends MasterWallet, W
         return new BTCTransactionProvider(this);
     }
 
-    public async getAddresses(): Promise<WalletAddressInfo[]> {
+    public getAddresses(): WalletAddressInfo[] {
         return [
             {
                 title: this.subWallets[StandardCoinName.BTC].getFriendlyName(),
-                address: await this.subWallets[StandardCoinName.BTC].getCurrentReceiverAddress()
+                address: this.subWallets[StandardCoinName.BTC].getCurrentReceiverAddress()
             }
         ];
     }

@@ -109,7 +109,7 @@ export class PacketDetailsPage implements OnInit {
 
         // Don't block the UI
         void (async () => {
-          this.walletAddress = await this.getActiveWalletAddress();
+          this.walletAddress = this.getActiveWalletAddress();
 
           // Refresh packet with latest data
           if (packetHash) {
@@ -191,7 +191,7 @@ export class PacketDetailsPage implements OnInit {
     await this.sendInitialGrabRequest();
   }
 
-  private getActiveWalletAddress(): Promise<string> {
+  private getActiveWalletAddress(): string {
     if (!this.walletService.getActiveNetworkWallet() || !this.walletService.getActiveNetworkWallet().getMainEvmSubWallet())
       return null;
 

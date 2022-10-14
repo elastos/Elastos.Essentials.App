@@ -54,7 +54,7 @@ export class HomePage {
     this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
-    this.walletAddress = await this.getActiveWalletAddress();
+    this.walletAddress = this.getActiveWalletAddress();
 
     if (this.walletAddress) {
       this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
@@ -138,7 +138,7 @@ export class HomePage {
     void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/opened-packets");
   }
 
-  private getActiveWalletAddress(): Promise<string> {
+  private getActiveWalletAddress(): string {
     if (!this.walletService.getActiveNetworkWallet() || !this.walletService.getActiveNetworkWallet().getMainEvmSubWallet())
       return null;
 

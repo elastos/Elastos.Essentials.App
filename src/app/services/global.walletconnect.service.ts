@@ -141,7 +141,7 @@ export class GlobalWalletConnectService extends GlobalService {
           if (c.connected) {
             try {
               let chainId = activeWallet.network instanceof EVMNetwork ? activeWallet.network.getMainChainID() : 0;
-              let account = activeWallet.network instanceof EVMNetwork ? await this.getAccountFromNetworkWallet(activeWallet) : null;
+              let account = activeWallet.network instanceof EVMNetwork ? this.getAccountFromNetworkWallet(activeWallet) : null;
               Logger.log("walletconnect", `Updating connected session`, c, chainId, account);
 
               c.updateSession({
@@ -163,7 +163,7 @@ export class GlobalWalletConnectService extends GlobalService {
   /**
    * Returns the eth account address associated with the given master wallet.
    */
-  private getAccountFromNetworkWallet(wallet: AnyNetworkWallet): Promise<string> {
+  private getAccountFromNetworkWallet(wallet: AnyNetworkWallet): string {
     return wallet.getMainEvmSubWallet().getCurrentReceiverAddress();
   }
 

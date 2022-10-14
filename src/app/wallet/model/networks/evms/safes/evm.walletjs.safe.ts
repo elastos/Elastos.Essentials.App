@@ -64,8 +64,8 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
     }
   }
 
-  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): Promise<string[]> {
-    return Promise.resolve([this.evmAddress]);
+  public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
+    return [this.evmAddress];
   }
 
   public createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
