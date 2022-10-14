@@ -82,7 +82,7 @@
             </ion-row>
 
             <ion-row class="btn-row" *ngIf="shouldShowGetAddressButton()">
-                <ebutton (clicked )="refreshAddressesWithTimeout()" [title]="'wallet.ledger-get-addresses' | translate">
+                <ebutton (clicked)="refreshAddressesWithTimeout()" [title]="'wallet.ledger-get-addresses' | translate">
                 </ebutton>
             </ion-row>
         </ng-container>
