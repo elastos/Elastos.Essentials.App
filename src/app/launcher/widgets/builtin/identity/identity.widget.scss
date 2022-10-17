@@ -12,7 +12,8 @@
     justify-content: flex-start;
     padding: 0;
 
-    ion-avatar {
+    .no-avatar,
+    .has-avatar {
       width: 48px;
       height: 48px;
     }

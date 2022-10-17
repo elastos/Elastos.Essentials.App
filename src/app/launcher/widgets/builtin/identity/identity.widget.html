@@ -2,13 +2,10 @@
 <ion-row *ngIf="getSignedInIdentity()" class="widget widget-background root id-row ion-activatable ripple"
   [class.darkContainer]="theme.darkMode" (click)="showMyIdentity()">
   <ion-col size="2" class="left-col">
-    <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-      <div inlineSVG="assets/launcher/default/default-avatar.svg"></div>
-    </ion-avatar>
-    <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
-      <img
-        [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
-    </ion-avatar>
+    <div *ngIf="!getSignedInIdentity().avatar" inlineSVG="assets/launcher/default/default-avatar.svg" class="no-avatar">
+    </div>
+    <img *ngIf="getSignedInIdentity().avatar" class="has-avatar"
+      [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData" />
   </ion-col>
 
   <ion-col size="8" class="mid-col">
