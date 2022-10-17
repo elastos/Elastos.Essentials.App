@@ -36,6 +36,7 @@ export class ContactsInitService extends GlobalService {
   }
 
   public onUserSignOut(): Promise<void> {
+    this.friendsService.stop();
     this.intentService.stop();
     this.backupService.stop();
     return;

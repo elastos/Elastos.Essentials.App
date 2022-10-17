@@ -7,6 +7,8 @@
     object-fit: cover;
     overflow: hidden;
     border-radius: 50%;
+    width: 66px;
+    height: 66px;
   }
 
   ion-slide {
@@ -81,8 +83,9 @@
     }
 
     .disabled-btn-row {
-      img {
+      .inline-svg {
         margin: 0 7.5px;
+        opacity: 0.5;
       }
     }
   }

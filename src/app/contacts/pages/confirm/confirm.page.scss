@@ -1,4 +1,4 @@
-@import 'src/app/contacts/root.scss';
+@import "src/app/contacts/root.scss";
 
 .container {
   display: flex;
@@ -8,8 +8,7 @@
   min-height: 100%;
 
   .profile-container {
-    background: #ffffff;
-    // border: 1.75px solid #4620b0;
+    background: var(--essentials-box-color);
     width: 90vw;
     border-radius: 12px;
 
@@ -22,7 +21,7 @@
         width: 84px;
         margin-top: -42px;
         border-radius: 50%;
-        box-shadow: 3px 3px 8px rgba(100,100,100,0.2);
+        box-shadow: 3px 3px 8px var(--essentials-border-separator-color);
         overflow: hidden;
         // border: 1.75px solid #4620b0;
       }
@@ -31,7 +30,6 @@
         border-radius: 50%;
         object-fit: cover;
         overflow: hidden;
-        // border: 1.75px solid #4620b0;
       }
     }
 
@@ -44,7 +42,6 @@
         margin: 15px;
         font-size: 22px;
         font-weight: 600;
-        font-family: 'Inter' !important;
         text-align: center;
 
         span {
@@ -58,7 +55,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #f8f8ff;
       height: 110px;
       overflow: hidden;
 
@@ -67,7 +63,7 @@
         font-weight: 500;
         text-align: center;
         color: #161740;
-        font-family: 'Inter' !important;
+        font-family: "Inter" !important;
       }
     }
 
@@ -78,50 +74,8 @@
       align-items: center;
 
       .btn {
+        width: 45%;
         height: 45px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 8px;
-        background-color: #f8f8ff;
-
-        ion-label {
-          font-size: 15px;
-          font-weight: 500;
-          color: #161740;
-          font-family: 'Inter' !important;
-        }
-      }
-    }
-  }
-}
-
-.darkContainer {
-  .profile-container {
-    background: #363636;
-
-
-    .profile-name {
-      h1 {
-        color: #fdfeff;
-      }
-    }
-
-    .message {
-      background: #212021;
-
-      p {
-        color: #fdfeff;
-      }
-    }
-
-    .btn-row {
-      .btn {
-        background: #212021;
-
-        ion-label {
-          color: #fdfeff;
-        }
       }
     }
   }

@@ -374,3 +374,11 @@ ion-toggle {
   --background-checked: var(--essentials-button-background-color);
   --handle-background-checked: var(--ion-background-color);
 }
+
+ion-checkbox {
+  --border-color: var(--ion-text-color);
+  --border-color-checked: var(--ion-text-color);
+  --border-width: 1.5px;
+  --checkmark-color: var(--ion-background-color);
+  --background-checked: var(--ion-text-color);
+}

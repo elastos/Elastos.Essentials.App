@@ -107,7 +107,7 @@ export class Contact {
   /**
    * Tells whether the contact is currently online or not.
    */
-  public async getOnlineStatus(): Promise<OnlineStatus> {
+  public getOnlineStatus(): Promise<OnlineStatus> {
     // TODO
     return null;
   }
@@ -163,7 +163,7 @@ export class ContactNotifierService {
    *
    * @returns The currently active carrier address on which user can be reached by (future) contacts.
    */
-  public async getCarrierAddress(): Promise<string> {
+  public getCarrierAddress(): Promise<string> {
     // TODO
     return null;
   }
@@ -175,7 +175,7 @@ export class ContactNotifierService {
    */
   public async resolveContact(did: string): Promise<Contact> {
     // TODO
-    return null;
+    return await null;
   }
 
   /**
@@ -193,7 +193,7 @@ export class ContactNotifierService {
    */
   public async getAllContacts(): Promise<Contact[]> {
     // TODO
-    return [];
+    return await [];
   }
 
   /**
@@ -218,7 +218,7 @@ export class ContactNotifierService {
   /**
    * Returns the current online status mode.
    */
-  public async getOnlineStatusMode(): Promise<OnlineStatusMode> {
+  public getOnlineStatusMode(): Promise<OnlineStatusMode> {
     // TODO
     return null;
   }
@@ -248,7 +248,7 @@ export class ContactNotifierService {
    *
    * @returns The generated contact
    */
-  public async acceptInvitation(invitationId: string): Promise<Contact> {
+  public acceptInvitation(invitationId: string): Promise<Contact> {
     // TODO
     return null;
   }
@@ -286,7 +286,7 @@ export class ContactNotifierService {
   /**
    * Returns the way invitations are accepted.
    */
-  public async getInvitationRequestsMode(): Promise<InvitationRequestsMode> {
+  public getInvitationRequestsMode(): Promise<InvitationRequestsMode> {
     // TODO
     return null;
   }

@@ -64,11 +64,11 @@ export class FriendDetailsPage implements OnInit {
       }
 
       const targetContact = this.friendsService.getContact(paramMap.get('friendId'));
-      this.friendsService.contacts.map((contact) => {
+      for (let contact of this.friendsService.getContacts()) {
         if (contact.id === targetContact.id) {
           this.contact = contact;
         }
-      });
+      }
 
       Logger.log('contacts', 'Contact profile for', this.contact);
       //this.buildDisplayableAppsInfo();

@@ -4,24 +4,21 @@
     <div class="header">
 
       <!-- Empty Contacts -->
-      <div *ngIf="friendsService.contacts.length === 0" class="no-contacts">
+      <div *ngIf="contacts.length === 0" class="no-contacts">
         <img class="profile-img"
           [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
         <h1>{{ 'contacts.no-contacts' | translate }}</h1>
         <p>{{ 'contacts.add-a-contact' | translate }}</p>
         <ion-row class="btn-row disabled-btn-row">
-          <img [src]="theme.darkMode ? '/assets/identity/svg/qrcode.svg' : '/assets/identity/svg/qrcode-dark.svg'">
-          <img
-            [src]="theme.darkMode ? '/assets/identity/svg/edit-button.svg' : '/assets/identity/svg/edit-button-dark.svg'">
-          <img
-            [src]="theme.darkMode ? '/assets/components/titlebar/horizontal_menu.svg' : '/assets/components/titlebar/darkmode/horizontal_menu.svg'">
+          <div class="inline-svg" inlineSVG="/assets/identity/svg/qrcode.svg"></div>
+          <div class="inline-svg" inlineSVG="/assets/identity/svg/edit.svg"></div>
+          <div class="inline-svg" inlineSVG="/assets/identity/svg/horizontal_menu.svg"></div>
         </ion-row>
       </div>
 
-      <!-- Contacts Img Slide -->
-      <ion-slides *ngIf="friendsService.contacts.length" #slider [options]="slideOpts"
-        (ionSlideDidChange)="getActiveSlide()">
-        <ion-slide *ngFor="let contact of friendsService.contacts">
+      <!-- Contacts Img Slider - if at least one contact -->
+      <ion-slides *ngIf="contacts.length" #slider [options]="slideOpts" (ionSlideDidChange)="getActiveSlide()">
+        <ion-slide *ngFor="let contact of contacts">
           <img [src]="uxService.getAvatar(contact)" class="inactiveSlide profile-img"
             [class.activeSlide]="contact === friendsService.activeSlide || shouldShowFirstContactInformation()"
             (click)="goToContact(contact)">
@@ -29,7 +26,7 @@
       </ion-slides>
 
       <!-- Contact management for active slides when detected -->
-      <div class="slide-content" *ngIf="friendsService.contacts.length && friendsService.activeSlide">
+      <div class="slide-content" *ngIf="contacts.length && friendsService.activeSlide">
         <h1>{{ uxService.getDisplayableName(friendsService.activeSlide) }}</h1>
         <p>{{ uxService.getDisplayableBio(friendsService.activeSlide) }}</p>
         <ion-row class="btn-row">
@@ -51,25 +48,25 @@
           before service can resolve the first contact
       -->
       <div class="slide-content" *ngIf="!friendsService.activeSlide && shouldShowFirstContactInformation()">
-        <h1>{{ uxService.getDisplayableName(friendsService.contacts[0]) }}</h1>
-        <p>{{ uxService.getDisplayableBio(friendsService.contacts[0]) }}</p>
+        <h1>{{ uxService.getDisplayableName(contacts[0]) }}</h1>
+        <p>{{ uxService.getDisplayableBio(contacts[0]) }}</p>
         <ion-row class="btn-row">
           <div class="ion-activatable ripple">
             <img
               [src]="!theme.darkMode ? '/assets/contacts/buttons/scan.svg' : '/assets/contacts/buttons/darkmode/scan.svg'"
-              (click)="popupService.showQRCode(friendsService.contacts[0])">
+              (click)="popupService.showQRCode(contacts[0])">
             <ion-ripple-effect></ion-ripple-effect>
           </div>
           <div class="ion-activatable ripple">
             <img
               [src]="!theme.darkMode ? '/assets/contacts/buttons/edit.svg' : '/assets/contacts/buttons/darkmode/edit.svg'"
-              (click)="friendsService.showCustomization(friendsService.contacts[0])">
+              (click)="showCustomization(contacts[0])">
             <ion-ripple-effect></ion-ripple-effect>
           </div>
           <div class="ion-activatable ripple">
             <img
               [src]="!theme.darkMode ? '/assets/contacts/buttons/options.svg' : '/assets/contacts/buttons/darkmode/options.svg'"
-              (click)="popupService.showOptions($event, friendsService.contacts[0])">
+              (click)="popupService.showOptions($event, contacts[0])">
             <ion-ripple-effect></ion-ripple-effect>
           </div>
         </ion-row>
@@ -87,8 +84,8 @@
     </ion-segment>
 
     <!-- All Contacts -->
-    <ion-list *ngIf="friendsService.contacts.length > 0 && !favActive" class="ordered-list">
-      <ion-grid class="ion-no-padding" *ngFor="let letter of friendsService.letters">
+    <ion-list *ngIf="contacts.length > 0 && !favActive" class="ordered-list">
+      <ion-grid class="ion-no-padding" *ngFor="let letter of letters">
         <ion-grid>
           <ion-row>
             <ion-col offset="0.5" size="2" class="first-col">
@@ -96,7 +93,7 @@
             </ion-col>
           </ion-row>
         </ion-grid>
-        <ion-item-sliding *ngFor="let contact of friendsService.contacts">
+        <ion-item-sliding *ngFor="let contact of contacts">
           <!-- HAS CONTACT NAME -->
           <ion-item class="ripple ion-activatable" [class.activeItem]="
               contact === friendsService.activeSlide ||
@@ -159,7 +156,7 @@
     </ion-list>
 
     <!-- Favorite Contacts -->
-    <ion-list *ngIf="friendsService.contacts.length > 0 && favActive">
+    <ion-list *ngIf="contacts.length > 0 && favActive">
       <ion-item-sliding *ngFor="let contact of getFavorites()">
         <ion-item class="ripple ion-activatable" [class.activeItem]="
             contact === friendsService.activeSlide ||

@@ -33,6 +33,9 @@ export class FriendsPage implements OnInit {
   private subscription: Subscription = null;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
+  public letters: string[] = [];
+  public contacts: Contact[] = [];
+
   slideOpts = {
     initialSlide: 0,
     speed: 200,
@@ -57,6 +60,17 @@ export class FriendsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.friendsService.contacts.subscribe(contacts => {
+      if (contacts) {
+        this.contacts = contacts;
+        this.letters = this.friendsService.extractContactFirstLetters(contacts);
+        void this.initContacts();
+
+        // Start refreshing contacts data when we enter the contact app's main screen. But do this
+        // only once per app session as this is a heavy process (did documents, download avatars, etc)
+        void this.friendsService.remoteUpdateContactsOnlyOnce();
+      }
+    });
   }
 
   ionViewWillEnter() {
@@ -77,8 +91,6 @@ export class FriendsPage implements OnInit {
       this.appService.onTitleBarItemClicked(clickedIcon);
     }
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener)
-
-    void this.getContacts();
   }
 
   ionViewWillLeave() {
@@ -96,21 +108,18 @@ export class FriendsPage implements OnInit {
   }
 
   getFavorites(): Contact[] {
-    return this.friendsService.contacts.filter((contact) => contact.isFav);
+    return this.contacts.filter((contact) => contact.isFav);
   }
 
-  async getContacts() {
-    Logger.log('contacts', 'Initializing home - "friends" pg');
+  async initContacts() {
     await this.getActiveSlide();
   }
 
   async getActiveSlide() {
-    if (this.friendsService.contacts.length) {
+    if (this.contacts.length && this.slider) {
       const index = await this.slider.getActiveIndex();
-      this.friendsService.activeSlide = this.friendsService.contacts[index] || this.friendsService.contacts[this.friendsService.contacts.length - 1];
+      this.friendsService.activeSlide = this.contacts[index] || this.contacts[this.contacts.length - 1];
       Logger.log('contacts', 'friends.getActiveSlide - ', this.friendsService.activeSlide);
-    } else {
-      Logger.log('contacts', 'friends.getActiveSlide - No contacts');
     }
   }
 
@@ -118,10 +127,10 @@ export class FriendsPage implements OnInit {
   // contacts list.
   shouldShowFirstContactInformation(): boolean {
     // Different list size means different content.
-    if (this.friendsService.contacts.length != defaultContacts.length)
+    if (this.contacts.length != defaultContacts.length)
       return false;
 
-    for (let userContact of this.friendsService.contacts) {
+    for (let userContact of this.contacts) {
       if (!defaultContacts.find(c => c === userContact.id))
         return false;
     }

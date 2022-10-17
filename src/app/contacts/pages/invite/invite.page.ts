@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
@@ -8,7 +8,14 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Contact } from '../../models/contact.model';
 import { FriendsService } from '../../services/friends.service';
+import { IntentService } from '../../services/intent.service';
 import { UxService } from '../../services/ux.service';
+
+export type InvitePageParams = {
+  singleInvite: boolean;
+  contacts?: Contact[]; // Filtered contaccts to use.
+  actionType: 'pickfriend' | 'share'
+}
 
 @Component({
   selector: 'app-invite',
@@ -21,50 +28,63 @@ export class InvitePage implements OnInit {
   // Params
   public isFilter = false;
   public isSingleInvite = false;
-  private intent = ''
+  private actionType: 'pickfriend' | 'share' = null;
   private actionByUser = false;
 
-  public filteredContacts: Contact[];
+  public contacts: Contact[];
   public letters: string[] = [];
   public buttonLabel: string = null;
 
   constructor(
     public friendsService: FriendsService,
+    private intentService: IntentService,
     public uxService: UxService,
     private route: ActivatedRoute,
     public translate: TranslateService,
     private globalNav: GlobalNavService,
-    public theme: GlobalThemeService
-  ) { }
+    public theme: GlobalThemeService,
+    private router: Router
+  ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation.extras.state) {
+      let state = <InvitePageParams>navigation.extras.state;
 
-  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
-
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      Logger.log('contacts', 'pickfriend', params);
-
-      if (params.singleInvite === true) {
+      if (state.singleInvite === true) {
         this.isSingleInvite = true;
         this.buttonLabel = this.translate.instant('contacts.invite-contact');
       } else {
         this.buttonLabel = this.translate.instant('contacts.invite-contacts');
       }
 
-      if (params.friendsFiltered) {
+      if (state.contacts) {
+        this.contacts = state.contacts;
         this.isFilter = true;
-        this.sortContacts(this.isFilter);
       } else {
+        this.contacts = this.friendsService.contacts.value;
         this.isFilter = false;
-        this.sortContacts(this.isFilter);
       }
-      if (params.intent) {
-        this.intent = params.intent;
+
+      this.letters = this.friendsService.extractContactFirstLetters(this.contacts);
+
+      if (state.actionType) {
+        this.actionType = state.actionType;
+      }
+
+
+      Logger.log('contacts', 'Is single invite?', this.isSingleInvite);
+      Logger.log('contacts', 'Friends filtered?', this.isFilter);
+      Logger.log('contacts', 'Intent', this.actionType);
+    }
+  }
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
+  ngOnInit() {
+    this.friendsService.contacts.subscribe(contacts => {
+      if (contacts) {
+
       }
     });
-
-    Logger.log('contacts', 'Is single invite?', this.isSingleInvite);
-    Logger.log('contacts', 'Friends filtered?', this.isFilter);
-    Logger.log('contacts', 'Intent', this.intent);
   }
 
   ionViewWillEnter() {
@@ -81,88 +101,23 @@ export class InvitePage implements OnInit {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-    if (this.intent.length > 0 && !this.actionByUser) {
-      this.friendsService.sendEmptyIntentRes();
+    if (this.actionType.length > 0 && !this.actionByUser) {
+      this.intentService.sendEmptyIntentRes();
     }
   }
 
   getContacts() {
-    return this.friendsService.contacts.filter((contact) => contact.id !== 'did:elastos');
-  }
-
-  sortContacts(isFilter: boolean) {
-    this.letters = [];
-    if (isFilter) {
-      this.friendsService.filteredContacts.map((contact) => {
-        // Add letter for 'anonymous' contact
-        if (
-          !contact.credentials.name && contact.customName && contact.customName === 'Anonymous Contact' && !this.letters.includes('Anonymous') ||
-          !contact.credentials.name && !contact.customName && !this.letters.includes('Anonymous')
-        ) {
-          this.letters.push('Anonymous');
-        }
-        // Add letter for name credential
-        if (
-          contact.credentials.name && !contact.customName && !this.letters.includes(contact.credentials.name[0].toUpperCase())
-        ) {
-          this.letters.push(contact.credentials.name[0].toUpperCase());
-        }
-        // Add letter for custom name
-        if (
-          !contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase()) ||
-          contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase())
-        ) {
-          this.letters.push(contact.customName[0].toUpperCase());
-        }
-      });
-
-      this.letters = this.letters.sort((a, b) => a > b ? 1 : -1);
-      this.letters.push(this.letters.splice(this.letters.indexOf('Anonymous'), 1)[0]);
-    } else {
-      this.friendsService.contacts.map((contact) => {
-        // Add letter for 'anonymous' contact
-        if (
-          !contact.credentials.name && contact.customName && contact.customName === 'Anonymous Contact' && !this.letters.includes('Anonymous') ||
-          !contact.credentials.name && !contact.customName && !this.letters.includes('Anonymous')
-        ) {
-          this.letters.push('Anonymous');
-        }
-        // Add letter for name credential
-        if (
-          contact.id !== 'did:elastos' && contact.credentials.name && !contact.customName && !this.letters.includes(contact.credentials.name[0].toUpperCase())
-        ) {
-          this.letters.push(contact.credentials.name[0].toUpperCase());
-        }
-        // Add letter for custom name
-        if (
-          !contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase()) ||
-          contact.id !== 'did:elastos' && contact.credentials.name && contact.customName && contact.customName !== 'Anonymous Contact' && !this.letters.includes(contact.customName[0].toUpperCase())
-        ) {
-          this.letters.push(contact.customName[0].toUpperCase());
-        }
-      });
-
-      this.letters = this.letters.sort((a, b) => a > b ? 1 : -1);
-      this.letters.push(this.letters.splice(this.letters.indexOf('Anonymous'), 1)[0]);
-    }
+    return this.contacts.filter((contact) => contact.id !== 'did:elastos');
   }
 
   // If pick-friend intent is single invite, disable checkboxes if a friend is picked //
   singlePicked(isFilter: boolean) {
     let selectedFriends = 0;
-    if (!isFilter) {
-      this.friendsService.contacts.map(contact => {
-        if (contact.isPicked) {
-          selectedFriends++;
-        }
-      });
-    } else {
-      this.friendsService.filteredContacts.map(contact => {
-        if (contact.isPicked) {
-          selectedFriends++;
-        }
-      });
-    }
+    this.contacts.map(contact => {
+      if (contact.isPicked) {
+        selectedFriends++;
+      }
+    });
 
     if (selectedFriends >= 1) {
       return true;
@@ -172,14 +127,16 @@ export class InvitePage implements OnInit {
   }
 
   inviteClicked() {
+    let pickedContacts = this.contacts.filter(c => c.isPicked);
     this.actionByUser = true;
-    if (this.intent == "share") {
+
+    if (this.actionType == "share") {
       // We were picking friend(s) for sharing content
-      void this.friendsService.shareToContacts(this.isFilter);
+      void this.intentService.shareToContacts(pickedContacts);
     }
     else {
-      // We were picking fiends to get friends info
-      this.friendsService.inviteContacts(this.isFilter, this.intent);
+      // We were picking friends to get friends info
+      this.intentService.inviteContacts(this.actionType, pickedContacts);
     }
   }
 }

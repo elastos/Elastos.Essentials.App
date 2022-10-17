@@ -42,7 +42,7 @@ export class NativeService {
   }
 
   /********* Alerts *********/
-  async alertNoContacts(intent: string, intentId: any, msg: string) {
+  async alertNoContactsAndSendIntentResponse(intentId: any, msg: string) {
     const alert = await this.alertController.create({
       mode: 'ios',
       header: msg,

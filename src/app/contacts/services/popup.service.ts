@@ -52,7 +52,7 @@ export class PopupService {
   }
 
   async showOptions(ev: any, contact: Contact, fromContactDetails?: boolean) {
-    const targetContact = this.friendsService.contacts.find((_contact) => _contact.id === contact.id);
+    const targetContact = this.friendsService.getContact(contact.id);
     Logger.log('contacts', 'Opening options for contact', targetContact);
 
     this.optionsPopup = await this.popoverCtrl.create({

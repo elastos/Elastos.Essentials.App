@@ -2,12 +2,13 @@
   <app-titlebar></app-titlebar>
   <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
     <div class="profile-container">
-  
+
       <ion-row class="img-row">
-        <img *ngIf="!avatar" [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+        <img *ngIf="!avatar"
+          [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
         <img *ngIf="avatar" class="profile-img" [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
       </ion-row>
-  
+
       <ion-row>
         <ion-col class="profile-name">
           <h1 *ngIf="name" class="ion-padding-horizontal">{{ name }}</h1>
@@ -16,26 +17,18 @@
           </h1>
         </ion-col>
       </ion-row>
-  
+
       <ion-row>
         <ion-col class="message ion-no-padding">
           <p class="ion-padding-horizontal">{{ 'contacts.do-you-want-to-add' | translate }}</p>
         </ion-col>
       </ion-row>
-  
+
       <ion-row class="btn-row">
-        <ion-col class="btn ion-activatable ripple" size="5" (click)="denyContact()">
-          <ion-label>{{ 'common.cancel' | translate }}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
-        <ion-col class="btn ion-activatable ripple" size="5" (click)="addContact()">
-          <ion-label>{{ 'contacts.add' | translate }}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
+        <ebutton mode="cancel" class="btn" (clicked)="denyContact()" [title]="'common.cancel' | translate"></ebutton>
+        <ebutton class="btn" (clicked)="addContact()" [title]="'contacts.add' | translate"></ebutton>
       </ion-row>
-  
+
     </div>
   </ion-grid>
 </ion-content>
-
-

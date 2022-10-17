@@ -1,4 +1,4 @@
-@import 'src/app/contacts/root.scss';
+@import "src/app/contacts/root.scss";
 
 .container {
   min-height: 100%;
@@ -13,13 +13,8 @@
   .btn-container {
     padding: 15px 15px 0;
 
-    ion-button {
-      height: 50px;
+    ebutton {
       width: 100%;
-      --border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1px;
     }
   }
 
@@ -31,7 +26,7 @@
       font-size: 16px;
       font-weight: 500;
       text-align: center;
-    };
+    }
   }
 
   ion-list {
@@ -48,7 +43,7 @@
         align-items: center;
 
         img {
-          width: 50px ;
+          width: 50px;
           height: 50px;
         }
 
@@ -58,11 +53,11 @@
           line-height: 1.2;
         }
 
-        ion-checkbox {
-          --border-color: #565bdb;
+        /* ion-checkbox {
+          --border-color: var(--ion-text-color);
           --border-width: 2px;
           --background: transparent;
-        }
+        } */
       }
     }
 
@@ -76,16 +71,6 @@
         font-size: 11px;
         font-weight: 700;
       }
-    }
-  }
-}
-
-.darkContainer {
-  ion-list {
-    background: #121212;
-
-    ion-item {
-      --background: #121212;
     }
   }
 }
