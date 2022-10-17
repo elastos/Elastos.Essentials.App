@@ -1,7 +1,9 @@
-import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, VoteContentInfo, VotingInfo } from "@elastosfoundation/wallet-js-sdk";
-import type { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
-import type { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
-import type { UTXOInput } from "@elastosfoundation/wallet-js-sdk/typings/wallet/UTXO";
+import type {
+  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
+  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
+  EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
+  ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
+} from "@elastosfoundation/wallet-js-sdk";
 import { ELATransactionCoder } from "src/app/helpers/ela/ela.transaction.coder";
 import { ELATransactionFactory } from "src/app/helpers/ela/ela.transaction.factory";
 import { ELATransactionSigner } from "src/app/helpers/ela/ela.transaction.signer";

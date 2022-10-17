@@ -1,4 +1,4 @@
-import type { json } from "@elastosfoundation/wallet-js-sdk/typings/types";
+import type { json } from "@elastosfoundation/wallet-js-sdk";
 import { lazyEthersImport, lazyEthersLibUtilImport } from "src/app/helpers/import.helper";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";

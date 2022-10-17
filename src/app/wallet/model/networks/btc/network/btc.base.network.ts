@@ -1,4 +1,4 @@
-import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
+import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
 import type { CoinID } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";

@@ -1,7 +1,11 @@
-import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, MainchainSubWallet as SDKMainchainSubWallet, MasterWallet as SDKMasterWallet, NormalProposalOwnerInfo, PayloadStakeInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, VoteContentInfo, VotingInfo } from "@elastosfoundation/wallet-js-sdk";
-import type { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
-import type { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
-import type { UTXOInput } from "@elastosfoundation/wallet-js-sdk/typings/wallet/UTXO";
+import type {
+  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
+  CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
+  CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, MainchainSubWallet as SDKMainchainSubWallet,
+  MasterWallet as SDKMasterWallet, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, ReceiveCustomIDOwnerInfo,
+  RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo,
+  UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
+} from "@elastosfoundation/wallet-js-sdk";
 import moment from "moment";
 import { md5 } from "src/app/helpers/crypto/md5";
 import { lazyElastosWalletSDKImport } from "src/app/helpers/import.helper";

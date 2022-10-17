@@ -1,9 +1,10 @@
-import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, VoteContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
-import type { PublickeysInfo } from '@elastosfoundation/wallet-js-sdk/typings/account/SubAccount';
-import type { CancelProducerInfo } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer';
-import type { ProducerInfoJson } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo';
-import type { UnregisterCRPayload } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/UnregisterCR';
-import type { UTXOInput } from '@elastosfoundation/wallet-js-sdk/typings/wallet/UTXO';
+import type {
+    CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
+    CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
+    EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
+    ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnregisterCRPayload, UnstakeInfo, UTXOInput, VoteContentInfo,
+    VotingInfo
+} from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
@@ -452,7 +453,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return await null;
     }
 
-    public async createConsolidateTransaction(utxoArray: Utxo[], memo = ''): Promise<string> {
+    public createConsolidateTransaction(utxoArray: Utxo[], memo = ''): Promise<string> {
         if (!utxoArray || utxoArray.length == 0) return null;
 
         let utxoArrayForSDK = [];
@@ -916,7 +917,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public signDigest(address: string, digest: string, passwd: string): Promise<string> {
-        return(this.networkWallet.safe as any as ElastosMainChainSafe).signDigest(address, digest, passwd);
+        return (this.networkWallet.safe as any as ElastosMainChainSafe).signDigest(address, digest, passwd);
     }
 
     public verifyDigest(publicKey: string, digest: string, signature: string): boolean {

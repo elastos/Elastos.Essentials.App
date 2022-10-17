@@ -1,9 +1,10 @@
-import type { ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, MainchainSubWallet, NormalProposalOwnerInfo, PayloadStakeInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, VoteContentInfo, VotingInfo } from "@elastosfoundation/wallet-js-sdk";
-import type { PublickeysInfo } from "@elastosfoundation/wallet-js-sdk/typings/account/SubAccount";
-import type { CancelProducerInfo } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/CancelProducer";
-import type { ProducerInfoJson } from "@elastosfoundation/wallet-js-sdk/typings/transactions/payload/ProducerInfo";
-import type { json } from "@elastosfoundation/wallet-js-sdk/typings/types";
-import type { UTXOInput } from "@elastosfoundation/wallet-js-sdk/typings/wallet/UTXO";
+import type {
+  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
+  CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
+  CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, json, MainchainSubWallet, NormalProposalOwnerInfo,
+  PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo,
+  SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
+} from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
 import { PubKeyInfo } from "src/app/wallet/model/elastos.types";
 import { WalletJSSafe } from "src/app/wallet/model/safes/walletjs.safe";

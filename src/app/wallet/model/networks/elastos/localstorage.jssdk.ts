@@ -1,6 +1,4 @@
-import type { WalletStorage } from "@elastosfoundation/wallet-js-sdk";
-import type { LocalStoreInfo } from "@elastosfoundation/wallet-js-sdk/typings/persistence/LocalStore";
-import type { JSONObject } from "@elastosfoundation/wallet-js-sdk/typings/types";
+import type { JSONObject, LocalStoreInfo, WalletStorage } from "@elastosfoundation/wallet-js-sdk";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { NetworkTemplateStore } from "src/app/services/stores/networktemplate.store";
 

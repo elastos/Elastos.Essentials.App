@@ -1,5 +1,4 @@
-import type { MasterWallet, SubWallet } from "@elastosfoundation/wallet-js-sdk";
-import type { json } from "@elastosfoundation/wallet-js-sdk/typings/types";
+import type { json, MasterWallet, SubWallet } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
 import { AuthService } from "../../services/auth.service";
 import { Transfer } from "../../services/cointransfer.service";

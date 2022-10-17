@@ -1,4 +1,4 @@
-import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk/typings/config";
+import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk";
 import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
