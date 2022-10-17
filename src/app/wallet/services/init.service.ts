@@ -24,8 +24,8 @@ import { ElastosIdentityChainMainNetNetwork, ElastosIdentityChainTestNetNetwork 
 import { ElastosSmartChainMainNetNetwork, ElastosSmartChainTestNetNetwork } from '../model/networks/elastos/evms/esc/network/esc.networks';
 import { ElastosLRWNetwork } from '../model/networks/elastos/lrw/network/elastos.lrw.network';
 import { ElastosMainChainMainNetNetwork, ElastosMainChainTestNetNetwork } from '../model/networks/elastos/mainchain/network/elastos.networks';
+import { EthereumGoerliNetwork } from '../model/networks/ethereum/network/ethereum.goerli.network';
 import { EthereumMainNetNetwork } from '../model/networks/ethereum/network/ethereum.mainnet.network';
-import { EthereumRopstenNetwork } from '../model/networks/ethereum/network/ethereum.ropsten.network';
 import { FantomMainNetNetwork } from '../model/networks/fantom/network/fantom.mainnet.network';
 import { FantomTestNetNetwork } from '../model/networks/fantom/network/fantom.testnet.network';
 import { FuseMainNetNetwork } from '../model/networks/fuse/network/fuse.mainnet.network';
@@ -167,7 +167,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork());
     await this.createAndRegisterNetwork(new ElastosIdentityChainTestNetNetwork());
     await this.createAndRegisterNetwork(new BTCTestNetNetwork());
-    await this.createAndRegisterNetwork(new EthereumRopstenNetwork());
+    await this.createAndRegisterNetwork(new EthereumGoerliNetwork());
     await this.createAndRegisterNetwork(new HECOTestNetNetwork());
     await this.createAndRegisterNetwork(new BSCTestNetNetwork());
     await this.createAndRegisterNetwork(new FusionTestNetNetwork());

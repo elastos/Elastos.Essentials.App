@@ -40,17 +40,10 @@
     align-items: center;
 
     .btn {
-      height: 50px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 8px;
-      background-color: #f0f0f0;
+      width: 100%;
 
-      ion-label {
-        font-size: 15px;
-        font-weight: 500;
-        color: #161740;
+      &.half {
+        width: 45%;
       }
     }
   }

@@ -4,12 +4,12 @@ import { EthereumAPI, EthereumAPIType } from "./ethereum.api";
 import { EthereumBaseNetwork } from "./ethereum.base.network";
 
 // https://rpc.info/#ethereum-rpc
-export class EthereumRopstenNetwork extends EthereumBaseNetwork {
+export class EthereumGoerliNetwork extends EthereumBaseNetwork {
   constructor() {
     super(
       "ethereum",
-      "Ethereum Ropsten",
-      "Ropsten",
+      "Ethereum Goerli",
+      "Goerli",
       "assets/wallet/networks/ethereum.png",
       "ETH",
       "ETH",
@@ -22,10 +22,10 @@ export class EthereumRopstenNetwork extends EthereumBaseNetwork {
 
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
-      return EthereumAPI.getApiUrl(EthereumAPIType.RPC, "ropsten");
+      return EthereumAPI.getApiUrl(EthereumAPIType.RPC, "goerli");
     else if (type === NetworkAPIURLType.ETHERSCAN)
-      return EthereumAPI.getApiUrl(EthereumAPIType.ETHERSCAN_API, "ropsten");
+      return EthereumAPI.getApiUrl(EthereumAPIType.ETHERSCAN_API, "goerli");
     else
-      throw new Error(`EthereumRopstenNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
+      throw new Error(`EthereumGoerliNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
 }

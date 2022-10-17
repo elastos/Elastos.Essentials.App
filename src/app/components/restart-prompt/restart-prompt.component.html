@@ -11,13 +11,9 @@
     </ion-col>
   </ion-row>
   <ion-row class="btn-row">
-    <ion-col *ngIf="canCancel" class="btn ion-activatable ripple" size="5" (click)="cancel()">
-        <ion-label>{{ 'settings.restart-later' | translate }}</ion-label>
-        <ion-ripple-effect></ion-ripple-effect>
-    </ion-col>
-    <ion-col class="btn ion-activatable ripple" [size]="canCancel ? 5 : 10" (click)="confirm()">
-        <ion-label>{{ 'common.confirm' | translate }}</ion-label>
-        <ion-ripple-effect></ion-ripple-effect>
-    </ion-col>
+    <ebutton mode="cancel" *ngIf="canCancel" class="btn half" (clicked)="cancel()"
+      [title]="'settings.restart-later' | translate"></ebutton>
+    <ebutton class="btn" [class.half]="canCancel" (clicked)="confirm()" [title]="'common.confirm' | translate">
+    </ebutton>
   </ion-row>
 </div>
