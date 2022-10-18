@@ -38,40 +38,13 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
+    padding: 10px;
 
     .btn {
       width: 100%;
 
       &.half {
         width: 45%;
-      }
-    }
-  }
-}
-
-.darkContainer {
-  background: #2b2c49;
-
-  .header {
-    h1 {
-      color: #fdfeff;
-    }
-  }
-
-  .message {
-    background: #2b2c49;
-
-    p {
-      color: #fdfeff;
-    }
-  }
-
-  .btn-row {
-    .btn {
-      background: #161740;
-
-      ion-label {
-        color: #fdfeff;
       }
     }
   }

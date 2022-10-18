@@ -1,8 +1,9 @@
-import { Component, NgZone, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, NgZone, OnInit, ViewChild } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ActionSheetController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
+import FastAverageColor from "fast-average-color";
 import { isNil } from "lodash-es";
 import * as moment from "moment";
 import { Subscription } from "rxjs";
@@ -44,6 +45,7 @@ type DisplayProperty = {
 })
 export class CredentialDetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
+  @ViewChild("icon") iconElement: ElementRef;
 
   public credentials: VerifiableCredential[];
   public currentOnChainDIDDocument: DIDDocument = null;
@@ -217,7 +219,7 @@ export class CredentialDetailsPage implements OnInit {
     // Prepare the credential for display
     this.credential.onIconReady(iconSrc => {
       this.zone.run(() => {
-        this.iconSrc = iconSrc;
+        this.applyIconAfterFetch(iconSrc);
         this.iconLoaded = true;
       })
     });
@@ -252,6 +254,38 @@ export class CredentialDetailsPage implements OnInit {
 
     //await this.isLocalCredSyncOnChain();
     this.hasCheckedCredential = true;
+  }
+
+  /**
+     * Applies an asynchronously fetched icon data to the UI icon
+     */
+  private applyIconAfterFetch(iconSrc: string) {
+    // Load the image manually to be able to extract the main color
+    let image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.onload = async () => {
+      this.iconElement.nativeElement.crossOrigin = 'anonymous';
+      this.iconElement.nativeElement.src = image.src;
+
+      const fac = new FastAverageColor();
+      try {
+        let color = await fac.getColorAsync(this.iconElement.nativeElement);
+
+        // Change the icon background colro according to the main icon color type (light or dark)
+        if (color.isDark)
+          this.iconElement.nativeElement.style.backgroundColor = "#FFFFFF80"; // color.rgba;
+        else
+          this.iconElement.nativeElement.style.backgroundColor = "#00000080";
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    image.onerror = () => {
+      image.src = "assets/identity/smallIcons/dark/finger-print.svg";
+      this.iconElement.nativeElement.style.backgroundColor = "#00000080";
+    };
+
+    image.src = iconSrc;
   }
 
   getDisplayableCredentialTitle(): string {
