@@ -475,9 +475,11 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
     if (amount.eq(-1)) {//-1: send all.
       let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice))
-      amount = this.balance.minus(fee).dividedBy(this.tokenAmountMulipleTimes);
+      amount = this.balance.minus(fee);
       if (amount.lte(0))
         return null;
+    } else {
+        amount = amount.multipliedBy(this.tokenAmountMulipleTimes);
     }
 
     let nonce = nonceArg;

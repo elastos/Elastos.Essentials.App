@@ -442,7 +442,7 @@ export class EVMService {
         gasLimit: web3.utils.toHex(gasLimit),
         gasPrice: web3.utils.toHex(gasPrice),
         to: toAddress,
-        value: web3.utils.toHex(web3.utils.toWei(Util.getDecimalString(amount))),
+        value: web3.utils.toHex(amount) // the unit of amount is wei
     }
     Logger.log('wallet', 'EVMService::createUnsignedTransferTransaction:', txData);
     return Promise.resolve(txData);

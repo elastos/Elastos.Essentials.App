@@ -204,19 +204,22 @@ export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvide
 
   private async sendTransaction(params) {
     let safe = <EVMSafe><unknown>this.mainCoinSubWallet.networkWallet.safe;
-    // TODO: use createPaymentTransaction for native token
-    let unsignedTx = await safe.createContractTransaction(params.to, params.value, params.gasPrice, params.gasLimit, params.nonce, params.data);
-    Logger.log('ChaingeWeb3Provider', 'ChaingeWeb3Provider sendUnsignedTransaction unsignedTx', unsignedTx)
+
+    let unsignedTx = null;
+    if (params.data === '0x') {
+        // Native token, the unit of value is wei
+        unsignedTx = await safe.createTransferTransaction(params.to, params.value, params.gasPrice, params.gasLimit, params.nonce);
+    } else {
+        unsignedTx = await safe.createContractTransaction(params.to, params.value, params.gasPrice, params.gasLimit, params.nonce, params.data);
+    }
+
     const txId = await this.sendUnsignedTransaction(this.mainCoinSubWallet, unsignedTx);
-    Logger.log('ChaingeWeb3Provider', 'ChaingeWeb3Provider sendUnsignedTransaction txId', txId)
+    Logger.log('ChaingeWeb3Provider', 'sendTransaction txId', txId)
     return txId;
   }
 
   private async sendUnsignedTransaction(mainCoinSubWallet: AnyMainCoinEVMSubWallet, unsignedTx: any): Promise<string> {
-    Logger.log("ChaingeWeb3Provider", "Signing and sending transaction", unsignedTx);
     let sendResult = await mainCoinSubWallet.signAndSendRawTransaction(unsignedTx, null, false, false, false);
-    Logger.log("ChaingeWeb3Provider", "ChaingeWeb3Provider Transaction result:", sendResult);
-
     if (!sendResult || !sendResult.published)
       return null;
     else
