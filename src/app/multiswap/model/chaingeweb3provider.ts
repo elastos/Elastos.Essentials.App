@@ -1,6 +1,9 @@
 import EventEmitter from "events";
+import { Logger } from "src/app/logger";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
-import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
+import { AnyEVMNetworkWallet } from "src/app/wallet/model/networks/evms/networkwallets/evm.networkwallet";
+import { EVMSafe } from "src/app/wallet/model/networks/evms/safes/evm.safe";
+import { AnyMainCoinEVMSubWallet } from "src/app/wallet/model/networks/evms/subwallets/evm.subwallet";
 import type { AbstractProvider } from "web3-core";
 import type { JsonRpcPayload, JsonRpcResponse } from "web3-core-helpers";
 
@@ -12,15 +15,19 @@ type JsonRpcCallback = (error: Error | null, result?: JsonRpcResponse) => void;
  */
 export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvider {
   public chainId: number = null;
+  private address: string = null;
   private ready = false;
   private idMapping = new IdMapping(); // Helper class to create and retrieve payload IDs for requests and responses.
   private callbacks = new Map<string | number, JsonRpcCallback>();
   private wrapResults = new Map<string | number, boolean>();
+  private mainCoinSubWallet: AnyMainCoinEVMSubWallet;
 
-  constructor(private network: EVMNetwork, private address: string) {
+  constructor(private networkWallet: AnyEVMNetworkWallet) {
     super();
 
-    this.chainId = network.getMainChainID();
+    this.chainId = networkWallet.network.getMainChainID();
+    this.mainCoinSubWallet = networkWallet.getMainEvmSubWallet();
+    this.address = this.mainCoinSubWallet.getCurrentReceiverAddress();
     this.ready = !!(this.chainId && this.address);
 
     this.emitConnect(this.chainId);
@@ -61,7 +68,7 @@ export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvide
   }
 
   private emitConnect(chainId: number) {
-    console.log("InAppBrowserWeb3Provider: emitting connect", chainId);
+    Logger.log('ChaingeWeb3Provider', "emitting connect", chainId);
     this.emit("connect", { chainId: chainId });
   }
 
@@ -96,7 +103,7 @@ export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvide
    */
   private _request(payload: JsonRpcPayload, wrapResult = true): Promise<JsonRpcResponse> {
     this.idMapping.tryIntifyId(payload);
-    return new Promise<JsonRpcResponse>((resolve, reject) => {
+    return new Promise<JsonRpcResponse>(async (resolve, reject) => {
       if (!payload.id) {
         payload.id = Utils.genId();
       }
@@ -119,6 +126,11 @@ export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvide
         case "eth_coinbase":
           this.sendResponse(payload.id, this.eth_coinbase());
           break;
+        case "eth_sendTransaction":
+          Logger.log('ChaingeWeb3Provider', '_request eth_sendTransaction', payload)
+          let txId = await this.sendTransaction(payload.params[0])
+          this.sendResponse(payload.id, txId);
+          break;
         case "net_version":
         case "eth_sign":
         case "personal_sign":
@@ -134,9 +146,6 @@ export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvide
         case "eth_newPendingTransactionFilter":
         case "eth_uninstallFilter":
         case "eth_requestAccounts":
-        case "eth_sendTransaction":
-        // TODO: probably we need to send a escntransaction intent here
-        // fallthrough
         case "eth_subscribe":
           throw new Error(`The ChaingeWeb3Provider does not support the ${payload.method} method.`);
         default:
@@ -174,7 +183,7 @@ export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvide
   }
 
   private callJsonRPC(payload: JsonRpcPayload): Promise<JsonRpcResponse> {
-    return GlobalJsonRPCService.instance.httpPost(this.network.getRPCUrl(), payload, null, 5000, true, true);
+    return GlobalJsonRPCService.instance.httpPost(this.networkWallet.network.getRPCUrl(), payload, null, 5000, true, true);
   }
 
   /**
@@ -191,6 +200,27 @@ export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvide
     that._request(payload)
       .then((data) => callback(null, data))
       .catch((error) => callback(error, null));
+  }
+
+  private async sendTransaction(params) {
+    let safe = <EVMSafe><unknown>this.mainCoinSubWallet.networkWallet.safe;
+    // TODO: use createPaymentTransaction for native token
+    let unsignedTx = await safe.createContractTransaction(params.to, params.value, params.gasPrice, params.gasLimit, params.nonce, params.data);
+    Logger.log('ChaingeWeb3Provider', 'ChaingeWeb3Provider sendUnsignedTransaction unsignedTx', unsignedTx)
+    const txId = await this.sendUnsignedTransaction(this.mainCoinSubWallet, unsignedTx);
+    Logger.log('ChaingeWeb3Provider', 'ChaingeWeb3Provider sendUnsignedTransaction txId', txId)
+    return txId;
+  }
+
+  private async sendUnsignedTransaction(mainCoinSubWallet: AnyMainCoinEVMSubWallet, unsignedTx: any): Promise<string> {
+    Logger.log("ChaingeWeb3Provider", "Signing and sending transaction", unsignedTx);
+    let sendResult = await mainCoinSubWallet.signAndSendRawTransaction(unsignedTx, null, false, false, false);
+    Logger.log("ChaingeWeb3Provider", "ChaingeWeb3Provider Transaction result:", sendResult);
+
+    if (!sendResult || !sendResult.published)
+      return null;
+    else
+      return sendResult.txid;
   }
 }
 
