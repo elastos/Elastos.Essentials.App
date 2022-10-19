@@ -52,6 +52,8 @@ export class EthereumMainNetNetwork extends EthereumBaseNetwork {
       return EthereumAPI.getApiUrl(EthereumAPIType.RPC, "mainnet");
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return EthereumAPI.getApiUrl(EthereumAPIType.ETHERSCAN_API, "mainnet");
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return EthereumAPI.getApiUrl(EthereumAPIType.BLOCK_EXPLORER, "mainnet");
     else
       throw new Error(`EthereumMainNetNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

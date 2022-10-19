@@ -107,6 +107,8 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHSC), MAINNET_TEMPLATE);
     else if (type === NetworkAPIURLType.ETHERSCAN) {
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(StandardCoinName.ETHSC), MAINNET_TEMPLATE);
+    } else if (type === NetworkAPIURLType.BLOCK_EXPLORER) {
+        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHSC), MAINNET_TEMPLATE);
     } else
       return null;
   }
@@ -152,6 +154,8 @@ export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBas
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHSC), TESTNET_TEMPLATE);
     else if (type === NetworkAPIURLType.ETHERSCAN) {
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(StandardCoinName.ETHSC), TESTNET_TEMPLATE);
+    } else if (type === NetworkAPIURLType.BLOCK_EXPLORER) {
+        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHSC), TESTNET_TEMPLATE);
     } else
       return null;
   }

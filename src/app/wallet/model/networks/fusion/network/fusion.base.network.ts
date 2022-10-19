@@ -35,6 +35,8 @@ export class FusionBaseNetwork extends EVMNetwork {
       return FusionAPI.getApiUrl(FusionApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return FusionAPI.getApiUrl(FusionApiType.FSNSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+        return FusionAPI.getApiUrl(FusionApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`FusionBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

@@ -35,6 +35,8 @@ export class CronosBaseNetwork extends EVMNetwork {
       return CronosAPI.getApiUrl(CronosApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return CronosAPI.getApiUrl(CronosApiType.ETHERSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return CronosAPI.getApiUrl(CronosApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`CronosBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

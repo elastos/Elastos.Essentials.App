@@ -35,6 +35,8 @@ export class ArbitrumBaseNetwork extends EVMNetwork {
       return ArbitrumAPI.getApiUrl(ArbitrumApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return ArbitrumAPI.getApiUrl(ArbitrumApiType.ETHERSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return ArbitrumAPI.getApiUrl(ArbitrumApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`BSCNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

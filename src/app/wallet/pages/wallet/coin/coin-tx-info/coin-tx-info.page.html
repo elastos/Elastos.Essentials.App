@@ -33,7 +33,7 @@
                         [class.rotate]="item.show" />
                 </ion-col>
                 <div *ngIf="item.show" class="details-container" (click)="item.show = ! item.show">
-                    <div class="details-row">
+                    <div class="details-row" (click)="openForBrowseMode(item)">
                         <h2>{{ item.value }}</h2>
                     </div>
                 </div>

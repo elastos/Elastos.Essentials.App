@@ -35,6 +35,8 @@ export class HooBaseNetwork extends EVMNetwork {
       return HooAPI.getApiUrl(HooApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return HooAPI.getApiUrl(HooApiType.ETHERSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return HooAPI.getApiUrl(HooApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`HooBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

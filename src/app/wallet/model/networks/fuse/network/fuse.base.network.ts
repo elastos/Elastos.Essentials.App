@@ -35,6 +35,8 @@ export class FuseBaseNetwork extends EVMNetwork {
       return FuseAPI.getApiUrl(FuseApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return FuseAPI.getApiUrl(FuseApiType.ETHERSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return FuseAPI.getApiUrl(FuseApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`FuseBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

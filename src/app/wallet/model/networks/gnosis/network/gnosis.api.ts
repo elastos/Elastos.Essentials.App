@@ -2,7 +2,8 @@ import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 
 export enum GnosisApiType {
   RPC,
-  ETHERSCAN_API
+  ETHERSCAN_API,
+  BLOCK_EXPLORER
 }
 
 export class GnosisAPI {
@@ -13,6 +14,7 @@ export class GnosisAPI {
           // case GnosisApiType.RPC: return 'https://blockscout.com/xdai/mainnet/api/eth-rpc';
           case GnosisApiType.RPC: return 'https://rpc.gnosischain.com';
           case GnosisApiType.ETHERSCAN_API: return 'https://blockscout.com/xdai/mainnet/api';
+          case GnosisApiType.BLOCK_EXPLORER: return 'https://blockscout.com/xdai/mainnet';
           default:
             throw new Error("Gnosis API - Unknown api type " + type);
         }

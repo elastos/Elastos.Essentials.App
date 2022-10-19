@@ -35,6 +35,8 @@ export class GnosisBaseNetwork extends EVMNetwork {
       return GnosisAPI.getApiUrl(GnosisApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return GnosisAPI.getApiUrl(GnosisApiType.ETHERSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return GnosisAPI.getApiUrl(GnosisApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`GnosisBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

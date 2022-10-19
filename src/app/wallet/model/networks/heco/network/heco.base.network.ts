@@ -35,6 +35,8 @@ export class HecoBaseNetwork extends EVMNetwork {
       return HecoAPI.getApiUrl(HecoApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return HecoAPI.getApiUrl(HecoApiType.ETHERSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return HecoAPI.getApiUrl(HecoApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`HecoBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

@@ -2,7 +2,8 @@ import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.netw
 
 export enum FantomApiType {
   RPC,
-  ETHERSCAN_API
+  ETHERSCAN_API,
+  BLOCK_EXPLORER
 }
 
 export class FantomAPI {
@@ -12,6 +13,7 @@ export class FantomAPI {
         switch (type) {
           case FantomApiType.RPC: return 'https://rpcapi.fantom.network';
           case FantomApiType.ETHERSCAN_API: return 'https://api.ftmscan.com/api';
+          case FantomApiType.BLOCK_EXPLORER: return 'https://ftmscan.com';
           default:
             throw new Error("Fantom API - Unknown api type " + type);
         }
@@ -19,6 +21,7 @@ export class FantomAPI {
         switch (type) {
           case FantomApiType.RPC: return 'https://rpc.testnet.fantom.network';
           case FantomApiType.ETHERSCAN_API: return 'https://api-testnet.ftmscan.com/api';
+          case FantomApiType.BLOCK_EXPLORER: return 'https://testnet.ftmscan.com';
           default:
             throw new Error("Fantom API - Unknown api type " + type);
         }

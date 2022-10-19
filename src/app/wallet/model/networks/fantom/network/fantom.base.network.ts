@@ -35,6 +35,8 @@ export class FantomBaseNetwork extends EVMNetwork {
       return FantomAPI.getApiUrl(FantomApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return FantomAPI.getApiUrl(FantomApiType.ETHERSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return FantomAPI.getApiUrl(FantomApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`FantomBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

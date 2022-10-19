@@ -23,6 +23,8 @@ export class TelosBaseNetwork extends EVMNetwork {
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
       return TelosAPI.getApiUrl(TelosAPIType.RPC, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return TelosAPI.getApiUrl(TelosAPIType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`TelosBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

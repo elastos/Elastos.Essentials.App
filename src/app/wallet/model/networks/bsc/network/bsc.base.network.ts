@@ -35,6 +35,8 @@ export class BSCBaseNetwork extends EVMNetwork {
       return BscAPI.getApiUrl(BscApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return BscAPI.getApiUrl(BscApiType.ETHERSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return BscAPI.getApiUrl(BscApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`BSCNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

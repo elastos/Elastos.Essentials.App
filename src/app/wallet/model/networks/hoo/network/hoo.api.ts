@@ -2,7 +2,8 @@ import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.netw
 
 export enum HooApiType {
   RPC,
-  ETHERSCAN_API
+  ETHERSCAN_API,
+  BLOCK_EXPLORER
 }
 
 export class HooAPI {
@@ -12,6 +13,7 @@ export class HooAPI {
         switch (type) {
           case HooApiType.RPC: return 'https://http-mainnet.hoosmartchain.com';
           case HooApiType.ETHERSCAN_API: return 'https://hooscan.com/api';
+          case HooApiType.BLOCK_EXPLORER: return 'https://hooscan.com';
           default:
             throw new Error("Hoo API - Unknown api type " + type);
         }
@@ -19,6 +21,7 @@ export class HooAPI {
         switch (type) {
           case HooApiType.RPC: return 'https://http-testnet.hoosmartchain.com';
           case HooApiType.ETHERSCAN_API: return 'TODO';
+          case HooApiType.BLOCK_EXPLORER: return 'https://testnet.hooscan.com';
           default:
             throw new Error("Hoo API - Unknown api type " + type);
         }

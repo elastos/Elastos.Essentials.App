@@ -2,7 +2,8 @@ import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.netw
 
 export enum BscApiType {
   ETHERSCAN_API,
-  RPC
+  RPC,
+  BLOCK_EXPLORER
 }
 
 // https://docs.binance.org/smart-chain/developer/rpc.html
@@ -13,6 +14,7 @@ export class BscAPI {
         switch (type) {
           case BscApiType.RPC: return 'https://bsc-dataseed1.defibit.io';
           case BscApiType.ETHERSCAN_API: return 'https://api.bscscan.com/api';
+          case BscApiType.BLOCK_EXPLORER: return 'https://bscscan.com';
           default:
             throw new Error("Bsc API - Unknown api type " + type);
         }
@@ -20,6 +22,7 @@ export class BscAPI {
         switch (type) {
           case BscApiType.RPC: return 'https://data-seed-prebsc-1-s1.binance.org:8545';
           case BscApiType.ETHERSCAN_API: return 'https://api-testnet.bscscan.com/api';
+          case BscApiType.BLOCK_EXPLORER: return 'https://testnet.bscscan.com';
           default:
             throw new Error("Bsc API - Unknown api type " + type);
         }

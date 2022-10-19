@@ -2,7 +2,7 @@ import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.netw
 
 export enum BTCApiType {
   NODE,
-  EXPLORER,
+  BLOCK_EXPLORER
 }
 
 export class BTCAPI {
@@ -11,14 +11,18 @@ export class BTCAPI {
       case MAINNET_TEMPLATE:
         switch (type) {
           case BTCApiType.NODE: return 'https://btc.nownodes.io';
-          //case BTCApiType.EXPLORER: return 'https://btcbook.nownodes.io';
+        //   case BTCApiType.NODE: return 'https://btcbook.nownodes.io';
+          case BTCApiType.BLOCK_EXPLORER: return 'https://btcbook.nownodes.io';
+        //   case BTCApiType.BLOCK_EXPLORER: return 'https://blockexplorers.nownodes.io/bitcoin'
           default:
             throw new Error("BTC API - Unknown api type " + type);
         }
       case TESTNET_TEMPLATE:
         switch (type) {
           case BTCApiType.NODE: return 'https://btc-testnet.nownodes.io';
-          //case BTCApiType.EXPLORER: return 'https://btcbook-testnet.nownodes.io';
+        //   case BTCApiType.NODE: return 'https://btcbook-testnet.nownodes.io';
+          case BTCApiType.BLOCK_EXPLORER: return 'https://btcbook-testnet.nownodes.io'
+        //   case BTCApiType.BLOCK_EXPLORER: return 'https://www.blockchain.com/btc-testnet'
           default:
             throw new Error("BTC API - Unknown api type " + type);
         }

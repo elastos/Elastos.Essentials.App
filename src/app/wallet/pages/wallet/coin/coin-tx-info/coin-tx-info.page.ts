@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
@@ -11,6 +12,7 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
+import { NetworkAPIURLType } from 'src/app/wallet/model/networks/base/networkapiurltype';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
@@ -97,6 +99,7 @@ export class CoinTxInfoPage implements OnInit {
         public theme: GlobalThemeService,
         private offlineTransactionsService: OfflineTransactionsService,
         private nav: GlobalNavService,
+        public dappbrowserService: DappBrowserService,
     ) {
     }
 
@@ -384,6 +387,29 @@ export class CoinTxInfoPage implements OnInit {
             return true;
         } else {
             return false;
+        }
+    }
+
+    openForBrowseMode(item: TransactionDetail) {
+        let action = ''
+        switch (item.type) {
+            case 'txid':
+            action = '/tx/';
+            break;
+            case 'blockId':
+            action = '/block/';
+            break;
+            case 'address':
+            action = '/address/';
+            break;
+            default:
+            return;
+        }
+
+        let browserUrl = WalletNetworkService.instance.activeNetwork.value.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
+        if (browserUrl) {
+            let url = browserUrl + action + item.value;
+            void this.dappbrowserService.openForBrowseMode(url, "");
         }
     }
 

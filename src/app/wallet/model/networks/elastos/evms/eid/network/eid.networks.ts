@@ -66,7 +66,9 @@ export class ElastosIdentityChainMainNetNetwork extends ElastosIdentityChainNetw
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHDID), MAINNET_TEMPLATE);
-    else
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER) {
+        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHDID), MAINNET_TEMPLATE);
+    } else
       return null;
   }
 
@@ -93,7 +95,9 @@ export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetw
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHDID), TESTNET_TEMPLATE);
-    else
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER) {
+        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHDID), TESTNET_TEMPLATE);
+    } else
       return null;
   }
 

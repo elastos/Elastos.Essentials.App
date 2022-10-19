@@ -36,6 +36,8 @@ export abstract class AvalancheCChainBaseNetwork extends EVMNetwork {
       return AvalancheCChainAPI.getApiUrl(AvalancheCChainApiType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.COVALENTHQ)
       return CovalentHelper.apiUrl();
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return AvalancheCChainAPI.getApiUrl(AvalancheCChainApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`AvalancheCChainBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

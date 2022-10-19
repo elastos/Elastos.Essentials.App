@@ -21,6 +21,8 @@ export class BTCTestNetNetwork extends BTCNetworkBase {
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
       return BTCAPI.getApiUrl(BTCApiType.NODE, TESTNET_TEMPLATE);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return BTCAPI.getApiUrl(BTCApiType.BLOCK_EXPLORER, TESTNET_TEMPLATE);
     else
       throw new Error(`BTCNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }

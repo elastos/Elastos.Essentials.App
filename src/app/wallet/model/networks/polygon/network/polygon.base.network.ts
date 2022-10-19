@@ -35,6 +35,8 @@ export class PolygonBaseNetwork extends EVMNetwork {
       return PolygonAPI.getApiUrl(PolygonAPIType.RPC, this.networkTemplate);
     else if (type === NetworkAPIURLType.ETHERSCAN)
       return PolygonAPI.getApiUrl(PolygonAPIType.ETHERSCAN_API, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return PolygonAPI.getApiUrl(PolygonAPIType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`PolygonBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
