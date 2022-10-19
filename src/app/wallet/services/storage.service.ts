@@ -150,9 +150,7 @@ export class LocalStorage {
     }
 
     public setCurrency(value: string) {
-        return this.set("currency", JSON.stringify(value)).then(() => {
-            Logger.log('wallet', 'Currency stored');
-        });
+        return this.set("currency", JSON.stringify(value));
     }
 
     public async getCurrency(): Promise<string> {
@@ -162,9 +160,7 @@ export class LocalStorage {
     }
 
     public setCurrencyDisplayPreference(useCurrency: boolean) {
-        return this.set('useCurrency', JSON.stringify(useCurrency)).then(() => {
-            Logger.log('wallet', 'Currency display preference stored');
-        });
+        return this.set('useCurrency', JSON.stringify(useCurrency));
     }
 
     public async getCurrencyDisplayPreference(): Promise<boolean> {
@@ -186,9 +182,7 @@ export class LocalStorage {
     }
 
     public setVisit(visited: boolean) {
-        return this.set('visited', JSON.stringify(visited)).then(() => {
-            Logger.log('wallet', 'Visit stored');
-        });
+        return this.set('visited', JSON.stringify(visited));
     }
 
     public async getVisit(): Promise<boolean> {
@@ -198,9 +192,7 @@ export class LocalStorage {
     }
 
     public setContacts(contacts: Contact[]) {
-        return this.set('contacts', JSON.stringify(contacts)).then(() => {
-            Logger.log('wallet', 'Contacts stored');
-        });
+        return this.set('contacts', JSON.stringify(contacts));
     }
 
     public async getContacts(): Promise<Contact[]> {
