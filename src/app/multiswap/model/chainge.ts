@@ -100,7 +100,7 @@ export class ChaingeSwap {
         return null;
     }
 
-    public async getCrossChainQuote(amount: number, feeLevel: number, fromChain: string, toChain: string, token: string): Promise<ChaingeCrossChain> {
+    public async getCrossChainQuote(amount: string, feeLevel: number, fromChain: string, toChain: string, token: string): Promise<ChaingeCrossChain> {
         try {
             const result = await this.chainge.getCrossChainQuote({
                 amount, feeLevel, fromChain, toChain, token
