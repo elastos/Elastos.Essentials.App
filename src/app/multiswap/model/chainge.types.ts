@@ -1,23 +1,30 @@
 export enum OrderStatus {
     ONGOING = 1,
-    OK =  2,
+    OK = 2,
     FAIL = 3,
     PartiallyCompleted = 6, // Partial completion (only for transaction orders)
 }
 
 export enum OrderType {
     CROSSCHAIN = 1,
-    AGGREGATE =  2,
+    AGGREGATE = 2,
 }
 
-export type ChaingeResponce = {
-    code: number;
+export enum ErrorCode {
+    SUCCESS = 200,
+    VALIDATION_FAILED = 31010, // msg: "Validation failed!"
+    TOKEN_CHAIN_NOT_SUPPORTED = 31006, // msg: "Not support this chain and token!"
+    NO_ROUTE = 31037 // msg: "Get aggregate quote error! Error msg !" (according to chainge team, this happens when no DEX is available to route tokens)
+}
+
+export type Response = {
+    code: ErrorCode;
     data: any;
     msg: string;
     status: number;
 }
 
-export type ChaingeSupportChain = {
+export type SupportedChain = {
     chainId: number;
     fullName: string;
     id: number;
@@ -27,7 +34,7 @@ export type ChaingeSupportChain = {
     url: string; // eg. "https://chainge.oss-cn-hongkong.aliyuncs.com/icon/75_ELA_color.png"
 }
 
-export type ChaingeSupportToken = {
+export type SupportedToken = {
     address: string;
     chain: string;
     decimals: number;
@@ -37,32 +44,32 @@ export type ChaingeSupportToken = {
     url: string; // eg. "https://chainge.oss-cn-hongkong.aliyuncs.com/icon/75_ELA_color.png"
 }
 
-export type ChaingeFeeToInfo = {
+export type FeeToInfo = {
     address: string; // "0x01a14bc0018fc97e2fdb14ace069f50b1c44ee86" ??
     feeLevel: number;
     feeRate: number;
     id: number;
 }
 
-export type ChaingeCrossChain = {
+export type CrossChainQuote = {
     amountIn: number;
     amountOut: number;
-    fee: number;
-    gas: number;
+    fee: number; // All fees including chainge and essentials. In tokenIn amount
+    gas: number; // Gas paid by the intermediate transactions
     tokenIn: string
 }
 
-export type ChaingeAggregateQuote = {
+export type AggregateQuote = {
     amountIn: number;
     amountOut: number;
-    fee: number;
-    gas: number;
+    fee: number; // All fees including chainge and essentials. In tokenIn amount
+    gas: number; // Gas paid by the intermediate transactions
     slippage: number;
     tokenIn: string;
     tokeOut: string;
 }
 
-export type ChaingeTx = {
+export type Transaction = {
     chain: string;
     event: {
         amount: string; // eg. "100000000000000000"
@@ -89,17 +96,17 @@ export type ChaingeTx = {
     value: string;
 }
 
-export type ChaingeMinterParams = {
+export type MinterParams = {
     raw: string;
     signHash: string[];
-    tx: ChaingeTx;
+    tx: Transaction;
 }
 
-export type ChaingeOrder = {
+export type Order = {
     backAddress: string;
     backAmount: string; // "0"
     backChain: string;
-    backHash : string; // null
+    backHash: string; // null
     backToken: string;
     certHash: string;
     feeLevel: string; // null
@@ -126,12 +133,17 @@ export type ChaingeOrder = {
 export enum ActionType {
     SENDTRANSACTION = 'signAndSendTransaction',
     AGGREGATE = 'aggregate',
-    CROSSCHAIN =  'crossChain',
+    CROSSCHAIN = 'crossChain',
     WAITTRANSACTION = 'waitForTransaction',
     SUBMIT = 'submit',
 }
 
-export type ChaingeCallbackResult = {
+export type CallbackResult = {
     response: any;
     certHash?: string
 }
+
+export class ChaingeException extends Error { }
+export class UnspecifiedException extends ChaingeException { }
+export class UnsupportedTokenOrChainException extends ChaingeException { }
+export class NoRouteException extends ChaingeException { }

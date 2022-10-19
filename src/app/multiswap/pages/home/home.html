@@ -9,7 +9,6 @@
     <div class="fetch-tokens-heading">
       <div class="heading" [class.highlighted]="!selectedSourceToken">{{ 'easybridge.source-token' | translate }}
       </div>
-      <ion-spinner *ngIf="fetchingTokens">{{ 'easybridge.searching-tokens' | translate }}</ion-spinner>
     </div>
     <div class="source-tokens">
       <!-- No token selected yet -->
@@ -34,10 +33,6 @@
           </div>
         </div>
       </div>
-
-      <!-- <div *ngIf="!fetchingTokens && sourceTokens.length === 0">
-        {{ 'easybridge.no-source-funds' | translate }}
-      </div> -->
     </div>
 
     <!-- Destination tokens -->
@@ -102,20 +97,9 @@
     </div>
 
     <!-- Transfer info -->
-    <div *ngIf="selectedDestinationToken && activeTransfer && canTransfer()" class="card transfer-summary">
+    <div *ngIf="selectedDestinationToken && activeTransfer && !lastError && canTransfer()"
+      class="card transfer-summary">
       <div class="heading">{{ 'easybridge.transfer-summary' | translate }}</div>
-      <ion-row>
-        <ion-col size="5">
-          {{ 'easybridge.bridge-fees' | translate }}
-        </ion-col>
-        <ion-col size="7" *ngIf="hasBridgeFees()">
-          {{ getDisplayableBridgeFees() }}% ({{ getDisplayableBridgeFeesAmount() }} {{
-          selectedSourceToken.token.getSymbol() }})
-        </ion-col>
-        <ion-col size="7" *ngIf="!hasBridgeFees()">
-          {{ 'easybridge.free' | translate }}
-        </ion-col>
-      </ion-row>
 
       <ion-row *ngIf="activeTransfer.swapStep">
         <ion-col size="5">
@@ -141,7 +125,7 @@
           {{ 'easybridge.received-amount' | translate }}
         </ion-col>
         <ion-col size="7">
-          <b>~ {{ getDisplayableAmount(activeTransfer.amount) }}
+          <b>~ {{ getEstimatedReceivedAmount() }}
             {{selectedDestinationToken.token.getSymbol() }}</b>
         </ion-col>
       </ion-row>

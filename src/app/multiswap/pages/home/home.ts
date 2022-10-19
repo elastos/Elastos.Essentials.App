@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonInput, ModalController, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import { GlobalFirebaseService } from 'src/app/services/global.firebase.service'
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Coin } from 'src/app/wallet/model/coin';
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
@@ -21,7 +22,7 @@ import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service'
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { Transfer } from '../../model/transfer';
+import { Transfer, TransferStep } from '../../model/transfer';
 import { UIToken } from '../../model/uitoken';
 import { ChaingeSwapService } from '../../services/chaingeswap.service';
 import { SwapUIService } from '../../services/swap.ui.service';
@@ -58,7 +59,7 @@ export class HomePage {
   public selectedSourceToken: UIToken = null;
   public destinationTokens: UIToken[] = [];
   public selectedDestinationToken: UIToken = null;
-  public transferAmount: number = null;
+  public transferAmount: string = null;
 
   private masterWallet: MasterWallet = null;
   private evmWalletAddress: string = null;
@@ -88,6 +89,7 @@ export class HomePage {
     private modalCtrl: ModalController,
     private route: ActivatedRoute,
     private router: Router,
+    private zone: NgZone,
     private tokenChooserService: TokenChooserService,
     private swapUIService: SwapUIService
   ) {
@@ -116,41 +118,38 @@ export class HomePage {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
 
     // Transfer is completed? Clean it up to restart fresh next time
-    /* if (this.activeTransfer && this.activeTransfer.currentStep === TransferStep.COMPLETED) {
+    if (this.activeTransfer && this.activeTransfer.currentStep === TransferStep.COMPLETED) {
       void this.activeTransfer.reset();
-    } */
+    }
   }
 
   private async init(): Promise<void> {
-    Logger.log("easybridge", "Home page - initializing context");
+    Logger.log("multiswap", "Home page - initializing context");
 
     // Load the on going transfer from disk if there is one.
-    /* this.activeTransfer = await Transfer.loadExistingTransfer();
+    this.activeTransfer = await Transfer.loadExistingTransfer();
 
     // No on going transfer? Prepare for a new one
     if (!this.activeTransfer) {
       await this.prepareForNewTransfer();
     }
     else {
-      // Existing transfer? Don't show the intro, directly show the status
-      this.showingIntro = false;
-
       if (this.activeTransfer.currentStep !== TransferStep.NEW)
         this.canEditFields = false;
 
       this.subscribeToTransferStatus();
 
       // Update UI with saved data
-      this.transferAmount = this.activeTransfer.amount;
-      let sourceNetwork = <EVMNetwork>this.networkService.getNetworkByChainId(this.activeTransfer.sourceToken.chainId);
+      this.transferAmount = this.activeTransfer.amount.toString(10);
+      let sourceNetwork = <EVMNetwork>this.activeTransfer.sourceToken.network;
       if (await this.loadWalletAndAddress(this.activeTransfer.masterWalletId, sourceNetwork)) {
         this.fetchSourceTokensBalances();
         this.selectedDestinationToken = {
           token: this.activeTransfer.destinationToken,
-          estimatedAmount: new BigNumber(0)
+          amount: new BigNumber(0)
         };
       }
-    } */
+    }
 
     await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.networkService.activeNetwork.value);
 
@@ -211,16 +210,16 @@ export class HomePage {
     }); */
   }
 
-  /* private async refreshActiveTransferSourceTokenBalance() {
-    if (!this.selectedSourceToken)
+  private async refreshActiveTransferSourceTokenBalance() {
+    /* if (!this.selectedSourceToken)
       return;
 
     try {
       let walletAddress = this.activeTransfer.getWalletAddress();
-      let sourceNetwork = <EVMNetwork>this.networkService.getNetworkByChainId(this.activeTransfer.sourceToken.chainId);
+      let sourceNetwork = <EVMNetwork>this.activeTransfer.sourceToken.network;
 
       let chainBalance: BigNumber;
-      if (this.activeTransfer.sourceToken.isNative) {
+      if (this.activeTransfer.sourceToken instanceof NativeCoin) {
         let web3 = await this.evmService.getWeb3(sourceNetwork);
         chainBalance = new BigNumber(await web3.eth.getBalance(walletAddress));
       } else {
@@ -231,10 +230,10 @@ export class HomePage {
       this.selectedSourceToken.balance = readableAmount;
     }
     catch (e) {
-      Logger.warn("easybridge", "Refresh source token balance error:", e);
+      Logger.warn("multiswap", "Refresh source token balance error:", e);
       // Silent catch, not blocking...
-    }
-  } */
+    } */
+  }
 
   public getWalletName(): string {
     if (!this.masterWallet)
@@ -252,13 +251,18 @@ export class HomePage {
   }
 
   public getDisplayableSwapFees(): string {
-    //return this.activeTransfer.swapStep.swapFees.toPrecision(2);
-    return "todo";
+    return (this.activeTransfer.swapStep.fees * 100).toFixed(2);
   }
 
   public getDisplayableSwapPriceImpact(): string {
-    //return this.activeTransfer.swapStep.trade.priceImpact.toFixed(2);
-    return "todo";
+    if (this.activeTransfer.swapStep.slippage)
+      return (this.activeTransfer.swapStep.slippage * 100).toFixed(2);
+    else
+      return null;
+  }
+
+  public getEstimatedReceivedAmount(): string {
+    return this.getDisplayableAmount(this.activeTransfer.estimatedReceivedAmount);
   }
 
   /**
@@ -267,10 +271,12 @@ export class HomePage {
   public async pickSourceToken() {
     const selectedToken = await this.pickToken(true);
 
-    if (selectedToken) {
+    /* if (selectedToken) {
       this.selectedSourceToken = selectedToken;
       Logger.log("multiswap", "Picked source token", this.selectedSourceToken);
-    }
+    } */
+
+    void this.selectSourceToken(selectedToken);
 
     /* if (this.tokenSubwallet && this.tokenSubwallet.id !== params.data.selectedSubwallet.id) {
       // The token is a different one, reset the amounts to avoid mistakes
@@ -284,31 +290,32 @@ export class HomePage {
   public async pickDestinationToken() {
     const selectedToken = await this.pickToken(false);
 
-    if (selectedToken) {
+    /* if (selectedToken) {
       this.selectedDestinationToken = selectedToken;
       Logger.log("multiswap", "Picked destination token", this.selectedDestinationToken);
-    }
+    } */
+
+    void this.selectDestinationToken(selectedToken);
   }
 
   private pickToken(forSource: boolean): Promise<UIToken> {
     return this.swapUIService.pickToken(forSource, forSource || !this.selectedSourceToken ? null : this.selectedSourceToken.token)
   }
 
-  public selectSourceToken(sourceToken: UIToken) {
+  public async selectSourceToken(sourceToken: UIToken) {
     if (this.transferIsBeingComputed || !this.canEditFields) // Transfer is being computed or executed - don't allow to change things
       return;
 
     // Unselect, if it was selected
-    if (this.selectedSourceToken) {
+    if (this.selectedSourceToken && !sourceToken) {
       this.selectedSourceToken = null;
       return;
     }
 
     this.selectedSourceToken = sourceToken;
-    this.selectedDestinationToken = null;
     this.transferAmount = null;
 
-    this.updateDestinationTokens();
+    await this.recomputeTransfer();
   }
 
   public async selectDestinationToken(destinationToken: UIToken) {
@@ -316,7 +323,7 @@ export class HomePage {
       return;
 
     // Unselect, if it was selected
-    if (this.selectedDestinationToken) {
+    if (this.selectedDestinationToken && !destinationToken) {
       this.selectedDestinationToken = null;
       return;
     }
@@ -357,15 +364,16 @@ export class HomePage {
   }
 
   private async recomputeTransfer() {
-    /* this.lastError = null;
+    this.lastError = null;
 
-    if (!(this.transferAmount > 0))
+    const transferAmountBN = new BigNumber(this.transferAmount);
+    if (!(transferAmountBN.gt(0)))
       return;
 
-    Logger.log("easybridge", "Recomputing transfer info", this.transferAmount);
+    Logger.log("multiswap", "Recomputing transfer info", this.transferAmount);
 
     // Make sure there is enough balance
-    if (this.selectedSourceToken.balance.lt(this.transferAmount)) {
+    if (this.selectedSourceToken.amount.lt(this.transferAmount)) {
       this.lastError = GlobalTranslationService.instance.translateInstant("easybridge.not-enough-tokens");
       return;
     }
@@ -376,26 +384,26 @@ export class HomePage {
       this.transferIsBeingComputed = true;
     });
 
-    let transfer = await Transfer.prepareNewTransfer(this.masterWallet.id, this.selectedSourceToken.token, this.selectedDestinationToken.token, this.transferAmount);
+    let transfer = await Transfer.prepareNewTransfer(this.masterWallet.id, this.selectedSourceToken.token, this.selectedDestinationToken.token, transferAmountBN);
 
-    Logger.log("easybridge", "Transfer computation result:", transfer);
+    Logger.log("multiswap", "Transfer computation result:", transfer);
 
     this.zone.run(() => {
       this.activeTransfer = transfer;
       this.subscribeToTransferStatus();
 
       this.transferIsBeingComputed = false;
-    }); */
+    });
   }
 
-  /* private subscribeToTransferStatus() {
+  private subscribeToTransferStatus() {
     this.transferStatusSub = this.activeTransfer.status.subscribe(status => {
-      Logger.log("easybridge", "Transfer status:", status);
+      Logger.log("multiswap", "Transfer status:", status);
       this.activeTransferCanContinue = status.canContinue;
       this.activeTransferCanDismiss = status.canDismiss;
       this.lastError = status.lastError;
     });
-  } */
+  }
 
   private unsubscribeFromTransferStatus() {
     if (this.transferStatusSub) {
@@ -405,15 +413,15 @@ export class HomePage {
   }
 
   public getTransferButtonText(): string {
-    /* if (!this.activeTransfer || this.activeTransfer.currentStep === TransferStep.NEW)
+    if (!this.activeTransfer || this.activeTransfer.currentStep === TransferStep.NEW)
       return this.translate.instant("easybridge.start-transfer");
     else
-      return this.translate.instant("easybridge.resume-transfer"); */
-    return "todo";
+      return this.translate.instant("easybridge.resume-transfer");
   }
 
   public canTransfer(): boolean {
     return this.activeTransferCanContinue && this.activeTransfer &&
+      !this.lastError &&
       !!this.selectedDestinationToken && !!this.selectedSourceToken &&
       !!this.transferAmount && !this.transferStarted &&
       this.selectedSourceToken.amount.gte(this.transferAmount); // Balance should be high enough
@@ -422,7 +430,7 @@ export class HomePage {
   /**
    * Starts or continues the transfer process where it was interrupted.
    */
-  public transfer() {
+  public async transfer() {
 
     this.transferStarted = true;
     this.canEditFields = false;
@@ -433,10 +441,10 @@ export class HomePage {
       amount: this.activeTransfer.amount
     }); */
 
-    // await this.activeTransfer.execute();
+    await this.activeTransfer.execute();
 
     // Refresh selected source token balance after spending some
-    //void this.refreshActiveTransferSourceTokenBalance();
+    void this.refreshActiveTransferSourceTokenBalance();
 
     this.transferStarted = false;
   }
@@ -444,7 +452,7 @@ export class HomePage {
   /**
    * Deletes current transfer state to restart from scratch.
    */
-  /* public async reset() {
+  public async reset() {
     let agreed = await this.popupService.showConfirmationPopup(
       this.translate.instant("easybridge.reset-confirmation-title"),
       this.translate.instant("easybridge.reset-confirmation-content")
@@ -467,7 +475,7 @@ export class HomePage {
 
       void this.prepareForNewTransfer();
     }
-  } */
+  }
 
   /**
    * User clicks the done button. We exit the screen.
@@ -478,11 +486,11 @@ export class HomePage {
     void this.globalNavService.goToLauncher();
   }
 
-  /* public isCompleted(): boolean {
+  public isCompleted(): boolean {
     return this.activeTransfer && this.activeTransfer.currentStep === TransferStep.COMPLETED;
-  } */
+  }
 
-  /* public getTransferProgressIndex(): number {
+  public getTransferProgressIndex(): number {
     if (!this.activeTransfer)
       return 0;
 
@@ -501,7 +509,7 @@ export class HomePage {
       return this.translate.instant("easybridge.not-started");
 
     return this.activeTransfer.getTransferProgressMessage();
-  } */
+  }
 
   public openGlideFinance() {
     void this.dAppBrowserService.openForBrowseMode("https://glidefinance.io", "Glide Finance");

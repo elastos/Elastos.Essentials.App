@@ -1,8 +1,8 @@
 import Chainge from '@chainge/sdk';
 import { Logger } from 'src/app/logger';
-import type { ChaingeAggregateQuote, ChaingeCrossChain, ChaingeFeeToInfo, ChaingeOrder, ChaingeSupportChain, ChaingeSupportToken } from 'src/app/multiswap/model/chainge.types';
+import { ActionType, AggregateQuote, CallbackResult, CrossChainQuote, ErrorCode, FeeToInfo, NoRouteException, Order, Response, SupportedChain, SupportedToken, UnspecifiedException, UnsupportedTokenOrChainException } from 'src/app/multiswap/model/chainge.types';
 import { ChaingeWeb3Provider } from 'src/app/multiswap/model/chaingeweb3provider';
-import { AnyEVMNetworkWallet } from 'src/app/wallet/model/networks/evms/networkwallets/evm.networkwallet';
+import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 
 export class ChaingeSwap {
     private config = {
@@ -13,13 +13,13 @@ export class ChaingeSwap {
     private chainge: Chainge = null;
     private evmAddress = null;
 
-    constructor(private networkWallet: AnyEVMNetworkWallet) {
-        let provider = new ChaingeWeb3Provider(networkWallet)
+    constructor(mainCoinSubwallet: AnyMainCoinEVMSubWallet) {
+        let provider = new ChaingeWeb3Provider(mainCoinSubwallet)
         this.chainge = new Chainge(provider, this.config);
-        this.evmAddress = networkWallet.getMainEvmSubWallet().getCurrentReceiverAddress();
+        this.evmAddress = mainCoinSubwallet.getCurrentReceiverAddress();
     }
 
-    public async getSupportChains(): Promise<ChaingeSupportChain[]> {
+    public async getSupportChains(): Promise<SupportedChain[]> {
         try {
             const result = await this.chainge.getSupportChains();
             if (result.code === 200 && result.data.chains) {
@@ -35,7 +35,7 @@ export class ChaingeSwap {
         return [];
     }
 
-    public async getSupportTokens(chain: string): Promise<ChaingeSupportToken[]> {
+    public async getSupportTokens(chain: string): Promise<SupportedToken[]> {
         try {
             const result = await this.chainge.getSupportTokens(chain);
             if (result.code === 200 && result.data.tokenVos) {
@@ -53,7 +53,7 @@ export class ChaingeSwap {
 
     public async setFeeToInfo(feeLevel: number, feeToAddress: string) {
         try {
-            const result = await this.chainge.setFeeToInfo({feeLevel, feeToAddress});
+            const result = await this.chainge.setFeeToInfo({ feeLevel, feeToAddress });
             if (result.code === 200) {
                 Logger.log('ChaingeSwap', 'setFeeToInfo succeeded feeLevel:', feeLevel, ' feeToAddress:', feeToAddress)
                 return true;
@@ -67,7 +67,7 @@ export class ChaingeSwap {
         return false;
     }
 
-    public async getFeeToInfo(): Promise<ChaingeFeeToInfo> {
+    public async getFeeToInfo(): Promise<FeeToInfo> {
         try {
             const result = await this.chainge.getFeeToInfo();
             if (result.code === 200 && result.data.FeeToInfo) {
@@ -100,44 +100,50 @@ export class ChaingeSwap {
         return null;
     }
 
-    public async getCrossChainQuote(amount: string, feeLevel: number, fromChain: string, toChain: string, token: string): Promise<ChaingeCrossChain> {
+    public async getCrossChainQuote(amount: string, feeLevel: number, fromChain: string, toChain: string, token: string): Promise<CrossChainQuote> {
+        let result: Response;
         try {
-            const result = await this.chainge.getCrossChainQuote({
+            result = await this.chainge.getCrossChainQuote({
                 amount, feeLevel, fromChain, toChain, token
             });
-            if (result.code === 200 && result.data.crossChain) {
-                Logger.log('ChaingeSwap', 'getCrossChainQuote', result.data.crossChain)
-                return result.data.crossChain;
-            } else {
-                Logger.warn('ChaingeSwap', 'getCrossChainQuote error:', result)
-            }
         }
         catch (e) {
-            Logger.warn('ChaingeSwap', 'getCrossChainQuote exception', e)
+            Logger.warn('ChaingeSwap', 'getCrossChainQuote exception', e);
+            throw new UnspecifiedException();
         }
-        return null;
+
+        if (result.code === ErrorCode.SUCCESS && result.data.crossChain) {
+            Logger.log('ChaingeSwap', 'getCrossChainQuote', result.data.crossChain)
+            return result.data.crossChain;
+        } else {
+            Logger.warn('ChaingeSwap', 'getCrossChainQuote error:', result);
+            throw this.apiResponseToException(result);
+        }
     }
 
-    public async getAggregateQuote(feeLevel: number, fromAmount: string, fromToken: string, toChain: string, toToken: string): Promise<ChaingeAggregateQuote> {
+    public async getAggregateQuote(feeLevel: number, fromAmount: string, fromToken: string, toChain: string, toToken: string): Promise<AggregateQuote> {
+        let result: Response;
         try {
-            const result = await this.chainge.getAggregateQuote({
+            result = await this.chainge.getAggregateQuote({
                 feeLevel, fromAmount, fromToken, toChain, toToken
             });
-
-            if (result.code === 200 && result.data.aggregate) {
-                Logger.log('ChaingeSwap', 'getAggregateQuote', result.data.aggregate)
-                return result.data.aggregate;
-            } else {
-                Logger.warn('ChaingeSwap', 'getAggregateQuote error:', result)
-            }
         }
         catch (e) {
-            Logger.warn('ChaingeSwap', 'getAggregateQuote exception', e)
+            Logger.warn('ChaingeSwap', 'getAggregateQuote exception', e);
+            throw new UnspecifiedException();
         }
-        return null;
+
+        if (result.code === ErrorCode.SUCCESS && result.data.aggregate) {
+            Logger.log('ChaingeSwap', 'getAggregateQuote', result.data.aggregate)
+            return result.data.aggregate;
+        } else {
+            Logger.warn('ChaingeSwap', 'getAggregateQuote error:', result);
+            throw this.apiResponseToException(result);
+        }
+
     }
 
-    public async submitCrossChain(feeLevel: number, fromAmount: string, fromChain: string, fromToken: string, toChain: string): Promise<ChaingeAggregateQuote> {
+    public async submitCrossChain(feeLevel: number, fromAmount: string, fromChain: string, fromToken: string, toChain: string): Promise<AggregateQuote> {
         try {
             const result = await this.chainge.submitCrossChain({
                 evmAddress: this.evmAddress, feeLevel, fromAddress: this.evmAddress, fromAmount, fromChain, fromToken, toChain
@@ -157,12 +163,12 @@ export class ChaingeSwap {
 
     // Wrapper methods for getTransferToMinterRaw and submitCrossChain
     public async executeCrossChain(feeLevel: number,
-                                fromAmount: string,
-                                fromChain: string,
-                                fromToken: string,
-                                toChain: string,
-                                callback,
-                                timeout = 10000): Promise<any> {
+        fromAmount: string,
+        fromChain: string,
+        fromToken: string,
+        toChain: string,
+        callback: (result: CallbackResult, action: ActionType) => void,
+        timeout = 10000): Promise<any> {
         if (fromChain === toChain) {
             let message = 'executeCrossChain: The source chain and target chain are the same, should use executeAggregate';
             Logger.warn('ChaingeSwap', message);
@@ -198,13 +204,13 @@ export class ChaingeSwap {
 
     // Submit transaction hash and start cross chain liquidity swap, return Order detail subscribe function.
     public async executeAggregate(feeLevel: number,
-                                fromAmount: string,
-                                fromChain: string,
-                                fromToken: string,
-                                toChain: string,
-                                toToken: string,
-                                callback,
-                                timeout = 10000): Promise<any> {
+        fromAmount: string,
+        fromChain: string,
+        fromToken: string,
+        toChain: string,
+        toToken: string,
+        callback: (result: CallbackResult, action: ActionType) => void,
+        timeout = 10000): Promise<any> {
         if (fromToken === toToken) {
             let message = 'executeAggregate: The source token and target token are the same, should use executeCrossChain';
             Logger.warn('ChaingeSwap', message);
@@ -239,7 +245,7 @@ export class ChaingeSwap {
     }
 
     // You can get the sn from executeCrossChain or executeAggregate.
-    public async getOrderDetail(sn: string) : Promise<ChaingeOrder>{
+    public async getOrderDetail(sn: string): Promise<Order> {
         try {
             const result = await this.chainge.getOrderDetail(sn);
             if (result.code === 200 && result.data.order) {
@@ -253,6 +259,14 @@ export class ChaingeSwap {
             Logger.warn('ChaingeSwap', 'getOrderDetail exception', e)
         }
         return null;
+    }
+
+    private apiResponseToException(response: Response): Error {
+        switch (response.code) {
+            case ErrorCode.NO_ROUTE: return new NoRouteException();
+            case ErrorCode.TOKEN_CHAIN_NOT_SUPPORTED: return new UnsupportedTokenOrChainException();
+            default: return new UnspecifiedException();
+        }
     }
 
     // public async getOrderDetailByHashAndEvmAddress(chain: string, evmAddress: string, hash: string) : Promise<ChaingeOrder>{
