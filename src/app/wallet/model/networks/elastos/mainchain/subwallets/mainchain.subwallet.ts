@@ -1526,7 +1526,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string) {
+    public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string, stakeUntil = 0) {
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).generateProducerPayload(
             publicKey,
             nodePublicKey,
@@ -1534,7 +1534,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             url,
             IPAddress,
             location,
-            payPasswd
+            payPasswd,
+            stakeUntil
         );
     }
 

@@ -1,10 +1,10 @@
 import type {
-  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
-  CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
-  CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, MainchainSubWallet as SDKMainchainSubWallet,
-  MasterWallet as SDKMasterWallet, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, ReceiveCustomIDOwnerInfo,
-  RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo,
-  UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
+    CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
+    CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
+    CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, MainchainSubWallet as SDKMainchainSubWallet,
+    MasterWallet as SDKMasterWallet, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, ReceiveCustomIDOwnerInfo,
+    RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo,
+    UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
 import moment from "moment";
 import { md5 } from "src/app/helpers/crypto/md5";
@@ -282,7 +282,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return null;
   }
 
-  public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any> {
+  public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string, stakeUntil = 0): Promise<any> {
     // TODO: Do not support.
     return null;
   }

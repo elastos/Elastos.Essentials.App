@@ -1,9 +1,9 @@
 import type {
-  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
-  CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
-  CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, json, MainchainSubWallet, NormalProposalOwnerInfo,
-  PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo,
-  SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
+    CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
+    CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
+    CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, json, MainchainSubWallet, NormalProposalOwnerInfo,
+    PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo,
+    SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
 import { PubKeyInfo } from "src/app/wallet/model/elastos.types";
@@ -298,7 +298,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any> {
+  public async generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string, stakeUntil = 0): Promise<any> {
     return await (<MainchainSubWallet>this.sdkSubWallet).generateProducerPayload(
       publicKey,
       nodePublicKey,
@@ -306,8 +306,8 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
       url,
       IPAddress,
       location.toString(),
-      0, // stakeUntil:The block height when your staking expires. It is required in DPoS 2.0 version.
-      payPasswd
+      stakeUntil, // stakeUntil:The block height when your staking expires. It is required in DPoS 2.0 version.
+      payPasswd,
     );
   }
 
