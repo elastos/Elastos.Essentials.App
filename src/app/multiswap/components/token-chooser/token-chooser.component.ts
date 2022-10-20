@@ -23,6 +23,12 @@ import { TokenChooserService } from '../../services/tokenchooser.service';
 /**
  * Filter method to return only some networks to show in the chooser.
  */
+export type NetworkChooserFilter = (network: AnyNetwork) => boolean;
+
+
+/**
+ * Filter method to return only some networks to show in the chooser.
+ */
 //export type NetworkChooserFilter = (networks: AnyNetwork) => boolean;
 
 export type TokenChooserComponentOptions = {
@@ -55,7 +61,7 @@ export type TokenChooserComponentOptions = {
    * Optional filter. Only returned networks will show in the list.
    * Return true to keep the network in the list, false to hide it.
    */
-  //filter?: NetworkChooserFilter;
+  filter?: NetworkChooserFilter;
 }
 
 export type TokenChooserComponentResult = {
@@ -114,6 +120,10 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
 
     // Only EVM networks for now
     this.networksToShowInList = <EVMNetwork[]>networks.filter(n => n instanceof EVMNetwork && !this.isNetworkExcluded(n));
+
+    // Filter out networks again based on given filter
+    if (this.options.filter)
+      this.networksToShowInList = this.networksToShowInList.filter(n => this.options.filter(n));
 
     // If a forced network is provided, use it
     if (this.options.entryNetwork) {

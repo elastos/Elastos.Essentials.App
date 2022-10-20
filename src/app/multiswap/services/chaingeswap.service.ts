@@ -43,7 +43,7 @@ export class ChaingeSwapService {
   /**
    * Returns the list of supported networks that can be used with the chainge API.
    */
-  private getSupportedNetworks(): AnyNetwork[] {
+  public getSupportedNetworks(): AnyNetwork[] {
     if (NetworkTemplateStore.networkTemplate !== MAINNET_TEMPLATE) {
       Logger.warn("chainge", "No network supported outside of mainnet");
       return [];
@@ -51,7 +51,7 @@ export class ChaingeSwapService {
 
     let networks: AnyNetwork[] = [];
     for (let essNetwork of this.networkService.getAvailableNetworks()) {
-      let chaingeChaingeName = this.chaingeToEssentialsChainName(essNetwork.key);
+      let chaingeChaingeName = this.essentialsToChaingeChainName(essNetwork);
       if (chaingeChaingeName)
         networks.push(essNetwork);
     }
