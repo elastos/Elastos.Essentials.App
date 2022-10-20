@@ -35,6 +35,9 @@
       </div>
     </div>
 
+    <!-- Exchange source and dest tokens -->
+    <div class="switch" inlineSVG="/assets/multiswap/icons/switch.svg" (click)="switchTokens()"></div>
+
     <!-- Destination tokens -->
     <div>
       <div class="heading" [class.highlighted]="!selectedDestinationToken">{{ 'multiswap.destination-token' |

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { EthTransactionComponentModule } from 'src/app/wallet/components/eth-transaction/module';
 import { LedgerSignComponentModule } from 'src/app/wallet/components/ledger-sign/module';
@@ -21,6 +22,7 @@ import { HomePage } from './home';
     EthTransactionComponentModule,
     LedgerSignComponentModule,
     TokenChooserComponentModule,
+    InlineSVGModule,
     RouterModule.forChild([{
       path: '',
       component: HomePage,

@@ -33,12 +33,6 @@ ion-content {
         background: var(--essentials-box-color);
     }
 
-    .glide-container {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
-
     .wallet-name {
         margin-bottom: 0px;
     }
@@ -91,6 +85,11 @@ ion-content {
                 }
             }
         }
+    }
+
+    .switch {
+        height: 24px;
+        margin-top: 10px;
     }
 
     .amount-container {

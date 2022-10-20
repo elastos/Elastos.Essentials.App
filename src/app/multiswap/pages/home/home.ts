@@ -206,24 +206,6 @@ export class HomePage {
         this.selectedSourceToken.amount = balance;
       }
     });
-
-    /* this.easyBridgeService.fetchBridgeableBalances(this.evmWalletAddress).subscribe({
-      next: usableTokens => {
-        this.sourceTokens = usableTokens;
-
-        // If there is an active transfer, auto re-select the source token when the balance gets fetched
-        if (this.activeTransfer) {
-          this.selectedSourceToken = this.sourceTokens.find(t => equalTokens(t.token, this.activeTransfer.sourceToken));
-          if (this.selectedSourceToken) {
-            this.updateDestinationTokens();
-            this.selectedDestinationToken = this.destinationTokens.find(t => equalTokens(t.token, this.activeTransfer.destinationToken));
-          }
-        }
-      },
-      complete: () => {
-        this.fetchingTokens = false;
-      }
-    }); */
   }
 
   private async refreshActiveTransferSourceTokenBalance() {
@@ -335,6 +317,24 @@ export class HomePage {
     }
 
     this.selectedDestinationToken = destinationToken;
+    this.transferAmount = null;
+
+    this.recomputeTransfer();
+  }
+
+  /**
+   * Inverts source nad destination tokens.
+   */
+  public switchTokens() {
+    if (this.transferIsBeingComputed || !this.canEditFields) // Transfer is being computed or executed - don't allow to change things
+      return;
+
+    // Exchange source and dest
+    let tmpToken = this.selectedSourceToken;
+    this.selectedSourceToken = this.selectedDestinationToken;
+    this.selectedDestinationToken = tmpToken;
+
+    // Reset amount
     this.transferAmount = null;
 
     this.recomputeTransfer();
