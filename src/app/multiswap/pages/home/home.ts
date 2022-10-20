@@ -136,6 +136,7 @@ export class HomePage {
     // No on going transfer? Prepare for a new one
     if (!this.activeTransfer) {
       await this.prepareForNewTransfer();
+      await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.networkService.activeNetwork.value);
     }
     else {
       if (this.activeTransfer.currentStep !== TransferStep.NEW)
@@ -160,8 +161,6 @@ export class HomePage {
 
       void this.activeTransfer.updateComputations();
     }
-
-    await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.networkService.activeNetwork.value);
 
     this.initializing = false;
 
