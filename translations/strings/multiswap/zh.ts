@@ -13,18 +13,18 @@ export const zh = {
         },
 
         // Home screen
-        'source-token': 'Source token',
-        'destination-token': 'Destination token',
-        'pick-a-token': 'Pick a token',
+        'source-token': '源代币',
+        'destination-token': '目标代币',
+        'pick-a-token': '选择一个代币',
 
         // Transfer steps
-        "step-not-started": "Not started",
-        "step-publishing": "Exchange is starting",
-        "step-published": "Exchange is on going",
-        "step-failed": "Tokens exchange failed",
-        "step-received": "Completed, tokens received",
+        "step-not-started": "未执行",
+        "step-publishing": "开始兑换",
+        "step-published": "正在进行兑换",
+        "step-failed": "兑换代币失败",
+        "step-received": "完成，兑换的代币已收到",
 
         // Popups
-        "reset-confirmation-content": "Make sure to reset the current transfer only if your current one seems to be stuck. On going swap will continue but you won't be able to monitor the progress.",
+        "reset-confirmation-content": "确保仅在当前交易似乎被卡住时才执行重置。正在进行的兑换会继续，但您无法查看进度。",
     }
 }

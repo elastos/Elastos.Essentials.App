@@ -115,7 +115,7 @@ export class InternalHiveAuthHelper {
         let appContext = await this.getAppContext(targetDid, onAuthError);
 
         const { AppContext, Vault } = await lazyElastosHiveSDKImport();
-        let providerAddress = await AppContext.getProviderAddress(targetDid);
+        let providerAddress = await AppContext.getProviderAddressByUserDid(targetDid);
         let vaultServices = new Vault(appContext, providerAddress);
 
         Logger.log("hiveauthhelper", "Hive vault services initialization completed");

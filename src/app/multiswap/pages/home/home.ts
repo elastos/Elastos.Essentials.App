@@ -107,7 +107,7 @@ export class HomePage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('Swap tokens'));
+    this.titleBar.setTitle(this.translate.instant('launcher.swap-tokens'));
   }
 
   ionViewDidEnter() {
