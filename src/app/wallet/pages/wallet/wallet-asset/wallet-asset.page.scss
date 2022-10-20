@@ -8,11 +8,6 @@ ion-slide {
     padding: 15px 7.5px;
 }
 
-.updateprogress {
-    margin-bottom: 5px;
-    text-align: center;
-}
-
 .single-slide {
     padding: 15px 20px;
 }
@@ -25,6 +20,18 @@ ion-slide,
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 50px;
+
+    .update-progress-row {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .updateprogress {
+            text-align: center;
+        }
+    }
 
     .card-label-row {
         display: flex;

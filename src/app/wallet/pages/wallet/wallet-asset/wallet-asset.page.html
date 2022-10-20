@@ -2,27 +2,24 @@
     <app-titlebar></app-titlebar>
 
     <ion-content>
-        <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-            <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="crescent">
-                <div class='updateprogress'>{{ getUpdatingProgressInfo() }}%</div>
-            </ion-refresher-content>
-        </ion-refresher>
-
         <ion-grid class="single-slide" [class.dark-slide]="theme.darkMode" [class.blur]="native.popup">
             <!-- Grand total -->
-            <ion-row class="card-row">
-                <ion-row class="card-label-row">
-                    <div class="overview-img">
-                        <div class="inline-svg" inlineSVG="/assets/wallet/settings/curcol-wallet.svg"></div>
-                    </div>
-                    <div class='title'>{{ 'wallet.total-amount' | translate }}</div>
-                    <div class="bigFont" *ngIf="totalAmount.length <= 8">{{ totalAmount }}
-                        <span class="ela">{{ currencyService.selectedCurrency.symbol }}</span>
-                    </div>
-                    <div class="smallFont" *ngIf="totalAmount.length > 8">{{ totalAmount }}
-                        <span class="ela">{{ currencyService.selectedCurrency.symbol }}</span>
-                    </div>
-                </ion-row>
+            <ion-row class="card-label-row">
+                <div class="overview-img">
+                    <div class="inline-svg" inlineSVG="/assets/wallet/settings/curcol-wallet.svg"></div>
+                </div>
+                <div class='title'>{{ 'wallet.total-amount' | translate }}</div>
+                <div class="bigFont" *ngIf="totalAmount.length <= 8">{{ totalAmount }}
+                    <span class="ela">{{ currencyService.selectedCurrency.symbol }}</span>
+                </div>
+                <div class="smallFont" *ngIf="totalAmount.length > 8">{{ totalAmount }}
+                    <span class="ela">{{ currencyService.selectedCurrency.symbol }}</span>
+                </div>
+            </ion-row>
+
+            <!-- update progress -->
+            <ion-row class="update-progress-row" *ngIf="getUpdatingProgressInfo() != 100">
+                <p class='updateprogress'> {{ 'wallet.refresh-refreshing-text' | translate }} {{ getUpdatingProgressInfo() }}% </p>
             </ion-row>
 
             <!-- Wallets list -->

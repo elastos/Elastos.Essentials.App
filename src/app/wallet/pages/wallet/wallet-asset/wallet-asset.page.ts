@@ -70,7 +70,7 @@ export class WalletAssetPage implements OnDestroy {
     public assetsInfo: NetworkWalletAssetInfo[] = [];
     public totalAmount = '';
 
-    public minAmount = 1; // Do not show if the subwallet amount less than 1 dollar.
+    public minAmount = 0.01; // Do not show if the subwallet amount less than 0.01 dollar.
 
     private totalSubwalletCount = 0;
     private updatedSubwalletCount = 0;
