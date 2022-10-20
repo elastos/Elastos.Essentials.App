@@ -144,8 +144,8 @@ export class WalletInitService extends GlobalService {
 
     // Register all networks, no matter if they are for the active network template or not,
     // as they are sometimes needed.
-    await this.createAndRegisterNetwork(new ElastosMainChainMainNetNetwork(), networkTemplate === MAINNET_TEMPLATE);
-    await this.createAndRegisterNetwork(new ElastosSmartChainMainNetNetwork());
+    await this.createAndRegisterNetwork(new ElastosMainChainMainNetNetwork());
+    await this.createAndRegisterNetwork(new ElastosSmartChainMainNetNetwork(), networkTemplate === MAINNET_TEMPLATE);
     await this.createAndRegisterNetwork(new ElastosIdentityChainMainNetNetwork());
     await this.createAndRegisterNetwork(new BTCMainNetNetwork());
     await this.createAndRegisterNetwork(new EthereumMainNetNetwork());
@@ -163,8 +163,8 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new FuseMainNetNetwork());
     await this.createAndRegisterNetwork(new CronosMainNetNetwork());
 
-    await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
-    await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork());
+    await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork());
+    await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
     await this.createAndRegisterNetwork(new ElastosIdentityChainTestNetNetwork());
     await this.createAndRegisterNetwork(new BTCTestNetNetwork());
     await this.createAndRegisterNetwork(new EthereumGoerliNetwork());
