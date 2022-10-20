@@ -267,7 +267,11 @@ export class HomePage {
   }
 
   public getDisplayableSwapFees(): string {
-    return (this.activeTransfer.swapStep.fees * 100).toFixed(2);
+    return this.activeTransfer.swapStep.fees.toFixed(5);
+  }
+
+  public getDisplayableSwapFeesPercent(): string {
+    return (this.activeTransfer.swapStep.feesPercent * 100).toFixed(2);
   }
 
   public getDisplayableSwapPriceImpact(): string {

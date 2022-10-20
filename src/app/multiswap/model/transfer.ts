@@ -37,7 +37,8 @@ type SwapStep = {
   orderId?: string;
 
   // Computed
-  fees: number; // 0-1 - Total swap fees in percentage of the input amount.
+  fees: number; // Total swap fees in source token amount.
+  feesPercent: number; // 0-1 - Total swap fees in percentage of the input amount.
   slippage: number; // 0-1
 }
 
@@ -234,9 +235,10 @@ export class Transfer {
       let { fees, slippage, amountOut } = await ChaingeSwapService.instance.getSwapQuote(this.sourceNetworkSubWallet, this.sourceToken, this.amount, this.destinationToken);
 
       // Chainge fees are in number of input tokens. We convert this to percentage
-      let percentFees = fees / this.amount.toNumber();
+      let feesPercent = fees / this.amount.toNumber();
       this.swapStep = {
-        fees: percentFees,
+        fees,
+        feesPercent,
         slippage
       }
 
