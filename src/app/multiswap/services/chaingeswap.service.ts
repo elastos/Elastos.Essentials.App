@@ -8,7 +8,7 @@ import { AnyMainCoinEVMSubWallet } from "src/app/wallet/model/networks/evms/subw
 import { AnyNetwork } from "src/app/wallet/model/networks/network";
 import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { ChaingeSwap } from "../model/chainge";
-import { UnsupportedTokenOrChainException } from "../model/chainge.types";
+import { ErrorCode, Order, UnsupportedTokenOrChainException } from "../model/chainge.types";
 
 const ESSENTIALS_SWAP_FEES = 2; // Must be an integer - https://chainge-finance.gitbook.io/chainge-finance/get-started-1/fee-structure
 
@@ -143,7 +143,13 @@ export class ChaingeSwapService {
     return { fees, slippage, amountOut };
   }
 
-  public async executeSwap(mainCoinSubWallet: AnyMainCoinEVMSubWallet, from: Coin, amountIn: BigNumber, to: Coin) {
+  /**
+   * Executes ths possibly multi steps swap by the chainge sdk.
+   *
+   * This method returns when the order ID is received, so that this ID can be saved and checked later, even after coming back to the screen.
+   * The callback sends intermediate and additional events such as when the swap is completed (fully completed, or failure somewhere) - TODO.
+   */
+  public executeSwap(mainCoinSubWallet: AnyMainCoinEVMSubWallet, from: Coin, amountIn: BigNumber, to: Coin): Promise<string> {
     let chainge = new ChaingeSwap(mainCoinSubWallet);
 
     // await chainge.setFeeToInfo(1, '0x01a14bC0018fc97e2fdB14ace069F50b1C44eE86')
@@ -158,23 +164,55 @@ export class ChaingeSwapService {
     if (!chaingeToChain)
       throw new UnsupportedTokenOrChainException(`Unsupported chainge swap network ${to.network.key} for the destination token`);
 
-    /**
-     * If the token is the same, use executeCrossChain.
-     * If the token is different, use executeAggregate
-     **/
-    let sameToken = from.getSymbol() === to.getSymbol();
-    if (sameToken) {
-      // Same token, just crossing chain
-      let ret = await chainge.executeCrossChain(ESSENTIALS_SWAP_FEES, amountIn.toString(10), chaingeFromChain, from.getSymbol(), chaingeToChain, (result, action) => {
-        Logger.warn('chainge', 'executeCrossChain callback', result, action);
-      });
-      Logger.warn('chainge', 'executeCrossChain ret', ret);
-    }
-    else {
-      // More complex operation than a simple bridge
-      await chainge.executeAggregate(ESSENTIALS_SWAP_FEES, amountIn.toString(10), chaingeFromChain, from.getSymbol(), chaingeToChain, to.getSymbol(), (result, action) => {
-        Logger.warn('chainge', 'executeAggregate callback', result, action);
-      });
-    }
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
+      /**
+       * If the token is the same, use executeCrossChain.
+       * If the token is different, use executeAggregate
+       **/
+      let sameToken = from.getSymbol() === to.getSymbol();
+      let resolved = false;
+      if (sameToken) {
+        // Same token, just crossing chain
+        let ret = await chainge.executeCrossChain(ESSENTIALS_SWAP_FEES, amountIn.toString(10), chaingeFromChain, from.getSymbol(), chaingeToChain, (result, action) => {
+          Logger.warn('chainge', 'executeCrossChain callback', result, action);
+
+          // TODO: handle errors as well
+          if (result.certHash && !resolved) {
+            resolved = true;
+            resolve(result.certHash);
+          }
+        });
+        Logger.warn('chainge', 'executeCrossChain ret', ret);
+      }
+      else {
+        // More complex operation than a simple bridge
+        await chainge.executeAggregate(ESSENTIALS_SWAP_FEES, amountIn.toString(10), chaingeFromChain, from.getSymbol(), chaingeToChain, to.getSymbol(), (result, action) => {
+          Logger.log('chainge', 'executeAggregate submit order callback:', result, action);
+
+          /// TODO IMPORTANT: handle errors here in case or error during submission
+        }, result => {
+          Logger.log('chainge', 'executeAggregate track order progress callback:', result);
+
+          // Return the order SN (ID) as soon as we get it.
+          if (!resolved) {
+            if (result.code !== ErrorCode.SUCCESS) {
+              resolved = true;
+              reject("Track order - failure - error code " + result.code);
+            }
+            else if (result.data) {
+              resolved = true;
+              resolve(result.data.order.sn);
+            }
+          }
+        });
+        Logger.log('chainge', 'executeAggregate returns');
+      }
+    });
+  }
+
+  public getOrderDetails(mainCoinSubWallet: AnyMainCoinEVMSubWallet, sn: string): Promise<Order> {
+    let chainge = new ChaingeSwap(mainCoinSubWallet);
+    return chainge.getOrderDetails(sn);
   }
 }

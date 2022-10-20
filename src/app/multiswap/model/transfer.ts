@@ -15,14 +15,13 @@ import { AuthService } from "src/app/wallet/services/auth.service";
 import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { ChaingeSwapService } from "../services/chaingeswap.service";
-import { NoRouteException, UnsupportedTokenOrChainException } from "./chainge.types";
+import { AmountTooLowException, NoRouteException, OrderStatus, UnsupportedTokenOrChainException } from "./chainge.types";
 
 export enum TransferStep {
   NEW = "new",
-  SWAP_TX_PUBLISHING = "swap_tx_publishing",
-  SWAP_TX_PUBLISHED = "swap_tx_published",
-  SWAP_TX_REJECTED = "swap_tx_rejected",
-  SWAP_TOKEN_RECEIVED = "swap_token_received",
+  PUBLISHING = "swap_tx_publishing",
+  PUBLISHED = "swap_tx_published",
+  REJECTED = "swap_tx_rejected",
   COMPLETED = "completed"
 }
 
@@ -35,7 +34,7 @@ type TransferStatus = {
 
 type SwapStep = {
   // State
-  transactionHash?: string; // Swap contract transaction hash on the destination chain
+  orderId?: string;
 
   // Computed
   fees: number; // 0-1 - Total swap fees in percentage of the input amount.
@@ -93,6 +92,8 @@ export class Transfer {
     canDismiss: false
   });
 
+  public computing = new BehaviorSubject<boolean>(false); // Transfer values are being computed. This involves networking.
+
   protected constructor() { }
 
   /**
@@ -137,16 +138,15 @@ export class Transfer {
     transfer.estimatedReceivedAmount = serializedTransfer.estimatedReceivedAmount ? new BigNumber(serializedTransfer.estimatedReceivedAmount) : null;
     transfer.userAgreed = serializedTransfer.userAgreed;
 
-    await transfer.updateComputations();
-
     return transfer;
   }
 
-  public static async prepareNewTransfer(masterWalletId: string, sourceToken: Coin, destinationToken: Coin, amount: BigNumber): Promise<Transfer> {
+  public static prepareNewTransfer(masterWalletId: string, sourceToken: Coin, destinationToken: Coin, amount: BigNumber): Transfer {
     let transfer = new Transfer();
 
-    await transfer.compute(masterWalletId, sourceToken, destinationToken, amount);
-    await transfer.save();
+    void transfer.compute(masterWalletId, sourceToken, destinationToken, amount).then(() => {
+      void transfer.save();
+    })
 
     return transfer;
   }
@@ -200,8 +200,10 @@ export class Transfer {
    * Differential computation: refreshes only part of the computation (eg: most recent swap values) but without any change on the
    * input values passed to compute().
    */
-  private async updateComputations(): Promise<void> {
+  public async updateComputations(): Promise<void> {
     Logger.log("multiswap", "Computing transfer information", this.masterWalletId, this.sourceToken, this.destinationToken, this.amount);
+
+    this.computing.next(true);
 
     // Unless said otherwise below, we may be able to execute the transfer.
     this.canExecute = true;
@@ -213,13 +215,17 @@ export class Transfer {
 
     // Get a network wallet for the target source chain - don't launch its background services
     let sourceNetworkWallet = await sourceNetwork.createNetworkWallet(masterWallet, false);
-    if (!(sourceNetworkWallet instanceof EVMNetworkWallet))
+    if (!(sourceNetworkWallet instanceof EVMNetworkWallet)) {
+      this.computing.next(false);
       throw new Error("Multiswap service can only be used with EVM networks");
+    }
 
     // Get a network wallet for the target source chain - don't launch its background services
     let destinationNetworkWallet = await destinationNetwork.createNetworkWallet(masterWallet, false);
-    if (!(destinationNetworkWallet instanceof EVMNetworkWallet))
+    if (!(destinationNetworkWallet instanceof EVMNetworkWallet)) {
+      this.computing.next(false);
       throw new Error("Multiswap service can only be used with EVM networks");
+    }
 
     this.sourceNetworkSubWallet = sourceNetworkWallet.getMainEvmSubWallet();
     this.destinationNetworkSubWallet = destinationNetworkWallet.getMainEvmSubWallet();
@@ -242,11 +248,14 @@ export class Transfer {
         this.cannotExecuteReason = "Unsupported tokens for swap";
       else if (e instanceof NoRouteException)
         this.cannotExecuteReason = "No way to directly route tokens. Please manually swap to intermediate tokens";
+      else if (e instanceof AmountTooLowException)
+        this.cannotExecuteReason = "Amount is too low to cover transaction fees, please set a higher amount";
       else
         this.cannotExecuteReason = "Unknown error";
     }
 
     this.emitPostComputationStatus();
+    this.computing.next(false);
   }
 
   private emitPostComputationStatus() {
@@ -275,8 +284,10 @@ export class Transfer {
           else
             autoProcessNextStep = await this.executeSwap();
           break;
-        case TransferStep.SWAP_TX_PUBLISHED:
-          await this.executeCompletion();
+        case TransferStep.PUBLISHED:
+          autoProcessNextStep = await this.awaitOrderCompletion();
+          break;
+        case TransferStep.COMPLETED:
           autoProcessNextStep = false; // loop end
           break;
         default:
@@ -292,21 +303,23 @@ export class Transfer {
     await this.updateComputations();
 
     Logger.log("multiswap", "Executing the swap");
-    let txId: string;
+    let orderId: string;
     try {
-      await ChaingeSwapService.instance.executeSwap(this.sourceNetworkSubWallet, this.sourceToken, this.amount, this.destinationToken);
+      this.currentStep = TransferStep.PUBLISHING;
 
-      /* txId = await UniswapService.instance.executeSwapTrade(this.destinationNetworkSubWallet, this.swapStep.from, this.swapStep.trade);
-      if (txId) {
+      orderId = await ChaingeSwapService.instance.executeSwap(this.sourceNetworkSubWallet, this.sourceToken, this.amount, this.destinationToken);
+      console.log("txId", orderId);
+
+      if (orderId) {
         Logger.log("multiswap", "Swap complete");
 
-        this.currentStep = TransferStep.SWAP_TX_PUBLISHED;
-        this.swapStep.transactionHash = txId;
+        this.currentStep = TransferStep.PUBLISHED;
+        this.swapStep.orderId = orderId;
         await this.save();
         this.emitStatus();
 
         return true;
-      } */
+      }
     }
     catch (e) {
       // Gas estimation error, network error...
@@ -314,10 +327,39 @@ export class Transfer {
       // Fallthrough
     }
 
-    if (!txId) {
+    if (!orderId) {
       Logger.log("multiswap", "Swap failed");
 
       this.emitStatus(GlobalTranslationService.instance.translateInstant('easybridge.error-swap-failed'));
+
+      return false;
+    }
+  }
+
+  /**
+   * Awaits the final order status, based on a previously obtained order id.
+   * The result of this await can be either completed (tokens arrived at destination), or an error.
+   */
+  private async awaitOrderCompletion(): Promise<boolean> {
+    let order = await ChaingeSwapService.instance.getOrderDetails(this.sourceNetworkSubWallet, this.swapStep.orderId);
+
+    if (order) {
+      if (order.status === OrderStatus.COMPLETED) {
+        await this.executeCompletion();
+        return false;
+      }
+      else if (order.status === OrderStatus.FAILED) {
+        this.currentStep = TransferStep.REJECTED;
+        await this.save();
+        this.emitStatus();
+        return false;
+      }
+
+      return true; // No new status (order still on going?), continue the process loop
+    }
+    else {
+      // Timeout while checking, maybe the bridge takes too long or is stuck.
+      this.emitStatus(GlobalTranslationService.instance.translateInstant('easybridge.bridging-takes-too-long'));
 
       return false;
     }
@@ -337,13 +379,10 @@ export class Transfer {
       case TransferStep.NEW:
         canContinue = true; canDismiss = false;
         break;
-      case TransferStep.SWAP_TX_PUBLISHED:
+      case TransferStep.PUBLISHED:
         canContinue = true; canDismiss = true;
         break;
-      case TransferStep.SWAP_TX_REJECTED:
-        canContinue = true; canDismiss = true;
-        break;
-      case TransferStep.SWAP_TOKEN_RECEIVED:
+      case TransferStep.REJECTED:
         canContinue = true; canDismiss = true;
         break;
       case TransferStep.COMPLETED:
@@ -365,35 +404,35 @@ export class Transfer {
     switch (this.currentStep) {
       case TransferStep.NEW:
         return 0;
-      case TransferStep.SWAP_TX_PUBLISHED:
-        return 6;
-      case TransferStep.SWAP_TX_REJECTED: // TODO
-        return 7;
-      case TransferStep.SWAP_TOKEN_RECEIVED:
-        return 8;
+      case TransferStep.PUBLISHING:
+        return 1;
+      case TransferStep.PUBLISHED:
+        return 2;
+      case TransferStep.REJECTED: // TODO
+        return 3;
       case TransferStep.COMPLETED:
-        return 9;
+        return 4;
       default:
         throw new Error(`getTransferProgressIndex(): Unhandled step ${this.currentStep}`);
     }
   }
 
   public getTotalNumberOfSteps(): number {
-    return 10;
+    return 5;
   }
 
   public getTransferProgressMessage(): string {
     switch (this.currentStep) {
       case TransferStep.NEW:
-        return GlobalTranslationService.instance.translateInstant('easybridge.step-not-started');
-      case TransferStep.SWAP_TX_PUBLISHED:
-        return GlobalTranslationService.instance.translateInstant('easybridge.step-swap-published');
-      case TransferStep.SWAP_TX_REJECTED:
-        return GlobalTranslationService.instance.translateInstant('easybridge.step-swap-failed');
-      case TransferStep.SWAP_TOKEN_RECEIVED:
-        return GlobalTranslationService.instance.translateInstant('easybridge.step-swap-received');
+        return GlobalTranslationService.instance.translateInstant('multiswap.step-not-started');
+      case TransferStep.PUBLISHING:
+        return GlobalTranslationService.instance.translateInstant('multiswap.step-publishing');
+      case TransferStep.PUBLISHED:
+        return GlobalTranslationService.instance.translateInstant('multiswap.step-published');
+      case TransferStep.REJECTED:
+        return GlobalTranslationService.instance.translateInstant('multiswap.step-failed');
       case TransferStep.COMPLETED:
-        return GlobalTranslationService.instance.translateInstant('easybridge.step-completed');
+        return GlobalTranslationService.instance.translateInstant('multiswap.step-received');
       default:
         throw new Error(`getTransferProgressMessage(): Unhandled step ${this.currentStep}`);
     }

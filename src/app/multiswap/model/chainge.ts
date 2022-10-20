@@ -1,6 +1,6 @@
 import Chainge from '@chainge/sdk';
 import { Logger } from 'src/app/logger';
-import { ActionType, AggregateQuote, CallbackResult, CrossChainQuote, ErrorCode, FeeToInfo, NoRouteException, Order, Response, SupportedChain, SupportedToken, UnspecifiedException, UnsupportedTokenOrChainException } from 'src/app/multiswap/model/chainge.types';
+import { ActionType, AggregateQuote, AmountTooLowException, ChaingeException, CrossChainQuote, ErrorCode, FeeToInfo, NoRouteException, Order, Response, SubmitOrderCallback, SubmitOrderCallbackResult, SupportedChain, SupportedToken, TrackOrderCallback, UnspecifiedException, UnsupportedTokenOrChainException } from 'src/app/multiswap/model/chainge.types';
 import { ChaingeWeb3Provider } from 'src/app/multiswap/model/chaingeweb3provider';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 
@@ -101,7 +101,7 @@ export class ChaingeSwap {
     }
 
     public async getCrossChainQuote(amount: string, feeLevel: number, fromChain: string, toChain: string, token: string): Promise<CrossChainQuote> {
-        let result: Response;
+        let result: Response<any>;
         try {
             result = await this.chainge.getCrossChainQuote({
                 amount, feeLevel, fromChain, toChain, token
@@ -122,7 +122,7 @@ export class ChaingeSwap {
     }
 
     public async getAggregateQuote(feeLevel: number, fromAmount: string, fromToken: string, toChain: string, toToken: string): Promise<AggregateQuote> {
-        let result: Response;
+        let result: Response<any>;
         try {
             result = await this.chainge.getAggregateQuote({
                 feeLevel, fromAmount, fromToken, toChain, toToken
@@ -167,7 +167,7 @@ export class ChaingeSwap {
         fromChain: string,
         fromToken: string,
         toChain: string,
-        callback: (result: CallbackResult, action: ActionType) => void,
+        progressCallback: (result: SubmitOrderCallbackResult, action: ActionType) => void,
         timeout = 10000): Promise<any> {
         if (fromChain === toChain) {
             let message = 'executeCrossChain: The source chain and target chain are the same, should use executeAggregate';
@@ -177,7 +177,7 @@ export class ChaingeSwap {
         try {
             let ret = await this.chainge.executeCrossChain({
                 evmAddress: this.evmAddress, feeLevel, fromAddress: this.evmAddress, fromAmount, fromChain, fromToken, toChain
-            }, timeout, callback);
+            }, timeout, progressCallback);
 
             // TODO: Notify users
             if (ret && typeof ret === 'function') {
@@ -202,50 +202,53 @@ export class ChaingeSwap {
         return null;
     }
 
-    // Submit transaction hash and start cross chain liquidity swap, return Order detail subscribe function.
+    /**
+     * Submit transaction hash and start cross chain liquidity swap.
+     * Return Order detail
+     */
     public async executeAggregate(feeLevel: number,
         fromAmount: string,
         fromChain: string,
         fromToken: string,
         toChain: string,
         toToken: string,
-        callback: (result: CallbackResult, action: ActionType) => void,
-        timeout = 10000): Promise<any> {
+        progressCallback: SubmitOrderCallback,
+        orderProgressCallback: TrackOrderCallback,
+        timeout = 10000): Promise<void> {
+
         if (fromToken === toToken) {
             let message = 'executeAggregate: The source token and target token are the same, should use executeCrossChain';
-            Logger.warn('ChaingeSwap', message);
-            throw new Error(message)
+            Logger.error('ChaingeSwap', message);
+            throw new Error(message);
         }
+
         try {
+            // ret can be a callback that will be called many times to give us the order progress, or an error object.
             let ret = await this.chainge.executeAggregate({
                 evmAddress: this.evmAddress, feeLevel, fromAddress: this.evmAddress, fromAmount, fromChain, fromToken, toChain, toToken
-            }, timeout, callback)
+            }, timeout, progressCallback);
 
-            // TODO: Notify users
+            // After returning from executeAggregate(), the order transaction has been submitted already.
+            // The progress callback stops being called and the order tracking callback can now be used.
+
             if (ret && typeof ret === 'function') {
-                ret(result => {
-                    if (result.code === 200 && result.data.order) {
-                        Logger.log('ChaingeSwap', 'executeAggregate', result.data.order)
-                        return result.data.order;
-                    } else {
-                        Logger.warn('ChaingeSwap', 'executeAggregate error:', result)
-                    }
-                });
+                ret(result => orderProgressCallback(result));
             } else {
-                Logger.warn('ChaingeSwap', 'executeAggregate result not function', ret)
+                Logger.error('ChaingeSwap', 'executeAggregate error', ret);
+                throw new ChaingeException("executeAggregate() error - request not submitted successfully? " + ret);
             }
-
-            // TODO
-            return ret;
         }
         catch (e) {
-            Logger.warn('ChaingeSwap', 'executeAggregate exception', e)
+            Logger.error('ChaingeSwap', 'executeAggregate exception', e)
         }
         return null;
     }
 
-    // You can get the sn from executeCrossChain or executeAggregate.
-    public async getOrderDetail(sn: string): Promise<Order> {
+    /**
+     * Using a given sn (order id) obtained from executeCrossChain or executeAggregate,
+     * fetches the current order status.
+     */
+    public async getOrderDetails(sn: string): Promise<Order> {
         try {
             const result = await this.chainge.getOrderDetail(sn);
             if (result.code === 200 && result.data.order) {
@@ -261,10 +264,13 @@ export class ChaingeSwap {
         return null;
     }
 
-    private apiResponseToException(response: Response): Error {
+    private apiResponseToException(response: Response<any>): Error {
         switch (response.code) {
             case ErrorCode.NO_ROUTE: return new NoRouteException();
             case ErrorCode.TOKEN_CHAIN_NOT_SUPPORTED: return new UnsupportedTokenOrChainException();
+            case ErrorCode.AGGREGATE_AMOUNT_TOO_LOW:
+            case ErrorCode.CROSS_CHAIN_AMOUNT_TOO_LOW:
+                return new AmountTooLowException();
             default: return new UnspecifiedException();
         }
     }

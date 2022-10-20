@@ -65,7 +65,6 @@ export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvide
   }
 
   private emitConnect(chainId: number) {
-    Logger.log('ChaingeWeb3Provider', "emitting connect", chainId);
     this.emit("connect", { chainId: chainId });
   }
 

@@ -7,7 +7,7 @@
 
     <!-- Source tokens -->
     <div class="fetch-tokens-heading">
-      <div class="heading" [class.highlighted]="!selectedSourceToken">{{ 'easybridge.source-token' | translate }}
+      <div class="heading" [class.highlighted]="!selectedSourceToken">{{ 'multiswap.source-token' | translate }}
       </div>
     </div>
     <div class="source-tokens">
@@ -15,7 +15,7 @@
       <div class="source-token" (click)="pickSourceToken()" *ngIf="!selectedSourceToken">
         <div class="left"> </div>
         <div class="right">
-          Pick a token
+          {{ 'multiswap.pick-a-token' | translate }}
         </div>
       </div>
 
@@ -37,7 +37,7 @@
 
     <!-- Destination tokens -->
     <div>
-      <div class="heading" [class.highlighted]="!selectedDestinationToken">{{ 'easybridge.destination-token' |
+      <div class="heading" [class.highlighted]="!selectedDestinationToken">{{ 'multiswap.destination-token' |
         translate }}</div>
       <div class="destination-tokens">
         <!-- No token selected yet-->
@@ -97,11 +97,14 @@
     </div>
 
     <!-- Transfer info -->
-    <div *ngIf="selectedDestinationToken && activeTransfer && !lastError && canTransfer()"
+    <div *ngIf="selectedDestinationToken && activeTransfer && !lastError && canTransfer() && !transferIsBeingComputed"
       class="card transfer-summary">
-      <div class="heading">{{ 'easybridge.transfer-summary' | translate }}</div>
+      <div class="heading">{{ 'easybridge.transfer-summary' | translate }} <ion-spinner *ngIf="transferStarted">
+        </ion-spinner>
+      </div>
 
-      <ion-row *ngIf="activeTransfer.swapStep">
+      <!-- Swap slippage. Only when DEXes are involved, not pure bridges -->
+      <ion-row *ngIf="activeTransfer.swapStep && activeTransfer.swapStep.slippage">
         <ion-col size="5">
           {{ 'easybridge.swap-price-impact' | translate }}
         </ion-col>
@@ -147,7 +150,17 @@
 
     <div class="buttons">
       <!-- Transfer -->
-      <ebutton (clicked)="transfer()" [disabled]="!canTransfer()" [title]="getTransferButtonText()"></ebutton>
+      <ebutton (clicked)="transfer()" [disabled]="!canTransfer()" *ngIf="!isCompleted()"
+        [title]="getTransferButtonText()"></ebutton>
+
+      <!-- Reset -->
+      <p (click)="reset()" *ngIf="!isCompleted() && canReset()" class="reset">
+        {{'easybridge.reset'| translate }}
+      </p>
+
+      <!-- Done -->
+      <ebutton (clicked)="done()" *ngIf="isCompleted()" [title]="'easybridge.done' | translate">
+      </ebutton>
     </div>
   </div>
 

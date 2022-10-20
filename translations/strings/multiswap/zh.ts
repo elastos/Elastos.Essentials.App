@@ -10,6 +10,18 @@ export const zh = {
             'no-token-result': '当前搜索或筛选没有代币。',
             'retrieving-token': '从链中检索代币',
             'select-token-network': '请选择代币的目标网络。'
-        }
+        },
+
+        // Home screen
+        'source-token': 'Source token',
+        'destination-token': 'Destination token',
+        'pick-a-token': 'Pick a token',
+
+        // Transfer steps
+        "step-not-started": "Not started",
+        "step-publishing": "Exchange is starting",
+        "step-published": "Exchange is on going",
+        "step-failed": "Tokens exchange failed",
+        "step-received": "Completed, tokens received"
     }
 }

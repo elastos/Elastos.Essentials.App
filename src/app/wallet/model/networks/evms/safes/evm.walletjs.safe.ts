@@ -4,6 +4,7 @@ import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
+import { WalletService } from "src/app/wallet/services/wallet.service";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
 import { SignTransactionResult } from "../../../safes/safe.types";
@@ -79,10 +80,15 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
   public async signTransaction(subWallet: AnySubWallet, rawTransaction: json, transfer: Transfer, forcePasswordPrompt = true, visualFeedback = true): Promise<SignTransactionResult> {
     Logger.log('wallet', ' signTransaction rawTransaction', rawTransaction)
 
-    let signedTx = null
+    let payPassword: string;
+    if (forcePasswordPrompt) {
+      payPassword = await WalletService.instance.openPayModal(transfer);
+    }
+    else {
+      payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id, true, false); // Don't force password
+    }
 
-    // Must be confirmed by the user.
-    let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id, true, true);
+    let signedTx = null;
     if (!payPassword)
       return { signedTransaction: signedTx };
 

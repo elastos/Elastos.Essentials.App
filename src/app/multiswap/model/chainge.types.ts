@@ -1,7 +1,7 @@
 export enum OrderStatus {
     ONGOING = 1,
-    OK = 2,
-    FAIL = 3,
+    COMPLETED = 2,
+    FAILED = 3,
     PartiallyCompleted = 6, // Partial completion (only for transaction orders)
 }
 
@@ -14,12 +14,14 @@ export enum ErrorCode {
     SUCCESS = 200,
     VALIDATION_FAILED = 31010, // msg: "Validation failed!"
     TOKEN_CHAIN_NOT_SUPPORTED = 31006, // msg: "Not support this chain and token!"
-    NO_ROUTE = 31037 // msg: "Get aggregate quote error! Error msg !" (according to chainge team, this happens when no DEX is available to route tokens)
+    NO_ROUTE = 31037, // msg: "Get aggregate quote error! Error msg !" (according to chainge team, this happens when no DEX is available to route tokens)
+    AGGREGATE_AMOUNT_TOO_LOW = 31031, // msg: "Get aggregate quote error! Amount can't cover gas and fee!"
+    CROSS_CHAIN_AMOUNT_TOO_LOW = 31071 // msg: "Get cross chain quote error! Amount can't cover gas and fee!"
 }
 
-export type Response = {
+export type Response<T> = {
     code: ErrorCode;
-    data: any;
+    data: T;
     msg: string;
     status: number;
 }
@@ -138,12 +140,61 @@ export enum ActionType {
     SUBMIT = 'submit',
 }
 
-export type CallbackResult = {
-    response: any;
-    certHash?: string
+type SignAndSendTransactionResponse = {
+    response: 'start' | 'end';
 }
+
+type CrossChainResponse = {
+    // TODO
+}
+
+type AggregateResponse = {
+    certHash: string;
+    evmAddress: string;
+    feeLevel: number;
+    fromAddress: string;
+    fromAmount: string;
+    fromChain: string;
+    fromToken: string;
+    toChain: string;
+    toToken: string;
+}
+
+type WaitForTransactionResponse = {
+    status: 'start' | 'end';
+    result?: any; // EVM transaction payload
+}
+
+type SubmitResponse = {
+    certHash: string;
+    response: Response<{
+        sn: string; // eg: "AG2060620221020005405509"
+        status: OrderStatus;
+    }>;
+}
+
+export type SubmitOrderCallbackResult = {
+    certHash?: string
+    response: SignAndSendTransactionResponse | CrossChainResponse | AggregateResponse | WaitForTransactionResponse | SubmitResponse;
+}
+
+export type TrackOrderCallbackResult = Response<{
+    order: Order
+}>;
+
+/**
+ * Callback called while a request to executeAggregate() or to executeCrossChain() is started.
+ * During this time, this callback can be called severla ti;es to give status about the submission on the source chain.
+ * Once the order has been submitted on the source chain, executeAggregate() and executeCrossChain() return and provide a different
+ * callback to follow the order progress overall. That second callback gives a status 2 (COMPLETED) when the tokens have fully arrived
+ * on the destination chain.
+ */
+export type SubmitOrderCallback = (result: SubmitOrderCallbackResult, action: ActionType) => void;
+
+export type TrackOrderCallback = (result: TrackOrderCallbackResult) => void;
 
 export class ChaingeException extends Error { }
 export class UnspecifiedException extends ChaingeException { }
 export class UnsupportedTokenOrChainException extends ChaingeException { }
+export class AmountTooLowException extends ChaingeException { }
 export class NoRouteException extends ChaingeException { }

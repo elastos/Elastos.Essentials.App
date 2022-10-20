@@ -10,6 +10,18 @@ export const it = {
             'no-token-result': 'No token for the current search or filter.',
             'retrieving-token': 'Retrieving token from chain',
             'select-token-network': 'Please select token\'s target network.'
-        }
+        },
+
+        // Home screen
+        'source-token': 'Source token',
+        'destination-token': 'Destination token',
+        'pick-a-token': 'Pick a token',
+
+        // Transfer steps
+        "step-not-started": "Not started",
+        "step-publishing": "Exchange is starting",
+        "step-published": "Exchange is on going",
+        "step-failed": "Tokens exchange failed",
+        "step-received": "Completed, tokens received"
     }
 }

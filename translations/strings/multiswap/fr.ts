@@ -10,6 +10,18 @@ export const fr = {
             'no-token-result': 'Aucun jeton pour la recherche / filtre actuel.',
             'retrieving-token': 'Recherche du jeton',
             'select-token-network': 'Veuillez d\'abord choisir un réseau.'
-        }
+        },
+
+        // Home screen
+        'source-token': 'Jeton source',
+        'destination-token': 'Jeton cible',
+        'pick-a-token': 'Sélectionner un jeton',
+
+        // Transfer steps
+        "step-not-started": "Not started",
+        "step-publishing": "Exchange is starting",
+        "step-published": "Exchange is on going",
+        "step-failed": "Tokens exchange failed",
+        "step-received": "Completed, tokens received"
     }
 }
