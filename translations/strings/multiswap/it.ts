@@ -22,6 +22,9 @@ export const it = {
         "step-publishing": "Exchange is starting",
         "step-published": "Exchange is on going",
         "step-failed": "Tokens exchange failed",
-        "step-received": "Completed, tokens received"
+        "step-received": "Completed, tokens received",
+
+        // Popups
+        "reset-confirmation-content": "Make sure to reset the current transfer only if your current one seems to be stuck. On going swap will continue but you won't be able to monitor the progress.",
     }
 }

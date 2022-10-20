@@ -473,7 +473,9 @@ export class HomePage {
   public async reset() {
     let agreed = await this.popupService.showConfirmationPopup(
       this.translate.instant("easybridge.reset-confirmation-title"),
-      this.translate.instant("easybridge.reset-confirmation-content")
+      this.translate.instant("multiswap.reset-confirmation-content"),
+      undefined,
+      "/assets/launcher/widgets/swap-widget-icon.svg"
     );
 
     if (agreed) {

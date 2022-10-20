@@ -279,12 +279,12 @@ export class GlobalPopupService {
      * Resolves when the popup is closing. True if confirmed, false if cancelled.
      */
     private confirmationPopup: HTMLIonPopoverElement = null;
-    public showConfirmationPopup(title: string, text: string, confirmationButtonText?: string): Promise<boolean> {
+    public showConfirmationPopup(title: string, text: string, confirmationButtonText?: string, customIcon?: string): Promise<boolean> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async resolve => {
             let componentProps: ConfirmationPopupComponentParams = {
                 type: "custom",
-                customIcon: "/assets/launcher/icons/hive-cross.svg",
+                customIcon: customIcon ? customIcon : "/assets/launcher/icons/hive-cross.svg",
                 title,
                 text,
                 confirmationButtonText
