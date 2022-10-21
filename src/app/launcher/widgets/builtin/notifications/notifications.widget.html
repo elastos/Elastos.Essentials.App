@@ -16,7 +16,7 @@
       <ion-col size="12" *ngFor="let notification of notifications">
         <div class="notification">
           <div class="header">
-            <img class="icon" [src]="notificationService.getNotificationIcon(notification)" />
+            <div class="icon inline-svg" [inlineSVG]="notificationService.getNotificationIcon(notification)"></div>
             <div class="sender">{{ notificationService.getNotificationHeader(notification) }}</div>
           </div>
           <div class="title">{{ notification.title }}</div>

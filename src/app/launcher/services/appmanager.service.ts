@@ -217,27 +217,27 @@ export class AppmanagerService {
     getAppIcon(app: App) {
         switch (app) {
             case App.CONTACTS:
-                return 'assets/contacts/images/logo.png';
+                return 'assets/launcher/apps/app-icons/contacts.svg';
             case App.CRCOUNCIL_VOTING:
-                return 'assets/crcouncilvoting/images/logo.png';
+                return 'assets/launcher/apps/app-icons/council.svg';
             case App.CRPROPOSAL_VOTING:
-                return 'assets/crproposalvoting/images/logo.png';
+                return 'assets/launcher/apps/app-icons/proposal.svg';
             case App.SCANNER:
                 return 'assets/scanner/imgs/logo.png';
             case App.DEVELOPER_TOOLS:
-                return 'assets/developertools/images/logo.png';
+                return 'assets/launcher/apps/app-icons/settings.svg';
             case App.DPOS_VOTING:
-                return 'assets/dposvoting/images/logo.png';
+                return 'assets/launcher/apps/app-icons/dpos.svg';
             case App.DPOS_REGISTRATION:
-                return 'assets/dposregistration/images/logo.png';
+                return 'assets/launcher/apps/app-icons/dpos.svg';
             case App.HIVE_MANAGER:
-                return 'assets/hivemanager/images/logo.png';
+                return 'assets/launcher/apps/app-icons/curcol-hive-cross.svg';
             case App.IDENTITY:
-                return 'assets/identity/images/logo.png';
+                return 'assets/launcher/apps/app-icons/identity.svg';
             case App.SETTINGS:
-                return 'assets/settings/icon/logo.png';
+                return 'assets/launcher/apps/app-icons/settings.svg';
             case App.WALLET:
-                return 'assets/wallet/images/logo.png';
+                return 'assets/launcher/apps/app-icons/wallet.svg';
             default:
                 return "assets/shared/essentials-black-circle.svg";
         }

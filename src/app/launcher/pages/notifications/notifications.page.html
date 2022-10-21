@@ -8,7 +8,8 @@
                     lines="none">
                     <ion-row class="notif-row">
                         <ion-col class="name-col" size="7.5">
-                            <img [src]="notificationService.getNotificationIcon(notification)" />
+                            <div class="inline-svg" [inlineSVG]="notificationService.getNotificationIcon(notification)">
+                            </div>
                             <h2>{{ notificationService.getNotificationHeader(notification) | translate }}</h2>
                         </ion-col>
                         <ion-col class="date-col" size="4.5" (click)="close(notification)">
