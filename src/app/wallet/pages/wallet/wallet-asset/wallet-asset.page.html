@@ -18,7 +18,7 @@
             </ion-row>
 
             <!-- update progress -->
-            <ion-row class="update-progress-row" *ngIf="getUpdatingProgressInfo() != 100">
+            <ion-row class="update-progress-row" *ngIf="getUpdatingProgressInfo() != '100'">
                 <p class='updateprogress'> {{ 'wallet.refresh-refreshing-text' | translate }} {{ getUpdatingProgressInfo() }}% </p>
             </ion-row>
 
