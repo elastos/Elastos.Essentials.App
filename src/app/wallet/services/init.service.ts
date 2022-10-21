@@ -20,6 +20,7 @@ import { BSCTestNetNetwork } from '../model/networks/bsc/network/bsc.testnet.net
 import { BTCMainNetNetwork } from '../model/networks/btc/network/btc.mainnet.network';
 import { BTCTestNetNetwork } from '../model/networks/btc/network/btc.testnet.network';
 import { CronosMainNetNetwork } from '../model/networks/cronos/network/cronos.mainnet.network';
+import { CronosTestNetNetwork } from '../model/networks/cronos/network/cronos.testnet.network';
 import { ElastosIdentityChainMainNetNetwork, ElastosIdentityChainTestNetNetwork } from '../model/networks/elastos/evms/eid/network/eid.networks';
 import { ElastosSmartChainMainNetNetwork, ElastosSmartChainTestNetNetwork } from '../model/networks/elastos/evms/esc/network/esc.networks';
 import { ElastosLRWNetwork } from '../model/networks/elastos/lrw/network/elastos.lrw.network';
@@ -178,6 +179,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new TelosTestNetNetwork());
     await this.createAndRegisterNetwork(new IoTeXTestNetNetwork());
     await this.createAndRegisterNetwork(new HooTestNetNetwork());
+    await this.createAndRegisterNetwork(new CronosTestNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
 

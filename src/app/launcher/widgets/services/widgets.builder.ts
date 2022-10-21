@@ -80,7 +80,6 @@ export class WidgetsBuilder {
                 case "hive-sync": widgetComponentClass = (await import("../builtin/hive-sync/hive-sync.widget")).HiveSyncWidget; break;
                 case "wallet-connect": widgetComponentClass = (await import("../builtin/wallet-connect/wallet-connect.widget")).WalletConnectWidget; break;
                 case "new-red-packets": widgetComponentClass = (await import("../builtin/new-red-packets/new-red-packets.widget")).NewRedPacketsWidget; break;
-                case "easy-bridge": widgetComponentClass = (await import("../builtin/easy-bridge/easy-bridge.widget")).EasyBridgeWidget; break;
                 case "contacts": widgetComponentClass = (await import("../builtin/contacts/contacts.widget")).ContactsWidget; break;
                 case "red-packets": widgetComponentClass = (await import("../builtin/red-packets/red-packets.widget")).RedPacketsWidget; break;
                 case "hive": widgetComponentClass = (await import("../builtin/hive/hive.widget")).HiveWidget; break;

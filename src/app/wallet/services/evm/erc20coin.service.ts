@@ -236,7 +236,7 @@ export class ERC20CoinService {
                 return true;
             }
         } catch (error) {
-            Logger.error("easybridge", "Increase ERC20 allowance error:", error);
+            Logger.error("wallet", "Increase ERC20 allowance error:", error);
             return false;
         }
     }

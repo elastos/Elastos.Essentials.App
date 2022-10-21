@@ -23,7 +23,7 @@ const routes: Routes = [
   { path: 'redpackets', loadChildren: () => import('./redpackets/module').then(x => x.RedPacketsModule), canActivate: [AuthGuardService] },
   { path: 'security', loadChildren: () => import('./security/module').then(x => x.SecurityModule) },
   { path: 'migrator', loadChildren: () => import('./migrator/module').then(x => x.MigratorModule) },
-  { path: 'easybridge', loadChildren: () => import('./easybridge/module').then(x => x.EasyBridgeModule) },
+  //{ path: 'easybridge', loadChildren: () => import('./easybridge/module').then(x => x.EasyBridgeModule) },
   { path: 'multiswap', loadChildren: () => import('./multiswap/module').then(x => x.MultiSwapModule) },
 
   // Prevent angular from calling a random default route sometimes when starting,

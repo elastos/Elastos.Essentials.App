@@ -12,7 +12,6 @@ export type BuiltInWidgetType =
   "hive-sync" |
   "wallet-connect" |
   "new-red-packets" |
-  "easy-bridge" |
   "contacts" |
   "red-packets" |
   "hive" |

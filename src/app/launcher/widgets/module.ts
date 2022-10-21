@@ -17,7 +17,6 @@ import { ChooseActiveNetworkWidget } from "./builtin/choose-active-network/choos
 import { ContactsWidget } from "./builtin/contacts/contacts.widget";
 import { CyberRepublicWidget } from "./builtin/cyber-republic/cyber-republic.widget";
 import { DiscoverDAppsWidget } from "./builtin/discover-dapps/discover-dapps.widget";
-import { EasyBridgeWidget } from "./builtin/easy-bridge/easy-bridge.widget";
 import { ElastosStakingWidget } from "./builtin/elastos-staking/elastos-staking.widget";
 import { ElastosVotingWidget } from "./builtin/elastos-voting/elastos-voting.widget";
 import { FavoriteAppsWidget } from "./builtin/favorite-apps/favorite-apps.widget";
@@ -57,7 +56,6 @@ import { TokenPriceTemplate } from "./plugins/templates/tokenprice/tokenprice";
     BackupIdentityWidget,
     HiveSyncWidget,
     NewRedPacketsWidget,
-    EasyBridgeWidget,
     ContactsWidget,
     RedPacketsWidget,
     HiveWidget,

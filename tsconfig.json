@@ -10,7 +10,7 @@
     "plugins",
     "platforms",
     "origin_platforms",
-    //"www"
+    "src/app/easybridge"
   ],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,

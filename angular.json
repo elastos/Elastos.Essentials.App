@@ -113,7 +113,11 @@
               "js-crypto-key-utils",
               "graphql-request",
               "dns-packet",
-              "@ensdomains/address-encoder"
+              "@ensdomains/address-encoder",
+              "bip32",
+              "@chainge/sdk",
+              "ethers/lib/utils",
+              "@unstoppabledomains/resolution"
             ]
           },
           "configurations": {

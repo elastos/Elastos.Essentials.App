@@ -33,7 +33,6 @@ const builtInWidgets: WidgetState[] = [
     { category: "builtin", builtInType: "recent-apps", displayCategories: [DisplayCategories.BROWSER] },
     { category: "builtin", builtInType: "favorite-apps", displayCategories: [DisplayCategories.BROWSER] },
     { category: "builtin", builtInType: "wallet-connect", displayCategories: [DisplayCategories.FINANCE] },
-    { category: "builtin", builtInType: "easy-bridge", displayCategories: [DisplayCategories.FINANCE] },
     { category: "builtin", builtInType: "contacts", displayCategories: [DisplayCategories.COMMUNITY] },
     { category: "builtin", builtInType: "red-packets", displayCategories: [DisplayCategories.COMMUNITY] },
     { category: "builtin", builtInType: "hive", displayCategories: [DisplayCategories.ELASTOS] },
@@ -422,7 +421,6 @@ export class WidgetsService {
                 widgets.push(this.createBuiltInWidgetState("hive-sync"));
                 widgets.push(this.createBuiltInWidgetState("swap"));
                 widgets.push(this.createBuiltInWidgetState("discover-dapps"));
-                //widgets.push(this.createBuiltInWidgetState("easy-bridge"));
                 widgets.push(this.createBuiltInWidgetState("red-packets"));
 
                 break;
