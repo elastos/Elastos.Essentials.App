@@ -74,6 +74,24 @@
     //border-bottom: solid 2px rgb(63, 132, 214);
   }
 
+  .icon-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    padding: 10px;
+    opacity: 1;
+    background: var(--ion-background-color);
+
+    .inline-svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   // Weird, should not be put in the generic widget background. Inherited from the previous launcher screen style
   .app-col {
     padding: 0;
@@ -89,22 +107,6 @@
 
       .left-col {
         justify-content: flex-start;
-
-        .icon-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 12px;
-          width: 48px;
-          height: 48px;
-          opacity: 1;
-          background: var(--ion-background-color);
-
-          img {
-            width: 55%;
-            height: 55%;
-          }
-        }
       }
 
       .mid-col {

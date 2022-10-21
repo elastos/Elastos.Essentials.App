@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { customizedSVGID } from 'src/app/helpers/picture.helpers';
 import { AppmanagerService } from 'src/app/launcher/services/appmanager.service';
 import { App } from 'src/app/model/app.enum';
 import { UIToken } from 'src/app/multiswap/model/uitoken';
@@ -55,4 +56,6 @@ export class SwapWidget implements IWidget {
       state: params
     });
   }
+
+  public customizeSVGID = customizedSVGID;
 }

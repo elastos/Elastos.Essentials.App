@@ -1,6 +1,7 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { customizedSVGID } from 'src/app/helpers/picture.helpers';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { AppmanagerService, RunnableApp } from 'src/app/launcher/services/appmanager.service';
 import { App } from 'src/app/model/app.enum';
@@ -21,7 +22,7 @@ export class HiveWidget implements IWidget, OnInit, OnDestroy {
     routerContext: App.HIVE_MANAGER,
     name: this.translate.instant('launcher.app-hive'),
     description: this.translate.instant('launcher.app-hive-description'),
-    icon: '/assets/launcher/icons/hive-cross.svg',
+    icon: '/assets/launcher/apps/app-icons/curcol-hive-cross.svg',
     hasWidget: true,
     startCall: () => this.hiveManagerInitService.start()
   };
@@ -75,4 +76,6 @@ export class HiveWidget implements IWidget, OnInit, OnDestroy {
     }
     return;
   }
+
+  public customizeSVGID = customizedSVGID;
 }

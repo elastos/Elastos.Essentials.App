@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { BrowserFavorite } from 'src/app/dappbrowser/model/favorite';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { FavoritesService } from 'src/app/dappbrowser/services/favorites.service';
+import { customizedSVGID } from 'src/app/helpers/picture.helpers';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -61,4 +62,6 @@ export class FavoriteAppsWidget implements IWidget, OnInit, OnDestroy {
     else
       return app.name;
   }
+
+  public customizeSVGID = customizedSVGID;
 }

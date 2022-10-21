@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { BrowsedAppInfo } from 'src/app/dappbrowser/model/browsedappinfo';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
-import { transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
+import { customizedSVGID, transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from 'src/app/model/app.enum';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
@@ -70,4 +70,6 @@ export class RecentAppsWidget implements IWidget, OnInit, OnDestroy {
 
     return network.logo;
   }
+
+  public customizeSVGID = customizedSVGID;
 }

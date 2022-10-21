@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { customizedSVGID } from 'src/app/helpers/picture.helpers';
 import { AppmanagerService, RunnableAppCategory } from 'src/app/launcher/services/appmanager.service';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from 'src/app/model/app.enum';
@@ -58,11 +59,12 @@ export class CyberRepublicWidget implements IWidget, OnInit {
           name: 'launcher.app-cr-suggestion',
           description: 'launcher.app-crsuggestion-description',
           icon: '/assets/launcher/apps/app-icons/suggestion.svg',
-          iconDark: '/assets/launcher/apps/app-icons/suggestion_dark.svg',
           hasWidget: false,
           routerPath: '/crproposalvoting/suggestions/all'
         }
       ]
     };
   }
+
+  public customizeSVGID = customizedSVGID;
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { customizedSVGID } from 'src/app/helpers/picture.helpers';
 import { AppmanagerService, RunnableAppCategory } from 'src/app/launcher/services/appmanager.service';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from 'src/app/model/app.enum';
@@ -35,7 +36,7 @@ export class ElastosStakingWidget implements IWidget, OnInit {
           routerContext: App.ELASTOS_STAKING,
           name: 'launcher.app-elastos-staking',
           description: 'launcher.app-elastos-staking-description',
-          icon: '/assets/launcher/apps/app-icons/dpos.svg', // TODO: icon
+          icon: '/assets/launcher/apps/app-icons/staking.svg',
           hasWidget: false,
           startCall: async () => {
             // TODO @dongxiao: open staking screens
@@ -44,4 +45,6 @@ export class ElastosStakingWidget implements IWidget, OnInit {
       ]
     };
   }
+
+  public customizeSVGID = customizedSVGID;
 }

@@ -4,7 +4,8 @@
     <ion-row class="app-row">
       <ion-col class="left-col" size="2">
         <div class="icon-container" [id]="app.id">
-          <img [src]="app.iconDark && theme.darkMode ? app.iconDark : app.icon">
+          <div class="inline-svg" [inlineSVG]="app.iconDark && theme.darkMode ? app.iconDark : app.icon"
+            [onSVGLoaded]="customizeSVGID"></div>
         </div>
       </ion-col>
       <ion-col class="mid-col" size="8">

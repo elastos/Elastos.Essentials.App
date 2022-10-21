@@ -29,7 +29,8 @@
     <ion-row class="app-row">
       <ion-col class="left-col" size="2">
         <div class="icon-container" id="browser">
-          <img src="/assets/launcher/apps/app-icons/browser.svg">
+          <div class="inline-svg" inlineSVG="/assets/launcher/apps/app-icons/browser.svg"
+            [onSVGLoaded]="customizeSVGID"></div>
         </div>
       </ion-col>
       <ion-col class="mid-col" size="8">

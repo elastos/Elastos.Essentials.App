@@ -1,0 +1,15 @@
+<svg width="100%" height="100%" viewBox="0 0 26 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="13" cy="17" rx="13" ry="5" transform="rotate(-180 13 17)" fill="url(#paint0_linear_660_3806_custom_id)"/>
+<ellipse cx="13" cy="5" rx="13" ry="5" fill="currentColor"/>
+<ellipse cx="13" cy="11" rx="13" ry="5" fill="url(#paint1_linear_660_3806_custom_id)"/>
+<defs>
+<linearGradient id="paint0_linear_660_3806_custom_id" x1="13" y1="12" x2="13" y2="22" gradientUnits="userSpaceOnUse">
+<stop stop-color="currentColor"/>
+<stop offset="1" stop-color="currentColor" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_660_3806_custom_id" x1="13" y1="6" x2="13" y2="16" gradientUnits="userSpaceOnUse">
+<stop stop-color="currentColor" stop-opacity="0"/>
+<stop offset="1" stop-color="currentColor"/>
+</linearGradient>
+</defs>
+</svg>

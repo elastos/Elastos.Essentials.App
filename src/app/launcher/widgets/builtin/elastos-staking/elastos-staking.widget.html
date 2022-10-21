@@ -8,7 +8,8 @@
     <ion-row class="app-row" [class.add-border]="app !== runnableApps.apps[runnableApps.apps.length -1]">
       <ion-col class="left-col" size="2">
         <div class="icon-container" [id]="app.id">
-          <img [src]="app.iconDark && theme.darkMode ? app.iconDark : app.icon">
+          <div class="inline-svg" [onSVGLoaded]="customizeSVGID"
+            [inlineSVG]="app.iconDark && theme.darkMode ? app.iconDark : app.icon"></div>
         </div>
       </ion-col>
       <ion-col class="mid-col" size="8">

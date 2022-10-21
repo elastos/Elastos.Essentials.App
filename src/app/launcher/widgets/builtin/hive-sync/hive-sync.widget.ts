@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { customizedSVGID } from 'src/app/helpers/picture.helpers';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
@@ -51,4 +52,6 @@ export class HiveSyncWidget implements IWidget, OnInit, OnDestroy {
       this.needToPromptHiveSync = false;
     }
   }
+
+  public customizeSVGID = customizedSVGID;
 }

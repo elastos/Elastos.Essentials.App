@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { customizedSVGID } from 'src/app/helpers/picture.helpers';
 import { AppmanagerService, RunnableAppCategory } from 'src/app/launcher/services/appmanager.service';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from 'src/app/model/app.enum';
@@ -57,4 +58,6 @@ export class ElastosVotingWidget implements IWidget, OnInit {
       ]
     };
   }
+
+  public customizeSVGID = customizedSVGID;
 }

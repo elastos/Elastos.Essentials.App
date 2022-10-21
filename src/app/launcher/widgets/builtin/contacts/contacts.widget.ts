@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ContactsInitService } from 'src/app/contacts/services/init.service';
+import { customizedSVGID } from 'src/app/helpers/picture.helpers';
 import { AppmanagerService, RunnableApp } from 'src/app/launcher/services/appmanager.service';
 import { App } from 'src/app/model/app.enum';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -30,4 +31,6 @@ export class ContactsWidget implements IWidget {
     public appService: AppmanagerService,
     private contactsInitService: ContactsInitService
   ) { }
+
+  public customizeSVGID = customizedSVGID;
 }
