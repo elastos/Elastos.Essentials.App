@@ -59,6 +59,8 @@ export class ElastosMainChainMainNetNetwork extends ElastosMainChainNetworkBase 
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ELA), MAINNET_TEMPLATE);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ELA), MAINNET_TEMPLATE);
     else
       return null;
   }
@@ -96,6 +98,8 @@ export class ElastosMainChainTestNetNetwork extends ElastosMainChainNetworkBase 
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ELA), TESTNET_TEMPLATE);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ELA), TESTNET_TEMPLATE);
     else
       return null;
   }
