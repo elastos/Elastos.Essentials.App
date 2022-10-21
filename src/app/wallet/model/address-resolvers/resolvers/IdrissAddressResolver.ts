@@ -9,6 +9,8 @@ export class IdrissResolver extends Resolver {
         super();
     }
 
+    public stop() {}
+
     public getName(): string {
         return "Idriss";
     }

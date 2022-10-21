@@ -53,6 +53,10 @@ export class NameResolvingService {
     }
 
     public reset() {
+        this.resolvers.forEach((resolver) => {
+            resolver.stop();
+            resolver = null;
+        });
         this.resolvers = [];
     }
 }

@@ -10,6 +10,8 @@ export class CryptoNameResolver extends Resolver {
         super();
     }
 
+    public stop() {}
+
     public getName(): string {
         return "CryptoName";
     }

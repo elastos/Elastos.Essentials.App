@@ -18,6 +18,8 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
         super();
     }
 
+    public stop() {}
+
     public getName(): string {
         return "Unstoppable Domains";
     }

@@ -14,6 +14,8 @@ export class ENSResolver extends Resolver {
         super();
     }
 
+    public stop() {}
+
     private async lazyInitENS() {
         if (this.ENSInstance)
             return;
