@@ -46,7 +46,7 @@
                     <ion-select [(ngModel)]="dposInfo.location" [attr.disabled]="needConfirm"
                         placeholder="{{'dposregistration.node-location-placeholder' | translate}}"
                         [attr.ok-text]="'common.confirm' | translate" [attr.cancel-text]="'common.cancel' | translate">
-                        <ion-select-option *ngFor="let code of areaList" [value]="code">
+                        <ion-select-option *ngFor="let code of getAreaList()" [value]="code">
                             {{ 'crcouncilvoting.' + code | translate }}
                         </ion-select-option>
                     </ion-select>

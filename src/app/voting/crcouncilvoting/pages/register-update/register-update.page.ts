@@ -33,7 +33,6 @@ export class RegisterUpdatePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     // public masterWalletId: string;
-    public areaList = areaList;
     public info: any = {
         nickname: "",
         location: 0,
@@ -93,6 +92,11 @@ export class RegisterUpdatePage implements OnInit {
         }
     }
 
+    public getAreaList() {
+        // Remove United Stated from the list as CR council members cannot register in that country
+        return areaList.filter(a => a != 1);
+    }
+
     checkValues() {
         Logger.log("RegisterUpdatePage", "Candidate Info", this.info);
 
@@ -116,7 +120,7 @@ export class RegisterUpdatePage implements OnInit {
             return;
         }
 
-        if (!this.info.location || this.areaList.indexOf(this.info.location) == -1) {
+        if (!this.info.location || this.getAreaList().indexOf(this.info.location) == -1) {
             blankMsg = this.translate.instant('crcouncilvoting.location') + blankMsg;
             this.globalNative.genericToast(blankMsg);
             return;

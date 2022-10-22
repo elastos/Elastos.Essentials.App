@@ -24,7 +24,6 @@ export class DPosRegistrationPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     public masterWalletId: string;
-    public areaList = areaList;
     public dposInfo: DPoSRegistrationInfo = {
         nickname: "",
         location: 0,
@@ -84,6 +83,11 @@ export class DPosRegistrationPage implements OnInit {
                 this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
                 break;
         }
+    }
+
+    public getAreaList() {
+        // Filter out United States, as supernodes are not allowed to register in that country.
+        return areaList.filter(a => a != 1);
     }
 
     checkValues() {
