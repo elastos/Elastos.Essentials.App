@@ -26,9 +26,9 @@
                                     <h4 [class.selected]="candidateIsSelected(candidate)">{{ candidate.nickname }}
                                     </h4>
                                     <p>
-                                        <ion-icon name="navigate"></ion-icon> {{ 'crcouncilvoting.' + candidate.location
+                                        <!-- <ion-icon name="navigate"></ion-icon> {{ 'crcouncilvoting.' + candidate.location
                                         | translate }}
-                                        &nbsp;
+                                        &nbsp; -->
                                         <span class="votes">{{ fixVotes(candidate.votes) }}</span>
                                         {{'crcouncilvoting.votes' | translate }}
                                     </p>
