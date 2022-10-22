@@ -87,7 +87,7 @@ export class DPosRegistrationPage implements OnInit {
 
     public getAreaList() {
         // Filter out United States, as supernodes are not allowed to register in that country.
-        return areaList.filter(a => a != 1);
+        return areaList.filter(a => a != 1001);
     }
 
     checkValues() {
