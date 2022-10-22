@@ -26,15 +26,14 @@
                         </ion-col>
                         <ion-col size="7.5" (click)="_showNode(nodesService.dposList.indexOf(node), node)"
                             class="label-col">
-                            <ion-label>
-                                <h4>{{ node.nickname }}</h4>
-                                <p>
-                                    <!-- <span [class.inactive]="node.state !== 'Active'">
-                                        <ion-icon name="navigate"></ion-icon> {{ node.Location }}
-                                    </span>
-                                    &#8226; --> {{ getVotePercent(node.votes) }}% of Votes
-                                </p>
-                            </ion-label>
+                            <h4>{{ node.nickname }}</h4>
+                            <p>
+                                <span *ngIf="node.state === 'Inactive'">Inactive &#8226; </span>
+                                <!-- <span [class.inactive]="node.state !== 'Active'">
+                                    <ion-icon name="navigate"></ion-icon> {{ node.Location }}
+                                </span> -->
+                                {{ getVotePercent(node.votes) }}% of Votes
+                            </p>
                         </ion-col>
                         <ion-col size="1.5" class="checkbox-container" *ngIf="voteService.canVote()">
                             <ion-checkbox value="node" [(ngModel)]="node.isChecked" mode="ios"
