@@ -87,7 +87,7 @@ export class DPosRegistrationPage implements OnInit {
 
     public getAreaList() {
         // Filter out United States, as supernodes are not allowed to register in that country.
-        return areaList.filter(a => a != 1);
+        return areaList.filter(a => a != 1001);
     }
 
     checkValues() {
@@ -207,7 +207,7 @@ export class DPosRegistrationPage implements OnInit {
         Logger.log('dposregistration', 'Calling update()', this.dposInfo);
 
         if (!await this.voteService.checkWalletAvailableForVote()) {
-          return;
+            return;
         }
 
         const payPassword = await this.authService.getWalletPassword(this.masterWalletId);
