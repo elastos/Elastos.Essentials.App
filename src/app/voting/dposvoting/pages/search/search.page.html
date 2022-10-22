@@ -30,10 +30,11 @@
                 <ion-label>
                   <h4>{{ node.nickname }}</h4>
                   <p>
+                    <span *ngIf="node.state === 'Inactive'">Inactive &#8226; </span>
                     <!-- <span [class.inactive]="node.state !== 'Active'">
-                      <ion-icon name="navigate"></ion-icon> {{ node.Location }}
+                        <ion-icon name="navigate"></ion-icon> {{ node.Location }}
                     </span> -->
-                    &#8226; {{ getVotePercent(node.votes) }}% of Votes
+                    {{ getVotePercent(node.votes) }}% of Votes
                   </p>
                 </ion-label>
               </ion-col>
