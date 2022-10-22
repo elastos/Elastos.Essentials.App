@@ -183,7 +183,7 @@ export class NodesService {
     async getStoredVotes() {
         this._votes = [];
 
-        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'dposvoting', this.voteService.masterWalletId + '-votes', []).then(async data => {
+        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'dposvoting', this.voteService.masterWalletId + '-votes', []).then(data => {
             if (data && data.length > 0) {
                 // filter invalid votes.
                 this._votes = data.filter(c => { return c.tx; });
