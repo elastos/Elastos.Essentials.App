@@ -2,60 +2,39 @@
   <app-titlebar></app-titlebar>
   <div class="ion-text-center header">
     <div class="search-container">
-      <ion-input
-        #search
-        placeholder="{{ 'dposvoting.search-supernode' | translate }}"
-        [(ngModel)]="_node"
-        (ngModelChange)="filterNodes($event)"
-        mode="ios"
-        clearInput
-      >
+      <ion-input #search placeholder="{{ 'dposvoting.search-supernode' | translate }}" [(ngModel)]="_node"
+        (ngModelChange)="filterNodes($event)" mode="ios" clearInput>
       </ion-input>
     </div>
   </div>
 
   <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length; else loadingList">
 
-    <app-node-slider-search
-      *ngIf="showNode"
-      [nodeIndex]="nodeIndex"
-      [totalVotes]="nodesService.totalVotes"
-      [_nodes]="filteredNodes"
-      [node]="node"
-    >
+    <app-node-slider-search *ngIf="showNode" [nodeIndex]="nodeIndex" [totalVotes]="nodesService.totalVotes"
+      [_nodes]="filteredNodes" [node]="node">
     </app-node-slider-search>
 
     <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.darkContainer]="theme.darkMode">
-      <ion-virtual-scroll [items]="filteredNodes"  approxItemHeight="240px">
+      <ion-virtual-scroll [items]="filteredNodes" approxItemHeight="240px">
         <ion-item *virtualItem="let node">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">
-              <ion-col
-                size="1"
-                class="rank-container ion-no-padding"
-                (click)="_showNode(filteredNodes.indexOf(node), node)"
-              >
+              <ion-col size="1" class="rank-container ion-no-padding"
+                (click)="_showNode(filteredNodes.indexOf(node), node)">
                 {{ node.index }}
               </ion-col>
-              <ion-col
-                size="2"
-                class="img-container"
-                (click)="_showNode(filteredNodes.indexOf(node), node)"
-              >
+              <ion-col size="2" class="img-container" (click)="_showNode(filteredNodes.indexOf(node), node)">
                 <img [src]="node.imageUrl ? node.imageUrl : '../assets/dposvoting/icon/elastos-icon.svg'">
               </ion-col>
-              <ion-col
-                size="7.5"
-                class="label-col"
-                (click)="_showNode(filteredNodes.indexOf(node), node)"
-              >
+              <ion-col size="7.5" class="label-col" (click)="_showNode(filteredNodes.indexOf(node), node)">
                 <ion-label>
                   <h4>{{ node.nickname }}</h4>
                   <p>
+                    <span *ngIf="node.state === 'Inactive'">Inactive &#8226; </span>
                     <!-- <span [class.inactive]="node.state !== 'Active'">
-                      <ion-icon name="navigate"></ion-icon> {{ node.Location }}
+                        <ion-icon name="navigate"></ion-icon> {{ node.Location }}
                     </span> -->
-                    &#8226; {{ getVotePercent(node.votes) }}% of Votes
+                    {{ getVotePercent(node.votes) }}% of Votes
                   </p>
                 </ion-label>
               </ion-col>
@@ -75,10 +54,7 @@
         <ion-item *ngFor='let empty of nodesService.emptyList' lines="none">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">
-              <ion-col
-                size="1"
-                class="rank-container ion-no-padding"
-              >
+              <ion-col size="1" class="rank-container ion-no-padding">
                 <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
               </ion-col>
               <ion-col size="2" class="img-container">
@@ -88,8 +64,12 @@
               </ion-col>
               <ion-col size="7.5">
                 <ion-label>
-                  <h4><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></h4>
-                  <p><ion-skeleton-text animated style="width: 60%"></ion-skeleton-text><p>
+                  <h4>
+                    <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+                  </h4>
+                  <p>
+                    <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+                  <p>
                 </ion-label>
               </ion-col>
               <ion-col size="1.5" class="checkbox-container">
