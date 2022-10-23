@@ -51,6 +51,7 @@ export class GlobalBTCRPCService {
         })
     }
 
+    // EXPLORER api
     public async balancehistory(rpcApiUrl: string, address: string): Promise<BigNumber> {
         let requestUrl = rpcApiUrl + '/api/v2/balancehistory/' + address;
 
@@ -68,6 +69,7 @@ export class GlobalBTCRPCService {
         }
     }
 
+    // EXPLORER api
     public async address(rpcApiUrl: string, address: string, pageSize: number, page = 1): Promise<AddressResult> {
         // address/<address>[?page=<page>&pageSize=<size>&from=<block height>&to=<block height>&details=<basic|tokens|tokenBalances|txids|txs>&contract=<contract address>]
         let requestUrl = rpcApiUrl + '/api/v2/address/' + address + '?pageSize=' + pageSize + '&page=' + page;
@@ -94,6 +96,7 @@ export class GlobalBTCRPCService {
     //     }
     // }
 
+    // EXPLORER api
     public async getrawtransaction(rpcApiUrl: string, txid: string): Promise<BTCTransaction> {
         let requestUrl = rpcApiUrl + '/api/v2/tx/' + txid;
 
@@ -106,6 +109,7 @@ export class GlobalBTCRPCService {
         }
     }
 
+    // EXPLORER api
     public async getUTXO(rpcApiUrl: string, address: string): Promise<BTCUTXO[]> {
         let requestUrl = rpcApiUrl + '/api/v2/utxo/' + address + '?confirmed=true';
 
@@ -118,6 +122,7 @@ export class GlobalBTCRPCService {
         }
     }
 
+    // Node api
     public async estimatesmartfee(rpcApiUrl: string): Promise<number> {
         const param = {
             'API_key': this.apikey,
@@ -139,7 +144,7 @@ export class GlobalBTCRPCService {
         return null;
     }
 
-    // return txid
+    // Node api
     public async sendrawtransaction(rpcApiUrl: string, signedhex: string): Promise<string> {
         const param = {
             'API_key': this.apikey,

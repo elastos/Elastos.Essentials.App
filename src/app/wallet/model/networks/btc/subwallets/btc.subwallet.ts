@@ -13,6 +13,7 @@ import { SwapProvider } from '../../../earn/swapprovider';
 import { WalletType } from '../../../masterwallets/wallet.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, UtxoForSDK } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
+import { NetworkAPIURLType } from '../../base/networkapiurltype';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
 import { BTCSafe } from '../safes/btc.safe';
@@ -28,12 +29,15 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     private legacyAddress: string = null;
     private transactionsList: string[] = null;
     private totalTransactionCount = 0;
+    private explorerApiUrl = null;
 
     constructor(networkWallet: AnyNetworkWallet, public rpcApiUrl: string) {
         super(networkWallet, StandardCoinName.BTC);
 
         this.tokenDecimals = 8;
         this.tokenAmountMulipleTimes = Config.SELAAsBigNumber;
+
+        this.explorerApiUrl = this.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.EXPLORER);
 
         void this.getRootPaymentAddress();
     }
@@ -180,7 +184,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
     //satoshi
     public async getAvailableUtxo(amount: number) {
-        let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.rpcApiUrl, this.legacyAddress);
+        let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.explorerApiUrl, this.legacyAddress);
         let utxoArrayForSDK: UtxoForSDK[] = [];
         let getEnoughUTXO = false;
         if (utxoArray) {
@@ -249,7 +253,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         if (this.masterWallet.type === WalletType.LEDGER) {
             for (let i = 0; i < utxo.length; i++) {
                 if (!utxo[i].utxoHex) {
-                    let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, utxo[i].TxHash);
+                    let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.explorerApiUrl, utxo[i].TxHash);
                     if (rawtransaction) {
                         utxo[i].utxoHex = rawtransaction.hex;
                     } else {
@@ -295,7 +299,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
      */
     private async updateBTCSubWalletInfo() {
         // Get the latest info.
-        let btcInfo = await GlobalBTCRPCService.instance.address(this.rpcApiUrl, this.legacyAddress, TRANSACTION_LIMIT, 1);
+        let btcInfo = await GlobalBTCRPCService.instance.address(this.explorerApiUrl, this.legacyAddress, TRANSACTION_LIMIT, 1);
         if (btcInfo) {
             if (btcInfo.balance) {
                 // the unconfirmedBalance is negative for unconfirmed sending transaction.
@@ -311,7 +315,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     async getTransactionDetails(txid: string): Promise<any> {
-        return await GlobalBTCRPCService.instance.getrawtransaction(this.rpcApiUrl, txid);
+        return await GlobalBTCRPCService.instance.getrawtransaction(this.explorerApiUrl, txid);
     }
 
     // BTC chain don't support such "EVM" features for now, so we override the default
