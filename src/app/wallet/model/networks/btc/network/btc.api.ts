@@ -10,8 +10,8 @@ export class BTCAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case BTCApiType.NODE: return 'https://btc.nownodes.io';
-        //   case BTCApiType.NODE: return 'https://btcbook.nownodes.io';
+        //   case BTCApiType.NODE: return 'https://btc.nownodes.io';
+          case BTCApiType.NODE: return 'https://btcbook.nownodes.io';
           case BTCApiType.BLOCK_EXPLORER: return 'https://btcbook.nownodes.io';
         //   case BTCApiType.BLOCK_EXPLORER: return 'https://blockexplorers.nownodes.io/bitcoin'
           default:
