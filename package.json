@@ -48,7 +48,7 @@
     "@awesome-cordova-plugins/lottie-splash-screen": "^5.46.0",
     "@awesome-cordova-plugins/screen-orientation": "5.37.3",
     "@awesome-cordova-plugins/status-bar": "5.37.3",
-    "@chainge/sdk": "^0.0.8",
+    "@chainge/sdk": "^0.0.9",
     "@elastosfoundation/did-js-sdk": "^2.2.12",
     "@elastosfoundation/hive-js-sdk": "^2.9.4",
     "@elastosfoundation/wallet-js-sdk": "^1.0.2",
@@ -222,6 +222,13 @@
     "https": false,
     "os": false
   },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "Firefox ESR",
+    "not dead",
+    "not IE 9-11"
+  ],
   "description": "An Ionic project",
   "cordova": {
     "plugins": {
