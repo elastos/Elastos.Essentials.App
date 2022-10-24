@@ -239,7 +239,7 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
     this.totalTokensToFetch++;
 
     this.tokenChooserService.getCoinBalance(uiToken.token, walletAddress, networkWallet).pipe(filter(val => val !== null), take(1)).subscribe(balance => {
-      if (balance !== null) {
+      if (balance !== null && !balance.isNaN()) {
         uiToken.amount = balance;
         this.refreshDisplayableTokens();
 

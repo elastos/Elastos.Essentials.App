@@ -22,7 +22,7 @@ export class TokenChooserService {
   }
 
   public getCoinBalance(coin: Coin, walletAddress: string, networkWallet: AnyNetworkWallet): BehaviorSubject<BigNumber> {
-    const coinKey = coin.key();
+    const coinKey = coin.key() + '-' + networkWallet.id;
     if (this.balances[coinKey])
       return this.balances[coinKey];
 
