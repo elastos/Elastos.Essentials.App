@@ -247,13 +247,13 @@ export class Transfer {
     catch (e) {
       this.canExecute = false;
       if (e instanceof UnsupportedTokenOrChainException)
-        this.cannotExecuteReason = "Unsupported tokens for swap";
+        this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('multiswap.unsupported-tokens')
       else if (e instanceof NoRouteException)
-        this.cannotExecuteReason = "No way to directly route tokens. Please manually swap to intermediate tokens";
+        this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('multiswap.no-route')
       else if (e instanceof AmountTooLowException)
-        this.cannotExecuteReason = "Amount is too low to cover transaction fees, please set a higher amount";
+        this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('multiswap.amount-too-low')
       else
-        this.cannotExecuteReason = "Unknown error";
+        this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('multiswap.unknown-error')
     }
 
     this.emitPostComputationStatus();
