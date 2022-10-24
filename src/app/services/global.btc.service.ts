@@ -40,13 +40,13 @@ export class GlobalBTCRPCService {
                     }
 
                 } else {
-                    throw new Error("Can't find the api keys, the value is " + value)
+                    Logger.warn('GlobalBTCRPCService', "Can't find the nownodes api keys, the value is " + value)
                 }
             },
             complete: () => {
             },
             error: (e) => {
-                throw e;
+                Logger.warn('GlobalBTCRPCService', "Can't find the nownodes api keys", e)
             }
         })
     }
