@@ -1,8 +1,11 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
+import { Channel, MyProfile, RuntimeContext } from "feeds-experiment";
+import { GlobalConfig } from 'src/app/config/globalconfig';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
 import { Logger } from 'src/app/logger';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
 import { NewsContent, NewsContentItem, PluginConfig } from '../../base/pluginconfig';
@@ -12,6 +15,7 @@ import { NewsSource, WidgetsNewsService } from '../../services/news.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 import { NewsConfiguratorComponent } from './components/configurator/configurator.component';
+
 
 const ROTATION_TIME_SEC = 10;
 
@@ -64,6 +68,46 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
     WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
+
+    void this.test();
+  }
+
+  private async test() {
+    const applicationDid = GlobalConfig.ESSENTIALS_APP_DID;
+    const currentNet = "mainnet";
+    const localDataDir = "/data/store/develop1";
+    const resolveCache = '/data/store/catch1';
+
+    RuntimeContext.initialize(applicationDid, currentNet, localDataDir, resolveCache);
+    const appCtx = RuntimeContext.getInstance();
+    let myprofile: MyProfile;
+    if (!appCtx.checkSignin()) {
+
+      try {
+        myprofile = await appCtx.signin();
+        console.log("FEEDS myprofile after sign in", myprofile)
+      }
+      catch (e) {
+        console.error("FEEDS", e)
+      }
+    }
+
+    try {
+      const myProfileHive = await appCtx.signToHive(DIDSessionsStore.signedInDIDString);
+      console.log("FEEDS myProfileHive", myProfileHive)
+
+      const currentTime = new Date().getTime()
+      const subscriptions = await myprofile.querySubscriptions()
+
+      for (let item of subscriptions) {
+        const channel = new Channel(appCtx, item)
+        const postBodys = await channel.queryPosts(currentTime, 10)
+        console.log("FEEDS postBodys", postBodys)
+      }
+    }
+    catch (e) {
+      console.error("FEEDS", e)
+    }
   }
 
   ngOnDestroy() {
