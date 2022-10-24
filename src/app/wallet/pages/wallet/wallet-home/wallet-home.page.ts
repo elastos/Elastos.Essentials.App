@@ -116,7 +116,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private defiService: DefiService,
         private globalStartupService: GlobalStartupService,
         private events: GlobalEvents,
-        private zone: NgZone,
+        private zone: NgZone
     ) {
         GlobalFirebaseService.instance.logEvent("wallet_home_enter");
     }

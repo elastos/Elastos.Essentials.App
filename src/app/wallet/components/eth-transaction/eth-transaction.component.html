@@ -39,11 +39,11 @@
     </ion-row>
 
     <ion-row *ngIf="publicationFailed">
-      <ion-col class="btn cancel ion-activatable ripple" size="5.6">
+      <ion-col class="btn cancel ion-activatable ripple" size="6">
         <ebutton (clicked)="cancel()" [title]="'common.close' | translate">
         </ebutton>
       </ion-col>
-      <ion-col class="btn confirm ion-activatable ripple" size="5.6">
+      <ion-col class="btn confirm ion-activatable ripple" size="6">
         <ebutton (clicked)="speedup()" [title]="'wallet.eth-transaction-speedup' | translate">
         </ebutton>
       </ion-col>
