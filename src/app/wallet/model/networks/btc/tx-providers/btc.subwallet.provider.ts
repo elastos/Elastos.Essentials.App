@@ -5,6 +5,7 @@ import { ProviderTransactionInfo } from "../../../tx-providers/providertransacti
 import { SubWalletTransactionProvider } from "../../../tx-providers/subwallet.provider";
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
 import { TransactionDirection } from "../../../tx-providers/transaction.types";
+import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { BTCSubWallet } from "../subwallets/btc.subwallet";
 
@@ -51,7 +52,8 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
             Logger.log('wallet', 'fetchTransactions page:', page);
 
             let tokenAddress = subWallet.getCurrentReceiverAddress();
-            let btcInfo = await GlobalBTCRPCService.instance.address(this.rpcApiUrl, tokenAddress, MAX_RESULTS_PER_FETCH, page);
+            let rpcApiUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
+            let btcInfo = await GlobalBTCRPCService.instance.address(rpcApiUrl, tokenAddress, MAX_RESULTS_PER_FETCH, page);
             if (btcInfo) {
                 if (btcInfo.txids.length < MAX_RESULTS_PER_FETCH) {
                     this.canFetchMore = false;
