@@ -21,7 +21,7 @@
 <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_644_260" result="shape"/>
 </filter>
 <linearGradient id="paint0_linear_644_260_custom_id" x1="15.2344" y1="12.8906" x2="25.1241" y2="16.9313" gradientUnits="userSpaceOnUse">
-<stop stop-color="currentColor"/>
+<stop stop-color="currentColor" stop-opacity="0.5"/>
 <stop offset="1" stop-color="currentColor"/>
 </linearGradient>
 <linearGradient id="paint1_linear_644_260_custom_id" x1="0" y1="8.39844" x2="19.0001" y2="15.3943" gradientUnits="userSpaceOnUse">
@@ -34,7 +34,7 @@
 <stop offset="1" stop-color="currentColor" stop-opacity="0"/>
 </linearGradient>
 <linearGradient id="paint3_linear_644_260_custom_id" x1="0" y1="7.8125" x2="25.1861" y2="17.0861" gradientUnits="userSpaceOnUse">
-<stop stop-color="currentColor"/>
+<stop stop-color="currentColor" stop-opacity="0.5"/>
 <stop offset="1" stop-color="currentColor" stop-opacity="0"/>
 </linearGradient>
 </defs>

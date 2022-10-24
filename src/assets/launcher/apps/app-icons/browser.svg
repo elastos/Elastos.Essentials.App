@@ -4,7 +4,7 @@
 <path d="M6.99958 23.3923L10.7496 11.701L15.2496 14.299L6.99958 23.3923Z" fill="currentColor" fill-opacity="0.5"/>
 <defs>
 <linearGradient id="paint0_linear_656_2367_custom_id" x1="0" y1="0" x2="26" y2="26" gradientUnits="userSpaceOnUse">
-<stop stop-color="currentColor"/>
+<stop stop-color="currentColor" stop-opacity="0.5"/>
 <stop offset="1" stop-color="currentColor" stop-opacity="0"/>
 </linearGradient>
 </defs>

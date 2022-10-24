@@ -95,6 +95,8 @@
   // Weird, should not be put in the generic widget background. Inherited from the previous launcher screen style
   .app-col {
     padding: 0;
+    border-radius: 10px;
+    overflow: hidden;
 
     .app-row {
       padding: 0;
