@@ -93,7 +93,7 @@ export class HomePage {
     private tokenChooserService: TokenChooserService,
     private swapUIService: SwapUIService
   ) {
-    GlobalFirebaseService.instance.logEvent("easybridge_home_enter");
+    GlobalFirebaseService.instance.logEvent("multiswap_home_enter");
 
     route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -455,6 +455,17 @@ export class HomePage {
     });
 
     await this.activeTransfer.execute();
+
+    // Log "completed" only if really completed transfer
+    if (this.activeTransfer.status.value.step === TransferStep.COMPLETED) {
+      void this.firebase.logEvent("multiswap_transfer_completed", {
+        fromtoken: this.activeTransfer.sourceToken.getSymbol(),
+        fromchain: this.activeTransfer.sourceToken.network.key,
+        totoken: this.activeTransfer.destinationToken.getSymbol(),
+        tochain: this.activeTransfer.destinationToken.network.key,
+        amount: this.activeTransfer.amount
+      });
+    }
 
     // Refresh selected source token balance after spending some
     void this.refreshActiveTransferSourceTokenBalance();
