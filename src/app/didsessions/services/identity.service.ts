@@ -10,7 +10,6 @@ import { BiometricAuthenticationFailedException } from 'src/app/model/exceptions
 import { BiometricLockedoutException } from 'src/app/model/exceptions/biometriclockedout.exception';
 import { PasswordManagerCancellationException } from 'src/app/model/exceptions/passwordmanagercancellationexception';
 import { WrongPasswordException } from 'src/app/model/exceptions/wrongpasswordexception.exception';
-import { GlobalPasswordService } from 'src/app/services/globa.password.service';
 import { GlobalDIDSessionsService, SignInOptions } from 'src/app/services/global.didsessions.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
@@ -20,6 +19,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPasswordService } from 'src/app/services/global.password.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -639,7 +639,7 @@ export class IdentityService {
         Logger.log("DIDSessions", "Loading DID Session identities");
 
         let identityEntries = await this.didSessions.getIdentityEntries();
-        //Logger.log('didsessions', identityEntries);
+        //Logger.log('didsessions', 'identityEntries', identityEntries);
 
         let didStores: IdentityGroup[] = [];
         for (let idEntry of identityEntries) {
@@ -731,7 +731,8 @@ export class IdentityService {
             await nextStep.completionCb(data);
         }
         else {
-            Logger.log("didsessions", "Can't run next step " + nextStepId + ", there is nothing after...");
+            Logger.warn("didsessions", "Can't run next step " + nextStepId + ", there is nothing after...");
+            Logger.warn('didsessions', 'this.nextSteps', this.nextSteps, ' nextStepId:', nextStepId)
         }
     }
 

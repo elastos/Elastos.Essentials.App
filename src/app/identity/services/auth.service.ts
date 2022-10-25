@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
 import { PasswordManagerCancellationException } from 'src/app/model/exceptions/passwordmanagercancellationexception';
-import { GlobalPasswordService } from 'src/app/services/globa.password.service';
+import { GlobalPasswordService } from 'src/app/services/global.password.service';
 import { DIDService } from './did.service';
 import { PopupProvider } from './popup';
 

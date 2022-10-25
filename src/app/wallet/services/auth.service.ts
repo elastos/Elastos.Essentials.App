@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
-import { GlobalPasswordService } from 'src/app/services/globa.password.service';
+import { GlobalPasswordService } from 'src/app/services/global.password.service';
 
 @Injectable({
     providedIn: 'root'

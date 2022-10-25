@@ -6,10 +6,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
-import { GlobalPasswordService } from 'src/app/services/globa.password.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { GlobalPasswordService } from 'src/app/services/global.password.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { environment } from 'src/environments/environment';
 
