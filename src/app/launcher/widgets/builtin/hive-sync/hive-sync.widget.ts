@@ -6,7 +6,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { IWidget } from '../../base/iwidget';
+import { WidgetBase } from '../../base/widgetbase';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 
 @Component({
@@ -14,8 +14,7 @@ import { WidgetsServiceEvents } from '../../services/widgets.events';
   templateUrl: './hive-sync.widget.html',
   styleUrls: ['./hive-sync.widget.scss'],
 })
-export class HiveSyncWidget implements IWidget, OnInit, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
+export class HiveSyncWidget extends WidgetBase implements OnInit, OnDestroy {
   public editing: boolean; // Widgets container is being edited
 
   public needToPromptHiveSync = false;
@@ -25,10 +24,16 @@ export class HiveSyncWidget implements IWidget, OnInit, OnDestroy {
     public didService: DIDManagerService,
     private globalHiveService: GlobalHiveService,
     private prefs: GlobalPreferencesService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
-    void this.globalHiveService.getSyncDataToHiveWasPrompted().then(prompted => this.needToPromptHiveSync = !prompted);
+    void this.globalHiveService.getSyncDataToHiveWasPrompted().then(prompted => {
+      this.needToPromptHiveSync = !prompted
+
+      this.notifyReadyToDisplay();
+    });
 
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
     WidgetsServiceEvents.editionMode.subscribe(editing => {

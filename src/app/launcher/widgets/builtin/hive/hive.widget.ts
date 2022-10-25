@@ -7,16 +7,14 @@ import { AppmanagerService, RunnableApp } from 'src/app/launcher/services/appman
 import { App } from 'src/app/model/app.enum';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { IWidget } from '../../base/iwidget';
+import { WidgetBase } from '../../base/widgetbase';
 
 @Component({
   selector: 'widget-hive',
   templateUrl: './hive.widget.html',
   styleUrls: ['./hive.widget.scss'],
 })
-export class HiveWidget implements IWidget, OnInit, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
-
+export class HiveWidget extends WidgetBase implements OnInit, OnDestroy {
   public app: RunnableApp = {
     id: 'hive',
     routerContext: App.HIVE_MANAGER,
@@ -45,7 +43,9 @@ export class HiveWidget implements IWidget, OnInit, OnDestroy {
     public appService: AppmanagerService,
     private globalHiveService: GlobalHiveService,
     private hiveManagerInitService: HiveManagerInitService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     // Wait to know user's hive vault status to show the hive storage widget
@@ -65,6 +65,8 @@ export class HiveWidget implements IWidget, OnInit, OnDestroy {
         });
       }
     });
+
+    this.notifyReadyToDisplay();
 
     return;
   }

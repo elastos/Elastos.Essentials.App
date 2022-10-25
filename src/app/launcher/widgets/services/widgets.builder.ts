@@ -1,8 +1,8 @@
 import { DragDrop, DragRef } from '@angular/cdk/drag-drop';
 import { ComponentRef, TemplateRef, ViewContainerRef } from '@angular/core';
 import { Logger } from 'src/app/logger';
-import { IWidget } from '../base/iwidget';
 import type { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
+import { WidgetBase } from '../base/widgetbase';
 import { WidgetState } from '../base/widgetstate';
 import { NewsWidget } from '../builtin/news/news.widget';
 import { WidgetPluginsService } from './plugin.service';
@@ -16,7 +16,7 @@ export class WidgetsBuilder {
      *
      * Item is made draggable as part of a cdkDropList, only if dragDrop is set.
      */
-    public static async appendWidgetFromState(containerName: string, widgetState: WidgetState, list: ViewContainerRef, container: ViewContainerRef, boundaries: ViewContainerRef, dragPlaceholder: TemplateRef<any>, dragDrop: DragDrop, insertionIndex: number = undefined): Promise<{ dragRef: DragRef<any>, widgetComponentInstance: IWidget, widgetHolderComponentRef: ComponentRef<WidgetHolderComponent> }> {
+    public static async appendWidgetFromState(containerName: string, widgetState: WidgetState, list: ViewContainerRef, container: ViewContainerRef, boundaries: ViewContainerRef, dragPlaceholder: TemplateRef<any>, dragDrop: DragDrop, insertionIndex: number = undefined): Promise<{ dragRef: DragRef<any>, widgetComponentInstance: WidgetBase, widgetHolderComponentRef: ComponentRef<WidgetHolderComponent> }> {
         const forSelection = !dragDrop; // For now, "dragDrop" undefined or null means "preview mode"
 
         // Plugin safety check - Make sure  we have a valid config in this widget
@@ -62,7 +62,7 @@ export class WidgetsBuilder {
 
         // Put the real widget in the holder
         let widgetComponentClass = null; // Widget interface
-        let widgetComponentInstance: IWidget = null;
+        let widgetComponentInstance: WidgetBase = null;
         if (widgetState.category === "builtin") {
             switch (widgetState.builtInType) {
                 // Dynamic imports for bundle split and avoid circular dependencies
@@ -110,7 +110,7 @@ export class WidgetsBuilder {
         const pluginWidgetComponentInstance = widgetComponentInstance;
         pluginWidgetComponentInstance.forSelection = forSelection; // Let the widget know where it will be used so it can adjust some UI
 
-        await pluginWidgetComponentInstance.attachWidgetState?.(widgetState);
+        await pluginWidgetComponentInstance.attachWidgetState(widgetState);
         await pluginWidgetComponentInstance.attachHolder?.(holder.instance);
 
         holder.instance.attachWidgetComponent(pluginWidgetComponentInstance);

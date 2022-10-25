@@ -7,16 +7,14 @@ import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { IWidget } from '../../base/iwidget';
+import { WidgetBase } from '../../base/widgetbase';
 
 @Component({
   selector: 'widget-identity',
   templateUrl: './identity.widget.html',
   styleUrls: ['./identity.widget.scss'],
 })
-export class IdentityWidget implements IWidget, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
-
+export class IdentityWidget extends WidgetBase implements OnDestroy {
   private popover: HTMLIonPopoverElement = null;
 
   constructor(
@@ -24,7 +22,10 @@ export class IdentityWidget implements IWidget, OnDestroy {
     public didService: DIDManagerService,
     private nav: GlobalNavService,
     private popoverCtrl: PopoverController
-  ) { }
+  ) {
+    super();
+    this.notifyReadyToDisplay();
+  }
 
   ngOnDestroy() {
     console.log("IDENTITY TODO DISMISS POPOVER ON EXIT")

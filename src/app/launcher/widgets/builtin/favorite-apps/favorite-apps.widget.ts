@@ -8,16 +8,14 @@ import { DIDManagerService } from 'src/app/launcher/services/didmanager.service'
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { IWidget } from '../../base/iwidget';
+import { WidgetBase } from '../../base/widgetbase';
 
 @Component({
   selector: 'widget-favorite-apps',
   templateUrl: './favorite-apps.widget.html',
   styleUrls: ['./favorite-apps.widget.scss'],
 })
-export class FavoriteAppsWidget implements IWidget, OnInit, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
-
+export class FavoriteAppsWidget extends WidgetBase implements OnInit, OnDestroy {
   private favoritesSub: Subscription = null;
 
   public favorites: BrowserFavorite[] = [];
@@ -28,13 +26,17 @@ export class FavoriteAppsWidget implements IWidget, OnInit, OnDestroy {
     private browserService: DappBrowserService,
     private favoritesService: FavoritesService,
     private globalNavService: GlobalNavService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.favoritesSub = this.favoritesService.sortedFavorites.subscribe(favorites => {
       if (favorites)
         this.favorites = favorites.slice(0, 4); // Max 4 apps shown
+
+      this.notifyReadyToDisplay();
     });
 
     return;

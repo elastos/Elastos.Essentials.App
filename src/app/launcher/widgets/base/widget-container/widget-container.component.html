@@ -32,7 +32,11 @@
     + Add widget
   </div> -->
 
-  <div #widgetsboundaries id="widgetsboundaries" class="widgets-boundaries">
+  <div *ngIf="!allWidgetsReadyToDisplay" class="widgets-ready-awaiter">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div #widgetsboundaries id="widgetsboundaries" class="widgets-boundaries" [class.hidden]="!allWidgetsReadyToDisplay">
     <div #widgetslist class="widgets-list">
       <!-- Use a template that disappears at runtime because createComponent() adds new children as SIBLING of #container, not inside... -->
       <ng-template #container></ng-template>

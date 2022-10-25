@@ -6,9 +6,9 @@ import BigNumber from 'bignumber.js';
 import { lazyCustomUniswapSDKImport, lazyUniswapSDKCoreImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import type { Pair } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
-import { ERC20Coin } from '../../model/coin';
-import { EVMNetwork } from '../../model/networks/evms/evm.network';
-import { AnyNetwork } from '../../model/networks/network';
+import type { ERC20Coin } from '../../model/coin';
+import type { EVMNetwork } from '../../model/networks/evms/evm.network';
+import type { AnyNetwork } from '../../model/networks/network';
 import { LocalStorage } from '../storage.service';
 import { EVMService } from './evm.service';
 

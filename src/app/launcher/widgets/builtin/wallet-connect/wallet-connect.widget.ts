@@ -6,7 +6,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { IWidget } from '../../base/iwidget';
+import { WidgetBase } from '../../base/widgetbase';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 
 @Component({
@@ -14,8 +14,7 @@ import { WidgetsServiceEvents } from '../../services/widgets.events';
   templateUrl: './wallet-connect.widget.html',
   styleUrls: ['./wallet-connect.widget.scss'],
 })
-export class WalletConnectWidget implements IWidget, OnInit, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
+export class WalletConnectWidget extends WidgetBase implements OnInit, OnDestroy {
   public editing: boolean; // Widgets container is being edited
 
   private walletConnectSub: Subscription = null; // Subscription to wallet connect active sessions
@@ -27,7 +26,9 @@ export class WalletConnectWidget implements IWidget, OnInit, OnDestroy {
     public didService: DIDManagerService,
     private nav: GlobalNavService,
     private globalWalletConnectService: GlobalWalletConnectService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
@@ -39,6 +40,8 @@ export class WalletConnectWidget implements IWidget, OnInit, OnDestroy {
       this.zone.run(() => {
         this.walletConnectConnectors = Array.from(connectors.values()).slice(0, 3); // Keep only 3 items
         Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors, this.walletConnectConnectors.length);
+
+        this.notifyReadyToDisplay();
       });
     });
   }

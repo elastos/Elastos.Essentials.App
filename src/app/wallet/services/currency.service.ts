@@ -6,7 +6,7 @@ import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ERC20Coin } from '../model/coin';
-import { EVMNetwork } from '../model/networks/evms/evm.network';
+import type { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { AnyNetwork } from '../model/networks/network';
 import { TimeBasedPersistentCache } from '../model/timebasedpersistentcache';
 import { UniswapCurrencyService } from './evm/uniswap.currency.service';
@@ -315,9 +315,9 @@ export class CurrencyService {
     }
     else {
       Logger.log("wallet", "No currency in trinity API for", network.getMainTokenSymbol(), ". Trying other methods");
-      if (network instanceof EVMNetwork && network.getUniswapCurrencyProvider()) {
+      if (network.isEVMNetwork() && (<EVMNetwork>network).getUniswapCurrencyProvider()) {
         // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
-        let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(<EVMNetwork>network, network.getUniswapCurrencyProvider().getWrappedNativeCoin());
+        let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(<EVMNetwork>network, (<EVMNetwork>network).getUniswapCurrencyProvider().getWrappedNativeCoin());
         if (usdValue) {
           this.pricesCache.set(cacheKey, {
             usdValue

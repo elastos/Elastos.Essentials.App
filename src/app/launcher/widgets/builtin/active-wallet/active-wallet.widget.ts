@@ -17,6 +17,7 @@ import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { WidgetBase } from '../../base/widgetbase';
 
 // The networkWallet is null if the masterWallet is not supported on the active netowrk.
 type MasterWalletWithNetworkWallet = {
@@ -29,9 +30,7 @@ type MasterWalletWithNetworkWallet = {
   templateUrl: './active-wallet.widget.html',
   styleUrls: ['./active-wallet.widget.scss'],
 })
-export class ActiveWalletWidget implements OnInit, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
-
+export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy {
   @ViewChild('walletsSlider') walletsSlider: IonSlides;
 
   private popover: HTMLIonPopoverElement = null;
@@ -62,7 +61,9 @@ export class ActiveWalletWidget implements OnInit, OnDestroy {
     private globalNative: GlobalNativeService,
     public translate: TranslateService,
     public currencyService: CurrencyService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit(): Promise<void> {
     // Wait for wallet service to be initialized (existing wallets loaded) so we can display some balance
@@ -139,7 +140,7 @@ export class ActiveWalletWidget implements OnInit, OnDestroy {
     return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toFixed();
   }
 
-  private async updateWidgetMainWallet() {
+  private updateWidgetMainWallet() {
     // Deprecated
     let activeWallet = this.walletService.activeNetworkWallet.value;
     if (activeWallet) {
@@ -184,6 +185,8 @@ export class ActiveWalletWidget implements OnInit, OnDestroy {
       let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
       this.backgroundGradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
     }
+
+    this.notifyReadyToDisplay();
   }
 
 

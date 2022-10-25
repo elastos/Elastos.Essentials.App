@@ -4,17 +4,14 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { LastUsedNetworks, WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
-import { IWidget } from '../../base/iwidget';
-import { WidgetState } from '../../base/widgetstate';
+import { WidgetBase } from '../../base/widgetbase';
 
 @Component({
   selector: 'choose-active-network',
   templateUrl: './choose-active-network.widget.html',
   styleUrls: ['./choose-active-network.widget.scss'],
 })
-export class ChooseActiveNetworkWidget implements IWidget, OnInit, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
-
+export class ChooseActiveNetworkWidget extends WidgetBase implements OnInit, OnDestroy {
   private activeNetworkSub: Subscription = null;
   private lastUsedNetworksSub: Subscription = null;
 
@@ -25,7 +22,9 @@ export class ChooseActiveNetworkWidget implements IWidget, OnInit, OnDestroy {
     public theme: GlobalThemeService,
     private walletNetworkService: WalletNetworkService,
     private walletNetworkUIService: WalletNetworkUIService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.activeNetworkSub = this.walletNetworkService.activeNetwork.subscribe(activeNetwork => {
@@ -48,9 +47,6 @@ export class ChooseActiveNetworkWidget implements IWidget, OnInit, OnDestroy {
       this.lastUsedNetworksSub.unsubscribe();
       this.lastUsedNetworksSub = null;
     }
-  }
-
-  attachWidgetState(widgetState: WidgetState) {
   }
 
   /**
@@ -97,6 +93,8 @@ export class ChooseActiveNetworkWidget implements IWidget, OnInit, OnDestroy {
     });
 
     this.lastUsedNetworks = networksList;
+
+    this.notifyReadyToDisplay();
   }
 
   public selectNetwork(network: AnyNetwork) {

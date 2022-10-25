@@ -8,16 +8,14 @@ import { MultiSwapHomePageParams } from 'src/app/multiswap/pages/home/home';
 import { SwapUIService } from 'src/app/multiswap/services/swap.ui.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { IWidget } from '../../base/iwidget';
+import { WidgetBase } from '../../base/widgetbase';
 
 @Component({
   selector: 'widget-swap',
   templateUrl: './swap.widget.html',
   styleUrls: ['./swap.widget.scss'],
 })
-export class SwapWidget implements IWidget {
-  public forSelection: boolean; // Initialized by the widget service
-
+export class SwapWidget extends WidgetBase {
   public sourceToken: UIToken = null;
   public destinationToken: UIToken = null;
 
@@ -27,7 +25,11 @@ export class SwapWidget implements IWidget {
     public appService: AppmanagerService,
     private nav: GlobalNavService,
     private swapUIService: SwapUIService
-  ) { }
+  ) {
+    super();
+
+    this.notifyReadyToDisplay();
+  }
 
   public onSwapClicked() {
     this.navToSwapScreen();

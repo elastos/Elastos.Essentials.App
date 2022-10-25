@@ -3,8 +3,7 @@ import { DIDManagerService } from 'src/app/launcher/services/didmanager.service'
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { IWidget } from '../../base/iwidget';
-import { WidgetState } from '../../base/widgetstate';
+import { WidgetBase } from '../../base/widgetbase';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 
 @Component({
@@ -12,8 +11,7 @@ import { WidgetsServiceEvents } from '../../services/widgets.events';
   templateUrl: './backup-identity.widget.html',
   styleUrls: ['./backup-identity.widget.scss'],
 })
-export class BackupIdentityWidget implements IWidget, OnInit, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
+export class BackupIdentityWidget extends WidgetBase implements OnInit, OnDestroy {
   public editing: boolean; // Widgets container is being edited
 
   public identityBackedUp = true;
@@ -23,7 +21,9 @@ export class BackupIdentityWidget implements IWidget, OnInit, OnDestroy {
     public didService: DIDManagerService,
     private nav: GlobalNavService,
     private didSessions: GlobalDIDSessionsService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     // Watch identity backed up by user
@@ -33,12 +33,11 @@ export class BackupIdentityWidget implements IWidget, OnInit, OnDestroy {
     WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
+
+    this.notifyReadyToDisplay();
   }
 
   ngOnDestroy(): void {
-  }
-
-  attachWidgetState(widgetState: WidgetState) {
   }
 
   backupIdentity() {

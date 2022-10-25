@@ -9,10 +9,10 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
-import { IWidget } from '../base/iwidget';
-import { PluginConfig } from '../base/pluginconfig';
-import { WidgetContainerComponent } from '../base/widget-container/widget-container.component';
-import { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
+import type { PluginConfig } from '../base/pluginconfig';
+import type { WidgetContainerComponent } from '../base/widget-container/widget-container.component';
+import type { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
+import type { WidgetBase } from '../base/widgetbase';
 import { BuiltInWidgetType, DisplayCategories, PluginType, WidgetContainerState, WidgetState } from '../base/widgetstate';
 import { WidgetsNewsService } from './news.service';
 import { WidgetPluginsService } from './plugin.service';
@@ -47,7 +47,7 @@ const builtInWidgets: WidgetState[] = [
 
 export type WidgetInstance = {
     widgetId: string; // Reference widget ID
-    widget: IWidget; // Widget component instance (Angular Component implementing our widget interface)
+    widget: WidgetBase; // Widget component instance (Angular Component implementing our widget interface)
     holderComponentRef: ComponentRef<any>; // Angular's UI element root for the widget HOLDER instance
     container: WidgetContainerComponent;
 }
@@ -143,7 +143,7 @@ export class WidgetsService {
      * Restores a widget that was previously saved.
      * Called when the widgets container is instantiated.
      */
-    public async restoreWidget(widgetContainer: WidgetContainerComponent, widget: WidgetState, widgetslist: ViewContainerRef, container: ViewContainerRef, boundaries: ViewContainerRef, dragPlaceholder: TemplateRef<any>): Promise<{ dragRef: DragRef, widgetHolderComponentRef: ComponentRef<WidgetHolderComponent>, widgetComponentInstance: IWidget }> {
+    public async restoreWidget(widgetContainer: WidgetContainerComponent, widget: WidgetState, widgetslist: ViewContainerRef, container: ViewContainerRef, boundaries: ViewContainerRef, dragPlaceholder: TemplateRef<any>): Promise<{ dragRef: DragRef, widgetHolderComponentRef: ComponentRef<WidgetHolderComponent>, widgetComponentInstance: WidgetBase }> {
         let result = await WidgetsBuilder.appendWidgetFromState(widgetContainer.name, widget, widgetslist, container, boundaries, dragPlaceholder, this.dragDrop);
         if (result) {
             let { dragRef, widgetComponentInstance, widgetHolderComponentRef } = result;

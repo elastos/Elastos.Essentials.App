@@ -4,8 +4,8 @@ import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.servic
 import { GlobalThemeService } from '../../../../services/theming/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
-import { IWidget } from '../iwidget';
-import { WidgetState } from '../widgetstate';
+import type { WidgetBase } from '../widgetbase';
+import type { WidgetState } from '../widgetstate';
 
 @Component({
   selector: 'widget-holder',
@@ -22,7 +22,7 @@ export class WidgetHolderComponent implements OnInit {
   public dragHandle: ElementRef;
 
   public widgetState: WidgetState = null;
-  private widgetComponent: IWidget = null;
+  public widgetComponent: WidgetBase = null;
   public configureIconListener: () => void = null;
 
   public editing = false;
@@ -58,7 +58,7 @@ export class WidgetHolderComponent implements OnInit {
   /**
    * Attaches the widget component instance displayed inside this holder.
    */
-  public attachWidgetComponent(widgetComponent: IWidget) {
+  public attachWidgetComponent(widgetComponent: WidgetBase) {
     this.widgetComponent = widgetComponent;
   }
 

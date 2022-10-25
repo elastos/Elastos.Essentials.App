@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { App } from 'src/app/model/app.enum';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
@@ -12,7 +12,7 @@ import { DIDManagerService } from '../../services/didmanager.service';
   templateUrl: './options.component.html',
   styleUrls: ['./options.component.scss'],
 })
-export class OptionsComponent implements OnInit {
+export class OptionsComponent {
 
   constructor(
     public theme: GlobalThemeService,
@@ -21,9 +21,6 @@ export class OptionsComponent implements OnInit {
     private globalNavService: GlobalNavService,
     private appBackGroundService: GlobalAppBackgroundService
   ) { }
-
-  ngOnInit() {
-  }
 
   async manageIdentity() {
     await this.popoverCtrl.dismiss();

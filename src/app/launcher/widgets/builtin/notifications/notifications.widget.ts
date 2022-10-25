@@ -4,7 +4,7 @@ import { LauncherNotification, NotificationManagerService } from 'src/app/launch
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
-import { IWidget } from '../../base/iwidget';
+import { WidgetBase } from '../../base/widgetbase';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 
 @Component({
@@ -12,8 +12,7 @@ import { WidgetsServiceEvents } from '../../services/widgets.events';
   templateUrl: './notifications.widget.html',
   styleUrls: ['./notifications.widget.scss'],
 })
-export class NotificationsWidget implements IWidget, OnInit, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
+export class NotificationsWidget extends WidgetBase implements OnInit, OnDestroy {
   public editing: boolean; // Widgets container is being edited
 
   private notifsSub: Subscription = null;
@@ -27,7 +26,10 @@ export class NotificationsWidget implements IWidget, OnInit, OnDestroy {
     private walletNetworkService: WalletNetworkService,
     private walletNetworkUIService: WalletNetworkUIService,
     public notificationService: NotificationManagerService
-  ) { }
+  ) {
+    super();
+  }
+
 
   ngOnInit() {
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
@@ -40,6 +42,8 @@ export class NotificationsWidget implements IWidget, OnInit, OnDestroy {
         this.totalNotifications = notifications.length;
         this.notifications = notifications.slice(0, 3);
       }
+
+      this.notifyReadyToDisplay();
     });
   }
 

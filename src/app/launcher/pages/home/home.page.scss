@@ -23,6 +23,10 @@ ion-content {
         .swiper-wrapper {
             height: auto !important;
         }
+
+        &.hidden {
+            display: none;
+        }
     }
 
     ion-slide {

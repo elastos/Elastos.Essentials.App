@@ -15,14 +15,6 @@ import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetContainerComponent } from '../widget-container/widget-container.component';
 import { DisplayCategories as DisplayCategory, WidgetState } from '../widgetstate';
 
-/* TODO:
-download json by the widget service
-return a widget state
-add widget state into preview container
-select button, add to home
-if selected, also save to available custom widgets for later reuse
-*/
-
 type Category = {
   key: DisplayCategory; // Key matching widgets
   title: string; // Display name

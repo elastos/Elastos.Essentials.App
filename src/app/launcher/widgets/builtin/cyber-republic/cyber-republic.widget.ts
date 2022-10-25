@@ -8,16 +8,14 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { IWidget } from '../../base/iwidget';
+import { WidgetBase } from '../../base/widgetbase';
 
 @Component({
   selector: 'widget-cyber-republic',
   templateUrl: './cyber-republic.widget.html',
   styleUrls: ['./cyber-republic.widget.scss'],
 })
-export class CyberRepublicWidget implements IWidget, OnInit {
-  public forSelection: boolean; // Initialized by the widget service
-
+export class CyberRepublicWidget extends WidgetBase implements OnInit {
   public runnableApps: RunnableAppCategory = null;
 
   constructor(
@@ -28,7 +26,9 @@ export class CyberRepublicWidget implements IWidget, OnInit {
     public walletNetworkService: WalletNetworkService,
     private dposVotingInitService: DPoSVotingInitService,
     private crCouncilVotingInitService: CRCouncilVotingInitService,
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.runnableApps = {
@@ -64,6 +64,8 @@ export class CyberRepublicWidget implements IWidget, OnInit {
         }
       ]
     };
+
+    this.notifyReadyToDisplay();
   }
 
   public customizeSVGID = customizedSVGID;

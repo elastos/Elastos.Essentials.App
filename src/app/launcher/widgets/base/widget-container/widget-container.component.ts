@@ -6,14 +6,15 @@ import { DragDrop, DragRef, DropListRef } from '@angular/cdk/drag-drop';
 import { Component, ComponentRef, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewRef } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { WidgetInstance, WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
+import type { WidgetInstance } from 'src/app/launcher/widgets/services/widgets.service';
+import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
 import { GlobalThemeService } from '../../../../services/theming/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 import { WidgetsUIService } from '../../services/widgets.ui.service';
 import { ColorChooserComponent } from '../color-chooser/color-chooser.component';
-import { WidgetHolderComponent } from '../widget-holder/widget-holder.component';
-import { WidgetState } from '../widgetstate';
+import type { WidgetHolderComponent } from '../widget-holder/widget-holder.component';
+import type { WidgetState } from '../widgetstate';
 @Component({
   selector: 'widget-container',
   templateUrl: './widget-container.component.html',
@@ -53,6 +54,8 @@ export class WidgetContainerComponent implements OnInit {
   public editing = false;
 
   private holdersInstances: ComponentRef<WidgetHolderComponent>[] = []; // List of all widget holders initiated in this contained. Used to destroy those references when the container gets destroyed
+  private widgetsReadyToDisplay: { [widgetId: string]: boolean } = {}; // List of widgets ready to be displayed (they emited their ready to display event)
+  public allWidgetsReadyToDisplay = false;
 
   constructor(
     public theme: GlobalThemeService,
@@ -82,6 +85,9 @@ export class WidgetContainerComponent implements OnInit {
         }
       });
     }
+    else {
+      this.allWidgetsReadyToDisplay = true; // In selection mode, don't bother with the "blink" problem
+    }
   }
 
   private loadContainer() {
@@ -93,10 +99,18 @@ export class WidgetContainerComponent implements OnInit {
       for (let widget of state.widgets) {
         let result = await this.widgetsService.restoreWidget(this, widget, this.widgetslist, this.container, this.widgetsBoundaries, this.dragPlaceholder);
         if (result) {
-          let { dragRef, widgetHolderComponentRef } = result;
+          let { dragRef, widgetHolderComponentRef, widgetComponentInstance } = result;
           this.dragRefs.push(dragRef);
           this.holdersInstances.push(widgetHolderComponentRef);
+          this.widgetsReadyToDisplay[widgetComponentInstance.widgetState.id] = false; // Widget not ready yet
         }
+      }
+
+      for (let holder of this.holdersInstances) {
+        holder.instance.widgetComponent.onReadyToDisplay.subscribe(ready => {
+          this.widgetsReadyToDisplay[holder.instance.widgetComponent.widgetState.id] = ready; // Widget not ready yet
+          this.checkAllWidgetsReady();
+        });
       }
 
       this.cdkList.withItems(this.dragRefs);
@@ -114,10 +128,24 @@ export class WidgetContainerComponent implements OnInit {
   }
 
   /**
+   * Checks if all widgets are ready to display and if so, all widgets can be displayed at once
+   */
+  private checkAllWidgetsReady() {
+    console.log("All widgets ready");
+
+    let nbWidgetsReadyToDisplay = Object.values(this.widgetsReadyToDisplay).filter(ready => ready).length;
+    this.allWidgetsReadyToDisplay = this.holdersInstances.length === nbWidgetsReadyToDisplay;
+
+    console.log("widgets", nbWidgetsReadyToDisplay, "/", this.holdersInstances.length);
+  }
+
+  /**
    * Widget is being deleted by the service. We remove it from UI
    */
   public onWidgetDeletion(widgetInstance: WidgetInstance, holderViewRef: ViewRef) {
     let deletionIndex = this.container.indexOf(holderViewRef);
+
+    delete this.widgetsReadyToDisplay[widgetInstance.widget.widgetState.id];
 
     // Remove the widget holder view from the widgets list
     this.container.remove(deletionIndex);

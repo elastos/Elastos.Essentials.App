@@ -4,10 +4,10 @@ import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.ser
 import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { IWidget } from '../../base/iwidget';
 import { NewsContent, NewsContentItem, PluginConfig } from '../../base/pluginconfig';
-import { WidgetHolderComponent } from '../../base/widget-holder/widget-holder.component';
-import { WidgetState } from '../../base/widgetstate';
+import type { WidgetHolderComponent } from '../../base/widget-holder/widget-holder.component';
+import { WidgetBase } from '../../base/widgetbase';
+import type { WidgetState } from '../../base/widgetstate';
 import { NewsSource, WidgetsNewsService } from '../../services/news.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
@@ -29,11 +29,10 @@ export type DisplayableNews = {
   templateUrl: './news.widget.html',
   styleUrls: ['./news.widget.scss'],
 })
-export class NewsWidget implements IWidget, OnInit, OnDestroy {
+export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
   @Input("config")
   public config: PluginConfig<NewsContent> = null;
 
-  public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
 
   private modal: HTMLIonModalElement = null;
@@ -55,6 +54,7 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
     private popoverCtrl: PopoverController,
     private modalController: ModalController
   ) {
+    super();
     // NOTE: no auto rotation for now, this makes the UI move up/down depending on news count on each page
     //this.rotationTimeout = setTimeout(() => { this.updateActiveNews(); }, ROTATION_TIME_SEC * 1000);
   }
@@ -64,6 +64,8 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
     WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
+
+    this.notifyReadyToDisplay();
   }
 
   ngOnDestroy() {
@@ -76,6 +78,8 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
   }
 
   attachWidgetState(widgetState: WidgetState) {
+    super.attachWidgetState(widgetState);
+
     this.widgetsNewsService.sources.subscribe(newsSources => {
       void this.prepareNews(newsSources);
     });

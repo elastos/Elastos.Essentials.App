@@ -6,16 +6,14 @@ import { DIDManagerService } from 'src/app/launcher/services/didmanager.service'
 import { App } from 'src/app/model/app.enum';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { IWidget } from '../../base/iwidget';
+import { WidgetBase } from '../../base/widgetbase';
 
 @Component({
   selector: 'widget-elastos-staking',
   templateUrl: './elastos-staking.widget.html',
   styleUrls: ['./elastos-staking.widget.scss'],
 })
-export class ElastosStakingWidget implements IWidget, OnInit {
-  public forSelection: boolean; // Initialized by the widget service
-
+export class ElastosStakingWidget extends WidgetBase implements OnInit {
   public runnableApps: RunnableAppCategory = null;
 
   constructor(
@@ -24,7 +22,9 @@ export class ElastosStakingWidget implements IWidget, OnInit {
     private translate: TranslateService,
     public appService: AppmanagerService,
     public walletNetworkService: WalletNetworkService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.runnableApps = {
@@ -44,6 +44,8 @@ export class ElastosStakingWidget implements IWidget, OnInit {
         }
       ]
     };
+
+    this.notifyReadyToDisplay();
   }
 
   public customizeSVGID = customizedSVGID;

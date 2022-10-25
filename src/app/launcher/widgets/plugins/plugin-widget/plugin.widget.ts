@@ -3,8 +3,8 @@ import { Subscription } from 'rxjs';
 import { AppmanagerService } from 'src/app/launcher/services/appmanager.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { IWidget } from '../../base/iwidget';
 import { PluginConfig, RefreshOn } from '../../base/pluginconfig';
+import { WidgetBase } from '../../base/widgetbase';
 import { WidgetState } from '../../base/widgetstate';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsService } from '../../services/widgets.service';
@@ -14,10 +14,7 @@ import { WidgetsService } from '../../services/widgets.service';
   templateUrl: './plugin.widget.html',
   styleUrls: ['./plugin.widget.scss'],
 })
-export class PluginWidget implements IWidget, OnInit, OnDestroy {
-  public forSelection: boolean; // Initialized by the widget service
-
-  private widgetState: WidgetState = null;
+export class PluginWidget extends WidgetBase implements OnInit, OnDestroy {
   public config: PluginConfig<any> = null;
 
   private refreshWidgetTimer: any = null;
@@ -28,9 +25,12 @@ export class PluginWidget implements IWidget, OnInit, OnDestroy {
     public appService: AppmanagerService,
     private widgetsService: WidgetsService,
     private walletNetworkService: WalletNetworkService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
+    this.notifyReadyToDisplay();
     return;
   }
 
@@ -65,8 +65,9 @@ export class PluginWidget implements IWidget, OnInit, OnDestroy {
   }
 
   public async attachWidgetState(widgetState: WidgetState) {
+    super.attachWidgetState(widgetState);
+
     this.config = await WidgetPluginsService.instance.getPluginWidgetStateConfig(widgetState);
-    this.widgetState = widgetState;
 
     this.networkChangeSub = this.walletNetworkService.activeNetwork.subscribe(activeNetwork => {
       if (activeNetwork) {

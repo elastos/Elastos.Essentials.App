@@ -9,20 +9,19 @@ import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { WidgetBase } from '../../base/widgetbase';
 
 @Component({
   selector: 'active-network-coin-price',
   templateUrl: './active-network-coin-price.widget.html',
   styleUrls: ['./active-network-coin-price.widget.scss'],
 })
-export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
+export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, OnDestroy {
   private coinPriceRoot: ElementRef;
   @ViewChild('coinPriceRoot', { static: false }) set content(_coinPriceRoot: ElementRef) {
     this.coinPriceRoot = _coinPriceRoot;
     this.prepare();
   }
-
-  public forSelection: boolean; // Initialized by the widget service
 
   public activeNetwork: AnyNetwork = null;
   public coinDisplayPrice: string = null;
@@ -39,7 +38,9 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
     private walletInitService: WalletInitService,
     public translate: TranslateService,
     public currencyService: CurrencyService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit(): Promise<void> {
     // Refresh when network changes
@@ -89,6 +90,8 @@ export class ActiveNetworkCoinPriceWidget implements OnInit, OnDestroy {
         let gradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
         // TODO TRY: color/1 to color more dark/1
         this.coinPriceRoot.nativeElement.style.background = gradient;
+
+        this.notifyReadyToDisplay();
       }
     }
   }

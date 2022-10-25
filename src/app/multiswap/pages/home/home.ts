@@ -485,7 +485,7 @@ export class HomePage {
       this.translate.instant("easybridge.reset-confirmation-title"),
       this.translate.instant("multiswap.reset-confirmation-content"),
       undefined,
-      "/assets/launcher/widgets/swap-widget-icon.svg"
+      "/assets/launcher/apps/app-icons/swap.svg"
     );
 
     if (agreed) {

@@ -44,9 +44,9 @@ import { WalletJSSDKHelper } from '../model/networks/elastos/wallet.jssdk.helper
 import { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { ERC20SubWallet } from '../model/networks/evms/subwallets/erc20.subwallet';
 import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm.subwallet';
-import { AnyNetwork } from '../model/networks/network';
+import type { AnyNetwork } from '../model/networks/network';
 import { AuthService } from './auth.service';
-import { Transfer } from './cointransfer.service';
+import type { Transfer } from './cointransfer.service';
 import { ERC1155Service } from './evm/erc1155.service';
 import { ERC721Service } from './evm/erc721.service';
 import { MultiSigService } from './multisig.service';
@@ -388,7 +388,7 @@ export class WalletService {
     /**
      * Gets the list of master wallets that supports the specified network, sorted alphabetically.
      */
-     public getMasterWalletsListByNetwork(networkKey: string): MasterWallet[] {
+    public getMasterWalletsListByNetwork(networkKey: string): MasterWallet[] {
         let network = this.networkService.getNetworkByKey(networkKey)
         return Object.values(this.masterWallets).filter((wallet) => {
             return wallet.supportsNetwork(network)
