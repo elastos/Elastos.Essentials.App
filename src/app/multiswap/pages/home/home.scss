@@ -122,6 +122,21 @@ ion-content {
 
         .balance-row {
             margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+
+            #max-btn {
+                font-size: 11px;
+                font-weight: 700;
+                width: 50px;
+            }
+
+            .align-right {
+                width: 100%;
+                text-align: right;
+            }
         }
     }
 

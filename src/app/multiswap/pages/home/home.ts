@@ -14,7 +14,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { Coin } from 'src/app/wallet/model/coin';
+import { Coin, ERC20Coin } from 'src/app/wallet/model/coin';
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
@@ -59,6 +59,7 @@ export class HomePage {
   public destinationTokens: UIToken[] = [];
   public selectedDestinationToken: UIToken = null;
   public transferAmount: string = null;
+  public sendMax = false;
 
   private masterWallet: MasterWallet = null;
   private evmWalletAddress: string = null;
@@ -346,6 +347,7 @@ export class HomePage {
     if (this.transferIsBeingComputed || this.transferStarted) // Transfer is being computed or executed - don't allow to change things
       return;
 
+    this.sendMax = false;
     void this.recomputeTransfer();
   }
 
@@ -354,6 +356,20 @@ export class HomePage {
     setTimeout(async () => {
       (await input.getInputElement()).scrollIntoView({ behavior: 'smooth' });
     }, 500);
+  }
+
+  public setMaxTransfer() {
+    this.sendMax = true;
+    this.transferAmount = this.getDisplayableAmount(this.selectedSourceToken.amount);
+
+    void this.recomputeTransfer();
+  }
+
+  public supportsMaxTransfer() {
+    // Hide max button when selected source token is native token, because of transaction gas cost, can't know the max.
+    if (this.selectedSourceToken && this.selectedSourceToken.token instanceof ERC20Coin) {
+        return true;
+    } else return false;
   }
 
   /**
@@ -371,17 +387,22 @@ export class HomePage {
   private recomputeTransfer() {
     this.lastError = null;
 
-    const transferAmountBN = new BigNumber(this.transferAmount);
-    if (!(transferAmountBN.gt(0)))
-      return;
+    let transferAmountBN = null;
+    if (this.sendMax) {
+        transferAmountBN = this.selectedSourceToken.amount;
+    } else {
+        transferAmountBN = new BigNumber(this.transferAmount);
+        if (!(transferAmountBN.gt(0)))
+          return;
 
-    Logger.log("multiswap", "Recomputing transfer info", this.transferAmount);
-
-    // Make sure there is enough balance
-    if (this.selectedSourceToken.amount.lt(this.transferAmount)) {
-      this.lastError = GlobalTranslationService.instance.translateInstant("easybridge.not-enough-tokens");
-      return;
+        // Make sure there is enough balance
+        if (this.selectedSourceToken.amount.lt(this.transferAmount)) {
+          this.lastError = GlobalTranslationService.instance.translateInstant("easybridge.not-enough-tokens");
+          return;
+        }
     }
+
+    Logger.log("multiswap", "Recomputing transfer info", transferAmountBN.toString());
 
     this.zone.run(() => {
       this.unsubscribeFromTransferStatus();

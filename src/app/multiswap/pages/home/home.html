@@ -82,8 +82,13 @@
             selectedSourceToken.token.getSymbol() }}</span>
         </div>
         <div class="balance-row">
-          Balance: {{ getDisplayableAmount(selectedSourceToken.amount) }} <b>{{ selectedSourceToken.token.getSymbol()
-            }}</b>
+            <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}
+            </p>
+            <p class="align-right">
+                {{ 'multiswap.balance' | translate }} {{ getDisplayableAmount(selectedSourceToken.amount) }} <b>{{ selectedSourceToken.token.getSymbol()
+                }}</b>
+            </p>
+
         </div>
       </div>
 

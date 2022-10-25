@@ -16,6 +16,7 @@ export const en = {
         'source-token': 'Source token',
         'destination-token': 'Destination token',
         'pick-a-token': 'Pick a token',
+        'balance': 'Balance:',
 
         // Transfer steps
         "step-not-started": "Not started",

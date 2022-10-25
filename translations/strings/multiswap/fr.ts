@@ -16,6 +16,7 @@ export const fr = {
         'source-token': 'Jeton source',
         'destination-token': 'Jeton cible',
         'pick-a-token': 'Sélectionner un jeton',
+        'balance': 'Balance:',
 
         // Transfer steps
         "step-not-started": "Not started",

@@ -16,6 +16,7 @@ export const zh = {
         'source-token': '源代币',
         'destination-token': '目标代币',
         'pick-a-token': '选择一个代币',
+        'balance': '余额:',
 
         // Transfer steps
         "step-not-started": "未执行",
