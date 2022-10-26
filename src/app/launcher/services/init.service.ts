@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { WidgetsFeedsNewsService } from '../widgets/services/feedsnews.service';
 import { WidgetsNewsService } from '../widgets/services/news.service';
 import { WidgetPluginsService } from '../widgets/services/plugin.service';
 import { AppmanagerService } from './appmanager.service';
@@ -23,7 +24,8 @@ export class LauncherInitService extends GlobalService {
     private tipsService: TipsService,
     private didManager: DIDManagerService,
     private widgetPluginsService: WidgetPluginsService, // init
-    private widgetNewsService: WidgetsNewsService // init
+    private widgetNewsService: WidgetsNewsService, // init
+    private widgetFeedsNewsService: WidgetsFeedsNewsService // init
   ) {
     super();
   }

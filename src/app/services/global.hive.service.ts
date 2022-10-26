@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { SubscriptionInfo, Vault, VaultInfo, VaultSubscription } from '@elastosfoundation/hive-js-sdk';
+import type { AppContextProvider, SubscriptionInfo, Vault, VaultInfo, VaultSubscription } from '@elastosfoundation/hive-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from "rxjs";
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
@@ -150,6 +150,10 @@ export class GlobalHiveService extends GlobalService {
     });
 
     return vaultServices;
+  }
+
+  public getRawHiveContextProvider(appDID: string, userDID: string): Promise<AppContextProvider> {
+    return this.hiveAuthHelper.getAppContextProvider(appDID, userDID);
   }
 
   /**

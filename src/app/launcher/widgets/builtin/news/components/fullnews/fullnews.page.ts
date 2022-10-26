@@ -6,20 +6,11 @@ import moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
-import { NewsContent, NewsContentItem, PluginConfig } from 'src/app/launcher/widgets/base/pluginconfig';
+import { FeedsChannel, WidgetsFeedsNewsService } from 'src/app/launcher/widgets/services/feedsnews.service';
 import { NewsSource, WidgetsNewsService } from 'src/app/launcher/widgets/services/news.service';
-import { WidgetPluginsService } from 'src/app/launcher/widgets/services/plugin.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-
-/**
- * Mix of raw news source config with real news content.
- */
-export type DisplayableNews = {
-  source: NewsSource;
-  config: PluginConfig<NewsContent>; // Whole json plugin parent.
-  news: NewsContentItem;
-}
+import { DisplayableNews, NewsHelper } from '../../helper';
 
 @Component({
   selector: 'app-fullnews',
@@ -33,6 +24,11 @@ export class FullNewsPage implements OnInit {
 
   private modalAlreadyDismissed = false;
 
+  // Raw inputs
+  private newsSources: NewsSource[] = [];
+  private feedsChannels: FeedsChannel[] = [];
+
+  // Displayable
   public news: DisplayableNews[] = [];
 
   constructor(
@@ -42,14 +38,22 @@ export class FullNewsPage implements OnInit {
     public theme: GlobalThemeService,
     public translate: TranslateService,
     private widgetsNewsService: WidgetsNewsService,
-    private widgetPluginsService: WidgetPluginsService,
+    private widgetsFeedsNewsService: WidgetsFeedsNewsService,
     private dappBrowserService: DappBrowserService
   ) {
   }
 
   ngOnInit() {
-    this.widgetsNewsService.sources.subscribe(newsSources => {
-      void this.prepareNews(newsSources);
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.widgetsNewsService.sources.subscribe(async newsSources => {
+      this.newsSources = newsSources;
+      this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.widgetsFeedsNewsService.channels.subscribe(async channels => {
+      this.feedsChannels = channels;
+      this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
     });
   }
 
@@ -83,38 +87,12 @@ export class FullNewsPage implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  private async prepareNews(newsSources: NewsSource[]) {
-    let allNews: DisplayableNews[] = [];
-
-    // For each source, get its content.
-    for (let source of newsSources) {
-      if (!source.enabled)
-        continue; // Skip this source if disabled
-
-      let content = <PluginConfig<NewsContent>>await this.widgetPluginsService.getPluginContent(source.url);
-
-      for (let news of content.content.items) {
-        let displayableNews: DisplayableNews = {
-          source,
-          config: content,
-          news
-        };
-        allNews.push(displayableNews);
-      }
-    }
-
-    // Sort all collected news by date
-    allNews.sort((a, b) => b.news.timevalue - a.news.timevalue);
-
-    this.news = allNews;
-  }
-
   public getIcon(news: DisplayableNews): string {
-    return news.config.logo; // Project logo
+    return news.logo; // Project logo
   }
 
   public getSender(news: DisplayableNews): string {
-    return news.config.projectname;
+    return news.sender;
   }
 
   public getTitle(news: DisplayableNews): string {
@@ -126,7 +104,7 @@ export class FullNewsPage implements OnInit {
   }
 
   public getNotificationDate(news: DisplayableNews) {
-    return moment(Number(news.news.timevalue)).startOf('minutes').fromNow();
+    return moment.unix(news.news.timevalue).startOf('minutes').fromNow();
   }
 
   public openNews(news: DisplayableNews) {

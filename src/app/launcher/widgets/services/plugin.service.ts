@@ -87,7 +87,7 @@ export class WidgetPluginsService implements GlobalService {
         return source.lastFetched;
     }
 
-    private getDatedPluginSource(url: string) {
+    private getDatedPluginSource(url: string): DatedPluginSource {
         if (!this.state) // Should not happen, just in case
             return null;
 

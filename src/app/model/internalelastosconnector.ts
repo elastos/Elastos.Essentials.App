@@ -1,4 +1,4 @@
-import type { VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
+import { VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { lazyElastosDIDSDKImport } from "../helpers/import.helper";
 import { Logger } from "../logger";
@@ -6,6 +6,12 @@ import { Logger } from "../logger";
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 //declare let didManager: DIDPlugin.DIDManager;
 
+/**
+ * This internal elastos connector creates a window.elastosconnectivity context INSIDE
+ * the essentials app itself. It is currently used by:
+ * - The hive helper, to create app id credentials
+ * - The news widgets, for feeds authentication
+ */
 export class InternalElastosConnector implements Interfaces.Connectors.IConnector {
     public name = "essentials-internal";
 
@@ -21,6 +27,36 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
     getCredentials(claims: any): Promise<VerifiablePresentation> {
         throw new Error("getCredentials(): Method not implemented.");
     }
+
+    /**
+     * For feeds SDK: return an empty presentation, HOPING that all credentials
+     * are optional for now.
+     */
+    /* requestCredentials(request: CredentialDisclosureRequest): Promise<VerifiablePresentation> {
+        return new Promise(resolve => {
+            void AuthService.instance.checkPasswordThenExecute(async () => {
+                // TODO - REMOVE WHEN WE CAN - Mandatory for feeds for now
+                let nameCred = DIDService.instance.getActiveDid().getCredentialById(new DIDURL("#name"));
+                //let nameCredJson = await nameCred.pluginVerifiableCredential.toJson()
+
+                //let nameCredJS = await VerifiableCredential.parse(nameCredJson);
+
+                const presentation = await DIDService.instance.getActiveDid().createVerifiablePresentationFromCredentials(
+                    [nameCred.pluginVerifiableCredential],
+                    AuthService.instance.getCurrentUserPassword(),
+                    request.nonce, request.realm);
+                Logger.log('connector', "Created presentation:", presentation);
+
+                // Convert from Cordova VP to DID JS VP
+                let vpJson = await presentation.toJson();
+                const didJSPresentation = VerifiablePresentation.parse(vpJson);
+                resolve(didJSPresentation);
+            }, () => {
+                // Cancelled
+                resolve(null);
+            });
+        });
+    } */
 
     generateAppIdCredential(appInstanceDID: string): Promise<VerifiableCredential> {
         Logger.log("connector", "App ID Credential generation flow started");

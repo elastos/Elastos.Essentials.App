@@ -6,6 +6,7 @@
       }}</span>
   </div>
 
+  <!-- Plugin sources -->
   <ion-row class="sources-row">
     <ion-col size="6" *ngFor="let source of sources">
       <ion-row class="source">
@@ -15,6 +16,26 @@
         <img class="project-logo" [cache]="source.icon" />
         <div class="name">{{source.name}}</div>
         <img class="delete" src="/assets/launcher/widgets/close.svg" (click)="deleteSource(source)" />
+      </ion-row>
+    </ion-col>
+  </ion-row>
+
+  <!-- Feeds subscriptions -->
+  <div class="title-row">
+    <span class="title">Feeds subscriptions</span>
+    <span class="selected">{{ 'launcher.n-news-sources-selected' | translate : {selected:
+      getSelectedFeedsChannelsCount()}
+      }}</span>
+  </div>
+
+  <ion-row class="sources-row">
+    <ion-col size="6" *ngFor="let channel of feedsChannels">
+      <ion-row class="source">
+        <div class="checkbox" [class.selected]="channel.enabled" (click)="toggleFeedsChannelEnabled(channel)">
+          <img src="/assets/launcher/widgets/check.svg" />
+        </div>
+        <img class="project-logo" [cache]="channel.icon" />
+        <div class="name">{{channel.name}}</div>
       </ion-row>
     </ion-col>
   </ion-row>

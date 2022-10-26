@@ -5,6 +5,7 @@ import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/n
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-js';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
+import { GlobalConfig } from './config/globalconfig';
 import { ElastosSDKHelper } from './helpers/elastossdk.helper';
 import { Logger } from './logger';
 import { InternalElastosConnector } from './model/internalelastosconnector';
@@ -101,7 +102,7 @@ export class AppComponent {
       await connectivity.setActiveConnector(internalConnector.name);
 
       // Register Essentials' App DID to the connectivity SDK - For hive authentication flows.
-      connectivity.setApplicationDID("did:elastos:ig1nqyyJhwTctdLyDFbZomSbZSjyMN1uor");
+      connectivity.setApplicationDID(GlobalConfig.ESSENTIALS_APP_DID);
 
       // Catch android back key for navigation
       this.setupBackKeyNavigation();

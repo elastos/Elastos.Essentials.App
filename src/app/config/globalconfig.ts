@@ -1,6 +1,7 @@
 export const GlobalConfig = {
   /** Application DID for Essentials. Used for example for hive storage sandboxing. */
   ESSENTIALS_APP_DID: "did:elastos:ig1nqyyJhwTctdLyDFbZomSbZSjyMN1uor",
+  FEEDS_APP_DID: "did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geXg"
 };
 
 export const GlobalRedPacketServiceAddresses = {

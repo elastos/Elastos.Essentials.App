@@ -4,25 +4,18 @@ import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.ser
 import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { NewsContent, NewsContentItem, PluginConfig } from '../../base/pluginconfig';
-import type { WidgetHolderComponent } from '../../base/widget-holder/widget-holder.component';
+import { NewsContent, PluginConfig } from '../../base/pluginconfig';
+import { WidgetHolderComponent } from '../../base/widget-holder/widget-holder.component';
 import { WidgetBase } from '../../base/widgetbase';
 import type { WidgetState } from '../../base/widgetstate';
+import { FeedsChannel, WidgetsFeedsNewsService } from '../../services/feedsnews.service';
 import { NewsSource, WidgetsNewsService } from '../../services/news.service';
-import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
+import { WidgetsService } from '../../services/widgets.service';
 import { NewsConfiguratorComponent } from './components/configurator/configurator.component';
+import { DisplayableNews, NewsHelper } from './helper';
 
 const ROTATION_TIME_SEC = 10;
-
-/**
- * Mix of raw news source config with real news content.
- */
-export type DisplayableNews = {
-  source: NewsSource;
-  config: PluginConfig<NewsContent>; // Whole json plugin parent.
-  news: NewsContentItem;
-}
 
 @Component({
   selector: 'news',
@@ -34,9 +27,15 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
   public config: PluginConfig<NewsContent> = null;
 
   public editing: boolean; // Widgets container is being edited
+  public refreshingFeedsChannels = false;
 
   private modal: HTMLIonModalElement = null;
 
+  // Raw inputs
+  private newsSources: NewsSource[] = [];
+  private feedsChannels: FeedsChannel[] = [];
+
+  // Displayable
   public news: DisplayableNews[] = [];
 
   public transitioning = false;
@@ -48,8 +47,9 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
   constructor(
     public theme: GlobalThemeService,
     public notificationService: NotificationManagerService,
+    private widgetsService: WidgetsService,
     private widgetsNewsService: WidgetsNewsService,
-    private widgetPluginsService: WidgetPluginsService,
+    private widgetsFeedsNewsService: WidgetsFeedsNewsService,
     private dappBrowserService: DappBrowserService,
     private popoverCtrl: PopoverController,
     private modalController: ModalController
@@ -80,8 +80,20 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
   attachWidgetState(widgetState: WidgetState) {
     super.attachWidgetState(widgetState);
 
-    this.widgetsNewsService.sources.subscribe(newsSources => {
-      void this.prepareNews(newsSources);
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.widgetsNewsService.sources.subscribe(async newsSources => {
+      this.newsSources = newsSources;
+      this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.widgetsFeedsNewsService.channels.subscribe(async channels => {
+      this.feedsChannels = channels;
+      this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
+    });
+
+    this.widgetsFeedsNewsService.fetchingChannels.subscribe(fetching => {
+      this.refreshingFeedsChannels = fetching;
     });
   }
 
@@ -90,32 +102,6 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
     holder.setOnConfigureIconClickedListener(() => {
       void this.showConfigurator();
     });
-  }
-
-  private async prepareNews(newsSources: NewsSource[]) {
-    let allNews: DisplayableNews[] = [];
-
-    // For each source, get its content.
-    for (let source of newsSources) {
-      if (!source.enabled)
-        continue; // Skip this source if disabled
-
-      let content = <PluginConfig<NewsContent>>await this.widgetPluginsService.getPluginContent(source.url);
-
-      for (let news of content.content.items) {
-        let displayableNews: DisplayableNews = {
-          source,
-          config: content,
-          news
-        };
-        allNews.push(displayableNews);
-      }
-    }
-
-    // Sort all collected news by date
-    allNews.sort((a, b) => b.news.timevalue - a.news.timevalue);
-
-    this.news = allNews;
   }
 
   private updateActiveNews() {
@@ -141,11 +127,11 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
   }
 
   public getIcon(itemIndexInPage: number): string {
-    return this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].config.logo; // Project logo
+    return this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].logo; // Project logo
   }
 
   public getSender(itemIndexInPage: number): string {
-    return this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].config.projectname || "";
+    return this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].sender;
   }
 
   public getTitle(itemIndexInPage: number): string {
@@ -219,5 +205,13 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
     });
     void modal.onDidDismiss().then(() => { });
     void modal.present();
+  }
+
+  /**
+   * Launches the news refresh process
+   */
+  public refreshAllNews() {
+    // TODO: AFTER MERGE TO MASTER void this.widgetsService.refreshWidgetPluginContent(this.widgetState);
+    // TODO: FEEDS NEWS SERVICE REFRESH
   }
 }
