@@ -31,7 +31,7 @@ export class UnstakePage {
     public amount = 0;
 
     constructor(
-        private stakeService: StakeService,
+        public stakeService: StakeService,
         public translate: TranslateService,
         public popupProvider: PopupProvider,
         public walletManager: WalletService,

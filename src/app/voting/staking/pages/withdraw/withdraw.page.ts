@@ -29,13 +29,13 @@ export class WithdrawPage {
 
     public available = 0;
     public amount = 0;
-    private advanced = false;
-    private address = "";
-    private isMultiWallet = false;
+    public advanced = false;
+    public address = "";
+    public isMultiWallet = false;
 
     constructor(
         public uxService: UXService,
-        private stakeService: StakeService,
+        public stakeService: StakeService,
         public translate: TranslateService,
         public popupProvider: PopupProvider,
         public walletManager: WalletService,

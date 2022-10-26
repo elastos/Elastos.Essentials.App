@@ -5,7 +5,6 @@ import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titl
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService, VoteType } from '../../services/stake.service';
 
 
@@ -19,21 +18,20 @@ export class StakingHomePage implements OnInit {
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
-    private showItems = [];
-    private buttonList = [];
-    private voteItems = [];
+    public showItems = [];
+    public buttonList = [];
+    public voteItems = [];
 
-    private detail = false;
-    private showVotesDetails = false;
-    private voteType = VoteType.DPoSV2;
-    private voteInfo: any;
+    public detail = false;
+    public showVotesDetails = false;
+    public voteType = VoteType.DPoSV2;
+    public voteInfo: any;
 
     public dataFetched = false;
 
     constructor(
-        private voteService: VoteService,
-        private translate: TranslateService,
-        private stakeService: StakeService,
+        public translate: TranslateService,
+        public stakeService: StakeService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
     ) {
